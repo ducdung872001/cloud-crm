@@ -269,14 +269,14 @@ export default function MarketingAutomationList() {
       //       },
       //     ]),
 
-      // {
-      //   title: "Cài đặt MA",
-      //   icon: <Icon name="Settings" style={{ width: 18 }} />,
-      //   callback: () => {
-      //     navigate(`/marketing_automation_setting/${item.id}`);
-      //     //   setShowModalConfig(true);
-      //   },
-      // },
+      {
+        title: "Cài đặt MA",
+        icon: <Icon name="Settings" style={{ width: 18 }} />,
+        callback: () => {
+          navigate(`/marketing_automation_setting/${item.id}`);
+          //   setShowModalConfig(true);
+        },
+      },
 
       // {
       //     title: "Xem chi tiết",

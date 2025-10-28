@@ -279,7 +279,7 @@ i18n.use(initReactI18next).init({
           smsMarketing: "SMS Marketing",
           zaloMarketing: "Zalo Marketing",
           marketingAutomation: "Marketing Automation",
-          campaignMarketing: "Chiến dịch Marketing",
+          campaignMarketing: "Ngân sách Marketing",
 
           salesChannel: "Kênh bán",
           // đoạn này là children của kênh bán
