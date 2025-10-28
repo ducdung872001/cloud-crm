@@ -1,0 +1,25 @@
+{
+    "authOptions": {
+        "clientId": "9d56aa14-bc78-4f52-841d-fd5329639631",
+        "authority": "https://login.microsoftonline.com/common"
+    },
+    "request": {
+        "authCodeUrlParameters": {
+            "scopes": [
+                "user.read",
+                "Mail.Read", 
+                "Mail.Send"
+            ],
+            "redirectUri": "http://localhost:4000/crm/user_setting"
+        },
+        "tokenRequest": {
+            "redirectUri": "http://localhost:4000/crm/user_setting",
+            "scopes": [
+                "user.read"
+            ]
+        }
+    },
+    "resourceApi": {
+        "endpoint": "https://graph.microsoft.com/v1.0/me"
+    }
+}

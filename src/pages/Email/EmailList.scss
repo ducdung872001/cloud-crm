@@ -1,0 +1,96 @@
+.page-email {
+  .card-box {
+    position: relative;
+
+    .box__lst--email {
+      .footer__lst--email {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2.4rem 2rem;
+        font-size: 1.4rem;
+        line-height: 2rem;
+        color: var(--text-primary-color);
+
+        .__center {
+          width: 30%;
+          white-space: nowrap;
+          display: flex;
+          gap: 1rem;
+          flex-shrink: 0;
+          align-items: center;
+          justify-content: center;
+
+          .display-item__button {
+            .base-button {
+              border: 1px solid var(--border-color);
+              padding: 0.3rem 0.4rem 0.3rem 0.8rem;
+              font-weight: 400;
+              gap: 0;
+            }
+          }
+        }
+
+        .__right {
+          .base-button {
+            font-size: 1.4rem;
+            line-height: 2rem;
+            padding: 0.8rem 0.8rem 0.8rem 1.6rem;
+
+            svg {
+              width: 1.8rem;
+              height: 1.8rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .notification__connect--email {
+    position: fixed;
+    right: 4rem;
+    bottom: 3rem;
+    z-index: 10;
+    background-color: var(--extra-color-5);
+    border: 1.5px solid var(--warning-color);
+    padding: 2rem;
+    border-radius: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .content {
+      font-weight: 500;
+    }
+
+    .action__connect {
+      display: flex;
+      align-items: center;
+      gap: 0 1rem;
+      padding-left: 5rem;
+
+      span {
+        cursor: pointer;
+
+        svg {
+          width: 2rem;
+          height: 2rem;
+        }
+      }
+
+      .__connect {
+        svg {
+          fill: var(--success-darker-color);
+        }
+      }
+
+      .__cancel {
+        svg {
+          fill: var(--error-darker-color);
+        }
+      }
+    }
+  }
+}

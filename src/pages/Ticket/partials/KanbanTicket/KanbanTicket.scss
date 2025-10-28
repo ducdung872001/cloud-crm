@@ -1,0 +1,58 @@
+.wrapper-kanban-ticket {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 2rem;
+  position: relative;
+
+  .task-list {
+    & + .task-list {
+      margin-left: 2rem;
+    }
+
+    min-height: 10rem;
+    display: flex;
+    flex-direction: column;
+    width: 33%;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+
+    .wrapper__title {
+      margin-bottom: 2.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0 0.8rem;
+
+      .title-task {
+        font-size: 1.3rem;
+        font-weight: 600;
+        background-color: #deebff;
+        color: var(--primary-color-90);
+        padding: 0.2rem 1rem;
+        border-radius: 5px;
+        align-self: flex-start;
+      }
+
+      .total-task {
+        font-weight: 600;
+      }
+    }
+
+    &:first-child {
+      .wrapper__title {
+        .title-task {
+          background-color: #dfe1e6;
+          color: var(--text-primary-color);
+        }
+      }
+    }
+  }
+
+  .loading-kanban {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+  }
+}

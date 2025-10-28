@@ -1,0 +1,13 @@
+.modal-add-ticket-proc {
+  .form-ticket-proc-group {
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem 3.2rem;
+
+      .form-group {
+        width: 100%;
+      }
+    }
+  }
+}

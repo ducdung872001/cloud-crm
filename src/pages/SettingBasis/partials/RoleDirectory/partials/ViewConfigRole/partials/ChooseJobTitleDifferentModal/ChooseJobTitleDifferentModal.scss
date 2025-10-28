@@ -1,0 +1,12 @@
+.modal-copy-jobtitle {
+  .form__copy--jobtitle {
+    .list-form-group {
+      display: flex;
+      flex-direction: column;
+
+      .form-group {
+        margin-bottom: 0.8rem;
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+.radio-list {
+  &__title,
+  .title-radio {
+    color: var(--text-primary-color);
+    cursor: text;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    .required {
+      color: var(--error-color);
+    }
+  }
+  .radio-title-icon {
+    display: flex;
+    align-items: flex-end;
+    gap: 0 0.8rem;
+    margin-bottom: 0.5rem;
+
+    .title-radio {
+      margin-bottom: 0;
+    }
+
+    .icon-radio {
+      cursor: pointer;
+
+      svg {
+        width: 1.6rem;
+        height: 1.6rem;
+
+        &:hover {
+          fill: var(--primary-color);
+        }
+      }
+    }
+  }
+  &.has-title {
+    &__left {
+      flex-direction: row;
+      gap: 2.4rem;
+      align-items: flex-start;
+      display: flex;
+      .radio-list__title {
+        min-width: 8rem;
+        margin: 0;
+        flex-shrink: 0;
+        line-height: 2.4rem;
+      }
+      .disabled__radio--title {
+        opacity: 0.6rem;
+      }
+      .form-group {
+        width: 100%;
+      }
+    }
+  }
+  .has-error,
+  .has-warning {
+    color: var(--error-color);
+    font-size: 1.3rem;
+    line-height: 1.2;
+    padding-top: 0.4rem;
+  }
+  .has-warning {
+    color: var(--warning-color);
+  }
+}

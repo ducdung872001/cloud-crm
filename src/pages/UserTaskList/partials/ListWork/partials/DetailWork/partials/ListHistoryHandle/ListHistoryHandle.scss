@@ -1,0 +1,20 @@
+.list_history_handle_detail_work{
+    .box-table {
+        .pagination{
+            display: none !important;
+        }
+
+        .process-time{
+            .text-time{
+              font-size: 14px;
+              font-weight: 400;
+              cursor: pointer;
+              &:hover{
+                color: var(--primary-color-90);
+              }
+            }
+        }
+    }
+
+    
+}

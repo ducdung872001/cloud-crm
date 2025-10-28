@@ -1,0 +1,96 @@
+.modal-option {
+  .modal-dialog {
+    max-width: 90rem;
+
+    .modal-body {
+      padding: 0;
+
+      .search-option {
+        .search-container {
+          padding: 1.5rem 1.8rem;
+
+          .filter-container {
+            width: 100%;
+
+            .filter-block {
+              width: 50%;
+
+              .base-button {
+                width: 100%;
+              }
+            }
+          }
+
+          .base-input {
+            display: none;
+          }
+
+          .icon__clear--keyword {
+            display: none;
+          }
+        }
+
+        .list-filter-choose {
+          padding: 0.8rem 1.8rem 1.5rem;
+        }
+      }
+
+      .list-option {
+        padding: 2rem 2.2rem 2rem 4.2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2.8rem 2rem;
+        background-color: var(--extra-color-30);
+
+        .item-option {
+          width: calc(32% - 1rem);
+          border-radius: 0.5rem;
+          background-color: var(--white-color);
+          overflow: hidden;
+          box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+          .title {
+            padding: 1rem 1.2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--extra-color-30);
+          }
+
+          .content {
+            cursor: pointer;
+            font-size: 1.4rem;
+            font-weight: 500;
+            padding: 1.2rem;
+            height: 12rem;
+          }
+
+          .action-option {
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background-color: var(--primary-color-50);
+            color: var(--white-color);
+            font-size: 1.5rem;
+            font-weight: 500;
+
+            &:hover {
+              background-color: var(--primary-color);
+              color: var(--white-color);
+            }
+          }
+        }
+
+        .loading__wrapper {
+          margin: 0 auto;
+          min-height: 60rem;
+        }
+
+        .system-notification {
+          margin: 0 auto;
+        }
+      }
+    }
+  }
+}

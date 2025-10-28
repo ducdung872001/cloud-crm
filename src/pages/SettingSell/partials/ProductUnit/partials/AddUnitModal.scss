@@ -1,0 +1,13 @@
+.modal-add-foodunit {
+  .form-foodunit-group {
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 3.2rem;
+    }
+
+    .form-group {
+      width: calc(50% - 1.6rem);
+    }
+  }
+}

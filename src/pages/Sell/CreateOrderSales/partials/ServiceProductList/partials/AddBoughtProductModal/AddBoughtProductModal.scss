@@ -1,0 +1,70 @@
+.modal-add-bought-product {
+  .form-add-bought-product {
+    .modal-body {
+      padding: 0;
+    }
+
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 3.2rem;
+      padding: 1.6rem;
+      max-height: 48rem;
+      overflow: auto;
+
+      .form-group {
+        width: calc(50% - 1.6rem);
+        transition: all 0.5s ease-in-out;
+
+        &:first-child,
+        &:last-child {
+          width: 100%;
+        }
+
+        .price__adjustment,
+        .active__price--adjustment {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0 0.8rem;
+          height: 3.933rem;
+          margin-top: 2.5rem;
+          border-radius: 0.5rem;
+          border: 1px dashed var(--extra-color-50);
+          font-size: 1.5rem;
+          font-weight: 500;
+          cursor: pointer;
+
+          svg {
+            width: 2rem;
+            height: 2rem;
+          }
+
+          &:hover {
+            color: var(--extra-color-50);
+
+            svg {
+              fill: var(--success-color);
+            }
+          }
+        }
+
+        .active__price--adjustment {
+          border-color: var(--success-darker-color);
+          color: var(--extra-color-50);
+          fill: var(--success-color);
+        }
+      }
+
+      #FieldDiscountUnit {
+        .radio-list {
+          .form-group {
+            .base-radio {
+              margin-top: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}

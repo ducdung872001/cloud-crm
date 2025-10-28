@@ -1,0 +1,22 @@
+.modal-view-result-survey {
+  .box-view-result-survey {
+    .modal-body {
+      padding: 0;
+    }
+
+    .body__result--survey {
+      padding: 1.6rem;
+
+      .chart__common {
+        width: 55%;
+        margin: 0 auto;
+        max-height: 40rem;
+        overflow: auto;
+      }
+
+      .system-notification {
+        padding: 3rem 2.4rem;
+      }
+    }
+  }
+}

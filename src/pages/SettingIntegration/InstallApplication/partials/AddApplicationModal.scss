@@ -1,0 +1,70 @@
+.modal-add--app {
+    .form-add--app {
+      .list-form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem 3.2rem;
+      }
+  
+      .form-group {
+        width: calc(50% - 1.6rem);
+  
+        &:first-child,
+        &:last-child {
+          width: 100%;
+        }
+  
+        .client__key {
+          width: 100%;
+  
+          .label__key {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0 0.8rem;
+  
+            .name--key {
+              cursor: text;
+              font-size: 1.4rem;
+              font-weight: 700;
+              line-height: 2rem;
+              opacity: 0.6;
+              margin-bottom: 0.5rem;
+            }
+  
+            .icon__change {
+              position: absolute;
+              right: 8.2rem;
+              bottom: 0.4rem;
+              cursor: pointer;
+  
+              svg {
+                width: 1.6rem;
+                height: 1.6rem;
+                fill: var(--extra-color-50);
+  
+                &:hover {
+                  fill: var(--warning-darker-color);
+                }
+              }
+            }
+          }
+        }
+      }
+  
+      #FieldStatus {
+        .radio-list {
+          .form-group {
+            width: 100%;
+  
+            .base-radio {
+              & + .base-radio {
+                margin-top: 0rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  

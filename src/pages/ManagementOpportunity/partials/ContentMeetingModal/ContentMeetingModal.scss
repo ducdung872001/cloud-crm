@@ -1,0 +1,23 @@
+.modal-add-content {
+    .form-add-content {
+      .modal-body {
+        padding: 0;
+      }
+  
+      .list-form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem 2.2rem;
+        padding: 1.6rem;
+        max-height: 48rem;
+        overflow: auto;
+  
+        .form-group {
+            width: 100%;
+            transition: all 0.5s ease-in-out;
+  
+        }
+      }
+    }
+  }
+  

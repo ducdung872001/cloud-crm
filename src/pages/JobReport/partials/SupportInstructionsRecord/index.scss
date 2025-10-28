@@ -1,0 +1,28 @@
+.support__instructions--record {
+  .modal-body {
+    padding: 0;
+  }
+
+  .lst__instructions--record {
+    padding: 1.6rem 0;
+
+    .item__instructions--record {
+      padding: 1rem 1.6rem;
+      font-size: 1.5rem;
+      font-weight: 500;
+      border-top: 1px solid var(--extra-color-20);
+
+      &:last-child {
+        border-bottom: 1px solid var(--extra-color-20);
+      }
+    }
+
+    .__even {
+      background-color: var(--primary-color-30);
+    }
+
+    .__odd {
+      background-color: var(--extra-color-10);
+    }
+  }
+}

@@ -1,0 +1,77 @@
+.base-radio {
+  label {
+    padding-left: 2.6rem;
+    margin-bottom: 0;
+    font-weight: 400;
+    cursor: pointer;
+    position: relative;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    vertical-align: top;
+  }
+
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 2rem;
+    width: 2rem;
+    margin: 0;
+    top: 2px;
+    left: -2px;
+
+    &:focus ~ .checkmark {
+      border-color: var(--primary-color);
+    }
+
+    &:checked ~ .checkmark {
+      border-color: var(--primary-color);
+
+      &:after {
+        background-color: var(--primary-color);
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+  }
+
+  .checkmark {
+    background: linear-gradient(to bottom, var(--white-color), var(--extra-color-5));
+    box-shadow: var(--box-shadow-input);
+    border-radius: 100%;
+    height: 1.6rem;
+    width: 1.6rem;
+    border: 1px solid var(--border-color);
+    position: absolute;
+    cursor: pointer;
+    left: 0;
+    top: 2px;
+
+    &:after {
+      content: "";
+      display: block;
+      height: 0.8rem;
+      width: 0.8rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: 100%;
+      background-color: transparent;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.15s ease-in-out;
+    }
+  }
+  & + .base-radio {
+    margin-top: 1rem;
+  }
+  &.has-disabled {
+    label {
+      cursor: no-drop;
+      opacity: 0.6;
+
+      .checkmark {
+        cursor: no-drop;
+        background: var(--extra-color-5);
+      }
+    }
+  }
+}

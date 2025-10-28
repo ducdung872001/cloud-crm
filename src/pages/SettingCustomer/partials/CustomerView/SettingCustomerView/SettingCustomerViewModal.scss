@@ -1,0 +1,39 @@
+.modal-setting-customer-view {
+    .container-setting-customer-view{
+      .modal-body {
+        padding: 0;
+      }
+      .form-setting-customer-view{
+        max-height: 48rem;
+        overflow: auto;
+        padding: 1.6rem;
+        .list-form-group{
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.6rem 3.2rem;
+          .form-group{
+            width: calc(50% - 1.6rem);
+            .base-select{
+              .select-custom {
+                .css-140qvo9-menu{
+                  position: relative;
+                }
+              }
+            }
+          }
+        }
+        .box-table{
+          margin-top: 1.2rem;
+          // .pagination{
+          //   justify-content: center;
+          // }
+          // .count-item{
+          //   display: none;
+          // }
+        }
+        
+      }
+        
+    }
+}
+  

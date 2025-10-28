@@ -1,0 +1,31 @@
+.modal-kpi-template-goal {
+  .modal-dialog {
+    max-width: 72rem;
+  }
+
+  .modal-body {
+    padding: 0;
+  }
+
+  .wrapper__kpi-template-goal {
+    padding: 1.6rem;
+
+    .form__submit--kpi-template-goal {
+      margin-top: 4rem;
+    }
+
+    .list__kpi-template-goal {
+      margin-top: 1rem;
+
+      .action__add--kpi-template-goal {
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+      }
+
+      .box-table {
+        margin-top: 1.2rem;
+      }
+    }
+  }
+}

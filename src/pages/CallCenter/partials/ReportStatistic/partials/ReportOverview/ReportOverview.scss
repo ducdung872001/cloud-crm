@@ -1,0 +1,29 @@
+.report-overview {
+    padding: 1.6rem;
+    .list-report{
+        display: flex;
+        gap: 1.5rem 0rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+        justify-content: space-between;
+        .item-report{
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 1rem;
+            width: 23.5%;
+            
+            .title-report{
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+            }
+            .content-report{
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+            }
+        }
+    }
+}

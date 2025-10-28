@@ -1,0 +1,57 @@
+.modal-add-fanpage {
+  .modal-dialog {
+    max-width: 70rem;
+
+    .list-fanpage {
+      .box-table {
+        .box-table__wrapper {
+          .table {
+            tbody {
+              tr {
+                .actions {
+                  .actions-0 {
+                    .base-button {
+                      position: relative;
+
+                      .un-selected,
+                      .selected {
+                        background: linear-gradient(to bottom, var(--white-color), var(--extra-color-5));
+                        box-shadow: var(--box-shadow-input);
+                        border-radius: 100%;
+                        height: 1.6rem;
+                        width: 1.6rem;
+                        border: 1px solid var(--border-color);
+                        position: absolute;
+                        cursor: pointer;
+                        left: -1.3rem;
+                        top: -0.7rem;
+                      }
+
+                      .selected {
+                        border-color: var(--primary-color);
+
+                        &::after {
+                          background-color: var(--primary-color);
+                          transform: translate(-50%, -50%) scale(1);
+                          content: "";
+                          display: block;
+                          height: 0.8rem;
+                          width: 0.8rem;
+                          position: absolute;
+                          top: 50%;
+                          left: 50%;
+                          border-radius: 100%;
+                          transition: transform 0.15s ease-in-out;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

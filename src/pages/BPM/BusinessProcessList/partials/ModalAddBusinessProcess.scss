@@ -1,0 +1,192 @@
+.modal-add-business-process {
+  .form-add-business-process {
+    .modal-body {
+      padding: 0;
+    }
+
+    .list-form-group {
+      display: flex;
+      flex-direction: column;
+      padding: 1.6rem;
+      height: 30rem;
+      max-height: 40rem;
+      overflow: auto;
+    }
+
+    .list-field-item {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 3.2rem;
+
+      .form-group {
+        //   &:first-child {
+        width: 100%;
+        //   }
+        // width: calc(50% - 1.6rem);
+      }
+    }
+
+    .tab_2_step_process {
+      padding: 1.6rem;
+      max-height: 40rem;
+      overflow: auto;
+      .container_step {
+        // border: 1px solid;
+        display: flex;
+        margin-bottom: 2rem;
+        // align-items: center;
+        gap: 0 1rem;
+
+        .item_step {
+          width: 100%;
+        }
+
+        // .action__add--step {
+        //   cursor: pointer;
+        //   margin-top: 1.2rem;
+        //   // border: 1px solid;
+        //   flex: 1;
+        //   display: flex;
+        //   justify-content: flex-end;
+
+        //   svg {
+        //     width: 2rem;
+        //     height: 2rem;
+        //     fill: var(--success-color);
+        //   }
+        // }
+
+        .action__remove--step {
+          cursor: pointer;
+          margin-top: 1.1rem;
+          // border: 1px solid;
+          flex: 1;
+          display: flex;
+          justify-content: flex-end;
+
+          svg {
+            width: 2rem;
+            height: 2rem;
+            fill: var(--extra-color-50);
+
+            &:hover {
+              fill: var(--error-darker-color);
+            }
+          }
+        }
+      }
+
+      .button_add_approach {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        // border: 1px solid;
+        // padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+        // border-radius: 5px;
+        // background-color: var(--primary-bg-color);
+
+        svg {
+          width: 1.8rem;
+          height: 1.8rem;
+          // fill: var(--extra-color-50);
+          // fill: white;
+        }
+        &:hover {
+          // background-color: var(--primary-color);
+          svg {
+            fill: var(--primary-color-90);
+          }
+          .title_button {
+            color: var(--primary-color-90);
+          }
+        }
+
+        .title_button {
+          font-size: 14px;
+          font-weight: 400;
+          margin-left: 5px;
+          // color: white;
+        }
+      }
+    }
+
+    .tab_4_objectAttribute {
+      padding: 1.6rem;
+
+      .list__object--attribute {
+        display: flex;
+        gap: 1.2rem 3.2rem;
+        flex-wrap: wrap;
+        margin-top: 1.6rem;
+        .label-title {
+          width: 100%;
+          font-size: 2rem;
+          line-height: 2.4rem;
+        }
+        .radio-list {
+          .form-group {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0 1.2rem;
+            margin-top: 1.5rem;
+            .base-radio {
+              margin: 0;
+              margin-top: 0;
+            }
+            .base-checkbox {
+              margin-top: 0;
+            }
+          }
+        }
+        .form-group {
+          width: calc(50% - 1.6rem);
+        }
+        .special-case {
+          // width: 100%;
+        }
+      }
+    }
+    .tab_4_objectAttribute-selected {
+      padding: 0 1.6rem 1.6rem 1.6rem;
+      margin-top: 1.6rem;
+      max-height: calc(100vh - 240px);
+      // border: 1px solid;
+      overflow: auto;
+      .list__object--attribute {
+        display: flex;
+        gap: 1.2rem 3.2rem;
+        flex-wrap: wrap;
+        margin-top: 1.6rem;
+        .label-title {
+          width: 100%;
+          font-size: 2rem;
+          line-height: 2.4rem;
+        }
+        .radio-list {
+          .form-group {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0 1.2rem;
+            margin-top: 1.5rem;
+            .base-radio {
+              margin: 0;
+              margin-top: 0;
+            }
+            .base-checkbox {
+              margin-top: 0;
+            }
+          }
+        }
+        .form-group {
+          width: calc(50% - 1.6rem);
+        }
+        .special-case {
+          // width: 100%;
+        }
+      }
+    }
+  }
+}

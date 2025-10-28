@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tặng bộ giải pháp phần mềm spa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Roboto:wght@300;400;500;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    table {
+      border-spacing: 0;
+    }
+
+    td {
+      padding: 0;
+    }
+
+    .wrapper__template--email {
+      width: 100%;
+      table-layout: fixed;
+      background-color: #f5f5f5;
+      padding: 60px 0;
+    }
+
+    .main {
+      margin: 0 auto;
+      width: 100%;
+      max-width: 640px;
+      border-spacing: 0;
+      font-family: "Roboto", sans-serif;
+      color: #444;
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 400;
+      border-radius: 3px;
+      border-collapse: collapse;
+    }
+
+    @media (max-width: 760px) {
+      .two-column {
+        display: block;
+        text-align: center;
+      }
+
+      .two-column .column {
+        display: block;
+        padding-bottom: 20px;
+      }
+
+      .two-column .res-mobile {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <center class="wrapper__template--email">
+    <table class="main" bgcolor="#ffffff" cellpadding="0" cellspacing="0" width="100%">
+      <tbody>
+        <tr>
+          <td>
+            <p align="center" style="background-color: #145c73; padding: 10px 0 5px">
+              <a href="https://crm.reborn.vn/crm/">
+                <img src="https://cdn.reborn.vn/2023/03/27/b5a74b51-5ef3-4e4b-b06e-f94b43fb9192-1679899586.png"
+                  alt="logo" width="156px" height="52px" />
+              </a>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 16px">
+            <table cellpadding="0" cellspacing="0" width="100%">
+              <tbody>
+                <tr>
+                  <td>
+                    <p><strong>[REBORN CRM] Tặng MIỄN PHÍ</strong>&nbsp;bộ phần mềm quản lý và chăm sóc khách hàng 🎉.</p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding: 20px 0">
+                    <p>
+                      Kính gửi:&nbsp;<strong>{{customer_gender}} {{customer_name}}</strong>, <br />
+                      Lời đầu tiên, Reborn JSC xin gửi lời chào trân trọng tới {{customer_gender}} {{customer_name}}. <br />
+                      Chúng tôi gửi thư ngỏ này đến {{customer_gender}} {{customer_name}} để gửi tặng tài khoản sử dụng miễn phí Reborn CRM - Giải pháp tăng hiệu quả bán hàng và chăm sóc khách hàng.
+                    </p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <h4>1. Tài khoản sử dụng</h4>
+                    <p>
+                      Reborn JSC xin gửi tới {{customer_gender}} tài khoản sử dụng Reborn CRM - Phần mềm quản lý và chăm sóc khách
+                      hàng, quản lý bán hàng, nhắc lịch, quản lý kho,.. và quản trị các hoạt động nội bộ Doanh nghiệp:
+                    </p>
+                    <ul style="padding: 12px 0 20px 40px">
+                      <li>
+                        <strong>Đường dẫn truy cập:&nbsp;</strong>
+                        <a href="https://{{subdomain}}.reborn.vn/crm/">https://{{subdomain}}.reborn.vn/crm/</a>
+                      </li>
+                      <li><strong>Tài khoản:</strong>&nbsp;<span>{{account}}</span></li>
+                      <li><strong>Mật khẩu:</strong>&nbsp;<span>Reborn@32123</span></li>
+                    </ul>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <p>{{customer_gender}} hãy truy cập và sử dụng Reborn CRM ngay bây giờ. Tài khoản trên là hoàn toàn miễn phí.
+                    </p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding: 20px 0">
+                    <p>
+                      Reborn chỉ thu phí duy trì hệ thống khi {{customer_gender}} đã cảm thấy hài lòng. Phí duy trì hệ thống là cạnh
+                      tranh, và rẻ nhất thị trường.
+                    </p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding: 20px 0">
+                    <h4>
+                      ✍️ Tại sao bạn nên chọn&nbsp;
+                      <span style="color: #145c73">Reborn CRM: </span>
+                    </h4>
+
+                    <ol style="padding: 6px 0px 6px 42px">                      
+                      <li>
+                        <span style="color: #ff2d60; font-weight: 500">CRM</span>
+                        &nbsp;dễ dùng nhất.
+                      </li>
+                      <li>
+                        <span style="color: #ff2d60; font-weight: 500">CRM</span>
+                        &nbsp;có chi phí đầu tư thấp nhất.
+                      </li>
+                      <li>
+                        <span style="color: #ff2d60; font-weight: 500">CRM</span>
+                        &nbsp;hoạt động ổn định nhất.
+                      </li>
+                      <li>
+                        <span style="color: #ff2d60; font-weight: 500">CRM</span>
+                        &nbsp;giải được các vấn đề căn cơ nhất.
+                      </li>
+                      <li>
+                        <span style="color: #ff2d60; font-weight: 500">CRM</span>
+                        &nbsp;có tỷ lệ upsale cao nhất.
+                      </li>
+                    </ol>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <h4>2. Giới thiệu về hệ sinh thái Reborn</h4>
+                    <p>Reborn bao gồm một hệ sinh thái giải pháp TOÀN DIỆN dành cho Doanh nghiệp.</p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td align="center" style="padding: 30px">
+                    <table>
+                      <tbody>
+                        <tr class="two-column">
+                          <td valign="top" align="center" width="350px" class="column">
+                            <h4>Reborn Market</h4>
+                            <p style="padding-top: 10px">
+                              Công cụ hỗ trợ Doanh nghiệp thực hiện khai thác thị trường, tìm kiếm nguồn khách hàng tiềm
+                              năng với chi phí tối ưu.
+                            </p>
+                          </td>
+                          <td width="30px">&nbsp;</td>
+                          <td valign="middle" width="250px" style="overflow: hidden" class="res-mobile">
+                            <img
+                              src="https://cdn.reborn.vn/2023/03/27/a429000b-0d24-43ab-bb9a-275cb98be3f8-1679899824.png"
+                              alt="Reborn Market" width="100%" height="100%"
+                              style="object-fit: cover; border: 1px solid #ccc; border-radius: 3px" />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td align="center" style="padding: 30px">
+                    <table>
+                      <tbody>
+                        <tr class="two-column">
+                          <td valign="middle" width="250px" style="overflow: hidden" class="column res-mobile">
+                            <img
+                              src="https://cdn.reborn.vn/2023/03/27/01695365-4ac3-4cd7-b451-6f49cb80e86a-1679899794.png"
+                              alt="Reborn Crm" width="100%" height="100%"
+                              style="object-fit: cover; border: 1px solid #ccc; border-radius: 3px" />
+                          </td>
+                          <td width="30px">&nbsp;</td>
+                          <td valign="top" align="center" width="350px">
+                            <h4>Reborn CRM</h4>
+                            <p style="padding-top: 10px">
+                              Là phần mềm quản lý và chăm sóc khách hàng, quản lý bán hàng, 
+                              nhắc lịch, quản trị kho và quản trị các hoạt động nội bộ Doanh nghiệp.
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td align="center" style="padding: 30px">
+                    <table>
+                      <tbody>
+                        <tr class="two-column">
+                          <td valign="top" align="center" width="350px" class="column">
+                            <h4>Reborn WEB</h4>
+                            <p style="padding-top: 10px">
+                              Giao diện Website được tối ưu đẹp mắt, chuẩn SEO. Doanh nghiệp có thể dễ dàng đăng tải
+                              thông tin dịch vụ, chương trình
+                              khuyến mãi của mình và hỗ trợ chăm sóc khách hàng trực tuyến ngay tại đây.
+                            </p>
+                          </td>
+                          <td width="30px">&nbsp;</td>
+                          <td valign="middle" width="250px" style="overflow: hidden" class="res-mobile">
+                            <img
+                              src="https://cdn.reborn.vn/2023/03/27/cc13a4bb-c61a-45df-a66b-97d50cf5f01d-1679899851.png"
+                              alt="Reborn Web" width="250px"
+                              style="object-fit: cover; border: 1px solid #ccc; border-radius: 3px" />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td align="center" style="padding: 30px">
+                    <table>
+                      <tbody>
+                        <tr class="two-column">
+                          <td valign="top" width="250px" style="overflow: hidden" class="column res-mobile">
+                            <img
+                              src="https://cdn.reborn.vn/2023/03/27/649c791c-2780-4800-8dba-779bd76795e5-1679899682.jpg"
+                              alt="reborn app" width="200px" style="object-fit: cover" />
+                          </td>
+                          <td width="30px">&nbsp;</td>
+                          <td valign="middle" align="center" width="350px">
+                            <h4>Reborn App</h4>
+                            <p style="padding-top: 10px">
+                              Một ứng dụng di động dành cho khách hàng của các Doanh nghiệp. Tạo sự kết nối giữa Doanh nghiệp và khách hàng của mình
+                              bằng những tương tác, chương trình khuyến mãi đăng tải ngay trên app.
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td align="center" style="padding: 30px">
+                    <table>
+                      <tbody>
+                        <tr class="two-column">
+                          <td valign="top" align="center" width="350px" class="column">
+                            <h4>Reborn Community</h4>
+                            <p style="padding-top: 10px">
+                              Reborn Community được định hình là nền tảng, mạng xã hội thẩm mỹ. Là cộng đồng chia sẻ
+                              kiến thức, trải nghiệm làm đẹp
+                              của khách hàng đã từng sử dụng dịch vụ.
+                            </p>
+                          </td>
+                          <td width="30px">&nbsp;</td>
+                          <td valign="middle" width="250px" style="overflow: hidden" class="res-mobile">
+                            <img
+                              src="https://cdn.reborn.vn/2023/03/27/15819866-6e57-4fb5-bae2-c7d504751444-1679899757.jpg"
+                              alt="Reborn Community" width="250px"
+                              style="object-fit: cover; border: 1px solid #ccc; border-radius: 3px" />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <p>
+                      Trong quá trình sử dụng, nếu {{customer_gender}} có thắc mắc hay yêu cầu hỗ trợ nào, vui lòng reply email này
+                      hoặc liên hệ trực tiếp với
+                      em.
+                    </p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding: 20px 0px">
+                    <p>
+                      <strong> Reborn rất mong nhận được phản hồi từ {{customer_gender}}. </strong>
+                    </p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding-bottom: 20px">
+                    <p>
+                      Cảm ơn {{customer_gender}} {{customer_name}}, <br />
+                      Trân trọng.
+                      <img src="https://cloud.reborn.vn/adminapi/email/tracking?trackingId={{tracking_id}}" />
+                    </p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td align="center" style="background-color: #145c73; color: #fff; padding: 10px 0">
+                    <p>Thông tin liên hệ: Phan Đức Dũng</p>
+                    <p>Số điện thoại:&nbsp;<a href="tel:0973090393" style="color:white">0973.090.393</a></p>
+                    <p>Địa chỉ: Tầng 8 Tòa nhà Sannam, 78 Duy Tân, Cầu Giấy, Hà Nội.</p>                    
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </center>
+</body>
+
+</html>

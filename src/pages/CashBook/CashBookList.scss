@@ -1,0 +1,134 @@
+.cashbook {
+  position: relative;
+
+  .type__one {
+    top: 7.3rem;
+  }
+
+  .type__two {
+    top: 7rem;
+  }
+
+  &__total {
+    position: absolute;
+    right: 2.2rem;
+
+    display: flex;
+    align-items: center;
+    gap: 0 1rem;
+
+    &--revenue,
+    &--expenditure {
+      font-weight: 600;
+    }
+
+    &--revenue {
+      span {
+        padding-right: 1.2rem;
+        color: var(--sea-green-color);
+      }
+    }
+
+    &--expenditure {
+      span {
+        color: var(--error-darker-color);
+      }
+    }
+
+    &--export-revenue {
+      border: 1.5px dashed var(--extra-color-30);
+      padding: 0.2rem 1.2rem;
+      border-radius: 0.3rem;
+      cursor: pointer;
+      margin-right: 2rem;
+
+      span {
+        display: flex;
+        align-items: center;
+        gap: 0 0.6rem;
+        font-weight: 500;
+        color: var(--extra-color-50);
+
+        svg {
+          width: 2rem;
+          height: 2rem;
+          fill: var(--extra-color-50);
+        }
+      }
+
+      &:hover {
+        border-color: var(--primary-color);
+
+        span {
+          color: var(--primary-color-90);
+
+          svg {
+            fill: var(--primary-color-90);
+          }
+        }
+      }
+    }
+  }
+
+  .card-box {
+    .action-header {
+      display: flex;
+      flex-direction: column;
+
+      .title__actions {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+
+        .menu-list {
+          border-radius: 0.8rem 0.8rem 0 0;
+          border-bottom: 1px solid var(--border-color);
+          padding: 0 2rem;
+          height: 5rem;
+          letter-spacing: 0.25px;
+          font-size: 1.4rem;
+          line-height: 2rem;
+          color: var(--text-extra-color);
+          display: flex;
+          align-items: center;
+          gap: 2.3rem;
+          width: 100%;
+
+          li {
+            display: flex;
+            align-items: center;
+            gap: 0 0.2rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            padding: 1.5rem 0 1.2rem;
+            transition: color 0.2s ease-in-out;
+
+            svg {
+              width: 1.8rem;
+              height: 1.8rem;
+              fill: var(--text-extra-color);
+            }
+
+            &:hover,
+            &.active {
+              border-bottom-color: var(--primary-color);
+              color: var(--text-primary-color);
+
+              svg {
+                fill: var(--text-primary-color);
+              }
+            }
+            &.active {
+              cursor: default;
+              pointer-events: none;
+            }
+          }
+        }
+      }
+
+      .search-container {
+        padding: 2.4rem 2rem 0;
+      }
+    }
+  }
+}

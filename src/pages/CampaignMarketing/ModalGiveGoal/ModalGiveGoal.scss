@@ -1,0 +1,56 @@
+.modal-give-goal {
+    .form-give-goal {
+        .modal-body {
+            padding: 0;
+        }
+        .list-form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem 3.2rem;
+            padding: 1.6rem;
+            max-height: 48rem;
+            overflow: auto;
+
+            .form-group {
+                width: calc(50% - 1.6rem);
+
+            }
+
+            .box-add{
+              display: flex; 
+              align-items: center;
+              cursor: pointer;
+              .icon_add{
+                svg {
+                  width: 1.6rem;
+                  // height: 2rem;
+                }
+              }
+              &:hover {
+                svg {
+                  opacity: 0.8;
+                  fill: #1c8cff;
+                }
+                color:#1c8cff;
+              }
+            }
+            
+            .icon-delete {
+                cursor: pointer;
+  
+                svg {
+                  width: 2rem;
+                  height: 2rem;
+                }
+  
+                &:hover {
+                  svg {
+                    opacity: 0.8;
+                    fill: var(--error-darker-color);
+                  }
+                }
+              }
+        }
+    }
+  }
+  

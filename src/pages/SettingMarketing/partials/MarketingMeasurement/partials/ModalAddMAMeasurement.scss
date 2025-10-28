@@ -1,0 +1,48 @@
+.modal-add-marketing-measurement {
+    .form-add-marketing-measurement {
+      .modal-body {
+        padding: 0;
+      }
+  
+      .list-form-group {
+        display: flex;
+        flex-direction: column;
+      
+        padding: 1.6rem;
+        max-height: 40rem;
+        overflow: auto;
+      }
+  
+      .list-field-item {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem 3.2rem;
+        flex-wrap: wrap;
+  
+        .form-group {
+        //   &:first-child {
+        //     width: 100%;
+        //   }
+          width: calc(50% - 1.6rem);
+
+          .radio-list {
+            .form-group {
+              width: 100%;
+              display: flex;
+              align-items: center;
+              gap: 0 2rem;
+              margin-bottom: 0;
+
+              .base-radio {
+                margin-top: 0;
+              }
+            }
+          }
+        }
+  
+
+      }
+
+    }
+  }
+  

@@ -1,0 +1,42 @@
+.modal-kpi-object {
+  .modal-dialog {
+    max-width: 65rem;
+  }
+
+  .modal-body {
+    padding: 0;
+  }
+
+  .wrapper__kpi-object {
+    padding: 1.6rem;
+    max-height: 42rem;
+    overflow: auto;
+
+    .form__submit--kpi-object {
+      margin-top: 1.5rem;
+    }
+
+    .list__kpi-object {
+      margin-top: 1rem;
+
+      .action__add--kpi-object {
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+      }
+
+      .box-table {
+        margin-top: 1.2rem;
+      }
+
+      .system-notification {
+        padding: 0;
+        .system-notification__wrapper {
+          svg {
+            width: 23rem;
+          }
+        }
+      }
+    }
+  }
+}

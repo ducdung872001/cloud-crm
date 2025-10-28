@@ -1,0 +1,19 @@
+.modal-add-report-dashboard {
+    .form-report-dashboard {
+      .list-form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem 3.2rem;
+  
+        .form-group {
+          // width: calc(50% - 1.6rem);
+          width: 100%;
+  
+          // &:last-child {
+          //   width: 100%;
+          // }
+        }
+      }
+    }
+  }
+  

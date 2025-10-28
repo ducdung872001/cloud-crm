@@ -1,0 +1,38 @@
+.modal-add-object-feature {
+  .box__object-feature {
+    .modal-body {
+      padding: 0;
+    }
+
+    .box__condition {
+      .box__view--feature {
+        .action__body--feature {
+          position: relative;
+
+          .action__add {
+            position: absolute;
+            top: 0.85rem;
+            right: 2rem;
+
+            .base-button {
+              padding: 0.8rem 1.2rem;
+            }
+          }
+        }
+
+        .wrapper__content--feature {
+          max-height: 42rem;
+          overflow: auto;
+        }
+
+        .loading__wrapper {
+          min-height: 22rem;
+        }
+
+        .system-notification {
+          padding: 4rem 2.4rem 2rem;
+        }
+      }
+    }
+  }
+}

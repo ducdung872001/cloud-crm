@@ -1,0 +1,26 @@
+.modal-add-team {
+    .form-team-group {
+      .list-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem 0;
+  
+        .list-field-basic {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1.2rem 2.2rem;
+  
+          .form-group {
+            // width: calc(50% - 1.1rem);
+            width: 100%;
+  
+            // &:last-child {
+            //   width: 100%;
+            // }
+          }
+        }
+  
+      }
+    }
+  }
+  

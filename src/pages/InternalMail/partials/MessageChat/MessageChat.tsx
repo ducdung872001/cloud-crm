@@ -1,0 +1,374 @@
+import React, { Fragment, useEffect, useRef, useState } from "react";
+import HeadlessTippy from "@tippyjs/react/headless";
+import { IMessageChatProps } from "model/mailBox/PropsModel";
+import { IMailboxExchangeRequestModel } from "model/mailBox/MailBoxRequestModel";
+import Icon from "components/icon";
+import MailboxService from "services/MailboxService";
+import { showToast } from "utils/common";
+import { FILE_IMAGE_MAX } from "utils/constant";
+// import { uploadImageFromFiles } from "utils/image";
+import FileService from "services/FileService";
+import { uploadVideoFormData } from "utils/videoFormData";
+import { uploadDocumentFormData } from "utils/document";
+import EmojiChat from "./partials/EmojiChat/EmojiChat";
+import UploadMediaModal from "./partials/UploadMedia/UploadMediaModal";
+import UploadDocumentModal from "./partials/UploadDocument/UploadDocumentModal";
+import "./MessageChat.scss";
+
+export default function MessageChat(props: IMessageChatProps) {
+  const { mailboxId, onHide, takeHeightTextarea, dataExchange } = props;
+
+  const inputRef = useRef(null);
+  const textareaRef = useRef(null);
+
+  const [showModalOption, setShowModalOption] = useState<boolean>(false);
+  const [showEmojiChat, setShowEmojiChat] = useState<boolean>(false);
+  const [loadingSend, setLoadingSend] = useState<boolean>(false);
+  const [infoMedia, setInfoMedia] = useState({
+    type: "",
+    url: "",
+  });
+  const [infoDocument, setInfoDocument] = useState({
+    type: "",
+    url: "",
+    fileSize: 0,
+    fileName: "",
+  });
+  const [checkTypeUpload, setCheckTypeUpload] = useState<number>(null);
+  const [checkType, setCheckType] = useState<string>(null);
+  const [showProgress, setShowProgress] = useState<number>(0);
+  const [optionUploadFile] = useState([
+    {
+      icon: <Icon name="Document" />,
+      name: "Tài liệu",
+      is_show: false,
+      action: 1,
+    },
+    {
+      icon: <Icon name="Image" />,
+      name: "Ảnh hoặc video",
+      is_show: false,
+      action: 2,
+    },
+  ]);
+  const [messageChat, setMessageChat] = useState<IMailboxExchangeRequestModel>({
+    content: "",
+    medias: "",
+    mailboxId: mailboxId,
+  });
+  const [showModalMedia, setShowModalMedia] = useState<boolean>(false);
+  const [showModalDocument, setShowModalDocument] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (dataExchange) {
+      setMessageChat({ ...messageChat, content: dataExchange.content, medias: dataExchange.medias, id: dataExchange.id });
+      textareaRef.current.focus();
+    } else {
+      setMessageChat({ ...messageChat, content: "", medias: "", id: null });
+    }
+  }, [dataExchange]);
+
+  useEffect(() => {
+    setMessageChat({ ...messageChat, mailboxId: mailboxId, content: "" });
+  }, [mailboxId]);
+
+  // call api khi click vào icon send
+  const handleSendChat = async (e) => {
+    e.preventDefault();
+
+    if (!messageChat.content) return;
+
+    setLoadingSend(true);
+
+    const body: IMailboxExchangeRequestModel = {
+      ...{ id: messageChat.id },
+      ...(messageChat as IMailboxExchangeRequestModel),
+    };
+
+    const response = await MailboxService.mailboxExchangeUpdate(body);
+
+    if (response.code === 0) {
+      setMessageChat({ ...messageChat, content: "" });
+      onHide(true);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+
+    setLoadingSend(false);
+  };
+
+  // call api khi ấn nút enter trên bàn phím khi nhập nội dung
+  const handleEnterSendChat = async () => {
+    if (messageChat.content) {
+      setLoadingSend(true);
+
+      const body: IMailboxExchangeRequestModel = {
+        ...{ id: messageChat.id },
+        ...(messageChat as IMailboxExchangeRequestModel),
+      };
+
+      const response = await MailboxService.mailboxExchangeUpdate(body);
+
+      if (response.code === 0) {
+        setMessageChat({ ...messageChat, content: "" });
+        onHide(true);
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      }
+      setLoadingSend(false);
+    }
+  };
+
+  const handleOnKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleEnterSendChat();
+    }
+  };
+
+  const onClickOutside = () => {
+    setShowModalOption(false);
+  };
+
+  const [heightTagTextarea, setHeightTagTextarea] = useState(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+    }
+  }, [textareaRef.current?.value]);
+
+  const handleTextareaChange = (e) => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+      setHeightTagTextarea(textareaRef.current.scrollHeight);
+    }
+
+    const value = e.target.value;
+    setMessageChat({ ...messageChat, content: value });
+  };
+
+  useEffect(() => {
+    if (heightTagTextarea) {
+      takeHeightTextarea(heightTagTextarea);
+    }
+  }, [heightTagTextarea]);
+
+  const handleChangeUpload = (e) => {
+    e.preventDefault();
+
+    if (e.target.files && e.target.files.length > 0) {
+      if (e.target.files[0].size > FILE_IMAGE_MAX) {
+        showToast(`Ảnh tải lên giới hạn dung lượng không quá ${FILE_IMAGE_MAX / 1024 / 1024}MB`, "warning");
+        e.target.value = "";
+      } else {
+        const typeUpload = e.target.files[0].type;
+        if (typeUpload.startsWith("video")) {
+          setCheckType("video");
+          setShowModalMedia(true);
+          uploadVideoFormData(e.target.files[0], onSuccess, onError, onProgress);
+        }
+
+        if (typeUpload.startsWith("image")) {
+          setCheckType("image");
+          setShowModalMedia(true);
+          // uploadImageFromFiles(e.target.files, showImage, false, getProgress);
+          handUploadFile(e.target.files[0]);
+        }
+
+        if (typeUpload.startsWith("application")) {
+          setShowModalDocument(true);
+          uploadDocumentFormData(e.target.files[0], (onSuccess = onSuccessDocument), (onError = onErrorDocument), (onProgress = onProgressDocument));
+        }
+        e.target.value = null;
+      }
+    }
+  };
+
+  //* Xử lý tài liệu
+  const onSuccessDocument = (data) => {
+    if (data) {
+      setInfoDocument({ type: data.extension, url: data.fileUrl, fileSize: data.fileSize, fileName: data.fileName });
+    }
+  };
+
+  const onErrorDocument = (message) => {
+    showToast(message.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+    setShowModalDocument(false);
+  };
+
+  const onProgressDocument = (percent) => {
+    if (percent) {
+      setShowProgress(percent);
+
+      if (percent >= 99) {
+        setShowProgress(0);
+      }
+    }
+  };
+
+  //* Xử lý video
+  let onSuccess = (data) => {
+    if (data) {
+      setInfoMedia({ ...infoMedia, type: data.fileType, url: data.fileUrl });
+    }
+  };
+
+  let onError = (message) => {
+    showToast(message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+  };
+
+  let onProgress = (percent) => {
+    if (percent) {
+      setShowProgress(percent);
+
+      if (percent >= 99) {
+        setShowProgress(0);
+      }
+    }
+  };
+
+  //* Xử lý ảnh
+  const showImage = (url) => {
+    if (url) {
+      setInfoMedia({ ...infoMedia, type: "image", url: url });
+    }
+  };
+
+  const getProgress = (percent) => {
+    if (percent) {
+      setShowProgress(percent);
+
+      if (percent >= 99) {
+        setShowProgress(0);
+      }
+    }
+  };
+
+  const handUploadFile = async (file) => {
+    await FileService.uploadFile({ data: file, onSuccess: processUploadSuccess });
+  };
+
+  const processUploadSuccess = (data) => {
+    const result = data?.fileUrl;
+    setInfoMedia({ ...infoMedia, type: "image", url: result });
+  };
+
+  useEffect(() => {
+    if (showProgress) {
+      // setInfoMedia({ ...infoMedia, progress: showProgress });
+    }
+  }, [showProgress]);
+
+  return (
+    <Fragment>
+      <div className="message-chat__internal">
+        <div className={`icon-emotion ${showEmojiChat ? "isShowEmotion" : ""}`}>
+          <Icon name="Happy" onClick={() => setShowEmojiChat(!showEmojiChat)} />
+          <EmojiChat
+            onShow={showEmojiChat}
+            dataMessage={messageChat}
+            setDataMessage={setMessageChat}
+            onHide={() => {
+              setShowEmojiChat(false);
+            }}
+          />
+        </div>
+        <div className="content-message">
+          <textarea
+            ref={textareaRef}
+            rows={1}
+            placeholder="Soạn tin"
+            value={messageChat.content}
+            autoFocus={true}
+            onKeyDown={handleOnKeyDown}
+            className="detail-message"
+            onChange={handleTextareaChange}
+          />
+        </div>
+        <div className={`file-document ${showModalOption ? "active" : ""}`}>
+          <HeadlessTippy
+            interactive
+            visible={showModalOption}
+            render={(attrs) => (
+              <div className="popover-option" {...attrs}>
+                <ul className="menu-item">
+                  {optionUploadFile.map((item, idx) => (
+                    <li
+                      key={idx}
+                      onClick={() => {
+                        setTimeout(() => setShowModalOption(item.is_show), 300);
+                      }}
+                    >
+                      <label style={{ cursor: "pointer" }} htmlFor={`imageUpload-${item.action}`}>
+                        <span className="icon-item">{item.icon}</span>
+                        <span className="title-item">{item.name}</span>
+                      </label>
+                      <input
+                        ref={inputRef}
+                        type="file"
+                        id={`imageUpload-${item.action}`}
+                        accept={item.action === 2 ? "video/*,image/*" : ".xlsx,.xls,.doc,.docx,.ppt,.pptx,.txt,.pdf"}
+                        className="d-none"
+                        onChange={(e) => handleChangeUpload(e)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            offset={[0, 18]}
+            onClickOutside={onClickOutside}
+          >
+            <span className="icon-attach--file" onClick={() => setShowModalOption(!showModalOption)}>
+              <Icon name="AttachFile" />
+            </span>
+          </HeadlessTippy>
+        </div>
+        <div className={`${messageChat.content ? "active__send--message" : "hide__send--message"}`} onClick={(e) => handleSendChat(e)}>
+          {loadingSend ? <Icon name="Refresh" className="icon-refresh" /> : <Icon name="Send" />}
+        </div>
+        <UploadMediaModal
+          checkType={checkType}
+          infoMedia={infoMedia}
+          onShow={showModalMedia}
+          mailboxId={mailboxId}
+          onAddUpload={(upload) => {
+            if (upload) {
+              setCheckTypeUpload(2);
+              inputRef.current.click();
+            }
+          }}
+          onHideForm={(reload) => {
+            if (reload) {
+              onHide(true);
+            }
+            setShowModalMedia(false);
+            setInfoMedia({ type: "", url: "" });
+          }}
+        />
+        <UploadDocumentModal
+          onShow={showModalDocument}
+          infoDocument={infoDocument}
+          mailboxId={mailboxId}
+          progress={showProgress}
+          onEditUpload={(upload) => {
+            if (upload) {
+              setCheckTypeUpload(1);
+              inputRef.current.click();
+            }
+          }}
+          onHideForm={(reload) => {
+            if (reload) {
+              onHide(true);
+            }
+            setShowModalDocument(false);
+            setInfoDocument({ type: "", url: "", fileName: "", fileSize: 0 });
+          }}
+        />
+      </div>
+    </Fragment>
+  );
+}

@@ -1,0 +1,21 @@
+.modal-allocate-budget {
+    .form-allocate-budget {
+        .modal-body {
+            padding: 0;
+        }
+        .list-form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem 3.2rem;
+            padding: 1.6rem;
+            max-height: 48rem;
+            overflow: auto;
+
+            .form-group {
+                width: calc(50% - 1.6rem);
+
+            }
+        }
+    }
+  }
+  

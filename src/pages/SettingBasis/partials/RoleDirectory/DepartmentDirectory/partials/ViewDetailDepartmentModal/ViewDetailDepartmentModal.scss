@@ -1,0 +1,29 @@
+.view-detail-department {
+  .list-department {
+    width: 100%;
+
+    .title-focus {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--primary-color-70);
+      padding: 0.6rem 0.8rem;
+      color: var(--white-color);
+
+      h3 {
+        margin-bottom: 0;
+      }
+    }
+
+    .department-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0.8rem;
+
+      & + .department-item {
+        border-top: 1.2px solid var(--extra-color-50);
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+.modal-add-kpi {
+  .form-kpi {
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 3.2rem;
+
+      .form-group {
+        width: 100%;
+      }
+    }
+  }
+}

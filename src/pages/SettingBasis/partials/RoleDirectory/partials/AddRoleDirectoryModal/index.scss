@@ -1,0 +1,114 @@
+.modal-add-role {
+  .form-department-group {
+    .modal-body {
+      padding: 0;
+    }
+
+    .list-form-group {
+      padding: 1.6rem;
+      max-height: 48rem;
+      overflow: auto;
+    }
+
+    .list-form-info-basic,
+    .list-form-note {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 2rem;
+
+      .form-group {
+        // &:first-child {
+        //   width: 100%;
+        // }
+        &:nth-child(3) {
+          width: 100%;
+        }
+
+        width: calc(50% - 1rem);
+      }
+    }
+
+    .list-form-config-department {
+      display: flex;
+      flex-direction: column;
+
+      .title-add-department {
+        color: var(--text-primary-color);
+        cursor: text;
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 2rem;
+        margin-bottom: 0.5rem;
+
+        &::after {
+          content: "*";
+          color: var(--error-color);
+          margin-left: 0.3rem;
+        }
+      }
+
+      .field-config-item {
+        display: flex;
+        align-items: center;
+
+        .change-value-config {
+          width: 100%;
+          display: flex;
+          align-items: flex-start;
+          gap: 0 2rem;
+
+          .form-group {
+            &:first-child {
+              width: 50%;
+            }
+            width: 45%;
+
+            .base-input {
+              margin-top: 0;
+            }
+          }
+        }
+
+        .action-change,
+        .keep-position {
+          display: flex;
+          align-items: center;
+          gap: 0 0.6rem;
+          margin-bottom: 1.2rem;
+
+          .icon-add,
+          .icon-delete {
+            cursor: pointer;
+
+            svg {
+              width: 2rem;
+              height: 2rem;
+            }
+          }
+
+          .icon-add {
+            svg {
+              fill: var(--success-color);
+            }
+          }
+
+          .icon-delete {
+            svg {
+              fill: var(--error-color);
+            }
+          }
+        }
+
+        .keep-position {
+          margin-bottom: 3.4rem;
+        }
+      }
+    }
+
+    .list-form-note {
+      .form-group {
+        width: 100%;
+      }
+    }
+  }
+}

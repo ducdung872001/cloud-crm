@@ -1,0 +1,85 @@
+.page__report--revenue {
+  .box__view--total {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 3rem 2rem;
+    padding: 3rem 0rem;
+
+    .item {
+      position: relative;
+      border-radius: 0.3rem;
+      padding: 1.8rem;
+      min-width: 20rem;
+      flex: 1;
+      cursor: pointer;
+      border: 1px dashed transparent;
+
+      .__top,
+      .__bottom {
+        color: var(--white-color);
+      }
+
+      .__top {
+        display: flex;
+        align-items: center;
+        gap: 0 0.8rem;
+        font-size: 1.8rem;
+        font-weight: 500;
+        margin-bottom: 1.2rem;
+
+        svg {
+          width: 2.6rem;
+          height: 2.6rem;
+          fill: var(--white-color);
+        }
+      }
+
+      .__bottom {
+        padding-left: 0.8rem;
+      }
+    }
+
+    .item__revenue {
+      background-color: #015aa4;
+    }
+
+    .item__expense {
+      background-color: #dc3545;
+    }
+
+    .item__income {
+      background-color: #28a745;
+    }
+
+    .item__debt {
+      background-color: #e19147;
+
+      .__bottom {
+        padding-left: 1rem;
+      }
+    }
+
+    .un_active--icon,
+    .active__icon {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.8rem;
+      transition: opacity 0.5s ease-in-out;
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+        fill: var(--white-color);
+      }
+    }
+
+    .active__icon {
+      opacity: 1;
+    }
+
+    .un_active--icon {
+      opacity: 0;
+    }
+  }
+}

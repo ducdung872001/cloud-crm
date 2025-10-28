@@ -1,0 +1,17 @@
+.modal-add-customer-source {
+  .form-customer-source {
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 3.2rem;
+
+      .form-group {
+        width: calc(50% - 1.6rem);
+
+        &:last-child {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

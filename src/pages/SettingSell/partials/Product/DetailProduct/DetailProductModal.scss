@@ -1,0 +1,29 @@
+.modal-detail-product {
+    .form-detail-product {
+      .modal-body{
+        padding: 0;
+        .wrapper-detail-product {
+            max-height: 42rem;
+            overflow: auto;
+            padding: 1.6rem;
+  
+            .form-group {
+                padding: 0.8rem 0 1.6rem;
+            }
+
+            .memo {
+                .base-checkbox {
+                    label {
+                        font-size: 1.3rem;
+                    }
+                }
+            }
+
+  
+    
+          }
+      }  
+     
+    }
+  }
+  

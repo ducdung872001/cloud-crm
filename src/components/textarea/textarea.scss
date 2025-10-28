@@ -1,0 +1,141 @@
+.base-textarea {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  & + .base-textarea {
+    margin-top: 1.6rem;
+  }
+  label {
+    display: block;
+    position: relative;
+    margin: 0;
+    .required {
+      color: var(--error-color);
+    }
+  }
+  textarea {
+    box-shadow: none;
+    font-size: 1.4rem;
+    padding: 0.8rem 0;
+    outline: none;
+    background: var(--white-color);
+    caret-color: var(--primary-color);
+    color: var(--text-primary-color);
+    width: 100%;
+    display: block;
+    transition: all 0.2s ease-in-out;
+    transition-property: background, color, border;
+    line-height: 2.2rem;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    height: 10rem;
+    &:focus {
+      box-shadow: none;
+      border-color: var(--primary-color);
+    }
+    &::placeholder {
+      color: var(--text-extra-color);
+      opacity: 1;
+    }
+
+    &:-ms-input-placeholder {
+      color: var(--text-extra-color);
+    }
+
+    &::-ms-input-placeholder {
+      color: var(--text-extra-color);
+    }
+  }
+  &.has-label {
+    label {
+      color: var(--text-primary-color);
+      cursor: text;
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 2rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+  &.invalid {
+    textarea {
+      border-color: var(--error-color);
+    }
+  }
+  &.warning {
+    textarea {
+      border-color: var(--warning-color);
+    }
+  }
+  &.has-disabled {
+    label {
+      opacity: 0.6;
+    }
+    textarea {
+      opacity: 0.6;
+    }
+  }
+  &.has-label {
+    &__left {
+      .base-textarea__wrapper {
+        flex-direction: row;
+        gap: 2.4rem;
+        align-items: flex-start;
+        display: flex;
+      }
+      label {
+        min-width: 8rem;
+        margin: 1rem 0 0;
+        flex-shrink: 0;
+      }
+    }
+  }
+  &-fill {
+    textarea {
+      border: 1px solid var(--border-color);
+      border-radius: 0.3rem;
+      padding: 0.8rem 1.2rem;
+    }
+    &.has-disabled {
+      label {
+        opacity: 0.6;
+        color: inherit;
+      }
+      textarea {
+        opacity: 0.6;
+        color: inherit;
+        background: var(--extra-color-5);
+      }
+    }
+    &.has-label {
+      margin: 0;
+    }
+  }
+  &--fill-color {
+    textarea {
+      background-color: var(--primary-color-10);
+      padding: 0.8rem;
+      border-bottom: none;
+    }
+  }
+  &-row {
+    textarea {
+      height: auto;
+      min-height: 4rem;
+      max-height: 10rem;
+    }
+  }
+  .has-error,
+  .has-warning {
+    color: var(--error-color);
+    font-size: 1.3rem;
+    line-height: 1.2;
+    padding-top: 0.4rem;
+  }
+  .has-warning {
+    color: var(--warning-color);
+  }
+}

@@ -1,0 +1,13 @@
+.modal-add-email--config {
+  .form-email-config--group {
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 2.2rem;
+
+      .form-group {
+        width: calc(50% - 1.1rem);
+      }
+    }
+  }
+}

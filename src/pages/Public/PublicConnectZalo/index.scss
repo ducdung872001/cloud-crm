@@ -1,0 +1,37 @@
+.modal-view-connect {
+  .modal-dialog {
+    max-width: 50rem;
+
+    .modal-body {
+      padding: 2rem;
+
+      .page__connect--zalo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+        .notification {
+          display: flex;
+          flex-direction: column;
+          text-align: center;
+          margin-bottom: 2rem;
+
+          .name__connect--success {
+            color: #0c7f25;
+            font-weight: 600;
+          }
+
+          .automatic-navigation {
+            font-size: 1.5rem;
+            font-weight: 500;
+
+            strong {
+              color: var(--error-darker-color);
+            }
+          }
+        }
+      }
+    }
+  }
+}

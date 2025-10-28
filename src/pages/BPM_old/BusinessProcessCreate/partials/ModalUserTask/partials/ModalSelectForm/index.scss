@@ -1,0 +1,89 @@
+.modal-select-form {
+    .form-select-form-group {
+      .modal-body {
+        padding: 0;
+      }
+  
+      .list-form-group {
+        padding: 1.6rem;
+  
+        .title-preview {
+          margin-top: 1rem;
+          font-size: 1.4rem;
+          color: var(--primary-color);
+          font-weight: 500;
+        }
+  
+        .preview-eform-container {
+          border: 1px dashed var(--extra-color-50);
+          border-radius: 0.3rem;
+          padding: 1rem;
+  
+          .list__eform {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem 3.2rem;
+  
+            .form-group {
+              width: calc(50% - 1.6rem);
+              .radio-list {
+                .form-group {
+                  width: 100%;
+                }
+              }
+            }
+  
+            .label-title {
+              width: 100%;
+              font-weight: 600;
+              border-top: 1px dashed #ddd;
+              padding-top: 2rem;
+              margin-bottom: 0.5rem;
+            }
+  
+            .label-title-first {
+              width: 100%;
+              font-weight: 600;
+            }
+  
+            .select-custom,
+            .select__custom-label {
+              div[class*="-control"] {
+                padding: 0rem 0rem 0rem 1.2rem;
+              }
+            }
+  
+            .selected--item {
+              display: flex;
+              align-items: center;
+              gap: 0 0.5rem;
+              line-height: 1.1;
+  
+              .avatar {
+                width: 2.6rem;
+                height: 2.6rem;
+                border-radius: 50rem;
+                overflow: hidden;
+                flex-shrink: 0;
+  
+                img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+              }
+            }
+          }
+        }
+  
+        .loading__wrapper {
+          min-height: 20rem;
+        }
+  
+        .system-notification {
+          padding: 0 2.4rem;
+        }
+      }
+    }
+  }
+  

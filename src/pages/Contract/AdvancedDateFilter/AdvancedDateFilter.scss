@@ -1,0 +1,123 @@
+.form__advanced--date {
+    min-width: 19rem;
+    
+    .box__option {
+      position: relative;
+  
+      .value-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0 1rem;
+        padding: 0.7rem 1.2rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        box-shadow: var(--box-shadow-input);
+        width: 100%;
+        cursor: default;
+        background-color: white;
+        .view-option {
+          font-size: 1.4rem;
+        }
+  
+        .__icon {
+          svg {
+            width: 2rem;
+            height: 2rem;
+            fill: var(--text-extra-color);
+          }
+        }
+      }
+  
+      .show-option {
+        border-color: var(--primary-color-90);
+      }
+  
+      .list__option,
+      .custom__date {
+        position: absolute;
+        top: 4.6rem;
+        left: 0;
+        right: 0;
+        z-index: 9;
+        background-color: var(--white-color);
+        border-radius: 0.4rem;
+        box-shadow: 0 0 0 1px hsla(0, 0%, 0%, 0.1), 0 4px 11px hsla(0, 0%, 0%, 0.1);
+        padding: 0.5rem 0;
+      }
+  
+      .list__option {
+        .item-option {
+          padding: 0.8rem 1.2rem;
+          font-size: 1.4rem;
+          cursor: default;
+  
+          &:hover {
+            background-color: #e9eaeb;
+          }
+        }
+  
+        .active__option {
+          background-color: #015aa4;
+          color: var(--white-color);
+  
+          &:hover {
+            background-color: #015aa4;
+          }
+        }
+      }
+  
+      .custom__date {
+        .action-backup {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.6rem 1rem;
+          cursor: pointer;
+  
+          .icon-backup {
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: var(--extra-color);
+            }
+          }
+  
+          .__name {
+            text-align: center;
+            flex: 1;
+            font-size: 1.4rem;
+          }
+  
+          &:hover {
+            background-color: #e9eaeb;
+          }
+        }
+  
+        .wrapper__from {
+          padding: 1rem 0.8rem 0.6rem;
+          display: flex;
+          align-items: flex-start;
+          justify-content: flex-start;
+          flex-direction: column;
+          gap: 0.8rem 0;
+  
+          .form-item {
+            .base-datepicker-fill {
+              .react-datepicker-wrapper {
+                input {
+                  padding: 0.6rem 1.2rem;
+                }
+              }
+            }
+          }
+  
+          .btn__search {
+            width: 100%;
+            padding: 0.6rem 1.2rem;
+          }
+        }
+      }
+    }
+  }
+  

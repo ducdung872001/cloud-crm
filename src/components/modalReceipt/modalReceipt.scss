@@ -1,0 +1,319 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.2s;
+}
+
+.modal-receipt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1055;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+  animation: fadeIn 0.2s;
+
+  .modal-dialog {
+    position: relative;
+    width: auto;
+    max-width: 900px;
+    margin: 3rem auto;
+    pointer-events: none;
+    z-index: 999;
+    &--centered {
+      min-height: calc(100% - 6rem);
+      align-items: center;
+      display: flex;
+    }
+  }
+
+  .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid var(--border-color);
+    border-radius: 0.3rem;
+    outline: 0;
+  }
+
+  /*CSS Header Model Receipt*/
+  .modal-receipt-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1.6rem;
+    border-bottom: 1px solid var(--border-color);
+    border-top-left-radius: 0.3rem;
+    border-top-right-radius: 0.3rem;
+
+    .wrapper-header {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+
+      .header__image {
+        img {
+          width: 7rem;
+          height: 7rem;
+          object-fit: contain;
+        }
+      }
+
+      .header__info {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+
+        h4 {
+          color: #004353;
+          font-size: 1.8rem;
+        }
+
+        &--address,
+        &--phone {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 1.4rem;
+        }
+
+        &--address {
+          margin-left: 0.2rem;
+          svg {
+            width: 1.8rem;
+            height: 1.8rem;
+            margin-right: 0.2rem;
+            fill: var(--primary-text-color);
+            color: var(--primary-text-color);
+          }
+        }
+
+        &--phone {
+          svg {
+            width: 2.2rem;
+            height: 2.2rem;
+            fill: var(--error-darker-color);
+            color: var(--error-darker-color);
+          }
+        }
+      }
+    }
+
+    .btn-close {
+      opacity: 0.5;
+      svg {
+        fill: var(--black-color);
+        color: var(--black-color);
+      }
+      &:hover,
+      &:focus {
+        opacity: 0.75;
+        background: none;
+        box-shadow: none;
+      }
+    }
+  }
+
+  /*CSS Modal Body Receipt*/
+  .modal-receipt-body {
+    padding: 1.6rem;
+    position: relative;
+    max-height: 48rem;
+    overflow: auto;
+    flex: 1 1 auto;
+
+    .coupon-title {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      margin-bottom: 2.6rem;
+
+      h2 {
+        text-transform: uppercase;
+        color: #004353;
+        font-size: 2.6rem;
+        line-height: 1;
+        font-weight: 700;
+      }
+      span {
+        margin-top: 1rem;
+        font-weight: 700;
+        font-size: 1.5rem;
+      }
+    }
+
+    .info-person,
+    .info-card {
+      display: grid;
+      gap: 0.5rem 1.8rem;
+      grid-auto-flow: column;
+      font-size: 1.5rem;
+
+      label {
+        margin-bottom: 0;
+        margin-right: 0.5rem;
+        position: relative;
+
+        &::after {
+          position: absolute;
+          content: ":";
+          right: 0;
+        }
+      }
+    }
+
+    .info-card {
+      grid-template-rows: repeat(1, auto);
+
+      .title-left {
+        width: 7rem;
+      }
+
+      .title-right {
+        width: 10rem;
+      }
+
+      .title-center {
+        width: 11.8rem;
+      }
+    }
+
+    .info-person {
+      grid-template-rows: repeat(2, auto);
+
+      .title-left {
+        width: 9.8rem;
+      }
+
+      .title-right {
+        width: 11rem;
+      }
+    }
+
+    .detail-product {
+      margin-top: 2.8rem;
+
+      h3 {
+        font-size: 1.6rem;
+        color: #004353;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .box-table {
+        margin-top: 1rem;
+      }
+
+      .icon__print {
+        margin-bottom: 0.5rem;
+        padding-left: 1rem;
+        cursor: pointer;
+
+        svg {
+          width: 2rem;
+          height: 2rem;
+          color: var(--extra-color-50);
+        }
+
+        &:hover {
+          svg {
+            fill: var(--primary-color);
+          }
+        }
+      }
+    }
+
+    .billing-information {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-top: 1.6rem;
+
+      &--left {
+        width: 65%;
+        border: 1px dashed #666;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        font-size: 1.4rem;
+        min-height: 23.8rem;
+
+        h4 {
+          color: #212b35;
+          font-weight: 700;
+          margin: 0.3rem 0;
+        }
+      }
+
+      &--right {
+        width: 32%;
+
+        .info-payment {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #212b35;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          border-bottom: 1px dashed #000;
+          margin-bottom: 0.5rem;
+          padding-bottom: 0.5rem;
+
+          label {
+            margin-bottom: 0rem;
+          }
+        }
+      }
+    }
+  }
+
+  /*CSS Modal Footer Receipt*/
+  .modal-receipt-footer {
+    padding: 1.6rem;
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+    border-top: 1px solid var(--border-color);
+    border-bottom-left-radius: 0.3rem;
+    border-bottom-right-radius: 0.3rem;
+    &__actions {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      .base-button {
+        min-width: 12rem;
+      }
+
+      &--right {
+        .custom__print {
+          .base-select {
+            &-fill {
+              .select-custom,
+              .select__custom-label,
+              .select__custom-multi {
+                div[class*="-control"] {
+                  border-color: var(--primary-color);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

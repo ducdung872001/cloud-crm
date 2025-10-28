@@ -1,0 +1,45 @@
+.modal-export-process {
+    .form-export-process {
+      .modal-body {
+        padding: 0;
+      }
+  
+      .list-form-group {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 1.6rem;
+        max-height: 52rem;
+        overflow: auto;
+
+        .form-group {
+            width: 100%;
+            padding: 1.6rem 1.6rem 0 1.6rem;
+            margin-bottom: 0;
+            .radio-list {
+                .form-group {
+                    padding-top: 1rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 1.2rem 3.2rem;
+                    .base-radio {
+                        margin: 0;
+                    }
+                }
+            }
+        }
+
+        .list-select-node{
+            // border: 1px solid;
+            display: flex;
+            flex-direction: column;
+
+            .box-table {
+                margin-top: 0
+            }
+        }
+      }
+
+
+    }
+  }
+  

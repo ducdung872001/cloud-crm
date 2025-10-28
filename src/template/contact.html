@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Submission</title>
+
+  <!-- External Script -->
+  <script src="https://tnteco.reborn.vn/crm/js/webform.js"></script>
+  <script>rb('clientId', 'cjgfiaaeec');</script>
+  <!-- END -->
+
+  <!-- Custom CSS -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f5f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .form-container {
+      background: #ffffff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    input[type="submit"] {
+      background-color: #007bff;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    .note {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+    }
+
+    @media (max-width: 600px) {
+      .form-container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="form-container">
+    <h2>Liên hệ tư vấn</h2>
+    <form id="contactForm">
+      <label for="fullname">Họ tên:</label>
+      <input type="text" id="fullname" name="fullname" required />
+
+      <label for="phone">Số điện thoại:</label>
+      <input type="tel" id="phone" name="phone" required />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="note">Ghi chú:</label>
+      <textarea id="note" name="note" placeholder="Nhập nội dung ghi chú..."></textarea>
+
+      <input type="submit" value="Gửi thông tin" />
+    </form>
+    <p class="note">Thông tin sẽ được gửi đến hệ thống CRM để tư vấn.</p>
+  </div>
+
+  <script>
+    function onSubmit(event) {
+      event.preventDefault();
+      const formData = new FormData(document.getElementById("contactForm"));
+      const data = {
+        name: formData.get("fullname"),
+        phone: formData.get("phone"),
+        email: formData.get("email"),
+        note: formData.get("note")
+      };
+      getContact(data);
+      return false;
+    }
+
+    document.getElementById("contactForm").addEventListener("submit", onSubmit);
+  </script>
+</body>
+</html>

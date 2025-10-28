@@ -1,0 +1,317 @@
+.wrapper__repeat--time {
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  border-radius: 0.5rem;
+  padding: 1.2rem 1.6rem;
+
+  .custom_repeat,
+  .box__repeat--week,
+  .box__repeat--moth,
+  .box__end--time,
+  .time__period {
+    .name {
+      font-size: 1.4rem;
+      color: var(--extra-color-50);
+      font-weight: 500;
+    }
+  }
+
+  .custom_repeat {
+    .setup__custom {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0 1rem;
+      padding: 0.6rem 0 0.8rem;
+
+      .name-custom {
+        font-size: 1.4rem;
+        font-weight: 500;
+      }
+
+      .qty-repeat {
+        width: 15%;
+        .base-input {
+          .base-input__input {
+            input {
+              text-align: center;
+              padding: 0.5rem 0.3rem;
+            }
+          }
+        }
+      }
+
+      .choose-option {
+        width: 30%;
+        .base-select {
+          .select-custom {
+            div[class*="-control"] {
+              padding: 0rem 3.2rem 0rem 1.2rem;
+              min-height: 3.6rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .box__repeat--week,
+  .box__repeat--moth {
+    margin-top: 0.5rem;
+    margin-bottom: 1.8rem;
+
+    .lst__repeat--week,
+    .lst__repeat--moth {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      padding-top: 0.8rem;
+
+      .item__repeat--week,
+      .item__repeat--moth {
+        font-size: 1rem;
+        padding: 0.8rem;
+        background-color: var(--extra-color-20);
+        border-radius: 50rem;
+        width: 2.55rem;
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        color: var(--extra-color-50);
+        cursor: pointer;
+      }
+
+      .active__repeat--week,
+      .active__repeat--moth {
+        color: var(--white-color);
+        background-color: var(--primary-color);
+      }
+    }
+  }
+
+  .box__end--time {
+    .option__end--time {
+      display: flex;
+      align-items: flex-end;
+      gap: 0 1.2rem;
+
+      .option__left {
+        .radio-list {
+          .form-group {
+            margin: 0.6rem 0 1.6rem !important;
+
+            .base-radio {
+              & + .base-radio {
+                margin-top: 1.5rem;
+              }
+            }
+          }
+        }
+      }
+
+      .option__value--right {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem 0;
+        margin-bottom: 1.5rem;
+
+        .the_day {
+          .base-datepicker {
+            .react-datepicker-wrapper {
+              .react-datepicker__input-container {
+                input {
+                  padding: 0.3rem 1.2rem 0.3rem 1rem;
+                }
+              }
+            }
+          }
+        }
+
+        .dis__the_day {
+          .base-datepicker {
+            .react-datepicker-wrapper {
+              .react-datepicker__input-container {
+                input {
+                  cursor: no-drop;
+                }
+              }
+            }
+          }
+        }
+
+        .after_number {
+          background-color: var(--extra-color-50);
+          border-radius: 0.3rem;
+          padding: 0.3rem 1.2rem 0.3rem 1rem;
+          display: flex;
+          align-items: center;
+          width: 100%;
+
+          input {
+            border: none;
+            outline: none;
+            background-color: transparent;
+            width: 4rem;
+            padding: 0;
+            font-size: 1.4rem;
+
+            &:disabled {
+              cursor: no-drop;
+            }
+          }
+
+          input[type="number"]::-webkit-inner-spin-button,
+          input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+
+          input[type="number"] {
+            -moz-appearance: textfield; /* Firefox */
+          }
+
+          .subtitles {
+            font-size: 1.4rem;
+            font-weight: 500;
+          }
+        }
+
+        .dis__after_number {
+          opacity: 0.5;
+          cursor: no-drop;
+          background-color: var(--extra-color-10);
+        }
+      }
+    }
+  }
+
+  .time__period {
+    .lst__time--period {
+      margin-top: 0.5rem;
+
+      .item__time--period {
+        border: 1px dashed var(--extra-color-20);
+        border-radius: 0.3rem;
+        padding: 0.7rem 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0 1rem;
+
+        & + .item__time--period {
+          margin-top: 0.6rem;
+        }
+
+        .info__time {
+          width: 90%;
+          display: flex;
+          align-items: center;
+          gap: 0 1rem;
+        }
+
+        .start__time,
+        .end__time {
+          display: flex;
+          align-items: center;
+          gap: 0 0.6rem;
+
+          .name--time {
+            display: block;
+            flex-shrink: 0;
+            font-size: 1.4rem;
+            font-weight: 500;
+          }
+
+          .choose__time {
+            .select-custom {
+              div[class*="-control"] {
+                padding: 0.3rem 2.8rem 0.3rem 1.2rem;
+              }
+
+              div[class*="-menu"] {
+                top: -21.5rem;
+
+                div[class*="-MenuList"] {
+                  max-height: 20rem;
+                }
+              }
+            }
+            .react-datepicker-wrapper {
+              input {
+                padding: 0.2rem 1rem;
+              }
+            }
+          }
+        }
+
+        .start__time {
+          width: 50%;
+
+          .choose__time {
+            flex: 1;
+          }
+        }
+
+        .end__time {
+          width: 50%;
+
+          .choose__time {
+            flex: 1;
+          }
+        }
+
+        .action__time {
+          display: flex;
+          align-items: center;
+          gap: 0 0.4rem;
+
+          span {
+            cursor: pointer;
+
+            svg {
+              width: 1.8rem;
+              height: 1.8rem;
+              fill: var(--extra-color-50);
+            }
+          }
+
+          .add--time {
+            svg {
+              &:hover {
+                fill: var(--success-darker-color);
+              }
+            }
+          }
+
+          .delete--time {
+            svg {
+              &:hover {
+                fill: var(--error-darker-color);
+              }
+            }
+          }
+        }
+
+        @media (max-width: 1819px) {
+          .info__time {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem 0;
+          }
+
+          .start__time {
+            gap: 0 1rem;
+          }
+
+          .start__time,
+          .end__time {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}

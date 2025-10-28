@@ -1,0 +1,55 @@
+.modal-setting-report {
+    .container-setting-report{
+      .modal-body {
+        padding: 0;
+      }
+      .form-setting-report{
+        max-height: 48rem;
+        overflow: auto;
+        padding: 1.6rem;
+        .list-form-group{
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.6rem 3.2rem;
+          .form-group{
+            &:first-child {
+              width: 100%;
+            }
+            width: calc(50% - 1.6rem);
+            .base-select{
+              .select-custom {
+                .css-140qvo9-menu{
+                  position: relative;
+                }
+              }
+            }
+            .radio-list {
+              .form-group {
+                display: flex;
+                align-items: center;
+                gap: 0 2.2rem;
+                margin-top: 1rem;
+    
+                .base-radio {
+                  margin-top: 0;
+                }
+              }
+            }
+          }
+        }
+        
+      }
+
+      .box-table{
+        margin-top: 1.2rem;
+        // .pagination{
+        //   justify-content: center;
+        // }
+        // .count-item{
+        //   display: none;
+        // }
+      }
+        
+    }
+}
+  

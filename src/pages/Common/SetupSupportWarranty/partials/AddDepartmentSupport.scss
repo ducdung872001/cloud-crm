@@ -1,0 +1,28 @@
+.modal-add-department--support {
+  .form-add-department--support {
+    .list-form-group {
+      .name-time {
+        color: var(--text-primary-color);
+        cursor: text;
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 2rem;
+        margin-bottom: 0.5rem;
+        margin-top: 0.8rem;
+        display: block;
+      }
+
+      .info__time {
+        border: 1px dashed var(--extra-color-30);
+        border-radius: 0.5rem;
+        padding: 1rem;
+
+        .time-item {
+          & + .time-item {
+            margin-top: 1.2rem;
+          }
+        }
+      }
+    }
+  }
+}

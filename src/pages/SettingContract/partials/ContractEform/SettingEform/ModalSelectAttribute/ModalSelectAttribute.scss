@@ -1,0 +1,204 @@
+.modal-select-attribute {
+    .box__select--attribute {
+      .modal-body {
+        padding: 0;
+      }
+      .view__option {
+        max-height: 42rem;
+        overflow: auto;
+        .box-table {
+          margin-top: 1.2rem;
+          .box-table__wrapper {
+            .table-striped {
+              tbody {
+                tr {
+                  td {
+                    .style-name {
+                      cursor: pointer;
+                      &:hover {
+                        color: #015aa4;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        .list-form-group {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1.2rem 3.2rem;
+          padding: 1rem 2rem 1rem 2rem;
+        }
+
+        .form-group {
+          width: calc(50% - 1.6rem);
+    
+          &.formula {
+            width: 100%;
+    
+            .formula-input {
+              display: flex;
+              width: 100%;
+    
+              .base-textarea {
+                width: 100% !important;              
+              }
+    
+              textarea {
+                width: 100%;
+                height: 60px;
+              }
+    
+              svg {
+                margin-top: 32px;
+                margin-left: 8px;
+                cursor: pointer;
+              }
+            }
+    
+            .formula-list {
+              position: absolute;
+              right: 16px;
+              background-color: white;
+              width: 50%;
+              display: flex;
+              flex-direction: column;
+              align-items: flex-end;
+              border: 1px solid #ddd;
+              border-radius: 5px;
+              padding: 10px;
+              z-index: 10000;
+              margin-right: 30px;
+    
+              label {
+                width: 100%;
+                border-bottom: 1px dashed #ddd;
+                padding: 4px 0;
+                cursor: pointer;
+    
+                &:last-child {
+                  border-bottom: none;
+                }
+              }
+            }
+          }
+    
+          .formula-icon {
+            width: 24px;
+            height: 24px;
+          }
+    
+          .radio-list {
+            .form-group {
+              display: flex;
+              width: 100%;
+              // gap: 0 2rem;
+              align-items: center;
+    
+              .base-radio {
+                margin-top: 0;
+              }
+            }
+          }
+        }
+    
+        .form-group-number {
+          width: 100%;
+    
+          .form-group {
+            width: 100%;
+    
+            display: flex;
+            gap: 0 3rem;
+    
+            .base-radio {
+              margin-top: 0;
+            }
+    
+            .radio-list {
+              .form-group {
+                display: flex;
+                width: 100%;
+                gap: 0 3rem;
+    
+                // justify-content: space-between;
+                .base-radio {
+                  margin-top: 0;
+                }
+              }
+            }
+          }
+        }
+    
+        .options__attribute,
+        .attribute__item {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 0 0.8rem;
+    
+          .attribute__default,
+          .list-field-attribute {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            gap: 0 0.8rem;
+    
+            .form-group {
+              width: 100%;
+            }
+          }
+    
+          .add-attribute,
+          .remove-attribute {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+    
+            .icon-add,
+            .icon-remove {
+              margin-top: 2.4rem;
+              cursor: pointer;
+    
+              svg {
+                width: 2rem;
+                height: 2rem;
+                fill: var(--success-color);
+              }
+            }
+          }
+        }
+    
+        .list__attribute {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 1.2rem 0;
+    
+          .attribute__item {
+            .remove-attribute {
+              .icon-remove {
+                margin-top: 0;
+                svg {
+                  fill: var(--error-color);
+                }
+              }
+            }
+          }
+        }
+       
+  
+        .loading__wrapper {
+          min-height: 20rem;
+        }
+  
+        .system-notification {
+          padding: 3rem 2.4rem;
+        }
+      }
+    }
+  }
+  

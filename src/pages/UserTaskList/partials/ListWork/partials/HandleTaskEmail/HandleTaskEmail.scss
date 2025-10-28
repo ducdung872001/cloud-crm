@@ -1,0 +1,32 @@
+.handle-task-email{
+  border: 1px dashed;
+  padding: 2rem;
+  .fjs-container .fjs-powered-by {
+    display: none !important;
+  }
+
+  .container-header{
+      display: flex;
+      justify-content: space-between;
+
+      .container-button{
+          display: flex;
+          gap: 0 1rem;
+          .button-action{
+              border: 1px solid var(--border-color);
+              border-radius: 5px;
+              padding: 0rem 1rem;
+              height: 28px;
+              align-items: center;
+              justify-content: center;
+              // margin-right: 10px;
+              cursor: pointer;
+              &:hover {
+                background-color: var(--primary-color-90);
+                color: white;
+              }
+            }
+      }
+  } 
+}
+

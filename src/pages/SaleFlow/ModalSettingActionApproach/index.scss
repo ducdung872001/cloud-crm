@@ -1,0 +1,31 @@
+.modal-setting-action-approach {
+    .form-setting-action-approach {
+        .container-setting-action-approach{
+            max-height: 48rem;
+            overflow: auto;
+           .box-table {
+                margin-top: 1.5rem;
+
+                .box-table__wrapper {
+                    .table {
+                      tbody {
+                        tr {
+                          td {
+                            .icon-checked{
+                                svg {
+                                    width: 1.8rem;
+                                    height: 1.8rem;
+                                    // fill: var(--extra-color-50);
+                                    fill: var(--success-color);
+                                }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+           }
+        }
+    }
+  }
+  

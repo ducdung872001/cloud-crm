@@ -1,0 +1,231 @@
+.sidebar {
+  background: var(--primary-bg-color); // var(--menu-background-color)
+  width: 28rem;
+  box-shadow: var(--box-shadow);
+  height: 100%;
+  transition: all 0.5s ease-in-out;
+  flex-shrink: 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 999;
+  overflow: hidden;
+  .track-vertical {
+    div {
+      background: rgba(255, 255, 255, 0.4) !important;
+    }
+  }
+  &-logo {
+    padding: 0.7rem 2rem 0.7rem 1.5rem;
+    transition: all 0.5s ease-in-out;
+    border-bottom: 1px solid #aaa;
+    .logo {
+      display: flex;
+      align-items: center;
+      height: 4.2rem;
+      width: 18.2rem;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: all 0.5s ease-in-out;
+
+      svg {
+        width: 12.6rem;
+        flex-shrink: 0;
+      }
+      img{
+        width: 182px;
+        height: 42px;
+
+      }
+    }
+    .btn-collapsed-sidebar {
+      svg {
+        fill: var(--white-color);
+        color: var(--white-color);
+      }
+      &:hover:not(:disabled),
+      &:focus:not(:disabled),
+      &:active:not(:disabled) {
+        box-shadow: none;
+        background: none;
+      }
+    }
+  }
+
+  &-menu {
+    border-top: 1px solid #4e4e4e;
+    height: calc(100% - 5.7rem);
+  }
+
+  &__option,
+  &__option--show {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 28rem;
+    height: 4rem;
+    padding: 0 3rem;
+    background-color: var(--white-color);
+    transition: all 0.5s ease-in-out;
+
+    .item {
+      position: relative;
+      color: var(--black-color);
+    }
+
+    .link-item {
+      &::after {
+        content: "";
+        position: absolute;
+        left: -3rem;
+        top: calc(50% - 0.7rem);
+        width: 0;
+        height: 1.6rem;
+        border-left: 0.1rem solid var(--black-color);
+      }
+    }
+  }
+
+  @media (min-width: 1200px) {
+    &--collapsed {
+      width: 7.2rem;
+      .sidebar {
+        &-logo {
+          // padding: 1.2rem 1.4rem;
+          padding: 0.7rem 2rem 0.7rem 2.2rem;
+          .logo {
+            // width: 4.3rem;
+            transition: width 0.5s ease-in-out;
+            svg {
+              flex-shrink: 0;
+              // padding-left: 1rem;
+            }
+          }
+        }
+        &-menu {
+          ul {
+            .level-1 {
+              & > a {
+                padding-left: 2.4rem;
+                span {
+                  opacity: 0;
+                  white-space: nowrap;
+                }
+                .arrow-menu {
+                  opacity: 0;
+                }
+              }
+            }
+          }
+        }
+      }
+      &:not(.sidebar--hover) {
+        .sidebar {
+          &-menu {
+            ul {
+              ul {
+                max-height: 0 !important;
+              }
+            }
+          }
+        }
+      }
+    }
+    &--hover {
+      width: 28rem;
+      .sidebar {
+        &-logo {
+          // padding: 1.2rem 2rem 1.2rem 2.8rem;
+          padding: 0.7rem 2rem 0.7rem 1.5rem;
+          .logo {
+            // width: 17.2rem;
+          }
+        }
+        &-menu {
+          ul {
+            .level-1 {
+              & > a {
+                padding-left: 1.6rem;
+                span {
+                  opacity: 1;
+                }
+                .arrow-menu {
+                  opacity: 1;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    &__option--show {
+      display: none !important;
+      flex-direction: column;
+      justify-content: flex-start;
+      width: 7.2rem;
+      height: 10rem;
+      padding: 1.2rem 3rem;
+      transition: all 0.5s ease-in-out;
+
+      .link-item {
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: calc(50% - 0.7rem);
+          width: 0;
+          height: 0;
+          border-left: none;
+        }
+      }
+    }
+  }
+  @media (max-width: 1199px) {
+    left: -26rem;
+    overflow: initial;
+    width: 26rem;
+    &--collapsed {
+      left: 0;
+    }
+
+    &__option {
+      visibility: hidden;
+    }
+
+    &__option--show {
+      visibility: visible;
+      width: 26rem;
+    }
+  }
+}
+
+.overlay-sidebar__mobile {
+  position: fixed;
+  z-index: 500;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(33, 43, 53, 0.86);
+  display: none;
+
+  .btn-close-sidebar {
+    position: absolute;
+    top: 1rem;
+    left: 27rem;
+    z-index: 999;
+    transition: none;
+    svg {
+      fill: var(--white-color);
+      color: var(--white-color);
+    }
+    &:focus:not(:disabled),
+    &:active:not(:disabled) {
+      background: none;
+      box-shadow: none;
+    }
+    &:hover {
+      background-color: transparent !important;
+    }
+  }
+}

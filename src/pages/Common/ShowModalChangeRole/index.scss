@@ -1,0 +1,71 @@
+.modal-change-role {
+  .box-change-role {
+    .lst__role--change {
+      .item__role {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: var(--extra-color-5);
+        border-radius: 0.3rem;
+        padding: 1rem 1.2rem;
+        font-size: 1.5rem;
+        cursor: pointer;
+
+        .info-role {
+          display: flex;
+          align-items: center;
+          gap: 0 0.5rem;
+
+          .avatar-role {
+            svg {
+              width: 3.5rem;
+              height: 3.5rem;
+              fill: var(--extra-color-30);
+            }
+          }
+
+          .desc-role {
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column-reverse;
+
+            span {
+              display: block;
+            }
+
+            .name-dep {
+              font-size: 1.2rem;
+              font-weight: 500;
+              color: var(--extra-color-50);
+              line-height: 1.5rem;
+            }
+          }
+        }
+
+        & + .item__role {
+          margin-top: 0.8rem;
+        }
+
+        .icon-check {
+          svg {
+            width: 1.6rem;
+            height: 1.6rem;
+          }
+        }
+
+        &.active__role {
+          cursor: default;
+          border: 1.3px dashed var(--primary-color-80);
+          background-color: var(--extra-color-10);
+
+          .icon-check {
+            svg {
+              fill: var(--success-color);
+            }
+          }
+        }
+      }
+    }
+  }
+}

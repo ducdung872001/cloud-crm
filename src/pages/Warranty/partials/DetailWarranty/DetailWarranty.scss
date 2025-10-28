@@ -1,0 +1,59 @@
+.page-detail-warranty {
+  max-height: calc(100% - 11.3rem);
+
+  .action-navigation {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .action-backup {
+      display: flex;
+      align-items: center;
+
+      h1 {
+        color: var(--text-primary-color);
+        font-size: 2.4rem;
+        line-height: 2.8rem;
+        padding-right: 1rem;
+        margin: 0;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .title-first {
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+
+      .title-last {
+        color: var(--extra-color-50);
+      }
+
+      svg {
+        width: 4rem;
+        height: 4rem;
+        padding-right: 1rem;
+      }
+    }
+  }
+
+  .card-box {
+    margin-top: 2rem;
+
+    .info-customer-warranty {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #3a87ad;
+    }
+
+    .info-action-detail {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+    }
+  }
+}

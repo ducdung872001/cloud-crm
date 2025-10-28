@@ -1,0 +1,23 @@
+.modal__change-contract-status {
+    .form__change-contract-status {
+      .list-form-group {
+        .form-group {
+          .radio-list {
+            .form-group {
+              display: flex;
+              flex-wrap: wrap;
+              align-items: center;
+              gap: 0 2rem;
+  
+              .base-radio {
+                margin-top: 10px;
+                // margin-bottom: 10px;
+                width: 48%;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  

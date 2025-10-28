@@ -1,0 +1,35 @@
+.sortby {
+  margin-left: 1.6rem;
+  flex-shrink: 0;
+  .btn-sortby {
+    padding: 0.7rem 1.2rem;
+    svg {
+      color: var(--text-primary-color);
+      fill: var(--text-primary-color);
+      width: 2.4rem;
+      height: 2.4rem;
+    }
+  }
+  @media (max-width: 767px) {
+    margin-left: 0.8rem;
+  }
+}
+.popover-sortby {
+  min-width: 22rem;
+  padding: 0;
+  .triangle {
+    right: 1.6rem;
+  }
+  .list-sortby {
+    padding: 1.6rem 2rem;
+    .base-radio {
+      white-space: nowrap;
+      & + .base-radio {
+        margin-top: 0.8rem;
+      }
+    }
+    @media (max-width: 767px) {
+      padding: 1.2rem 1.6rem;
+    }
+  }
+}

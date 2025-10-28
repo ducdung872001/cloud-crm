@@ -1,0 +1,110 @@
+.page-work {
+  .card-box {
+    box-shadow: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    .action-header {
+      position: relative;
+
+      .add-work {
+        position: absolute;
+        top: 0.8rem;
+        right: 2.2rem;
+
+        .base-button {
+          padding: 0.8rem 1rem;
+        }
+      }
+      .full-page {
+        position: absolute;
+        top: 0.8rem;
+        right: 8.2rem;
+
+        .base-button {
+          padding: 0.8rem 1rem;
+        }
+      }
+    }
+
+    .box-table {
+      .box-table__wrapper {
+        .table {
+          tbody {
+            tr {
+              td {
+                .content {
+                  margin-bottom: 0;
+                  cursor: pointer;
+                }
+
+                .name-work {
+                  cursor: pointer;
+                }
+
+                .percent__finish--work {
+                  position: relative;
+                  cursor: pointer;
+
+                  .value-percent {
+                    width: 3.5rem;
+                    height: 3.5rem;
+
+                    .CircularProgressbar-text {
+                      font-size: 3rem;
+                      font-weight: 600;
+                    }
+                  }
+                }
+
+                .status-unfulfilled,
+                .status-success,
+                .status-processing,
+                .status-cancelled,
+                .status-pause,
+                .status-processing--waring {
+                  height: 2.4rem;
+                  border-radius: 1.2rem;
+                  background: var(--primary-color);
+                  display: inline-block;
+                  padding: 0 1.2rem;
+                  color: #fff;
+                  font-size: 1.2rem;
+                  line-height: 2.4rem;
+                  font-weight: 500;
+                  justify-content: center;
+                  align-items: center;
+                  min-width: 9rem;
+                }
+
+                .status-unfulfilled {
+                  background-color: var(--extra-color-50);
+                }
+
+                .status-success {
+                  background-color: var(--success-color);
+                }
+
+                .status-processing {
+                  background-color: var(--primary-color);
+                }
+
+                .status-processing--waring {
+                  background-color: var(--warning-color);
+                }
+
+                .status-cancelled {
+                  background-color: var(--error-color);
+                }
+
+                .status-pause {
+                  background-color: var(--warning-darker-color);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

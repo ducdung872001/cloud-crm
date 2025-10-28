@@ -1,0 +1,64 @@
+.modal-add-unit-price {
+  .form-unit-price-group {
+    .lst__costs {
+      .item--cost {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0 1rem;
+
+        .info__cost {
+          width: 97%;
+          display: flex;
+          align-items: flex-start;
+          gap: 0 0.6rem;
+
+          .base-input-fill {
+            &.has-disabled {
+              .base-input__input {
+                input {
+                  opacity: 0.9;
+                }
+              }
+            }
+          }
+
+          .form-group {
+            flex: 1;
+          }
+        }
+
+        .action__cost {
+          display: flex;
+          align-items: center;
+          gap: 0 0.5rem;
+          flex-shrink: 0;
+          margin-bottom: 1.2rem;
+
+          svg {
+            width: 2rem;
+            height: 2rem;
+            cursor: pointer;
+          }
+
+          .add-cost {
+            svg {
+              fill: var(--success-color);
+            }
+          }
+
+          .delete-cost {
+            svg {
+              fill: var(--error-darker-color);
+            }
+          }
+        }
+      }
+
+      .loading__wrapper {
+        min-height: 15rem;
+      }
+    }
+  }
+}

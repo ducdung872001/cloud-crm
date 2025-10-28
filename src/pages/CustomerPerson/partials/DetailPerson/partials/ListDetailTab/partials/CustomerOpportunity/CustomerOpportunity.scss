@@ -1,0 +1,83 @@
+.customer__opportunity {
+  .action-header {
+    display: flex;
+    flex-direction: column;
+
+    .title__actions {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      position: relative;
+
+      .menu-list {
+        border-radius: 0.8rem 0.8rem 0 0;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0 2rem;
+        height: 5rem;
+        letter-spacing: 0.25px;
+        font-size: 1.4rem;
+        line-height: 2rem;
+        color: var(--text-extra-color);
+        display: flex;
+        align-items: center;
+        gap: 2.3rem;
+        width: 100%;
+
+        li {
+          display: flex;
+          align-items: center;
+          gap: 0 0.2rem;
+          cursor: pointer;
+          border-bottom: 3px solid transparent;
+          padding: 1.5rem 0 1.2rem;
+          transition: color 0.2s ease-in-out;
+
+          svg {
+            width: 1.8rem;
+            height: 1.8rem;
+            fill: var(--text-extra-color);
+          }
+
+          &:hover,
+          &.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--text-primary-color);
+
+            svg {
+              fill: var(--text-primary-color);
+            }
+          }
+          &.active {
+            cursor: default;
+          }
+        }
+      }
+
+      .add-ticket {
+        position: absolute;
+        right: 1.3rem;
+        top: 15%;
+        transform: translateX(-15%);
+
+        .base-button {
+          padding: 0.8rem 1rem;
+        }
+      }
+    }
+  }
+
+  .percent__finish--opportunity {
+    position: relative;
+    cursor: pointer;
+
+    .value-percent {
+      width: 3.5rem;
+      height: 3.5rem;
+
+      .CircularProgressbar-text {
+        font-size: 3rem;
+        font-weight: 600;
+      }
+    }
+  }
+}

@@ -1,0 +1,122 @@
+.react-tag-input {
+  .label-text {
+    color: var(--text-primary-color);
+    cursor: text;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 2rem;
+    margin-bottom: 0.5rem;
+    cursor: text;
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
+  }
+  &__container {
+    position: relative;
+    padding-top: 1.6rem;
+    // border-bottom: 1px solid var(--border-color);
+
+    &.has-value {
+      padding-top: 2.4rem;
+      // .label-text {
+      //   font-size: 1.2rem;
+      //   top: 0;
+      //   line-height: 1.6rem;
+      // }
+      &-input:not(.has-value) {
+        padding-top: 1.6rem;
+        // .label-text {
+        //   font-size: 1.2rem;
+        //   top: 0;
+        //   line-height: 1.6rem;
+        // }
+      }
+    }
+
+    &.on-focused {
+      // border-bottom: 1px solid var(--primary-color);
+      // .label-text {
+      //   font-size: 1.2rem;
+      //   top: 0;
+      //   line-height: 1.6rem;
+      //   color: var(--primary-color);
+      // }
+    }
+  }
+  &__list {
+    overflow: auto;
+    border-radius: 0.3rem;
+    padding: 0.7rem 0.8rem 0.8rem;
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+    min-height: 2.9rem;
+    font-size: 1.4rem;
+    outline: none;
+    caret-color: var(--primary-color);
+    color: var(--text-primary-color);
+    width: 100%;
+    background: var(--white-color);
+    cursor: text;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: flex-start;
+    max-height: 9.3rem;
+  }
+
+  &__input {
+    border: none;
+    min-width: 8rem;
+    outline: none;
+    box-shadow: none;
+    height: 2.4rem;
+    margin-left: 0.3rem;
+  }
+
+  &__item {
+    line-height: 2rem;
+    background-color: var(--extra-color-20);
+    color: var(--text-primary-color);
+    border-radius: 0.3rem;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    overflow: hidden;
+
+    & + .react-tag-input__item {
+      margin-left: 0.8rem;
+    }
+  }
+
+  .tag-name {
+    padding: 0.6rem 0 0.6rem 1.2rem;
+  }
+
+  &__remove {
+    background-color: var(--extra-color-30);
+    cursor: pointer;
+    font-size: 1.8rem;
+    padding: 0.6rem 0.5rem;
+
+    svg {
+      width: 1.3rem;
+      height: 1.3rem;
+      margin-bottom: 0.2rem;
+    }
+
+    &:hover {
+      background-color: var(--error-darker-color);
+
+      svg {
+        fill: var(--white-color);
+      }
+    }
+  }
+
+  .message-error {
+    margin-top: 0.5rem;
+    font-size: 1.3rem;
+    color: var(--error-color);
+    display: block;
+  }
+}

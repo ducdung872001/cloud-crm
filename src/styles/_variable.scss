@@ -1,0 +1,94 @@
+@function rgba-to-rgb($rgb, $alpha: 1, $background: #fff) {
+  @return mix(rgb(red($rgb), green($rgb), blue($rgb)), $background, $alpha * 100%);
+}
+
+$white-color: #ffffff;
+$black-color: #000000;
+$blue-color: #1c8cff;
+$sea-green-color: #2e8b57;
+$background-color: #f3f3f3;
+$background-color-hover: #f9fafb;
+$primary-color: #015aa4;
+$primary-bg-color: #004353; //rgb(0, 67, 83);
+$primary-text-menu-color: #eb480b;
+$extra-color: #212b35;
+$error-color: #ed0f0f;
+$error-darker-color: #dc3545;
+$warning-color: #f88114;
+$warning-darker-color: #e19147;
+$success-color: #1bc10d;
+$success-darker-color: #28a745;
+$menu-active-color: linear-gradient(90deg, #015aa4 0%, #4cb8e8 153.5%);
+$menu-active-children-color: #75c9f0;
+$menu-background-children-color: #000c37;
+$box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.2);
+$box-shadow-input: inset 0 1px 0 0 rgb(63 63 68 / 5%);
+$box-shadow-button: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+//Chart colors
+$chart-color-violet: rgb(110, 105, 211);
+$chart-color-violet-darker: rgb(84,79,197);
+$chart-color-green: rgb(0,226,114);
+$chart-color-orange: rgb(254,181,106);
+$chart-color-orange-dark: rgb(254,106,53);
+$chart-color-pink: rgb(225, 155, 250);
+$chart-color-pink-dark:rgb(213,104,251);
+$chart-color-coban: rgb(46,224,202);
+$chart-color-red: rgb(250,75,66);
+$chart-color-black: rgb(0,0,0);
+$chart-color-blue: #015aa4;
+
+:root {
+  --white-color: #{$white-color};
+  --black-color: #{$black-color};
+  --blue-color: #{$blue-color};
+  --sea-green-color: #{$sea-green-color};
+  --background-color: #{$background-color};
+  --background-color-hover: #{$background-color-hover};
+  --primary-bg-color: #{$primary-bg-color};
+  --primary-text-color: #{$primary-text-menu-color};
+  --primary-color: #{$primary-color};
+  --primary-color-90: #{rgba-to-rgb($primary-color, 0.9)};
+  --primary-color-80: #{rgba-to-rgb($primary-color, 0.8)};
+  --primary-color-70: #{rgba-to-rgb($primary-color, 0.7)};
+  --primary-color-50: #{rgba-to-rgb($primary-color, 0.5)};
+  --primary-color-30: #{rgba-to-rgb($primary-color, 0.3)};
+  --primary-color-10: #{rgba-to-rgb($primary-color, 0.1)};
+  --primary-color-5: #{rgba-to-rgb($primary-color, 0.05)};
+  --extra-color: #{$extra-color};
+  --extra-color-50: #{rgba-to-rgb($extra-color, 0.5)};
+  --extra-color-30: #{rgba-to-rgb($extra-color, 0.3)};
+  --extra-color-20: #{rgba-to-rgb($extra-color, 0.2)};
+  --extra-color-10: #{rgba-to-rgb($extra-color, 0.1)};
+  --extra-color-5: #{rgba-to-rgb($extra-color, 0.05)};
+  --text-primary-color: #{$extra-color};
+  --text-extra-color: #{rgba-to-rgb($extra-color, 0.5)};
+  --border-color: #{rgba-to-rgb($extra-color, 0.2)};
+  --error-color: #{$error-color};
+  --error-color-rgb: #{red($error-color), green($error-color), blue($error-color)};
+  --error-darker-color: #{$error-darker-color};
+  --error-darker-color-rgb: #{red($error-darker-color), green($error-darker-color), blue($error-darker-color)};
+  --warning-color: #{$warning-color};
+  --warning-color-rgb: #{red($warning-color), green($warning-color), blue($warning-color)};
+  --warning-darker-color: #{$warning-darker-color};
+  --warning-darker-color-rgb: #{red($warning-darker-color), green($warning-darker-color), blue($warning-darker-color)};
+  --success-color: #{$success-color};
+  --success-color-rgb: #{red($success-color), green($success-color), blue($success-color)};
+  --success-darker-color: #{$success-darker-color};
+  --success-darker-color-rgb: #{red($success-darker-color), green($success-darker-color), blue($success-darker-color)};
+  --menu-active-color: #{$menu-active-color};
+  --menu-active-children-color: #{$menu-active-children-color};
+  --menu-background-children-color: #{$menu-background-children-color};
+  --menu-background-color: #{rgba-to-rgb($menu-background-children-color, 0.9)};
+  --box-shadow: #{$box-shadow};
+  --box-shadow-input: #{$box-shadow-input};
+  --box-shadow-button: #{$box-shadow-button};
+  //Chart colors
+  --chart-color-total: #{$chart-color-blue};
+  --chart-color-success: #{$chart-color-green};
+  --chart-color-remaining: #{$chart-color-violet-darker};
+  --chart-color-average: #{$chart-color-coban};
+  --chart-color-early: #{$chart-color-violet};
+  --chart-color-true: #{$chart-color-violet};
+  --chart-color-out-date: #{$chart-color-orange-dark};
+  --chart-color-today: #{$chart-color-orange};
+}

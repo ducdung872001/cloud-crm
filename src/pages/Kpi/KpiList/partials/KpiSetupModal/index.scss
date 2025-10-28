@@ -1,0 +1,43 @@
+.modal-kpi-setup {
+  .modal-dialog {
+    max-width: 72rem;
+  }
+
+  .modal-body {
+    padding: 0;
+  }
+
+  .wrapper__kpi-setup {
+    padding: 0 1.6rem 1.6rem 1.6rem;
+    // max-height: 48rem;
+    // overflow: auto;
+
+    .form__submit--kpi-setup {
+      margin-top: 4rem;
+    }
+
+    .list__kpi-setup {
+      margin-top: 1rem;
+
+      .action__add--kpi-setup {
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+      }
+
+      .box-table {
+        margin-top: 1.2rem;
+      }
+    }
+  }
+}
+
+// đoạn css mới
+.modal-kpi-setup {
+  .wrapper__kpi-setup {
+    .action__add--kpi-setup {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+}
