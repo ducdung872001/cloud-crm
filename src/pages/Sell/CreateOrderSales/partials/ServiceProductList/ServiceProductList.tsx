@@ -206,8 +206,8 @@ export default function ServiceProductList(props: IServiceProductListProps) {
 
     Promise.all(arrPromises)
       .then((results) => {
-        const ok = results?.filter(Boolean)?.length || 0;
-        if (ok > 0) {
+        const checkbox = results?.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
           showToast("Xóa dịch vụ/sản phẩm đã chọn thành công", "success");
           getListProductInvoiceService();
           setListIdChecked([]);
