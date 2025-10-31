@@ -562,7 +562,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                       setConfig({ date: "", keyType: 1 });
                     }
                     if (e.value === "Duration") {
-                      setConfig({ day: "", hour: "", minute: "", second: "", keyType: 1 });
+                      setConfig({ day: "0", hour: "0", minute: "0", second: "0", keyType: 1 });
                     }
                     if (e.value === "Cycle") {
                       setConfig([
@@ -672,7 +672,9 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                                   fill={false}
                                   value={config.day}
                                   onChange={(e) => {
-                                    const value = e.target.value || "";
+                                    let value = e.target.value || "";
+                                    // Loại bỏ số 0 ở đầu và chuyển thành số
+                                    value = value.replace(/^0+/, '') || "0";
                                     setConfig({ ...config, day: value });
                                   }}
                                 />
@@ -690,7 +692,9 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                                   fill={false}
                                   value={config.hour}
                                   onChange={(e) => {
-                                    const value = e.target.value || "";
+                                    let value = e.target.value || "";
+                                    // Loại bỏ số 0 ở đầu và chuyển thành số
+                                    value = value.replace(/^0+/, '') || "0";
                                     setConfig({ ...config, hour: value });
                                   }}
                                 />
@@ -708,7 +712,9 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                                   fill={false}
                                   value={config.minute}
                                   onChange={(e) => {
-                                    const value = e.target.value || "";
+                                    let value = e.target.value || "";
+                                    // Loại bỏ số 0 ở đầu và chuyển thành số
+                                    value = value.replace(/^0+/, '') || "0";
                                     setConfig({ ...config, minute: value });
                                   }}
                                 />
@@ -726,7 +732,9 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                                   fill={false}
                                   value={config.second}
                                   onChange={(e) => {
-                                    const value = e.target.value || "";
+                                    let value = e.target.value || "";
+                                    // Loại bỏ số 0 ở đầu và chuyển thành số
+                                    value = value.replace(/^0+/, '') || "0";
                                     setConfig({ ...config, second: value });
                                   }}
                                 />
