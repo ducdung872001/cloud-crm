@@ -19,8 +19,7 @@ i18n.use(initReactI18next).init({
           createKPITask: "Create KPI task",
           kpiManagement: "Manage KPI",
           project: "Project",
-          workManagement: "Work Management",
-          userTaskManagement: "User task management",
+          workManagement: "Work Management",          
           // Quản lý công việc
           userTaskList: "User Task list",
           job: "Task",
@@ -69,6 +68,8 @@ i18n.use(initReactI18next).init({
           zalo: "Zalo",
 
           selling: "Sales",
+          opportunity: "Opportunities",
+          provideService: "Provide service",
           // đoạn này là children của selling
           createSalesOrder: "Create sales order",
           salesInvoice: "Sales Invoice",
@@ -236,10 +237,9 @@ i18n.use(initReactI18next).init({
           createKPIFramework: "Tạo bộ KPI",
           createKPITask: "Tạo phiếu giao KPI",
           kpiManagement: "Quản lý KPI",
-          project: "Dự án",
-          userTaskManagement: "Quản lý nhiệm vụ",
+          project: "Dự án",          
           //Quản lý công việc BPM
-          userTaskList: "Danh sách nhiệm vụ", //Gán nhiệm vụ cho người dùng hoặc nhóm
+          userTaskList: "Xử lý hồ sơ",
           workManagement: "Quản lý công việc",
           job: "Công việc",
           jobReport: "Báo cáo công việc",
@@ -273,20 +273,22 @@ i18n.use(initReactI18next).init({
           guaranteeContract: "Danh sách bảo lãnh",
           listWarrantyContract: "Danh sách bảo hành",
 
-          marketing: "Marketing",
+          marketing: "Truyền thông",
           // đoạn này là children của marketing
-          emailMarketing: "Email Marketing",
-          smsMarketing: "SMS Marketing",
-          zaloMarketing: "Zalo Marketing",
-          marketingAutomation: "Marketing Automation",
-          campaignMarketing: "Ngân sách Marketing",
+          emailMarketing: "Truyền thông bằng Email",
+          smsMarketing: "Truyền thông bằng SMS",
+          zaloMarketing: "Truyền thông bằng Zalo",
+          marketingAutomation: "Truyền thông theo kịch bản",
+          campaignMarketing: "Ngân sách truyền thông",
 
           salesChannel: "Kênh bán",
           // đoạn này là children của kênh bán
-          facebook: "Facebook",
-          zalo: "Zalo",
+          facebook: "Tin nhắn Facebook",
+          zalo: "Tin nhắn Zalo",
 
           selling: "Bán hàng",
+          opportunity: "Cơ hội bán hàng",
+          provideService: "Thực hiện dịch vụ",
           // đoạn này là children của bán hàng
           createSalesOrder: "Tạo đơn bán hàng",
           salesInvoice: "Hóa đơn bán hàng",
@@ -309,13 +311,13 @@ i18n.use(initReactI18next).init({
           customerSurvey: "Khảo sát khách hàng",
 
           // đoạn này là children của đặt hàng
-          order: "Đặt hàng",
+          order: "Mua hàng",
           createOrder: "Tạo đơn đặt hàng",
           orderInvoiceList: "Hóa đơn đặt hàng",
           temporaryOrderList: "Đơn đặt lưu tạm",
 
           // đoạn này là children của quản lý đơn đặt hàng
-          manageOrder: "Quản lý đặt hàng",
+          manageOrder: "Yêu cầu mua hàng",
           productList: "Thống kê sản phẩm",
 
           warehouse: "Kho hàng",
@@ -335,10 +337,7 @@ i18n.use(initReactI18next).init({
           manageProcesses: "Quản lý quy trình",
           processSimulation: "Mô phỏng quy trình",
           objectManage: "Quản lý hồ sơ",
-          manage_data_sharing: "Chia sẻ dữ liệu",
-
-          // Thông tin khảo sát
-          survey: "Trải nghiệm khách hàng",
+          manage_data_sharing: "Chia sẻ dữ liệu",          
           cxmSurvey: "Danh sách khảo sát",
 
           // Quản lý vận hành
