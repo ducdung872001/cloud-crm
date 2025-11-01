@@ -48,7 +48,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     },
     {
       value: "Chuyển sang một luồng thay thế",
-      label: "Chuyển sang một luồng thay thếmmmm",
+      label: "Chuyển sang một luồng thay thế",
     },
   ];
 
