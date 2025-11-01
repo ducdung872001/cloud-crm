@@ -853,12 +853,14 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           <ModalHeader
             title={`${data ? "Chỉnh sửa" : "Thêm mới"} lịch sử điều trị`}
             toggle={() => {
-              !isSubmit && onHide(false);
-              !isSubmit && setDetailCustomer(null);
-              !isSubmit && setDetailEmployee(null);
-              !isSubmit && setDetailService(null);
-              !isSubmit && setListBuyService([]);
-              !isSubmit && setDetailCard(null);
+              if (!isSubmit) {
+                onHide(false);
+                setDetailCustomer(null);
+                setDetailEmployee(null);
+                setDetailService(null);
+                setListBuyService([]);
+                setDetailCard(null);
+              }
             }}
           />
           <ModalBody>
