@@ -270,13 +270,13 @@ export async function SelectOptionData(key: string, params?: any) {
           return { value: item.id, label: `${item.name} - ${item.phoneMasked}` };
         }
         if (key === "categoryItemId") {
-          return { value: item.name, label: `${item.name}` };
+          return { value: item.id, label: `${item.name}` };
         }
         if (key === "customerSource" || key === "customerSourceId" ) {
-          return { value: item.name, label: `${item.name}` };
+          return { value: item.id, label: `${item.name}` };
         }
         if (key === "marketingId"|| key === "marketingChanelId" ) {
-          return { value: item.name, label: `${item.name}` };
+          return { value: item.id, label: `${item.name}` };
         }
         if (key === "scrId") {
           return { value: item.id, label: `${item.unitNumber} - ${item.customerName}` };
