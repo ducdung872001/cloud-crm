@@ -18,7 +18,7 @@ export async function SelectOptionEform(key: string, api: string, params?: any) 
     response = data;
   }
 
-  console.log('response', response);
+  // console.log('response', response);
   
   if (response) {
     if (response.code === 0) {

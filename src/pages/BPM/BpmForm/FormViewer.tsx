@@ -28,6 +28,7 @@ import "@bpmn-io/form-js/dist/assets/form-js-editor.css";
 import "@bpmn-io/form-js/dist/assets/form-js-playground.css";
 import _ from "lodash";
 import { SelectOptionEform } from "utils/apiSelectCommon";
+import { CallApiCommon } from "utils/callApiCommon";
 // import { SelectOptionEform } from "utils/apiSelectCommon";
 
 //Range
@@ -254,9 +255,9 @@ const FormViewerComponent = (props: any) => {
       const removeBtns = listEl.querySelectorAll(".fjs-repeat-row-remove");
 
       if (rows.length === 1) {
-        removeBtns.forEach((btn) => (btn.style.display = "none"));
+        removeBtns.forEach((btn: any) => (btn.style.display = "none"));
       } else {
-        removeBtns.forEach((btn) => (btn.style.display = ""));
+        removeBtns.forEach((btn: any) => (btn.style.display = ""));
       }
     });
   }
@@ -575,9 +576,19 @@ const FormViewerComponent = (props: any) => {
             // console.log("apiParams after =>", apiParams);
             params.apiParams = apiParams;
           }
+          console.log('apiParams', apiParams);
+
+          const paramsTotal = Object.fromEntries(
+            apiParams.split(",").map(part => {
+              const [key, ...rest] = part.split("=");
+              const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
+              return [key.trim(), value];
+            })
+          );
 
           // console.log("params from api =>", params);
-          const resp = await RestService.post(params);
+          // const resp = await RestService.post(params);
+          const resp = await CallApiCommon(attrs?.apiUrl, { ...paramsTotal});
 
           //Lấy ra kết quả resp.result => array|object|scalar
           // console.log("resp from api =>", resp?.result);
