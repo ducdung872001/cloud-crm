@@ -23,6 +23,7 @@ import KpiObjectList from "pages/Kpi/KpiObjectList/KpiObjectList";
 import DetailPersonList from "pages/CustomerPerson/partials/DetailPerson/DetailPersonList";
 import WarrantyList from "pages/Warranty/WarrantyList";
 import TicketList from "pages/Ticket/TicketList";
+import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import SettingTicketList from "pages/SettingTicket/SettingTicketList";
 import SettingWarrantyList from "pages/SettingWarranty/SettingWarrantyList";
 import DetailWarranty from "pages/Warranty/partials/DetailWarranty/DetailWarranty";
@@ -1376,6 +1377,10 @@ export const routes: IRouter[] = [
   {
     path: urls.ticket,
     component: <TicketList />,
+  },
+  {
+    path: urls.collect_ticket,
+    component: <CollectTicket />,
   },
   {
     path: urls.detail_ticket,
