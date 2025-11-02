@@ -13,14 +13,13 @@ export default function SettingMarketingList() {
 
   const menuSetting = [
     {
-      title: "Kênh Marketing",
+      title: "Kênh truyền thông",
       is_tab: "tab_one",
     },
     {
-      title: "Đo lường Marketing",
+      title: "Đo lường truyền thông",
       is_tab: "tab_two",
-    },
-         
+    },         
   ];
 
   return (
