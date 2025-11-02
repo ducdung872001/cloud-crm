@@ -6,26 +6,25 @@ import ModalAddMarketingMeasurement from "./partials/MarketingMeasurement/partia
 import MarketingMeasurement from "./partials/MarketingMeasurement/MarketingMeasurement";
 
 export default function SettingMarketingList() {
-  document.title = "Cài đặt Marketing";
+  document.title = "Cài đặt truyền thông";
 
   const [tab, setTab] = useState<string>("");
   const [isDetailCategory, setIsDetailCategory] = useState<boolean>(false);
 
   const menuSetting = [
     {
-      title: "Kênh Marketing",
+      title: "Kênh truyền thông",
       is_tab: "tab_one",
     },
     {
-      title: "Đo lường Marketing",
+      title: "Đo lường truyền thông",
       is_tab: "tab_two",
-    },
-         
+    },         
   ];
 
   return (
     <div className="page-content page-setting-marketing">
-      {!isDetailCategory && <TitleAction title="Cài đặt Marketing" />}
+      {!isDetailCategory && <TitleAction title="Cài đặt truyền thông" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (
           <ul className="menu">
