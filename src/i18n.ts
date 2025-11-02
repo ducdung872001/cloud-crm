@@ -338,7 +338,7 @@ i18n.use(initReactI18next).init({
           processSimulation: "Mô phỏng quy trình",
           objectManage: "Quản lý hồ sơ",
           manage_data_sharing: "Chia sẻ dữ liệu",          
-          cxmSurvey: "Danh sách khảo sát",
+          cxmSurvey: "Chiến dịch khảo sát",
 
           // Quản lý vận hành
           operate: "Quản lý vận hành",
@@ -368,7 +368,7 @@ i18n.use(initReactI18next).init({
           settingPartner: "Cài đặt đối tác",
           settingContact: "Cài đặt người liên hệ",
           settingSales: "Cài đặt bán hàng",
-          settingMarketing: "Cài đặt Marketing",
+          settingMarketing: "Cài đặt truyền thông",
           settingContract: "Cài đặt hợp đồng",
           settingEform: "Cài đặt biểu mẫu",
           settingProcess: "Cài đặt quy trình",

@@ -223,7 +223,7 @@ export default function MarketingMeasurement(props: any) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt Marketing
+            Cài đặt truyền thông
           </h1>
           <Icon
             name="ChevronRight"

@@ -124,7 +124,7 @@ import SettingPartnerList from "pages/SettingPartner/SettingPartnerList";
 import GuaranteeContractList from "pages/Contract/GuaranteeContract/GuaranteeContract";
 import PartnerList from "pages/PartnerList/PartnerList";
 import ReportLogin from "pages/ReportLogin/ReportLogin";
-// cài đặt mẫu báo giá
+// Cài đặt mẫu báo giá
 import SettingQuoteForm from "pages/SettingQuoteForm/SettingQuoteForm";
 import DetailGuaranteeContract from "pages/Contract/GuaranteeContract/DetailGuaranteeContract/DetailGuaranteeContract";
 import CampaignMarketingList from "pages/CampaignMarketing/CampaignMarketingList";
@@ -205,7 +205,7 @@ export const menu: IMenuItem[] = [
             code: "MAILBOX",
           },
           // {
-          //   title: "Tài liệu", // document
+          //   title: "document", // document
           //   path: urls.internal_mail,
           //   icon: <Icon name="DocumentFill" />,
           //   code: "DOCUMENT",
@@ -240,6 +240,12 @@ export const menu: IMenuItem[] = [
           //   icon: <Icon name="MoneyFill" />,
           //   code: "EARNINGS",
           // },
+          {
+            title: "settingKPI", // Cài đặt KPI
+            path: urls.setting_kpi,
+            icon: <Icon name="KpiCustomer" />,
+            code: "",
+          },
         ],
       },
       {
@@ -259,6 +265,12 @@ export const menu: IMenuItem[] = [
             path: urls.middle_work,
             icon: <Icon name="Job" />,
             code: "WORK_ORDER",
+          },
+          {
+            title: "settingProject", // Cài đặt dự án
+            path: urls.setting_project,
+            icon: <Icon name="SettingJob" />,
+            code: "",
           },
         ],
       },
@@ -281,7 +293,6 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="Profile" />,
         code: "CUSTOMER",
       },
-
       ...(!checkSubdomainTNEX
         ? [
           {
@@ -298,6 +309,28 @@ export const menu: IMenuItem[] = [
           },
         ]
         : []),
+      {
+        title: "settingCustomer", // Cài đặt khách hàng
+        path: urls.setting_customer,
+        icon: <Icon name="SettingCustomer" />,
+        code: "MENU_SETUP_CUSTOMER",
+      },
+      ...(!checkSubdomainTNEX
+        ? [
+          {
+            title: "settingPartner", // Cài đặt đối tác
+            path: urls.setting_partner,
+            icon: <Icon name="SettingCustomer" />,
+            code: "",
+          },
+          {
+            title: "settingContact", // Cài đặt người liên hệ
+            path: urls.setting_contact,
+            icon: <Icon name="SettingCustomer" />,
+            code: "",
+          }
+        ]
+        : [])
     ],
   },
 
@@ -344,6 +377,30 @@ export const menu: IMenuItem[] = [
             path: urls.warrantyContract,
             icon: <Icon name="Invoice" />,
             code: "WARRANTY_CONTRACT",
+          },
+          {
+            title: "settingContract", // Cài đặt hợp đồng
+            path: urls.setting_contract,
+            icon: <Icon name="SettingSell" />,
+            code: "",
+          },
+          {
+            title: "settingQuoteForm", // Cài đặt mẫu báo giá
+            path: urls.setting_quote_form,
+            icon: <Icon name="SettingSell" />,
+            code: "",
+          },
+          {
+            title: "settingProcess", // Cài đặt quy trình phê duyệt (V1 - old)
+            path: urls.setting_process,
+            icon: <Icon name="SettingSell" />,
+            code: "",
+          },
+          {
+            title: "settingCode",
+            path: urls.setting_code,
+            icon: <Icon name="ReportFill" />,
+            code: "",
           },
         ],
       },
@@ -439,6 +496,14 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="OpportunityManagement" />,
         code: "",
       },
+      ...(!checkSubdomainTNEX
+        ? [
+          {
+            title: "settingSalesChannel", // Cài đặt kênh bán
+            path: urls.setting_social_crm,
+            icon: <Icon name="SettingSocial" />,
+            code: "MENU_SETUP_SOCIAL_CRM",
+          }] : []),
     ],
   },
   {
@@ -485,6 +550,12 @@ export const menu: IMenuItem[] = [
             icon: <Icon name="ManageOpportunity" />,
             code: "INVOICE_MANAGEMENT",
           },
+          {
+            title: "settingSales", // Cài đặt bán hàng
+            path: urls.setting_sell,
+            icon: <Icon name="SettingSell" />,
+            code: "MENU_SETUP_SELL",
+          },
         ]
         : []),
       // {
@@ -507,7 +578,13 @@ export const menu: IMenuItem[] = [
           path: urls.treatment_history,
           icon: <Icon name="TraetmentHistory" />,
           code: "TREATMENT_HISTORY",
-        }
+        },
+        {
+          title: "medicalRecord", // Nhật ký điều trị
+          path: urls.diary_surgery,
+          icon: <Icon name="Postoperative" />,
+          code: "DIARY_SURGERY_VIEW",
+        },
       ],
     }] : []),
   ...(!checkSubdomainTNEX
@@ -542,16 +619,6 @@ export const menu: IMenuItem[] = [
             icon: <Icon name="ReceiveTicket" />,
             code: "TICKET",
           },
-          ...(isBeauty && isBeauty == "1"
-            ? [
-              {
-                title: "medicalRecord", // Nhật ký điều trị
-                path: urls.diary_surgery,
-                icon: <Icon name="Postoperative" />,
-                code: "DIARY_SURGERY_VIEW",
-              },
-            ]
-            : []),
           ...(sourceDomain == "rebornjsc.reborn.vn"
             ? [
               {
@@ -569,10 +636,10 @@ export const menu: IMenuItem[] = [
             code: "",
           },
           {
-            title: "cxmSurvey", // Danh sách chiến dịch khảo sát
+            title: "cxmSurvey", // Chiến dịch khảo sát
             path: urls.cxmSurvey,
             icon: <Icon name="Customer" />,
-            code: "SURVEY_CUSTOMER",
+            code: "CXM_SURVEY",
           },
           // {
           //   title: "cxmResponse", // Danh sách câu hỏi khảo sát
@@ -580,9 +647,21 @@ export const menu: IMenuItem[] = [
           //   icon: <Icon name="KpiCustomer" />,
           //   code: "",
           // },
+          {
+            title: "settingWarranty", // Cài đặt bảo hành
+            path: urls.setting_warranty,
+            icon: <Icon name="SettingWarranty" />,
+            code: "",
+          },
+          {
+            title: "settingTicket", // Cài đặt hỗ trợ
+            path: urls.setting_ticket,
+            icon: <Icon name="SettingTicket" />,
+            code: "",
+          },
         ],
       },
-      sourceDomain !== "hasedu.reborn.vn" && {
+      {
         title: "order", // Đặt hàng
         path: urls.product_import,
         icon: <Icon name="Cart" />,
@@ -608,7 +687,7 @@ export const menu: IMenuItem[] = [
           },
         ],
       },
-      sourceDomain !== "hasedu.reborn.vn" && {
+      {
         title: "warehouse", // Kho hàng
         path: urls.product_import,
         icon: <Icon name="ImportGoods" />,
@@ -828,12 +907,6 @@ export const menu: IMenuItem[] = [
             icon: <Icon name="ContactCustomer" />,
             code: "",
           },
-          {
-            title: "settingKPI", // Cài đặt KPI
-            path: urls.setting_kpi,
-            icon: <Icon name="KpiCustomer" />,
-            code: "",
-          },
         ]
         : []),
       // {
@@ -841,33 +914,9 @@ export const menu: IMenuItem[] = [
       //   path: urls.setting_timekeeping,
       //   icon: <Icon name="SettingTimekeeping" />,
       //   code: "",
-      // },
-      {
-        title: "settingCustomer", // Cài đặt khách hàng
-        path: urls.setting_customer,
-        icon: <Icon name="SettingCustomer" />,
-        code: "MENU_SETUP_CUSTOMER",
-      },
+      // },      
       ...(!checkSubdomainTNEX
         ? [
-          {
-            title: "settingPartner", // Cài đặt đối tác
-            path: urls.setting_partner,
-            icon: <Icon name="SettingCustomer" />,
-            code: "",
-          },
-          {
-            title: "settingContact", // Cài đặt người liên hệ
-            path: urls.setting_contact,
-            icon: <Icon name="SettingCustomer" />,
-            code: "",
-          },
-          {
-            title: "settingSales", // Cài đặt bán hàng
-            path: urls.setting_sell,
-            icon: <Icon name="SettingSell" />,
-            code: "MENU_SETUP_SELL",
-          },
           {
             title: "settingMarketing", // Cài đặt marketing
             path: urls.setting_marketing,
@@ -875,26 +924,8 @@ export const menu: IMenuItem[] = [
             code: "",
           },
           {
-            title: "settingContract", // Cài đặt hợp đồng
-            path: urls.setting_contract,
-            icon: <Icon name="SettingSell" />,
-            code: "",
-          },
-          {
             title: "settingEform", // Cài đặt biểu mẫu
             path: urls.setting_eform,
-            icon: <Icon name="SettingSell" />,
-            code: "",
-          },
-          {
-            title: "settingProcess", // Cài đặt quy trình
-            path: urls.setting_process,
-            icon: <Icon name="SettingSell" />,
-            code: "",
-          },
-          {
-            title: "settingQuoteForm", // Cài đặt mẫu báo giá
-            path: urls.setting_quote_form,
             icon: <Icon name="SettingSell" />,
             code: "",
           },
@@ -915,26 +946,7 @@ export const menu: IMenuItem[] = [
           //   path: urls.setting_market_research,
           //   icon: <Icon name="SettingAnalytics" />,
           //   code: "",
-          // },
-          {
-            title: "settingSalesChannel", // Cài đặt kênh bán
-            path: urls.setting_social_crm,
-            icon: <Icon name="SettingSocial" />,
-            code: "MENU_SETUP_SOCIAL_CRM",
-          },
-          {
-            title: "settingWarranty", // Cài đặt bảo hành
-            path: urls.setting_warranty,
-            icon: <Icon name="SettingWarranty" />,
-            code: "",
-          },
-          {
-            title: "settingTicket", // Cài đặt hỗ trợ
-            path: urls.setting_ticket,
-            icon: <Icon name="SettingTicket" />,
-            code: "",
-          },
-
+          // },               
           {
             title: "settingSMS", // Cài đặt SMS
             path: urls.setting_sms,
@@ -951,12 +963,6 @@ export const menu: IMenuItem[] = [
             title: "settingZalo", //Cài đặt Zalo
             path: urls.setting_zalo,
             icon: <Icon name="Zalo" />,
-            code: "",
-          },
-          {
-            title: "settingProject", // Cài đặt dự án
-            path: urls.setting_project,
-            icon: <Icon name="SettingJob" />,
             code: "",
           },
           // {
@@ -976,13 +982,7 @@ export const menu: IMenuItem[] = [
           //   path: urls.integrated_monitoring,
           //   icon: <Icon name="ReportFill" />,
           //   code: "",
-          // },
-          {
-            title: "settingCode",
-            path: urls.setting_code,
-            icon: <Icon name="ReportFill" />,
-            code: "",
-          },
+          // },          
           {
             title: "configBpm", // cấu hình BPM
             path: urls.config_bpm,
