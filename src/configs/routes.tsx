@@ -821,12 +821,12 @@ export const menu: IMenuItem[] = [
         title: "bpm", // Quản lý quy trình
         path: urls.sell,
         icon: <Icon name="CashBook" />,
-        code: "MANAGE_PROCESSES",
+        code: "BPM",
         children: [
           {
             title: "manageProcesses",
             path: urls.manage_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
-            code: "MANAGE_PROCESSES",
+            code: "BPM",
             icon: <Icon name="CashBook" />,
           },
           {
