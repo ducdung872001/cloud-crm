@@ -235,7 +235,7 @@ export default function ObjectAttributeList(props: any) {
             className="title-first"
             title="Quay lại"
           >
-            Cấu hình BPM
+            Cấu hình quy trình
           </h1>
           <Icon
             name="ChevronRight"

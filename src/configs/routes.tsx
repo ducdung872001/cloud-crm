@@ -447,6 +447,12 @@ export const menu: IMenuItem[] = [
             icon: <Icon name="Marketing" />,
             code: "MA",
           },
+          {
+            title: "settingMarketing", // Cài đặt marketing
+            path: urls.setting_marketing,
+            icon: <Icon name="SettingSell" />,
+            code: "",
+          },
         ],
       },
     ]
@@ -797,6 +803,18 @@ export const menu: IMenuItem[] = [
           //   icon: <Icon name="ImpactHistory" />,
           //   code: "",
           // },
+          {
+            title: "settingCashbook", // Cài đặt tài chính
+            path: urls.setting_cash_book,
+            icon: <Icon name="SettingCashbook" />,
+            code: "MENU_SETUP_CASHBOOK",
+          },
+          {
+            title: "settingDashboard", // cài đặt Dashboard
+            path: urls.setting_dashboard,
+            icon: <Icon name="ReportFill" />,
+            code: "",
+          },
         ],
       },
       {
@@ -828,7 +846,13 @@ export const menu: IMenuItem[] = [
             path: urls.user_task_list,
             code: "WORK_MANAGEMENT",
             icon: <Icon name="ManageWork" />,
-          }
+          },
+          {
+            title: "configBpm", // Cấu hình quy trình
+            path: urls.config_bpm,
+            icon: <Icon name="SettingJob" />,
+            code: "",
+          },
         ],
       },
     ]
@@ -916,13 +940,7 @@ export const menu: IMenuItem[] = [
       //   code: "",
       // },      
       ...(!checkSubdomainTNEX
-        ? [
-          {
-            title: "settingMarketing", // Cài đặt marketing
-            path: urls.setting_marketing,
-            icon: <Icon name="SettingSell" />,
-            code: "",
-          },
+        ? [          
           {
             title: "settingEform", // Cài đặt biểu mẫu
             path: urls.setting_eform,
@@ -934,13 +952,7 @@ export const menu: IMenuItem[] = [
           //   path: urls.setting_rose,
           //   icon: <Icon name="SettingRose" />,
           //   code: "",
-          // },
-          {
-            title: "settingCashbook", // Cài đặt tài chính
-            path: urls.setting_cash_book,
-            icon: <Icon name="SettingCashbook" />,
-            code: "MENU_SETUP_CASHBOOK",
-          },
+          // },          
           // {
           //   title: "Cài đặt tìm khách hàng",
           //   path: urls.setting_market_research,
@@ -966,12 +978,6 @@ export const menu: IMenuItem[] = [
             code: "",
           },
           // {
-          //   title: "settingJob", // Cài đặt công việc
-          //   path: urls.setting_work,
-          //   icon: <Icon name="SettingJob" />,
-          //   code: "",
-          // },
-          // {
           //   title: "settingReport",
           //   path: urls.setting_report,
           //   icon: <Icon name="ReportFill" />,
@@ -982,19 +988,7 @@ export const menu: IMenuItem[] = [
           //   path: urls.integrated_monitoring,
           //   icon: <Icon name="ReportFill" />,
           //   code: "",
-          // },          
-          {
-            title: "configBpm", // cấu hình BPM
-            path: urls.config_bpm,
-            icon: <Icon name="SettingJob" />,
-            code: "",
-          },
-          {
-            title: "settingDashboard", // cài đặt Dashboard
-            path: urls.setting_dashboard,
-            icon: <Icon name="ReportFill" />,
-            code: "",
-          },
+          // },                        
         ]
         : []),
       // (checkSubdomainTNPM || checkSubdomainGREENSPA) && {

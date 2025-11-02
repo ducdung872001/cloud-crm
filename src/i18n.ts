@@ -386,7 +386,7 @@ i18n.use(initReactI18next).init({
           settingReport: "Cài đặt báo cáo",
           integratedMonitoring: "Giám sát tích hợp",
           settingCode: "Cài đặt mã",
-          configBpm: "Cấu hình BPM",
+          configBpm: "Cấu hình quy trình",
           settingDashboard: "Cài đặt báo cáo",
           settingApplication: "Cài đặt tích hợp",
           resourceManagement: "Quản trị tài nguyên",
