@@ -290,18 +290,19 @@ const FormViewerComponent = (props: any) => {
     let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
       let { schema, data } = event;
-      // // console.log("event", event);
-      // // console.log("Check grid > Changed Data =>", data);
+      // console.log("Check grid > Changed Data =>", data);
 
       let components = schema.components;
       const newValues = data;
 
       for (const key in newValues) {
         if (!_.isEqual(newValues[key], prevValues[key])) {
-          // // console.log("Field thay đổi:", key, "->", newValues[key]);
-
-          const keyFind = components.find((el) => el.key === key);
-
+          // console.log("Field thay đổi:", key, "->", newValues[key]);
+          console.log('components', components);
+          
+          const keyFind = components.find((el) => (el.key === key || el.path === key));
+          console.log('keyFind', keyFind);
+          
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
           // // console.log("bindingTarget", keyFind?.properties?.bindingTarget);
           if (keyFind?.properties?.bindingTarget) {
@@ -310,13 +311,13 @@ const FormViewerComponent = (props: any) => {
              * chỗ này check điều kiện để tránh trường hợp khi thay đổi trường được binding nó lại chạy vào hàm này thì trường được binding lại bị set lại giá trị mà lấy ra từ trường cấu hình binding
              * ý nghĩ là check nếu thay đổi giá trị trường có key === key trong binding target thì sẽ k chạy vào hàm này
              */
-            if (key !== keyFind?.properties?.bindingTarget) {
+            if (key !== keyFind?.properties?.bindingTarget) {              
               updateExpressionField(components, schema, data);
-            }
-          }
+            } 
+          }          
         }
       }
-      prevValues = { ...newValues };
+      // prevValues = { ...newValues };
 
       setDataSchemaDraft(data);
 
@@ -328,25 +329,6 @@ const FormViewerComponent = (props: any) => {
       // //Trường nào thay đổi
       // let components = schema.components;
       // updateExpressionField(components, schema, data);
-
-      // function formatNumberWithCommas(number) {
-      //   if (number == null || isNaN(number)) return '';
-      //   return new Intl.NumberFormat('en-US').format(number);
-      // }
-
-      // Kiểm tra và format các trường kiểu number
-      // for (const [key, value] of Object.entries(data)) {
-      //   if (typeof value === 'number' || (typeof value === 'string' && !isNaN(value))) {
-      //     // Format số theo dấu phẩy (thêm dấu ',' vào hàng nghìn)
-      //     let formattedValue = formatNumberWithCommas(value);
-      //     // console.log(`Formatted Value for ${key}:`, formattedValue);
-
-      //     // Cập nhật lại giá trị sau khi format
-      //     data[key] = formattedValue;
-      //   }
-      // }
-      //Kiểm tra nó có kích hoạt sự thay đổi nào khác không
-      //Kiểm tra sự scroll của thành phần trên form
     });
     // // Gắn sự kiện click vào container
     // const handleClick = (event: MouseEvent) => {
@@ -369,8 +351,6 @@ const FormViewerComponent = (props: any) => {
         if (component.type === "expression") {
           let dataExpression = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
-          // // console.log("target =>", target);
-          // // console.log("dataExpression =>", dataExpression);
 
           if (target) {
             if (dataExpression && dataExpression != data[target]) {
@@ -415,12 +395,32 @@ const FormViewerComponent = (props: any) => {
           }
         }
 
-        // if (component.type == "number") {
-        //   // console.log('component', component);
-        //   // console.log('data', data);
-        //   // console.log('cos vào');
-
-        // }
+        if (component.type === "dynamiclist") {
+          component.components.forEach((componentChild) => {
+            if (componentChild.type == "select") {
+              data[component.path].map((el) => {                
+                let dataSelect = el[componentChild.key]; //Lấy ra key
+                let target = componentChild?.properties?.bindingTarget;
+                if (target) {
+                  const listTarget = target.split(",").map((item) => item.trim()) || [];
+      
+                  if (dataSelect) {
+                    const optionValue = componentChild.values || [];
+                    const valueSelected = optionValue.find((el) => el.value === dataSelect);
+                    
+                    if (listTarget && listTarget.length > 0) {
+                      listTarget.map((item) => {
+                        el[item] = valueSelected && valueSelected[item] ? valueSelected[item] : "";
+                      });
+                    } else {
+                      el[target] = valueSelected && valueSelected[target] ? valueSelected[target] : "";
+                    }
+                  }
+                }
+              });
+            }
+          })
+        }
       });
     };
 
@@ -508,7 +508,6 @@ const FormViewerComponent = (props: any) => {
       // console.log("Event focus =>", event);
 
       let formData = formViewerRef.current._getState().data;
-      // console.log("Current formData focus:", formData);
 
       const nodeId = contextData?.nodeId;
       const potId = contextData?.potId;

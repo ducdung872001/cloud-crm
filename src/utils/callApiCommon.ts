@@ -9,7 +9,8 @@ export async function CallApiCommon(api: string, params?: any) {
   let response;
 
   if(api){
-    const apiUrlOption = process.env.APP_API_URL + api;
+    // const apiUrlOption = process.env.APP_API_URL + api;
+    const apiUrlOption = api?.includes("https://") ? api : `${process.env.APP_API_URL}${api}`;
     const result = await fetch(`${apiUrlOption}${convertParamsToString(params)}`, {
         method: "GET",
     });
