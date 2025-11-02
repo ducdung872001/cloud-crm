@@ -342,7 +342,7 @@ export default function CampaignMarketingList() {
     const response = await CampaignMarketingService.deleteMABudget(id);
 
     if (response.code === 0) {
-      showToast("Xóa kênh Marketing thành công", "success");
+      showToast("Xóa kênh truyền thông thành công", "success");
       reloadListChannel();
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -432,7 +432,7 @@ export default function CampaignMarketingList() {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "kênh Marketing " : `${listIdChecked.length} kênh Marketing đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "kênh truyền thông " : `${listIdChecked.length} kênh truyền thông đã chọn`}
           {item ? <strong>{item.channelName}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
