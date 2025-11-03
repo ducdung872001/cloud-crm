@@ -102,7 +102,7 @@ export default function ComponentList(props: any) {
     }
 
     if (isMounted.current === true) {
-        getListComponent(params);
+      getListComponent(params);
       const paramsTemp = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
@@ -135,9 +135,9 @@ export default function ComponentList(props: any) {
 
   const dataMappingArray = (item: any, index: number) => [
     getPageOffset(params) + index + 1,
-    item.name, 
+    item.name,
     item.code,
-    item.type === 1 ? 'Hành động' : 'Lịch sử phê duyệt'
+    item.type === 1 ? "Hành động" : "Lịch sử phê duyệt",
   ];
 
   const actionsTable = (item: any): IAction[] => {
@@ -216,7 +216,7 @@ export default function ComponentList(props: any) {
             className="title-first"
             title="Quay lại"
           >
-            Cấu hình BPM
+            Cấu hình quy trình
           </h1>
           <Icon
             name="ChevronRight"
@@ -299,7 +299,7 @@ export default function ComponentList(props: any) {
           setShowModalAddComponent(false);
         }}
       />
-     
+
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );

@@ -44,6 +44,7 @@ import SpaceCustomerService from "services/SpaceCustomerService";
 import BuildingService from "services/BuildingService";
 import CustomerMarketingLeadService from "services/CustomerMarketingLeadService";
 import RoleService from "services/RoleService";
+import CampaignMarketingService from "services/CampaignMarketingService";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -80,6 +81,9 @@ export async function SelectOptionData(key: string, params?: any) {
     case "categoryServiceId":
       response = await CategoryServiceService.list(params);
       break;
+    case "categoryItemId":
+      response = await CategoryServiceService.list(params);
+      break;
     case "groupId":
     case "groupTip":
       response = await TipGroupService.list(params);
@@ -93,6 +97,12 @@ export async function SelectOptionData(key: string, params?: any) {
     case "customer":
     case "customerId":
       response = await CustomerService.filter(params);
+      break;
+    case "customerSource":
+      response = await CustomerSourceService.list(params);
+      break;
+    case "customerSourceId":
+      response = await CustomerSourceService.list(params);
       break;
     case "uploadId":
       response = await CustomerService.lstUpload(params);
@@ -133,6 +143,12 @@ export async function SelectOptionData(key: string, params?: any) {
     case "marketingSendLeadSource":
     case "marketingSendLeadSource":
       response = await CustomerMarketingLeadService.list(params);
+      break;
+    case "marketingId":
+      response = await CampaignMarketingService.list(params);
+      break;
+    case "marketingChanelId":
+      response = await CampaignMarketingService.listMAChannel(params);
       break;
     case "sourceId":
     case "source":
@@ -253,6 +269,15 @@ export async function SelectOptionData(key: string, params?: any) {
         if (key === "customer" || key === "customerId") {
           return { value: item.id, label: `${item.name} - ${item.phoneMasked}` };
         }
+        if (key === "categoryItemId") {
+          return { value: item.id, label: `${item.name}` };
+        }
+        if (key === "customerSource" || key === "customerSourceId") {
+          return { value: item.id, label: `${item.name}` };
+        }
+        if (key === "marketingId" || key === "marketingChanelId") {
+          return { value: item.id, label: `${item.name}` };
+        }
         if (key === "scrId") {
           return { value: item.id, label: `${item.unitNumber} - ${item.customerName}` };
         }
@@ -260,11 +285,11 @@ export async function SelectOptionData(key: string, params?: any) {
           return { value: item.name, label: `${item.name}` };
         }
         if (key === "serviceId") {
-          return { 
-            value: item.id, 
+          return {
+            value: item.id,
             label: `${item.name}`,
             service_price: item.price || 0,
-            service_discount: item.discount || 0
+            service_discount: item.discount || 0,
           };
         }
         return {

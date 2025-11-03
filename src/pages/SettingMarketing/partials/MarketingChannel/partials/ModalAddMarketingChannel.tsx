@@ -103,7 +103,7 @@ export default function ModalAddMarketingChannel(props: any) {
     const response = await CampaignMarketingService.updateMAChannel(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} kênh Marketing thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} kênh truyền thông thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -203,7 +203,7 @@ export default function ModalAddMarketingChannel(props: any) {
       >
         <form className="form-add-marketing-channel" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader
-            title={`${data ? "Chỉnh sửa" : "Thêm mới"} kênh Marketing`}
+            title={`${data ? "Chỉnh sửa" : "Thêm mới"} kênh truyền thông`}
             toggle={() => {
               !isSubmit && onHide(false);
             }}

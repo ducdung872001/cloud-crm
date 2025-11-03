@@ -176,7 +176,7 @@ export default function AddCardServiceModal(props: AddInfoCardServiceModalProps)
     setValidateCard(false);
     setDataCard(e);
     if (e.serviceId > 0) {
-      setDataService({ value: e.serviceId, label: e.serviceName, serviceCombo: e.serviceCombo, treatmentNum: 0 });
+      setDataService({ value: e.serviceId, label: e.serviceName, serviceCombo: e.serviceCombo, treatmentNum: 1 });
     } else {
       setDataService(null);
       setDataPriceVariation(null);
@@ -261,7 +261,7 @@ export default function AddCardServiceModal(props: AddInfoCardServiceModalProps)
         invoiceId: invoiceId,
         customerId: customerId,
         serviceId: 0,
-        treatmentNum: 0,
+        treatmentNum: 1,
         totalCard: 0,
         serviceCombo: "",
       } as IBoughtCardRequest),
@@ -326,7 +326,7 @@ export default function AddCardServiceModal(props: AddInfoCardServiceModalProps)
                     disabled={!dataService || dataService?.serviceCombo ? true : false}
                   />
                 ),
-              },              
+              },
             ] as IFieldCustomize[])
           : []),
         {
@@ -397,7 +397,7 @@ export default function AddCardServiceModal(props: AddInfoCardServiceModalProps)
 
       setFormData({ ...formData, values: { ...formData?.values, serviceId: dataService.value } });
     } else {
-      setFormData({ ...formData, values: { ...formData?.values, serviceId: 0, treatmentNum: 0, serviceCombo: JSON.stringify("") } });
+      setFormData({ ...formData, values: { ...formData?.values, serviceId: 0, treatmentNum: 1, serviceCombo: JSON.stringify("") } });
     }
   }, [dataService]);
 

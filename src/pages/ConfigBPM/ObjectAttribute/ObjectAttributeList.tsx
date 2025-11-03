@@ -15,7 +15,7 @@ import ContractAttributeService from "services/ContractAttributeService";
 import { showToast } from "utils/common";
 import { getPermissions } from "utils/common";
 // import AddContractAttributeModal from "./partials/AddContractAtributeModal";
-import { getPageOffset } from 'reborn-util';
+import { getPageOffset } from "reborn-util";
 import { useSearchParams } from "react-router-dom";
 
 import "./ObjectAttributeList.scss";
@@ -42,7 +42,7 @@ export default function ObjectAttributeList(props: any) {
   const [params, setParams] = useState({
     name: "",
     limit: 10,
-    page: 1
+    page: 1,
   });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
@@ -56,7 +56,7 @@ export default function ObjectAttributeList(props: any) {
   const contractAttributeFilterList: IFilterItem[] = useMemo(
     () => [
       {
-        key: "datatype", 
+        key: "datatype",
         name: "Kiểu dữ liệu",
         type: "select",
         is_featured: true,
@@ -152,11 +152,11 @@ export default function ObjectAttributeList(props: any) {
   const dataFormat = ["text-center", "", "", "text-center", ""];
 
   const dataMappingArray = (item: any, index: number) => [
-    getPageOffset(params) + index + 1, 
-    item.name, 
-    item.datatype || 'text',
-    item.position, 
-    item.parentName
+    getPageOffset(params) + index + 1,
+    item.name,
+    item.datatype || "text",
+    item.position,
+    item.parentName,
   ];
 
   const actionsTable = (item: any): IAction[] => {
@@ -235,7 +235,7 @@ export default function ObjectAttributeList(props: any) {
             className="title-first"
             title="Quay lại"
           >
-            Cấu hình BPM
+            Cấu hình quy trình
           </h1>
           <Icon
             name="ChevronRight"
@@ -318,7 +318,7 @@ export default function ObjectAttributeList(props: any) {
             getListObjectAttribute(params);
           }
           setShowModalAdd(false);
-          setDataObjectAttribute(null)
+          setDataObjectAttribute(null);
         }}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />

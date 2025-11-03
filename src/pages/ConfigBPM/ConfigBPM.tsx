@@ -5,9 +5,8 @@ import ComponentList from "./ComponentList/ComponentList";
 import ObjectGroupList from "./ObjectGroup/ObjectGroup";
 import ObjectAttributeList from "./ObjectAttribute/ObjectAttributeList";
 
-
 export default function ConfigBPM() {
-  document.title = "Cấu hình BPM";
+  document.title = "Cấu hình quy trình";
   const isBeauty = localStorage.getItem("isBeauty");
 
   const [tab, setTab] = useState<string>("");
@@ -26,12 +25,11 @@ export default function ConfigBPM() {
     //   title: "Định nghĩa các trường thông tin bổ sung đối tượng",
     //   is_tab: "tab_three",
     // },
-       
   ];
 
   return (
     <div className="page-content page-config-bpm">
-      {!isDetailCategory && <TitleAction title="Cấu hình BPM" />}
+      {!isDetailCategory && <TitleAction title="Cấu hình quy trình" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (
           <ul className="menu">
@@ -77,7 +75,9 @@ export default function ConfigBPM() {
             }
           }}
         />
-      ) : ([])}
+      ) : (
+        []
+      )}
     </div>
   );
 }

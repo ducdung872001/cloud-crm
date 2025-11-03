@@ -44,9 +44,9 @@ export default function CampaignMarketingList() {
   const navigate = useNavigate();
   const checkIsKanban = localStorage.getItem("isKanbanCampaignMA");
 
-//   const checkSaleflowId = localStorage.getItem("saleflowId");
+  //   const checkSaleflowId = localStorage.getItem("saleflowId");
   // console.log("checkCampaignId", checkCampaignId);
-//   const checkSaleflowName = localStorage.getItem("saleflowName");
+  //   const checkSaleflowName = localStorage.getItem("saleflowName");
   // console.log("checkCampaignName", checkCampaignName);
 
   const isMounted = useRef(false);
@@ -73,7 +73,7 @@ export default function CampaignMarketingList() {
     name: "",
     limit: 10,
     status: -1,
-    page: 1
+    page: 1,
   });
 
   const [status, setStatus] = useState<number>(() => {
@@ -82,8 +82,7 @@ export default function CampaignMarketingList() {
 
   useEffect(() => {
     setParams({ ...params, status: status });
-  }, [status])
-  
+  }, [status]);
 
   ///activities
 
@@ -111,36 +110,36 @@ export default function CampaignMarketingList() {
 
   const listApproach = [
     {
-        value: 1,
-        label: 'Chiến dịch',
-        color: "#E98E4C"
+      value: 1,
+      label: "Chiến dịch",
+      color: "#E98E4C",
     },
     {
-        value: 2,
-        label: 'Phân bổ ngân sách',
-        color:  "#ED6665"
+      value: 2,
+      label: "Phân bổ ngân sách",
+      color: "#ED6665",
     },
     {
-        value: 3,
-        label: 'Giao chỉ tiêu',
-        color: "#FFBF00"
+      value: 3,
+      label: "Giao chỉ tiêu",
+      color: "#FFBF00",
     },
     {
-        value: 4,
-        label: 'Theo dõi thực hiện',
-        color: "#9966CC"
+      value: 4,
+      label: "Theo dõi thực hiện",
+      color: "#9966CC",
     },
     {
-        value: 5,
-        label: 'Báo cáo',
-        color: "#6A5ACD"
+      value: 5,
+      label: "Báo cáo",
+      color: "#6A5ACD",
     },
     {
-        value: 6,
-        label: 'Kết thúc',
-        color: "#007FFF"
+      value: 6,
+      label: "Kết thúc",
+      color: "#007FFF",
     },
-  ]
+  ];
 
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(checkIsKanban ? JSON.parse(checkIsKanban) : false);
   useEffect(() => {
@@ -196,7 +195,7 @@ export default function CampaignMarketingList() {
 
   const abortController = new AbortController();
 
-  const getListCampaignMA= async (paramsSearch: any) => {
+  const getListCampaignMA = async (paramsSearch: any) => {
     setIsLoading(true);
 
     const response = await CampaignMarketingService.list(paramsSearch, abortController.signal);
@@ -221,8 +220,6 @@ export default function CampaignMarketingList() {
     }
     setIsLoading(false);
   };
-
-
 
   useEffect(() => {
     if (!isMounted.current) {
@@ -291,26 +288,23 @@ export default function CampaignMarketingList() {
   const titles = ["STT", "Ảnh chiến dịch", "Tên chiến dịch", "Mã chiến dịch", "Ngày bắt đầu", "Ngày kết thúc", "Tổng ngân sách", "Trạng thái"];
   const dataFormat = ["text-center", "text-center", "", "", "text-center", "text-center", "text-right", "text-center"];
 
-
   const dataMappingArray = (item: any, index: number) => [
     getPageOffset(params) + index + 1,
     <Image key={item.id} src={item.cover} alt={item.name} />,
     item.name,
     item.code,
-    item.startDate ? moment(item.startDate).format('DD/MM/YYYY') : '',
-    item.endDate ? moment(item.endDate).format('DD/MM/YYYY') : '',
+    item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "",
+    item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
     formatCurrency(item.totalBudget || 0),
     <Badge
-        key={item.id}
-        text={item.statusOther === 1 || item.statusOther === 0 ? "Đang thực hiện" : item.statusOther === 2 ? "Hoàn thành" : "Tạm dừng"}
-        variant={item.statusOther === 1 || item.statusOther === 0 ? "primary" : item.statusOther === 2 ? "success" : "warning"}
+      key={item.id}
+      text={item.statusOther === 1 || item.statusOther === 0 ? "Đang thực hiện" : item.statusOther === 2 ? "Hoàn thành" : "Tạm dừng"}
+      variant={item.statusOther === 1 || item.statusOther === 0 ? "primary" : item.statusOther === 2 ? "success" : "warning"}
     />,
   ];
 
   const actionsTable = (item: any): IAction[] => {
-
     return [
-    
       // {
       //   title: "Xem chi tiết",
       //   icon: <Icon name="Eye" />,
@@ -342,7 +336,7 @@ export default function CampaignMarketingList() {
     const response = await CampaignMarketingService.deleteMABudget(id);
 
     if (response.code === 0) {
-      showToast("Xóa kênh Marketing thành công", "success");
+      showToast("Xóa kênh truyền thông thành công", "success");
       reloadListChannel();
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -350,7 +344,6 @@ export default function CampaignMarketingList() {
     setShowDialog(false);
     setContentDialog(null);
   };
-
 
   const onDelete = async (id: number) => {
     const response = await CampaignMarketingService.delete(id);
@@ -432,7 +425,7 @@ export default function CampaignMarketingList() {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "kênh Marketing " : `${listIdChecked.length} kênh Marketing đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "kênh truyền thông " : `${listIdChecked.length} kênh truyền thông đã chọn`}
           {item ? <strong>{item.channelName}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -464,8 +457,6 @@ export default function CampaignMarketingList() {
   ];
 
   //danh sách quy trinhf
-
-
 
   const [campaignMaIdList, setCampaignMAIdList] = useState([]);
   // console.log('opportunityIdList', opportunityIdList);
@@ -508,7 +499,7 @@ export default function CampaignMarketingList() {
               emailMasked: item.customerEmail,
               address: item.customerAddress,
               employeeName: item.employeeName,
-              coyId: item.id
+              coyId: item.id,
             });
           }
         }
@@ -522,7 +513,6 @@ export default function CampaignMarketingList() {
   }, [campaignMaIdList]);
 
   const handlClickOptionStatus = (e, value) => {
-
     if (value == status) {
       setStatus(-1);
       // setParams({ ...params, status: -1 });
@@ -564,7 +554,7 @@ export default function CampaignMarketingList() {
       const result = response.result;
       if (status === 1) {
         setDataOfStatus_1(result);
-      } 
+      }
       // else if (status === 2) {
       //   setDataOfStatus_2(result);
       // } else if (status === 3) {
@@ -599,7 +589,7 @@ export default function CampaignMarketingList() {
   const reLoadListCampaignMA = () => {
     getListCampaignMA(params);
     getDataOfStatus(1);
-  }
+  };
 
   const reloadListChannel = () => {
     getListChannel(2);
@@ -607,7 +597,7 @@ export default function CampaignMarketingList() {
     getListChannel(4);
     getListChannel(5);
     getListChannel(6);
-  }
+  };
 
   const [isModalAllocateBudget, setIsModalAllocateBudget] = useState(false);
   const [isModalGiveGoal, setIsModalGiveGoal] = useState(false);
@@ -629,7 +619,7 @@ export default function CampaignMarketingList() {
         setDataOfStatus_3(result);
       } else if (status === 4) {
         setDataOfStatus_4(result);
-      } else if(status === 5){
+      } else if (status === 5) {
         setDataOfStatus_5(result);
       } else {
         setDataOfStatus_6(result);
@@ -642,18 +632,14 @@ export default function CampaignMarketingList() {
   const [isModalReport, setIsModalReport] = useState(false);
   const [isMarketingChannelInternal, setIsMarketingChannelInternal] = useState(false);
 
-
   return (
     <div className={`page-content page__campaign-marketing${isNoItem ? " bg-white" : ""}`}>
       {!isDetailCampaignMA && <TitleAction title="Chiến dịch Marketing" titleActions={titleActions} />}
 
-        <div className="card-box d-flex flex-column">
-        
-
-          <div className={`${isRegimeKanban ? "d-none" : "quick__search"}`}>
-            
-            <div className={`${isRegimeKanban ? "d-none" : "quick__search--right"}`}>
-              {/* {width < 1920 && width > 768 && listApproach.length > 4 ? (
+      <div className="card-box d-flex flex-column">
+        <div className={`${isRegimeKanban ? "d-none" : "quick__search"}`}>
+          <div className={`${isRegimeKanban ? "d-none" : "quick__search--right"}`}>
+            {/* {width < 1920 && width > 768 && listApproach.length > 4 ? (
                 <Swiper
                   onInit={(core: SwiperCore) => {
                     swiperRelationshipRef.current = core.el;
@@ -685,252 +671,246 @@ export default function CampaignMarketingList() {
                   })}
                 </Swiper>
               ) : ( */}
-                <div className="list__relationship">
-                  {listApproach.map((item, idx) => {
-                    return item.label ? (
-                      <div
-                        key={idx}
-                        className={`relationship-item ${item.value == status ? "active__relationship--item" : ""}`}
-                        style={{ backgroundColor: item.color, color: 'white' }}
-                        onClick={(e) => {
-                          e && e.preventDefault();
-                          handlClickOptionStatus(e, item.value);
-                        }}
-                      >
-                        {item.label}
-                      </div>
-                    ) : null;
-                  })}
-                </div>
-              {/* )} */}
-            </div>
-            
-          </div>
-          <div className={`${isRegimeKanban ? "d-none" : ""}`}>
-            <SearchBox
-              name="Tên chiến dịch marketing"
-              params={params}
-              isSaveSearch={true}
-              listSaveSearch={listSaveSearch}
-              isFilter={false}
-              listFilterItem={customerFilterList}
-              updateParams={(paramsNew) => setParams(paramsNew)}
-            />
-
-            {!isLoading && listCampaignMA && listCampaignMA.length > 0 ? (
-              <BoxTable
-                name="Danh sách chiến dịch marketing"
-                titles={titles}
-                items={listCampaignMA}
-                isPagination={true}
-                dataPagination={pagination}
-                dataMappingArray={(item, index) => dataMappingArray(item, index)}
-                dataFormat={dataFormat}
-                striped={true}
-                isBulkAction={true}
-                bulkActionItems={bulkActionList}
-                listIdChecked={listIdChecked}
-                setListIdChecked={(listId) => setListIdChecked(listId)}
-                actions={actionsTable}
-                actionType="inline"
-              />
-            ) : isLoading ? (
-              <Loading />
-            ) : (
-              <Fragment>
-                {isNoItem ? (
-                  <SystemNotification
-                    description={
-                      <span>
-                        Hiện tại chưa có chiến dịch Marketing nào. <br />
-                        Hãy thêm mới chiến dịch Marketing đầu tiên nhé!
-                      </span>
-                    }
-                    type="no-item"
-                    titleButton="Thêm mới chiến dịch Marketing"
-                    action={() => {
-                      setShowModalAdd(true);
-                      setIdCampaignMA(null);
-                      setDataCampaignMA(null);
+            <div className="list__relationship">
+              {listApproach.map((item, idx) => {
+                return item.label ? (
+                  <div
+                    key={idx}
+                    className={`relationship-item ${item.value == status ? "active__relationship--item" : ""}`}
+                    style={{ backgroundColor: item.color, color: "white" }}
+                    onClick={(e) => {
+                      e && e.preventDefault();
+                      handlClickOptionStatus(e, item.value);
                     }}
-                  />
-                ) : (
-                  <SystemNotification
-                    description={
-                      <span>
-                        Không có dữ liệu trùng khớp. <br />
-                        Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
-                      </span>
-                    }
-                    type="no-result"
-                  />
-                )}
-              </Fragment>
-            )}
+                  >
+                    {item.label}
+                  </div>
+                ) : null;
+              })}
+            </div>
+            {/* )} */}
           </div>
+        </div>
+        <div className={`${isRegimeKanban ? "d-none" : ""}`}>
+          <SearchBox
+            name="Tên chiến dịch marketing"
+            params={params}
+            isSaveSearch={true}
+            listSaveSearch={listSaveSearch}
+            isFilter={false}
+            listFilterItem={customerFilterList}
+            updateParams={(paramsNew) => setParams(paramsNew)}
+          />
 
-          <div className={`${isRegimeKanban ? "" : "d-none"}`}>
-              <Kanban
-                params={params}
-                setParams={setParams}
-                contractFilterList={customerFilterList}
-                listApproach={listApproach}
-                data={listCampaignMA}
-
-                dataOfStatus_1={dataOfStatus_1}
-                setDataOfStatus_1={setDataOfStatus_1}
-                dataOfStatus_2={dataOfStatus_2}
-                setDataOfStatus_2={setDataOfStatus_2}
-                dataOfStatus_3={dataOfStatus_3}
-                setDataOfStatus_3={setDataOfStatus_3}
-                dataOfStatus_4={dataOfStatus_4}
-                setDataOfStatus_4={setDataOfStatus_4}
-                dataOfStatus_5={dataOfStatus_5}
-                setDataOfStatus_5={setDataOfStatus_5}
-                dataOfStatus_6={dataOfStatus_6}
-                setDataOfStatus_6={setDataOfStatus_6}
-
-                onReload={(reload, idStartPoint, idEndPoint) => {
-                  if (reload) {
-                    // getListCampaignMA(params)
-    
-                    // if (idStartPoint === 1 || idEndPoint === 1) {
-                    //   getDataOfStatus(1);
-                    // }
-                    if (idStartPoint === 2 || idEndPoint === 2) {
-                      getListChannel(2);
-                    }
-                    if (idStartPoint === 3 || idEndPoint === 3) {
-                      getListChannel(3);
-                    }
-                    if (idStartPoint === 4 || idEndPoint === 4) {
-                      getListChannel(4);
-                    }
-                    if (idStartPoint === 5 || idEndPoint === 5) {
-                      getListChannel(5);
-                    }
-                    if (idStartPoint === 6 || idEndPoint === 6) {
-                      getListChannel(6);
-                    }
-
+          {!isLoading && listCampaignMA && listCampaignMA.length > 0 ? (
+            <BoxTable
+              name="Danh sách chiến dịch marketing"
+              titles={titles}
+              items={listCampaignMA}
+              isPagination={true}
+              dataPagination={pagination}
+              dataMappingArray={(item, index) => dataMappingArray(item, index)}
+              dataFormat={dataFormat}
+              striped={true}
+              isBulkAction={true}
+              bulkActionItems={bulkActionList}
+              listIdChecked={listIdChecked}
+              setListIdChecked={(listId) => setListIdChecked(listId)}
+              actions={actionsTable}
+              actionType="inline"
+            />
+          ) : isLoading ? (
+            <Loading />
+          ) : (
+            <Fragment>
+              {isNoItem ? (
+                <SystemNotification
+                  description={
+                    <span>
+                      Hiện tại chưa có chiến dịch Marketing nào. <br />
+                      Hãy thêm mới chiến dịch Marketing đầu tiên nhé!
+                    </span>
                   }
-                }}
-                campaignMaIdList={campaignMaIdList}
-                setCampaignMAIdList={setCampaignMAIdList}
-                customerIdlist={customerIdlist}
-                setCustomerIdList={setCustomerIdList}
-                columnList={columnList}
-                setColumnList={setColumnList}
-                checkColumn={checkColumn}
-                setCheckColumn={setCheckColumn}
-                dataCustomerList={dataCustomerList}
-                setShowModalAdd={setShowModalAdd}
-                setIsModalAllocateBudget={setIsModalAllocateBudget}
-                setIsModalGiveGoal={setIsModalGiveGoal}
-                setDataCampaignMA={setDataCampaignMA}
-                setChannelItemData={setChannelItemData}
-                showDialogConfirmDeleteChannel={showDialogConfirmDeleteChannel}
-                showDialogConfirmDelete={showDialogConfirmDelete}
-                setIsChangeStatusCampaign={setIsChangeStatusCampaign}
-                setIsModalReport={setIsModalReport}
-                setIsMarketingChannelInternal={setIsMarketingChannelInternal}
-              />
-          </div>
-
-        
+                  type="no-item"
+                  titleButton="Thêm mới chiến dịch Marketing"
+                  action={() => {
+                    setShowModalAdd(true);
+                    setIdCampaignMA(null);
+                    setDataCampaignMA(null);
+                  }}
+                />
+              ) : (
+                <SystemNotification
+                  description={
+                    <span>
+                      Không có dữ liệu trùng khớp. <br />
+                      Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
+                    </span>
+                  }
+                  type="no-result"
+                />
+              )}
+            </Fragment>
+          )}
         </div>
 
-        <ModalAddCampaignMA
-            onShow={showModalAdd}
-            idData={idCampaignMA}
-            onHide={(reload) => {
+        <div className={`${isRegimeKanban ? "" : "d-none"}`}>
+          <Kanban
+            params={params}
+            setParams={setParams}
+            contractFilterList={customerFilterList}
+            listApproach={listApproach}
+            data={listCampaignMA}
+            dataOfStatus_1={dataOfStatus_1}
+            setDataOfStatus_1={setDataOfStatus_1}
+            dataOfStatus_2={dataOfStatus_2}
+            setDataOfStatus_2={setDataOfStatus_2}
+            dataOfStatus_3={dataOfStatus_3}
+            setDataOfStatus_3={setDataOfStatus_3}
+            dataOfStatus_4={dataOfStatus_4}
+            setDataOfStatus_4={setDataOfStatus_4}
+            dataOfStatus_5={dataOfStatus_5}
+            setDataOfStatus_5={setDataOfStatus_5}
+            dataOfStatus_6={dataOfStatus_6}
+            setDataOfStatus_6={setDataOfStatus_6}
+            onReload={(reload, idStartPoint, idEndPoint) => {
               if (reload) {
-                reLoadListCampaignMA();
+                // getListCampaignMA(params)
+
+                // if (idStartPoint === 1 || idEndPoint === 1) {
+                //   getDataOfStatus(1);
+                // }
+                if (idStartPoint === 2 || idEndPoint === 2) {
+                  getListChannel(2);
+                }
+                if (idStartPoint === 3 || idEndPoint === 3) {
+                  getListChannel(3);
+                }
+                if (idStartPoint === 4 || idEndPoint === 4) {
+                  getListChannel(4);
+                }
+                if (idStartPoint === 5 || idEndPoint === 5) {
+                  getListChannel(5);
+                }
+                if (idStartPoint === 6 || idEndPoint === 6) {
+                  getListChannel(6);
+                }
               }
-              setShowModalAdd(false);
-              setIdCampaignMA(null);
             }}
-        />
+            campaignMaIdList={campaignMaIdList}
+            setCampaignMAIdList={setCampaignMAIdList}
+            customerIdlist={customerIdlist}
+            setCustomerIdList={setCustomerIdList}
+            columnList={columnList}
+            setColumnList={setColumnList}
+            checkColumn={checkColumn}
+            setCheckColumn={setCheckColumn}
+            dataCustomerList={dataCustomerList}
+            setShowModalAdd={setShowModalAdd}
+            setIsModalAllocateBudget={setIsModalAllocateBudget}
+            setIsModalGiveGoal={setIsModalGiveGoal}
+            setDataCampaignMA={setDataCampaignMA}
+            setChannelItemData={setChannelItemData}
+            showDialogConfirmDeleteChannel={showDialogConfirmDeleteChannel}
+            showDialogConfirmDelete={showDialogConfirmDelete}
+            setIsChangeStatusCampaign={setIsChangeStatusCampaign}
+            setIsModalReport={setIsModalReport}
+            setIsMarketingChannelInternal={setIsMarketingChannelInternal}
+          />
+        </div>
+      </div>
 
-        <ModalAllocateBudget
-            onShow={isModalAllocateBudget}
-            idData={channelItemData?.id}
-            idCampaign={dataCampaignMA?.id || channelItemData?.marketingId}
-            onHide={(reload) => {
-              if (reload) {
-                getListChannel(2);
-              }
-              setIsModalAllocateBudget(false);
-              setChannelItemData(null);
-              setIdCampaignMA(null);
-              setDataCampaignMA(null);
-            }}
-        />
+      <ModalAddCampaignMA
+        onShow={showModalAdd}
+        idData={idCampaignMA}
+        onHide={(reload) => {
+          if (reload) {
+            reLoadListCampaignMA();
+          }
+          setShowModalAdd(false);
+          setIdCampaignMA(null);
+        }}
+      />
 
-        <ModalGiveGoal
-          onShow={isModalGiveGoal}
-          idData={channelItemData?.id}
-          idCampaign={channelItemData?.marketingId}
-          onHide={(reload) => {
-            if (reload) {
-              getListChannel(2);
-              getListChannel(3);
-            }
-            setIsModalGiveGoal(false);
-            setChannelItemData(null);
-            setIdCampaignMA(null);
-            setDataCampaignMA(null);
-          }}
-        />
+      <ModalAllocateBudget
+        onShow={isModalAllocateBudget}
+        idData={channelItemData?.id}
+        idCampaign={dataCampaignMA?.id || channelItemData?.marketingId}
+        onHide={(reload) => {
+          if (reload) {
+            getListChannel(2);
+          }
+          setIsModalAllocateBudget(false);
+          setChannelItemData(null);
+          setIdCampaignMA(null);
+          setDataCampaignMA(null);
+        }}
+      />
 
-        <ChangeStatusCampaign
-          onShow={isChangeStatusCampaign}
-          data={dataCampaignMA}
-          onHide={(reload) => {
-            if (reload) {
-              getListCampaignMA(params);
-              reLoadListCampaignMA();
-            }
-            setIsChangeStatusCampaign(false);
-            setDataCampaignMA(null);
-          }}
-        />
+      <ModalGiveGoal
+        onShow={isModalGiveGoal}
+        idData={channelItemData?.id}
+        idCampaign={channelItemData?.marketingId}
+        onHide={(reload) => {
+          if (reload) {
+            getListChannel(2);
+            getListChannel(3);
+          }
+          setIsModalGiveGoal(false);
+          setChannelItemData(null);
+          setIdCampaignMA(null);
+          setDataCampaignMA(null);
+        }}
+      />
 
-        <MarketingReport
-          onShow={isModalReport}
-          data={channelItemData}
-          onHide={(reload) => {
-            if (reload) {
-              // getListContractEform(params);
-            }
-            setIsModalReport(false);
-            setChannelItemData(null);
-          }}
-        />
-        
+      <ChangeStatusCampaign
+        onShow={isChangeStatusCampaign}
+        data={dataCampaignMA}
+        onHide={(reload) => {
+          if (reload) {
+            getListCampaignMA(params);
+            reLoadListCampaignMA();
+          }
+          setIsChangeStatusCampaign(false);
+          setDataCampaignMA(null);
+        }}
+      />
+
+      <MarketingReport
+        onShow={isModalReport}
+        data={channelItemData}
+        onHide={(reload) => {
+          if (reload) {
+            // getListContractEform(params);
+          }
+          setIsModalReport(false);
+          setChannelItemData(null);
+        }}
+      />
+
       <MarketingChannelInternal
         onShow={isMarketingChannelInternal}
         data={channelItemData}
         // checkEmail={checkEmail}
         onHide={(reload, type, mbtId) => {
           if (reload) {
-            if(type === 'email'){
-              navigate(`/email_marketting?mbtId=${mbtId}`)
-            } 
+            if (type === "email") {
+              navigate(`/email_marketting?mbtId=${mbtId}`);
+            }
 
-            if(type === 'sms'){
-              navigate(`/sms_marketting?mbtId=${mbtId}`)
-            } 
+            if (type === "sms") {
+              navigate(`/sms_marketting?mbtId=${mbtId}`);
+            }
 
-            if(type === 'marketing_automation'){
-              navigate(`/create_marketing_automation?mbtId=${mbtId}`)
-            } 
+            if (type === "marketing_automation") {
+              navigate(`/create_marketing_automation?mbtId=${mbtId}`);
+            }
           }
           setIsMarketingChannelInternal(false);
         }}
       />
-    
-        <Dialog content={contentDialog} isOpen={showDialog} />
+
+      <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );
 }

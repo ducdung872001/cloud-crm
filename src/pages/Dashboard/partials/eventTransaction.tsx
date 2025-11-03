@@ -5,7 +5,7 @@ import CustomScrollbar from "components/customScrollbar";
 const eventType = {
   sale: "Bán hàng cho khách hàng",
   warehousing: "Nhập hàng từ nhà cung cấp",
-  order: "Đặt hàng từ nhà cung cấp",
+  order: "Mua hàng từ nhà cung cấp",
   customer_return: "Khách hàng trả hàng",
   return_supplier: "Trả hàng nhà cung cấp",
 };

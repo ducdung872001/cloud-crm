@@ -41,13 +41,13 @@ export default function MarketingChannel(props: any) {
   const [params, setParams] = useState({
     name: "",
     limit: 10,
-    page: 1
+    page: 1,
   });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách kênh Marketing",
+      name: "Danh sách kênh truyền thông",
       is_active: true,
     },
   ]);
@@ -75,21 +75,21 @@ export default function MarketingChannel(props: any) {
       const result = response.result;
       setListMarketingChannel(result);
 
-    //   setPagination({
-    //     ...pagination,
-    //     page: +result.page,
-    //     sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
-    //     totalItem: +result.total,
-    //     totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
-    //   });
+      //   setPagination({
+      //     ...pagination,
+      //     page: +result.page,
+      //     sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
+      //     totalItem: +result.total,
+      //     totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
+      //   });
 
-    //   if (+result.total === 0 && +result.page === 1) {
-    //     setIsNoItem(true);
-    //   }
-    } 
+      //   if (+result.total === 0 && +result.page === 1) {
+      //     setIsNoItem(true);
+      //   }
+    }
     // else if (response.code == 400) {
     //   setIsPermissions(true);
-    // } 
+    // }
     else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -108,7 +108,7 @@ export default function MarketingChannel(props: any) {
     }
 
     if (isMounted.current === true) {
-        getListMarketingChannel(params);
+      getListMarketingChannel(params);
       const paramsTemp = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
@@ -139,12 +139,7 @@ export default function MarketingChannel(props: any) {
 
   const dataFormat = ["text-center", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
-    getPageOffset(params) + index + 1,
-    item.name, 
-    item.code,
-    item.position,
-  ];
+  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.code, item.position];
 
   const actionsTable = (item: any): IAction[] => {
     return [
@@ -170,7 +165,7 @@ export default function MarketingChannel(props: any) {
     const response = await CampaignMarketingService.deleteMAChannel(id);
 
     if (response.code === 0) {
-      showToast("Xóa loại kênh Marketing thành công", "success");
+      showToast("Xóa loại kênh truyền thông thành công", "success");
       getListMarketingChannel(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -222,7 +217,7 @@ export default function MarketingChannel(props: any) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt Marketing
+            Cài đặt truyền thông
           </h1>
           <Icon
             name="ChevronRight"
@@ -230,13 +225,13 @@ export default function MarketingChannel(props: any) {
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Danh sách kênh Marketing</h1>
+          <h1 className="title-last">Danh sách kênh truyền thông</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên kênh Marketing"
+          name="Tên kênh truyền thông"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -269,12 +264,12 @@ export default function MarketingChannel(props: any) {
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa có kênh Marketing nào. <br />
-                    Hãy thêm mới kênh Marketing đầu tiên nhé!
+                    Hiện tại chưa có kênh truyền thông nào. <br />
+                    Hãy thêm mới kênh truyền thông đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới kênh Marketing"
+                titleButton="Thêm mới kênh truyền thông"
                 action={() => {
                   setDataMarketingChannel(null);
                   setShowModalAddChannel(true);
@@ -306,7 +301,7 @@ export default function MarketingChannel(props: any) {
           setShowModalAddChannel(false);
         }}
       />
-     
+
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );
