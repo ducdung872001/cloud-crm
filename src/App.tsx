@@ -34,6 +34,7 @@ import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import { msalConfig } from "./configs/authConfig";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
+import EmailConfirm from "pages/Ticket/partials/EmailComfirm/EmailConfirm";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -125,7 +126,13 @@ export default function App() {
     }
 
     //Gọi thực thi
-    checkEmployeeStatus();
+    // checkEmployeeStatus();
+      if (
+      location.pathname !== "/send_email_confirm" 
+    ) {
+      checkEmployeeStatus();
+    }
+
   }, [cookies.user, location]);
 
   useEffect(() => {
@@ -285,6 +292,7 @@ export default function App() {
           {isLogin && <Route path="*" element={<LayoutPage />} />}
           {location.pathname == "/link_survey" && <Route path="/link_survey" element={<LinkSurvey />} />}
           {location.pathname == "/upload_document" && <Route path="/upload_document" element={<UploadDocument />} />}
+          {location.pathname == "/send_email_confirm" && <Route path="/send_email_confirm" element={<EmailConfirm />} />}
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />

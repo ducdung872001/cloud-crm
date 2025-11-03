@@ -166,6 +166,7 @@ import BusinessProcessCreate from "pages/BPM/BusinessProcessCreate";
 import CampaignListParent from "pages/Campaign/CampaignListParent";
 import UserTaskList from "pages/UserTaskList";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
+import EmailConfirm from "pages/Ticket/partials/EmailComfirm/EmailConfirm";
 
 const isBeauty = localStorage.getItem("isBeauty");
 
@@ -1255,6 +1256,10 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_ticket,
     component: <SettingTicketList />,
+  },
+  {
+    path: urls.send_email_confirm,
+    component: <EmailConfirm />,
   },
   {
     path: urls.setting_call,

@@ -1553,6 +1553,7 @@ export const urlsApi = {
     ticketExchangeDelete: prefixAdmin + "/ticketExchange/delete",
     ticketProcess: prefixAdmin + "/ticketProcess/update",
     resetTransferVotes: prefixAdmin + "/supportObject/reset",
+    sendEmailConfirm: prefixAdmin + "/send_email_confirm",
   },
   ticketCategory: {
     list: prefixAdmin + "/ticketCategory/list",
@@ -3020,6 +3021,7 @@ export const urls = {
   sms_marketting: "/sms_marketting",
   email_marketting: "/email_marketting",
   zalo_marketting: "/zalo_marketting",
+  send_email_confirm: "/send_email_confirm",
   // Setting
   setting_common: "/setting_common",
   setting_rose: "/setting_rose",
