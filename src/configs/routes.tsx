@@ -524,7 +524,7 @@ export const menu: IMenuItem[] = [
             title: "manageOrder", // Yêu cầu mua hàng
             path: urls.manager_order,
             icon: <Icon name="ManageOrder" />,
-            code: "MANAGE_ORDER", //Tài nguyên cho show quản lý đặt hàng hay không
+            code: "ORDER_REQUEST", //Tài nguyên cho show quản lý đặt hàng hay không
           },
           {
             title: "createSalesOrder", // Tạo đơn bán hàng
