@@ -33,6 +33,9 @@ export default function RegisterFetch() {
         config.headers["Content-Type"] = "application/json";
       }
       config.headers["Hostname"] = location.hostname || "";
+      // config.headers["Hostname"] = "rebornjsc.reborn.vn";
+      // config.headers["Hostname"] = "ducnang24.reborn.vn";
+      // https://ducnang24.reborn.vn/crm/setting_account
 
       // if (urlsFormData.filter((urlForm) => url.indexOf(urlForm) !== -1).length > 0) {
       //   delete config.headers["Content-Type"];
@@ -54,7 +57,7 @@ export default function RegisterFetch() {
               } else {
                 url = process.env.APP_API_URL + url;
               }
-              // url = "http://192.168.137.1:9100" + url; //Gọi sang máy Năng, nếu không gọi thì comment đoạn này và mở đoạn trên
+              // url = "http://192.168.183.33:9100" + url; //Gọi sang máy Năng, nếu không gọi thì comment đoạn này và mở đoạn trên
             } else {
               url = process.env.APP_API_URL + url;
             }

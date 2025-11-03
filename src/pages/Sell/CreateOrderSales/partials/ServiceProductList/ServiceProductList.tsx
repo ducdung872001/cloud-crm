@@ -190,35 +190,54 @@ export default function ServiceProductList(props: IServiceProductListProps) {
   };
 
   const onDeleteAllServiceProduct = () => {
-    const selectedIds = listIdChecked || [];
-    if (!selectedIds.length) return;
+    const arrServicePromise = [];
+    const arrProductPromise = [];
 
-    const arrPromises = selectedIds.map((selectedId) => {
-      const found = listProductInvoiceService.find((x) => (x.bptId || x.bseId) === selectedId);
-      if (found?.bptId) {
-        return BoughtProductService.delete(found.bptId);
-      }
-      if (found?.bseId) {
-        return BoughtServiceService.delete(found.bseId);
-      }
-      return Promise.resolve(null);
-    });
+    if (listIdProduct.length > 0) {
+      listIdProduct.map((item) => {
+        const promise = new Promise((resolve, reject) => {
+          BoughtProductService.delete(item).then((res) => {
+            resolve(res);
+          });
+        });
 
-    Promise.all(arrPromises)
-      .then((results) => {
-        const checkbox = results?.filter(Boolean)?.length || 0;
-        if (checkbox > 0) {
-          showToast("Xóa dịch vụ/sản phẩm đã chọn thành công", "success");
-          getListProductInvoiceService();
-          setListIdChecked([]);
-        } else {
-          showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-        }
-      })
-      .finally(() => {
-        setShowDialog(false);
-        setContentDialog(null);
+        arrProductPromise.push(promise);
+
+        Promise.all(arrProductPromise).then((result) => {
+          if (result.length > 0) {
+            showToast("Xóa sản phẩm thành công", "success");
+            getListProductInvoiceService();
+          } else {
+            showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+          }
+          setShowDialog(false);
+          setContentDialog(null);
+        });
       });
+    }
+
+    if (listIdService.length > 0) {
+      listIdService.map((item) => {
+        const promise = new Promise((resolve, reject) => {
+          BoughtServiceService.delete(item).then((res) => {
+            resolve(res);
+          });
+        });
+
+        arrServicePromise.push(promise);
+
+        Promise.all(arrServicePromise).then((result) => {
+          if (result.length > 0) {
+            showToast("Xóa dịch vụ thành công", "success");
+            getListProductInvoiceService();
+          } else {
+            showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+          }
+          setShowDialog(false);
+          setContentDialog(null);
+        });
+      });
+    }
   };
 
   const showDialogConfirmDelete = (item?: IProductInvoiceServiceResponse) => {
@@ -273,7 +292,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
           name="dịch vụ/sản phẩm cần bán đã chọn"
           titles={titles}
           dataFormat={dataFormat}
-          items={listProductInvoiceService.map((item) => ({ ...item, id: item.bptId || item.bseId }))}
+          items={listProductInvoiceService}
           dataMappingArray={(item, index) => dataMappingArray(item, index)}
           listIdChecked={listIdChecked}
           bulkActionItems={bulkActionList}

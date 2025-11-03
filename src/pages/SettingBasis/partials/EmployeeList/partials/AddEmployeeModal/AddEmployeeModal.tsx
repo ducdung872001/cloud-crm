@@ -66,9 +66,12 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
     }
   };
 
+  const [loadingListRole, setLoadingListRole] = useState<boolean>(false);
+
   useEffect(() => {
     if (data && onShow) {
       handleDetailEmployee(data.id);
+      setLoadingListRole(true);
       handleGetRole(data.id);
     }
   }, [data, onShow]);
@@ -217,6 +220,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
         avatar: data?.avatar ?? "",
         sip: data?.sip ?? "",
         roles: dataLstEmployeeRole ?? "[]",
+        roleEmployeeList: [],
       } as IEmployeeRequest),
     [data, onShow, branchId, dataBranch, dataLstEmployeeRole]
   );
@@ -246,7 +250,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
 
   const [formData, setFormData] = useState<IFormData>({
     values: values,
-  });  
+  });
 
   const [isLoadingRole, setIsLoadingRole] = useState<boolean>(false);
   const [listRole, setListRole] = useState<IOption[]>([]);
@@ -725,12 +729,25 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
       return;
     }
 
-    setIsSubmit(true);
-
     const body: IEmployeeRequest = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as IEmployeeRequest),
+      ...{
+        roleEmployeeList: valueListRole?.length
+          ? valueListRole.map((item) => {
+              return {
+                roleId: item.value,
+                employeeId: data?.id || null,
+                id: null,
+              };
+            })
+          : [],
+      },
     };
+
+    // console.log("body", body);
+    // return;
+    setIsSubmit(true);
 
     if (isDifferenceObj(formData.values, values)) {
       const response = await EmployeeService.update(body);
@@ -740,53 +757,55 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
         showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
     }
-    if (isDifferenceRole) {
-      // Tìm những phần tử mà trong defaultListRole có, mà trong valueListRole không có (xóa)
-      const removed = defaultListRole.filter((item) => !valueListRole.some((v) => v.id === item.id));
-      if (removed.length > 0) {
-        for (const item of removed) {
-          if (item?.id) {
-            await EmployeeService.deleteRole({ id: item.id });
-          }
-        }
-      }
-      // Tìm những phần tử mà trong valueListRole có (id == null), mà trong defaultListRole không có (thêm mới)
-      const added = valueListRole.filter(
-        (item) =>
-          item.id == null && // id == null (thêm mới)
-          !defaultListRole.some((d) => d.value === item.value) // không có trong defaultListRole
-      );
+    handleClearForm(true);
+    setIsSubmit(false);
+    // if (isDifferenceRole) {
+    //   // Tìm những phần tử mà trong defaultListRole có, mà trong valueListRole không có (xóa)
+    //   const removed = defaultListRole.filter((item) => !valueListRole.some((v) => v.id === item.id));
+    //   if (removed.length > 0) {
+    //     for (const item of removed) {
+    //       if (item?.id) {
+    //         await EmployeeService.deleteRole({ id: item.id });
+    //       }
+    //     }
+    //   }
+    //   // Tìm những phần tử mà trong valueListRole có (id == null), mà trong defaultListRole không có (thêm mới)
+    //   const added = valueListRole.filter(
+    //     (item) =>
+    //       item.id == null && // id == null (thêm mới)
+    //       !defaultListRole.some((d) => d.value === item.value) // không có trong defaultListRole
+    //   );
 
-      if (added?.length > 0) {
-        const responseRole = await handleUpdateRole();
-        if (responseRole.code === 0) {
-          showToast(`${data ? "Cập nhật" : "Thêm mới"} quyền cho nhân viên thành công`, "success");
-        } else {
-          showToast(responseRole.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-        }
-      }
-    }
-    if (isDifferenceRole || isDifferenceObj(formData.values, values)) {
-      handleClearForm(true);
-      setIsSubmit(false);
-    }
+    //   if (added?.length > 0) {
+    //     const responseRole = await handleUpdateRole();
+    //     if (responseRole.code === 0) {
+    //       showToast(`${data ? "Cập nhật" : "Thêm mới"} quyền cho nhân viên thành công`, "success");
+    //     } else {
+    //       showToast(responseRole.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    //     }
+    //   }
+    // }
+    // if (isDifferenceRole || isDifferenceObj(formData.values, values)) {
+    //   handleClearForm(true);
+    //   setIsSubmit(false);
+    // }
   };
 
-  const handleUpdateRole = async () => {
-    const body: any = valueListRole?.length
-      ? valueListRole.map((item) => {
-          return {
-            roleId: item.value,
-            employeeId: data?.id,
-            id: item?.id || null,
-          };
-        })
-      : [];
+  // const handleUpdateRole = async () => {
+  //   const body: any = valueListRole?.length
+  //     ? valueListRole.map((item) => {
+  //         return {
+  //           roleId: item.value,
+  //           employeeId: data?.id,
+  //           id: item?.id || null,
+  //         };
+  //       })
+  //     : [];
 
-    const response = await EmployeeService.updateRole(body);
+  //   const response = await EmployeeService.updateRole(body);
 
-    return response;
-  };
+  //   return response;
+  // };
 
   const [defaultListRole, setDefaultListRole] = useState([]);
   const handleGetRole = async (employeeId) => {
@@ -806,6 +825,16 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
     setDefaultListRole(listRoleEmployee);
 
     setValueListRole(listRoleEmployee);
+    if (listRoleEmployee?.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        values: {
+          ...prev.values,
+          roleEmployeeList: listRoleEmployee,
+        },
+      }));
+    }
+    setLoadingListRole(false);
   };
 
   useEffect(() => {
@@ -909,16 +938,26 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
                       return { value: item.value, label: item.label, id: (check && check?.id) || null };
                     })
                   );
+                  setFormData((prev) => ({
+                    ...prev,
+                    values: {
+                      ...prev.values,
+                      roleEmployeeList: e.map((item) => {
+                        let check = defaultListRole.find((el) => el.value === item.value);
+                        return { roleId: item.value, employeeId: data?.id || null, id: (check && check?.id) || null };
+                      }),
+                    },
+                  }));
                 }}
                 onMenuOpen={onSelectOpenRole}
                 placeholder="Chọn nhóm quyền"
-                isLoading={isLoadingRole}
+                isLoading={isLoadingRole || loadingListRole}
               />
             </div>
           ),
         },
       ] as IFieldCustomize[],
-    [listRole, isLoadingRole, valueListRole, defaultListRole, formData]
+    [listRole, isLoadingRole, valueListRole, defaultListRole, formData, loadingListRole]
   );
 
   const actions = useMemo<IActionModal>(

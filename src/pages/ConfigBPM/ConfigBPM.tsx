@@ -7,7 +7,7 @@ import ObjectAttributeList from "./ObjectAttribute/ObjectAttributeList";
 
 
 export default function ConfigBPM() {
-  document.title = "Cấu hình quy trình";
+  document.title = "Cấu hình BPM";
   const isBeauty = localStorage.getItem("isBeauty");
 
   const [tab, setTab] = useState<string>("");
@@ -31,7 +31,7 @@ export default function ConfigBPM() {
 
   return (
     <div className="page-content page-config-bpm">
-      {!isDetailCategory && <TitleAction title="Cấu hình quy trình" />}
+      {!isDetailCategory && <TitleAction title="Cấu hình BPM" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (
           <ul className="menu">

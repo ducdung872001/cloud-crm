@@ -59,7 +59,6 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
   const [isLoadingEmployee, setIsLoadingEmployee] = useState<boolean>(false);
 
   const [detailService, setDetailService] = useState(null);
-  const [detailCard, setDetailCard] = useState(null);
 
   //!validate
   const [checkFieldCustomer, setCheckFieldCustomer] = useState<boolean>(false);
@@ -180,7 +179,6 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
     setCheckFieldCustomer(false);
     setDetailCustomer(e);
     setDetailService(null);
-    setDetailCard(null);
     onSelectOpenBuyService(e.value);
     setFormData({ ...formData, values: { ...formData?.values, customerId: e.value, customerPhone: e.phoneMasked, treatmentTh: 0 } });
   };
@@ -264,17 +262,6 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           serviceNumber: data?.serviceNumber ? data?.serviceNumber : takeDetailService.serviceNumber,
           cardNumber: data?.cardNumber ? data?.cardNumber : takeDetailService.cardNumber,
         });
-        setDetailCard({
-          value: takeDetailService.id,
-          serviceId: takeDetailService.serviceId,
-          label: takeDetailService.serviceName,
-          avatar: takeDetailService.serviceAvatar,
-          isCombo: takeDetailService.isCombo,
-          treatmentNum: takeDetailService.treatmentNum,
-          totalTreatment: takeDetailService.totalTreatment + 1,
-          serviceNumber: data?.serviceNumber ? data?.serviceNumber : takeDetailService.serviceNumber,
-          cardNumber: data?.cardNumber ? data?.cardNumber : takeDetailService.cardNumber,
-        });
       }
     }
 
@@ -287,17 +274,13 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
     }
   }, [data, onShow, idCustomer]);
 
-  const formatOptionLabelBuyService = (option) => {
-    const { label, avatar, cardNumber, serviceNumber } = option || {};
+  const formatOptionLabelBuyService = ({ label, avatar }) => {
     return (
       <div className="selected--item">
         <div className="avatar">
           <img src={avatar || ImageThirdGender} alt={label} />
         </div>
-        <div>
-          <div><strong>{cardNumber || "Không có mã thẻ"}</strong>{serviceNumber ? ` • ${serviceNumber}` : ""}</div>
-          <div className="sub">{label}</div>
-        </div>
+        {label}
       </div>
     );
   };
@@ -306,34 +289,6 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
   const handleChangeValueService = (e) => {
     setCheckFieldService(false);
     setDetailService(e);
-  };
-
-  const handleChangeValueCard = (e) => {
-    setDetailCard(e);
-    // đồng bộ sang trường Dịch vụ khi chọn thẻ dịch vụ
-    if (e) {
-      setDetailService({
-        value: e?.serviceId,
-        serviceId: e?.serviceId,
-        label: e?.label,
-        avatar: e?.avatar,
-        isCombo: e?.isCombo,
-        treatmentNum: e?.treatmentNum,
-        totalTreatment: e?.totalTreatment,
-        serviceNumber: e?.serviceNumber,
-        cardNumber: e?.cardNumber,
-      });
-    }
-    setFormData({
-      ...formData,
-      values: {
-        ...formData?.values,
-        serviceId: e?.serviceId,
-        serviceNumber: e?.serviceNumber,
-        cardNumber: e?.cardNumber,
-        treatmentTh: e?.totalTreatment || 1,
-      },
-    });
   };
 
   useEffect(() => {
@@ -526,7 +481,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
               required={true}
               onChange={(e) => handleChangeValueService(e)}
               isAsyncPaginate={true}
-              disabled={true}
+              disabled={!detailCustomer}
               isFormatOptionLabel={true}
               placeholder="Chọn dịch vụ"
               additional={{
@@ -537,42 +492,6 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
               error={checkFieldService}
               message="Dịch vụ không được bỏ trống"
               isLoading={data?.serviceId ? isLoadingBuyService : null}
-            />
-          ),
-        },
-        {
-          name: "cardNumberSelect",
-          type: "custom",
-          snippet: (
-            <SelectCustom
-              id="cardNumberSelect"
-              name="cardNumberSelect"
-              label="Thẻ dịch vụ"
-              required={true}
-              options={listBuyService}
-              fill={true}
-              value={detailCard}
-              special={true}
-              onChange={(e) => handleChangeValueCard(e)}
-              disabled={!detailCustomer}
-              isFormatOptionLabel={true}
-              placeholder="Chọn thẻ dịch vụ"
-              formatOptionLabel={formatOptionLabelBuyService}
-              isLoading={isLoadingBuyService}
-            />
-          ),
-        },
-        {
-          name: "cardTreatmentNum",
-          type: "custom",
-          snippet: (
-            <NummericInput
-              label="Số buổi trong thẻ"
-              name="cardTreatmentNum"
-              value={detailCard?.treatmentNum || detailService?.treatmentNum || 0}
-              placeholder="Số buổi của thẻ"
-              fill={true}
-              disabled={true}
             />
           ),
         },
@@ -740,7 +659,6 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       setListBuyService([]);
       setDetailEmployee(null);
       setDetailService(null);
-      setDetailCard(null);
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -754,7 +672,6 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
     setListBuyService([]);
     setDetailEmployee(null);
     setDetailService(null);
-    setDetailCard(null);
     setIsLoadingBuyService(false);
   };
 
@@ -853,14 +770,11 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           <ModalHeader
             title={`${data ? "Chỉnh sửa" : "Thêm mới"} lịch sử điều trị`}
             toggle={() => {
-              if (!isSubmit) {
-                onHide(false);
-                setDetailCustomer(null);
-                setDetailEmployee(null);
-                setDetailService(null);
-                setListBuyService([]);
-                setDetailCard(null);
-              }
+              !isSubmit && onHide(false);
+              !isSubmit && setDetailCustomer(null);
+              !isSubmit && setDetailEmployee(null);
+              !isSubmit && setDetailService(null);
+              !isSubmit && setListBuyService([]);
             }}
           />
           <ModalBody>

@@ -174,7 +174,7 @@ export default function ModalAllocateBudget(props: any) {
 
     if (!formData.values?.channelId) {
       setCheckFieldChannel(true);
-      showToast("Vui lòng chọn kênh truyền thông", "error");
+      showToast("Vui lòng chọn kênh Marketing", "error");
       return;
     }
 
@@ -188,7 +188,7 @@ export default function ModalAllocateBudget(props: any) {
     const response = await CampaignMarketingService.updateMABudget(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} phân bổ kênh truyền thông thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} phân bổ kênh Marketing thành công`, "success");
       handClearForm(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -300,24 +300,24 @@ export default function ModalAllocateBudget(props: any) {
         size="lg"
       >
         <form className="form-allocate-budget" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${idData ? "Chỉnh sửa" : "Phân bổ"} ngân sách kênh truyền thông`} toggle={() => !isSubmit && handClearForm(false)} />
+          <ModalHeader title={`${idData ? "Chỉnh sửa" : "Phân bổ"} ngân sách kênh Marketing`} toggle={() => !isSubmit && handClearForm(false)} />
           <ModalBody>
             <div className="list-form-group">
               <div className="form-group">
                 <SelectCustom
                   id="channelId"
                   name="channelId"
-                  label="Kênh truyền thông"
+                  label="Kênh Marketing"
                   fill={true}
                   required={true}
                   error={checkFieldChannel}
-                  message="Kênh truyền thông không được bỏ trống"
+                  message="Kênh Marketing không được bỏ trống"
                   options={[]}
                   value={dataChannel}
                   onChange={(e) => handleChangeValueChannel(e)}
                   isAsyncPaginate={true}
                   isFormatOptionLabel={false}
-                  placeholder="Chọn kênh truyền thông"
+                  placeholder="Chọn kênh Marketing"
                   additional={{
                     page: 1,
                   }}

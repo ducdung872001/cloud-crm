@@ -47,7 +47,7 @@ export default function MarketingChannel(props: any) {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách kênh truyền thông",
+      name: "Danh sách kênh Marketing",
       is_active: true,
     },
   ]);
@@ -170,7 +170,7 @@ export default function MarketingChannel(props: any) {
     const response = await CampaignMarketingService.deleteMAChannel(id);
 
     if (response.code === 0) {
-      showToast("Xóa loại kênh truyền thông thành công", "success");
+      showToast("Xóa loại kênh Marketing thành công", "success");
       getListMarketingChannel(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -222,7 +222,7 @@ export default function MarketingChannel(props: any) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt truyền thông
+            Cài đặt Marketing
           </h1>
           <Icon
             name="ChevronRight"
@@ -230,13 +230,13 @@ export default function MarketingChannel(props: any) {
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Danh sách kênh truyền thông</h1>
+          <h1 className="title-last">Danh sách kênh Marketing</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên kênh truyền thông"
+          name="Tên kênh Marketing"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -269,12 +269,12 @@ export default function MarketingChannel(props: any) {
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa có kênh truyền thông nào. <br />
-                    Hãy thêm mới kênh truyền thông đầu tiên nhé!
+                    Hiện tại chưa có kênh Marketing nào. <br />
+                    Hãy thêm mới kênh Marketing đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới kênh truyền thông"
+                titleButton="Thêm mới kênh Marketing"
                 action={() => {
                   setDataMarketingChannel(null);
                   setShowModalAddChannel(true);

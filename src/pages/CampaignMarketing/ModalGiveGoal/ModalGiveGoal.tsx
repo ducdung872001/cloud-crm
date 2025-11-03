@@ -364,7 +364,7 @@ export default function ModalGiveGoal(props: any) {
     const response = await CampaignMarketingService.updateMABudget(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} phân bổ kênh truyền thông thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} phân bổ kênh Marketing thành công`, "success");
       handClearForm(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");

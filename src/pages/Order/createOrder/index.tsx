@@ -628,7 +628,7 @@ export default function CreateOrder() {
     <div className={classNames("wrapper__create-order")}>
       <div className="header__order">
         <h1 className="title">
-          {params["type"] ? (params["type"] === "edit" ? "Chỉnh sửa đơn mua hàng" : "Chỉnh sửa đơn đặt lưu tạm") : "Mua hàng"}
+          {params["type"] ? (params["type"] === "edit" ? "Chỉnh sửa đơn đặt hàng" : "Chỉnh sửa đơn đặt lưu tạm") : "Đặt hàng"}
         </h1>
         <div className="action__header">
           <Button variant="outline" onClick={() => setShowMdoalChoose(true)}>

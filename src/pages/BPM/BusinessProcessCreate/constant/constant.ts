@@ -49,7 +49,7 @@ export const EVENT_TYPE_MAP = {
       "bpmn:ConditionalEventDefinition": "bpmn:ConditionalCatchEvent",
       "bpmn:MessageEventDefinition": "bpmn:MessageIntermediateCatchEvent",
       "bpmn:EscalationEventDefinition": "bpmn:EscalationIntermediateCatchEvent",
-      "bpmn:TimerEventDefinition": "bpmn:IntermediateCatchEvent",
+      "bpmn:TimerEventDefinition": "bpmn:TimerIntermediateCatchEvent",
       "bpmn:SignalEventDefinition": "bpmn:SignalIntermediateCatchEvent"
     },
     "bpmn:IntermediateThrowEvent": {

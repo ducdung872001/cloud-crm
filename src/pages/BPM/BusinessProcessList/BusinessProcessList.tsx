@@ -407,7 +407,7 @@ export default function BusinessProcessList() {
           setDataBusinessProcess(item);
         },
       },
-      permissions["BPM_UPDATE"] == 1 && {
+      permissions["MANAGE_PROCESSES_UPDATE"] == 1 && {
         title: listIdChecked.length > 0 ? "" : "Sửa",
         disabled: listIdChecked.length > 0 ? true : false,
         icon: <Icon name="Pencil" className={listIdChecked.length > 0 ? "icon-edit-inactive" : "icon-edit-active"} />,
@@ -428,7 +428,7 @@ export default function BusinessProcessList() {
       //     },
       //   },
       // ] : [])
-      permissions["BPM_DELETE"] == 1 && {
+      permissions["MANAGE_PROCESSES_DELETE"] == 1 && {
         title: listIdChecked.length > 0 ? "" : "Xóa",
         disabled: listIdChecked.length > 0 ? true : false,
         icon: <Icon name="Trash" className={listIdChecked.length > 0 ? "icon-delete-inactive" : "icon-delete-active"} />,

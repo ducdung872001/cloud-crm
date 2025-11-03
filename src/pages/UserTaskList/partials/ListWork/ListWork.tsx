@@ -535,7 +535,7 @@ export default function ListWork(props: any) {
     "Trạng thái",
   ];
 
-  const titlesExcel = ["STT", "Tên công việc", "Dự án", "Thời gian", "Tên gói thầu", "Người nhận việc", "Trạng thái"];
+  const titlesExcel = ["STT", "Tên công việc", "Dự án", "Thời gian", "Tên gói thầu mua sắm", "Người nhận việc", "Trạng thái"];
   const dataFormatExport = [
     "center",
     "center",

@@ -559,10 +559,10 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                   onChange={(e) => {
                     setFormData({ ...formData, timerType: e.value });
                     if (e.value === "Date") {
-                      setConfig({ date: 0, keyType: 1 });
+                      setConfig({ date: "", keyType: 1 });
                     }
                     if (e.value === "Duration") {
-                      setConfig({ day: 0, hour: 0, minute: 0, second: 0, keyType: 1 });
+                      setConfig({ day: "", hour: "", minute: "", second: "", keyType: 1 });
                     }
                     if (e.value === "Cycle") {
                       setConfig([
@@ -628,7 +628,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                             loadOptionsPaginate={config.keyType === 2 ? loadedOptionAttribute : loadedOptionForm}
                             onChange={(e) => {
                               setValueKey(e);
-                              setConfig({ ...config, date: 0, reference: e.value });
+                              setConfig({ ...config, date: e.value });
                             }}
                           />
                         </div>
@@ -643,15 +643,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                           className={"icon-change-select"}
                           onClick={(e) => {
                             setValueKey(null);
-                            setConfig({ ...config,
-                                ...(config.keyType === 0
-                                  ? {
-                                      date: 0,
-                                    }
-                                  : {
-                                      reference: "",
-                                    }),
-                                keyType: config.keyType === 0 ? 1 : config.keyType === 1 ? 2 : 0, });
+                            setConfig({ ...config, keyType: config.keyType === 0 ? 1 : config.keyType === 1 ? 2 : 0 });
                           }}
                         >
                           <Icon name="ResetPassword" style={{ width: 18 }} />
@@ -680,9 +672,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                                   fill={false}
                                   value={config.day}
                                   onChange={(e) => {
-                                    let value = e.target.value || "";
-                                    // Loại bỏ số 0 ở đầu và chuyển thành số
-                                    value = value.replace(/^0+/, '') || "0";
+                                    const value = e.target.value || "";
                                     setConfig({ ...config, day: value });
                                   }}
                                 />
@@ -700,9 +690,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                                   fill={false}
                                   value={config.hour}
                                   onChange={(e) => {
-                                    let value = e.target.value || "";
-                                    // Loại bỏ số 0 ở đầu và chuyển thành số
-                                    value = value.replace(/^0+/, '') || "0";
+                                    const value = e.target.value || "";
                                     setConfig({ ...config, hour: value });
                                   }}
                                 />
@@ -720,9 +708,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                                   fill={false}
                                   value={config.minute}
                                   onChange={(e) => {
-                                    let value = e.target.value || "";
-                                    // Loại bỏ số 0 ở đầu và chuyển thành số
-                                    value = value.replace(/^0+/, '') || "0";
+                                    const value = e.target.value || "";
                                     setConfig({ ...config, minute: value });
                                   }}
                                 />
@@ -740,9 +726,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                                   fill={false}
                                   value={config.second}
                                   onChange={(e) => {
-                                    let value = e.target.value || "";
-                                    // Loại bỏ số 0 ở đầu và chuyển thành số
-                                    value = value.replace(/^0+/, '') || "0";
+                                    const value = e.target.value || "";
                                     setConfig({ ...config, second: value });
                                   }}
                                 />
