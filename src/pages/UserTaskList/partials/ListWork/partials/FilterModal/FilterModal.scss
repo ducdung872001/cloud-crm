@@ -1,0 +1,140 @@
+.popover-filter-listwork {
+  border: 1px solid #eeeeef;
+  border-radius: 8px;
+
+  // position: absolute;
+  // z-index: 9;
+  // right: 0;
+  // background-color: white;
+  .triangle {
+    right: 1rem;
+  }
+  // border-radius: 0.2rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  padding: 0;
+  width: 40rem;
+  max-height: 80rem;
+
+  .box__add--filter {
+    border: 1px solid #eeeeef;
+    border-radius: 8px;
+    .header_filter {
+      // border: 1px solid;
+      padding: 1rem 1.6rem 1rem 1.6rem;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #eeeeef;
+
+      .header_left {
+        display: flex;
+        align-items: center;
+        gap: 0 0.6rem;
+        .label {
+          font-size: 14px;
+          font-weight: 600;
+        }
+      }
+
+      .header_right {
+        align-items: center;
+        display: flex;
+        cursor: pointer;
+        svg {
+          width: 2rem;
+          height: 2rem;
+        }
+      }
+    }
+
+    .body_filter {
+      padding: 1.2rem 2rem 1.2rem 2rem;
+
+      .form-filter {
+        margin-bottom: 1.2rem;
+
+        .base-select {
+          label {
+            color: #939394;
+            font-size: 14px;
+            font-weight: 600;
+          }
+        }
+
+        .base-input {
+          label {
+            color: #939394;
+            font-size: 14px;
+            font-weight: 600;
+          }
+        }
+
+        .icon_status {
+          display: flex;
+          align-items: center;
+          .icon {
+            margin-top: -4;
+            margin-right: 2px;
+            svg {
+              // width: 15px;
+              // height: 15px;
+            }
+          }
+        }
+      }
+
+      .filter_time {
+        margin-bottom: 1.2rem;
+        .body_time {
+          margin-top: 0.2rem;
+          display: flex;
+          align-items: center;
+          // gap: 0 0.3rem;
+          justify-content: space-between;
+
+          .base-datepicker {
+            label {
+              font-size: 12px;
+              font-weight: 400;
+            }
+          }
+        }
+      }
+    }
+
+    .action__confirm {
+      border-top: 1px solid #eeeeef;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0 1rem;
+      padding: 1rem;
+      // border: 1px solid;
+
+      .base-button {
+        padding: 0.6rem 2.4rem;
+        font-size: 1.4rem;
+      }
+      .button_cancel {
+        background-color: #f8f8f8;
+        border: 0;
+        color: #2c2c2c;
+        &:hover {
+          background: #cecece;
+        }
+      }
+
+      .button_apply {
+        background: #ed1b34;
+        border: 0;
+        color: #ffffff;
+
+        &:hover {
+          background: #cd021a;
+        }
+      }
+    }
+  }
+}

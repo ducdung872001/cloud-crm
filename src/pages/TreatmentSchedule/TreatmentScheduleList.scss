@@ -1,0 +1,10 @@
+.page-schedule-next {
+  .link-treament-schedule {
+    color: var(--extra-color);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+}

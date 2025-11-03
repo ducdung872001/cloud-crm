@@ -1,0 +1,57 @@
+.page--sms-marketing {
+  .card-box {
+    .box-table {
+      .box-table__wrapper {
+        .table {
+          thead {
+            tr {
+              th {
+                &:nth-child(6) {
+                  width: 16.3rem;
+                }
+              }
+            }
+          }
+          tbody {
+            tr {
+              td {
+                .pending-status,
+                .success-status,
+                .send-pending,
+                .send-success,
+                .send-cancel {
+                  height: 2.4rem;
+                  border-radius: 1.2rem;
+                  background: var(--primary-color);
+                  display: inline-block;
+                  padding: 0 1.2rem;
+                  color: #fff;
+                  font-size: 1.2rem;
+                  line-height: 2.4rem;
+                  font-weight: 500;
+                  justify-content: center;
+                  align-items: center;
+                  min-width: 9rem;
+                }
+
+                .pending-status,
+                .send-pending {
+                  background-color: var(--warning-color);
+                }
+
+                .success-status,
+                .send-success {
+                  background-color: var(--success-color);
+                }
+
+                .send-cancel {
+                  background-color: var(--error-color);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

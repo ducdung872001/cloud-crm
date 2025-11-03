@@ -1,0 +1,224 @@
+.box__add--customer--survey {
+  margin-top: 0.5rem;
+  .desc__form--survey {
+    padding: 1rem 2rem 2rem;
+    position: relative;
+
+    .prev__view {
+      position: fixed;
+      right: 5.2rem;
+      background-color: var(--white-color);
+      box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+      z-index: 99;
+      width: 25rem;
+      margin: 0 auto;
+      border-radius: 0.3rem;
+      padding-bottom: 1.2rem;
+      overflow: hidden;
+
+      .note__prev--view {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: var(--extra-color);
+        font-size: 1.1rem;
+        line-height: 1.6rem;
+        border-bottom-left-radius: 0.5rem;
+        padding: 0.3rem 0.5rem;
+        font-weight: 500;
+        color: var(--white-color);
+      }
+
+      .content__survey {
+        margin-top: 3rem;
+        font-size: 1.4rem;
+        line-height: 2rem;
+        max-height: 18rem;
+        overflow: auto;
+        padding: 0.8rem 1.2rem 0rem;
+
+        p {
+          margin-bottom: 0;
+        }
+
+        .draft__content {
+          border: 1px dashed var(--extra-color-50);
+          border-radius: 0.3rem;
+          color: var(--extra-color-30);
+          font-size: 1.4rem;
+          padding: 1.2rem;
+          text-align: center;
+        }
+      }
+
+      .emoticon__survey {
+        padding: 1rem 1.2rem 1.2rem;
+        text-align: center;
+      }
+
+      .call__to--action {
+        font-size: 1.3rem;
+        padding: 0.4rem 2.4rem;
+        width: 60%;
+        margin: 0 auto;
+      }
+    }
+
+    .lst__form--group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem 3.2rem;
+      margin-bottom: 2rem;
+
+      .form-group {
+        width: 100%;
+      }
+
+      .title__item {
+        color: var(--text-primary-color);
+        cursor: text;
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 2rem;
+        margin-bottom: 0.6rem;
+        display: block;
+
+        &::after {
+          content: "*";
+          padding-left: 0.3rem;
+          color: var(--error-color);
+        }
+      }
+
+      .title__params {
+        &::after {
+          content: "";
+        }
+      }
+
+      .time__survey {
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0 3.2rem;
+
+        .form-group {
+          width: 50%;
+        }
+      }
+
+      .choose__option--emoticon {
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+
+        .form-group {
+          width: 25%;
+
+          .radio-list {
+            .form-group {
+              width: 100%;
+            }
+          }
+        }
+
+        .number__of__option {
+          width: 75%;
+          display: flex;
+          align-items: center;
+
+          .view__option--icon {
+            .lst__emoticon {
+              border-radius: 0.3rem;
+              border: 1.2px dashed var(--extra-color-30);
+              padding: 0.8rem 1.6rem;
+              display: flex;
+              align-items: center;
+              gap: 0 0.8rem;
+              font-size: 2rem;
+            }
+          }
+        }
+      }
+
+      .lst__params {
+        border: 1.2px dashed var(--extra-color-30);
+        border-radius: 0.3rem;
+        padding: 1rem;
+
+        .item__params {
+          width: 100%;
+          display: flex;
+          align-items: flex-start;
+          gap: 0 1.6rem;
+
+          & + .item__params {
+            margin-top: 1.2rem;
+          }
+
+          .info--parmas {
+            width: 97%;
+            display: flex;
+            align-items: flex-start;
+            gap: 0 1.2rem;
+
+            .form-group {
+              margin-bottom: 0;
+            }
+          }
+
+          .action--params {
+            margin-top: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 0 0.6rem;
+            flex-shrink: 0;
+
+            svg {
+              width: 2rem;
+              height: 2rem;
+              cursor: pointer;
+            }
+
+            .action-add {
+              svg {
+                fill: var(--success-darker-color);
+              }
+            }
+
+            .action-delete {
+              svg {
+                fill: var(--error-darker-color);
+              }
+            }
+          }
+        }
+      }
+
+      .box__link {
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+        gap: 0 1.2rem;
+
+        svg {
+          width: 2rem;
+          height: 2rem;
+        }
+
+        .icon__connect {
+          margin-top: 3rem;
+
+          svg {
+            fill: var(--success-darker-color);
+          }
+        }
+      }
+    }
+
+    .modal-footer {
+      padding: 2rem 0;
+    }
+  }
+}

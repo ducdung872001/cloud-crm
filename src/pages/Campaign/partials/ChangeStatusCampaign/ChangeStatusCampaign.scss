@@ -1,0 +1,44 @@
+.modal-add-change-status {
+    .form-change-status-group {
+      .modal-body {
+        padding: 0;
+      }
+  
+      .list-form-group {
+        display: flex;
+        flex-direction: column;
+        padding: 1.6rem;
+        max-height: 50rem;
+        overflow: auto;
+      }
+
+      .list-field-item {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem 3.2rem;
+        // margin-top: 10px;
+
+        .radio-list {
+            .form-group {
+              width: 100%;
+              display: flex;
+              align-items: center;
+              gap: 0 2rem;
+              margin-top: 1.5rem;
+              margin-left: 10px;
+  
+              .base-radio {
+                margin: 0;
+              }
+            }
+          }
+        
+        .form-group {
+            width: 100%;
+        }
+
+      }
+  
+    }
+  }
+  

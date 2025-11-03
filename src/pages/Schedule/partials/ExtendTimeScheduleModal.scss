@@ -1,0 +1,12 @@
+.modal-extend-time-schedule {
+  .form-extend-time-schedule-group {
+    .list-form-group {
+      display: flex;
+      gap: 1.2rem 3.2rem;
+      flex-wrap: wrap;
+      & > .form-group {
+        width: calc(50% - 1.6rem);
+      }
+    }
+  }
+}

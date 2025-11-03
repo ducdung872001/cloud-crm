@@ -1,0 +1,132 @@
+.modal-add-related--customer {
+  .modal-dialog {
+    max-width: 100rem;
+  }
+
+  .wrapper-option-related--customer {
+    .modal-body {
+      padding: 0;
+
+      .search-related--customer {
+        padding-bottom: 2rem;
+      }
+
+      .list__option-related--customer {
+        padding: 0 2rem;
+
+        .table__related--customer {
+          .wrapper-table {
+            width: 100%;
+            position: relative;
+            font-size: 1.4rem;
+            line-height: 2rem;
+            letter-spacing: 0.25px;
+
+            thead {
+              position: sticky;
+              z-index: 100;
+              top: 0;
+              background: var(--primary-color-5);
+              box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+
+              tr {
+                th {
+                  padding: 1.6rem;
+                  white-space: nowrap;
+                  font-size: 1.6rem;
+                  font-weight: 700;
+                  line-height: 2.4rem;
+
+                  &.checkbox {
+                    width: 5.6rem;
+                    max-width: 5.6rem;
+                    padding: 1.6rem 0.8rem 1.6rem 2.4rem;
+                    .base-checkbox {
+                      z-index: 2;
+                      position: relative;
+                    }
+
+                    .view__count-click {
+                      position: absolute;
+                      top: 0;
+                      bottom: 0;
+                      left: 7rem;
+                      background: var(--primary-color-5);
+                      display: flex;
+                      align-items: center;
+                      font-weight: 400;
+                      width: 88rem;
+                      z-index: 999;
+
+                      ul {
+                        .select-count {
+                          font-size: 1.4rem;
+                          line-height: 2rem;
+                          letter-spacing: 0.25px;
+                          color: var(--text-primary-color);
+                          margin-right: 2rem;
+                          span {
+                            color: var(--primary-color);
+                            padding: 0 0.3rem;
+                          }
+                        }
+
+                        & .confirm-action {
+                          padding: 0.6rem 2.4rem;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            tbody {
+              tr {
+                &:nth-child(even) {
+                  background: var(--extra-color-5);
+                }
+                td {
+                  border-bottom: 1px solid var(--extra-color-20);
+                  padding: 1.6rem;
+                  transition: background-color 0.15s ease-in-out;
+                  vertical-align: middle;
+
+                  &.checkbox {
+                    width: 5.6rem;
+                    max-width: 5.6rem;
+                    padding: 1.6rem 0.8rem 1.6rem 2.4rem;
+                  }
+                  &.text-center {
+                    text-align: center;
+                  }
+                  .avatar {
+                    width: 5.6rem;
+                    height: 5.6rem;
+                    border-radius: 0.5rem;
+                    overflow: hidden;
+
+                    img {
+                      width: 100%;
+                      height: 100%;
+                      object-fit: cover;
+                    }
+                  }
+                }
+                .cursor-pointer {
+                  cursor: pointer;
+                }
+                .has-choose {
+                  background-color: var(--primary-color-10);
+                }
+                &:hover {
+                  background-color: var(--primary-color-10);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

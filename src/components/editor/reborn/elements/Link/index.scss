@@ -1,0 +1,35 @@
+.element-link {
+    display: inline;
+    position: relative;
+
+    .popup {
+        position: absolute;
+        left: 0;
+        display: flex;
+        align-items: center;
+        background-color: white;
+        padding: 6px 10px;
+        gap: 10px;
+        border-radius: 6px;
+        border: 1px solid lightgray;
+        z-index: 1000;
+
+        a {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding-right: 10px;
+            border-right: 1px solid lightgrey;
+        }
+
+        button {
+            border: none;
+            background: transparent;
+
+            &:hover {
+                color: rebeccapurple;
+                cursor: pointer;
+            }
+        }
+    }
+}

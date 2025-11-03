@@ -1,0 +1,73 @@
+.page-warranty {
+  .card-box {
+    .processing__department {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      // gap: 0.6rem 0;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.8rem;
+
+      .name-item {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-size: 1.3rem;
+        padding: 0.2rem 0.8rem;
+        border-radius: 0.3rem;
+        width: 100%;
+
+        svg {
+          width: 2rem;
+          height: 2rem;
+          margin-left: 0.2rem;
+          margin-bottom: 0.2rem;
+        }
+      }
+
+      .name-department {
+        // border: 1px solid var(--primary-color);
+
+        svg {
+          fill: var(--primary-color) !important;
+          margin-right: 0.4rem;
+        }
+      }
+
+      .name-employee {
+        // border: 1px solid var(--extra-color-50);
+
+        svg {
+          fill: var(--primary-color);
+          margin-right: 0.6rem;
+          margin-left: 0.5rem;
+        }
+      }
+    }
+
+    & > div:first-child {
+      position: relative;
+
+      .option-improve {
+        position: absolute;
+        right: 0;
+        padding: 1.3rem 2rem 1.3rem 1.3rem;
+        cursor: pointer;
+
+        .icon-item {
+          svg {
+            width: 2.5rem;
+            height: 2.5rem;
+            fill: var(--extra-color);
+          }
+        }
+
+        &:hover {
+          svg {
+            fill: var(--primary-color);
+          }
+        }
+      }
+    }
+  }
+}

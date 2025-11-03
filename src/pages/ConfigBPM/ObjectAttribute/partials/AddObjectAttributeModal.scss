@@ -1,0 +1,480 @@
+.modal-add-object-attribute {
+    .form-object-attribute {
+      .modal-body {
+        padding: 0;
+        // height: auto ;
+      }
+      .list-form-group {
+        // display: flex;
+        // flex-wrap: wrap;
+        // gap: 1.2rem 3.2rem;
+        height: calc(100vh - 200px);
+        overflow: auto;
+        padding: 1.6rem;
+
+        .box__bpm {
+          border: 1px solid var(--extra-color-30);
+          .tab__container {
+            .lst__tabs {
+              display: flex;
+              align-items: center;
+              background-color: var(--primary-color-70);
+              padding: 0.8rem 1.25rem 0;
+      
+              .item-tab {
+                padding: 0.3rem 1rem;
+                border-top-left-radius: 0.6rem;
+                border-top-right-radius: 0.6rem;
+                background-color: transparent;
+      
+                .info-tab {
+                  font-size: 1.4rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+      
+                  .name-tab {
+                    min-width: 12rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0 0.3rem;
+                    position: relative;
+      
+                    .icon-change-tab {
+                      cursor: pointer;
+      
+                      svg {
+                        width: 1.6rem;
+                        height: 1.6rem;
+                        fill: var(--extra-color-50);
+                      }
+      
+                      &:hover {
+                        svg {
+                          fill: var(--primary-color);
+                        }
+                      }
+      
+                      &--active {
+                        svg {
+                          fill: var(--primary-color);
+                        }
+                      }
+                    }
+      
+                    .name-customize {
+                      .base-input__input {
+                        input {
+                          cursor: pointer;
+                          border: none;
+                          padding: 0.3rem 0.5rem;
+                        }
+                      }
+                    }
+      
+                    .has-disabled {
+                      .base-input__input {
+                        input {
+                          opacity: 1;
+                          background: transparent;
+                        }
+                      }
+                    }
+      
+                    .coating-disabled {
+                      position: absolute;
+                      top: 0;
+                      right: 0;
+                      bottom: 0;
+                      left: 0;
+                      z-index: 10;
+                      cursor: pointer;
+                    }
+                  }
+      
+                  .delete-tab {
+                    padding: 0.1rem;
+                    cursor: pointer;
+                    width: 1.8rem;
+                    height: 1.8rem;
+                    overflow: hidden;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+      
+                    svg {
+                      width: 1.6rem;
+                      height: 1.6rem;
+                    }
+      
+                    &:hover {
+                      background-color: var(--white-color);
+                      border-radius: 50rem;
+                    }
+                  }
+                }
+      
+                &--active {
+                  background-color: var(--white-color);
+                  cursor: default;
+      
+                  .info-tab {
+                    .name-tab {
+                      .name-customize {
+                        .base-input__input {
+                          input {
+                            cursor: pointer;
+                          }
+                        }
+                      }
+      
+                      .has-disabled {
+                        .base-input__input {
+                          input {
+                            cursor: default;
+                          }
+                        }
+                      }
+                    }
+                    .delete-tab {
+                      svg {
+                        fill: var(--extra-color-50);
+                      }
+      
+                      &:hover {
+                        background-color: var(--error-darker-color);
+      
+                        svg {
+                          fill: var(--white-color);
+                        }
+                      }
+                    }
+                  }
+                }
+      
+                &--seperate {
+                  position: relative;
+      
+                  &::after {
+                    content: "";
+                    position: absolute;
+                    right: 0;
+                    bottom: 0.6rem;
+                    width: 0.12rem;
+                    height: 1.8rem;
+                    background-color: var(--white-color);
+                  }
+                }
+              }
+      
+              .add__tab {
+                margin-left: 1rem;
+                width: 2rem;
+                height: 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                border-radius: 50rem;
+      
+                svg {
+                  width: 1rem;
+                  height: 1rem;
+                }
+      
+                &:hover {
+                  background-color: var(--white-color);
+                }
+              }
+            }
+      
+            .border__bottom--tab {
+              background-color: var(--primary-color-70);
+              .bg-border {
+                height: 1.2rem;
+                background-color: var(--white-color);
+                border-top-left-radius: 2rem;
+                border-top-right-radius: 2rem;
+              }
+            }
+          }
+          .lst__plugin {
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            gap: 0 1.6rem;
+            padding: 1rem 1.8rem 1rem;
+            border-bottom: 1px solid var(--extra-color-30);
+            // border: 1px solid;
+      
+            .item-plugin {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+      
+              svg {
+                width: 2rem;
+                height: 2rem;
+                fill: var(--extra-color-30);
+              }
+      
+              &:hover {
+                svg {
+                  fill: var(--black-color);
+                }
+              }
+            }
+          }
+      
+          //TODO: đoạn cần copy
+          .content {
+            display: flex;
+            align-items: flex-start;
+          }
+      
+          .content__left {
+            width: 20rem;
+      
+            .title-left {
+              background-color: var(--extra-color-30);
+              font-size: 1.4rem;
+              width: 100%;
+              display: block;
+              padding: 0.3rem 1rem;
+              font-weight: 500;
+            }
+      
+            .lst__field {
+              padding: 2rem 1rem;
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 1rem;
+      
+              .item-field {
+                border: 1px solid var(--extra-color-30);
+                border-radius: 0.5rem;
+                padding: 0.6rem 0.2rem;
+                font-size: 1.4rem;
+                text-align: center;
+                font-weight: 500;
+                cursor: pointer;
+      
+                &:hover {
+                  background-color: var(--extra-color-10);
+                }
+              }
+            }
+          }
+      
+          .content__center {
+            flex: 1;
+            border-left: 1px solid var(--extra-color-30);
+            border-right: 1px solid var(--extra-color-30);
+      
+            .react-grid-layout {
+              min-height: 42rem;
+      
+              .react-grid-item {
+                min-height: 4.5rem;
+      
+                &.item__node--layout {
+                  background-color: #f4f4f569;
+                }
+      
+                .layout__children {
+                  display: flex;
+                  align-items: flex-start;
+                  justify-content: space-between;
+                  gap: 0 2rem;
+                  padding: 0.8rem;
+      
+                  .item-render {
+                    flex: 1;
+                  }
+      
+                  .action-children {
+                    width: 5.5rem;
+                    margin-top: 0.2rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0 0.8rem;
+      
+                    &-item {
+                      cursor: pointer;
+      
+                      svg {
+                        width: 2rem;
+                        height: 2rem;
+                        fill: var(--extra-color-50);
+                      }
+                    }
+      
+                    &-edit {
+                      svg {
+                        fill: var(--primary-color);
+                      }
+                    }
+      
+                    &-delete {
+                      svg {
+                        fill: var(--error-darker-color);
+                      }
+                    }
+                  }
+                }
+              }
+      
+              svg {
+                width: 3rem;
+                height: 3rem;
+              }
+            }
+      
+            .list__eform {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 1.2rem 3.2rem;
+      
+              .form-group {
+                width: calc(50% - 1.6rem);
+                .radio-list {
+                  .form-group {
+                    width: 100%;
+                  }
+                }
+              }
+      
+              .label-title {
+                width: 100%;
+                font-weight: 600;
+                border-top: 1px dashed #ddd;
+                padding-top: 2rem;
+                margin-bottom: 0.5rem;
+              }
+      
+              .label-title-first {
+                width: 100%;
+                font-weight: 600;
+              }
+      
+              .select-custom,
+              .select__custom-label {
+                div[class*="-control"] {
+                  padding: 0rem 0rem 0rem 1.2rem;
+                }
+              }
+      
+              .selected--item {
+                display: flex;
+                align-items: center;
+                gap: 0 0.5rem;
+                line-height: 1.1;
+      
+                .avatar {
+                  width: 2.6rem;
+                  height: 2.6rem;
+                  border-radius: 50rem;
+                  overflow: hidden;
+                  flex-shrink: 0;
+      
+                  img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                  }
+                }
+              }
+            }
+          }
+      
+          .content__right {
+            width: 25rem;
+
+            // đoạn này sau không cần bỏ đi
+            padding: 1.2rem;
+            // text-align: center;
+            // đoạn này sau không cần bỏ đi
+          }
+          //TODO: đoạn cần copy
+        }
+      }
+  
+      .form-group {
+        &:first-child {
+          width: 100%;
+        }
+        width: calc(50% - 1.6rem);
+  
+        &.formula {
+          width: 100%;
+  
+          .formula-input {
+            display: flex;
+            width: 100%;
+  
+            .base-textarea {
+              width: 100% !important;              
+            }
+  
+            textarea {
+              width: 100%;
+              height: 60px;
+            }
+  
+            svg {
+              margin-top: 32px;
+              margin-left: 8px;
+              cursor: pointer;
+            }
+          }
+  
+          .formula-list {
+            position: absolute;
+            right: 16px;
+            background-color: white;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            z-index: 10000;
+            margin-right: 30px;
+  
+            label {
+              width: 100%;
+              border-bottom: 1px dashed #ddd;
+              padding: 4px 0;
+              cursor: pointer;
+  
+              &:last-child {
+                border-bottom: none;
+              }
+            }
+          }
+        }
+  
+        .formula-icon {
+          width: 24px;
+          height: 24px;
+        }
+  
+        .radio-list {
+          .form-group {
+            display: flex;
+            width: 100%;
+            // gap: 0 2rem;
+            align-items: center;
+  
+            .base-radio {
+              margin-top: 0;
+            }
+          }
+        }
+      }
+  
+      
+    }
+  }

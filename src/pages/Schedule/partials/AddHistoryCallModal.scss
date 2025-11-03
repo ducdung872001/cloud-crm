@@ -1,0 +1,15 @@
+.modal-history-call {
+  .form-history-call-group {
+    .list-form-group {
+      display: flex;
+      gap: 1.2rem 3.2rem;
+      flex-wrap: wrap;
+      & > .form-group {
+        width: calc(50% - 1.6rem);
+      }
+      #Content{
+        width: 100%;
+      }
+    }
+  }
+}

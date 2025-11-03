@@ -1,0 +1,17 @@
+.modal-add-inventory {
+  .form-inventory {
+    .list-form-group {
+      display: grid;
+      // flex-wrap: wrap;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.2rem 3.2rem;
+    }
+    #FieldAddress {
+        width: 100%;
+        grid-column: span 2;
+    }
+    .form-group {
+      width: 100%;
+    }
+  }
+}

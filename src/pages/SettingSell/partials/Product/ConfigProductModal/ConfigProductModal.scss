@@ -1,0 +1,202 @@
+.modal-config-product {
+    .form-product-config {
+        .modal-body{
+          padding: 0 1.6rem 0 1.6rem;
+        }
+        .tab-form {
+            display: flex;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+            .tab-box {
+                border: 1px solid #90959a;
+                border-radius: 5px;
+                padding: 5px 10px 5px 10px;
+                cursor: pointer;
+                margin-right: 10px;
+
+                // &:hover {
+                //     background-color: #90959a;
+                //     color: white;
+                // }
+            
+            }
+
+            .tab-box-active {
+                border: 1px solid #90959a;
+                border-radius: 5px;
+                padding: 5px 10px 5px 10px;
+                cursor: pointer;
+                margin-right: 10px;
+                background-color: #90959a;
+                color: white;
+            }
+
+        }
+
+        .time-box {
+          margin-top: 1rem;
+          border: 1px solid #d3d5d7;
+          width: 100%;
+          padding: 1.6rem;
+          border-radius: 5px;
+
+          .radio-select-time {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+          }
+
+          .inTime-box {
+            display: flex;
+            // gap: 0 1rem;
+            // border: 1px solid;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+
+            .base-datepicker{
+              margin-top: 0;
+            }
+          }
+
+          .action__remove--approach {
+            cursor: pointer;
+            // margin-top: 0.8rem;
+
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: var(--extra-color-50);
+
+              &:hover {
+                fill: var(--error-darker-color);
+              }
+            }
+          }
+        }
+
+        .source-box {
+          margin-top: 1rem;
+          border: 1px solid #d3d5d7;
+          width: 100%;
+          padding: 1.6rem;
+          border-radius: 5px;
+
+          .action__remove--approach {
+            cursor: pointer;
+            // margin-top: 0.8rem;
+
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: var(--extra-color-50);
+
+              &:hover {
+                fill: var(--error-darker-color);
+              }
+            }
+          }
+        }
+
+        .totalPayment-box {
+          margin-top: 1rem;
+          border: 1px solid #d3d5d7;
+          width: 100%;
+          padding: 1.6rem;
+          border-radius: 5px;
+
+          .radio-select-payment {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+          }
+
+          .action__remove--approach {
+            cursor: pointer;
+            // margin-top: 0.8rem;
+
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: var(--extra-color-50);
+
+              &:hover {
+                fill: var(--error-darker-color);
+              }
+            }
+          }
+        }
+
+        .location-box {
+          margin-top: 1rem;
+          border: 1px solid #d3d5d7;
+          width: 100%;
+          padding: 1.6rem;
+          border-radius: 5px;
+
+          .action__remove--approach {
+            cursor: pointer;
+            // margin-top: 0.8rem;
+
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: var(--extra-color-50);
+
+              &:hover {
+                fill: var(--error-darker-color);
+              }
+            }
+          }
+
+          .location-form {
+            display: flex;
+            justify-content: space-between;
+            .form-group {
+              width: 32%;
+            }
+          }
+        }
+
+        .saleChannel-box {
+          margin-top: 1rem;
+          border: 1px solid #d3d5d7;
+          width: 95%;
+          padding: 1.6rem;
+          border-radius: 5px;
+        }
+
+        .input-product {
+            margin-top: 1rem;
+            // display: flex;
+            // gap: 0 1rem;
+            // align-items: center;
+        }
+
+        .input-action{
+            margin-top: 2rem;
+            display: flex;
+            gap: 0 1rem;
+
+            .action__remove--approach {
+                cursor: pointer;
+                margin-top: 0.8rem;
+
+                svg {
+                  width: 2rem;
+                  height: 2rem;
+                  fill: var(--extra-color-50);
+
+                  &:hover {
+                    fill: var(--error-darker-color);
+                  }
+                }
+              }
+        }
+
+
+    }
+  }
+  

@@ -1,0 +1,188 @@
+.title-conversation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.6rem;
+  height: 4.2rem;
+  border-bottom: 1px solid var(--extra-color-30);
+  background-color: var(--white-color);
+  position: relative;
+
+  .title-left {
+    display: flex;
+    align-items: center;
+    gap: 0 0.6rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+
+    .avatar-conversation {
+      width: 3.2rem;
+      height: 3.2rem;
+      border-radius: 50rem;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  .title-right {
+    display: flex;
+    align-items: center;
+    gap: 0 0.8rem;
+
+    .search-chat,
+    .broadly,
+    .settings {
+      cursor: pointer;
+      width: 3rem;
+      height: 3rem;
+      padding: 0 0.4rem 0.3rem;
+      border-radius: 50rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        width: 2.2rem;
+        height: 2.2rem;
+        fill: #aaa;
+
+        &:hover {
+          fill: var(--primary-color-90);
+        }
+      }
+    }
+
+    //* đoạn này css element tìm kiếm
+    .search-chat,
+    .active-search-chat {
+      .search-item {
+        position: absolute;
+        left: 0;
+        top: 4.2rem;
+        background-color: var(--white-color);
+        padding: 1rem 2rem;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 99;
+
+        .search-container {
+          padding: 0;
+          width: 100%;
+          padding-right: 1.2rem;
+        }
+
+        .base-button {
+          border: none;
+          color: var(--extra-color-50);
+
+          &:hover {
+            border: none;
+            color: var(--primary-color);
+          }
+        }
+
+        .base-button:active:not(:disabled):not([disabled]) {
+          box-shadow: none;
+          background: transparent;
+        }
+      }
+
+      &:hover {
+        background-color: var(--extra-color-10);
+      }
+    }
+
+    //* đoạn này css element mở rộng
+    .broadly,
+    .active-broadly {
+      &:hover {
+        background-color: var(--extra-color-10);
+      }
+    }
+
+    //* đoạn này css element cài đặt
+    .settings,
+    .active-setting {
+      svg {
+        width: 2rem;
+        height: 2rem;
+      }
+
+      &:hover {
+        background-color: var(--extra-color-10);
+      }
+    }
+
+    .active-search-chat,
+    .active-setting {
+      background-color: var(--extra-color-10);
+
+      svg {
+        fill: var(--primary-color-90);
+      }
+    }
+
+    .active-broadly {
+      background-color: var(--extra-color-10);
+
+      svg {
+        fill: var(--primary-color-90);
+      }
+    }
+  }
+}
+
+.setting-item {
+  width: 14rem !important;
+  top: 6rem !important;
+  right: 3.2rem !important;
+  background-color: var(--white-color);
+  border-radius: 0.3rem;
+  padding: 0.6rem 0.5rem;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
+  .menu-setting {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem 0;
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0 0.6rem;
+      font-size: 1.4rem;
+      line-height: 2.4rem;
+      font-weight: 500;
+      padding: 0.5rem 0.8rem;
+      border-radius: 0.5rem;
+
+      svg {
+        width: 1.8rem;
+        height: 1.8rem;
+        fill: var(--primary-color-90);
+      }
+
+      &:nth-child(2) {
+        color: #ff595a;
+
+        svg {
+          fill: #ff595a;
+        }
+
+        &:hover {
+          background-color: rgba(255, 89, 90, 0.08);
+        }
+      }
+
+      &:hover {
+        background-color: var(--primary-color-5);
+      }
+    }
+  }
+}

@@ -1,0 +1,218 @@
+.modal-show-work {
+    .modal-dialog {
+      max-width: 75rem;
+    }
+  
+    .modal-body {
+      padding: 0;
+  
+      .wrapper__view--work {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        width: 100%;
+        padding: 1.6rem;
+        gap: 0 0.8rem;
+  
+        .view__work--left {
+          width: 50%;
+  
+          .item__info--left {
+            display: flex;
+            align-items: flex-start;
+            font-size: 1.6rem;
+  
+            & + .item__info--left {
+              margin-top: 0.6rem;
+            }
+  
+            .title {
+              width: 15.5rem;
+              position: relative;
+  
+              &::after {
+                content: ":";
+                position: absolute;
+                right: 0.7rem;
+                bottom: 0;
+                top: 0;
+              }
+            }
+  
+            .name {
+              font-weight: 400;
+              width: 20rem;
+  
+              &::first-letter {
+                text-transform: capitalize;
+              }
+            }
+          }
+  
+          .progress--work {
+            .name {
+              font-weight: 600;
+              color: var(--success-darker-color);
+            }
+          }
+  
+          .status--work {
+            .name {
+              font-weight: 600;
+            }
+          }
+  
+          .status--work-pendding {
+            .name {
+              color: var(--warning-color);
+            }
+          }
+  
+          .status--work-success {
+            .name {
+              color: var(--success-darker-color);
+            }
+          }
+  
+          .status--work-faild {
+            .name {
+              color: var(--error-color);
+            }
+          }
+  
+          .status--work-pause {
+            .name {
+              color: var(--warning-color);
+            }
+          }
+  
+          .content {
+            .content--item {
+              line-height: 2rem;
+            }
+          }
+  
+          .document {
+            flex-direction: column;
+  
+            .document--item {
+              display: flex;
+              align-items: center;
+              gap: 0 0.8rem;
+              margin-top: 0.6rem;
+  
+              .image-item {
+                width: 10rem;
+                height: 10rem;
+                border-radius: 0.5rem;
+                overflow: hidden;
+  
+                img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+              }
+            }
+          }
+        }
+  
+        .view__work--right {
+          width: 50%;
+          display: flex;
+          flex-direction: column;
+          font-size: 1.6rem;
+          gap: 0.6rem 0;
+  
+          .info__manager,
+          .info__job--recipient,
+          .info__participant,
+          .info__customer {
+            .title {
+              width: 16rem;
+              position: relative;
+  
+              &::after {
+                content: ":";
+                position: absolute;
+                right: 0.7rem;
+                bottom: 0;
+                top: 0;
+              }
+            }
+          }
+  
+          .info__manager,
+          .info__job--recipient {
+            display: flex;
+            align-items: center;
+  
+            .name__manager,
+            .name__recipient {
+              display: flex;
+              align-items: center;
+              gap: 0 0.8rem;
+              margin-left: 0.6rem;
+  
+              .avatar--manager,
+              .avatar--recipient {
+                width: 2.6rem;
+                height: 2.6rem;
+                border-radius: 50rem;
+                overflow: hidden;
+                flex-shrink: 0;
+  
+                img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+              }
+            }
+          }
+  
+          .info__participant,
+          .info__customer {
+            .list__participant,
+            .list__customer {
+              background: var(--white-color);
+              border-radius: 0.4rem;
+              border: 1.5px dashed #e0e0e0;
+              padding: 0.6rem 0;
+              display: flex;
+              max-width: 32rem;
+              margin-top: 1rem;
+  
+              .item__participant,
+              .item__customer {
+                display: flex;
+                align-items: center;
+                gap: 0 0.8rem;
+                padding: 0.4rem 0.6rem;
+  
+                .avatar--participant,
+                .avatar--customer {
+                  width: 2.8rem;
+                  height: 2.8rem;
+                  border-radius: 50rem;
+                  overflow: hidden;
+                  flex-shrink: 0;
+  
+                  img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                  }
+                }
+              }
+            }
+          }
+  
+          .info__customer {
+            margin-top: 0.6rem;
+          }
+        }
+      }
+    }
+  }
+  

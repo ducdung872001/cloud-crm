@@ -1,0 +1,70 @@
+.modal-add-treament-history {
+  .form-treament-history-group {
+    .modal-body {
+      padding: 0;
+    }
+
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 2.2rem;
+      padding: 1.6rem;
+      max-height: 48rem;
+      overflow: auto;
+
+      .form-group {
+        width: calc(50% - 1.1rem);
+
+        &:nth-child(7),
+        &:nth-child(8),
+        &:last-child {
+          width: 100%;
+        }
+
+        &:nth-child(8) {
+          .upload__img--after--before {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0 3rem;
+          }
+        }
+      }
+
+      @media (max-width: 760px) {
+        .form-group {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .form-group {
+          &:nth-child(8) {
+            .upload__img--after--before {
+              justify-content: space-between;
+              flex-wrap: wrap;
+            }
+          }
+        }
+      }
+
+      @media (max-width: 370px) {
+        .form-group {
+          &:nth-child(8) {
+            .upload__img--after--before {
+              gap: 0 0.8rem;
+
+              .wrapper-file__upload {
+                flex: 1;
+
+                .file-upload {
+                  width: 100%;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

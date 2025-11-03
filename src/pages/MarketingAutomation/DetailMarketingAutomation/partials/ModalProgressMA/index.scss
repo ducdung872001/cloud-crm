@@ -1,0 +1,150 @@
+.modal-progress-ma{
+    .form-progress-ma{
+        .modal-body {
+            padding: 0;
+          }
+        .box-progress-ma{
+            max-height: 48rem;
+            position: relative;
+            // overflow: auto;
+
+            .dndflow {
+                width: 100%;
+                height: 46rem;
+              }
+              
+            .dndflow aside {
+              border-right: 1px solid #eee;
+              padding: 15px 10px;
+              font-size: 12px;
+              background: #fcfcfc;
+            }
+            
+            .dndflow aside .description {
+              margin-bottom: 10px;
+            }
+            
+            .dndflow .dndnode {
+              height: 20px;
+              padding: 4px;
+              border: 1px solid #1a192b;
+              border-radius: 2px;
+              margin-bottom: 10px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              cursor: grab;
+            }
+            
+            .dndflow .dndnode.input {
+              border-color: #0041d0;
+            }
+            
+            .dndflow .dndnode.output {
+              border-color: #ff0072;
+            }
+            
+            .dndflow .reactflow-wrapper {
+              flex-grow: 1;
+              height: 100%;
+              // position: relative;
+            }
+            
+            .dndflow .selectall {
+              margin-top: 10px;
+            }
+            
+            @media screen and (min-width: 768px) {
+              .dndflow {
+                flex-direction: row;
+              }
+            
+              .dndflow aside {
+                width: 20%;
+                max-width: 250px;
+              }
+            }
+              
+              ////
+              
+            .react-flow-automation {
+              // overflow: unset !important;
+              position: absolute !important;
+              border: 1px solid #e0e0e0;
+              // width: 77% !important;
+              height: 95% !important;
+            
+              // .react-flow__renderer {
+              //   .react-flow__pane {
+              //     .react-flow__viewport {
+              //       .react-flow__nodes {
+              //         .react-flow__node {
+              //           border-radius: 5px;
+              //           border: 1px solid #E0E0E0;
+              //           border-left: 3px solid #4169E1;
+              //         }
+              //       }
+              //     }
+              //   }
+              // }
+            }
+          
+          .note__signature {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 99;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+            border-radius: 0.3rem;
+            background-color: var(--white-color);
+            padding: 1.2rem;
+            font-size: 1.4rem;
+            line-height: 2rem;
+        
+            .hight-line {
+              color: var(--error-darker-color);
+              font-weight: 500;
+              margin-bottom: 0.5rem;
+              display: block;
+            }
+        
+            .lst__agent {
+              .item--agent {
+                display: flex;
+                align-items: center;
+                gap: 0 0.2rem;
+                padding: 0.3rem 0;
+        
+                .name {
+                  position: relative;
+        
+                  &::after {
+                    content: ":";
+                  }
+                }
+        
+                .bg-item {
+                  width: 2rem;
+                  height: 1.2rem;
+                  display: block;
+                  border: 1px solid var(--extra-color-30);
+                  border-radius: 0.3rem;
+                }
+        
+                .bg-yellow {
+                  background: yellow;
+                }
+        
+                .bg-success {
+                  background: var(--success-darker-color);
+                }
+        
+                .bg-error {
+                  background: var(--error-darker-color);
+                }
+              }
+            }
+          }
+        }
+    }
+}

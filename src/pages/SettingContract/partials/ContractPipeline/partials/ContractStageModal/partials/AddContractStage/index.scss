@@ -1,0 +1,42 @@
+.form__add--contract-stage {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  .list-form-group {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem 0;
+
+    .form-group {
+      width: 100%;
+      &:last-child {
+        display: flex;
+        flex-direction: column;
+
+        .label {
+          color: var(--text-primary-color);
+          cursor: text;
+          font-size: 1.4rem;
+          font-weight: 700;
+          line-height: 2rem;
+          margin-bottom: 0.5rem;
+
+          &::after {
+            content: "*";
+            color: var(--error-color);
+            margin-left: 0.3rem;
+          }
+        }        
+      }
+    }
+  }
+
+  .btn__add--contract-stage {
+    width: 60%;
+    margin-top: 3rem;
+  }
+}

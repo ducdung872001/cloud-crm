@@ -1,0 +1,23 @@
+.box-table {
+  .box-table__wrapper {
+    .table__zalo {
+      tbody {
+        tr {
+          td {
+            img {
+              width: 5.2rem;
+              height: 5.2rem;
+              object-fit: cover;
+            }
+
+            svg {
+              width: 5.5rem;
+              height: 5.5rem;
+              fill: var(--primary-color);
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+.modal-step {
+  .modal-dialog {
+    max-width: 72rem;
+  }
+
+  .modal-body {
+    padding: 0;
+  }
+
+  .wrapper__step {
+    padding: 1.6rem;
+
+    .form__submit--step {
+      margin-top: 4rem;
+    }
+
+    .list__step {
+      margin-top: 1rem;
+
+      .action__add--step {
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+      }
+
+      .box-table {
+        margin-top: 1.2rem;
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+.page__report--common {
+  .common {
+    padding: 2rem;
+
+    .box__filter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      &--left {
+        h2 {
+          text-transform: uppercase;
+          font-weight: 700;
+          margin-bottom: 0.3rem;
+        }
+
+        .action__export {
+          display: flex;
+          align-items: center;
+          color: var(--black-color);
+          gap: 0.8rem;
+          font-size: 1.4rem;
+          font-weight: 400;
+          cursor: pointer;
+
+          svg {
+            fill: var(--black-color);
+            width: 2rem;
+            height: 2rem;
+          }
+
+          &:hover {
+            color: var(--primary-color);
+
+            svg {
+              fill: var(--primary-color);
+            }
+          }
+        }
+      }
+
+      &--right {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 0 2rem;
+
+        .form-group {
+          min-width: 19rem;
+
+          &:nth-child(2) {
+            width: 24rem;
+            flex: 1;
+          }
+        }
+      }
+    }
+  }
+}

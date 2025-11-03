@@ -1,0 +1,13 @@
+.contract-list{
+    max-height: 48rem;
+    overflow: auto;
+    padding: 1.6rem;
+    .list-tab{
+      display: flex;
+      .item-tab{
+        padding: 1rem;
+        border: 1px solid;
+      }
+    }
+  }
+  

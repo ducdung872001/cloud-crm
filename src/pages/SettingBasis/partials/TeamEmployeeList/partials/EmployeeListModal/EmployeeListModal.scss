@@ -1,0 +1,42 @@
+.modal-list-employee {
+    .container-list-employee{
+      .modal-body {
+        padding: 0;
+      }
+      .form-list-employee{
+        max-height: 48rem;
+        overflow: auto;
+        padding: 1.6rem;
+        .list-form-group{
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.6rem 3.2rem;
+          .form-group{
+            // :first-child{
+            //     width: 100%;
+            // }
+            width: 100%;
+            .base-select{
+              .select-custom {
+                .css-140qvo9-menu{
+                  position: relative;
+                }
+              }
+            }
+          }
+        }
+        .box-table{
+          margin-top: 1.2rem;
+          // .pagination{
+          //   justify-content: center;
+          // }
+          // .count-item{
+          //   display: none;
+          // }
+        }
+        
+      }
+        
+    }
+}
+  

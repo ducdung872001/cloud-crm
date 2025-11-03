@@ -1,0 +1,94 @@
+.modal-add-relation-ship {
+  .form-relation-ship {
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 3.2rem;
+    }
+
+    .form-group {
+      position: relative;
+      width: calc(50% - 1.6rem);
+
+      &:last-child {
+        width: 100%;
+
+        .label {
+          color: var(--text-primary-color);
+          cursor: text;
+          font-size: 1.4rem;
+          font-weight: 700;
+          line-height: 2rem;
+          margin-bottom: 0.5rem;
+
+          .required {
+            color: var(--error-color);
+          }
+        }
+
+        .btn-bg-color {
+          width: 100%;
+          background-color: transparent;
+          color: var(--text-extra-color);
+          justify-content: space-between;
+          border: 1px solid var(--border-color);
+          padding: 0.6rem 0.8rem;
+          font-size: 1.4rem;
+          line-height: 2.4rem;
+          font-weight: 400;
+
+          &:focus,
+          &:hover,
+          &:active {
+            background-color: none;
+            box-shadow: none;
+          }
+          &:active {
+            border: 1px solid var(--primary-color-90);
+          }
+
+          .value {
+            width: 100%;
+            flex-shrink: 0;
+            height: 3rem;
+            border-radius: 0.5rem;
+          }
+
+          svg {
+            fill: var(--black-color);
+            color: var(--black-color);
+          }
+        }
+
+        .menu {
+          position: absolute;
+          background-color: var(--white-color);
+          box-shadow: var(--box-shadow);
+          width: 100%;
+          padding: 0.5rem 0;
+          border-radius: 0.5rem;
+          height: 18rem;
+          margin-top: 0.3rem;
+          z-index: 99;
+          overflow-y: scroll;
+          left: 0;
+          transition: left 1s linear;
+
+          .change-color {
+            cursor: pointer;
+            padding: 0.8rem 0;
+            height: 3.5rem;
+
+            &:hover {
+              opacity: 0.8;
+            }
+          }
+        }
+        ::-webkit-scrollbar-track {
+          border-top-right-radius: 0.5rem;
+          border-bottom-right-radius: 0.5rem;
+        }
+      }
+    }
+  }
+}

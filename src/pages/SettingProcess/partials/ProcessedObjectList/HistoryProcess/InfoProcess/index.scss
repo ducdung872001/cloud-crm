@@ -1,0 +1,131 @@
+.box__info {
+    padding: 2rem;
+    margin-bottom: 1.6rem;
+  
+    .namefs {
+      text-align: center;
+    }
+    .table__form-fs {
+      width: 100%;
+      position: relative;
+      font-size: 1.4rem;
+      line-height: 2rem;
+      letter-spacing: 0.25px;
+      margin-top: 1.2rem;
+      border: 1px solid var(--extra-color-30);
+  
+      .table__form-fs,
+      th,
+      td {
+        border: 1px solid var(--extra-color-50);
+        border-collapse: collapse;
+      }
+  
+      thead {
+        position: relative;
+        z-index: 2;
+  
+        tr {
+          th {
+            padding: 1.2rem;
+            white-space: nowrap;
+            font-size: 1.4rem;
+            font-weight: 600;
+            line-height: 2rem;
+          }
+        }
+      }
+  
+      tbody {
+        tr {
+          td {
+            //   border-bottom: 1px solid var(--extra-color-20);
+            padding: 1.2rem;
+            transition: background-color 0.15s ease-in-out;
+            vertical-align: middle;
+  
+            &:hover {
+              background-color: var(--primary-color-10);
+            }
+            &:last-child {
+              td {
+                border-bottom: none;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0rem 3.2rem;
+      padding: 1.6rem;
+      max-height: 48rem;
+      overflow: auto;
+
+      .radio-list {
+        width: 100%;
+        // width: calc(50% - 1.6rem);
+        .form-group {
+          display: flex;
+          gap: 0 1.6rem;
+          // margin: 0.6rem 0 1.6rem !important;
+
+          .base-radio {
+            & + .base-radio {
+              margin-top: 0rem;
+            }
+          }
+        }
+      }
+
+      .form-group{
+        width: calc(50% - 1.6rem);
+        margin-bottom: 1.6rem;
+
+        // &:nth-child(2){
+        //   width: 100%;
+        // }
+      }
+
+      .list__object--attribute {
+        display: flex;
+        gap: 1.2rem 3.2rem;
+        flex-wrap: wrap;
+
+        .label-title {
+          width: 100%;
+          font-size: 2rem;
+          line-height: 2.4rem;
+        }
+
+        .radio-list {
+          .form-group {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0 1.2rem;
+            margin-top: 1.5rem;
+
+            .base-radio {
+              margin: 0;
+              margin-top: 0;
+            }
+            .base-checkbox {
+              margin-top: 0;
+            }
+          }
+        }
+        .form-group {
+          width: calc(50% - 1.6rem);
+        }
+
+        .special-case {
+          width: 100%;
+        }
+      }
+    }
+  }
+  

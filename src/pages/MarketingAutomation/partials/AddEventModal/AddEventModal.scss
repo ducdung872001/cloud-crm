@@ -1,0 +1,103 @@
+.modal-add-contact {
+    .form-contact {
+      .list-form-group {
+        display: flex;
+        flex-wrap: wrap;
+        // justify-content: center;
+        // gap: 1.2rem 3.2rem;
+        gap: 0 0.8rem;
+  
+        .form-group {
+          width: 49%
+        }
+  
+  
+        // .form-group-1 {
+        //   width: calc(50% - 1.6rem);
+        // }
+  
+  
+        .options__customer,
+        .customer__item,
+        .options__email,
+        .email__item {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 0 0.8rem;
+          
+  
+          .form-box {
+            width: 48.9%;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;   
+            .form-group-box {
+              width: 100%;
+            }
+          }
+  
+          .customer__default,
+          .list-field-customer,
+          .email__default,
+          .list-field-email {
+            width: 100%;
+            display: flex;
+            // justify-content: space-between;
+            gap: 0 0.8rem;
+  
+            #FieldCustomerId {
+              width: 100%;
+            }
+  
+            .form-group {
+              width: 100%;
+            }
+          }
+  
+          .add-customer,
+          .remove-customer,
+          .add-email,
+          .remove-email {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+  
+            .icon-add,
+            .icon-remove {
+              margin-top: 2.5rem;
+              cursor: pointer;
+  
+              svg {
+                width: 2rem;
+                height: 2rem;
+                fill: var(--success-color);
+              }
+            }
+          }
+        }
+  
+        .list__customer,
+        .list__email {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 1.2rem 0;
+          margin-bottom: 15px;
+  
+          .customer__item,
+          .email__item {
+            .remove-customer,
+            .remove-email {
+              .icon-remove {
+                svg {
+                  fill: var(--error-color);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  

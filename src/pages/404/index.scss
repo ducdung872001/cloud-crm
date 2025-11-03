@@ -1,0 +1,26 @@
+.page-404 {
+  height: 80vh;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+    letter-spacing: 0.15px;
+    color: var(--extra-color-80);
+    svg {
+      margin-bottom: 5.2rem;
+    }
+
+    .back-up {
+      margin-top: 3rem;
+      background-color: #00c39f;
+      border: 1px solid #00c39f;
+
+      &:hover {
+        background-color: #00c39f;
+        border-color: #00c39f;
+      }
+    }
+  }
+}

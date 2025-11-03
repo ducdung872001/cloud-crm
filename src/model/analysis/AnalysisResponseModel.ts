@@ -1,0 +1,33 @@
+export interface IAnalysisResponse {
+  id: number;
+  url: string;
+  domain: string;
+  sourceId: string;
+  firstCrawledTime: string;
+  lastCrawledTime: string;
+  lastUpdatedTime: string;
+  publishedTime: string;
+  publishedTimestamp: string;
+  title: string;
+  summary: string;
+  content: string;
+  imageSource: string;
+  videoSource: string;
+  commentId: number;
+  commentCount: number;
+  replyCount: string;
+  likeCount: number;
+  reachCount: number;
+  shareCount: number;
+  shareContent: string;
+  wallId: number;
+  wallDisplayName: string;
+  authorId: number;
+  authorDisplayName: string;
+  authorBirthYear: string;
+  authorGender: string;
+  articleType: string;
+  postId: string;
+  partnerId: string;
+  createdTime: string;
+}

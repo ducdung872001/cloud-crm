@@ -1,0 +1,21 @@
+.modal-add-name-filter {
+    .form-add-name-filter {
+      .modal-body {
+        padding: 0;
+      }
+      .list-form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem 3.2rem;
+        max-height: 48rem;
+        overflow: auto;
+        padding: 1.6rem;
+  
+        .form-group {
+          width: 100%;
+          transition: all 0.5s ease-in-out;
+        }
+      }
+    }
+  }
+  

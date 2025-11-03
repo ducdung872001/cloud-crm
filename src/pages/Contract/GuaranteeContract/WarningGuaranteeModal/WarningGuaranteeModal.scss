@@ -1,0 +1,45 @@
+.modal-warning-guarantee {
+    .form-warning-guarantee {
+      .modal-body {
+        padding: 0;
+      }
+
+      .header-tab{
+        border-bottom: 0.5px solid #d3d5d7;
+        padding: 1rem 1.6rem 0rem 1.6rem;
+        display: flex;
+
+        .box-tab-active{
+          border-bottom: 1.5px solid;
+          padding: 0 1.2rem 1rem 1.2rem;
+          cursor: pointer;
+
+          .name-tab{
+            font-size: 16px;
+            font-weight: 500;
+          }
+
+        }
+
+        .box-tab-inActive{
+          // border: 1px solid;
+          padding: 0 1.2rem 0 1.2rem;
+          cursor: pointer;
+  
+          .name-tab{
+            font-size: 16px;
+            font-weight: 400;
+            color: #d3d5d7;
+            &:hover {
+              color: black;
+            }
+          }
+          
+        }
+        
+        
+      }
+  
+    }
+  }
+  

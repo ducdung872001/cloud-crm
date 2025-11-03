@@ -1,0 +1,21 @@
+.modal-list-upload-file {
+    // .modal-dialog {
+    //   max-width: 72rem;
+    // }
+  
+    .modal-body {
+      padding: 0;
+    }
+  
+    .wrapper__list-file-upload {
+      padding: 0 1.6rem 1.6rem 1.6rem;
+      max-height: 45rem;
+      overflow: auto;
+  
+      .box-table {
+        margin-top: 1.2rem;
+      }
+    }
+  }
+  
+  

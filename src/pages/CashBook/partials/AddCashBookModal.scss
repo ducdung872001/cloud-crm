@@ -1,0 +1,33 @@
+.modal-customer-add-cashbook {
+  .form-customer-cashbook-group {
+    .modal-body {
+      padding: 0;
+    }
+
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 3.2rem;
+      padding: 1.6rem;
+      max-height: 44rem;
+      overflow: auto;
+
+      .form-group {
+        width: calc(50% - 1.6rem);
+        transition: all 0.5s ease-in-out;
+
+        // &:first-child {
+        //   width: 100%;
+        // }
+
+        &:last-child {
+          width: 67.5%;
+        }
+      }
+
+      #FieldDebt {
+        width: 100%;
+      }
+    }
+  }
+}

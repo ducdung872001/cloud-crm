@@ -1,0 +1,60 @@
+.page__choose--role {
+  .box__choose--role {
+    .lst__role {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+
+      .item--role {
+        width: 17rem;
+        height: 14rem;
+        background-color: var(--extra-color-5);
+        border-radius: 0.3rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: column;
+        padding: 2rem 1rem 1rem;
+        position: relative;
+        cursor: pointer;
+
+        h3 {
+          font-size: 1.5rem;
+          text-align: center;
+        }
+
+        .avatar-role {
+          svg {
+            width: 4.5rem;
+            height: 4.5rem;
+            fill: var(--extra-color-30);
+          }
+        }
+
+        .name-dep {
+          display: block;
+          text-align: center;
+          font-size: 1.3rem;
+          color: var(--extra-color-50);
+          font-weight: 500;
+        }
+
+        .icon-check {
+          position: absolute;
+          right: 0.5rem;
+          top: 0;
+
+          svg {
+            width: 1.6rem;
+            height: 1.6rem;
+            fill: var(--success-color);
+          }
+        }
+
+        &.active__role {
+          border: 1.2px dashed var(--primary-color-90);
+        }
+      }
+    }
+  }
+}

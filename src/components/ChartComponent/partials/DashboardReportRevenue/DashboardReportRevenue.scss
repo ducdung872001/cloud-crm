@@ -1,0 +1,171 @@
+.search__box--partner {
+  background-color: var(--white-color);
+  .line__height--partner {
+    border-radius: 0.8rem 0.8rem 0 0;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 2rem;
+    height: 5rem;
+    letter-spacing: 0.25px;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2.4rem;
+    color: var(--text-primary-color);
+
+    li {
+      display: block;
+      border-bottom: 3px solid transparent;
+      padding: 1.5rem 0 1.2rem;
+      transition: color 0.2s ease-in-out;
+      cursor: pointer;
+
+      &.active__item--title {
+        border-color: var(--primary-color);
+        cursor: default;
+      }
+    }
+  }
+
+  .list-partner {
+    // border: 1px solid;
+    margin-top: 2rem;
+    padding: 0 2rem 0 2rem;
+
+    .list__relationship {
+      display: flex;
+      align-items: center;
+      gap: 0 0.6rem;
+      transition: all 0.3s ease-in-out;
+
+      .relationship-item,
+      .active__relationship--item {
+        padding: 0.7rem 1.8rem;
+        text-align: center;
+        font-size: 1.4rem;
+        cursor: pointer;
+        font-weight: 500;
+        border-radius: 0.5rem;
+      }
+
+      .relationship-item {
+        opacity: 0.9;
+      }
+
+      .active__relationship--item {
+        border: 1px dashed var(--black-color);
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+        opacity: 1;
+      }
+    }
+  }
+}
+.report-revenue {
+  // padding: 1.6rem;
+  .box__view--total {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem 2rem;
+    padding: 3rem 0rem;
+
+    .item {
+      position: relative;
+      border-radius: 0.3rem;
+      padding: 1.8rem;
+      cursor: pointer;
+      border: 1px dashed transparent;
+
+      .__top,
+      .__bottom {
+        color: var(--white-color);
+      }
+
+      .__top {
+        display: flex;
+        align-items: center;
+        gap: 0 0.8rem;
+        font-size: 1.8rem;
+        font-weight: 500;
+        margin-bottom: 1.2rem;
+
+        svg {
+          width: 2.6rem;
+          height: 2.6rem;
+          fill: var(--white-color);
+        }
+      }
+
+      .__bottom {
+        padding-left: 0.8rem;
+      }
+    }
+
+    .item__revenue {
+      background-color: #015aa4;
+    }
+
+    .item__expense {
+      background-color: #dc3545;
+    }
+
+    .item__income {
+      background-color: #28a745;
+    }
+
+    .item__debt {
+      background-color: #e19147;
+
+      .__bottom {
+        padding-left: 1rem;
+      }
+    }
+
+    .un_active--icon,
+    .active__icon {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.8rem;
+      transition: opacity 0.5s ease-in-out;
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+        fill: var(--white-color);
+      }
+    }
+
+    .active__icon {
+      opacity: 1;
+    }
+
+    .un_active--icon {
+      opacity: 0;
+    }
+  }
+}
+
+@media (max-width: 1819px) {
+  .overview {
+    &-item {
+      padding: 2rem;
+      &__number {
+        padding-top: 4.6rem;
+        span {
+          font-size: 5.2rem;
+          min-width: unset;
+        }
+        svg {
+          height: 5.4rem;
+        }
+      }
+    }
+  }
+
+  .report-revenue {
+    .box__view--total {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+  }
+}

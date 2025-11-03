@@ -1,0 +1,22 @@
+.modal-detail-opt {
+  .modal-dialog--xxl {
+    max-width: calc(100vw - 20rem) !important;
+
+    .modal-content {
+      .modal-body {
+        max-height: calc(100vh - 10rem) !important;
+        overflow-y: auto;
+        .card-box {
+          .box-table {
+            margin-top: 0;
+            svg {
+              width: 20px;
+              height: 20px;
+              fill: blue;
+            }
+          }
+        }
+      }
+    }
+  }
+}

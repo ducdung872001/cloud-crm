@@ -1,0 +1,40 @@
+.modal-add-contractor-payment {
+    .form-contractor-payment-group {
+      .modal-body {
+        padding: 0;
+      }
+      .list-form-group-contractor-payment {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem 3.2rem;
+        padding: 1.6rem;
+        max-height: 40rem;
+        overflow: auto;
+  
+        .form-group {
+          width: calc(50% - 1.6rem);
+          transition: all 1s ease-in-out;
+  
+          .radio-list {
+            .form-group {
+              display: flex;
+              align-items: center;
+              gap: 0 2rem;
+  
+              .base-radio {
+                & + .base-radio {
+                  margin-top: 5px;
+                }
+              }
+            }
+          }
+  
+          // &:last-child,
+          &:first-child {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+  

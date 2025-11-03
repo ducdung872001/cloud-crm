@@ -1,0 +1,46 @@
+.signed__rejected--history {
+  padding: 1rem 2rem 2rem;
+
+  .lst__history {
+    position: relative;
+    // padding-left: 0.8rem;
+
+    .__name--history {
+      font-size: 1.4rem;
+      color: var(--extra-color-50);
+      font-weight: 500;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .lst__approval--log {
+      margin-bottom: 3rem;
+
+      .box-table {
+        margin-top: 2rem;
+      }
+    }
+
+    .system-notification {
+      padding: 3rem 2.4rem 0;
+    }
+  }
+
+  .submit__form--signature {
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    border-radius: 0.3rem;
+    padding: 1.2rem 1.6rem 1.8rem;
+
+    .lst__action {
+      display: flex;
+      align-items: center;
+      gap: 0 1rem;
+      margin-top: 2.2rem;
+
+      .base-button {
+        padding: 0.4rem 1.8rem;
+        font-size: 1.3rem;
+      }
+    }
+  }
+}

@@ -1,0 +1,151 @@
+.wrapper-kanban-saleflow-invoice {
+  padding: 2rem;
+  position: relative;
+  min-height: 70rem;
+
+  .__special-kanban--saleflow-invoice {
+    overflow: auto;
+    min-height: 30rem;
+  }
+
+  .search__kanban {
+    .search-container {
+      padding: 0.8rem 0 4rem;
+    }
+  }
+
+  .box__task--kanban {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .task-list {
+    & + .task-list {
+      margin-left: 2rem;
+    }
+
+    min-height: 10rem;
+    display: flex;
+    flex-direction: column;
+    width: 18%;
+    border-radius: 0.5rem;
+    flex: 1;
+    height: 80rem;
+
+    .lst__item {
+      // max-height: 75rem;
+      height: 100%;
+      overflow: auto;
+      padding: 0.8rem;
+      // border: 1px solid;
+    }
+
+    .wrapper__title {
+      margin-bottom: 1rem;
+      // display: flex;
+      align-items: center;
+      gap: 0 0.8rem;
+      padding: 0.2rem 1rem;
+      // border: 1px solid;
+      // border-top: 5px solid #96CDCD;
+      // border-top-left-radius: 5px;
+      // border-top-right-radius: 5px;
+      background-color: #bfefff;
+      border-radius: 10px;
+
+      .title-task {
+        font-size: 13px;
+        font-weight: 500;
+        // background-color: rgba(var(--success-color-rgb), 0.3);
+        color: var(--text-primary-color);
+        // padding: 0.2rem 1rem;
+        // border-radius: 5px;
+        align-self: flex-start;
+        // border: 1px solid;
+      }
+
+      .title-task-1 {
+        font-size: 14px;
+        font-weight: 600;
+        // background-color: rgba(var(--success-color-rgb), 0.3);
+        // color: var(--text-primary-color);
+        color: white;
+        // padding: 0.2rem 1rem;
+        // border-radius: 5px;
+        align-self: flex-start;
+      }
+
+      .total-task {
+        font-weight: 600;
+      }
+    }
+
+    .button-add-customer {
+      margin-bottom: 1rem;
+      border: 1px solid #d3d5d7;
+      border-radius: 5px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 2rem;
+      cursor: pointer;
+      &:hover {
+        background: #e9eaeb;
+        .icon__add--customer {
+          svg {
+            fill: var(--success-darker-color);
+            margin-bottom: 2px;
+          }
+        }
+      }
+
+      .icon__add--customer {
+        cursor: pointer;
+        align-items: center;
+        margin-bottom: 1.5px;
+
+        svg {
+          width: 1.6rem;
+          height: 1.6rem;
+        }
+      }
+    }
+
+    &:first-child {
+      .wrapper__title {
+        .title-task {
+          // background-color: #dfe1e6;
+        }
+      }
+    }
+
+    &:nth-child(2) {
+      .wrapper__title {
+        .title-task {
+          // background-color: #deebff;
+        }
+      }
+    }
+
+    &:nth-child(4) {
+      .wrapper__title {
+        .title-task {
+          // background-color: #ff463b;
+        }
+      }
+    }
+
+    &:last-child {
+      .wrapper__title {
+        .title-task {
+          // background: rgba(var(--warning-color-rgb), 0.5);
+        }
+      }
+    }
+  }
+}

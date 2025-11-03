@@ -1,0 +1,111 @@
+.modal-quote{
+    .container-quote{
+        .box-table{
+          margin-top: 1.2rem;
+          .pagination{
+            justify-content: center;
+          }
+          .count-item{
+            display: none;
+          }
+        }
+        .modal-body {
+          padding: 0;
+        }
+
+        .table-quote{
+          max-height: 42rem;
+          overflow: auto;
+        }
+
+        .list-form-group {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0rem 3.2rem;
+          padding: 1.6rem;
+        }
+    
+        .form-group {
+          width: 100%;
+          margin-bottom: 1.6rem;
+    
+          &:nth-child(2),
+          &:nth-child(3) {
+            width: calc(50% - 1.6rem);
+          }
+        }
+    
+        #FieldFsId {
+          margin-bottom: 0;
+        }
+    
+        .action__show-more {
+          width: 100%;
+    
+          .__more {
+            margin-top: 0.3rem;
+            font-size: 1.4rem;
+            color: var(--primary-color-90);
+            font-weight: 500;
+            cursor: pointer;
+            display: block;
+    
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+    
+        .info__fs {
+          .table__fs {
+            width: 100%;
+            position: relative;
+            font-size: 1.4rem;
+            line-height: 2rem;
+            letter-spacing: 0.25px;
+            margin-top: 1.2rem;
+            border: 1px solid var(--extra-color-30);
+            border-radius: 0.3rem;
+    
+            thead {
+              // background: var(--primary-color-5);
+              border-bottom: 1px solid var(--extra-color-20);
+              position: relative;
+              z-index: 2;
+    
+              tr {
+                th {
+                  padding: 1.2rem;
+                  white-space: nowrap;
+                  font-size: 1.4rem;
+                  font-weight: 600;
+                  line-height: 2rem;
+                }
+              }
+            }
+    
+            tbody {
+              tr {
+                td {
+                  border-bottom: 1px solid var(--extra-color-20);
+                  padding: 1.2rem;
+                  transition: background-color 0.15s ease-in-out;
+                  vertical-align: middle;
+    
+                  &:hover {
+                    background-color: var(--primary-color-10);
+                  }
+                  &:last-child {
+                    td {
+                      border-bottom: none;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+       
+    }
+}
+  

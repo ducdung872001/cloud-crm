@@ -1,0 +1,80 @@
+.modal-send-email {
+    .form-email {
+      .list-form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem 3.2rem;
+  
+        .form-group {
+          width: 100%;
+  
+          .radio-list {
+            .form-group {
+              display: flex;
+              align-items: flex-start;
+              .base-radio {
+                margin-top: 1rem;
+                margin-right: 2rem;
+              }
+            }
+          }
+
+          &:nth-child(1) {
+            position: relative;
+            width: 100%;
+
+            .wrapper__email {
+                display: flex;
+                width: 100%;
+                align-items: center;
+                justify-content: space-between;
+                position: relative;
+
+                .base-input{
+                    flex: 1;
+                    .base-input__wrapper{
+                        width: 100%;
+                    }
+                }
+
+                .select-customer{
+                    border: 1px solid;
+                    height: 3.99rem;
+                    top: 2.5rem;
+                    position: absolute;
+                    right: 0;
+                    cursor: pointer;
+                    
+                    .title-select-customer{
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        height: 100%;
+                        gap: 0 0.5rem;
+                        padding: 0 1.2rem;
+                        font-size: 1.4rem;
+                        font-weight: 500;
+                        background-color: var(--extra-color-30);
+                        border-top-right-radius: 0.3rem;
+                        border-bottom-right-radius: 0.3rem;
+                        border-left: 1px solid var(--extra-color-30);
+
+                        svg {
+                            width: 2rem;
+                            height: 2rem;
+                            flex-shrink: 0;
+                          }
+                    }
+                }
+            }
+          }
+        }
+  
+        #FieldTitle,
+        #FieldType {        
+          width: calc(50% - 1.6rem);
+        }      
+      }
+    }
+  }
+  

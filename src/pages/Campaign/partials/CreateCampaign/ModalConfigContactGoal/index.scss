@@ -1,0 +1,40 @@
+.modal-setting-contact-goal {
+    .form-setting-contact-goal {
+        .container-contact-goal{
+          margin-top: 2rem;
+            .box-contact-goal{
+              display: flex;
+              // justify-content: space-between;
+              gap: 0 1rem;
+              flex-wrap: wrap;
+              .box-action{
+                padding: 0.5rem 1.5rem 0.5rem ;
+                border: 1px solid var(--border-color);
+                width: 32%;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+                margin-bottom: 15px;
+                .form-group{
+                    // border: 1px solid;
+                    // width: 100%;
+                    margin-left: 10px;
+                    flex: 1;
+                    .base-input{
+                        .base-input__input {
+                            input {
+                                padding: 0;
+                                line-height: 1rem;
+                                margin-top: 0.3rem;
+                                font-size: 14px;
+                                text-align:center
+                            }
+                        }
+                    }
+                }
+            }
+            }
+        }
+    }
+  }
+  

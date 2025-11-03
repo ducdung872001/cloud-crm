@@ -1,0 +1,93 @@
+.page__behavior__interests {
+  margin-top: 4rem;
+
+  .title__common {
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+
+    .name-common {
+      font-weight: 700;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .icon__option--download {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      cursor: pointer;
+      border-radius: 0.3rem;
+      padding: 0.4rem;
+
+      &:hover {
+        background-color: var(--extra-color-10);
+      }
+
+      svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        fill: var(--extra-color-50);
+      }
+
+      &.active__option {
+        background-color: var(--primary-color-30);
+
+        &:hover {
+          background-color: var(--primary-color-30);
+        }
+      }
+
+      .lst__option {
+        position: absolute;
+        top: 3rem;
+        width: 13rem;
+        left: 0;
+        right: 0;
+        z-index: 9;
+        background-color: var(--white-color);
+        border-radius: 0.4rem;
+        box-shadow: 0 0 0 1px hsla(0, 0%, 0%, 0.1), 0 4px 11px hsla(0, 0%, 0%, 0.1);
+        padding: 0.5rem 0;
+
+        .item__option {
+          padding: 0.2rem 1rem;
+          font-size: 1.4rem;
+          cursor: default;
+
+          &:hover {
+            background-color: #e9eaeb;
+          }
+        }
+      }
+    }
+  }
+
+  .__header,
+  .__body,
+  .__footer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .__body {
+    padding: 3rem 0;
+  }
+
+  .__footer {
+    padding-bottom: 3rem;
+  }
+
+  .page__highly__engaged--customers {
+    width: 100%;
+  }
+
+  .page__quantity__interaction--frequency,
+  .page__quantity__noninteraction--day,
+  .page__interacted__across__channels,
+  .page__campaign__affiliated--customer,
+  .page__buying--potential {
+    width: 50%;
+  }
+}

@@ -1,0 +1,77 @@
+.modal-preview-eform {
+    .form-preview-eform-group {
+      .modal-body {
+        padding: 0;
+      }
+
+      .preview-eform-container{
+        padding: 1.6rem;
+        .list__contract--attribute {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1.2rem 3.2rem;
+         
+    
+          .form-group {
+            // width: calc(32% - 1.6rem);
+            width: calc(50% - 1.6rem);
+            .radio-list {
+              .form-group {
+                width: 100%;
+              }
+            }
+          }
+    
+          .label-title {
+            width: 100%;
+            font-weight: 600;
+            // margin-top: 2rem;
+            border-top: 1px dashed #ddd;
+            padding-top: 2rem;
+          }    
+
+          .label-title-first {
+            width: 100%;
+            font-weight: 600;
+            // margin-top: 2rem;
+            // border-top: 1px dashed #ddd;
+            // padding-top: 2rem;
+          }    
+    
+    
+          .select-custom,
+          .select__custom-label {
+            // opacity: 0.6;
+    
+            div[class*="-control"] {
+              // cursor: no-drop;
+              padding: 0rem 0rem 0rem 1.2rem
+            }
+          }
+          
+          .selected--item {
+            display: flex;
+            align-items: center;
+            gap: 0 0.5rem;
+            line-height: 1.1;
+    
+            .avatar {
+              width: 2.6rem;
+              height: 2.6rem;
+              border-radius: 50rem;
+              overflow: hidden;
+              flex-shrink: 0;
+    
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+          }
+        }
+      }
+
+    }
+  }
+  

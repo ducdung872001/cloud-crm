@@ -1,0 +1,221 @@
+.modal-add-emplyee {
+  .form-emplyee-group {
+    .modal-body {
+      padding: 0;
+
+      .wrapper-coupled {
+        padding: 1.6rem;
+        max-height: 48rem;
+        overflow: auto;
+
+        .list-form-basic,
+        .list-form-enhance {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.8rem 2rem;
+        }
+
+        .info__employee {
+          width: 100%;
+          display: flex;
+          align-items: flex-start;
+          gap: 0 1.6rem;
+          margin: 1rem 0;
+
+          .form-group {
+            &:last-child {
+              flex: 1;
+            }
+          }
+        }
+
+        .list-form-basic {
+          .form-group {
+            width: calc(50% - 1rem);
+          }
+        }
+
+        .list-form-enhance {
+          .form-group {
+            width: calc(50% - 1rem);
+            transition: all 1s ease-in-out;
+
+            &:last-child {
+              width: 100%;
+            }
+
+            .radio-list {
+              .form-group {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 0 1.2rem;
+                margin-top: 1.5rem;
+
+                .base-radio {
+                  margin: 0;
+                }
+              }
+            }
+          }
+        }
+
+        #FieldAddRole {
+          width: 100%;
+        }
+
+        .box__add--role {
+          label {
+            color: var(--text-primary-color);
+            cursor: text;
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 2rem;
+            margin-bottom: 0.5rem;
+          }
+
+          .lst__role {
+            border: 1.2px dashed var(--extra-color-50);
+            border-radius: 0.3rem;
+            padding: 1rem;
+
+            .item-role {
+              width: 100%;
+              display: flex;
+              align-items: center;
+
+              & + .item-role {
+                margin-top: 1.2rem;
+              }
+
+              &--info {
+                width: 90%;
+                display: flex;
+                align-items: center;
+                gap: 0 1rem;
+                flex-shrink: 0;
+
+                .form-group {
+                  width: 50%;
+                  flex: 1;
+                  margin-bottom: 0;
+                }
+              }
+
+              &--action {
+                width: 10%;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0 0.5rem;
+                margin-left: 0.8rem;
+                padding-top: 2.1rem;
+
+                .action-item {
+                  cursor: pointer;
+
+                  svg {
+                    width: 2rem;
+                    height: 2rem;
+                  }
+
+                  &--add {
+                    svg {
+                      fill: var(--success-darker-color);
+                    }
+                  }
+
+                  &--delete {
+                    svg {
+                      fill: var(--error-darker-color);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        .box__name__code {
+          label {
+            color: var(--text-primary-color);
+            cursor: text;
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 2rem;
+            margin-bottom: 0.5rem;
+          }
+
+          .lst__role {
+            .item-role {
+              width: 100%;
+              display: flex;
+              align-items: center;
+
+              & + .item-role {
+                margin-top: 1.2rem;
+              }
+
+              &--info {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 0 1rem;
+                flex-shrink: 0;
+
+                .form-group-name {
+                  width: 60%;
+                  flex: 1;
+                  margin-bottom: 0;
+                }
+                .form-group-code {
+                  width: 40%;
+                  flex: 1;
+                  margin-bottom: 0;
+                }
+              }
+
+              &--action {
+                width: 10%;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0 0.5rem;
+                margin-left: 0.8rem;
+                padding-top: 2.1rem;
+
+                .action-item {
+                  cursor: pointer;
+
+                  svg {
+                    width: 2rem;
+                    height: 2rem;
+                  }
+
+                  &--add {
+                    svg {
+                      fill: var(--success-darker-color);
+                    }
+                  }
+
+                  &--delete {
+                    svg {
+                      fill: var(--error-darker-color);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+#FieldViewMode {
+  width: calc(50% - 1rem);
+  .form-group {
+    display: block;
+  }
+}

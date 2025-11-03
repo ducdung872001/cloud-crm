@@ -1,0 +1,155 @@
+.modal-call-api {
+    .form-call-api {
+        .modal-body{
+            padding: 0;
+          }
+        .container-call-api{
+            padding: 1.6rem;
+            max-height: 48rem;
+            overflow: auto;
+            .container-name {
+                // margin-bottom: 2rem;
+                // width: 48.5%;
+                // padding: 1.6rem;
+                .box-name{
+                display: flex;
+        
+                .name-group {
+                    color: var(--text-primary-color);
+                    cursor: text;
+                    font-size: 1.4rem;
+                    font-weight: 700;
+                    line-height: 2rem;
+                    margin-bottom: 0.5rem;
+                    padding-top: 0.3rem;
+                    display: block;
+                    margin-right: 5px;
+        
+                    &::after {
+                    content: "*";
+                    padding-left: 0.3rem;
+                    color: var(--error-color);
+                    }
+                }
+                }
+            }
+            .list-form-group-call-api {
+                // display: flex;
+                // flex-wrap: wrap;
+                gap: 1.2rem 3.2rem;
+                // padding: 1.6rem;
+                // border: 1px solid;
+                margin-top: 2rem;
+
+                .header_option{
+                    // border: 1px solid;
+                    display: flex;
+                    gap: 0 2rem;
+                    .item_option{
+                        .radio-list {
+                            .form-group {
+                            display: flex;
+                            align-items: center;
+                            gap: 2.5rem;
+        
+                            .base-radio {
+                                margin-top: 0;
+                            }
+                            }
+                        }
+                    }
+                }
+
+                .body_option{
+                    // border: 1px solid;
+                    margin-top: 15px;
+
+                    .option_2{
+                        .button_test{
+                            border: 1px solid var(--extra-color-30);
+                            padding: 0 1rem;
+                            margin-top: 1rem;
+                            border-radius: 5px;
+                            cursor: pointer;
+
+                            &:hover{
+                                background-color: var(--primary-color-10);
+                            }
+                        }
+
+                        .container_body{
+                            margin-top: 1rem;
+                            border: 1px dashed var(--extra-color-50);
+                            padding: 1.6rem;
+                            border-radius: 5px;
+
+                            .box_attribute{
+                                display: flex;
+                                align-items: center;
+                                margin-bottom: 1.6rem;
+                               
+                                .box_title{
+                                    border: 1px solid var(--border-color);
+                                    padding: 0.7rem 1.2rem;
+                                    border-radius: 3px;
+                                    align-items: center;
+                                    justify-content: center;
+                                    display: flex;
+                                    min-width: 15%;
+                                }
+                                .value{
+                                    flex: 1;
+                                }
+                                &:last-child{
+                                    margin-bottom: 0;
+                                }
+                            }
+                        }
+
+                        .container_result{
+                            margin-top: 2rem;
+                            border: 1px dashed var(--extra-color-50);
+                            padding: 1rem 1.6rem 1.6rem 1.6rem;
+                            border-radius: 5px;
+
+                            .title{
+                                // border: 1px solid;
+                            }
+
+                            .body{
+                                // border: 1px solid;
+                                margin-top: 1rem;
+                                .body_content{
+                                    margin-left: 1.6rem;
+                                    .item_content{
+                                        display: flex;
+                                        margin-bottom: 0.3rem;
+
+                                        .name{
+                                            margin-right: 5px;
+                                        }
+                                        .value{
+
+                                        }
+
+                                        &:last-child{
+                                            margin-bottom: 0;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        .button_footer{
+                            margin-top: 1.6rem;
+                            display: flex;
+                            gap: 0 1.5rem;
+                            justify-content: flex-end;
+                        }
+                    }
+                }
+            }
+        }
+    }
+  }
+  

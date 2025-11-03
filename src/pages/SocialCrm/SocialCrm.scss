@@ -1,0 +1,51 @@
+.page-social {
+  .card-box {
+    padding: 2rem;
+  }
+
+  .menu {
+    display: grid;
+    grid-column-gap: 1.6rem;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(4, auto);
+
+    &__social {
+      padding: 0 1rem;
+      border-radius: 0.4rem;
+
+      .btn-facebook {
+        border: none;
+        outline: none;
+        border-radius: 0.4rem;
+        background-color: #0075fa;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1rem 1.8rem;
+        color: var(--white-color);
+
+        &:hover {
+          background-color: var(--primary-color);
+        }
+      }
+    }
+  }
+
+  @media (max-width: 887px) {
+    .menu {
+      grid-template-rows: repeat(7, auto);
+    }
+  }
+
+  @media (max-width: 515px) {
+    .menu {
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+
+      &__category {
+        width: 100%;
+      }
+    }
+  }
+}

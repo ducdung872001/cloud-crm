@@ -1,0 +1,43 @@
+.comtainer-compare-in-dropdown-input {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: start;
+  .base-select {
+    width: 82px;
+  }
+  .select-field {
+    .base-select {
+      .select-custom {
+        [class*="-indicatorContainer"]:last-of-type {
+          /* Các thuộc tính CSS */
+          display: none;
+        }
+        [class*="-indicatorSeparator"] {
+          /* Các thuộc tính CSS */
+          display: none;
+        }
+        [class*="-control"] {
+          padding: 0;
+          width: 31rem;
+        }
+        [class*="-control"] > :first-child {
+          max-height: 97px;
+          overflow: scroll;
+          [class*="-multiValue"] {
+            padding: 2px 5px;
+            border: 1px solid var(--border-color);
+            background: linear-gradient(to bottom, var(--white-color), var(--extra-color-5));
+            border-radius: 2px;
+            white-space: nowrap;
+            font-size: 1.6rem;
+          }
+        }
+        // [class*="-control"] > :first-child > :last-child {
+        //   display: none;
+        // }
+      }
+    }
+  }
+}

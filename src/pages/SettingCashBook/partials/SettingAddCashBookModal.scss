@@ -1,0 +1,16 @@
+.modal-add-cashbook {
+  .form-cashbook-group {
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 3.2rem;
+    }
+
+    .form-group {      
+      width: calc(50% - 1.6rem);      
+      &:first-child, &:nth-child(2) {
+        width: 100%;
+      }
+    }
+  }
+}

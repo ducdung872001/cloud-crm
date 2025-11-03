@@ -1,0 +1,110 @@
+.modal-add-partnercall {
+  .form-partnercall-group {
+    .modal-body {
+      padding: 0;
+    }
+
+    .list-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem 0;
+      padding: 1.6rem;
+      max-height: 48rem;
+      overflow: auto;
+
+      .list-form-partner {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem 2.2rem;
+
+        .form-group {
+          width: calc(50% - 1.1rem);
+        }
+      }
+
+      .list-field-config {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1rem;
+
+        .title-config {
+          color: var(--text-primary-color);
+          cursor: text;
+          font-size: 1.4rem;
+          font-weight: 700;
+          line-height: 2rem;
+          margin-bottom: 0.5rem;
+
+          &::after {
+            content: "*";
+            color: var(--error-color);
+            margin-left: 0.3rem;
+          }
+        }
+
+        .field-config-item {
+          display: flex;
+          align-items: center;
+
+          .change-value-config {
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            gap: 0 2rem;
+
+            .form-group {
+              width: 47%;
+
+              .base-input {
+                margin-top: 0;
+              }
+            }
+          }
+
+          .action-change {
+            display: flex;
+            align-items: center;
+            gap: 0 0.6rem;
+            margin-bottom: 1.2rem;
+
+            .icon-add,
+            .icon-delete {
+              cursor: pointer;
+
+              svg {
+                width: 2rem;
+                height: 2rem;
+              }
+            }
+
+            .icon-add {
+              svg {
+                fill: var(--success-color);
+              }
+            }
+
+            .icon-delete {
+              svg {
+                fill: var(--error-color);
+              }
+            }
+          }
+        }
+      }
+
+      .list-form-contact {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem 2.2rem;
+
+        .form-group {
+          width: calc(50% - 1.1rem);
+
+          &:last-child {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}

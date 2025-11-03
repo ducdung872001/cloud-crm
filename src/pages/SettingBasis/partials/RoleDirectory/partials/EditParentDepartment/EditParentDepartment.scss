@@ -1,0 +1,29 @@
+.modal-edit-parent-department {
+    .form-department-group {
+      .modal-body {
+        padding: 0;
+      }
+  
+      .list-form-group {
+        padding: 1.6rem;
+        max-height: 48rem;
+        // overflow: auto;
+      }
+  
+      .list-form-info-basic,
+      .list-form-note {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem 2rem;
+        
+        .form-group {
+          &:first-child {
+            width: 100%;
+          }
+          
+          width: calc(50% - 1rem);
+        }
+      }
+    }
+  }
+  

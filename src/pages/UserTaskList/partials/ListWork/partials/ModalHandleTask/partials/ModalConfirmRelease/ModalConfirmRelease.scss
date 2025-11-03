@@ -1,0 +1,64 @@
+.modal-accept-release {
+    .form-accept-release {
+        .modal-body {
+          padding: 0;
+        }
+
+        .container-accept{
+            // border: 1px solid;
+            padding: 2rem 1.6rem 2rem 1.6rem;
+            border-radius: 8px;
+
+            .box-title{
+                display: flex;
+                justify-content: center;
+            }
+
+            .box-content{
+                display: flex;
+                justify-content: center;
+                margin-top: 1.6rem;
+            }
+
+            .box-footer{
+                display: flex;
+                margin-top: 2rem;
+                justify-content: space-between;
+
+                .button-accept,
+                .button-cancel{
+                    border: 1px solid #EEEEEF;
+                    padding: 8px 0 8px 0;
+                    justify-content: center;
+                    width: 48%;
+                    display: flex;
+                    border-radius: 6px;
+                    cursor: pointer;
+                }
+
+                .button-cancel{
+                    &:hover {
+                        background-color: var(--extra-color-20);
+                    }
+                }
+
+                .button-accept{
+                    background-color: #ED1B34;
+                    color: white;
+                    display: flex;
+                    &:hover {
+                        background-color: #cd021a;
+                    }
+
+                    svg {
+                        height: 2rem;
+                        width: 2rem;
+                        margin-left: 0.5rem;
+                        fill: #FFFFFF
+                    }
+                }
+            }
+        }
+      }
+  }
+  

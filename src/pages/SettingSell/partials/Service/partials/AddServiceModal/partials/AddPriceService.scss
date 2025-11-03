@@ -1,0 +1,35 @@
+.modal-add-price {
+  .modal-dialog {
+    max-width: 72rem;
+  }
+
+  .form-add-price {
+    .wrapper__add--price {
+      display: flex;
+      flex-direction: column;
+
+      .list__form--item {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem 3.2rem;
+
+        .form-group {
+          width: calc(50% - 1.6rem);
+        }
+
+        .btn__add--price {
+          padding: 0.6rem 2.2rem;
+        }
+      }
+
+      .list__price--variant {
+        border-top: 1px dashed var(--extra-color-20);
+        margin-top: 2.2rem;
+
+        .box-table {
+          margin-top: 2.2rem;
+        }
+      }
+    }
+  }
+}

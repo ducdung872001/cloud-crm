@@ -1,0 +1,113 @@
+.modal-config-time {
+    .form-config-time{
+      .modal-body{
+        padding: 0;
+      }
+
+      .box-name-point {
+        display: flex;
+        justify-content: space-between;
+        padding: 1.6rem 1.6rem 0 1.6rem;
+        .container-name {
+          margin-bottom: 2rem;
+          width: 48.5%;
+          .box-name{
+            display: flex;
+
+            .name-group {
+              color: var(--text-primary-color);
+              cursor: text;
+              font-size: 1.4rem;
+              font-weight: 700;
+              line-height: 2rem;
+              margin-bottom: 0.5rem;
+              padding-top: 0.3rem;
+              display: block;
+              margin-right: 5px;
+    
+              &::after {
+                content: "*";
+                padding-left: 0.3rem;
+                color: var(--error-color);
+              }
+            }
+          }
+        }
+
+        .container-point {
+          margin-bottom: 2rem;
+          width: 48.5%;
+          .box-name{
+            display: flex;
+
+            .name-group {
+              color: var(--text-primary-color);
+              cursor: text;
+              font-size: 1.4rem;
+              font-weight: 700;
+              line-height: 2rem;
+              margin-bottom: 0.5rem;
+              padding-top: 0.3rem;
+              display: block;
+              margin-right: 5px;
+    
+              // &::after {
+              //   content: "*";
+              //   padding-left: 0.3rem;
+              //   color: var(--error-color);
+              // }
+            }
+          }
+        }
+      }
+
+      .box_line_date{
+          display: flex;
+          align-items: center;
+          margin-top: 0rem;
+          // border: 1px solid;
+          padding: 0 1.6rem 1.6rem 1.6rem;
+
+          .title_expire{
+            font-size: 14px;
+            font-weight: 500;
+            width: 11rem;
+          //   border: 1px solid;
+          }
+
+          .box_expire{
+            display: flex;
+            align-items: center;
+            .box_time{
+              display: flex;
+              align-items: center;
+
+              .form-group{
+                // border: 1px solid;
+                // flex: 1;
+                width: 6rem;
+                // margin-left: 10px;
+                .base-input{
+                  .base-input__input {
+                    input {
+                      padding: 0;
+                      line-height: 1rem;
+                      margin-top: 1.2rem;
+                      font-size: 14px;
+                      text-align:center
+                    }
+                  }
+                }
+              }
+
+              .title_time {
+                font-size: 14px;
+              }
+            }
+            
+          }
+
+        }
+    }
+}
+  

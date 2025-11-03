@@ -1,0 +1,14 @@
+.modal-detail-report-opt {
+  .modal-dialog--xxl {
+    max-width: 1350px !important;
+    .modal-content {
+      .modal-body {
+        .card-box {
+          .box-table {
+            margin-top: 0;
+          }
+        }
+      }
+    }
+  }
+}

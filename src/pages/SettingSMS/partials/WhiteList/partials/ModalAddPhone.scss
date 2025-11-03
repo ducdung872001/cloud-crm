@@ -1,0 +1,27 @@
+.modal-add-phone {  
+    .form-add-phone-group {
+      .list-form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem 3.2rem;
+      }
+  
+      .form-group {
+        width: calc(50% - 1.6rem);
+        .radio-list {
+          .form-group {
+            width: 100%;
+            display: flex; 
+            align-items: center;
+            gap: 0 1.2rem;
+            margin-top: 1.5rem;
+  
+            .base-radio {
+              margin: 0;
+            }
+          }
+        }
+      }    
+    }
+  }
+  

@@ -1,0 +1,198 @@
+.modal-add-image {
+  .form-add-image-group {
+    .modal-body {
+      padding: 0;
+    }
+
+    .wrapper__add--image {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem 0;
+      padding: 1.6rem 1.6rem 2rem;
+
+      .menu__list--option {
+        margin-bottom: 2rem;
+        height: 5rem;
+        letter-spacing: 0.25px;
+        font-size: 1.4rem;
+        line-height: 2rem;
+        color: var(--text-extra-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2.2rem;
+
+        .option-item,
+        .action__option {
+          position: relative;
+          cursor: pointer;
+          padding: 1rem 0 1.2rem;
+          transition: color 0.2s ease-in-out;
+
+          &::before {
+            content: "";
+            position: absolute;
+            left: 1.1rem;
+            bottom: 0;
+            width: 70%;
+            height: 0.3rem;
+            background-color: var(--extra-color-50);
+            border-radius: 0.5rem;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s ease;
+          }
+
+          &:hover::before {
+            transform: scaleX(0.9);
+            transform-origin: left;
+          }
+        }
+
+        .action__option {
+          cursor: default;
+          pointer-events: none;
+
+          &::before {
+            background-color: var(--primary-color-90);
+            transform: scaleX(0.9);
+            transform-origin: left;
+          }
+        }
+      }
+
+      h4 {
+        width: 18rem;
+        flex-shrink: 0;
+      }
+
+      .upload-photos {
+        width: 100%;
+        border: 1px dashed var(--extra-color-50);
+        border-radius: 0.5rem;
+        overflow: hidden;
+
+        .upload {
+          label {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            padding: 0.6rem 0;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 500;
+          }
+
+          &:hover {
+            color: var(--primary-color-90);
+          }
+        }
+
+        .upload__done {
+          background: linear-gradient(to right, var(--primary-color-30), var(--primary-color-90));
+          transition: all 0.3s ease-out;
+
+          label {
+            color: var(--white-color);
+            font-weight: 500;
+          }
+        }
+
+        &:hover {
+          border-color: var(--success-darker-color);
+        }
+      }
+
+      .list__photo--gallery {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.8rem 0.5rem;
+
+        .item {
+          width: 12rem;
+          height: 12rem;
+          border-radius: 0.3rem;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+      }
+
+      .list__img--selected {
+        display: flex;
+        align-items: flex-start;
+
+        h4 {
+          color: var(--extra-color-50);
+        }
+
+        .list-item {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 0.8rem 0.5rem;
+
+          .item {
+            width: 5rem;
+            height: 5rem;
+            border: 1px solid var(--extra-color-50);
+            border-radius: 0.3rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+              object-fit: cover;
+              width: 100%;
+              height: 100%;
+            }
+
+            svg {
+              width: 3rem;
+              height: 3rem;
+            }
+
+            .icon-delete {
+              display: none;
+            }
+          }
+
+          .img-selected {
+            cursor: pointer;
+            position: relative;
+
+            &:hover {
+              img {
+                opacity: 0.5;
+              }
+
+              .icon-delete {
+                display: block;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+
+                svg {
+                  width: 2rem;
+                  height: 2rem;
+                  fill: var(--error-color);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

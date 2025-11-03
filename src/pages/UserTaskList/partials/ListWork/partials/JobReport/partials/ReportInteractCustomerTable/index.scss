@@ -1,0 +1,43 @@
+.page__customer--report {
+  .card-box {
+    .search-container {
+      padding: 2.4rem 0 0;
+    }
+
+    .title__report {
+      display: flex;
+      align-items: center;
+      gap: 0 0.6rem;
+      margin-bottom: 0.5rem;
+
+      h2 {
+        margin-bottom: 0rem;
+      }
+
+      .icon__info {
+        cursor: pointer;
+
+        svg {
+          width: 2rem;
+          height: 2rem;
+          fill: var(--extra-color-50);
+        }
+
+        &:hover {
+          svg {
+            fill: var(--primary-color-90);
+          }
+        }
+      }
+    }
+
+    .view__history--interact {
+      color: var(--primary-color);
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

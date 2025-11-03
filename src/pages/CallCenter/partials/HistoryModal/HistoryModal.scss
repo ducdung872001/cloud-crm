@@ -1,0 +1,32 @@
+.modal-history {
+    .container-history{
+      .modal-body {
+        padding: 0;
+      }
+
+      .body-history{
+        max-height: 48rem;
+        overflow: auto;
+        padding: 1.6rem;
+        .list-tab{
+          display: flex;
+          .item-tab{
+            padding: 1rem;
+            border: 1px solid;
+          }
+        }
+      }
+      .box-table{
+        margin-top: 1.2rem;
+        // .pagination{
+        //   justify-content: center;
+        // }
+        // .count-item{
+        //   display: none;
+        // }
+      }
+      
+
+    }
+}
+  

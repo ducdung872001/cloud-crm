@@ -1,0 +1,30 @@
+.base-badge {
+  height: 2.4rem;
+  border-radius: 1.2rem;
+  background: var(--primary-color);
+  display: inline-block;
+  padding: 0 1.2rem;
+  color: #fff;
+  font-size: 1.2rem;
+  white-space: nowrap;
+  line-height: 2.4rem;
+  font-weight: 500;
+  justify-content: center;
+  align-items: center;
+  min-width: 9rem;
+  &--success {
+    background: var(--success-color);
+  }
+  &--error {
+    background: var(--error-color);
+  }
+  &--warning {
+    background: var(--warning-color);
+  }
+  &--secondary {
+    background: var(--extra-color-50);
+  }
+  &--transparent {
+    background: transparent;
+  }
+}

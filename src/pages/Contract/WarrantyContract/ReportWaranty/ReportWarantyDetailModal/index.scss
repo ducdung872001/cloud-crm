@@ -1,0 +1,19 @@
+.modal-detail-report-waranty {
+  .modal-body {
+    padding: 0;
+    .box-table {
+      margin-top: 0;
+      svg {
+        width: 20px;
+        height: 20px;
+        fill: blue;
+      }
+      .text-primary {
+        color: black;
+        &:hover {
+          color: blue;
+        }
+      }
+    }
+  }
+}

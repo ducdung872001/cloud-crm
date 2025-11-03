@@ -1,0 +1,45 @@
+.icon-caret {
+    position: absolute;
+    right: 2px;
+    top: 1px;
+    width: 20px;
+    background: #ddd;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.cell-option {
+    position: absolute;
+    right: -200px;
+    top: -16px;
+    z-index: 1000;
+    padding-inline-start: 0 !important;
+
+    color: var(--ds-text, #091e42);
+    background-color: var(--ds-surface-overlay, #ffffff);
+    border-radius: 3px;
+    box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.31) 0px 0px 1px;
+    box-sizing: border-box;
+    overflow: auto;
+    padding: 4px 0px;
+    max-height: 90vh;
+    width: 200px;
+
+    li {
+        cursor: pointer;
+        padding: 10px;
+        list-style: none;
+
+        &:hover {
+            background-color: #ddd;
+        }
+    }
+}
+
+td {
+    &:last-child {
+        .cell-option {
+            right: 24px;
+        }
+    }
+}

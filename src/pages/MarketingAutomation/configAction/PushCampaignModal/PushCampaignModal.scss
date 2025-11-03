@@ -1,0 +1,47 @@
+.modal-push-campaign {
+    .form-push-campaign {
+        .container-name {
+            // margin-bottom: 2rem;
+            // width: 48.5%;
+            padding: 0 1.6rem 0 1.6rem;
+            .box-name{
+              display: flex;
+    
+              .name-group {
+                color: var(--text-primary-color);
+                cursor: text;
+                font-size: 1.4rem;
+                font-weight: 700;
+                line-height: 2rem;
+                margin-bottom: 0.5rem;
+                padding-top: 0.3rem;
+                display: block;
+                margin-right: 5px;
+      
+                &::after {
+                  content: "*";
+                  padding-left: 0.3rem;
+                  color: var(--error-color);
+                }
+              }
+            }
+        }
+        .list-form-group-push-campaign {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem 3.2rem;
+            padding: 1.6rem;
+    
+            .form-group {
+            width: calc(50% - 1.6rem);
+            
+            &:first-child {
+                width: 100%;
+            }
+    
+            
+            }
+        }
+    }
+  }
+  

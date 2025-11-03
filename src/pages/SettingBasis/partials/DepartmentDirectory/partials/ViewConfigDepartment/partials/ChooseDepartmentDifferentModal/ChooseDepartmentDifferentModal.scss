@@ -1,0 +1,57 @@
+.modal-copy-department {
+  .form__copy--department {
+    .modal-body {
+      padding: 0;
+    }
+
+    .copy__department {
+      display: flex;
+      flex-direction: column;
+
+      .choose__department {
+        padding: 2rem;
+
+        .list--department {
+          color: var(--text-primary-color);
+          cursor: text;
+          font-size: 1.4rem;
+          font-weight: 700;
+          line-height: 2rem;
+          margin-bottom: 0.8rem;
+        }
+
+        .department__item {
+          & + .department__item {
+            margin-top: 1rem;
+          }
+
+          .list__job--title {
+            display: flex;
+            flex-direction: column;
+            padding: 0.3rem 0 0 2.5rem;
+          }
+        }
+      }
+
+      .department__nominated {
+        border-top: 1px dashed var(--extra-color-20);
+        padding: 2rem;
+
+        .name--department {
+          color: var(--text-primary-color);
+          cursor: text;
+          font-size: 1.5rem;
+          font-weight: 600;
+          line-height: 2rem;
+          margin-bottom: 0.8rem;
+        }
+
+        .list__jobtitle--props {
+          display: flex;
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    }
+  }
+}

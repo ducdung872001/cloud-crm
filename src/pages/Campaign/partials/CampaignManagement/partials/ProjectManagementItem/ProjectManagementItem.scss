@@ -1,0 +1,340 @@
+.project-management-item {
+  .project__management-lv1,
+  .active__project-management {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0.5rem 1rem 0rem;
+    cursor: pointer;
+    position: relative;
+
+    .folder-project-management {
+      display: flex;
+      align-items: flex-start;
+      gap: 0 0.8rem;
+      padding: 0 0.8rem 0 1.2rem;
+      font-size: 1.5rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.5s ease-in-out;
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+        fill: var(--warning-darker-color);
+        margin-top: 0.3rem;
+      }
+
+      .name--project {
+        width: 20rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+
+    .actions-edit-remove,
+    .active__item--option {
+      margin-right: 1rem;
+      display: none;
+
+      svg {
+        width: 1.2rem;
+        height: 1.2rem;
+        fill: var(--extra-color);
+      }
+    }
+
+    .active__item--option {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--white-color);
+      padding: 0.6rem;
+      border-radius: 50rem;
+
+      svg {
+        fill: var(--primary-color);
+      }
+
+      .menu-action-project {
+        position: absolute;
+        background-color: var(--white-color);
+        top: 4.6rem;
+        right: 1.2rem;
+        left: 1.2rem;
+        border-radius: 0.3rem;
+        padding: 0.6rem 0.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem 0;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+        z-index: 10;
+
+        .view-project-item,
+        .add-project-item,
+        .edit-project-item,
+        .remove-project-item {
+          display: flex;
+          align-items: center;
+          gap: 0 0.6rem;
+          font-size: 1.4rem;
+          line-height: 2.4rem;
+          font-weight: 500;
+          padding: 0.5rem 0.8rem;
+          border-radius: 0.5rem;
+          cursor: pointer;
+
+          svg {
+            width: 1.8rem;
+            height: 1.8rem;
+          }
+        }
+
+        .add-project-item {
+          svg {
+            fill: rgba(var(--success-color-rgb), 0.9);
+          }
+
+          &:hover {
+            background-color: rgba(var(--success-color-rgb), 0.1);
+          }
+        }
+
+        .view-project-item,
+        .edit-project-item {
+          svg {
+            fill: var(--primary-color-90);
+          }
+
+          &:hover {
+            background-color: var(--primary-color-5);
+          }
+        }
+
+        .remove-project-item {
+          color: #ff595a;
+
+          svg {
+            fill: #ff595a;
+          }
+
+          &:hover {
+            background-color: rgba(255, 89, 90, 0.08);
+          }
+        }
+      }
+    }
+
+    &:hover {
+      background-color: var(--extra-color-20);
+
+      .actions-edit-remove {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--white-color);
+        padding: 0.6rem;
+        border-radius: 50rem;
+
+        svg {
+          fill: var(--primary-color);
+        }
+      }
+    }
+  }
+
+  .active__project-management {
+    background-color: var(--extra-color-20);
+  }
+
+  .project__management-lv2,
+  .active__project-management--lv2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 0.8rem 0 0.8rem 3.5rem;
+    position: relative;
+
+    .name__product-lv2 {
+      display: flex;
+      align-items: flex-start;
+      cursor: pointer;
+      font-size: 1.4rem;
+      font-weight: 500;
+
+      .name-project--child {
+        width: 18.5rem;
+      }
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+        margin-top: 0.3rem;
+        flex-shrink: 0;
+      }
+    }
+
+    .actions-edit-remove-child,
+    .active__item-child--option {
+      margin-right: 1rem;
+      display: none;
+
+      svg {
+        width: 1.2rem;
+        height: 1.2rem;
+        fill: var(--extra-color);
+      }
+    }
+
+    .active__item-child--option {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--white-color);
+      padding: 0.6rem;
+      border-radius: 50rem;
+
+      svg {
+        fill: var(--primary-color);
+      }
+
+      .menu-action-project-child {
+        position: absolute;
+        background-color: var(--white-color);
+        top: 4.3rem;
+        right: 1.2rem;
+        left: 1.2rem;
+        border-radius: 0.3rem;
+        padding: 0.6rem 0.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem 0;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+        z-index: 10;
+
+        .view-project-item,
+        .edit-project-item,
+        .remove-project-item {
+          display: flex;
+          align-items: center;
+          gap: 0 0.6rem;
+          font-size: 1.4rem;
+          line-height: 2.4rem;
+          font-weight: 500;
+          padding: 0.5rem 0.8rem;
+          border-radius: 0.5rem;
+          cursor: pointer;
+
+          svg {
+            width: 1.8rem;
+            height: 1.8rem;
+          }
+        }
+
+        .view-project-item,
+        .edit-project-item {
+          svg {
+            fill: var(--primary-color-90);
+          }
+
+          &:hover {
+            background-color: var(--primary-color-5);
+          }
+        }
+
+        .remove-project-item {
+          color: #ff595a;
+
+          svg {
+            fill: #ff595a;
+          }
+
+          &:hover {
+            background-color: rgba(255, 89, 90, 0.08);
+          }
+        }
+      }
+    }
+
+    &:hover {
+      background-color: var(--extra-color-20);
+
+      .name__product-lv2 {
+        color: var(--primary-color);
+
+        svg {
+          fill: var(--primary-color);
+        }
+      }
+
+      .actions-edit-remove-child {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--white-color);
+        padding: 0.6rem;
+        border-radius: 50rem;
+
+        svg {
+          fill: var(--primary-color);
+        }
+      }
+    }
+  }
+
+  .active__project-management--lv2 {
+    background-color: var(--extra-color-20);
+
+    .name__product-lv2 {
+      color: var(--primary-color);
+
+      svg {
+        fill: var(--primary-color);
+      }
+    }
+  }
+
+  @media (max-width: 1599px) {
+    .project__management-lv1,
+    .active__project-management {
+      .folder-project-management {
+        .name--project {
+          width: 17rem;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 1400px) {
+    .project__management-lv1,
+    .active__project-management {
+      .folder-project-management {
+        .name--project {
+          width: 15rem;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 1365px) {
+    .project__management-lv1,
+    .active__project-management {
+      .folder-project-management {
+        .name--project {
+          width: 14rem;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 991px) {
+    //
+  }
+
+  @media (max-width: 767px) {
+    //
+  }
+}

@@ -1,0 +1,28 @@
+.container-button-component {
+    padding: 5px 1.4rem 5px 1.4rem;
+    border-radius: 8px;
+    background-color: #ED1B34;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #cd021a;
+    }
+}
+
+.container-button-component-disabled {
+    padding: 5px 1.4rem 5px 1.4rem;
+    border-radius: 8px;
+    background-color: #B7B8B9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+
+    // cursor: pointer;
+    // &:hover {
+    //     background-color: #cd021a;
+    // }
+}

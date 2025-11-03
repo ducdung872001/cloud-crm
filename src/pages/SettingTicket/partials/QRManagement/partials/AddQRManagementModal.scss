@@ -1,0 +1,53 @@
+.modal-add-qr-code {
+  .form-add-qr-code-group {
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 3.2rem;
+
+      .form-group {
+        width: calc(50% - 1.6rem);
+      }
+
+      .view__qr--code {
+        .name-code {
+          color: var(--text-primary-color);
+          cursor: text;
+          font-size: 1.4rem;
+          font-weight: 700;
+          line-height: 2rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .box__scan {
+          width: 16rem;
+          border-radius: 0.3rem;
+          border: 1px solid var(--border-color);
+          padding-top: 1rem;
+
+          svg {
+            display: flex;
+            margin: 0 auto;
+          }
+
+          .base-button {
+            width: 100%;
+            margin-top: 1rem;
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--white-color);
+            padding: 0.4rem;
+            border: none;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            background: var(--extra-color-50);
+          }
+        }
+      }
+
+      #FieldLink {
+        width: 100%;
+      }
+    }
+  }
+}

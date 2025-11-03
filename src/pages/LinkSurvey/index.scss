@@ -1,0 +1,144 @@
+.page__link--survey {
+  min-height: 85vh;
+  padding-right: 28rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .form__add--voc {
+    border-radius: 0.3rem;
+    background-color: var(--white-color);
+    padding: 2.2rem 3.6rem;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+    .content__survey {
+      // sau có các case khác thì css ở đây
+    }
+
+    .evaluate__survey {
+      margin: 2rem 0;
+
+      .lst-evaluate--emoticon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0 0.8rem;
+
+        .item__evaluate {
+          .icon-emoticon {
+            position: relative;
+
+            .check__emoticon {
+              position: absolute;
+              top: -0.3rem;
+              right: 0;
+              border: 1px solid var(--extra-color-30);
+              border-radius: 50%;
+              background-color: var(--extra-color-5);
+              padding: 0.2rem;
+              width: 1.3rem;
+              height: 1.3rem;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              svg {
+                fill: var(--sea-green-color);
+              }
+            }
+
+            .__icon {
+              cursor: pointer;
+              font-size: 2.6rem;
+            }
+          }
+        }
+      }
+
+      .lst__star--rating {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0 0.3rem;
+
+        .item__star {
+          cursor: pointer;
+
+          svg {
+            width: 2.5rem;
+            height: 2.5rem;
+            fill: var(--extra-color-50);
+          }
+        }
+
+        .on {
+          .item__star {
+            svg {
+              fill: var(--warning-color);
+            }
+          }
+        }
+
+        .off {
+          .item__star {
+            svg {
+              fill: var(--extra-color-50);
+            }
+          }
+        }
+      }
+    }
+
+    .base-button {
+      line-height: 2.2rem;
+      padding: 0.6rem 3rem;
+      font-size: 1.5rem;
+      width: 42%;
+      margin: 0 auto;
+    }
+  }
+
+  .box__thank--you {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+
+    .content {
+      .title-content {
+        font-size: 2rem;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+    }
+  }
+
+  @media (max-width: 1819px) {
+    .box__thank--you {
+      max-width: 70rem;
+    }
+  }
+
+  @media (max-width: 1119px) {
+    padding-right: 0;
+  }
+
+  @media (max-width: 767px) {
+    .form__add--voc {
+      padding: 1.6rem;
+    }
+
+    .box__thank--you {
+      .content {
+        .title-content {
+          font-size: 1.6rem;
+        }
+
+        .desc {
+          font-size: 1.5rem;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,95 @@
+.page__statistic_contract {
+    padding: 2.5rem 2rem 2rem;
+  
+    .title__common {
+        gap: 1.2rem;
+        margin-bottom: 1.2rem;
+    
+        .name-common {
+          font-weight: 700;
+          margin: 0;
+          text-transform: uppercase;
+        }
+    
+        .icon__option--download {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          cursor: pointer;
+          border-radius: 0.3rem;
+          padding: 0.4rem;
+    
+          &:hover {
+            background-color: var(--extra-color-10);
+          }
+    
+          svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            fill: var(--extra-color-50);
+          }
+    
+          &.active__option {
+            background-color: var(--primary-color-30);
+    
+            &:hover {
+              background-color: var(--primary-color-30);
+            }
+          }
+    
+          .lst__option {
+            position: absolute;
+            top: 3rem;
+            width: 13rem;
+            left: 0;
+            right: 0;
+            z-index: 9;
+            background-color: var(--white-color);
+            border-radius: 0.4rem;
+            box-shadow: 0 0 0 1px hsla(0, 0%, 0%, 0.1), 0 4px 11px hsla(0, 0%, 0%, 0.1);
+            padding: 0.5rem 0;
+    
+            .item__option {
+              padding: 0.2rem 1rem;
+              font-size: 1.4rem;
+              cursor: default;
+    
+              &:hover {
+                background-color: #e9eaeb;
+              }
+            }
+          }
+        }
+      }
+    
+      .body__demo--graphic {
+        // padding-top: 3rem;
+    
+        .__top--graphic {
+          width: 100%;
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          padding-bottom: 3rem;
+    
+          .page__report_contract_status {
+            width: 50%;
+          }
+        }
+    
+        .__bottom--graphic {
+          width: 100%;
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          padding-bottom: 3rem;
+    
+          .page__report_contract_status {
+            width: 50%;
+          }
+        }
+      }
+    
+  }
+  

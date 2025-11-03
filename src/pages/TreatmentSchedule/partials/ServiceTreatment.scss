@@ -1,0 +1,20 @@
+.modal-service-treatment {
+  .modal-dialog {
+    max-width: 80rem;
+  }
+
+  .list-form-group {
+    .list-data-customer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2.8rem;
+
+      .base-input {
+        flex: 1;
+        margin-top: 0;
+      }
+    }
+  }
+}

@@ -1,0 +1,117 @@
+.add-template-email {
+  padding: 2rem;
+
+  .form-template-email-group {
+    .template-email {
+      border-top: none;
+    }
+
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 3.2rem;
+
+      .form-group {
+        width: 100%;
+      }
+
+      #FieldTcyId {
+        width: calc(50% - 3.2rem);
+      }
+
+      #FieldType {
+        width: calc(50% - 3.2rem);
+
+        .radio-list {
+          .form-group {
+            display: flex;
+            align-items: center;
+            gap: 0 1rem;
+            margin-top: 1.3rem;
+
+            .base-radio {
+              margin: 0;
+            }
+          }
+        }
+      }
+
+      .code-email {
+        padding: 0.6rem 0 1.2rem 0;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.8rem;
+
+        .name-template {
+          background-color: #5a6268;
+          padding: 0.2rem 0.6rem;
+          border-radius: 0.5rem;
+          font-size: 1.3rem;
+          color: var(--white-color);
+          cursor: pointer;
+
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+      }
+      .code-email-select{
+        padding: 0.6rem 0 1.2rem 0;
+        display: flex;
+        align-items: center;
+        // justify-content: space-between;
+        gap: 0 2rem;
+        .left{
+          width: calc(50% - 3.2rem);
+          align-items: flex-start;
+          .list__relationship {
+            padding-right: 2rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            align-items: center;
+            gap: 0 1rem;
+            transition: all 0.3s ease-in-out;
+    
+            .relationship-item,
+            .active__relationship--item {
+              padding: 0.7rem 1.8rem;
+              text-align: center;
+              font-size: 1.4rem;
+              cursor: pointer;
+              font-weight: 500;
+              border-radius: 0.5rem;
+              position: relative;
+              svg {
+                position: absolute;
+                top: 2px;
+                left: 117px;
+                width: 1rem;
+                height: 1rem;
+                fill: white;
+              }
+            }
+    
+            .relationship-item {
+              opacity: 0.9;
+            }
+    
+            .active__relationship--item {
+              border: 1px dashed var(--black-color);
+              box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+              opacity: 1;
+            }
+          }
+        }
+        .right{
+          width: calc(50% - 3.2rem);
+          padding-left: 1rem;
+          align-items: flex-start;
+          // [class*="-placeholder"] {
+          //   color: black;
+          // }
+        }
+      }
+    }
+  }
+}

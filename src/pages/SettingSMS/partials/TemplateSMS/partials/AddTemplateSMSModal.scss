@@ -1,0 +1,51 @@
+.modal-add-template-sms {
+  .form-template-sms-group {
+    .modal-body {
+      padding: 0;
+    }
+
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 3.2rem;
+      padding: 1.6rem;
+      max-height: 48rem;
+      overflow: auto;
+
+      .form-group {
+        width: 100%;
+      }
+
+      #FieldContent {
+        margin-bottom: 0;
+      }
+
+      .code-sms {
+        padding: 0.6rem 0 1.2rem 0;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.8rem;
+
+        .name-template {
+          background-color: #5a6268;
+          padding: 0.2rem 0.6rem;
+          border-radius: 0.5rem;
+          font-size: 1.3rem;
+          color: var(--white-color);
+          cursor: pointer;
+
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+      }
+
+      .noted {
+        color: var(--error-darker-color);
+        font-size: 1.4rem;
+        font-weight: 500;
+      }
+    }
+  }
+}

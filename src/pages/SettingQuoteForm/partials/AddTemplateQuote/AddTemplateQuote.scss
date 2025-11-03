@@ -1,0 +1,274 @@
+.modal-add-template-quote {
+  .modal-body {
+    padding: 0;
+  }
+  .wrapper__lst__add--field {
+    padding: 1.6rem;
+    // max-height: 42rem;
+    // overflow: auto;
+
+    // css thêm mới field
+    .info__field--config {
+      display: flex;
+      flex-wrap: wrap;
+
+      .form-group {
+        width: 100%;
+      }
+
+      .merge-form {
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+        gap: 0 2rem;
+
+        .form-group {
+          flex: 1;
+        }
+      }
+
+      .form-special {
+        display: flex;
+        align-items: center;
+
+        .base-input {
+          flex: 1;
+
+          .base-input__input {
+            input {
+              border-radius: 0;
+              border-top-left-radius: 0.3rem;
+              border-bottom-left-radius: 0.3rem;
+            }
+          }
+        }
+
+        .choose__formula {
+          position: relative;
+          flex-shrink: 0;
+          cursor: pointer;
+
+          .name__choose {
+            width: 4rem;
+            margin-top: 2.5rem;
+            height: 3.933rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            border-top-right-radius: 0.3rem;
+            border-bottom-right-radius: 0.3rem;
+
+            svg {
+              width: 3rem;
+              height: 3rem;
+              fill: var(--extra-color-50);
+            }
+
+            &:hover {
+              background-color: var(--primary-color-10);
+            }
+          }
+
+          .lst-field-choose-formula {
+            position: absolute;
+            right: 0;
+            width: 25rem;
+            bottom: 4.5rem;
+            opacity: 1;
+            background: var(--white-color);
+            z-index: 99;
+            padding-bottom: 1rem;
+            border-radius: 0.3rem;
+            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+
+            .suggested__formula {
+              display: block;
+              padding: 0.5rem 1rem;
+              border-bottom: 1.2px solid var(--extra-color-30);
+            }
+
+            .lst__formula {
+              padding: 0.5rem 0.5rem 0;
+              max-height: 14rem;
+              overflow: auto;
+              font-size: 1.4rem;
+
+              .name-formula {
+                display: block;
+                padding: 0.8rem 0.6rem;
+                cursor: pointer;
+                border-radius: 0.3rem;
+
+                &:hover {
+                  background-color: var(--extra-color-20);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .box__data--select {
+        width: 100%;
+        margin-bottom: 1.2rem;
+
+        .name-lst {
+          color: var(--text-primary-color);
+          cursor: text;
+          font-size: 1.4rem;
+          font-weight: 700;
+          line-height: 2rem;
+          margin-bottom: 0.5rem;
+          display: block;
+        }
+
+        .lst__data {
+          border: 1px dashed var(--extra-color-20);
+          border-radius: 0.3rem;
+          padding: 1rem;
+
+          .item-data {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            & + .item-data {
+              margin-top: 1rem;
+            }
+
+            .info__data {
+              display: flex;
+              align-items: flex-start;
+              gap: 0 1.2rem;
+              width: 89%;
+
+              .form-group {
+                flex: 1;
+                margin-bottom: 0;
+              }
+            }
+
+            .action-data {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 0 0.6rem;
+              width: 8%;
+              flex-shrink: 0;
+
+              &--item {
+                cursor: pointer;
+
+                svg {
+                  width: 2rem;
+                  height: 2rem;
+                }
+              }
+
+              &--add {
+                svg {
+                  fill: var(--success-color);
+                }
+              }
+
+              &--delete {
+                svg {
+                  fill: var(--error-darker-color);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // css hiển thị ra các field
+    .box__lst--field {
+      .title-name {
+        color: var(--text-primary-color);
+        cursor: text;
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 2rem;
+        margin-bottom: 0.8rem;
+        display: block;
+      }
+
+      .lst__field--data {
+        background-color: var(--extra-color-5);
+        border-radius: 0.5rem;
+
+        .lst-data {
+          padding: 1.2rem;
+          max-height: 32rem;
+          overflow: auto;
+        }
+
+        .item__data {
+          border: 1.5px solid var(--extra-color-20);
+          border-radius: 0.3rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background-color: var(--white-color);
+          padding: 0.8rem 1.2rem;
+          font-size: 1.5rem;
+          font-weight: 500;
+
+          & + .item__data {
+            margin-top: 1rem;
+          }
+
+          svg {
+            width: 2rem;
+            height: 2rem;
+          }
+
+          .action-data {
+            display: flex;
+            align-items: center;
+            gap: 0 0.8rem;
+
+            &--item {
+              cursor: pointer;
+            }
+
+            &--edit {
+              svg {
+                fill: var(--primary-color);
+              }
+            }
+
+            &--delete {
+              svg {
+                fill: var(--error-darker-color);
+              }
+            }
+
+            &--change {
+              svg {
+                fill: var(--warning-darker-color);
+              }
+            }
+          }
+
+          &--add {
+            justify-content: center;
+            gap: 0 0.8rem;
+            cursor: pointer;
+
+            &:hover {
+              opacity: 0.8;
+              color: var(--success-color);
+
+              svg {
+                fill: var(--success-color);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

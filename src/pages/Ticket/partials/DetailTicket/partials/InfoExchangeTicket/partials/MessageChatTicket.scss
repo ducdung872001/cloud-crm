@@ -1,0 +1,121 @@
+.message-chat-ticket {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0.5rem 1.2rem;
+
+  .icon-emotion,
+  .isShowEmotion {
+    padding: 0.2rem;
+    cursor: pointer;
+    position: relative;
+
+    svg {
+      width: 2.5rem;
+      height: 2.5rem;
+      fill: #aaa;
+
+      &:hover {
+        fill: #a05176;
+      }
+    }
+
+    &:hover {
+      background-color: var(--extra-color-10);
+      border-radius: 50rem;
+    }
+  }
+
+  .isShowEmotion {
+    background-color: var(--extra-color-10);
+    border-radius: 50rem;
+
+    svg {
+      fill: #a05176;
+    }
+  }
+
+  .content-message {
+    width: 89%;
+
+    .base-input {
+      .base-input__input {
+        input {
+          border: none;
+          caret-color: #50335b;
+        }
+      }
+    }
+  }
+
+  .file-document,
+  .active {
+    cursor: pointer;
+    border-radius: 50rem;
+
+    .icon-attach--file {
+      svg {
+        width: 3.2rem;
+        height: 3.2rem;
+      }
+    }
+  }
+
+  .file-document {
+    .icon-attach--file {
+      svg {
+        fill: #aaa;
+      }
+    }
+
+    &:hover {
+      background-color: var(--extra-color-10);
+    }
+
+    .popover-option {
+      background-color: var(--white-color);
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      border-radius: 0.5rem;
+
+      .menu-item {
+        padding: 0.5rem;
+        display: flex;
+        flex-direction: column;
+
+        li {
+          display: flex;
+          align-items: center;
+          gap: 0 0.6rem;
+          font-size: 1.4rem;
+          line-height: 2.4rem;
+          font-weight: 500;
+          padding: 0.5rem 0.8rem;
+          border-radius: 0.5rem;
+
+          .icon-item {
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: var(--extra-color-10);
+            }
+          }
+
+          &:hover {
+            background-color: var(--primary-color-5);
+          }
+        }
+      }
+    }
+  }
+
+  .active {
+    background-color: var(--extra-color-10);
+
+    .icon-attach--file {
+      svg {
+        fill: #b65379;
+      }
+    }
+  }
+}

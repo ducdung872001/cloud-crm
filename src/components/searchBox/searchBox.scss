@@ -1,0 +1,110 @@
+.search-container {
+  padding: 2.4rem 2rem 0;
+  .search__keyword--text {
+    position: relative;
+    flex: 1 0 auto;
+    .icon {
+      width: 2.4rem;
+      height: 2.4rem;
+      svg {
+        fill: var(--text-extra-color);
+        color: var(--text-extra-color);
+      }
+    }
+
+    .icon__clear--keyword {
+      position: absolute;
+      top: 0.6rem;
+      right: 1rem;
+      cursor: pointer;
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+        fill: var(--extra-color-50);
+      }
+
+      &:hover {
+        svg {
+          fill: var(--extra-color-30);
+        }
+      }
+    }
+  }
+  &.has-filter {
+    .search__keyword--text {
+      margin-left: -1px;
+      input {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+  }
+  &.has-save-search {
+    .search__keyword--text {
+      input {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+  }
+  .btn-save-search {
+    margin-left: -1px;
+    padding-right: 2rem;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    font-size: 1.4rem;
+  }
+  @media (max-width: 767px) {
+    padding: 1.6rem 1.6rem 0;
+    .search__keyword--text {
+      width: min-content;
+    }
+    .btn-save-search {
+      padding-left: 1.2rem;
+      padding-right: 1.2rem;
+    }
+  }
+}
+.list-filter-choose {
+  padding: 1.2rem 2rem 0;
+  ul {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    li {
+      border-radius: 0.3rem;
+      padding: 0.6rem 0.8rem 0.6rem 1.2rem;
+      background: var(--extra-color-20);
+      font-size: 1.4rem;
+      line-height: 2rem;
+      color: var(--text-primary-color);
+      display: flex;
+      white-space: nowrap;
+      gap: 0.4rem;
+      .btn-remove {
+        cursor: pointer;
+        width: 2rem;
+        height: 2rem;
+        svg {
+          width: 2rem;
+          height: 2rem;
+          color: var(--text-primary-color);
+          fill: var(--text-primary-color);
+        }
+        &:hover {
+          svg {
+            color: var(--primary-color);
+            fill: var(--primary-color);
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 767px) {
+    padding: 1.2rem 1.6rem 0;
+  }
+}

@@ -1,0 +1,137 @@
+.payment__bill--item {
+    .title__payment--bill {
+      font-weight: 600;
+      margin-bottom: 2rem;
+    }
+  
+    .form__payment--bill {
+      .list-form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem 3.2rem;
+  
+        .form-group {
+          width: calc(32% - 1.6rem);
+        }
+  
+        #PaymentType {
+          .radio-list {
+            .form-group {
+              width: 100%;
+              display: flex;
+              align-items: center;
+              gap: 0 2rem;
+              margin-top: 1.5rem;
+              margin-bottom: 0;
+  
+              .base-radio {
+                margin-top: 0;
+              }
+            }
+          }
+        }
+  
+        #CardPaymentBill {
+          width: 100%;
+  
+          .list__card--payment-bill {
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 3.2rem 0;
+  
+            .form__card--item {
+              display: flex;
+              align-items: center;
+              gap: 0 3.2rem;
+              width: 64%;
+              position: relative;
+  
+              .change__card--item {
+                width: 100%;
+                display: flex;
+                align-items: flex-start;
+                gap: 0 3.2rem;
+  
+                .form-group {
+                  width: 50%;
+                  margin-bottom: 0;
+  
+                  &:first-child {
+                    .base-select {
+                      .select-custom {
+                        div[class*="-menu"] {
+                          & > div:first-child {
+                            max-height: 12rem;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+  
+              .action-change {
+                position: absolute;
+                top: 1.3rem;
+                right: -5rem;
+                display: flex;
+                align-items: center;
+                gap: 0 0.6rem;
+                margin-top: 1.8rem;
+  
+                .icon-add,
+                .icon-delete {
+                  cursor: pointer;
+  
+                  svg {
+                    width: 2rem;
+                    height: 2rem;
+                  }
+                }
+  
+                .icon-add {
+                  svg {
+                    fill: var(--success-color);
+                  }
+                }
+  
+                .icon-delete {
+                  margin-left: 1rem;
+                  svg {
+                    fill: var(--error-color);
+                  }
+                }
+              }
+  
+              .update__width--item {
+                right: -8.8rem;
+              }
+            }
+          }
+        }
+      }
+  
+      .action__apply--payment {
+        position: relative;
+        padding: 1.6rem;
+        margin-top: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0 1.2rem;
+        border-top: 1px solid var(--border-color);
+        border-bottom-left-radius: 0.3rem;
+        border-bottom-right-radius: 0.3rem;
+  
+        .side__action {
+          display: flex;
+          align-items: center;
+          gap: 0 1.2rem;
+        }
+      }
+    }
+  }
+  

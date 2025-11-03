@@ -1,0 +1,89 @@
+.modal-add-permission-group {
+    .form-permission-group {
+        .container-search-partner{
+            .list-form-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1.2rem 3.2rem;
+            }
+          
+            .form-group {
+                &:first-child {
+                    width: 100%;
+                }
+                width: calc(50% - 1.6rem);
+            }
+
+            .info-partner{
+                margin-top: 1.5rem;
+
+                .item-partner{
+                    margin-top: 0.5rem;
+                    border: 1px dashed var(--extra-color-30);
+                    border-radius: 5px;
+                    padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+                    cursor: pointer;
+                    // margin-bottom: 10px;
+
+                    &:hover {
+                        background-color: var(--primary-color-30);
+                    }
+                  }
+            }
+        }
+
+        .info-partner{
+          // margin-top: 1.5rem;
+
+          .item-partner{
+              margin-top: 0.5rem;
+              border: 1px dashed var(--extra-color-30);
+              border-radius: 5px;
+              padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+              // cursor: pointer;
+              margin-bottom: 2rem;
+
+              // &:hover {
+              //     background-color: var(--primary-color-30);
+              // }
+            }
+      }
+
+        .list-form-add-permission{
+            // display: flex;
+            // flex-wrap: wrap;
+            // gap: 1.2rem 3.2rem;
+            // padding: 1.6rem;
+            max-height: 40rem;
+            overflow: auto;
+      
+            .form-group {
+            //   width: calc(50% - 1.6rem);
+              transition: all 1s ease-in-out;
+            
+              .radio-list {
+                .form-group {
+                  display: flex;
+                  align-items: center;
+                  gap: 0 2rem;
+                  width: 100%;
+                  margin-top: 10px;
+      
+                  .base-radio {
+                    & + .base-radio {
+                      margin-top: 0;
+                    }
+                  }
+
+                  .base-checkbox{
+                    margin-top: 0;
+                  }
+                }
+              }
+            }
+    
+        }
+      
+    }
+  }
+  

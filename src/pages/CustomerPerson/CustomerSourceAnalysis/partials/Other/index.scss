@@ -1,0 +1,131 @@
+.page__other {
+  margin-top: 4rem;
+
+  .title__common {
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+
+    .name-common {
+      font-weight: 700;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .icon__option--download {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      cursor: pointer;
+      border-radius: 0.3rem;
+      padding: 0.4rem;
+
+      &:hover {
+        background-color: var(--extra-color-10);
+      }
+
+      svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        fill: var(--extra-color-50);
+      }
+
+      &.active__option {
+        background-color: var(--primary-color-30);
+
+        &:hover {
+          background-color: var(--primary-color-30);
+        }
+      }
+
+      .lst__option {
+        position: absolute;
+        top: 3rem;
+        width: 13rem;
+        left: 0;
+        right: 0;
+        z-index: 9;
+        background-color: var(--white-color);
+        border-radius: 0.4rem;
+        box-shadow: 0 0 0 1px hsla(0, 0%, 0%, 0.1), 0 4px 11px hsla(0, 0%, 0%, 0.1);
+        padding: 0.5rem 0;
+
+        .item__option {
+          padding: 0.2rem 1rem;
+          font-size: 1.4rem;
+          cursor: default;
+
+          &:hover {
+            background-color: #e9eaeb;
+          }
+        }
+      }
+    }
+  }
+
+  .header__other,
+  .footer__other {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0 3rem;
+  }
+
+  .footer__other {
+    padding-top: 3rem;
+  }
+
+  .page__toployal--customer {
+    width: 50%;
+
+    .lst__toployal--customer {
+      margin-top: 7.8rem;
+      border-radius: 0.3rem;
+      overflow: hidden;
+
+      .item__toployal--customer {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 1.2rem 0.8rem;
+        font-size: 1.5rem;
+
+        .name__customer {
+          .stt {
+            padding-right: 0.5rem;
+            position: relative;
+
+            &::after {
+              content: ".";
+            }
+          }
+        }
+
+        &.customer__even {
+          background-color: var(--primary-color-30);
+        }
+
+        &.customer__odd {
+          background-color: var(--extra-color-10);
+        }
+      }
+    }
+  }
+
+  .page__quantity__loyalty--point {
+    width: 50%;
+  }
+
+  .page__quantity__customer--group {
+    width: 45%;
+  }
+
+  .page__quantity__customer--source {
+    width: 55%;
+  }
+
+  .system-notification {
+    padding: 3rem 2.4rem;
+    justify-content: flex-start !important;
+  }
+}

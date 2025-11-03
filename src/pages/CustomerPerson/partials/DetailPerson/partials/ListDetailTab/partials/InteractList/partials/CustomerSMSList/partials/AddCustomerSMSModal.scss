@@ -1,0 +1,149 @@
+.modal-send-sms {
+  .form-send-sms {
+    .modal-body {
+      padding: 0;
+
+      .search-option {
+        .search-container {
+          padding: 1.5rem 1.8rem;
+
+          .filter-container {
+            width: 100%;
+
+            .filter-block {
+              width: 50%;
+
+              .base-button {
+                width: 100%;
+              }
+            }
+          }
+
+          .base-input {
+            display: none;
+          }
+        }
+
+        .list-filter-choose {
+          padding: 0.8rem 1.8rem 1.5rem;
+        }
+      }
+
+      .box__template--sms {
+        padding: 1.8rem;
+        background-color: var(--primary-color-5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .list-template-sms {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem 2rem;
+
+        .item-template-sms,
+        .active-template-sms {
+          width: calc(50% - 1rem);
+          padding: 1.6rem;
+          border-radius: 0.5rem;
+          border: 1.3px dashed transparent;
+          position: relative;
+          background-color: var(--white-color);
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+
+          .iconCheck {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.3rem;
+
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: var(--success-darker-color);
+            }
+          }
+
+          .info-template-sms {
+            display: flex;
+            flex-direction: column;
+
+            .title {
+              font-size: 1.6rem;
+            }
+
+            .content {
+              cursor: pointer;
+              color: var(--extra-color-50);
+              font-size: 1.4rem;
+              height: 10rem;
+            }
+          }
+
+          .icon-action {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+
+            .action-left {
+              background-color: var(--extra-color-20);
+              border-radius: 0.5rem;
+              padding: 0.8rem 1rem;
+              display: flex;
+              align-items: center;
+              gap: 0 0.3rem;
+              cursor: pointer;
+
+              .action-item {
+                font-size: 1.3rem;
+                margin-bottom: 0;
+              }
+
+              svg {
+                width: 1.8rem;
+                height: 1.8rem;
+              }
+
+              &:hover {
+                background-color: var(--success-color);
+
+                .action-item {
+                  color: var(--white-color);
+                }
+
+                svg {
+                  fill: var(--white-color);
+                }
+              }
+            }
+          }
+        }
+
+        .active-template-sms {
+          border-color: var(--success-darker-color);
+
+          .icon-action {
+            .action-left {
+              background-color: var(--success-color);
+
+              .action-item {
+                color: var(--white-color);
+              }
+
+              svg {
+                fill: var(--white-color);
+              }
+            }
+          }
+        }
+
+        .loading__wrapper {
+          margin: 0 auto;
+          min-height: 50rem;
+        }
+      }
+    }
+  }
+}

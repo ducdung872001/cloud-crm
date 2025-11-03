@@ -1,0 +1,95 @@
+.modal__choose--item {
+  .box__choose {
+    .modal-body {
+      padding: 0;
+    }
+
+    .lst__items {
+      // padding: 1.6rem 1.6rem 0;
+
+      .search-container {
+        padding-bottom: 1.5rem;
+      }
+
+      .view__items--product {
+        max-height: 50rem;
+        overflow: auto;
+
+        .table__search--product {
+          margin-top: 1.7rem;
+          // padding: 0 1.6rem;
+          overflow: visible;
+
+          .table__product {
+            width: 100%;
+            position: relative;
+            font-size: 1.4rem;
+            line-height: 2rem;
+            letter-spacing: 0.25px;
+
+            thead {
+              background: var(--primary-color-5);
+              box-shadow: var(--box-shadow);
+              position: sticky;
+              z-index: 100;
+              top: -0.2px;
+              box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+
+              tr {
+                th {
+                  padding: 1.6rem;
+                  white-space: nowrap;
+                  font-size: 1.6rem;
+                  font-weight: 700;
+                  line-height: 2.4rem;
+
+                  &.image {
+                    width: 7.4rem;
+                  }
+                }
+              }
+            }
+
+            tbody {
+              tr {
+                &.item-product {
+                  cursor: pointer;
+                }
+
+                &:nth-child(even) {
+                  background: var(--extra-color-5);
+                }
+
+                td {
+                  border-bottom: 1px solid var(--extra-color-20);
+                  padding: 1.6rem;
+                  transition: background-color 0.15s ease-in-out;
+                  vertical-align: middle;
+
+                  &.image {
+                    width: 7.4rem;
+                    text-align: center;
+                  }
+
+                  &:last-child {
+                    border-bottom: none;
+                  }
+                }
+              }
+
+              &:last-child {
+                td {
+                  border-bottom: none;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    ::-webkit-scrollbar-track {
+      visibility: hidden;
+    }
+  }
+}

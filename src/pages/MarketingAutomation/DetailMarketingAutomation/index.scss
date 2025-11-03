@@ -1,0 +1,173 @@
+.page-customer-automation-marketing-list {
+  .action-navigation {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+
+    .action-backup {
+      display: flex;
+      align-items: center;
+
+      h1 {
+        color: var(--text-primary-color);
+        font-size: 2.4rem;
+        line-height: 2.8rem;
+        padding-right: 1rem;
+        margin: 0;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .title-first {
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+
+      .title-last {
+        color: var(--extra-color-50);
+      }
+
+      svg {
+        width: 4rem;
+        height: 4rem;
+        padding-right: 1rem;
+      }
+    }
+  }
+  .card-box {
+    .action-header{
+      .list__relationship {
+        padding-top: 1.5rem;
+        padding-right: 2rem;
+        padding-left: 2rem;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        align-items: center;
+        gap: 0 1rem;
+        transition: all 0.3s ease-in-out;
+
+        .relationship-item,
+        .active__relationship--item {
+          padding: 0.7rem 1.8rem;
+          text-align: center;
+          font-size: 1.4rem;
+          cursor: pointer;
+          font-weight: 500;
+          border-radius: 0.5rem;
+        }
+
+        .relationship-item {
+          opacity: 0.9;
+          border: 1px solid var(--white-color);
+        }
+
+        .active__relationship--item {
+          border: 1px solid var(--black-color);
+          box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+          opacity: 1;
+        }
+      }
+      .title__actions {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+
+        .menu-list {
+          border-radius: 0.8rem 0.8rem 0 0;
+          border-bottom: 1px solid var(--border-color);
+          padding: 0 2rem;
+          height: 5rem;
+          letter-spacing: 0.25px;
+          font-size: 1.4rem;
+          line-height: 2rem;
+          color: var(--text-extra-color);
+          display: flex;
+          align-items: center;
+          gap: 2.3rem;
+          width: 100%;
+
+          li {
+            display: flex;
+            align-items: center;
+            gap: 0 0.2rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            padding: 1.5rem 0 1.2rem;
+            transition: color 0.2s ease-in-out;
+
+            svg {
+              width: 1.8rem;
+              height: 1.8rem;
+              fill: var(--text-extra-color);
+            }
+
+            &:hover,
+            &.active {
+              border-bottom-color: var(--primary-color);
+              color: var(--text-primary-color);
+
+              svg {
+                fill: var(--text-primary-color);
+              }
+            }
+            &.active {
+              cursor: default;
+              pointer-events: none;
+            }
+          }
+        }
+      }
+    }
+    .box-table {
+      .box-table__wrapper {
+        .table-striped {
+          tbody {
+            tr {
+              td {
+                .btn__navigation {
+                  text-decoration: none;
+                  color: var(--text-primary-color);
+
+                  &:hover {
+                    color: var(--primary-color-90);
+                  }
+                }
+
+                .percent__finish--opportunity {
+                  position: relative;
+                  cursor: pointer;
+
+                  .value-percent {
+                    width: 3.5rem;
+                    height: 3.5rem;
+
+                    .CircularProgressbar-text {
+                      font-size: 3rem;
+                      font-weight: 600;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .detail-customer-marketing-automation {
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-primary-color);
+
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
+  }
+  
+  }
+  

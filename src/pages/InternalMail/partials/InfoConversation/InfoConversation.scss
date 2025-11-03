@@ -1,0 +1,191 @@
+.info-internal-mail,
+.people-involved,
+.shared-files {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--extra-color-30);
+
+  .loading__wrapper {
+    min-height: 15rem;
+  }
+
+  .pater-info,
+  .pater-involved,
+  .pater-file {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 0;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--primary-color-5);
+    }
+
+    .icon-info,
+    .icon-customer,
+    .icon-file-present {
+      padding-left: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0 0.5rem;
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+        fill: var(--primary-color-90);
+      }
+    }
+
+    .icon-up-down {
+      padding-right: 0.8rem;
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+        fill: var(--primary-color-90);
+      }
+    }
+  }
+
+  .active {
+    background-color: var(--primary-color-5);
+    cursor: default;
+  }
+}
+
+.info-internal-mail {
+  .detail__creator {
+    padding: 0.8rem 1.2rem 1.2rem;
+
+    &--person {
+      display: flex;
+      align-items: center;
+      gap: 0 0.6rem;
+
+      .avatar-creator {
+        width: 4rem;
+        height: 4rem;
+        border-radius: 50rem;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      .info-creator {
+        display: flex;
+        flex-direction: column;
+
+        .name {
+          cursor: pointer;
+          font-size: 1.4rem;
+          line-height: 2rem;
+          font-weight: 600;
+
+          &:hover {
+            color: var(--primary-color);
+          }
+        }
+
+        .date {
+          font-size: 1.2rem;
+          line-height: 1.8rem;
+          font-weight: 500;
+          color: var(--extra-color-50);
+        }
+      }
+    }
+
+    &--content {
+      padding-left: 4.5rem;
+
+      .title {
+        padding-right: 0.5rem;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .content-item {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+    }
+  }
+}
+
+.people-involved {
+  .detail-people {
+    display: flex;
+    flex-direction: column;
+    padding: 0.8rem 1.2rem 1.2rem;
+
+    .list-person {
+      display: flex;
+      flex-direction: column;
+
+      .person-item {
+        display: flex;
+        align-items: center;
+        gap: 0 0.8rem;
+        cursor: pointer;
+
+        & + .person-item {
+          margin-top: 1rem;
+        }
+
+        .avatar-person {
+          width: 3.2rem;
+          height: 3.2rem;
+          border-radius: 50rem;
+          overflow: hidden;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+
+        .name-person {
+          font-size: 1.5rem;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+.shared-files {
+  .detail-files {
+    padding: 1.2rem;
+    color: var(--warning-color);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1rem;
+
+    .notification-attachment {
+      width: 100%;
+      display: block;
+      text-align: center;
+    }
+
+    .item-attachment {
+      .img-document {
+        width: 12rem;
+        height: 12rem;
+        border-radius: 0.5rem;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+  }
+}
