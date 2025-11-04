@@ -5,7 +5,6 @@ import ComponentList from "./ComponentList/ComponentList";
 import ObjectGroupList from "./ObjectGroup/ObjectGroup";
 import ObjectAttributeList from "./ObjectAttribute/ObjectAttributeList";
 
-
 export default function ConfigBPM() {
   document.title = "Cấu hình quy trình";
   const isBeauty = localStorage.getItem("isBeauty");
@@ -26,7 +25,6 @@ export default function ConfigBPM() {
     //   title: "Định nghĩa các trường thông tin bổ sung đối tượng",
     //   is_tab: "tab_three",
     // },
-       
   ];
 
   return (
@@ -77,7 +75,9 @@ export default function ConfigBPM() {
             }
           }}
         />
-      ) : ([])}
+      ) : (
+        []
+      )}
     </div>
   );
 }
