@@ -34,6 +34,22 @@ export async function SelectOptionEform(key: string, api: string, params?: any) 
             projectCatalog: item.pclId,
           };
         }
+        if (key === "serviceId") {
+          return { 
+            value: item.id, 
+            label: `${item.name}`,
+            service_price: item.price || 0,
+            service_discount: item.discount || 0
+          };
+        }
+        if (key === "productId") {
+          return { 
+            value: item.id, 
+            label: `${item.name}`,
+            product_price: item.price || 0,
+            product_discount: item.discount || 0
+          };
+        }
         return {
           value: item.id,
           label: item.name || item.title,

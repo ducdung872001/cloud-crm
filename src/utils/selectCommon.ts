@@ -292,6 +292,14 @@ export async function SelectOptionData(key: string, params?: any) {
             service_discount: item.discount || 0
           };
         }
+        if (key === "productId") {
+          return { 
+            value: item.id, 
+            label: `${item.name}`,
+            product_price: item.price || 0,
+            product_discount: item.discount || 0
+          };
+        }
         return {
           value: item.id || item.uploadId,
           label: item.name || item.title || item.parentName || item.productName || item.partnerName || item.fileName || item.licensePlate,
