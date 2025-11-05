@@ -19,7 +19,8 @@ i18n.use(initReactI18next).init({
           createKPITask: "Create KPI task",
           kpiManagement: "Manage KPI",
           project: "Project",
-          workManagement: "Work Management",          
+          workManagement: "Work Management",
+          userTaskManagement: "User task management",
           // Quản lý công việc
           userTaskList: "User Task list",
           job: "Task",
@@ -78,6 +79,7 @@ i18n.use(initReactI18next).init({
           salesCampaign: "Sales Campaign",
           createOppotunity: "Create opportunity",
           opportunityList: "Opportunity List",
+          orderRequestList: "Order request list",
           // salesManagement: "Opportunity Management",
           salesManagement: "Take care of the opportunity",
           salesFlow: "Sales Flow",
@@ -238,7 +240,7 @@ i18n.use(initReactI18next).init({
           createKPIFramework: "Tạo bộ KPI",
           createKPITask: "Tạo phiếu giao KPI",
           kpiManagement: "Quản lý KPI",
-          project: "Dự án",          
+          project: "Dự án",
           //Quản lý công việc BPM
           userTaskList: "Xử lý hồ sơ",
           workManagement: "Quản lý công việc",
@@ -298,6 +300,7 @@ i18n.use(initReactI18next).init({
           salesCampaign: "Quản lý chiến dịch",
           createOppotunity: "Tạo cơ hội",
           opportunityList: "Danh sách cơ hội",
+          orderRequestList: "Yêu cầu mua hàng",
           salesManagement: "Chăm sóc cơ hội",
           salesFlow: "Quy trình bán hàng",
           invoicesManagement: "Quản lý bán hàng",
@@ -339,7 +342,7 @@ i18n.use(initReactI18next).init({
           manageProcesses: "Quản lý quy trình",
           processSimulation: "Mô phỏng quy trình",
           objectManage: "Quản lý hồ sơ",
-          manage_data_sharing: "Chia sẻ dữ liệu",          
+          manage_data_sharing: "Chia sẻ dữ liệu",
           cxmSurvey: "Chiến dịch khảo sát",
 
           // Quản lý vận hành

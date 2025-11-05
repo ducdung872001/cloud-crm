@@ -554,6 +554,13 @@ export const urlsApi = {
     export: prefixAdmin + "/cashbook/export",
     detail: prefixAdmin + "/cashbook/get",
   },
+  orderRequest: {
+    list: prefixAdmin + "/order-request/list",
+    update: prefixAdmin + "/order-request/update",
+    delete: prefixAdmin + "/order-request/delete-soft",
+    export: prefixAdmin + "/order-request/export",
+    detail: prefixAdmin + "/order-request/get",
+  },
   //khu vực trải nghiệm khách hàng
   cxmSurvey: {
     list: prefixAdmin + "/cxmSurvey/list",
@@ -3087,6 +3094,7 @@ export const urls = {
   edit_sale_campaign: "/edit_sale_campaign/:id?",
   // danh sách cơ hội
   opportunity_list: "/opportunity_list",
+  order_request_list: "/order_request_list",
   // quản lý cơ hội
   management_opportunity: "/management_opportunity",
   // tổng đài
@@ -3167,7 +3175,7 @@ export const urls = {
   building: "/building",
   buildingFloor: "/building_floor",
 
-  //upload tài liệu bpm 
+  //upload tài liệu bpm
   // Link cho phép tải tài liệu lên
   upload_document: "/upload_document",
 };

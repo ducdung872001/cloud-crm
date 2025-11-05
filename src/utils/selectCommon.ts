@@ -276,10 +276,10 @@ export async function SelectOptionData(key: string, params?: any) {
         if (key === "categoryItemId") {
           return { value: item.id, label: `${item.name}` };
         }
-        if (key === "customerSource" || key === "customerSourceId" ) {
+        if (key === "customerSource" || key === "customerSourceId") {
           return { value: item.id, label: `${item.name}` };
         }
-        if (key === "marketingId"|| key === "marketingChanelId" ) {
+        if (key === "marketingId" || key === "marketingChanelId") {
           return { value: item.id, label: `${item.name}` };
         }
         if (key === "promotionId") {
@@ -292,11 +292,19 @@ export async function SelectOptionData(key: string, params?: any) {
           return { value: item.name, label: `${item.name}` };
         }
         if (key === "serviceId") {
+          return {
+            value: item.id,
+            label: `${item.name}`,
+            service_price: item.price || 0,
+            service_discount: item.discount || 0,
+          };
+        }
+        if (key === "productId") {
           return { 
             value: item.id, 
             label: `${item.name}`,
-            service_price: item.price || 0,
-            service_discount: item.discount || 0
+            product_price: item.price || 0,
+            product_discount: item.discount || 0
           };
         }
         return {
