@@ -60,6 +60,7 @@ i18n.use(initReactI18next).init({
           smsMarketing: "SMS Marketing",
           zaloMarketing: "Zalo Marketing",
           marketingAutomation: "Marketing Automation",
+          marketingAutomationV2: "Marketing Automation V2",
           campaignMarketing: "Marketing Campaign",
 
           salesChannel: "Sales channel",
@@ -279,6 +280,7 @@ i18n.use(initReactI18next).init({
           smsMarketing: "Truyền thông bằng SMS",
           zaloMarketing: "Truyền thông bằng Zalo",
           marketingAutomation: "Truyền thông theo kịch bản",
+          marketingAutomationV2: "Truyền thông theo kịch bản V2",
           campaignMarketing: "Ngân sách truyền thông",
 
           salesChannel: "Kênh bán",
