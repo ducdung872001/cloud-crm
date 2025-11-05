@@ -29,6 +29,21 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  //gui thong tin voucher
+  sendVoucher: (body: IEmailRequest, params: any) => {
+    return fetch(`${urlsApi.email.sendEmailConfirm}${convertParamsToString(params)}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  //gui phieu uu dai
+  sendEmailSale: (body: IEmailRequest, params: any) => {
+    return fetch(`${urlsApi.email.sendEmailConfirm}${convertParamsToString(params)}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  // Gửi email mới với FormData (có file đính kèm)
   sendEmailNew: (body, id, takeResult) => {
     const formData = new FormData();
     formData.append("request", JSON.stringify(body));

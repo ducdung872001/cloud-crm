@@ -1553,7 +1553,6 @@ export const urlsApi = {
     ticketExchangeDelete: prefixAdmin + "/ticketExchange/delete",
     ticketProcess: prefixAdmin + "/ticketProcess/update",
     resetTransferVotes: prefixAdmin + "/supportObject/reset",
-    sendEmailConfirm: prefixAdmin + "/send_email_confirm",
   },
   ticketCategory: {
     list: prefixAdmin + "/ticketCategory/list",
@@ -2060,13 +2059,18 @@ export const urlsApi = {
   dataSupplySource: {
     list: prefixAdmin + "/filter-setting/list",
   },
+  //lay danh sach voucher
+  voucher: {
+    list: prefixAdmin + "/promotion/list",
+  },
 
   email: {
     list: prefixAdmin + "/outlookMail/list",
     detail: prefixAdmin + "/outlookMail/get",
     sendEmail: prefixAdmin + "/outlookMail/sendEmail",
     delete: prefixAdmin + "/outlookMail/delete",
-
+    sendEmailConfirm: prefixAdmin + "/promotion/init-receive-task",
+    
     // call api email
     lstEmail: "https://connect.reborn.vn/api/v1/google/gmail/message/search",
     sendEmailNew: "https://connect.reborn.vn/api/v1/google/gmail/message/send",
@@ -2096,6 +2100,8 @@ export const urlsApi = {
     listCustomerByDate: prefixAdmin + "/ma/statistic/byDate",
     detailCustomer: prefixAdmin + "/maCustomer/result",
     deleteCustomer: prefixAdmin + "/maCustomer/delete",
+    // updateMapping: prefixAdmin + "/maMapping/update",
+    // detailMapping: prefixAdmin + "/maMapping/get",
   },
 
   // chiến dịch bán hàng
@@ -3022,6 +3028,7 @@ export const urls = {
   email_marketting: "/email_marketting",
   zalo_marketting: "/zalo_marketting",
   send_email_confirm: "/send_email_confirm",
+  voucher_confirm: "/voucher_confirm",
   // Setting
   setting_common: "/setting_common",
   setting_rose: "/setting_rose",
@@ -3101,9 +3108,12 @@ export const urls = {
   // cài đặt ứng dụng
   install_app: "/install_app",
   // thử nghiệm với marketing automation (cài đặt)
+  marketing_automation_v2: "/marketing_automation_v2",
   marketing_automation: "/marketing_automation",
   create_marketing_automation: "/create_marketing_automation",
+  create_marketing_automation_v2: "/create_marketing_automation_v2",
   edit_marketing_automation: "/edit_marketing_automation/:id?",
+  edit_marketing_automation_v2: "/edit_marketing_automation_v2/:id?",
   marketing_automation_setting: "/marketing_automation_setting/:id",
   detail_marketing_automation: "/detail_marketing_automation/maId/:id?",
 

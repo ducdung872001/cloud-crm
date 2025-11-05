@@ -166,7 +166,10 @@ import BusinessProcessCreate from "pages/BPM/BusinessProcessCreate";
 import CampaignListParent from "pages/Campaign/CampaignListParent";
 import UserTaskList from "pages/UserTaskList";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
-import EmailConfirm from "pages/Ticket/partials/EmailComfirm/EmailConfirm";
+import MarketingAutomationV2 from "pages/MarketingAutomation/MarketingAutomationListV2";
+import CreateMarketingAutomationV2 from "pages/MarketingAutomation/CreateMarketingAutomation/CreateMarketingAutomationV2";
+import EmailConfirm from "pages/Contract/EmailComfirm/EmailConfirm";
+import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 
 const isBeauty = localStorage.getItem("isBeauty");
 
@@ -445,6 +448,12 @@ export const menu: IMenuItem[] = [
           {
             title: "marketingAutomation",
             path: urls.marketing_automation,
+            icon: <Icon name="Marketing" />,
+            code: "MA",
+          },
+          {
+            title: "marketingAutomationV2",
+            path: urls.marketing_automation_v2,
             icon: <Icon name="Marketing" />,
             code: "MA",
           },
@@ -1262,6 +1271,10 @@ export const routes: IRouter[] = [
     component: <EmailConfirm />,
   },
   {
+    path: urls.voucher_confirm,
+    component: <VoucherForm />,
+  },
+  {
     path: urls.setting_call,
     component: <SettingCallList />,
   },
@@ -1509,6 +1522,10 @@ export const routes: IRouter[] = [
     component: <MarketingAutomationList />,
   },
   {
+    path: urls.marketing_automation_v2,
+    component: <MarketingAutomationV2 />,
+  },
+  {
     path: urls.detail_marketing_automation,
     component: <DetailMarketingAutomation />,
   },
@@ -1517,8 +1534,16 @@ export const routes: IRouter[] = [
     component: <CreateMarketingAutomation />,
   },
   {
+    path: urls.create_marketing_automation_v2,
+    component: <CreateMarketingAutomationV2 />,
+  },
+  {
     path: urls.edit_marketing_automation,
     component: <CreateMarketingAutomation />,
+  },
+  {
+    path: urls.edit_marketing_automation_v2,
+    component: <CreateMarketingAutomationV2 />,
   },
   {
     path: urls.marketing_automation_setting,

@@ -66,12 +66,4 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-
-//email sale
-  sendEmailSale: (body: ITicketRequestModel, params: any) => {
-    return fetch(`${urlsApi.ticket.sendEmailConfirm}${convertParamsToString(params)}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
-  },
 };

@@ -45,6 +45,7 @@ import BuildingService from "services/BuildingService";
 import CustomerMarketingLeadService from "services/CustomerMarketingLeadService";
 import RoleService from "services/RoleService";
 import CampaignMarketingService from "services/CampaignMarketingService";
+import PromotionService from "services/PromotionService";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -153,6 +154,9 @@ export async function SelectOptionData(key: string, params?: any) {
     case "sourceId":
     case "source":
       response = await CustomerSourceService.list(params);
+      break;
+    case "promotionId":
+      response = await PromotionService.list(params);
       break;
     case "cgpId":
     case "cgp":
@@ -276,6 +280,9 @@ export async function SelectOptionData(key: string, params?: any) {
           return { value: item.id, label: `${item.name}` };
         }
         if (key === "marketingId"|| key === "marketingChanelId" ) {
+          return { value: item.id, label: `${item.name}` };
+        }
+        if (key === "promotionId") {
           return { value: item.id, label: `${item.name}` };
         }
         if (key === "scrId") {
