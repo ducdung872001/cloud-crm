@@ -14,6 +14,14 @@ export const lookupOptions = [
     value: "field",
     label: "Lĩnh vực",
   },
+  {
+    value: "service",
+    label: "Dịch vụ",
+  },
+  {
+    value: "product",
+    label: "Sản phẩm",
+  }
   //   {
   //     value: "business_category",
   //     label: "Ngành nghề kinh doanh",
