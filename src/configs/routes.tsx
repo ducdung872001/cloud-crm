@@ -452,12 +452,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="Marketing" />,
               code: "MA",
             },
-            {
-              title: "marketingAutomationV2",
-              path: urls.marketing_automation_v2,
-              icon: <Icon name="Marketing" />,
-              code: "MA",
-            },
+            // {
+            //   title: "marketingAutomationV2",
+            //   path: urls.marketing_automation_v2,
+            //   icon: <Icon name="Marketing" />,
+            //   code: "MA",
+            // },
             {
               title: "settingMarketing", // Cài đặt marketing
               path: urls.setting_marketing,
@@ -1527,18 +1527,18 @@ export const routes: IRouter[] = [
     path: urls.marketing_automation,
     component: <MarketingAutomationList />,
   },
-  {
-    path: urls.marketing_automation_v2,
-    component: <MarketingAutomationListV2 />,
-  },
-  {
-    path: urls.create_marketing_automation_v2,
-    component: <CreateMarketingAutomationV2 />,
-  },
-  {
-    path: urls.edit_marketing_automation_v2,
-    component: <CreateMarketingAutomationV2 />,
-  },
+  // {
+  //   path: urls.marketing_automation_v2,
+  //   component: <MarketingAutomationListV2 />,
+  // },
+  // {
+  //   path: urls.create_marketing_automation_v2,
+  //   component: <CreateMarketingAutomationV2 />,
+  // },
+  // {
+  //   path: urls.edit_marketing_automation_v2,
+  //   component: <CreateMarketingAutomationV2 />,
+  // },
   {
     path: urls.detail_marketing_automation,
     component: <DetailMarketingAutomation />,
