@@ -312,17 +312,9 @@ export async function SelectOptionData(key: string, params?: any) {
           };
         }
         if (key === "boughtCardServiceByCustomerId") {
-          let serviceCombo: any = item.serviceCombo;
-          if (typeof serviceCombo === "string") {
-            try {
-              serviceCombo = JSON.parse(serviceCombo);
-            } catch (e) {
-              serviceCombo = null;
-            }
-          }
           return {
             value: item.id,
-            label: `${(serviceCombo && serviceCombo.name) || item.name || ""}`,
+            label: `${item.serviceName}`,
             card_number: item.cardNumber || 0,
             treatment_number: item.treatmentNum || 0,
             total_treatment: item.totalTreatment || 0,
