@@ -13,6 +13,7 @@ import { isDifferenceObj } from "reborn-util";
 import FileService from "services/FileService";
 import CustomerService from "services/CustomerService";
 import PromotionService from "services/PromotionService";
+import ScheduleConsultantService from "services/ScheduleConsultantService";
 import { UserContext, ContextType } from "contexts/userContext";
 import "./EmailConfirm.scss";
 import { useLocation } from "react-router-dom";
@@ -27,6 +28,7 @@ export default function VoucherForm() {
   const processCode = queryParams.get("code") || "QTB";
   const customerIdParam = queryParams.get("customerId");
   const voucherIdParam = queryParams.get("promotionId");
+  const scheduleConsultantIdParam = queryParams.get("scheduleConsultantId");
 
   const { id, dataBranch } = useContext(UserContext) as ContextType;
 
@@ -40,6 +42,7 @@ export default function VoucherForm() {
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
   const [isLoadingVoucher, setIsLoadingVoucher] = useState<boolean>(false);
   const [voucherInfo, setVoucherInfo] = useState<any>(null);
+  const [scheduleInfo, setScheduleInfo] = useState<any>(null);
 
   const [listImageTicket, setListImageTicket] = useState([]);
 
@@ -48,6 +51,7 @@ export default function VoucherForm() {
       ({
         id: null,
         name: "",
+        topic: "",
         requestNo: "",
         departmentId: null,
         employeeId: null,
@@ -93,12 +97,6 @@ export default function VoucherForm() {
         sumInsured: null,
         coverageStart: "",
         coverageEnd: "",
-        coverageDay: null,
-        usagePurpose: "",
-        deductible: null,
-        beneficiary: "",
-        productSchemaSnapshotJson: "",
-        productDataJson: "",
         confirm: null,
         voucherId: null,
         voucherName: "",
@@ -118,6 +116,41 @@ export default function VoucherForm() {
   const [formData, setFormData] = useState<IFormData>({
     values: values,
   });
+  //! Lấy thông tin lịch tư vấn theo ID
+  const getScheduleDetail = async (scheduleId: number) => {
+    try {
+      const response = await ScheduleConsultantService.detail(scheduleId);
+      if (response.code === 0 && response.result) {
+        const info = response.result;
+        setScheduleInfo(info);
+        setFormData((prev) => ({
+          ...prev,
+          values: {
+            ...prev.values,
+            // map các trường cần hiển thị
+            name: info.title || "",
+            customerName: info.customerName || prev.values.customerName,
+            employeeName: info.consultantName || prev.values.employeeName,
+            coverageStart: info.startTime ? new Date(info.startTime).toLocaleString("vi-VN") : prev.values.coverageStart,
+            coverageEnd: info.endTime ? new Date(info.endTime).toLocaleString("vi-VN") : prev.values.coverageEnd,
+          },
+        }));
+      }
+    } catch (error) {
+      // silent
+    }
+  };
+
+  //! Tự động load thông tin lịch tư vấn từ scheduleConsultantId trong URL
+  useEffect(() => {
+    if (scheduleConsultantIdParam) {
+      const scheduleId = parseInt(scheduleConsultantIdParam);
+      if (scheduleId) {
+        getScheduleDetail(scheduleId);
+      }
+    }
+  }, [scheduleConsultantIdParam]);
+
 
   const [detailCustomer, setDetailCustomer] = useState(null);
 
@@ -216,8 +249,42 @@ export default function VoucherForm() {
 
   const listFieldVoteInfo: any[] = [
     {
+      label: "Tiêu đề",
+      name: "name",
+      type: "text",
+      fill: true,
+      disabled: true,
+    },
+    // {
+    //   label: "Chủ đề",
+    //   name: "topic",
+    //   type: "text",
+    //   fill: true,
+    // },
+    {
       label: "Tên khách hàng",
       name: "customerName",
+      type: "text",
+      fill: true,
+      disabled: true,
+    },
+    {
+      label: "Chuyên viên tư vấn",
+      name: "employeeName",
+      type: "text",
+      fill: true,
+      disabled: true,
+    },
+    {
+      label: "Bắt đầu lịch",
+      name: "coverageStart",
+      type: "text",
+      fill: true,
+      disabled: true,
+    },
+    {
+      label: "Kết thúc lịch",
+      name: "coverageEnd",
       type: "text",
       fill: true,
       disabled: true,
@@ -334,6 +401,7 @@ export default function VoucherForm() {
     const body: any = {
       id: formData.values.id || null,
       name: formData.values.name || "",
+      topic: formData.values.topic || "",
       requestNo: formData.values.requestNo || "",
       departmentId: formData.values.departmentId || null,
       employeeId: formData.values.employeeId || null,

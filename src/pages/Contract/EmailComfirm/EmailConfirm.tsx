@@ -18,6 +18,7 @@ import "./EmailConfirm.scss";
 import { useLocation } from "react-router-dom";
 import Button from "components/button/button";
 import EmailService from "services/EmailService";
+import ScheduleConsultantService from "services/ScheduleConsultantService";
 
 export default function EmailConfirm() {
   // const { onShow, data, idCustomer, saleflowId, sieId } = props;
@@ -27,6 +28,7 @@ export default function EmailConfirm() {
   const queryParams = new URLSearchParams(location.search);
   const processCode = queryParams.get("code") || "QTB";
   const customerIdParam = queryParams.get("customerId");
+  const scheduleConsultantIdParam = queryParams.get("scheduleConsultantId");
 
   const { id, dataBranch } = useContext(UserContext) as ContextType;
 
@@ -46,6 +48,7 @@ export default function EmailConfirm() {
     ({
       id: null,
       name: "",
+      topic: "",
       requestNo: "",
       departmentId: null,
       employeeId: null,
@@ -118,6 +121,7 @@ export default function EmailConfirm() {
   });
 
   const [detailCustomer, setDetailCustomer] = useState(null);
+  const [scheduleInfo, setScheduleInfo] = useState<any>(null);
   //! Tự động load thông tin khách hàng từ customerId trong URL
   useEffect(() => {
     if (customerIdParam) {
@@ -127,6 +131,37 @@ export default function EmailConfirm() {
       }
     }
   }, [customerIdParam]);
+
+  //! Lấy thông tin lịch tư vấn theo scheduleConsultantId
+  const getScheduleDetail = async (scheduleId: number) => {
+    try {
+      const response = await ScheduleConsultantService.detail(scheduleId);
+      if (response.code === 0 && response.result) {
+        const info = response.result;
+        setScheduleInfo(info);
+        setFormData((prev) => ({
+          ...prev,
+          values: {
+            ...prev.values,
+            name: info.title || "",
+            customerName: info.customerName || prev.values.customerName,
+            employeeName: info.consultantName || prev.values.employeeName,
+            coverageStart: info.startTime ? new Date(info.startTime).toLocaleString("vi-VN") : prev.values.coverageStart,
+            coverageEnd: info.endTime ? new Date(info.endTime).toLocaleString("vi-VN") : prev.values.coverageEnd,
+          },
+        }));
+      }
+    } catch (e) {
+      // silent
+    }
+  };
+
+  useEffect(() => {
+    if (scheduleConsultantIdParam) {
+      const scheduleId = parseInt(scheduleConsultantIdParam);
+      if (scheduleId) getScheduleDetail(scheduleId);
+    }
+  }, [scheduleConsultantIdParam]);
 
   const handleDetailCustomer = async (id: number) => {
     setIsLoadingCustomer(true);
@@ -174,11 +209,30 @@ export default function EmailConfirm() {
 
   const listFieldVoteInfo: any[] = [
     {
+      label: "Tiêu đề",
+      name: "name",
+      type: "text",
+      fill: true,
+      disabled: true,
+    },
+    // {
+    //   label: "Chủ đề",
+    //   name: "topic",
+    //   type: "text",
+    //   fill: true,
+    // },
+    {
       label: "Tên khách hàng",
       name: "customerName",
       type: "text",
       fill: true,
-      // disabled: idCustomer ? true : false,
+      disabled: true,
+    },
+    {
+      label: "Chuyên viên tư vấn",
+      name: "employeeName",
+      type: "text",
+      fill: true,
       disabled: true,
     },
     {
@@ -262,6 +316,7 @@ export default function EmailConfirm() {
     const body: any = {
       id: formData.values.id || null,
       name: formData.values.name || "",
+      topic: formData.values.topic || "",
       requestNo: formData.values.requestNo || "",
       departmentId: formData.values.departmentId || null,
       employeeId: formData.values.employeeId || null,
