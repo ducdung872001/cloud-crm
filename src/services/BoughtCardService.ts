@@ -26,4 +26,10 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  listBoughtCardByCustomerId: (params: IBoughtCardFilterRequest, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.boughtCard.listBoughtCardByCustomerId}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
 };

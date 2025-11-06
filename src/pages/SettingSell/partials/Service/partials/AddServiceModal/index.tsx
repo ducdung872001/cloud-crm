@@ -156,7 +156,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
         retailPrice: data?.retailPrice ?? 0,
         totalTime: data?.totalTime ?? 0,
         isCombo: data?.isCombo?.toString() ?? "0",
-        treatmentNum: data?.treatmentNum ?? 0,
+        treatmentNum: data?.treatmentNum ?? 1,
         featured: data?.featured ?? 1,
         active: data?.active ?? 1,
         position: data?.position?.toString() ?? "0",

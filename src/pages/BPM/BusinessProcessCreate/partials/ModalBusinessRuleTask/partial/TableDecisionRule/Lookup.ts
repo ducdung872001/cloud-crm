@@ -1,5 +1,7 @@
 import FieldListService from "services/FieldListService";
 import ProjectRealtyService from "services/ProjectRealtyService";
+import ServiceService from "services/ServiceService";
+import WarehouseService from "services/WarehouseService";
 
 export const lookupOptions = [
   //   {
@@ -14,6 +16,14 @@ export const lookupOptions = [
     value: "field",
     label: "Lĩnh vực",
   },
+  {
+    value: "service",
+    label: "Dịch vụ",
+  },
+  {
+    value: "product",
+    label: "Sản phẩm",
+  }
   //   {
   //     value: "business_category",
   //     label: "Ngành nghề kinh doanh",
@@ -93,6 +103,12 @@ const getLookupValue = async (dataRow) => {
             break;
           case "project_realty":
             response = await ProjectRealtyService.list(params);
+            break;
+          case "service":
+            response = await ServiceService.filter(params);
+            break;
+          case "product":
+            response = await WarehouseService.productList(params);
             break;
           default:
             break;

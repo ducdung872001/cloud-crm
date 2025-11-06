@@ -1,0 +1,245 @@
+.page-collect-ticket {
+  width: 100%;
+  height: 100vh;
+  display: flex; /* Kích hoạt Flexbox */
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  .form-ticket-group {
+    .header-form {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.6rem;
+      margin-top: 1.6rem;
+      color: var(--text-primary-color);
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+    .list-form-group {
+      display: flex;
+      flex-direction: column;
+      padding: 1.6rem;
+
+      overflow: auto;
+
+      .wrapper-field-ticket-service {
+        display: flex;
+        flex-direction: column;
+
+        .attachments {
+          padding-top: 1.5rem;
+
+          .title-attachment {
+            display: flex;
+            align-items: center;
+            gap: 0 0.3rem;
+            color: var(--text-primary-color);
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 2rem;
+            margin-bottom: 0.5rem;
+          }
+
+          .list-image-scroll,
+          .wrapper-list-image {
+            border: 1px dashed var(--extra-color-50);
+            padding: 1.2rem;
+            height: 12rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.8rem;
+
+            .action-upload-image {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 100%;
+              height: 100%;
+              cursor: pointer;
+
+              .wrapper-upload {
+                display: flex;
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+                color: var(--extra-color-50);
+                font-size: 1.4rem;
+                font-weight: 500;
+
+                svg {
+                  width: 3.2rem;
+                  height: 3.2rem;
+                  fill: var(--extra-color-50);
+                }
+              }
+
+              &:hover {
+                .wrapper-upload {
+                  color: var(--primary-color-70);
+
+                  svg {
+                    fill: var(--primary-color-90);
+                  }
+                }
+              }
+            }
+
+            .image-item {
+              width: 9rem;
+              height: 9rem;
+              position: relative;
+              cursor: pointer;
+
+              & + .image-item {
+                margin-left: 1rem;
+              }
+
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 0.5rem;
+              }
+
+              .icon-delete {
+                display: none;
+              }
+
+              &:hover {
+                img {
+                  opacity: 0.5;
+                }
+
+                .icon-delete {
+                  display: block;
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+
+                  svg {
+                    width: 2rem;
+                    height: 2rem;
+                    fill: var(--error-color);
+                  }
+                }
+              }
+            }
+
+            .add-image {
+              width: 9rem;
+              height: 9rem;
+              border-radius: 0.5rem;
+              cursor: pointer;
+              border: 1px dashed var(--extra-color-50);
+              margin: 0 0 0 1rem;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              svg {
+                width: 3rem;
+                height: 3rem;
+                fill: var(--extra-color-50);
+              }
+
+              &:hover {
+                border: 1px dashed var(--success-color);
+
+                svg {
+                  fill: var(--warning-color);
+                }
+              }
+            }
+          }
+
+          .list-image-scroll {
+            overflow-x: scroll;
+            overflow-y: hidden;
+          }
+        }
+      }
+
+      #FieldSupportId,
+      #FieldContent {
+        width: 100%;
+      }
+    }
+    ::-webkit-scrollbar-track {
+      border-radius: 0.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .form-ticket-group {
+      // border: 1px solid var(--extra-color-50);
+      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+      min-width: 78rem;
+      width: 45%;
+      .modal-body {
+        padding: 0;
+      }
+      .wrapper-field-ticket-service {
+        .list-field {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.6rem 2.8rem;
+
+          .form-group {
+            width: calc(50% - 1.6rem);
+            transition: width 0.5s ease-in-out;
+            &:first-child {
+              width: 100%;
+            }
+          }
+        }
+        .lst-field--date {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.6rem 2.8rem;
+          margin-top: 1.6rem;
+
+          .form-group {
+            width: calc(50% - 1.6rem);
+            transition: width 0.5s ease-in-out;
+          }
+        }
+      }
+    }
+  }
+
+  // Thêm kiểu cho điện thoại
+  @media (max-width: 768px) {
+    .form-ticket-group {
+      // min-width: 768px;
+      width: 100%;
+      .wrapper-field-ticket-service {
+        .list-field {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.6rem 2.8rem;
+
+          .form-group {
+            width: 100%;
+            transition: width 0.5s ease-in-out;
+          }
+        }
+        .lst-field--date {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.6rem 2.8rem;
+          margin-top: 1.6rem;
+
+          .form-group {
+            width: 100%;
+            transition: width 0.5s ease-in-out;
+          }
+        }
+      }
+    }
+  }
+}
+
+.custom-button-rollback{
+  margin-top: 16px !important;
+}
