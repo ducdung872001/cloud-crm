@@ -46,6 +46,7 @@ import CustomerMarketingLeadService from "services/CustomerMarketingLeadService"
 import RoleService from "services/RoleService";
 import CampaignMarketingService from "services/CampaignMarketingService";
 import PromotionService from "services/PromotionService";
+import BoughtCardService from "services/BoughtCardService";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -84,6 +85,9 @@ export async function SelectOptionData(key: string, params?: any) {
       break;
     case "categoryItemId":
       response = await CategoryServiceService.list(params);
+      break;
+    case "boughtCardServiceByCustomerId":
+      response = await BoughtCardService.listBoughtCardByCustomerId(params);
       break;
     case "groupId":
     case "groupTip":
@@ -305,6 +309,23 @@ export async function SelectOptionData(key: string, params?: any) {
             label: `${item.name}`,
             product_price: item.price || 0,
             product_discount: item.discount || 0
+          };
+        }
+        if (key === "boughtCardServiceByCustomerId") {
+          let serviceCombo: any = item.serviceCombo;
+          if (typeof serviceCombo === "string") {
+            try {
+              serviceCombo = JSON.parse(serviceCombo);
+            } catch (e) {
+              serviceCombo = null;
+            }
+          }
+          return {
+            value: item.id,
+            label: `${(serviceCombo && serviceCombo.name) || item.name || ""}`,
+            card_number: item.cardNumber || 0,
+            treatment_number: item.treatmentNum || 0,
+            total_treatment: item.totalTreatment || 0,
           };
         }
         return {

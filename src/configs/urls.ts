@@ -373,6 +373,7 @@ export const urlsApi = {
     add: prefixAdmin + "/boughtCardService/update",
     delete: prefixAdmin + "/boughtCardService/delete",
     update: prefixAdmin + "/boughtCardService/update/cardNumber",
+    listBoughtCardByCustomerId: prefixAdmin + "/boughtCardService/getBoughtCardServiceByCustomerId",
   },
   product: {
     filterWarehouse: prefixAdmin + "/product/in_warehouse",
