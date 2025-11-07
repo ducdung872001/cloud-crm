@@ -82,7 +82,7 @@ export default function ModalRequestDetail(props: any) {
         size={"xl"}
       >
         <ModalHeader
-          title={`Chi tiết yêu cầu mua hàng`}
+          title={`Yêu cầu mua hàng: ${data && data[0] && data[0]?.beautySalonName ? data[0]?.beautySalonName : ""}`}
           toggle={() => {
             onHide(false);
           }}
@@ -107,13 +107,13 @@ export default function ModalRequestDetail(props: any) {
               <div className="item-request" key={index}>
                 <div className="avatar">
                   <img src={item.avatar || ImageThirdGender} alt={item.name} />
+                  <div className="name">{item.name.length > 100 ? `${item.name.slice(0, 100)}...` : item.name}</div>
                 </div>
                 <div className="info">
-                  <div className="name">{item.name}</div>
                   <div className="request-info">
-                    <div className="quantity">Số lượng: {item.qty}</div>
-                    <div className="price">Đơn giá: {formatCurrency(item.price)}</div>
-                    <div className="total">Tổng: {formatCurrency(item.price * item.qty)}</div>
+                    <div className="quantity item-info">Số lượng: {item.qty}</div>
+                    <div className="price item-info">Đơn giá: {formatCurrency(item.price)}</div>
+                    <div className="total item-info">Tổng: {formatCurrency(item.price * item.qty)}</div>
                   </div>
                 </div>
               </div>

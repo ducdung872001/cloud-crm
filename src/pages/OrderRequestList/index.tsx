@@ -21,6 +21,25 @@ import OrderRequestService from "services/OrderRequestService";
 import moment from "moment";
 import ModalRequestDetail from "./partials/ModalRequestDetail";
 
+const statusText = {
+  PENDING: "Chờ xác nhận",
+  COMPLETED: "Hoàn thành",
+  PROCESSING: "Đang xử lý",
+  RECOMMENDED: "Đã đề xuất lại",
+  STORE_RECOMMENDED: "Cửa hàng đề xuất",
+  CUSTOMER_CANCELED: "Đã huỷ",
+  STORE_CANCELED: "Cửa hàng hủy",
+};
+const statusColor = {
+  PENDING: "orange",
+  COMPLETED: "green",
+  PROCESSING: "blue",
+  RECOMMENDED: "blue",
+  STORE_RECOMMENDED: "purple",
+  CUSTOMER_CANCELED: "red",
+  STORE_CANCELED: "red",
+};
+
 export default function OrderRequestList() {
   document.title = "Danh sách yêu cầu đặt hàng";
 
@@ -45,6 +64,8 @@ export default function OrderRequestList() {
       setShowModalAdd(true);
     }
   }, [isCreate]);
+
+  console.log("listOpportunity>>>", listOpportunity);
 
   const [params, setParams] = useState<any>({
     name: "",
@@ -180,7 +201,7 @@ export default function OrderRequestList() {
 
   const titles = ["STT", "Tên đại lý", "Tên khách hàng", "Sản phẩm", "Ngày đặt", "Nơi đặt", "Ghi chú", "Trạng thái"];
 
-  const dataFormat = ["text-center", "", "", "", "text-center", "", "", ""];
+  const dataFormat = ["text-center", "", "", "", "text-center", "", "", "text-center"];
 
   const [showModalRequestDetail, setShowModalRequestDetail] = useState<boolean>(false);
   const [dataRequestDetail, setDataRequestDetail] = useState<any>(null);
@@ -192,19 +213,31 @@ export default function OrderRequestList() {
     item?.customerInfo ? JSON.parse(item.customerInfo).name : "",
     <a
       onClick={(e) => {
-        if (item?.orderInfo && JSON.parse(item.orderInfo).length > 0) {
+        if (item?.orderInfo && JSON.parse(item?.orderInfo) && JSON.parse(item?.orderInfo)?.items?.length > 0) {
           setShowModalRequestDetail(true);
-          setDataRequestDetail(JSON.parse(item.orderInfo));
+          setDataRequestDetail(JSON.parse(item.orderInfo).items);
           setCustomerInfo(item?.customerInfo ? JSON.parse(item.customerInfo) : null);
         }
       }}
     >
-      {"Xem " + (item?.orderInfo ? JSON.parse(item.orderInfo).length : "0") + " sản phẩm"}
+      {"Xem " + (item?.orderInfo ? JSON.parse(item.orderInfo)?.items?.length : "0") + " sản phẩm"}
     </a>,
     item?.createdAt ? moment(item.createdAt).format("DD/MM/YYYY") : "",
     item?.src || "",
     item?.note || "",
-    item?.status || "",
+    <span
+      className={`status-table status-${statusColor[item.status]}`}
+      style={{
+        fontWeight: 500,
+        fontSize: 14,
+        color: `${statusColor[item.status]}`,
+        border: `1px solid ${statusColor[item.status]}`,
+        padding: "4px 8px",
+        borderRadius: "8px",
+      }}
+    >
+      {statusText[item.status]}
+    </span>,
   ];
 
   const actionsTable = (item: IWorkTypeResponse): IAction[] => {
