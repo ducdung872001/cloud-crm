@@ -505,7 +505,7 @@ const FormViewerComponent = (props: any) => {
     });
 
     formViewerRef.current.on("formField.focus", async (event) => {
-      // console.log("Event focus =>", event);
+      console.log("Event focus =>", event);
 
       let formData = formViewerRef.current._getState().data;
 

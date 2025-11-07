@@ -6,6 +6,8 @@ const prefixSale = "/sale";
 const prefixSystem = "/system";
 const prefixCs = "/cs";
 const prefixApplication = "/application";
+const prefixHr = "/hr";
+const prefixRebornVn = "https://reborn.vn/api";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -846,6 +848,15 @@ export const urlsApi = {
     list_branch: prefixAdmin + "/role/list/branch",
 
     updateParent: prefixAdmin + "/role/update/parent",
+  },
+  productIdApi: {
+    list: prefixRebornVn + "/product/list",
+  },
+  serviceIdApi: {
+    list: prefixRebornVn + "/service/list",
+  },
+  cardServiceIdApi: {
+    list: prefixRebornVn + "/cardService/list",
   },
   card: {
     list: prefixAdmin + "/card/list",
@@ -2078,7 +2089,7 @@ export const urlsApi = {
     sendEmail: prefixAdmin + "/outlookMail/sendEmail",
     delete: prefixAdmin + "/outlookMail/delete",
     sendEmailConfirm: prefixAdmin + "/promotion/init-receive-task",
-    
+
     // call api email
     lstEmail: "https://connect.reborn.vn/api/v1/google/gmail/message/search",
     sendEmailNew: "https://connect.reborn.vn/api/v1/google/gmail/message/send",
