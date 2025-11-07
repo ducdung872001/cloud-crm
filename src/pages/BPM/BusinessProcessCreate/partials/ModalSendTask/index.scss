@@ -165,6 +165,21 @@
                   border: 1px solid var(--border-color);
                   padding: 0 1rem;
                   border-radius: 5px;
+                  gap: 0.8rem;
+                min-height: 4.2rem;
+                .input-text {
+                  flex: 1;
+                  display: flex;
+                  align-items: center;
+                  .base-input {
+                    width: 100%;
+                    .base-input__input {
+                      input {
+                        border-bottom: 0;
+                      }
+                    }
+                  }
+                }
                   .select-mapping{
                     width: 100%;
                     background-color: #f3f3f3;
@@ -180,6 +195,12 @@
                     }
                   }
                   .icon-change-select{
+                    flex-shrink: 0;
+                  width: 3.2rem;
+                  height: 3.2rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
                     cursor: pointer;
                     svg {
                         width: 1.8rem;
@@ -242,6 +263,21 @@
                   border: 1px solid var(--border-color);
                   padding: 0 1rem;
                   border-radius: 5px;
+                  gap: 0.8rem;
+                min-height: 4.2rem;
+                .input-text {
+                  flex: 1;
+                  display: flex;
+                  align-items: center;
+                  .base-input {
+                    width: 100%;
+                    .base-input__input {
+                      input {
+                        border-bottom: 0;
+                      }
+                    }
+                  }
+                }
                   .select-mapping{
                     width: 100%;
                     background-color: #f3f3f3;

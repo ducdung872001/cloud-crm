@@ -35,7 +35,7 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
       name: "",
       attributeMapping: null,
       attributeMappingId: "",
-      mappingType: "",
+      mappingType: 1,
       checkName: false,
       checkMapping: false,
     },
@@ -102,41 +102,41 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
       const errorHandling = (result?.errorHandling && JSON.parse(result.errorHandling)) || null;
       setHandleErrorData(errorHandling?.config || null);
 
-      const arrayInput =
-        (result.inputVar &&
-          JSON.parse(result.inputVar) &&
-          Object.entries(JSON.parse(result.inputVar)).map(([key, value]) => {
-            return { [key]: value };
-          })) ||
-        [];
-      const newListInputVarData = Array.isArray(arrayInput) && arrayInput.length > 0 ? arrayInput : [];
-      const listInputVarData = newListInputVarData.map((item) => {
-        const name = Object.entries(item)[0][0];
-        const attributeMapping: any = Object.entries(item)[0][1];
+      let inputVarParsed: any = {};
+      try {
+        inputVarParsed = result.inputVar ? JSON.parse(result.inputVar) : {};
+      } catch (error) {
+        inputVarParsed = {};
+      }
 
-        return {
-          name: name,
-          attributeMapping: attributeMapping,
-          attributeMappingId: attributeMapping,
-          // mappingType: attributeMapping?.includes("var") ? 2 : 1,
-          mappingType: attributeMapping,
-          checkName: false,
-          checkMapping: false,
-        };
-      });
+      const listInputVarData =
+        inputVarParsed && typeof inputVarParsed === "object" && !Array.isArray(inputVarParsed)
+          ? Object.entries(inputVarParsed).map(([key, value]) => {
+              const valueString = typeof value === "string" ? value : value?.toString?.() || "";
+              return {
+                name: key,
+                attributeMapping: valueString,
+                attributeMappingId: valueString,
+                mappingType: valueString.startsWith("var_") ? 2 : valueString.startsWith("frm_") ? 1 : 0,
+                checkName: false,
+                checkMapping: false,
+              };
+            })
+          : [];
+
       if (listInputVarData && listInputVarData.length > 0) {
-        setListInputVar(
-          listInputVarData || [
-            {
-              name: "",
-              attributeMapping: "",
-              attributeMappingId: "",
-              mappingType: "",
-              checkName: false,
-              checkMapping: false,
-            },
-          ]
-        );
+        setListInputVar(listInputVarData);
+      } else {
+        setListInputVar([
+          {
+            name: "",
+            attributeMapping: null,
+            attributeMappingId: "",
+            mappingType: 1,
+            checkName: false,
+            checkMapping: false,
+          },
+        ]);
       }
 
       const arrayOut =
@@ -146,7 +146,7 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
             return { [key]: value };
           })) ||
         [];
-      const newListOutputVarData = Array.isArray(arrayOut) && arrayInput.length > 0 ? arrayOut : [];
+      const newListOutputVarData = Array.isArray(arrayOut) && arrayOut.length > 0 ? arrayOut : [];
       const listOutputVarData = newListOutputVarData.map((item) => {
         const name = Object.entries(item)[0][0];
         const attributeMapping: any = Object.entries(item)[0][1];
@@ -274,17 +274,66 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
 
     ///validate biến đầu vào
     const listInputVarData = [...listInputVar];
-    const listInputVarSubmit = (listInputVarData || []).map((item) => {
+    let hasErrorInput = false;
+
+    const listInputVarValidated = listInputVarData.map((item) => {
+      const isEmptyRow = !item.name && !item.attributeMapping && !item.attributeMappingId;
+      let checkName = item.checkName;
+      let checkMapping = item.checkMapping;
+
+      if (isEmptyRow) {
+        return {
+          ...item,
+          checkName: false,
+          checkMapping: false,
+        };
+      }
+
+      if (!item.name) {
+        checkName = true;
+        hasErrorInput = true;
+      }
+
+      if (item.mappingType === 0) {
+        if (!item.attributeMapping) {
+          checkMapping = true;
+          hasErrorInput = true;
+        }
+      } else {
+        if (!item.attributeMappingId) {
+          checkMapping = true;
+          hasErrorInput = true;
+        }
+      }
+
       return {
-        // [item.name]: item.attributeMapping,
-        [item.name]: item.mappingType,
+        ...item,
+        checkName,
+        checkMapping,
       };
     });
+
+    if (hasErrorInput) {
+      setListInputVar(listInputVarValidated);
+      showToast("Vui lòng kiểm tra lại thông tin biến đầu vào", "error");
+      return;
+    }
+
+    const listInputVarSubmit = listInputVarValidated
+      .filter((item) => item.name && (item.mappingType === 0 ? item.attributeMapping : item.attributeMappingId))
+      .map((item) => {
+        const value = item.mappingType === 0 ? item.attributeMapping : item.attributeMappingId;
+
+        return {
+          [item.name]: value,
+        };
+      });
+
     const objInput = listInputVarSubmit.reduce((acc, curr) => {
       const key = Object.keys(curr)[0];
       acc[key] = curr[key];
       return acc;
-    });
+    }, {});
 
     ///validate biến đầu ra
     const listOutVarData = [...listOutVar];
@@ -325,7 +374,7 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
       messageName: data?.messageName ?? "",
       messageId: `bpm-signal-intermediate-${formData?.messageId}`,
       endpoint: formData?.endpoint ?? "",
-      inputVar: JSON.stringify(objInput),
+      inputVar: JSON.stringify(objInput || {}),
       outputVar: JSON.stringify(objOut),
       errorHandling: JSON.stringify(errorHandlingSubmit),
       signalRef: formData?.signalRef ?? "",
@@ -411,9 +460,9 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
     setListInputVar([
       {
         name: "",
-        attributeMapping: "",
+        attributeMapping: null,
         attributeMappingId: "",
-        mappingType: "",
+        mappingType: 1,
         checkName: false,
         checkMapping: false,
       },
@@ -748,21 +797,21 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
 
               <div className="container-inputVar">
                 <div>
-                  <span style={{ fontSize: 14, fontWeight: "700" }}>Cấu trúc bản tin</span>
+                  <span style={{ fontSize: 14, fontWeight: "700" }}>Biến đầu vào</span>
                 </div>
                 {listInputVar && listInputVar.length > 0
                   ? listInputVar.map((item, index) => (
                       <div key={index} className="list-item-inputVar">
                         <div className="item-inputVar">
                           <Input
-                            id="nameInput"
-                            name="nameInput"
-                            label={index === 0 ? "Tên trường" : ""}
+                            id="mappingNameInput"
+                            name="mappingNameInput"
+                            label={index === 0 ? "Tên tham số đầu vào" : ""}
                             fill={true}
                             required={false}
                             error={item.checkName}
-                            message="Tên trường không được để trống"
-                            placeholder={"Tên trường"}
+                            message="Tên tham số đầu vào không được để trống"
+                            placeholder={"Tên tham số đầu vào"}
                             value={item.name}
                             onChange={(e) => {
                               const value = e.target.value;
@@ -780,74 +829,102 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
                         <div className="item-inputVar">
                           {index === 0 ? (
                             <div>
-                              <span style={{ fontSize: 14, fontWeight: "700" }}>Kiểu dữ liệu</span>
+                              <span style={{ fontSize: 14, fontWeight: "700" }}>Biến quy trình</span>
                             </div>
                           ) : null}
                           <div className={"container-select-mapping"}>
-                            <div className="select-mapping">
-                              <SelectCustom
-                                id="type"
-                                name="type"
-                                // label={index === 0 ? "Kiểu dữ liệu" : ""}
-                                fill={false}
-                                special={true}
-                                required={true}
-                                options={[
-                                  {
-                                    value: "text",
-                                    label: "Văn bản",
-                                  },
-                                  {
-                                    value: "int",
-                                    label: "Số nguyên",
-                                  },
-                                  {
-                                    value: "float",
-                                    label: "Số thực",
-                                  },
-                                  {
-                                    value: "list",
-                                    label: "Danh sách",
-                                  },
-                                  {
-                                    value: "date",
-                                    label: "Ngày tháng",
-                                  },
-                                  {
-                                    value: "boolean",
-                                    label: "Đúng/sai",
-                                  },
-                                ]}
-                                value={
-                                  item.mappingType === "text"
-                                    ? { value: "text", label: "Văn bản" }
-                                    : item.mappingType === "int"
-                                    ? { value: "int", label: "Số nguyên" }
-                                    : item.mappingType === "float"
-                                    ? { value: "float", label: "Số thực" }
-                                    : item.mappingType === "list"
-                                    ? { value: "list", label: "Danh sách" }
-                                    : item.mappingType === "date"
-                                    ? { value: "date", label: "Ngày tháng" }
-                                    : item.mappingType === "boolean"
-                                    ? { value: "boolean", label: "Đúng/sai" }
-                                    : null
-                                }
-                                onChange={(e) => {
+                            {!item.mappingType ? (
+                              <div className="input-text">
+                                <Input
+                                  name={`mapping-value-${index}`}
+                                  fill={false}
+                                  value={item.attributeMapping}
+                                  error={item.checkMapping}
+                                  message="Giá trị không được để trống"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    setListInputVar((current) =>
+                                      current.map((obj, idx) => {
+                                        if (index === idx) {
+                                          return {
+                                            ...obj,
+                                            attributeMapping: value,
+                                            attributeMappingId: value,
+                                            checkMapping: false,
+                                          };
+                                        }
+                                        return obj;
+                                      })
+                                    );
+                                  }}
+                                  placeholder={`Nhập giá trị`}
+                                />
+                              </div>
+                            ) : (
+                              <div className="select-mapping">
+                                <SelectCustom
+                                  key={`${index}-${item?.mappingType}`}
+                                  id="inputMappingFieldName"
+                                  name="inputMappingFieldName"
+                                  fill={false}
+                                  required={false}
+                                  error={item.checkMapping}
+                                  message="Giá trị không được để trống"
+                                  options={[]}
+                                  value={item.attributeMapping ? { value: item.attributeMappingId, label: item.attributeMapping } : null}
+                                  onChange={(e) => {
+                                    setListInputVar((current) =>
+                                      current.map((obj, idx) => {
+                                        if (index === idx) {
+                                          return { ...obj, attributeMapping: e.label, attributeMappingId: e.value, checkMapping: false };
+                                        }
+                                        return obj;
+                                      })
+                                    );
+                                  }}
+                                  isAsyncPaginate={true}
+                                  isFormatOptionLabel={false}
+                                  placeholder={item.mappingType === 2 ? "Chọn biến" : "Chọn trường trong form"}
+                                  additional={{
+                                    page: 1,
+                                  }}
+                                  loadOptionsPaginate={item?.mappingType === 2 ? loadedOptionAttribute : loadedOptionForm}
+                                />
+                              </div>
+                            )}
+
+                            <Tippy
+                              content={
+                                item.mappingType === 0
+                                  ? "Chuyển chọn trường trong form"
+                                  : item.mappingType === 1
+                                  ? "Chuyển chọn biến"
+                                  : "Chuyển nhập giá trị"
+                              }
+                            >
+                              <div
+                                className={"icon-change-select"}
+                                onClick={() => {
                                   setListInputVar((current) =>
                                     current.map((obj, idx) => {
                                       if (index === idx) {
-                                        return { ...obj, mappingType: e.value };
+                                        const nextType = obj.mappingType === 0 ? 1 : obj.mappingType === 1 ? 2 : obj.mappingType === 2 ? 0 : 1;
+                                        return {
+                                          ...obj,
+                                          mappingType: nextType,
+                                          attributeMapping: "",
+                                          attributeMappingId: "",
+                                          checkMapping: false,
+                                        };
                                       }
                                       return obj;
                                     })
                                   );
                                 }}
-                                isAsyncPaginate={false}
-                                isFormatOptionLabel={false}
-                                placeholder="Chọn kiểu dữ liệu"
-                              />
-                            </div>
+                              >
+                                <Icon name="ResetPassword" style={{ width: 18 }} />
+                              </div>
+                            </Tippy>
                           </div>
                         </div>
                         <div className="add-attribute" style={index === 0 ? { marginTop: "3.2rem" } : {}}>
@@ -855,17 +932,20 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
                             <span
                               className="icon-add"
                               onClick={() => {
-                                setListInputVar([
-                                  ...listInputVar,
-                                  {
-                                    name: "",
-                                    attributeMapping: "",
-                                    attributeMappingId: "",
-                                    mappingType: "",
-                                    checkName: false,
-                                    checkMapping: false,
-                                  },
-                                ]);
+                                setListInputVar((current) => {
+                                  const lastItem = current[current.length - 1];
+                                  return [
+                                    ...current,
+                                    {
+                                      name: "",
+                                      attributeMapping: null,
+                                      attributeMappingId: "",
+                                      mappingType: lastItem ? lastItem.mappingType : 1,
+                                      checkName: false,
+                                      checkMapping: false,
+                                    },
+                                  ];
+                                });
                               }}
                             >
                               <Icon name="PlusCircleFill" />
