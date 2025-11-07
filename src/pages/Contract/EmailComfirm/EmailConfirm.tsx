@@ -20,6 +20,7 @@ import { useLocation } from "react-router-dom";
 import Button from "components/button/button";
 import EmailService from "services/EmailService";
 import ScheduleConsultantService from "services/ScheduleConsultantService";
+import { ca } from "date-fns/locale";
 
 export default function EmailConfirm() {
   // const { onShow, data, idCustomer, saleflowId, sieId } = props;
@@ -95,6 +96,7 @@ export default function EmailConfirm() {
       creatorName: "",
       departmentName: "",
       employeeName: "",
+      cardName: "",
       bsnId: null,
       clientId: "",
       qrCode: "",
@@ -171,6 +173,7 @@ export default function EmailConfirm() {
             name: info.title || "",
             customerName: info.customerName || prev.values.customerName,
             employeeName: info.consultantName || prev.values.employeeName,
+            carName: info.cardName || prev.values.cardName,
             coverageStart: info.startTime ? new Date(info.startTime).toLocaleString("vi-VN") : prev.values.coverageStart,
             coverageEnd: info.endTime ? new Date(info.endTime).toLocaleString("vi-VN") : prev.values.coverageEnd,
           },
@@ -218,6 +221,7 @@ export default function EmailConfirm() {
         employeeId: result.employeeId,
         employeePhone: result.employeePhone,
         employeeName: result.employeeName,
+        cardName: result.cardName,
       });
       // Tự động điền thông tin khách hàng vào form
       setFormData((prev) => ({
@@ -230,6 +234,7 @@ export default function EmailConfirm() {
           customerName: result.name,
           customerPhone: result.phoneMasked,
           customerEmail: result.emailMasked,
+          cardName: result.cardName,
         },
       }));
     } else {
@@ -399,12 +404,19 @@ export default function EmailConfirm() {
       disabled: true,
     },
     {
-      label: "Chuyên viên tư vấn",
-      name: "employeeName",
+      label: "Hạng thành viên",
+      name: "cardName",
       type: "text",
       fill: true,
       disabled: true,
     },
+    // {
+    //   label: "Chuyên viên tư vấn",
+    //   name: "employeeName",
+    //   type: "text",
+    //   fill: true,
+    //   disabled: true,
+    // },
     {
       name: "voucherSelect",
       type: "custom",
@@ -565,6 +577,7 @@ export default function EmailConfirm() {
       creatorName: creatorName,
       departmentName: formData.values.departmentName || "",
       employeeName: formData.values.employeeName || "",
+      cardName: formData.values.cardName || "",
       bsnId: formData.values.bsnId || null,
       clientId: formData.values.clientId || "ieabgaiifh",
       qrCode: processCode,

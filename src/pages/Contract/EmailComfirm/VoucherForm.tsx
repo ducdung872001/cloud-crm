@@ -430,8 +430,8 @@ export default function VoucherForm() {
       disabled: true,
     },
     {
-      label: "Hạng thành viên",
-      name: "cardName",
+      label: "Chuyên viên tư vấn",
+      name: "employeeName",
       type: "text",
       fill: true,
       disabled: true,
