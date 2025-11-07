@@ -535,7 +535,7 @@ export const menu: IMenuItem[] = [
         ? [
             {
               title: "manageOrder", // Yêu cầu mua hàng
-              path: urls.manager_order,
+              path: urls.order_request_list,
               icon: <Icon name="ManageOrder" />,
               code: "ORDER_REQUEST", //Tài nguyên cho show quản lý đặt hàng hay không
             },
@@ -1466,6 +1466,12 @@ export const routes: IRouter[] = [
     path: urls.create_sale_add,
     component: <CreateOrderSales />,
   },
+  // danh sách yêu cầu đặt hàng
+  {
+    path: urls.order_request_list,
+    component: <OrderRequestList />,
+  },
+
   // danh sách hóa đơn bán hàng
   {
     path: urls.sale_invoice,
