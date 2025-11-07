@@ -47,6 +47,9 @@ import RoleService from "services/RoleService";
 import CampaignMarketingService from "services/CampaignMarketingService";
 import PromotionService from "services/PromotionService";
 import BoughtCardService from "services/BoughtCardService";
+import ProductIdApiService from "services/ProductIdApiService";
+import ServiceIdApiService from "services/ServiceIdApiService";
+import CardServiceIdApiService from "services/CardServiceIdApiService";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -270,6 +273,30 @@ export async function SelectOptionData(key: string, params?: any) {
     case "rolePermission":
       response = await RoleService.list(params);
       break;
+    case "apiProductId":
+      response = await ProductIdApiService.list({
+        ...params,
+        limit: 1000,
+      });
+      break;
+    case "apiProductId":
+      response = await ProductIdApiService.list({
+        ...params,
+        limit: 1000,
+      });
+      break;
+    case "apiServiceId":
+      response = await ServiceIdApiService.list({
+        ...params,
+        limit: 1000,
+      });
+      break;
+    case "apiCardServiceId":
+      response = await CardServiceIdApiService.list({
+        ...params,
+        limit: 1000,
+      });
+      break;
   }
   if (response) {
     if (response.code === 0) {
@@ -304,11 +331,11 @@ export async function SelectOptionData(key: string, params?: any) {
           };
         }
         if (key === "productId") {
-          return { 
-            value: item.id, 
+          return {
+            value: item.id,
             label: `${item.name}`,
             product_price: item.price || 0,
-            product_discount: item.discount || 0
+            product_discount: item.discount || 0,
           };
         }
         if (key === "boughtCardServiceByCustomerId") {
