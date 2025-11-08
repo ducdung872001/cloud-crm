@@ -28,7 +28,29 @@ export default function VoucherForm() {
   const processCode = queryParams.get("code") || "QTB";
   const customerIdParam = queryParams.get("customerId");
   const voucherIdParam = queryParams.get("promotionId");
-  const scheduleConsultantIdParam = queryParams.get("scheduleConsultantId");
+  const rawScheduleConsultantIdParam = queryParams.get("scheduleConsultantId");
+  const rawPotIdParam = queryParams.get("potId");
+  const nodeIdParam = queryParams.get("nodeId");
+  const currentRequestIdParam = queryParams.get("currentRequestId");
+  const messageIdParam = queryParams.get("messageId");
+
+  const parsedScheduleParams = useMemo(() => {
+    if (rawScheduleConsultantIdParam && rawScheduleConsultantIdParam.includes("?potId=") && !rawPotIdParam) {
+      const [scheduleId, potId] = rawScheduleConsultantIdParam.split("?potId=");
+      return {
+        scheduleConsultantId: scheduleId,
+        potId: potId,
+      };
+    }
+
+    return {
+      scheduleConsultantId: rawScheduleConsultantIdParam,
+      potId: rawPotIdParam,
+    };
+  }, [rawScheduleConsultantIdParam, rawPotIdParam]);
+
+  const scheduleConsultantIdParam = parsedScheduleParams.scheduleConsultantId;
+  const potIdParam = parsedScheduleParams.potId;
 
   const { id, dataBranch } = useContext(UserContext) as ContextType;
 
@@ -45,6 +67,8 @@ export default function VoucherForm() {
   const [scheduleInfo, setScheduleInfo] = useState<any>(null);
 
   const [listImageTicket, setListImageTicket] = useState([]);
+  const [voucherList, setVoucherList] = useState<any[]>([]);
+  const [voucherOptions, setVoucherOptions] = useState<IOption[]>([]);
 
   const values = useMemo(
     () =>
@@ -89,6 +113,7 @@ export default function VoucherForm() {
         customerName: "",
         customerPhone: "",
         customerEmail: "",
+        cardName: "",
         riskAddress: "",
         registrationNo: "",
         manufactureYear: null,
@@ -102,6 +127,9 @@ export default function VoucherForm() {
         voucherName: "",
         voucherStartTime: "",
         voucherEndTime: "",
+        nodeId: null,
+        currentRequestId: null,
+        messageId: null,
       } as any),
     []
   );
@@ -151,6 +179,32 @@ export default function VoucherForm() {
     }
   }, [scheduleConsultantIdParam]);
 
+  //! Tự động set potId từ URL vào form
+  useEffect(() => {
+    if (potIdParam) {
+      setFormData((prev) => ({
+        ...prev,
+        values: {
+          ...prev.values,
+          potId: potIdParam,
+        },
+      }));
+    }
+  }, [potIdParam]);
+
+  //! Tự động set nodeId, currentRequestId, messageId từ URL vào form
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      values: {
+        ...prev.values,
+        ...(nodeIdParam && { nodeId: nodeIdParam }),
+        ...(currentRequestIdParam && { currentRequestId: currentRequestIdParam }),
+        ...(messageIdParam && { messageId: messageIdParam }),
+      },
+    }));
+  }, [nodeIdParam, currentRequestIdParam, messageIdParam]);
+
 
   const [detailCustomer, setDetailCustomer] = useState(null);
 
@@ -168,14 +222,14 @@ export default function VoucherForm() {
       if (response.code === 0 && response.result?.items?.length > 0) {
         const voucher = response.result.items[0];
         setVoucherInfo(voucher);
-        setFormData({
-          ...formData,
+        setFormData((prev) => ({
+          ...prev,
           values: {
-            ...formData.values,
+            ...prev.values,
             voucherId: voucher.id,
             voucherName: voucher.name,
           },
-        });
+        }));
       } else {
         showToast("Không tìm thấy thông tin voucher", "error");
       }
@@ -206,6 +260,84 @@ export default function VoucherForm() {
     }
   }, [voucherIdParam]);
 
+  const fetchVoucherList = useCallback(
+    async (params: { scheduleConsultantId?: number; potId?: string | number }) => {
+      if (!params.scheduleConsultantId && !params.potId) {
+        return;
+      }
+
+      setIsLoadingVoucher(true);
+      try {
+        const requestParams: any = {
+          limit: 50,
+        };
+
+        if (params.scheduleConsultantId) {
+          requestParams.scheduleConsultantId = params.scheduleConsultantId;
+        }
+
+        if (params.potId) {
+          requestParams.potId = params.potId;
+        }
+
+        const response = await PromotionService.list(requestParams);
+
+        if (response.code !== 0) {
+          showToast(response.message || "Không lấy được danh sách voucher", "error");
+          setVoucherList([]);
+          setVoucherOptions([]);
+          return;
+        }
+
+        const results: any[] = response?.result?.items || [];
+        setVoucherList(results);
+        const opts = results.map((v) => ({ value: v.id, label: v.name }));
+        setVoucherOptions(opts);
+
+        if (results.length === 0) {
+          return;
+        }
+
+        setFormData((prev) => {
+          const currentVoucher = results.find((item) => item.id === prev.values.voucherId);
+          const pickedVoucher = currentVoucher || results[0];
+
+          if (!pickedVoucher) {
+            return prev;
+          }
+
+          return {
+            ...prev,
+            values: {
+              ...prev.values,
+              voucherId: pickedVoucher.id,
+              voucherName: pickedVoucher.name || "",
+              voucherStartTime: pickedVoucher.startTime ? new Date(pickedVoucher.startTime).toLocaleDateString("vi-VN") : "",
+              voucherEndTime: pickedVoucher.endTime ? new Date(pickedVoucher.endTime).toLocaleDateString("vi-VN") : "",
+            },
+          };
+        });
+      } catch (error) {
+        showToast("Không lấy được danh sách voucher", "error");
+        setVoucherList([]);
+        setVoucherOptions([]);
+      } finally {
+        setIsLoadingVoucher(false);
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    const scheduleId = scheduleConsultantIdParam ? parseInt(scheduleConsultantIdParam, 10) : undefined;
+    const normalizedScheduleId = scheduleId && !Number.isNaN(scheduleId) ? scheduleId : undefined;
+    const normalizedPotId = potIdParam || undefined;
+
+    if (normalizedScheduleId || normalizedPotId) {
+      fetchVoucherList({ scheduleConsultantId: normalizedScheduleId, potId: normalizedPotId });
+    }
+  }, [scheduleConsultantIdParam, potIdParam, fetchVoucherList]);
+
   const handleDetailCustomer = async (id: number) => {
     setIsLoadingCustomer(true);
 
@@ -228,18 +360,19 @@ export default function VoucherForm() {
       });
 
       // Tự động điền thông tin khách hàng vào form
-      setFormData({
-        ...formData,
+      setFormData((prev) => ({
+        ...prev,
         values: {
-          ...formData.values,
+          ...prev.values,
           customerId: result.id,
           employeeId: result.employeeId,
           employeeName: result.employeeName,
           customerName: result.name,
           customerPhone: result.phoneMasked,
           customerEmail: result.emailMasked,
+          cardName: result.cardName,
         },
-      });
+      }));
     } else {
       showToast(response.message || "Chi tiết khách hàng lỗi. Vui lòng thử lại sau !", "error");
     }
@@ -262,20 +395,6 @@ export default function VoucherForm() {
     //   fill: true,
     // },
     {
-      label: "Tên khách hàng",
-      name: "customerName",
-      type: "text",
-      fill: true,
-      disabled: true,
-    },
-    {
-      label: "Chuyên viên tư vấn",
-      name: "employeeName",
-      type: "text",
-      fill: true,
-      disabled: true,
-    },
-    {
       label: "Bắt đầu lịch",
       name: "coverageStart",
       type: "text",
@@ -285,6 +404,13 @@ export default function VoucherForm() {
     {
       label: "Kết thúc lịch",
       name: "coverageEnd",
+      type: "text",
+      fill: true,
+      disabled: true,
+    },
+    {
+      label: "Tên khách hàng",
+      name: "customerName",
       type: "text",
       fill: true,
       disabled: true,
@@ -304,11 +430,41 @@ export default function VoucherForm() {
       disabled: true,
     },
     {
-      label: "Tên voucher",
-      name: "voucherName",
+      label: "Chuyên viên tư vấn",
+      name: "employeeName",
       type: "text",
       fill: true,
       disabled: true,
+    },
+    {
+      name: "voucherSelect",
+      type: "custom",
+      snippet: (
+        <SelectCustom
+          label="Chọn voucher"
+          name="voucherSelect"
+          fill={true}
+          required={true}
+          disabled={isLoadingVoucher}
+          options={voucherOptions}
+          value={voucherOptions.find((o) => o.value === formData?.values?.voucherId) || null}
+          onChange={(opt) => {
+            const selectedId = opt?.value;
+            const selected = voucherList.find((v) => v.id === selectedId);
+            setFormData((prev) => ({
+              ...prev,
+              values: {
+                ...prev.values,
+                voucherId: selected?.id || null,
+                voucherName: selected?.name || "",
+                voucherStartTime: selected?.startTime ? new Date(selected.startTime).toLocaleDateString("vi-VN") : "",
+                voucherEndTime: selected?.endTime ? new Date(selected.endTime).toLocaleDateString("vi-VN") : "",
+              },
+            }));
+          }}
+          placeholder="Chọn voucher"
+        />
+      ),
     },
     {
       label: "Ngày bắt đầu",
@@ -328,24 +484,31 @@ export default function VoucherForm() {
       name: "confirm",
       type: "custom",
       snippet: (
-        <SelectCustom
-          label="Xác nhận ưu đãi"
-          name="confirm"
-          fill={true}
-          required={true}
-          options={[
-            { value: 1, label: "Đồng ý" },
-            { value: 0, label: "Không đồng ý" },
-          ]}
-          value={formData?.values?.confirm}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              values: { ...formData.values, confirm: e?.value },
-            })
-          }
-          placeholder="Chọn xác nhận"
-        />
+        <div className="field-custom-radio">
+          <label style={{ display: "block", marginBottom: 8 }}>Xác nhận ưu đãi</label>
+          <div style={{ display: "flex", gap: 16 }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <input
+                type="radio"
+                name="confirm"
+                value={1}
+                checked={(formData?.values?.confirm ?? 1) === 1}
+                onChange={() => setFormData({ ...formData, values: { ...formData.values, confirm: 1 } })}
+              />
+              Đồng ý
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <input
+                type="radio"
+                name="confirm"
+                value={0}
+                checked={formData?.values?.confirm === 0}
+                onChange={() => setFormData({ ...formData, values: { ...formData.values, confirm: 0 } })}
+              />
+              Không đồng ý
+            </label>
+          </div>
+        </div>
       ),
     },
   ];
@@ -365,6 +528,13 @@ export default function VoucherForm() {
       });
     }
   }, [voucherInfo]);
+
+  //! Mặc định confirm = 1 (Đồng ý)
+  useEffect(() => {
+    if (formData?.values?.confirm === null || formData?.values?.confirm === undefined) {
+      setFormData((prev) => ({ ...prev, values: { ...prev.values, confirm: 1 } }));
+    }
+  }, [formData?.values?.confirm]);
 
   useEffect(() => {
     const result = JSON.parse(formData.values.docLink).map((item) => item.url);
@@ -426,8 +596,10 @@ export default function VoucherForm() {
       bsnId: formData.values.bsnId || null,
       clientId: formData.values.clientId || "ieabgaiifh",
       qrCode: processCode,
+      code: processCode,
       potId: formData.values.potId || "",
       processId: formData.values.processId || "",
+      scheduleConsultantId: scheduleConsultantIdParam ? parseInt(scheduleConsultantIdParam) : null,
       branchId: branchId,
       branchName: branchName,
       createdAt: formData.values.createdAt || "",
@@ -439,6 +611,8 @@ export default function VoucherForm() {
       customerName: formData.values.customerName || "",
       customerPhone: formData.values.customerPhone || "",
       customerEmail: formData.values.customerEmail || "",
+      cardName: formData.values.cardName || "",
+      email: formData.values.customerEmail || "",
       riskAddress: formData.values.riskAddress || "",
       registrationNo: formData.values.registrationNo || "",
       manufactureYear: formData.values.manufactureYear || null,
@@ -454,6 +628,10 @@ export default function VoucherForm() {
       productSchemaSnapshotJson: formData.values.productSchemaSnapshotJson || "",
       productDataJson: formData.values.productDataJson || "",
       confirm: formData.values.confirm !== null ? formData.values.confirm : null, // 0 hoặc 1
+      voucherId: formData.values.voucherId || null,
+      nodeId: formData.values.nodeId || null,
+      currentRequestId: formData.values.currentRequestId || formData.values.requestNo || null,
+      messageId: formData.values.messageId || null,
     };
 
     console.log("body", body);
@@ -588,11 +766,11 @@ export default function VoucherForm() {
       <div className="page-collect-ticket">
         <form className="form-ticket-group" onSubmit={(e) => onSubmit(e)}>
           <div className="header-form">
-            <h1>THÔNG TIN ƯU ĐÃI</h1>
+            <h1>THÔNG TIN ƯU ĐÃI VÀ ĐẶT LỊCH HẸN TƯ VẤN</h1>
           </div>
           {succesSubmit ? (
             <div className="list-form-group" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-              GỬI THÔNG TIN ƯU ĐÃI THÀNH CÔNG
+              GỬI THÔNG TIN THÀNH CÔNG
               <Button onClick={handleGoBack} type="button" color="primary" size="large" className="custom-button-rollback">
                 Quay lại
               </Button>

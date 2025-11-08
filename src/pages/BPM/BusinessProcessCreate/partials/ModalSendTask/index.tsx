@@ -130,7 +130,7 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
           name: name,
           attributeMapping: attributeMapping,
           attributeMappingId: attributeMapping,
-          mappingType: attributeMapping?.includes("var") ? 2 : 1,
+          mappingType: attributeMapping?.includes("var") ? 2 : attributeMapping?.includes("frm") ? 1 : 0,
           checkName: false,
           checkMapping: false,
         };
@@ -209,7 +209,7 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
       description: data?.description ?? "",
       messageName: data?.messageName ?? "",
       messageId: data?.messageId ?? "",
-      // recipient: data?.recipient ?? "Người dùng",
+      recipient: data?.recipient ?? "Hệ thống khác",
       endpoint: data?.endpoint ?? null,
       inputVar: data?.inputVar ?? "",
       messageFormat: data?.messageFormat ?? "",
@@ -863,65 +863,94 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
                             </div>
                           ) : null}
                           <div className={"container-select-mapping"}>
-                            <div className="select-mapping">
-                              <SelectCustom
-                                key={item?.mappingType}
-                                id="fielName"
-                                name="fielName"
-                                // label={index === 0 ? "Biến quy trình" : ''}
-                                fill={false}
-                                required={false}
-                                error={item.checkMapping}
-                                message="Biến quy trình không được để trống"
-                                options={[]}
-                                value={item.attributeMapping ? { value: item.attributeMappingId, label: item.attributeMapping } : null}
-                                onChange={(e) => {
+                            {!item.mappingType ? (
+                              <div className="input-text">
+                                <Input
+                                  name={item.attributeMapping}
+                                  fill={false}
+                                  value={item.attributeMapping}
+                                  onChange={(e) => {
+                                    setListInputVar((current) =>
+                                      current.map((obj, idx) => {
+                                        if (index === idx) {
+                                          return {
+                                            ...obj,
+                                            attributeMapping: e.target.value,
+                                            attributeMappingId: e.target.value,
+                                            checkMapping: false,
+                                          };
+                                        }
+                                        return obj;
+                                      })
+                                    );
+                                  }}
+                                  placeholder={`Nhập giá trị`}
+                                />
+                              </div>
+                            ) : (
+                              <div className="select-mapping">
+                                <SelectCustom
+                                  key={item?.mappingType}
+                                  id="fieldName"
+                                  name="fieldName"
+                                  // label={index === 0 ? "Biến quy trình" : ''}
+                                  fill={false}
+                                  required={false}
+                                  error={item.checkMapping}
+                                  message="Biến quy trình không được để trống"
+                                  options={[]}
+                                  value={item.attributeMapping ? { value: item.attributeMappingId, label: item.attributeMapping } : null}
+                                  onChange={(e) => {
+                                    setListInputVar((current) =>
+                                      current.map((obj, idx) => {
+                                        if (index === idx) {
+                                          return { ...obj, attributeMapping: e.label, attributeMappingId: e.value, checkMapping: false };
+                                        }
+                                        return obj;
+                                      })
+                                    );
+                                  }}
+                                  isAsyncPaginate={true}
+                                  isFormatOptionLabel={false}
+                                  // placeholder={item.mappingType === 2 ? "Chọn biến" : 'Chọn trường trong form'}
+                                  placeholder={item.mappingType === 2 ? "Chọn biến" : "Chọn trường trong form"}
+                                  additional={{
+                                    page: 1,
+                                  }}
+                                  loadOptionsPaginate={item?.mappingType === 2 ? loadedOptionAttribute : loadedOptionForm}
+                                  // formatOptionLabel={formatOptionLabelEmployee}
+                                  // error={checkFieldEform}
+                                  // message="Biểu mẫu không được bỏ trống"
+                                  // disabled={}
+                                />
+                              </div>
+                            )}
+
+                            <Tippy
+                              content={
+                                item.mappingType === 0
+                                  ? "Chuyển chọn trường trong form"
+                                  : item.mappingType === 1
+                                  ? "Chuyển chọn biến"
+                                  : "Chuyển nhập giá trị"
+                              }
+                            >
+                              <div
+                                className={"icon-change-select"}
+                                onClick={(e) => {
                                   setListInputVar((current) =>
                                     current.map((obj, idx) => {
                                       if (index === idx) {
-                                        return { ...obj, attributeMapping: e.label, attributeMappingId: e.value, checkMapping: false };
+                                        return {
+                                          ...obj,
+                                          mappingType: item.mappingType === 0 ? 1 : item.mappingType === 1 ? 2 : 0,
+                                          attributeMapping: "",
+                                          attributeMappingId: "",
+                                        };
                                       }
                                       return obj;
                                     })
                                   );
-                                }}
-                                isAsyncPaginate={true}
-                                isFormatOptionLabel={false}
-                                // placeholder={item.mappingType === 2 ? "Chọn biến" : 'Chọn trường trong form'}
-                                placeholder={item.mappingType === 2 ? "Chọn biến" : "Chọn trường trong form"}
-                                additional={{
-                                  page: 1,
-                                }}
-                                loadOptionsPaginate={item?.mappingType === 2 ? loadedOptionAttribute : loadedOptionForm}
-                                // formatOptionLabel={formatOptionLabelEmployee}
-                                // error={checkFieldEform}
-                                // message="Biểu mẫu không được bỏ trống"
-                                // disabled={}
-                              />
-                            </div>
-                            <Tippy content={item.mappingType === 2 ? "Chuyển chọn trường trong form" : "Chuyển chọn biến"}>
-                              <div
-                                className={"icon-change-select"}
-                                onClick={(e) => {
-                                  if (item.mappingType === 1) {
-                                    setListInputVar((current) =>
-                                      current.map((obj, idx) => {
-                                        if (index === idx) {
-                                          return { ...obj, mappingType: 2 };
-                                        }
-                                        return obj;
-                                      })
-                                    );
-                                  } else {
-                                    setListInputVar((current) =>
-                                      current.map((obj, idx) => {
-                                        if (index === idx) {
-                                          return { ...obj, mappingType: 1 };
-                                        }
-                                        return obj;
-                                      })
-                                    );
-                                  }
                                 }}
                               >
                                 <Icon name="ResetPassword" style={{ width: 18 }} />
@@ -940,7 +969,7 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
                                     name: "",
                                     attributeMapping: "",
                                     attributeMappingId: "",
-                                    mappingType: 1,
+                                    mappingType: listInputVar.length > 0 ? listInputVar[listInputVar.length - 1].mappingType : 1,
                                     checkName: false,
                                     checkMapping: false,
                                   },

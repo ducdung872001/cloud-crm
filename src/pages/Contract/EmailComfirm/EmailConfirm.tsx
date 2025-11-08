@@ -12,6 +12,7 @@ import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import FileService from "services/FileService";
 import CustomerService from "services/CustomerService";
+import PromotionService from "services/PromotionService";
 import { EMAIL_REGEX } from "utils/constant";
 import { UserContext, ContextType } from "contexts/userContext";
 import "./EmailConfirm.scss";
@@ -19,6 +20,7 @@ import { useLocation } from "react-router-dom";
 import Button from "components/button/button";
 import EmailService from "services/EmailService";
 import ScheduleConsultantService from "services/ScheduleConsultantService";
+import { ca } from "date-fns/locale";
 
 export default function EmailConfirm() {
   // const { onShow, data, idCustomer, saleflowId, sieId } = props;
@@ -28,7 +30,27 @@ export default function EmailConfirm() {
   const queryParams = new URLSearchParams(location.search);
   const processCode = queryParams.get("code") || "QTB";
   const customerIdParam = queryParams.get("customerId");
-  const scheduleConsultantIdParam = queryParams.get("scheduleConsultantId");
+  const voucherIdParam = queryParams.get("promotionId");
+  const rawScheduleConsultantIdParam = queryParams.get("scheduleConsultantId");
+  const rawPotIdParam = queryParams.get("potId");
+
+  const parsedScheduleParams = useMemo(() => {
+    if (rawScheduleConsultantIdParam && rawScheduleConsultantIdParam.includes("?potId=") && !rawPotIdParam) {
+      const [scheduleId, potId] = rawScheduleConsultantIdParam.split("?potId=");
+      return {
+        scheduleConsultantId: scheduleId,
+        potId: potId,
+      };
+    }
+
+    return {
+      scheduleConsultantId: rawScheduleConsultantIdParam,
+      potId: rawPotIdParam,
+    };
+  }, [rawScheduleConsultantIdParam, rawPotIdParam]);
+
+  const scheduleConsultantIdParam = parsedScheduleParams.scheduleConsultantId;
+  const potIdParam = parsedScheduleParams.potId;
 
   const { id, dataBranch } = useContext(UserContext) as ContextType;
 
@@ -40,8 +62,12 @@ export default function EmailConfirm() {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
+  const [isLoadingVoucher, setIsLoadingVoucher] = useState<boolean>(false);
+  const [voucherInfo, setVoucherInfo] = useState<any>(null);
 
   const [listImageTicket, setListImageTicket] = useState([]);
+  const [voucherList, setVoucherList] = useState<any[]>([]);
+  const [voucherOptions, setVoucherOptions] = useState<IOption[]>([]);
 
   const values = useMemo(
     () =>
@@ -70,6 +96,7 @@ export default function EmailConfirm() {
       creatorName: "",
       departmentName: "",
       employeeName: "",
+      cardName: "",
       bsnId: null,
       clientId: "",
       qrCode: "",
@@ -146,6 +173,7 @@ export default function EmailConfirm() {
             name: info.title || "",
             customerName: info.customerName || prev.values.customerName,
             employeeName: info.consultantName || prev.values.employeeName,
+            carName: info.cardName || prev.values.cardName,
             coverageStart: info.startTime ? new Date(info.startTime).toLocaleString("vi-VN") : prev.values.coverageStart,
             coverageEnd: info.endTime ? new Date(info.endTime).toLocaleString("vi-VN") : prev.values.coverageEnd,
           },
@@ -162,6 +190,19 @@ export default function EmailConfirm() {
       if (scheduleId) getScheduleDetail(scheduleId);
     }
   }, [scheduleConsultantIdParam]);
+
+  //! Tự động set potId từ URL vào form
+  useEffect(() => {
+    if (potIdParam) {
+      setFormData((prev) => ({
+        ...prev,
+        values: {
+          ...prev.values,
+          potId: potIdParam,
+        },
+      }));
+    }
+  }, [potIdParam]);
 
   const handleDetailCustomer = async (id: number) => {
     setIsLoadingCustomer(true);
@@ -180,20 +221,22 @@ export default function EmailConfirm() {
         employeeId: result.employeeId,
         employeePhone: result.employeePhone,
         employeeName: result.employeeName,
+        cardName: result.cardName,
       });
       // Tự động điền thông tin khách hàng vào form
-      setFormData({
-        ...formData,
+      setFormData((prev) => ({
+        ...prev,
         values: {
-          ...formData.values,
+          ...prev.values,
           customerId: result.id,
           employeeId: result.employeeId,
           employeeName: result.employeeName,
           customerName: result.name,
           customerPhone: result.phoneMasked,
           customerEmail: result.emailMasked,
+          cardName: result.cardName,
         },
-      });
+      }));
     } else {
       showToast(response.message || "Chi tiết khách hàng lỗi. Vui lòng thử lại sau !", "error");
     }
@@ -207,6 +250,128 @@ export default function EmailConfirm() {
   //   }
   // }, [idCustomer, onShow, data?.customerId]);
 
+  //! Lấy thông tin voucher theo ID
+  const getVoucherDetail = async (voucherId: number) => {
+    setIsLoadingVoucher(true);
+    try {
+      const param: any = {
+        id: voucherId,
+        limit: 1,
+      };
+
+      const response = await PromotionService.list(param);
+
+      if (response.code === 0 && response.result?.items?.length > 0) {
+        const voucher = response.result.items[0];
+        setVoucherInfo(voucher);
+        setFormData((prev) => ({
+          ...prev,
+          values: {
+            ...prev.values,
+            voucherId: voucher.id,
+            voucherName: voucher.name,
+            voucherStartTime: voucher.startTime ? new Date(voucher.startTime).toLocaleDateString("vi-VN") : "",
+            voucherEndTime: voucher.endTime ? new Date(voucher.endTime).toLocaleDateString("vi-VN") : "",
+          },
+        }));
+      } else {
+        showToast("Không tìm thấy thông tin voucher", "error");
+      }
+    } catch (error) {
+      showToast("Lỗi khi lấy thông tin voucher. Vui lòng thử lại sau", "error");
+    } finally {
+      setIsLoadingVoucher(false);
+    }
+  };
+
+  //! Tự động load thông tin voucher từ voucherId trong URL
+  useEffect(() => {
+    if (voucherIdParam) {
+      const voucherId = parseInt(voucherIdParam);
+      if (voucherId) {
+        getVoucherDetail(voucherId);
+      }
+    }
+  }, [voucherIdParam]);
+
+  const fetchVoucherList = useCallback(
+    async (params: { scheduleConsultantId?: number; potId?: string | number }) => {
+      if (!params.scheduleConsultantId && !params.potId) {
+        return;
+      }
+
+      setIsLoadingVoucher(true);
+      try {
+        const requestParams: any = {
+          limit: 50,
+        };
+
+        if (params.scheduleConsultantId) {
+          requestParams.scheduleConsultantId = params.scheduleConsultantId;
+        }
+
+        if (params.potId) {
+          requestParams.potId = params.potId;
+        }
+
+        const response = await PromotionService.list(requestParams);
+
+        if (response.code !== 0) {
+          showToast(response.message || "Không lấy được danh sách voucher", "error");
+          setVoucherList([]);
+          setVoucherOptions([]);
+          return;
+        }
+
+        const results: any[] = response?.result?.items || [];
+        setVoucherList(results);
+        const opts = results.map((v) => ({ value: v.id, label: v.name }));
+        setVoucherOptions(opts);
+
+        if (results.length === 0) {
+          return;
+        }
+
+        setFormData((prev) => {
+          const currentVoucher = results.find((item) => item.id === prev.values.voucherId);
+          const pickedVoucher = currentVoucher || results[0];
+
+          if (!pickedVoucher) {
+            return prev;
+          }
+
+          return {
+            ...prev,
+            values: {
+              ...prev.values,
+              voucherId: pickedVoucher.id,
+              voucherName: pickedVoucher.name || "",
+              voucherStartTime: pickedVoucher.startTime ? new Date(pickedVoucher.startTime).toLocaleDateString("vi-VN") : "",
+              voucherEndTime: pickedVoucher.endTime ? new Date(pickedVoucher.endTime).toLocaleDateString("vi-VN") : "",
+            },
+          };
+        });
+      } catch (error) {
+        showToast("Không lấy được danh sách voucher", "error");
+        setVoucherList([]);
+        setVoucherOptions([]);
+      } finally {
+        setIsLoadingVoucher(false);
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    const scheduleId = scheduleConsultantIdParam ? parseInt(scheduleConsultantIdParam, 10) : undefined;
+    const normalizedScheduleId = scheduleId && !Number.isNaN(scheduleId) ? scheduleId : undefined;
+    const normalizedPotId = potIdParam || undefined;
+
+    if (normalizedScheduleId || normalizedPotId) {
+      fetchVoucherList({ scheduleConsultantId: normalizedScheduleId, potId: normalizedPotId });
+    }
+  }, [scheduleConsultantIdParam, potIdParam, fetchVoucherList]);
+
   const listFieldVoteInfo: any[] = [
     {
       label: "Tiêu đề",
@@ -215,22 +380,9 @@ export default function EmailConfirm() {
       fill: true,
       disabled: true,
     },
-    // {
-    //   label: "Chủ đề",
-    //   name: "topic",
-    //   type: "text",
-    //   fill: true,
-    // },
     {
       label: "Tên khách hàng",
       name: "customerName",
-      type: "text",
-      fill: true,
-      disabled: true,
-    },
-    {
-      label: "Chuyên viên tư vấn",
-      name: "employeeName",
       type: "text",
       fill: true,
       disabled: true,
@@ -252,30 +404,117 @@ export default function EmailConfirm() {
       disabled: true,
     },
     {
-      name: "confirm",
+      label: "Hạng thành viên",
+      name: "cardName",
+      type: "text",
+      fill: true,
+      disabled: true,
+    },
+    // {
+    //   label: "Chuyên viên tư vấn",
+    //   name: "employeeName",
+    //   type: "text",
+    //   fill: true,
+    //   disabled: true,
+    // },
+    {
+      name: "voucherSelect",
       type: "custom",
       snippet: (
         <SelectCustom
-          label="Xác nhận ưu đãi"
-          name="confirm"
+          label="Chọn voucher"
+          name="voucherSelect"
           fill={true}
           required={true}
-          options={[
-            { value: 1, label: "Đồng ý" },
-            { value: 0, label: "Không đồng ý" },
-          ]}
-          value={formData?.values?.confirm}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              values: { ...formData.values, confirm: e?.value },
-            })
-          }
-          placeholder="Chọn xác nhận"
+          disabled={isLoadingVoucher}
+          options={voucherOptions}
+          value={voucherOptions.find((o) => o.value === formData?.values?.voucherId) || null}
+          onChange={(opt) => {
+            const selectedId = opt?.value;
+            const selected = voucherList.find((v) => v.id === selectedId);
+            setFormData((prev) => ({
+              ...prev,
+              values: {
+                ...prev.values,
+                voucherId: selected?.id || null,
+                voucherName: selected?.name || "",
+                voucherStartTime: selected?.startTime ? new Date(selected.startTime).toLocaleDateString("vi-VN") : "",
+                voucherEndTime: selected?.endTime ? new Date(selected.endTime).toLocaleDateString("vi-VN") : "",
+              },
+            }));
+          }}
+          placeholder="Chọn voucher"
         />
       ),
     },
+    {
+      label: "Ngày bắt đầu",
+      name: "voucherStartTime",
+      type: "text",
+      fill: true,
+      disabled: true,
+    },
+    {
+      label: "Ngày kết thúc",
+      name: "voucherEndTime",
+      type: "text",
+      fill: true,
+      disabled: true,
+    },
+    {
+      name: "confirm",
+      type: "custom",
+      snippet: (
+        <div className="field-custom-radio">
+          <label style={{ display: "block", marginBottom: 8 }}>Xác nhận ưu đãi</label>
+          <div style={{ display: "flex", gap: 16 }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <input
+                type="radio"
+                name="confirm"
+                value={1}
+                checked={(formData?.values?.confirm ?? 1) === 1}
+                onChange={() => setFormData((prev) => ({ ...prev, values: { ...prev.values, confirm: 1 } }))}
+              />
+              Đồng ý
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <input
+                type="radio"
+                name="confirm"
+                value={0}
+                checked={formData?.values?.confirm === 0}
+                onChange={() => setFormData((prev) => ({ ...prev, values: { ...prev.values, confirm: 0 } }))}
+              />
+              Không đồng ý
+            </label>
+          </div>
+        </div>
+      ),
+    },
   ];
+
+  //! Cập nhật thông tin voucher vào form khi load xong
+  useEffect(() => {
+    if (voucherInfo) {
+      setFormData((prev) => ({
+        ...prev,
+        values: {
+          ...prev.values,
+          voucherName: voucherInfo.name || "",
+          voucherStartTime: voucherInfo.startTime ? new Date(voucherInfo.startTime).toLocaleDateString("vi-VN") : "",
+          voucherEndTime: voucherInfo.endTime ? new Date(voucherInfo.endTime).toLocaleDateString("vi-VN") : "",
+        },
+      }));
+    }
+  }, [voucherInfo]);
+
+  //! Mặc định confirm = 1 (Đồng ý)
+  useEffect(() => {
+    if (formData?.values?.confirm === null || formData?.values?.confirm === undefined) {
+      setFormData((prev) => ({ ...prev, values: { ...prev.values, confirm: 1 } }));
+    }
+  }, [formData?.values?.confirm]);
 
   useEffect(() => {
     const result = JSON.parse(formData.values.docLink).map((item) => item.url);
@@ -338,6 +577,7 @@ export default function EmailConfirm() {
       creatorName: creatorName,
       departmentName: formData.values.departmentName || "",
       employeeName: formData.values.employeeName || "",
+      cardName: formData.values.cardName || "",
       bsnId: formData.values.bsnId || null,
       clientId: formData.values.clientId || "ieabgaiifh",
       qrCode: processCode,
@@ -369,6 +609,11 @@ export default function EmailConfirm() {
       productSchemaSnapshotJson: formData.values.productSchemaSnapshotJson || "",
       productDataJson: formData.values.productDataJson || "",
       confirm: formData.values.confirm !== null ? formData.values.confirm : null, // 0 hoặc 1
+      voucherId: formData.values.voucherId || null,
+      voucherName: formData.values.voucherName || "",
+      voucherStartTime: formData.values.voucherStartTime || "",
+      voucherEndTime: formData.values.voucherEndTime || "",
+      scheduleConsultantId: scheduleConsultantIdParam ? parseInt(scheduleConsultantIdParam) : null,
     };
     console.log("body", body);
     // return;
@@ -484,7 +729,7 @@ export default function EmailConfirm() {
           url: item,
         };
       });
-      setFormData({ ...formData, values: { ...formData.values, docLink: JSON.stringify(result) } });
+      setFormData((prev) => ({ ...prev, values: { ...prev.values, docLink: JSON.stringify(result) } }));
     }
   }, [listImageTicket]);
 
