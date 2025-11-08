@@ -418,10 +418,10 @@ export default function EmailConfirm() {
     []
   );
 
-  useEffect(() => {
-    const fmtStartDate = fmtStartDateParam || "01/01/2010";
-    fetchVoucherList(fmtStartDate);
-  }, [fmtStartDateParam, fetchVoucherList]);
+ useEffect(() => {
+  const fmtStartDate = fmtStartDateParam || new Date().toLocaleDateString("vi-VN"); 
+  fetchVoucherList(fmtStartDate);
+}, [fmtStartDateParam, fetchVoucherList]);
 
   const selectedVoucherOption = useMemo(() => {
     const id = formData?.values?.voucherId;
@@ -429,9 +429,6 @@ export default function EmailConfirm() {
     return voucherOptions.find(opt => Number(opt.value) === Number(id)) || null;
 
   }, [formData?.values?.voucherId, voucherOptions]);
-  console.log("selectedVoucherOption:", selectedVoucherOption);
-  console.log("voucherOptions:", voucherOptions);
-  console.log("voucherId:", formData.values.voucherId);
 
   const listFieldVoteInfo: any[] = useMemo(() => [
     {
