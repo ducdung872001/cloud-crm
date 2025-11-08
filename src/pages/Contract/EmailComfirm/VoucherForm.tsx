@@ -365,7 +365,7 @@ export default function VoucherForm() {
   );
 
   useEffect(() => {
-    const fmtStartDate = fmtStartDateParam || "01/01/2010";
+    const fmtStartDate = fmtStartDateParam || new Date().toLocaleDateString("vi-VN");
     fetchVoucherList(fmtStartDate);
   }, [fmtStartDateParam, fetchVoucherList]);
 
