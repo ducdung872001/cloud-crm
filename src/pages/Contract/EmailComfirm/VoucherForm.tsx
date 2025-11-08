@@ -421,11 +421,6 @@ export default function VoucherForm() {
     return voucherOptions.find(opt => Number(opt.value) === Number(id)) || null;
 
   }, [formData?.values?.voucherId, voucherOptions]);
-  console.log("selectedVoucherOption:", selectedVoucherOption);
-  console.log("voucherOptions:", voucherOptions);
-  console.log("voucherId:", formData.values.voucherId);
-
-
 
   // Memoize các field để tránh tạo lại snippet mỗi render
   const listFieldVoteInfo: any[] = useMemo(() => [
