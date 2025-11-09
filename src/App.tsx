@@ -296,8 +296,8 @@ export default function App() {
           {isLogin && <Route path="*" element={<LayoutPage />} />}
           {location.pathname == "/link_survey" && <Route path="/link_survey" element={<LinkSurvey />} />}
           {location.pathname == "/upload_document" && <Route path="/upload_document" element={<UploadDocument />} />}
-          {location.pathname == "/send_email_confirm" && <Route path="/send_email_confirm" element={<EmailConfirm />} />}
-          {location.pathname == "/voucher_confirm" && <Route path="/voucher_confirm" element={<VoucherForm/> } /> }
+          <Route path="/send_email_confirm" element={<EmailConfirm />} />
+          <Route path="/voucher_confirm" element={<VoucherForm/> } />
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />
