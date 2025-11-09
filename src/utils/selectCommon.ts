@@ -45,6 +45,11 @@ import BuildingService from "services/BuildingService";
 import CustomerMarketingLeadService from "services/CustomerMarketingLeadService";
 import RoleService from "services/RoleService";
 import CampaignMarketingService from "services/CampaignMarketingService";
+import PromotionService from "services/PromotionService";
+import BoughtCardService from "services/BoughtCardService";
+import ProductIdApiService from "services/ProductIdApiService";
+import ServiceIdApiService from "services/ServiceIdApiService";
+import CardServiceIdApiService from "services/CardServiceIdApiService";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -83,6 +88,9 @@ export async function SelectOptionData(key: string, params?: any) {
       break;
     case "categoryItemId":
       response = await CategoryServiceService.list(params);
+      break;
+    case "boughtCardServiceByCustomerId":
+      response = await BoughtCardService.listBoughtCardByCustomerId(params);
       break;
     case "groupId":
     case "groupTip":
@@ -153,6 +161,9 @@ export async function SelectOptionData(key: string, params?: any) {
     case "sourceId":
     case "source":
       response = await CustomerSourceService.list(params);
+      break;
+    case "promotionId":
+      response = await PromotionService.list(params);
       break;
     case "cgpId":
     case "cgp":
@@ -262,6 +273,30 @@ export async function SelectOptionData(key: string, params?: any) {
     case "rolePermission":
       response = await RoleService.list(params);
       break;
+    case "apiProductId":
+      response = await ProductIdApiService.list({
+        ...params,
+        limit: 1000,
+      });
+      break;
+    case "apiProductId":
+      response = await ProductIdApiService.list({
+        ...params,
+        limit: 1000,
+      });
+      break;
+    case "apiServiceId":
+      response = await ServiceIdApiService.list({
+        ...params,
+        limit: 1000,
+      });
+      break;
+    case "apiCardServiceId":
+      response = await CardServiceIdApiService.list({
+        ...params,
+        limit: 1000,
+      });
+      break;
   }
   if (response) {
     if (response.code === 0) {
@@ -276,6 +311,9 @@ export async function SelectOptionData(key: string, params?: any) {
           return { value: item.id, label: `${item.name}` };
         }
         if (key === "marketingId" || key === "marketingChanelId") {
+          return { value: item.id, label: `${item.name}` };
+        }
+        if (key === "promotionId") {
           return { value: item.id, label: `${item.name}` };
         }
         if (key === "scrId") {
@@ -293,11 +331,20 @@ export async function SelectOptionData(key: string, params?: any) {
           };
         }
         if (key === "productId") {
-          return { 
-            value: item.id, 
+          return {
+            value: item.id,
             label: `${item.name}`,
             product_price: item.price || 0,
-            product_discount: item.discount || 0
+            product_discount: item.discount || 0,
+          };
+        }
+        if (key === "boughtCardServiceByCustomerId") {
+          return {
+            value: item.id,
+            label: `${item.serviceName}`,
+            card_number: item.cardNumber || 0,
+            treatment_number: item.treatmentNum || 0,
+            total_treatment: item.totalTreatment || 0,
           };
         }
         return {

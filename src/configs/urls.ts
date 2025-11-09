@@ -6,6 +6,8 @@ const prefixSale = "/sale";
 const prefixSystem = "/system";
 const prefixCs = "/cs";
 const prefixApplication = "/application";
+const prefixHr = "/hr";
+const prefixRebornVn = "https://reborn.vn/api";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -373,6 +375,7 @@ export const urlsApi = {
     add: prefixAdmin + "/boughtCardService/update",
     delete: prefixAdmin + "/boughtCardService/delete",
     update: prefixAdmin + "/boughtCardService/update/cardNumber",
+    listBoughtCardByCustomerId: prefixAdmin + "/boughtCardService/getBoughtCardServiceByCustomerId",
   },
   product: {
     filterWarehouse: prefixAdmin + "/product/in_warehouse",
@@ -845,6 +848,15 @@ export const urlsApi = {
     list_branch: prefixAdmin + "/role/list/branch",
 
     updateParent: prefixAdmin + "/role/update/parent",
+  },
+  productIdApi: {
+    list: prefixRebornVn + "/product/list",
+  },
+  serviceIdApi: {
+    list: prefixRebornVn + "/service/list",
+  },
+  cardServiceIdApi: {
+    list: prefixRebornVn + "/cardService/list",
   },
   card: {
     list: prefixAdmin + "/card/list",
@@ -2066,12 +2078,17 @@ export const urlsApi = {
   dataSupplySource: {
     list: prefixAdmin + "/filter-setting/list",
   },
+  //lay danh sach voucher
+  voucher: {
+    list: prefixAdmin + "/promotion/list",
+  },
 
   email: {
     list: prefixAdmin + "/outlookMail/list",
     detail: prefixAdmin + "/outlookMail/get",
     sendEmail: prefixAdmin + "/outlookMail/sendEmail",
     delete: prefixAdmin + "/outlookMail/delete",
+    sendEmailConfirm: prefixAdmin + "/promotion/init-receive-task",
 
     // call api email
     lstEmail: "https://connect.reborn.vn/api/v1/google/gmail/message/search",
@@ -2102,6 +2119,8 @@ export const urlsApi = {
     listCustomerByDate: prefixAdmin + "/ma/statistic/byDate",
     detailCustomer: prefixAdmin + "/maCustomer/result",
     deleteCustomer: prefixAdmin + "/maCustomer/delete",
+    updateMapping: prefixAdmin + "/maMapping/update",
+    detailMapping: prefixAdmin + "/maMapping/get",
   },
 
   // chiến dịch bán hàng
@@ -3027,6 +3046,8 @@ export const urls = {
   sms_marketting: "/sms_marketting",
   email_marketting: "/email_marketting",
   zalo_marketting: "/zalo_marketting",
+  send_email_confirm: "/send_email_confirm",
+  voucher_confirm: "/voucher_confirm",
   // Setting
   setting_common: "/setting_common",
   setting_rose: "/setting_rose",
@@ -3107,9 +3128,12 @@ export const urls = {
   // cài đặt ứng dụng
   install_app: "/install_app",
   // thử nghiệm với marketing automation (cài đặt)
+  marketing_automation_v2: "/marketing_automation_v2",
   marketing_automation: "/marketing_automation",
   create_marketing_automation: "/create_marketing_automation",
+  create_marketing_automation_v2: "/create_marketing_automation_v2",
   edit_marketing_automation: "/edit_marketing_automation/:id?",
+  edit_marketing_automation_v2: "/edit_marketing_automation_v2/:id?",
   marketing_automation_setting: "/marketing_automation_setting/:id",
   detail_marketing_automation: "/detail_marketing_automation/maId/:id?",
 

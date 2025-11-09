@@ -30,25 +30,37 @@
       border-bottom: 1px solid #e0e0e0;
       .avatar {
         margin-right: 4rem;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
         img {
           width: 10rem;
           height: 10rem;
           object-fit: contain;
         }
-      }
-      .info {
         .name {
+          width: 25rem;
           font-size: 1.6rem;
           font-weight: 600;
           margin-bottom: 0.5rem;
         }
+      }
+      .info {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
         .request-info {
           width: 100%;
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 10rem;
+          gap: 5rem;
           font-size: 1.4rem;
           color: #666666;
+          .item-info {
+            min-width: 14rem;
+          }
         }
       }
     }

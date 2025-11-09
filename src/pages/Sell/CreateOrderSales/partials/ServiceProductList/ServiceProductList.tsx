@@ -101,7 +101,11 @@ export default function ServiceProductList(props: IServiceProductListProps) {
     index + 1,
     <Image key={index} src={item.productAvatar || item.serviceAvatar || ImageThirdGender} alt={item.name} />,
     !item.batchNo ? (
-      item.serviceName
+      <>
+        <span>{item.name}</span>
+        <br />
+        <span>{item.serviceName}</span>
+      </>
     ) : (
       <Fragment>
         <span>{item.name}</span>
