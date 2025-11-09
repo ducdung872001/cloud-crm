@@ -328,25 +328,37 @@ export default function CalendarCommon() {
     setIsLoading(false);
   };
 
+  // useEffect(() => {
+  //   // if (!isMounted.current) {
+  //   //   isMounted.current = true;
+  //   //   return;
+  //   // }
+
+  //   if (isMounted.current === true) {
+  //     getListSchedule(params);
+  //     const paramsTemp = _.cloneDeep(params);
+
+  //     Object.keys(paramsTemp).map(function (key) {
+  //       paramsTemp[key] === "" ? delete paramsTemp[key] : null;
+  //     });
+  //   }
+
+  //   return () => {
+  //     abortController.abort();
+  //   };
+  // }, [params]);
+
   useEffect(() => {
-    // if (!isMounted.current) {
-    //   isMounted.current = true;
-    //   return;
-    // }
+  getListSchedule(params);
 
-    if (isMounted.current === true) {
-      getListSchedule(params);
-      const paramsTemp = _.cloneDeep(params);
+  const paramsTemp = _.cloneDeep(params);
+  Object.keys(paramsTemp).forEach((key) => {
+    if (paramsTemp[key] === "") delete paramsTemp[key];
+  });
 
-      Object.keys(paramsTemp).map(function (key) {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-    }
-
-    return () => {
-      abortController.abort();
-    };
+  return () => abortController.abort();
   }, [params]);
+
 
   // Đoạn này lấy thông tin kéo thả lịch để thêm mới
   const handleSelectSlot = useCallback(
