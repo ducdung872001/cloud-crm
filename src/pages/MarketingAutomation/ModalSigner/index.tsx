@@ -1,17 +1,14 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import _ from "lodash";
 import { IActionModal } from "model/OtherModel";
-import TextArea from "components/textarea/textarea";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
-import ApprovalService from "services/ApprovalService";
 import { showToast } from "utils/common";
 
 import "./index.scss";
 import BusinessProcessService from "services/BusinessProcessService";
-import ProcessedObjectService from "services/ProcessedObjectService";
-import Input from "components/input/input";
-import Icon from "components/icon";
+import MarketingAutomationService from "services/MarketingAutomationService";
 
 interface IAddSignerFSAndQuoteProps {
   onShow: boolean;
@@ -20,29 +17,26 @@ interface IAddSignerFSAndQuoteProps {
 }
 
 export default function ModalSigner(props: IAddSignerFSAndQuoteProps) {
+  const navigate = useNavigate();
   const { onShow, onHide, data } = props;
+  // console.log("ModalSigner data", data);
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [listDataVar, setListDataVar] = useState([
-    {
-      var: '',
-      value: ''
-    }
-  ])
+  const [validateFieldProcess, setValidateFieldProcess] = useState<boolean>(false);
+  const [valueProcess, setValueProcess] = useState(null);
 
   useEffect(() => {
-    if(onShow && data && data?.processId){
-      setValueProcess({value: data?.processId, label: data?.processName})
+    if (onShow && data && data?.processId) {
+      setValueProcess({ value: data?.processId, label: data?.processName });
     }
-  }, [onShow, data])
+  }, [onShow, data]);
 
   const values = useMemo(
     () => ({
-        // id: data?.id ?? null,
-        processId: data?.processId ?? null,
-        potId: data?.id ?? null,
-        startNodeId: data?.startNodeId ??null,
-        name: data?.name ?? ""
+      processId: data?.processId ?? null,
+      processName: data?.processName ?? null,
+      // potId: data?.id ?? null,
+      // startNodeId: data?.startNodeId ?? null,
     }),
     [onShow, data]
   );
@@ -58,8 +52,79 @@ export default function ModalSigner(props: IAddSignerFSAndQuoteProps) {
     };
   }, [values]);
 
-  const [validateFieldProcess, setValidateFieldProcess] = useState<boolean>(false);
-  const [valueProcess, setValueProcess] = useState(null);
+  const [validateFieldApproval, setValidateFieldApproval] = useState<boolean>(false);
+
+  const handleClearForm = (acc) => {
+    onHide(acc);
+    setFormData(values);
+    setValueProcess(null);
+    // setValueNode(null);
+    setValidateFieldApproval(false);
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.processId) {
+      setValidateFieldProcess(true);
+      return;
+    }
+
+    // if (!formData.startNodeId) {
+    //   setValidateFieldNode(true);
+    //   return;
+    // }
+
+    setIsSubmit(true);
+
+    const body = {
+      id: data?.id,
+      maId: data?.maId,
+      processId: formData.processId,
+      // thêm các trường khác nếu cần
+    };
+
+    const response = await MarketingAutomationService.updateMapping(body);
+
+    console.log("response updateMapping>>>>>", response);
+
+    if (response.code === 0) {
+      showToast("Cập nhật quy trình thành công", "success");
+      handleClearForm(true);
+      navigate(`/bpm/create/${formData.processId}`);
+      localStorage.setItem("backUpUrlProcess", JSON.stringify({ processId: formData.processId }));
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+
+    setIsSubmit(false);
+  };
+
+  const actions = useMemo<IActionModal>(
+    () => ({
+      actions_right: {
+        buttons: [
+          {
+            title: "Hủy",
+            color: "primary",
+            variant: "outline",
+            disabled: isSubmit,
+            callback: () => {
+              handleClearForm(false);
+            },
+          },
+          {
+            title: "Xác nhận",
+            type: "submit",
+            color: "primary",
+            // disabled: isSubmit || _.isEqual(formData, values) || validateFieldApproval,
+            is_loading: isSubmit,
+          },
+        ],
+      },
+    }),
+    [isSubmit, validateFieldApproval, formData, values, valueProcess]
+  );
 
   const loadedOptionProcess = async (search, loadedOptions, { page }) => {
     const param = {
@@ -67,8 +132,7 @@ export default function ModalSigner(props: IAddSignerFSAndQuoteProps) {
       page: page,
       status: 1,
       limit: 10,
-      potId: data?.id,
-      opType: 'EX' // lấy về ds quy trình mà đối tượng chưa trình, IN - quy trình đối tượng đã trình
+      opType: "EX", // lấy về ds quy trình mà đối tượng chưa trình, IN - quy trình đối tượng đã trình
     };
 
     const response = await BusinessProcessService.list(param);
@@ -103,137 +167,6 @@ export default function ModalSigner(props: IAddSignerFSAndQuoteProps) {
     setValidateFieldProcess(false);
   };
 
-
-  const [validateFieldNode, setValidateFieldNode] = useState<boolean>(false);
-  const [valueNode, setValueNode] = useState(null);
-
-  const loadedOptionNode = async (search, loadedOptions, { page }) => {
-    const param = {
-      name: search,
-      page: page,
-      status: 1,
-      limit: 10,
-      processId: valueProcess?.value
-    };
-
-    const response = await BusinessProcessService.bpmListNode(param);
-
-    if (response.code === 0) {
-      const dataOption = response.result.items;
-
-      return {
-        options: [
-          ...(dataOption.length > 0
-            ? dataOption.map((item) => {
-                return {
-                  value: item.nodeId,
-                  label: item.name || item.nodeId,
-                };
-              })
-            : []),
-        ],
-        hasMore: response.result.loadMoreAble,
-        additional: {
-          page: page + 1,
-        },
-      };
-    }
-
-    return { options: [], hasMore: false };
-  };
-
-  const handleChangeValueNode = (e) => {
-    setValueNode(e);
-    setFormData({ ...formData, startNodeId: e.value });
-    setValidateFieldNode(false);
-  };
-
-  useEffect(() => {
-    loadedOptionNode("", undefined, { page: 1 });
-  }, [valueProcess?.value]);
-
-  const handleClearForm = (acc) => {
-    onHide(acc);
-    setFormData(values);
-    setValueProcess(null);
-    setValidateFieldProcess(false);
-    setValueNode(null);
-    setValidateFieldNode(false);
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formData.processId) {
-      setValidateFieldProcess(true);
-      return;
-    }
-
-    // if (!formData.startNodeId) {
-    //   setValidateFieldNode(true);
-    //   return;
-    // }
-
-    setIsSubmit(true);
-
-    const nodeName = valueNode && valueNode.label && valueNode.value && String(valueNode.label) !== String(valueNode.value);
-    const nameDefault = nodeName ? (valueNode.label as any) : (data?.name || formData?.name || "");
-
-    const updateNameBody: any = {
-      id: formData?.potId,
-      name: nameDefault,
-    };
-
-    const resUpdateName = await ProcessedObjectService.update(updateNameBody);
-
-    if (resUpdateName.code !== 0) {
-      showToast(resUpdateName.message ?? "Cập nhật tên đối tượng thất bại", "error");
-      setIsSubmit(false);
-      return;
-    }
-
-    const body = {
-      ...formData,
-    };
-
-    const response = await ProcessedObjectService.updateProcessInstance(body);
-
-    if (response.code === 0) {
-      showToast("Trình xử lý thành công", "success");
-      handleClearForm(true);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-
-    setIsSubmit(false);
-  };
-
-  const actions = useMemo<IActionModal>(
-    () => ({
-      actions_right: {
-        buttons: [
-          {
-            title: "Hủy",
-            color: "primary",
-            variant: "outline",
-            disabled: isSubmit,
-            callback: () => {
-              handleClearForm(false);
-            },
-          },
-          {
-            title: "Xác nhận",
-            type: "submit",
-            color: "primary",
-            disabled: isSubmit || _.isEqual(formData, values) || validateFieldProcess,
-            is_loading: isSubmit,
-          },
-        ],
-      },
-    }),
-    [isSubmit, validateFieldProcess, formData, values, validateFieldNode]
-  );
-
   return (
     <Fragment>
       <Modal
@@ -243,7 +176,6 @@ export default function ModalSigner(props: IAddSignerFSAndQuoteProps) {
         staticBackdrop={true}
         toggle={() => !isSubmit && handleClearForm(false)}
         className="modal-signer"
-        size="lg"
       >
         <form className="form-add-signer" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader title={`Trình xử lý`} toggle={() => !isSubmit && handleClearForm(false)} />
@@ -267,97 +199,6 @@ export default function ModalSigner(props: IAddSignerFSAndQuoteProps) {
                   error={validateFieldProcess}
                   message="Quy trình xử lý không được bỏ trống"
                 />
-              </div>
-
-              <div className="form-group">
-                <SelectCustom
-                  key={valueProcess?.value}
-                  name="startNodeId"
-                  value={valueNode}
-                  label="Chọn Node bắt đầu"
-                  fill={true}
-                  required={false}
-                  options={[]}
-                  isAsyncPaginate={true}
-                  additional={{
-                    page: 1,
-                  }}
-                  loadOptionsPaginate={loadedOptionNode}
-                  placeholder="Chọn Node bắt đầu"
-                  onChange={(e) => handleChangeValueNode(e)}
-                  error={validateFieldNode}
-                  message="Node bắt đầu không được bỏ trống"
-                  disabled={formData?.processId ? false : true}
-                />
-              </div>
-              
-
-              <div className="container-list-var">
-                <div>
-                  <span style={{fontSize: 14, fontWeight: '500'}}>Điều kiện</span>
-                </div>
-                {listDataVar && listDataVar.length > 0 ? 
-                  listDataVar.map((item, index) => (
-                    <div key={index} className="box-var">
-                      <div className="form-group-var">
-                        <SelectCustom
-                          name=""
-                          value={item.var}
-                          label=""
-                          fill={true}
-                          required={false}
-                          options={[]}
-                          isAsyncPaginate={true}
-                          additional={{
-                            page: 1,
-                          }}
-                          loadOptionsPaginate={loadedOptionProcess}
-                          placeholder="Chọn biến quy trình"
-                          onChange={(e) => handleChangeValueProcess(e)}
-                          // error={validateFieldProcess}
-                          // message="Quy trình xử lý không được bỏ trống"
-                        />
-                      </div>
-
-                      <div className="form-group-var">
-                        <Input
-                          name=""
-                          value={item?.value}
-                          label=""
-                          fill={true}
-                          required={false}
-                          onChange={(e) => {
-                              const value = e.target.value;
-                              // setDataTriggerConditions({quantity: value});
-                          }}
-                          placeholder="Nhập giá trị"
-                        />
-                      </div>
-
-                      <div 
-                        className="button-add"
-                        onClick={() => {
-                          setListDataVar([...listDataVar, {var: '', value: ''}]);
-                        }}
-                      >
-                        <Icon name="PlusCircleFill" />
-                      </div>
-
-                      {listDataVar.length > 1 ? 
-                        <div 
-                          className="button-delete"
-                          onClick={() => {
-                            const newData = [...listDataVar];
-                            newData.splice(index, 1);
-                            setListDataVar(newData);
-                          }}
-                        >
-                          <Icon name="Trash" />
-                        </div>
-                      : null}
-                    </div>
-                  ))
-                : null}
               </div>
             </div>
           </ModalBody>

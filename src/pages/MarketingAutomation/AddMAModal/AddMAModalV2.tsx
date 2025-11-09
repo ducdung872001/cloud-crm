@@ -3,21 +3,17 @@ import { getSearchParameters, isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import Icon from "components/icon";
-import NummericInput from "components/input/numericInput";
-import SelectCustom from "components/selectCustom/selectCustom";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
-import CheckboxList from "components/checkbox/checkboxList";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useActiveElement, useOnClickOutside } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
-import { showToast } from "utils/common";
 
 import WorkOrderService from "services/WorkOrderService";
 import "./AddMAModal.scss";
 import { ContextType, UserContext } from "contexts/userContext";
 
-export default function AddMAModal(props: any) {
+export default function AddMAModalV2(props: any) {
   const { onShow, onHide, id } = props;
 
   const params: any = getSearchParameters();
@@ -149,16 +145,6 @@ export default function AddMAModal(props: any) {
       ...(formData.values as any),
     };
 
-    // const response = await WorkOrderService.update(body);
-
-    // if (response.code === 0) {
-    //   showToast(`${data ? "Cập nhật" : "Thêm mới"} chương trình MA thành công`, "success");
-    //   onHide(true);
-
-    // } else {
-    //   showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    //   setIsSubmit(false);
-    // }
     setIsSubmit(false);
   };
 

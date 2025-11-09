@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useRef, useContext } from "react";
-import _ from "lodash";
+import _, { set } from "lodash";
 import moment from "moment";
 import { Link, useNavigate } from "react-router-dom";
 import { IAction, ISaveSearch } from "model/OtherModel";
@@ -19,12 +19,13 @@ import { getPageOffset } from "reborn-util";
 import Badge from "components/badge/badge";
 import "./MarketingAutomationList.scss";
 import { ContextType, UserContext } from "contexts/userContext";
-import AddMAModalV2 from "./AddMAModal/AddMAModal";
 import MarketingAutomationService from "services/MarketingAutomationService";
 import ReportMa from "./ReportMa/ReportMa";
+import ProcessedObjectService from "services/ProcessedObjectService";
+import AddMAModalV2 from "./AddMAModal/AddMAModalV2";
 import ModalSigner from "./ModalSigner";
 
-export default function MarketingAutomationV2() {
+export default function MarketingAutomationListV2() {
   document.title = "Danh sách Marketing Automation V2";
 
   const navigate = useNavigate();
@@ -36,8 +37,6 @@ export default function MarketingAutomationV2() {
   const [idMA, setIdMA] = useState<number>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
-  const [showModalSigner, setShowModalSigner] = useState<boolean>(false);
-  const [idCampaign, setIdCampaign] = useState<any>(null);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [showDialogPause, setShowDialogPause] = useState<boolean>(false);
@@ -47,6 +46,11 @@ export default function MarketingAutomationV2() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDetailMA, setIsDetailMA] = useState<boolean>(false);
   const [dataMA, setDataMA] = useState(null);
+  const [hasSignature, setHasSignature] = useState<boolean>(false);
+  const [dataObject, setDataObject] = useState(null);
+  const [listObject, setListObject] = useState([]);
+  const [showModalInitBpm, setShowModalInitBpm] = useState<boolean>(false);
+  
 
   const [params, setParams] = useState<ICampaignFilterRequest>({
     name: "",
@@ -83,23 +87,6 @@ export default function MarketingAutomationV2() {
   const getListMarketingAutomation = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    // setListMarketingAutomation([
-    //     {
-    //         id: 1,
-    //         name:'Chương trình MA sinh nhật',
-    //         startDate:'12/1/2024',
-    //         endDate: '30/1/2024',
-    //         status: 1
-    //     },
-    //     {
-    //         id: 2,
-    //         name:'Chương trình MA tết',
-    //         startDate:'12/1/2024',
-    //         endDate: '30/1/2024',
-    //         status: 1
-    //     }
-    // ])
-
     const response = await MarketingAutomationService.list(paramsSearch, abortController.signal);
 
     if (response.code == 0) {
@@ -115,6 +102,34 @@ export default function MarketingAutomationV2() {
       });
 
       if (+result.total === 0 && !params?.name && +result.page === 1) {
+        setIsNoItem(true);
+      }
+    } else if (response.code == 400) {
+      setIsPermissions(true);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+    setIsLoading(false);
+  };
+
+  const getListProcessedObject = async (paramsSearch) => {
+    setIsLoading(true);
+
+    const response = await ProcessedObjectService.list(paramsSearch);
+
+    if (response.code === 0) {
+      const result = response.result;
+      setListObject(result.items);
+
+      setPagination({
+        ...pagination,
+        page: +result.page,
+        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
+        totalItem: +result.total,
+        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
+      });
+
+      if (+result.total === 0 && +result.page === 1) {
         setIsNoItem(true);
       }
     } else if (response.code == 400) {
@@ -176,16 +191,6 @@ export default function MarketingAutomationV2() {
 
   const dataMappingArray = (item: any, index: number) => [
     getPageOffset(params) + index + 1,
-    // <Link
-    //   key={item.id}
-    //   to={`/detail_marketing_automation/maId/${item.id}`}
-    //   onClick={() => {
-    //     //
-    //   }}
-    //   className="detail-marketing-automation"
-    // >
-    //   {item.name}
-    // </Link>,
     item.name,
     <div
       key={item.id}
@@ -198,8 +203,6 @@ export default function MarketingAutomationV2() {
     </div>,
     item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "",
     item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
-    // item.startDate ,
-    // item.endDate ,
     <Badge key={index} variant={item.status === 1 ? "success" : "secondary"} text={item.status === 1 ? "Đã phê duyệt" : "Chưa phê duyệt"} />,
     <div
       key={item.id}
@@ -238,58 +241,60 @@ export default function MarketingAutomationV2() {
     }
   };
 
+  // Hàm riêng cho callback Cài đặt MA
+  const handleSetupMACallback = async (item) => {
+    const detailProcess = await MarketingAutomationService.detailMapping(item.id);
+    if (detailProcess && detailProcess.result) {
+      setDataObject({
+        ...item,
+        maId: item.id,
+        id: detailProcess.result.id,
+        processId: detailProcess.result.processId,
+        processName: detailProcess.result.processName,
+      });
+    } else {
+      showToast(detailProcess.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+    setHasSignature(true);
+  };
+
   const actionsTable = (item: any): IAction[] => {
     return [
-      // ...(item.status !== 1
-      //   ? [
-      //       {
-      //         title: "Phê duyệt",
-      //         icon: <Icon name="FingerTouch" className="icon-warning" style={item.isSetup ? {} : { fill: "var(--extra-color-30)" }} />,
-      //         callback: () => {
-      //           if (item.isSetup) {
-      //             // onApprove(item.id, 1);
-      //             showDialogConfirmApprove(item, 1);
-      //           } else {
-      //             showToast("Vui lòng cài đặt chương trình trước khi phê duyệt", "error");
-      //           }
-      //         },
-      //       },
-      //     ]
-      //   : [
-      //       {
-      //         title: "Tạm dừng",
-      //         icon: <Icon name="Pause" />,
-      //         callback: () => {
-      //           // onApprove(item.id, 2);
-      //           showDialogConfirmPause(item, 2);
-      //         },
-      //       },
-      //     ]),
+      ...(item.status !== 1
+        ? [
+            {
+              title: "Phê duyệt",
+              icon: <Icon name="FingerTouch" className="icon-warning" style={item.isSetup ? {} : { fill: "var(--extra-color-30)" }} />,
+              callback: () => {
+                if (item.isSetup) {
+                  // onApprove(item.id, 1);
+                  showDialogConfirmApprove(item, 1);
+                } else {
+                  showToast("Vui lòng cài đặt chương trình trước khi phê duyệt", "error");
+                }
+              },
+            },
+          ]
+        : [
+            {
+              title: "Tạm dừng",
+              icon: <Icon name="Pause" />,
+              callback: () => {
+                // onApprove(item.id, 2);
+                showDialogConfirmPause(item, 2);
+              },
+            },
+          ]),
 
       {
         title: "Cài đặt MA",
         icon: <Icon name="Settings" style={{ width: 18 }} />,
         callback: () => {
-          navigate(`/marketing_automation_setting/${item.id}`);
-          //   setShowModalConfig(true);
-        },
-      },
-
-      // {
-      //     title: "Xem chi tiết",
-      //     icon: <Icon name="Eye" />,
-      //     callback: () => {
-      //     //   setIdCampaign(item.id);
-      //     //   setIsDetailCampaignDetail(true);
-      //     },
-      // },
-
-      {
-        title: "Trình xử lý",
-        icon: <Icon name="FingerTouch" className="icon-warning" />,
-        callback: () => {
-          setIdCampaign(item);
-          setShowModalSigner(true);
+          handleSetupMACallback(item);
+          setDataObject({
+            ...dataObject,
+            maId: item.id,
+          });
         },
       },
 
@@ -297,8 +302,6 @@ export default function MarketingAutomationV2() {
         title: "Sửa",
         icon: <Icon name="Pencil" />,
         callback: () => {
-          //   setIdCampaign(item.id);
-          //   // setShowModalAdd(true);
           navigate(`/edit_marketing_automation_v2/${item.id}`);
         },
       },
@@ -447,7 +450,7 @@ export default function MarketingAutomationV2() {
 
   return (
     <div className={`page-content page-automation-marketing-list${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title={showReport ? "Báo cáo chương trình " + itemReport.name : "Danh sách Marketing Automation"} titleActions={titleActions} />
+      <TitleAction title={showReport ? "Báo cáo chương trình " + itemReport.name : "Danh sách Marketing Automation V2"} titleActions={titleActions} />
 
       {showReport ? (
         <ReportMa dataMaReport={itemReport} />
@@ -463,7 +466,7 @@ export default function MarketingAutomationV2() {
 
           {!isLoading && listMarketingAutomation && listMarketingAutomation.length > 0 ? (
             <BoxTable
-              name="Chương trình Marketing Automation"
+              name="Chương trình Marketing Automation V2"
               titles={titles}
               items={listMarketingAutomation}
               isPagination={true}
@@ -497,7 +500,7 @@ export default function MarketingAutomationV2() {
                   action={() => {
                     // setIdMA(null);
                     // setShowModalAdd(true);
-                    navigate("/create_marketing_automation");
+                    navigate("/create_marketing_automation_v2");
                   }}
                 />
               ) : (
@@ -528,17 +531,16 @@ export default function MarketingAutomationV2() {
         }}
       />
       <ModalSigner
-        onShow={showModalSigner}
-        data={idCampaign}
+        onShow={hasSignature}
         onHide={(reload) => {
           if (reload) {
-            getListMarketingAutomation(params);
+            getListProcessedObject(params);
           }
-          setShowModalSigner(false);
-          setIdCampaign(null);
+          setDataObject(null);
+          setHasSignature(false);
         }}
+        data={dataObject}
       />
-
       <Dialog content={contentDialog} isOpen={showDialog} />
       <Dialog content={contentDialogPause} isOpen={showDialogPause} />
       <Dialog content={contentDialogApprove} isOpen={showDialogApprove} />

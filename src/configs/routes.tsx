@@ -456,7 +456,7 @@ export const menu: IMenuItem[] = [
             //   title: "marketingAutomationV2",
             //   path: urls.marketing_automation_v2,
             //   icon: <Icon name="Marketing" />,
-            //   code: "MA",
+            //   code: "KANBAN_V2",
             // },
             {
               title: "settingMarketing", // Cài đặt marketing
