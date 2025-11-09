@@ -329,10 +329,10 @@ export default function CalendarCommon() {
   };
 
   useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
+    // if (!isMounted.current) {
+    //   isMounted.current = true;
+    //   return;
+    // }
 
     if (isMounted.current === true) {
       getListSchedule(params);
