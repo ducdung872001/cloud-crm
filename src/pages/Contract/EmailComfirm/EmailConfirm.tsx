@@ -25,6 +25,7 @@ import { ca } from "date-fns/locale";
 export default function EmailConfirm() {
   // const { onShow, data, idCustomer, saleflowId, sieId } = props;
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Lấy trường code từ query parameters của URL
   const queryParams = new URLSearchParams(location.search);
@@ -33,6 +34,11 @@ export default function EmailConfirm() {
   const voucherIdParam = queryParams.get("promotionId");
   const rawScheduleConsultantIdParam = queryParams.get("scheduleConsultantId");
   const rawPotIdParam = queryParams.get("potId");
+  const nodeIdParam = queryParams.get("nodeId");
+  const currentRequestIdParam = queryParams.get("currentRequestId");
+  const messageIdParam = queryParams.get("messageId");
+  const fmtStartDateParam = queryParams.get("fmtStartDate");
+  const topicParam = queryParams.get("topicId");
 
   const parsedScheduleParams = useMemo(() => {
     if (rawScheduleConsultantIdParam && rawScheduleConsultantIdParam.includes("?potId=") && !rawPotIdParam) {
@@ -86,7 +92,6 @@ export default function EmailConfirm() {
       productName: "",
       companyName: "",
       contractId: null,
-      compensationMax: null,
       status: null,
       notes: "",
       recordingUrl: "",
@@ -96,7 +101,6 @@ export default function EmailConfirm() {
       creatorName: "",
       departmentName: "",
       employeeName: "",
-      cardName: "",
       bsnId: null,
       clientId: "",
       qrCode: "",
@@ -106,32 +110,24 @@ export default function EmailConfirm() {
       branchName: "",
       createdAt: "",
       updatedAt: "",
-      productSchemaVersion: "",
-      productSchemaSnapshot: "",
-      productData: null,
-      insurObject: null,
       customerName: "",
       customerPhone: "",
       customerEmail: "",
-      riskAddress: "",
-      registrationNo: "",
+      cardName: "",
       manufactureYear: null,
       brand: "",
       model: "",
       sumInsured: null,
       coverageStart: "",
       coverageEnd: "",
-      coverageDay: null,
-      usagePurpose: "",
-      deductible: null,
-      beneficiary: "",
-      productSchemaSnapshotJson: "",
-      productDataJson: "",
       confirm: null,
       voucherId: null,
       voucherName: "",
       voucherStartTime: "",
       voucherEndTime: "",
+      nodeId: null,
+      currentRequestId: null,
+      messageId: null,
     } as any),
     []
   );
@@ -145,7 +141,17 @@ export default function EmailConfirm() {
 
   const [formData, setFormData] = useState<IFormData>({
     values: values,
+    errors: {},
   });
+
+  const safeParse = (txt: string) => {
+    try {
+      return JSON.parse(txt);
+    } catch (e) {
+      return null;
+    }
+  };
+
 
   const [detailCustomer, setDetailCustomer] = useState(null);
   const [scheduleInfo, setScheduleInfo] = useState<any>(null);
@@ -204,45 +210,66 @@ export default function EmailConfirm() {
     }
   }, [potIdParam]);
 
-  const handleDetailCustomer = async (id: number) => {
+  //! Tự động set nodeId, currentRequestId, messageId từ URL vào form
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      values: {
+        ...prev.values,
+        ...(nodeIdParam && { nodeId: nodeIdParam }),
+        ...(currentRequestIdParam && { currentRequestId: currentRequestIdParam }),
+        ...(messageIdParam && { messageId: messageIdParam }),
+        ...(topicParam && { topic: topicParam }),
+      },
+    }));
+  }, [nodeIdParam, currentRequestIdParam, messageIdParam, topicParam]);
+
+
+  const handleDetailCustomer = useCallback(async (idCust: number) => {
     setIsLoadingCustomer(true);
 
-    const response = await CustomerService.detail(id);
+    try {
+      const response = await CustomerService.detail(idCust);
 
-    if (response.code === 0) {
-      const result = response.result;
+      if (response.code === 0) {
+        const result = response.result;
 
-      setDetailCustomer({
-        value: result.id,
-        label: `${result.name} - ${result.phoneMasked}`,
-        phone: result.phoneMasked,
-        email: result.emailMasked,
-        name: result.name,
-        employeeId: result.employeeId,
-        employeePhone: result.employeePhone,
-        employeeName: result.employeeName,
-        cardName: result.cardName,
-      });
-      // Tự động điền thông tin khách hàng vào form
-      setFormData((prev) => ({
-        ...prev,
-        values: {
-          ...prev.values,
-          customerId: result.id,
+        setDetailCustomer({
+          value: result.id,
+          label: `${result.name} - ${result.phoneMasked}`,
+          phone: result.phoneMasked,
+          email: result.emailMasked,
+          name: result.name,
           employeeId: result.employeeId,
+          employeePhone: result.employeePhone,
           employeeName: result.employeeName,
-          customerName: result.name,
-          customerPhone: result.phoneMasked,
-          customerEmail: result.emailMasked,
-          cardName: result.cardName,
-        },
-      }));
-    } else {
-      showToast(response.message || "Chi tiết khách hàng lỗi. Vui lòng thử lại sau !", "error");
-    }
+          address: result.address,
+          taxCode: result.taxCode,
+        });
 
-    setIsLoadingCustomer(false);
-  };
+        // Tự động điền thông tin khách hàng vào form
+        setFormData((prev) => ({
+          ...prev,
+          values: {
+            ...prev.values,
+            customerId: result.id,
+            employeeId: result.employeeId,
+            employeeName: result.employeeName,
+            customerName: result.name,
+            customerPhone: result.phoneMasked,
+            customerEmail: result.emailMasked,
+            cardName: result.cardName,
+          },
+        }));
+      } else {
+        showToast(response.message || "Chi tiết khách hàng lỗi. Vui lòng thử lại sau !", "error");
+      }
+    } catch (err) {
+      showToast("Lỗi khi lấy chi tiết khách hàng", "error");
+    } finally {
+      setIsLoadingCustomer(false);
+    }
+  }, []);
 
   // useEffect(() => {
   //   if ((idCustomer || data?.customerId) && onShow) {
@@ -251,7 +278,7 @@ export default function EmailConfirm() {
   // }, [idCustomer, onShow, data?.customerId]);
 
   //! Lấy thông tin voucher theo ID
-  const getVoucherDetail = async (voucherId: number) => {
+  const getVoucherDetail = useCallback(async (voucherId: number) => {
     setIsLoadingVoucher(true);
     try {
       const param: any = {
@@ -270,8 +297,6 @@ export default function EmailConfirm() {
             ...prev.values,
             voucherId: voucher.id,
             voucherName: voucher.name,
-            voucherStartTime: voucher.startTime ? new Date(voucher.startTime).toLocaleDateString("vi-VN") : "",
-            voucherEndTime: voucher.endTime ? new Date(voucher.endTime).toLocaleDateString("vi-VN") : "",
           },
         }));
       } else {
@@ -282,7 +307,7 @@ export default function EmailConfirm() {
     } finally {
       setIsLoadingVoucher(false);
     }
-  };
+  }, []);
 
   //! Tự động load thông tin voucher từ voucherId trong URL
   useEffect(() => {
@@ -292,26 +317,18 @@ export default function EmailConfirm() {
         getVoucherDetail(voucherId);
       }
     }
-  }, [voucherIdParam]);
+  }, [voucherIdParam, getVoucherDetail]);
 
   const fetchVoucherList = useCallback(
-    async (params: { scheduleConsultantId?: number; potId?: string | number }) => {
-      if (!params.scheduleConsultantId && !params.potId) {
-        return;
-      }
-
+    async (fmtStartDate?: string) => {
       setIsLoadingVoucher(true);
       try {
         const requestParams: any = {
           limit: 50,
         };
 
-        if (params.scheduleConsultantId) {
-          requestParams.scheduleConsultantId = params.scheduleConsultantId;
-        }
-
-        if (params.potId) {
-          requestParams.potId = params.potId;
+        if (fmtStartDate) {
+          requestParams.fmtStartDate = fmtStartDate;
         }
 
         const response = await PromotionService.list(requestParams);
@@ -320,6 +337,16 @@ export default function EmailConfirm() {
           showToast(response.message || "Không lấy được danh sách voucher", "error");
           setVoucherList([]);
           setVoucherOptions([]);
+          setFormData((prev) => ({
+            ...prev,
+            values: {
+              ...prev.values,
+              voucherId: 0,
+              voucherName: "",
+              voucherStartTime: "",
+              voucherEndTime: "",
+            },
+          }));
           return;
         }
 
@@ -329,15 +356,34 @@ export default function EmailConfirm() {
         setVoucherOptions(opts);
 
         if (results.length === 0) {
+          setFormData((prev) => ({
+            ...prev,
+            values: {
+              ...prev.values,
+              voucherId: 0,
+              voucherName: "",
+              voucherStartTime: "",
+              voucherEndTime: "",
+            },
+          }));
           return;
         }
 
         setFormData((prev) => {
           const currentVoucher = results.find((item) => item.id === prev.values.voucherId);
-          const pickedVoucher = currentVoucher || results[0];
+          const pickedVoucher = currentVoucher || null;
 
           if (!pickedVoucher) {
-            return prev;
+            return {
+              ...prev,
+              values: {
+                ...prev.values,
+                voucherId: 0,
+                voucherName: "",
+                voucherStartTime: "",
+                voucherEndTime: "",
+              },
+            };
           }
 
           return {
@@ -355,6 +401,16 @@ export default function EmailConfirm() {
         showToast("Không lấy được danh sách voucher", "error");
         setVoucherList([]);
         setVoucherOptions([]);
+        setFormData((prev) => ({
+          ...prev,
+          values: {
+            ...prev.values,
+            voucherId: 0,
+            voucherName: "",
+            voucherStartTime: "",
+            voucherEndTime: "",
+          },
+        }));
       } finally {
         setIsLoadingVoucher(false);
       }
@@ -362,17 +418,19 @@ export default function EmailConfirm() {
     []
   );
 
-  useEffect(() => {
-    const scheduleId = scheduleConsultantIdParam ? parseInt(scheduleConsultantIdParam, 10) : undefined;
-    const normalizedScheduleId = scheduleId && !Number.isNaN(scheduleId) ? scheduleId : undefined;
-    const normalizedPotId = potIdParam || undefined;
+ useEffect(() => {
+  const fmtStartDate = fmtStartDateParam || new Date().toLocaleDateString("vi-VN"); 
+  fetchVoucherList(fmtStartDate);
+}, [fmtStartDateParam, fetchVoucherList]);
 
-    if (normalizedScheduleId || normalizedPotId) {
-      fetchVoucherList({ scheduleConsultantId: normalizedScheduleId, potId: normalizedPotId });
-    }
-  }, [scheduleConsultantIdParam, potIdParam, fetchVoucherList]);
+  const selectedVoucherOption = useMemo(() => {
+    const id = formData?.values?.voucherId;
+    if (!id || id === 0) return null;
+    return voucherOptions.find(opt => Number(opt.value) === Number(id)) || null;
 
-  const listFieldVoteInfo: any[] = [
+  }, [formData?.values?.voucherId, voucherOptions]);
+
+  const listFieldVoteInfo: any[] = useMemo(() => [
     {
       label: "Tiêu đề",
       name: "name",
@@ -428,18 +486,24 @@ export default function EmailConfirm() {
           required={true}
           disabled={isLoadingVoucher}
           options={voucherOptions}
-          value={voucherOptions.find((o) => o.value === formData?.values?.voucherId) || null}
+          value={formData.values.voucherId}
           onChange={(opt) => {
-            const selectedId = opt?.value;
+
+            const selectedId = opt.value;
             const selected = voucherList.find((v) => v.id === selectedId);
+
             setFormData((prev) => ({
               ...prev,
               values: {
                 ...prev.values,
-                voucherId: selected?.id || null,
+                voucherId: selected?.id || 0,
                 voucherName: selected?.name || "",
-                voucherStartTime: selected?.startTime ? new Date(selected.startTime).toLocaleDateString("vi-VN") : "",
-                voucherEndTime: selected?.endTime ? new Date(selected.endTime).toLocaleDateString("vi-VN") : "",
+                voucherStartTime: selected?.startTime
+                  ? new Date(selected.startTime).toLocaleDateString("vi-VN")
+                  : "",
+                voucherEndTime: selected?.endTime
+                  ? new Date(selected.endTime).toLocaleDateString("vi-VN")
+                  : "",
               },
             }));
           }}
@@ -492,7 +556,7 @@ export default function EmailConfirm() {
         </div>
       ),
     },
-  ];
+  ], [voucherOptions, selectedVoucherOption, isLoadingVoucher, voucherList, formData?.values?.confirm]);
 
   //! Cập nhật thông tin voucher vào form khi load xong
   useEffect(() => {
@@ -510,124 +574,177 @@ export default function EmailConfirm() {
   }, [voucherInfo]);
 
   //! Mặc định confirm = 1 (Đồng ý)
-  useEffect(() => {
-    if (formData?.values?.confirm === null || formData?.values?.confirm === undefined) {
-      setFormData((prev) => ({ ...prev, values: { ...prev.values, confirm: 1 } }));
-    }
-  }, [formData?.values?.confirm]);
-
-  useEffect(() => {
-    const result = JSON.parse(formData.values.docLink).map((item) => item.url);
-    setListImageTicket(result);
-  }, [formData.values.docLink]);
-
-  useEffect(() => {
-    setFormData({ ...formData, values: values, errors: {} });
-    setIsSubmit(false);
-
-    return () => {
+   useEffect(() => {
+      setFormData((prev) => {
+        if (prev.values.confirm === null || prev.values.confirm === undefined) {
+          return { ...prev, values: { ...prev.values, confirm: 1 } };
+        }
+        return prev;
+      });
+    }, []);
+  
+    //! Đảm bảo tất cả các trường string không bị undefined
+    useEffect(() => {
+      setFormData((prev) => {
+        const updatedValues = { ...prev.values };
+        let hasChanges = false;
+  
+        const stringFields = [
+          "name", "topic", "requestNo", "type", "categoryName", "productName", "companyName",
+          "notes", "recordingUrl", "docLink", "consultedInfo", "creatorName", "departmentName",
+          "employeeName", "clientId", "qrCode", "potId", "processId", "branchName", "createdAt",
+          "updatedAt", "productSchemaVersion", "productSchemaSnapshot", "customerName", "customerPhone",
+          "customerEmail", "cardName", "riskAddress", "registrationNo", "brand", "model",
+          "coverageStart", "coverageEnd", "usagePurpose", "beneficiary", "productSchemaSnapshotJson",
+          "productDataJson", "voucherName", "voucherStartTime", "voucherEndTime"
+        ];
+  
+        stringFields.forEach((key) => {
+          if (updatedValues[key] === undefined || updatedValues[key] === null) {
+            updatedValues[key] = "";
+            hasChanges = true;
+          }
+        });
+  
+        if (hasChanges) {
+          return { ...prev, values: updatedValues };
+        }
+        return prev;
+      });
+  
+    }, []);
+  
+    useEffect(() => {
+      const parsed = safeParse(formData.values.docLink);
+      if (Array.isArray(parsed)) {
+        const result = parsed.map((item: any) => item.url).filter(Boolean);
+        setListImageTicket(result);
+      } else {
+        setListImageTicket([]);
+      }
+    }, [formData.values.docLink]);
+  
+    useEffect(() => {
+      setFormData((prev) => ({ ...prev, values: values, errors: {} }));
       setIsSubmit(false);
+  
+      return () => {
+        setIsSubmit(false);
+      };
+    }, [values]);
+  
+    const onSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+  
+      // Đảm bảo tất cả các trường string không bị undefined trước khi validate
+      const sanitizedFormData = {
+        ...formData,
+        values: {
+          ...formData.values,
+          name: formData.values.name ?? "",
+          topic: formData.values.topic ?? "",
+          requestNo: formData.values.requestNo ?? "",
+          type: formData.values.type ?? "",
+          categoryName: formData.values.categoryName ?? "",
+          recordingUrl: formData.values.recordingUrl ?? "",
+          docLink: formData.values.docLink ?? "[]",
+          creatorName: formData.values.creatorName ?? "",
+          departmentName: formData.values.departmentName ?? "",
+          employeeName: formData.values.employeeName ?? "",
+          clientId: formData.values.clientId ?? "",
+          qrCode: formData.values.qrCode ?? "",
+          potId: formData.values.potId ?? "",
+          processId: formData.values.processId ?? "",
+          branchName: formData.values.branchName ?? "",
+          createdAt: formData.values.createdAt ?? "",
+          updatedAt: formData.values.updatedAt ?? "",
+          customerName: formData.values.customerName ?? "",
+          customerPhone: formData.values.customerPhone ?? "",
+          customerEmail: formData.values.customerEmail ?? "",
+          cardName: formData.values.cardName ?? "",
+          coverageStart: formData.values.coverageStart ?? "",
+          coverageEnd: formData.values.coverageEnd ?? "",
+          voucherName: formData.values.voucherName ?? "",
+          voucherStartTime: formData.values.voucherStartTime ?? "",
+          voucherEndTime: formData.values.voucherEndTime ?? "",
+          confirm: formData.values.confirm != null ? String(formData.values.confirm) : 1, // default = 1
+          coverageDay: formData.values.coverageDay != null ? String(formData.values.coverageDay) : "",
+          voucherId: formData.values.voucherId != null ? formData.values.voucherId : 0
+  
+        } as any,
+      };
+  
+  
+      const errors = Validate(validations, sanitizedFormData, [...listFieldVoteInfo]);
+  
+      if (Object.keys(errors).length > 0) {
+        setFormData((prevState) => ({ ...prevState, errors: errors }));
+        return;
+      }
+      setIsSubmit(true);
+  
+      setFormData(sanitizedFormData);
+  
+      const branchId = dataBranch?.value || null;
+      const branchName = dataBranch?.label || "";
+      const creatorId = id || null;
+      const creatorName = "";
+  
+      const body: any = {
+        id: sanitizedFormData.values.id || null,
+        name: sanitizedFormData.values.name || "",
+        topic: sanitizedFormData.values.topic || "",
+        requestNo: sanitizedFormData.values.requestNo || "",
+        employeeId: sanitizedFormData.values.employeeId || null,
+        customerId: sanitizedFormData.values.customerId || null,
+        type: sanitizedFormData.values.type || "",
+        status: sanitizedFormData.values.status || null,
+        docLink: sanitizedFormData.values.docLink || "[]",
+        creatorId: creatorId,
+        creatorName: creatorName,
+        employeeName: sanitizedFormData.values.employeeName || "",
+        bsnId: sanitizedFormData.values.bsnId || null,
+        clientId: sanitizedFormData.values.clientId || "",
+        qrCode: processCode,
+        code: processCode,
+        potId: sanitizedFormData.values.potId || "",
+        processId: sanitizedFormData.values.processId || "",
+        scheduleConsultantId: scheduleConsultantIdParam ? parseInt(scheduleConsultantIdParam) : null,
+        branchId: branchId,
+        branchName: branchName,
+        customerName: sanitizedFormData.values.customerName || "",
+        customerPhone: sanitizedFormData.values.customerPhone || "",
+        customerEmail: sanitizedFormData.values.customerEmail || "",
+        cardName: sanitizedFormData.values.cardName || "",
+        email: sanitizedFormData.values.customerEmail || "",
+        manufactureYear: sanitizedFormData.values.manufactureYear || null,
+        coverageStart: sanitizedFormData.values.coverageStart || "",
+        coverageEnd: sanitizedFormData.values.coverageEnd || "",
+        coverageDay: sanitizedFormData.values.coverageDay || null,
+        confirm: sanitizedFormData.values.confirm !== null ? sanitizedFormData.values.confirm : null, // 0 hoặc 1
+        voucherId: sanitizedFormData.values.voucherId || 0,
+        nodeId: sanitizedFormData.values.nodeId || null,
+        currentRequestId: sanitizedFormData.values.currentRequestId || sanitizedFormData.values.requestNo || null,
+        messageId: sanitizedFormData.values.messageId || null,
+      };
+  
+      // console.log("body", body);
+  
+      try {
+        const response = await EmailService.sendVoucher(body, { processCode, confirm: body.confirm });
+  
+        if (response.code === 0) {
+          showToast(`Tạo phiếu thành công`, "success");
+          setSuccesSubmit(true);
+        } else {
+          showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+          setIsSubmit(false);
+        }
+      } catch (err) {
+        showToast("Lỗi khi gửi phiếu", "error");
+        setIsSubmit(false);
+      }
     };
-  }, [values]);
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-
-    const errors = Validate(validations, formData, [...listFieldVoteInfo]);
-
-    if (Object.keys(errors).length > 0) {
-      setFormData((prevState) => ({ ...prevState, errors: errors }));
-      return;
-    }
-    setIsSubmit(true);
-
-    // Lấy thông tin từ context
-    const branchId = dataBranch?.value || null;
-    const branchName = dataBranch?.label || "";
-    const creatorId = id || null;
-    const creatorName = ""; // Có thể lấy từ context nếu có
-
-    // const body: ITicketRequestModel = {
-    //   ...(formData.values as ITicketRequestModel),
-    //   ...{ supportId: 85, clientId: "ieabgaiifh", qrCode: processCode },
-    // };
-    // Tạo body với tất cả các trường
-    const body: any = {
-      id: formData.values.id || null,
-      name: formData.values.name || "",
-      topic: formData.values.topic || "",
-      requestNo: formData.values.requestNo || "",
-      departmentId: formData.values.departmentId || null,
-      employeeId: formData.values.employeeId || null,
-      customerId: formData.values.customerId || null,
-      type: formData.values.type || "",
-      categoryId: formData.values.categoryId || null,
-      categoryName: formData.values.categoryName || "",
-      productId: formData.values.productId || null,
-      productName: formData.values.productName || "",
-      companyName: formData.values.companyName || "",
-      contractId: formData.values.contractId || null,
-      compensationMax: formData.values.compensationMax || null,
-      status: formData.values.status || null,
-      notes: formData.values.notes || "",
-      recordingUrl: formData.values.recordingUrl || "",
-      docLink: formData.values.docLink || "[]",
-      consultedInfo: formData.values.consultedInfo || "",
-      creatorId: creatorId,
-      creatorName: creatorName,
-      departmentName: formData.values.departmentName || "",
-      employeeName: formData.values.employeeName || "",
-      cardName: formData.values.cardName || "",
-      bsnId: formData.values.bsnId || null,
-      clientId: formData.values.clientId || "ieabgaiifh",
-      qrCode: processCode,
-      potId: formData.values.potId || "",
-      processId: formData.values.processId || "",
-      branchId: branchId,
-      branchName: branchName,
-      createdAt: formData.values.createdAt || "",
-      updatedAt: formData.values.updatedAt || "",
-      productSchemaVersion: formData.values.productSchemaVersion || "",
-      productSchemaSnapshot: formData.values.productSchemaSnapshot || "",
-      productData: formData.values.productData || null,
-      insurObject: formData.values.insurObject || null,
-      customerName: formData.values.customerName || "",
-      customerPhone: formData.values.customerPhone || "",
-      customerEmail: formData.values.customerEmail || "",
-      riskAddress: formData.values.riskAddress || "",
-      registrationNo: formData.values.registrationNo || "",
-      manufactureYear: formData.values.manufactureYear || null,
-      brand: formData.values.brand || "",
-      model: formData.values.model || "",
-      sumInsured: formData.values.sumInsured || null,
-      coverageStart: formData.values.coverageStart || "",
-      coverageEnd: formData.values.coverageEnd || "",
-      coverageDay: formData.values.coverageDay || null,
-      usagePurpose: formData.values.usagePurpose || "",
-      deductible: formData.values.deductible || null,
-      beneficiary: formData.values.beneficiary || "",
-      productSchemaSnapshotJson: formData.values.productSchemaSnapshotJson || "",
-      productDataJson: formData.values.productDataJson || "",
-      confirm: formData.values.confirm !== null ? formData.values.confirm : null, // 0 hoặc 1
-      voucherId: formData.values.voucherId || null,
-      voucherName: formData.values.voucherName || "",
-      voucherStartTime: formData.values.voucherStartTime || "",
-      voucherEndTime: formData.values.voucherEndTime || "",
-      scheduleConsultantId: scheduleConsultantIdParam ? parseInt(scheduleConsultantIdParam) : null,
-    };
-    console.log("body", body);
-    // return;
-
-    const response = await EmailService.sendEmailSale(body, { processCode, confirm: body.confirm });
-
-    if (response.code === 0) {
-      showToast(`Tạo phiếu thành công`, "success");
-      setSuccesSubmit(true);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-      setIsSubmit(false);
-    }
-  };
 
   const actions = useMemo<IActionModal>(
     () => ({
@@ -646,7 +763,7 @@ export default function EmailConfirm() {
     [formData, values, isSubmit]
   );
 
-  const showDialogConfirmCancel = () => {
+  const showDialogConfirmCancel = useCallback(() => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-cancel",
@@ -668,7 +785,7 @@ export default function EmailConfirm() {
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
-  };
+  },[]);
 
   const checkKeyDown = useCallback(
     (e) => {
@@ -684,7 +801,7 @@ export default function EmailConfirm() {
         }
       }
     },
-    [formData]
+    [formData, showDialog, values, focusedElement, showDialogConfirmCancel]
   );
 
   useEffect(() => {
@@ -712,35 +829,36 @@ export default function EmailConfirm() {
   //   }
   // };
 
-  const handUploadFile = async (file) => {
-    await FileService.uploadFile({ data: file, onSuccess: processUploadSuccess });
-  };
+  const handUploadFile = async (file: File) => {
+      try {
+        await FileService.uploadFile({ data: file, onSuccess: processUploadSuccess });
+      } catch (err) {
+        showToast("Lỗi upload ảnh", "error");
+      }
+    };
 
-  const processUploadSuccess = (data) => {
+  const processUploadSuccess = (data: any) => {
     const result = data?.fileUrl;
-    setListImageTicket([...listImageTicket, result]);
+    if (result) {
+      setListImageTicket((prev) => [...prev, result]);
+    }
   };
 
   useEffect(() => {
-    if (listImageTicket && listImageTicket.length > 0) {
-      const result = listImageTicket.map((item) => {
-        return {
-          type: "image",
-          url: item,
-        };
-      });
-      setFormData((prev) => ({ ...prev, values: { ...prev.values, docLink: JSON.stringify(result) } }));
-    }
-  }, [listImageTicket]);
+      if (listImageTicket && listImageTicket.length > 0) {
+        const result = listImageTicket.map((item) => ({ type: "image", url: item }));
+        setFormData((prev) => ({ ...prev, values: { ...prev.values, docLink: JSON.stringify(result) } }));
+      }
+    }, [listImageTicket]);
 
   // const handleRemoveImageItem = (idx) => {
   //   const result = JSON.parse(formData.values.docLink);
   //   result.splice(idx, 1);
   //   setFormData({ ...formData, values: { ...formData.values, docLink: JSON.stringify(result) } });
   // };
-  const navigate = useNavigate();
   const handleGoBack = () => {
-    navigate(0);
+    // nếu mục đích là quay lại trang trước => navigate(-1)
+    navigate(-1);
   };
   return (
     <Fragment>
@@ -751,7 +869,7 @@ export default function EmailConfirm() {
           </div>
           {succesSubmit ? (
             <div className="list-form-group" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-              NỘP PHIẾU XÁC NHẬN ƯU ĐÃI THÀNH CÔNG, CHÚNG TÔI SẼ LIÊN HỆ VỚI BẠN TRONG THỜI GIAN SỚM NHẤT
+              NỘP PHIẾU XÁC NHẬN THÀNH CÔNG, CHÚNG TÔI SẼ LIÊN HỆ VỚI BẠN TRONG THỜI GIAN SỚM NHẤT
               <Button onClick={handleGoBack} type="button" color="primary" size="large" className="custom-button-rollback">
                 Quay lại
               </Button>
@@ -764,14 +882,13 @@ export default function EmailConfirm() {
                     <div className="list-field">
                       {listFieldVoteInfo.map((field, index) => (
                         <FieldCustomize
-                          key={index}
+                          key={field.name ?? index}
                           field={field}
                           handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldVoteInfo, setFormData)}
                           formData={formData}
                         />
                       ))}
                     </div>
-
                   </div>
                 </div>
               </ModalBody>

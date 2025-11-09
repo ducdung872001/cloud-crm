@@ -372,7 +372,8 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
       code: formData?.code ?? "",
       description: formData?.description ?? "",
       messageName: data?.messageName ?? "",
-      messageId: `bpm-signal-intermediate-${formData?.messageId}`,
+      // messageId: `bpm-signal-intermediate-${formData?.messageId}`,
+      messageId: formData?.messageId ?? "",
       endpoint: formData?.endpoint ?? "",
       inputVar: JSON.stringify(objInput || {}),
       outputVar: JSON.stringify(objOut),
@@ -779,7 +780,7 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
                   <span style={{ fontSize: 14, fontWeight: "700" }}>Định danh thông điệp (Topic)</span>
                 </div>
                 <div className="box-input-message">
-                  <span style={{ fontSize: 14, fontWeight: "400" }}>bpm-signal-intermediate-</span>
+                  <span style={{ fontSize: 14, fontWeight: "400" }}></span>
                   <Input
                     name="messageId"
                     value={formData.messageId}
@@ -790,7 +791,7 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
                       const value = e.target.value;
                       setFormData({ ...formData, messageId: value });
                     }}
-                    placeholder=""
+                    placeholder="Định danh thông điệp"
                   />
                 </div>
               </div>

@@ -2119,8 +2119,8 @@ export const urlsApi = {
     listCustomerByDate: prefixAdmin + "/ma/statistic/byDate",
     detailCustomer: prefixAdmin + "/maCustomer/result",
     deleteCustomer: prefixAdmin + "/maCustomer/delete",
-    // updateMapping: prefixAdmin + "/maMapping/update",
-    // detailMapping: prefixAdmin + "/maMapping/get",
+    updateMapping: prefixAdmin + "/maMapping/update",
+    detailMapping: prefixAdmin + "/maMapping/get",
   },
 
   // chiến dịch bán hàng
