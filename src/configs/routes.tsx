@@ -1466,7 +1466,7 @@ export const routes: IRouter[] = [
     path: urls.create_sale_add,
     component: <CreateOrderSales />,
   },
-  // danh sách yêu cầu đặt hàng
+  // Danh sách yêu cầu mua hàng
   {
     path: urls.order_request_list,
     component: <OrderRequestList />,
