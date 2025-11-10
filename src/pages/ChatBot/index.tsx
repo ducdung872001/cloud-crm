@@ -70,7 +70,9 @@ export default function ChatBot() {
   });
 
   const [lstFeedback, setLstFeedback] = useState([]);
-  const [dataFeedback, setDataFeedback] = useState(null);
+  console.log('lstFeedback', lstFeedback);
+  
+  const [dataFeedback, setDataFeedback] = useState(null);  
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEditChat, setIsEditChat] = useState<boolean>(false);
@@ -98,7 +100,7 @@ export default function ChatBot() {
 
     if (response.code === 0) {
       const result = response.result;
-      setHasMore((params.page - 1) * 10 + (result.items.length || 0) < result.total);
+      // setHasMore((params.page - 1) * 10 + (result.items.length || 0) < result.total);
 
       const newDataExchange = params.page === 1 ? [] : lstFeedback;
 
@@ -114,6 +116,8 @@ export default function ChatBot() {
   };
 
   useEffect(() => {
+    console.log('co vaof k');
+    
     handleGetFeedback(params);
   }, [params, activeStatus, isShowChatBot]);
 
@@ -299,7 +303,7 @@ export default function ChatBot() {
                                   item.role === 'user' ?
                                     <div key={idx} className="item__content--bot">
                                         <div className="desc__content__send">
-                                            <div
+                                            {/* <div
                                                 className="desc__content__send--right"
                                                 onClick={() => {
                                                     setIsEditChat(!isEditChat);
@@ -314,7 +318,7 @@ export default function ChatBot() {
 
                                                 {isEditChat && item.id === idFeedback && (
                                                     <ul className="lst__action" ref={refEditChat}>
-                                                        {/* <li
+                                                        <li
                                                             className="item__action--edit"
                                                             onClick={(e) => {
                                                             e && e.preventDefault();
@@ -323,7 +327,7 @@ export default function ChatBot() {
                                                         >
                                                             <Icon name="Pencil" />
                                                             Sửa
-                                                        </li> */}
+                                                        </li>
                                                         <li
                                                             className="item__action--remove"
                                                             onClick={() => {
@@ -336,7 +340,7 @@ export default function ChatBot() {
                                                         </li>
                                                     </ul>
                                                 )}
-                                            </div>
+                                            </div> */}
                                             <div className="desc__content__send--left">
                                                 <div className="--content">
                                                     <div className="content-res">{item.medias && item.medias.length > 0 ? boxContentMedia(item) : item.content}</div>
@@ -364,7 +368,7 @@ export default function ChatBot() {
                                                     {moment(item.createdTime).format("HH:mm")} <Icon name="Checked" />
                                                 </span>
                                             </div>
-                                            <div
+                                            {/* <div
                                                 className="desc__content__receive--right"
                                                 onClick={() => {
                                                     setIsEditChat(!isEditChat);
@@ -379,7 +383,7 @@ export default function ChatBot() {
 
                                                 {isEditChat && item.id === idFeedback && (
                                                     <ul className="lst__action" ref={refEditChat}>
-                                                        {/* <li
+                                                        <li
                                                             className="item__action--edit"
                                                             onClick={(e) => {
                                                             e && e.preventDefault();
@@ -388,7 +392,7 @@ export default function ChatBot() {
                                                         >
                                                             <Icon name="Pencil" />
                                                             Sửa
-                                                        </li> */}
+                                                        </li>
                                                         <li
                                                             className="item__action--remove"
                                                             onClick={() => {
@@ -401,7 +405,7 @@ export default function ChatBot() {
                                                         </li>
                                                     </ul>
                                                 )}
-                                            </div>
+                                            </div> */}
                                         </div>
                                         
                                     </div>
@@ -434,9 +438,17 @@ export default function ChatBot() {
                     <ContentChat
                         data={dataFeedback}
                         onHide={(reload, newMessage) => {
+                          console.log('newMessage', newMessage);
+                          
                             if (reload) {
                                 dataFeedback ? handleGetFeedback(params) : setParams({ ...params, page: 1 });
-                                // setLstFeedback(oldArray => [...oldArray, newMessage])
+                                // setLstFeedback(oldArray => [...oldArray, ...newMessage]);
+                                // requestAnimationFrame(() => {
+                                //   const container = messageEndRef.current;
+                                //   if (container) {
+                                //     container.scrollTop = container.scrollHeight;
+                                //   }
+                                // });
                                 setDataFeedback(null);
                                 setIsUnmount(true);
                             }
