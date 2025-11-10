@@ -70,7 +70,7 @@ export default function ChatBot() {
   });
 
   const [lstFeedback, setLstFeedback] = useState([]);
-  console.log('lstFeedback', lstFeedback);
+  // console.log('lstFeedback', lstFeedback);
   
   const [dataFeedback, setDataFeedback] = useState(null);  
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -115,9 +115,7 @@ export default function ChatBot() {
     params.page === 1 && scrollToLastMessage();
   };
 
-  useEffect(() => {
-    console.log('co vaof k');
-    
+  useEffect(() => {    
     handleGetFeedback(params);
   }, [params, activeStatus, isShowChatBot]);
 
