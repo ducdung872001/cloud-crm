@@ -29,7 +29,7 @@ const colorData = [
 ];
 
 export default function KanbanBpm(props: any) {
-  const { dataStart, setDataStart, dataSuccess, setDataSuccess, onReload, params, processId, setParams, itemShow, processType } = props;
+  const { processId, itemShow, processType } = props;
 
   //Kanban BPM
   const checkProcessId = (localStorage.getItem("processOrderRequestId") && JSON.parse(localStorage.getItem("processOrderRequestId"))) || -1;
@@ -43,7 +43,6 @@ export default function KanbanBpm(props: any) {
   const [listColumn, setListColumn] = useState([]);
   const [valueProcess, setValueProcess] = useState(null);
   const [isLoadingKanban, setIsLoadingKanban] = useState<boolean>(false);
-  const [dataOfStep, setDataOfStep] = useState([]);
   const abortController = new AbortController();
 
   useEffect(() => {
@@ -55,24 +54,41 @@ export default function KanbanBpm(props: any) {
 
   useEffect(() => {
     if (listStepProcess && listStepProcess.length > 0 && processId && processId !== -1) {
-      listStepProcess.map((item, index) => {
-        const param = {
-          processId: processId,
-          workflowId: item.value,
-          // workflowId: -1,
-          limit: 10,
-          page: 1,
-        };
-        getDataOfStep(param, item.label);
-      });
+      const fetchData = async () => {
+        let newColumns = [];
+        for (let i = 0; i < listStepProcess.length; i++) {
+          const item = listStepProcess[i];
+          const param = {
+            processId: processId,
+            workflowId: item.value,
+            limit: 10,
+            page: 1,
+          };
+          let dataColumns = await getDataOfStep(param, item.label);
+          newColumns.push({
+            id: item.value,
+            title: item.label,
+            color: item.color,
+            processId: item.processId,
+            step: item.stepNumber,
+            items: dataColumns.value || [],
+            hasMore: dataColumns.hasMore,
+            page: dataColumns.page,
+          });
+        }
+        setColumns(newColumns);
+      };
+      fetchData();
     }
   }, [listStepProcess, processId]);
 
   const getDataOfStep = async (paramsSearch, stepName) => {
-    const response = await BusinessProcessService.listWorkFlow(paramsSearch, abortController.signal);
+    const response = await BusinessProcessService.listWorkflowCloud(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
       const result = response.result;
+      console.log("stepName>>", stepName);
+      console.log("stepName>>result", result);
       const newData = {
         stepId: paramsSearch.workflowId,
         stepName: stepName,
@@ -80,10 +96,16 @@ export default function KanbanBpm(props: any) {
         hasMore: result?.loadMoreAble,
         page: result?.page,
       };
-
-      setDataOfStep((oldArray) => [...oldArray, newData]);
+      return newData;
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      return {
+        stepId: paramsSearch.workflowId,
+        stepName: stepName,
+        value: [],
+        hasMore: false,
+        page: 1,
+      };
     }
   };
 
@@ -122,15 +144,15 @@ export default function KanbanBpm(props: any) {
               };
             })
           : []),
-        {
-          id: "done",
-          title: "Hoàn thành",
-          color: "#1bc10d",
-          processId: processId || listStepProcess[0]?.processId,
-          items: [],
-          hasMore: false,
-          page: 1,
-        },
+        // {
+        //   id: "done",
+        //   title: "Hoàn thành",
+        //   color: "#1bc10d",
+        //   processId: processId || listStepProcess[0]?.processId,
+        //   items: [],
+        //   hasMore: false,
+        //   page: 1,
+        // },
       ]);
       console.log("Ok1234>>", [
         ...(dataOption.length > 0
@@ -144,120 +166,112 @@ export default function KanbanBpm(props: any) {
               };
             })
           : []),
-        {
-          id: "done",
-          title: "Hoàn thành",
-          color: "#1bc10d",
-          processId: processId || listStepProcess[0]?.processId,
-          items: [],
-          hasMore: false,
-          page: 1,
-        },
+        // {
+        //   id: "done",
+        //   title: "Hoàn thành",
+        //   color: "#1bc10d",
+        //   processId: processId || listStepProcess[0]?.processId,
+        //   items: [],
+        //   hasMore: false,
+        //   page: 1,
+        // },
       ]);
       setIsLoadingKanban(false);
     }
   };
 
-  const [columns, setColumns] = useState<any[]>([
-    {
-      id: "done",
-      title: "Hoàn thành",
-      color: "#1bc10d",
-      processId: processId || "",
-      items: [],
-      hasMore: false,
-      page: 1,
-    },
-  ]);
+  const [columns, setColumns] = useState([]);
 
   useEffect(() => {
     const processData = async () => {
       //   setIsLoadingColumns(true);
-      const resultData = await Promise.all(
-        listStepProcess.map(async (item) => {
-          const newDataItemsStep = dataOfStep?.length > 0 && dataOfStep?.find((element) => element.stepId === item.value);
-          const newDataItems = newDataItemsStep?.value || [];
-          const newHasMore = newDataItemsStep?.hasMore;
-          const newPage = newDataItemsStep?.page;
+      //   const resultData = await Promise.all(
+      //     listStepProcess.map(async (item) => {
+      //       const newDataItemsStep = dataOfStep?.length > 0 && dataOfStep?.find((element) => element.stepId === item.value);
+      //       const newDataItems = newDataItemsStep?.value || [];
+      //       const newHasMore = newDataItemsStep?.hasMore;
+      //       const newPage = newDataItemsStep?.page;
 
-          const listPotId = newDataItems.map((el) => el.potId);
+      //       const listPotId = newDataItems.map((el) => el.potId);
 
-          let detailData = [];
-          if (listPotId.length > 0) {
-            detailData = await fetchDataItem(listPotId.join(","), processType);
-            // Bạn có thể xử lý hoặc gắn `detailData` vào `newDataItems` nếu cần
-            console.log("resultData>>>detailData", detailData);
-          }
+      //       let detailData = [];
+      //       if (listPotId.length > 0) {
+      //         detailData = await fetchDataItem(listPotId.join(","), processType);
+      //         // Bạn có thể xử lý hoặc gắn `detailData` vào `newDataItems` nếu cần
+      //         console.log("resultData>>>detailData", detailData);
+      //       }
 
-          if (item.label) {
-            return {
-              id: item.value,
-              title: item.label,
-              color: item.color,
-              processId: item.processId,
-              step: item.stepNumber,
-              items:
-                newDataItems.map((el) => {
-                  return {
-                    ...el,
-                    dataDetail: detailData?.find((detail) => detail.potId === el.potId) || null, // Gắn dữ liệu chi tiết vào từng mục
-                  };
-                }) || [],
-              hasMore: newHasMore,
-              page: newPage,
-            };
-          }
-          return null;
-        })
-      );
-      console.log("resultData>>>", resultData);
+      //       if (item.label) {
+      //         return {
+      //           id: item.value,
+      //           title: item.label,
+      //           color: item.color,
+      //           processId: item.processId,
+      //           step: item.stepNumber,
+      //           items:
+      //             newDataItems.map((el) => {
+      //               return {
+      //                 ...el,
+      //                 dataDetail: detailData?.find((detail) => detail.potId === el.potId) || null, // Gắn dữ liệu chi tiết vào từng mục
+      //               };
+      //             }) || [],
+      //           hasMore: newHasMore,
+      //           page: newPage,
+      //         };
+      //       }
+      //       return null;
+      //     })
+      //   );
+      //   console.log("resultData>>>", resultData);
 
-      const result = resultData.filter((el) => el !== null);
+      //   const result = resultData.filter((el) => el !== null);
 
       // Lấy dữ liệu của cột hoàn thành
 
       let newDataSuccess: any = {};
-      if (dataSuccess && dataSuccess?.items && dataSuccess?.items.length > 0) {
-        const detailDataSuccess = await fetchDataItem(dataSuccess?.items.map((el) => el.potId).join(","), processType);
+      //   if (dataSuccess && dataSuccess?.items && dataSuccess?.items.length > 0) {
+      //     const detailDataSuccess = await fetchDataItem(dataSuccess?.items.map((el) => el.potId).join(","), processType);
 
-        if (detailDataSuccess && detailDataSuccess.length > 0) {
-          newDataSuccess = {
-            ...dataSuccess,
-            items: dataSuccess?.items.map((el) => ({
-              ...el,
-              dataDetail: detailDataSuccess?.find((detail) => detail.potId == el.potId) || null,
-            })),
-          };
-          result.push({
-            id: "done",
-            title: "Hoàn thành",
-            color: "#1bc10d",
-            processId: listStepProcess[0]?.processId,
-            step: 0, // or any appropriate value for step
-            items: newDataSuccess?.items || [],
-            hasMore: newDataSuccess?.loadMoreAble,
-            page: newDataSuccess?.page,
-          });
-        } else {
-          result.push({
-            id: "done",
-            title: "Hoàn thành",
-            color: "#1bc10d",
-            processId: listStepProcess[0]?.processId,
-            items: dataSuccess?.items || [],
-            step: 0, // or any appropriate value for step
-            hasMore: dataSuccess?.loadMoreAble,
-            page: dataSuccess?.page,
-          });
-        }
-      }
+      //     if (detailDataSuccess && detailDataSuccess.length > 0) {
+      //       newDataSuccess = {
+      //         ...dataSuccess,
+      //         items: dataSuccess?.items.map((el) => ({
+      //           ...el,
+      //           dataDetail: detailDataSuccess?.find((detail) => detail.potId == el.potId) || null,
+      //         })),
+      //       };
+      //       //   result.push({
+      //       //     id: "done",
+      //       //     title: "Hoàn thành",
+      //       //     color: "#1bc10d",
+      //       //     processId: listStepProcess[0]?.processId,
+      //       //     step: 0, // or any appropriate value for step
+      //       //     items: newDataSuccess?.items || [],
+      //       //     hasMore: newDataSuccess?.loadMoreAble,
+      //       //     page: newDataSuccess?.page,
+      //       //   });
+      //     } else {
+      //       //   result.push({
+      //       //     id: "done",
+      //       //     title: "Hoàn thành",
+      //       //     color: "#1bc10d",
+      //       //     processId: listStepProcess[0]?.processId,
+      //       //     items: dataSuccess?.items || [],
+      //       //     step: 0, // or any appropriate value for step
+      //       //     hasMore: dataSuccess?.loadMoreAble,
+      //       //     page: dataSuccess?.page,
+      //       //   });
+      //     }
+      //   }
+      //   console.log("dataOfStep>>>", dataOfStep);
+      //   console.log("dataOfStep>>>result", result);
 
-      setColumns(result);
+      //   setColumns(result);
       //   setIsLoadingColumns(false);
     };
 
     processData();
-  }, [listStepProcess, dataOfStep, dataSuccess]);
+  }, [listStepProcess]);
 
   const onDragEnd = async (result) => {
     if (!result.destination) return;
@@ -299,6 +313,9 @@ export default function KanbanBpm(props: any) {
 
   const handleScrollSpecial = async (e, itemStep, status) => {
     const result = e.target.scrollHeight - Math.round(e.target.scrollTop) === e.target.clientHeight;
+    console.log("response123111>>resultscroll", result);
+    console.log("response123111>>itemStep.hasMore", itemStep.hasMore);
+
     if (result && itemStep.hasMore) {
       const param = {
         processId: itemStep.processId,
@@ -307,7 +324,7 @@ export default function KanbanBpm(props: any) {
         page: itemStep.page + 1,
         status: status,
       };
-      console.log("response123111", param);
+      console.log("response123111>>", param);
       return;
       const response = await BusinessProcessService.listWorkFlow(param);
       if (response.code === 0) {
@@ -318,16 +335,58 @@ export default function KanbanBpm(props: any) {
           items: [...itemStep.items, ...result.items],
         };
 
-        if (status === 0) {
-          setDataStart(newData);
-        } else if (status === 2) {
-          setDataSuccess(newData);
-        }
+        // if (status === 0) {
+        //   setDataStart(newData);
+        // } else if (status === 2) {
+        //   setDataSuccess(newData);
+        // }
       } else {
         showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
     }
   };
+  const handleScroll = async (e, itemStep) => {
+    const result = e.target.scrollHeight - Math.round(e.target.scrollTop) === e.target.clientHeight;
+    console.log("response123111>>e.target.clientHeight", e.target.clientHeight);
+    console.log("response123111>>itemStep", e.target.scrollHeight - Math.round(e.target.scrollTop));
+    console.log("response123111>>result", result);
+    console.log("response123111>>itemStep", itemStep);
+    if (result && itemStep.hasMore) {
+      const param = {
+        processId: itemStep.processId,
+        workflowId: itemStep.id,
+        limit: 10,
+        page: itemStep.page + 1,
+      };
+      return;
+      //   const response = await BusinessProcessService.listWorkFlow(param);
+      //   if (response.code === 0) {
+      //     const result = response.result;
+
+      //     let newDataOfStep = [...dataOfStep];
+      //     const indexStep = newDataOfStep.findIndex((el) => el.stepId === itemStep.id);
+      //     const stepFind = newDataOfStep.find((el) => el.stepId === itemStep.id);
+      //     if (indexStep !== -1) {
+      //       const newData = {
+      //         stepId: itemStep.id,
+      //         stepName: itemStep.title,
+      //         value: [...stepFind.value, ...result?.items],
+      //         hasMore: result?.loadMoreAble,
+      //         page: result?.page,
+      //       };
+      //       newDataOfStep[indexStep] = newData;
+      //       // console.log('newDataOfApproach', newDataOfApproach);
+      //       setDataOfStep(newDataOfStep);
+      //     }
+      //   } else {
+      //     showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      //   }
+    }
+  };
+  console.log("listColumn>>>", listColumn);
+  console.log("listColumn>>>columns>>>", columns);
+  //   console.log("listColumn>>>dataOfStep>>>", dataOfStep);
+
   return (
     <div className="wrapper-kanban-bpm">
       <div className="search__kanban">
@@ -379,13 +438,17 @@ export default function KanbanBpm(props: any) {
                           className="lst__item"
                           style={{ backgroundColor: snapshot.isDraggingOver ? "#D1FAE5" : "#f4f5f7" }}
                           onScroll={(e) => {
-                            if (column.id === 0) {
-                              handleScrollSpecial(e, column, 0);
-                            } else if (column.id === "done") {
-                              handleScrollSpecial(e, column, 1);
-                            } else {
-                              //   handleScroll(e, column);
-                            }
+                            // console.log("response123111>>column.id>>", column.id);
+                            // console.log("response123111>>scrollTop>>", e.target.scrollHeight);
+
+                            // if (column.id === 0) {
+                            //   handleScrollSpecial(e, column, 0);
+                            // } else if (column.id === "done") {
+                            //   handleScrollSpecial(e, column, 1);
+                            // } else {
+                            //   //   handleScroll(e, column);
+                            // }
+                            handleScroll(e, column);
                           }}
                         >
                           {columns[id]?.items ? (

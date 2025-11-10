@@ -57,7 +57,7 @@ export default function RegisterFetch() {
               } else {
                 url = process.env.APP_API_URL + url;
               }
-              // url = "http://192.168.183.33:9100" + url; //Gọi sang máy Năng, nếu không gọi thì comment đoạn này và mở đoạn trên
+              // url = "http://192.168.1.49:9100" + url; //Gọi sang máy Năng, nếu không gọi thì comment đoạn này và mở đoạn trên
             } else {
               url = process.env.APP_API_URL + url;
             }

@@ -2154,6 +2154,7 @@ export const urlsApi = {
     deleteStep: prefixBpm + "/workflow/delete",
     //lấy danh sách item workflow ở step
     listWorkflow: prefixBpm + "/workflowStatus/list",
+    listWorkflowCloud: prefixAdmin + "/workflowStatus/list",
     deleteWorkflow: prefixBpm + "/workflowStatus/delete",
 
     //update sla
