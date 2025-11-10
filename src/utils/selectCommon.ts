@@ -279,12 +279,6 @@ export async function SelectOptionData(key: string, params?: any) {
         limit: 1000,
       });
       break;
-    case "apiProductId":
-      response = await ProductIdApiService.list({
-        ...params,
-        limit: 1000,
-      });
-      break;
     case "apiServiceId":
       response = await ServiceIdApiService.list({
         ...params,
@@ -345,6 +339,13 @@ export async function SelectOptionData(key: string, params?: any) {
             card_number: item.cardNumber || 0,
             treatment_number: item.treatmentNum || 0,
             total_treatment: item.totalTreatment || 0,
+          };
+        }
+        if (key === "apiProductId" || key === "apiServiceId" || key === "apiCardServiceId") {
+          return {
+            value: item.id,
+            label: `${item.name}`,
+            ...item,
           };
         }
         return {
