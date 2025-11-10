@@ -30,6 +30,8 @@ export default function ContentChat(props: any) {
     // id: null,
     message: "",
   });
+  console.log('messageChat', messageChat);
+  
 
   // call api khi click vào icon send
   const handleSendChat = async (e) => {
@@ -46,8 +48,20 @@ export default function ContentChat(props: any) {
     const response = await ChatBotService.update(body);
 
     if (response.code === 0) {
+      const  result = response.result;
+        const newMessage = [
+          {
+            content: messageChat.message,
+            role: 'user'
+          },
+          {
+            ...result,
+            content: result.reply,
+            role: 'system'
+          }
+        ]
       setMessageChat({ ...messageChat, message: "" });
-      onHide(true);
+      onHide(true, newMessage);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -67,11 +81,17 @@ export default function ContentChat(props: any) {
 
       if (response.code === 0) {
         const  result = response.result;
-        const newMessage = {
-          ...result,
-          content: result.reply,
-          role: 'user'
-        }
+        const newMessage = [
+          {
+            content: messageChat.message,
+            role: 'user'
+          },
+          {
+            ...result,
+            content: result.reply,
+            role: 'system'
+          }
+        ]
         setMessageChat({ ...messageChat, message: "" });
         onHide(true, newMessage);
       } else {

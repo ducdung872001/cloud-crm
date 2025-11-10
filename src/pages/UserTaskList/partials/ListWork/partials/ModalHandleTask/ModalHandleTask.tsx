@@ -615,6 +615,14 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
       }
     }
 
+    if(config?.extendTime) {
+      if(new Date(config?.extendTime) < new Date()){
+        showToast("Thời gian gia hạn không được nhỏ hơn thời gian hiện tại", "error");
+        setIsSubmit(false);
+        return;
+      }
+    }
+
     setIsSubmit(true);
 
     const response = await BusinessProcessService.updateHandleTask(body);
