@@ -110,8 +110,6 @@ export default function OrderRequestList() {
     }
   }, [isCreate]);
 
-  console.log("listOpportunity>>>", listOpportunity);
-
   const [params, setParams] = useState<any>({
     name: "",
     limit: 10,
@@ -237,7 +235,7 @@ export default function OrderRequestList() {
       ...(isRegimeKanban
         ? [
             {
-              title: "Quay lại",
+              title: "Danh sách yêu cầu",
               callback: () => {
                 // hiển thị chế độ kanban
                 setIsRegimeKanban(!isRegimeKanban);

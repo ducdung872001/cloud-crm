@@ -4,7 +4,7 @@ import "./badge.scss";
 interface BadgeProps {
   text: string;
   style?: any;
-  variant: "error" | "success" | "warning" | "primary" | "secondary" | "transparent";
+  variant: "error" | "success" | "warning" | "primary" | "secondary" | "transparent" | "done" | "wait-collect";
 }
 
 export default function Badge(props: BadgeProps) {
