@@ -1,4 +1,4 @@
-.wrapper-kanban-ticket-process {
+.wrapper-kanban-claim-process {
   padding: 2rem;
   position: relative;
   min-height: 70rem;
@@ -147,6 +147,154 @@
           // background: rgba(var(--warning-color-rgb), 0.5);
         }
       }
+    }
+  }
+}
+.task__item_order_request--bpm {
+  border-radius: 0.5rem;
+  margin-bottom: 10px;
+  // overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+  & + .task__item--bpm {
+    margin-top: 1.2rem;
+  }
+
+  .task-infomation {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 0.8rem;
+    cursor: pointer;
+    .title--job {
+      // max-width: 20.6rem;
+      // min-height: 3.2rem;
+      // padding-bottom: 0.4rem;
+      word-wrap: break-word;
+      // border: 1px solid;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    &:hover {
+      background-color: var(--extra-color-5);
+    }
+
+    .task-footer {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .time-task,
+      .task-success,
+      .task-faild,
+      .task-item {
+        display: flex;
+        align-items: center;
+        gap: 0 0.3rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        padding: 0 0.5rem;
+        border-radius: 0.5rem;
+
+        svg {
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+      }
+
+      .time-task {
+        padding: 0;
+
+        .status-unfulfilled,
+        .status-processing,
+        .status-cancelled,
+        .status-processing--waring {
+          color: var(--white-color);
+          padding: 0 0.8rem;
+          border-radius: 0.5rem;
+          font-size: 1rem;
+        }
+
+        .status-unfulfilled {
+          background-color: var(--extra-color-50);
+        }
+
+        .status-processing {
+          background-color: var(--primary-color);
+        }
+
+        .status-processing--waring {
+          background-color: var(--warning-color);
+        }
+
+        .status-cancelled {
+          background-color: var(--error-color);
+        }
+      }
+
+      .task-success {
+        color: var(--success-darker-color);
+
+        svg {
+          fill: var(--success-darker-color);
+        }
+      }
+
+      .task-faild {
+        color: var(--error-darker-color);
+
+        svg {
+          fill: var(--error-darker-color);
+        }
+      }
+
+      .task-item {
+        background-color: #ffebe6;
+        svg {
+          fill: var(--warning-color);
+        }
+      }
+
+      .avatar {
+        width: 2.8rem;
+        height: 2.8rem;
+        overflow: hidden;
+        border-radius: 50rem;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+
+    .container-action {
+      // border: 1px solid;
+      margin-right: 3px;
+      width: 25px;
+      height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .disabled__task--item {
+    background-color: var(--extra-color-10);
+    cursor: pointer;
+
+    .task-footer {
+      .task-success,
+      .task-faild {
+        background-color: var(--extra-color-5);
+      }
+    }
+
+    &:hover {
+      background-color: var(--extra-color-10);
     }
   }
 }

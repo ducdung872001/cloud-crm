@@ -1,18 +1,22 @@
 import React, { Fragment } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import Icon from "components/icon";
-import "./TaskItemTicket.scss";
+import "./TaskItemClaim.scss";
 import Tippy from "@tippyjs/react";
 import moment from "moment";
 import Badge from "components/badge/badge";
 
-export default function TaskItemTicket(props: any) {
+export default function TaskItemClaim(props: any) {
   const { item, index, column, callbackHistory, callBackAction } = props;
-  console.log("item task item ticket:", item);
 
   return (
     <Fragment>
-      <Draggable key={item.id} draggableId={item.id.toString()} isDragDisabled={true} index={index}>
+      <Draggable
+        key={item.id}
+        draggableId={item.id.toString()}
+        // isDragDisabled={true}
+        index={index}
+      >
         {(provided, snapshot) => (
           <div
             ref={provided.innerRef}
@@ -23,7 +27,7 @@ export default function TaskItemTicket(props: any) {
               backgroundColor: snapshot.isDragging ? "white" : "white",
               ...provided.draggableProps.style,
             }}
-            className="task__item_ticket--bpm"
+            className="task__item_claim--bpm"
             onDoubleClick={(e) => {
               callbackHistory(item);
 
@@ -53,7 +57,7 @@ export default function TaskItemTicket(props: any) {
                 </div>
                 <div>
                   <span style={{ fontSize: 12, fontWeight: "500", marginLeft: 5 }}>
-                    {item?.dataDetail ? "Ticket - " + item?.dataDetail?.code || "" : "Không tìm thấy Ticket"}
+                    {item?.dataDetail ? "Claim - " + item?.dataDetail?.code || "" : "Không tìm thấy Claim"}
                   </span>
                 </div>
               </div>
@@ -79,26 +83,42 @@ export default function TaskItemTicket(props: any) {
                   <Badge
                     key={item.id}
                     text={
-                      !item?.dataDetail?.status
-                        ? "Chưa thực hiện"
+                      item?.dataDetail?.status === 0
+                        ? "Khởi tạo"
                         : item?.dataDetail?.status === 1
-                        ? "Đang thực hiện"
+                        ? "Đã tiếp nhận"
                         : item?.dataDetail?.status === 2
-                        ? "Đã hoàn thành"
+                        ? "Chờ hóa đơn sửa chữa"
+                        : item?.dataDetail?.status === 3
+                        ? "Thẩm định hiện trường"
                         : item?.dataDetail?.status === 4
-                        ? "Tạm dừng"
-                        : "Đã hủy"
+                        ? "Chờ phê duyệt"
+                        : item?.dataDetail?.status === 5
+                        ? "Từ chối"
+                        : item?.dataDetail?.status === 6
+                        ? "Chờ thanh toán"
+                        : item?.dataDetail?.status === 7
+                        ? "Đã thanh toán"
+                        : "Không xác định"
                     }
                     variant={
-                      !item?.dataDetail?.status
+                      item?.dataDetail?.status === 0
                         ? "secondary"
                         : item?.dataDetail?.status === 1
                         ? "primary"
                         : item?.dataDetail?.status === 2
-                        ? "success"
+                        ? "warning"
+                        : item?.dataDetail?.status === 3
+                        ? "primary"
                         : item?.dataDetail?.status === 4
                         ? "warning"
-                        : "error"
+                        : item?.dataDetail?.status === 5
+                        ? "error"
+                        : item?.dataDetail?.status === 6
+                        ? "wait-collect"
+                        : item?.dataDetail?.status === 7
+                        ? "done"
+                        : "transparent"
                     }
                   />
                 </span>

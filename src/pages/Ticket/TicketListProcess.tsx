@@ -18,15 +18,13 @@ import { isDifferenceObj, getPageOffset } from "reborn-util";
 import TicketService from "services/TicketService";
 import AddTicketModal from "./partials/AddEditTicketModal/AddTicketModal";
 import TableTicket from "./partials/TableTicket/TableTicket";
-import KanbanTicket from "./partials/KanbanTicket/KanbanTicket";
 import BusinessProcessService from "services/BusinessProcessService";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Loading from "components/loading";
-import KanbanTicketProcess from "./partials/KanbanTicketProcess";
 import { getListColumns } from "./partials/getListColumns";
 import ModalSigner from "./partials/ModalSigner";
-import HistoryProcess from "./partials/HistoryProcess";
 import AddTransferVotes from "pages/Common/AddTransferVotes";
+import KanbanTicketProcess from "./partials/KanbanTicketProcess";
 
 import "tippy.js/animations/scale.css";
 import "./TicketList.scss";
@@ -230,14 +228,14 @@ export default function TicketListProcess() {
               // icon: <Icon name="Fullscreen" />,
               callback: () => {
                 setIsRegimeKanban(true);
-                if (processId == -1) {
-                  setProcessId(listTicket && listTicket.length > 0 && +listTicket[0].id);
-                  setProcessName(listTicket[0]?.name);
-                } else {
-                  setProcessId(processId);
-                  // setValueApproach(null);
-                  // setParams({ ...params, processId: processId });
-                }
+                // if (processId == -1) {
+                //   setProcessId(listTicket && listTicket.length > 0 && +listTicket[0].id);
+                //   setProcessName(listTicket[0]?.name);
+                // } else {
+                //   setProcessId(processId);
+                //   // setValueApproach(null);
+                //   // setParams({ ...params, processId: processId });
+                // }
               },
             },
           ]),
@@ -897,84 +895,7 @@ export default function TicketListProcess() {
             <Loading />
           </div>
           <div className={`${!isLoadingKanban ? "" : "d-none"}`}>
-            {/* <KanbanTicket
-                params={params}
-                setParams={setParams}
-                dataOfStep={dataOfStep}
-                setDataOfStep={setDataOfStep}
-                dataStart={dataOfStepStart}
-                setDataOfStepStart={setDataOfStepStart}
-                dataSuccess={dataOfStepSuccess}
-                listStepProcess={listStepProcess}
-                callbackHistory={(e) => {
-                    setHasHistorySignature(true);
-                    setDataObject(e);
-                }}
-                onReload={(reload, itemObject) => {
-                    if (reload) {
-                    if (itemObject?.status === 0 || itemObject?.status === 2) {
-                        getDataOfStepSpecial(processId, itemObject?.status);
-                    }
-                    if (itemObject?.status === 1) {
-                        if (listStepProcess && listStepProcess.length > 0) {
-                        const dataChoosedStep = listStepProcess.find((el) => el.value === itemObject.workflowId);
-
-                        const param = {
-                            processId: processId,
-                            workflowId: dataChoosedStep.value,
-                            limit: 10,
-                            page: 1,
-                        };
-                        getDataOfStepAction(param, dataChoosedStep.label);
-                        }
-                    }
-                    }
-                }}
-                /> */}
-
-            <KanbanTicketProcess
-              processType="ticket"
-              params={params}
-              setIsLoading={setIsLoadingKanban}
-              setParams={setParams}
-              processId={processId}
-              listColumn={listColumn}
-              // data={listManagementInvoice}
-              dataOfStep={dataOfStep}
-              setDataOfStep={setDataOfStep}
-              dataStart={dataOfStepStart}
-              setDataStart={setDataOfStepStart}
-              dataSuccess={dataOfStepSuccess}
-              listStepProcess={listStepProcess}
-              callbackHistory={(e) => {
-                setHasHistorySignature(true);
-                setDataObject(e);
-              }}
-              onReload={(reload, itemObject) => {
-                if (reload) {
-                  if (itemObject?.status === 0 || itemObject?.status === 2) {
-                    getDataOfStepSpecial(processId, itemObject?.status);
-                  }
-                  if (itemObject?.status === 1) {
-                    if (listStepProcess && listStepProcess.length > 0) {
-                      const dataChoosedStep = listStepProcess.find((el) => el.value === itemObject.workflowId);
-
-                      const param = {
-                        processId: processId,
-                        workflowId: dataChoosedStep.value,
-                        limit: 10,
-                        page: 1,
-                      };
-                      getDataOfStepAction(param, dataChoosedStep.label);
-                    }
-                  }
-                }
-              }}
-            />
-
-            <div className={`${hasHistorySignature ? "" : "d-none"}`}>
-                <HistoryProcess onShow={hasHistorySignature} dataObject={dataObject} onHide={() => setHasHistorySignature(false)} />
-            </div>
+            <KanbanTicketProcess processId={processId} />
           </div>
         </div>
       </div>

@@ -204,11 +204,11 @@ export default function ModalAddFile(props: any) {
     if (onShow && listAttactment) {
       setNewData([]);
       (listAttactment || []).map((item) => {
-        var request = new XMLHttpRequest();
+        const request = new XMLHttpRequest();
         request.open("GET", item.url, true);
         request.responseType = "blob";
         request.onload = function () {
-          var reader = new FileReader();
+          const reader = new FileReader();
           reader.readAsDataURL(request.response);
           reader.onload = function (e: any) {
             const data = {

@@ -1,6 +1,5 @@
-import { name } from "jssip";
 import ContractService from "services/ContractService";
-import TicketService from "services/TicketService";
+import OrderRequestService from "services/OrderRequestService";
 
 const getListContract = async (potIds: any) => {
   const params = {
@@ -19,28 +18,26 @@ const getListContract = async (potIds: any) => {
   }
 };
 
-const getListTicket = async (potIds: any) => {
+const getListClaim = async (potIds: any) => {
   const params = {
     limit: 10,
     potIds: potIds,
-    name  : "",
   };
 
-  const response = await TicketService.list(params);
+  const response = await OrderRequestService.list(params);
 
   if (response.code === 0) {
     const result = response.result;
 
-    const listTicket = result?.items || [];
+    const listClaim = result?.items || [];
 
-    return listTicket;
+    return listClaim;
   }
 };
 
 export const fetchDataDetail = async (potIds, processType) => {
-  console.log("fetchDataDetail potIds:", potIds, "processType:", processType);
   try {
-    const dataFetch = processType && processType === "ticket" ? await getListTicket(potIds) : await getListContract(potIds);
+    const dataFetch = processType && processType === "claim" ? await getListClaim(potIds) : await getListContract(potIds);
     return dataFetch;
   } catch (error) {
     console.error("Error fetching data:", error); // Xử lý lỗi nếu có
