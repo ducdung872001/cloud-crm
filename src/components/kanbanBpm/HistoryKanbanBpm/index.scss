@@ -1,0 +1,41 @@
+.page__view--history-kanban-bpm {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.6rem;
+  width: 100%;
+  min-height: 23vh;
+
+  .content__left {
+    width: 18rem;
+    flex-shrink: 0;
+    padding-right: 2rem;
+
+    .item--tab {
+      padding: 0.8rem 1.2rem;
+      border: 1px solid var(--extra-color-50);
+      border-radius: 0.5rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--extra-color-20);
+      }
+
+      & + .item--tab {
+        margin-top: 1.2rem;
+      }
+
+      &.active__item--tab {
+        background-color: var(--extra-color-20);
+        cursor: default;
+      }
+    }
+  }
+
+  .content__right {
+    width: 85%;
+    flex: 1;
+    border: 1px dashed var(--extra-color-50);
+    border-radius: 0.5rem;
+  }
+}

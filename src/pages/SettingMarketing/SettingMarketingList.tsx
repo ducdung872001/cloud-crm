@@ -19,7 +19,7 @@ export default function SettingMarketingList() {
     {
       title: "Đo lường truyền thông",
       is_tab: "tab_two",
-    },         
+    },
   ];
 
   return (
@@ -62,7 +62,9 @@ export default function SettingMarketingList() {
             }
           }}
         />
-      ) :  ([])}
+      ) : (
+        []
+      )}
     </div>
   );
 }

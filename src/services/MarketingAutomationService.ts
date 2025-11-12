@@ -125,4 +125,17 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
+  updateMapping: (body: any) => {
+    return fetch(urlsApi.ma.updateMapping, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+
+  detailMapping: (id: number) => {
+    return fetch(`${urlsApi.ma.detailMapping}?maId=${id}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
 };

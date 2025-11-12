@@ -1089,6 +1089,8 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
       ...(data ? { id: data.id } : {}),
       ...(dataOpp?.coyId ? { coyId: dataOpp.coyId } : {}),
       ...(dataOpp?.approachId ? { approachId: dataOpp.approachId } : {}),
+      startTime: moment(formData.values.startTime).format('YYYY-MM-DDTHH:mm:ss'),
+      endTime: moment(formData.values.endTime).format('YYYY-MM-DDTHH:mm:ss'),
     };
 
     const response = await ScheduleConsultantService.update(body);

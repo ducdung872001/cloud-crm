@@ -41,7 +41,7 @@ export default function MarketingChannel(props: any) {
   const [params, setParams] = useState({
     name: "",
     limit: 10,
-    page: 1
+    page: 1,
   });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
@@ -75,21 +75,21 @@ export default function MarketingChannel(props: any) {
       const result = response.result;
       setListMarketingChannel(result);
 
-    //   setPagination({
-    //     ...pagination,
-    //     page: +result.page,
-    //     sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
-    //     totalItem: +result.total,
-    //     totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
-    //   });
+      //   setPagination({
+      //     ...pagination,
+      //     page: +result.page,
+      //     sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
+      //     totalItem: +result.total,
+      //     totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
+      //   });
 
-    //   if (+result.total === 0 && +result.page === 1) {
-    //     setIsNoItem(true);
-    //   }
-    } 
+      //   if (+result.total === 0 && +result.page === 1) {
+      //     setIsNoItem(true);
+      //   }
+    }
     // else if (response.code == 400) {
     //   setIsPermissions(true);
-    // } 
+    // }
     else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -108,7 +108,7 @@ export default function MarketingChannel(props: any) {
     }
 
     if (isMounted.current === true) {
-        getListMarketingChannel(params);
+      getListMarketingChannel(params);
       const paramsTemp = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
@@ -139,12 +139,7 @@ export default function MarketingChannel(props: any) {
 
   const dataFormat = ["text-center", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
-    getPageOffset(params) + index + 1,
-    item.name, 
-    item.code,
-    item.position,
-  ];
+  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.code, item.position];
 
   const actionsTable = (item: any): IAction[] => {
     return [
@@ -306,7 +301,7 @@ export default function MarketingChannel(props: any) {
           setShowModalAddChannel(false);
         }}
       />
-     
+
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );

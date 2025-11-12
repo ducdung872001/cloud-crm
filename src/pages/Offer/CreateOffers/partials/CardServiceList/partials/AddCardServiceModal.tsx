@@ -326,7 +326,7 @@ export default function AddCardServiceModal(props: AddInfoCardServiceModalProps)
                     disabled={!dataService || dataService?.serviceCombo ? true : false}
                   />
                 ),
-              },              
+              },
             ] as IFieldCustomize[])
           : []),
         {

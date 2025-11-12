@@ -4,6 +4,8 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import ProjectRealtyService from "services/ProjectRealtyService";
 
 import FieldListService from "services/FieldListService";
+import ServiceService from "services/ServiceService";
+import WarehouseService from "services/WarehouseService";
 import { IColumnGrid } from "pages/BPM/GridForm";
 
 interface SelectLookupProps {
@@ -104,6 +106,12 @@ function SelectLookupOla(props: SelectLookupProps) {
         break;
       case "field":
         response = await FieldListService.list(param);
+        break;
+      case "service":
+        response = await ServiceService.filter(param);
+        break;
+      case "product":
+        response = await WarehouseService.productList(param);
         break;
       default:
         break;

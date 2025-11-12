@@ -34,6 +34,8 @@ import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import { msalConfig } from "./configs/authConfig";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
+import EmailConfirm from "pages/Contract/EmailComfirm/EmailConfirm";
+import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import CollectTicket from "pages/Ticket/partials/CollectTicket";
 
 const msalInstance = new PublicClientApplication(msalConfig);
@@ -126,11 +128,17 @@ export default function App() {
     }
 
     //Gọi thực thi
-    if (
-      location.pathname !== "/collect_ticket" 
-    ) {
+    // checkEmployeeStatus();
+      if (
+      location.pathname !== "/send_email_confirm" && location.pathname !== "/voucher_confirm"
+    ) 
+    // if (
+    //   location.pathname !== "/send_voucher" 
+    // ) 
+    {
       checkEmployeeStatus();
     }
+
   }, [cookies.user, location]);
 
   useEffect(() => {

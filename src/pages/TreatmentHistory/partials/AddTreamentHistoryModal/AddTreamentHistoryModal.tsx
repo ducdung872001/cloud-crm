@@ -295,7 +295,10 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           <img src={avatar || ImageThirdGender} alt={label} />
         </div>
         <div>
-          <div><strong>{cardNumber || "Không có mã thẻ"}</strong>{serviceNumber ? ` • ${serviceNumber}` : ""}</div>
+          <div>
+            <strong>{cardNumber || "Không có mã thẻ"}</strong>
+            {serviceNumber ? ` • ${serviceNumber}` : ""}
+          </div>
           <div className="sub">{label}</div>
         </div>
       </div>
@@ -417,7 +420,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
     }
 
     return { options: [], hasMore: false };
-  }
+  };
 
   const formatOptionLabelEmployee = ({ label, avatar }) => {
     return (

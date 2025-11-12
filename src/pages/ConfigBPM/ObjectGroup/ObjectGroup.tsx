@@ -42,7 +42,7 @@ export default function ObjectGroupList(props: any) {
   const [params, setParams] = useState({
     name: "",
     limit: 10,
-    page: 1
+    page: 1,
   });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
@@ -107,7 +107,7 @@ export default function ObjectGroupList(props: any) {
     }
 
     if (isMounted.current === true) {
-        getListOjectGroup(params);
+      getListOjectGroup(params);
       const paramsTemp = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
@@ -138,11 +138,7 @@ export default function ObjectGroupList(props: any) {
 
   const dataFormat = ["text-center", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
-    getPageOffset(params) + index + 1,
-    item.name, 
-    item.position,
-  ];
+  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.position];
 
   const actionsTable = (item: any): IAction[] => {
     return [
@@ -320,10 +316,10 @@ export default function ObjectGroupList(props: any) {
             getListOjectGroup(params);
           }
           setShowModalSetting(false);
-          setDataObjectGroup(null)
+          setDataObjectGroup(null);
         }}
       />
-     
+
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );
