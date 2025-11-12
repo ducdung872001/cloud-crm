@@ -36,12 +36,12 @@ type ColumnProps = {
 };
 
 /**
- * Column component:
- * - Fetches its initial page (page 1) if parent hasn't provided items yet.
- * - Handles infinite scroll and loads more pages when user scrolls to bottom.
- * - Controls its own isLoading state locally and informs parent via setLoading/onInitLoad/onAppend.
- * - Renders Droppable and Draggable items using columnState.items from parent.
- */
+ *  Phần cột trong Kanban BPM
+ * - Tự fetch trang đầu tiên nếu parent chưa cung cấp items
+ * - Xử lý cuộn vô hạn, tải thêm trang khi cuộn xuống đáy
+ * - Quản lý trạng thái isLoading cục bộ và thông báo cho parent qua setLoading/onInitLoad/onAppend
+ * - Hiển thị Droppable và các mục Draggable sử dụng columnState.items từ parent
+ * */
 const ColumnComponent: React.FC<ColumnProps> = ({
   columnDef,
   columnState,
@@ -56,7 +56,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
   const processId = columnDef.processId;
   const abortRef = useRef<AbortController | null>(null);
 
-  // local loading state for immediate checks (but parent also holds isLoading for UI)
+  // Loading state khi load thêm trang
   const [localLoading, setLocalLoading] = useState(false);
 
   // helper to call API
@@ -98,7 +98,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
     [id, processId]
   );
 
-  // initial load: if parent hasn't provided items (or page === 0), fetch page 1
+  // khởi tạo dữ liệu ban đầu cho cột nếu chưa có : nếu parent chưa cung cấp items (hoặc page === 0), thì fetch trang 1
   useEffect(() => {
     let mounted = true;
     const shouldLoadInitial =
@@ -121,7 +121,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
     };
   }, [columnState, getDataOfStep, id, onInitLoad, setLoading]);
 
-  // scroll handler inside Column
+  // Cuộn xuống gần đáy sẽ tải thêm trang
   const handleScroll = useCallback(
     async (e: React.UIEvent<HTMLDivElement>) => {
       const col = columnState;
@@ -139,7 +139,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
       try {
         const nextPage = (col.page || 1) + 1;
         const res = await getDataOfStep(nextPage);
-        // append into parent
+        // Cập nhật lên parent
         onAppend(id, { items: res.items, hasMore: res.hasMore, page: res.page });
       } catch (err) {
         console.error(err);

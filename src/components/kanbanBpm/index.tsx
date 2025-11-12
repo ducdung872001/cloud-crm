@@ -5,7 +5,6 @@ import Loading from "components/loading";
 import BusinessProcessService from "services/BusinessProcessService";
 import { showToast } from "utils/common";
 import ColumnComponent from "./ColumnComponent";
-import HistoryOfKanban from "./HistoryKanbanBpm/HistoryOfKanban";
 import HistoryKanbanBpm from "./HistoryKanbanBpm";
 
 const colorData = [
