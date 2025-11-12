@@ -557,18 +557,18 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="ReturnInvoice" />,
               code: "RETURN_INVOICE",
             },
-            {
-              title: "salesFlow", // Quy trình bán hàng
-              path: urls.sale_flow,
-              icon: <Icon name="SalesProcess" />,
-              code: "SALE_FLOW",
-            },
-            {
-              title: "invoicesManagement", // Quản lý bán hàng
-              path: urls.management_sale,
-              icon: <Icon name="ManageOpportunity" />,
-              code: "INVOICE_MANAGEMENT",
-            },
+            // {
+            //   title: "salesFlow", // Quy trình bán hàng
+            //   path: urls.sale_flow,
+            //   icon: <Icon name="SalesProcess" />,
+            //   code: "SALE_FLOW",
+            // },
+            // {
+            //   title: "invoicesManagement", // Quản lý bán hàng
+            //   path: urls.management_sale,
+            //   icon: <Icon name="ManageOpportunity" />,
+            //   code: "INVOICE_MANAGEMENT",
+            // },
             {
               title: "settingSales", // Cài đặt bán hàng
               path: urls.setting_sell,

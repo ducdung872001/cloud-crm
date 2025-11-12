@@ -1669,6 +1669,7 @@ export const urlsApi = {
   //   updatePriorityLevel: prefixAdmin + "/workOrder/update/priorityLevel",
   // },
   workOrder: {
+    listBpmWorkOrder: prefixBpm + "/workOrder/list",
     list: prefixAdmin + "/workOrder/list",
     update: prefixAdmin + "/workOrder/update",
     updateEmployee: prefixAdmin + "/workOrder/update/employee",
@@ -2154,6 +2155,7 @@ export const urlsApi = {
     deleteStep: prefixBpm + "/workflow/delete",
     //lấy danh sách item workflow ở step
     listWorkflow: prefixBpm + "/workflowStatus/list",
+    listWorkflowCloud: prefixAdmin + "/workflowStatus/list",
     deleteWorkflow: prefixBpm + "/workflowStatus/delete",
 
     //update sla
