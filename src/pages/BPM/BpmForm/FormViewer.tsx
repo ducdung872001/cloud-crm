@@ -348,7 +348,7 @@ const FormViewerComponent = (props: any) => {
 
     const updateExpressionField = (components, schema, data) => {
       components.forEach((component) => {
-        if (component.type === "expression") {          
+        if (component.type === "expression") {
           let dataExpression = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
 
@@ -360,15 +360,14 @@ const FormViewerComponent = (props: any) => {
           }
         }
 
-
-        if(component.type == "number" && component?.properties?.formula) {
-          console.log('vao 2', component);
+        if (component.type == "number" && component?.properties?.formula) {
+          console.log("vao 2", component);
           let formula = component?.properties?.formula;
-          console.log('formula122', formula);
+          console.log("formula122", formula);
 
           if (formula) {
             formula = formula.replace(/curr\.([a-zA-Z_]\w*)/g, (_, field) => data[field]);
-            console.log('formula', formula);
+            console.log("formula", formula);
             // data[target] = formula;
           }
         }
@@ -410,17 +409,17 @@ const FormViewerComponent = (props: any) => {
 
         if (component.type === "dynamiclist") {
           component.components.forEach((componentChild) => {
-            if (componentChild.type == "select") {              
+            if (componentChild.type == "select") {
               data[component.path].map((el) => {
                 let dataSelect = el[componentChild.key]; //Lấy ra key
                 let target = componentChild?.properties?.bindingTarget;
                 if (target) {
-                  if(componentChild.type == "select") {
+                  if (componentChild.type == "select") {
                     const listTarget = target.split(",").map((item) => item.trim()) || [];
                     if (dataSelect) {
                       const optionValue = componentChild.values || [];
                       const valueSelected = optionValue.find((el) => el.value === dataSelect);
-  
+
                       if (listTarget && listTarget.length > 0) {
                         listTarget.map((item) => {
                           el[item] = valueSelected && valueSelected[item] ? valueSelected[item] : "";
@@ -431,25 +430,21 @@ const FormViewerComponent = (props: any) => {
                     }
                   }
                 }
-
               });
             }
 
-            if(componentChild.type == "number"){
-              if(componentChild.type == "number" && componentChild?.properties?.formula) {
+            if (componentChild.type == "number") {
+              if (componentChild.type == "number" && componentChild?.properties?.formula) {
                 let formula = componentChild?.properties?.formula;
                 if (formula && componentChild?.properties?.formula) {
-                  data[component.path].map(el => {
+                  data[component.path].map((el) => {
                     formula = formula.replace(/curr\.([a-zA-Z_]\w*)/g, (_, field) => el[field]);
-                    console.log('formula', eval(formula));
-                    el[componentChild?.key] = eval(formula)
-                  })
-                  
+                    console.log("formula", eval(formula));
+                    el[componentChild?.key] = eval(formula);
+                  });
                 }
               }
             }
-
-           
           });
         }
       });

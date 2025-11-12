@@ -78,7 +78,8 @@ export default function ListWork(props: any) {
   const getListWork = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await WorkOrderService.list(paramsSearch, abortController.signal);
+    // const response = await WorkOrderService.listBpmWorkOrder(paramsSearch, abortController.signal);
+    const response = await WorkOrderService.listBpmWorkOrder(paramsSearch);
 
     if (response.code === 0) {
       const result = response.result;
