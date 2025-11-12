@@ -501,6 +501,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
     }, 500);
     setIsLoadingEngine(true);
     setKeyForm(null);
+    setInitFormSchema(defaultSchema);
   };
 
   const checkEmpty = (data, listColumn) => {
