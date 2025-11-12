@@ -878,6 +878,8 @@ export default function CustomerPersonList() {
       setParams((prevParams) => ({ ...prevParams, limit: limit, page: 1 }));
     },
   });
+  console.log('pagination', pagination);
+  
 
   const [paginationPartner, setPaginationPartner] = useState<PaginationProps>({
     ...DataPaginationDefault,
