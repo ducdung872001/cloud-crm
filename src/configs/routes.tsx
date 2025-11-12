@@ -23,6 +23,7 @@ import KpiObjectList from "pages/Kpi/KpiObjectList/KpiObjectList";
 import DetailPersonList from "pages/CustomerPerson/partials/DetailPerson/DetailPersonList";
 import WarrantyList from "pages/Warranty/WarrantyList";
 import TicketList from "pages/Ticket/TicketList";
+import TicketListProcess from "pages/Ticket/TicketListProcess";
 import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import SettingTicketList from "pages/SettingTicket/SettingTicketList";
 import SettingWarrantyList from "pages/SettingWarranty/SettingWarrantyList";
@@ -625,6 +626,12 @@ export const menu: IMenuItem[] = [
             path: urls.ticket,
             icon: <Icon name="ReceiveTicket" />,
             code: "TICKET",
+          },
+          {
+            title: "receiveTicketProcess", // Tiếp nhận hỗ trợ
+            path: urls.ticket_process,
+            icon: <Icon name="ReceiveTicket" />,
+            code: "KANBAN_V2",
           },
           ...(sourceDomain == "rebornjsc.reborn.vn"
             ? [
@@ -1244,6 +1251,10 @@ export const routes: IRouter[] = [
   {
     path: urls.ticket,
     component: <TicketList />,
+  },
+  {
+    path: urls.ticket_process,
+    component: <TicketListProcess />,
   },
   {
     path: urls.collect_ticket,

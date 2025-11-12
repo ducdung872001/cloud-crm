@@ -2,122 +2,167 @@ import React, { useState, useEffect, Fragment } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { showToast } from "utils/common";
 import TaskItem from "./partials/TaskItem/TaskItem";
-import "./KanbanTicket.scss";
+import "./index.scss";
 import { IContractResponse } from "model/contract/ContractResponseModel";
-import Tippy from "@tippyjs/react";
-import Icon from "components/icon";
 import SaleflowInvoiceService from "services/SaleflowInvoiceService";
 import BusinessProcessService from "services/BusinessProcessService";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
+import { fetchDataDetail } from "./getListObject";
+import TaskItemTicket from "./partials/TaskItemTicket/TaskItemTicket";
+import Loading from "components/loading";
 
-export default function Kanban(props: any) {
+export default function KanbanTicketProcess(props: any) {
   const {
-    data,
     dataOfStep,
     setDataOfStep,
     dataStart,
     setDataStart,
     dataSuccess,
     setDataSuccess,
-
     onReload,
     params,
+    processId,
     setParams,
     listStepProcess,
     callbackHistory,
-
+    processType,
+    listColumn,
   } = props;
-  console.log("dataOfStep", dataOfStep);
-  console.log('listStepProcess', listStepProcess);
-  
 
-  const marginRight = 12;
-  const [columns, setColumns] = useState<any[]>([]);
-  console.log("columns", columns);
+  const [columns, setColumns] = useState<any[]>([
+    {
+      id: 0,
+      title: "Bắt đầu",
+      color: "#177AD5",
+      processId: processId || listStepProcess[0]?.processId,
+      items: [],
+      hasMore: false,
+      page: 1,
+    },
+    ...listStepProcess.map((item) => ({
+      id: item.value,
+      title: item.label,
+      color: item.color,
+      processId: item.processId,
+      step: item.stepNumber,
+      items: dataOfStep?.find((element) => element.stepId === item.value)?.value || [],
+      hasMore: dataOfStep?.find((element) => element.stepId === item.value)?.hasMore || false,
+      page: dataOfStep?.find((element) => element.stepId === item.value)?.page || 1,
+    })),
+    {
+      id: "done",
+      title: "Hoàn thành",
+      color: "#1bc10d",
+      processId: processId || listStepProcess[0]?.processId,
+      items: [],
+      hasMore: false,
+      page: 1,
+    },
+  ]);
 
   const [idEndPoint, setIdEndPoint] = useState<number>(null);
   const [dataWork, setDataWork] = useState<IContractResponse>(null);
 
   const [submitTask, setSubmitTask] = useState<boolean>(false);
 
+  const [isLoadingColumns, setIsLoadingColumns] = useState<boolean>(false);
+
   useEffect(() => {
-    const resultData = listStepProcess.map((item) => {
-      //lấy ra danh sách các cơ hội thuộc quy trình này
-      const newDataItemsStep = (dataOfStep?.length > 0 && dataOfStep.find((element) => element.stepId === item.value)) || null;
-      const newDataItems = newDataItemsStep?.value || [];
-      const newHasMore = newDataItemsStep?.hasMore;
-      const newPage = newDataItemsStep?.page;
-
-      //Lọc ra các cơ hội đang hoạt động
-    //   const resultDataItems =
-    //     newDataItems.length > 0 &&
-    //     newDataItems.filter((element) => {
-    //       return element.status !== 1 && element.status !== 3;
-    //     });
-
-      if (item.label) {
-        return {
-          id: item.value,
-          title: item.label,
-          color: item.color,
-          processId: item.processId,
-          step: item.stepNumber,
-          // items: data.filter((element) => {
-          //   // return element.approachId === item.value;
-          //   return element.approachId === item.value && element.invoiceResponse?.status !== 1 && element.invoiceResponse?.status !== 3;
-          // }),
-          items: newDataItems || [],
-          hasMore: newHasMore,
-          page: newPage,
-        };
+    const processData = async () => {
+      setIsLoadingColumns(true);
+      console.log("Kanban: listStepProcess:", listStepProcess);
+      console.log("Kanban: dataOfStep:", dataOfStep);
+      if (!listStepProcess || listStepProcess.length === 0) {
+        // nothing to build yet
+        setColumns([]);
+        setIsLoadingColumns(false);
+        return;
       }
-    });
+      const resultData = await Promise.all(
+        listStepProcess.map(async (item) => {
+          const newDataItemsStep = dataOfStep?.length > 0 && dataOfStep.find((element) => element.stepId === item.value);
+          console.log("newDataItemsStep:", newDataItemsStep);
+          const newDataItems = newDataItemsStep?.value || [];
+          console.log("newDataItems:", newDataItems);
+          const newHasMore = newDataItemsStep?.hasMore;
+          const newPage = newDataItemsStep?.page;
 
-    const result = resultData.filter((el) => el);
+          const listPotId = newDataItems.map((el) => el.potId);
 
-    if (result) {
-      result.unshift({
-        id: 0,
-        title: "Bắt đầu",
-        color: "#177AD5",
-        processId: listStepProcess[0]?.processId,
-        // items: data.filter((el) => {
-        //   return !el.approachId;
-        // }),
-        items: dataStart?.items || [],
-        hasMore: dataStart?.loadMoreAble,
-        page: dataStart?.page,
-      });
+          let detailData = [];
+          if (listPotId.length > 0) {
+            detailData = await fetchDataDetail(listPotId.join(","), processType);
+            // Bạn có thể xử lý hoặc gắn `detailData` vào `newDataItems` nếu cần
+          }
+          console.log("detailData:", detailData);
 
-      result.push(
-        {
-          id: "done",
-          title: "Hoàn thành",
-          color: "#1bc10d",
-          processId: listStepProcess[0]?.processId,
-          // items: data.filter((el) => {
-          //   return el.invoiceResponse?.status === 1;
-          // }),
-          items: dataSuccess?.items || [],
-          hasMore: dataSuccess?.loadMoreAble,
-          page: dataSuccess?.page,
-        },
-        // {
-        //   id: "fail",
-        //   title: "Thất bại",
-        //   color: "#ed0f0f",
-        //   saleflowId: listApproach[0]?.saleflowId,
-        //   // items: data.filter((el) => {
-        //   //   return el.invoiceResponse?.status === 3;
-        //   // }),
-        //   items: dataFail?.items || [],
-        //   hasMore: dataStart?.loadMoreAble,
-        //   page: dataStart?.page,
-        // }
+          if (item.label) {
+            return {
+              id: item.value,
+              title: item.label,
+              color: item.color,
+              processId: item.processId,
+              step: item.stepNumber,
+              items:
+                newDataItems.map((el) => {
+                  return {
+                    ...el,
+                    dataDetail: detailData.find((detail) => detail.potId === el.potId) || null, // Gắn dữ liệu chi tiết vào từng mục
+                  };
+                }) || [],
+              hasMore: newHasMore,
+              page: newPage,
+            };
+          }
+          return null;
+        })
       );
-    }
-    setColumns(result);
-  }, [data, listStepProcess, dataOfStep, dataStart, dataSuccess]);
+      console.log("resultData:", resultData);
+      const result = resultData.filter((el) => el !== null);
+
+      // Lấy dữ liệu của cột hoàn thành
+
+      let newDataSuccess: any = {};
+      if (dataSuccess && dataSuccess?.items && dataSuccess?.items.length > 0) {
+        const detailDataSuccess = await fetchDataDetail(dataSuccess?.items.map((el) => el.potId).join(","), processType);
+
+        if (detailDataSuccess && detailDataSuccess.length > 0) {
+          newDataSuccess = {
+            ...dataSuccess,
+            items: dataSuccess?.items.map((el) => ({
+              ...el,
+              dataDetail: detailDataSuccess.find((detail) => detail.potId == el.potId) || null,
+            })),
+          };
+          result.push({
+            id: "done",
+            title: "Hoàn thành",
+            color: "#1bc10d",
+            processId: listStepProcess[0]?.processId,
+            items: newDataSuccess?.items || [],
+            hasMore: newDataSuccess?.loadMoreAble,
+            page: newDataSuccess?.page,
+          });
+        } else {
+          result.push({
+            id: "done",
+            title: "Hoàn thành",
+            color: "#1bc10d",
+            processId: listStepProcess[0]?.processId,
+            items: dataSuccess?.items || [],
+            hasMore: dataSuccess?.loadMoreAble,
+            page: dataSuccess?.page,
+          });
+        }
+      }
+
+      setColumns(result);
+      console.log("Columns after processing:", result);
+      setIsLoadingColumns(false);
+    };
+
+    processData();
+  }, [listStepProcess, dataOfStep, dataSuccess]);
 
   const onDragEnd = async (result) => {
     if (!result.destination) return;
@@ -128,28 +173,26 @@ export default function Kanban(props: any) {
 
     const dragItem = newColumns[parseInt(source.droppableId)].items[source.index];
     setDataWork(dragItem);
-    console.log("dragItem", dragItem);
 
     //! biến này tạo ra với mục đích lấy cột hiện tại
     const sourceColumn = columns[source.droppableId];
-    console.log("sourceColumn", sourceColumn);
 
     //! biến này tạo ra với mục đích lấy cột cuối muốn kéo thả đến
     const destColumn = newColumns[destination.droppableId];
-    console.log("destColumn", destColumn);
 
     const startPoint = sourceColumn.id;
     const endPoint = destColumn.id;
 
-    const startLabel = sourceColumn.title;
-    const endLabel = destColumn.title;
+  // labels available if needed for logging or status update
+  // const startLabel = sourceColumn.title;
+  // const endLabel = destColumn.title;
 
     //? đoạn này check đk nếu như id của điểm đầu khác với id của điểm cuối
     //* thì lúc đó mới lấy giá trị điểm bắt đầu và điểm kết thúc
     if (startPoint !== endPoint) {
       setIdEndPoint(endPoint);
 
-    //   handleUpdateStatusInvoice(endPoint, dragItem, startPoint, startLabel, endLabel);
+      //   handleUpdateStatusInvoice(endPoint, dragItem, startPoint, startLabel, endLabel);
     }
 
     newColumns[parseInt(source.droppableId)].items.splice(source.index, 1);
@@ -160,56 +203,9 @@ export default function Kanban(props: any) {
     setColumns(newColumns);
   };
 
-  const handleUpdateStatusInvoice = async (endPoint, dragItem, startPoint, startLabel, endLabel) => {
-    const listApproachId = [
-      { value: startPoint, label: startLabel },
-      { value: endPoint, label: endLabel },
-    ];
-
-    const body = {
-      id: dragItem?.id,
-      approachId: endPoint,
-      // invoiceId: dragItem?.invoiceId,
-      // saleflowId: params?.saleflowId,
-    };
-
-    const bodySecond = {
-      id: dragItem?.id,
-      invoiceId: dragItem?.invoiceId,
-      // invoiceId: dragItem?.invoiceId,
-      // saleflowId: params?.saleflowId,
-    };
-
-    console.log("body", body);
-
-    if (submitTask) {
-      return;
-    }
-
-    let response = null;
-
-    if (endPoint === "done") {
-      response = await SaleflowInvoiceService.updateApproachSuccess(bodySecond);
-    } else if (endPoint === "fail") {
-      response = await SaleflowInvoiceService.updateApproachCancel(bodySecond);
-    } else {
-      response = await SaleflowInvoiceService.updateApproach(body);
-    }
-
-    if (response.code === 0) {
-      showToast("Chuyển giai đoạn thành công", "success");
-      onReload(true, listApproachId);
-      setIdEndPoint(null);
-      setDataWork(null);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-  };
-
   const handleScroll = async (e, itemStep) => {
     const result = e.target.scrollHeight - Math.round(e.target.scrollTop) === e.target.clientHeight;
     if (result && itemStep.hasMore) {
-      console.log("itemStep", itemStep);
       const param = {
         processId: itemStep.processId,
         workflowId: itemStep.id,
@@ -232,7 +228,6 @@ export default function Kanban(props: any) {
             page: result?.page,
           };
           newDataOfStep[indexStep] = newData;
-          // console.log('newDataOfApproach', newDataOfApproach);
           setDataOfStep(newDataOfStep);
         }
       } else {
@@ -244,7 +239,6 @@ export default function Kanban(props: any) {
   const handleScrollSpecial = async (e, itemStep, status) => {
     const result = e.target.scrollHeight - Math.round(e.target.scrollTop) === e.target.clientHeight;
     if (result && itemStep.hasMore) {
-      console.log("itemStep", itemStep);
       const param = {
         processId: itemStep.processId,
         workflowId: itemStep.id,
@@ -265,13 +259,12 @@ export default function Kanban(props: any) {
           setDataStart(newData);
         } else if (status === 2) {
           setDataSuccess(newData);
-        } 
+        }
       } else {
         showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
     }
   };
-
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
@@ -315,7 +308,7 @@ export default function Kanban(props: any) {
   };
 
   return (
-    <div className="wrapper-kanban-business-process">
+    <div className="wrapper-kanban-ticket-process">
       <div className="search__kanban">
         {/* <SearchBox
           name="Tên"
@@ -326,11 +319,18 @@ export default function Kanban(props: any) {
         /> */}
       </div>
       <div className="__special-kanban--business-process">
-        <div className="box__task--kanban" style={{ width: `${columns.length >= 5 ? `${columns.length * 210}px` : "100%"}`, marginBottom: "1.5rem" }}>
+        <div
+          className="box__task--kanban"
+          style={{
+            // width: `${columns.length >= 5 ? `${columns.length * 210}px` : "100%"}`,
+            width: ` "100%"`,
+            marginBottom: "1.5rem",
+          }}
+        >
           <DragDropContext onDragEnd={onDragEnd}>
-            {columns.map((column, idx) => {           
+            {listColumn.map((column, id) => {
               return (
-                <Droppable key={idx} droppableId={idx.toString()}>
+                <Droppable key={column.id} droppableId={id.toString()}>
                   {(provided, snapshot) => {
                     return (
                       <div
@@ -354,19 +354,7 @@ export default function Kanban(props: any) {
                           >
                             {column.title}
                           </span>
-                      
                         </div>
-
-                        {/* {!column.id && (
-                          <Tippy content="Tạo hoá đơn">
-                            <div className="button-add-customer" onClick={() => setShowModalAdd(true)}>
-                              <div className="icon__add--customer">
-                                <Icon name="PlusCircleFill" />
-                              </div>
-                            </div>
-                          </Tippy>
-                        )} */}
-
                         <div
                           className="lst__item"
                           style={{ backgroundColor: snapshot.isDraggingOver ? "#D1FAE5" : "#f4f5f7" }}
@@ -380,37 +368,28 @@ export default function Kanban(props: any) {
                             }
                           }}
                         >
-                          {column.items?.map((item, idx) => {
-                            return (
-                              <TaskItem
-                                key={idx}
-                                item={item}
-                                index={idx}
-                                column={column}
-                                callbackHistory={callbackHistory}
-                                callBackAction={(item, type) => {                                  
-                                  if(type === 'delete'){
-                                    showDialogConfirmDelete(item);
-                                  }
-                                  
-                                } }
-                                // setDataCustomer={setDataCustomer}
-                                // customerIdlist={customerIdlist}
-                                // setCustomerIdList={setCustomerIdList}
-                                // invoiceIdList={invoiceIdList}
-                                // setInvoiceIdList={setInvoiceIdList}
-                                // checkColumn={checkColumn}
-                                // setCheckColumn={setCheckColumn}
-                                // setColumnList={setColumnList}
-                                // setShowModalExchange={setShowModalExchange}
-                                // setIsCollectInfoEform={setIsCollectInfoEform}
-                                // setIsUploadAttachment={setIsUploadAttachment}
-                                // setModalAddTicket={setModalAddTicket}
-                                // setModalAddWarranty={setModalAddWarranty}
-                                // setShowModalViewInvoice={setShowModalViewInvoice}
-                              />
-                            );
-                          })}
+                          {columns[id]?.items && !isLoadingColumns ? (
+                            <>
+                              {columns[id].items?.map((item, idx) => {
+                                return (
+                                  <TaskItemTicket
+                                    key={item.id}
+                                    item={item}
+                                    index={idx}
+                                    column={column}
+                                    callbackHistory={callbackHistory}
+                                    callBackAction={(item, type) => {
+                                      if (type === "delete") {
+                                        showDialogConfirmDelete(item);
+                                      }
+                                    }}
+                                  />
+                                );
+                              })}
+                            </>
+                          ) : (
+                            <Loading />
+                          )}
                         </div>
                         {provided.placeholder}
                       </div>
@@ -424,7 +403,6 @@ export default function Kanban(props: any) {
       </div>
 
       <Dialog content={contentDialog} isOpen={showDialog} />
-  
     </div>
   );
 }

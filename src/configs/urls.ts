@@ -1544,7 +1544,7 @@ export const urlsApi = {
   ticket: {
     list: prefixAdmin + "/ticket/list",
     update: prefixAdmin + "/ticket/update",
-    collect: prefixCs + "/ticket/send/jssdk",
+    collect: prefixAdmin + "/ticket/send/jssdk",
     detail: prefixAdmin + "/ticket/get",
     delete: prefixAdmin + "/ticket/delete",
     viewer: prefixAdmin + "/ticket/viewer",
@@ -3012,6 +3012,7 @@ export const urls = {
   detail_warranty: "/detail_warranty/warrantyId/:id",
   setting_warranty: "/setting_warranty",
   ticket: "/ticket",
+  ticket_process: "/ticket_process",
   collect_ticket: "/collect_ticket",
   detail_ticket: "/detail_ticket/ticketId/:id",
   setting_ticket: "/setting_ticket",
