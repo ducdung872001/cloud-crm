@@ -38,6 +38,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
   const [childProcessId, setChildProcessId] = useState(null);
   const [transforms, setTransforms] = useState(null);
   // console.log("transforms", transforms);
+  const [valueKey, setValueKey] = useState(null);
 
   const [listInputVar, setListInputVar] = useState([
     {
@@ -101,7 +102,9 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
     if (response.code == 0) {
       const result = response.result;
       const authentication = (result?.authentication && JSON.parse(result.authentication)) || null;
-      setAuthenticationData(authentication?.config || null);
+      let authentication_config = authentication?.config ? { ...authentication.config, keyType: authentication?.config?.keyType || 1 } : null;
+      setAuthenticationData(authentication_config);
+      setValueKey(authentication_config?.token ? { value: authentication_config.token, label: authentication_config.token } : null);
 
       const errorHandling = (result?.errorHandling && JSON.parse(result.errorHandling)) || null;
       setHandleErrorData(errorHandling?.config || null);
@@ -966,7 +969,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
                       setAuthenticationData({ username: "", password: "" });
                     }
                     if (value === "JWT") {
-                      setAuthenticationData({ token: "" });
+                      setAuthenticationData({ token: "", keyType: 1 });
                     }
                     if (value === "OAuth") {
                       setAuthenticationData({ accessToken: "", refreshToken: "" });
@@ -1010,21 +1013,76 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
                 ) : null}
 
                 {formData.authentication === "JWT" ? (
-                  <div className="box-auth">
-                    <div className="item-token">
-                      <Input
-                        id="token"
-                        name="token"
-                        label="Token"
-                        fill={true}
-                        required={true}
-                        placeholder={"Token"}
-                        value={authenticationData?.token}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setAuthenticationData({ ...authenticationData, token: value });
-                        }}
-                      />
+                  <div className="form-group-jwt">
+                    <div className="input-key">
+                      <label>
+                        Token <span>*</span>
+                      </label>
+                      <div className={"container-select-mapping"}>
+                        {authenticationData.keyType == 1 ? (
+                          <div className="input-text">
+                            <Input
+                              id="token"
+                              name="token"
+                              label=""
+                              fill={false}
+                              required={true}
+                              placeholder={"Token"}
+                              value={authenticationData?.token}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                setAuthenticationData({ ...authenticationData, token: value });
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <div className="select-mapping">
+                            <SelectCustom
+                              key={"key_" + authenticationData.keyType}
+                              id="key"
+                              className="select"
+                              fill={false}
+                              required={false}
+                              options={[]}
+                              value={valueKey}
+                              isAsyncPaginate={true}
+                              isFormatOptionLabel={false}
+                              placeholder={authenticationData.keyType === 2 ? "Chọn biến" : "Chọn trường trong form"}
+                              additional={{
+                                page: 1,
+                              }}
+                              loadOptionsPaginate={authenticationData.keyType === 2 ? loadedOptionAttribute : loadedOptionForm}
+                              onChange={(e) => {
+                                setValueKey(e);
+                                setAuthenticationData({ ...authenticationData, token: e.label });
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        <Tippy
+                          content={
+                            authenticationData.keyType === 0
+                              ? "Chuyển nhập giá trị"
+                              : authenticationData.keyType === 1
+                              ? "Chuyển chọn biến"
+                              : "Chuyển chọn trường trong form"
+                          }
+                        >
+                          <div
+                            className={"icon-change-select"}
+                            onClick={(e) => {
+                              setValueKey(null);
+                              setAuthenticationData({
+                                token: "",
+                                keyType: authenticationData.keyType === 0 ? 1 : authenticationData.keyType === 1 ? 2 : 0,
+                              });
+                            }}
+                          >
+                            <Icon name="ResetPassword" style={{ width: 18 }} />
+                          </div>
+                        </Tippy>
+                      </div>
                     </div>
                   </div>
                 ) : null}
