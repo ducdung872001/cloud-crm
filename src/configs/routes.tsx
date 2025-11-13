@@ -1273,10 +1273,6 @@ export const routes: IRouter[] = [
     component: <TicketListProcess />,
   },
   {
-    path: urls.ticket_process,
-    component: <TicketListProcess />,
-  },
-  {
     path: urls.collect_ticket,
     component: <CollectTicket />,
   },
