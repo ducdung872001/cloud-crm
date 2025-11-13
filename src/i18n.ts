@@ -260,7 +260,7 @@ i18n.use(initReactI18next).init({
           teacherProfile: "Hồ sơ giáo viên",
           contactProfile: "Hồ sơ người liên hệ",
           parentProfile: "Hồ sơ phụ huynh",
-          treatmentHistory: "Lịch sử điều trị",
+          treatmentHistory: "Lịch sử thực hiện dịch vụ",
           customerSegments: "Phân khúc khách hàng",
 
           quote: "Báo giá",

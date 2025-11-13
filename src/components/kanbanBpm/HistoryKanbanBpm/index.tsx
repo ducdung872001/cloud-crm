@@ -9,6 +9,7 @@ import InfoProcess from "./InfoProcess";
 import DetailHistoryProcess from "./HistoryOfKanban";
 import ViewProcess from "./ViewProcess";
 import BusinessProcessService from "services/BusinessProcessService";
+import Icon from "components/icon";
 
 export default function HistoryKanbanBpm(props: any) {
   const { onShow, onHide, dataObject, type, onBack } = props;
@@ -39,7 +40,7 @@ export default function HistoryKanbanBpm(props: any) {
       tab: "tab_three",
     },
     {
-      name: "Kanban",
+      name: "Quay lại",
       tab: "tab_four",
     },
   ];
@@ -101,7 +102,20 @@ export default function HistoryKanbanBpm(props: any) {
                   }
                 }}
               >
-                {item.name}
+                {item.tab !== "tab_four" ? (
+                  <span>{item.name}</span>
+                ) : (
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 16,
+                    }}
+                  >
+                    <Icon name="ChevronLeft" />
+                    {item.name}
+                  </span>
+                )}
               </div>
             );
           })}

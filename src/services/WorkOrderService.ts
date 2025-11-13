@@ -22,6 +22,12 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  listBpmWorkOrder: (body: IWorkOrderRequestModel) => {
+    return fetch(urlsApi.workOrder.listBpmWorkOrder, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   // list: (body: any) => {
   //   return fetch(urlsApi.workOrder.list, {
   //     method: "POST",

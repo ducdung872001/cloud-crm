@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo, Fragment, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import moment from "moment";
 import { IActionModal, IOption } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
+import Icon from "components/icon";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import Modal, { ModalBody, ModalFooter } from "components/modal/modal";
@@ -401,6 +403,42 @@ export default function VoucherForm() {
 
   }, [formData?.values?.voucherId, voucherOptions]);
 
+  // lấy thông tin ngày bắt đầu và ngày kết thúc
+  const startDay = formData.values.coverageStart 
+    ? moment(formData.values.coverageStart).format("DD/MM/YYYY HH:mm")
+    : "";
+  const endDay = formData.values.coverageEnd
+    ? moment(formData.values.coverageEnd).format("DD/MM/YYYY HH:mm")
+    : "";
+
+  const maxEndDate = formData.values.coverageStart
+    ? moment(formData.values.coverageStart).add(1, "day").toDate()
+    : null;
+  
+  const minEndDate = formData.values.coverageStart
+    ? moment(formData.values.coverageStart).toDate()
+    : null;
+
+  const isEndDateExceeded = formData.values.coverageStart && formData.values.coverageEnd
+    ? moment(formData.values.coverageEnd).diff(moment(formData.values.coverageStart), "days") > 1
+    : false;
+
+  const handleChangeCoverageStart = useCallback((value: any) => {
+    setFormData((prev) => {
+      const newValues: any = { ...prev.values, coverageStart: value };
+      
+      if (value) {
+        const endDate = moment(value).add(1, "day").toDate();
+        newValues.coverageEnd = endDate;
+      }
+      
+      return {
+        ...prev,
+        values: newValues,
+      };
+    });
+  }, []);
+
   // Memoize các field để tránh tạo lại snippet mỗi render
   const listFieldVoteInfo: any[] = useMemo(() => [
     {
@@ -413,16 +451,32 @@ export default function VoucherForm() {
     {
       label: "Bắt đầu lịch",
       name: "coverageStart",
-      type: "text",
+      type: "date",
       fill: true,
-      disabled: true,
+      required: true,
+      icon: <Icon name="Calendar" />,
+      iconPosition: "left",
+      placeholder: "Nhập ngày bắt đầu",
+      hasSelectTime: true,
+      isWarning: startDay && endDay && startDay > endDay,
+      messageWarning: "Ngày bắt đầu nhỏ hơn ngày kết thúc",
     },
     {
       label: "Kết thúc lịch",
       name: "coverageEnd",
-      type: "text",
+      type: "date",
       fill: true,
-      disabled: true,
+      required: true,
+      icon: <Icon name="Calendar" />,
+      iconPosition: "left",
+      placeholder: "Nhập ngày kết thúc",
+      hasSelectTime: true,
+      minDate: minEndDate,
+      maxDate: maxEndDate,
+      isWarning: (startDay && endDay && endDay < startDay) || isEndDateExceeded,
+      messageWarning: isEndDateExceeded 
+        ? "Ngày kết thúc chỉ được lớn hơn ngày bắt đầu 1 ngày" 
+        : "Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu",
     },
     {
       label: "Tên khách hàng",
@@ -533,7 +587,7 @@ export default function VoucherForm() {
         </div>
       ),
     },
-  ], [voucherOptions, selectedVoucherOption, isLoadingVoucher, voucherList, formData?.values?.confirm]);
+  ], [voucherOptions, selectedVoucherOption, isLoadingVoucher, voucherList, formData?.values?.confirm, startDay, endDay, maxEndDate, minEndDate, isEndDateExceeded, handleChangeCoverageStart]);
 
   //! Cập nhật thông tin voucher vào form khi load xong
   useEffect(() => {
@@ -651,6 +705,19 @@ export default function VoucherForm() {
 
 
     const errors = Validate(validations, sanitizedFormData, [...listFieldVoteInfo]);
+
+    // Kiểm tra validation cho ngày kết thúc
+    if (sanitizedFormData.values.coverageStart && sanitizedFormData.values.coverageEnd) {
+      const startMoment = moment(sanitizedFormData.values.coverageStart);
+      const endMoment = moment(sanitizedFormData.values.coverageEnd);
+      const daysDiff = endMoment.diff(startMoment, "days");
+      
+      if (endMoment.isBefore(startMoment)) {
+        errors.coverageEnd = "Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu";
+      } else if (daysDiff > 1) {
+        errors.coverageEnd = "Ngày kết thúc chỉ được lớn hơn ngày bắt đầu 1 ngày";
+      }
+    }
 
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
@@ -845,7 +912,14 @@ export default function VoucherForm() {
                         <FieldCustomize
                           key={field.name ?? index}
                           field={field}
-                          handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldVoteInfo, setFormData)}
+                          handleUpdate={(value) => {
+                            // Sử dụng custom handler cho trường coverageStart
+                            if (field.name === "coverageStart") {
+                              handleChangeCoverageStart(value);
+                            } else {
+                              handleChangeValidate(value, field, formData, validations, listFieldVoteInfo, setFormData);
+                            }
+                          }}
                           formData={formData}
                         />
                       ))}

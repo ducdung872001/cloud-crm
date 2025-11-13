@@ -1670,6 +1670,7 @@ export const urlsApi = {
   //   updatePriorityLevel: prefixAdmin + "/workOrder/update/priorityLevel",
   // },
   workOrder: {
+    listBpmWorkOrder: prefixBpm + "/workOrder/list",
     list: prefixAdmin + "/workOrder/list",
     update: prefixAdmin + "/workOrder/update",
     updateEmployee: prefixAdmin + "/workOrder/update/employee",
@@ -2081,7 +2082,7 @@ export const urlsApi = {
   },
   //lay danh sach voucher
   voucher: {
-    list: prefixAdmin + "/promotion/list",
+    list: prefixAdmin + "/promotion/list-active",
   },
 
   email: {
