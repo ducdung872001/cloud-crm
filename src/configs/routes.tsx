@@ -643,6 +643,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="ReceiveTicket" />,
               code: "TICKET",
             },
+            {
+              title: "receiveTicketProcess", // Tiếp nhận hỗ trợ
+              path: urls.ticket_process,
+              icon: <Icon name="ReceiveTicket" />,
+              code: "KANBAN_V2",
+            },
             ...(sourceDomain == "rebornjsc.reborn.vn"
               ? [
                   {
@@ -1261,6 +1267,10 @@ export const routes: IRouter[] = [
   {
     path: urls.ticket,
     component: <TicketList />,
+  },
+  {
+    path: urls.ticket_process,
+    component: <TicketListProcess />,
   },
   {
     path: urls.ticket_process,
