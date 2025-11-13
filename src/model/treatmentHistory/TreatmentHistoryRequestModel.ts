@@ -33,6 +33,7 @@ export interface ITreatmentHistoryRequestModel {
   cardNumber: string;
   treatmentNum: number;
   totalTreatment: number;
+  commits: string;
   // trường này thêm vào với mục đích cho form cân đối
   customerPhone: string;
 }

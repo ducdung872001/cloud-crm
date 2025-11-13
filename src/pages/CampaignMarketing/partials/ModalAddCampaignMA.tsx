@@ -355,6 +355,7 @@ export default function ModalAddCampaignMA(props: any) {
 
     const body: any = {
       ...(formData.values as any),
+      processCode: data?.processCode ?? "QTMKT",
       ...(data ? { id: data.id } : {}),
     };
 
