@@ -89,6 +89,13 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  //Lấy danh sách công việc trong quy trình
+  listWorkflowCloud: (params?: any, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.businessProcess.listWorkflowCloud}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
   deleteWorkFlow: (id: number) => {
     return fetch(`${urlsApi.businessProcess.deleteWorkflow}?id=${id}`, {
       method: "DELETE",

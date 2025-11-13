@@ -2,6 +2,7 @@
   padding: 2rem;
   position: relative;
   min-height: 70rem;
+  background-color: white;
 
   .__special-kanban--business-process {
     overflow: auto;
@@ -149,4 +150,8 @@
       }
     }
   }
+}
+.wrapper-history-bpm {
+  padding: 2rem;
+  background-color: white;
 }

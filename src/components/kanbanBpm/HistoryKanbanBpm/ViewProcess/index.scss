@@ -1,0 +1,107 @@
+.box__view--process {
+    width: 100%;
+    height: 70vh;
+    position: relative;
+
+    .view-process{
+      // height: 55rem;
+      height: 70vh;
+      overflow: auto;
+      border: '1px solid #ccc';
+      .bjs-container .djs-palette {
+        display: none; /* Ẩn thanh công cụ palette */
+      }
+      .zoom-buttons {
+        position: absolute;
+        bottom: 15px;  /* Cách mép dưới */
+        right: 20px;   /* Cách mép phải */
+        display: flex;
+        flex-direction: column;
+        gap: 10px;  /* Khoảng cách giữa các nút */
+      }
+      
+      .zoom-btn {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        border: none;
+        background-color: var(--extra-color-50);  /* Màu nền xanh lá */
+        // background-color: #4CAF50;  /* Màu nền xanh lá */
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Hiệu ứng khi hover */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .zoom-btn:hover {
+        // background-color: #45a049; /* Đổi màu khi hover */
+        background-color: var(--primary-color); /* Đổi màu khi hover */
+      }
+    }
+  
+    .note__process {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 99;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+      border-radius: 0.3rem;
+      background-color: var(--white-color);
+      padding: 1.2rem;
+      font-size: 1.4rem;
+      line-height: 2rem;
+  
+      .hight-line {
+        color: var(--error-darker-color);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+  
+      .lst__agent {
+        .item--agent {
+          display: flex;
+          align-items: center;
+          gap: 0 0.2rem;
+          padding: 0.3rem 0;
+  
+          .name {
+            position: relative;
+  
+            &::after {
+              content: ":";
+            }
+          }
+  
+          .bg-item {
+            width: 2rem;
+            height: 1.2rem;
+            display: block;
+            border: 1px solid var(--extra-color-30);
+            border-radius: 0.3rem;
+          }
+  
+          .bg-active {
+            background: #FFC300;
+          }
+
+          .bg-hold {
+            background: #DDDDDD;
+          }
+  
+          .bg-success {
+            background: #33CC33;
+          }
+  
+          .bg-error {
+            background: red;
+          }
+        }
+      }
+    }
+  }
+  

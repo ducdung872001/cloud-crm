@@ -304,7 +304,6 @@ const FormViewerComponent = (props: any) => {
           console.log("keyFind", keyFind);
 
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
-          // // console.log("bindingTarget", keyFind?.properties?.bindingTarget);
           if (keyFind?.properties?.bindingTarget) {
             /**
              * khi thay đổi trường nào chưa bindingTarget thì mới cập nhật trường được binding
@@ -348,7 +347,7 @@ const FormViewerComponent = (props: any) => {
 
     const updateExpressionField = (components, schema, data) => {
       components.forEach((component) => {
-        if (component.type === "expression") {          
+        if (component.type === "expression") {
           let dataExpression = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
 
@@ -360,19 +359,6 @@ const FormViewerComponent = (props: any) => {
           }
         }
 
-
-        if(component.type == "number" && component?.properties?.formula) {
-          console.log('vao 2', component);
-          let formula = component?.properties?.formula;
-          console.log('formula122', formula);
-
-          if (formula) {
-            formula = formula.replace(/curr\.([a-zA-Z_]\w*)/g, (_, field) => data[field]);
-            console.log('formula', formula);
-            // data[target] = formula;
-          }
-        }
-
         if (component.type == "group") {
           let subComponents = component.components;
           updateExpressionField(subComponents, schema, data);
@@ -381,12 +367,9 @@ const FormViewerComponent = (props: any) => {
         if (component.type == "select") {
           let dataSelect = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
-          console.log("target =>", target);
-          console.log("dataSelect =>", dataSelect);
 
           if (target) {
             const listTarget = target.split(",").map((item) => item.trim()) || [];
-            console.log("listTarget", listTarget);
 
             if (dataSelect) {
               //lấy ra list option để chọn
@@ -409,18 +392,19 @@ const FormViewerComponent = (props: any) => {
         }
 
         if (component.type === "dynamiclist") {
-          component.components.forEach((componentChild) => {
-            if (componentChild.type == "select") {              
+          component.components.forEach((componentChild, index) => {
+            if (componentChild.type == "select") {          
               data[component.path].map((el) => {
                 let dataSelect = el[componentChild.key]; //Lấy ra key
                 let target = componentChild?.properties?.bindingTarget;
+                
                 if (target) {
-                  if(componentChild.type == "select") {
+                  if (componentChild.type == "select") {
                     const listTarget = target.split(",").map((item) => item.trim()) || [];
                     if (dataSelect) {
                       const optionValue = componentChild.values || [];
                       const valueSelected = optionValue.find((el) => el.value === dataSelect);
-  
+
                       if (listTarget && listTarget.length > 0) {
                         listTarget.map((item) => {
                           el[item] = valueSelected && valueSelected[item] ? valueSelected[item] : "";
@@ -431,25 +415,28 @@ const FormViewerComponent = (props: any) => {
                     }
                   }
                 }
-
               });
             }
 
-            if(componentChild.type == "number"){
-              if(componentChild.type == "number" && componentChild?.properties?.formula) {
+            if (componentChild.type == "number") {
+              if (componentChild.type == "number" && componentChild?.properties?.formula) {
                 let formula = componentChild?.properties?.formula;
                 if (formula && componentChild?.properties?.formula) {
-                  data[component.path].map(el => {
+                  // console.log('data', data);
+                  
+                  data[component.path].map((el, index) => {
+                    // console.log('el', el);
+                    
                     formula = formula.replace(/curr\.([a-zA-Z_]\w*)/g, (_, field) => el[field]);
-                    console.log('formula', eval(formula));
-                    el[componentChild?.key] = eval(formula)
-                  })
+                    // console.log('formula', eval(formula));
+                    // el[componentChild?.key] = eval(formula);
+                    data[component.path][index][componentChild.key] = eval(formula);
+                  });
+                  return data;
                   
                 }
               }
             }
-
-           
           });
         }
       });
@@ -503,11 +490,9 @@ const FormViewerComponent = (props: any) => {
                 return value !== undefined && value !== null ? value : "null";
               });
 
-              // console.log("apiParams after =>", apiParams);
               params.apiParams = apiParams;
             }
 
-            // console.log("params from api =>", params);
             const resp = await RestService.post(params);
 
             //Lấy ra kết quả resp.result => array|object|scalar
@@ -550,25 +535,31 @@ const FormViewerComponent = (props: any) => {
       //1. Loại là select
       if (formField.type == "select") {
         let fields = formField?.properties?.binding || ""; //Trả về departmentId
-        // console.log("fields =>", fields);
         let apiUrl = formField?.properties?.apiUrl || "";
+        let paramsUrl = formField?.properties?.paramsUrl || "";
 
+        const paramsTotal = Object.fromEntries(
+          paramsUrl.split(",").map((part) => {
+            const [key, ...rest] = part.split("=");
+            const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
+            return [key.trim(), value];
+          })
+        );        
+ 
         //Tồn tại trường binding
         if (fields) {
           let arrField = fields.split(",");
-          // console.log("arrField", arrField);
-
           let params = {};
 
           for (let index = 0; index < arrField.length; index++) {
             let field = arrField[index].trim();
-            // console.log("field =>", field);
-
             let value = formData[field] ?? 0;
-            params = { ...params, [field]: value };
+            params = { 
+              ...params, 
+              [field]: value,
+              ...(paramsUrl ? {...paramsTotal} : {})
+            };
           }
-
-          // console.log("params =>", params);
 
           let dataOption;
           if (apiUrl) {
@@ -603,10 +594,8 @@ const FormViewerComponent = (props: any) => {
               return value !== undefined && value !== null ? value : "null";
             });
 
-            // console.log("apiParams after =>", apiParams);
             params.apiParams = apiParams;
           }
-          console.log("apiParams", apiParams);
 
           const paramsTotal = Object.fromEntries(
             apiParams.split(",").map((part) => {
@@ -838,18 +827,15 @@ const FormViewerComponent = (props: any) => {
           } else {
             componentUrl = `${process.env.APP_LINK}${component.url}`;
           }
-          // console.log("componentUrl", componentUrl);
 
           // Lấy fieldName từ properties.name, nếu không có thì gán giá trị mặc định là 'undefined'
           const codeTemplateEform = component?.properties?.codeTemplateEform || "undefined";
-          // console.log("codeTemplateEform", codeTemplateEform);
         }
       });
 
       // setShowPopupCustom(true);
 
       const validationErrors = formViewerRef.current.validate();
-      // console.log("validationErrors", validationErrors);
 
       // Convert validationErrors object into an array of keys
       const errorFields = Object.keys(validationErrors);
@@ -898,54 +884,11 @@ const FormViewerComponent = (props: any) => {
         });
     };
 
-    // Định nghĩa hàm bất đồng bộ trong useEffect để sử dụng await
-    const initializeForm = async () => {
-      // Xử lý nếu là iframe (Dùng cho ảnh)
-      let updatedFormSchema = updateIframeLinks(formSchema);
-
-      // Xử lý nếu là button (Ví dụ chuyển đổi từ type=... sang type được chỉ định)
-      updatedFormSchema = updateButtons(updatedFormSchema);
-
-      // Xử lý khởi tạo các trường select trong form
-      updatedFormSchema = await initBindingData(updatedFormSchema);
-
-      // Import schema vào Viewer
-      if (dataInit) {
-        formViewerRef.current
-          .importSchema(updatedFormSchema, dataInit)
-          .then(() => {
-            setCurrFormSchema(updatedFormSchema);
-          })
-          .catch((err) => {
-            console.error("Lỗi khi tải form 1:", err);
-          });
-        setIsLoading(false);
-      } else {
-        formViewerRef.current
-          .importSchema(updatedFormSchema)
-          .then(() => {
-            setCurrFormSchema(updatedFormSchema);
-          })
-          .catch((err) => {
-            console.error("Lỗi khi tải form 2:", err);
-          });
-        setIsLoading(false);
-      }
-    };
-
-    // Gọi hàm async
-    initializeForm();
-
     return () => {
       if (formViewerRef.current) {
         formViewerRef.current.destroy();
       }
     };
-    // }, [formSchema, dataInit, currFormSchema, showOnRejectModal]);
-  }, [formSchema, dataInit, currFormSchema]);
-
-  useEffect(() => {
-    // console.log("currFormSchema changed =>", currFormSchema);
   }, [currFormSchema]);
 
   /**
@@ -1137,9 +1080,17 @@ const FormViewerComponent = (props: any) => {
             // Lấy ra các tham số được gán khởi tạo
             // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
             let key = componentL1.valuesKey;
-            let params = componentL1.properties?.params || "";
-            params = [];
-            filterItems.push({ key, params, compKey: componentL1.key, type: "select" });
+            let paramsUrl = componentL1?.properties?.paramsUrl || "";
+            const paramsTotal = Object.fromEntries(
+              paramsUrl.split(",").map((part) => {
+                const [key, ...rest] = part.split("=");
+                const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
+                return [key.trim(), value];
+              })
+            );
+            // let params = componentL1.properties?.params || "";
+            // params = [];
+            filterItems.push({ key, paramsTotal, compKey: componentL1.key, type: "select" });
           }
 
           //Lặp cấp L2
@@ -1152,9 +1103,17 @@ const FormViewerComponent = (props: any) => {
                 // Lấy ra các tham số được gán khởi tạo
                 // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
                 let key = componentL2.valuesKey;
-                let params = componentL2.properties?.params || "";
-                params = [];
-                filterItems.push({ key, params, compKey: componentL2.key, type: "select" });
+                let paramsUrl = componentL2?.properties?.paramsUrl || "";
+                const paramsTotal = Object.fromEntries(
+                  paramsUrl.split(",").map((part) => {
+                    const [key, ...rest] = part.split("=");
+                    const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
+                    return [key.trim(), value];
+                  })
+                );
+                // let params = componentL2.properties?.params || "";
+                // params = [];
+                filterItems.push({ key, paramsTotal, compKey: componentL2.key, type: "select" });
               }
 
               //Lặp cấp L3
@@ -1167,9 +1126,17 @@ const FormViewerComponent = (props: any) => {
                     // Lấy ra các tham số được gán khởi tạo
                     // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
                     let key = componentL3.valuesKey;
-                    let params = componentL3.properties?.params || "";
-                    params = [];
-                    filterItems.push({ key, params, compKey: componentL3.key, type: "select" });
+                    let paramsUrl = componentL3?.properties?.paramsUrl || "";
+                    const paramsTotal = Object.fromEntries(
+                      paramsUrl.split(",").map((part) => {
+                        const [key, ...rest] = part.split("=");
+                        const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
+                        return [key.trim(), value];
+                      })
+                    );
+                    // let params = componentL3.properties?.params || "";
+                    // params = [];
+                    filterItems.push({ key, paramsTotal, compKey: componentL3.key, type: "select" });
                   }
                 });
               }
@@ -1196,9 +1163,17 @@ const FormViewerComponent = (props: any) => {
             // Lấy ra các tham số được gán khởi tạo
             // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
             let key = nestedComponent.valuesKey;
-            let params = nestedComponent.properties?.params || "";
-            params = [];
-            filterItems.push({ key, params, compKey: nestedComponent.key, type: "select" });
+            let paramsUrl = nestedComponent?.properties?.paramsUrl || "";
+            const paramsTotal = Object.fromEntries(
+              paramsUrl.split(",").map((part) => {
+                const [key, ...rest] = part.split("=");
+                const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
+                return [key.trim(), value];
+              })
+            );
+            // let params = nestedComponent.properties?.params || "";
+            // params = [];
+            filterItems.push({ key, paramsTotal, compKey: nestedComponent.key, type: "select" });
           }
         });
       }
@@ -1212,9 +1187,9 @@ const FormViewerComponent = (props: any) => {
         //Đã là 1 dạng list gồm {label, value}
         let dataOption;
         if (filterItem?.apiUrl) {
-          dataOption = await SelectOptionEform(filterItem.key, filterItem?.apiUrl, { ...filterItem.params, status: 1 });
+          dataOption = await SelectOptionEform(filterItem.key, filterItem?.apiUrl, { ...filterItem.paramsTotal, status: 1 });
         } else {
-          dataOption = await SelectOptionData(filterItem.key, filterItem.params);
+          dataOption = await SelectOptionData(filterItem.key, filterItem.paramsTotal);
         }
 
         //Lưu trang là số 1 => Đăng ký lắng nghe sự kiện scroll
@@ -1294,6 +1269,46 @@ const FormViewerComponent = (props: any) => {
     // Trả về dữ liệu đã được cập nhật
     return updatedFormSchema;
   };
+
+  useEffect(() => {
+     // Định nghĩa hàm bất đồng bộ trong useEffect để sử dụng await
+     const initializeForm = async () => {
+      // Xử lý nếu là iframe (Dùng cho ảnh)
+      let updatedFormSchema = updateIframeLinks(formSchema);
+
+      // Xử lý nếu là button (Ví dụ chuyển đổi từ type=... sang type được chỉ định)
+      updatedFormSchema = updateButtons(updatedFormSchema);
+
+      // Xử lý khởi tạo các trường select trong form
+      updatedFormSchema = await initBindingData(updatedFormSchema);
+
+      // Import schema vào Viewer
+      if (dataInit) {
+        formViewerRef.current
+          .importSchema(updatedFormSchema, dataInit)
+          .then(() => {
+            setCurrFormSchema(updatedFormSchema);
+          })
+          .catch((err) => {
+            console.error("Lỗi khi tải form 1:", err);
+          });
+        setIsLoading(false);
+      } else {
+        formViewerRef.current
+          .importSchema(updatedFormSchema)
+          .then(() => {
+            setCurrFormSchema(updatedFormSchema);
+          })
+          .catch((err) => {
+            console.error("Lỗi khi tải form 2:", err);
+          });
+        setIsLoading(false);
+      }
+    };
+
+    // Gọi hàm async
+    initializeForm();
+  }, [formSchema, dataInit, currFormSchema]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
