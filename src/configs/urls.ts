@@ -2081,7 +2081,7 @@ export const urlsApi = {
   },
   //lay danh sach voucher
   voucher: {
-    list: prefixAdmin + "/promotion/list",
+    list: prefixAdmin + "/promotion/list-active",
   },
 
   email: {

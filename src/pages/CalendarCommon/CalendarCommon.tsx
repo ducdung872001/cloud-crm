@@ -52,7 +52,7 @@ export default function CalendarCommon() {
           },
           {
             value: "2",
-            label: "Thêm lịch điều trị",
+            label: "Thêm lịch thực hiện dịch vụ",
           },
           {
             value: "3",
