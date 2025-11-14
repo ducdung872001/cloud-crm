@@ -567,4 +567,13 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+
+  //Chạy lại dữ liệu
+  reloadData: (body: any) => {
+    return fetch(urlsApi.customer.reloadData, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+
 };

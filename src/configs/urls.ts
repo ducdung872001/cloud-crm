@@ -159,6 +159,7 @@ export const urlsApi = {
 
     //lấy tài khoản tổng đài
     getAccountCall: prefixAdmin + "/employeeAgent/employeeId",
+    reloadData: prefixAdmin + "/customer/moveToEs",
   },
 
   partner: {
@@ -2627,23 +2628,23 @@ export const urlsApi = {
     list: prefixAdmin + "/artifactGridHeader/list",
 
     //Thêm cột
-    update: prefixAdmin + "/artifactGridHeader/update",
-    detail: prefixAdmin + "/artifactGridHeader/get",
-    delete: prefixAdmin + "/artifactGridHeader/delete",
+    update: prefixBpm + "/artifactGridHeader/update",
+    detail: prefixBpm + "/artifactGridHeader/get",
+    delete: prefixBpm + "/artifactGridHeader/delete",
 
     //Thêm hàng
-    updateRow: prefixAdmin + "/artifactGrid/update",
-    detailRow: prefixAdmin + "/artifactGrid/get",
-    deleteRow: prefixAdmin + "/artifactGrid/delete",
+    updateRow: prefixBpm + "/artifactGrid/update",
+    detailRow: prefixBpm + "/artifactGrid/get",
+    deleteRow: prefixBpm + "/artifactGrid/delete",
 
-    importFile: prefixAdmin + "/upload/excelFile",
+    importFile: prefixBpm + "/upload/excelFile",
 
     //Thêm hàng
-    updateComment: prefixAdmin + "/artifactComment/update",
-    listComment: prefixAdmin + "/artifactComment/list",
+    updateComment: prefixBpm + "/artifactComment/update",
+    listComment: prefixBpm + "/artifactComment/list",
 
     //Lấy lữ liệu upload
-    getRowsUpload: prefixAdmin + "/upload/getRows",
+    getRowsUpload: prefixBpm + "/upload/getRows",
   },
   //TODO: End quy trình bpm
 
