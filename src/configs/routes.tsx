@@ -130,7 +130,7 @@ import DetailGuaranteeContract from "pages/Contract/GuaranteeContract/DetailGuar
 import CampaignMarketingList from "pages/CampaignMarketing/CampaignMarketingList";
 import BusinessProcessList from "pages/BPM/BusinessProcessList/BusinessProcessList";
 import SettingBusinessProcess from "pages/BPM/SettingBusinessProcess/SettingBusinessProcess";
-import ConfigBPM from "pages/ConfigBPM/ConfigBPM";
+import ConfigBPM from "pages/ConfigBPM";
 import ProcessedObjectList from "pages/SettingProcess/partials/ProcessedObjectList";
 import CreateOrder from "pages/Order/createOrder";
 import OrderInvoiceList from "pages/Order/orderInvoiceList";

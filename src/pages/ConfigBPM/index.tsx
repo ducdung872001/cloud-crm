@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import TitleAction from "components/titleAction/titleAction";
-import "./ConfigBPM.scss";
+import "./index.scss";
 import ComponentList from "./ComponentList/ComponentList";
-import ObjectGroupList from "./ObjectGroup/ObjectGroup";
+import ObjectGroupList from "./ObjectGroup";
 import ObjectAttributeList from "./ObjectAttribute/ObjectAttributeList";
 
 export default function ConfigBPM() {
