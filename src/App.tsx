@@ -299,6 +299,8 @@ export default function App() {
           {location.pathname == "/link_survey" && <Route path="/link_survey" element={<LinkSurvey />} />}
           {location.pathname == "/upload_document" && <Route path="/upload_document" element={<UploadDocument />} />}
           {location.pathname == "/collect_ticket" && <Route path="/collect_ticket" element={<CollectTicket />} />}
+          {location.pathname == "/send_email_confirm" && <Route path="/send_email_confirm" element={<EmailConfirm />} />}
+          {location.pathname == "/voucher_confirm" && <Route path="/voucher_confirm" element={<VoucherForm/> } /> }
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />
