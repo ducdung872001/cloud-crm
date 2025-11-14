@@ -1,0 +1,11 @@
+.modal-setting-object {
+  .modal-dialog--full {
+    .form-setting-object {
+      .modal-body {
+        padding: 0 !important;
+        overflow: scroll;
+        max-height: calc(100vh - 152px);
+      }
+    }
+  }
+}

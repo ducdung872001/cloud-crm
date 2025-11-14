@@ -177,7 +177,7 @@ export default function ModalUserTask({ onShow, onHide, dataNode, processId, dis
     setFormSchema(newSchema); // Cập nhật schema mới
     console.log("Schema mới:", newSchema);
     setListComponent(newSchema?.components);
-  }
+  };
 
   const addArtifactMetadata = async (nodeId, fieldName, link, type) => {
     const body = {
@@ -481,8 +481,8 @@ export default function ModalUserTask({ onShow, onHide, dataNode, processId, dis
         callBack={(e, formId) => {
           const newDataForm = {
             ...e,
-            id: formSchema?.id
-          }
+            id: formSchema?.id,
+          };
           setInitFormSchema(newDataForm);
           setFormSchema(newDataForm);
         }}
