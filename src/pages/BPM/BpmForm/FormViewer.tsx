@@ -290,8 +290,8 @@ const FormViewerComponent = (props: any) => {
     let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
       let { schema, data } = event;
-      // console.log("Check grid > Changed Data =>", data);
-
+      console.log('event', event);
+      
       let components = schema.components;
       const newValues = data;
 
@@ -350,7 +350,6 @@ const FormViewerComponent = (props: any) => {
         if (component.type === "expression") {
           let dataExpression = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
-
           if (target) {
             if (dataExpression && dataExpression != data[target]) {
               data[target] = dataExpression;
@@ -393,10 +392,16 @@ const FormViewerComponent = (props: any) => {
 
         if (component.type === "dynamiclist") {
           component.components.forEach((componentChild, index) => {
-            if (componentChild.type == "select") {          
-              data[component.path].map((el) => {
+            // console.log('componentChild', componentChild);
+            
+            if (componentChild.type == "select" || componentChild.type === "expression") {   
+              console.log('componentChild', componentChild);
+
+              data[component.path].map((el) => {    
+                console.log('el', el);
+                            
                 let dataSelect = el[componentChild.key]; //Lấy ra key
-                let target = componentChild?.properties?.bindingTarget;
+                let target = componentChild?.properties?.bindingTarget;                
                 
                 if (target) {
                   if (componentChild.type == "select") {
@@ -414,29 +419,40 @@ const FormViewerComponent = (props: any) => {
                       }
                     }
                   }
+
+                  if (componentChild.type === "expression") {
+                    let dataExpression = el[componentChild.key]; //Lấy ra key
+                    console.log('dataExpression', dataExpression);
+                    
+                    if (dataExpression) {
+                      el[target] = dataExpression;
+                      // rerenderForm(schema, data);
+                    }
+                  }
                 }
               });
             }
 
-            if (componentChild.type == "number") {
-              if (componentChild.type == "number" && componentChild?.properties?.formula) {
-                let formula = componentChild?.properties?.formula;
-                if (formula && componentChild?.properties?.formula) {
-                  // console.log('data', data);
+
+            // if (componentChild.type == "number") {
+            //   if (componentChild.type == "number" && componentChild?.properties?.formula) {
+            //     let formula = componentChild?.properties?.formula;
+            //     if (formula && componentChild?.properties?.formula) {
+            //       // console.log('data', data);
                   
-                  data[component.path].map((el, index) => {
-                    // console.log('el', el);
+            //       data[component.path].map((el, index) => {
+            //         console.log('el', el);
                     
-                    formula = formula.replace(/curr\.([a-zA-Z_]\w*)/g, (_, field) => el[field]);
-                    // console.log('formula', eval(formula));
-                    // el[componentChild?.key] = eval(formula);
-                    data[component.path][index][componentChild.key] = eval(formula);
-                  });
-                  return data;
+            //         formula = formula.replace(/curr\.([a-zA-Z_]\w*)/g, (_, field) => el[field]);
+            //         // console.log('formula', eval(formula));
+            //         // el[componentChild?.key] = eval(formula);
+            //         data[component.path][index][componentChild.key] = eval(formula);
+            //       });
+            //       return data;
                   
-                }
-              }
-            }
+            //     }
+            //   }
+            // }
           });
         }
       });
