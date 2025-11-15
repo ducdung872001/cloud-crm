@@ -32,6 +32,7 @@ export interface ITicketResponseModel {
   lstTicketProcess: any;
   status: number;
   executorId: number;
+  processId: number;
 }
 
 export interface IViewStatusTicketResponseModel {

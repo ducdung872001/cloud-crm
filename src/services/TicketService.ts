@@ -22,6 +22,12 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  collect: (body: ITicketRequestModel, params?: any) => {
+    return fetch(`${urlsApi.ticket.collect}${convertParamsToString(params)}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   detail: (id: number) => {
     return fetch(`${urlsApi.ticket.detail}?id=${id}`, {
       method: "GET",
