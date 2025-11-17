@@ -13,6 +13,9 @@ console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
+  beautySalon: {
+    list: prefixRebornVn + "/beautySalon/list",
+  },
   user: {
     create: prefixAuthenticator + "/user/create",
     profile: prefixAuthenticator + "/user/me",
@@ -3113,6 +3116,7 @@ export const urls = {
   // danh sách cơ hội
   opportunity_list: "/opportunity_list",
   order_request_list: "/order_request_list",
+  order_tracking: "/order_tracking",
   // quản lý cơ hội
   management_opportunity: "/management_opportunity",
   // tổng đài

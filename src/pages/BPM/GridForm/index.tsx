@@ -11,8 +11,11 @@ import "./index.scss";
 import Button from "components/button/button";
 import Popover from "components/popover/popover";
 import { useOnClickOutside } from "utils/hookCustom";
+import NoteField, { INoteData } from "./partials/NoteField";
 import ImageThirdGender from "assets/images/third-gender.png";
 import Checkbox from "components/checkbox/checkbox";
+import ModalExport from "./partials/ModalExport/ModalExport";
+import ModalImport from "./partials/ModalImport";
 import { PHONE_REGEX, EMAIL_REGEX, PHONE_REGEX_NEW } from "utils/constant";
 import _, { set } from "lodash";
 import ModalAddColumn from "./partials/ModalAddColumn/ModalAddColumn";
@@ -21,9 +24,11 @@ import GridService from "services/GridService";
 import { getSearchParameters } from "reborn-util";
 import { showToast } from "utils/common";
 // import { setTime } from "react-datepicker/dist/date_utils";
+import ModalComment from "./partials/ModalComment";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import moment from "moment";
 // import ModalAddSupplier from "pages/Supplier/partials/ModalAddSupplier";
+import ActionRow from "./partials/ActionRowPopup/ActionRow";
 import { Textarea } from "@bpmn-io/form-js-viewer";
 import TextArea from "components/textarea/textarea";
 import CustomerService from "services/CustomerService";
@@ -37,9 +42,8 @@ import BusinessCategoryService from "services/BusinessCategoryService";
 import SupplierService from "services/SupplierService";
 import InvestorService from "services/InvestorService";
 import ProcurementService from "services/ProcurementService";
-import Loading from "components/loading";
+import { dataRowHsmt, headerHsmt, dataRowHsmtTvtk } from "./GridConfigHsmt";
 import WorkCategoryService from "services/WorkCategoryService";
-// import { dataRowHsmt, headerHsmt } from "./GridConfigHsmt";
 
 export interface IColumnGrid {
   name: string;
@@ -53,20 +57,25 @@ export interface IColumnGrid {
   format_lookup?: string;
 }
 
-export default function GridFormSetting(props: any) {
+export default function GridFormNew(props: any) {
   const params: any = getSearchParameters();
-
-  const { nodeId, fieldName, processId } = props;
+  const columns = props.columns || [];
+  const title = props?.title || "Danh mục";
+  const data = props?.data || [];
 
   const parser = new Parser();
 
   const enableAddRow = params?.enableAddRow == "false" ? false : true;
   const enableAddColumns = params?.enableAddColumns == "false" ? false : true;
-  const enableAddCmtCell = false;
-  const enableAddCmtCol = false;
-  const enableEditCell = false;
-  //   const fieldName = params?.fieldName || "";
-  //   const documentType = params?.documentType || "";
+  const enableExport = params?.enableExport == "false" ? false : true;
+  const enableImport = params?.enableImport == "false" ? false : true;
+  const enableAddCmtCell = params?.enableAddCmtCell == "false" ? false : true;
+  const enableAddCmtCol = params?.enableAddCmtCol == "false" ? false : true;
+  const enableEditCell = params?.enableEditCell == "false" ? false : true;
+  const enableSave = params?.enableSave == "false" ? false : true;
+  const fieldName = params?.fieldName || "";
+  const documentType = params?.documentType || "";
+  const procurementType = params?.procurementType || "";
 
   const optionRegex = {
     phoneRegex: PHONE_REGEX_NEW,
@@ -81,7 +90,7 @@ export default function GridFormSetting(props: any) {
   const [success, setSuccess] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const getDetailArtifact = async (nodeId, fieldName) => {
+  const getDetailArtifact = async (nodeId, fieldName, potId, workId) => {
     const params = {
       nodeId: nodeId,
       fieldName: fieldName,
@@ -92,37 +101,69 @@ export default function GridFormSetting(props: any) {
       const result = response.result;
       const header = (result?.header && JSON.parse(result.header)) || null;
       setListColumn(header || []);
+      let dataRowOrigin: any = await getDetailRow(nodeId, fieldName, potId, workId, header);
+      if (dataRowOrigin && dataRowOrigin.length && dataRowOrigin[0].length) {
+        const listComment = await getListComment();
+        if (listComment) {
+          dataRowOrigin = dataRowOrigin.map((item) => {
+            if (item.type == "title") {
+              return item;
+            }
+
+            return item.map((field) => {
+              return {
+                ...field,
+                isHaveNote: listComment[field.rowKey + "-" + field.key] ? true : false,
+              };
+            });
+          });
+        }
+        setDataRow(dataRowOrigin);
+      }
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
     setLoading(false);
   };
 
-  //   const getDetailHsmt = async (nodeId, fieldName, potId, workId) => {
-  //     setListColumn(headerHsmt);
-  //     let dataRowOrigin: any = await getDetailRow(nodeId, fieldName, potId, workId, headerHsmt);
-  //     if (dataRowOrigin && dataRowOrigin.length == 8 && dataRowOrigin[0].length) {
-  //       // Nếu có dữ liệu hồ sơ mời thầu rồi thì hiển thị dữ liệu
-  //       setDataRow(dataRowOrigin);
-  //     } else {
-  //       // Nếu chưa có dữ liệu thì hiển thị dữ liệu mẫu trống
-  //       setDataRow(
-  //         dataRowHsmt.map((item, index) => {
-  //           if (index == 0) {
-  //             return item;
-  //           } else {
-  //             let uuid = uuidv4();
-  //             return item.map((field) => {
-  //               return {
-  //                 ...field,
-  //                 rowKey: uuid,
-  //               };
-  //             });
-  //           }
-  //         })
-  //       );
-  //     }
-  //   };
+  const getDetailHsmt = async (nodeId, fieldName, potId, workId) => {
+    setListColumn(headerHsmt);
+    let dataRowOrigin: any = await getDetailRow(nodeId, fieldName, potId, workId, headerHsmt);
+    if (dataRowOrigin && dataRowOrigin.length && dataRowOrigin[0].length) {
+      // Nếu có dữ liệu hồ sơ mời thầu rồi thì hiển thị dữ liệu
+      setDataRow(dataRowOrigin);
+    } else {
+      // Nếu chưa có dữ liệu thì hiển thị dữ liệu mẫu trống
+      let data_model = [];
+      if (procurementType == "tvtk") {
+        data_model = dataRowHsmtTvtk;
+      } else {
+        data_model = dataRowHsmt;
+      }
+      setDataRow(
+        data_model.map((item, index) => {
+          if (index == 0) {
+            return item;
+          } else {
+            let uuid = uuidv4();
+            if (item?.length) {
+              return item.map((field) => {
+                return {
+                  ...field,
+                  rowKey: uuid,
+                };
+              });
+            } else {
+              return {
+                ...item,
+                rowKey: uuid,
+              };
+            }
+          }
+        })
+      );
+    }
+  };
 
   const getDetailRow = async (nodeId, fieldName, potId, workId, header) => {
     const params = {
@@ -168,20 +209,20 @@ export default function GridFormSetting(props: any) {
   useEffect(() => {
     if (fieldName != "hsmt") {
       setLoading(true);
-      if (nodeId && fieldName) {
-        getDetailArtifact(nodeId, fieldName);
+      if (params?.nodeId && params?.fieldName && params?.potId && params?.workId) {
+        getDetailArtifact(params?.nodeId, params?.fieldName, params?.potId, params?.workId);
       } else {
-        // getDetailArtifact("Activity_0n3i8dv", "boq", 496, 1813); // Dữ liệu test
+        getDetailArtifact("Activity_0n3i8dv", "boq", 496, 1813); // Dữ liệu test
       }
     } else {
       // Xử lý trường hợp hiển thị danh sách hồ sơ mời thầu ở đây
-      //   if (params?.nodeId && params?.fieldName && params?.potId && params?.workId) {
-      //     getDetailHsmt(params?.nodeId, params?.fieldName, params?.potId, params?.workId);
-      //   } else {
-      //     getDetailHsmt("Activity_0n3i8dv", "hsmt", 496, 1813); // Dữ liệu test
-      //   }
+      if (params?.nodeId && params?.fieldName && params?.potId && params?.workId) {
+        getDetailHsmt(params?.nodeId, params?.fieldName, params?.potId, params?.workId);
+      } else {
+        getDetailHsmt("Activity_0n3i8dv", "hsmt", 496, 1813); // Dữ liệu test
+      }
     }
-  }, [nodeId, fieldName]);
+  }, []);
 
   const [listColumn, setListColumn] = useState<any[]>([]);
 
@@ -644,6 +685,8 @@ export default function GridFormSetting(props: any) {
     setDataNoteField(field.noteList);
   };
 
+  const [showModalImport, setShowModalImport] = useState<boolean>(false);
+  const [onShowModalExport, setOnShowModalExport] = useState<boolean>(false);
   const [showModalAddColumn, setShowModalAddColumn] = useState<boolean>(false);
   const [dataColumnEdit, setDataColumnEdit] = useState<any>(null);
   const optionsExport: IOption[] = useMemo(
@@ -705,10 +748,10 @@ export default function GridFormSetting(props: any) {
       }
     }
     const param = {
-      nodeId: nodeId || "Activity_0n3i8dv",
-      processId: processId || 380,
+      nodeId: params?.nodeId || "Activity_0n3i8dv",
+      processId: params?.processId || 380,
       potId: params?.potId || 496,
-      fieldName: fieldName || "boq",
+      fieldName: params?.fieldName || "boq",
       documentType: params?.documentType || "PVYC",
       workId: params?.workId || 1813,
       data: JSON.stringify(data),
@@ -727,9 +770,9 @@ export default function GridFormSetting(props: any) {
 
   const addColumn = async (list_column) => {
     let dataSubmit = {
-      nodeId: nodeId || "Activity_0n3i8dv",
-      processId: processId || 380,
-      fieldName: fieldName || "boq",
+      nodeId: params?.nodeId || "Activity_0n3i8dv",
+      processId: params?.processId || 380,
+      fieldName: params?.fieldName || "boq",
       header: JSON.stringify(list_column),
     };
     const responseHeader = await GridService.update(dataSubmit);
@@ -796,10 +839,11 @@ export default function GridFormSetting(props: any) {
   const [dataImport, setDataImport] = useState<any>(null);
   const [dataImportHeader, setDataImportHeader] = useState<any>(null);
   const [dataExcel, setDataExcel] = useState<any>(null);
+
   const [caclData, setCaclData] = useState<any>(false);
   const [lineSuccess, setLineSuccess] = useState<any>(0);
 
-  const lineStart = 3;
+  const lineStart = 2;
 
   useEffect(() => {
     if (dataExcel) {
@@ -823,7 +867,10 @@ export default function GridFormSetting(props: any) {
 
   async function caclImportData() {
     let newDataRow = [dataRow[0]];
+    let index = 0;
     for (const element of dataExcel.slice(lineStart)) {
+      index++;
+
       // Tạo 1 row mới
       let uuid = uuidv4();
       let _baseRow = baseRow.map((field) => ({
@@ -833,6 +880,20 @@ export default function GridFormSetting(props: any) {
 
       let new_field: any = [];
       let listIgnoreField = [];
+
+      if (index == 1) {
+        let isRowSpecial = true;
+        for (let field of _baseRow) {
+          let value = element[field.name];
+          if (value) {
+            isRowSpecial = false;
+            break;
+          }
+        }
+        if (isRowSpecial) {
+          continue;
+        }
+      }
 
       for (let field of _baseRow) {
         let value = element[field.name];
@@ -954,6 +1015,7 @@ export default function GridFormSetting(props: any) {
     }
     setDataRow(newDataRow);
     setCaclData(false);
+    setShowModalImport(false);
   }
 
   const loadValueLookup = async (id, lookup, bindingField, code?: string) => {
@@ -1141,6 +1203,43 @@ export default function GridFormSetting(props: any) {
 
   useOnClickOutside(refColumn, () => setShowPopoverStatus(showPopoverStatus.map((item) => false)), ["index"]);
 
+  const handleActionRow = (detailAction) => {
+    let uuid = uuidv4();
+    switch (detailAction.action) {
+      case "insert":
+        let _baseRow = baseRow.map((field) => {
+          return {
+            ...field,
+            rowKey: uuid,
+          };
+        });
+        if (detailAction?.rowIndex !== undefined) {
+          let _dataRow = [...dataRow];
+          _dataRow.splice(detailAction?.position == "top" ? detailAction.rowIndex : detailAction.rowIndex + 1, 0, _baseRow);
+          setDataRow(_dataRow);
+        }
+        break;
+      case "insertTitle":
+        let titleRow = {
+          rowKey: uuid,
+          style: "title-" + detailAction?.stype,
+          content: "",
+          indexTitle: "",
+          type: "title",
+          isShowEdit: true,
+        };
+        if (detailAction?.rowIndex !== undefined) {
+          let _dataRow = [...dataRow];
+          _dataRow.splice(detailAction?.position == "top" ? detailAction.rowIndex : detailAction.rowIndex + 1, 0, titleRow);
+          setDataRow(_dataRow);
+        }
+        break;
+      case "delete":
+        handleDeleteRow(dataRow, detailAction?.rowIndex);
+        break;
+    }
+  };
+
   const [refs, setRefs] = useState([]);
   const [height, setHeight] = useState([]);
 
@@ -1252,16 +1351,16 @@ export default function GridFormSetting(props: any) {
         const element = listDeleteField[index];
         await onDeleteColumn({
           key: element,
-          nodeId: nodeId || "Activity_0n3i8dv",
-          fieldName: fieldName || "boq",
+          nodeId: params?.nodeId || "Activity_0n3i8dv",
+          fieldName: params?.fieldName || "boq",
         });
       }
       setListColumn(listColumn.filter((item) => !listDeleteField.includes(item.key)));
     } else {
       await onDeleteColumn({
         key: field.key,
-        nodeId: nodeId || "Activity_0n3i8dv",
-        fieldName: fieldName || "boq",
+        nodeId: params?.nodeId || "Activity_0n3i8dv",
+        fieldName: params?.fieldName || "boq",
       });
       setListColumn(listColumn.filter((item) => item.name !== field.name));
     }
@@ -1269,82 +1368,103 @@ export default function GridFormSetting(props: any) {
   };
 
   return (
-    <div className="box__setting-grid-form">
-      {!loading ? (
-        <div className="form-group">
-          {dataRow.length > 0 ? (
-            <div className="content__tbody--table">
-              <div className="wrap-table" style={params?.fieldName == "hsmt" ? { borderRight: "none", borderBottomRightRadius: "0" } : {}}>
-                {dataRow.map((row, rowIndex) => {
-                  if (row?.type == "title") {
-                    return (
-                      <div key={rowIndex} className="item__tbody-title">
-                        <div
-                          className={rowIndex == dataRow.length - 1 ? `index--last index--title` : `index--title`}
-                          onClick={() => {
-                            setShowPopoverStatus(
-                              showPopoverStatus.map((item, index) => {
-                                return index == rowIndex ? !item : false;
-                              })
-                            );
-                          }}
-                        >
-                          <div className="index--data" style={{ cursor: "pointer" }}>
-                            <div>{rowIndex}</div>
-                          </div>
-                        </div>
-                        {showPopoverStatus[rowIndex] && enableAddRow && rowIndex != 0 ? (
-                          <Popover
-                            direction={"bottom"}
-                            alignment={"left"}
-                            isTriangle={true}
-                            className="popover-note"
-                            refContainer={null}
-                            refPopover={refColumn}
-                            forNote={true}
-                          >
-                            {/* <ActionRow onShow={true} rowIndex={rowIndex} callBack={(detailAction) => handleActionRow(detailAction)}></ActionRow> */}
-                          </Popover>
-                        ) : null}
+    <div className="box__add-grid-form">
+      {!success || loading ? (
+        <div className="loading-grid">
+          <div className="import-loading">
+            <Icon name="Refresh" />
+          </div>
+        </div>
+      ) : null}
+      <div className="form-group">
+        {/* <div className="label__form">
+          <span className="label">{title}</span>
+        </div> */}
+        <div className="action-excel">
+          {enableExport ? (
+            <Button
+              color="secondary"
+              className="button--left"
+              onClick={() => {
+                setOnShowModalExport(true);
+                handlExportData();
+              }}
+            >
+              <Icon name="Upload" /> Xuất dữ liệu Excel
+            </Button>
+          ) : null}
+          {enableImport ? (
+            <Button
+              color="secondary"
+              className="button--right"
+              onClick={() => {
+                setShowModalImport(true);
+              }}
+            >
+              <Icon name="DownLoadNew" /> Nhập dữ liệu Excel
+            </Button>
+          ) : null}
+        </div>
 
-                        {row.isShowEdit ? (
-                          <div key={"title-" + rowIndex} className="content-title" style={{ paddingLeft: "1rem" }}>
-                            <TextArea
-                              name={"title-" + rowIndex}
-                              value={row.content}
-                              autoFocus={true}
-                              readOnly={!enableEditCell ? true : false}
-                              onChange={(e) => {
-                                setDataRow(
-                                  dataRow.map((itemRow, indexItemRow) => {
-                                    if (indexItemRow == rowIndex) {
-                                      return {
-                                        ...itemRow,
-                                        content: e.target.value,
-                                      };
-                                    }
-                                    return itemRow;
-                                  })
-                                );
-                              }}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                  // Thực hiện hành động khi nhấn Enter
-                                  // Đổi trạng thái isShowEdit = false
-                                  setDataRow(
-                                    dataRow.map((itemRow, indexItemRow) => {
-                                      if (indexItemRow == rowIndex) {
-                                        return {
-                                          ...itemRow,
-                                          isShowEdit: false,
-                                        };
-                                      }
-                                      return itemRow;
-                                    })
-                                  );
-                                }
-                              }}
-                              onBlur={() => {
+        {dataRow.length > 0 ? (
+          <div className="content__tbody--table">
+            <div className="wrap-table" style={params?.fieldName == "hsmt" ? { borderRight: "none", borderBottomRightRadius: "0" } : {}}>
+              {dataRow.map((row, rowIndex) => {
+                if (row?.type == "title") {
+                  return (
+                    <div key={rowIndex} className="item__tbody-title">
+                      <div
+                        className={rowIndex == dataRow.length - 1 ? `index--last index--title` : `index--title`}
+                        onClick={() => {
+                          setShowPopoverStatus(
+                            showPopoverStatus.map((item, index) => {
+                              return index == rowIndex ? !item : false;
+                            })
+                          );
+                        }}
+                      >
+                        <div className="index--data" style={{ cursor: "pointer" }}>
+                          <div>{rowIndex}</div>
+                        </div>
+                      </div>
+                      {showPopoverStatus[rowIndex] && enableAddRow && rowIndex != 0 ? (
+                        <Popover
+                          direction={"bottom"}
+                          alignment={"left"}
+                          isTriangle={true}
+                          className="popover-note"
+                          refContainer={null}
+                          refPopover={refColumn}
+                          forNote={true}
+                        >
+                          <ActionRow onShow={true} rowIndex={rowIndex} callBack={(detailAction) => handleActionRow(detailAction)}></ActionRow>
+                        </Popover>
+                      ) : null}
+
+                      {row.isShowEdit ? (
+                        <div key={"title-" + rowIndex} className="content-title" style={{ paddingLeft: "1rem" }}>
+                          <TextArea
+                            name={"title-" + rowIndex}
+                            value={row.content}
+                            autoFocus={true}
+                            readOnly={!enableEditCell ? true : false}
+                            onChange={(e) => {
+                              setDataRow(
+                                dataRow.map((itemRow, indexItemRow) => {
+                                  if (indexItemRow == rowIndex) {
+                                    return {
+                                      ...itemRow,
+                                      content: e.target.value,
+                                    };
+                                  }
+                                  return itemRow;
+                                })
+                              );
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                // Thực hiện hành động khi nhấn Enter
+                                // Đổi trạng thái isShowEdit = false
                                 setDataRow(
                                   dataRow.map((itemRow, indexItemRow) => {
                                     if (indexItemRow == rowIndex) {
@@ -1356,379 +1476,460 @@ export default function GridFormSetting(props: any) {
                                     return itemRow;
                                   })
                                 );
-                              }}
-                              placeholder={"Nhập tiêu đề " + row.style.split("-")[1]}
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className={row.style + " content-title"}
-                            style={{ cursor: "pointer", whiteSpace: "normal" }}
-                            onDoubleClick={() => {
-                              // Đổi trạng thái isShowEdit = true
+                              }
+                            }}
+                            onBlur={() => {
                               setDataRow(
                                 dataRow.map((itemRow, indexItemRow) => {
                                   if (indexItemRow == rowIndex) {
                                     return {
                                       ...itemRow,
-                                      isShowEdit: true,
+                                      isShowEdit: false,
                                     };
                                   }
                                   return itemRow;
                                 })
                               );
                             }}
-                          >
-                            <div>{row.content}</div>
+                            placeholder={"Nhập tiêu đề " + row.style.split("-")[1]}
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className={row.style + " content-title"}
+                          style={
+                            params?.fieldName == "hsmt"
+                              ? {
+                                  cursor: "pointer",
+                                  whiteSpace: "normal",
+                                  color: "black",
+                                  borderRight: "1px solid var(--extra-color-50)",
+                                  fontWeight: "bold",
+                                }
+                              : { cursor: "pointer", whiteSpace: "normal" }
+                          }
+                          onDoubleClick={() => {
+                            // Đổi trạng thái isShowEdit = true
+                            setDataRow(
+                              dataRow.map((itemRow, indexItemRow) => {
+                                if (indexItemRow == rowIndex) {
+                                  return {
+                                    ...itemRow,
+                                    isShowEdit: true,
+                                  };
+                                }
+                                return itemRow;
+                              })
+                            );
+                          }}
+                        >
+                          <div>{row.content}</div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div
+                      key={rowIndex}
+                      ref={refs[rowIndex]}
+                      className={rowIndex == 0 ? `item__tbody item__tbody--header` : `item__tbody item_row_${rowIndex}`}
+                      style={params?.fieldName == "hsmt" ? { borderTopRightRadius: "0" } : {}}
+                    >
+                      <div
+                        className={rowIndex == 0 ? `index index--header` : rowIndex == dataRow.length - 1 ? `index index--last` : `index`}
+                        style={{ height: row?.find((item) => item?.isRegexFalse) ? "80px" : "" }}
+                      >
+                        {rowIndex == 0 ? (
+                          <div>STT</div>
+                        ) : (
+                          <div className="index--data" style={{ cursor: "pointer" }}>
+                            {/* {enableAddRow ? (
+                            <>
+                              <div className={`index--number`}>{rowIndex}</div>
+                              <div className="index--trash" onClick={() => handleDeleteRow(row, rowIndex)}>
+                                <Icon name="Trash" />
+                              </div>
+                            </>
+                          ) : (
+                            <div className={``}>{rowIndex}</div>
+                          )} */}
+                            <>
+                              <div
+                                className={`index--number`}
+                                onClick={() => {
+                                  setShowPopoverStatus(
+                                    showPopoverStatus.map((item, index) => {
+                                      return index == rowIndex ? !item : false;
+                                    })
+                                  );
+                                }}
+                              >
+                                {rowIndex}
+                              </div>
+                              <div className="index--carret">
+                                <div
+                                  className="svg-carret"
+                                  onMouseDown={() => {
+                                    handleMouseDown(rowIndex);
+                                  }}
+                                >
+                                  <Icon name="CaretDown" />
+                                </div>
+                              </div>
+                            </>
+                            {/* <div>{rowIndex}</div> */}
                           </div>
                         )}
                       </div>
-                    );
-                  } else {
-                    return (
-                      <div
-                        key={rowIndex}
-                        ref={refs[rowIndex]}
-                        className={rowIndex == 0 ? `item__tbody item__tbody--header` : `item__tbody item_row_${rowIndex}`}
-                        style={params?.fieldName == "hsmt" ? { borderTopRightRadius: "0" } : {}}
-                      >
-                        <div
-                          className={rowIndex == 0 ? `index index--header` : rowIndex == dataRow.length - 1 ? `index index--last` : `index`}
-                          style={{ height: row?.find((item) => item?.isRegexFalse) ? "80px" : "" }}
+                      {showPopoverStatus[rowIndex] && enableAddRow && rowIndex != 0 ? (
+                        <Popover
+                          direction={"bottom"}
+                          alignment={"left"}
+                          isTriangle={true}
+                          className="popover-note"
+                          refContainer={null}
+                          refPopover={refColumn}
+                          forNote={true}
                         >
-                          {rowIndex == 0 ? (
-                            <div>STT</div>
-                          ) : (
-                            <div className="index--data" style={{ cursor: "pointer" }}>
-                              {/* {enableAddRow ? (
-                              <>
-                                <div className={`index--number`}>{rowIndex}</div>
-                                <div className="index--trash" onClick={() => handleDeleteRow(row, rowIndex)}>
-                                  <Icon name="Trash" />
-                                </div>
-                              </>
-                            ) : (
-                              <div className={``}>{rowIndex}</div>
-                            )} */}
-                              <>
-                                <div
-                                  className={`index--number`}
-                                  onClick={() => {
-                                    setShowPopoverStatus(
-                                      showPopoverStatus.map((item, index) => {
-                                        return index == rowIndex ? !item : false;
-                                      })
-                                    );
-                                  }}
-                                >
-                                  {rowIndex}
-                                </div>
-                                <div className="index--carret">
-                                  <div
-                                    className="svg-carret"
-                                    onMouseDown={() => {
-                                      handleMouseDown(rowIndex);
-                                    }}
-                                  >
-                                    <Icon name="CaretDown" />
-                                  </div>
-                                </div>
-                              </>
-                              {/* <div>{rowIndex}</div> */}
-                            </div>
-                          )}
-                        </div>
-                        {showPopoverStatus[rowIndex] && enableAddRow && rowIndex != 0 ? (
-                          <Popover
-                            direction={"bottom"}
-                            alignment={"left"}
-                            isTriangle={true}
-                            className="popover-note"
-                            refContainer={null}
-                            refPopover={refColumn}
-                            forNote={true}
-                          >
-                            {/* <ActionRow onShow={true} rowIndex={rowIndex} callBack={(detailAction) => handleActionRow(detailAction)}></ActionRow> */}
-                          </Popover>
-                        ) : null}
+                          <ActionRow onShow={true} rowIndex={rowIndex} callBack={(detailAction) => handleActionRow(detailAction)}></ActionRow>
+                        </Popover>
+                      ) : null}
 
-                        {row.map((field, fieldIndex) => {
-                          return rowIndex == 0 ? ( // Hàng đầu tiên là tiêu đề
-                            <>
-                              {field.key != "documentType" ? (
-                                <div
-                                  key={fieldIndex}
-                                  className={`form-field form-field--header`}
-                                  // style={{ borderBottom: "1px solid var(--extra-color-50)" }}
-                                >
-                                  <div className="form-field__header">
-                                    {editColumn[fieldIndex]?.isShowEdit ? (
-                                      <NummericInput
-                                        name={"edit-position-" + fieldIndex}
-                                        value={editColumn[fieldIndex]?.newPosition}
-                                        autoFocus={true}
-                                        onValueChange={(e) => {
-                                          let newEditColumn = editColumn.map((item, index) => {
-                                            return index == fieldIndex ? { ...item, newPosition: e.floatValue } : item;
-                                          });
-                                          setEditColumn(newEditColumn);
-                                        }}
-                                        onKeyDown={(e) => {
-                                          if (e.key === "Enter") {
-                                            handleUpdateColumn(fieldIndex);
-                                          }
-                                        }}
-                                        onBlur={() => {
+                      {row.map((field, fieldIndex) => {
+                        return rowIndex == 0 ? ( // Hàng đầu tiên là tiêu đề
+                          <>
+                            {field.key != "documentType" ? (
+                              <div
+                                key={fieldIndex}
+                                className={`form-field form-field--header`}
+                                // style={{ borderBottom: "1px solid var(--extra-color-50)" }}
+                              >
+                                <div className="form-field__header">
+                                  {editColumn[fieldIndex]?.isShowEdit ? (
+                                    <NummericInput
+                                      name={"edit-position-" + fieldIndex}
+                                      value={editColumn[fieldIndex]?.newPosition}
+                                      autoFocus={true}
+                                      onValueChange={(e) => {
+                                        let newEditColumn = editColumn.map((item, index) => {
+                                          return index == fieldIndex ? { ...item, newPosition: e.floatValue } : item;
+                                        });
+                                        setEditColumn(newEditColumn);
+                                      }}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          handleUpdateColumn(fieldIndex);
+                                        }
+                                      }}
+                                      onBlur={() => {
+                                        setEditColumn(
+                                          editColumn.map((item, index) =>
+                                            index == fieldIndex
+                                              ? {
+                                                  ...item,
+                                                  isShowEdit: false,
+                                                }
+                                              : item
+                                          )
+                                        );
+                                      }}
+                                      placeholder={`Nhập thứ tự hiển thị`}
+                                    />
+                                  ) : (
+                                    <>
+                                      {field?.placeholder?.length > 45 ? `${field?.placeholder.substring(0, 45)}...` : field?.placeholder}
+                                      {field?.required && <span style={{ color: "red", marginLeft: "5px", fontSize: "18px" }}>*</span>}
+                                      <div
+                                        title={"Sửa vị trí cột"}
+                                        className={"edit-column"}
+                                        onClick={() => {
                                           setEditColumn(
                                             editColumn.map((item, index) =>
                                               index == fieldIndex
                                                 ? {
                                                     ...item,
-                                                    isShowEdit: false,
+                                                    isShowEdit: true,
                                                   }
                                                 : item
                                             )
                                           );
+                                          // setShowModalAddColumn(true);
+                                          // setDataColumnEdit({
+                                          //   ...listColumn.find((item) => item.name === field.name),
+                                          //   options: JSON.stringify(listColumn.find((item) => item.name === field.name)?.options),
+                                          // });
                                         }}
-                                        placeholder={`Nhập thứ tự hiển thị`}
-                                      />
-                                    ) : (
-                                      <>
-                                        {field?.placeholder?.length > 45 ? `${field?.placeholder.substring(0, 45)}...` : field?.placeholder}
-                                        {field?.required && <span style={{ color: "red", marginLeft: "5px", fontSize: "18px" }}>*</span>}
+                                      >
+                                        Thứ tự hiển thị: {listColumn[fieldIndex]?.position || 0}
+                                      </div>
+                                      {enableAddColumns ? (
                                         <div
-                                          title={"Sửa vị trí cột"}
-                                          className={"edit-column"}
+                                          title={"Xoá cột"}
+                                          className={"delete-column"}
                                           onClick={() => {
-                                            setEditColumn(
-                                              editColumn.map((item, index) =>
-                                                index == fieldIndex
-                                                  ? {
-                                                      ...item,
-                                                      isShowEdit: true,
-                                                    }
-                                                  : item
-                                              )
-                                            );
-                                            // setShowModalAddColumn(true);
-                                            // setDataColumnEdit({
-                                            //   ...listColumn.find((item) => item.name === field.name),
-                                            //   options: JSON.stringify(listColumn.find((item) => item.name === field.name)?.options),
-                                            // });
+                                            setIsChangeColumns(true);
+                                            setLoading(true);
+                                            hanhdleDeleteColumn(field);
                                           }}
                                         >
-                                          Thứ tự hiển thị: {listColumn[fieldIndex]?.position || 0}
+                                          <Icon name="Trash" />
                                         </div>
-                                        {enableAddColumns ? (
-                                          <div
-                                            title={"Xoá cột"}
-                                            className={"delete-column"}
-                                            onClick={() => {
-                                              setIsChangeColumns(true);
-                                              setLoading(true);
-                                              hanhdleDeleteColumn(field);
-                                            }}
-                                          >
-                                            <Icon name="Trash" />
-                                          </div>
-                                        ) : null}
-                                      </>
-                                    )}
-                                  </div>
-                                </div>
-                              ) : null}
-                            </>
-                          ) : (
-                            <>
-                              {field.key != "documentType" ? (
-                                <div
-                                  key={fieldIndex}
-                                  className={rowIndex == dataRow.length - 1 ? `form-field form-field--last` : `form-field`}
-                                  style={{ height: row?.find((item) => item?.isRegexFalse) ? "80px" : "" }}
-                                >
-                                  {enableAddCmtCell ? (
-                                    <div
-                                      title={field?.isHaveNote ? "Xem ghi chú" : "Thêm ghi chú"}
-                                      className={field?.isHaveNote ? "note" : "add-note"}
-                                      onClick={() => {
-                                        handShowModalNote(field, rowIndex, fieldIndex);
-                                        setRowKeyComment(field.rowKey);
-                                        setColumnKeyComment(field.key);
-                                      }}
-                                    >
-                                      {!field.noteList?.length ? <Icon name="Pencil" /> : null}
-                                    </div>
-                                  ) : null}
-                                  {field.type === "text" ? (
-                                    <TextArea
-                                      name={field.name}
-                                      row={1}
-                                      value={field.value}
-                                      readOnly={!enableEditCell ? true : field.readOnly}
-                                      // disabled={field.readOnly}
-                                      onChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, "input")}
-                                      placeholder={`Nhập ${field?.placeholder}`}
-                                      error={field?.isRegexFalse}
-                                      message={field.name + " không hợp lệ"}
-                                      height={height[rowIndex] + "px"}
-                                    />
-                                  ) : field.type === "number" ? (
-                                    <NummericInput
-                                      name={field.name}
-                                      value={field.value}
-                                      disabled={!enableEditCell ? true : field.readOnly}
-                                      thousandSeparator={true}
-                                      onValueChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, "number")}
-                                      placeholder={`Nhập ${field?.placeholder}`}
-                                      isDecimalScale={false}
-                                    />
-                                  ) : field.type === "checkbox" ? (
-                                    <Checkbox
-                                      checked={field.value}
-                                      disabled={!enableEditCell ? true : field.readOnly}
-                                      onChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, "checkbox")}
-                                    />
-                                  ) : field.type === "date" ? (
-                                    <DatePickerCustom
-                                      name={field.name}
-                                      fill={false}
-                                      // value={field.value}
-                                      value={field.value ? moment(field.value).format("DD/MM/YYYY") : ""}
-                                      iconPosition="left"
-                                      disabled={!enableEditCell ? true : field.readOnly}
-                                      // icon={<Icon name="Calendar" />}
-                                      onChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, field.type)}
-                                      placeholder={`Chọn ${field?.placeholder}`}
-                                    />
-                                  ) : field.type === "formula" ? (
-                                    <NummericInput
-                                      name={field.name}
-                                      value={field.value}
-                                      disabled={true}
-                                      thousandSeparator={true}
-                                      placeholder={`Nhập ${field?.placeholder}`}
-                                      isDecimalScale={false}
-                                    />
-                                  ) : field.type === "time_range" ? (
-                                    <Input
-                                      name={field.name}
-                                      value={field.value}
-                                      readOnly={!enableEditCell ? true : field.isBinding}
-                                      disabled={true}
-                                      // onChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, "input")}
-                                      placeholder={`${field?.placeholder}`}
-                                      error={field?.isRegexFalse}
-                                      message={field.name + " không hợp lệ"}
-                                    />
-                                  ) : field.type === "lookup" || field.type === "binding" ? (
-                                    <div
-                                      onDoubleClick={() => {
-                                        handleShowDetail(rowIndex, fieldIndex);
-                                      }}
-                                      style={{ cursor: "pointer" }}
-                                    >
-                                      <SelectLookup
-                                        name={field.name}
-                                        lookup={field.lookup}
-                                        bindingField={field.listBindingField}
-                                        bindingKey={field.key}
-                                        dataRow={dataRow}
-                                        listColumn={listColumn}
-                                        disabled={!enableEditCell ? true : field.readOnly}
-                                        setListColumn={setListColumn}
-                                        setListLoadBindingField={setListLoadBindingField}
-                                        listLoadBindingField={listLoadBindingField}
-                                        columnIndex={fieldIndex}
-                                        rowIndex={rowIndex}
-                                        value={field.value}
-                                        onChange={(e) => {
-                                          handChangeValueItem(rowIndex, fieldIndex, e, field.type);
-                                        }}
-                                        placeholder={`Chọn ${field?.placeholder}`}
-                                      />
-                                    </div>
-                                  ) : (
-                                    <SelectCustom
-                                      name={field.name}
-                                      disabled={!enableEditCell ? true : field.readOnly}
-                                      options={field.options || []}
-                                      value={field.value}
-                                      onChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, "select")}
-                                      placeholder={`Chọn ${field?.placeholder}`}
-                                    />
+                                      ) : null}
+                                    </>
                                   )}
                                 </div>
-                              ) : null}
-                            </>
-                          );
-                        })}
-                        {enableAddCmtCol && params.fieldName != "hsmt" ? (
-                          <>
-                            {rowIndex == 0 ? (
-                              <div
-                                className="comment-column--fist"
-                                style={{
-                                  height: row?.find((item) => item?.isRegexFalse) ? "80px" : "",
-                                  // borderBottom: "1px solid var(--extra-color-50)",
-                                }}
-                              >
-                                <div className="index--fist">Làm rõ</div>
                               </div>
-                            ) : (
+                            ) : null}
+                          </>
+                        ) : (
+                          <>
+                            {field.key != "documentType" ? (
                               <div
-                                className={`${rowIndex == dataRow.length - 1 ? "comment-column--last" : "comment-column"}`}
+                                key={fieldIndex}
+                                className={rowIndex == dataRow.length - 1 ? `form-field form-field--last` : `form-field`}
                                 style={{ height: row?.find((item) => item?.isRegexFalse) ? "80px" : "" }}
                               >
-                                <div
-                                  className="index--comment"
-                                  onClick={() => {
-                                    if (row[0]?.rowKey) {
-                                      setShowModalNote(true);
-                                      setRowKeyComment(row[0]?.rowKey);
-                                      setColumnKeyComment("cot-lam-ro");
-                                    } else {
-                                      showToast("Hãy thêm cột dữ liệu đầu tiên", "error");
-                                    }
-                                  }}
-                                >
-                                  <div className="icon-comment">
-                                    {row.length && dataCommentLast && dataCommentLast[row[0]?.rowKey] ? <div className="red-dot"></div> : null}
-                                    <Icon name="Comment" />
+                                {enableAddCmtCell ? (
+                                  <div
+                                    title={field?.isHaveNote ? "Xem ghi chú" : "Thêm ghi chú"}
+                                    className={field?.isHaveNote ? "note" : "add-note"}
+                                    onClick={() => {
+                                      handShowModalNote(field, rowIndex, fieldIndex);
+                                      setRowKeyComment(field.rowKey);
+                                      setColumnKeyComment(field.key);
+                                    }}
+                                  >
+                                    {!field.noteList?.length ? <Icon name="Pencil" /> : null}
                                   </div>
+                                ) : null}
+                                {field.type === "text" ? (
+                                  <TextArea
+                                    name={field.name}
+                                    row={1}
+                                    value={field.value}
+                                    readOnly={!enableEditCell ? true : field.readOnly}
+                                    // disabled={field.readOnly}
+                                    onChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, "input")}
+                                    placeholder={`Nhập ${field?.placeholder}`}
+                                    error={field?.isRegexFalse}
+                                    message={field.name + " không hợp lệ"}
+                                    height={height[rowIndex] + "px"}
+                                  />
+                                ) : field.type === "number" ? (
+                                  <NummericInput
+                                    name={field.name}
+                                    value={field.value}
+                                    disabled={!enableEditCell ? true : field.readOnly}
+                                    thousandSeparator={true}
+                                    onValueChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, "number")}
+                                    placeholder={`Nhập ${field?.placeholder}`}
+                                    isDecimalScale={false}
+                                  />
+                                ) : field.type === "checkbox" ? (
+                                  <>
+                                    {fieldName == "hsmt" && field.key == "HoSoMoiThau" && field?.rowSpecialKey == "hstc" ? (
+                                      <Checkbox checked={false} disabled={!enableEditCell ? true : field.readOnly} onChange={() => {}} />
+                                    ) : (
+                                      <Checkbox
+                                        checked={field.value}
+                                        disabled={!enableEditCell ? true : field.readOnly}
+                                        onChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, "checkbox")}
+                                      />
+                                    )}
+                                  </>
+                                ) : field.type === "date" ? (
+                                  <DatePickerCustom
+                                    name={field.name}
+                                    fill={false}
+                                    // value={field.value}
+                                    value={field.value ? moment(field.value).format("DD/MM/YYYY") : ""}
+                                    iconPosition="left"
+                                    disabled={!enableEditCell ? true : field.readOnly}
+                                    // icon={<Icon name="Calendar" />}
+                                    onChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, field.type)}
+                                    placeholder={`Chọn ${field?.placeholder}`}
+                                  />
+                                ) : field.type === "formula" ? (
+                                  <NummericInput
+                                    name={field.name}
+                                    value={field.value}
+                                    disabled={true}
+                                    thousandSeparator={true}
+                                    placeholder={`Nhập ${field?.placeholder}`}
+                                    isDecimalScale={false}
+                                  />
+                                ) : field.type === "time_range" ? (
+                                  <Input
+                                    name={field.name}
+                                    value={field.value}
+                                    readOnly={!enableEditCell ? true : field.isBinding}
+                                    disabled={true}
+                                    // onChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, "input")}
+                                    placeholder={`${field?.placeholder}`}
+                                    error={field?.isRegexFalse}
+                                    message={field.name + " không hợp lệ"}
+                                  />
+                                ) : field.type === "lookup" || field.type === "binding" ? (
+                                  <div
+                                    onDoubleClick={() => {
+                                      handleShowDetail(rowIndex, fieldIndex);
+                                    }}
+                                    style={{ cursor: "pointer" }}
+                                  >
+                                    <SelectLookup
+                                      name={field.name}
+                                      lookup={field.lookup}
+                                      bindingField={field.listBindingField}
+                                      bindingKey={field.key}
+                                      dataRow={dataRow}
+                                      listColumn={listColumn}
+                                      disabled={!enableEditCell ? true : field.readOnly}
+                                      setListColumn={setListColumn}
+                                      setListLoadBindingField={setListLoadBindingField}
+                                      listLoadBindingField={listLoadBindingField}
+                                      columnIndex={fieldIndex}
+                                      rowIndex={rowIndex}
+                                      value={field.value}
+                                      onChange={(e) => {
+                                        handChangeValueItem(rowIndex, fieldIndex, e, field.type);
+                                      }}
+                                      placeholder={`Chọn ${field?.placeholder}`}
+                                    />
+                                  </div>
+                                ) : (
+                                  <SelectCustom
+                                    name={field.name}
+                                    disabled={!enableEditCell ? true : field.readOnly}
+                                    options={field.options || []}
+                                    value={field.value}
+                                    onChange={(e) => handChangeValueItem(rowIndex, fieldIndex, e, "select")}
+                                    placeholder={`Chọn ${field?.placeholder}`}
+                                  />
+                                )}
+                              </div>
+                            ) : null}
+                          </>
+                        );
+                      })}
+                      {enableAddCmtCol && params.fieldName != "hsmt" ? (
+                        <>
+                          {rowIndex == 0 ? (
+                            <div
+                              className="comment-column--fist"
+                              style={{
+                                height: row?.find((item) => item?.isRegexFalse) ? "80px" : "",
+                                // borderBottom: "1px solid var(--extra-color-50)",
+                              }}
+                            >
+                              <div className="index--fist">Làm rõ</div>
+                            </div>
+                          ) : (
+                            <div
+                              className={`${rowIndex == dataRow.length - 1 ? "comment-column--last" : "comment-column"}`}
+                              style={{ height: row?.find((item) => item?.isRegexFalse) ? "80px" : "" }}
+                            >
+                              <div
+                                className="index--comment"
+                                onClick={() => {
+                                  if (row[0]?.rowKey) {
+                                    setShowModalNote(true);
+                                    setRowKeyComment(row[0]?.rowKey);
+                                    setColumnKeyComment("cot-lam-ro");
+                                  } else {
+                                    showToast("Hãy thêm cột dữ liệu đầu tiên", "error");
+                                  }
+                                }}
+                              >
+                                <div className="icon-comment">
+                                  {row.length && dataCommentLast && dataCommentLast[row[0]?.rowKey] ? <div className="red-dot"></div> : null}
+                                  <Icon name="Comment" />
                                 </div>
                               </div>
-                            )}
-                          </>
-                        ) : null}
-                      </div>
-                    );
-                  }
-                })}
-              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : null}
+                    </div>
+                  );
+                }
+              })}
             </div>
-          ) : null}
-          <div className="action-field-add">
-            {enableAddColumns ? (
-              <Button
-                color="secondary"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setShowModalAddColumn(true);
-                }}
-              >
-                <Icon name="PlusCircle" /> Thêm cột
-              </Button>
-            ) : null}
           </div>
+        ) : null}
+        <div className="action-field-add">
+          {enableAddRow ? (
+            <Button
+              color="secondary"
+              onClick={() => {
+                let uuid = uuidv4();
+                let _baseRow = baseRow.map((field) => {
+                  return {
+                    ...field,
+                    rowKey: uuid,
+                  };
+                });
+                setDataRow([...dataRow, _baseRow]);
+              }}
+            >
+              <Icon name="PlusCircle" /> Thêm dòng
+            </Button>
+          ) : null}
+          {enableAddColumns ? (
+            <Button
+              color="secondary"
+              onClick={() => {
+                setShowModalAddColumn(true);
+              }}
+            >
+              <Icon name="PlusCircle" /> Thêm cột
+            </Button>
+          ) : null}
+
+          {enableSave ? (
+            <Button
+              color="secondary"
+              onClick={() => {
+                // setShowModalAddColumn(true);
+                setLoading(true);
+                saveDataRow(dataRow);
+              }}
+            >
+              <Icon name="CheckedCircle" /> Lưu
+            </Button>
+          ) : null}
         </div>
-      ) : (
-        <Loading />
-      )}
+      </div>
+      <ModalExport
+        name={title}
+        listColumn={listColumn}
+        listData={listDataExport}
+        onShow={onShowModalExport}
+        onHide={() => setOnShowModalExport(false)}
+        options={optionsExport}
+        callback={(type, extension) => {
+          // exportCallback(type, extension)
+        }}
+      />
+      <ModalImport
+        name={"Dữ liệu mẫu"}
+        listColumn={listColumn}
+        onShow={showModalImport}
+        caclData={caclData}
+        lineSuccess={lineSuccess}
+        setDataImport={setDataImport}
+        setDataImportHeader={setDataImportHeader}
+        setDataExcel={setDataExcel}
+        onHide={(reload) => {
+          if (reload) {
+            // getListCustomer(params, activeTitleHeader);
+          }
+          setShowModalImport(false);
+        }}
+        type="grid"
+      />
       <ModalAddColumn
         onShow={showModalAddColumn}
-        nodeId={nodeId}
-        fieldName={fieldName}
-        processId={processId}
         data={dataColumnEdit}
         listColumn={listColumn}
         setListColumn={setListColumn}
@@ -1740,6 +1941,36 @@ export default function GridFormSetting(props: any) {
           // setDataCustomerAttribute(null);
         }}
       />
+      <ModalComment
+        onShow={showModalNote}
+        nodeId={params?.nodeId || "Activity_0n3i8dv"}
+        potId={params?.potId || 496}
+        fieldName={params?.fieldName || "boq"}
+        workId={params?.workId || 1813}
+        rowKey={rowKeyComment}
+        columnKey={columnKeyComment}
+        onHide={(reload) => {
+          setShowModalNote(false);
+          setRowKeyComment(null);
+          setColumnKeyComment(null);
+          if (reload) {
+            getListComment();
+          }
+        }}
+      ></ModalComment>
+      {/* <ModalAddSupplier
+        onShow={showModalAdd}
+        data={null}
+        isView={true}
+        showFromGrid={true}
+        supplierId={supplierId}
+        onHide={(reload) => {
+          if (reload) {
+            // getListInvestor(params);
+          }
+          setShowModalAdd(false);
+        }}
+      /> */}
     </div>
   );
 }
