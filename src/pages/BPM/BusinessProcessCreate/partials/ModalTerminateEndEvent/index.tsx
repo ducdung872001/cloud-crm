@@ -26,6 +26,8 @@ export default function ModalTerminateEndEvent({ onShow, onHide, dataNode, proce
   const [data, setData] = useState(null);
   const [childProcessId, setChildProcessId] = useState(null);
 
+  const [dataWorkflow, setDataWorkflow] = useState(null);
+
   const values = useMemo(
     () => ({
       id: null,
@@ -35,6 +37,7 @@ export default function ModalTerminateEndEvent({ onShow, onHide, dataNode, proce
       code: data?.code ?? null,
       terminateScope: data?.terminateScope ?? null,
       reason: data?.reason ?? "",
+      workflowId: data?.workflowId ?? null,
     }),
     [onShow, data, dataNode, processId, childProcessId]
   );
@@ -95,6 +98,7 @@ export default function ModalTerminateEndEvent({ onShow, onHide, dataNode, proce
       code: formData?.code ?? null,
       terminateScope: formData?.terminateScope ?? null,
       reason: formData?.reason ?? "",
+      workflowId: formData?.workflowId ?? null,
     };
 
     console.log("body", body);
@@ -168,6 +172,40 @@ export default function ModalTerminateEndEvent({ onShow, onHide, dataNode, proce
   const handleClear = (acc) => {
     onHide(acc);
     setData(null);
+  };
+
+  const loadedOptionWorkflow = async (search, loadedOptions, { page }) => {
+    const params = {
+      name: search,
+      page: page,
+      limit: 10,
+      processId: processId,
+    };
+    const response = await BusinessProcessService.listStep(params);
+
+    if (response.code === 0) {
+      const dataOption = response.result?.items || [];
+      const options = dataOption.filter((el) => el.stepName);
+
+      return {
+        options: [
+          ...(options.length > 0
+            ? options.map((item) => {
+                return {
+                  value: item.id,
+                  label: item.stepName,
+                };
+              })
+            : []),
+        ],
+        hasMore: response.result.loadMoreAble,
+        additional: {
+          page: page + 1,
+        },
+      };
+    }
+
+    return { options: [], hasMore: false };
   };
 
   return (
@@ -290,6 +328,32 @@ export default function ModalTerminateEndEvent({ onShow, onHide, dataNode, proce
                     setFormData({ ...formData, description: value });
                   }}
                   placeholder="Nhập mô tả"
+                />
+              </div>
+              
+              <div className="form-group">
+                <SelectCustom
+                  // key={listAttribute.length}
+                  id=""
+                  name="name"
+                  label={"Luồng công việc"}
+                  fill={true}
+                  required={false}
+                  // error={item.checkMapping}
+                  // message="Biến quy trình không được để trống"
+                  options={[]}
+                  value={dataWorkflow}
+                  onChange={(e) => {
+                    setDataWorkflow(e);
+                    setFormData({ ...formData, workflowId: e.value });
+                  }}
+                  isAsyncPaginate={true}
+                  placeholder="Chọn luồng công việc"
+                  additional={{
+                    page: 1,
+                  }}
+                  loadOptionsPaginate={loadedOptionWorkflow}
+                  // formatOptionLabel={formatOptionLabelAttribute}
                 />
               </div>
             </div>
