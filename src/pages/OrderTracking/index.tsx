@@ -12,15 +12,15 @@ import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
 import { IWorkTypeResponse } from "model/workType/WorkTypeResponseModel";
 import { showToast } from "utils/common";
-import { getPageOffset } from "reborn-util";
+import { getPageOffset, isDifferenceObj } from "reborn-util";
 import "./index.scss";
 import { useSearchParams } from "react-router-dom";
 import OrderRequestService from "services/OrderRequestService";
 import moment from "moment";
 import ModalRequestDetail from "./partials/ModalRequestDetail";
-import BusinessProcessService from "services/BusinessProcessService";
-import { getListColumns } from "./partials/getListColumns";
-import KanbanOrderRequestProcess from "./partials/KanbanOrderRequestProcess";
+import KanbanOrderTracking from "./partials/KanbanOrderTracking";
+import SelectCustom from "components/selectCustom/selectCustom";
+import BeautySalonService from "services/BeautySalonService";
 
 const statusText = {
   PENDING: "Chờ xác nhận",
@@ -41,15 +41,13 @@ const statusColor = {
   STORE_CANCELED: "red",
 };
 
-export default function OrderRequestList() {
+export default function OrderTracking() {
   document.title = "Danh sách yêu cầu mua hàng";
 
   const isMounted = useRef(false);
 
-  const [listOpportunity, setLisOpportunity] = useState([]);
-  const [dataOpportunity, setDataOpportunity] = useState(null);
+  const [listOrderTracking, setListOrderTracking] = useState([]);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
-  const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -57,31 +55,6 @@ export default function OrderRequestList() {
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(false);
-
-  //Kanban BPM
-  const checkProcessId = (localStorage.getItem("processOrderRequestId") && JSON.parse(localStorage.getItem("processOrderRequestId"))) || -1;
-  const checkProcessName = localStorage.getItem("processOrderRequestName");
-  // const [processId, setProcessId] = useState(() => {
-  //   return checkProcessId ? checkProcessId : -1;
-  // });
-  const [processId, setProcessId] = useState(1518);
-  // const [processId, setProcessId] = useState(null);
-  // const [processId, setProcessId] = useState(1648);
-  // const [processCode, setProcessCode] = useState("XNDH");
-  const [processName, setProcessName] = useState<string>(checkProcessName ? checkProcessName : "Chọn quy trình");
-  const [dataOfStep, setDataOfStep] = useState([]);
-  const [columnList, setColumnList] = useState(undefined);
-  const [checkColumn, setCheckColumn] = useState(null);
-  const [isLoadingKanban, setIsLoadingKanban] = useState<boolean>(false);
-
-  const isCreate = searchParams.get("isCreate") || null;
-
-  useEffect(() => {
-    if (isCreate) {
-      setDataOpportunity(null);
-      setShowModalAdd(true);
-    }
-  }, [isCreate]);
 
   const [params, setParams] = useState<any>({
     name: "",
@@ -113,15 +86,15 @@ export default function OrderRequestList() {
     );
   }, [tabActive]);
 
-  const customerFilterList: IFilterItem[] = useMemo(
+  const beautySalonFilterList: IFilterItem[] = useMemo(
     () => [
-      // {
-      //   key: "customerId",
-      //   name: "Khách hàng",
-      //   type: "select",
-      //   is_featured: true,
-      //   value: searchParams.get("customerId") ?? "",
-      // },
+      {
+        key: "bsnId",
+        name: "Đại lý",
+        type: "select",
+        is_featured: true,
+        value: searchParams.get("bsnId") ?? "",
+      },
       // {
       //   key: "employeeId",
       //   name: "Nhân viên",
@@ -147,14 +120,14 @@ export default function OrderRequestList() {
 
   const abortController = new AbortController();
 
-  const getListOpportunity = async (paramsSearch: any) => {
+  const getListOrderTracking = async (paramsSearch: any) => {
     setIsLoading(true);
 
     const response = await OrderRequestService.list(paramsSearch);
 
     if (response.code === 0) {
       const result = response.result;
-      setLisOpportunity(result.items || []);
+      setListOrderTracking(result.items || []);
 
       setPagination({
         ...pagination,
@@ -188,7 +161,7 @@ export default function OrderRequestList() {
     }
 
     if (isMounted.current === true) {
-      getListOpportunity(params);
+      getListOrderTracking(params);
       const paramsTemp = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
@@ -216,13 +189,6 @@ export default function OrderRequestList() {
             },
           ]
         : [
-            // {
-            //   title: "Thêm mới",
-            //   callback: () => {
-            //     setDataClaim(null);
-            //     setShowModalAdd(true);
-            //   },
-            // },
             {
               title: "Kanban",
               callback: () => {
@@ -280,14 +246,6 @@ export default function OrderRequestList() {
 
   const actionsTable = (item: IWorkTypeResponse): IAction[] => {
     return [
-      // {
-      //   title: "Sửa",
-      //   icon: <Icon name="Pencil" />,
-      //   callback: () => {
-      //     setDataOpportunity(item);
-      //     setShowModalAdd(true);
-      //   },
-      // },
       {
         title: "Xóa",
         icon: <Icon name="Trash" className="icon-error" />,
@@ -303,7 +261,7 @@ export default function OrderRequestList() {
 
     if (response.code === 0) {
       showToast("Xóa loại yêu cầu đặt hàng thành công", "success");
-      getListOpportunity(params);
+      getListOrderTracking(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -343,23 +301,15 @@ export default function OrderRequestList() {
     },
   ];
 
-  useEffect(() => {
-    setValueProcess({
-      value: processId,
-      label: processName,
-    });
-  }, [processId]);
+  const [valueBeautySalon, setValueBeautySalon] = useState(null);
 
-  const [valueProcess, setValueProcess] = useState(null);
-
-  const loadOptionProcess = async (search, loadedOptions, { page }) => {
+  const loadOptionBeautySalon = async (search, loadedOptions, { page }) => {
     const param: any = {
       name: search,
       page: page,
       limit: 10,
-      type: 3,
     };
-    const response = await BusinessProcessService.list(param);
+    const response = await BeautySalonService.list(param);
     const optionProcess =
       page === 1
         ? [
@@ -395,27 +345,44 @@ export default function OrderRequestList() {
   };
 
   useEffect(() => {
-    loadOptionProcess("", undefined, { page: 1 });
+    loadOptionBeautySalon("", undefined, { page: 1 });
   }, []);
 
-  const handleChangeValueProcess = (e) => {
-    getListColumns(+e.value);
-    setDataOfStep([]);
-    setValueProcess(e);
-    setProcessId(+e.value);
-    setProcessName(e.label);
-    if (e.value === -1) {
-      setIsRegimeKanban(false);
-    }
-    clearKanban();
-  };
-  const clearKanban = () => {
-    setColumnList(undefined);
-    setCheckColumn(null);
+  const handleChangeValueBeautySalon = (e) => {
+    setValueBeautySalon(e);
   };
 
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+
+    if (isMounted.current === true) {
+      getListOrderTracking(params);
+
+      const paramsTemp = _.cloneDeep(params);
+      if (paramsTemp.limit === 10) {
+        delete paramsTemp["limit"];
+      }
+      Object.keys(paramsTemp).map(function (key) {
+        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
+      });
+      if (isDifferenceObj(searchParams, paramsTemp)) {
+        if (paramsTemp.page === 1) {
+          delete paramsTemp["page"];
+        }
+        setSearchParams(paramsTemp as Record<string, string | string[]>);
+      }
+    }
+
+    return () => {
+      abortController.abort();
+    };
+  }, [params]);
+
   return (
-    <div className={`page-content page-opportunity-list${isNoItem ? " bg-white" : ""}`}>
+    <div className={`page-content page-order-tracking${isNoItem ? " bg-white" : ""}`}>
       <TitleAction title="Danh sách yêu cầu mua hàng" titleActions={titleActions} />
       <div className={`${isRegimeKanban ? "d-none" : ""}`}>
         <div className="card-box d-flex flex-column">
@@ -425,19 +392,18 @@ export default function OrderRequestList() {
             params={params}
             isSaveSearch={true}
             listSaveSearch={listSaveSearch}
-            // isFilter={true}
-            isFilter={tabActive == "all" ? true : false}
+            isFilter={true}
             isHiddenSearch={tabActive == "all" ? false : true}
-            listFilterItem={customerFilterList}
+            listFilterItem={beautySalonFilterList}
             updateParams={(paramsNew) => setParams(paramsNew)}
           />
           {tabActive == "all" ? (
             <>
-              {!isLoading && listOpportunity && listOpportunity.length > 0 ? (
+              {!isLoading && listOrderTracking && listOrderTracking.length > 0 ? (
                 <BoxTable
                   name="Danh sách yêu cầu mua hàng"
                   titles={titles}
-                  items={listOpportunity}
+                  items={listOrderTracking}
                   isPagination={true}
                   dataPagination={pagination}
                   dataMappingArray={(item, index) => dataMappingArray(item, index)}
@@ -461,15 +427,12 @@ export default function OrderRequestList() {
                       description={
                         <span>
                           Hiện tại chưa có yêu cầu đặt hàng nào. <br />
-                          Hãy thêm mới loại công việc đầu tiên nhé!
                         </span>
                       }
                       type="no-item"
-                      titleButton="Thêm mới yêu cầu đặt hàng"
-                      action={() => {
-                        setDataOpportunity(null);
-                        setShowModalAdd(true);
-                      }}
+                      // titleButton="Thêm mới yêu cầu đặt hàng"
+                      // action={() => {
+                      // }}
                     />
                   ) : (
                     <SystemNotification
@@ -490,35 +453,48 @@ export default function OrderRequestList() {
         </div>
       </div>
       <div className={`${!isRegimeKanban ? "d-none" : ""}`}>
-        {/* <div style={{ width: "45rem", paddingTop: "2rem", paddingRight: "2rem", paddingLeft: "2rem" }}>
-          <SelectCustom
-            id="processId"
-            name="processId"
-            fill={true}
-            required={true}
-            options={[]}
-            value={valueProcess}
-            onChange={(e) => {
-              if (e.value !== processId) {
-                setIsLoadingKanban(true);
-                handleChangeValueProcess(e);
-              }
+        <div
+          style={{
+            width: "100%",
+            padding: "2rem",
+            backgroundColor: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+          }}
+        >
+          <div
+            style={{
+              width: "30%",
             }}
-            isAsyncPaginate={true}
-            placeholder="Chọn quy trình"
-            additional={{
-              page: 1,
-            }}
-            loadOptionsPaginate={loadOptionProcess}
-          />
-        </div> */}
-        <div className={`${isLoadingKanban ? "" : "d-none"}`}>
-          <Loading />
+          >
+            <SelectCustom
+              id="bsnId"
+              name="bsnId"
+              fill={true}
+              required={true}
+              options={[]}
+              value={valueBeautySalon}
+              onChange={(e) => {
+                if (e.value !== valueBeautySalon?.value) {
+                  handleChangeValueBeautySalon(e);
+                }
+              }}
+              isAsyncPaginate={true}
+              placeholder="Chọn đại lý"
+              additional={{
+                page: 1,
+              }}
+              loadOptionsPaginate={loadOptionBeautySalon}
+            />
+          </div>
         </div>
-        <div className={`${!isLoadingKanban ? "" : "d-none"}`}>
-          <KanbanOrderRequestProcess
-            // processId={processId}
-            processCode={"XNDH"}
+        <div>
+          <KanbanOrderTracking
+            beautySalonId={valueBeautySalon?.value}
+            setShowModalRequestDetail={setShowModalRequestDetail}
+            setDataRequestDetail={setDataRequestDetail}
+            setCustomerInfo={setCustomerInfo}
           />
         </div>
       </div>

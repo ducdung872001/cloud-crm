@@ -50,6 +50,7 @@ import BoughtCardService from "services/BoughtCardService";
 import ProductIdApiService from "services/ProductIdApiService";
 import ServiceIdApiService from "services/ServiceIdApiService";
 import CardServiceIdApiService from "services/CardServiceIdApiService";
+import BeautySalonService from "services/BeautySalonService";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -287,6 +288,12 @@ export async function SelectOptionData(key: string, params?: any) {
       break;
     case "apiCardServiceId":
       response = await CardServiceIdApiService.list({
+        ...params,
+        limit: 1000,
+      });
+      break;
+    case "bsnId":
+      response = await BeautySalonService.list({
         ...params,
         limit: 1000,
       });

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Loading from "components/loading";
-import BusinessProcessService from "services/BusinessProcessService";
 import { showToast } from "utils/common";
 
 type ColumnDef = {
@@ -9,8 +8,6 @@ type ColumnDef = {
   value?: any;
   label?: string;
   color?: string;
-  processId?: any;
-  processCode?: any;
 };
 
 type ColumnState = {
@@ -21,11 +18,10 @@ type ColumnState = {
   hasMore?: boolean;
   page?: number;
   isLoading?: boolean;
-  processId?: any;
 };
 
 type ColumnProps = {
-  columnDef: ColumnDef; // static definition from parent (id, label, color, processId)
+  columnDef: ColumnDef; // static definition from parent (id, label, color)
   columnState?: ColumnState; // current state stored in parent (may be undefined initially)
   droppableId: string; // index string used by parent for DnD
   index: number;
@@ -34,6 +30,7 @@ type ColumnProps = {
   onAppend: (columnId: any, payload: { items: any[]; hasMore: boolean; page: number }) => void;
   setLoading: (columnId: any, loading: boolean) => void;
   setShowHistory: (item: any) => void;
+  functionGetDataItem?: any;
 };
 
 /**
@@ -43,7 +40,7 @@ type ColumnProps = {
  * - Quản lý trạng thái isLoading cục bộ và thông báo cho parent qua setLoading/onInitLoad/onAppend
  * - Hiển thị Droppable và các mục Draggable sử dụng columnState.items từ parent
  * */
-const ColumnComponent: React.FC<ColumnProps> = ({
+const ColumnCommon: React.FC<ColumnProps> = ({
   columnDef,
   columnState,
   droppableId,
@@ -52,10 +49,10 @@ const ColumnComponent: React.FC<ColumnProps> = ({
   onAppend,
   setLoading,
   setShowHistory,
+  functionGetDataItem,
 }) => {
   const id = columnDef.id;
-  const processId = columnDef?.processId || null;
-  const processCode = columnDef?.processCode || null;
+  const status = columnDef.value;
   const abortRef = useRef<AbortController | null>(null);
 
   // Loading state khi load thêm trang
@@ -64,20 +61,16 @@ const ColumnComponent: React.FC<ColumnProps> = ({
   // helper to call API
   const getDataOfStep = useCallback(
     async (page = 1) => {
-      if (!processId && !processCode) return { items: [], hasMore: false, page };
+      if (!status) return { items: [], hasMore: false, page };
       try {
         abortRef.current = new AbortController();
         const params = {
-          ...(processId ? { processId: processId } : {}),
-          ...(processCode ? { processCode: processCode } : {}),
-          // processId,
-          // processCode,
-          workflowId: id,
+          status: status,
           limit: 10,
           page,
         };
-        // return;
-        const response = await BusinessProcessService.listWorkflowCloud(params, abortRef.current.signal);
+        // const response = await OrderRequestService.list(params, abortRef.current.signal);
+        const response = await functionGetDataItem(params, abortRef.current.signal);
         if (response.code === 0) {
           const result = response.result;
           return {
@@ -101,7 +94,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
         abortRef.current = null;
       }
     },
-    [id, processId, processCode]
+    [id, status]
   );
 
   // khởi tạo dữ liệu ban đầu cho cột nếu chưa có : nếu parent chưa cung cấp items (hoặc page === 0), thì fetch trang 1
@@ -110,7 +103,9 @@ const ColumnComponent: React.FC<ColumnProps> = ({
     const shouldLoadInitial =
       !columnState ||
       (Array.isArray(columnState.items) && columnState.items.length === 0 && (columnState.page === 0 || columnState.page === undefined));
-    if (shouldLoadInitial) {
+    console.log("ColumnCommon: shouldLoadInitial =", status, shouldLoadInitial, columnState);
+
+    if (shouldLoadInitial && columnState) {
       (async () => {
         setLocalLoading(true);
         setLoading(id, true);
@@ -125,7 +120,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
       mounted = false;
       if (abortRef.current) abortRef.current.abort();
     };
-  }, [columnState, getDataOfStep, id, onInitLoad, setLoading]);
+  }, [columnState, getDataOfStep, onInitLoad, setLoading]);
 
   // Cuộn xuống gần đáy sẽ tải thêm trang
   const handleScroll = useCallback(
@@ -187,7 +182,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
                           key={draggableId}
                           draggableId={draggableId}
                           index={idx}
-                          isDragDisabled={true} // Bật/tắt khả năng kéo thả
+                          isDragDisabled={false} // Bật/tắt khả năng kéo thả
                         >
                           {(providedDraggable) => (
                             <div
@@ -200,8 +195,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
                             >
                               <div
                                 onDoubleClick={(e) => {
-                                  // e.stopPropagation();
-                                  console.log("Double click item:", item);
+                                  e.stopPropagation();
                                   setShowHistory(item);
                                 }}
                               >
@@ -278,7 +272,10 @@ function areEqual(prev: ColumnProps, next: ColumnProps) {
     if (aFirst !== bFirst || aLast !== bLast) return false;
   }
 
+  //kiểm tra functionGetDataItem
+  if (prev.functionGetDataItem !== next.functionGetDataItem) return false;
+
   return true;
 }
 
-export default React.memo(ColumnComponent, areEqual);
+export default React.memo(ColumnCommon, areEqual);
