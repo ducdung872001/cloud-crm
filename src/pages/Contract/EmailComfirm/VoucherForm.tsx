@@ -99,8 +99,8 @@ export default function VoucherForm() {
       brand: "",
       model: "",
       sumInsured: null,
-      coverageStart: "",
-      coverageEnd: "",
+      startTime: "",
+      endTime: "",
       confirm: null,
       voucherId: null,
       voucherName: "",
@@ -147,8 +147,8 @@ export default function VoucherForm() {
             name: info.title || "",
             customerName: info.customerName || prev.values.customerName,
             employeeName: info.consultantName || prev.values.employeeName,
-            coverageStart: info.startTime ? new Date(info.startTime).toLocaleString("vi-VN") : prev.values.coverageStart,
-            coverageEnd: info.endTime ? new Date(info.endTime).toLocaleString("vi-VN") : prev.values.coverageEnd,
+            startTime: info.startTime || prev.values.startTime,
+            endTime: info.endTime || prev.values.endTime,
           },
         }));
       }
@@ -247,16 +247,12 @@ export default function VoucherForm() {
   }, [voucherId, getVoucherDetail]);
 
   const fetchVoucherList = useCallback(
-    async (fmtStartDate?: string) => {
+    async () => {
       setIsLoadingVoucher(true);
       try {
         const requestParams: any = {
           limit: 50,
         };
-
-        if (fmtStartDate) {
-          requestParams.fmtStartDate = fmtStartDate;
-        }
 
         const response = await PromotionService.list(requestParams);
 
@@ -346,9 +342,8 @@ export default function VoucherForm() {
   );
 
   useEffect(() => {
-    const StartDate = fmtStartDate || new Date().toLocaleDateString("vi-VN");
-    fetchVoucherList(StartDate);
-  }, [fmtStartDate, fetchVoucherList]);
+    fetchVoucherList();
+  }, [fetchVoucherList]);
 
   const handleDetailCustomer = useCallback(async (idCust: number) => {
     setIsLoadingCustomer(true);
@@ -404,32 +399,32 @@ export default function VoucherForm() {
   }, [formData?.values?.voucherId, voucherOptions]);
 
   // lấy thông tin ngày bắt đầu và ngày kết thúc
-  const startDay = formData.values.coverageStart 
-    ? moment(formData.values.coverageStart).format("DD/MM/YYYY HH:mm")
+  const startDay = formData.values.startTime 
+    ? moment(formData.values.startTime).format("DD/MM/YYYY HH:mm")
     : "";
-  const endDay = formData.values.coverageEnd
-    ? moment(formData.values.coverageEnd).format("DD/MM/YYYY HH:mm")
+  const endDay = formData.values.endTime
+    ? moment(formData.values.endTime).format("DD/MM/YYYY HH:mm")
     : "";
 
-  const maxEndDate = formData.values.coverageStart
-    ? moment(formData.values.coverageStart).add(1, "day").toDate()
+  const maxEndDate = formData.values.startTime
+    ? moment(formData.values.startTime).add(1, "day").toDate()
     : null;
   
-  const minEndDate = formData.values.coverageStart
-    ? moment(formData.values.coverageStart).toDate()
+  const minEndDate = formData.values.startTime
+    ? moment(formData.values.startTime).toDate()
     : null;
 
-  const isEndDateExceeded = formData.values.coverageStart && formData.values.coverageEnd
-    ? moment(formData.values.coverageEnd).diff(moment(formData.values.coverageStart), "days") > 1
+  const isEndDateExceeded = formData.values.startTime && formData.values.endTime
+    ? moment(formData.values.endTime).diff(moment(formData.values.startTime), "days") > 1
     : false;
 
   const handleChangeCoverageStart = useCallback((value: any) => {
     setFormData((prev) => {
-      const newValues: any = { ...prev.values, coverageStart: value };
+      const newValues: any = { ...prev.values, startTime: value };
       
       if (value) {
         const endDate = moment(value).add(1, "day").toDate();
-        newValues.coverageEnd = endDate;
+        newValues.endTime = endDate;
       }
       
       return {
@@ -450,7 +445,7 @@ export default function VoucherForm() {
     },
     {
       label: "Bắt đầu lịch",
-      name: "coverageStart",
+      name: "startTime",
       type: "date",
       fill: true,
       required: true,
@@ -463,7 +458,7 @@ export default function VoucherForm() {
     },
     {
       label: "Kết thúc lịch",
-      name: "coverageEnd",
+      name: "endTime",
       type: "date",
       fill: true,
       required: true,
@@ -626,7 +621,7 @@ export default function VoucherForm() {
         "employeeName", "clientId", "qrCode", "potId", "processId", "branchName", "createdAt",
         "updatedAt", "productSchemaVersion", "productSchemaSnapshot", "customerName", "customerPhone",
         "customerEmail", "cardName", "riskAddress", "registrationNo", "brand", "model",
-        "coverageStart", "coverageEnd", "usagePurpose", "beneficiary", "productSchemaSnapshotJson",
+        "startTime", "endTime", "usagePurpose", "beneficiary", "productSchemaSnapshotJson",
         "productDataJson", "voucherName", "voucherStartTime", "voucherEndTime"
       ];
 
@@ -691,8 +686,6 @@ export default function VoucherForm() {
         customerPhone: formData.values.customerPhone ?? "",
         customerEmail: formData.values.customerEmail ?? "",
         cardName: formData.values.cardName ?? "",
-        coverageStart: formData.values.coverageStart ?? "",
-        coverageEnd: formData.values.coverageEnd ?? "",
         voucherName: formData.values.voucherName ?? "",
         voucherStartTime: formData.values.voucherStartTime ?? "",
         voucherEndTime: formData.values.voucherEndTime ?? "",
@@ -707,9 +700,9 @@ export default function VoucherForm() {
     const errors = Validate(validations, sanitizedFormData, [...listFieldVoteInfo]);
 
     // Kiểm tra validation cho ngày kết thúc
-    if (sanitizedFormData.values.coverageStart && sanitizedFormData.values.coverageEnd) {
-      const startMoment = moment(sanitizedFormData.values.coverageStart);
-      const endMoment = moment(sanitizedFormData.values.coverageEnd);
+    if (sanitizedFormData.values.startTime && sanitizedFormData.values.endTime) {
+      const startMoment = moment(sanitizedFormData.values.startTime);
+      const endMoment = moment(sanitizedFormData.values.endTime);
       const daysDiff = endMoment.diff(startMoment, "days");
       
       if (endMoment.isBefore(startMoment)) {
@@ -760,8 +753,8 @@ export default function VoucherForm() {
       cardName: sanitizedFormData.values.cardName || "",
       email: sanitizedFormData.values.customerEmail || "",
       manufactureYear: sanitizedFormData.values.manufactureYear || null,
-      coverageStart: sanitizedFormData.values.coverageStart || "",
-      coverageEnd: sanitizedFormData.values.coverageEnd || "",
+      startTime: moment(formData.values.startTime).format('YYYY-MM-DDTHH:mm:ss'),
+      endTime: moment(formData.values.endTime).format('YYYY-MM-DDTHH:mm:ss'),
       coverageDay: sanitizedFormData.values.coverageDay || null,
       confirm: sanitizedFormData.values.confirm !== null ? sanitizedFormData.values.confirm : null, // 0 hoặc 1
       voucherId: sanitizedFormData.values.voucherId || 0,
@@ -913,8 +906,8 @@ export default function VoucherForm() {
                           key={field.name ?? index}
                           field={field}
                           handleUpdate={(value) => {
-                            // Sử dụng custom handler cho trường coverageStart
-                            if (field.name === "coverageStart") {
+                            // Sử dụng custom handler cho trường startTime
+                            if (field.name === "startTime") {
                               handleChangeCoverageStart(value);
                             } else {
                               handleChangeValidate(value, field, formData, validations, listFieldVoteInfo, setFormData);
