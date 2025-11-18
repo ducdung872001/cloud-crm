@@ -111,6 +111,7 @@ import CreateOffers from "pages/Offer/CreateOffers/CreateOffers";
 import OfferList from "pages/Offer/OfferList/OfferList";
 import FsQuote from "pages/FsQuote";
 import Quotations from "pages/Quotations";
+import QuotationsNew from "pages/Quotations/index_New";
 import SettingProcess from "pages/SettingProcess/SettingProcess";
 import DetailContract from "pages/Contract/DetailContract/DetailContract";
 import SaleFlowList from "pages/SaleFlow/SaleFlowList";
@@ -362,6 +363,12 @@ export const menu: IMenuItem[] = [
             {
               title: "listQuotations", // Danh sách báo giá
               path: urls.quote,
+              icon: <Icon name="Invoice" />,
+              code: "",
+            },
+            {
+              title: "listQuotationsNew", // Danh sách báo giá mới
+              path: urls.quoteNew,
               icon: <Icon name="Invoice" />,
               code: "",
             },
@@ -1627,6 +1634,10 @@ export const routes: IRouter[] = [
   {
     path: urls.quote,
     component: <Quotations />,
+  },
+  {
+    path: urls.quoteNew,
+    component: <QuotationsNew />,
   },
   {
     path: urls.setting_process,
