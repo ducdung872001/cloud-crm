@@ -324,6 +324,7 @@ i18n.use(initReactI18next).init({
           temporaryOrderList: "Đơn đặt lưu tạm",
 
           // đoạn này là children của quản lý đơn đặt hàng
+          orderTracking: "Theo dõi đặt hàng",
           manageOrder: "Yêu cầu mua hàng",
           productList: "Thống kê sản phẩm",
 

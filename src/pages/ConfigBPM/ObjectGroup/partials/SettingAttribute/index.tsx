@@ -10,18 +10,18 @@ import { useActiveElement, useOnClickOutside } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import SelectCustom from "components/selectCustom/selectCustom";
-import { isDifferenceObj } from 'reborn-util';
+import { isDifferenceObj } from "reborn-util";
 import Tippy from "@tippyjs/react";
 import Input from "components/input/input";
 import TextArea from "components/textarea/textarea";
 import Icon from "components/icon";
-import { Parser } from 'formula-functionizer';
+import { Parser } from "formula-functionizer";
 import { convertToId } from "reborn-util";
 import _, { isNumber } from "lodash";
 import RadioList from "components/radio/radioList";
 import { v4 as uuidv4 } from "uuid";
 
-import "./SettingAttribute.scss";
+import "./index.scss";
 import ObjectGroupService from "services/ObjectGroupService";
 import Button from "components/button/button";
 import { Responsive, WidthProvider } from "react-grid-layout";
@@ -32,7 +32,6 @@ import Checkbox from "components/checkbox/checkbox";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import ModalTypeForm from "pages/BPM/SettingBusinessProcess/ConfigModal/partials/ModalTypeForm/ModalTypeForm";
 import ContractEformService from "services/ContractEformService";
-
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -85,10 +84,10 @@ const lstOptionField = [
     type: "text",
     w: 3,
     h: 1.5,
-    layout: 
+    layout: (
       <div>
         <Input
-          label={'Tên trường'}
+          label={"Tên trường"}
           name="name"
           fill={true}
           disabled={true}
@@ -97,148 +96,163 @@ const lstOptionField = [
           placeholder={`Nhập`}
           onChange={(e) => {}}
         />
-      </div>,
+      </div>
+    ),
   },
   {
     name: "Textarea",
     type: "textarea",
     w: 3,
     h: 2.5,
-    layout: <div>
-      <TextArea
-        label={'Tên trường'}
-        name="name"
-        // value={}
-        placeholder={`Nhập`}
-        fill={true}
-        disabled={true}
-        // required={!!customerAttribute.required}
-        onChange={(e) => {}}
-        // maxLength={459}
-      />
-    </div>,
+    layout: (
+      <div>
+        <TextArea
+          label={"Tên trường"}
+          name="name"
+          // value={}
+          placeholder={`Nhập`}
+          fill={true}
+          disabled={true}
+          // required={!!customerAttribute.required}
+          onChange={(e) => {}}
+          // maxLength={459}
+        />
+      </div>
+    ),
   },
   {
     name: "Number",
     type: "number",
     w: 3,
     h: 1.5,
-    layout: <div>
-      <NummericInput
-        label={'Tên trường'}
-        name="name"
-        fill={true}
-        disabled={true}
-        // required={!!customerAttribute.required}
-        // value={}
-        thousandSeparator={true}
-        placeholder={`Nhập `}
-        // decimalScale={getDecimalScale(customerAttribute.attributes)}
-        // onChange={(e) => {}}
-      />
-    </div>,
+    layout: (
+      <div>
+        <NummericInput
+          label={"Tên trường"}
+          name="name"
+          fill={true}
+          disabled={true}
+          // required={!!customerAttribute.required}
+          // value={}
+          thousandSeparator={true}
+          placeholder={`Nhập `}
+          // decimalScale={getDecimalScale(customerAttribute.attributes)}
+          // onChange={(e) => {}}
+        />
+      </div>
+    ),
   },
   {
     name: "Dropdown",
     type: "dropdown",
     w: 3,
     h: 1.5,
-    layout: <div>
-      <SelectCustom
-        label={'Tên trường'}
-        name="name"
-        fill={true}
-        disabled={true}
-        // required={!!customerAttribute.required}
-        options={[]}
-        // value={}
-        onChange={(e) => {}}
-        placeholder={`Chọn `}
-      />
-    </div>,
+    layout: (
+      <div>
+        <SelectCustom
+          label={"Tên trường"}
+          name="name"
+          fill={true}
+          disabled={true}
+          // required={!!customerAttribute.required}
+          options={[]}
+          // value={}
+          onChange={(e) => {}}
+          placeholder={`Chọn `}
+        />
+      </div>
+    ),
   },
   {
     name: "Multiselect",
     type: "multiselect",
     w: 3,
     h: 2,
-    layout: <div>
-      <CheckboxList
-        title={'Tên trường'}
-        // required={!!customerAttribute.required}
-        disabled={true}
-        options={[
-          {
-            value: 'option_1',
-            label: 'Lựa chọn 1'
-          },
-          {
-            value: 'option_2',
-            label: 'Lựa chọn 2'
-          },
-        ]}
-        // value={}
-        onChange={(e) => {}}
-      />
-    </div>,
+    layout: (
+      <div>
+        <CheckboxList
+          title={"Tên trường"}
+          // required={!!customerAttribute.required}
+          disabled={true}
+          options={[
+            {
+              value: "option_1",
+              label: "Lựa chọn 1",
+            },
+            {
+              value: "option_2",
+              label: "Lựa chọn 2",
+            },
+          ]}
+          // value={}
+          onChange={(e) => {}}
+        />
+      </div>
+    ),
   },
   {
     name: "Checkbox",
     type: "checkbox",
     w: 3,
     h: 1.5,
-    layout: <div>
-      <Checkbox
-        // checked={}
-        label={'Tên trường'}
-        onChange={(e) => {}}
-      />
-    </div>,
+    layout: (
+      <div>
+        <Checkbox
+          // checked={}
+          label={"Tên trường"}
+          onChange={(e) => {}}
+        />
+      </div>
+    ),
   },
   {
     name: "Radio",
     type: "radio",
     w: 3,
     h: 2,
-    layout: <div>
-      <RadioList
-        name={'name'}
-        title={'Tên trường'}
-        options={[
-          {
-            value: 'option_1',
-            label: 'Lựa chọn 1'
-          },
-          {
-            value: 'option_2',
-            label: 'Lựa chọn 2'
-          },
-        ]}
-        // value={}
-        onChange={(e) => {}}
-      />
-    </div>,
+    layout: (
+      <div>
+        <RadioList
+          name={"name"}
+          title={"Tên trường"}
+          options={[
+            {
+              value: "option_1",
+              label: "Lựa chọn 1",
+            },
+            {
+              value: "option_2",
+              label: "Lựa chọn 2",
+            },
+          ]}
+          // value={}
+          onChange={(e) => {}}
+        />
+      </div>
+    ),
   },
   {
     name: "Date",
     type: "date",
     w: 3,
     h: 1.5,
-    layout: <div>
-      <DatePickerCustom
-        label={'Tên trường'}
-        name={'name'}
-        fill={true}
-        // value={}
-        disabled={true}
-        onChange={(e) => {}}
-        placeholder={`Nhập `}
-        // required={!!customerAttribute.required}
-        iconPosition="left"
-        icon={<Icon name="Calendar" />}
-        isMaxDate={false}
-      />
-    </div>,
+    layout: (
+      <div>
+        <DatePickerCustom
+          label={"Tên trường"}
+          name={"name"}
+          fill={true}
+          // value={}
+          disabled={true}
+          onChange={(e) => {}}
+          placeholder={`Nhập `}
+          // required={!!customerAttribute.required}
+          iconPosition="left"
+          icon={<Icon name="Calendar" />}
+          isMaxDate={false}
+        />
+      </div>
+    ),
   },
 ];
 
@@ -289,15 +303,14 @@ function bfs(items, newItem) {
   return newLayouts;
 }
 
-
 export default function SettingAttribute(props: any) {
   const { onShow, onHide, dataObjectGroup } = props;
-  console.log('dataObjectGroup', dataObjectGroup);
-  
+  console.log("dataObjectGroup", dataObjectGroup);
+
   const refShowField = useRef();
   useOnClickOutside(refShowField, () => setShowFields(false), ["formula"]);
 
-//   const dataCheck = dataContractAttribute?.attributes && JSON.parse(dataContractAttribute?.attributes)
+  //   const dataCheck = dataContractAttribute?.attributes && JSON.parse(dataContractAttribute?.attributes)
   // console.log('dataCheck', dataCheck);
 
   const parser = new Parser();
@@ -310,12 +323,12 @@ export default function SettingAttribute(props: any) {
 
   const [data, setData] = useState<any>();
 
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: '', label: '' }]);
+  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: "", label: "" }]);
   const [detailLookup, setDetailLookup] = useState<any>("contract");
-  const [numberFormat, setNumberFormat] = useState<any>('');
+  const [numberFormat, setNumberFormat] = useState<any>("");
 
   const [contractAttributeFields, setContractAttributeFields] = useState<any>(null); //Khởi tạo null là quan trọng
-  console.log('contractAttributeFields', contractAttributeFields);
+  console.log("contractAttributeFields", contractAttributeFields);
 
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
@@ -325,25 +338,22 @@ export default function SettingAttribute(props: any) {
   //Dữ liệu id của eform
   const [eformId, setEformId] = useState(null);
 
+  //   const onSubmit = async (e) => {
+  //     e.preventDefault();
 
-//   const onSubmit = async (e) => {
-//     e.preventDefault();
+  //     setIsSubmit(true);
 
-//     setIsSubmit(true);
+  //     const response = await ContractAttributeService.update(body);
 
-//     const response = await ContractAttributeService.update(body);
+  //     if (response.code === 0) {
+  //       showToast(`${data ? "Cập nhật" : "Thêm mới"} trường thông tin hợp đồng thành công`, "success");
+  //       handleClearForm(true);
 
-//     if (response.code === 0) {
-//       showToast(`${data ? "Cập nhật" : "Thêm mới"} trường thông tin hợp đồng thành công`, "success");
-//       handleClearForm(true);
-      
-//     } else {
-//       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-//       setIsSubmit(false);
-//     }
-//   };
-
-
+  //     } else {
+  //       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+  //       setIsSubmit(false);
+  //     }
+  //   };
 
   const actions = useMemo<IActionModal>(
     () => ({
@@ -355,8 +365,8 @@ export default function SettingAttribute(props: any) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-                handleClearForm(false)
-            //   !isDifferenceObj(formData.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
+              handleClearForm(false);
+              //   !isDifferenceObj(formData.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
             },
           },
           // {
@@ -366,7 +376,7 @@ export default function SettingAttribute(props: any) {
           //   disabled:
           //     isSubmit,
           //   //   (!isDifferenceObj(formData.values, values)) ||
-          //   //   (formData.errors && Object.keys(formData.errors).length > 0) || 
+          //   //   (formData.errors && Object.keys(formData.errors).length > 0) ||
           //   //   checkFieldName,
           //   is_loading: isSubmit,
           // },
@@ -400,7 +410,6 @@ export default function SettingAttribute(props: any) {
     setShowDialog(true);
   };
 
-
   //! Đoạn này xử lý phức tạp hơn
   const [toolboxItem, setToolboxItem] = useState(null);
   const [breakpoint, setBreakpoint] = useState("lg");
@@ -409,7 +418,7 @@ export default function SettingAttribute(props: any) {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [dataLayout, setDataLayout] = useState(null);
   const [dataField, setDataField] = useState(null);
-  console.log('dataField', dataField);
+  console.log("dataField", dataField);
 
   // useEffect(() => {
   //   //Nếu rỗng thì thay đổi
@@ -426,10 +435,9 @@ export default function SettingAttribute(props: any) {
   //   //Nếu rỗng thì thay đổi
   //   let fieldName = dataField['fieldName'] || "";
   //   fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, 'g'), '');
-    
+
   //   setDataField({ ...dataField, fieldName: fieldName });
   // }, [dataField['fieldName']]);
-  
 
   // const dataTabConfig = configs.find((_, idx) => idx === idxConfig);
   const [dataTabConfig, setDataTabConfig] = useState({
@@ -437,7 +445,7 @@ export default function SettingAttribute(props: any) {
     layouts: { lg: [] },
   });
 
-  console.log('dataTabConfig', dataTabConfig);
+  console.log("dataTabConfig", dataTabConfig);
 
   const getDataObjectGroup = async (groupId) => {
     const response = await ObjectAttributeService.listAll(groupId);
@@ -445,9 +453,8 @@ export default function SettingAttribute(props: any) {
     if (response.code === 0) {
       const result = response.result;
 
-      const newresult = Object.entries(result)
-      console.log('newresult', newresult);
-      
+      const newresult = Object.entries(result);
+      console.log("newresult", newresult);
 
       const newChildrens = await Promise.all(
         Object.entries(result).map((item: any, key) => {
@@ -455,7 +462,7 @@ export default function SettingAttribute(props: any) {
           return item[1][0].datatype === "text" ? (
             <div key={item[1][0].id} datatype={item[1][0].datatype} style={{ height: "100%" }}>
               <Input
-                label={item[1][0].name ? item[1][0].name : 'Tên trường'}
+                label={item[1][0].name ? item[1][0].name : "Tên trường"}
                 name="name"
                 fill={true}
                 disabled={true}
@@ -468,7 +475,7 @@ export default function SettingAttribute(props: any) {
           ) : item[1][0].datatype === "textarea" ? (
             <div key={item[1][0].id} datatype={item[1][0].datatype} style={{ height: "100%" }}>
               <TextArea
-                label={item[1][0].name ? item[1][0].name : 'Tên trường'}
+                label={item[1][0].name ? item[1][0].name : "Tên trường"}
                 name="name"
                 // value={}
                 placeholder={`Nhập ${item[1][0].name}`}
@@ -482,7 +489,7 @@ export default function SettingAttribute(props: any) {
           ) : item[1][0].datatype === "number" ? (
             <div key={item[1][0].id} datatype={item[1][0].datatype} style={{ height: "100%" }}>
               <NummericInput
-                label={item[1][0].name ? item[1][0].name : 'Tên trường'}
+                label={item[1][0].name ? item[1][0].name : "Tên trường"}
                 name="name"
                 fill={true}
                 disabled={true}
@@ -497,7 +504,7 @@ export default function SettingAttribute(props: any) {
           ) : item[1][0].datatype === "dropdown" ? (
             <div key={item[1][0].id} datatype={item[1][0].datatype} style={{ height: "100%" }}>
               <SelectCustom
-                label={item[1][0].name ? item[1][0].name : 'Tên trường'}
+                label={item[1][0].name ? item[1][0].name : "Tên trường"}
                 name="name"
                 fill={true}
                 disabled={true}
@@ -511,23 +518,23 @@ export default function SettingAttribute(props: any) {
           ) : item[1][0].datatype === "multiselect" ? (
             <div key={item[1][0].id} datatype={item[1][0].datatype} style={{ height: "100%" }}>
               <CheckboxList
-                title={item[1][0].name ? item[1][0].name : 'Tên trường'}
+                title={item[1][0].name ? item[1][0].name : "Tên trường"}
                 required={!!item[1][0].required}
                 disabled={true}
                 options={
-                  item[1][0].attributes 
-                    ? JSON.parse(item[1][0].attributes) 
+                  item[1][0].attributes
+                    ? JSON.parse(item[1][0].attributes)
                     : [
                         {
-                          value: 'option_1',
-                          label: 'Lựa chọn 1'
+                          value: "option_1",
+                          label: "Lựa chọn 1",
                         },
                         {
-                          value: 'option_2',
-                          label: 'Lựa chọn 2'
+                          value: "option_2",
+                          label: "Lựa chọn 2",
                         },
                       ]
-                  }
+                }
                 // value={}
                 onChange={(e) => {}}
               />
@@ -537,31 +544,31 @@ export default function SettingAttribute(props: any) {
               <Checkbox
                 // checked={}
                 disabled={true}
-                label={item[1][0].name ? item[1][0].name : 'Tên trường'}
+                label={item[1][0].name ? item[1][0].name : "Tên trường"}
                 onChange={(e) => {}}
               />
             </div>
           ) : item[1][0].datatype === "radio" ? (
             <div key={item[1][0].id} datatype={item[1][0].datatype} style={{ height: "100%" }}>
               <RadioList
-                name={'name'}
+                name={"name"}
                 disabled={true}
                 required={!!item[1][0].required}
-                title={item[1][0].name ? item[1][0].name : 'Tên trường'}
+                title={item[1][0].name ? item[1][0].name : "Tên trường"}
                 options={
-                  item[1][0].attributes 
-                    ? JSON.parse(item[1][0].attributes) 
+                  item[1][0].attributes
+                    ? JSON.parse(item[1][0].attributes)
                     : [
                         {
-                          value: 'option_1',
-                          label: 'Lựa chọn 1'
+                          value: "option_1",
+                          label: "Lựa chọn 1",
                         },
                         {
-                          value: 'option_2',
-                          label: 'Lựa chọn 2'
+                          value: "option_2",
+                          label: "Lựa chọn 2",
                         },
                       ]
-                  }
+                }
                 // value={}
                 onChange={(e) => {}}
               />
@@ -569,8 +576,8 @@ export default function SettingAttribute(props: any) {
           ) : item[1][0].datatype === "date" ? (
             <div key={item[1][0].id} datatype={item[1][0].datatype} style={{ height: "100%" }}>
               <DatePickerCustom
-                label={item[1][0].name ? item[1][0].name : 'Tên trường'}
-                name={'name'}
+                label={item[1][0].name ? item[1][0].name : "Tên trường"}
+                name={"name"}
                 fill={true}
                 // value={}
                 disabled={true}
@@ -582,18 +589,15 @@ export default function SettingAttribute(props: any) {
                 isMaxDate={false}
               />
             </div>
-          ) : 
-          (
+          ) : (
             <div key={item[1][0].id} datatype={item[1][0].datatype} style={{ height: "100%" }}>
               {/* <EformPreview idEform={item.eformId} /> */}
             </div>
           );
-          
         })
       );
 
-      console.log('newChildrens', newChildrens);
-      
+      console.log("newChildrens", newChildrens);
 
       const newConfig = {
         childrens: newChildrens || [],
@@ -624,12 +628,10 @@ export default function SettingAttribute(props: any) {
         },
       };
 
-      setDataTabConfig(newConfig)
-
+      setDataTabConfig(newConfig);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
-    
   };
 
   const getDetailAttribute = async (id) => {
@@ -637,36 +639,33 @@ export default function SettingAttribute(props: any) {
 
     if (response.code === 0) {
       const result = response.result;
-      if ((result?.datatype == 'dropdown' || result?.datatype == 'radio' || result?.datatype == 'multiselect')) {
-        setAddFieldAttributes(result?.attributes ? JSON.parse(result?.attributes) : [{ value: '', label: '' }]);
+      if (result?.datatype == "dropdown" || result?.datatype == "radio" || result?.datatype == "multiselect") {
+        setAddFieldAttributes(result?.attributes ? JSON.parse(result?.attributes) : [{ value: "", label: "" }]);
       }
 
-      if (result?.datatype == 'lookup' && result?.attributes) {
-        setDetailLookup(JSON.parse(result?.attributes).refType || 'contract');
+      if (result?.datatype == "lookup" && result?.attributes) {
+        setDetailLookup(JSON.parse(result?.attributes).refType || "contract");
       }
-  
-      if (result?.datatype == 'number') {
-        setNumberFormat(result?.attributes ? JSON.parse(result?.attributes).numberFormat : '');
+
+      if (result?.datatype == "number") {
+        setNumberFormat(result?.attributes ? JSON.parse(result?.attributes).numberFormat : "");
       }
-  
-      if (result?.datatype == 'formula' && result?.attributes) {
-        setSelectedFormula(JSON.parse(result?.attributes).formula || '');
+
+      if (result?.datatype == "formula" && result?.attributes) {
+        setSelectedFormula(JSON.parse(result?.attributes).formula || "");
       }
 
       setDataField(result);
-
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
-    
   };
 
   useEffect(() => {
-    if(dataObjectGroup?.id){
+    if (dataObjectGroup?.id) {
       getDataObjectGroup(dataObjectGroup.id);
     }
-  }, [dataObjectGroup])
-  
+  }, [dataObjectGroup]);
 
   const handleDeleteItemChildren = async (id, dataField) => {
     const newLayouts = _.cloneDeep(dataTabConfig.layouts);
@@ -678,9 +677,9 @@ export default function SettingAttribute(props: any) {
         ...dataTabConfig,
         layouts: newLayouts,
         childrens: dataTabConfig.childrens.filter((child) => child.key !== id),
-      })
+      });
 
-      if(dataField?.id === +id){
+      if (dataField?.id === +id) {
         setDataField(null);
       }
     } else {
@@ -710,16 +709,14 @@ export default function SettingAttribute(props: any) {
   const memoizedItems = useMemo(() => {
     return dataTabConfig.layouts[breakpoint].map((item) => {
       return (
-        <div 
-          key={item.i} 
-          className="item__node--layout" 
-          onMouseDown={stopPropagation} 
+        <div
+          key={item.i}
+          className="item__node--layout"
+          onMouseDown={stopPropagation}
           onTouchStart={stopPropagation}
-          style={dataField?.id === +item.i ? {border: '1px dashed var(--primary-color)', cursor:'pointer'} : {cursor:'pointer'}}
+          style={dataField?.id === +item.i ? { border: "1px dashed var(--primary-color)", cursor: "pointer" } : { cursor: "pointer" }}
         >
-          <div 
-            className="layout__children" 
-          >
+          <div className="layout__children">
             <div className="item-render">{item.children}</div>
             <div className="action-children">
               <Tippy content="Sửa">
@@ -763,13 +760,13 @@ export default function SettingAttribute(props: any) {
       );
     });
   }, [dataTabConfig.layouts, breakpoint, dataField]);
-  
+
   const handleDrop = async (layout, item, e) => {
-    console.log('item', item);
-    console.log('toolboxItem', toolboxItem);
-    
+    console.log("item", item);
+    console.log("toolboxItem", toolboxItem);
+
     const { type } = toolboxItem;
-    console.log('type', type);
+    console.log("type", type);
 
     // if(type === 'create_form'){
     //   const body: any = {
@@ -778,9 +775,9 @@ export default function SettingAttribute(props: any) {
     //     note: '',
     //     type: 1
     //   };
-  
+
     //   const response = await ContractEformService.update(body);
-  
+
     //   if (response.code === 0) {
     //     const result = response.result;
     //     setEformId(result.id);
@@ -790,32 +787,31 @@ export default function SettingAttribute(props: any) {
     //   }
     //   return;
     // }
-    
-    
+
     const data = e.dataTransfer.getData("text");
 
     const newLayouts = _.cloneDeep(dataTabConfig.layouts);
 
     const body = {
-      name: '',
-      fieldName: '',
-      required: '',
-      readonly: '',
-      uniqued: '',
+      name: "",
+      fieldName: "",
+      required: "",
+      readonly: "",
+      uniqued: "",
       datatype: type,
-      attributes: '',
-      position: '',
+      attributes: "",
+      position: "",
       groupId: dataObjectGroup?.id,
       x: item.x,
       y: item.y,
       w: item.w,
       h: item.h,
-    }
+    };
 
-    console.log('body', body);
+    console.log("body", body);
 
     const response = await ObjectAttributeService.update(body);
-    if(response.code === 0){
+    if (response.code === 0) {
       const result = response.result;
 
       const newItem = {
@@ -827,13 +823,12 @@ export default function SettingAttribute(props: any) {
         isResizable: undefined,
       };
 
-      console.log('newItem', newItem);
-      
-  
+      console.log("newItem", newItem);
+
       Object.keys(newLayouts).forEach((size) => {
         newLayouts[size] = bfs(newLayouts[size], newItem);
       });
-  
+
       setDataTabConfig({
         ...dataTabConfig,
         layouts: newLayouts,
@@ -843,11 +838,11 @@ export default function SettingAttribute(props: any) {
             {toolboxItem.layout}
           </div>,
         ],
-      })
+      });
 
       // setNextId(uuidv4());
       setDataLayout(newItem);
-  
+
       setShowModalAdd(true);
       setTypeModal(toolboxItem.type);
 
@@ -855,7 +850,6 @@ export default function SettingAttribute(props: any) {
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
-    
 
     // setConfigs((prev) =>
     //   prev.map((ol, idx) => {
@@ -876,8 +870,6 @@ export default function SettingAttribute(props: any) {
     //     return ol;
     //   })
     // );
-
-
   };
 
   const handleDragStart = (item) => {
@@ -923,11 +915,10 @@ export default function SettingAttribute(props: any) {
       });
     });
 
-
     setDataTabConfig({
       ...dataTabConfig,
       layouts: newLayouts,
-    })
+    });
 
     // setConfigs((prev) =>
     //   prev.map((item, idx) => {
@@ -944,7 +935,6 @@ export default function SettingAttribute(props: any) {
   };
 
   const droppingItem = getDroppingItem();
-
 
   const listFieldNumberFormat = [
     {
@@ -963,7 +953,7 @@ export default function SettingAttribute(props: any) {
       value: "1,234.567",
       label: "1,234.567",
     },
-  ]
+  ];
 
   //! đoạn này xử lý vấn đề lấy giá trị của attribute khi thêm nhiều
   const handleChangeValueAttributeItem = (e, idx) => {
@@ -993,22 +983,29 @@ export default function SettingAttribute(props: any) {
     const body: any = {
       ...(dataField as any),
       // ...(data ? { id: data.id } : {}),
-      ...(
-        (dataField['datatype'] == 'dropdown' || dataField['datatype'] == 'radio' || dataField['datatype'] == 'multiselect') ? {
-          attributes: addFieldAttributes ? JSON.stringify(addFieldAttributes) : null
-        } : {}),
+      ...(dataField["datatype"] == "dropdown" || dataField["datatype"] == "radio" || dataField["datatype"] == "multiselect"
+        ? {
+            attributes: addFieldAttributes ? JSON.stringify(addFieldAttributes) : null,
+          }
+        : {}),
 
-      ...((dataField['datatype'] == 'lookup') ? {
-        attributes: detailLookup ? JSON.stringify({ refType: detailLookup }) : null
-      } : {}),
+      ...(dataField["datatype"] == "lookup"
+        ? {
+            attributes: detailLookup ? JSON.stringify({ refType: detailLookup }) : null,
+          }
+        : {}),
 
-      ...((dataField['datatype'] == 'number') ? {
-        attributes: detailLookup ? JSON.stringify({ numberFormat: numberFormat }) : null
-      } : {}),
+      ...(dataField["datatype"] == "number"
+        ? {
+            attributes: detailLookup ? JSON.stringify({ numberFormat: numberFormat }) : null,
+          }
+        : {}),
 
-      ...((dataField['datatype'] == 'formula') ? {
-        attributes: selectedFormula ? JSON.stringify({ formula: selectedFormula }) : null
-      } : {}),
+      ...(dataField["datatype"] == "formula"
+        ? {
+            attributes: selectedFormula ? JSON.stringify({ formula: selectedFormula }) : null,
+          }
+        : {}),
     };
 
     const response = await ObjectAttributeService.update(body);
@@ -1021,16 +1018,16 @@ export default function SettingAttribute(props: any) {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
-  }
+  };
 
   const saveEform = async (e) => {
     e.preventDefault();
 
     const body: any = {
-      id:  eformId,
-      name:  "",
-      note: '',
-      type: 0
+      id: eformId,
+      name: "",
+      note: "",
+      type: 0,
     };
 
     const response = await ContractEformService.update(body);
@@ -1042,7 +1039,7 @@ export default function SettingAttribute(props: any) {
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
-  }
+  };
 
   const handleClearForm = (acc) => {
     onHide(acc);
@@ -1052,15 +1049,13 @@ export default function SettingAttribute(props: any) {
       layouts: { lg: [] },
     });
     // setEformId(null);
-  }
+  };
 
   const refreshData = () => {
     setDataField(null);
     setNumberFormat(null);
-    setAddFieldAttributes([{value: '', label: ''}])
-  }
-
-  
+    setAddFieldAttributes([{ value: "", label: "" }]);
+  };
 
   return (
     <Fragment>
@@ -1071,7 +1066,7 @@ export default function SettingAttribute(props: any) {
         staticBackdrop={true}
         toggle={() => {
           if (!isSubmit) {
-            handleClearForm(false)
+            handleClearForm(false);
             // if ((data?.datatype == 'dropdown' || data?.datatype == 'radio') && data?.attributes) {
             //   setAddFieldAttributes(JSON.parse(data?.attributes));
             // } else {
@@ -1080,19 +1075,19 @@ export default function SettingAttribute(props: any) {
           }
         }}
         className="modal-setting-object-attribute"
-        size = 'full'
+        size="full"
       >
         <form className="form-setting-object-attribute">
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} trường thông tin đối tượng`}
+          <ModalHeader
+            title={`${data ? "Chỉnh sửa" : "Thêm mới"} trường thông tin đối tượng`}
             toggle={() => {
               if (!isSubmit) {
-                handleClearForm(false)
+                handleClearForm(false);
               }
             }}
           />
           <ModalBody>
             <div className="list-form-object-attribute">
-
               <div className="box__bpm">
                 {/* <div className="tab__container">
                   <div className="lst__tabs">
@@ -1208,7 +1203,7 @@ export default function SettingAttribute(props: any) {
                     </div> */}
                   </div>
                   <div className="content__right">
-                    {dataField ? 
+                    {dataField ? (
                       <div className="form-attribute">
                         <div className="form-group-attribute">
                           <Input
@@ -1222,10 +1217,10 @@ export default function SettingAttribute(props: any) {
                               const value = e.target.value;
 
                               let fieldName = convertToId(value) || "";
-                              fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, 'g'), '');
+                              fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, "g"), "");
 
                               //Chỉ set lại nếu là trường hợp thêm mới
-                              setDataField({ ...dataField,name: value, fieldName: fieldName });
+                              setDataField({ ...dataField, name: value, fieldName: fieldName });
                               // if (!dataField?.id) {
                               //   setDataField({ ...dataField,name: value, fieldName: fieldName });
                               // } else {
@@ -1246,62 +1241,61 @@ export default function SettingAttribute(props: any) {
                               const value = e.target.value;
                               // setDataField({ ...dataField, fieldName: value });
                               let fieldName = value || "";
-                              fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, 'g'), '');
-                              
+                              fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, "g"), "");
+
                               setDataField({ ...dataField, fieldName: fieldName });
                             }}
                           />
                         </div>
-                        
+
                         <div className="form-group-attribute">
-                          {
-                            dataField['datatype'] == 'dropdown' ||
-                            dataField['datatype'] == 'radio' ||
-                            dataField['datatype'] == 'multiselect' ?
-                              <div className="list__attribute">
-                                {addFieldAttributes.map((item, idx) => {
-                                  return (
-                                    <div key={idx} className="attribute__item">
-                                      <div className="list-field-attribute">
-                                        <div className="form-group">
-                                          <Input
-                                            label={idx == 0 ? 'Lựa chọn' : ''}
-                                            fill={true}
-                                            required={true}
-                                            value={item.label}
-                                            placeholder="Nhập lựa chọn"
-                                            onChange={(e) => handleChangeValueAttributeItem(e, idx)}
-                                          />
-                                        </div>
+                          {dataField["datatype"] == "dropdown" || dataField["datatype"] == "radio" || dataField["datatype"] == "multiselect" ? (
+                            <div className="list__attribute">
+                              {addFieldAttributes.map((item, idx) => {
+                                return (
+                                  <div key={idx} className="attribute__item">
+                                    <div className="list-field-attribute">
+                                      <div className="form-group">
+                                        <Input
+                                          label={idx == 0 ? "Lựa chọn" : ""}
+                                          fill={true}
+                                          required={true}
+                                          value={item.label}
+                                          placeholder="Nhập lựa chọn"
+                                          onChange={(e) => handleChangeValueAttributeItem(e, idx)}
+                                        />
                                       </div>
-                                      {
-                                        idx == 0 ? <span className="add-attribute">
-                                          <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
-                                            <span
-                                              className="icon-add"
-                                              onClick={() => {
-                                                setAddFieldAttributes([...addFieldAttributes, { value: '', label: '' }]);
-                                              }}
-                                            >
-                                              <Icon name="PlusCircleFill" />
-                                            </span>
-                                          </Tippy>
-                                        </span> : <span className="remove-attribute">
-                                          <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
-                                            <span className="icon-remove" onClick={() => handleRemoveItemAttribute(idx)}>
-                                              <Icon name="Trash" />
-                                            </span>
-                                          </Tippy>
-                                        </span>
-                                      }
                                     </div>
-                                  );
-                                })}
-                              </div> : null
-                          }
+                                    {idx == 0 ? (
+                                      <span className="add-attribute">
+                                        <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
+                                          <span
+                                            className="icon-add"
+                                            onClick={() => {
+                                              setAddFieldAttributes([...addFieldAttributes, { value: "", label: "" }]);
+                                            }}
+                                          >
+                                            <Icon name="PlusCircleFill" />
+                                          </span>
+                                        </Tippy>
+                                      </span>
+                                    ) : (
+                                      <span className="remove-attribute">
+                                        <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
+                                          <span className="icon-remove" onClick={() => handleRemoveItemAttribute(idx)}>
+                                            <Icon name="Trash" />
+                                          </span>
+                                        </Tippy>
+                                      </span>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ) : null}
                         </div>
 
-                        {dataField?.datatype == 'number' ?
+                        {dataField?.datatype == "number" ? (
                           <div className="form-group-attribute">
                             <RadioList
                               options={listFieldNumberFormat}
@@ -1312,18 +1306,18 @@ export default function SettingAttribute(props: any) {
                               onChange={(e) => setNumberFormat(e?.target.value)}
                             />
                           </div>
-                          : null}
+                        ) : null}
 
                         <div className="form-group-attribute">
                           <NummericInput
                             name="position"
                             id="position"
-                            label= "Thứ tự hiển thị"
+                            label="Thứ tự hiển thị"
                             placeholder="Nhập thứ tự hiển thị"
                             fill={true}
-                            value={dataField?.position || ''}
+                            value={dataField?.position || ""}
                             onValueChange={(e) => {
-                              const value = e.floatValue || '';
+                              const value = e.floatValue || "";
                               setDataField({ ...dataField, position: value });
                             }}
                           />
@@ -1331,11 +1325,11 @@ export default function SettingAttribute(props: any) {
                         <div className="form-group-attribute">
                           <CheckboxList
                             title="Trường bắt buộc nhập?"
-                            options= {[
+                            options={[
                               {
                                 value: "1",
-                                label: "Bắt buộc"
-                              }
+                                label: "Bắt buộc",
+                              },
                             ]}
                             value={[dataField?.required].join()}
                             onChange={(e) => {
@@ -1347,11 +1341,11 @@ export default function SettingAttribute(props: any) {
                         <div className="form-group-attribute">
                           <CheckboxList
                             title="Chỉ cho phép đọc?"
-                            options= {[
+                            options={[
                               {
                                 value: "1",
-                                label: "Chỉ cho phép đọc"
-                              }
+                                label: "Chỉ cho phép đọc",
+                              },
                             ]}
                             value={[dataField?.readonly].join()}
                             onChange={(e) => {
@@ -1363,11 +1357,11 @@ export default function SettingAttribute(props: any) {
                         <div className="form-group-attribute">
                           <CheckboxList
                             title="Kiểm trùng giá trị?"
-                            options= {[
+                            options={[
                               {
                                 value: "1",
-                                label: "Kiểm trùng dữ liệu"
-                              }
+                                label: "Kiểm trùng dữ liệu",
+                              },
                             ]}
                             value={[dataField?.uniqued].join()}
                             onChange={(e) => {
@@ -1377,7 +1371,7 @@ export default function SettingAttribute(props: any) {
                           />
                         </div>
 
-                        <div style={{display: 'flex', justifyContent:'flex-end'}}>
+                        <div style={{ display: "flex", justifyContent: "flex-end" }}>
                           <Button
                             color="primary"
                             // disabled={isSubmit}
@@ -1389,16 +1383,14 @@ export default function SettingAttribute(props: any) {
                           </Button>
                         </div>
                       </div>
-                    : null}
-                    
+                    ) : null}
                   </div>
                 </div>
                 {/* Đoạn cần copy */}
               </div>
 
-
-              {typeModal && 
-                (typeModal === 'form' ? 
+              {typeModal &&
+                (typeModal === "form" ? (
                   <ModalTypeForm
                     onShow={showModalAdd}
                     onHide={(reload) => {
@@ -1411,10 +1403,7 @@ export default function SettingAttribute(props: any) {
                     dataComponent={dataComponent}
                     callBack={(data) => {}}
                   />
-                : null)
-              }
-
-        
+                ) : null)}
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

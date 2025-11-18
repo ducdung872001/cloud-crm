@@ -290,7 +290,7 @@ const FormViewerComponent = (props: any) => {
     let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
       let { schema, data } = event;
-      // console.log("Check grid > Changed Data =>", data);
+      console.log("event", event);
 
       let components = schema.components;
       const newValues = data;
@@ -350,7 +350,6 @@ const FormViewerComponent = (props: any) => {
         if (component.type === "expression") {
           let dataExpression = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
-
           if (target) {
             if (dataExpression && dataExpression != data[target]) {
               data[target] = dataExpression;
@@ -393,11 +392,17 @@ const FormViewerComponent = (props: any) => {
 
         if (component.type === "dynamiclist") {
           component.components.forEach((componentChild, index) => {
-            if (componentChild.type == "select") {          
+            // console.log('componentChild', componentChild);
+
+            if (componentChild.type == "select" || componentChild.type === "expression") {
+              console.log("componentChild", componentChild);
+
               data[component.path].map((el) => {
+                console.log("el", el);
+
                 let dataSelect = el[componentChild.key]; //Lấy ra key
                 let target = componentChild?.properties?.bindingTarget;
-                
+
                 if (target) {
                   if (componentChild.type == "select") {
                     const listTarget = target.split(",").map((item) => item.trim()) || [];
@@ -414,29 +419,39 @@ const FormViewerComponent = (props: any) => {
                       }
                     }
                   }
+
+                  if (componentChild.type === "expression") {
+                    let dataExpression = el[componentChild.key]; //Lấy ra key
+                    console.log("dataExpression", dataExpression);
+
+                    if (dataExpression) {
+                      el[target] = dataExpression;
+                      // rerenderForm(schema, data);
+                    }
+                  }
                 }
               });
             }
 
-            if (componentChild.type == "number") {
-              if (componentChild.type == "number" && componentChild?.properties?.formula) {
-                let formula = componentChild?.properties?.formula;
-                if (formula && componentChild?.properties?.formula) {
-                  // console.log('data', data);
-                  
-                  data[component.path].map((el, index) => {
-                    // console.log('el', el);
-                    
-                    formula = formula.replace(/curr\.([a-zA-Z_]\w*)/g, (_, field) => el[field]);
-                    // console.log('formula', eval(formula));
-                    // el[componentChild?.key] = eval(formula);
-                    data[component.path][index][componentChild.key] = eval(formula);
-                  });
-                  return data;
-                  
-                }
-              }
-            }
+            // if (componentChild.type == "number") {
+            //   if (componentChild.type == "number" && componentChild?.properties?.formula) {
+            //     let formula = componentChild?.properties?.formula;
+            //     if (formula && componentChild?.properties?.formula) {
+            //       // console.log('data', data);
+
+            //       data[component.path].map((el, index) => {
+            //         console.log('el', el);
+
+            //         formula = formula.replace(/curr\.([a-zA-Z_]\w*)/g, (_, field) => el[field]);
+            //         // console.log('formula', eval(formula));
+            //         // el[componentChild?.key] = eval(formula);
+            //         data[component.path][index][componentChild.key] = eval(formula);
+            //       });
+            //       return data;
+
+            //     }
+            //   }
+            // }
           });
         }
       });
@@ -461,6 +476,7 @@ const FormViewerComponent = (props: any) => {
       if (setShowPopupCustom && codeTemplateEform) {
         setShowPopupCustom(true);
         setCodePopupCustom(codeTemplateEform);
+        console.log("codeTemplateEform", codeTemplateEform);
       }
 
       //1. Loại là select
@@ -544,8 +560,8 @@ const FormViewerComponent = (props: any) => {
             const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
             return [key.trim(), value];
           })
-        );        
- 
+        );
+
         //Tồn tại trường binding
         if (fields) {
           let arrField = fields.split(",");
@@ -554,10 +570,10 @@ const FormViewerComponent = (props: any) => {
           for (let index = 0; index < arrField.length; index++) {
             let field = arrField[index].trim();
             let value = formData[field] ?? 0;
-            params = { 
-              ...params, 
+            params = {
+              ...params,
               [field]: value,
-              ...(paramsUrl ? {...paramsTotal} : {})
+              ...(paramsUrl ? { ...paramsTotal } : {}),
             };
           }
 
@@ -1271,8 +1287,8 @@ const FormViewerComponent = (props: any) => {
   };
 
   useEffect(() => {
-     // Định nghĩa hàm bất đồng bộ trong useEffect để sử dụng await
-     const initializeForm = async () => {
+    // Định nghĩa hàm bất đồng bộ trong useEffect để sử dụng await
+    const initializeForm = async () => {
       // Xử lý nếu là iframe (Dùng cho ảnh)
       let updatedFormSchema = updateIframeLinks(formSchema);
 

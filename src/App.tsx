@@ -37,6 +37,7 @@ import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import EmailConfirm from "pages/Contract/EmailComfirm/EmailConfirm";
 import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import CollectTicket from "pages/Ticket/partials/CollectTicket";
+import GridFormNew from "pages/BPM/GridForm";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -125,20 +126,16 @@ export default function App() {
           navigate(`/login${returnUrl}`);
         }
       }
-    }
+    };
 
     //Gọi thực thi
     // checkEmployeeStatus();
-      if (
-      location.pathname !== "/send_email_confirm" && location.pathname !== "/voucher_confirm"
-    ) 
-    // if (
-    //   location.pathname !== "/send_voucher" 
-    // ) 
-    {
+    if (location.pathname !== "/send_email_confirm" && location.pathname !== "/voucher_confirm") {
+      // if (
+      //   location.pathname !== "/send_voucher"
+      // )
       checkEmployeeStatus();
     }
-
   }, [cookies.user, location]);
 
   useEffect(() => {
@@ -172,7 +169,7 @@ export default function App() {
 
   /**
    * Trả về thông tin
-   * @returns 
+   * @returns
    */
   const getDetailEmployeeInfo = async () => {
     if (isChecking) {
@@ -296,11 +293,13 @@ export default function App() {
         />
         <Routes>
           {isLogin && <Route path="*" element={<LayoutPage />} />}
+          {location.pathname == "/grid_form" && <Route path="/grid_form" element={<GridFormNew />} />}
+          {/* {location.pathname == "/grid_form_new" && <Route path="/grid_form_new" element={<GridAg />} />} */}
           {location.pathname == "/link_survey" && <Route path="/link_survey" element={<LinkSurvey />} />}
           {location.pathname == "/upload_document" && <Route path="/upload_document" element={<UploadDocument />} />}
           {location.pathname == "/collect_ticket" && <Route path="/collect_ticket" element={<CollectTicket />} />}
           {location.pathname == "/send_email_confirm" && <Route path="/send_email_confirm" element={<EmailConfirm />} />}
-          {location.pathname == "/voucher_confirm" && <Route path="/voucher_confirm" element={<VoucherForm/> } /> }
+          {location.pathname == "/voucher_confirm" && <Route path="/voucher_confirm" element={<VoucherForm />} />}
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />

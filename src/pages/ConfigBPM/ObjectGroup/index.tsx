@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
+import React, { Fragment, useState, useEffect, useRef, useContext } from "react";
 import _ from "lodash";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -14,14 +14,18 @@ import { IContractPipelineResponse } from "model/contractPipeline/ContractPipeli
 import { showToast } from "utils/common";
 import { getPageOffset } from "reborn-util";
 import { getPermissions } from "utils/common";
-import "./ObjectGroup.scss";
+import "./index.scss";
 // import AddContractCategoryModal from "./partials/AddContractCategoryModal/AddContractCategoryModal";
 import ObjectGroupService from "services/ObjectGroupService";
+import SettingAttribute from "./partials/SettingAttribute";
 import AddObjectGroupModal from "./partials/AddObjectGroupModal";
-import SettingAttribute from "./SettingAttribute/SettingAttribute";
+import ObjectSettingModal from "./partials/ObjectSettingModal";
+import { UserContext, ContextType } from "contexts/userContext";
 
 export default function ObjectGroupList(props: any) {
   document.title = "Danh mục loại đối tượng";
+
+  const { role } = useContext(UserContext) as ContextType;
 
   const { onBackProps } = props;
 
@@ -31,6 +35,7 @@ export default function ObjectGroupList(props: any) {
   const [dataObjectGroup, setDataObjectGroup] = useState(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAddOjectGroup, setShowModalAddOjectGroup] = useState<boolean>(false);
+  const [showModalSettingObject, setShowModalSettingObject] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -142,6 +147,18 @@ export default function ObjectGroupList(props: any) {
 
   const actionsTable = (item: any): IAction[] => {
     return [
+      ...(role == "mod"
+        ? [
+            {
+              title: "Cài đặt hồ sơ",
+              icon: <Icon name="SettingTicket" />,
+              callback: () => {
+                setDataObjectGroup(item);
+                setShowModalSettingObject(true);
+              },
+            },
+          ]
+        : []),
       {
         title: "Cài đặt trường",
         icon: <Icon name="Settings" />,
@@ -305,6 +322,17 @@ export default function ObjectGroupList(props: any) {
             getListOjectGroup(params);
           }
           setShowModalAddOjectGroup(false);
+        }}
+      />
+      <ObjectSettingModal
+        onShow={showModalSettingObject}
+        dataObject={dataObjectGroup}
+        onHide={(reload) => {
+          if (reload) {
+            getListOjectGroup(params);
+          }
+          setShowModalSettingObject(false);
+          setDataObjectGroup(null);
         }}
       />
 

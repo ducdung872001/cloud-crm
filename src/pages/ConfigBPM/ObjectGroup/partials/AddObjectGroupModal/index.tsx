@@ -9,7 +9,7 @@ import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
-import "./AddObjectGroupModal.scss";
+import "./index.scss";
 import ObjectGroupService from "services/ObjectGroupService";
 
 export default function AddObjectGroupModal(props: any) {
@@ -21,18 +21,17 @@ export default function AddObjectGroupModal(props: any) {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-
   const values = useMemo(
     () =>
-    ({
-      id: data?.id ?? 0,
-      name: data?.name ?? "",
-      position: data?.position ?? 0,
-    } as IContractPipelineRequest),
+      ({
+        id: data?.id ?? 0,
+        name: data?.name ?? "",
+        position: data?.position ?? 0,
+      } as IContractPipelineRequest),
     [data, onShow]
   );
 
-  const [formData, setFormData] = useState<IFormData>({ values: values });  
+  const [formData, setFormData] = useState<IFormData>({ values: values });
 
   const validations: IValidation[] = [
     {
@@ -42,7 +41,7 @@ export default function AddObjectGroupModal(props: any) {
     {
       name: "position",
       rules: "required|min:0",
-    }
+    },
   ];
 
   const listFieldBasic = useMemo(

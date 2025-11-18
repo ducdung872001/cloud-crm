@@ -132,7 +132,7 @@ import DetailGuaranteeContract from "pages/Contract/GuaranteeContract/DetailGuar
 import CampaignMarketingList from "pages/CampaignMarketing/CampaignMarketingList";
 import BusinessProcessList from "pages/BPM/BusinessProcessList/BusinessProcessList";
 import SettingBusinessProcess from "pages/BPM/SettingBusinessProcess/SettingBusinessProcess";
-import ConfigBPM from "pages/ConfigBPM/ConfigBPM";
+import ConfigBPM from "pages/ConfigBPM";
 import ProcessedObjectList from "pages/SettingProcess/partials/ProcessedObjectList";
 import CreateOrder from "pages/Order/createOrder";
 import OrderInvoiceList from "pages/Order/orderInvoiceList";
@@ -174,6 +174,8 @@ import EmailConfirm from "pages/Contract/EmailComfirm/EmailConfirm";
 import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import MarketingAutomationListV2 from "pages/MarketingAutomation/MarketingAutomationListV2";
 import CreateMarketingAutomationV2 from "pages/MarketingAutomation/CreateMarketingAutomation/CreateMarketingAutomationV2";
+import { useCookies } from "react-cookie";
+import OrderTracking from "pages/OrderTracking";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -183,6 +185,8 @@ const checkSubdomainTNEX = sourceDomain.includes("tnex");
 const checkSubdomainTNPM = sourceDomain.includes("tnpm") || sourceDomain.includes("localhost");
 const checkSubdomainGREENSPA = sourceDomain.includes("greenspa");
 // "tnex.reborn.vn"
+
+const checkUserRoot = localStorage.getItem("user.root") == "1";
 
 export const menu: IMenuItem[] = [
   ...(!checkSubdomainTNEX
@@ -533,6 +537,16 @@ export const menu: IMenuItem[] = [
     icon: <Icon name="Sell" />,
     code: "MENU_SELL",
     children: [
+      ...(!checkSubdomainTNEX && checkUserRoot
+        ? [
+            {
+              title: "orderTracking", // Theo dõi đặt hàng
+              path: urls.order_tracking,
+              icon: <Icon name="ManageOrder" />,
+              code: "", //Tài nguyên cho show quản lý đặt hàng hay không
+            },
+          ]
+        : []),
       ...(!checkSubdomainTNEX
         ? [
             {
@@ -1483,6 +1497,10 @@ export const routes: IRouter[] = [
     component: <CreateOrderSales />,
   },
   // Danh sách yêu cầu mua hàng
+  {
+    path: urls.order_tracking,
+    component: <OrderTracking />,
+  },
   {
     path: urls.order_request_list,
     component: <OrderRequestList />,
