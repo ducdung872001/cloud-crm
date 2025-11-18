@@ -628,6 +628,7 @@ export default function TicketListProcess() {
           optionProcess.push({
             value: item.id,
             label: item.name,
+            code: item.code,
           });
         });
       }
@@ -895,7 +896,10 @@ export default function TicketListProcess() {
             <Loading />
           </div>
           <div className={`${!isLoadingKanban ? "" : "d-none"}`}>
-            <KanbanTicketProcess processId={processId} />
+            <KanbanTicketProcess 
+              // processId={processId}
+              processCode={valueProcess?.code}
+             />
           </div>
         </div>
       </div>
