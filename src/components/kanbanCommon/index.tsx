@@ -36,9 +36,6 @@ export default function KanbanCommon({ itemShow, listStep, functionGetDataItem, 
   const [columns, setColumns] = useState<any[]>([]);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [showHistory, setShowHistory] = useState<boolean>(false);
-  const [itemHistory, setItemHistory] = useState<any>(null);
-
-  console.log("ColumnCommon: shouldLoadInitial = PENDING: RENDER KanbanCommon");
 
   useEffect(() => {
     abortControllerRef.current = new AbortController();
@@ -48,7 +45,7 @@ export default function KanbanCommon({ itemShow, listStep, functionGetDataItem, 
   }, []);
 
   useEffect(() => {
-    // Initialize columns state based on listStep
+    // Initialize columns state based on listStep (phải để các trạng thái bắt đầu như thế này để tương thích với ColumnCommon, không gây render - gọi api lại nhiều lần khi bắt đầu)
     const initialColumns = listStep.map((step, index) => ({
       id: step.id,
       title: step.label,
@@ -56,7 +53,7 @@ export default function KanbanCommon({ itemShow, listStep, functionGetDataItem, 
       items: [],
       hasMore: true,
       page: 0,
-      isLoading: false,
+      isLoading: true,
     }));
     setColumns(initialColumns);
   }, []);
@@ -119,7 +116,7 @@ export default function KanbanCommon({ itemShow, listStep, functionGetDataItem, 
 
   return (
     <>
-      <div className={`wrapper-kanban-bpm ${showHistory ? "d-none" : ""}`}>
+      <div className={`wrapper-kanban-common ${showHistory ? "d-none" : ""}`}>
         <div className="__special-kanban--business-process">
           <div
             className="box__task--kanban"

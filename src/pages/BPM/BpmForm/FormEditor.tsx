@@ -11,7 +11,25 @@ import "@bpmn-io/form-js/dist/assets/form-js-editor.css";
 import "@bpmn-io/form-js/dist/assets/form-js-playground.css";
 import ButtonExportNode from "../BusinessProcessCreate/components/ButtonExportNode/ButtonExportNode";
 
-const FormEditorComponent = ({ initialSchema, onSchemaChange, callback, onClickSaveForm, onClickSelectForm, dataNode }) => {
+interface FormEditorProps {
+  initialSchema: any;
+  onSchemaChange: (schema: any) => void;
+  callback: (action: string) => void;
+  onClickSaveForm: () => void;
+  onClickSelectForm: () => void;
+  dataNode?: any;
+  disableHeader?: boolean;
+}
+
+const FormEditorComponent = ({
+  initialSchema,
+  onSchemaChange,
+  callback,
+  onClickSaveForm,
+  onClickSelectForm,
+  dataNode,
+  disableHeader = false,
+}: FormEditorProps) => {
   const editorContainerRef = useRef(null);
   const formEditorRef = useRef(null);
   const schemaRef = useRef<any>(null);
@@ -65,17 +83,16 @@ const FormEditorComponent = ({ initialSchema, onSchemaChange, callback, onClickS
     schemaRef.current = initialSchema;
     // Lắng nghe sự kiện thay đổi và gọi callback
     formEditorRef.current.on("changed", (event) => {
-      console.log('event', event);
-      
+      console.log("event", event);
+
       const schema = formEditorRef.current.getSchema();
 
       // So sánh schema mới với schema cũ để biết component nào thay đổi
       const oldSchema = schemaRef.current;
       const newSchema = schema;
 
-      console.log('oldSchema', oldSchema);
-      console.log('newSchema', newSchema);
-      
+      console.log("oldSchema", oldSchema);
+      console.log("newSchema", newSchema);
 
       onSchemaChange(schema); // Gửi schema mới lên parent component
     });
@@ -134,95 +151,94 @@ const FormEditorComponent = ({ initialSchema, onSchemaChange, callback, onClickS
 
   return (
     <div className="form-editor-container">
-      <div className="container-header">
-        <div className="container-title">
-          <h2>Trình tạo biểu mẫu</h2>
-          <div className="button-save" onClick={() => onClickSelectForm()}>
-            <span style={{ fontSize: 14 }}>Chọn mẫu</span>
+      {disableHeader ? null : (
+        <div className="container-header">
+          <div className="container-title">
+            <h2>Trình tạo biểu mẫu</h2>
+            <div className="button-save" onClick={() => onClickSelectForm()}>
+              <span style={{ fontSize: 14 }}>Chọn mẫu</span>
+            </div>
+            <div
+              className="button-save"
+              onClick={() => {
+                onClickSaveForm();
+              }}
+            >
+              <span style={{ fontSize: 14 }}>Lưu mẫu</span>
+            </div>
           </div>
-          <div
-            className="button-save"
-            onClick={() => {
-              onClickSaveForm();
-            }}
-          >
-            <span style={{ fontSize: 14 }}>Lưu mẫu</span>
-          </div>
-        </div>
-        <div className="container-button">
-          <div
-            className="button-OLA"
-            onClick={() => {
-              callback("OLA");
-            }}
-          >
-            <span style={{ fontSize: 12, fontWeight: "600" }}>OLA</span>
-          </div>
-          <Tippy content="Người xử lý">
+          <div className="container-button">
             <div
-              className="button-setting"
+              className="button-OLA"
               onClick={() => {
-                callback("participant");
+                callback("OLA");
               }}
             >
-              <Icon name="Person" style={{ width: 20 }} />
+              <span style={{ fontSize: 12, fontWeight: "600" }}>OLA</span>
             </div>
-          </Tippy>
-          <Tippy content="Sao chép biểu mẫu khác">
-            <div
-              className="button-setting"
-              onClick={() => {
-                callback("copy");
-              }}
-            >
-              <Icon name="Copy" style={{ width: 21 }} />
-            </div>
-          </Tippy>
-          <Tippy content="Cài đặt biến">
-            <div
-              className="button-setting"
-              onClick={() => {
-                callback("setting-var");
-              }}
-            >
-              <Icon name="VarSetting" style={{ width: 22 }} />
-            </div>
-          </Tippy>
-          <Tippy content="Dữ liệu vào/ra">
-            <div
-              className="button-setting"
-              onClick={() => {
-                callback("mapping");
-              }}
-            >
-              <Icon name="Mapping" style={{ width: 22 }} />
-            </div>
-          </Tippy>
-          <Tippy content="Debug">
-            <div
-              className="button-setting"
-              onClick={() => {
-                callback("debug");
-              }}
-            >
-              <Icon name="Debug" style={{ width: 20 }} />
-            </div>
-          </Tippy>
-          <Tippy content="Cài đặt Eform">
-            <div
-              className="button-setting"
-              onClick={() => {
-                callback("timer");
-              }}
-            >
-              <Icon name="Settings" style={{ width: 22 }} />
-            </div>
-          </Tippy>
-          <ButtonExportNode
-            nodeId = {dataNode?.id}
-          />
+            <Tippy content="Người xử lý">
+              <div
+                className="button-setting"
+                onClick={() => {
+                  callback("participant");
+                }}
+              >
+                <Icon name="Person" style={{ width: 20 }} />
+              </div>
+            </Tippy>
+            <Tippy content="Sao chép biểu mẫu khác">
+              <div
+                className="button-setting"
+                onClick={() => {
+                  callback("copy");
+                }}
+              >
+                <Icon name="Copy" style={{ width: 21 }} />
+              </div>
+            </Tippy>
+            <Tippy content="Cài đặt biến">
+              <div
+                className="button-setting"
+                onClick={() => {
+                  callback("setting-var");
+                }}
+              >
+                <Icon name="VarSetting" style={{ width: 22 }} />
+              </div>
+            </Tippy>
+            <Tippy content="Dữ liệu vào/ra">
+              <div
+                className="button-setting"
+                onClick={() => {
+                  callback("mapping");
+                }}
+              >
+                <Icon name="Mapping" style={{ width: 22 }} />
+              </div>
+            </Tippy>
+            <Tippy content="Debug">
+              <div
+                className="button-setting"
+                onClick={() => {
+                  callback("debug");
+                }}
+              >
+                <Icon name="Debug" style={{ width: 20 }} />
+              </div>
+            </Tippy>
+            <Tippy content="Cài đặt Eform">
+              <div
+                className="button-setting"
+                onClick={() => {
+                  callback("timer");
+                }}
+              >
+                <Icon name="Settings" style={{ width: 22 }} />
+              </div>
+            </Tippy>
+            <ButtonExportNode nodeId={dataNode?.id} />
 
-          {/* <Tippy content="Lưu Node">
+            {/* <Tippy content="Lưu Node">
             <div
               className='button-setting'
               onClick={() => {
@@ -232,10 +248,10 @@ const FormEditorComponent = ({ initialSchema, onSchemaChange, callback, onClickS
               <Icon name="CheckedCircle" style={{ width: 22 }} />
             </div>
           </Tippy> */}
+          </div>
         </div>
-      </div>
+      )}
       <div ref={editorContainerRef}></div> {/* Container cho editor */}
-     
     </div>
   );
 };

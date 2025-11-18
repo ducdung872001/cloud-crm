@@ -2891,6 +2891,7 @@ export const urlsApi = {
   objectGroup: {
     list: prefixBpm + "/objectGroup/list",
     update: prefixBpm + "/objectGroup/update",
+    updateConfig: prefixBpm + "/objectGroup/update/config",
     detail: prefixBpm + "/objectGroup/get",
     delete: prefixBpm + "/objectGroup/delete",
   },

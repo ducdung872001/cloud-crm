@@ -14,24 +14,28 @@ const listStep = [
     value: "PENDING",
     label: "Chờ xác nhận",
     color: "#E98E4C",
+    key: "status",
   },
   {
     id: "PROCESSING",
     value: "PROCESSING",
     label: "Đang xử lý",
     color: "#1C8CFF",
+    key: "status",
   },
   {
     id: "STORE_RECOMMENDED",
     value: "STORE_RECOMMENDED",
     label: "Cửa hàng đề xuất",
     color: "#9966CC",
+    key: "status",
   },
   {
     id: "RECOMMENDED",
     value: "RECOMMENDED",
     label: "Đã đề xuất lại",
     color: "#9966CC",
+    key: "status",
   },
 
   {
@@ -39,18 +43,21 @@ const listStep = [
     value: "CUSTOMER_CANCELED",
     label: "Đã huỷ",
     color: "#FF3B30",
+    key: "status",
   },
   {
     id: "STORE_CANCELED",
     value: "STORE_CANCELED",
     label: "Cửa hàng hủy",
     color: "#FF3B30",
+    key: "status",
   },
   {
     id: "COMPLETED",
     value: "COMPLETED",
     label: "Hoàn thành",
     color: "#1BC10D",
+    key: "status",
   },
 ];
 
@@ -86,13 +93,10 @@ export default function KanbanOrderTracking(props: any) {
   };
   //Xử lý hành động click đúp trên item
   const handleDoubleClick = (item) => {
-    console.log("Kích đúp", item);
     setShowModalRequestDetail(true);
     setDataRequestDetail(JSON.parse(item.orderInfo)?.items || []);
     setCustomerInfo(item?.customerInfo ? JSON.parse(item.customerInfo) : null);
   };
-
-  console.log("KanbanOrderTracking valueBeautySalon", beautySalonId);
 
   // Cài đặt hiển thị item
   const itemSetup = useCallback(
@@ -176,15 +180,6 @@ export default function KanbanOrderTracking(props: any) {
     [callBackAction, beautySalonId]
   );
 
-  // const OrderRequestServiceList = async (params: any, signal?: AbortSignal) => {
-  //   let mergedParams = {
-  //     ...params,
-  //     ...(beautySalonId ? { bsnId: beautySalonId } : {}),
-  //   };
-  //   let response = await OrderRequestService.list(mergedParams, signal);
-  //   return response;
-  // };
-
   const OrderRequestServiceList = useCallback(
     async (params: any, signal?: AbortSignal) => {
       let mergedParams = {
@@ -197,11 +192,9 @@ export default function KanbanOrderTracking(props: any) {
     [beautySalonId]
   );
 
-  console.log("KanbanOrderTracking render beautySalonId", beautySalonId);
-
   return (
     <KanbanCommon
-      key={beautySalonId}
+      key={beautySalonId} // Key để reset lại trạng thái khi beautySalonId thay đổi, trong các trường hợp khác thì key khác
       itemShow={itemSetup}
       listStep={listStep}
       functionGetDataItem={OrderRequestServiceList}

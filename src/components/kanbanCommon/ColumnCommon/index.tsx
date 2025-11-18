@@ -8,6 +8,7 @@ type ColumnDef = {
   value?: any;
   label?: string;
   color?: string;
+  key?: string;
 };
 
 type ColumnState = {
@@ -52,50 +53,46 @@ const ColumnCommon: React.FC<ColumnProps> = ({
   functionGetDataItem,
 }) => {
   const id = columnDef.id;
-  const status = columnDef.value;
   const abortRef = useRef<AbortController | null>(null);
 
   // Loading state khi load thêm trang
   const [localLoading, setLocalLoading] = useState(false);
 
   // helper to call API
-  const getDataOfStep = useCallback(
-    async (page = 1) => {
-      if (!status) return { items: [], hasMore: false, page };
-      try {
-        abortRef.current = new AbortController();
-        const params = {
-          status: status,
-          limit: 10,
-          page,
+  const getDataOfStep = useCallback(async (page = 1) => {
+    if (!columnDef.value) return { items: [], hasMore: false, page };
+    try {
+      abortRef.current = new AbortController();
+      const params = {
+        ...{ [columnDef.key]: columnDef.value },
+        limit: 10,
+        page,
+      };
+      // const response = await OrderRequestService.list(params, abortRef.current.signal);
+      const response = await functionGetDataItem(params, abortRef.current.signal);
+      if (response.code === 0) {
+        const result = response.result;
+        return {
+          items: result?.items || [],
+          hasMore: !!result?.loadMoreAble,
+          page: result?.page || page,
         };
-        // const response = await OrderRequestService.list(params, abortRef.current.signal);
-        const response = await functionGetDataItem(params, abortRef.current.signal);
-        if (response.code === 0) {
-          const result = response.result;
-          return {
-            items: result?.items || [],
-            hasMore: !!result?.loadMoreAble,
-            page: result?.page || page,
-          };
-        } else {
-          showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-          return { items: [], hasMore: false, page };
-        }
-      } catch (err) {
-        if ((err as any)?.name === "AbortError") {
-          // aborted, ignore
-          return { items: [], hasMore: false, page };
-        }
-        console.error(err);
-        showToast("Có lỗi khi tải dữ liệu", "error");
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
         return { items: [], hasMore: false, page };
-      } finally {
-        abortRef.current = null;
       }
-    },
-    [id, status]
-  );
+    } catch (err) {
+      if ((err as any)?.name === "AbortError") {
+        // aborted, ignore
+        return { items: [], hasMore: false, page };
+      }
+      console.error(err);
+      showToast("Có lỗi khi tải dữ liệu", "error");
+      return { items: [], hasMore: false, page };
+    } finally {
+      abortRef.current = null;
+    }
+  }, []);
 
   // khởi tạo dữ liệu ban đầu cho cột nếu chưa có : nếu parent chưa cung cấp items (hoặc page === 0), thì fetch trang 1
   useEffect(() => {
@@ -103,7 +100,6 @@ const ColumnCommon: React.FC<ColumnProps> = ({
     const shouldLoadInitial =
       !columnState ||
       (Array.isArray(columnState.items) && columnState.items.length === 0 && (columnState.page === 0 || columnState.page === undefined));
-    console.log("ColumnCommon: shouldLoadInitial =", status, shouldLoadInitial, columnState);
 
     if (shouldLoadInitial && columnState) {
       (async () => {
@@ -234,46 +230,63 @@ function areEqual(prev: ColumnProps, next: ColumnProps) {
   const aState = prev.columnState;
   const bState = next.columnState;
 
-  // id (dùng columnDef làm fallback)
   const aId = aState?.id ?? prev.columnDef.id;
   const bId = bState?.id ?? next.columnDef.id;
-  if (aId !== bId) return false;
+  if (aId !== bId) {
+    // console.log("ColumnCommon: Re-render: id changed", aId, bId);
+    return false;
+  }
 
-  // title (fallback về columnDef.label nếu state chưa có)
   const aTitle = aState?.title ?? prev.columnDef.label;
   const bTitle = bState?.title ?? next.columnDef.label;
-  if (aTitle !== bTitle) return false;
+  if (aTitle !== bTitle) {
+    // console.log("ColumnCommon: Re-render: title changed", aTitle, bTitle);
+    return false;
+  }
 
-  // color
   const aColor = aState?.color ?? prev.columnDef.color;
   const bColor = bState?.color ?? next.columnDef.color;
-  if (aColor !== bColor) return false;
+  if (aColor !== bColor) {
+    // console.log("ColumnCommon: Re-render: color changed", aColor, bColor);
+    return false;
+  }
 
-  // loading / hasMore
   const aIsLoading = !!aState?.isLoading;
   const bIsLoading = !!bState?.isLoading;
-  if (aIsLoading !== bIsLoading) return false;
+  if (aIsLoading !== bIsLoading) {
+    // console.log("ColumnCommon: Re-render: isLoading changed", aIsLoading, bIsLoading);
+    return false;
+  }
 
   const aHasMore = !!aState?.hasMore;
   const bHasMore = !!bState?.hasMore;
-  if (aHasMore !== bHasMore) return false;
+  if (aHasMore !== bHasMore) {
+    // console.log("ColumnCommon: Re-render: hasMore changed", aHasMore, bHasMore);
+    return false;
+  }
 
-  // items length (an toàn với optional chaining)
   const aLen = Array.isArray(aState?.items) ? aState!.items.length : 0;
   const bLen = Array.isArray(bState?.items) ? bState!.items.length : 0;
-  if (aLen !== bLen) return false;
+  if (aLen !== bLen) {
+    // console.log("ColumnCommon: Re-render: items length changed", aLen, bLen);
+    return false;
+  }
 
-  // nếu cùng có items, so sánh phần tử đầu/cuối để detect meaningful changes
   if (aLen > 0 && bLen > 0) {
     const aFirst = aState!.items[0]?.id ?? null;
     const bFirst = bState!.items[0]?.id ?? null;
     const aLast = aState!.items[aLen - 1]?.id ?? null;
     const bLast = bState!.items[bLen - 1]?.id ?? null;
-    if (aFirst !== bFirst || aLast !== bLast) return false;
+    if (aFirst !== bFirst || aLast !== bLast) {
+      // console.log("ColumnCommon: Re-render: items first/last changed", aFirst, bFirst, aLast, bLast);
+      return false;
+    }
   }
 
-  //kiểm tra functionGetDataItem
-  if (prev.functionGetDataItem !== next.functionGetDataItem) return false;
+  if (prev.functionGetDataItem !== next.functionGetDataItem) {
+    // console.log("ColumnCommon: Re-render: functionGetDataItem changed");
+    return false;
+  }
 
   return true;
 }
