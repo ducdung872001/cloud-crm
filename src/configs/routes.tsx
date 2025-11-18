@@ -23,6 +23,8 @@ import KpiObjectList from "pages/Kpi/KpiObjectList/KpiObjectList";
 import DetailPersonList from "pages/CustomerPerson/partials/DetailPerson/DetailPersonList";
 import WarrantyList from "pages/Warranty/WarrantyList";
 import TicketList from "pages/Ticket/TicketList";
+import TicketListProcess from "pages/Ticket/TicketListProcess";
+import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import SettingTicketList from "pages/SettingTicket/SettingTicketList";
 import SettingWarrantyList from "pages/SettingWarranty/SettingWarrantyList";
 import DetailWarranty from "pages/Warranty/partials/DetailWarranty/DetailWarranty";
@@ -172,6 +174,8 @@ import EmailConfirm from "pages/Contract/EmailComfirm/EmailConfirm";
 import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import MarketingAutomationListV2 from "pages/MarketingAutomation/MarketingAutomationListV2";
 import CreateMarketingAutomationV2 from "pages/MarketingAutomation/CreateMarketingAutomation/CreateMarketingAutomationV2";
+import { useCookies } from "react-cookie";
+import OrderTracking from "pages/OrderTracking";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -181,6 +185,8 @@ const checkSubdomainTNEX = sourceDomain.includes("tnex");
 const checkSubdomainTNPM = sourceDomain.includes("tnpm") || sourceDomain.includes("localhost");
 const checkSubdomainGREENSPA = sourceDomain.includes("greenspa");
 // "tnex.reborn.vn"
+
+const checkUserRoot = localStorage.getItem("user.root") == "1";
 
 export const menu: IMenuItem[] = [
   ...(!checkSubdomainTNEX
@@ -531,6 +537,16 @@ export const menu: IMenuItem[] = [
     icon: <Icon name="Sell" />,
     code: "MENU_SELL",
     children: [
+      ...(!checkSubdomainTNEX && checkUserRoot
+        ? [
+            {
+              title: "orderTracking", // Theo dõi đặt hàng
+              path: urls.order_tracking,
+              icon: <Icon name="ManageOrder" />,
+              code: "", //Tài nguyên cho show quản lý đặt hàng hay không
+            },
+          ]
+        : []),
       ...(!checkSubdomainTNEX
         ? [
             {
@@ -640,6 +656,12 @@ export const menu: IMenuItem[] = [
               path: urls.ticket,
               icon: <Icon name="ReceiveTicket" />,
               code: "TICKET",
+            },
+            {
+              title: "receiveTicketProcess", // Tiếp nhận hỗ trợ
+              path: urls.ticket_process,
+              icon: <Icon name="ReceiveTicket" />,
+              code: "KANBAN_V2",
             },
             ...(sourceDomain == "rebornjsc.reborn.vn"
               ? [
@@ -1261,6 +1283,14 @@ export const routes: IRouter[] = [
     component: <TicketList />,
   },
   {
+    path: urls.ticket_process,
+    component: <TicketListProcess />,
+  },
+  {
+    path: urls.collect_ticket,
+    component: <CollectTicket />,
+  },
+  {
     path: urls.detail_ticket,
     component: <DetailTicket />,
   },
@@ -1467,6 +1497,10 @@ export const routes: IRouter[] = [
     component: <CreateOrderSales />,
   },
   // Danh sách yêu cầu mua hàng
+  {
+    path: urls.order_tracking,
+    component: <OrderTracking />,
+  },
   {
     path: urls.order_request_list,
     component: <OrderRequestList />,

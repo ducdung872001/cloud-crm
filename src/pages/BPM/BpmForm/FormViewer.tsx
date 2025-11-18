@@ -391,8 +391,8 @@ const FormViewerComponent = (props: any) => {
             if (componentChild.type == "select" || componentChild.type === "expression") {   
               data[component.path].map((el) => {                                
                 let dataSelect = el[componentChild.key]; //Lấy ra key
-                let target = componentChild?.properties?.bindingTarget;                
-                
+                let target = componentChild?.properties?.bindingTarget;
+
                 if (target) {
                   if (componentChild.type == "select") {
                     const listTarget = target.split(",").map((item) => item.trim()) || [];
@@ -422,23 +422,22 @@ const FormViewerComponent = (props: any) => {
               });
             }
 
-
             // if (componentChild.type == "number") {
             //   if (componentChild.type == "number" && componentChild?.properties?.formula) {
             //     let formula = componentChild?.properties?.formula;
             //     if (formula && componentChild?.properties?.formula) {
             //       // console.log('data', data);
-                  
+
             //       data[component.path].map((el, index) => {
             //         console.log('el', el);
-                    
+
             //         formula = formula.replace(/curr\.([a-zA-Z_]\w*)/g, (_, field) => el[field]);
             //         // console.log('formula', eval(formula));
             //         // el[componentChild?.key] = eval(formula);
             //         data[component.path][index][componentChild.key] = eval(formula);
             //       });
             //       return data;
-                  
+
             //     }
             //   }
             // }
@@ -466,6 +465,7 @@ const FormViewerComponent = (props: any) => {
       if (setShowPopupCustom && codeTemplateEform) {
         setShowPopupCustom(true);
         setCodePopupCustom(codeTemplateEform);
+        console.log("codeTemplateEform", codeTemplateEform);
       }
 
       //1. Loại là select
@@ -549,8 +549,8 @@ const FormViewerComponent = (props: any) => {
             const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
             return [key.trim(), value];
           })
-        );        
- 
+        );
+
         //Tồn tại trường binding
         if (fields) {
           let arrField = fields.split(",");
@@ -559,10 +559,10 @@ const FormViewerComponent = (props: any) => {
           for (let index = 0; index < arrField.length; index++) {
             let field = arrField[index].trim();
             let value = formData[field] ?? 0;
-            params = { 
-              ...params, 
+            params = {
+              ...params,
               [field]: value,
-              ...(paramsUrl ? {...paramsTotal} : {})
+              ...(paramsUrl ? { ...paramsTotal } : {}),
             };
           }
 
@@ -1276,8 +1276,8 @@ const FormViewerComponent = (props: any) => {
   };
 
   useEffect(() => {
-     // Định nghĩa hàm bất đồng bộ trong useEffect để sử dụng await
-     const initializeForm = async () => {
+    // Định nghĩa hàm bất đồng bộ trong useEffect để sử dụng await
+    const initializeForm = async () => {
       // Xử lý nếu là iframe (Dùng cho ảnh)
       let updatedFormSchema = updateIframeLinks(formSchema);
 

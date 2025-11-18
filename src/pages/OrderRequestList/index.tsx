@@ -65,6 +65,9 @@ export default function OrderRequestList() {
   //   return checkProcessId ? checkProcessId : -1;
   // });
   const [processId, setProcessId] = useState(1518);
+  // const [processId, setProcessId] = useState(null);
+  // const [processId, setProcessId] = useState(1648);
+  // const [processCode, setProcessCode] = useState("XNDH");
   const [processName, setProcessName] = useState<string>(checkProcessName ? checkProcessName : "Chọn quy trình");
   const [dataOfStep, setDataOfStep] = useState([]);
   const [columnList, setColumnList] = useState(undefined);
@@ -513,7 +516,10 @@ export default function OrderRequestList() {
           <Loading />
         </div>
         <div className={`${!isLoadingKanban ? "" : "d-none"}`}>
-          <KanbanOrderRequestProcess processId={processId} />
+          <KanbanOrderRequestProcess
+            // processId={processId}
+            processCode={"XNDH"}
+          />
         </div>
       </div>
 

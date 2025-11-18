@@ -28,7 +28,7 @@ const statusColor = {
 };
 
 const KanbanOrderRequestProcess = (props: any) => {
-  const { processId } = props;
+  const { processId, processCode } = props;
 
   //Xử lý các hành động trên item
   const callBackAction = (item, action) => {
@@ -120,10 +120,10 @@ const KanbanOrderRequestProcess = (props: any) => {
         </Draggable>
       );
     },
-    [processId, callBackAction]
+    [processId, callBackAction, processCode]
   );
 
-  return <KanbanBpm processId={processId} itemShow={itemSetup} />;
+  return <KanbanBpm processId={processId} processCode={processCode} itemShow={itemSetup} />;
 };
 
 export default memo(KanbanOrderRequestProcess);

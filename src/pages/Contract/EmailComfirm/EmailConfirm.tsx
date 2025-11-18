@@ -298,16 +298,12 @@ export default function EmailConfirm() {
   }, [voucherId, getVoucherDetail]);
 
   const fetchVoucherList = useCallback(
-    async (fmtStartDate?: string) => {
+    async () => {
       setIsLoadingVoucher(true);
       try {
         const requestParams: any = {
           limit: 50,
         };
-
-        if (fmtStartDate) {
-          requestParams.fmtStartDate = fmtStartDate;
-        }
 
         const response = await PromotionService.list(requestParams);
 
@@ -397,9 +393,8 @@ export default function EmailConfirm() {
   );
 
  useEffect(() => {
-  const StartDate = fmtStartDate || new Date().toLocaleDateString("vi-VN"); 
-  fetchVoucherList(StartDate);
-}, [fmtStartDate, fetchVoucherList]);
+  fetchVoucherList();
+}, [fetchVoucherList]);
 
   const selectedVoucherOption = useMemo(() => {
     const id = formData?.values?.voucherId;

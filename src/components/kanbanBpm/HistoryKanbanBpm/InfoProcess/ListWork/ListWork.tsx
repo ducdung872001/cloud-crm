@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import _, { set } from "lodash";
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -17,6 +17,7 @@ import "./ListWork.scss";
 import WorkOrderService from "services/WorkOrderService";
 import Button from "components/button/button";
 import HandleTask from "pages/MiddleWork/partials/ListWork/partials/HandleTask/HandleTask";
+import ModalHandleTask from "pages/UserTaskList/partials/ListWork/partials/ModalHandleTask/ModalHandleTask";
 
 export default function ListWork(props: any) {
   document.title = "Danh sách công việc";
@@ -238,7 +239,8 @@ export default function ListWork(props: any) {
 
   return (
     <div className={`page-content page-list-work-process${isNoItem ? " bg-white" : ""}`}>
-      <div className={`${isHandleTask ? "d-none" : "card-box d-flex flex-column"}`}>
+      {/* <div className={`${isHandleTask ? "d-none" : "card-box d-flex flex-column"}`}> */}
+      <div className={`card-box d-flex flex-column`}>
         {/* <SearchBox
                 name="Tên biểu mẫu"
                 params={params}
@@ -299,7 +301,7 @@ export default function ListWork(props: any) {
         )}
       </div>
 
-      <div className={isHandleTask ? "" : "d-none"}>
+      {/* <div className={isHandleTask ? "" : "d-none"}>
         <div className="container-button">
           <div
             className="button-back"
@@ -314,7 +316,27 @@ export default function ListWork(props: any) {
         <div className="container-form">
           <HandleTask onShow={isHandleTask} dataWork={dataWork} />
         </div>
-      </div>
+      </div> */}
+      <ModalHandleTask
+        onShow={isHandleTask}
+        isHandleTask={isHandleTask}
+        dataWork={dataWork}
+        onHide={(reload, notClose, closeDetailWork) => {
+          setIsHandleTask(false);
+          if (reload) {
+            // handGetDetailWork(idData);
+            // getListWorkPause(idData);
+            // getListWorkPause(data?.potId, data?.processId, data?.id, data);
+          }
+          if (!notClose) {
+            // setIsModalHandleTask(false);
+          }
+
+          if (closeDetailWork) {
+            // setIsHandleTask();
+          }
+        }}
+      />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );

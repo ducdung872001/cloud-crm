@@ -91,6 +91,7 @@ i18n.use(initReactI18next).init({
           customerCareEmail: "Customer care email",
           receiveWarranty: "Receive warranty",
           receiveTicket: "Receive ticket",
+          receiveTicketProcess: "Receive ticket process",
           medicalRecord: "Medical record",
           feedbackEnhancement: "Feedback enhancement",
           customerSurvey: "Customer survey",
@@ -310,6 +311,7 @@ i18n.use(initReactI18next).init({
           customerServiceHotline: "Tổng đài CSKH",
           receiveWarranty: "Tiếp nhận bảo hành",
           receiveTicket: "Tiếp nhận hỗ trợ",
+          receiveTicketProcess: "Tiếp nhận hỗ trợ theo quy trình",
           customerCareEmail: "Email CSKH",
           medicalRecord: "Nhật ký điều trị",
           feedbackEnhancement: "Góp ý cải tiến",
@@ -322,6 +324,7 @@ i18n.use(initReactI18next).init({
           temporaryOrderList: "Đơn đặt lưu tạm",
 
           // đoạn này là children của quản lý đơn đặt hàng
+          orderTracking: "Theo dõi đặt hàng",
           manageOrder: "Yêu cầu mua hàng",
           productList: "Thống kê sản phẩm",
 

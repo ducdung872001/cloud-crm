@@ -13,6 +13,9 @@ console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
+  beautySalon: {
+    list: prefixRebornVn + "/beautySalon/list",
+  },
   user: {
     create: prefixAuthenticator + "/user/create",
     profile: prefixAuthenticator + "/user/me",
@@ -1564,6 +1567,7 @@ export const urlsApi = {
   ticket: {
     list: prefixAdmin + "/ticket/list",
     update: prefixAdmin + "/ticket/update",
+    collect: prefixAdmin + "/ticket/send/jssdk",
     detail: prefixAdmin + "/ticket/get",
     delete: prefixAdmin + "/ticket/delete",
     viewer: prefixAdmin + "/ticket/viewer",
@@ -2887,6 +2891,7 @@ export const urlsApi = {
   objectGroup: {
     list: prefixBpm + "/objectGroup/list",
     update: prefixBpm + "/objectGroup/update",
+    updateConfig: prefixBpm + "/objectGroup/update/config",
     detail: prefixBpm + "/objectGroup/get",
     delete: prefixBpm + "/objectGroup/delete",
   },
@@ -3040,6 +3045,8 @@ export const urls = {
   detail_warranty: "/detail_warranty/warrantyId/:id",
   setting_warranty: "/setting_warranty",
   ticket: "/ticket",
+  ticket_process: "/ticket_process",
+  collect_ticket: "/collect_ticket",
   detail_ticket: "/detail_ticket/ticketId/:id",
   setting_ticket: "/setting_ticket",
   setting_sms: "/setting_sms",
@@ -3110,6 +3117,7 @@ export const urls = {
   // danh sách cơ hội
   opportunity_list: "/opportunity_list",
   order_request_list: "/order_request_list",
+  order_tracking: "/order_tracking",
   // quản lý cơ hội
   management_opportunity: "/management_opportunity",
   // tổng đài

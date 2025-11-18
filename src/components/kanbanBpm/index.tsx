@@ -30,11 +30,12 @@ const colorData = [
 ];
 
 type Props = {
-  processId: any;
+  processId?: any;
+  processCode?: any;
   itemShow: (item: any, idx: number) => React.ReactNode;
 };
 
-export default function KanbanBpm({ processId, itemShow }: Props) {
+export default function KanbanBpm({ processId, processCode, itemShow }: Props) {
   const [listStepProcess, setListStepProcess] = useState<any[]>([]);
   const [columns, setColumns] = useState<any[]>([]);
   const [isLoadingKanban, setIsLoadingKanban] = useState<boolean>(false);
@@ -48,18 +49,24 @@ export default function KanbanBpm({ processId, itemShow }: Props) {
       abortControllerRef.current?.abort();
     };
   }, []);
-
+  console.log("KanbanBpm: RENDER KanbanBpm useEffect processId/processCode", processId, processCode);
   useEffect(() => {
-    if (processId == null || processId === -1) return;
-    getListStepProcess(processId);
-  }, [processId]);
+    if (!processId && !processCode) return;
 
-  const getListStepProcess = async (pid: any) => {
+    getListStepProcess(processId, processCode);
+  }, [processId, processCode]);
+
+  const getListStepProcess = async (pid?: any, pCode?: any) => {
     setIsLoadingKanban(true);
     const body: any = {
-      processId: pid,
+      ...(pid ? { processId: pid } : {}),
+      ...(pCode ? { processCode: pCode } : {}),
+      // processId: pid,
+      // processCode: pCode || "",
       limit: 100,
     };
+    console.log("KanbanBpm: getListStepProcess body", body);
+
     try {
       const response = await BusinessProcessService.listStep(body);
       if (response.code === 0) {
@@ -72,6 +79,7 @@ export default function KanbanBpm({ processId, itemShow }: Props) {
                 label: item.stepName,
                 color: colorData[index % colorData.length],
                 processId: item.processId,
+                processCode: pCode || "",
                 // NOTE: do not fetch items here — Column will fetch its own initial page
               }))
             : []
@@ -85,6 +93,7 @@ export default function KanbanBpm({ processId, itemShow }: Props) {
                 title: item.stepName,
                 color: colorData[index % colorData.length],
                 processId: item.processId,
+                processCode: pCode || "",
                 items: [], // will be filled by Column via callbacks
                 hasMore: true,
                 page: 0,
