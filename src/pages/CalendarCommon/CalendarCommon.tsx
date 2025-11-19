@@ -44,39 +44,44 @@ export default function CalendarCommon() {
   const { dataBranch } = useContext(UserContext) as ContextType;
 
   const listOptionNewAdd =
-    isBeauty && isBeauty == "1"
-      ? [
+    // isBeauty && isBeauty == "1"
+    //   ? 
+      [
           {
-            value: "1",
+            value: "2",
             label: "Thêm lịch tư vấn",
           },
           {
-            value: "2",
+            value: "3",
             label: "Thêm lịch thực hiện dịch vụ",
           },
           {
-            value: "3",
+            value: "1",
             label: "Thêm lịch công việc",
           },
         ]
-      : [
-          {
-            value: "1",
-            label: "Thêm lịch tư vấn",
-          },
-          {
-            value: "3",
-            label: "Thêm lịch công việc",
-          },
-        ];
+      // : [
+      //     {
+      //       value: "1",
+      //       label: "Thêm lịch tư vấn",
+      //     },
+      //     {
+      //       value: "3",
+      //       label: "Thêm lịch công việc",
+      //     },
+      //   ];
 
   const [valueOptionAdd, setValueOptionAdd] = useState({
-    value: "1",
+    value: "2",
     label: "Thêm lịch tư vấn",
   });
 
   const handleChangeValueOptionAdd = (e) => {
     setValueOptionAdd(e);
+    setFilterCalendar((prev) => ({
+      ...prev,
+      chooseTypeCalendar: [Number(e?.value)],
+    }));
   };
 
   //đoạn này sau tách thành 1 component
@@ -368,9 +373,9 @@ export default function CalendarCommon() {
         setStartDate(start);
         setEndDate(end);
 
-        if (valueOptionAdd.value == "1") {
+        if (valueOptionAdd.value == "2") {
           setShowModalAddConsultationScheduleModal(true);
-        } else if (valueOptionAdd.value == "2") {
+        } else if (valueOptionAdd.value == "3") {
           setShowModalAddTreatmentSchedule(true);
         } else {
           setShowModalAddWork(true);

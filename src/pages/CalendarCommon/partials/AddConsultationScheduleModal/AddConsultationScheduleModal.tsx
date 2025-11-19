@@ -19,6 +19,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
+import Button from "components/button/button";
 import { useActiveElement, useOnClickOutside } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { listTimeSlots, showToast } from "utils/common";
@@ -53,6 +54,10 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
   const focusedElement = useActiveElement();
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+    const [showDialogConfirmCustomerArrived, setShowDialogConfirmCustomerArrived] = useState<boolean>(false);
+  const [contentDialogConfirmCustomerArrived, setContentDialogConfirmCustomerArrived] = useState<IContentDialog>(null);
+  const [isSubmittingCustomerArrived, setIsSubmittingCustomerArrived] = useState<boolean>(false);
+
   const [valueDecisionTime, setValueDecisionTime] = useState({
     value: "3",
     label: "Phút",
@@ -1227,6 +1232,57 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
     setShowDialog(true);
   };
 
+  //! Xử lý xác nhận khách đến
+  const handleShowDialogConfirmCustomerArrived = () => {
+    const contentDialog: IContentDialog = {
+      color: "success",
+      className: "dialog-customer-arrived",
+      isCentered: true,
+      isLoading: false,
+      title: <Fragment>Xác nhận khách đến</Fragment>,
+      message: <Fragment>Bạn có chắc chắn khách hàng đã đến?</Fragment>,
+      cancelText: "Hủy",
+      cancelAction: () => {
+        setShowDialogConfirmCustomerArrived(false);
+        setContentDialogConfirmCustomerArrived(null);
+      },
+      defaultText: "Xác nhận",
+      defaultAction: () => {
+        handleConfirmCustomerArrived();
+      },
+    };
+    setContentDialogConfirmCustomerArrived(contentDialog);
+    setShowDialogConfirmCustomerArrived(true);
+  };
+
+  const handleConfirmCustomerArrived = async () => {
+    if (!idData) return;
+
+    setIsSubmittingCustomerArrived(true);
+
+    const body: IScheduleConsultantRequestModelProps = {
+      ...(formData.values as IScheduleConsultantRequestModelProps),
+      ...(idData ? { id: idData } : {}),
+      status: "7", // Giả định status 7 là "Khách đến", có thể cần điều chỉnh theo backend
+    } as any;
+
+    const response = await ScheduleConsultantService.update(body);
+
+    if (response.code === 0) {
+      showToast("Xác nhận khách đến thành công", "success");
+      // Reload lại dữ liệu
+      if (idData) {
+        await getDetailDataItem(idData);
+      }
+      setShowDialogConfirmCustomerArrived(false);
+      setContentDialogConfirmCustomerArrived(null);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+
+    setIsSubmittingCustomerArrived(false);
+  };
+
   const checkKeyDown = useCallback(
     (e) => {
       const { keyCode } = e;
@@ -1263,7 +1319,39 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
         className="modal-add-event"
       >
         <form className="form-add-event" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${idData ? "Chỉnh sửa" : "Thêm mới"} lịch tư vấn`} toggle={() => !isSubmit && handClearForm(false)} />
+          <ModalHeader
+            custom={idData ? true : false}
+            title={idData ? undefined : `${idData ? "Chỉnh sửa" : "Thêm mới"} lịch thực tư vấn`}
+            toggle={() => !isSubmit && handClearForm(false)}
+          >
+            {idData ? (
+              <Fragment>
+                <div className="modal-header-custom">
+                  <h4>{`Chỉnh sửa lịch tư vấn`}</h4>
+                  <div className="modal-header-actions">
+                    <Button
+                      type="button"
+                      color="primary"
+                      variant="outline"
+                      onClick={() => handleShowDialogConfirmCustomerArrived()}
+                      disabled={isSubmit || isSubmittingCustomerArrived}
+                    >
+                      Khách đến
+                    </Button>
+                    <Button
+                      onClick={() => !isSubmit && handClearForm(false)}
+                      type="button"
+                      className="btn-close"
+                      color="transparent"
+                      onlyIcon={true}
+                    >
+                      <Icon name="Times" />
+                    </Button>
+                  </div>
+                </div>
+              </Fragment>
+            ) : null}
+          </ModalHeader>
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (
@@ -1280,6 +1368,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
         </form>
       </Modal>
       <Dialog content={contentDialog} isOpen={showDialog} />
+       <Dialog content={contentDialogConfirmCustomerArrived} isOpen={showDialogConfirmCustomerArrived} />
     </Fragment>
   );
 }
