@@ -42,6 +42,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [dataInit, setDataInit] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
   const [isLoadingEngine, setIsLoadingEngine] = useState(true);
   const [isLoadingRecall, setIsLoadingRecall] = useState(false);
 

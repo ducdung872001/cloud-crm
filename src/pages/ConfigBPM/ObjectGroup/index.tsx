@@ -147,18 +147,15 @@ export default function ObjectGroupList(props: any) {
 
   const actionsTable = (item: any): IAction[] => {
     return [
-      ...(role == "mod"
-        ? [
-            {
-              title: "Cài đặt hồ sơ",
-              icon: <Icon name="SettingTicket" />,
-              callback: () => {
-                setDataObjectGroup(item);
-                setShowModalSettingObject(true);
-              },
-            },
-          ]
-        : []),
+      {
+        title: "Cài đặt hồ sơ",
+        icon: <Icon name="SettingTicket" />,
+        callback: () => {
+          setDataObjectGroup(item);
+          setShowModalSettingObject(true);
+        },
+      },
+
       {
         title: "Cài đặt trường",
         icon: <Icon name="Settings" />,
