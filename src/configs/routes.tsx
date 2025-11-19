@@ -186,7 +186,7 @@ const checkSubdomainTNPM = sourceDomain.includes("tnpm") || sourceDomain.include
 const checkSubdomainGREENSPA = sourceDomain.includes("greenspa");
 // "tnex.reborn.vn"
 
-const checkUserRoot = localStorage.getItem("user.root");
+const checkUserRoot = localStorage.getItem("user.root") == "1";
 
 export const menu: IMenuItem[] = [
   ...(!checkSubdomainTNEX

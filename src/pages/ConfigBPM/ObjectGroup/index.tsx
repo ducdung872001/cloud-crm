@@ -326,7 +326,7 @@ export default function ObjectGroupList(props: any) {
       />
       <ObjectSettingModal
         onShow={showModalSettingObject}
-        data={dataObjectGroup}
+        dataObject={dataObjectGroup}
         onHide={(reload) => {
           if (reload) {
             getListOjectGroup(params);

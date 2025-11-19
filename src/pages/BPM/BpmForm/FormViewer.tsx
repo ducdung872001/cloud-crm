@@ -290,18 +290,14 @@ const FormViewerComponent = (props: any) => {
     let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
       let { schema, data } = event;
-      console.log("event", event);
-
+      
       let components = schema.components;
       const newValues = data;
 
       for (const key in newValues) {
         if (!_.isEqual(newValues[key], prevValues[key])) {
-          // console.log("Field thay đổi:", key, "->", newValues[key]);
-          console.log("components", components);
 
           const keyFind = components.find((el) => el.key === key || el.path === key);
-          console.log("keyFind", keyFind);
 
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
           if (keyFind?.properties?.bindingTarget) {
@@ -391,15 +387,9 @@ const FormViewerComponent = (props: any) => {
         }
 
         if (component.type === "dynamiclist") {
-          component.components.forEach((componentChild, index) => {
-            // console.log('componentChild', componentChild);
-
-            if (componentChild.type == "select" || componentChild.type === "expression") {
-              console.log("componentChild", componentChild);
-
-              data[component.path].map((el) => {
-                console.log("el", el);
-
+          component.components.forEach((componentChild, index) => {            
+            if (componentChild.type == "select" || componentChild.type === "expression") {   
+              data[component.path].map((el) => {                                
                 let dataSelect = el[componentChild.key]; //Lấy ra key
                 let target = componentChild?.properties?.bindingTarget;
 
@@ -422,8 +412,7 @@ const FormViewerComponent = (props: any) => {
 
                   if (componentChild.type === "expression") {
                     let dataExpression = el[componentChild.key]; //Lấy ra key
-                    console.log("dataExpression", dataExpression);
-
+                    
                     if (dataExpression) {
                       el[target] = dataExpression;
                       // rerenderForm(schema, data);
