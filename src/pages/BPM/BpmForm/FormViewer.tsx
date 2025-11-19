@@ -844,21 +844,21 @@ const FormViewerComponent = (props: any) => {
 
       // Convert validationErrors object into an array of keys
       const errorFields = Object.keys(validationErrors);
-      if (!showOnRejectModal) {
-        if (errorFields.length > 0) {
-          showToast("Các trường bắt buộc không được để trống", "error");
-          // // console.log('Object.entries(validationErrors)', Object.entries(validationErrors));
-          // Duyệt qua các lỗi và thay thế thông báo
-          for (const fieldId in validationErrors) {
-            validationErrors[fieldId] = validationErrors[fieldId].map((error) => {
-              if (error === "Field is required.") {
-                return "Không được để trống.";
-              }
-              return error;
-            });
-          }
-          // return;
+      if (!showOnRejectModal && errorFields.length > 0) {
+        showToast("Các trường bắt buộc không được để trống", "error");
+        for (const fieldId in validationErrors) {
+          validationErrors[fieldId] = validationErrors[fieldId].map((error) => {
+            if (error === "Field is required.") {
+              return "Không được để trống.";
+            }
+            return error;
+          });
         }
+        // Gọi callback để thông báo có lỗi validation (nếu có)
+        if (props.onValidationError) {
+          props.onValidationError();
+        }
+        return;
       }
       const formData = event.data;
 
