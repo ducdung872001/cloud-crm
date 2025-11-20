@@ -4,6 +4,7 @@ import "./index.scss";
 import ComponentList from "./ComponentList/ComponentList";
 import ObjectGroupList from "./ObjectGroup";
 import ObjectAttributeList from "./ObjectAttribute/ObjectAttributeList";
+import FormCategory from "./FormCategory";
 
 export default function ConfigBPM() {
   document.title = "Cấu hình quy trình";
@@ -25,6 +26,10 @@ export default function ConfigBPM() {
     //   title: "Định nghĩa các trường thông tin bổ sung đối tượng",
     //   is_tab: "tab_three",
     // },
+    {
+      title: "Danh mục biểu mẫu",
+      is_tab: "tab_four",
+    },
   ];
 
   return (
@@ -69,6 +74,14 @@ export default function ConfigBPM() {
         />
       ) : isDetailCategory && tab === "tab_three" ? (
         <ObjectAttributeList
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetailCategory(false);
+            }
+          }}
+        />
+      ) : isDetailCategory && tab === "tab_four" ? (
+        <FormCategory
           onBackProps={(isBack) => {
             if (isBack) {
               setIsDetailCategory(false);
