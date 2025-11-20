@@ -11,6 +11,12 @@ import "@bpmn-io/form-js/dist/assets/form-js-editor.css";
 import "@bpmn-io/form-js/dist/assets/form-js-playground.css";
 import ButtonExportNode from "../BusinessProcessCreate/components/ButtonExportNode/ButtonExportNode";
 
+// Grid
+import GridExtension from "./extension/grid/render";
+import PropertiesPanelGridPropertiesPanel from "./extension/grid/propertiesPanel";
+import ModalConfigGrid from "./partials/ModalConfigGrid";
+import ModalConfigLinkingGrid from "./partials/ModalConfigLinkingGrid";
+
 interface FormEditorProps {
   initialSchema: any;
   onSchemaChange: (schema: any) => void;
@@ -43,10 +49,8 @@ const FormEditorComponent = ({
         // NumberRenderExtension
         // TreeSelectorEditorExtension,
         // Đóng tạm vì gây lỗi khi build lên môi trường production
-        // RenderExtension,
-        // PropertiesPanelExtension,
-        // GridExtension,
-        // PropertiesPanelGridPropertiesPanel,
+        GridExtension,
+        PropertiesPanelGridPropertiesPanel,
       ],
 
       // load properties panel extension
@@ -130,7 +134,43 @@ const FormEditorComponent = ({
     return () => window.removeEventListener("openConfigModal", handler as EventListener);
   }, [formEditorRef]);
 
-  const updateFieldLabel = (fieldId: string, data: any) => {
+  const [isConfigLinkingGridOpen, setIsConfigLinkingGridOpen] = useState(false);
+  const [dataConfigLinkingGrid, setDataConfigLinkingGrid] = useState(null);
+  const [listGridField, setListGridField] = useState([]);
+
+  useEffect(() => {
+    const handler = (e: CustomEvent) => {
+      const { fieldId } = e.detail;
+      // Xử lý với fieldId hoặc lưu vào state
+      console.log("fieldId nhận được từ con:", fieldId);
+      setFieldId(fieldId);
+      setIsConfigLinkingGridOpen(true);
+      const editor = formEditorRef.current;
+      if (editor) {
+        const schema = editor.getSchema();
+        // Tìm field cần sửa
+        const field = schema.components.find((f) => f.id === fieldId);
+        if (field) {
+          setDataConfigLinkingGrid(field);
+          setListGridField(
+            schema.components
+              .filter((c) => c.type === "grid" && c.id !== fieldId)
+              .map((item) => ({
+                id: item.id,
+                label: item.label,
+                fieldName: item.fieldName,
+                dataRow: item.dataRow ? JSON.parse(item.dataRow) : [],
+                headerTable: item.headerTable ? JSON.parse(item.headerTable) : [],
+              }))
+          );
+        }
+      }
+    };
+    window.addEventListener("openLinkingConfigModal", handler as EventListener);
+    return () => window.removeEventListener("openLinkingConfigModal", handler as EventListener);
+  }, [formEditorRef]);
+
+  const updateFieldLabel = (fieldId: string, data: any, location?: string) => {
     const editor = formEditorRef.current;
     console.log("updateFieldLabel>>", fieldId, data);
 
@@ -139,10 +179,16 @@ const FormEditorComponent = ({
       // Tìm field cần sửa
       const field = schema.components.find((f) => f.id === fieldId);
       if (field) {
-        field.headerTable = JSON.stringify(data.headerTable);
-        field.dataRow = JSON.stringify(data.dataRow);
+        if (location && location == "linking") {
+          field.linkingConfig = JSON.stringify(data.linkingConfig);
+        } else {
+          field.headerTable = JSON.stringify(data.headerTable);
+          field.dataRow = JSON.stringify(data.dataRow);
+        }
         // Import lại schema đã sửa vào editor
         editor.importSchema(schema);
+        console.log("dataConfigGrid>>", dataConfigGrid);
+        console.log("dataConfigGrid>>schema.components>>", formEditorRef.current.getSchema().components);
       }
     }
   };
@@ -252,6 +298,39 @@ const FormEditorComponent = ({
         </div>
       )}
       <div ref={editorContainerRef}></div> {/* Container cho editor */}
+      <ModalConfigGrid
+        onShow={isConfigOpen}
+        onHide={(reload) => {
+          if (reload) {
+            // getDataBpmFormArtifact(+dataNode.id, idTabConfig);
+          }
+          setIsConfigOpen(false);
+          setDataConfigGrid(null);
+        }}
+        dataConfig={dataConfigGrid}
+        callBack={(data) => {
+          updateFieldLabel(fieldId, data);
+          setIsConfigOpen(false);
+        }}
+      />
+      <ModalConfigLinkingGrid
+        onShow={isConfigLinkingGridOpen}
+        onHide={(reload) => {
+          if (reload) {
+            // getDataBpmFormArtifact(+dataNode.id, idTabConfig);
+          }
+          setIsConfigLinkingGridOpen(false);
+          setDataConfigLinkingGrid(null);
+          setListGridField([]);
+        }}
+        listGridField={listGridField}
+        dataConfig={dataConfigLinkingGrid}
+        callBack={(data) => {
+          updateFieldLabel(fieldId, data, "linking");
+          setIsConfigLinkingGridOpen(false);
+          setListGridField([]);
+        }}
+      />
     </div>
   );
 };

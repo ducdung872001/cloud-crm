@@ -3,6 +3,10 @@
   align-items: center;
   justify-content: center;
   .form-viewer-container {
-    width: 998px;
+    // width: 998px;
+    width: 100%;
+    .cds--grid {
+      max-inline-size: 100%;
+    }
   }
 }

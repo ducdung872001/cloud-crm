@@ -1,0 +1,79 @@
+.custom-cell-edit {
+  width: 100% !important;
+  height: calc(100% - 1px) !important;
+  background-color: white;
+  .base-textarea {
+    width: calc(100% - 20px);
+
+    label {
+      textarea {
+        padding: 7px 5px 5px 18px;
+        border: none !important;
+        resize: none;
+        max-height: none;
+      }
+    }
+  }
+  .base-input {
+    width: calc(100% - 20px);
+
+    label {
+      input {
+        padding: 7px 5px 5px 18px;
+        border: none !important;
+        resize: none;
+        max-height: none;
+      }
+    }
+  }
+  .base-checkbox {
+    padding-left: 18px;
+    label {
+      input {
+      }
+    }
+  }
+  .base-input__nummeric {
+    width: calc(100% - 20px);
+    label {
+      .base-input__input {
+        border: none !important;
+        input {
+          padding-right: 5px;
+          border: none !important;
+          text-align: right;
+        }
+      }
+    }
+  }
+  .base-datepicker {
+    width: 100%;
+    // height: calc(100% - 3px) !important;
+    padding-left: 18px;
+    label {
+      input {
+        border-bottom: none !important;
+        height: calc(100% - 4px) !important;
+        padding: 0 !important;
+      }
+    }
+  }
+  .base-select {
+    width: 100%;
+    [class*="-control"] {
+      [class*="-placeholder"] {
+        padding-left: 18px;
+      }
+      [class*="-indicatorContainer"]:first-of-type {
+        /* Các thuộc tính CSS */
+        margin-right: 20px;
+      }
+      [class*="-singleValue"] {
+        padding-left: 18px;
+        .selected--item {
+          height: 23px;
+        }
+      }
+    }
+  }
+}
