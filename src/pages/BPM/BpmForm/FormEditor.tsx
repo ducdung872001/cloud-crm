@@ -120,7 +120,7 @@ const FormEditorComponent = ({
       if (comp.id === fieldId) {
         return comp;
       }
-
+      // duyệt components bên trong (group, dynamiclist, container...)
       if (Array.isArray(comp.components) && comp.components.length > 0) {
         const found = walkFindGrid(comp.components, fieldId);
         if (found) return found;
@@ -172,6 +172,8 @@ const FormEditorComponent = ({
         const field = walkFindGrid(schema.components, fieldId);
         if (field) {
           setDataConfigLinkingGrid(field);
+
+          // Cần phải sửa để lấy tất cả grid bằng đệ quy
           setListGridField(
             schema.components
               .filter((c) => c.type === "grid" && c.id !== fieldId)
@@ -240,6 +242,7 @@ const FormEditorComponent = ({
       }
 
       // nếu comp có children, đệ quy
+      // duyệt components bên trong (group, dynamiclist, container...)
       if (comp && Array.isArray(comp.components)) {
         const { components: newChildComponents, updated: childUpdated } = updateComponentByIdImmutable(comp.components, id, updater, stopAfterFirst);
 
