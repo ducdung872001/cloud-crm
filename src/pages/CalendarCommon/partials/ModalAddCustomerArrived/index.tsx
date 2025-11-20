@@ -282,6 +282,12 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
     const response = await ScheduleTreatmentService.update(body as any);
 
     if (response.code === 0) {
+      try {
+        const treatmentScheduleId = body.id ?? data?.id ?? formData.potId;
+        await ScheduleTreatmentService.updateKafka({ treatmentScheduleId, processor: JSON.stringify(processorObj) });
+      } catch (e) {
+      }
+
       showToast("Xử lý thành công", "success");
       handleClearForm(true);
     } else {
@@ -338,10 +344,10 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
                   className="custom-label"
                   value={formData?.potName ?? data?.name ?? ""}
                   onChange={(e) => setFormData({ ...formData, potName: e.target.value })}
-                  label="Tên đối tượng xử lý"
+                  label="Tên hồ sơ"
                   fill={true}
                   required={false}
-                  placeholder="Tên đối tượng xử lý"
+                  placeholder="Tên hồ sơ"
                 />
                 <SelectCustom
                   name="processId"
@@ -368,7 +374,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
                   name="groupId"
                   className="custom-label"
                   value={valueGroup}
-                  label="Nhóm xử lý"
+                  label="Loại hồ sơ"
                   fill={true}
                   required={false}
                   options={[]}
@@ -377,7 +383,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
                     page: 1,
                   }}
                   loadOptionsPaginate={loadedOptionGroup}
-                  placeholder="Chọn nhóm xử lý"
+                  placeholder="Chọn loại hồ sơ"
                   onChange={(e) => handleChangeValueGroup(e)}
                   error={false}
                   message=""
@@ -407,7 +413,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
 
               <div className="container-list-var">
                 <div>
-                  <span style={{ fontSize: 14, fontWeight: '500' }}>Điều kiện</span>
+                  <span style={{ fontSize: 14, fontWeight: '500' }}>Cài đặt biến</span>
                 </div>
                 {listDataVar && listDataVar.length > 0 ?
                   listDataVar.map((item, index) => (

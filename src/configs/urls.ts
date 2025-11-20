@@ -530,6 +530,7 @@ export const urlsApi = {
     update: prefixAdmin + "/scheduleTreatment/update",
     detail: prefixAdmin + "/scheduleTreatment/get",
     delete: prefixAdmin + "/scheduleTreatment/delete",
+    updateKafka: prefixBpm + "/kafka/activateProcess",
   },
   // lịch chung (điều trị, tư vấn, công việc)
   scheduleCommon: {
