@@ -133,6 +133,22 @@ export default function ModalUserTask({ onShow, onHide, dataNode, processId, dis
     }
   }
 
+  const walkAddIframGrid = (components, body) => {
+    if (components && components.length > 0) {
+      components.forEach(comp => {
+        if (comp.type === "iframe") {
+          addIframe(comp, body);
+        }
+    
+        // duyệt components bên trong (group, dynamiclist, container...)
+        if (Array.isArray(comp.components) && comp.components.length > 0) {
+          walkAddIframGrid(comp.components, body);
+        }
+      });
+    };
+    
+  }
+
   const onSubmit = async (e) => {
     e.preventDefault();
 
@@ -169,20 +185,10 @@ export default function ModalUserTask({ onShow, onHide, dataNode, processId, dis
     // }
 
     console.log("formSchemaSubmit", formSchema);
-    if (formSchema && formSchema.components?.length > 0) {
-      formSchema.components.map(item => {
-        if(item.type === "iframe"){
-          addIframe(item, body);
-        }
 
-        if(item.type === "dynamiclist" || item.type === "group"){
-          item.components.map(el => {
-            if(el.type === "iframe"){
-              addIframe(el, body);
-            }
-          })
-        }
-      })
+    //lưu grid nhiều cấp
+    if (formSchema && formSchema.components?.length > 0) {
+      walkAddIframGrid(formSchema.components, body); 
     }
 
     const response = await BusinessProcessService.updateUserTask(body);
