@@ -44,8 +44,8 @@ export default function CalendarCommon() {
   const { dataBranch } = useContext(UserContext) as ContextType;
 
   const listOptionNewAdd =
-    isBeauty && isBeauty == "1"
-      ? 
+    // isBeauty && isBeauty == "1"
+    //   ? 
       [
           {
             value: "2",
@@ -60,16 +60,16 @@ export default function CalendarCommon() {
             label: "Thêm lịch công việc",
           },
         ]
-      : [
-          {
-            value: "1",
-            label: "Thêm lịch tư vấn",
-          },
-          {
-            value: "3",
-            label: "Thêm lịch công việc",
-          },
-        ];
+      // : [
+      //     {
+      //       value: "1",
+      //       label: "Thêm lịch tư vấn",
+      //     },
+      //     {
+      //       value: "3",
+      //       label: "Thêm lịch công việc",
+      //     },
+      //   ];
 
   const [valueOptionAdd, setValueOptionAdd] = useState({
     value: "2",

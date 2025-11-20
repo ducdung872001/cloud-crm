@@ -32,6 +32,7 @@ import BoughtServiceService from "services/BoughtServiceService";
 import TreatmentRoomService from "services/TreatmentRoomService";
 import ScheduleTreatmentService from "services/ScheduleTreatmentService";
 import "./AddTreatmentScheduleModal.scss";
+import ModalAddCustomerArrived from "../ModalAddCustomerArrived";
 
 interface IDataListNotificationProps {
   method: string[];
@@ -58,6 +59,8 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
   const [showDialogConfirmCustomerArrived, setShowDialogConfirmCustomerArrived] = useState<boolean>(false);
   const [contentDialogConfirmCustomerArrived, setContentDialogConfirmCustomerArrived] = useState<IContentDialog>(null);
   const [isSubmittingCustomerArrived, setIsSubmittingCustomerArrived] = useState<boolean>(false);
+  const [showModalCustomerArrived, setShowModalCustomerArrived] = useState<boolean>(false);
+  const [isReloadingFromChild, setIsReloadingFromChild] = useState<boolean>(false);
 
   const [valueDecisionTime, setValueDecisionTime] = useState({
     value: "3",
@@ -1527,7 +1530,7 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
     const body: IScheduleTreatmentRequestModal = {
       ...(formData.values as IScheduleTreatmentRequestModal),
       ...(idData ? { id: idData } : {}),
-      status: "7", // Giả định status 7 là "Khách đến", có thể cần điều chỉnh theo backend
+      status: "5",
     };
 
     const response = await ScheduleTreatmentService.update(body);
@@ -1619,8 +1622,8 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
                       type="button"
                       color="primary"
                       variant="outline"
-                      onClick={() => handleShowDialogConfirmCustomerArrived()}
-                      disabled={isSubmit || isSubmittingCustomerArrived}
+                      onClick={(e) => setShowModalCustomerArrived(true)}
+                      disabled={isSubmit || isSubmittingCustomerArrived || isReloadingFromChild}
                     >
                       Khách đến
                     </Button>
@@ -1653,6 +1656,17 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
           <ModalFooter actions={actions} />
         </form>
       </Modal>
+      <ModalAddCustomerArrived
+        onShow={showModalCustomerArrived}
+        onHide={(reload) => {
+          setShowModalCustomerArrived(false);
+          if (reload && idData) {
+              setIsReloadingFromChild(true);
+              getDetailTreatmentSchedule(idData);
+          }
+        }}
+        data={data}
+      />
       <Dialog content={contentDialog} isOpen={showDialog} />
       <Dialog content={contentDialogConfirmCustomerArrived} isOpen={showDialogConfirmCustomerArrived} />
     </Fragment>

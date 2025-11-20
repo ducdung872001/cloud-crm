@@ -29,6 +29,7 @@ import EmployeeService from "services/EmployeeService";
 import ServiceService from "services/ServiceService";
 import ScheduleConsultantService from "services/ScheduleConsultantService";
 import "./AddConsultationScheduleModal.scss";
+import ModalAddCustomerArrivedConsultation from "../ModalAddCustomerArrived/ModalConsulation";
 
 interface IDataListNotificationProps {
   method: string[];
@@ -57,6 +58,8 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
     const [showDialogConfirmCustomerArrived, setShowDialogConfirmCustomerArrived] = useState<boolean>(false);
   const [contentDialogConfirmCustomerArrived, setContentDialogConfirmCustomerArrived] = useState<IContentDialog>(null);
   const [isSubmittingCustomerArrived, setIsSubmittingCustomerArrived] = useState<boolean>(false);
+  const [showModalCustomerArrived, setShowModalCustomerArrived] = useState<boolean>(false);
+    const [isReloadingFromChild, setIsReloadingFromChild] = useState<boolean>(false);
 
   const [valueDecisionTime, setValueDecisionTime] = useState({
     value: "3",
@@ -1263,7 +1266,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
     const body: IScheduleConsultantRequestModelProps = {
       ...(formData.values as IScheduleConsultantRequestModelProps),
       ...(idData ? { id: idData } : {}),
-      status: "7", // Giả định status 7 là "Khách đến", có thể cần điều chỉnh theo backend
+      status: "5", 
     } as any;
 
     const response = await ScheduleConsultantService.update(body);
@@ -1333,7 +1336,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
                       type="button"
                       color="primary"
                       variant="outline"
-                      onClick={() => handleShowDialogConfirmCustomerArrived()}
+                      onClick={(e) => setShowModalCustomerArrived(true)}
                       disabled={isSubmit || isSubmittingCustomerArrived}
                     >
                       Khách đến
@@ -1367,6 +1370,17 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
           <ModalFooter actions={actions} />
         </form>
       </Modal>
+      <ModalAddCustomerArrivedConsultation
+              onShow={showModalCustomerArrived}
+              onHide={(reload) => {
+                setShowModalCustomerArrived(false);
+                if (reload && idData) {
+                    setIsReloadingFromChild(true);
+                    getDetailDataItem(idData);
+                }
+              }}
+              data={data}
+            />
       <Dialog content={contentDialog} isOpen={showDialog} />
        <Dialog content={contentDialogConfirmCustomerArrived} isOpen={showDialogConfirmCustomerArrived} />
     </Fragment>
