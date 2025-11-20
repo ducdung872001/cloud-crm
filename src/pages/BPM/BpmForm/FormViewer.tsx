@@ -9,7 +9,7 @@ import { components } from "react-select";
 import ApprovedObjectService from "services/ApprovedObjectService";
 import Loading from "components/loading";
 // import FormattedNumberField from "./FormattedNumberField";
-// import GridExtension from "./extension/gridViewer/render";
+import GridExtension from "./extension/gridViewer/render";
 // import RenderExtension from './extension/range/render';
 // import HiddenRenderExtension from './extension/hidden/render';
 // import NumberRenderExtension from './extension/number/render';
@@ -274,7 +274,7 @@ const FormViewerComponent = (props: any) => {
         // TreeSelectorEditorExtension
         // Đóng tạm vì gây lỗi khi build lên môi trường production
         // RenderExtension,
-        // GridExtension,
+        GridExtension,
       ],
 
       // components: {
@@ -290,13 +290,12 @@ const FormViewerComponent = (props: any) => {
     let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
       let { schema, data } = event;
-      
+
       let components = schema.components;
       const newValues = data;
 
       for (const key in newValues) {
         if (!_.isEqual(newValues[key], prevValues[key])) {
-
           const keyFind = components.find((el) => el.key === key || el.path === key);
 
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
@@ -387,9 +386,9 @@ const FormViewerComponent = (props: any) => {
         }
 
         if (component.type === "dynamiclist") {
-          component.components.forEach((componentChild, index) => {            
-            if (componentChild.type == "select" || componentChild.type === "expression") {   
-              data[component.path].map((el) => {                                
+          component.components.forEach((componentChild, index) => {
+            if (componentChild.type == "select" || componentChild.type === "expression") {
+              data[component.path].map((el) => {
                 let dataSelect = el[componentChild.key]; //Lấy ra key
                 let target = componentChild?.properties?.bindingTarget;
 
@@ -412,7 +411,7 @@ const FormViewerComponent = (props: any) => {
 
                   if (componentChild.type === "expression") {
                     let dataExpression = el[componentChild.key]; //Lấy ra key
-                    
+
                     if (dataExpression) {
                       el[target] = dataExpression;
                       // rerenderForm(schema, data);

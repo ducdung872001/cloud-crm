@@ -2,3 +2,12 @@
 @import "_typography.scss";
 @import "_common.scss";
 @import "_datetime_custom.scss";
+
+body {
+  .ag-theme-alpine .ag-menu {
+    z-index: 9999;
+  }
+  .ag-theme-alpine .ag-list {
+    z-index: 99999;
+  }
+}

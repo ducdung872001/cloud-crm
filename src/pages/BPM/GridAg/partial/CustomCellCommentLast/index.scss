@@ -1,0 +1,38 @@
+.custom-cell-render-comment-last {
+  width: 100%;
+  position: relative;
+  .comment-column {
+    min-width: 72px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 0.3rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    .index--comment {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      svg {
+        width: 2rem;
+        height: 2rem;
+        fill: #b7b8b9;
+      }
+      .icon-comment {
+        position: relative;
+        .red-dot {
+          position: absolute;
+          top: 7px;
+          right: -5px;
+          width: 10px;
+          height: 10px;
+          background-color: red;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+}
