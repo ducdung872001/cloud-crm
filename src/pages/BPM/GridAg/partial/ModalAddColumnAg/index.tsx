@@ -105,7 +105,7 @@ export default function ModalAddColumnAg(props: any) {
     if (data?.parentId) {
       setDetailParent({ value: data.parentId, label: data.parentName });
     }
-    if ((data?.type == "select" || data?.type == "radio" || data?.type == "multiselect") && data?.options) {
+    if ((data?.type == "select" || data?.type == "multiselect") && data?.options) {
       setAddFieldAttributes(data?.options);
     }
     if (data?.type == "lookup" && data?.options) {
@@ -309,11 +309,11 @@ export default function ModalAddColumnAg(props: any) {
                 setAddFieldAttributes([{ value: "", label: "" }]);
               }
             } else if (e?.value == "radio") {
-              if (data && data.type === "radio" && data.options) {
-                setAddFieldAttributes(JSON.parse(data?.options));
-              } else {
-                setAddFieldAttributes([{ value: "", label: "" }]);
-              }
+              // if (data && data.type === "radio" && data.options) {
+              //   setAddFieldAttributes(JSON.parse(data?.options));
+              // } else {
+              //   setAddFieldAttributes([{ value: "", label: "" }]);
+              // }
             } else if (e?.value === "lookup") {
               if (data && data.type === "lookup" && data.lookup) {
                 setDetailLookup(data.lookup);
@@ -344,6 +344,10 @@ export default function ModalAddColumnAg(props: any) {
             {
               value: "checkbox",
               label: "Checkbox",
+            },
+            {
+              value: "radio",
+              label: "Radio",
             },
             {
               value: "date",
@@ -880,7 +884,7 @@ export default function ModalAddColumnAg(props: any) {
               ))}
 
               {/* Trường hợp là dropdown hoặc radio hoặc multiselect */}
-              {formData?.values["type"] == "select" || formData?.values["type"] == "radio" || formData?.values["type"] == "multiselect" ? (
+              {formData?.values["type"] == "select" || formData?.values["type"] == "multiselect" ? (
                 <div className="list__attribute">
                   <div>
                     <span style={{ fontSize: 14, fontWeight: "700" }}>Lựa chọn</span>

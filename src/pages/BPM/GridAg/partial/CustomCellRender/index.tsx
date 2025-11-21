@@ -56,6 +56,44 @@ const CustomCellRender = (props) => {
     return moment(input).format("DD/MM/YYYY");
   }
 
+  const handleChangeValue = (e?) => {
+    // e may be event (checkbox) or undefined (radio)
+    if (type === "checkbox") {
+      const newValue = e ? (e.target.checked ? "true" : "false") : "false";
+      props.node.setDataValue(props.colDef.field, newValue);
+      return;
+    }
+
+    if (type === "radio") {
+      const field = props.colDef.field;
+      const api = props.api;
+
+      // Lấy giá trị hiện tại của ô (ưu tiên node.data)
+      const currentValue = String(props.node.data?.[field] ?? props.value ?? "false");
+
+      // Nếu ô hiện tại đang true -> chỉ toggle thành false, không thay đổi các ô khác
+      if (currentValue === "true") {
+        props.node.setDataValue(field, "false");
+        return;
+      }
+
+      // Nếu ô hiện tại đang không phải "true" -> đặt ô này = "true" và các ô khác trong cột = "false"
+      // Nếu bạn chỉ muốn cập nhật các hàng đang hiển thị (sau filter/pagination),
+      // dùng api.forEachNodeAfterFilter hoặc api.forEachNodeAfterFilterAndSort thay vì api.forEachNode
+      api.forEachNode((node) => {
+        const targetValue = node === props.node ? "true" : "false";
+        if (String(node.data?.[field] ?? "") !== targetValue || node === props.node) {
+          node.setDataValue(field, targetValue);
+        }
+      });
+
+      return;
+    }
+
+    // default fallback
+    props.node.setDataValue(props.colDef.field, null);
+  };
+
   const generateItem = useCallback(
     (type) => {
       switch (type) {
@@ -103,11 +141,48 @@ const CustomCellRender = (props) => {
         case "checkbox":
           return (
             <div className="text-truncate" title={props?.value ? props.value.toString() : "false"}>
-              {props.value ? (
+              {/* {props.value === "true" ? (
                 <Icon name="Checked" style={{ width: "14px", height: "14px" }} />
               ) : (
                 <Icon name="Times" style={{ width: "2rem", height: "2rem" }} />
-              )}
+              )} */}
+              <div style={{ minHeight: "4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                <Checkbox
+                  checked={props.value === "true"}
+                  disabled={false}
+                  onChange={(e) => {
+                    handleChangeValue(e);
+                  }}
+                />
+              </div>
+            </div>
+          );
+        case "radio":
+          return (
+            <div className="text-truncate" title={props?.value ? props.value.toString() : "false"}>
+              <div style={{ minHeight: "4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                <div
+                  className={`circle-button-radio ${props.value === "true" ? "active" : ""}`}
+                  onClick={() => {
+                    handleChangeValue();
+                    // let currentValue = checkedMap[props.data.rowKey] ? checkedMap[props.data.rowKey][props.colDef.field] || false : false;
+                    // setCheckedMap((prev) => {
+                    //   let newCheckedMap = { ...prev };
+                    //   if (!newCheckedMap[props.data.rowKey]) {
+                    //     newCheckedMap[props.data.rowKey] = {};
+                    //   }
+                    //   newCheckedMap[props.data.rowKey][props.colDef.field] = !currentValue;
+                    //   // Chỉ cho phép một radio được chọn trong cùng một cột
+                    //   Object.keys(newCheckedMap).forEach((rowKey) => {
+                    //     if (rowKey !== props.data.rowKey) {
+                    //       newCheckedMap[rowKey][props.colDef.field] = false;
+                    //     }
+                    //   });
+                    //   return newCheckedMap;
+                    // });
+                  }}
+                />
+              </div>
             </div>
           );
         default:
