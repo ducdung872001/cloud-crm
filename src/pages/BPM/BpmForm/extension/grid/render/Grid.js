@@ -33,15 +33,27 @@ export function GridRenderer(props) {
 
   const { formId } = useContext(FormContext);
 
-  let listHeaderTable =
-    field.headerTable && JSON.parse(field.headerTable)
+  // let listHeaderTable =
+  //   field.headerTable && JSON.parse(field.headerTable)
+  //     ? JSON.parse(field.headerTable)
+  //     : [
+  //         {
+  //           name: "STT",
+  //           position: 1,
+  //         },
+  //       ];
+  let listHeaderTable = field.headerTable
+    ? typeof field.headerTable === "string"
       ? JSON.parse(field.headerTable)
-      : [
-          {
-            name: "STT",
-            position: 1,
-          },
-        ];
+      : field.headerTable
+    : [
+        {
+          name: "STT",
+          position: 1,
+        },
+      ];
+
+  console.log("listHeaderTable", listHeaderTable);
 
   listHeaderTable = listHeaderTable.sort((a, b) => a.position - b.position);
 

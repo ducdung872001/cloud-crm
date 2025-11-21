@@ -152,7 +152,7 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
           </div>
           <ModalBody>
             <div className="list-form-group">
-              <GridAg location={"configForm"} setDataConfigGrid={setDataConfigGrid} dataConfig={dataConfig} />
+              <GridAg location={"configForm"} setDataConfigGrid={setDataConfigGrid} dataGrid={dataConfig} />
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

@@ -24,7 +24,7 @@ import GridAg from "pages/BPM/GridAg";
 
 export const gridType = "grid";
 
-let dataConfig = {
+let dataGrid = {
   // Phải khai báo bên ngoài hàm để giữ trạng thái, nếu khai báo bên trong thì sẽ bị reload liên tục
   // headerTable: JSON.stringify([]),
   // dataRow: JSON.stringify([]),
@@ -36,26 +36,26 @@ export function GridRenderer(props) {
   const { description, id, label } = field;
   const { formId } = useContext(FormContext);
 
-  // console.log("field grid render", field, value);
+  console.log("attributeValue>field grid render", value);
   // console.log("field grid render>JSON.parse(value)", JSON.parse(value));
 
   const errorMessageId = errors.length === 0 ? undefined : `${prefixId(id, formId)}-error-message`;
 
   // Tạo 1 div placeholder
   const containerId = `gridag-container-${id}`;
-  if (!dataConfig[id]) {
-    dataConfig[id] = {};
+  if (!dataGrid[id]) {
+    dataGrid[id] = {};
   }
 
-  dataConfig[id].headerTable = props?.field?.headerTable ? props?.field?.headerTable : JSON.stringify([]);
+  dataGrid[id].headerTable = props?.field?.headerTable ? props?.field?.headerTable : [];
   if (!value || value === "undefined" || value === "") {
-    dataConfig[id].dataRow = props?.field?.dataRow ? props?.field?.dataRow : JSON.stringify([]);
+    dataGrid[id].dataRow = props?.field?.dataRow ? props?.field?.dataRow : [];
   } else {
     try {
       //Hiện tại chỉ cho sửa được dataRow, headerTable cố định từ đầu
-      let _dataConfig = JSON.parse(value) ? JSON.parse(value) : {};
-      // dataConfig[id].headerTable = _dataConfig.headerTable ? _dataConfig.headerTable : JSON.stringify([]);
-      dataConfig[id].dataRow = _dataConfig.dataRow ? _dataConfig.dataRow : JSON.stringify([]);
+      let _dataGrid = JSON.parse(value) ? JSON.parse(value) : {};
+      dataGrid[id].headerTable = _dataGrid.headerTable ? _dataGrid.headerTable : [];
+      dataGrid[id].dataRow = _dataGrid.dataRow ? _dataGrid.dataRow : [];
     } catch (e) {
       console.error("Invalid JSON in grid value", e);
     }
@@ -79,6 +79,8 @@ export function GridRenderer(props) {
     if (container && props.onChange && field) {
       // Điều kiện container và props.onChange và field quan trọng
       configField[id] = field;
+      console.log("configField[id]", configField[id]);
+      console.log("dataGrid[id]", dataGrid[id]);
 
       ReactDOM.render(
         <GridAg
@@ -89,9 +91,10 @@ export function GridRenderer(props) {
           onAction={(action) => {
             handleOnAction(action);
           }}
-          dataConfig={dataConfig[id]}
+          dataGrid={dataGrid[id]}
           configField={configField[id]}
         />,
+        // <div>okok</div>,
         container
       );
 

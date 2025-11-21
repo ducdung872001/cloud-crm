@@ -304,12 +304,12 @@ const FormEditorComponent = ({
         // }
         if (location === "linking") {
           const linking = data && data.linkingConfig !== undefined ? data.linkingConfig : {};
-          newNode.linkingConfig = typeof linking === "string" ? linking : JSON.stringify(linking);
+          newNode.linkingConfig = linking;
         } else {
           const header = data && data.headerTable !== undefined ? data.headerTable : [];
           const row = data && data.dataRow !== undefined ? data.dataRow : [];
-          newNode.headerTable = typeof header === "string" ? header : JSON.stringify(header);
-          newNode.dataRow = typeof row === "string" ? row : JSON.stringify(row);
+          newNode.headerTable = header;
+          newNode.dataRow = row;
         }
       } catch (err) {
         console.error("Failed to serialize data for field", fieldId, err);

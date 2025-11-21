@@ -159,6 +159,15 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
     if (response.code == 0) {
       const result = response.result;
       const attributeValue = (result?.attributeValue && JSON.parse(result?.attributeValue)) || null;
+      // const attributeValue = JSON.parse(
+      //   '{"grid_122qhm": "{\\"headerTable\\":\\"[{\\\\\\"headerName\\\\\\":\\\\\\"STT\\\\\\",\\\\\\"name\\\\\\":\\\\\\"STT\\\\\\",\\\\\\"key\\\\\\":\\\\\\"stt\\\\\\",\\\\\\"width\\\\\\":80,\\\\\\"cellStyle\\\\\\":{\\\\\\"textAlign\\\\\\":\\\\\\"center\\\\\\"}},{\\\\\\"name\\\\\\":\\\\\\"Họ và tên\\\\\\",\\\\\\"key\\\\\\":\\\\\\"HoVaTen\\\\\\",\\\\\\"type\\\\\\":\\\\\\"text\\\\\\",\\\\\\"required\\\\\\":false,\\\\\\"isSum\\\\\\":false,\\\\\\"options\\\\\\":[],\\\\\\"position\\\\\\":\\\\\\"0\\\\\\",\\\\\\"lookup\\\\\\":\\\\\\"\\\\\\",\\\\\\"regex\\\\\\":\\\\\\"\\\\\\",\\\\\\"listBindingField\\\\\\":[],\\\\\\"readOnly\\\\\\":0,\\\\\\"haveCheckbox\\\\\\":0,\\\\\\"haveRadio\\\\\\":0,\\\\\\"formula\\\\\\":\\\\\\"{\\\\\\\\\\\\\\"formula\\\\\\\\\\\\\\":\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"}\\\\\\",\\\\\\"timeRange\\\\\\":\\\\\\"{\\\\\\\\\\\\\\"startDate\\\\\\\\\\\\\\":\\\\\\\\\\\\\\"\\\\\\\\\\\\\\",\\\\\\\\\\\\\\"endDate\\\\\\\\\\\\\\":\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"}\\\\\\"}]\\",\\"dataRow\\":\\"[{\\\\\\"rowKey\\\\\\":\\\\\\"d7a66372-f14a-45ae-b8a5-34c79ccfb688\\\\\\",\\\\\\"stt\\\\\\":\\\\\\"\\\\\\",\\\\\\"HoVaTen\\\\\\":\\\\\\"Lê Khắc Hiếu\\\\\\",\\\\\\"cot-lam-ro\\\\\\":\\\\\\"\\\\\\"},{\\\\\\"rowKey\\\\\\":\\\\\\"b40aa0f3-7c73-4051-aa8e-7338e68612f6\\\\\\",\\\\\\"stt\\\\\\":\\\\\\"\\\\\\",\\\\\\"HoVaTen\\\\\\":\\\\\\"Bùi Đức Năng\\\\\\",\\\\\\"cot-lam-ro\\\\\\":\\\\\\"\\\\\\"}]\\"}"}'
+      // );
+      // const attributeValue_ = { grid_122qhm: attributeValue?.grid_122qhm ? JSON.parse(attributeValue?.grid_122qhm) : null };
+      // console.log("attributeValue", attributeValue);
+      // console.log("attributeValue_", { grid_122qhm: attributeValue_?.grid_122qhm ? JSON.stringify(attributeValue_?.grid_122qhm) : null });
+
+      // const _attributeValue_ = { grid_122qhm: attributeValue_?.grid_122qhm ? JSON.stringify(attributeValue_?.grid_122qhm) : null };
+
       setDataInit(attributeValue);
       // setDataInit({...attributeValue, projectCatalog: 9});
       setDataEngine(result);
@@ -617,6 +626,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
 
   const onSubmit = async (config) => {
     setIsSubmit(false);
+    console.log("config>>>>", config);
 
     const isJump = (config?.option_jump && +config?.option_jump) || null;
     const contextData = dataWork?.contextData && JSON.parse(dataWork?.contextData);
@@ -646,6 +656,9 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
     }
 
     setIsSubmit(true);
+
+    console.log("body", body);
+    // return;
 
     const response = await BusinessProcessService.updateHandleTask(body);
     if (response.code === 0) {
