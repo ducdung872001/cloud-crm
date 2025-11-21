@@ -18,11 +18,11 @@ import { useState, useEffect } from "preact/hooks";
 
 let listEnable = [
   { id: "enable-add-row", key: "enableAddRow", label: "Enable Add Row" },
-  { id: "enable-add-col", key: "enableAddCol", label: "Enable Add Column" },
-  { id: "enable-export", key: "enableExport", label: "Enable Export" },
-  { id: "enable-import", key: "enableImport", label: "Enable Import" },
-  { id: "enable-add-cmt-cell", key: "enableAddCmtCell", label: "Enable Add Comment Cell" },
-  { id: "enable-add-cmt-col", key: "enableAddCmtCol", label: "Enable Add Comment Column" },
+  // { id: "enable-add-col", key: "enableAddCol", label: "Enable Add Column" },
+  // { id: "enable-export", key: "enableExport", label: "Enable Export" },
+  // { id: "enable-import", key: "enableImport", label: "Enable Import" },
+  // { id: "enable-add-cmt-cell", key: "enableAddCmtCell", label: "Enable Add Comment Cell" },
+  // { id: "enable-add-cmt-col", key: "enableAddCmtCol", label: "Enable Add Comment Column" },
   { id: "enable-edit-cell", key: "enableEditCell", label: "Enable Edit Cell" },
   // { id: "enable-save", key: "enableSave", label: "Enable Save" },
 ];

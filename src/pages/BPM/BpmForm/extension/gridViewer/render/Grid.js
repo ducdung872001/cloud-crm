@@ -36,6 +36,9 @@ export function GridRenderer(props) {
   const { description, id, label } = field;
   const { formId } = useContext(FormContext);
 
+  console.log("field grid render", field, value);
+  // console.log("field grid render>JSON.parse(value)", JSON.parse(value));
+
   const errorMessageId = errors.length === 0 ? undefined : `${prefixId(id, formId)}-error-message`;
 
   // Tạo 1 div placeholder
@@ -49,6 +52,7 @@ export function GridRenderer(props) {
     dataConfig[id].dataRow = props?.field?.dataRow ? props?.field?.dataRow : JSON.stringify([]);
   } else {
     try {
+      //Hiện tại chỉ cho sửa được dataRow, headerTable cố định từ đầu
       let _dataConfig = JSON.parse(value) ? JSON.parse(value) : {};
       // dataConfig[id].headerTable = _dataConfig.headerTable ? _dataConfig.headerTable : JSON.stringify([]);
       dataConfig[id].dataRow = _dataConfig.dataRow ? _dataConfig.dataRow : JSON.stringify([]);

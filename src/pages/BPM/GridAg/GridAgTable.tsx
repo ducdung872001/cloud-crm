@@ -118,7 +118,7 @@ const GridAgTable = (
     location && location == "configViewer" ? configField : location && location == "configForm" ? configFieldModal : getSearchParameters();
   const enableAddRow = !params?.enableAddRow || params?.enableAddRow == "false" ? false : true;
   const enableFilter = !params?.enableFilter || params?.enableFilter == "false" ? false : true;
-  const enableAddColumns = !params?.enableAddColumns || params?.enableAddColumns == "false" ? false : true;
+  const enableAddColumns = !params?.enableAddCol || params?.enableAddCol == "false" ? false : true;
   const enableExport = !params?.enableExport || params?.enableExport == "false" ? false : true;
   const enableImport = !params?.enableImport || params?.enableImport == "false" ? false : true;
   const enableAddCmtCell = !params?.enableAddCmtCell || params?.enableAddCmtCell == "false" ? false : true;
@@ -126,6 +126,8 @@ const GridAgTable = (
   const enableEditCell = !params?.enableEditCell || params?.enableEditCell == "false" ? false : true;
   const enableSave = !params?.enableSave || params?.enableSave == "false" ? false : true;
   const fieldName = params?.fieldName || "";
+
+  console.log("configField", configField);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -161,6 +163,7 @@ const GridAgTable = (
 
   useEffect(() => {
     onChange && onChange({ headerTable: JSON.stringify(columnsConfig), dataRow: JSON.stringify(rowData) });
+    // onChange && onChange({ headerTable: columnsConfig, dataRow: rowData });
   }, [columnsConfig, rowData]);
 
   useEffect(() => {

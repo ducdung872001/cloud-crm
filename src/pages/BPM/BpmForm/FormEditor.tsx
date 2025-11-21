@@ -131,6 +131,35 @@ const FormEditorComponent = ({
     return null;
   };
 
+  /**
+   * Tìm tất cả các component có type === "grid" trong mảng components,
+   * bỏ qua component có id === excludeId.
+   * Tránh trả về duplicate dựa trên id (nếu có).
+   */
+  function findAllGrids(components: any[] | undefined, excludeId?: string): any[] {
+    const results: any[] = [];
+    const seen = new Set<string | undefined>();
+
+    function walk(comps?: any[]) {
+      if (!Array.isArray(comps) || comps.length === 0) return;
+      for (const c of comps) {
+        const id = c.id;
+        // Nếu là grid và không phải excludeId và chưa thấy trước đó
+        if (c.type === "grid" && id !== excludeId && !seen.has(id)) {
+          results.push(c);
+          seen.add(id);
+        }
+        // Duyệt con nếu có
+        if (Array.isArray(c.components) && c.components.length > 0) {
+          walk(c.components);
+        }
+      }
+    }
+
+    walk(components);
+    return results;
+  }
+
   useEffect(() => {
     const handler = (e: CustomEvent) => {
       const { fieldId } = e.detail;
@@ -161,7 +190,6 @@ const FormEditorComponent = ({
     const handler = (e: CustomEvent) => {
       const { fieldId } = e.detail;
       // Xử lý với fieldId hoặc lưu vào state
-      console.log("fieldId nhận được từ con:", fieldId);
       setFieldId(fieldId);
       setIsConfigLinkingGridOpen(true);
       const editor = formEditorRef.current;
@@ -172,19 +200,8 @@ const FormEditorComponent = ({
         const field = walkFindGrid(schema.components, fieldId);
         if (field) {
           setDataConfigLinkingGrid(field);
-
-          // Cần phải sửa để lấy tất cả grid bằng đệ quy
-          setListGridField(
-            schema.components
-              .filter((c) => c.type === "grid" && c.id !== fieldId)
-              .map((item) => ({
-                id: item.id,
-                label: item.label,
-                fieldName: item.fieldName,
-                dataRow: item.dataRow ? JSON.parse(item.dataRow) : [],
-                headerTable: item.headerTable ? JSON.parse(item.headerTable) : [],
-              }))
-          );
+          // Lấy tất cả grid bằng đệ quy
+          setListGridField(findAllGrids(schema.components, fieldId));
         }
       }
     };
@@ -276,6 +293,15 @@ const FormEditorComponent = ({
     const updater = (node: any) => {
       const newNode = { ...node };
       try {
+        // if (location === "linking") {
+        //   const linking = data && data.linkingConfig !== undefined ? data.linkingConfig : {};
+        //   newNode.linkingConfig = typeof linking === "string" ? linking : JSON.stringify(linking);
+        // } else {
+        //   const header = data && data.headerTable !== undefined ? data.headerTable : [];
+        //   const row = data && data.dataRow !== undefined ? data.dataRow : [];
+        //   newNode.headerTable = typeof header === "string" ? header : JSON.stringify(header);
+        //   newNode.dataRow = typeof row === "string" ? row : JSON.stringify(row);
+        // }
         if (location === "linking") {
           const linking = data && data.linkingConfig !== undefined ? data.linkingConfig : {};
           newNode.linkingConfig = typeof linking === "string" ? linking : JSON.stringify(linking);
@@ -310,8 +336,6 @@ const FormEditorComponent = ({
       return false;
     }
   };
-
-  console.log("dataConfigGrid>>", dataConfigGrid);
 
   return (
     <div className="form-editor-container">
