@@ -36,7 +36,7 @@ export function GridRenderer(props) {
   const { description, id, label } = field;
   const { formId } = useContext(FormContext);
 
-  console.log("field grid render", field, value);
+  // console.log("field grid render", field, value);
   // console.log("field grid render>JSON.parse(value)", JSON.parse(value));
 
   const errorMessageId = errors.length === 0 ? undefined : `${prefixId(id, formId)}-error-message`;
