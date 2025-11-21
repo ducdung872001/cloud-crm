@@ -49,13 +49,9 @@ const GridAgTable = (
   } = useGridAg();
   const gridRef = useRef<any>(null);
   const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction } = props;
-  console.log("configField", configField);
-  console.log("dataGrid", dataGrid);
   const idGrid = configField?.fieldName || dataGrid?.fieldName || "";
   const COLUMN_WIDTH_STORAGE_KEY = "gridag_column_widths" + idGrid;
   const linkingConfig = configField?.linkingConfig ? JSON.parse(configField.linkingConfig) : null;
-  console.log("linkingConfig", linkingConfig);
-  console.log("linkingConfig>>idGrid", idGrid);
   const [linkingConfigDeparture, setLinkingConfigDeparture] = useState(null);
   useEffect(() => {
     if (linkingConfig && linkingConfig?.gridDeparture) {
@@ -70,8 +66,6 @@ const GridAgTable = (
     }
   }, [idGrid, linkingConfig]);
 
-  console.log("linkingConfigDeparture>>", idGrid, linkingConfigDeparture);
-
   useEffect(() => {
     //Bắt sự kiện từ grid khác gửi sang
     if (linkingConfigDeparture && linkingConfigDeparture?.params && linkingConfigDeparture?.idGrid == linkingConfig?.gridDeparture) {
@@ -79,8 +73,6 @@ const GridAgTable = (
         if (linkingConfigDeparture?.params?.HoVaTen == "Hoàng Văn Lợi") {
           setDataFetch((prev) => ({ ...prev, data: [sampleData[0]] }));
         } else if (linkingConfigDeparture?.params?.HoVaTen == "Bùi Đức Năng") {
-          console.log("setDataFetch Bùi Đức Năng");
-
           setDataFetch((prev) => ({ ...prev, data: [sampleData[1]] }));
         } else {
           setDataFetch((prev) => ({ ...prev, data: [sampleData[2]] }));
@@ -126,8 +118,6 @@ const GridAgTable = (
   const enableEditCell = !params?.enableEditCell || params?.enableEditCell == "false" ? false : true;
   const enableSave = !params?.enableSave || params?.enableSave == "false" ? false : true;
   const fieldName = params?.fieldName || "";
-
-  console.log("configField", configField);
 
   useEffect(() => {
     const fetchData = async () => {

@@ -20,8 +20,6 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
     dataRow: dataConfig?.dataRow || [],
   });
 
-  console.log("dataConfig>>>", dataConfig);
-
   const values = useMemo(
     () => ({
       eformId: null,

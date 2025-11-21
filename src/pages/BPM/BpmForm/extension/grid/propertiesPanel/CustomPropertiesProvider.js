@@ -162,7 +162,6 @@ function createCustomEntry(field, editField, id, key, label) {
             {
               type: "button",
               onClick: () => {
-                console.log("Open config modal for fieldId:", field.id);
                 window.dispatchEvent(
                   new CustomEvent(key == "headerTable" ? "openConfigModal" : "openLinkingConfigModal", { detail: { fieldId: field.id } })
                 );

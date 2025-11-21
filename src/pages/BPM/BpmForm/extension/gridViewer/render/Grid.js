@@ -36,9 +36,6 @@ export function GridRenderer(props) {
   const { description, id, label } = field;
   const { formId } = useContext(FormContext);
 
-  console.log("attributeValue>field grid render", value);
-  // console.log("field grid render>JSON.parse(value)", JSON.parse(value));
-
   const errorMessageId = errors.length === 0 ? undefined : `${prefixId(id, formId)}-error-message`;
 
   // Tạo 1 div placeholder
@@ -79,9 +76,6 @@ export function GridRenderer(props) {
     if (container && props.onChange && field) {
       // Điều kiện container và props.onChange và field quan trọng
       configField[id] = field;
-      console.log("configField[id]", configField[id]);
-      console.log("dataGrid[id]", dataGrid[id]);
-
       ReactDOM.render(
         <GridAg
           location={"configViewer"}
@@ -94,7 +88,6 @@ export function GridRenderer(props) {
           dataGrid={dataGrid[id]}
           configField={configField[id]}
         />,
-        // <div>okok</div>,
         container
       );
 

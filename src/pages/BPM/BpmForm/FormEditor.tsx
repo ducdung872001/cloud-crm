@@ -209,32 +209,6 @@ const FormEditorComponent = ({
     return () => window.removeEventListener("openLinkingConfigModal", handler as EventListener);
   }, [formEditorRef]);
 
-  // const updateFieldLabel = (fieldId: string, data: any, location?: string) => {
-  //   const editor = formEditorRef.current;
-  //   console.log("schema.components>>updateFieldLabel>>", fieldId, data);
-
-  //   if (editor) {
-  //     const schema = editor.getSchema();
-  //     // Tìm field cần sửa
-  //     console.log("schema.components>>", schema.components);
-  //     // walkAddIframGrid(schema.components, fieldId, location, data);
-
-  //     const field = schema.components.find((f) => f.id === fieldId);
-  //     if (field) {
-  //       if (location && location == "linking") {
-  //         field.linkingConfig = JSON.stringify(data.linkingConfig);
-  //       } else {
-  //         field.headerTable = JSON.stringify(data.headerTable);
-  //         field.dataRow = JSON.stringify(data.dataRow);
-  //       }
-  //       // Import lại schema đã sửa vào editor
-  //       editor.importSchema(schema);
-  //       console.log("dataConfigGrid>>", dataConfigGrid);
-  //       console.log("dataConfigGrid>>schema.components>>", formEditorRef.current.getSchema().components);
-  //     }
-  //   }
-  // };
-
   // Trả về một bản mới của components với node đầu tiên có id khớp được cập nhật bởi updater
   function updateComponentByIdImmutable(
     components: any[] | undefined,
@@ -293,15 +267,6 @@ const FormEditorComponent = ({
     const updater = (node: any) => {
       const newNode = { ...node };
       try {
-        // if (location === "linking") {
-        //   const linking = data && data.linkingConfig !== undefined ? data.linkingConfig : {};
-        //   newNode.linkingConfig = typeof linking === "string" ? linking : JSON.stringify(linking);
-        // } else {
-        //   const header = data && data.headerTable !== undefined ? data.headerTable : [];
-        //   const row = data && data.dataRow !== undefined ? data.dataRow : [];
-        //   newNode.headerTable = typeof header === "string" ? header : JSON.stringify(header);
-        //   newNode.dataRow = typeof row === "string" ? row : JSON.stringify(row);
-        // }
         if (location === "linking") {
           const linking = data && data.linkingConfig !== undefined ? data.linkingConfig : {};
           newNode.linkingConfig = linking;
