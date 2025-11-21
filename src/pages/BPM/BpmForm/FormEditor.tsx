@@ -11,6 +11,12 @@ import "@bpmn-io/form-js/dist/assets/form-js-editor.css";
 import "@bpmn-io/form-js/dist/assets/form-js-playground.css";
 import ButtonExportNode from "../BusinessProcessCreate/components/ButtonExportNode/ButtonExportNode";
 
+// Grid
+import GridExtension from "./extension/grid/render";
+import PropertiesPanelGridPropertiesPanel from "./extension/grid/propertiesPanel";
+import ModalConfigGrid from "./partials/ModalConfigGrid";
+import ModalConfigLinkingGrid from "./partials/ModalConfigLinkingGrid";
+
 interface FormEditorProps {
   initialSchema: any;
   onSchemaChange: (schema: any) => void;
@@ -43,10 +49,8 @@ const FormEditorComponent = ({
         // NumberRenderExtension
         // TreeSelectorEditorExtension,
         // Đóng tạm vì gây lỗi khi build lên môi trường production
-        // RenderExtension,
-        // PropertiesPanelExtension,
-        // GridExtension,
-        // PropertiesPanelGridPropertiesPanel,
+        GridExtension,
+        PropertiesPanelGridPropertiesPanel,
       ],
 
       // load properties panel extension
@@ -109,6 +113,24 @@ const FormEditorComponent = ({
   const [fieldId, setFieldId] = useState<string>("");
   const [dataConfigGrid, setDataConfigGrid] = useState(null);
 
+  const walkFindGrid = (components, fieldId) => {
+    if (!components || components.length === 0) return null;
+
+    for (const comp of components) {
+      if (comp.id === fieldId) {
+        return comp;
+      }
+      // duyệt components bên trong (group, dynamiclist, container...)
+      if (Array.isArray(comp.components) && comp.components.length > 0) {
+        const found = walkFindGrid(comp.components, fieldId);
+        if (found) return found;
+      }
+    }
+
+    // Nếu vòng lặp hoàn tất mà không tìm thấy
+    return null;
+  };
+
   useEffect(() => {
     const handler = (e: CustomEvent) => {
       const { fieldId } = e.detail;
@@ -120,7 +142,8 @@ const FormEditorComponent = ({
       if (editor) {
         const schema = editor.getSchema();
         // Tìm field cần sửa
-        const field = schema.components.find((f) => f.id === fieldId);
+        // const field = schema.components.find((f) => f.id === fieldId);
+        const field = walkFindGrid(schema.components, fieldId);
         if (field) {
           setDataConfigGrid(field);
         }
@@ -130,20 +153,161 @@ const FormEditorComponent = ({
     return () => window.removeEventListener("openConfigModal", handler as EventListener);
   }, [formEditorRef]);
 
-  const updateFieldLabel = (fieldId: string, data: any) => {
-    const editor = formEditorRef.current;
-    console.log("updateFieldLabel>>", fieldId, data);
+  const [isConfigLinkingGridOpen, setIsConfigLinkingGridOpen] = useState(false);
+  const [dataConfigLinkingGrid, setDataConfigLinkingGrid] = useState(null);
+  const [listGridField, setListGridField] = useState([]);
 
-    if (editor) {
-      const schema = editor.getSchema();
-      // Tìm field cần sửa
-      const field = schema.components.find((f) => f.id === fieldId);
-      if (field) {
-        field.headerTable = JSON.stringify(data.headerTable);
-        field.dataRow = JSON.stringify(data.dataRow);
-        // Import lại schema đã sửa vào editor
-        editor.importSchema(schema);
+  useEffect(() => {
+    const handler = (e: CustomEvent) => {
+      const { fieldId } = e.detail;
+      // Xử lý với fieldId hoặc lưu vào state
+      console.log("fieldId nhận được từ con:", fieldId);
+      setFieldId(fieldId);
+      setIsConfigLinkingGridOpen(true);
+      const editor = formEditorRef.current;
+      if (editor) {
+        const schema = editor.getSchema();
+        // Tìm field cần sửa
+        // const field = schema.components.find((f) => f.id === fieldId);
+        const field = walkFindGrid(schema.components, fieldId);
+        if (field) {
+          setDataConfigLinkingGrid(field);
+
+          // Cần phải sửa để lấy tất cả grid bằng đệ quy
+          setListGridField(
+            schema.components
+              .filter((c) => c.type === "grid" && c.id !== fieldId)
+              .map((item) => ({
+                id: item.id,
+                label: item.label,
+                fieldName: item.fieldName,
+                dataRow: item.dataRow ? JSON.parse(item.dataRow) : [],
+                headerTable: item.headerTable ? JSON.parse(item.headerTable) : [],
+              }))
+          );
+        }
       }
+    };
+    window.addEventListener("openLinkingConfigModal", handler as EventListener);
+    return () => window.removeEventListener("openLinkingConfigModal", handler as EventListener);
+  }, [formEditorRef]);
+
+  // const updateFieldLabel = (fieldId: string, data: any, location?: string) => {
+  //   const editor = formEditorRef.current;
+  //   console.log("schema.components>>updateFieldLabel>>", fieldId, data);
+
+  //   if (editor) {
+  //     const schema = editor.getSchema();
+  //     // Tìm field cần sửa
+  //     console.log("schema.components>>", schema.components);
+  //     // walkAddIframGrid(schema.components, fieldId, location, data);
+
+  //     const field = schema.components.find((f) => f.id === fieldId);
+  //     if (field) {
+  //       if (location && location == "linking") {
+  //         field.linkingConfig = JSON.stringify(data.linkingConfig);
+  //       } else {
+  //         field.headerTable = JSON.stringify(data.headerTable);
+  //         field.dataRow = JSON.stringify(data.dataRow);
+  //       }
+  //       // Import lại schema đã sửa vào editor
+  //       editor.importSchema(schema);
+  //       console.log("dataConfigGrid>>", dataConfigGrid);
+  //       console.log("dataConfigGrid>>schema.components>>", formEditorRef.current.getSchema().components);
+  //     }
+  //   }
+  // };
+
+  // Trả về một bản mới của components với node đầu tiên có id khớp được cập nhật bởi updater
+  function updateComponentByIdImmutable(
+    components: any[] | undefined,
+    id: string,
+    updater: (node: any) => any,
+    stopAfterFirst = true
+  ): { components: any[] | undefined; updated: boolean } {
+    if (!Array.isArray(components)) return { components, updated: false };
+
+    let updated = false;
+
+    const newComponents = components.map((comp) => {
+      if (updated && stopAfterFirst) {
+        // nếu đã cập nhật và stopAfterFirst, trả về bản sao shallow
+        return comp;
+      }
+
+      if (comp && comp.id === id) {
+        updated = true;
+        // updater trả về node mới hoặc mutate node trước trả về comp
+        return updater({ ...comp });
+      }
+
+      // nếu comp có children, đệ quy
+      // duyệt components bên trong (group, dynamiclist, container...)
+      if (comp && Array.isArray(comp.components)) {
+        const { components: newChildComponents, updated: childUpdated } = updateComponentByIdImmutable(comp.components, id, updater, stopAfterFirst);
+
+        if (childUpdated) {
+          updated = true;
+          return { ...comp, components: newChildComponents };
+        }
+      }
+
+      // không thay đổi
+      return comp;
+    });
+
+    return { components: newComponents, updated };
+  }
+
+  const updateFieldLabel = (fieldId: string, data: any, location?: string): boolean => {
+    const editor = formEditorRef.current;
+    if (!editor) {
+      console.warn("No editor instance");
+      return false;
+    }
+
+    const schema = editor.getSchema();
+    if (!schema || !Array.isArray(schema.components)) {
+      console.warn("Invalid schema or missing components");
+      return false;
+    }
+
+    // updater: nhận node cũ, trả node mới
+    const updater = (node: any) => {
+      const newNode = { ...node };
+      try {
+        if (location === "linking") {
+          const linking = data && data.linkingConfig !== undefined ? data.linkingConfig : {};
+          newNode.linkingConfig = typeof linking === "string" ? linking : JSON.stringify(linking);
+        } else {
+          const header = data && data.headerTable !== undefined ? data.headerTable : [];
+          const row = data && data.dataRow !== undefined ? data.dataRow : [];
+          newNode.headerTable = typeof header === "string" ? header : JSON.stringify(header);
+          newNode.dataRow = typeof row === "string" ? row : JSON.stringify(row);
+        }
+      } catch (err) {
+        console.error("Failed to serialize data for field", fieldId, err);
+      }
+      return newNode;
+    };
+
+    const { components: newComponents, updated } = updateComponentByIdImmutable(schema.components, fieldId, updater, true);
+
+    if (!updated) {
+      console.warn("Field id not found:", fieldId);
+      return false;
+    }
+
+    // Build new schema (shallow copy) and import
+    const newSchema = { ...schema, components: newComponents };
+
+    try {
+      editor.importSchema(newSchema);
+      console.log("Schema updated for field", fieldId);
+      return true;
+    } catch (err) {
+      console.error("importSchema failed", err);
+      return false;
     }
   };
 
@@ -252,6 +416,39 @@ const FormEditorComponent = ({
         </div>
       )}
       <div ref={editorContainerRef}></div> {/* Container cho editor */}
+      <ModalConfigGrid
+        onShow={isConfigOpen}
+        onHide={(reload) => {
+          if (reload) {
+            // getDataBpmFormArtifact(+dataNode.id, idTabConfig);
+          }
+          setIsConfigOpen(false);
+          setDataConfigGrid(null);
+        }}
+        dataConfig={dataConfigGrid}
+        callBack={(data) => {
+          updateFieldLabel(fieldId, data);
+          setIsConfigOpen(false);
+        }}
+      />
+      <ModalConfigLinkingGrid
+        onShow={isConfigLinkingGridOpen}
+        onHide={(reload) => {
+          if (reload) {
+            // getDataBpmFormArtifact(+dataNode.id, idTabConfig);
+          }
+          setIsConfigLinkingGridOpen(false);
+          setDataConfigLinkingGrid(null);
+          setListGridField([]);
+        }}
+        listGridField={listGridField}
+        dataConfig={dataConfigLinkingGrid}
+        callBack={(data) => {
+          updateFieldLabel(fieldId, data, "linking");
+          setIsConfigLinkingGridOpen(false);
+          setListGridField([]);
+        }}
+      />
     </div>
   );
 };

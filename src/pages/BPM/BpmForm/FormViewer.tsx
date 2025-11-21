@@ -9,7 +9,7 @@ import { components } from "react-select";
 import ApprovedObjectService from "services/ApprovedObjectService";
 import Loading from "components/loading";
 // import FormattedNumberField from "./FormattedNumberField";
-// import GridExtension from "./extension/gridViewer/render";
+import GridExtension from "./extension/gridViewer/render";
 // import RenderExtension from './extension/range/render';
 // import HiddenRenderExtension from './extension/hidden/render';
 // import NumberRenderExtension from './extension/number/render';
@@ -274,7 +274,7 @@ const FormViewerComponent = (props: any) => {
         // TreeSelectorEditorExtension
         // Đóng tạm vì gây lỗi khi build lên môi trường production
         // RenderExtension,
-        // GridExtension,
+        GridExtension,
       ],
 
       // components: {
@@ -290,18 +290,13 @@ const FormViewerComponent = (props: any) => {
     let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
       let { schema, data } = event;
-      console.log("event", event);
 
       let components = schema.components;
       const newValues = data;
 
       for (const key in newValues) {
         if (!_.isEqual(newValues[key], prevValues[key])) {
-          // console.log("Field thay đổi:", key, "->", newValues[key]);
-          console.log("components", components);
-
           const keyFind = components.find((el) => el.key === key || el.path === key);
-          console.log("keyFind", keyFind);
 
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
           if (keyFind?.properties?.bindingTarget) {
@@ -392,14 +387,8 @@ const FormViewerComponent = (props: any) => {
 
         if (component.type === "dynamiclist") {
           component.components.forEach((componentChild, index) => {
-            // console.log('componentChild', componentChild);
-
             if (componentChild.type == "select" || componentChild.type === "expression") {
-              console.log("componentChild", componentChild);
-
               data[component.path].map((el) => {
-                console.log("el", el);
-
                 let dataSelect = el[componentChild.key]; //Lấy ra key
                 let target = componentChild?.properties?.bindingTarget;
 
@@ -422,7 +411,6 @@ const FormViewerComponent = (props: any) => {
 
                   if (componentChild.type === "expression") {
                     let dataExpression = el[componentChild.key]; //Lấy ra key
-                    console.log("dataExpression", dataExpression);
 
                     if (dataExpression) {
                       el[target] = dataExpression;
@@ -855,21 +843,21 @@ const FormViewerComponent = (props: any) => {
 
       // Convert validationErrors object into an array of keys
       const errorFields = Object.keys(validationErrors);
-      if (!showOnRejectModal) {
-        if (errorFields.length > 0) {
-          showToast("Các trường bắt buộc không được để trống", "error");
-          // // console.log('Object.entries(validationErrors)', Object.entries(validationErrors));
-          // Duyệt qua các lỗi và thay thế thông báo
-          for (const fieldId in validationErrors) {
-            validationErrors[fieldId] = validationErrors[fieldId].map((error) => {
-              if (error === "Field is required.") {
-                return "Không được để trống.";
-              }
-              return error;
-            });
-          }
-          // return;
+      if (!showOnRejectModal && errorFields.length > 0) {
+        showToast("Các trường bắt buộc không được để trống", "error");
+        for (const fieldId in validationErrors) {
+          validationErrors[fieldId] = validationErrors[fieldId].map((error) => {
+            if (error === "Field is required.") {
+              return "Không được để trống.";
+            }
+            return error;
+          });
         }
+        // Gọi callback để thông báo có lỗi validation (nếu có)
+        if (props.onValidationError) {
+          props.onValidationError();
+        }
+        return;
       }
       const formData = event.data;
 

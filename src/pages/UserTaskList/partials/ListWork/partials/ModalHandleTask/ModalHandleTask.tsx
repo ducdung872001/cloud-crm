@@ -42,6 +42,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [dataInit, setDataInit] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
   const [isLoadingEngine, setIsLoadingEngine] = useState(true);
   const [isLoadingRecall, setIsLoadingRecall] = useState(false);
 
@@ -412,7 +413,6 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                                   setShowConfirmRelease(true);
                                 } else {
                                   handleSubmit();
-                                  setIsSubmit(true);
                                 }
                               },
                             },
@@ -548,16 +548,34 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
       try {
         //Check thông tin trống khi lưu
         if (listDataRow && listDataRow.length > 0) {
-          listDataRow.map((item) => {
+          // Kiểm tra validation trước khi submit
+          let hasError = false;
+          for (const item of listDataRow) {
             if (checkEmpty(item.dataRow, item.listColumn)) {
               showToast("Các trường bắt buộc không được bỏ trống", "error");
-              return;
+              hasError = true;
+              break;
             }
             if (checkData(item.dataRow, item.listColumn)) {
               showToast("Dữ liệu không hợp lệ", "error");
-              return;
+              hasError = true;
+              break;
             }
-          });
+          }
+
+          if (hasError) {
+            setIsSubmit(false);
+            setTimeout(() => {
+              try {
+                formViewerRef.current?.submit();
+              } catch (error) {
+                setIsSubmit(false);
+              }
+            }, 100);
+            return;
+          }
+
+          setIsSubmit(true);
 
           const arrayPromise = [];
           listDataRow.map((item) => {
@@ -586,10 +604,13 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
             }
           });
         } else {
+          // Set submit state trước khi submit form
+          setIsSubmit(true);
           const result = await formViewerRef.current.submit();
         }
       } catch (error) {
         console.error("Form submission failed:", error);
+        setIsSubmit(false);
       }
     }
   };
@@ -969,6 +990,10 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                     }}
                     // showOnRejectModal={showOnRejectModal || showOnHoldModal}
                     showOnRejectModal={false}
+                    onValidationError={() => {
+                      // Reset submit state khi form-js có lỗi validation
+                      setIsSubmit(false);
+                    }}
                     setDataSchemaDraft={(data) => {
                       setDataSchemaDraft(data);
                       if (listNodeDocument && listNodeDocument.length > 0) {
@@ -1032,7 +1057,6 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                 onHide={(reload) => {
                   if (reload) {
                     handleSubmit();
-                    setIsSubmit(true);
                   }
                   setShowConfirmRelease(false);
                 }}

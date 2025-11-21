@@ -20,6 +20,7 @@ import ObjectExtraInfoService from "services/ObjectExtraInfoService";
 import WorkOrderService from "services/WorkOrderService";
 import { showToast } from "utils/common";
 import ListWork from "./ListWork/ListWork";
+import ObjectInfo from "../ObjectInfo";
 
 export default function InfoProcess(props: any) {
   const { data } = props;
@@ -53,6 +54,10 @@ export default function InfoProcess(props: any) {
     {
       value: 2,
       label: "Công việc cần xử lý",
+    },
+    {
+      value: 3,
+      label: "Thông tin hồ sơ",
     },
   ];
 
@@ -605,6 +610,11 @@ export default function InfoProcess(props: any) {
       {tab === 2 ? (
         <div className="list-work-order">
           <ListWork data={data} />
+        </div>
+      ) : null}
+      {tab === 3 ? (
+        <div className="list-work-order">
+          <ObjectInfo data={data} />
         </div>
       ) : null}
     </div>

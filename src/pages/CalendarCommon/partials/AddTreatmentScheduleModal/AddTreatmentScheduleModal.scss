@@ -1,5 +1,24 @@
 .modal-add-treatment-schedule {
   .form-add-treatment-schedule {
+    .modal-header-custom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 1.6rem;
+
+      h4 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+      }
+
+      .modal-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0 1rem;
+      }
+    }
     .modal-body {
       padding: 0;
     }

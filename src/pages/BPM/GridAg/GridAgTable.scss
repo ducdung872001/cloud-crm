@@ -1,0 +1,51 @@
+.ag-grid-table {
+  .action-excel {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .ag-theme-alpine {
+    height: 100% !important;
+    overflow: visible !important;
+    z-index: 10;
+    .ag-root {
+      .ag-header {
+        .ag-header-cell {
+          // border: 1px solid #ccc; /* Kẻ border cho header */
+          padding-right: 5px;
+        }
+        .header-no {
+          padding: 0 !important;
+        }
+      }
+      .ag-body {
+        .ag-row {
+          .ag-cell {
+            .ag-cell-wrapper {
+              .ag-cell-value {
+                // min-height: 58px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .ag-theme-alpine .ag-popup-editor {
+    .custom-cell-edit {
+      [class*="-control"] {
+        padding-left: 18px;
+        border: none !important;
+      }
+    }
+  }
+  .action-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 10px;
+    margin-top: 20px;
+  }
+}
