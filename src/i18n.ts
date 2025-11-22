@@ -168,6 +168,9 @@ i18n.use(initReactI18next).init({
           settingDashboard: "Setting report",
           settingApplication: "Setting integrate",
           resourceManagement: "Resource management",
+          organizationalManagement: "Organizational Management",
+          listOfOrganizations: "List of organizations",
+          servicePackageManagement: "servicePackageManagement"
         },
         pageDashboard: {
           title: "Dashboard",
@@ -398,6 +401,9 @@ i18n.use(initReactI18next).init({
           settingDashboard: "Cài đặt báo cáo",
           settingApplication: "Cài đặt tích hợp",
           resourceManagement: "Quản trị tài nguyên",
+          organizationalManagement: "Quản lý tổ chức",
+          listOfOrganizations: "Danh sách tổ chức",
+          servicePackageManagement: "Quản lý gói dịch vụ"
         },
         pageDashboard: {
           title: "Trang chủ",

@@ -1,0 +1,59 @@
+.modal-add-org {
+  .form-org-group {
+    .modal-body {
+      padding: 0;
+    }
+
+    .list-form-group {
+      display: flex;
+      gap: 0.5rem 3.2rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.6rem;
+      padding: 1.6rem;
+      max-height: 42rem;
+      overflow: auto;
+
+      .form-group {
+        width: calc(50% - 1.6rem);
+      }
+
+      #FieldSubdomain {
+        .info__subdomain {
+          display: flex;
+          align-items: flex-start;
+          position: relative;
+
+          .form-group {
+            width: 100%;
+          }
+
+          .last_subdomain {
+            position: absolute;
+            top: 2.6rem;
+            right: 0.1rem;
+            font-size: 1.4rem;
+            background: var(--extra-color-20);
+            padding: 0.8rem;
+            height: 3.8rem;
+          }
+        }
+      }
+
+      // #FieldName,
+      #FieldCustom,
+      #FieldDescription {
+        width: 100%;
+      }
+
+      .info__org {
+        display: flex;
+        align-items: center;
+        gap: 0 3.2rem;
+
+        .address-org {
+          flex: 1;
+        }
+      }
+    }
+  }
+}

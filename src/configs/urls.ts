@@ -15,6 +15,8 @@ export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
   beautySalon: {
     list: prefixRebornVn + "/beautySalon/list",
+    approve: prefixRebornVn + "/api/beautySalon/approve",
+    delete: prefixRebornVn + "/api/beautySalon/delete",
   },
   user: {
     create: prefixAuthenticator + "/user/create",
@@ -26,6 +28,7 @@ export const urlsApi = {
     changePass: prefixAuthenticator + "/user/change_pass",
     checkLogin: prefixAdmin + "/userLogin/list",
     detailTimeLogin: prefixAdmin + "/userLogin/daily/list",
+    list: prefixAuthenticator + "/user/list",
   },
 
   customer: {
@@ -40,7 +43,7 @@ export const urlsApi = {
     checkInProcess: prefixAdmin + "/customer/checkInProcess",
     link: prefixAdmin + "/customer/link_user",
     detail: prefixAdmin + "/customer/get",
-    area: "https://reborn.vn/api/area/child",
+    area: prefixRebornVn + "/area/child",
 
     // api lấy ra thông tin khách hàng dựa theo id
     listById: prefixAdmin + "/customer/list_by_id",
@@ -815,7 +818,7 @@ export const urlsApi = {
   },
 
   organization: {
-    list: "https://reborn.vn/api/beautySalon/list",
+    list: prefixRebornVn + "/beautySalon/list",
     customerUploadList: prefixAdmin + "/customerUpload/list",
     customerUploadDelete: prefixAdmin + "/cleanData/uploadCustomer/delete",
   },
@@ -1409,12 +1412,12 @@ export const urlsApi = {
   image: {
     upload: "https://login.noron.vn/api/upload/image",
     // upload: "https://reborn.vn/api/upload/file",
-    uploadReborn: "https://reborn.vn/api/upload/file",
+    uploadReborn: prefixRebornVn + "/upload/file",
     uploadNoron: "https://login.noron.vn/api/upload/file",
     // uploadReborn: "http://localhost:8000/api/upload/file"
   },
   file: {
-    upload: "https://reborn.vn/api/upload/file",
+    upload: prefixRebornVn + "/upload/file",
   },
   video: {
     upload: "https://login.noron.vn/api/upload/file",
@@ -1983,7 +1986,7 @@ export const urlsApi = {
   },
   // video hướng dẫn
   videoSupport: {
-    list: "https://reborn.vn/api//support/list",
+    list: prefixRebornVn + "/support/list",
   },
   // phiếu điều chỉnh kho
   adjustmentSlip: {
@@ -2829,10 +2832,16 @@ export const urlsApi = {
   },
   // đoạn này lấy ra danh sách các gói
   package: {
-    list: "https://reborn.vn/api/package/list",
-    addOrgApp: "https://reborn.vn/api/orgApp/add",
-    updateBill: "https://reborn.vn/api/orgApp/update/bill",
-    calcPrice: "https://reborn.vn/api/orgApp/calc/priceRemaining",
+    list: prefixRebornVn + "/package/list",
+    update: prefixRebornVn + "/package/update",
+    updateStatus: prefixRebornVn + "/package/update/status",
+    detail: prefixRebornVn + "/package/get",
+    delete: prefixRebornVn + "/package/delete",
+    addOrgApp: prefixRebornVn + "/orgApp/add",
+    updateBill: prefixRebornVn + "/orgApp/update/bill",
+    calcPrice: prefixRebornVn + "/orgApp/calc/priceRemaining",
+    extend: prefixRebornVn + "/orgApp/extend",
+    upgrade: prefixRebornVn + "/orgApp/upgrade",
   },
   gift: {
     list: prefixAdmin + "/gift/list",
@@ -2958,6 +2967,14 @@ export const urlsApi = {
     update: prefixAdmin + "/transactionInformation/update",
     get: prefixAdmin + "/transactionInformation/get",
     delete: prefixAdmin + "/transactionInformation/delete",
+  },
+
+  application: {
+    lst: prefixRebornVn + "/orgApp/list",
+    lstAll: prefixRebornVn + "/orgApp/list/all",
+    confirmBill: prefixRebornVn + "/orgApp/payment/verify",
+    update: prefixRebornVn + "/organization/update",
+    detail: prefixRebornVn + "/beautySalon/get",
   },
 };
 
@@ -3202,6 +3219,13 @@ export const urls = {
   //upload tài liệu bpm
   // Link cho phép tải tài liệu lên
   upload_document: "/upload_document",
+
+  //Quản lý tổ chức
+  organization: "/organization",
+  //quản lý gói dịch vụ
+  package_manage: "/package_manage",
+
+
 };
 
 export default urls;
