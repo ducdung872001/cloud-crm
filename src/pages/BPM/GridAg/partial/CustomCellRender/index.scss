@@ -65,6 +65,22 @@
       white-space: nowrap;
       padding-left: 20px;
       min-height: 40px;
+      .circle-button-radio {
+        width: 16px;
+        height: 16px;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: border-color 0.3s, background-color 0.3s;
+      }
+
+      .circle-button-radio.active {
+        border: 1px solid var(--primary-color);
+        background: radial-gradient(circle, var(--primary-color) 40%, white 41%);
+      }
     }
     .icon-error {
       border: 1px solid var(--error-color);
