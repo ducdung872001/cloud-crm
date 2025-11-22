@@ -27,8 +27,8 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [listDataVar, setListDataVar] = useState([
-    { key: "customer", fields: [{ k: "customerId", v: "", readonly: true }] },
-    { key: "service", fields: [{ k: "serviceId", v: "", readonly: true }] },
+    { key: "customer", fields: [{ fieldName: "customerId", value: "", readonly: true }] },
+    { key: "service", fields: [{ fieldName: "serviceId", value: "", readonly: true }] },
   ]);
 
   useEffect(() => {
@@ -66,34 +66,34 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
 
           if (!item?.processor) {
             setListDataVar([
-              { key: "customer", fields: [{ k: "customerId", v: String(customerIdFromRes ?? ""), readonly: true }] },
-              { key: "service", fields: [{ k: "serviceId", v: String(serviceIdFromRes ?? ""), readonly: true }] },
+              { key: "customer", fields: [{ fieldName: "customerId", value: String(customerIdFromRes ?? ""), readonly: true }] },
+              { key: "service", fields: [{ fieldName: "serviceId", value: String(serviceIdFromRes ?? ""), readonly: true }] },
             ]);
           }
 
           if (item.processor) {
             try {
-              const p = typeof item.processor === "string" ? JSON.parse(item.processor) : item.processor;
+              const process = typeof item.processor === "string" ? JSON.parse(item.processor) : item.processor;
 
-              if (p?.processId) {
-                setFormData((prev) => ({ ...prev, processId: p.processId }));
+              if (process?.processId) {
+                setFormData((prev) => ({ ...prev, processId: process.processId }));
               }
 
-              if (p?.potName) {
-                setFormData((prev) => ({ ...prev, potName: p.potName }));
+              if (process?.potName) {
+                setFormData((prev) => ({ ...prev, potName: process.potName }));
               }
 
-              if (p?.startNodeId) {
-                setValueNode({ value: p.startNodeId, label: p.startNodeId });
-                setFormData((prev) => ({ ...prev, startNodeId: p.startNodeId }));
+              if (process?.startNodeId) {
+                setValueNode({ value: process.startNodeId, label: process.startNodeId });
+                setFormData((prev) => ({ ...prev, startNodeId: process.startNodeId }));
               }
 
-              if (p?.groupId) {
-                setFormData((prev) => ({ ...prev, groupId: p.groupId }));
+              if (process?.groupId) {
+                setFormData((prev) => ({ ...prev, groupId: process.groupId }));
               }
 
-              if (p?.lstVar) {
-                let lst = p.lstVar;
+              if (process?.lstVar) {
+                let lst = process.lstVar;
                 try {
                   if (typeof lst === "string") lst = JSON.parse(lst);
                 } catch (e) {
@@ -127,8 +127,8 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
       groupId: data?.groupId ?? null,
       lstVar: data?.processor ? (() => {
         try {
-          const p = typeof data.processor === 'string' ? JSON.parse(data.processor) : data.processor;
-          return p.lstVar ? p.lstVar : [];
+          const process = typeof data.processor === 'string' ? JSON.parse(data.processor) : data.processor;
+          return process.lstVar ? process.lstVar : [];
         } catch (e) {
           return [];
         }
@@ -285,25 +285,25 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
         const val = item.value;
         if (val && typeof val === "object" && !Array.isArray(val)) {
           const fields = Object.keys(val).length
-            ? Object.keys(val).map((k) => ({ k, v: String(val[k]), readonly: (key === "customer" && k === "customerId") || (key === "service" && k === "serviceId") }))
-            : [{ k: "", v: "", readonly: false }];
+            ? Object.keys(val).map((fieldName) => ({ fieldName, value: String(val[fieldName]), readonly: (key === "customer" && fieldName === "customerId") || (key === "service" && fieldName === "serviceId") }))
+            : [{ fieldName: "", value: "", readonly: false }];
           return { key, fields };
         }
 
-        return { key, fields: [{ k: "value", v: val !== undefined && val !== null ? String(val) : "", readonly: false }] };
+        return { key, fields: [{ fieldName: "value", value: val !== undefined && val !== null ? String(val) : "", readonly: false }] };
       });
 
       const ensureDefault = (arr) => {
         const out = [...arr];
         const hasCustomer = out.find((x) => x.key === "customer");
         if (!hasCustomer) {
-          out.unshift({ key: "customer", fields: [{ k: "customerId", v: String((formData as any)?.customerId ?? ""), readonly: true }] });
+          out.unshift({ key: "customer", fields: [{ fieldName: "customerId", value: String((formData as any)?.customerId ?? ""), readonly: true }] });
         } else {
-          const c = out.find((x) => x.key === "customer");
-          if (c) {
-            const hasField = c.fields.find((f) => f.k === "customerId");
-            if (!hasField) c.fields.unshift({ k: "customerId", v: String((formData as any)?.customerId ?? ""), readonly: true });
-            else hasField.v = hasField.v ?? String((formData as any)?.customerId ?? "");
+          const customerKey = out.find((x) => x.key === "customer");
+          if (customerKey) {
+            const hasField = customerKey.fields.find((search) => search.fieldName === "customerId");
+            if (!hasField) customerKey.fields.unshift({ fieldName: "customerId", value: String((formData as any)?.customerId ?? ""), readonly: true });
+            else hasField.value = hasField.value ?? String((formData as any)?.customerId ?? "");
             hasField.readonly = true;
           }
         }
@@ -311,13 +311,13 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
         const hasService = out.find((x) => x.key === "service");
         if (!hasService) {
           const svcVal = (formData as any)?.serviceId ?? (typeof (formData as any)?.services === "string" ? (formData as any).services : "");
-          out.splice(hasCustomer ? 1 : 0, 0, { key: "service", fields: [{ k: "serviceId", v: String(svcVal ?? ""), readonly: true }] });
+          out.splice(hasCustomer ? 1 : 0, 0, { key: "service", fields: [{ fieldName: "serviceId", value: String(svcVal ?? ""), readonly: true }] });
         } else {
-          const s = out.find((x) => x.key === "service");
-          if (s) {
-            const hasField = s.fields.find((f) => f.k === "serviceId");
-            if (!hasField) s.fields.unshift({ k: "serviceId", v: String((formData as any)?.serviceId ?? (typeof (formData as any)?.services === "string" ? (formData as any).services : "")), readonly: true });
-            else hasField.v = hasField.v ?? String((formData as any)?.serviceId ?? (typeof (formData as any)?.services === "string" ? (formData as any).services : ""));
+          const serviceKey = out.find((x) => x.key === "service");
+          if (serviceKey) {
+            const hasField = serviceKey.fields.find((search) => search.fieldName === "serviceId");
+            if (!hasField) serviceKey.fields.unshift({ fieldName: "serviceId", value: String((formData as any)?.serviceId ?? (typeof (formData as any)?.services === "string" ? (formData as any).services : "")), readonly: true });
+            else hasField.value = hasField.value ?? String((formData as any)?.serviceId ?? (typeof (formData as any)?.services === "string" ? (formData as any).services : ""));
             hasField.readonly = true;
           }
         }
@@ -327,7 +327,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
 
       const final = ensureDefault(mapped.length ? mapped : []);
 
-      setListDataVar(final.length ? final : [{ key: "", fields: [{ k: "", v: "", readonly: false }] }]);
+      setListDataVar(final.length ? final : [{ key: "", fields: [{ fieldName: "", value: "", readonly: false }] }]);
     }
   }, [formData?.lstVar]);
 
@@ -353,14 +353,14 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
     setValueNode(null);
     setValidateFieldNode(false);
     setValueGroup(null);
-    setListDataVar([{ key: "", fields: [{ k: "", v: "", readonly: false }] }]);
+    setListDataVar([{ key: "", fields: [{ fieldName: "", value: "", readonly: false }] }]);
   };
 
   const buildProcessorBody = (includeStatus = false) => {
   const lstVar = (listDataVar || []).map((group) => ({
     key: group.key,
-    value: (group.fields || []).reduce((acc, f) => {
-      if (f.k) acc[f.k] = f.v;
+    value: (group.fields || []).reduce((acc, field) => {
+      if (field.fieldName) acc[field.fieldName] = field.value;
       return acc;
     }, {}),
   }));
@@ -594,7 +594,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
                             className="button-add"
                             title="Thêm biến mới"
                             onClick={() => {
-                              setListDataVar([...listDataVar, { key: "", fields: [{ k: "", v: "", readonly: false }] }]);
+                              setListDataVar([...listDataVar, { key: "", fields: [{ fieldName: "", value: "", readonly: false }] }]);
                             }}
                           >
                             <Icon name="PlusCircleFill" />
@@ -617,33 +617,33 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
                       </div>
 
                       <div className="fields-list">
-                        {(item.fields || []).map((f, fi) => (
+                        {(item.fields || []).map((field, fi) => (
                           <div className="field-item" key={fi}>
                             <Input
                               name={`field_k_${index}_${fi}`}
-                              value={f.k}
+                              value={field.fieldName}
                               label=""
                               fill={true}
                               required={false}
-                              readOnly={!!f.readonly}
+                              readOnly={!!field.readonly}
                               onChange={(e) => {
                                 const newData = [...listDataVar];
-                                newData[index].fields[fi].k = e.target.value;
+                                newData[index].fields[fi].fieldName = e.target.value;
                                 setListDataVar(newData);
                               }}
                               placeholder="Field name (ví dụ: age)"
                             />
                             <Input
                               name={`field_v_${index}_${fi}`}
-                              value={f.v}
+                              value={field.value}
                               className="custom-input"
                               label=""
                               fill={true}
                               required={false}
-                              readOnly={!!f.readonly}
+                              readOnly={!!field.readonly}
                               onChange={(e) => {
                                 const newData = [...listDataVar];
-                                newData[index].fields[fi].v = e.target.value;
+                                newData[index].fields[fi].value = e.target.value;
                                 setListDataVar(newData);
                               }}
                               placeholder="Value (ví dụ: 123123)"
@@ -654,14 +654,14 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
                               title="Thêm field"
                               onClick={() => {
                                 const newData = [...listDataVar];
-                                newData[index].fields.splice(fi + 1, 0, { k: "", v: "", readonly: false });
+                                newData[index].fields.splice(fi + 1, 0, { fieldName: "", value: "", readonly: false });
                                 setListDataVar(newData);
                               }}
                             >
                               <Icon name="PlusCircleFill" />
                             </div>
 
-                            {item.fields && item.fields.length > 1 && !f.readonly ? (
+                            {item.fields && item.fields.length > 1 && !field.readonly ? (
                               <div
                                 className="button-delete"
                                 title="Xóa field"
