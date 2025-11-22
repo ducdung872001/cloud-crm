@@ -62,4 +62,10 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  list: (params: any, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.user.list}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
 };

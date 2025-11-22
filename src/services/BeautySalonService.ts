@@ -11,4 +11,14 @@ export default {
       },
     }).then((res) => res.json());
   },
+  approve: (id: number) => {
+    return fetch(`${urlsApi.beautySalon.approve}?id=${id}`, {
+      method: "POST",
+    }).then((res) => res.json());
+  },
+  delete: (id: number) => {
+    return fetch(`${urlsApi.beautySalon.delete}?id=${id}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
 };
