@@ -15,4 +15,11 @@ export interface IScheduleConsultantRequestModelProps {
   endTime: string;
   type: number | string;
   notification: string;
+  customerName: string;
+  consultantName: string;
+  potName: string;
+  nodeId: string;
+  lstVar: Array<{ key: string; value: string }>;
+  potId: number;
+  processId: number;
 }
