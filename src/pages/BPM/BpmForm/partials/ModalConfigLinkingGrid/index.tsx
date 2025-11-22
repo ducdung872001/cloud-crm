@@ -10,6 +10,7 @@ import Icon from "components/icon";
 import Button from "components/button/button";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Input from "components/input/input";
+import { showToast } from "utils/common";
 
 export default function ModalConfigLinkingGrid({ onShow, onHide, callBack, dataConfig, listGridField }) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -34,6 +35,8 @@ export default function ModalConfigLinkingGrid({ onShow, onHide, callBack, dataC
       setOptionsListGridField(options);
     }
   }, [listGridField]);
+
+  console.log("optionsListGridField>>", optionsListGridField);
 
   const values = useMemo(
     () => ({
@@ -199,6 +202,11 @@ export default function ModalConfigLinkingGrid({ onShow, onHide, callBack, dataC
                     options={optionsListGridField}
                     value={formData.gridDeparture ? optionsListGridField.find((item) => item.value === formData.gridDeparture) : null}
                     onChange={(e) => {
+                      if (!e.value) {
+                        showToast("Vui lòng đặt Field Name cho lưới bạn muốn chọn", "error");
+                        setFormData({ ...formData, gridDeparture: null });
+                        return;
+                      }
                       setFormData({ ...formData, gridDeparture: e.value });
                     }}
                     isAsyncPaginate={false}
@@ -334,9 +342,22 @@ export default function ModalConfigLinkingGrid({ onShow, onHide, callBack, dataC
                     options={optionsListGridField}
                     value={formData.gridDestination ? formData.gridDestination : null}
                     onChange={(e) => {
-                      console.log(e);
+                      let includeValueUndefined = false;
+                      let newE = [];
+                      e.forEach((item) => {
+                        if (!item.value) {
+                          includeValueUndefined = true;
+                        } else {
+                          newE.push(item);
+                        }
+                      });
 
-                      setFormData({ ...formData, gridDestination: e });
+                      if (includeValueUndefined) {
+                        showToast("Vui lòng đặt Field Name cho lưới bạn muốn chọn", "error");
+                        setFormData({ ...formData, gridDestination: newE });
+                      } else {
+                        setFormData({ ...formData, gridDestination: e });
+                      }
                     }}
                     isAsyncPaginate={false}
                     isFormatOptionLabel={false}

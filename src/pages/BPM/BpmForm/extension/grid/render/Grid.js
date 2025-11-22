@@ -27,21 +27,20 @@ export const gridType = "grid";
 export function GridRenderer(props) {
   const { disabled, errors = [], field, readonly, value: rawValue } = props;
 
-  console.log("field grid render", field, rawValue);
-
   const { description, Number = {}, id, label } = field;
 
   const { formId } = useContext(FormContext);
 
-  let listHeaderTable =
-    field.headerTable && JSON.parse(field.headerTable)
+  let listHeaderTable = field.headerTable
+    ? typeof field.headerTable === "string"
       ? JSON.parse(field.headerTable)
-      : [
-          {
-            name: "STT",
-            position: 1,
-          },
-        ];
+      : field.headerTable
+    : [
+        {
+          name: "STT",
+          position: 1,
+        },
+      ];
 
   listHeaderTable = listHeaderTable.sort((a, b) => a.position - b.position);
 

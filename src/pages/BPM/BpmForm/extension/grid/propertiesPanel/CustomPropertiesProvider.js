@@ -18,11 +18,11 @@ import { useState, useEffect } from "preact/hooks";
 
 let listEnable = [
   { id: "enable-add-row", key: "enableAddRow", label: "Enable Add Row" },
-  { id: "enable-add-col", key: "enableAddCol", label: "Enable Add Column" },
-  { id: "enable-export", key: "enableExport", label: "Enable Export" },
-  { id: "enable-import", key: "enableImport", label: "Enable Import" },
-  { id: "enable-add-cmt-cell", key: "enableAddCmtCell", label: "Enable Add Comment Cell" },
-  { id: "enable-add-cmt-col", key: "enableAddCmtCol", label: "Enable Add Comment Column" },
+  // { id: "enable-add-col", key: "enableAddColumns", label: "Enable Add Column" },
+  // { id: "enable-export", key: "enableExport", label: "Enable Export" },
+  // { id: "enable-import", key: "enableImport", label: "Enable Import" },
+  // { id: "enable-add-cmt-cell", key: "enableAddCmtCell", label: "Enable Add Comment Cell" },
+  // { id: "enable-add-cmt-col", key: "enableAddCmtCol", label: "Enable Add Comment Column" },
   { id: "enable-edit-cell", key: "enableEditCell", label: "Enable Edit Cell" },
   // { id: "enable-save", key: "enableSave", label: "Enable Save" },
 ];
@@ -150,19 +150,18 @@ function createCustomEntry(field, editField, id, key, label) {
           },
         },
         [
-          h("input", {
-            id,
-            className: "bio-properties-panel-input",
-            value: inputValue,
-            onInput: (evt) => setInputValue(evt.target.value),
-            onBlur: (evt) => setValue(evt.target.value === "" ? undefined : evt.target.value),
-          }),
+          // h("input", {
+          //   id,
+          //   className: "bio-properties-panel-input",
+          //   value: inputValue,
+          //   onInput: (evt) => setInputValue(evt.target.value),
+          //   onBlur: (evt) => setValue(evt.target.value === "" ? undefined : evt.target.value),
+          // }),
           h(
             "button",
             {
               type: "button",
               onClick: () => {
-                console.log("Open config modal for fieldId:", field.id);
                 window.dispatchEvent(
                   new CustomEvent(key == "headerTable" ? "openConfigModal" : "openLinkingConfigModal", { detail: { fieldId: field.id } })
                 );
@@ -172,6 +171,7 @@ function createCustomEntry(field, editField, id, key, label) {
                 marginLeft: "5px",
                 border: "1px solid #ccc",
                 borderRadius: "4px",
+                width: "100%",
               },
             },
             "Config" /* just for testing */

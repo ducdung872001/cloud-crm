@@ -8,7 +8,6 @@ import CustomHeaderNo from "../partial/CustomHeaderNo";
 import { TypeNo } from "../Type/datatype";
 import { fetchDataLookupGrid } from "./lookupGrid";
 import CustomCellCommentLast from "../partial/CustomCellCommentLast";
-import { name } from "@azure/msal-browser/dist/packageMetadata";
 
 export const defaultNote = {
   noteId: "Activity_0n3i8dv",
@@ -124,6 +123,10 @@ export const getDataGrid = async (actionRow, params): Promise<{ columns: ColDef[
 export const generateColumns = (header, actionRow, typeNo, params) => {
   const columnsForGrid: any = header
     .map((col) => {
+      console.log("col", col);
+
+      const editable = col.readOnly != 1 && params?.enableEditCell && col.type != "checkbox" && col.type != "radio" ? true : false;
+
       let column: any = {
         headerName: col.name,
         field: col.key,
@@ -131,7 +134,7 @@ export const generateColumns = (header, actionRow, typeNo, params) => {
         filter: true,
         autoHeight: true, // 👈 cho phép chiều cao linh hoạt theo nội dung
         minWidth: 200,
-        editable: col.readOnly != 1 && params?.enableEditCell ? true : false,
+        editable: editable,
         headerComponent: CustomHeader,
         cellEditor: CustomCellEdit,
         cellEditorParams: {

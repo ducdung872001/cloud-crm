@@ -131,6 +131,35 @@ const FormEditorComponent = ({
     return null;
   };
 
+  /**
+   * Tìm tất cả các component có type === "grid" trong mảng components,
+   * bỏ qua component có id === excludeId.
+   * Tránh trả về duplicate dựa trên id (nếu có).
+   */
+  function findAllGrids(components: any[] | undefined, excludeId?: string): any[] {
+    const results: any[] = [];
+    const seen = new Set<string | undefined>();
+
+    function walk(comps?: any[]) {
+      if (!Array.isArray(comps) || comps.length === 0) return;
+      for (const c of comps) {
+        const id = c.id;
+        // Nếu là grid và không phải excludeId và chưa thấy trước đó
+        if (c.type === "grid" && id !== excludeId && !seen.has(id)) {
+          results.push(c);
+          seen.add(id);
+        }
+        // Duyệt con nếu có
+        if (Array.isArray(c.components) && c.components.length > 0) {
+          walk(c.components);
+        }
+      }
+    }
+
+    walk(components);
+    return results;
+  }
+
   useEffect(() => {
     const handler = (e: CustomEvent) => {
       const { fieldId } = e.detail;
@@ -161,7 +190,6 @@ const FormEditorComponent = ({
     const handler = (e: CustomEvent) => {
       const { fieldId } = e.detail;
       // Xử lý với fieldId hoặc lưu vào state
-      console.log("fieldId nhận được từ con:", fieldId);
       setFieldId(fieldId);
       setIsConfigLinkingGridOpen(true);
       const editor = formEditorRef.current;
@@ -172,51 +200,14 @@ const FormEditorComponent = ({
         const field = walkFindGrid(schema.components, fieldId);
         if (field) {
           setDataConfigLinkingGrid(field);
-
-          // Cần phải sửa để lấy tất cả grid bằng đệ quy
-          setListGridField(
-            schema.components
-              .filter((c) => c.type === "grid" && c.id !== fieldId)
-              .map((item) => ({
-                id: item.id,
-                label: item.label,
-                fieldName: item.fieldName,
-                dataRow: item.dataRow ? JSON.parse(item.dataRow) : [],
-                headerTable: item.headerTable ? JSON.parse(item.headerTable) : [],
-              }))
-          );
+          // Lấy tất cả grid bằng đệ quy
+          setListGridField(findAllGrids(schema.components, fieldId));
         }
       }
     };
     window.addEventListener("openLinkingConfigModal", handler as EventListener);
     return () => window.removeEventListener("openLinkingConfigModal", handler as EventListener);
   }, [formEditorRef]);
-
-  // const updateFieldLabel = (fieldId: string, data: any, location?: string) => {
-  //   const editor = formEditorRef.current;
-  //   console.log("schema.components>>updateFieldLabel>>", fieldId, data);
-
-  //   if (editor) {
-  //     const schema = editor.getSchema();
-  //     // Tìm field cần sửa
-  //     console.log("schema.components>>", schema.components);
-  //     // walkAddIframGrid(schema.components, fieldId, location, data);
-
-  //     const field = schema.components.find((f) => f.id === fieldId);
-  //     if (field) {
-  //       if (location && location == "linking") {
-  //         field.linkingConfig = JSON.stringify(data.linkingConfig);
-  //       } else {
-  //         field.headerTable = JSON.stringify(data.headerTable);
-  //         field.dataRow = JSON.stringify(data.dataRow);
-  //       }
-  //       // Import lại schema đã sửa vào editor
-  //       editor.importSchema(schema);
-  //       console.log("dataConfigGrid>>", dataConfigGrid);
-  //       console.log("dataConfigGrid>>schema.components>>", formEditorRef.current.getSchema().components);
-  //     }
-  //   }
-  // };
 
   // Trả về một bản mới của components với node đầu tiên có id khớp được cập nhật bởi updater
   function updateComponentByIdImmutable(
@@ -278,12 +269,12 @@ const FormEditorComponent = ({
       try {
         if (location === "linking") {
           const linking = data && data.linkingConfig !== undefined ? data.linkingConfig : {};
-          newNode.linkingConfig = typeof linking === "string" ? linking : JSON.stringify(linking);
+          newNode.linkingConfig = linking;
         } else {
           const header = data && data.headerTable !== undefined ? data.headerTable : [];
           const row = data && data.dataRow !== undefined ? data.dataRow : [];
-          newNode.headerTable = typeof header === "string" ? header : JSON.stringify(header);
-          newNode.dataRow = typeof row === "string" ? row : JSON.stringify(row);
+          newNode.headerTable = header;
+          newNode.dataRow = row;
         }
       } catch (err) {
         console.error("Failed to serialize data for field", fieldId, err);
@@ -310,8 +301,6 @@ const FormEditorComponent = ({
       return false;
     }
   };
-
-  console.log("dataConfigGrid>>", dataConfigGrid);
 
   return (
     <div className="form-editor-container">
