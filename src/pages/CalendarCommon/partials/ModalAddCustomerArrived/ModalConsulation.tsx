@@ -31,7 +31,7 @@ export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSA
   const [listDataVar, setListDataVar] = useState([
     {
       key: "",
-      fields: [{ k: "", v: "" }],
+      fields: [{ field: "", value: "" }],
     },
   ]);
 
@@ -51,8 +51,8 @@ export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSA
       groupId: data?.groupId ?? null,
       lstVar: data?.processor ? (() => {
         try {
-          const p = typeof data.processor === 'string' ? JSON.parse(data.processor) : data.processor;
-          return p.lstVar ? p.lstVar : [];
+          const process = typeof data.processor === 'string' ? JSON.parse(data.processor) : data.processor;
+          return process.lstVar ? process.lstVar : [];
         } catch (e) {
           return [];
         }
@@ -217,16 +217,16 @@ export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSA
         const val = item.value;
         if (val && typeof val === "object" && !Array.isArray(val)) {
           const fields = Object.keys(val).length
-            ? Object.keys(val).map((k) => ({ k, v: String(val[k]) }))
-            : [{ k: "", v: "" }];
+            ? Object.keys(val).map((field) => ({ field, value: String(val[field]) }))
+            : [{ field: "", value: "" }];
           return { key, fields };
         }
 
         // primitive or missing -> put single field named 'value'
-        return { key, fields: [{ k: "value", v: val !== undefined && val !== null ? String(val) : "" }] };
+        return { key, fields: [{ field: "value", value: val !== undefined && val !== null ? String(val) : "" }] };
       });
 
-      setListDataVar(mapped.length ? mapped : [{ key: "", fields: [{ k: "", v: "" }] }]);
+      setListDataVar(mapped.length ? mapped : [{ key: "", fields: [{ field: "", value: "" }] }]);
     }
   }, [formData?.lstVar]);
 
@@ -252,7 +252,7 @@ export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSA
     setValueNode(null);
     setValidateFieldNode(false);
     setValueGroup(null);
-    setListDataVar([{ key: "", fields: [{ k: "", v: "" }] }]);
+    setListDataVar([{ key: "", fields: [{ field: "", value: "" }] }]);
   };
 
   const onSubmit = async (e) => {
@@ -273,7 +273,7 @@ export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSA
     const lstVar = (listDataVar || []).map((group) => ({
       key: group.key,
       value: (group.fields || []).reduce((acc, f) => {
-        if (f.k) acc[f.k] = f.v;
+        if (f.field) acc[f.field] = f.value;
         return acc;
       }, {} as any),
     }));
@@ -428,120 +428,6 @@ export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSA
                   disabled={formData?.processId ? false : true}
                 />
               </div>
-
-
-              {/* <div className="container-list-var">
-                <div>
-                  <span style={{ fontSize: 14, fontWeight: '500' }}>Điều kiện</span>
-                </div>
-                {listDataVar && listDataVar.length > 0 ?
-                  listDataVar.map((item, index) => (
-                    <div key={index} className="box-var">
-                      <div className="box-var-header">
-                        <Input
-                          name={`var_key_${index}`}
-                          value={item.key}
-                          label=""
-                          fill={true}
-                          required={false}
-                          onChange={(e) => {
-                            const newData = [...listDataVar];
-                            newData[index].key = e.target.value;
-                            setListDataVar(newData);
-                          }}
-                          placeholder="Tên biến (ví dụ: customer)"
-                        />
-
-                        <div className="group-actions">
-                          <div
-                            className="button-add"
-                            title="Thêm biến mới"
-                            onClick={() => {
-                              setListDataVar([...listDataVar, { key: "", fields: [{ k: "", v: "" }] }]);
-                            }}
-                          >
-                            <Icon name="PlusCircleFill" />
-                          </div>
-
-                          {listDataVar.length > 1 ? (
-                            <div
-                              className="button-delete"
-                              title="Xóa biến"
-                              onClick={() => {
-                                const newData = [...listDataVar];
-                                newData.splice(index, 1);
-                                setListDataVar(newData);
-                              }}
-                            >
-                              <Icon name="Trash" />
-                            </div>
-                          ) : null}
-                        </div>
-                      </div>
-
-                      <div className="fields-list">
-                        {(item.fields || []).map((f, fi) => (
-                          <div className="field-item" key={fi}>
-                            <Input
-                              name={`field_k_${index}_${fi}`}
-                              value={f.k}
-                              label=""
-                              fill={true}
-                              required={false}
-                              onChange={(e) => {
-                                const newData = [...listDataVar];
-                                newData[index].fields[fi].k = e.target.value;
-                                setListDataVar(newData);
-                              }}
-                              placeholder="Field name (ví dụ: age)"
-                            />
-                            <Input
-                              name={`field_v_${index}_${fi}`}
-                              value={f.v}
-                              className="custom-input"
-                              label=""
-                              fill={true}
-                              required={false}
-                              onChange={(e) => {
-                                const newData = [...listDataVar];
-                                newData[index].fields[fi].v = e.target.value;
-                                setListDataVar(newData);
-                              }}
-                              placeholder="Value (ví dụ: 123123)"
-                            />
-
-                            <div
-                              className="button-add"
-                              title="Thêm field"
-                              onClick={() => {
-                                const newData = [...listDataVar];
-                                newData[index].fields.splice(fi + 1, 0, { k: "", v: "" });
-                                setListDataVar(newData);
-                              }}
-                            >
-                              <Icon name="PlusCircleFill" />
-                            </div>
-
-                            {item.fields && item.fields.length > 1 ? (
-                              <div
-                                className="button-delete"
-                                title="Xóa field"
-                                onClick={() => {
-                                  const newData = [...listDataVar];
-                                  newData[index].fields.splice(fi, 1);
-                                  setListDataVar(newData);
-                                }}
-                              >
-                                <Icon name="Trash" />
-                              </div>
-                            ) : null}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))
-                  : null}
-              </div> */}
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

@@ -1264,21 +1264,21 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
   setIsSubmittingCustomerArrived(true);
 
   const vForm: any = formData?.values ?? values;
-  const d: any = data;
+  const vdata: any = data;
 
   const kafkaData = {
-    employeeId: d?.consultantId ?? vForm?.consultantId ?? null,
-    employeeName: d?.consultantName ?? vForm?.consultantName ?? "",
-    customerId: d?.customerId ?? vForm?.customerId ?? null,
-    customerName: d?.customerName ?? vForm?.customerName ?? "",
+    employeeId: vdata?.consultantId ?? vForm?.consultantId ?? null,
+    employeeName: vdata?.consultantName ?? vForm?.consultantName ?? "",
+    customerId: vdata?.customerId ?? vForm?.customerId ?? null,
+    customerName: vdata?.customerName ?? vForm?.customerName ?? "",
     arrival: 1,
   };
 
   const kafkaBody = {
     data: JSON.stringify(kafkaData),
-    processId: d?.processId ?? vForm?.processId ?? 0,
-    potId: d?.id ?? vForm?.potId ?? 0,
-    nodeId: d?.nodeId ?? vForm?.nodeId ?? 0,
+    processId: vdata?.processId ?? vForm?.processId ?? 0,
+    potId: vdata?.id ?? vForm?.potId ?? 0,
+    nodeId: vdata?.nodeId ?? vForm?.nodeId ?? 0,
   };
 
   try {
