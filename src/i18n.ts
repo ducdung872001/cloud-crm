@@ -90,6 +90,7 @@ i18n.use(initReactI18next).init({
           customerServiceHotline: "Customer service hotline",
           customerCareEmail: "Customer care email",
           receiveWarranty: "Receive warranty",
+          receiveWarrantyProcess: "Receive warranty process",
           receiveTicket: "Receive ticket",
           receiveTicketProcess: "Receive ticket process",
           medicalRecord: "Medical record",
@@ -310,6 +311,7 @@ i18n.use(initReactI18next).init({
           // đoạn này là children của chăm sóc khách hàng
           customerServiceHotline: "Tổng đài CSKH",
           receiveWarranty: "Tiếp nhận bảo hành",
+          receiveWarrantyProcess: "Tiếp nhận bảo hành theo quy trình",
           receiveTicket: "Tiếp nhận hỗ trợ",
           receiveTicketProcess: "Tiếp nhận hỗ trợ theo quy trình",
           customerCareEmail: "Email CSKH",

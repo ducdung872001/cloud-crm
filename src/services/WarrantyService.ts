@@ -66,4 +66,10 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  collect: (body: IWarrantyRequestModel, params?: any) => {
+    return fetch(`${urlsApi.warranty.collect}${convertParamsToString(params)}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
 };

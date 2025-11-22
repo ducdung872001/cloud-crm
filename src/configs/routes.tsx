@@ -22,6 +22,8 @@ import KpiApplyList from "pages/Kpi/KpiApplyList/KpiApplyList";
 import KpiObjectList from "pages/Kpi/KpiObjectList/KpiObjectList";
 import DetailPersonList from "pages/CustomerPerson/partials/DetailPerson/DetailPersonList";
 import WarrantyList from "pages/Warranty/WarrantyList";
+import WarrantyListProcess from "pages/Warranty/WarrantyListProcess";
+import CollectWarranty from "pages/Warranty/partials/CollectWarranty";
 import TicketList from "pages/Ticket/TicketList";
 import TicketListProcess from "pages/Ticket/TicketListProcess";
 import CollectTicket from "pages/Ticket/partials/CollectTicket";
@@ -652,6 +654,12 @@ export const menu: IMenuItem[] = [
               code: "WARRANTY",
             },
             {
+              title: "receiveWarrantyProcess", // Tiếp nhận bảo hành
+              path: urls.warranty_process,
+              icon: <Icon name="ReceiveWarranty" />,
+              code: "KANBAN_V2",
+            },
+            {
               title: "receiveTicket", // Tiếp nhận hỗ trợ
               path: urls.ticket,
               icon: <Icon name="ReceiveTicket" />,
@@ -1269,6 +1277,14 @@ export const routes: IRouter[] = [
   {
     path: urls.warranty,
     component: <WarrantyList />,
+  },
+  {
+    path: urls.warranty_process,
+    component: <WarrantyListProcess />,
+  },
+  {
+    path: urls.collect_warranty,
+    component: <CollectWarranty />,
   },
   {
     path: urls.detail_warranty,
