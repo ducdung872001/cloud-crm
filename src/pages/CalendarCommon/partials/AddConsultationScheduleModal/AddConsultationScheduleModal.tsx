@@ -55,11 +55,11 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
   const focusedElement = useActiveElement();
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-    const [showDialogConfirmCustomerArrived, setShowDialogConfirmCustomerArrived] = useState<boolean>(false);
+  const [showDialogConfirmCustomerArrived, setShowDialogConfirmCustomerArrived] = useState<boolean>(false);
   const [contentDialogConfirmCustomerArrived, setContentDialogConfirmCustomerArrived] = useState<IContentDialog>(null);
   const [isSubmittingCustomerArrived, setIsSubmittingCustomerArrived] = useState<boolean>(false);
   const [showModalCustomerArrived, setShowModalCustomerArrived] = useState<boolean>(false);
-    const [isReloadingFromChild, setIsReloadingFromChild] = useState<boolean>(false);
+  const [isReloadingFromChild, setIsReloadingFromChild] = useState<boolean>(false);
 
   const [valueDecisionTime, setValueDecisionTime] = useState({
     value: "3",
@@ -187,18 +187,18 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
 
   const values = useMemo(
     () =>
-      ({
-        title: data?.title ?? "",
-        consultantId: data?.consultantId ?? detailEmployee?.value,
-        services: data?.services ?? "[]",
-        content: data?.content ?? "",
-        customerId: data?.customerId ?? idCustomer ?? null,
-        note: data?.note ?? "",
-        startTime: idData ? data?.startTime : startDate,
-        endTime: idData ? data?.endTime : endDate,
-        type: data?.type?.toString() ?? "1",
-        notification: data?.notification ?? "[]",
-      } as IScheduleConsultantRequestModelProps),
+    ({
+      title: data?.title ?? "",
+      consultantId: data?.consultantId ?? detailEmployee?.value,
+      services: data?.services ?? "[]",
+      content: data?.content ?? "",
+      customerId: data?.customerId ?? idCustomer ?? null,
+      note: data?.note ?? "",
+      startTime: idData ? data?.startTime : startDate,
+      endTime: idData ? data?.endTime : endDate,
+      type: data?.type?.toString() ?? "1",
+      notification: data?.notification ?? "[]",
+    } as IScheduleConsultantRequestModelProps),
     [onShow, data, startDate, endDate, idData, detailEmployee]
   );
 
@@ -1259,32 +1259,48 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
   };
 
   const handleConfirmCustomerArrived = async () => {
-    if (!idData) return;
+  if (!idData) return;
 
-    setIsSubmittingCustomerArrived(true);
+  setIsSubmittingCustomerArrived(true);
 
-    const body: IScheduleConsultantRequestModelProps = {
-      ...(formData.values as IScheduleConsultantRequestModelProps),
-      ...(idData ? { id: idData } : {}),
-      status: "5", 
-    } as any;
+  const vForm: any = formData?.values ?? values;
+  const d: any = data;
 
-    const response = await ScheduleConsultantService.update(body);
+  const kafkaData = {
+    employeeId: d?.consultantId ?? vForm?.consultantId ?? null,
+    employeeName: d?.consultantName ?? vForm?.consultantName ?? "",
+    customerId: d?.customerId ?? vForm?.customerId ?? null,
+    customerName: d?.customerName ?? vForm?.customerName ?? "",
+    arrival: 1,
+  };
+
+  const kafkaBody = {
+    data: JSON.stringify(kafkaData),
+    processId: d?.processId ?? vForm?.processId ?? 0,
+    potId: d?.id ?? vForm?.potId ?? 0,
+    nodeId: d?.nodeId ?? vForm?.nodeId ?? 0,
+  };
+
+  try {
+    const response = await ScheduleConsultantService.updateKafka(kafkaBody as any);
 
     if (response.code === 0) {
       showToast("Xác nhận khách đến thành công", "success");
-      // Reload lại dữ liệu
-      if (idData) {
-        await getDetailDataItem(idData);
-      }
+
+      if (idData) await getDetailDataItem(idData);
+
       setShowDialogConfirmCustomerArrived(false);
       setContentDialogConfirmCustomerArrived(null);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
-
+  } catch {
+    showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+  } finally {
     setIsSubmittingCustomerArrived(false);
-  };
+  }
+};
+
 
   const checkKeyDown = useCallback(
     (e) => {
@@ -1336,7 +1352,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
                       type="button"
                       color="primary"
                       variant="outline"
-                      onClick={(e) => setShowModalCustomerArrived(true)}
+                      onClick={(e) => handleShowDialogConfirmCustomerArrived()}
                       disabled={isSubmit || isSubmittingCustomerArrived}
                     >
                       Khách đến
