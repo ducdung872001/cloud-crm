@@ -6,20 +6,20 @@ import GridAgTable from "./GridAgTable";
 export interface IGridAgTable {
   location: string; // "iframe" hoặc "configViewer"
   setDataConfigGrid?: (data) => void;
-  dataConfig?: any; // Dữ liệu cấu hình bảng từ bên ngoài
+  dataGrid?: any; // Dữ liệu cấu hình bảng từ bên ngoài
   onChange?: (data) => void; // Hàm gọi khi có thay đổi dữ liệu (dùng trong configViewer)
   onAction?: (action: any) => void; // Hàm gọi khi có hành động trên grid
   configField?: any; // Dùng trong configViewer để truyền tham số thay vì lấy từ URL
 }
 
 function GridAg(props: IGridAgTable) {
-  const { location, setDataConfigGrid, dataConfig, onChange, configField, onAction } = props;
+  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction } = props;
   return (
     <GridAgProvider>
       <GridAgTable
         location={location}
         setDataConfigGrid={setDataConfigGrid}
-        dataConfig={dataConfig}
+        dataGrid={dataGrid}
         onChange={onChange}
         configField={configField}
         onAction={onAction}

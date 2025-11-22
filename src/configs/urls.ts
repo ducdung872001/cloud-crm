@@ -526,6 +526,7 @@ export const urlsApi = {
     update: prefixAdmin + "/scheduleConsultant/update",
     detail: prefixAdmin + "/scheduleConsultant/get",
     delete: prefixAdmin + "/scheduleConsultant/delete",
+    updateKafka: prefixBpm + "/kafka/activate/receiveTask",
   },
   // lịch điều trị
   scheduleTreatment: {

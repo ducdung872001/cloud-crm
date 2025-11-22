@@ -85,6 +85,115 @@
         }
       }
     }
+    .form-group-uri {
+      width: 100%;
+
+      .uri-input {
+        display: flex;
+        width: 100%;
+        gap: 0 1.6rem;
+      }
+
+      .base-textarea {
+        width: 100% !important;
+      }
+
+      textarea {
+        width: 100%;
+        height: 60px;
+      }
+
+      .list__binding {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem 0;
+        border: 1px dashed var(--border-color);
+        border-radius: 5px;
+        padding: 1rem;
+        margin-top: 2rem;
+
+        .attribute__item {
+          .remove-attribute {
+            .icon-remove {
+              svg {
+                fill: var(--error-color);
+              }
+            }
+          }
+          .list-field-attribute {
+            .form-group {
+              width: calc(40% - 1.2rem);
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              .readonly {
+                display: flex;
+                align-items: center;
+                gap: 0 0.8rem;
+                justify-content: center;
+              }
+              &:last-child {
+                width: calc(13% - 1.2rem);
+                padding-bottom: 12px;
+              }
+            }
+          }
+        }
+        .attribute__item_header {
+          .remove-attribute {
+            .icon-remove {
+              svg {
+                fill: var(--error-color);
+              }
+            }
+          }
+          .list-field-attribute {
+            display: flex;
+            .form-group {
+              width: calc(40% - 1.2rem);
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              padding-bottom: 0 !important;
+              margin-bottom: 0 !important;
+              font-size: 13px;
+              color: #374151;
+              .readonly {
+                display: flex;
+                align-items: center;
+                gap: 0 0.8rem;
+                justify-content: center;
+              }
+              &:last-child {
+                width: calc(13% - 1.2rem);
+                padding-bottom: 12px;
+              }
+            }
+          }
+        }
+      }
+      .list__params {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem 0;
+        border: 1px dashed var(--border-color);
+        border-radius: 5px;
+        padding: 1rem;
+        margin-top: 2rem;
+
+        .attribute__item {
+          .remove-attribute {
+            .icon-remove {
+              svg {
+                fill: var(--error-color);
+              }
+            }
+          }
+        }
+      }
+    }
     .form-group-binding {
       width: 100%;
       label {

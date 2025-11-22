@@ -25,7 +25,7 @@ import { filterData } from "./function/filterData";
 import { IGridAgTable } from ".";
 
 const GridAgTable = (
-  props: IGridAgTable // location: "iframe" | "configViewer", setDataConfigGrid, dataConfig, onChange, configField
+  props: IGridAgTable // location: "iframe" | "configViewer", setDataConfigGrid, dataGrid, onChange, configField
 ) => {
   const {
     typeNo,
@@ -48,14 +48,10 @@ const GridAgTable = (
     setCheckedMap,
   } = useGridAg();
   const gridRef = useRef<any>(null);
-  const { location, setDataConfigGrid, dataConfig, onChange, configField, onAction } = props;
-  console.log("configField", configField);
-  console.log("dataConfig", dataConfig);
-  const idGrid = configField?.fieldName || dataConfig?.fieldName || "";
+  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction } = props;
+  const idGrid = configField?.fieldName || dataGrid?.fieldName || "";
   const COLUMN_WIDTH_STORAGE_KEY = "gridag_column_widths" + idGrid;
   const linkingConfig = configField?.linkingConfig ? JSON.parse(configField.linkingConfig) : null;
-  console.log("linkingConfig", linkingConfig);
-  console.log("linkingConfig>>idGrid", idGrid);
   const [linkingConfigDeparture, setLinkingConfigDeparture] = useState(null);
   useEffect(() => {
     if (linkingConfig && linkingConfig?.gridDeparture) {
@@ -70,8 +66,6 @@ const GridAgTable = (
     }
   }, [idGrid, linkingConfig]);
 
-  console.log("linkingConfigDeparture>>", idGrid, linkingConfigDeparture);
-
   useEffect(() => {
     //Bắt sự kiện từ grid khác gửi sang
     if (linkingConfigDeparture && linkingConfigDeparture?.params && linkingConfigDeparture?.idGrid == linkingConfig?.gridDeparture) {
@@ -79,8 +73,6 @@ const GridAgTable = (
         if (linkingConfigDeparture?.params?.HoVaTen == "Hoàng Văn Lợi") {
           setDataFetch((prev) => ({ ...prev, data: [sampleData[0]] }));
         } else if (linkingConfigDeparture?.params?.HoVaTen == "Bùi Đức Năng") {
-          console.log("setDataFetch Bùi Đức Năng");
-
           setDataFetch((prev) => ({ ...prev, data: [sampleData[1]] }));
         } else {
           setDataFetch((prev) => ({ ...prev, data: [sampleData[2]] }));
@@ -141,26 +133,35 @@ const GridAgTable = (
       setIsFetchData(false);
     } else {
       setIsLoading(false);
-      if (!(dataConfig && dataConfig?.headerTable && JSON.parse(dataConfig.headerTable))) {
+      if (!(dataGrid && dataGrid?.headerTable)) {
         setDataFetch(getDataConfig(actionRow));
       }
     }
-  }, [isFetchData, location, dataConfig]);
+  }, [isFetchData, location, dataGrid]);
 
   useEffect(() => {
-    let dataConfigHeader = dataConfig?.headerTable && JSON.parse(dataConfig.headerTable) ? JSON.parse(dataConfig.headerTable) : [];
-    setColumnsConfig(dataConfigHeader);
-    let dataConfigRow = dataConfig?.dataRow && JSON.parse(dataConfig.dataRow) ? JSON.parse(dataConfig.dataRow) : [];
-    setRowData(dataConfigRow);
-    // onChange && onChange({ headerTable: dataConfig.headerTable, dataRow: dataConfig.dataRow });
-  }, [dataConfig]);
+    // let dataGridHeader = dataGrid?.headerTable && JSON.parse(dataGrid.headerTable) ? JSON.parse(dataGrid.headerTable) : [];
+    let dataGridHeader =
+      dataGrid?.headerTable && dataGrid.headerTable
+        ? typeof dataGrid.headerTable === "string"
+          ? JSON.parse(dataGrid.headerTable)
+          : dataGrid.headerTable
+        : [];
+    setColumnsConfig(dataGridHeader);
+    // let dataGridRow = dataGrid?.dataRow && JSON.parse(dataGrid.dataRow) ? JSON.parse(dataGrid.dataRow) : [];
+    let dataGridRow =
+      dataGrid?.dataRow && dataGrid.dataRow ? (typeof dataGrid.dataRow === "string" ? JSON.parse(dataGrid.dataRow) : dataGrid.dataRow) : [];
+    setRowData(dataGridRow);
+    // onChange && onChange({ headerTable: dataGrid.headerTable, dataRow: dataGrid.dataRow });
+  }, [dataGrid]);
 
   useEffect(() => {
     setDataConfigGrid && setDataConfigGrid((prev) => ({ ...prev, dataRow: rowData }));
   }, [rowData]);
 
   useEffect(() => {
-    onChange && onChange({ headerTable: JSON.stringify(columnsConfig), dataRow: JSON.stringify(rowData) });
+    // onChange && onChange({ headerTable: JSON.stringify(columnsConfig), dataRow: JSON.stringify(rowData) });
+    onChange && onChange({ headerTable: columnsConfig, dataRow: rowData });
   }, [columnsConfig, rowData]);
 
   useEffect(() => {
@@ -406,7 +407,8 @@ const GridAgTable = (
     // rowData là state, nhưng để chắc chắn, bạn nên lấy dữ liệu mới nhất từ gridRef
     if (location == "configViewer") {
       const updatedRowData = getLatestRowData();
-      onChange && onChange({ headerTable: JSON.stringify(columnsConfig), dataRow: JSON.stringify(updatedRowData) });
+      // onChange && onChange({ headerTable: JSON.stringify(columnsConfig), dataRow: JSON.stringify(updatedRowData) });
+      onChange && onChange({ headerTable: columnsConfig, dataRow: updatedRowData });
     }
   };
 

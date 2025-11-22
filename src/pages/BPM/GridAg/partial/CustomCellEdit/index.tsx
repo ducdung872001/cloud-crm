@@ -65,7 +65,7 @@ const CustomCellEdit = (props) => {
         }
       }
     } else if (type === "checkbox") {
-      newValue = e ? e.target.checked : false;
+      newValue = e ? (e.target.checked ? "true" : "false") : "false";
       // props.api.stopEditing();
     } else if (type === "date") {
       let _value = e ? new Date(e) : "";
@@ -102,6 +102,8 @@ const CustomCellEdit = (props) => {
     } else {
       newValue = e.target.value;
     }
+    console.log("newValue", newValue);
+
     props.node.setDataValue(props.colDef.field, newValue); // 👈 cập nhật lại vào grid
     setValue(newValue);
   };
@@ -145,6 +147,8 @@ const CustomCellEdit = (props) => {
       }),
     });
   }, [props.width]);
+
+  console.log("value", value);
 
   const generateItemInput = useCallback(
     (type) => {

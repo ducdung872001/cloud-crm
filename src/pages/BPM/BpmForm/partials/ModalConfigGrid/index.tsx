@@ -20,8 +20,6 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
     dataRow: dataConfig?.dataRow || [],
   });
 
-  console.log("dataConfig>>>", dataConfig);
-
   const values = useMemo(
     () => ({
       eformId: null,
@@ -152,7 +150,7 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
           </div>
           <ModalBody>
             <div className="list-form-group">
-              <GridAg location={"configForm"} setDataConfigGrid={setDataConfigGrid} dataConfig={dataConfig} />
+              <GridAg location={"configForm"} setDataConfigGrid={setDataConfigGrid} dataGrid={dataConfig} />
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />
