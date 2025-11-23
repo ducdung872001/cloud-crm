@@ -903,6 +903,7 @@ export const menu: IMenuItem[] = [
       title: "userAdministration",
       path: urls.user,
       icon: <Icon name="Customer" />,
+      code: "RESOURCE"
     },
     {
       title: "organizationalManagement",
@@ -920,6 +921,7 @@ export const menu: IMenuItem[] = [
           title: "renewalList",
           path: urls.extension_list,
           icon: <Icon name="Renewal" />,
+          code: "RENEWAL_LIST"
         }
       ],
     },
