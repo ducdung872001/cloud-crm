@@ -1059,178 +1059,178 @@ export default function ModalAddColumnAg(props: any) {
 
               {/* Trường hợp là lookup */}
               {formData?.values["type"] == "lookup" || formData?.values["type"] == "binding" ? (
-                // <div className="form-group">
-                //                     <SelectCustom
-                //     id="options"
-                //     name="options"
-                //     label="Thông tin tham chiếu"
-                //     fill={true}
-                //     required={true}
-                //     options={listLookup}
-                //     disabled={isEdit}
-                //     value={detailLookup}
-                //     onChange={(e) => handleDetailLookup(e)}
-                //     isFormatOptionLabel={true}
-                //     placeholder="Chọn tham chiếu"
-                //   />
-                // </div>
-                <div className="form-group-uri">
-                  <Input
-                    label="Đường dẫn API tham chiếu"
+                <div className="form-group">
+                  <SelectCustom
+                    id="options"
+                    name="options"
+                    label="Thông tin tham chiếu"
                     fill={true}
                     required={true}
-                    value={"ok"}
-                    placeholder="Nhập đường dẫn API tham chiếu"
-                    onChange={(e) => {
-                      console.log(e);
-                    }}
+                    options={listLookup}
+                    disabled={isEdit}
+                    value={detailLookup}
+                    onChange={(e) => handleDetailLookup(e)}
+                    isFormatOptionLabel={true}
+                    placeholder="Chọn tham chiếu"
                   />
-                  <div className="list__params">
-                    <div>
-                      <span style={{ fontSize: 14, fontWeight: "700" }}>Tham số API</span>
-                    </div>
-                    {listParams.map((item, idx) => {
-                      return (
-                        <div key={idx} className="attribute__item">
-                          <div className="list-field-attribute">
-                            <div className="form-group">
-                              <Input
-                                // label={idx == 0 ? 'Lựa chọn' : ''}
-                                fill={true}
-                                required={true}
-                                value={item.label}
-                                placeholder="Nhập key"
-                                onChange={(e) => handleChangeLabelParams(e, idx)}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <Input
-                                // label={idx == 0 ? 'Lựa chọn' : ''}
-                                fill={true}
-                                required={true}
-                                value={item.value}
-                                placeholder="Nhập giá trị"
-                                onChange={(e) => handleChangeValueParams(e, idx)}
-                              />
-                            </div>
-                          </div>
-                          {idx == 0 ? (
-                            <span className="add-attribute">
-                              <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
-                                <span
-                                  className="icon-add"
-                                  onClick={() => {
-                                    setListParams([...listParams, { value: "", label: "" }]);
-                                  }}
-                                >
-                                  <Icon name="PlusCircleFill" />
-                                </span>
-                              </Tippy>
-                            </span>
-                          ) : (
-                            <span className="remove-attribute">
-                              <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
-                                <span className="icon-remove" onClick={() => handleRemoveItemParams(idx)}>
-                                  <Icon name="Trash" />
-                                </span>
-                              </Tippy>
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {formData?.values["type"] == "binding" ? (
-                    <div className="list__binding">
-                      <div>
-                        <span style={{ fontSize: 14, fontWeight: "700" }}>Các cột tham chiếu</span>
-                      </div>
-                      <div className="attribute__item_header">
-                        <div className="list-field-attribute">
-                          <div className="form-group">Tên cột</div>
-                          <div className="form-group">Trường dữ liệu</div>
-                          <div className="form-group">Kiểu dữ liệu</div>
-                          <div className="form-group">Chỉ xem</div>
-                        </div>
-                      </div>
-                      {listColumnBinding.map((item, idx) => {
-                        return (
-                          <div key={idx} className="attribute__item">
-                            <div className="list-field-attribute">
-                              <div className="form-group">
-                                <Input
-                                  // label={idx == 0 ? 'Lựa chọn' : ''}
-                                  fill={true}
-                                  required={true}
-                                  value={item.label}
-                                  placeholder="Nhập tên cột"
-                                  onChange={(e) => handleChangeListColumnBinding(e, idx, "label")}
-                                />
-                              </div>
-                              <div className="form-group">
-                                <Input
-                                  // label={idx == 0 ? 'Lựa chọn' : ''}
-                                  fill={true}
-                                  required={true}
-                                  value={item.value}
-                                  placeholder="Nhập trường dữ liệu"
-                                  onChange={(e) => handleChangeListColumnBinding(e, idx, "value")}
-                                />
-                              </div>
-                              <div className="form-group">
-                                <SelectCustom
-                                  id={`type-binding-${idx}`}
-                                  name={`type-binding-${idx}`}
-                                  fill={true}
-                                  required={true}
-                                  options={[
-                                    { value: "text", label: "Text" },
-                                    { value: "number", label: "Number" },
-                                    { value: "date", label: "Date" },
-                                    { value: "checkbox", label: "Checkbox" },
-                                  ]}
-                                  value={item.type || "text"}
-                                  onChange={(e) => handleChangeListColumnBinding(e, idx, "type")}
-                                  isFormatOptionLabel={true}
-                                  placeholder="Chọn kiểu dữ liệu"
-                                />
-                              </div>
-                              <div className="form-group">
-                                <div className="readonly">
-                                  <Checkbox checked={item.readOnly} onChange={(e) => handleChangeListColumnBinding(e, idx, "readOnly")} />
-                                  {/* <span>Chỉ xem</span> */}
-                                </div>
-                              </div>
-                            </div>
-                            {idx == 0 ? (
-                              <span className="add-attribute">
-                                <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
-                                  <span
-                                    className="icon-add"
-                                    onClick={() => {
-                                      setListColumnBinding([...listColumnBinding, { value: "", label: "", readOnly: false, type: "text" }]);
-                                    }}
-                                  >
-                                    <Icon name="PlusCircleFill" />
-                                  </span>
-                                </Tippy>
-                              </span>
-                            ) : (
-                              <span className="remove-attribute">
-                                <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
-                                  <span className="icon-remove" onClick={() => handleRemoveItemListColumnsBinding(idx)}>
-                                    <Icon name="Trash" />
-                                  </span>
-                                </Tippy>
-                              </span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : null}
                 </div>
-              ) : null}
+              ) : // <div className="form-group-uri">
+              //   <Input
+              //     label="Đường dẫn API tham chiếu"
+              //     fill={true}
+              //     required={true}
+              //     value={"ok"}
+              //     placeholder="Nhập đường dẫn API tham chiếu"
+              //     onChange={(e) => {
+              //       console.log(e);
+              //     }}
+              //   />
+              //   <div className="list__params">
+              //     <div>
+              //       <span style={{ fontSize: 14, fontWeight: "700" }}>Tham số API</span>
+              //     </div>
+              //     {listParams.map((item, idx) => {
+              //       return (
+              //         <div key={idx} className="attribute__item">
+              //           <div className="list-field-attribute">
+              //             <div className="form-group">
+              //               <Input
+              //                 // label={idx == 0 ? 'Lựa chọn' : ''}
+              //                 fill={true}
+              //                 required={true}
+              //                 value={item.label}
+              //                 placeholder="Nhập key"
+              //                 onChange={(e) => handleChangeLabelParams(e, idx)}
+              //               />
+              //             </div>
+              //             <div className="form-group">
+              //               <Input
+              //                 // label={idx == 0 ? 'Lựa chọn' : ''}
+              //                 fill={true}
+              //                 required={true}
+              //                 value={item.value}
+              //                 placeholder="Nhập giá trị"
+              //                 onChange={(e) => handleChangeValueParams(e, idx)}
+              //               />
+              //             </div>
+              //           </div>
+              //           {idx == 0 ? (
+              //             <span className="add-attribute">
+              //               <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
+              //                 <span
+              //                   className="icon-add"
+              //                   onClick={() => {
+              //                     setListParams([...listParams, { value: "", label: "" }]);
+              //                   }}
+              //                 >
+              //                   <Icon name="PlusCircleFill" />
+              //                 </span>
+              //               </Tippy>
+              //             </span>
+              //           ) : (
+              //             <span className="remove-attribute">
+              //               <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
+              //                 <span className="icon-remove" onClick={() => handleRemoveItemParams(idx)}>
+              //                   <Icon name="Trash" />
+              //                 </span>
+              //               </Tippy>
+              //             </span>
+              //           )}
+              //         </div>
+              //       );
+              //     })}
+              //   </div>
+              //   {formData?.values["type"] == "binding" ? (
+              //     <div className="list__binding">
+              //       <div>
+              //         <span style={{ fontSize: 14, fontWeight: "700" }}>Các cột tham chiếu</span>
+              //       </div>
+              //       <div className="attribute__item_header">
+              //         <div className="list-field-attribute">
+              //           <div className="form-group">Tên cột</div>
+              //           <div className="form-group">Trường dữ liệu</div>
+              //           <div className="form-group">Kiểu dữ liệu</div>
+              //           <div className="form-group">Chỉ xem</div>
+              //         </div>
+              //       </div>
+              //       {listColumnBinding.map((item, idx) => {
+              //         return (
+              //           <div key={idx} className="attribute__item">
+              //             <div className="list-field-attribute">
+              //               <div className="form-group">
+              //                 <Input
+              //                   // label={idx == 0 ? 'Lựa chọn' : ''}
+              //                   fill={true}
+              //                   required={true}
+              //                   value={item.label}
+              //                   placeholder="Nhập tên cột"
+              //                   onChange={(e) => handleChangeListColumnBinding(e, idx, "label")}
+              //                 />
+              //               </div>
+              //               <div className="form-group">
+              //                 <Input
+              //                   // label={idx == 0 ? 'Lựa chọn' : ''}
+              //                   fill={true}
+              //                   required={true}
+              //                   value={item.value}
+              //                   placeholder="Nhập trường dữ liệu"
+              //                   onChange={(e) => handleChangeListColumnBinding(e, idx, "value")}
+              //                 />
+              //               </div>
+              //               <div className="form-group">
+              //                 <SelectCustom
+              //                   id={`type-binding-${idx}`}
+              //                   name={`type-binding-${idx}`}
+              //                   fill={true}
+              //                   required={true}
+              //                   options={[
+              //                     { value: "text", label: "Text" },
+              //                     { value: "number", label: "Number" },
+              //                     { value: "date", label: "Date" },
+              //                     { value: "checkbox", label: "Checkbox" },
+              //                   ]}
+              //                   value={item.type || "text"}
+              //                   onChange={(e) => handleChangeListColumnBinding(e, idx, "type")}
+              //                   isFormatOptionLabel={true}
+              //                   placeholder="Chọn kiểu dữ liệu"
+              //                 />
+              //               </div>
+              //               <div className="form-group">
+              //                 <div className="readonly">
+              //                   <Checkbox checked={item.readOnly} onChange={(e) => handleChangeListColumnBinding(e, idx, "readOnly")} />
+              //                   {/* <span>Chỉ xem</span> */}
+              //                 </div>
+              //               </div>
+              //             </div>
+              //             {idx == 0 ? (
+              //               <span className="add-attribute">
+              //                 <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
+              //                   <span
+              //                     className="icon-add"
+              //                     onClick={() => {
+              //                       setListColumnBinding([...listColumnBinding, { value: "", label: "", readOnly: false, type: "text" }]);
+              //                     }}
+              //                   >
+              //                     <Icon name="PlusCircleFill" />
+              //                   </span>
+              //                 </Tippy>
+              //               </span>
+              //             ) : (
+              //               <span className="remove-attribute">
+              //                 <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
+              //                   <span className="icon-remove" onClick={() => handleRemoveItemListColumnsBinding(idx)}>
+              //                     <Icon name="Trash" />
+              //                   </span>
+              //                 </Tippy>
+              //               </span>
+              //             )}
+              //           </div>
+              //         );
+              //       })}
+              //     </div>
+              //   ) : null}
+              // </div>
+              null}
               {/* Vùng listing sẵn các field đã chọn */}
               {detailBindingField.length ? (
                 <div className="form-group-binding">
