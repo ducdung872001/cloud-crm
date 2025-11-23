@@ -21,6 +21,12 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  update: (body: IUserRequest) => {
+    return fetch(urlsApi.user.update, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   detail: (id: number) => {
     return fetch(`${urlsApi.user.detail}?id=${id}`, {
       method: "GET",
@@ -60,6 +66,11 @@ export default {
   detailTimeLogin: (params: any) => {
     return fetch(`${urlsApi.user.detailTimeLogin}${convertParamsToString(params)}`, {
       method: "GET",
+    }).then((res) => res.json());
+  },
+  delete: (id: number) => {
+    return fetch(`${urlsApi.user.delete}?id=${id}`, {
+      method: "DELETE",
     }).then((res) => res.json());
   },
   list: (params: any, signal?: AbortSignal) => {

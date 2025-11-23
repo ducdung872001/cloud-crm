@@ -178,6 +178,8 @@ import { useCookies } from "react-cookie";
 import OrderTracking from "pages/OrderTracking";
 import OrganizationList from "pages/Organization/OrganizationList";
 import Package from "pages/Package";
+import ExtensionList from "pages/Extension/ExtensionList";
+import UserList from "pages/User/UserList";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -897,7 +899,11 @@ export const menu: IMenuItem[] = [
         },
       ]
     : []),
-
+    {
+      title: "userAdministration",
+      path: urls.user,
+      icon: <Icon name="Customer" />,
+    },
     {
       title: "organizationalManagement",
       path: urls.organization,
@@ -910,11 +916,11 @@ export const menu: IMenuItem[] = [
           icon: <Icon name="Partner" />,
           code: "ORGANIZATION_MANAGEMENT"
         },
-        // {
-        //   title: "Danh sách gia hạn",
-        //   path: urls.extension_list,
-        //   icon: <Icon name="Beauty" />,
-        // }
+        {
+          title: "renewalList",
+          path: urls.extension_list,
+          icon: <Icon name="Renewal" />,
+        }
       ],
     },
 
@@ -1752,11 +1758,19 @@ export const routes: IRouter[] = [
     component: <UploadDocument />,
   },
   {
+    path: urls.user,
+    component: <UserList />,
+  },
+  {
     path: urls.organization,
     component: <OrganizationList />,
   },
   {
     path: urls.package_manage,
     component: <Package />,
+  },
+  {
+    path: urls.extension_list,
+    component: <ExtensionList />,
   },
 ];

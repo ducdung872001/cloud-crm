@@ -1,0 +1,24 @@
+.modal-view-bill {
+  .form-view-bill-group {
+    .view__image--bill {
+      .system-notification {
+        padding: 1rem 2.4rem;
+      }
+
+      .img-bill {
+        width: 28rem;
+        height: 35rem;
+        background-color: var(--extra-color-20);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin: 0 auto;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+      }
+    }
+  }
+}

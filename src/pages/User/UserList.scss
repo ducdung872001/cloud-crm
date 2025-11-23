@@ -1,0 +1,22 @@
+.page-user{
+    .box-table {
+        // margin-left: 2rem;
+        // margin-right: 2rem;
+        margin-top: 1rem;
+        .box-table__wrapper {
+          .table {
+            tbody {
+              tr {
+                td {
+                  .container-name {
+                    // border: 1px solid;
+                    display: flex;
+                    width: 25rem;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+}

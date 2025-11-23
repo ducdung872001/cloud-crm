@@ -20,6 +20,7 @@ export const urlsApi = {
   },
   user: {
     create: prefixAuthenticator + "/user/create",
+    update: prefixAuthenticator + "/user/admin_update",
     profile: prefixAuthenticator + "/user/me",
     detail: prefixAuthenticator + "/user/get",
     basicInfo: prefixAuthenticator + "/user/basic_info",
@@ -29,6 +30,7 @@ export const urlsApi = {
     checkLogin: prefixAdmin + "/userLogin/list",
     detailTimeLogin: prefixAdmin + "/userLogin/daily/list",
     list: prefixAuthenticator + "/user/list",
+    delete: prefixAuthenticator + "/user/delete",
   },
 
   customer: {
@@ -3221,10 +3223,14 @@ export const urls = {
   // Link cho phép tải tài liệu lên
   upload_document: "/upload_document",
 
+  //Quản trị người dùng
+  user: "/user",
   //Quản lý tổ chức
   organization: "/organization",
   //quản lý gói dịch vụ
   package_manage: "/package_manage",
+  //danh sách gia hạn
+  extension_list: "/extension_list",
 
 
 };

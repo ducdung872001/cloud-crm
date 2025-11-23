@@ -275,6 +275,7 @@ import IconReceiveEmail from "assets/icons/icon-receive-email.svg";
 import IconReject from "assets/icons/icon-reject.svg";
 import IconReportRox from "assets/icons/icon-report-rox.svg";
 import IconReload from "assets/icons/icon-reload.svg";
+import IconRenewal from "assets/icons/icon-renewal.svg";
 
 // S
 import IconSupervisedUserCircle from "assets/icons/icon-supervised-user-circle.svg";
@@ -642,6 +643,7 @@ const iconTypes = {
   Reject: IconReject,
   ReportRox: IconReportRox,
   Reload: IconReload,
+  Renewal: IconRenewal,
   // S
   SupervisedUserCircle: IconSupervisedUserCircle,
   SalesProcess: IconSalesProcess,
