@@ -168,6 +168,11 @@ i18n.use(initReactI18next).init({
           settingDashboard: "Setting report",
           settingApplication: "Setting integrate",
           resourceManagement: "Resource management",
+          organizationalManagement: "Organizational management",
+          listOfOrganizations: "List of organizations",
+          servicePackageManagement: "Service package management",
+          renewalList: "Renewal list",
+          userAdministration: 'User administration'
         },
         pageDashboard: {
           title: "Dashboard",
@@ -398,6 +403,11 @@ i18n.use(initReactI18next).init({
           settingDashboard: "Cài đặt báo cáo",
           settingApplication: "Cài đặt tích hợp",
           resourceManagement: "Quản trị tài nguyên",
+          organizationalManagement: "Quản lý đại lý",
+          listOfOrganizations: "Danh sách tổ chức",
+          servicePackageManagement: "Quản lý gói dịch vụ",
+          renewalList: "Danh sách gia hạn",
+          userAdministration: "Quản trị người dùng"
         },
         pageDashboard: {
           title: "Trang chủ",

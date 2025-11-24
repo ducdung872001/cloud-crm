@@ -40,6 +40,8 @@ export default function ModalAddColumnAg(props: any) {
   const [listCustomerAttribute, setListCustomerAttribute] = useState<IOption[]>(null);
   const [isLoadingCustomerAttribute, setIsLoadingCustomerAttribute] = useState<boolean>(false);
   const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([]);
+  const [listParams, setListParams] = useState<any[]>([]);
+  const [listColumnBinding, setListColumnBinding] = useState<any[]>([]);
   const [detailLookup, setDetailLookup] = useState<any>("");
   const [numberFormat, setNumberFormat] = useState<any>("");
 
@@ -110,6 +112,12 @@ export default function ModalAddColumnAg(props: any) {
     }
     if (data?.type == "lookup" && data?.options) {
       setDetailLookup(data?.lookup);
+      setListParams([
+        {
+          value: "",
+          label: "",
+        },
+      ]);
     }
     if (data?.type == "binding") {
       setDetailLookup(data?.lookup);
@@ -122,6 +130,20 @@ export default function ModalAddColumnAg(props: any) {
             }))
           : []
       );
+      setListParams([
+        {
+          value: "",
+          label: "",
+        },
+      ]);
+      setListColumnBinding([
+        {
+          value: "",
+          label: "",
+          readOnly: false,
+          type: "text",
+        },
+      ]);
     }
     // if (data?.type == "number" && data?.options) {
     //   setNumberFormat(JSON.parse(data?.options).numberFormat || "");
@@ -163,6 +185,55 @@ export default function ModalAddColumnAg(props: any) {
     );
   };
 
+  //! đoạn này xử lý vấn đề lấy giá trị của các cột binding khi thêm nhiều
+  const handleChangeListColumnBinding = (e, idx, type) => {
+    const value = type === "readOnly" ? e.target.checked : type === "type" ? e.value : e.target.value;
+
+    console.log(listColumnBinding);
+
+    setListColumnBinding((current) =>
+      current.map((obj, index) => {
+        if (index === idx) {
+          return {
+            ...obj,
+            ...(type === "value" ? { value: value } : {}),
+            ...(type === "label" ? { label: value } : {}),
+            ...(type === "readOnly" ? { readOnly: value } : {}),
+            ...(type === "type" ? { type: value } : {}),
+          };
+        }
+        return obj;
+      })
+    );
+  };
+
+  //! đoạn này xử lý vấn đề lấy giá trị của params khi thêm nhiều
+  const handleChangeValueParams = (e, idx) => {
+    const value = e.target.value;
+
+    setListParams((current) =>
+      current.map((obj, index) => {
+        if (index === idx) {
+          return { ...obj, value: value };
+        }
+        return obj;
+      })
+    );
+  };
+  //! đoạn này xử lý vấn đề lấy nhãn của params khi thêm nhiều
+  const handleChangeLabelParams = (e, idx) => {
+    const value = e.target.value;
+
+    setListParams((current) =>
+      current.map((obj, index) => {
+        if (index === idx) {
+          return { ...obj, label: value };
+        }
+        return obj;
+      })
+    );
+  };
+
   //! đoạn này xử lý vấn đề lấy giá trị tham chiếu của trường lookup
   const handleDetailLookup = (item) => {
     setDetailLookup(item?.value);
@@ -187,6 +258,22 @@ export default function ModalAddColumnAg(props: any) {
     result.splice(idx, 1);
 
     setAddFieldAttributes(result);
+  };
+
+  //! xóa đi 1 item params
+  const handleRemoveItemParams = (idx) => {
+    const result = [...listParams];
+    result.splice(idx, 1);
+
+    setListParams(result);
+  };
+
+  //! xóa đi 1 item params
+  const handleRemoveItemListColumnsBinding = (idx) => {
+    const result = [...listColumnBinding];
+    result.splice(idx, 1);
+
+    setListColumnBinding(result);
   };
 
   // đoạn này sẽ xử lý thay đổi nội dung
@@ -320,6 +407,32 @@ export default function ModalAddColumnAg(props: any) {
               } else {
                 setDetailLookup("");
               }
+              setListParams([
+                {
+                  value: "",
+                  label: "",
+                },
+              ]);
+            } else if (e?.value === "binding") {
+              if (data && data.type === "lookup" && data.lookup) {
+                setDetailLookup(data.lookup);
+              } else {
+                setDetailLookup("");
+              }
+              setListParams([
+                {
+                  value: "",
+                  label: "",
+                },
+              ]);
+              setListColumnBinding([
+                {
+                  value: "",
+                  label: "",
+                  readOnly: false,
+                  type: "text",
+                },
+              ]);
             } else if (e?.value === "number") {
               if (data && data.type === "number" && data.options && JSON.parse(data?.options).numberFormat) {
                 setNumberFormat(JSON.parse(data?.options).numberFormat);
@@ -809,6 +922,8 @@ export default function ModalAddColumnAg(props: any) {
   const handleClearForm = (acc) => {
     onHide(acc);
     setAddFieldAttributes([{ value: "", label: "" }]);
+    setListParams([{ value: "", label: "" }]);
+    setListColumnBinding([{ value: "", label: "", readOnly: false, type: "text" }]);
     setDetailLookup("");
     setNumberFormat("");
     setShowFields(false);
@@ -868,7 +983,7 @@ export default function ModalAddColumnAg(props: any) {
         staticBackdrop={true}
         toggle={() => !isSubmit && handleClearForm(false)}
         className="modal-add-column-new"
-        size="lg"
+        size="xl"
       >
         <form className="form-customer-attribute-source">
           <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} cột`} toggle={() => !isSubmit && handleClearForm(true)} />
@@ -959,30 +1074,163 @@ export default function ModalAddColumnAg(props: any) {
                     placeholder="Chọn tham chiếu"
                   />
                 </div>
-              ) : null}
-              {formData?.values["type"] == "binding" ? (
-                <div className="form-group binding">
-                  <div className="formula-input">
-                    <SelectCustom
-                      id="bindingField"
-                      name="bindingField"
-                      label="Chọn trường tham chiếu"
-                      fill={true}
-                      required={true}
-                      // isMulti={true}
-                      special={true}
-                      disabled={isEdit}
-                      options={listBindingField}
-                      // value={detailBindingField}
-                      onChange={(e) => {
-                        handleChangeBindingField(e);
-                      }}
-                      isFormatOptionLabel={true}
-                      placeholder="Chọn trường tham chiếu"
-                    />
-                  </div>
-                </div>
-              ) : null}
+              ) : // <div className="form-group-uri">
+              //   <Input
+              //     label="Đường dẫn API tham chiếu"
+              //     fill={true}
+              //     required={true}
+              //     value={"ok"}
+              //     placeholder="Nhập đường dẫn API tham chiếu"
+              //     onChange={(e) => {
+              //       console.log(e);
+              //     }}
+              //   />
+              //   <div className="list__params">
+              //     <div>
+              //       <span style={{ fontSize: 14, fontWeight: "700" }}>Tham số API</span>
+              //     </div>
+              //     {listParams.map((item, idx) => {
+              //       return (
+              //         <div key={idx} className="attribute__item">
+              //           <div className="list-field-attribute">
+              //             <div className="form-group">
+              //               <Input
+              //                 // label={idx == 0 ? 'Lựa chọn' : ''}
+              //                 fill={true}
+              //                 required={true}
+              //                 value={item.label}
+              //                 placeholder="Nhập key"
+              //                 onChange={(e) => handleChangeLabelParams(e, idx)}
+              //               />
+              //             </div>
+              //             <div className="form-group">
+              //               <Input
+              //                 // label={idx == 0 ? 'Lựa chọn' : ''}
+              //                 fill={true}
+              //                 required={true}
+              //                 value={item.value}
+              //                 placeholder="Nhập giá trị"
+              //                 onChange={(e) => handleChangeValueParams(e, idx)}
+              //               />
+              //             </div>
+              //           </div>
+              //           {idx == 0 ? (
+              //             <span className="add-attribute">
+              //               <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
+              //                 <span
+              //                   className="icon-add"
+              //                   onClick={() => {
+              //                     setListParams([...listParams, { value: "", label: "" }]);
+              //                   }}
+              //                 >
+              //                   <Icon name="PlusCircleFill" />
+              //                 </span>
+              //               </Tippy>
+              //             </span>
+              //           ) : (
+              //             <span className="remove-attribute">
+              //               <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
+              //                 <span className="icon-remove" onClick={() => handleRemoveItemParams(idx)}>
+              //                   <Icon name="Trash" />
+              //                 </span>
+              //               </Tippy>
+              //             </span>
+              //           )}
+              //         </div>
+              //       );
+              //     })}
+              //   </div>
+              //   {formData?.values["type"] == "binding" ? (
+              //     <div className="list__binding">
+              //       <div>
+              //         <span style={{ fontSize: 14, fontWeight: "700" }}>Các cột tham chiếu</span>
+              //       </div>
+              //       <div className="attribute__item_header">
+              //         <div className="list-field-attribute">
+              //           <div className="form-group">Tên cột</div>
+              //           <div className="form-group">Trường dữ liệu</div>
+              //           <div className="form-group">Kiểu dữ liệu</div>
+              //           <div className="form-group">Chỉ xem</div>
+              //         </div>
+              //       </div>
+              //       {listColumnBinding.map((item, idx) => {
+              //         return (
+              //           <div key={idx} className="attribute__item">
+              //             <div className="list-field-attribute">
+              //               <div className="form-group">
+              //                 <Input
+              //                   // label={idx == 0 ? 'Lựa chọn' : ''}
+              //                   fill={true}
+              //                   required={true}
+              //                   value={item.label}
+              //                   placeholder="Nhập tên cột"
+              //                   onChange={(e) => handleChangeListColumnBinding(e, idx, "label")}
+              //                 />
+              //               </div>
+              //               <div className="form-group">
+              //                 <Input
+              //                   // label={idx == 0 ? 'Lựa chọn' : ''}
+              //                   fill={true}
+              //                   required={true}
+              //                   value={item.value}
+              //                   placeholder="Nhập trường dữ liệu"
+              //                   onChange={(e) => handleChangeListColumnBinding(e, idx, "value")}
+              //                 />
+              //               </div>
+              //               <div className="form-group">
+              //                 <SelectCustom
+              //                   id={`type-binding-${idx}`}
+              //                   name={`type-binding-${idx}`}
+              //                   fill={true}
+              //                   required={true}
+              //                   options={[
+              //                     { value: "text", label: "Text" },
+              //                     { value: "number", label: "Number" },
+              //                     { value: "date", label: "Date" },
+              //                     { value: "checkbox", label: "Checkbox" },
+              //                   ]}
+              //                   value={item.type || "text"}
+              //                   onChange={(e) => handleChangeListColumnBinding(e, idx, "type")}
+              //                   isFormatOptionLabel={true}
+              //                   placeholder="Chọn kiểu dữ liệu"
+              //                 />
+              //               </div>
+              //               <div className="form-group">
+              //                 <div className="readonly">
+              //                   <Checkbox checked={item.readOnly} onChange={(e) => handleChangeListColumnBinding(e, idx, "readOnly")} />
+              //                   {/* <span>Chỉ xem</span> */}
+              //                 </div>
+              //               </div>
+              //             </div>
+              //             {idx == 0 ? (
+              //               <span className="add-attribute">
+              //                 <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
+              //                   <span
+              //                     className="icon-add"
+              //                     onClick={() => {
+              //                       setListColumnBinding([...listColumnBinding, { value: "", label: "", readOnly: false, type: "text" }]);
+              //                     }}
+              //                   >
+              //                     <Icon name="PlusCircleFill" />
+              //                   </span>
+              //                 </Tippy>
+              //               </span>
+              //             ) : (
+              //               <span className="remove-attribute">
+              //                 <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
+              //                   <span className="icon-remove" onClick={() => handleRemoveItemListColumnsBinding(idx)}>
+              //                     <Icon name="Trash" />
+              //                   </span>
+              //                 </Tippy>
+              //               </span>
+              //             )}
+              //           </div>
+              //         );
+              //       })}
+              //     </div>
+              //   ) : null}
+              // </div>
+              null}
               {/* Vùng listing sẵn các field đã chọn */}
               {detailBindingField.length ? (
                 <div className="form-group-binding">

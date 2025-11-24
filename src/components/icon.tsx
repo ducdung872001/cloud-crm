@@ -34,6 +34,7 @@ import IconBellHoliday from "assets/icons/icon-bell-holiday.svg";
 import IconBuildingOffice from "assets/icons/icon-BuildingOffice.svg";
 import IconBuildings from "assets/icons/icon-Buildings.svg";
 import IconBiddingSite from "assets/icons/icon-bidding-site.svg";
+import IconBeauty from "assets/icons/icon-beauty.svg";
 
 // C
 import IconCart from "assets/icons/icon-cart.svg";
@@ -254,6 +255,7 @@ import IconPauseWork from "assets/icons/icon-pause-work.svg";
 import IconPencilSimpleLine from "assets/icons/icon-PencilSimpleLine.svg";
 import IconPencilSimpleLineSmall from "assets/icons/icon-small-PencilSimpleLine.svg";
 import IconProjectorScreen from "assets/icons/icon-ProjectorScreen.svg";
+import IconPartner from "assets/icons/icon-partner.svg";
 
 // R
 import IconReply from "assets/icons/icon-reply.svg";
@@ -273,6 +275,7 @@ import IconReceiveEmail from "assets/icons/icon-receive-email.svg";
 import IconReject from "assets/icons/icon-reject.svg";
 import IconReportRox from "assets/icons/icon-report-rox.svg";
 import IconReload from "assets/icons/icon-reload.svg";
+import IconRenewal from "assets/icons/icon-renewal.svg";
 
 // S
 import IconSupervisedUserCircle from "assets/icons/icon-supervised-user-circle.svg";
@@ -409,6 +412,8 @@ const iconTypes = {
   BuildingOffice: IconBuildingOffice,
   Buildings: IconBuildings,
   BiddingSite: IconBiddingSite,
+  Beauty: IconBeauty,
+
   // C
   Cart: IconCart,
   ConditionUp: IconConditionUp,
@@ -619,7 +624,7 @@ const iconTypes = {
   PencilSimpleLine: IconPencilSimpleLine,
   PencilSimpleLineSmall: IconPencilSimpleLineSmall,
   ProjectorScreen: IconProjectorScreen,
-
+  Partner: IconPartner,
   // R
   Reply: IconReply,
   Report: IconReport,
@@ -638,6 +643,7 @@ const iconTypes = {
   Reject: IconReject,
   ReportRox: IconReportRox,
   Reload: IconReload,
+  Renewal: IconRenewal,
   // S
   SupervisedUserCircle: IconSupervisedUserCircle,
   SalesProcess: IconSalesProcess,

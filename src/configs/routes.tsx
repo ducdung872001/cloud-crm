@@ -176,6 +176,10 @@ import MarketingAutomationListV2 from "pages/MarketingAutomation/MarketingAutoma
 import CreateMarketingAutomationV2 from "pages/MarketingAutomation/CreateMarketingAutomation/CreateMarketingAutomationV2";
 import { useCookies } from "react-cookie";
 import OrderTracking from "pages/OrderTracking";
+import OrganizationList from "pages/Organization/OrganizationList";
+import Package from "pages/Package";
+import ExtensionList from "pages/Extension/ExtensionList";
+import UserList from "pages/User/UserList";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -895,6 +899,46 @@ export const menu: IMenuItem[] = [
         },
       ]
     : []),
+    
+    {
+      title: "organizationalManagement",
+      path: urls.organization,
+      icon: <Icon name="Partner" />,
+      code: "RESOURCE",
+      children: [
+        {
+          title: "listOfOrganizations",
+          path: urls.organization,
+          icon: <Icon name="Partner" />,
+          code: "ORGANIZATION_MANAGEMENT"
+        },
+        {
+          title: "userAdministration",
+          path: urls.user,
+          icon: <Icon name="Customer" />,
+          code: "RESOURCE"
+        },
+        {
+          title: "servicePackageManagement",
+          path: urls.package_manage,
+          icon: <Icon name="Beauty" />,
+          code: "RESOURCE"
+        },
+        {
+          title: "renewalList",
+          path: urls.extension_list,
+          icon: <Icon name="Renewal" />,
+          code: "RENEWAL_LIST"
+        },
+        {
+          title: "resourceManagement", // Quản trị tài nguyên
+          path: urls.resource_management,
+          icon: <Icon name="SettingJob" />,
+          code: "RESOURCE",
+        },
+      ],
+    },
+
   ...(checkSubdomainTNPM || checkSubdomainGREENSPA
     ? [
         // {
@@ -1056,12 +1100,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="FileSharing" style={{ width: 35, height: 35, marginLeft: -5 }} />,
               code: "",
             },
-            {
-              title: "resourceManagement", // Quản trị tài nguyên
-              path: urls.resource_management,
-              icon: <Icon name="SettingJob" />,
-              code: "RESOURCE",
-            },
+            // {
+            //   title: "resourceManagement", // Quản trị tài nguyên
+            //   path: urls.resource_management,
+            //   icon: <Icon name="SettingJob" />,
+            //   code: "RESOURCE",
+            // },
           ]
         : []),
     ],
@@ -1720,5 +1764,21 @@ export const routes: IRouter[] = [
   {
     path: urls.upload_document,
     component: <UploadDocument />,
+  },
+  {
+    path: urls.user,
+    component: <UserList />,
+  },
+  {
+    path: urls.organization,
+    component: <OrganizationList />,
+  },
+  {
+    path: urls.package_manage,
+    component: <Package />,
+  },
+  {
+    path: urls.extension_list,
+    component: <ExtensionList />,
   },
 ];
