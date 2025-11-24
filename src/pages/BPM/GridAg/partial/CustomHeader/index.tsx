@@ -59,6 +59,7 @@ const CustomHeader = (props) => {
   }, [props.api, props.column]);
 
   const onDeleteColumn = async (param) => {
+    return;
     const response = await GridService.delete(param);
     if (response.code === 0) {
       // showToast("Xóa quy trình thành công", "success");

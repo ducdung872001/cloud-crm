@@ -209,6 +209,7 @@ const CustomCellEdit = (props) => {
             <SelectLookupGrid
               onBlur={handleBlur}
               name={props.colDef.field}
+              col={props.colDef}
               lookup={props.lookup}
               bindingField={props.colDef.cellEditorParams.listBindingField}
               // bindingKey={field.key}
