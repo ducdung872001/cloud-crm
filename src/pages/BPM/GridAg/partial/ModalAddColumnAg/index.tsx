@@ -766,7 +766,7 @@ export default function ModalAddColumnAg(props: any) {
                   fieldLabelLookup: lookupLabel,
                 }
               : {}),
-            ...(item.type == "binding" ? { listBindingField: _detailBindingField.filter((item) => item.value && item.label) || [] } : {}),
+            // ...(item.type == "binding" ? { listBindingField: _detailBindingField.filter((item) => item.value && item.label) || [] } : {}),
           };
         }
         return item;
@@ -1200,6 +1200,7 @@ export default function ModalAddColumnAg(props: any) {
                                   value={item.label}
                                   placeholder="Nhập tên cột"
                                   onChange={(e) => handleChangeListColumnBinding(e, idx, "label")}
+                                  readOnly={isEdit}
                                   onBlur={(e) => {
                                     // Kiểm tra trùng tên cột binding
                                     const isDuplicate = listColumnBinding.some(
@@ -1227,6 +1228,7 @@ export default function ModalAddColumnAg(props: any) {
                                   fill={true}
                                   required={true}
                                   value={item.value}
+                                  readOnly={isEdit}
                                   placeholder="Nhập trường dữ liệu"
                                   onChange={(e) => handleChangeListColumnBinding(e, idx, "value")}
                                 />
@@ -1237,6 +1239,7 @@ export default function ModalAddColumnAg(props: any) {
                                   name={`type-binding-${idx}`}
                                   fill={true}
                                   required={true}
+                                  disabled={isEdit}
                                   options={[
                                     { value: "text", label: "Text" },
                                     { value: "number", label: "Number" },
@@ -1251,32 +1254,45 @@ export default function ModalAddColumnAg(props: any) {
                               </div>
                               <div className="form-group">
                                 <div className="readonly">
-                                  <Checkbox checked={item.readOnly} onChange={(e) => handleChangeListColumnBinding(e, idx, "readOnly")} />
+                                  <Checkbox
+                                    checked={item.readOnly}
+                                    onChange={(e) => {
+                                      if (!isEdit) {
+                                        handleChangeListColumnBinding(e, idx, "readOnly");
+                                      }
+                                    }}
+                                  />
                                   {/* <span>Chỉ xem</span> */}
                                 </div>
                               </div>
                             </div>
-                            {idx == 0 ? (
-                              <span className="add-attribute">
-                                <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
-                                  <span
-                                    className="icon-add"
-                                    onClick={() => {
-                                      setListColumnBinding([...listColumnBinding, { value: "", label: "", readOnly: false, type: "text" }]);
-                                    }}
-                                  >
-                                    <Icon name="PlusCircleFill" />
-                                  </span>
-                                </Tippy>
-                              </span>
+                            {isEdit ? (
+                              <span></span>
                             ) : (
-                              <span className="remove-attribute">
-                                <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
-                                  <span className="icon-remove" onClick={() => handleRemoveItemListColumnsBinding(idx)}>
-                                    <Icon name="Trash" />
+                              <>
+                                {idx == 0 ? (
+                                  <span className="add-attribute">
+                                    <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
+                                      <span
+                                        className="icon-add"
+                                        onClick={() => {
+                                          setListColumnBinding([...listColumnBinding, { value: "", label: "", readOnly: false, type: "text" }]);
+                                        }}
+                                      >
+                                        <Icon name="PlusCircleFill" />
+                                      </span>
+                                    </Tippy>
                                   </span>
-                                </Tippy>
-                              </span>
+                                ) : (
+                                  <span className="remove-attribute">
+                                    <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
+                                      <span className="icon-remove" onClick={() => handleRemoveItemListColumnsBinding(idx)}>
+                                        <Icon name="Trash" />
+                                      </span>
+                                    </Tippy>
+                                  </span>
+                                )}
+                              </>
                             )}
                           </div>
                         );

@@ -24,6 +24,11 @@ const CustomCellEdit = (props) => {
   };
 
   const handleChangeValue = (e) => {
+    // props.node.setDataValue("TenVaHo", "Năng Đình Hoàng");
+    // props.node.setDataValue("GiaSanPham_BindingSanPham", 1111111);
+    // console.log("e in handleChangeValue", props.data);
+    // props.api.stopEditing();
+    // return;
     let newValue = null;
     if (type === "number") {
       newValue = e.floatValue;
@@ -50,11 +55,19 @@ const CustomCellEdit = (props) => {
       props.api.stopEditing();
     } else if (type === "binding") {
       newValue = e ? e.value : null;
-      props.api.stopEditing();
+      console.log("e in binding", e);
+      console.log("e in binding..props.columnsConfig..", columnsConfig);
+      console.log("e in binding..props.props.node..", props.node);
+
+      // GiaSanPham_BindingSanPham
       if (e != null) {
         if (e?.bindingField.length) {
           e.bindingField.map((field) => {
-            props.node.setDataValue(field.key, e[field.key] || "");
+            console.log("e in binding>>field in binding", field.key, e[field.key]);
+
+            props.node.setDataValue(field.key, e[field.key]);
+            // props.node.setDataValue(field.key, "11111111");
+            console.log("e in handleChangeValue", props.data);
           });
         }
       } else {
@@ -64,6 +77,7 @@ const CustomCellEdit = (props) => {
           });
         }
       }
+      props.api.stopEditing();
     } else if (type === "checkbox") {
       newValue = e ? (e.target.checked ? "true" : "false") : "false";
       // props.api.stopEditing();
@@ -102,7 +116,8 @@ const CustomCellEdit = (props) => {
     } else {
       newValue = e.target.value;
     }
-    console.log("newValue", newValue);
+    console.log("props.colDef.field>>>", newValue);
+    console.log("props.colDef.field>>>", props.colDef.field);
 
     props.node.setDataValue(props.colDef.field, newValue); // 👈 cập nhật lại vào grid
     setValue(newValue);

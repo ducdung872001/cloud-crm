@@ -92,6 +92,7 @@ export const getDataGrid = async (actionRow, params): Promise<{ columns: ColDef[
       params?.workId || defaultNote.workId
     );
     const data = dataDetailRow?.data || [];
+
     const checkedMap = dataDetailRow?.checkedMap || null;
     const dataComment = await getListComment(params);
     const dataGrid = {

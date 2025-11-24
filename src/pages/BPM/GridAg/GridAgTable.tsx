@@ -151,6 +151,8 @@ const GridAgTable = (
     // let dataGridRow = dataGrid?.dataRow && JSON.parse(dataGrid.dataRow) ? JSON.parse(dataGrid.dataRow) : [];
     let dataGridRow =
       dataGrid?.dataRow && dataGrid.dataRow ? (typeof dataGrid.dataRow === "string" ? JSON.parse(dataGrid.dataRow) : dataGrid.dataRow) : [];
+    console.log("getDataGrid>>dataGridHeader: ", dataGridHeader);
+    console.log("getDataGrid>>data: ", dataGridRow);
     setRowData(dataGridRow);
     // onChange && onChange({ headerTable: dataGrid.headerTable, dataRow: dataGrid.dataRow });
   }, [dataGrid]);
@@ -306,9 +308,11 @@ const GridAgTable = (
     const cols = columnsRef.current;
     const uuid = uuidv4();
     const newRow: any = { rowKey: uuid };
+    console.log("cols in handleAddRow", cols);
+
     cols.forEach((col: ColDef) => {
       if (col.field && col.field !== "rowKey") {
-        if (col.cellRendererParams.type === "number") {
+        if (col.cellRendererParams.type === "number" || col.cellEditorParams?.type === "lookup" || col.cellEditorParams?.type === "binding") {
           newRow[col.field] = 0; // Các ô dữ liệu trống
         } else {
           newRow[col.field] = ""; // Các ô dữ liệu trống
@@ -411,6 +415,8 @@ const GridAgTable = (
       onChange && onChange({ headerTable: columnsConfig, dataRow: updatedRowData });
     }
   };
+
+  console.log("Render GridAgTable:", rowData);
 
   return (
     <div className="ag-grid-table">
