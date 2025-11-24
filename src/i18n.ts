@@ -403,7 +403,7 @@ i18n.use(initReactI18next).init({
           settingDashboard: "Cài đặt báo cáo",
           settingApplication: "Cài đặt tích hợp",
           resourceManagement: "Quản trị tài nguyên",
-          organizationalManagement: "Quản lý tổ chức",
+          organizationalManagement: "Quản lý đại lý",
           listOfOrganizations: "Danh sách tổ chức",
           servicePackageManagement: "Quản lý gói dịch vụ",
           renewalList: "Danh sách gia hạn",

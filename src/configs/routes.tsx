@@ -899,17 +899,12 @@ export const menu: IMenuItem[] = [
         },
       ]
     : []),
-    {
-      title: "userAdministration",
-      path: urls.user,
-      icon: <Icon name="Customer" />,
-      code: "RESOURCE"
-    },
+    
     {
       title: "organizationalManagement",
       path: urls.organization,
       icon: <Icon name="Partner" />,
-      code: "ORGANIZATION_MANAGEMENT",
+      code: "RESOURCE",
       children: [
         {
           title: "listOfOrganizations",
@@ -918,19 +913,30 @@ export const menu: IMenuItem[] = [
           code: "ORGANIZATION_MANAGEMENT"
         },
         {
+          title: "userAdministration",
+          path: urls.user,
+          icon: <Icon name="Customer" />,
+          code: "RESOURCE"
+        },
+        {
+          title: "servicePackageManagement",
+          path: urls.package_manage,
+          icon: <Icon name="Beauty" />,
+          code: "RESOURCE"
+        },
+        {
           title: "renewalList",
           path: urls.extension_list,
           icon: <Icon name="Renewal" />,
           code: "RENEWAL_LIST"
-        }
+        },
+        {
+          title: "resourceManagement", // Quản trị tài nguyên
+          path: urls.resource_management,
+          icon: <Icon name="SettingJob" />,
+          code: "RESOURCE",
+        },
       ],
-    },
-
-    {
-      title: "servicePackageManagement",
-      path: urls.package_manage,
-      icon: <Icon name="Beauty" />,
-      code: "RESOURCE"
     },
 
   ...(checkSubdomainTNPM || checkSubdomainGREENSPA
@@ -1094,12 +1100,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="FileSharing" style={{ width: 35, height: 35, marginLeft: -5 }} />,
               code: "",
             },
-            {
-              title: "resourceManagement", // Quản trị tài nguyên
-              path: urls.resource_management,
-              icon: <Icon name="SettingJob" />,
-              code: "RESOURCE",
-            },
+            // {
+            //   title: "resourceManagement", // Quản trị tài nguyên
+            //   path: urls.resource_management,
+            //   icon: <Icon name="SettingJob" />,
+            //   code: "RESOURCE",
+            // },
           ]
         : []),
     ],
