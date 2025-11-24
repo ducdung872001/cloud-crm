@@ -62,11 +62,11 @@ export default function CalendarCommon() {
         ]
       : [
           {
-            value: "1",
+            value: "2",
             label: "Thêm lịch tư vấn",
           },
           {
-            value: "3",
+            value: "1",
             label: "Thêm lịch công việc",
           },
         ];
