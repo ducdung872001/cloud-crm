@@ -17,6 +17,13 @@ import BusinessProcessService from "services/BusinessProcessService";
 import Button from "components/button/button";
 import ModalSelectMappingOther from "./partials/ModalSelectMappingOther";
 import Input from "components/input/input";
+ 
+const SYSTEM_VARIABLES = [
+  { value: "sys_systemTime.localDateTime", label: "sys_systemTime.localDateTime" },
+  { value: "sys_systemTime.dateTime_dd_MM_yyyy_HH_mm_ss", label: "sys_systemTime.dateTime_dd_MM_yyyy_HH_mm_ss" },
+  { value: "sys_systemTime.date_dd_MM_yyyy", label: "sys_systemTime.date_dd_MM_yyyy" },
+  { value: "sys_systemTime.time_HH_mm_ss", label: "sys_systemTime.time_HH_mm_ss" },
+];
 
 export default function ModalMapping({ onShow, onHide, dataNode, listComponent, processId, codeForm }) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -304,7 +311,13 @@ export default function ModalMapping({ onShow, onHide, dataNode, listComponent, 
 
   const handleChangeValueVar = (e) => {
     if (tabMapping === "input") {
-      setFormData({ ...formData, fromNodeId: formData.mappingType == 2 ? "" : e.nodeId, fromFieldName: e.value });
+      if (formData.mappingType === 2) {
+        setFormData({ ...formData, fromNodeId: e.nodeId ?? "", fromFieldName: e.value });
+      } else if (formData.mappingType === 3) {
+        setFormData({ ...formData, fromNodeId: "", fromFieldName: e.value });
+      } else {
+        setFormData({ ...formData, fromNodeId: e.nodeId ?? "", fromFieldName: e.value });
+      }
     }
 
     if (tabMapping === "output") {
@@ -875,7 +888,7 @@ export default function ModalMapping({ onShow, onHide, dataNode, listComponent, 
                                   id="fielName"
                                   name="fielName"
                                   label=""
-                                  options={[]}
+                                  options={formData?.mappingType === 3 ? SYSTEM_VARIABLES : []}
                                   fill={false}
                                   value={
                                     tabMapping === "input"
@@ -914,7 +927,7 @@ export default function ModalMapping({ onShow, onHide, dataNode, listComponent, 
                                   special={true}
                                   required={true}
                                   onChange={(e) => handleChangeValueVar(e)}
-                                  isAsyncPaginate={true}
+                                  isAsyncPaginate={formData?.mappingType === 2 || formData?.mappingType === 1}
                                   isFormatOptionLabel={false}
                                   // placeholder={item.mappingType === 2 ? "Chọn biến" : 'Chọn trường trong form'}
                                   placeholder={
@@ -922,22 +935,32 @@ export default function ModalMapping({ onShow, onHide, dataNode, listComponent, 
                                       ? item.id === idEditMapping
                                         ? formData.mappingType === 2
                                           ? "Chọn biến"
+                                          : formData.mappingType === 3
+                                          ? "Chọn biến hệ thống"
                                           : "Chọn trường trong form"
                                         : item.mappingType === 2
                                         ? "Chọn biến"
+                                        : item.mappingType === 3
+                                        ? "Chọn biến hệ thống"
                                         : "Chọn trường trong form"
                                       : idxEditMapping === index
                                       ? formData.mappingType === 2
                                         ? "Chọn biến"
+                                        : formData.mappingType === 3
+                                        ? "Chọn biến hệ thống"
                                         : "Chọn trường trong form"
                                       : item.mappingType === 2
                                       ? "Chọn biến"
+                                      : item.mappingType === 3
+                                      ? "Chọn biến hệ thống"
                                       : "Chọn trường trong form"
                                   }
                                   additional={{
                                     page: 1,
                                   }}
-                                  loadOptionsPaginate={formData?.mappingType === 2 ? loadedOptionAttribute : loadedOptionForm}
+                                  loadOptionsPaginate={
+                                    formData?.mappingType === 2 ? loadedOptionAttribute : formData?.mappingType === 1 ? loadedOptionForm : undefined
+                                  }
                                   // formatOptionLabel={formatOptionLabelEmployee}
                                   // error={checkFieldEform}
                                   // message="Biểu mẫu không được bỏ trống"
@@ -954,7 +977,9 @@ export default function ModalMapping({ onShow, onHide, dataNode, listComponent, 
                                     ? "Chuyển chọn trường trong form"
                                     : formData.mappingType === 1
                                     ? "Chuyển chọn biến"
-                                    : "Chuyển nhập giá trị"
+                                    : formData.mappingType === 2
+                                    ? "Chuyển nhập giá trị"
+                                    : "Chuyển chọn biến hệ thống"
                                 }
                               >
                                 <div
@@ -973,14 +998,28 @@ export default function ModalMapping({ onShow, onHide, dataNode, listComponent, 
                                       if (item.id === idEditMapping) {
                                         setFormData({
                                           ...formData,
-                                          mappingType: formData.mappingType === 0 ? 1 : formData.mappingType === 1 ? 2 : 0,
+                                          mappingType:
+                                            formData.mappingType === 0
+                                              ? 1
+                                              : formData.mappingType === 1
+                                              ? 2
+                                              : formData.mappingType === 2
+                                              ? 3
+                                              : 0,
                                         });
                                       }
                                     } else {
                                       if (idxEditMapping === index) {
                                         setFormData({
                                           ...formData,
-                                          mappingType: formData.mappingType === 0 ? 1 : formData.mappingType === 1 ? 2 : 0,
+                                          mappingType:
+                                            formData.mappingType === 0
+                                              ? 1
+                                              : formData.mappingType === 1
+                                              ? 2
+                                              : formData.mappingType === 2
+                                              ? 3
+                                              : 0,
                                         });
 
                                         // if (formData.mappingType === 2) {
