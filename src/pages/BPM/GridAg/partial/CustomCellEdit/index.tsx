@@ -9,6 +9,7 @@ import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import moment from "moment";
 import { useGridAg } from "../../GridAgContext";
 import { Parser } from "formula-functionizer";
+import { genKeyLookupGrid } from "../../function/lookupGrid";
 
 const CustomCellEdit = (props) => {
   const { columnsConfig } = useGridAg();
@@ -50,11 +51,11 @@ const CustomCellEdit = (props) => {
       props.api.stopEditing();
     } else if (type === "binding") {
       newValue = e ? e.value : null;
-      props.api.stopEditing();
+
       if (e != null) {
         if (e?.bindingField.length) {
           e.bindingField.map((field) => {
-            props.node.setDataValue(field.key, e[field.key] || "");
+            props.node.setDataValue(field.key, e[field.key]);
           });
         }
       } else {
@@ -64,6 +65,7 @@ const CustomCellEdit = (props) => {
           });
         }
       }
+      props.api.stopEditing();
     } else if (type === "checkbox") {
       newValue = e ? (e.target.checked ? "true" : "false") : "false";
       // props.api.stopEditing();
@@ -102,7 +104,6 @@ const CustomCellEdit = (props) => {
     } else {
       newValue = e.target.value;
     }
-    console.log("newValue", newValue);
 
     props.node.setDataValue(props.colDef.field, newValue); // 👈 cập nhật lại vào grid
     setValue(newValue);
@@ -147,8 +148,6 @@ const CustomCellEdit = (props) => {
       }),
     });
   }, [props.width]);
-
-  console.log("value", value);
 
   const generateItemInput = useCallback(
     (type) => {
@@ -205,11 +204,13 @@ const CustomCellEdit = (props) => {
           );
         case "lookup":
         case "binding":
+          let keyLookup = genKeyLookupGrid(props.colDef.cellRendererParams);
           return (
             <SelectLookupGrid
               onBlur={handleBlur}
               name={props.colDef.field}
-              lookup={props.lookup}
+              col={props.colDef}
+              lookup={keyLookup}
               bindingField={props.colDef.cellEditorParams.listBindingField}
               // bindingKey={field.key}
               // columnIndex={fieldIndex}

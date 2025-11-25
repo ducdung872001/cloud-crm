@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect } from "react";
+import React, { ReactElement, useState, useEffect, useRef } from "react";
 import "./index.scss";
 import SelectCustom from "components/selectCustom/selectCustom";
 import ProjectRealtyService from "services/ProjectRealtyService";
@@ -6,6 +6,7 @@ import ProjectRealtyService from "services/ProjectRealtyService";
 import FieldListService from "services/FieldListService";
 import { IColumnGrid } from "pages/BPM/GridForm";
 import { useGridAg } from "pages/BPM/GridAg/GridAgContext";
+import { convertParamsToString } from "reborn-util";
 
 interface SelectLookupProps {
   id?: string;
@@ -71,28 +72,46 @@ interface SelectLookupProps {
   // lookupValues: any;
   loading: boolean;
   styleCustom?: any;
+  col?: any;
 }
 
+export const fetchLookupData = async (lookupUri: string, params: any, signal?: AbortSignal) => {
+  if (!lookupUri) return { code: -1, message: "No lookupUri provided" };
+  return fetch(`${lookupUri}${convertParamsToString(params)}`, {
+    signal,
+    method: "GET",
+  }).then((res) => res.json());
+};
+
 function SelectLookupGrid(props: SelectLookupProps) {
-  const { id, value, lookup, bindingField, bindingKey, name, placeholder, disabled, onChange, isMulti = false, loading, styleCustom } = props;
+  const { id, value, lookup, bindingField, bindingKey, name, placeholder, disabled, onChange, isMulti = false, loading, styleCustom, col } = props;
+
   const { lookupValues, setLookupValues } = useGridAg();
   const [dataLookup, setDataLookup] = useState(null);
   const [listDataLookupInternal, setListDataLookupInternal] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  // Hủy poll nếu component bị unmount
+  const abortRef = useRef<AbortController | null>(null);
 
   const loadValueLookup = async (id) => {
     setDataLookup(listDataLookupInternal.find((item) => item.value === id) || null);
   };
-
+  const abortController = new AbortController();
+  abortRef.current = abortController;
   //! đoạn này xử lý call api lấy ra list lookup
   const loadOptionLookup = async (search, loadedOptions, { page }) => {
+    const paramLookup = col.cellEditorParams.paramLookup
+      ? col.cellEditorParams.paramLookup.reduce((obj, item) => {
+          obj[item.key] = item.value;
+          return obj;
+        }, {})
+      : {};
     const param: any = {
       keyword: search,
       name: search,
       page: page,
       limit: 10,
-      active: 1,
-      status: 1,
+      ...paramLookup,
     };
 
     let response = {
@@ -104,16 +123,7 @@ function SelectLookupGrid(props: SelectLookupProps) {
     };
     try {
       setIsLoading(true); // Bắt đầu loading
-      switch (lookup) {
-        case "project_realty":
-          response = await ProjectRealtyService.list(param);
-          break;
-        case "field":
-          response = await FieldListService.list(param);
-          break;
-        default:
-          break;
-      }
+      response = await fetchLookupData(col.cellEditorParams.lookupUri, param, abortController.signal);
 
       if (response.code === 0) {
         const dataOption = response.result.items;
@@ -123,7 +133,11 @@ function SelectLookupGrid(props: SelectLookupProps) {
               ? dataOption.map((item: any) => {
                   return {
                     value: item.id,
-                    label: item?.name || "No name",
+                    label: col?.cellEditorParams?.fieldLabelLookup?.key
+                      ? item[col.cellEditorParams.fieldLabelLookup.key]
+                        ? item[col.cellEditorParams.fieldLabelLookup.key]
+                        : item?.name || "No name"
+                      : item?.name || "No name",
                     ...(bindingField?.length > 0
                       ? bindingField.reduce((acc, field) => {
                           acc[field.key] = item[field.value] || "";

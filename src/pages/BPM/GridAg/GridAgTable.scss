@@ -21,11 +21,14 @@
         }
       }
       .ag-body {
-        .ag-row {
-          .ag-cell {
-            .ag-cell-wrapper {
-              .ag-cell-value {
-                // min-height: 58px;
+        .ag-center-cols-viewport {
+          overflow-y: auto !important;
+          .ag-row {
+            .ag-cell {
+              .ag-cell-wrapper {
+                .ag-cell-value {
+                  // min-height: 58px;
+                }
               }
             }
           }
