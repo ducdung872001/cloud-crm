@@ -643,6 +643,14 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
     walk(components);
     return results;
   }
+  function canParseJSON(value: any): boolean {
+    try {
+      JSON.parse(value);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   const checkValidateForm = (config) => {
     // Check validate các bảng grid
@@ -653,6 +661,11 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
         let key = listKeyGrid[i];
         let grid = allGrid.find((el) => el.key === key);
         if (grid) {
+          const isParsable = canParseJSON(config[key]);
+          if (!isParsable) {
+            console.error("Dữ liệu bảng không đúng định dạng JSON");
+            continue;
+          }
           const dataGrid = JSON.parse(config[key]);
           const dataRows = dataGrid?.dataRow || [];
           const headerTable = dataGrid?.headerTable || [];
