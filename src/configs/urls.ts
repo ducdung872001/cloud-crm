@@ -570,6 +570,7 @@ export const urlsApi = {
   },
   orderRequest: {
     list: prefixAdmin + "/order-request/list",
+    listOne: prefixAdmin + "/order-request/list-one",
     update: prefixAdmin + "/order-request/update",
     delete: prefixAdmin + "/order-request/delete-soft",
     export: prefixAdmin + "/order-request/export",
@@ -3231,8 +3232,6 @@ export const urls = {
   package_manage: "/package_manage",
   //danh sách gia hạn
   extension_list: "/extension_list",
-
-
 };
 
 export default urls;
