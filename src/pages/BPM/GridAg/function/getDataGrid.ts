@@ -6,7 +6,7 @@ import CustomCellRender from "../partial/CustomCellRender";
 import CustomCellNoRender from "../partial/CustomCellNoRender";
 import CustomHeaderNo from "../partial/CustomHeaderNo";
 import { TypeNo } from "../Type/datatype";
-import { fetchDataLookupGrid } from "./lookupGrid";
+import { fetchDataLookupGrid, genKeyLookupGrid } from "./lookupGrid";
 import CustomCellCommentLast from "../partial/CustomCellCommentLast";
 
 export const defaultNote = {
@@ -124,8 +124,6 @@ export const getDataGrid = async (actionRow, params): Promise<{ columns: ColDef[
 export const generateColumns = (header, actionRow, typeNo, params) => {
   const columnsForGrid: any = header
     .map((col) => {
-      console.log("col", col);
-
       const editable = col.readOnly != 1 && params?.enableEditCell && col.type != "checkbox" && col.type != "radio" ? true : false;
 
       let column: any = {
@@ -229,9 +227,10 @@ export const mapDataWithLookup = async (header, data) => {
       let colBinding = header.filter((col) => col.type === "binding");
       if (colBinding.length > 0) {
         colBinding.forEach((col) => {
+          const lookupKey = genKeyLookupGrid(col);
           if (row[col.key]) {
             let listBindingField = col?.listBindingField || [];
-            let lookupData = dataLookup?.[col.lookup]?.listValue || [];
+            let lookupData = dataLookup?.[lookupKey]?.listValue || [];
             let itemLookup = lookupData.find((item) => item.value == row[col.key]);
             if (itemLookup) {
               listBindingField.forEach((bindingField) => {

@@ -75,7 +75,7 @@ interface SelectLookupProps {
   col?: any;
 }
 
-const fetchLookupData = async (lookupUri: string, params: any, signal?: AbortSignal) => {
+export const fetchLookupData = async (lookupUri: string, params: any, signal?: AbortSignal) => {
   if (!lookupUri) return { code: -1, message: "No lookupUri provided" };
   return fetch(`${lookupUri}${convertParamsToString(params)}`, {
     signal,
@@ -85,7 +85,6 @@ const fetchLookupData = async (lookupUri: string, params: any, signal?: AbortSig
 
 function SelectLookupGrid(props: SelectLookupProps) {
   const { id, value, lookup, bindingField, bindingKey, name, placeholder, disabled, onChange, isMulti = false, loading, styleCustom, col } = props;
-  console.log("Render SelectLookupGrid:", col.cellEditorParams);
 
   const { lookupValues, setLookupValues } = useGridAg();
   const [dataLookup, setDataLookup] = useState(null);

@@ -9,6 +9,7 @@ import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import moment from "moment";
 import { useGridAg } from "../../GridAgContext";
 import { Parser } from "formula-functionizer";
+import { genKeyLookupGrid } from "../../function/lookupGrid";
 
 const CustomCellEdit = (props) => {
   const { columnsConfig } = useGridAg();
@@ -24,11 +25,6 @@ const CustomCellEdit = (props) => {
   };
 
   const handleChangeValue = (e) => {
-    // props.node.setDataValue("TenVaHo", "Năng Đình Hoàng");
-    // props.node.setDataValue("GiaSanPham_BindingSanPham", 1111111);
-    // console.log("e in handleChangeValue", props.data);
-    // props.api.stopEditing();
-    // return;
     let newValue = null;
     if (type === "number") {
       newValue = e.floatValue;
@@ -55,19 +51,11 @@ const CustomCellEdit = (props) => {
       props.api.stopEditing();
     } else if (type === "binding") {
       newValue = e ? e.value : null;
-      console.log("e in binding", e);
-      console.log("e in binding..props.columnsConfig..", columnsConfig);
-      console.log("e in binding..props.props.node..", props.node);
 
-      // GiaSanPham_BindingSanPham
       if (e != null) {
         if (e?.bindingField.length) {
           e.bindingField.map((field) => {
-            console.log("e in binding>>field in binding", field.key, e[field.key]);
-
             props.node.setDataValue(field.key, e[field.key]);
-            // props.node.setDataValue(field.key, "11111111");
-            console.log("e in handleChangeValue", props.data);
           });
         }
       } else {
@@ -116,8 +104,6 @@ const CustomCellEdit = (props) => {
     } else {
       newValue = e.target.value;
     }
-    console.log("props.colDef.field>>>", newValue);
-    console.log("props.colDef.field>>>", props.colDef.field);
 
     props.node.setDataValue(props.colDef.field, newValue); // 👈 cập nhật lại vào grid
     setValue(newValue);
@@ -162,8 +148,6 @@ const CustomCellEdit = (props) => {
       }),
     });
   }, [props.width]);
-
-  console.log("value", value);
 
   const generateItemInput = useCallback(
     (type) => {
@@ -220,12 +204,13 @@ const CustomCellEdit = (props) => {
           );
         case "lookup":
         case "binding":
+          let keyLookup = genKeyLookupGrid(props.colDef.cellRendererParams);
           return (
             <SelectLookupGrid
               onBlur={handleBlur}
               name={props.colDef.field}
               col={props.colDef}
-              lookup={props.lookup}
+              lookup={keyLookup}
               bindingField={props.colDef.cellEditorParams.listBindingField}
               // bindingKey={field.key}
               // columnIndex={fieldIndex}

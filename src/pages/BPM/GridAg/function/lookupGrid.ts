@@ -1,5 +1,7 @@
+import { convertToId } from "reborn-util";
 import FieldListService from "services/FieldListService";
 import ProjectRealtyService from "services/ProjectRealtyService";
+import { fetchLookupData } from "../partial/CustomCellEdit/partials/SelectLookupGrid";
 
 export const lookupOptions = [
   //   {
@@ -45,6 +47,20 @@ export const fetchDataLookupGrid = async (columnsConfig, dataRow) => {
   }
 };
 
+export const genKeyLookupGrid = (field) => {
+  const stringKey =
+    field.lookupUri +
+    (field?.paramLookup?.length
+      ? field.paramLookup
+          .map((param) => {
+            return `_${param.key}_${param.value}`;
+          })
+          .join("")
+      : "");
+  const key = stringKey.replaceAll("/", "_").replaceAll("-", "_").replaceAll(" ", "_").replaceAll(":", "_").replaceAll(".", "_");
+  return key;
+};
+
 const getLookupValue = async (columnsConfig, dataRow) => {
   // Lăp qua từng row trong dataRow
   // Lặp qua từng field trong row
@@ -55,18 +71,28 @@ const getLookupValue = async (columnsConfig, dataRow) => {
     const item = dataRow[i];
     columnsConfig.forEach((field) => {
       if (field.type === "lookup" || field.type === "binding") {
-        if (!lookupValues?.[field.lookup]) {
-          lookupValues[field.lookup] = {
-            lookup: field.lookup,
+        const key = genKeyLookupGrid(field);
+        const paramLookup = field.paramLookup
+          ? field.paramLookup.reduce((obj, item) => {
+              obj[item.key] = item.value;
+              return obj;
+            }, {})
+          : {};
+
+        if (!lookupValues?.[key]) {
+          lookupValues[key] = {
+            lookup: key,
             values: [],
             bindingField: field?.listBindingField || [],
+            paramLookup: paramLookup,
+            lookupUri: field.lookupUri,
           };
         } else {
           //nếu đã tồn tại bindingField thì không thêm nữa
           if (field?.listBindingField && field.listBindingField?.length) {
             field.listBindingField.forEach((bindingField) => {
-              if (!lookupValues[field.lookup].bindingField.find((item) => item.key === bindingField.key)) {
-                lookupValues[field.lookup].bindingField.push(bindingField);
+              if (!lookupValues[key].bindingField.find((item) => item.key === bindingField.key)) {
+                lookupValues[key].bindingField.push(bindingField);
               }
             });
           }
@@ -75,8 +101,8 @@ const getLookupValue = async (columnsConfig, dataRow) => {
         const values = Array.isArray(item[field.key]) ? item[field.key] : [item[field.key]];
         values.forEach((value) => {
           if (parseInt(value)) {
-            if (!lookupValues[field.lookup].values.includes(parseInt(value))) {
-              lookupValues[field.lookup].values.push(parseInt(value));
+            if (!lookupValues[key].values.includes(parseInt(value))) {
+              lookupValues[key].values.push(parseInt(value));
             }
           }
         });
@@ -95,18 +121,19 @@ const getLookupValue = async (columnsConfig, dataRow) => {
           lstId: listLookup,
           limit: 2000,
           page: 1,
+          ...(lookup?.paramLookup || {}),
         };
-        let response = null;
-        switch (key) {
-          case "field":
-            response = await FieldListService.list(params);
-            break;
-          case "project_realty":
-            response = await ProjectRealtyService.list(params);
-            break;
-          default:
-            break;
-        }
+        let response = await fetchLookupData(lookup.lookupUri, params);
+        // switch (key) {
+        //   case "field":
+        //     response = await FieldListService.list(params);
+        //     break;
+        //   case "project_realty":
+        //     response = await ProjectRealtyService.list(params);
+        //     break;
+        //   default:
+        //     break;
+        // }
         if (response && response?.code == 0 && response?.result?.items?.length) {
           lookupValues[key].listValue = listLookup.map((item) => {
             const foundItem = response.result.items.find((field) => field.id === item);

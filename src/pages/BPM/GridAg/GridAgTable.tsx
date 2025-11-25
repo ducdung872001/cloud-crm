@@ -5,7 +5,7 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 
 import { ColDef } from "ag-grid-community";
-import { defaultNote, generateColumns, getDataConfig, getDataGrid, getListComment } from "./function/getDataGrid";
+import { defaultNote, generateColumns, getDataConfig, getDataGrid, getListComment, mapDataWithLookup } from "./function/getDataGrid";
 import "./GridAgTable.scss";
 import FullWidthRenderer from "./partial/FullWidthRenderer";
 import { sampleColumns, sampleData } from "./sampleData";
@@ -23,6 +23,7 @@ import { exportCustomExcel } from "./partial/ModalImportGrid/partials/exportExce
 import ModalCommentAg from "./partial/ModalCommentAg";
 import { filterData } from "./function/filterData";
 import { IGridAgTable } from ".";
+import { fetchDataLookupGrid } from "./function/lookupGrid";
 
 const GridAgTable = (
   props: IGridAgTable // location: "iframe" | "configViewer", setDataConfigGrid, dataGrid, onChange, configField
@@ -140,7 +141,6 @@ const GridAgTable = (
   }, [isFetchData, location, dataGrid]);
 
   useEffect(() => {
-    // let dataGridHeader = dataGrid?.headerTable && JSON.parse(dataGrid.headerTable) ? JSON.parse(dataGrid.headerTable) : [];
     let dataGridHeader =
       dataGrid?.headerTable && dataGrid.headerTable
         ? typeof dataGrid.headerTable === "string"
@@ -148,13 +148,18 @@ const GridAgTable = (
           : dataGrid.headerTable
         : [];
     setColumnsConfig(dataGridHeader);
-    // let dataGridRow = dataGrid?.dataRow && JSON.parse(dataGrid.dataRow) ? JSON.parse(dataGrid.dataRow) : [];
     let dataGridRow =
       dataGrid?.dataRow && dataGrid.dataRow ? (typeof dataGrid.dataRow === "string" ? JSON.parse(dataGrid.dataRow) : dataGrid.dataRow) : [];
-    console.log("getDataGrid>>dataGridHeader: ", dataGridHeader);
-    console.log("getDataGrid>>data: ", dataGridRow);
-    setRowData(dataGridRow);
-    // onChange && onChange({ headerTable: dataGrid.headerTable, dataRow: dataGrid.dataRow });
+    // const getDataLookupGrid = async (header, data) => {
+    //   const lookupValues = await fetchDataLookupGrid(header, data);
+    //   setLookupValues(lookupValues);
+    // };
+    const getDataLookupGrid = async (header, data) => {
+      let _dataLookup = await mapDataWithLookup(header, data);
+      setLookupValues(_dataLookup.dataLookup);
+      setRowData(_dataLookup.dataWithLookup);
+    };
+    getDataLookupGrid(dataGridHeader, dataGridRow);
   }, [dataGrid]);
 
   useEffect(() => {
@@ -308,8 +313,6 @@ const GridAgTable = (
     const cols = columnsRef.current;
     const uuid = uuidv4();
     const newRow: any = { rowKey: uuid };
-    console.log("cols in handleAddRow", cols);
-
     cols.forEach((col: ColDef) => {
       if (col.field && col.field !== "rowKey") {
         if (col.cellRendererParams.type === "number" || col.cellEditorParams?.type === "lookup" || col.cellEditorParams?.type === "binding") {
