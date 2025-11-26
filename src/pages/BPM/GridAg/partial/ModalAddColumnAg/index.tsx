@@ -368,7 +368,7 @@ export default function ModalAddColumnAg(props: any) {
           type: "text",
           fill: true,
           required: true,
-          disabled: isEdit,
+          // disabled: isEdit,
           error: checkFieldName,
           message: "Tên trường thông tin này đã tồn tại",
         },
@@ -749,6 +749,7 @@ export default function ModalAddColumnAg(props: any) {
         if (item.key === data?.key) {
           return {
             ...item,
+            name: formData.values["name"],
             required: formData.values["required"] == "1" ? true : false,
             isSum: formData.values["isSum"] == "1" ? true : false,
             position: formData.values["position"],
