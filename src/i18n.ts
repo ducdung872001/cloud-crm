@@ -172,7 +172,8 @@ i18n.use(initReactI18next).init({
           listOfOrganizations: "List of organizations",
           servicePackageManagement: "Service package management",
           renewalList: "Renewal list",
-          userAdministration: 'User administration'
+          userAdministration: 'User administration',
+          fieldManagement: "Field management"
         },
         pageDashboard: {
           title: "Dashboard",
@@ -407,7 +408,8 @@ i18n.use(initReactI18next).init({
           listOfOrganizations: "Danh sách tổ chức",
           servicePackageManagement: "Quản lý gói dịch vụ",
           renewalList: "Danh sách gia hạn",
-          userAdministration: "Quản trị người dùng"
+          userAdministration: "Quản trị người dùng",
+          fieldManagement: "Quản lý lĩnh vực"
         },
         pageDashboard: {
           title: "Trang chủ",

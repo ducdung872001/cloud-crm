@@ -180,6 +180,7 @@ import OrganizationList from "pages/Organization/OrganizationList";
 import Package from "pages/Package";
 import ExtensionList from "pages/Extension/ExtensionList";
 import UserList from "pages/User/UserList";
+import FieldMannagement from "pages/FieldManagement/FieldManagement";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -929,6 +930,12 @@ export const menu: IMenuItem[] = [
           path: urls.extension_list,
           icon: <Icon name="Renewal" />,
           code: "RENEWAL_LIST"
+        },
+        {
+          title: "fieldManagement",
+          path: urls.field_management,
+          icon: <Icon name="FieldMannagement" />,
+          code: ""
         },
         {
           title: "resourceManagement", // Quản trị tài nguyên
@@ -1780,5 +1787,9 @@ export const routes: IRouter[] = [
   {
     path: urls.extension_list,
     component: <ExtensionList />,
+  },
+  {
+    path: urls.field_management,
+    component: <FieldMannagement />,
   },
 ];

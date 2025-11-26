@@ -2847,6 +2847,13 @@ export const urlsApi = {
     extend: prefixRebornVn + "/orgApp/extend",
     upgrade: prefixRebornVn + "/orgApp/upgrade",
   },
+
+  field: {
+    list: prefixRebornVn + "/field/list",
+    update: prefixRebornVn + "/field/update",
+    detail: prefixRebornVn + "/field/get",
+    delete: prefixRebornVn + "/field/delete",
+  },
   gift: {
     list: prefixAdmin + "/gift/list",
     update: prefixAdmin + "/gift/update",
@@ -3232,6 +3239,8 @@ export const urls = {
   package_manage: "/package_manage",
   //danh sách gia hạn
   extension_list: "/extension_list",
+  //quản lý lĩnh vực
+  field_management: "/field_management",
 };
 
 export default urls;
