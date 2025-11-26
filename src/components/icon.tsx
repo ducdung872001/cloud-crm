@@ -144,6 +144,7 @@ import IconFunnel from "assets/icons/icon-funnel.svg";
 import IconFileDoc from "assets/icons/icon-FileDoc.svg";
 import IconFolders from "assets/icons/icon-folders-rox.svg";
 import IconFileXls from "assets/icons/icon-file-xls.svg";
+import IconFieldMannagement from "assets/icons/icon-field-management.svg";
 
 // G
 import IconGift from "assets/icons/icon-gift.svg";
@@ -522,6 +523,7 @@ const iconTypes = {
   FileDoc: IconFileDoc,
   Folders: IconFolders,
   FileXls: IconFileXls,
+  FieldMannagement: IconFieldMannagement,
   // G
   Gift: IconGift,
   Gmail: IconGmail,
