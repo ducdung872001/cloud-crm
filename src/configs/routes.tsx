@@ -935,7 +935,7 @@ export const menu: IMenuItem[] = [
           title: "fieldManagement",
           path: urls.field_management,
           icon: <Icon name="FieldMannagement" />,
-          code: ""
+          code: "FIELD_MANAGEMENT"
         },
         {
           title: "resourceManagement", // Quản trị tài nguyên
