@@ -55,7 +55,11 @@ const CustomCellEdit = (props) => {
       if (e != null) {
         if (e?.bindingField.length) {
           e.bindingField.map((field) => {
-            props.node.setDataValue(field.key, e[field.key]);
+            try {
+              props.node.setDataValue(field.key, e[field.key]);
+            } catch (error) {
+              console.log("Error binding field Grid", error);
+            }
           });
         }
       } else {
