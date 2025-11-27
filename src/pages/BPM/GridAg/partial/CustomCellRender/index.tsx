@@ -120,12 +120,14 @@ const CustomCellRender = (props) => {
             );
           }
         case "formula":
+          console.log("Rendering formula cell with value:", props);
+
           if (props?.value === null || props?.value === undefined || props?.value === "") {
             return <CustomCellFormula {...props} />;
           } else {
             return (
               <div className="text-truncate" title={props?.value ? props.value : null}>
-                {props?.value ? props.value : null}
+                {props?.value ? formatNumber(props?.value) : ""}
               </div>
             );
           }
