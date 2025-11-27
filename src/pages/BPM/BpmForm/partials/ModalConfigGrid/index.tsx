@@ -14,6 +14,7 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+  const [isSubmitFromModalConfig, setIsSubmitFromModalConfig] = useState<boolean>(false);
 
   const [dataConfigGrid, setDataConfigGrid] = useState<any>({
     headerTable: dataConfig?.headerTable || [],
@@ -38,9 +39,17 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
   }, [values]);
 
   const handleSubmit = () => {
+    // console.log("dataConfigGrid<<<<<<dataGrid", dataConfigGrid);
+    // return;
     onHide(false);
+
     callBack(dataConfigGrid);
+    setIsSubmitFromModalConfig(false);
   };
+
+  useEffect(() => {
+    console.log("dataConfigGrid<<<<<<", dataConfigGrid);
+  }, [dataConfigGrid]);
 
   const actions = useMemo<IActionModal>(
     () => ({
@@ -62,13 +71,14 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
             // disabled: isSubmit || !isDifferenceObj(formData, values),
             callback: () => {
               handleSubmit();
+              setIsSubmitFromModalConfig(true);
             },
             is_loading: isSubmit,
           },
         ],
       },
     }),
-    [formData, values, isSubmit, dataConfigGrid]
+    [formData, values, isSubmit, dataConfigGrid, isSubmitFromModalConfig]
   );
 
   const showDialogConfirmCancel = () => {
@@ -150,7 +160,12 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
           </div>
           <ModalBody>
             <div className="list-form-group">
-              <GridAg location={"configForm"} setDataConfigGrid={setDataConfigGrid} dataGrid={dataConfig} />
+              <GridAg
+                location={"configForm"}
+                setDataConfigGrid={setDataConfigGrid}
+                dataGrid={dataConfig}
+                isSubmitFromModalConfig={isSubmitFromModalConfig}
+              />
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

@@ -153,7 +153,7 @@ export default function ManageDefaultProcesses(props: any) {
     getPageOffset(params) + index + 1,
     item?.name ?? "",
     item?.uri ?? "",
-    item?.processCode ?? "",
+    item?.processCode + " - (" + item?.processName + ")" ?? "",
     // item.position,
   ];
 

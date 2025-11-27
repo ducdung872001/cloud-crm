@@ -49,7 +49,7 @@ const GridAgTable = (
     setCheckedMap,
   } = useGridAg();
   const gridRef = useRef<any>(null);
-  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction } = props;
+  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction, isSubmitFromModalConfig } = props;
   const idGrid = configField?.fieldName || dataGrid?.fieldName || "";
   const COLUMN_WIDTH_STORAGE_KEY = "gridag_column_widths" + idGrid;
   const linkingConfig = configField?.linkingConfig ? JSON.parse(configField.linkingConfig) : null;
@@ -397,6 +397,25 @@ const GridAgTable = (
     return _rowData;
   };
 
+  useEffect(() => {
+    console.log("isSubmitFromModalConfig", isSubmitFromModalConfig);
+
+    if (isSubmitFromModalConfig) {
+      const updatedRowData = getLatestRowData();
+      console.log("updatedRowData after modal config submit", updatedRowData);
+
+      // setDataConfigGrid({
+      //   headerTable: columnsConfig,
+      //   dataRow: updatedRowData,
+      // });
+      setDataConfigGrid((prev) => ({
+        ...prev,
+        headerTable: columnsConfig,
+        dataRow: updatedRowData,
+      }));
+    }
+  }, [isSubmitFromModalConfig]);
+
   const handleFilterData = () => {
     const _rowData = getLatestRowData();
     const paramFilter = filterData(_rowData, checkedMap, columnsConfig);
@@ -410,11 +429,12 @@ const GridAgTable = (
     }
   };
   const onCellValueChanged = () => {
+    console.log("Cell value changed", location);
+
     // params.data là dòng vừa được sửa
     // rowData là state, nhưng để chắc chắn, bạn nên lấy dữ liệu mới nhất từ gridRef
     if (location == "configViewer") {
       const updatedRowData = getLatestRowData();
-      // onChange && onChange({ headerTable: JSON.stringify(columnsConfig), dataRow: JSON.stringify(updatedRowData) });
       onChange && onChange({ headerTable: columnsConfig, dataRow: updatedRowData });
     }
   };

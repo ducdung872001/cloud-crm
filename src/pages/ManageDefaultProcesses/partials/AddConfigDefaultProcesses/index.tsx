@@ -192,7 +192,7 @@ export default function AddConfigDefaultProcesses(props: any) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} tính năng thành công`, "success");
       onHide(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -200,6 +200,7 @@ export default function AddConfigDefaultProcesses(props: any) {
   const handClearForm = () => {
     onHide(false);
     setCheckFieldProcess(false);
+    setDataProcess(null);
   };
 
   const actions = useMemo<IActionModal>(
@@ -246,6 +247,7 @@ export default function AddConfigDefaultProcesses(props: any) {
         onHide(false);
         setShowDialog(false);
         setContentDialog(null);
+        setDataProcess(null);
       },
     };
     setContentDialog(contentDialog);
@@ -284,14 +286,14 @@ export default function AddConfigDefaultProcesses(props: any) {
         isOpen={onShow}
         isCentered={true}
         staticBackdrop={true}
-        toggle={() => !isSubmit && onHide(false)}
+        toggle={() => !isSubmit && handClearForm()}
         className="modal-add-default-processes"
       >
         <form className="form-add-default-processes " onSubmit={(e) => onSubmit(e)}>
           <ModalHeader
             title={`${data ? "Chỉnh sửa" : "Thêm mới"} tính năng`}
             toggle={() => {
-              !isSubmit && onHide(false);
+              !isSubmit && handClearForm();
             }}
           />
           <ModalBody>

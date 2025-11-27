@@ -14,6 +14,12 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  updateAndInit: (body: any) => {
+    return fetch(urlsApi.fs.updateAndInit, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   updateStatus: (body: any) => {
     return fetch(urlsApi.fs.updateStatus, {
       method: "POST",

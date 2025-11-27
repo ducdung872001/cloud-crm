@@ -248,14 +248,15 @@ const CustomCellEdit = (props) => {
           const endDate =
             fieldKey === timeRange.endDate ? moment(_value, "MM/DD/YYYY") : moment(new Date(safeGet(dataRow, timeRange.endDate, null)), "MM/DD/YYYY");
 
-          let count = 0;
+          let count = -1;
           const currentDate = startDate.clone();
           while (currentDate.isSameOrBefore(endDate)) {
-            const dayOfWeek = currentDate.day();
-            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-              // 0 là Chủ nhật, 6 là Thứ 7, không tính ngày nghỉ
-              count++;
-            }
+            // const dayOfWeek = currentDate.day();
+            // if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+            //   // 0 là Chủ nhật, 6 là Thứ 7, không tính ngày nghỉ
+            //   count++;
+            // }
+            count++;
             currentDate.add(1, "days");
           }
           newData[col.key] = count + " ngày";
@@ -270,6 +271,8 @@ const CustomCellEdit = (props) => {
     // Nếu đã chuẩn bị newData (multi-field update) thì setData cả row 1 lần
     if (markMultiUpdate.value && newData) {
       props.node.setData(newData);
+      console.log("Multi-field update:", newData);
+
       // cập nhật local state giá trị hiển thị cho ô hiện tại
       setValue(newData[fieldKey]);
     } else {
@@ -349,7 +352,7 @@ const CustomCellEdit = (props) => {
               name={props.colDef.field}
               fill={false}
               // value={field.value}
-              value={value ? moment(value).format("DD/MM/YYYY") : ""}
+              value={value ?? null}
               iconPosition="left"
               // icon={<Icon name="Calendar" />}
               onChange={(e) => handleChangeValue(e)}

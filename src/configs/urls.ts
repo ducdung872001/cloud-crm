@@ -572,6 +572,7 @@ export const urlsApi = {
     list: prefixAdmin + "/order-request/list",
     listOne: prefixAdmin + "/order-request/list-one",
     update: prefixAdmin + "/order-request/update",
+    updateAndInit: prefixAdmin + "/order-request/update-and-init",
     delete: prefixAdmin + "/order-request/delete-soft",
     export: prefixAdmin + "/order-request/export",
     detail: prefixAdmin + "/order-request/get",
@@ -1112,6 +1113,7 @@ export const urlsApi = {
     list: prefixAdmin + "/contract/list",
     detail: prefixAdmin + "/contract/get",
     update: prefixAdmin + "/contract/update",
+    updateAndInit: prefixAdmin + "/contract/update-and-init",
     delete: prefixAdmin + "/contract/delete",
     updateAlert: prefixAdmin + "/contract/update/alert",
 
@@ -1582,6 +1584,7 @@ export const urlsApi = {
   ticket: {
     list: prefixAdmin + "/ticket/list",
     update: prefixAdmin + "/ticket/update",
+    updateAndInit: prefixAdmin + "/ticket/update-and-init",
     collect: prefixAdmin + "/ticket/send/jssdk",
     detail: prefixAdmin + "/ticket/get",
     delete: prefixAdmin + "/ticket/delete",
@@ -2775,6 +2778,7 @@ export const urlsApi = {
   fs: {
     lst: prefixAdmin + "/fs/list",
     update: prefixAdmin + "/fs/update",
+    updateAndInit: prefixAdmin + "/fs/update-and-init",
     delete: prefixAdmin + "/fs/delete",
     detail: prefixAdmin + "/fs/get",
     cloneFs: prefixAdmin + "/fs/clone",

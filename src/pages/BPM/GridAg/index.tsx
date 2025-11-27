@@ -10,10 +10,11 @@ export interface IGridAgTable {
   onChange?: (data) => void; // Hàm gọi khi có thay đổi dữ liệu (dùng trong configViewer)
   onAction?: (action: any) => void; // Hàm gọi khi có hành động trên grid
   configField?: any; // Dùng trong configViewer để truyền tham số thay vì lấy từ URL
+  isSubmitFromModalConfig?: boolean; // Dùng để biết có submit từ modal config grid hay không
 }
 
 function GridAg(props: IGridAgTable) {
-  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction } = props;
+  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction, isSubmitFromModalConfig } = props;
   return (
     <GridAgProvider>
       <GridAgTable
@@ -23,6 +24,7 @@ function GridAg(props: IGridAgTable) {
         onChange={onChange}
         configField={configField}
         onAction={onAction}
+        isSubmitFromModalConfig={isSubmitFromModalConfig}
       />
     </GridAgProvider>
   );
