@@ -145,14 +145,30 @@ export default function ManageDefaultProcesses(props: any) {
     ],
   };
 
-  const titles = ["STT", "Tên tính năng", "URI", "Mã quy trình"];
+  let options = [
+    { value: "/fs/", label: "Danh sách FS" },
+    { value: "/quote/", label: "Danh sách báo giá" },
+    { value: "/contract/", label: "Danh sách hợp đồng" },
+    { value: "/guarantee/", label: "Danh sách bảo lãnh" },
+    { value: "/contractWarranty/", label: "Danh sách bảo hành" },
+    { value: "/marketing/", label: "Ngân sách truyền thông" },
+    { value: "/ma/", label: "Truyền thông theo kịch bản" },
+    { value: "/campaignOpportunity/", label: "Quản lý cơ hội" },
+    { value: "/order_request/", label: "Xác nhận đơn hàng" },
+    { value: "/treatmentHistory/", label: "Lịch sử thực hiện dịch vụ" },
+    { value: "/warranty/", label: "Tiếp nhận bảo hành" },
+    { value: "/ticket/", label: "Tiếp nhận hỗ trợ" },
+    { value: "/invoice/", label: "Nhập kho" },
+  ];
+
+  const titles = ["STT", "Tên cấu hình", "Tính năng", "Mã quy trình"];
 
   const dataFormat = ["text-center", "", "text-left", "text-left", "text-center"];
 
   const dataMappingArray = (item: any, index: number) => [
     getPageOffset(params) + index + 1,
     item?.name ?? "",
-    item?.uri ?? "",
+    options.find((option) => option.value === item?.uri)?.label || item?.uri || "",
     item?.processCode + " - (" + item?.processName + ")" ?? "",
     // item.position,
   ];

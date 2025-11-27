@@ -616,7 +616,7 @@ export const menu: IMenuItem[] = [
           code: "MENU_SELL",
           children: [
             {
-              title: "treatmentHistory", // Lịch sử điều trị
+              title: "treatmentHistory", // Thực hiện dịch vụ
               path: urls.treatment_history,
               icon: <Icon name="TraetmentHistory" />,
               code: "TREATMENT_HISTORY",
