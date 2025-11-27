@@ -181,6 +181,7 @@ import Package from "pages/Package";
 import ExtensionList from "pages/Extension/ExtensionList";
 import UserList from "pages/User/UserList";
 import FieldMannagement from "pages/FieldManagement/FieldManagement";
+import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -896,55 +897,61 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="SettingJob" />,
               code: "",
             },
+            {
+              title: "manageDefaultProcesses",
+              path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
+              code: "BPM",
+              icon: <Icon name="CashBook" />,
+            },
           ],
         },
       ]
     : []),
-    
-    {
-      title: "organizationalManagement",
-      path: urls.organization,
-      icon: <Icon name="Partner" />,
-      code: "RESOURCE",
-      children: [
-        {
-          title: "listOfOrganizations",
-          path: urls.organization,
-          icon: <Icon name="Partner" />,
-          code: "ORGANIZATION_MANAGEMENT"
-        },
-        {
-          title: "userAdministration",
-          path: urls.user,
-          icon: <Icon name="Customer" />,
-          code: "RESOURCE"
-        },
-        {
-          title: "servicePackageManagement",
-          path: urls.package_manage,
-          icon: <Icon name="Beauty" />,
-          code: "RESOURCE"
-        },
-        {
-          title: "renewalList",
-          path: urls.extension_list,
-          icon: <Icon name="Renewal" />,
-          code: "RENEWAL_LIST"
-        },
-        {
-          title: "fieldManagement",
-          path: urls.field_management,
-          icon: <Icon name="FieldMannagement" />,
-          code: "FIELD_MANAGEMENT"
-        },
-        {
-          title: "resourceManagement", // Quản trị tài nguyên
-          path: urls.resource_management,
-          icon: <Icon name="SettingJob" />,
-          code: "RESOURCE",
-        },
-      ],
-    },
+
+  {
+    title: "organizationalManagement",
+    path: urls.organization,
+    icon: <Icon name="Partner" />,
+    code: "RESOURCE",
+    children: [
+      {
+        title: "listOfOrganizations",
+        path: urls.organization,
+        icon: <Icon name="Partner" />,
+        code: "ORGANIZATION_MANAGEMENT",
+      },
+      {
+        title: "userAdministration",
+        path: urls.user,
+        icon: <Icon name="Customer" />,
+        code: "RESOURCE",
+      },
+      {
+        title: "servicePackageManagement",
+        path: urls.package_manage,
+        icon: <Icon name="Beauty" />,
+        code: "RESOURCE",
+      },
+      {
+        title: "renewalList",
+        path: urls.extension_list,
+        icon: <Icon name="Renewal" />,
+        code: "RENEWAL_LIST",
+      },
+      {
+        title: "fieldManagement",
+        path: urls.field_management,
+        icon: <Icon name="FieldMannagement" />,
+        code: "FIELD_MANAGEMENT",
+      },
+      {
+        title: "resourceManagement", // Quản trị tài nguyên
+        path: urls.resource_management,
+        icon: <Icon name="SettingJob" />,
+        code: "RESOURCE",
+      },
+    ],
+  },
 
   ...(checkSubdomainTNPM || checkSubdomainGREENSPA
     ? [
@@ -1742,6 +1749,10 @@ export const routes: IRouter[] = [
   {
     path: urls.manage_processes,
     component: <BusinessProcessList />,
+  },
+  {
+    path: urls.manage_default_processes,
+    component: <ManageDefaultProcesses />,
   },
   {
     path: urls.process_simulation,

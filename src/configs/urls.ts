@@ -949,6 +949,13 @@ export const urlsApi = {
     contractEformDetail: prefixAdmin + "/contractEform/get/criteria",
   },
 
+  manageDefaultProcesses: {
+    list: prefixAdmin + "/process-permission/list",
+    update: prefixAdmin + "/process-permission/update",
+    detail: prefixAdmin + "/process-permission/get",
+    delete: prefixAdmin + "/process-permission/delete",
+  },
+
   contractAttachment: {
     list: prefixAdmin + "/attachment/list",
     update: prefixAdmin + "/attachment/update",
@@ -3192,6 +3199,7 @@ export const urls = {
   bpm: "/bpm",
   bpm_create: "/bpm/create/:id",
   manage_processes: "/manage_processes",
+  manage_default_processes: "/manage_default_processes",
   process_simulation: "/process_simulation",
   object_manage: "/object_manage",
   //cài đặt quy trình
