@@ -15,8 +15,8 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { useActiveElement } from "utils/hookCustom";
-import { isDifferenceObj } from "reborn-util";
-import { showToast } from "utils/common";
+import { isDifferenceObj, convertToFileName } from "reborn-util";
+import { handDownloadFileOrigin, showToast } from "utils/common";
 import ImageThirdGender from "assets/images/third-gender.png";
 import CustomerService from "services/CustomerService";
 import EmployeeService from "services/EmployeeService";
@@ -26,6 +26,80 @@ import "./AddTreamentHistoryModal.scss";
 import { ContextType, UserContext } from "contexts/userContext";
 import { IServiceFilterRequest } from "model/service/ServiceRequestModel";
 import ServiceService from "services/ServiceService";
+import ImgRar from "assets/images/img-rar.png";
+import ImgZip from "assets/images/img-zip.png";
+import ImgFilePDF from "assets/images/img-pdf.png";
+import ImgFileDoc from "assets/images/img-word.png";
+import ImgFileExcel from "assets/images/img-excel.png";
+import ImgFilePowerpoint from "assets/images/img-powerpoint.png";
+import Tippy from "@tippyjs/react";
+import { uploadDocumentFormData } from "utils/document";
+import FileService from "services/FileService";
+
+const FILE_IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg", "heic", "heif", "tif", "tiff"];
+
+const getFileExtension = (name?: string): string => {
+  if (!name) return "";
+  const lastDotIndex = name.lastIndexOf(".");
+  if (lastDotIndex === -1) return "";
+  return name.substring(lastDotIndex + 1).toLowerCase();
+};
+
+const normalizeAttachmentPayload = (payload: any, originFile?: File) => {
+  if (!payload) return null;
+  const fileUrl = payload.fileUrl || payload.url || "";
+  const fallbackFileNameFromUrl = fileUrl ? convertToFileName(fileUrl.split("/").pop()) : "";
+  const fileName = payload.fileName || originFile?.name || fallbackFileNameFromUrl || "";
+  const extensionCandidate =
+    (payload.extension || payload.type || getFileExtension(fileName) || getFileExtension(fileUrl))?.toString().toLowerCase() || "";
+  const mineType = (payload.mineType || payload.mimeType || payload.fileType || originFile?.type || "")?.toString().toLowerCase();
+  const fileType = (payload.fileType || (mineType && mineType.includes("/") ? mineType.split("/")[0] : mineType) || "")?.toString().toLowerCase();
+  const isImage =
+    fileType === "image" ||
+    (mineType && mineType.startsWith("image")) ||
+    FILE_IMAGE_EXTENSIONS.includes(extensionCandidate);
+
+  return {
+    width: payload.width ?? null,
+    height: payload.height ?? null,
+    fileUrl,
+    url: fileUrl,
+    fileName,
+    fileSize: payload.fileSize ?? originFile?.size ?? null,
+    fileType: payload.fileType ?? (isImage ? "image" : payload.fileType ?? "application"),
+    mineType: payload.mineType ?? payload.mimeType ?? originFile?.type ?? (isImage ? "image" : "application"),
+    extension: isImage ? extensionCandidate || "image" : extensionCandidate,
+    type: isImage ? "image" : extensionCandidate || "file",
+  };
+};
+
+const serializeAttachmentItem = (item) => ({
+  width: item?.width ?? null,
+  height: item?.height ?? null,
+  fileUrl: item?.fileUrl ?? item?.url ?? "",
+  fileName: item?.fileName ?? "",
+  fileSize: item?.fileSize ?? null,
+  fileType: item?.fileType ?? null,
+  mineType: item?.mineType ?? null,
+  extension: item?.extension ?? null,
+});
+
+const normalizeCommitsString = (value?: string) => {
+  if (!value) return "";
+
+  try {
+    const parsed = JSON.parse(value);
+    const list = (Array.isArray(parsed) ? parsed : [parsed])
+      .map((item) => normalizeAttachmentPayload(item))
+      .filter((item) => item)
+      .map((item) => serializeAttachmentItem(item));
+
+    if (list.length === 0) return "";
+    return JSON.stringify(list.length === 1 ? list[0] : list);
+  } catch (error) {
+    return "";
+  }
+};
 
 interface IDataServiceOption {
   value: number;
@@ -60,6 +134,38 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
 
   const [detailService, setDetailService] = useState(null);
   const [detailCard, setDetailCard] = useState(null);
+  const [listAttactment, setListAttactment] = useState([]);
+  const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
+  const [showProgress, setShowProgress] = useState<number>(0);
+
+  useEffect(() => {
+    if (!onShow) {
+      setListAttactment([]);
+      return;
+    }
+
+    if (!data?.commits) {
+      setListAttactment([]);
+      return;
+    }
+
+    const normalized = normalizeCommitsString(data.commits);
+
+    if (!normalized) {
+      setListAttactment([]);
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(normalized);
+      const mapping = (Array.isArray(parsed) ? parsed : [parsed])
+        .map((item) => normalizeAttachmentPayload(item))
+        .filter((item) => item);
+      setListAttactment(mapping);
+    } catch (error) {
+      setListAttactment([]);
+    }
+  }, [onShow, data?.commits]);
 
   //!validate
   const [checkFieldCustomer, setCheckFieldCustomer] = useState<boolean>(false);
@@ -68,22 +174,23 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
 
   const values = useMemo(
     () =>
-      ({
-        customerId: data?.customerId ?? null,
-        customerPhone: detailCustomer?.phoneMasked ?? "",
-        serviceId: data?.serviceId ?? null,
-        treatmentStart: data?.treatmentStart ?? new Date(),
-        treatmentEnd: data?.treatmentEnd ?? "",
-        procDesc: data?.procDesc ?? "",
-        afterProof: data?.afterProof ?? "",
-        prevProof: data?.prevProof ?? "",
-        scheduleNext: data?.scheduleNext ?? "",
-        employeeId: data?.employeeId ?? null,
-        note: data?.note ?? "",
-        treatmentTh: data?.totalTreatment ?? 0,
-        serviceNumber: data?.serviceNumber ?? null,
-        cardNumber: data?.cardNumber ?? null,
-      } as ITreatmentHistoryRequestModel),
+    ({
+      customerId: data?.customerId ?? null,
+      customerPhone: detailCustomer?.phoneMasked ?? "",
+      serviceId: data?.serviceId ?? null,
+      treatmentStart: data?.treatmentStart ?? new Date(),
+      treatmentEnd: data?.treatmentEnd ?? "",
+      procDesc: data?.procDesc ?? "",
+      afterProof: data?.afterProof ?? "",
+      prevProof: data?.prevProof ?? "",
+      scheduleNext: data?.scheduleNext ?? "",
+      employeeId: data?.employeeId ?? null,
+      note: data?.note ?? "",
+      treatmentTh: data?.totalTreatment ?? 0,
+      serviceNumber: data?.serviceNumber ?? null,
+      cardNumber: data?.cardNumber ?? null,
+      commits: normalizeCommitsString(data?.commits),
+    } as ITreatmentHistoryRequestModel),
     [data, onShow, detailCustomer?.phoneMasked]
   );
 
@@ -146,13 +253,13 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                  avatar: item.avatar,
-                  phoneMasked: item.phoneMasked,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+                avatar: item.avatar,
+                phoneMasked: item.phoneMasked,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -233,18 +340,18 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       setListBuyService([
         ...(dataOption.length > 0
           ? dataOption.map((item) => {
-              return {
-                value: item.id,
-                serviceId: item.serviceId,
-                label: item.serviceName,
-                avatar: item.serviceAvatar,
-                isCombo: item.isCombo,
-                treatmentNum: item.treatmentNum,
-                totalTreatment: item.totalTreatment + 1,
-                serviceNumber: item.serviceNumber,
-                cardNumber: item.cardNumber,
-              };
-            })
+            return {
+              value: item.id,
+              serviceId: item.serviceId,
+              label: item.serviceName,
+              avatar: item.serviceAvatar,
+              isCombo: item.isCombo,
+              treatmentNum: item.treatmentNum,
+              totalTreatment: item.totalTreatment + 1,
+              serviceNumber: item.serviceNumber,
+              cardNumber: item.cardNumber,
+            };
+          })
           : []),
       ]);
 
@@ -372,12 +479,12 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                  avatar: item.avatar,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+                avatar: item.avatar,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -404,12 +511,12 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                  avatar: item.avatar,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+                avatar: item.avatar,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -431,6 +538,140 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
         {label}
       </div>
     );
+  };
+  const uploadError = (message) => {
+    setIsLoadingFile(false);
+    showToast(message.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+  };
+  const handleRemoveImageItem = (idx) => {
+    const result = [...listAttactment];
+    result.splice(idx, 1);
+    setListAttactment(result);
+  };
+
+  const appendAttachment = (data, originFile?: File) => {
+    const attachment = normalizeAttachmentPayload(data, originFile);
+    if (attachment) {
+      setListAttactment((prev) => [...prev, attachment]);
+    }
+    setIsLoadingFile(false);
+  };
+
+  const handUploadFile = async (file: File) => {
+    await FileService.uploadFile({
+      data: file,
+      onSuccess: (response) => appendAttachment(response, file),
+      onError: uploadError,
+    });
+  };
+
+  const download = (link, name) => {
+    if (!link) return;
+    const type = link.includes(".docx")
+      ? "docx"
+      : link.includes(".xlsx")
+        ? "xlsx"
+        : link.includes(".pdf") || link.includes(".PDF")
+          ? "pdf"
+          : link.includes(".pptx")
+            ? "pptx"
+            : link.includes(".zip")
+              ? "zip"
+              : "rar";
+    const fallbackName = name || convertToFileName(link.split("/").pop());
+    const nameDownload = `${fallbackName}.${type}`;
+
+    handDownloadFileOrigin(link, nameDownload);
+  };
+
+  const isAttachmentImage = (item) => {
+    if (!item) return false;
+    const type = (item.type || "").toString().toLowerCase();
+    const extension = (item.extension || "").toString().toLowerCase();
+    const mineType = (item.mineType || item.fileType || "").toString().toLowerCase();
+    return type === "image" || mineType.startsWith("image") || FILE_IMAGE_EXTENSIONS.includes(extension);
+  };
+
+  const getAttachmentThumbnail = (item) => {
+    if (!item) return "";
+    if (isAttachmentImage(item)) {
+      return item.fileUrl || item.url;
+    }
+
+    const extension = (item.extension || item.type || "").toString().toLowerCase();
+
+    switch (extension) {
+      case "doc":
+      case "docx":
+        return ImgFileDoc;
+      case "xls":
+      case "xlsx":
+        return ImgFileExcel;
+      case "pdf":
+        return ImgFilePDF;
+      case "ppt":
+      case "pptx":
+        return ImgFilePowerpoint;
+      case "zip":
+        return ImgZip;
+      case "rar":
+        return ImgRar;
+      default:
+        return ImgFileDoc;
+    }
+  };
+
+  const handleUploadDocument = (e) => {
+    e.preventDefault();
+
+    const file = e.target.files[0];
+
+    const checkFile = file.type;
+    setIsLoadingFile(true);
+    if (checkFile.startsWith("image")) {
+      handUploadFile(file);
+      return;
+    }
+
+    uploadDocumentFormData(
+      file,
+      (response) => appendAttachment(response, file),
+      onError,
+      onProgress
+    );
+  };
+
+  const onError = (message) => {
+      setIsLoadingFile(false);
+      showToast(message.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+    };
+
+    useEffect(() => {
+        if (isLoadingFile === false) {
+          setShowProgress(0);
+        }
+      }, [isLoadingFile]);
+
+  useEffect(() => {
+    setFormData((prevState) => {
+      if (!prevState?.values) return prevState;
+      const payload = listAttactment.map(serializeAttachmentItem).filter((item) => item);
+      const commitValue = payload.length === 0 ? "" : JSON.stringify(payload.length === 1 ? payload[0] : payload);
+      if (prevState.values.commits === commitValue) return prevState;
+      return {
+        ...prevState,
+        values: {
+          ...prevState.values,
+          commits: commitValue,
+        },
+      };
+    });
+  }, [listAttactment]);
+
+  const onProgress = (percent) => {
+    if (percent) {
+      setShowProgress(percent.toFixed(0));
+    }
   };
 
   const handleChangeValueEmployee = (e) => {
@@ -671,6 +912,78 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           fill: true,
         },
         {
+          name: "commits",
+          type: "custom",
+          snippet: (
+            <div className="attachments">
+              <label className="title-attachment">Tài liệu đính kèm</label>
+              <div className={listAttactment.length >= 5 ? "list-image-scroll" : "wrapper-list-image"}>
+                {listAttactment.length === 0 ? (
+                  <label htmlFor="imageUpload" className="action-upload-image">
+                    <div className={`wrapper-upload ${isLoadingFile ? "d-none" : ""}`}>
+                      <Icon name="Upload" />
+                      Tải tài liệu lên
+                    </div>
+                    <div className={`is__loading--file ${isLoadingFile ? "" : "d-none"}`}>
+                      <Icon name="Refresh" />
+                      <span className="name-loading">Đang tải...{showProgress}%</span>
+                    </div>
+                  </label>
+                ) : (
+                  <Fragment>
+                    <div className="d-flex align-items-center">
+                      {listAttactment.map((item, idx) => (
+                        <div key={idx} className={isAttachmentImage(item) ? "image-item" : "file-item"}>
+                          <img
+                            src={getAttachmentThumbnail(item)}
+                            alt="image-warranty"
+                          />
+                          {!isAttachmentImage(item) && (
+                            <div className="file-name">
+                              <h5 style={{ fontSize: 14 }}>
+                                {item?.fileName || convertToFileName(item?.fileUrl || item?.url)}
+                              </h5>
+                            </div>
+                          )}
+                          <Tippy content="Tải xuống">
+                            <span
+                              className="icon-download"
+                              onClick={() => download(item?.fileUrl || item?.url, item?.fileName)}
+                            >
+                              <Icon name="Download" />
+                            </span>
+                          </Tippy>
+                          <Tippy content="Xoá">
+                            <span className="icon-delete" onClick={() => handleRemoveImageItem(idx)}>
+                              <Icon name="Trash" />
+                            </span>
+                          </Tippy>
+                        </div>
+                      ))}
+
+                      <div className={`is__loading--file ${isLoadingFile ? "" : "d-none"}`}>
+                        <Icon name="Refresh" />
+                        <span className="name-loading">Đang tải...{showProgress}%</span>
+                      </div>
+
+                      <label htmlFor="imageUpload" className="add-image">
+                        <Icon name="PlusCircleFill" />
+                      </label>
+                    </div>
+                  </Fragment>
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*,.xlsx,.xls,.doc,.docx,.ppt,.pptx,.txt,.pdf"
+                className="d-none"
+                id="imageUpload"
+                onChange={(e) => handleUploadDocument(e)}
+              />
+            </div>
+          ),
+        },
+        {
           label: "Thời gian thực hiện tiếp theo",
           name: "scheduleNext",
           type: "date",
@@ -732,6 +1045,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       {
         ...(formData.values as ITreatmentHistoryRequestModel),
         ...(data ? { id: data.id } : {}),
+        
       },
     ];
 
@@ -759,6 +1073,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
     setDetailService(null);
     setDetailCard(null);
     setIsLoadingBuyService(false);
+    setListAttactment([]);
   };
 
   const actions = useMemo<IActionModal>(
@@ -863,6 +1178,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
                 setDetailService(null);
                 setListBuyService([]);
                 setDetailCard(null);
+                setListAttactment([]);
               }
             }}
           />

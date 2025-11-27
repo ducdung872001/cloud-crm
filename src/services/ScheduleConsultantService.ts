@@ -15,6 +15,12 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  updateKafka: (body: IScheduleConsultantRequestModelProps) => {
+    return fetch(urlsApi.scheduleConsultant.updateKafka, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   detail: (id: number) => {
     return fetch(`${urlsApi.scheduleConsultant.detail}?id=${id}`, {
       method: "GET",

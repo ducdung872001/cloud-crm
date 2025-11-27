@@ -10,7 +10,7 @@ import ContractService from "services/ContractService";
 import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
-import { isDifferenceObj } from 'reborn-util';
+import { isDifferenceObj } from "reborn-util";
 import { SelectOptionData } from "utils/selectCommon";
 import "./AddContractModal.scss";
 
@@ -33,13 +33,13 @@ export default function AddContractModal(props: AddContractModalProps) {
 
   const values = useMemo(
     () =>
-    ({
-      name: data?.name ?? "",
-      taxCode: data?.taxCode ?? "",
-      contractNo: data?.contractNo ?? "",
-      signDate: data?.signDate ?? "",
-      dealValue: data?.dealValue ?? "",
-    } as IContractRequest),
+      ({
+        name: data?.name ?? "",
+        taxCode: data?.taxCode ?? "",
+        contractNo: data?.contractNo ?? "",
+        signDate: data?.signDate ?? "",
+        dealValue: data?.dealValue ?? "",
+      } as IContractRequest),
     [data, onShow]
   );
 
@@ -157,8 +157,8 @@ export default function AddContractModal(props: AddContractModalProps) {
           fill: true,
           options: listEmployee,
           onMenuOpen: onSelectOpenEmployee,
-          isLoading: isLoadingEmployee, 
-        },        
+          isLoading: isLoadingEmployee,
+        },
         {
           label: "Loại hợp đồng",
           name: "pipelineId",
@@ -244,10 +244,7 @@ export default function AddContractModal(props: AddContractModalProps) {
             title: data ? "Cập nhật" : "Tạo mới",
             type: "submit",
             color: "primary",
-            disabled:
-              isSubmit ||
-              !isDifferenceObj(formData.values, values) ||
-              (formData.errors && Object.keys(formData.errors).length > 0),
+            disabled: isSubmit || !isDifferenceObj(formData.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },
         ],

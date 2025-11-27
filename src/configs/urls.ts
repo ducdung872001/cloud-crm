@@ -13,8 +13,14 @@ console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
+  beautySalon: {
+    list: prefixRebornVn + "/beautySalon/list",
+    approve: prefixRebornVn + "/api/beautySalon/approve",
+    delete: prefixRebornVn + "/api/beautySalon/delete",
+  },
   user: {
     create: prefixAuthenticator + "/user/create",
+    update: prefixAuthenticator + "/user/admin_update",
     profile: prefixAuthenticator + "/user/me",
     detail: prefixAuthenticator + "/user/get",
     basicInfo: prefixAuthenticator + "/user/basic_info",
@@ -23,6 +29,8 @@ export const urlsApi = {
     changePass: prefixAuthenticator + "/user/change_pass",
     checkLogin: prefixAdmin + "/userLogin/list",
     detailTimeLogin: prefixAdmin + "/userLogin/daily/list",
+    list: prefixAuthenticator + "/user/list",
+    delete: prefixAuthenticator + "/user/delete",
   },
 
   customer: {
@@ -37,7 +45,7 @@ export const urlsApi = {
     checkInProcess: prefixAdmin + "/customer/checkInProcess",
     link: prefixAdmin + "/customer/link_user",
     detail: prefixAdmin + "/customer/get",
-    area: "https://reborn.vn/api/area/child",
+    area: prefixRebornVn + "/area/child",
 
     // api lấy ra thông tin khách hàng dựa theo id
     listById: prefixAdmin + "/customer/list_by_id",
@@ -159,6 +167,7 @@ export const urlsApi = {
 
     //lấy tài khoản tổng đài
     getAccountCall: prefixAdmin + "/employeeAgent/employeeId",
+    reloadData: prefixAdmin + "/customer/moveToEs",
   },
 
   partner: {
@@ -519,6 +528,7 @@ export const urlsApi = {
     update: prefixAdmin + "/scheduleConsultant/update",
     detail: prefixAdmin + "/scheduleConsultant/get",
     delete: prefixAdmin + "/scheduleConsultant/delete",
+    updateKafka: prefixBpm + "/kafka/activate/receiveTask",
   },
   // lịch điều trị
   scheduleTreatment: {
@@ -526,6 +536,7 @@ export const urlsApi = {
     update: prefixAdmin + "/scheduleTreatment/update",
     detail: prefixAdmin + "/scheduleTreatment/get",
     delete: prefixAdmin + "/scheduleTreatment/delete",
+    updateKafka: prefixBpm + "/kafka/activateProcess",
   },
   // lịch chung (điều trị, tư vấn, công việc)
   scheduleCommon: {
@@ -559,7 +570,9 @@ export const urlsApi = {
   },
   orderRequest: {
     list: prefixAdmin + "/order-request/list",
+    listOne: prefixAdmin + "/order-request/list-one",
     update: prefixAdmin + "/order-request/update",
+    updateAndInit: prefixAdmin + "/order-request/update-and-init",
     delete: prefixAdmin + "/order-request/delete-soft",
     export: prefixAdmin + "/order-request/export",
     detail: prefixAdmin + "/order-request/get",
@@ -810,7 +823,7 @@ export const urlsApi = {
   },
 
   organization: {
-    list: "https://reborn.vn/api/beautySalon/list",
+    list: prefixRebornVn + "/beautySalon/list",
     customerUploadList: prefixAdmin + "/customerUpload/list",
     customerUploadDelete: prefixAdmin + "/cleanData/uploadCustomer/delete",
   },
@@ -935,6 +948,13 @@ export const urlsApi = {
     checkDuplicated: prefixAdmin + "/eformAttribute/checkDuplicated",
     contractEformUpdate: prefixAdmin + "/contractEform/update",
     contractEformDetail: prefixAdmin + "/contractEform/get/criteria",
+  },
+
+  manageDefaultProcesses: {
+    list: prefixAdmin + "/process-permission/list",
+    update: prefixAdmin + "/process-permission/update",
+    detail: prefixAdmin + "/process-permission/get",
+    delete: prefixAdmin + "/process-permission/delete",
   },
 
   contractAttachment: {
@@ -1093,6 +1113,7 @@ export const urlsApi = {
     list: prefixAdmin + "/contract/list",
     detail: prefixAdmin + "/contract/get",
     update: prefixAdmin + "/contract/update",
+    updateAndInit: prefixAdmin + "/contract/update-and-init",
     delete: prefixAdmin + "/contract/delete",
     updateAlert: prefixAdmin + "/contract/update/alert",
 
@@ -1404,12 +1425,12 @@ export const urlsApi = {
   image: {
     upload: "https://login.noron.vn/api/upload/image",
     // upload: "https://reborn.vn/api/upload/file",
-    uploadReborn: "https://reborn.vn/api/upload/file",
+    uploadReborn: prefixRebornVn + "/upload/file",
     uploadNoron: "https://login.noron.vn/api/upload/file",
     // uploadReborn: "http://localhost:8000/api/upload/file"
   },
   file: {
-    upload: "https://reborn.vn/api/upload/file",
+    upload: prefixRebornVn + "/upload/file",
   },
   video: {
     upload: "https://login.noron.vn/api/upload/file",
@@ -1563,6 +1584,8 @@ export const urlsApi = {
   ticket: {
     list: prefixAdmin + "/ticket/list",
     update: prefixAdmin + "/ticket/update",
+    updateAndInit: prefixAdmin + "/ticket/update-and-init",
+    collect: prefixAdmin + "/ticket/send/jssdk",
     detail: prefixAdmin + "/ticket/get",
     delete: prefixAdmin + "/ticket/delete",
     viewer: prefixAdmin + "/ticket/viewer",
@@ -1977,7 +2000,7 @@ export const urlsApi = {
   },
   // video hướng dẫn
   videoSupport: {
-    list: "https://reborn.vn/api//support/list",
+    list: prefixRebornVn + "/support/list",
   },
   // phiếu điều chỉnh kho
   adjustmentSlip: {
@@ -2081,7 +2104,7 @@ export const urlsApi = {
   },
   //lay danh sach voucher
   voucher: {
-    list: prefixAdmin + "/promotion/list",
+    list: prefixAdmin + "/promotion/list-active",
   },
 
   email: {
@@ -2627,23 +2650,23 @@ export const urlsApi = {
     list: prefixAdmin + "/artifactGridHeader/list",
 
     //Thêm cột
-    update: prefixAdmin + "/artifactGridHeader/update",
-    detail: prefixAdmin + "/artifactGridHeader/get",
-    delete: prefixAdmin + "/artifactGridHeader/delete",
+    update: prefixBpm + "/artifactGridHeader/update",
+    detail: prefixBpm + "/artifactGridHeader/get",
+    delete: prefixBpm + "/artifactGridHeader/delete",
 
     //Thêm hàng
-    updateRow: prefixAdmin + "/artifactGrid/update",
-    detailRow: prefixAdmin + "/artifactGrid/get",
-    deleteRow: prefixAdmin + "/artifactGrid/delete",
+    updateRow: prefixBpm + "/artifactGrid/update",
+    detailRow: prefixBpm + "/artifactGrid/get",
+    deleteRow: prefixBpm + "/artifactGrid/delete",
 
-    importFile: prefixAdmin + "/upload/excelFile",
+    importFile: prefixBpm + "/upload/excelFile",
 
     //Thêm hàng
-    updateComment: prefixAdmin + "/artifactComment/update",
-    listComment: prefixAdmin + "/artifactComment/list",
+    updateComment: prefixBpm + "/artifactComment/update",
+    listComment: prefixBpm + "/artifactComment/list",
 
     //Lấy lữ liệu upload
-    getRowsUpload: prefixAdmin + "/upload/getRows",
+    getRowsUpload: prefixBpm + "/upload/getRows",
   },
   //TODO: End quy trình bpm
 
@@ -2755,6 +2778,7 @@ export const urlsApi = {
   fs: {
     lst: prefixAdmin + "/fs/list",
     update: prefixAdmin + "/fs/update",
+    updateAndInit: prefixAdmin + "/fs/update-and-init",
     delete: prefixAdmin + "/fs/delete",
     detail: prefixAdmin + "/fs/get",
     cloneFs: prefixAdmin + "/fs/clone",
@@ -2823,10 +2847,23 @@ export const urlsApi = {
   },
   // đoạn này lấy ra danh sách các gói
   package: {
-    list: "https://reborn.vn/api/package/list",
-    addOrgApp: "https://reborn.vn/api/orgApp/add",
-    updateBill: "https://reborn.vn/api/orgApp/update/bill",
-    calcPrice: "https://reborn.vn/api/orgApp/calc/priceRemaining",
+    list: prefixRebornVn + "/package/list",
+    update: prefixRebornVn + "/package/update",
+    updateStatus: prefixRebornVn + "/package/update/status",
+    detail: prefixRebornVn + "/package/get",
+    delete: prefixRebornVn + "/package/delete",
+    addOrgApp: prefixRebornVn + "/orgApp/add",
+    updateBill: prefixRebornVn + "/orgApp/update/bill",
+    calcPrice: prefixRebornVn + "/orgApp/calc/priceRemaining",
+    extend: prefixRebornVn + "/orgApp/extend",
+    upgrade: prefixRebornVn + "/orgApp/upgrade",
+  },
+
+  field: {
+    list: prefixRebornVn + "/field/list",
+    update: prefixRebornVn + "/field/update",
+    detail: prefixRebornVn + "/field/get",
+    delete: prefixRebornVn + "/field/delete",
   },
   gift: {
     list: prefixAdmin + "/gift/list",
@@ -2886,6 +2923,7 @@ export const urlsApi = {
   objectGroup: {
     list: prefixBpm + "/objectGroup/list",
     update: prefixBpm + "/objectGroup/update",
+    updateConfig: prefixBpm + "/objectGroup/update/config",
     detail: prefixBpm + "/objectGroup/get",
     delete: prefixBpm + "/objectGroup/delete",
   },
@@ -2951,6 +2989,14 @@ export const urlsApi = {
     update: prefixAdmin + "/transactionInformation/update",
     get: prefixAdmin + "/transactionInformation/get",
     delete: prefixAdmin + "/transactionInformation/delete",
+  },
+
+  application: {
+    lst: prefixRebornVn + "/orgApp/list",
+    lstAll: prefixRebornVn + "/orgApp/list/all",
+    confirmBill: prefixRebornVn + "/orgApp/payment/verify",
+    update: prefixRebornVn + "/organization/update",
+    detail: prefixRebornVn + "/beautySalon/get",
   },
 };
 
@@ -3039,6 +3085,8 @@ export const urls = {
   detail_warranty: "/detail_warranty/warrantyId/:id",
   setting_warranty: "/setting_warranty",
   ticket: "/ticket",
+  ticket_process: "/ticket_process",
+  collect_ticket: "/collect_ticket",
   detail_ticket: "/detail_ticket/ticketId/:id",
   setting_ticket: "/setting_ticket",
   setting_sms: "/setting_sms",
@@ -3109,6 +3157,7 @@ export const urls = {
   // danh sách cơ hội
   opportunity_list: "/opportunity_list",
   order_request_list: "/order_request_list",
+  order_tracking: "/order_tracking",
   // quản lý cơ hội
   management_opportunity: "/management_opportunity",
   // tổng đài
@@ -3154,6 +3203,7 @@ export const urls = {
   bpm: "/bpm",
   bpm_create: "/bpm/create/:id",
   manage_processes: "/manage_processes",
+  manage_default_processes: "/manage_default_processes",
   process_simulation: "/process_simulation",
   object_manage: "/object_manage",
   //cài đặt quy trình
@@ -3192,6 +3242,17 @@ export const urls = {
   //upload tài liệu bpm
   // Link cho phép tải tài liệu lên
   upload_document: "/upload_document",
+
+  //Quản trị người dùng
+  user: "/user",
+  //Quản lý tổ chức
+  organization: "/organization",
+  //quản lý gói dịch vụ
+  package_manage: "/package_manage",
+  //danh sách gia hạn
+  extension_list: "/extension_list",
+  //quản lý lĩnh vực
+  field_management: "/field_management",
 };
 
 export default urls;

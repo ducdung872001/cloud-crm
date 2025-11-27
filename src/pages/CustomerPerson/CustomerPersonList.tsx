@@ -2444,6 +2444,25 @@ export default function CustomerPersonList() {
     setShowDialog(true);
   };
 
+  const reloadData = async (listIdCustomer) => {
+    const body = {
+      lstId: listIdCustomer
+    };
+
+    const response = await CustomerService.reloadData(body);
+
+    if (response.code === 0) {
+      setIsLoading(true);
+      setTimeout(() => {
+        showToast("Chạy lại dữ liệu thành công", "success");
+        getListCustomer(params, activeTitleHeader);
+        setListIdChecked([]);
+      }, 2000)
+    } else {
+      showToast(response.message || "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+  }
+
   const [showModalOther, setShowModalOther] = useState<boolean>(false);
 
   const bulkActionList: BulkActionItemModel[] = [
@@ -2531,6 +2550,12 @@ export default function CustomerPersonList() {
       title: "Gửi SMS",
       callback: () => {
         setShowPageSendSMS(true);
+      },
+    },
+    {
+      title: "Chạy lại dữ liệu",
+      callback: () => {
+        reloadData(listIdChecked);
       },
     },
     permissions["CUSTOMER_DELETE"] == 1 && {

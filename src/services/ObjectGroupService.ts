@@ -14,6 +14,12 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  updateConfig: (body: any) => {
+    return fetch(urlsApi.objectGroup.updateConfig, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   detail: (id: number) => {
     return fetch(`${urlsApi.objectGroup.detail}?id=${id}`, {
       method: "GET",

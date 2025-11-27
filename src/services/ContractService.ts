@@ -21,6 +21,12 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  updateAndInit: (body: IContractRequest) => {
+    return fetch(urlsApi.contract.updateAndInit, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   delete: (id: number) => {
     return fetch(`${urlsApi.contract.delete}?id=${id}`, {
       method: "DELETE",
@@ -93,7 +99,6 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-
 
   fieldTable: (params: IContractFieldFilterRequest) => {
     return fetch(`${urlsApi.contract.fieldTable}${convertParamsToString(params)}`, {

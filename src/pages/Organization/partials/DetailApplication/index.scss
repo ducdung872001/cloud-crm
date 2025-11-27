@@ -1,0 +1,277 @@
+.detail__application {
+  .action-navigation {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .action-backup {
+      display: flex;
+      align-items: center;
+
+      h1 {
+        color: var(--text-primary-color);
+        font-size: 2.4rem;
+        line-height: 2.8rem;
+        padding-right: 1rem;
+        margin: 0;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .title-first {
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+
+      .title-last {
+        color: var(--extra-color-50);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      svg {
+        width: 4rem;
+        height: 4rem;
+        padding-right: 1rem;
+      }
+    }
+
+    @media (max-width: 760px) {
+      justify-content: flex-start;
+      flex-direction: column;
+
+      .action-backup {
+        position: relative;
+
+        .title-first {
+          display: none;
+        }
+
+        svg {
+          position: absolute;
+          left: -1.4rem;
+          padding-right: 0.5rem;
+          transform: rotate(180deg);
+        }
+
+        .title-last {
+          color: var(--text-primary-color);
+          margin-left: 3rem;
+        }
+      }
+
+      .title-action {
+        display: block !important;
+        margin-left: 3rem;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .action-backup {
+        .title-last {
+          font-size: 2rem;
+          color: var(--text-primary-color);
+          margin-left: 3rem;
+        }
+      }
+    }
+  }
+
+  .info__application {
+    padding: 2.4rem;
+    margin-top: 1.2rem;
+
+    .title {
+      margin-bottom: 1rem;
+    }
+
+    .lst__application {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.2rem 2rem;
+
+      .item__application {
+        width: 18rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background-color: var(--extra-color-5);
+        border: 1.3px solid var(--extra-color-50);
+        position: relative;
+        overflow: hidden;
+
+        .avatar-app {
+          width: 16rem;
+          height: 10rem;
+          overflow: hidden;
+          padding: 1rem;
+          margin-top: 1rem;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+
+        .info__app {
+          width: 100%;
+          margin-top: 1rem;
+          // color: var(--white-color);
+          background-color: var(--extra-color-20);
+          font-size: 1.3rem;
+          padding: 0.8rem 0.8rem 3rem;
+
+          .item-info {
+            .key {
+              position: relative;
+              display: inline-block;
+              width: 9.2rem;
+
+              &::after {
+                content: ":";
+                position: absolute;
+                right: 0.3rem;
+              }
+            }
+          }
+        }
+
+        .more_view {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0 0.3rem;
+          font-size: 1.2rem;
+          padding: 0.2rem 0;
+          background-color: var(--warning-color);
+          color: var(--white-color);
+          cursor: pointer;
+
+          svg {
+            width: 1.6rem;
+            height: 1.6rem;
+            fill: var(--white-color);
+          }
+
+          &:hover {
+            background-color: rgba($color: var(--warning-color-rgb), $alpha: 0.8);
+          }
+        }
+      }
+    }
+
+    .app__other {
+      .lst__app--other {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2rem;
+
+        .item-other {
+          border-radius: 0.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-direction: column;
+          background-color: var(--extra-color-5);
+          border: 1.3px solid var(--extra-color-50);
+          position: relative;
+          overflow: hidden;
+
+          .avatar-app {
+            width: 16rem;
+            height: 10rem;
+            overflow: hidden;
+            padding: 1rem;
+            margin: 1rem auto 0;
+
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+          }
+
+          .info__app {
+            .desc {
+              width: 100%;
+              height: 100%;
+              margin-top: 1rem;
+              // color: var(--white-color);
+              background-color: var(--extra-color-20);
+              font-size: 1.3rem;
+              padding: 0.8rem 0.8rem 2.6rem;
+              min-height: 13rem;
+              margin-bottom: 0;
+            }
+          }
+
+          .action__app {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0 0.3rem;
+            font-size: 1.2rem;
+            padding: 0.5rem 0;
+            background-color: var(--warning-color);
+            color: var(--white-color);
+            cursor: pointer;
+
+            &:hover {
+              background-color: rgba($color: var(--warning-color-rgb), $alpha: 0.8);
+            }
+          }
+        }
+      }
+    }
+
+    .table__detail--apply {
+      margin-top: 3.2rem;
+      border: 1px dashed var(--extra-color-50);
+      border-radius: 0.3rem;
+      padding: 1.2rem;
+
+      .name-apply {
+        font-weight: 500;
+      }
+
+      .box-table {
+        margin-top: 1rem;
+
+        .action-apply {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1rem;
+
+          .base-button {
+            width: 8rem;
+            font-size: 1.3rem;
+            line-height: 2rem;
+            padding: 0.4rem 1rem;
+          }
+        }
+      }
+    }
+
+    .__footer {
+      margin-top: 3rem;
+
+      .modal-footer {
+        padding: 1.6rem 0;
+      }
+    }
+  }
+}

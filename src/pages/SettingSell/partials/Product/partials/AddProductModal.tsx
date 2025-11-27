@@ -308,7 +308,7 @@ export default function AddProductModal(props: AddProductProps) {
                     fill={true}
                     value={formData?.values?.code}
                     placeholder="Nhập mã sản phẩm"
-                    onChange={(e) => setFormData({ ...formData, values: { ...formData.values, code: e.target.code } })}
+                    onChange={(e) => setFormData({ ...formData, values: { ...formData.values, code: e.target.value } })}
                   />
                 </div>
               </div>

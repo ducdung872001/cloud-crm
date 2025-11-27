@@ -64,7 +64,7 @@ export default function ModalSigner(props: IAddSignerFSAndQuoteProps) {
     const param = {
       name: search,
       page: page,
-      status: 1,
+      // status: 1,
       limit: 10,
       potId: data?.id,
       opType: 'EX' // lấy về ds quy trình mà đối tượng chưa trình, IN - quy trình đối tượng đã trình

@@ -32,4 +32,5 @@ export interface ITreatmentHistoryResponseModel {
   serviceNumber: string;
   isCombo: number;
   totalTreatment: number;
+  commits: string;
 }

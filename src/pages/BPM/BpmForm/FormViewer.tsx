@@ -9,7 +9,7 @@ import { components } from "react-select";
 import ApprovedObjectService from "services/ApprovedObjectService";
 import Loading from "components/loading";
 // import FormattedNumberField from "./FormattedNumberField";
-// import GridExtension from "./extension/gridViewer/render";
+import GridExtension from "./extension/gridViewer/render";
 // import RenderExtension from './extension/range/render';
 // import HiddenRenderExtension from './extension/hidden/render';
 // import NumberRenderExtension from './extension/number/render';
@@ -274,7 +274,7 @@ const FormViewerComponent = (props: any) => {
         // TreeSelectorEditorExtension
         // Đóng tạm vì gây lỗi khi build lên môi trường production
         // RenderExtension,
-        // GridExtension,
+        GridExtension,
       ],
 
       // components: {
@@ -290,18 +290,13 @@ const FormViewerComponent = (props: any) => {
     let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
       let { schema, data } = event;
-      // console.log("Check grid > Changed Data =>", data);
 
       let components = schema.components;
       const newValues = data;
 
       for (const key in newValues) {
         if (!_.isEqual(newValues[key], prevValues[key])) {
-          // console.log("Field thay đổi:", key, "->", newValues[key]);
-          console.log("components", components);
-
           const keyFind = components.find((el) => el.key === key || el.path === key);
-          console.log("keyFind", keyFind);
 
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
           if (keyFind?.properties?.bindingTarget) {
@@ -350,7 +345,6 @@ const FormViewerComponent = (props: any) => {
         if (component.type === "expression") {
           let dataExpression = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
-
           if (target) {
             if (dataExpression && dataExpression != data[target]) {
               data[target] = dataExpression;
@@ -393,11 +387,11 @@ const FormViewerComponent = (props: any) => {
 
         if (component.type === "dynamiclist") {
           component.components.forEach((componentChild, index) => {
-            if (componentChild.type == "select") {          
+            if (componentChild.type == "select" || componentChild.type === "expression") {
               data[component.path].map((el) => {
                 let dataSelect = el[componentChild.key]; //Lấy ra key
                 let target = componentChild?.properties?.bindingTarget;
-                
+
                 if (target) {
                   if (componentChild.type == "select") {
                     const listTarget = target.split(",").map((item) => item.trim()) || [];
@@ -414,29 +408,38 @@ const FormViewerComponent = (props: any) => {
                       }
                     }
                   }
+
+                  if (componentChild.type === "expression") {
+                    let dataExpression = el[componentChild.key]; //Lấy ra key
+
+                    if (dataExpression) {
+                      el[target] = dataExpression;
+                      // rerenderForm(schema, data);
+                    }
+                  }
                 }
               });
             }
 
-            if (componentChild.type == "number") {
-              if (componentChild.type == "number" && componentChild?.properties?.formula) {
-                let formula = componentChild?.properties?.formula;
-                if (formula && componentChild?.properties?.formula) {
-                  // console.log('data', data);
-                  
-                  data[component.path].map((el, index) => {
-                    // console.log('el', el);
-                    
-                    formula = formula.replace(/curr\.([a-zA-Z_]\w*)/g, (_, field) => el[field]);
-                    // console.log('formula', eval(formula));
-                    // el[componentChild?.key] = eval(formula);
-                    data[component.path][index][componentChild.key] = eval(formula);
-                  });
-                  return data;
-                  
-                }
-              }
-            }
+            // if (componentChild.type == "number") {
+            //   if (componentChild.type == "number" && componentChild?.properties?.formula) {
+            //     let formula = componentChild?.properties?.formula;
+            //     if (formula && componentChild?.properties?.formula) {
+            //       // console.log('data', data);
+
+            //       data[component.path].map((el, index) => {
+            //         console.log('el', el);
+
+            //         formula = formula.replace(/curr\.([a-zA-Z_]\w*)/g, (_, field) => el[field]);
+            //         // console.log('formula', eval(formula));
+            //         // el[componentChild?.key] = eval(formula);
+            //         data[component.path][index][componentChild.key] = eval(formula);
+            //       });
+            //       return data;
+
+            //     }
+            //   }
+            // }
           });
         }
       });
@@ -461,6 +464,7 @@ const FormViewerComponent = (props: any) => {
       if (setShowPopupCustom && codeTemplateEform) {
         setShowPopupCustom(true);
         setCodePopupCustom(codeTemplateEform);
+        console.log("codeTemplateEform", codeTemplateEform);
       }
 
       //1. Loại là select
@@ -544,8 +548,8 @@ const FormViewerComponent = (props: any) => {
             const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
             return [key.trim(), value];
           })
-        );        
- 
+        );
+
         //Tồn tại trường binding
         if (fields) {
           let arrField = fields.split(",");
@@ -554,10 +558,10 @@ const FormViewerComponent = (props: any) => {
           for (let index = 0; index < arrField.length; index++) {
             let field = arrField[index].trim();
             let value = formData[field] ?? 0;
-            params = { 
-              ...params, 
+            params = {
+              ...params,
               [field]: value,
-              ...(paramsUrl ? {...paramsTotal} : {})
+              ...(paramsUrl ? { ...paramsTotal } : {}),
             };
           }
 
@@ -839,21 +843,21 @@ const FormViewerComponent = (props: any) => {
 
       // Convert validationErrors object into an array of keys
       const errorFields = Object.keys(validationErrors);
-      if (!showOnRejectModal) {
-        if (errorFields.length > 0) {
-          showToast("Các trường bắt buộc không được để trống", "error");
-          // // console.log('Object.entries(validationErrors)', Object.entries(validationErrors));
-          // Duyệt qua các lỗi và thay thế thông báo
-          for (const fieldId in validationErrors) {
-            validationErrors[fieldId] = validationErrors[fieldId].map((error) => {
-              if (error === "Field is required.") {
-                return "Không được để trống.";
-              }
-              return error;
-            });
-          }
-          // return;
+      if (!showOnRejectModal && errorFields.length > 0) {
+        showToast("Các trường bắt buộc không được để trống", "error");
+        for (const fieldId in validationErrors) {
+          validationErrors[fieldId] = validationErrors[fieldId].map((error) => {
+            if (error === "Field is required.") {
+              return "Không được để trống.";
+            }
+            return error;
+          });
         }
+        // Gọi callback để thông báo có lỗi validation (nếu có)
+        if (props.onValidationError) {
+          props.onValidationError();
+        }
+        return;
       }
       const formData = event.data;
 
@@ -1271,8 +1275,8 @@ const FormViewerComponent = (props: any) => {
   };
 
   useEffect(() => {
-     // Định nghĩa hàm bất đồng bộ trong useEffect để sử dụng await
-     const initializeForm = async () => {
+    // Định nghĩa hàm bất đồng bộ trong useEffect để sử dụng await
+    const initializeForm = async () => {
       // Xử lý nếu là iframe (Dùng cho ảnh)
       let updatedFormSchema = updateIframeLinks(formSchema);
 

@@ -1,6 +1,7 @@
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import { IScheduleTreatmentFilterRequest, IScheduleTreatmentRequestModal } from "model/scheduleTreatment/ScheduleTreatmentRequestModel";
+import { update } from "lodash";
 
 export default {
   list: (params?: IScheduleTreatmentFilterRequest, signal?: AbortSignal) => {
@@ -11,6 +12,12 @@ export default {
   },
   update: (body: IScheduleTreatmentRequestModal) => {
     return fetch(urlsApi.scheduleTreatment.update, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  updateKafka: (body: any) => {
+    return fetch(urlsApi.scheduleTreatment.updateKafka, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());

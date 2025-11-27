@@ -10,7 +10,7 @@ export default {
   },
 
   update: (body: any) => {
-    return fetch(urlsApi.campaignMarketing.update, {
+    return fetch(`${urlsApi.campaignMarketing.update}?processCode=QTMKT`, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());

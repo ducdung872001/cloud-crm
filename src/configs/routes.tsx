@@ -23,6 +23,8 @@ import KpiObjectList from "pages/Kpi/KpiObjectList/KpiObjectList";
 import DetailPersonList from "pages/CustomerPerson/partials/DetailPerson/DetailPersonList";
 import WarrantyList from "pages/Warranty/WarrantyList";
 import TicketList from "pages/Ticket/TicketList";
+import TicketListProcess from "pages/Ticket/TicketListProcess";
+import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import SettingTicketList from "pages/SettingTicket/SettingTicketList";
 import SettingWarrantyList from "pages/SettingWarranty/SettingWarrantyList";
 import DetailWarranty from "pages/Warranty/partials/DetailWarranty/DetailWarranty";
@@ -130,7 +132,7 @@ import DetailGuaranteeContract from "pages/Contract/GuaranteeContract/DetailGuar
 import CampaignMarketingList from "pages/CampaignMarketing/CampaignMarketingList";
 import BusinessProcessList from "pages/BPM/BusinessProcessList/BusinessProcessList";
 import SettingBusinessProcess from "pages/BPM/SettingBusinessProcess/SettingBusinessProcess";
-import ConfigBPM from "pages/ConfigBPM/ConfigBPM";
+import ConfigBPM from "pages/ConfigBPM";
 import ProcessedObjectList from "pages/SettingProcess/partials/ProcessedObjectList";
 import CreateOrder from "pages/Order/createOrder";
 import OrderInvoiceList from "pages/Order/orderInvoiceList";
@@ -172,6 +174,14 @@ import EmailConfirm from "pages/Contract/EmailComfirm/EmailConfirm";
 import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import MarketingAutomationListV2 from "pages/MarketingAutomation/MarketingAutomationListV2";
 import CreateMarketingAutomationV2 from "pages/MarketingAutomation/CreateMarketingAutomation/CreateMarketingAutomationV2";
+import { useCookies } from "react-cookie";
+import OrderTracking from "pages/OrderTracking";
+import OrganizationList from "pages/Organization/OrganizationList";
+import Package from "pages/Package";
+import ExtensionList from "pages/Extension/ExtensionList";
+import UserList from "pages/User/UserList";
+import FieldMannagement from "pages/FieldManagement/FieldManagement";
+import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -181,6 +191,8 @@ const checkSubdomainTNEX = sourceDomain.includes("tnex");
 const checkSubdomainTNPM = sourceDomain.includes("tnpm") || sourceDomain.includes("localhost");
 const checkSubdomainGREENSPA = sourceDomain.includes("greenspa");
 // "tnex.reborn.vn"
+
+const checkUserRoot = localStorage.getItem("user.root") == "1";
 
 export const menu: IMenuItem[] = [
   ...(!checkSubdomainTNEX
@@ -531,6 +543,16 @@ export const menu: IMenuItem[] = [
     icon: <Icon name="Sell" />,
     code: "MENU_SELL",
     children: [
+      ...(!checkSubdomainTNEX && checkUserRoot
+        ? [
+            {
+              title: "orderTracking", // Theo dõi đặt hàng
+              path: urls.order_tracking,
+              icon: <Icon name="ManageOrder" />,
+              code: "", //Tài nguyên cho show quản lý đặt hàng hay không
+            },
+          ]
+        : []),
       ...(!checkSubdomainTNEX
         ? [
             {
@@ -640,6 +662,12 @@ export const menu: IMenuItem[] = [
               path: urls.ticket,
               icon: <Icon name="ReceiveTicket" />,
               code: "TICKET",
+            },
+            {
+              title: "receiveTicketProcess", // Tiếp nhận hỗ trợ
+              path: urls.ticket_process,
+              icon: <Icon name="ReceiveTicket" />,
+              code: "KANBAN_V2",
             },
             ...(sourceDomain == "rebornjsc.reborn.vn"
               ? [
@@ -869,10 +897,62 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="SettingJob" />,
               code: "",
             },
+            {
+              title: "manageDefaultProcesses",
+              path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
+              code: "BPM",
+              icon: <Icon name="CashBook" />,
+            },
           ],
         },
       ]
     : []),
+
+  {
+    title: "organizationalManagement",
+    path: urls.organization,
+    icon: <Icon name="Partner" />,
+    code: "RESOURCE",
+    children: [
+      {
+        title: "listOfOrganizations",
+        path: urls.organization,
+        icon: <Icon name="Partner" />,
+        code: "ORGANIZATION_MANAGEMENT",
+      },
+      {
+        title: "userAdministration",
+        path: urls.user,
+        icon: <Icon name="Customer" />,
+        code: "RESOURCE",
+      },
+      {
+        title: "servicePackageManagement",
+        path: urls.package_manage,
+        icon: <Icon name="Beauty" />,
+        code: "RESOURCE",
+      },
+      {
+        title: "renewalList",
+        path: urls.extension_list,
+        icon: <Icon name="Renewal" />,
+        code: "RENEWAL_LIST",
+      },
+      {
+        title: "fieldManagement",
+        path: urls.field_management,
+        icon: <Icon name="FieldMannagement" />,
+        code: "FIELD_MANAGEMENT",
+      },
+      {
+        title: "resourceManagement", // Quản trị tài nguyên
+        path: urls.resource_management,
+        icon: <Icon name="SettingJob" />,
+        code: "RESOURCE",
+      },
+    ],
+  },
+
   ...(checkSubdomainTNPM || checkSubdomainGREENSPA
     ? [
         // {
@@ -1034,12 +1114,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="FileSharing" style={{ width: 35, height: 35, marginLeft: -5 }} />,
               code: "",
             },
-            {
-              title: "resourceManagement", // Quản trị tài nguyên
-              path: urls.resource_management,
-              icon: <Icon name="SettingJob" />,
-              code: "RESOURCE",
-            },
+            // {
+            //   title: "resourceManagement", // Quản trị tài nguyên
+            //   path: urls.resource_management,
+            //   icon: <Icon name="SettingJob" />,
+            //   code: "RESOURCE",
+            // },
           ]
         : []),
     ],
@@ -1261,6 +1341,14 @@ export const routes: IRouter[] = [
     component: <TicketList />,
   },
   {
+    path: urls.ticket_process,
+    component: <TicketListProcess />,
+  },
+  {
+    path: urls.collect_ticket,
+    component: <CollectTicket />,
+  },
+  {
     path: urls.detail_ticket,
     component: <DetailTicket />,
   },
@@ -1468,6 +1556,10 @@ export const routes: IRouter[] = [
   },
   // Danh sách yêu cầu mua hàng
   {
+    path: urls.order_tracking,
+    component: <OrderTracking />,
+  },
+  {
     path: urls.order_request_list,
     component: <OrderRequestList />,
   },
@@ -1659,6 +1751,10 @@ export const routes: IRouter[] = [
     component: <BusinessProcessList />,
   },
   {
+    path: urls.manage_default_processes,
+    component: <ManageDefaultProcesses />,
+  },
+  {
     path: urls.process_simulation,
     component: <ProcessSimulation />,
   },
@@ -1686,5 +1782,25 @@ export const routes: IRouter[] = [
   {
     path: urls.upload_document,
     component: <UploadDocument />,
+  },
+  {
+    path: urls.user,
+    component: <UserList />,
+  },
+  {
+    path: urls.organization,
+    component: <OrganizationList />,
+  },
+  {
+    path: urls.package_manage,
+    component: <Package />,
+  },
+  {
+    path: urls.extension_list,
+    component: <ExtensionList />,
+  },
+  {
+    path: urls.field_management,
+    component: <FieldMannagement />,
   },
 ];

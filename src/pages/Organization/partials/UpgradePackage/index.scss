@@ -1,0 +1,78 @@
+.modal-upgrade-package-service {
+  .form-upgrade-package-service {
+    .modal-body {
+      padding: 0;
+    }
+    .list-form-group {
+      padding: 1.6rem;
+
+      .group__form {
+        display: flex;
+        align-items: center;
+        gap: 0 2.4rem;
+
+        .form-group {
+          flex: 1;
+          margin-bottom: 1.2rem;
+        }
+      }
+
+      .choose-option {
+        display: flex;
+        align-items: center;
+        gap: 0 1rem;
+        margin: 2rem 0;
+
+        .item-option {
+          position: relative;
+          border-radius: 0.3rem;
+          border: 1px solid var(--extra-color-20);
+          background-color: var(--extra-color-30);
+          padding: 0.7rem 1.2rem;
+          cursor: pointer;
+          text-align: center;
+          font-size: 1.4rem;
+          font-weight: 500;
+          flex: 1;
+
+          &:hover {
+            background-color: var(--extra-color-20);
+          }
+
+          &-active {
+            background-color: var(--extra-color-20);
+            border: 1px dashed var(--extra-color-50);
+            cursor: default;
+
+            .icon-check {
+              position: absolute;
+              top: 0.34rem;
+              right: 0.6rem;
+              z-index: 2;
+
+              svg {
+                width: 1.2rem;
+                height: 1.2rem;
+                fill: var(--success-darker-color);
+              }
+            }
+          }
+        }
+      }
+
+      .content {
+        font-size: 1.5rem;
+        margin-bottom: 0;
+        margin-top: 0.3rem;
+
+        strong {
+          font-weight: 600;
+
+          &:first-child {
+            color: var(--error-darker-color);
+          }
+        }
+      }
+    }
+  }
+}

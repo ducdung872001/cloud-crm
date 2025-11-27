@@ -9,6 +9,12 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  listOne: (params?: ICashbookFilterRequest, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.orderRequest.listOne}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
   update: (body: ICashbookRequest) => {
     return fetch(urlsApi.orderRequest.update, {
       method: "POST",

@@ -1,0 +1,21 @@
+.modal-add-field {
+    .form-field-group {
+      .modal-body {
+        padding: 0;
+      }
+      .list-form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 3.2rem;
+        padding: 1.6rem;
+        max-height: 52rem;
+        overflow: auto;
+      }
+  
+      .form-group {
+        width: calc(50% - 1.6rem);
+      }
+  
+    }
+  }
+  

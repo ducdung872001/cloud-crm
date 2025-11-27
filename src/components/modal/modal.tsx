@@ -33,6 +33,13 @@ export default function Modal(props: ModalProps) {
     "dialog-backdrop",
     "react-datepicker-popper",
     "popover",
+    // bọn này để tránh việc click vào menu của ag-grid bị đóng dialog
+    "custom-header-menu",
+    "custom-no-cell-menu",
+    "ag-menu",
+    "ag-list",
+    "Toastify__toast-container",
+    // bọn này để tránh việc click vào menu của ag-grid bị đóng dialog
     ...(staticBackdrop ? ["modal-backdrop"] : []),
   ]);
 

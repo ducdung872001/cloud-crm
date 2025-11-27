@@ -462,7 +462,7 @@ function FilterDate(props: FilterItemProps) {
         onChange={(e) => {
           setEndDate(e);
 
-          if(filterItem.key === 'time_sync'){
+          if (filterItem.key === "time_sync") {
             handleChangeFilter({
               ...filterItem,
               value: moment(e).format("DD/MM/YYYY HH:mm:ss"),
@@ -476,7 +476,7 @@ function FilterDate(props: FilterItemProps) {
         }}
         isFmtText={filterItem.is_fmt_text}
         maxDate={maxDate}
-        hasSelectTime={filterItem.key === 'time_sync' ? true : false}
+        hasSelectTime={filterItem.key === "time_sync" ? true : false}
       />
       {filterItem.type === "date-two" && (
         <Fragment>
@@ -487,7 +487,7 @@ function FilterDate(props: FilterItemProps) {
             onChange={(e) => {
               setMaxDate(e);
 
-              if(filterItem.key === 'time_sync'){
+              if (filterItem.key === "time_sync") {
                 handleChangeFilter({
                   ...filterItem,
                   value_extra: moment(e).format("DD/MM/YYYY HH:mm:ss"),
@@ -501,7 +501,7 @@ function FilterDate(props: FilterItemProps) {
             }}
             isFmtText={filterItem.is_fmt_text}
             minDate={endDate}
-            hasSelectTime={filterItem.key === 'time_sync' ? true : false}
+            hasSelectTime={filterItem.key === "time_sync" ? true : false}
           />
         </Fragment>
       )}
@@ -634,15 +634,11 @@ interface ListFilterChooseProps {
 
 export function ListFilterChoose(props: ListFilterChooseProps) {
   const { listFilterItem, updateFilterItem } = props;
-  
-  const listStringFields = [
-    "Trangthaikhoanvaycashloan",
-    "Trangthaikhoanvaycreditline",
-    "TrangThaiKhoanVayTBoss"
-  ];
-  
+
+  const listStringFields = ["Trangthaikhoanvaycashloan", "Trangthaikhoanvaycreditline", "TrangThaiKhoanVayTBoss"];
+
   // Lọc ra các phần tử có key KHÔNG nằm trong listStringFields
-  const filteredList = listFilterItem.filter(item => !listStringFields.includes(item.key));
+  const filteredList = listFilterItem.filter((item) => !listStringFields.includes(item.key));
 
   const removeValueFilter = (key) => {
     const listFilterItemNew = _.cloneDeep(listFilterItem);
@@ -655,6 +651,7 @@ export function ListFilterChoose(props: ListFilterChooseProps) {
       updateFilterItem(listFilterItemNew);
     }
   };
+
   return (
     <>
       {filteredList && filteredList.length > 0 && filteredList.filter((item) => item.value || item.value === 0).length > 0 && (

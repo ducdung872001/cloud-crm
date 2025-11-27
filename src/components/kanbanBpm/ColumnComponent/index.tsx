@@ -10,6 +10,7 @@ type ColumnDef = {
   label?: string;
   color?: string;
   processId?: any;
+  processCode?: any;
 };
 
 type ColumnState = {
@@ -53,7 +54,8 @@ const ColumnComponent: React.FC<ColumnProps> = ({
   setShowHistory,
 }) => {
   const id = columnDef.id;
-  const processId = columnDef.processId;
+  const processId = columnDef?.processId || null;
+  const processCode = columnDef?.processCode || null;
   const abortRef = useRef<AbortController | null>(null);
 
   // Loading state khi load thêm trang
@@ -62,15 +64,19 @@ const ColumnComponent: React.FC<ColumnProps> = ({
   // helper to call API
   const getDataOfStep = useCallback(
     async (page = 1) => {
-      if (!processId) return { items: [], hasMore: false, page };
+      if (!processId && !processCode) return { items: [], hasMore: false, page };
       try {
         abortRef.current = new AbortController();
         const params = {
-          processId,
+          ...(processId ? { processId: processId } : {}),
+          ...(processCode ? { processCode: processCode } : {}),
+          // processId,
+          // processCode,
           workflowId: id,
           limit: 10,
           page,
         };
+        // return;
         const response = await BusinessProcessService.listWorkflowCloud(params, abortRef.current.signal);
         if (response.code === 0) {
           const result = response.result;
@@ -95,7 +101,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
         abortRef.current = null;
       }
     },
-    [id, processId]
+    [id, processId, processCode]
   );
 
   // khởi tạo dữ liệu ban đầu cho cột nếu chưa có : nếu parent chưa cung cấp items (hoặc page === 0), thì fetch trang 1
