@@ -23,7 +23,6 @@ import { exportCustomExcel } from "./partial/ModalImportGrid/partials/exportExce
 import ModalCommentAg from "./partial/ModalCommentAg";
 import { filterData } from "./function/filterData";
 import { IGridAgTable } from ".";
-import { fetchDataLookupGrid } from "./function/lookupGrid";
 
 export interface GridAgTableHandle {
   getLatestRowData: () => any[];
@@ -429,8 +428,6 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     }
   };
   const onCellValueChanged = () => {
-    console.log("Cell value changed", location);
-
     // params.data là dòng vừa được sửa
     // rowData là state, nhưng để chắc chắn, bạn nên lấy dữ liệu mới nhất từ gridRef
     if (location == "viewAndHandle") {
@@ -439,7 +436,7 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     }
   };
 
-  console.log("Render GridAgTable:", rowData);
+  console.log("Render GridAgTable:", rowData); // Kiểm tra render và dữ liệu ban đầu
 
   return (
     <div className="ag-grid-table">

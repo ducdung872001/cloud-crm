@@ -120,8 +120,6 @@ const CustomCellRender = (props) => {
             );
           }
         case "formula":
-          console.log("Rendering formula cell with value:", props);
-
           if (props?.value === null || props?.value === undefined || props?.value === "") {
             return <CustomCellFormula {...props} />;
           } else {
@@ -133,8 +131,8 @@ const CustomCellRender = (props) => {
           }
         case "select":
           return (
-            <div className="text-truncate" title={props.value}>
-              {props.value}
+            <div className="text-truncate" title={props.options.find((opt) => opt.value === props.value)?.label || props.value}>
+              {props.options.find((opt) => opt.value === props.value)?.label || props.value}
             </div>
           );
         case "lookup":
