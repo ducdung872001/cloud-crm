@@ -125,14 +125,14 @@ const CustomCellRender = (props) => {
           } else {
             return (
               <div className="text-truncate" title={props?.value ? props.value : null}>
-                {props?.value ? props.value : null}
+                {props?.value ? formatNumber(props?.value) : ""}
               </div>
             );
           }
         case "select":
           return (
-            <div className="text-truncate" title={props.value}>
-              {props.value}
+            <div className="text-truncate" title={props.options.find((opt) => opt.value === props.value)?.label || props.value}>
+              {props.options.find((opt) => opt.value === props.value)?.label || props.value}
             </div>
           );
         case "lookup":

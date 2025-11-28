@@ -111,6 +111,7 @@ i18n.use(initReactI18next).init({
           cashbook: "Cash book",
           bpm: "Process Management",
           manageProcesses: "Manage processes",
+          manageDefaultProcesses: "Manage default processes",
           processSimulation: "Process simulation",
           objectManage: "Object Management",
           manage_data_sharing: "Manage data sharing",
@@ -172,8 +173,8 @@ i18n.use(initReactI18next).init({
           listOfOrganizations: "List of organizations",
           servicePackageManagement: "Service package management",
           renewalList: "Renewal list",
-          userAdministration: 'User administration',
-          fieldManagement: "Field management"
+          userAdministration: "User administration",
+          fieldManagement: "Field management",
         },
         pageDashboard: {
           title: "Dashboard",
@@ -266,7 +267,7 @@ i18n.use(initReactI18next).init({
           teacherProfile: "Hồ sơ giáo viên",
           contactProfile: "Hồ sơ người liên hệ",
           parentProfile: "Hồ sơ phụ huynh",
-          treatmentHistory: "Lịch sử thực hiện dịch vụ",
+          treatmentHistory: "Thực hiện dịch vụ",
           customerSegments: "Phân khúc khách hàng",
 
           quote: "Báo giá",
@@ -349,6 +350,7 @@ i18n.use(initReactI18next).init({
           cashbook: "Tài chính",
           bpm: "Quản lý quy trình",
           manageProcesses: "Quản lý quy trình",
+          manageDefaultProcesses: "Quản lý quy trình mặc định",
           processSimulation: "Mô phỏng quy trình",
           objectManage: "Quản lý hồ sơ",
           manage_data_sharing: "Chia sẻ dữ liệu",
@@ -409,7 +411,7 @@ i18n.use(initReactI18next).init({
           servicePackageManagement: "Quản lý gói dịch vụ",
           renewalList: "Danh sách gia hạn",
           userAdministration: "Quản trị người dùng",
-          fieldManagement: "Quản lý lĩnh vực"
+          fieldManagement: "Quản lý lĩnh vực",
         },
         pageDashboard: {
           title: "Trang chủ",

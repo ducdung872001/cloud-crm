@@ -572,6 +572,7 @@ export const urlsApi = {
     list: prefixAdmin + "/order-request/list",
     listOne: prefixAdmin + "/order-request/list-one",
     update: prefixAdmin + "/order-request/update",
+    updateAndInit: prefixAdmin + "/order-request/update-and-init",
     delete: prefixAdmin + "/order-request/delete-soft",
     export: prefixAdmin + "/order-request/export",
     detail: prefixAdmin + "/order-request/get",
@@ -949,6 +950,13 @@ export const urlsApi = {
     contractEformDetail: prefixAdmin + "/contractEform/get/criteria",
   },
 
+  manageDefaultProcesses: {
+    list: prefixAdmin + "/process-permission/list",
+    update: prefixAdmin + "/process-permission/update",
+    detail: prefixAdmin + "/process-permission/get",
+    delete: prefixAdmin + "/process-permission/delete",
+  },
+
   contractAttachment: {
     list: prefixAdmin + "/attachment/list",
     update: prefixAdmin + "/attachment/update",
@@ -1105,6 +1113,7 @@ export const urlsApi = {
     list: prefixAdmin + "/contract/list",
     detail: prefixAdmin + "/contract/get",
     update: prefixAdmin + "/contract/update",
+    updateAndInit: prefixAdmin + "/contract/update-and-init",
     delete: prefixAdmin + "/contract/delete",
     updateAlert: prefixAdmin + "/contract/update/alert",
 
@@ -1575,6 +1584,7 @@ export const urlsApi = {
   ticket: {
     list: prefixAdmin + "/ticket/list",
     update: prefixAdmin + "/ticket/update",
+    updateAndInit: prefixAdmin + "/ticket/update-and-init",
     collect: prefixAdmin + "/ticket/send/jssdk",
     detail: prefixAdmin + "/ticket/get",
     delete: prefixAdmin + "/ticket/delete",
@@ -2768,6 +2778,7 @@ export const urlsApi = {
   fs: {
     lst: prefixAdmin + "/fs/list",
     update: prefixAdmin + "/fs/update",
+    updateAndInit: prefixAdmin + "/fs/update-and-init",
     delete: prefixAdmin + "/fs/delete",
     detail: prefixAdmin + "/fs/get",
     cloneFs: prefixAdmin + "/fs/clone",
@@ -3192,6 +3203,7 @@ export const urls = {
   bpm: "/bpm",
   bpm_create: "/bpm/create/:id",
   manage_processes: "/manage_processes",
+  manage_default_processes: "/manage_default_processes",
   process_simulation: "/process_simulation",
   object_manage: "/object_manage",
   //cài đặt quy trình

@@ -27,7 +27,7 @@ import ViewDetailTreamentHistoryModal from "./partials/ViewDetailTreamentHistory
 import "tippy.js/animations/scale.css";
 
 export default function TreatmentHistoryList() {
-  document.title = "Lịch sử điều trị";
+  document.title = "Thực hiện dịch vụ";
 
   const isMounted = useRef(false);
 
@@ -53,7 +53,7 @@ export default function TreatmentHistoryList() {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách lịch sử điều trị",
+      name: "Danh sách thực hiện dịch vụ",
       is_active: true,
     },
   ]);
@@ -109,7 +109,7 @@ export default function TreatmentHistoryList() {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Lịch điều trị",
+    name: "Lịch thực hiện",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -381,7 +381,7 @@ export default function TreatmentHistoryList() {
           ExportTreatmentHistoryExcel(
             {
               fileName: "LichSuDieuTri",
-              title: "Lịch sử điều trị",
+              title: "Thực hiện dịch vụ",
               header: [],
               data: [],
               info: { name },
@@ -390,7 +390,7 @@ export default function TreatmentHistoryList() {
           );
           // ExportExcel({
           //   fileName: "LichSuDieuTri",
-          //   title: "Lịch sử điều trị",
+          //   title: "Thực hiện dịch vụ",
           //   header: titles,
           //   data: result.map((item, idx) => dataMappingArray(item, idx, "export")),
           //   info: { name },
@@ -437,7 +437,7 @@ export default function TreatmentHistoryList() {
   const onDelete = async (id: number) => {
     const response = await TreatmentHistoryService.delete(id);
     if (response.code === 0) {
-      showToast("Xóa lịch sử điều trị thành công", "success");
+      showToast("Xóa thực hiện dịch vụ thành công", "success");
       getListTreatmentHistory(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -461,7 +461,7 @@ export default function TreatmentHistoryList() {
 
     Promise.all(arrPromise).then((result) => {
       if (result.length > 0) {
-        showToast("Xóa lịch sử điều trị thành công", "success");
+        showToast("Xóa thực hiện dịch vụ thành công", "success");
         getListTreatmentHistory(params);
         setListIdChecked([]);
       } else {
@@ -481,7 +481,7 @@ export default function TreatmentHistoryList() {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "lịch sử điều trị " : `${listIdChecked.length} lịch sử điều trị đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "thực hiện dịch vụ " : `${listIdChecked.length} thực hiện dịch vụ đã chọn`}
           {item ? <strong>{item.serviceName}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -505,14 +505,14 @@ export default function TreatmentHistoryList() {
 
   const bulkActionList: BulkActionItemModel[] = [
     {
-      title: "Xóa lịch sử điều trị",
+      title: "Xóa thực hiện dịch vụ",
       callback: () => showDialogConfirmDelete(),
     },
   ];
 
   return (
     <div className={`page-content page-treatment--history${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Lịch sử điều trị" titleActions={titleActions} />
+      <TitleAction title="Thực hiện dịch vụ" titleActions={titleActions} />
 
       <div className="card-box d-flex flex-column">
         <SearchBox
@@ -527,7 +527,7 @@ export default function TreatmentHistoryList() {
 
         {!isLoading && listTreatmentHistory && listTreatmentHistory.length > 0 ? (
           <BoxTable
-            name="Lịch sử điều trị"
+            name="Thực hiện dịch vụ"
             titles={titles}
             items={listTreatmentHistory}
             isPagination={true}
@@ -553,12 +553,12 @@ export default function TreatmentHistoryList() {
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa có lịch sử điều trị nào. <br />
-                    Hãy thêm mới lịch sử điều trị đầu tiên nhé!
+                    Hiện tại chưa có thực hiện dịch vụ nào. <br />
+                    Hãy thêm mới thực hiện dịch vụ đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới lịch sử điều trị"
+                titleButton="Thêm mới thực hiện dịch vụ"
                 action={() => {
                   setDataTreatmentHistory(null);
                   setShowModalAdd(true);
@@ -590,7 +590,7 @@ export default function TreatmentHistoryList() {
         }}
       />
       <ExportModal
-        name="Lịch sử điều trị"
+        name="Thực hiện dịch vụ"
         onShow={onShowModalExport}
         onHide={() => setOnShowModalExport(false)}
         options={optionsExport}

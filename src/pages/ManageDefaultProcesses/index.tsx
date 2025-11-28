@@ -10,51 +10,52 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, ISaveSearch } from "model/OtherModel";
+import { IContractPipelineListProps } from "model/contractPipeline/PropsModel";
+import { IContractPipelineFilterRequest } from "model/contractPipeline/ContractPipelineRequestModel";
 import { IContractPipelineResponse } from "model/contractPipeline/ContractPipelineResponseModel";
 import { showToast } from "utils/common";
 import { getPageOffset } from "reborn-util";
+import ContractPipelineService from "services/ContractPipelineService";
 import { getPermissions } from "utils/common";
 import "./index.scss";
-import FormCategoryService from "services/FormCategoryService";
-import AddFrom from "./partials/AddFrom";
-import SettingForm from "./SettingForm";
+// import AddContractCategoryModal from "./partials/AddContractCategoryModal/AddContractCategoryModal";
+import ManageDefaultProcessesService from "services/ManageDefaultProcessesService";
+import AddConfigDefaultProcesses from "./partials/AddConfigDefaultProcesses";
 
-export default function FormCategory(props: any) {
-  document.title = "Danh mục biểu mẫu";
-
-  const { onBackProps } = props;
+export default function ManageDefaultProcesses(props: any) {
+  document.title = "Danh sách tính năng";
 
   const isMounted = useRef(false);
 
-  const [listObjectGroup, setListOjectGroup] = useState([]);
-  const [dataForm, setDataForm] = useState(null);
+  const [listContractEform, setListContractEform] = useState([]);
+  const [dataConfig, setDataConfig] = useState(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
-  const [showModalAddOjectGroup, setShowModalAddOjectGroup] = useState<boolean>(false);
+  const [showModalAddEform, setShowModalAddEform] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
-  const [showModalSetting, setShowModalSetting] = useState(false);
+  const [isSettingEform, setIsSettingEform] = useState<boolean>(false);
+  const [isPreviewEform, setIsPreviewEform] = useState(false);
 
-  const [params, setParams] = useState({
+  const [params, setParams] = useState<IContractPipelineFilterRequest>({
     name: "",
     limit: 10,
-    page: 1,
   });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh mục biểu mẫu",
+      name: "Danh sách tính năng",
       is_active: true,
     },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "biểu mẫu",
+    name: "tính năng",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -66,14 +67,14 @@ export default function FormCategory(props: any) {
 
   const abortController = new AbortController();
 
-  const getListOjectGroup = async (paramsSearch: any) => {
+  const getListContractEform = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await FormCategoryService.list(paramsSearch, abortController.signal);
+    const response = await ManageDefaultProcessesService.list(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
       const result = response.result;
-      setListOjectGroup(result?.items || []);
+      setListContractEform(result.items);
 
       setPagination({
         ...pagination,
@@ -106,7 +107,7 @@ export default function FormCategory(props: any) {
     }
 
     if (isMounted.current === true) {
-      getListOjectGroup(params);
+      getListContractEform(params);
       const paramsTemp = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
@@ -123,38 +124,63 @@ export default function FormCategory(props: any) {
 
   const titleActions: ITitleActions = {
     actions: [
-      {
-        title: "Thêm mới",
-        callback: () => {
-          setDataForm(null);
-          setShowModalAddOjectGroup(true);
-        },
-      },
+      ...(isSettingEform
+        ? [
+            // {
+            //   title: "Quay lại",
+            //   callback: () => {
+            //     setIsSettingEform(false);
+            //   },
+            // },
+          ]
+        : [
+            {
+              title: "Thêm mới",
+              callback: () => {
+                setDataConfig(null);
+                setShowModalAddEform(true);
+              },
+            },
+          ]),
     ],
   };
 
-  const titles = ["STT", "Mã biểu mẫu", "Tên biểu mẫu"];
+  let options = [
+    { value: "/fs/", label: "Danh sách FS" },
+    { value: "/quote/", label: "Danh sách báo giá" },
+    { value: "/contract/", label: "Danh sách hợp đồng" },
+    { value: "/guarantee/", label: "Danh sách bảo lãnh" },
+    { value: "/contractWarranty/", label: "Danh sách bảo hành" },
+    { value: "/marketing/", label: "Ngân sách truyền thông" },
+    { value: "/ma/", label: "Truyền thông theo kịch bản" },
+    { value: "/campaignOpportunity/", label: "Quản lý cơ hội" },
+    { value: "/order_request/", label: "Xác nhận đơn hàng" },
+    { value: "/treatmentHistory/", label: "Lịch sử thực hiện dịch vụ" },
+    { value: "/warranty/", label: "Tiếp nhận bảo hành" },
+    { value: "/ticket/", label: "Tiếp nhận hỗ trợ" },
+    { value: "/invoice/", label: "Nhập kho" },
+  ];
 
-  const dataFormat = ["text-center", "", "text-left"];
+  const titles = ["STT", "Tên cấu hình", "Tính năng", "Mã quy trình"];
 
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.code, item.name];
+  const dataFormat = ["text-center", "", "text-left", "text-left", "text-center"];
+
+  const dataMappingArray = (item: any, index: number) => [
+    getPageOffset(params) + index + 1,
+    item?.name ?? "",
+    options.find((option) => option.value === item?.uri)?.label || item?.uri || "",
+    item?.processCode + " - (" + item?.processName + ")" ?? "",
+    // item.position,
+  ];
 
   const actionsTable = (item: any): IAction[] => {
     return [
       {
-        title: "Cài đặt trường",
-        icon: <Icon name="Settings" />,
-        callback: () => {
-          setDataForm(item);
-          setShowModalSetting(true);
-        },
-      },
-      {
         title: "Sửa",
         icon: <Icon name="Pencil" />,
         callback: () => {
-          setDataForm(item);
-          setShowModalAddOjectGroup(true);
+          setDataConfig(item);
+          setShowModalAddEform(true);
         },
       },
       {
@@ -168,11 +194,11 @@ export default function FormCategory(props: any) {
   };
 
   const onDelete = async (id: number) => {
-    const response = await FormCategoryService.delete(id);
+    const response = await ManageDefaultProcessesService.delete(id);
 
     if (response.code === 0) {
-      showToast("Xóa loại đối tượng thành công", "success");
-      getListOjectGroup(params);
+      showToast("Xóa tính năng thành công", "success");
+      getListContractEform(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -189,7 +215,7 @@ export default function FormCategory(props: any) {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "loại đối tượng " : `${listIdChecked.length} loại đối tượng đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "tính năng" : `${listIdChecked.length} tính năng đã chọn`}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -206,48 +232,40 @@ export default function FormCategory(props: any) {
   };
 
   const bulkActionList: BulkActionItemModel[] = [
-    {
-      title: "Xóa loại đối tượng",
+    permissions["CONTRACT_DELETE"] == 1 && {
+      title: "Xóa loại hợp đồng",
       callback: () => showDialogConfirmDelete(),
     },
   ];
 
   return (
-    <div className={`page-content page-form-category${isNoItem ? " bg-white" : ""}`}>
+    <div className={`page-content page-contract-eform${isNoItem ? " bg-white" : ""}`}>
       <div className="action-navigation">
         <div className="action-backup">
           <h1
             onClick={() => {
-              onBackProps(true);
+              setIsSettingEform(false);
             }}
             className="title-first"
-            title="Quay lại"
           >
-            Cấu hình BPM
+            Danh sách tính năng
           </h1>
-          <Icon
-            name="ChevronRight"
-            onClick={() => {
-              onBackProps(true);
-            }}
-          />
-          <h1 className="title-last">Danh mục biểu mẫu</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên biểu mẫu"
+          name="Tên tính năng"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
           updateParams={(paramsNew) => setParams(paramsNew)}
         />
-        {!isLoading && listObjectGroup && listObjectGroup.length > 0 ? (
+        {!isLoading && listContractEform && listContractEform.length > 0 ? (
           <BoxTable
-            name="Biểu mẫu"
+            name="tính năng"
             titles={titles}
-            items={listObjectGroup}
+            items={listContractEform}
             isPagination={true}
             dataPagination={pagination}
             dataMappingArray={(item, index) => dataMappingArray(item, index)}
@@ -270,15 +288,15 @@ export default function FormCategory(props: any) {
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa có biểu mẫu nào. <br />
-                    Hãy thêm mới biểu mẫu đầu tiên nhé!
+                    Hiện tại chưa có tính năng nào. <br />
+                    Hãy thêm mới tính năng đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới biểu mẫu"
+                titleButton="Thêm mới tính năng"
                 action={() => {
-                  setDataForm(null);
-                  setShowModalAddOjectGroup(true);
+                  setDataConfig(null);
+                  setShowModalAddEform(true);
                 }}
               />
             ) : (
@@ -296,26 +314,15 @@ export default function FormCategory(props: any) {
           </Fragment>
         )}
       </div>
-      <AddFrom
-        onShow={showModalAddOjectGroup}
-        data={dataForm}
+      <AddConfigDefaultProcesses
+        onShow={showModalAddEform}
+        data={dataConfig}
         onHide={(reload) => {
           if (reload) {
-            getListOjectGroup(params);
+            getListContractEform(params);
           }
-          setShowModalAddOjectGroup(false);
-        }}
-      />
-
-      <SettingForm
-        onShow={showModalSetting}
-        dataForm={dataForm}
-        onHide={(reload) => {
-          if (reload) {
-            getListOjectGroup(params);
-          }
-          setShowModalSetting(false);
-          setDataForm(null);
+          setShowModalAddEform(false);
+          setDataConfig(null);
         }}
       />
 

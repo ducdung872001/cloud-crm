@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { IActionModal, IOption } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
-import CustomerAttributeService from "services/CustomerAttributeService";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -19,8 +18,6 @@ import GirdService from "services/GridService";
 import { BindingFieldMap } from "./BindingFieldMap";
 import Checkbox from "components/checkbox/checkbox";
 import { useGridAg } from "../../GridAgContext";
-import { set } from "lodash";
-import CheckboxList from "components/checkbox/checkboxList";
 
 export default function ModalAddColumnAg(props: any) {
   const { onShow, onHide, data, listColumn, setListColumn, setIsChangeColumns, typeNo, isEdit, location } = props;
@@ -62,53 +59,6 @@ export default function ModalAddColumnAg(props: any) {
 
   const [startDateTimeRange, setStartDateTimeRange] = useState(null);
   const [endDateTimeRange, setEndDateTimeRange] = useState(null);
-
-  const [listLookup, setListLookup] = useState<IOption[]>([
-    {
-      value: "reason",
-      label: "Loại nguyên nhân",
-    },
-    {
-      value: "project_catalog",
-      label: "Loại dự án",
-    },
-    {
-      value: "project_realty",
-      label: "Dự án",
-    },
-    {
-      value: "unit",
-      label: "Đơn vị tính",
-    },
-    {
-      value: "material",
-      label: "Vật tư",
-    },
-    {
-      value: "field",
-      label: "Lĩnh vực",
-    },
-    {
-      value: "business_category",
-      label: "Ngành nghề kinh doanh",
-    },
-    {
-      value: "supplier",
-      label: "Nhà cung cấp",
-    },
-    {
-      value: "investor",
-      label: "Chủ đầu tư",
-    },
-    {
-      value: "procurement_type",
-      label: "Loại yêu cầu mua sắm",
-    },
-    {
-      value: "work_category",
-      label: "Công việc",
-    },
-  ]);
 
   useEffect(() => {
     if (data?.parentId) {
@@ -230,24 +180,6 @@ export default function ModalAddColumnAg(props: any) {
     );
   };
 
-  //! đoạn này xử lý vấn đề lấy giá trị tham chiếu của trường lookup
-  const handleDetailLookup = (item) => {
-    setDetailLookup(item?.value);
-    if (BindingFieldMap[item?.value] && BindingFieldMap[item?.value].length > 0) {
-      setListBindingField(
-        BindingFieldMap[item?.value].map((item) => {
-          return { ...item, readOnly: true };
-        })
-      );
-    }
-    setDetailBindingField([]);
-  };
-  //! đoạn này xử lý vấn đề lấy giá trị tham chiếu của trường lookup
-  const handleChangeBindingField = (item) => {
-    setDetailBindingField([...detailBindingField, item]);
-    setListBindingField(listBindingField.filter((x) => x.value !== item.value));
-  };
-
   //! xóa đi 1 item attribute
   const handleRemoveItemAttribute = (idx) => {
     const result = [...addFieldAttributes];
@@ -346,10 +278,10 @@ export default function ModalAddColumnAg(props: any) {
     key = key.replace(new RegExp(`[^A-Za-z0-9]`, "g"), "");
 
     //Chỉ set lại nếu là trường hợp thêm mới
-    if (!data?.id) {
+    if (!data?.id && !isEdit) {
       setFormData({ ...formData, values: { ...formData.values, key: key } });
     }
-  }, [formData?.values["name"]]);
+  }, [formData?.values["name"], isEdit]);
 
   useEffect(() => {
     //Nếu rỗng thì thay đổi
@@ -368,7 +300,7 @@ export default function ModalAddColumnAg(props: any) {
           type: "text",
           fill: true,
           required: true,
-          disabled: isEdit,
+          // disabled: isEdit,
           error: checkFieldName,
           message: "Tên trường thông tin này đã tồn tại",
         },
@@ -749,6 +681,7 @@ export default function ModalAddColumnAg(props: any) {
         if (item.key === data?.key) {
           return {
             ...item,
+            name: formData.values["name"],
             required: formData.values["required"] == "1" ? true : false,
             isSum: formData.values["isSum"] == "1" ? true : false,
             position: formData.values["position"],
