@@ -113,20 +113,55 @@ export default function AddConfigDefaultProcesses(props: any) {
   //   "bsnId": 37
   // }
 
+  // Danh sách FS	/fs/
+  // Danh sách báo giá	/quote/
+  // Danh sách hợp đồng	/contract/
+  // Danh sách bảo lãnh	/guarantee/
+  // Danh sách bảo hành	/contractWarranty/
+  // Ngân sách truyền thông	/marketing/
+  // Truyền thông theo kịch bản	/ma/
+  // Quản lý cơ hội	/campaignOpportunity/
+  // Quản lý bán hàng
+  // Xác nhận đơn hàng	/order_request/
+  // Lịch sử thực hiện dịch vụ	/treatmentHistory/
+  // Chăm sóc khách hàng
+  // Tiếp nhận bảo hành	/warranty/
+  // Tiếp nhận hỗ trợ	/ticket/
+  // Xuất kho
+  // Nhập kho	/invoice/
+  // Chuyển kho
+  // Kiểm kho
+  // Quản lý quy trình mặc định
+
   const listFieldBasic = useMemo(
     () =>
       [
         {
-          label: "Tên tính năng",
+          label: "Tên cấu hình",
           name: "name",
           type: "text",
           fill: true,
           required: true,
         },
         {
-          label: "URI",
+          label: "Tính năng",
           name: "uri",
-          type: "text",
+          type: "select",
+          options: [
+            { value: "/fs/", label: "Danh sách FS" },
+            { value: "/quote/", label: "Danh sách báo giá" },
+            { value: "/contract/", label: "Danh sách hợp đồng" },
+            { value: "/guarantee/", label: "Danh sách bảo lãnh" },
+            { value: "/contractWarranty/", label: "Danh sách bảo hành" },
+            { value: "/marketing/", label: "Ngân sách truyền thông" },
+            { value: "/ma/", label: "Truyền thông theo kịch bản" },
+            { value: "/campaignOpportunity/", label: "Quản lý cơ hội" },
+            { value: "/order_request/", label: "Xác nhận đơn hàng" },
+            { value: "/treatmentHistory/", label: "Lịch sử thực hiện dịch vụ" },
+            { value: "/warranty/", label: "Tiếp nhận bảo hành" },
+            { value: "/ticket/", label: "Tiếp nhận hỗ trợ" },
+            { value: "/invoice/", label: "Nhập kho" },
+          ],
           fill: true,
           required: true,
         },
@@ -220,7 +255,13 @@ export default function AddConfigDefaultProcesses(props: any) {
             title: data ? "Cập nhật" : "Tạo mới",
             type: "submit",
             color: "primary",
-            disabled: isSubmit || !isDifferenceObj(formData.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
+            disabled:
+              isSubmit ||
+              !isDifferenceObj(formData.values, values) ||
+              (formData.errors && Object.keys(formData.errors).length > 0) ||
+              !formData.values.name ||
+              !formData.values.processCode ||
+              !formData.values.uri,
             is_loading: isSubmit,
           },
         ],
