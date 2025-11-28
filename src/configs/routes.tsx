@@ -406,12 +406,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="SettingSell" />,
               code: "",
             },
-            {
-              title: "settingProcess", // Cài đặt quy trình phê duyệt (V1 - old)
-              path: urls.setting_process,
-              icon: <Icon name="SettingSell" />,
-              code: "",
-            },
+            // {
+            //   title: "settingProcess", // Cài đặt quy trình phê duyệt (V1 - old)
+            //   path: urls.setting_process,
+            //   icon: <Icon name="SettingSell" />,
+            //   code: "",
+            // },
             {
               title: "settingCode",
               path: urls.setting_code,

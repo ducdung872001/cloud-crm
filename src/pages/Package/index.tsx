@@ -16,11 +16,13 @@ import { showToast } from "utils/common";
 import { formatCurrency, getPageOffset, isDifferenceObj } from "reborn-util";
 import AddPackageModal from "./partials/AddPackageModal";
 import { useSearchParams } from "react-router-dom";
-
+import "./index.scss";
 import "tippy.js/animations/scale.css";
+import Button from "components/button/button";
+import ViewConfigRole from "./ViewConfigRole";
 
 export default function Package() {
-  document.title = "Quản lý gói giá";
+  document.title = "Quản lý gói dịch vụ";
 
   const isMounted = useRef(false);
   const [listPackage, setListPackage] = useState<any[]>();
@@ -31,14 +33,19 @@ export default function Package() {
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
+  const [showConfig, setShowConfig] = useState<boolean>(false);
+  const [dataRole, setDataRole] = useState<any>(null);
+  const [idRole, setIdRole] = useState<number>(null);
   const [params, setParams] = useState<any>({
+    name: "",
+    page: 1,
     limit: 10,
   });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách gói giá",
+      name: "Danh sách gói dịch vụ",
       is_active: true,
     },
   ]);
@@ -51,7 +58,7 @@ export default function Package() {
       setParams((prevParams) => ({ ...prevParams, page: page }));
     },
     chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, limit: limit }));
+      setParams((prevParams) => ({ ...prevParams, limit: limit, page: 1 }));
     },
   });
 
@@ -68,7 +75,7 @@ export default function Package() {
           { value: "cms", label: "CMS" },
           { value: "web", label: "WEB" },
           { value: "app", label: "APP" },
-          { value: "market", label: "Market" },
+          // { value: "market", label: "Market" },
         ],
         is_featured: true,
         value: searchParams.get("code") ?? "",
@@ -165,10 +172,6 @@ export default function Package() {
     ],
   };
 
-  const titles = ["STT", "Tên ứng dụng", "Tên gói", "Loại gói", "Giá gốc", "Giá ưu đãi", "Thời gian", "Số tháng tặng", "Trạng thái"];
-
-  const dataFormat = ["text-center", "", "text-left", "text-left", "text-right", "text-right", "text-right", "text-right", "text-center"];
-
   const getPeriodName = (period: number) => {
     switch (period) {
       case 6:
@@ -199,16 +202,33 @@ export default function Package() {
     }
   };
 
+  const titles = ["STT", "Tên ứng dụng", "Tên gói", "Loại gói", "Giá gốc", "Giá ưu đãi", "Thời gian", "Số tháng tặng", "Phân quyền", "Trạng thái"];
+
+  const dataFormat = ["text-center", "", "text-left", "text-left", "text-right", "text-right", "text-right", "text-right", "text-center", "text-center"];
+
+
   // IPackageResponseModel
   const dataMappingArray = (item: any, index: number) => [
     getPageOffset(params) + index + 1,
     item.code,
-    item.name,
+    <div style={{width: '20rem'}}>
+      {item.name}
+    </div>,
     getPackageTypeName(item.packageType),
     formatCurrency(item.price, ",", "đ"),
     formatCurrency(item.priceDiscount, ",", "đ"),
     getPeriodName(item.period),
     item.periodBonus,
+    <a
+      key={item.id}
+      onClick={() => {
+        setShowConfig(true);
+        setDataRole(item);
+        setIdRole(item.id);
+      }}
+    >
+      Cấu hình
+    </a>,
     <Badge key={index} text={item.status == 1 ? "Đang hiệu lực" : "Tạm dừng"} variant={item.status == 1 ? "success" : "warning"} />,
   ];
 
@@ -247,7 +267,7 @@ export default function Package() {
     const response = await PackageService.delete(id);
 
     if (response.code === 0) {
-      showToast("Xóa gói giá thành công", "success");
+      showToast("Xóa gói dịch vụ thành công", "success");
       getListPackage(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -265,7 +285,7 @@ export default function Package() {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "gói giá " : `${listIdChecked.length} gói giá đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "gói dịch vụ " : `${listIdChecked.length} gói dịch vụ đã chọn`}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -330,75 +350,123 @@ export default function Package() {
 
   const bulkActionList: BulkActionItemModel[] = [
     {
-      title: "Xóa gói giá",
+      title: "Xóa gói dịch vụ",
       callback: () => showDialogConfirmDelete(),
     },
   ];
 
   return (
     <div className={`page-content page-package${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Quản lý gói giá" titleActions={titleActions} />
-      <div className="card-box d-flex flex-column">
-        <SearchBox
-          name="Tên gói giá"
-          params={params}
-          isSaveSearch={true}
-          listSaveSearch={listSaveSearch}
-          updateParams={(paramsNew) => setParams(paramsNew)}
-          isFilter={true}
-          listFilterItem={customerFilterList}
-        />
-        {!isLoading && listPackage && listPackage.length > 0 ? (
-          <BoxTable
-            name="Gói giá"
-            titles={titles}
-            items={listPackage}
-            isPagination={true}
-            dataPagination={pagination}
-            dataMappingArray={(item, index) => dataMappingArray(item, index)}
-            dataFormat={dataFormat}
-            isBulkAction={true}
-            listIdChecked={listIdChecked}
-            bulkActionItems={bulkActionList}
-            striped={true}
-            setListIdChecked={(listId) => setListIdChecked(listId)}
-            actions={actionsTable}
-            actionType="inline"
-          />
-        ) : isLoading ? (
-          <Loading />
-        ) : (
-          <Fragment>
-            {!isNoItem ? (
-              <SystemNotification
-                description={
-                  <span>
-                    Hiện tại chưa có gói giá nào. <br />
-                    Hãy thêm mới gói giá đầu tiên nhé!
-                  </span>
-                }
-                type="no-item"
-                titleButton="Thêm mới gói giá"
-                action={() => {
-                  setDataPackage(null);
-                  setShowModalAdd(true);
+      {/* <TitleAction title="Quản lý gói dịch vụ" titleActions={titleActions} /> */}
+      <div className="action-navigation">
+        <div className="action-backup">
+          <h1
+            title="Quay lại"
+            className={`active`}
+            onClick={() => {
+              setShowConfig(false);
+            }}
+          >
+            Quản lý gói dịch vụ
+          </h1>
+          {showConfig && (
+            <Fragment>
+              <Icon
+                name="ChevronRight"
+                onClick={() => {
+                  setShowConfig(false);
                 }}
               />
-            ) : (
-              <SystemNotification
-                description={
-                  <span>
-                    Không có dữ liệu trùng khớp.
-                    <br />
-                    Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
-                  </span>
-                }
-                type="no-result"
-              />
-            )}
-          </Fragment>
+              <h1 className="title-last">Cấu hình</h1>
+            </Fragment>
+          )}
+        </div>
+        {(
+          <Button
+            className="btn__add--department"
+            onClick={(e) => {
+              e && e.preventDefault();
+              setDataPackage(null);
+              setShowModalAdd(true);
+            }}
+          >
+            Thêm mới
+          </Button>
         )}
       </div>
+
+      {showConfig ? 
+        <div className="card-box d-flex flex-column">
+          <ViewConfigRole
+            data={dataRole}
+            onHide={(reload) => {
+              setShowConfig(false);
+            }}
+          />
+        </div>
+        : 
+        <div className="card-box d-flex flex-column">
+          <SearchBox
+            name="Tên gói giá"
+            params={params}
+            isSaveSearch={true}
+            listSaveSearch={listSaveSearch}
+            updateParams={(paramsNew) => setParams(paramsNew)}
+            isFilter={true}
+            listFilterItem={customerFilterList}
+          />
+          {!isLoading && listPackage && listPackage.length > 0 ? (
+            <BoxTable
+              name="Gói dịch vụ"
+              titles={titles}
+              items={listPackage}
+              isPagination={true}
+              dataPagination={pagination}
+              dataMappingArray={(item, index) => dataMappingArray(item, index)}
+              dataFormat={dataFormat}
+              isBulkAction={true}
+              listIdChecked={listIdChecked}
+              bulkActionItems={bulkActionList}
+              striped={true}
+              setListIdChecked={(listId) => setListIdChecked(listId)}
+              actions={actionsTable}
+              actionType="inline"
+            />
+          ) : isLoading ? (
+            <Loading />
+          ) : (
+            <Fragment>
+              {!isNoItem ? (
+                <SystemNotification
+                  description={
+                    <span>
+                      Hiện tại chưa có gói dịch vụ nào. <br />
+                      Hãy thêm mới gói dịch vụ đầu tiên nhé!
+                    </span>
+                  }
+                  type="no-item"
+                  titleButton="Thêm mới gói giá"
+                  action={() => {
+                    setDataPackage(null);
+                    setShowModalAdd(true);
+                  }}
+                />
+              ) : (
+                <SystemNotification
+                  description={
+                    <span>
+                      Không có dữ liệu trùng khớp.
+                      <br />
+                      Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
+                    </span>
+                  }
+                  type="no-result"
+                />
+              )}
+            </Fragment>
+          )}
+        </div>
+      }
       <AddPackageModal
         onShow={showModalAdd}
         data={dataPackage}

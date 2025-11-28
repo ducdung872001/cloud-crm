@@ -378,7 +378,7 @@ export default function Kanban(props: any) {
                         </div>
 
                         {column.id === 1 && (
-                          <Tippy content="Tạo chiến dịch Marketing">
+                          <Tippy content="Tạo ngân sách truyền thông">
                             <div className="button-add-customer" onClick={() => setShowModalAdd(true)}>
                               <div className="icon__add--customer">
                                 <Icon name="PlusCircleFill" />

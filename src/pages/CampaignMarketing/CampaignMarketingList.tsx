@@ -39,7 +39,7 @@ import MarketingChannelInternal from "./MarketingChannelInternal/MarketingChanne
 // import ModalDetailSaleInvoice from "./partials/ModalDetailSaleInvoice/ModalDetailSaleInvoice";
 
 export default function CampaignMarketingList() {
-  document.title = "Chiến dịch Marketing";
+  document.title = "Ngân sách truyền thông";
 
   const navigate = useNavigate();
   const checkIsKanban = localStorage.getItem("isKanbanCampaignMA");
@@ -176,7 +176,7 @@ export default function CampaignMarketingList() {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Chiến dịch Marketing",
+      name: "Ngân sách truyền thông",
       is_active: true,
     },
   ]);
@@ -349,7 +349,7 @@ export default function CampaignMarketingList() {
     const response = await CampaignMarketingService.delete(id);
 
     if (response.code === 0) {
-      showToast("Xóa chiến dịch Marketing thành công", "success");
+      showToast("Xóa ngân sách truyền thông thành công", "success");
       reLoadListCampaignMA();
       reloadListChannel();
     } else {
@@ -374,7 +374,7 @@ export default function CampaignMarketingList() {
 
     Promise.all(arrPromise).then((result) => {
       if (result.length > 0) {
-        showToast("Xóa chiến dịch Marketing thành công", "success");
+        showToast("Xóa ngân sách truyền thông thành công", "success");
         reLoadListCampaignMA();
         setListIdChecked([]);
       } else {
@@ -394,7 +394,7 @@ export default function CampaignMarketingList() {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "chiến dịch Marketing " : `${listIdChecked.length} chiến dịch Marketing đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "ngân sách truyền thông " : `${listIdChecked.length} ngân sách truyền thông đã chọn`}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -634,7 +634,7 @@ export default function CampaignMarketingList() {
 
   return (
     <div className={`page-content page__campaign-marketing${isNoItem ? " bg-white" : ""}`}>
-      {!isDetailCampaignMA && <TitleAction title="Chiến dịch Marketing" titleActions={titleActions} />}
+      {!isDetailCampaignMA && <TitleAction title="Ngân sách truyền thông" titleActions={titleActions} />}
 
       <div className="card-box d-flex flex-column">
         <div className={`${isRegimeKanban ? "d-none" : "quick__search"}`}>
@@ -693,7 +693,7 @@ export default function CampaignMarketingList() {
         </div>
         <div className={`${isRegimeKanban ? "d-none" : ""}`}>
           <SearchBox
-            name="Tên chiến dịch marketing"
+            name="Tên ngân sách truyền thông"
             params={params}
             isSaveSearch={true}
             listSaveSearch={listSaveSearch}
@@ -704,7 +704,7 @@ export default function CampaignMarketingList() {
 
           {!isLoading && listCampaignMA && listCampaignMA.length > 0 ? (
             <BoxTable
-              name="Danh sách chiến dịch marketing"
+              name="Danh sách ngân sách truyền thông"
               titles={titles}
               items={listCampaignMA}
               isPagination={true}
@@ -727,12 +727,12 @@ export default function CampaignMarketingList() {
                 <SystemNotification
                   description={
                     <span>
-                      Hiện tại chưa có chiến dịch Marketing nào. <br />
-                      Hãy thêm mới chiến dịch Marketing đầu tiên nhé!
+                      Hiện tại chưa có ngân sách truyền thông nào. <br />
+                      Hãy thêm mới ngân sách truyền thông đầu tiên nhé!
                     </span>
                   }
                   type="no-item"
-                  titleButton="Thêm mới chiến dịch Marketing"
+                  titleButton="Thêm mới ngân sách truyền thông"
                   action={() => {
                     setShowModalAdd(true);
                     setIdCampaignMA(null);
