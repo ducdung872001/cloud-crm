@@ -8,13 +8,12 @@ import "./index.scss";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Button from "components/button/button";
-import GridAg from "pages/BPM/GridAg";
+import GridAg, { GridAgHandle } from "pages/BPM/GridAg";
 
 export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [isSubmitFromModalConfig, setIsSubmitFromModalConfig] = useState<boolean>(false);
 
   const [dataConfigGrid, setDataConfigGrid] = useState<any>({
     headerTable: dataConfig?.headerTable || [],
@@ -39,17 +38,23 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
   }, [values]);
 
   const handleSubmit = () => {
-    // console.log("dataConfigGrid<<<<<<dataGrid", dataConfigGrid);
-    // return;
+    let latestRowData = handleGetLatest();
     onHide(false);
-
-    callBack(dataConfigGrid);
-    setIsSubmitFromModalConfig(false);
+    callBack({
+      headerTable: dataConfigGrid?.headerTable || [],
+      dataRow: latestRowData || [],
+    });
   };
 
-  useEffect(() => {
-    console.log("dataConfigGrid<<<<<<", dataConfigGrid);
-  }, [dataConfigGrid]);
+  // ref trỏ đến GridAg (mà GridAg sẽ forward ref tới GridAgTable)
+  const gridRef = useRef<GridAgHandle | null>(null);
+
+  const handleGetLatest = () => {
+    // Gọi hàm getLatestRowData được expose từ GridAgTable thông qua GridAg
+    const latest = gridRef.current?.getLatestRowData() ?? [];
+    return latest;
+    // bạn có thể set state, gửi lên server, hoặc xử lý tiếp ở đây
+  };
 
   const actions = useMemo<IActionModal>(
     () => ({
@@ -71,14 +76,13 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
             // disabled: isSubmit || !isDifferenceObj(formData, values),
             callback: () => {
               handleSubmit();
-              setIsSubmitFromModalConfig(true);
             },
             is_loading: isSubmit,
           },
         ],
       },
     }),
-    [formData, values, isSubmit, dataConfigGrid, isSubmitFromModalConfig]
+    [formData, values, isSubmit, dataConfigGrid]
   );
 
   const showDialogConfirmCancel = () => {
@@ -160,12 +164,7 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
           </div>
           <ModalBody>
             <div className="list-form-group">
-              <GridAg
-                location={"configForm"}
-                setDataConfigGrid={setDataConfigGrid}
-                dataGrid={dataConfig}
-                isSubmitFromModalConfig={isSubmitFromModalConfig}
-              />
+              <GridAg ref={gridRef} location={"configForm"} setDataConfigGrid={setDataConfigGrid} dataGrid={dataConfig} />
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

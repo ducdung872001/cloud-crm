@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from "react";
+import React, { useMemo, useState, useRef, useEffect, Fragment } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -25,11 +25,9 @@ import { filterData } from "./function/filterData";
 import { IGridAgTable } from ".";
 import { fetchDataLookupGrid } from "./function/lookupGrid";
 
-export interface GridAgTableHandle {
-  getLatestRowData: () => any[];
-}
-
-const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgTable, ref) => {
+const GridAgTable = (
+  props: IGridAgTable // location: "iframe" | "viewAndHandle", setDataConfigGrid, dataGrid, onChange, configField
+) => {
   const {
     typeNo,
     setTypeNo,
@@ -392,29 +390,12 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     setLoading(false);
   };
 
-  const getLatestRowData = useCallback(() => {
+  const getLatestRowData = () => {
     //Lấy data mới nhất trên lưới
-    const _rowData: any[] = [];
-    try {
-      if (gridRef.current && gridRef.current.api && typeof gridRef.current.api.forEachNode === "function") {
-        gridRef.current.api.forEachNode((node) => _rowData.push(node.data));
-        return _rowData;
-      }
-    } catch (e) {
-      // ignore and fallback
-    }
-    // fallback: trả về state rowData nếu api không có
-    return rowData || [];
-  }, [rowData]);
-
-  // Expose getLatestRowData cho component cha thông qua ref
-  useImperativeHandle(
-    ref,
-    () => ({
-      getLatestRowData,
-    }),
-    [getLatestRowData]
-  );
+    const _rowData = [];
+    gridRef.current.api.forEachNode((node) => _rowData.push(node.data));
+    return _rowData;
+  };
 
   const handleFilterData = () => {
     const _rowData = getLatestRowData();
@@ -609,6 +590,6 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
       ></ModalCommentAg>
     </div>
   );
-});
+};
 
 export default GridAgTable;
