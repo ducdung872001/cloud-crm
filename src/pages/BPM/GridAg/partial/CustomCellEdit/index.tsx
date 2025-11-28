@@ -281,8 +281,6 @@ const CustomCellEdit = (props) => {
           // nếu muốn thông báo, gọi props.api.dispatchEvent(...) hoặc props.onChange(...)
         }
       });
-      console.log("Multi-field update:", newData);
-
       // cập nhật local state giá trị hiển thị cho ô hiện tại
       setValue(newData[fieldKey]);
     } else {
