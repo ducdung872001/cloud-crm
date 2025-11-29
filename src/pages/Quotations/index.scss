@@ -3,6 +3,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    position: relative;
 
     .action-backup {
       display: flex;
@@ -88,5 +89,92 @@
         }
       }
     }
+  }
+}
+
+/* Right-side small action box (Kanban toggle) */
+.header-right-action {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(calc(-50% - 6px));
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: var(--primary-color, #1976d2);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.12);
+  height: 44px;
+  z-index: 999;
+  transition: transform 160ms ease, top 160ms ease, right 160ms ease;
+}
+
+.header-right-action .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: transparent !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Active state: remove outer blue frame and show compact blue button */
+.header-right-action.active {
+  background: transparent;
+  box-shadow: none;
+}
+
+.header-right-action.active .kanban-toggle-btn {
+  background: var(--primary-color, #1976d2) !important;
+  color: #fff !important;
+  padding: 4px 10px !important;
+  font-size: 1.4rem !important;
+  height: 36px !important;
+  border-radius: 6px;
+}
+
+/* Smaller variant for Kanban toggle button (bigger font, but compact) */
+.kanban-toggle-btn {
+  /* Match typical "list" button size: larger, pill-like */
+  padding: 8px 16px !important;
+  font-size: 1.6rem !important;
+  height: 44px !important;
+  line-height: 1 !important;
+  min-width: 100px !important;
+  background: transparent !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+}
+.header-right-action.active .kanban-toggle-btn {
+  background: var(--primary-color, #1976d2) !important;
+  color: #fff !important;
+  padding: 8px 16px !important;
+  font-size: 1.6rem !important;
+  height: 44px !important;
+  border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .header-right-action {
+    right: 16px;
+  }
+}
+
+@media (max-width: 760px) {
+  .header-right-action {
+    right: 10px;
+    top: 10px;
+    transform: none;
+  }
+  .kanban-toggle-btn {
+    font-size: 1.2rem !important;
+    min-width: 52px !important;
+    height: 32px !important;
+    padding: 3px 8px !important;
   }
 }
