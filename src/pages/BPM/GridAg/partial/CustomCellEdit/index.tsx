@@ -270,9 +270,17 @@ const CustomCellEdit = (props) => {
 
     // Nếu đã chuẩn bị newData (multi-field update) thì setData cả row 1 lần
     if (markMultiUpdate.value && newData) {
-      props.node.setData(newData);
-      console.log("Multi-field update:", newData);
-
+      // props.node.setData(newData); // cách này cũng update cả row 1 lần được nhưng không trigger change từng field , nghĩ cách sử dụng sau
+      Object.keys(newData).forEach((key) => {
+        const col = props.columnApi.getColumn(key);
+        if (col) {
+          props.node.setDataValue(key, newData[key]);
+        } else {
+          // thêm field mới vào data mà không dùng setDataValue
+          props.node.data = { ...(props.node.data || {}), [key]: newData[key] };
+          // nếu muốn thông báo, gọi props.api.dispatchEvent(...) hoặc props.onChange(...)
+        }
+      });
       // cập nhật local state giá trị hiển thị cho ô hiện tại
       setValue(newData[fieldKey]);
     } else {

@@ -78,7 +78,7 @@ export function GridRenderer(props) {
       configField[id] = field;
       ReactDOM.render(
         <GridAg
-          location={"configViewer"}
+          location={"viewAndHandle"}
           onChange={(e) => {
             handleGridChange(e);
           }}
