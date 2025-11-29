@@ -27,7 +27,7 @@ const statusColor = {
   STORE_CANCELED: "error",
 };
 
-const KanbanTicketProcess = (props: any) => {
+const KanbanWarrantyProcess = (props: any) => {
   const { processId, processCode } = props;
 
   //Xử lý các hành động trên item
@@ -126,4 +126,4 @@ const KanbanTicketProcess = (props: any) => {
   return <KanbanBpm processId={processId} processCode={processCode} itemShow={itemSetup} />;
 };
 
-export default memo(KanbanTicketProcess);
+export default memo(KanbanWarrantyProcess);
