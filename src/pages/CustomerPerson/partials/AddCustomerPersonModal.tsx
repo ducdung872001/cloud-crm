@@ -1458,6 +1458,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
           <RadioList
             name={customerAttribute.name}
             title={customerAttribute.name}
+            required={!!customerAttribute.required}
             options={customerAttribute.attributes ? JSON.parse(customerAttribute.attributes) : []}
             value={getCustomerAttributeValue(customerAttribute.id)}
             onChange={(e) => {

@@ -17,6 +17,7 @@ interface TitleActionProps {
   isDescendantTitle?: boolean;
   titleActions?: ITitleActions;
   callback?: () => void;
+  disableIcon?: boolean;
 }
 
 export interface ITitleActions {
