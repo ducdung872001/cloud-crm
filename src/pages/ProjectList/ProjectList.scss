@@ -361,6 +361,8 @@
       cursor: pointer;
       text-decoration: none;
       color: blue;
+      display: flex;
+      justify-content: center;
 
       &:hover {
         color: var(--primary-color);

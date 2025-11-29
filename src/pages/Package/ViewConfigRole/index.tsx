@@ -13,8 +13,6 @@ import { IViewConfigDepartmentProps } from "model/department/PropsModel";
 import PermissionService from "services/PermissionService";
 import { showToast } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
-import ChooseJobTitleDifferentModal from "./partials/ChooseJobTitleDifferentModal/ChooseJobTitleDifferentModal";
-import ChooseDepartmentDifferentModal from "./partials/ChooseDepartmentDifferentModal/ChooseDepartmentDifferentModal";
 import "tippy.js/animations/scale.css";
 import "./index.scss";
 import RolePermissionService from "services/RolePermissionService";
@@ -106,12 +104,10 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
     let lstRolePermissionResource = permissionRes.result;
     let mapPermission = {};
     (lstRolePermissionResource || []).forEach((permissionResource: any) => {
-      if (permissionResource?.actions) {
-        let actions = JSON.parse(permissionResource.actions);
-        actions.forEach((action: any) => {
-          mapPermission[`${permissionResource.code}_${action}`] = 1;
-        });
-      }
+      let actions = JSON.parse(permissionResource.actions);
+      actions.forEach((action: any) => {
+        mapPermission[`${permissionResource.code}_${action}`] = 1;
+      });
     });
 
     // console.log("permissions =>", JSON.stringify(mapPermission));
@@ -455,8 +451,9 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
                           return (
                             <div key={idx} className={`decentralization__item resource--item`}>
                               <div
-                                className={`department__permission--0  ${item.parentId === null || item.parentId === 0 ? "lv__children" : "lv__sub--children"
-                                  }`}
+                                className={`department__permission--0  ${
+                                  item.parentId === null || item.parentId === 0 ? "lv__children" : "lv__sub--children"
+                                }`}
                               >
                                 <Checkbox
                                   label={element.name}
@@ -535,21 +532,7 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
         </CustomScrollbar>
       </ModalBody>
       <ModalFooter actions={actions} />
-      <ChooseDepartmentDifferentModal
-        onShow={showModalCopyDepartment}
-        sourceDepartmentId={data?.id}
-        nameDepartment={data?.name}
-        listJobTitleProps={dataRole}
-        onHide={(reload) => {
-          if (reload) {
-            getListPermissionRole(true);
-
-            //Load lại quyền cho tài khoản này => Để test luôn
-            reloadPermissions();
-          }
-          setShowModalCopyDepartment(false);
-        }}
-      />
+      
     </div>
   );
 }

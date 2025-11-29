@@ -18,7 +18,8 @@ export default function HeaderFilter(props: any) {
         importExcel,
         setOnShowModalExport,
         setOnShowModalImport,
-        disableDeleteAll
+        disableDeleteAll,
+        listSaveSearch
     } = props;
 
   return (
@@ -45,14 +46,14 @@ export default function HeaderFilter(props: any) {
                 <SearchBox
                     name={titleSearch || ''}
                     params={params}
-                    isSaveSearch={false}
-                    // listSaveSearch={listSaveSearch}
+                    isSaveSearch={true}
+                    listSaveSearch={listSaveSearch}
                     updateParams={(paramsNew) => setParams(paramsNew)}
                 />
             </div>
         </div>
 
-        <div className="header-right">
+        {/* <div className="header-right">
         {exportExcel ?
             <div 
                 className="button_export"
@@ -83,7 +84,7 @@ export default function HeaderFilter(props: any) {
                 disableIcon={true}
             />
         : null}
-        </div>
+        </div> */}
 
     </div>
   );

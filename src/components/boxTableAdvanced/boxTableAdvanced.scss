@@ -31,6 +31,9 @@
       border: none;
       border-bottom: 1px solid var(--extra-color-30);
     }
+    .ag-header-cell-label {
+      justify-content: center;
+    }
 
     .ag-pinned-left-header {
       border-right: transparent;

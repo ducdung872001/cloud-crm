@@ -23,7 +23,7 @@ import ManageDefaultProcessesService from "services/ManageDefaultProcessesServic
 import AddConfigDefaultProcesses from "./partials/AddConfigDefaultProcesses";
 
 export default function ManageDefaultProcesses(props: any) {
-  document.title = "Danh sách tính năng";
+  document.title = "Cài đặt quy trình mặc định";
 
   const isMounted = useRef(false);
 
@@ -48,7 +48,7 @@ export default function ManageDefaultProcesses(props: any) {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách tính năng",
+      name: "Cài đặt quy trình mặc định",
       is_active: true,
     },
   ]);
@@ -248,7 +248,7 @@ export default function ManageDefaultProcesses(props: any) {
             }}
             className="title-first"
           >
-            Danh sách tính năng
+            Cài đặt quy trình mặc định
           </h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />

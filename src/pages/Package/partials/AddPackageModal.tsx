@@ -177,9 +177,13 @@ export default function AddPackageModal(props: any) {
               label: "CRM",
             },
             {
-              value: "MARKET",
-              label: "MARKET",
+              value: "CMS",
+              label: "CMS",
             },
+            // {
+            //   value: "MARKET",
+            //   label: "MARKET",
+            // },
             {
               value: "WEB",
               label: "WEB",
@@ -431,7 +435,7 @@ export default function AddPackageModal(props: any) {
     const response = await PackageService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} gói giá thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} gói dịch vụ thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -525,7 +529,7 @@ export default function AddPackageModal(props: any) {
         className="modal-add-package"
       >
         <form className="form-package-group" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} gói giá`} toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} gói dịch vụ`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (

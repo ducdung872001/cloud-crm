@@ -361,7 +361,7 @@ export default function ModalAddCampaignMA(props: any) {
     const response = await CampaignMarketingService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} chiến dịch Marketing thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} ngân sách truyền thông thành công`, "success");
       handClearForm(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -468,7 +468,7 @@ export default function ModalAddCampaignMA(props: any) {
         size="lg"
       >
         <form className="form-add-campaign-marketing" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${idData ? "Chỉnh sửa" : "Thêm mới"} chiến dịch Marketing`} toggle={() => !isSubmit && handClearForm(false)} />
+          <ModalHeader title={`${idData ? "Chỉnh sửa" : "Thêm mới"} ngân sách truyền thông`} toggle={() => !isSubmit && handClearForm(false)} />
           <ModalBody>
             <div className="list-form-group">
               <div className="box-avatar">
