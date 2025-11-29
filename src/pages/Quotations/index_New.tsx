@@ -18,9 +18,7 @@ import QuoteService from "services/QuoteService";
 import { ContextType, UserContext } from "contexts/userContext";
 import AddQuote from "./partials/AddQuote";
 import AddFormQuote from "./partials/AddFormQuoteBackup";
-import ViewDetailFsModal from "./partials/ViewDetailFS";
 import CopyItemModal from "./partials/CopyItemModal";
-import ProcessedObjectService from "services/ProcessedObjectService";
 import AddTemplateFSQuote from "pages/Common/AddTemplateFSQuote";
 import ModelSinger from "pages/SettingProcess/partials/ProcessedObjectList/partials/ModalSigner/index";
 import ViewHistorySignature from "pages/Common/ViewHistorySignature";
@@ -29,23 +27,9 @@ import { useSearchParams } from "react-router-dom";
 import SheetFieldQuoteFormService from "services/SheetFieldQuoteFormService";
 import SelectCustom from "components/selectCustom/selectCustom";
 import BusinessProcessService from "services/BusinessProcessService";
-import Kanban from "pages/BPM/BusinessProcessList/Kanban/Kanban";
-import SaleFlowService from "services/SaleFlowService";
-import SaleflowApproachService from "services/SaleflowApproachService";
-import SaleflowInvoiceService from "services/SaleflowInvoiceService";
-import KanbanOrderRequestProcess from "pages/OrderRequestList/partials/KanbanOrderRequestProcess";
-import KanbanSale from "pages/ManagementSale/partials/Kanban/Kanban";
-import HistoryProcess from "pages/BPM/BusinessProcessList/HistoryProcess/index"; 
-import Button from "components/button/button";
+import KanbanQuotationsProcess from "./KanbanQuotationsProcess";
 
 import "./index.scss";
-
-// thêm
-const colorData = [
-  "#E98E4C", "#ED6665", "#FFBF00", "#9966CC", "#6A5ACD", "#007FFF",
-  "#993300", "#F0DC82", "#CC5500", "#C41E3A", "#ACE1AF", "#7FFF00",
-  "#FF7F50", "#BEBEBE", "#FF00FF", "#C3CDE6", "#FFFF00", "#40826D", "#704214",
-];
 
 export default function QuotationsNew() {
   document.title = "Danh sách báo giá mới";
@@ -73,50 +57,26 @@ export default function QuotationsNew() {
   const [hasCopyQuote, setHasCopyQuote] = useState<boolean>(false);
   const [hasSignature, setHasSignature] = useState<boolean>(false);
   const [hasHistorySignature, setHasHistorySignature] = useState<boolean>(false);
-  const [viewType, setViewType] = useState<'list' | 'kanban'>('list');
   const [contractId, setContractId] = useState<number>(() => {
     return takeParamsUrl?.contractId ? takeParamsUrl?.contractId : null;
   });
 
   // Kanban for Order Request: states and helpers
-  const checkProcessOrderRequestId = (localStorage.getItem("processOrderRequestId") && JSON.parse(localStorage.getItem("processOrderRequestId"))) || -1;
-  const checkProcessOrderRequestName = localStorage.getItem("processOrderRequestName");
+  const checkProcessQuotationId = (localStorage.getItem("processQuotationId") && JSON.parse(localStorage.getItem("processQuotationId"))) || -1;
+  const checkProcessQuotationName = localStorage.getItem("processQuotationName");
 
-  const [processOrderRequestId, setProcessOrderRequestId] = useState<number>(1518);
-  const [processOrderRequestName, setProcessOrderRequestName] = useState<string>(
-    checkProcessOrderRequestName ? checkProcessOrderRequestName : "Chọn quy trình"
+  const [processQuotationId, setProcessQuotationId] = useState<number>(1518);
+  const [processQuotationName, setProcessQuotationName] = useState<string>(
+    checkProcessQuotationName ? checkProcessQuotationName : "Chọn quy trình"
   );
-  const [dataOfStepOrderRequest, setDataOfStepOrderRequest] = useState([]);
-  const [columnListOrderRequest, setColumnListOrderRequest] = useState<any>(undefined);
-  const [checkColumnOrderRequest, setCheckColumnOrderRequest] = useState<any>(null);
-  const [isLoadingKanbanOrderRequest, setIsLoadingKanbanOrderRequest] = useState<boolean>(false);
-  const [valueProcessOrderRequest, setValueProcessOrderRequest] = useState<any>(null);
+  const [isLoadingKanbanQuotation, setIsLoadingKanbanQuotation] = useState<boolean>(false);
+  const [valueProcessQuotation, setValueProcessQuotation] = useState<any>(null);
 
-  // Local helper to fetch columns for an order-request process. Attempts a service call
-  // if available, otherwise clears columns and stops loading.
-  const getListColumnsOrderRequest = async (procId: number) => {
-    try {
-      // If a service method exists on BusinessProcessService to get columns, call it.
-      if ((BusinessProcessService as any).getColumns) {
-        const resp = await (BusinessProcessService as any).getColumns({ processId: procId });
-        if (resp && resp.code === 0) {
-          setColumnListOrderRequest(resp.result || undefined);
-        } else {
-          setColumnListOrderRequest(undefined);
-        }
-      } else {
-        // fallback: clear columns (caller can implement real fetch elsewhere)
-        setColumnListOrderRequest(undefined);
-      }
-    } catch (err) {
-      setColumnListOrderRequest(undefined);
-    } finally {
-      setIsLoadingKanbanOrderRequest(false);
-    }
-  };
+
+
 
   // Async options loader for select (order request processes). Uses type:3 as requested.
-  const loadOptionProcessOrderRequest = async (search, loadedOptions, { page }) => {
+  const loadOptionProcessQuotation = async (search, loadedOptions, { page }) => {
     const param: any = {
       name: search,
       page: page,
@@ -134,6 +94,7 @@ export default function QuotationsNew() {
           optionProcess.push({
             value: item.id,
             label: item.name,
+            code: item.code,
           });
         });
       }
@@ -151,287 +112,26 @@ export default function QuotationsNew() {
   };
 
   // Handler when selecting a process for order-request Kanban
-  const handleChangeValueProcessOrderRequest = (e) => {
-    setIsLoadingKanbanOrderRequest(true);
-    getListColumnsOrderRequest(+e.value);
-    setDataOfStepOrderRequest([]);
-    setValueProcessOrderRequest(e);
-    setProcessOrderRequestId(+e.value);
-    setProcessOrderRequestName(e.label);
+  const handleChangeValueProcessQuotation = (e) => {
+    setIsLoadingKanbanQuotation(true);
+    setValueProcessQuotation(e);
+    setProcessQuotationId(+e.value);
+    setProcessQuotationName(e.label);
 
     // Persist selection
-    localStorage.setItem("processOrderRequestId", JSON.stringify(+e.value));
-    localStorage.setItem("processOrderRequestName", e.label);
-
-    if (e.value === -1) {
-      // if -1, switch off Kanban mode
-      // keep existing isRegimeKanban handling in component
-    }
-    // Keep local columns cleared until fetch completes
+    localStorage.setItem("processQuotationId", JSON.stringify(+e.value));
+    localStorage.setItem("processQuotationName", e.label);
+    
+    setTimeout(() => setIsLoadingKanbanQuotation(false), 500);
   };
 
   useEffect(() => {
-    setValueProcessOrderRequest({ value: processOrderRequestId, label: processOrderRequestName });
-  }, [processOrderRequestId]);
+    setValueProcessQuotation({ value: processQuotationId, label: processQuotationName });
+  }, [processQuotationId]);
 
-  useEffect(() => {
-    // Warm the select options (non-blocking)
-    loadOptionProcessOrderRequest("", undefined, { page: 1 });
-  }, []);
-
-    // Thêm vào sau các state hiện tại
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(
     checkIsKanban ? JSON.parse(checkIsKanban) : false
   );
-  const checkProcessId = localStorage.getItem("processId");
-  const checkProcessName = localStorage.getItem("processName");
-
-  const [processId, setProcessId] = useState(
-    checkProcessId ? JSON.parse(checkProcessId) : -1
-  );
-  const [processName, setProcessName] = useState<string>(
-    checkProcessName ? checkProcessName : "Tất cả quy trình"
-  );
-  const [valueProcess, setValueProcess] = useState(null);
-  const [listStepProcess, setListStepProcess] = useState([]);
-  const [dataOfStep, setDataOfStep] = useState([]);
-  const [dataOfStepStart, setDataOfStepStart] = useState([]);
-  const [dataOfStepSuccess, setDataOfStepSuccess] = useState([]);
-  const [columnList, setColumnList] = useState(undefined);
-  // --- ManagementSale Kanban state (copied) ---
-  const checkIsKanbanSale = localStorage.getItem("isKanbanSaleflow");
-  const checkSaleflowId = localStorage.getItem("saleflowId");
-  const checkSaleflowName = localStorage.getItem("saleflowName");
-
-  const [listPipelineSale, setListPipelineSale] = useState<any[]>([]);
-  const [valueSaleflowSale, setValueSaleflowSale] = useState(null);
-  const [listApproachSale, setListApproachSale] = useState<any[]>([]);
-  const [listConvertRateSale, setListConvertListSale] = useState<any[]>([]);
-
-  const [saleflowIdSale, setSaleflowIdSale] = useState<number>(checkSaleflowId ? JSON.parse(checkSaleflowId) : -1);
-  useEffect(() => {
-    localStorage.setItem("saleflowId", JSON.stringify(saleflowIdSale));
-  }, [saleflowIdSale]);
-
-  const [saleflowNameSale, setSaleflowNameSale] = useState<string>(checkSaleflowName ? checkSaleflowName : "Tất cả quy trình");
-  useEffect(() => {
-    localStorage.setItem("saleflowName", saleflowNameSale);
-  }, [saleflowNameSale]);
-
-  const [approachIdSale, setApproachIdSale] = useState<number>(() => {
-    return -1;
-  });
-
-  const [paramsSale, setParamsSale] = useState<any>({
-    name: "",
-    saleflowId: -1,
-    approachId: -1,
-    limit: 10,
-    page: 1,
-  });
-
-  const [dataOfApproachSale, setDataOfApproachSale] = useState<any[]>([]);
-  const [dataOfApproachStartSale, setDataOfApproachStartSale] = useState<any[]>([]);
-  const [dataOfApproachFailSale, setDataOfApproachFailSale] = useState<any[]>([]);
-  const [dataOfApproachSuccessSale, setDataOfApproachSuccessSale] = useState<any[]>([]);
-  const [newDataOfApproachSale, setNewDataOfApproachSale] = useState<any[]>([]);
-
-  const getPipelineListSale = async () => {
-    if (!listPipelineSale || listPipelineSale.length === 0) {
-      const param: any = { limit: 1000 };
-      const response = await SaleFlowService.list(param);
-      const optionSaleflow: any[] = [];
-
-      if (response.code === 0) {
-        const dataOption = response.result.items;
-        if (dataOption.length > 0) {
-          dataOption.map((item: any) => {
-            optionSaleflow.push({ value: item.id, label: item.name });
-          });
-        }
-      }
-
-      setListPipelineSale(optionSaleflow);
-    }
-  };
-
-  const loadOptionSaleflowSale = async (search, loadedOptions, { page }) => {
-    const param: any = { name: search, page: page, limit: 10 };
-    const response = await SaleFlowService.list(param);
-    const optionSaleflow = page === 1 ? [{ value: -1, label: "Tất cả quy trình" }] : [];
-
-    if (response.code === 0) {
-      const dataOption = response.result.items;
-      if (dataOption.length > 0) {
-        dataOption.map((item: any) => {
-          optionSaleflow.push({ value: item.id, label: item.name });
-        });
-      }
-
-      return { options: optionSaleflow, hasMore: response.result.loadMoreAble, additional: { page: page + 1 } };
-    }
-
-    return { options: [], hasMore: false };
-  };
-
-  const handleChangeValueSaleflowSale = (e) => {
-    setValueSaleflowSale(e);
-    setSaleflowIdSale(+e.value);
-    setSaleflowNameSale(e.label);
-    if (e.value === -1) {
-      setIsRegimeKanban(false);
-    }
-    clearKanbanSale();
-  };
-
-  const getOptionApproachSale = async (saleflowId) => {
-    const body: any = { saleflowId };
-    const response = await SaleflowApproachService.list(body);
-    if (response.code === 0) {
-      const dataOption = response.result;
-      setListApproachSale([
-        ...(dataOption.length > 0
-          ? dataOption.map((item, index) => ({
-              value: item.id,
-              label: item.name,
-              color: colorData[index],
-              lstSaleflowActivity: item.lstSaleflowActivity,
-              saleflowId: item.saleflowId,
-              step: item.step,
-            }))
-          : []),
-      ]);
-    }
-  };
-
-  const getDataOfApproachSale = async (paramsSearch, approachName) => {
-    const newDataApproach = [...newDataOfApproachSale];
-    const response = await SaleflowInvoiceService.list(paramsSearch);
-
-    if (response.code === 0) {
-      const result = response.result;
-      const newData = {
-        approachId: paramsSearch.approachId,
-        approachName: approachName,
-        value: result?.items,
-        hasMore: result?.loadMoreAble,
-        page: result?.page,
-      };
-
-      setDataOfApproachSale((oldArray) => [...oldArray, newData]);
-
-      newDataApproach.push(newData);
-      setNewDataOfApproachSale(newDataApproach);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-  };
-
-  const getDataOfApproachSpecialSale = async (saleflowId, status) => {
-    const param = { saleflowId: saleflowId, limit: 10, page: 1, approachId: -1, status: status };
-    const response = await SaleflowInvoiceService.list(param);
-
-    if (response.code === 0) {
-      const result = response.result;
-      if (status === 1) {
-        setDataOfApproachSuccessSale(result);
-      } else if (status === 3) {
-        setDataOfApproachFailSale(result);
-      } else {
-        setDataOfApproachStartSale(result);
-      }
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-  };
-
-  const getDataOneApproachSale = async (param, approachName) => {
-    const response = await SaleflowInvoiceService.list(param);
-    if (response.code === 0) {
-      const result = response.result;
-      const newDataOfApproach = [...dataOfApproachSale];
-      const indexApproach = dataOfApproachSale.findIndex((el) => el.approachId === param.approachId);
-      if (indexApproach !== -1) {
-        const newData = { approachId: param.approachId, approachName: approachName, value: result?.items, hasMore: result?.loadMoreAble, page: result?.page };
-        newDataOfApproach[indexApproach] = newData;
-        setDataOfApproachSale(newDataOfApproach);
-      }
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-  };
-
-  useEffect(() => {
-    getPipelineListSale();
-  }, []);
-
-  // When saleflowIdSale changes, load approaches and reset params similar to ManagementSale
-  useEffect(() => {
-    setParamsSale((prev) => ({ ...prev, saleflowId: saleflowIdSale, approachId: -1 }));
-    setApproachIdSale(-1);
-    if (saleflowIdSale === -1) {
-      setListApproachSale([]);
-      setListConvertListSale([]);
-    } else {
-      getOptionApproachSale(saleflowIdSale);
-    }
-  }, [saleflowIdSale]);
-
-  useEffect(() => {
-    if (listApproachSale && listApproachSale.length > 0) {
-      listApproachSale.map((item, index) => {
-        const param = { saleflowId: saleflowIdSale, approachId: item.value, limit: 10, page: 1 };
-        getDataOfApproachSale(param, item.label);
-        if (index === listApproachSale.length - 1) {
-          setNewDataOfApproachSale([]);
-        }
-      });
-    }
-  }, [listApproachSale, saleflowIdSale]);
-
-  useEffect(() => {
-    getDataOfApproachSpecialSale(saleflowIdSale, 0);
-    getDataOfApproachSpecialSale(saleflowIdSale, 1);
-    getDataOfApproachSpecialSale(saleflowIdSale, 3);
-  }, [saleflowIdSale]);
-
-  const [invoiceIdListSale, setInvoiceIdListSale] = useState<any[]>([]);
-  const [customerIdlistSale, setCustomerIdListSale] = useState<any[]>([]);
-  const [dataCustomerListSale, setDataCustomerListSale] = useState<any[]>([]);
-  const [columnListSale, setColumnListSale] = useState<any>(undefined);
-  const [checkColumnSale, setCheckColumnSale] = useState<any>(null);
-
-  useEffect(() => {
-    if (invoiceIdListSale && invoiceIdListSale.length > 0) {
-      const checkCustomerList: any[] = [];
-      const checkDataCustomerList: any[] = [];
-      invoiceIdListSale.map((item) => {
-        if (checkCustomerList.length === 0) {
-          checkCustomerList.push(item.customerId);
-          checkDataCustomerList.push({ name: item.customerName, id: item.customerId, phoneMasked: item.customerPhone, emailMasked: item.customerEmail, address: item.customerAddress, employeeName: item.employeeName, coyId: item.id });
-        } else {
-          if (!checkCustomerList.includes(item.customerId)) {
-            checkCustomerList.push(item.customerId);
-            checkDataCustomerList.push({ name: item.customerName, id: item.customerId, phoneMasked: item.customerPhone, emailMasked: item.customerEmail, address: item.customerAddress, employeeName: item.employeeName, coyId: item.id });
-          }
-        }
-      });
-      setCustomerIdListSale(checkCustomerList);
-      setDataCustomerListSale(checkDataCustomerList);
-    } else if (invoiceIdListSale && invoiceIdListSale.length === 0) {
-      setCustomerIdListSale([]);
-      setDataCustomerListSale([]);
-    }
-  }, [invoiceIdListSale]);
-
-  const clearKanbanSale = () => {
-    setInvoiceIdListSale([]);
-    setCustomerIdListSale([]);
-    setDataCustomerListSale([]);
-    setColumnListSale(undefined);
-    setCheckColumnSale(null);
-  };
-  // --- end ManagementSale Kanban state ---
   
 
   const [params, setParams] = useState({
@@ -476,52 +176,9 @@ export default function QuotationsNew() {
   }, [contractId]);
 
   // LocalStorage sync cho Kanban
-useEffect(() => {
-  localStorage.setItem("isKanbanBusinessProcess", JSON.stringify(isRegimeKanban));
-}, [isRegimeKanban]);
-
-useEffect(() => {
-  localStorage.setItem("processId", JSON.stringify(processId));
-}, [processId]);
-
-useEffect(() => {
-  localStorage.setItem("processName", processName);
-}, [processName]);
-
-// Load step process khi processId thay đổi
-useEffect(() => {
-  setValueProcess({
-    value: processId,
-    label: processName,
-  });
-
-  if (processId !== -1) {
-    getListStepProcess(processId);
-  }
-}, [processId]);
-
-// Load data cho từng step
-useEffect(() => {
-  if (listStepProcess && listStepProcess.length > 0) {
-    listStepProcess.map((item) => {
-      const param = {
-        processId: processId,
-        workflowId: item.value,
-        limit: 10,
-        page: 1,
-      };
-      getDataOfStep(param, item.label);
-    });
-  }
-}, [listStepProcess, processId]);
-
-// Load data special (start/success)
-useEffect(() => {
-  if (processId !== -1) {
-    getDataOfStepSpecial(processId, 0);
-    getDataOfStepSpecial(processId, 2);
-  }
-}, [processId]);
+  useEffect(() => {
+    localStorage.setItem("isKanbanBusinessProcess", JSON.stringify(isRegimeKanban));
+  }, [isRegimeKanban]);
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
@@ -605,200 +262,19 @@ useEffect(() => {
 
   const titleActions: ITitleActions = {
     actions: [
-      ...(!showModalSetingQuote || !hasHistorySignature
+      ...(!showModalSetingQuote && !hasHistorySignature
         ? [
             {
-              title: "Sao chép mẫu",
-              disabled: !isLoading && listQuote.length === 0,
+              title: isRegimeKanban ? "Danh sách" : "Kanban",
+              color: "primary",
               callback: () => {
-                setHasCopyQuote(true);
+                setIsRegimeKanban((prev) => !prev);
               },
             },
           ]
         : []),
-      {
-        title: !showModalSetingQuote || !hasHistorySignature ? "Thêm mới" : "Quay lại",
-        callback: () => {
-          if (showModalAdd) {
-            setShowModalAdd(false);
-          } else {
-            setDataQuote(null);
-            setShowModalAdd(true);
-          }
-        },
-      },
     ],
   };
-
-  // Lấy danh sách bước của quy trình
-const getListStepProcess = async (processId) => {
-  const body: any = {
-    processId,
-    limit: 100,
-  };
-
-  const response = await BusinessProcessService.listStep(body);
-  if (response.code === 0) {
-    const dataOption = response.result.items;
-
-    setListStepProcess([
-      ...(dataOption.length > 0
-        ? dataOption.map((item, index) => {
-            return {
-              value: item.id,
-              label: item.stepName,
-              color: colorData[index],
-              processId: item.processId,
-              step: item.stepNumber,
-            };
-          })
-        : []),
-    ]);
-  }
-};
-
-// Load options cho select process
-const loadOptionProcess = async (search, loadedOptions, { page }) => {
-  const param: any = {
-    name: search,
-    page: page,
-    limit: 10,
-  };
-  const response = await BusinessProcessService.list(param);
-  const optionProcess: any[] = page === 1 ? [] : [];
-
-  if (response.code === 0) {
-    const dataOption = response.result.items;
-
-    if (dataOption.length > 0) {
-      dataOption.map((item: any) => {
-        optionProcess.push({
-          value: item.id,
-          label: item.name,
-        });
-      });
-    }
-
-    return {
-      options: optionProcess,
-      hasMore: response.result.loadMoreAble,
-      additional: {
-        page: page + 1,
-      },
-    };
-  }
-
-  return { options: [], hasMore: false };
-};
-
-// Handle change value process
-const handleChangeValueProcess = (e) => {
-  setValueProcess(e);
-  setProcessId(+e.value);
-  setProcessName(e.label);
-  if (e.value === -1) {
-    setIsRegimeKanban(false);
-  }
-  clearKanban();
-};
-
-// Get data of step
-const getDataOfStep = async (paramsSearch, stepName) => {
-  const abortController = new AbortController();
-  const response = await BusinessProcessService.listWorkFlow(
-    paramsSearch,
-    abortController.signal
-  );
-
-  if (response.code === 0) {
-    const result = response.result;
-    const newData = {
-      stepId: paramsSearch.workflowId,
-      stepName: stepName,
-      value: result?.items,
-      hasMore: result?.loadMoreAble,
-      page: result?.page,
-    };
-
-    setDataOfStep((oldArray) => [...oldArray, newData]);
-  } else {
-    showToast(
-      response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau",
-      "error"
-    );
-  }
-};
-
-// Get data of step action
-const getDataOfStepAction = async (paramsSearch, stepName) => {
-  const abortController = new AbortController();
-  const response = await BusinessProcessService.listWorkFlow(
-    paramsSearch,
-    abortController.signal
-  );
-
-  if (response.code === 0) {
-    const result = response.result;
-    const listDataOfStep = [...dataOfStep];
-    const indexData = listDataOfStep.findIndex(
-      (el) => el.stepId === paramsSearch.workflowId
-    );
-
-    if (indexData !== -1) {
-      const newData = {
-        stepId: paramsSearch.workflowId,
-        stepName: stepName,
-        value: result?.items,
-        hasMore: result?.loadMoreAble,
-        page: result?.page,
-      };
-
-      listDataOfStep[indexData] = newData;
-    }
-    setDataOfStep(listDataOfStep);
-  } else {
-    showToast(
-      response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau",
-      "error"
-    );
-  }
-};
-
-// Get data of step special
-const getDataOfStepSpecial = async (processId, status) => {
-  const abortController = new AbortController();
-  const param = {
-    processId: processId,
-    limit: 10,
-    page: 1,
-    workflowId: -1,
-    status: status,
-  };
-  const response = await BusinessProcessService.listWorkFlow(
-    param,
-    abortController.signal
-  );
-
-  if (response.code === 0) {
-    const result = response.result;
-    if (status === 2) {
-      setDataOfStepSuccess(result);
-    } else {
-      setDataOfStepStart(result);
-    }
-  } else {
-    showToast(
-      response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau",
-      "error"
-    );
-  }
-};
-
-// Clear kanban
-const clearKanban = () => {
-  setColumnList(undefined);
-  setDataOfStep([]);
-};
 
   const titles = ["STT", "Tên báo giá", "Ngày tạo", "Ngày hết hạn", "Ngày ban hành", "Người lập", "Trạng thái"];
 
@@ -827,8 +303,6 @@ const clearKanban = () => {
       variant={!item.status ? "secondary" : item.status === 1 ? "primary" : item.status === 2 ? "success" : item.status === 4 ? "warning" : "error"}
     />,
   ];
-
-  const [viewDetailFs, setViewDetailFs] = useState<boolean>(false);
 
   const handleTitleExport = async (sheetId: number) => {
     const params = {
@@ -964,7 +438,12 @@ const clearKanban = () => {
               title: "Trình ký",
               icon: <Icon name="FingerTouch" className="icon-warning" />,
               callback: () => {
-                setDataObject(item);
+                // Lấy thông tin quy trình từ Quản lý quy trình (select trong Kanban)
+                setDataObject({
+                  ...item,
+                  processId: processQuotationId || null,
+                  processName: processQuotationName || null
+                });
                 setHasSignature(true);
                 // handleCheckValidateSignature(item, "signature");
               },
@@ -1189,86 +668,49 @@ const clearKanban = () => {
     <div className="action-navigation">
       <div className="action-backup" style={showModalSetingQuote || hasHistorySignature ? { marginBottom: "1.6rem" } : {}}>
         
-        {/* Breadcrumb - chỉ hiện khi không ở chế độ Kanban */}
-        {!isRegimeKanban && (
-          <>
-            <h1
-              onClick={() => {
-                setShowModalSetingQuote(false);
-                setHasHistorySignature(false);
-              }}
-              className="title-first"
-              title="Quay lại"
-            >
-              Danh sách báo giá mới
-            </h1>
-            {showModalSetingQuote && (
-              <Fragment>
-                <Icon
-                  name="ChevronRight"
-                  onClick={() => {
-                    setShowModalSetingQuote(false);
-                  }}
-                />
-                <h1 className="title-last">Cấu hình báo giá</h1>
-              </Fragment>
-            )}
-            {hasHistorySignature && (
-              <Fragment>
-                <Icon
-                  name="ChevronRight"
-                  onClick={() => {
-                    setHasHistorySignature(false);
-                  }}
-                />
-                <h1 className="title-last">Xem lịch sử ký</h1>
-              </Fragment>
-            )}
-          </>
-        )}
-
-        {/* Right-side action box with Kanban toggle button */}
-        <div className={`header-right-action ${isRegimeKanban ? 'active' : ''}`}>
-          <Button
-            type="button"
-            className="kanban-toggle-btn"
-            color={isRegimeKanban ? "secondary" : "primary"}
-            size="slim"
+        {/* Breadcrumb */}
+        <>
+          <h1
             onClick={() => {
-              setIsRegimeKanban(!isRegimeKanban);
+              setShowModalSetingQuote(false);
               setHasHistorySignature(false);
             }}
+            className="title-first"
+            title="Quay lại"
           >
-            {isRegimeKanban ? "Danh sách" : "Kanban"}
-          </Button>
-        </div>
+            Danh sách báo giá mới
+          </h1>
+          {showModalSetingQuote && (
+            <Fragment>
+              <Icon
+                name="ChevronRight"
+                onClick={() => {
+                  setShowModalSetingQuote(false);
+                }}
+              />
+              <h1 className="title-last">Cấu hình báo giá</h1>
+            </Fragment>
+          )}
+          {hasHistorySignature && (
+            <Fragment>
+              <Icon
+                name="ChevronRight"
+                onClick={() => {
+                  setHasHistorySignature(false);
+                }}
+              />
+              <h1 className="title-last">Xem lịch sử ký</h1>
+            </Fragment>
+          )}
+        </>
       </div>
+      {!showModalSetingQuote && !hasHistorySignature && <TitleAction title="" titleActions={titleActions} />}
     </div>
 
     <div className="card-box d-flex flex-column">
-      {/* SaleFlow selector */}
-      <div className={`${!hasHistorySignature ? (!isRegimeKanban ? "d-none" : "quick__search") : "d-none"}`}>
-        <div style={{ width: "30rem" }}>
-          <SelectCustom
-            id="saleflowIdSale"
-            name="saleflowIdSale"
-            fill={true}
-            required={true}
-            options={[]}
-            value={valueSaleflowSale}
-            onChange={(e) => handleChangeValueSaleflowSale(e)}
-            isAsyncPaginate={true}
-            placeholder="Chọn quy trình bán hàng"
-            additional={{
-              page: 1,
-            }}
-            loadOptionsPaginate={loadOptionSaleflowSale}
-          />
-        </div>
-      </div>
 
       {/* List View - Danh sách báo giá */}
-      <div className={`${isRegimeKanban ? "d-none" : ""} ${showModalSetingQuote || hasHistorySignature ? "d-none" : ""}`}>
+      <div className={`${isRegimeKanban || showModalSetingQuote || hasHistorySignature ? "d-none" : ""}`}>
         <SearchBox
           name="Tên báo giá"
           params={params}
@@ -1335,36 +777,38 @@ const clearKanban = () => {
       {/* Kanban View (Order Request Kanban) */}
       <div className={`${!hasHistorySignature ? (isRegimeKanban ? "" : "d-none") : "d-none"}`}>
         {/* Select quy trình (nếu muốn hiển thị) - đang bị comment trong code gốc */}
-        {/*
         <div style={{ width: "45rem", padding: "2rem" }}>
           <SelectCustom
-            id="processOrderRequestId"
-            name="processOrderRequestId"
+            id=""
+            name="name"
             fill={true}
             required={true}
-            value={valueProcessOrderRequest}
+            options={[]}
+            value={valueProcessQuotation}
             onChange={(e) => {
-              if (e.value !== processOrderRequestId) {
-                setIsLoadingKanbanOrderRequest(true);
-                handleChangeValueProcessOrderRequest(e);
+              if (e.value !== processQuotationId) {
+                setIsLoadingKanbanQuotation(true);
+                handleChangeValueProcessQuotation(e);
               }
             }}
             isAsyncPaginate={true}
             placeholder="Chọn quy trình"
             additional={{ page: 1 }}
-            loadOptionsPaginate={loadOptionProcessOrderRequest}
+            loadOptionsPaginate={loadOptionProcessQuotation}
           />
         </div>
-        */}
 
         {/* Loading khi đổi quy trình */}
-        <div className={`${isLoadingKanbanOrderRequest ? "" : "d-none"}`}>
+        <div className={`${isLoadingKanbanQuotation ? "" : "d-none"}`}>
           <Loading />
         </div>
 
         {/* Hiển thị Kanban */}
-        <div className={`${!isLoadingKanbanOrderRequest ? "" : "d-none"}`}>
-          <KanbanOrderRequestProcess processId={processOrderRequestId} />
+        <div className={`${!isLoadingKanbanQuotation ? "" : "d-none"}`}>
+          <KanbanQuotationsProcess 
+            processId={processQuotationId} 
+            processCode={valueProcessQuotation?.code}
+          />
         </div>
       </div>
 
@@ -1462,15 +906,6 @@ const clearKanban = () => {
 
         setListQuote(updateData);
         setDataQuote(data);
-      }}
-    />
-
-    <ViewDetailFsModal
-      onShow={viewDetailFs}
-      data={dataQuote}
-      onHide={() => {
-        setDataQuote(null);
-        setViewDetailFs(false);
       }}
     />
 
