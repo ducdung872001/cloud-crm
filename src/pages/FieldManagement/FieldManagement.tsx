@@ -167,7 +167,7 @@ export default function FieldMannagement() {
 
   const titles = ["STT", "Tên lĩnh vực", "Mã lĩnh vực", "Tỉ lệ", "Thứ tự"];
 
-  const dataFormat = ["text-center", "", "", "", "text-center"];
+  const dataFormat = ["text-center", "", "", "text-center", "text-center"];
 
   // IPackageResponseModel
   const dataMappingArray = (item: any, index: number) => [

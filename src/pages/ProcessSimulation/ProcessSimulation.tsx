@@ -293,7 +293,7 @@ export default function ProcessSimulation(props: any) {
 
   return (
     <Fragment>
-      <div className={`page-content page-process-simulation${isNoItem ? " bg-white" : ""} card-box`}>
+      <div className={`page-content page-process-simulation${isNoItem ? " bg-white" : ""}`}>
         <TitleAction title="Mô phỏng quy trình" titleActions={titleActions} />
 
         <div className="card-box d-flex flex-column">

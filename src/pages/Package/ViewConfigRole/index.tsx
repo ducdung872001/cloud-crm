@@ -13,8 +13,6 @@ import { IViewConfigDepartmentProps } from "model/department/PropsModel";
 import PermissionService from "services/PermissionService";
 import { showToast } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
-import ChooseJobTitleDifferentModal from "./partials/ChooseJobTitleDifferentModal/ChooseJobTitleDifferentModal";
-import ChooseDepartmentDifferentModal from "./partials/ChooseDepartmentDifferentModal/ChooseDepartmentDifferentModal";
 import "tippy.js/animations/scale.css";
 import "./index.scss";
 import RolePermissionService from "services/RolePermissionService";
@@ -534,21 +532,7 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
         </CustomScrollbar>
       </ModalBody>
       <ModalFooter actions={actions} />
-      <ChooseDepartmentDifferentModal
-        onShow={showModalCopyDepartment}
-        sourceDepartmentId={data?.id}
-        nameDepartment={data?.name}
-        listJobTitleProps={dataRole}
-        onHide={(reload) => {
-          if (reload) {
-            getListPermissionRole(true);
-
-            //Load lại quyền cho tài khoản này => Để test luôn
-            reloadPermissions();
-          }
-          setShowModalCopyDepartment(false);
-        }}
-      />
+      
     </div>
   );
 }
