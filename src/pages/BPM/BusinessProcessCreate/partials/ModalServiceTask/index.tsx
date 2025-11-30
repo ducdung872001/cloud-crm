@@ -1222,6 +1222,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
                             name="nameInput"
                             label={index === 0 ? "Tên tham số đầu vào" : ""}
                             fill={true}
+                            disabled={item.name === "listParam"}
                             required={item.name === "listParam"}
                             error={item.checkName}
                             message="Tên tham số đầu vào không được để trống"
