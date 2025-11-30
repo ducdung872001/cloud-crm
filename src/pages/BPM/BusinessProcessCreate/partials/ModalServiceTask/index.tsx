@@ -182,11 +182,18 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
           ]
         );
       }
+      const executionMode =
+        result?.executionMode && JSON.parse(result.executionMode)
+        ? JSON.parse(result.executionMode)
+        : { executionType: null, payloadHandling: null };
+
 
       const data = {
         ...result,
         authentication: authentication?.type || "Basic",
         errorHandling: errorHandling?.type || "Retry",
+        executionType: executionMode.executionType ?? null,
+        payloadHandling: executionMode.payloadHandling ?? null,
       };
 
       const httpHeaders = (result.httpHeaders && JSON.parse(result.httpHeaders)) || null;
@@ -228,6 +235,8 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
   const values = useMemo(
     () => ({
       id: null,
+      payloadHandling: data?.payloadHandling ?? null,
+      executionType: data?.executionType ?? null,
       name: data?.name ?? "",
       code: data?.code ?? "",
       description: data?.description ?? "",
@@ -287,6 +296,28 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
   //         }
   //     }
   // }, [formData.errorHandling])
+
+  useEffect(() => {
+  if (formData?.payloadHandling === 2) {
+    setListInputVar((current) => {
+      const existing = current?.find((it) => it.name === "listParam");
+      if (existing) return current; 
+      const newFirst = {
+        name: "listParam",
+        attributeMapping: "", 
+        attributeMappingId: "",
+        mappingType: 1,
+        checkName: false,
+        checkMapping: false,
+      };
+      const rest = (current || []).filter((it) => it.name !== "listParam");
+      return [newFirst, ...rest];
+    });
+  } else {
+    setListInputVar((current) => (current || []).filter((it) => it.name !== "listParam"));
+  }
+}, [formData?.payloadHandling]);
+
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -374,6 +405,10 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
     });
 
     // console.log('listOutVarSubmit', listOutVarSubmit);
+    const executionMode = JSON.stringify({
+      executionType: formData.executionType,
+      payloadHandling: formData.payloadHandling,
+    });
 
     const authenticationSubmit = {
       type: formData.authentication,
@@ -403,7 +438,11 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
       errorHandling: JSON.stringify(errorHandlingSubmit),
       timeout: formData?.timeout ?? "",
       serviceValidation: formData?.serviceValidation ?? 0, //0 - thất bại, 1 - thành công
-      executionMode: formData?.executionMode ?? null,
+      // executionMode: formData?.executionMode ?? null,
+      executionMode: JSON.stringify({
+        executionType: formData.executionType,
+        payloadHandling: formData.payloadHandling,
+      }),
       nodeId: dataNode?.id ?? null,
       processId: formData?.processId ?? null,
       workflowId: formData?.workflowId ?? null,
@@ -924,29 +963,32 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
 
               <div className="form-group">
                 <SelectCustom
-                  id="executionMode"
-                  name="executionMode"
+                  id="executionType"
+                  name="executionType"
                   label="Chế độ thực thi"
                   fill={true}
                   special={true}
                   required={true}
                   options={[
                     {
-                      value: "synchronous",
+                      value: 0,
                       label: "Đồng bộ",
                     },
                     {
-                      value: "asynchronous",
+                      value: 1,
                       label: "Bất đồng bộ",
                     },
                   ]}
                   value={
-                    formData.executionMode
-                      ? { value: formData.executionMode, label: formData.executionMode === "synchronous" ? "Đồng bộ" : "Bất đồng bộ" }
-                      : null
+                    formData.executionType !== null
+                  ? {
+                    value: formData.executionType,
+                    label: formData.executionType === 0 ? "Đồng bộ" : "Bất đồng bộ"
+                     }
+                  : null
                   }
                   onChange={(e) => {
-                    setFormData({ ...formData, executionMode: e.value });
+                    setFormData({ ...formData, executionType: e.value });
                   }}
                   isAsyncPaginate={false}
                   isFormatOptionLabel={false}
@@ -1123,6 +1165,50 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
                 ) : null}
               </div>
 
+              <div className="form-group">
+                <SelectCustom
+                  id="payloadHandling"
+                  name="payloadHandling"
+                  label="Dạng xử lý dữ liệu"
+                  fill={true}
+                  special={true}
+                  required={true}
+                  options={[
+                    {
+                      value: 0,
+                      label: "Xử lý thông thường",
+                    },
+                    {
+                      value: 1,
+                      label: "Xử lý cả lô param",
+                    },
+                    {
+                      value: 2,
+                      label: "Xử lý từng phần tử trong lô param ",
+                    },
+                  ]}
+                  value={
+                    formData.payloadHandling !== null
+                    ? {
+                    value: formData.payloadHandling,
+                    label:
+                    formData.payloadHandling === 0
+                    ? "Xử lý thông thường"
+                    : formData.payloadHandling === 1
+                    ? "Xử lý cả lô param"
+                    : "Xử lý từng phần tử trong lô param"
+                     } 
+                    : null
+                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, payloadHandling: e.value });
+                  }}
+                  isAsyncPaginate={false}
+                  isFormatOptionLabel={false}
+                  placeholder="Chọn dạng xử lý dữ liệu"
+                />
+              </div>
+
               <div className="container-inputVar">
                 <div>
                   <span style={{ fontSize: 14, fontWeight: "700" }}>Biến đầu vào</span>
@@ -1136,7 +1222,8 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
                             name="nameInput"
                             label={index === 0 ? "Tên tham số đầu vào" : ""}
                             fill={true}
-                            required={false}
+                            disabled={item.name === "listParam"}
+                            required={item.name === "listParam"}
                             error={item.checkName}
                             message="Tên tham số đầu vào không được để trống"
                             placeholder={"Tên tham số đầu vào"}
@@ -1309,7 +1396,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
                           </Tippy>
                         </div>
 
-                        {listInputVar.length > 1 ? (
+                        {listInputVar.length > 1 && item.name !== "listParam" ? (
                           <div className="remove-attribute" style={index === 0 ? { marginTop: "3.2rem" } : {}}>
                             <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
                               <span
