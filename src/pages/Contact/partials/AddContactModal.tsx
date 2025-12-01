@@ -765,6 +765,8 @@ export default function AddContactModal(props: AddContactModalProps) {
       defaultText: "Xác nhận",
       defaultAction: () => {
         clearForm(false);
+        setShowDialog(false);
+        setContentDialog(null);
       },
     };
     setContentDialog(contentDialog);
