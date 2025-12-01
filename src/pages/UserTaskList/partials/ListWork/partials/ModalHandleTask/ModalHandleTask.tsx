@@ -697,6 +697,14 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
 
   const onSubmit = async (config) => {
     let checkValidate = checkValidateForm(config);
+    // console.log("config", config);
+    // console.log("config:formViewerRef", formViewerRef);
+    // Object.keys(config).forEach((key) => {
+    //   console.log(`Key: ${key}, Value: ${typeof config[key] == "string" ? JSON.parse(config[key]) : config[key]}`); // Sử dụng JSON.parse nếu giá trị là chuỗi JSON
+    // });
+    // setIsSubmit(false);
+    // return;
+
     if (!checkValidate) {
       setIsSubmit(false);
       return;

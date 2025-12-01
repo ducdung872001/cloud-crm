@@ -44,6 +44,7 @@ export function GridRenderer(props) {
     dataGrid[id] = {};
   }
 
+  console.log("GridRenderer props:", props);
   dataGrid[id].headerTable = props?.field?.headerTable ? props?.field?.headerTable : [];
   if (!value || value === "undefined" || value === "") {
     dataGrid[id].dataRow = props?.field?.dataRow ? props?.field?.dataRow : [];

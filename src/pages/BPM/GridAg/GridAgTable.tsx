@@ -151,10 +151,6 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     setColumnsConfig(dataGridHeader);
     let dataGridRow =
       dataGrid?.dataRow && dataGrid.dataRow ? (typeof dataGrid.dataRow === "string" ? JSON.parse(dataGrid.dataRow) : dataGrid.dataRow) : [];
-    // const getDataLookupGrid = async (header, data) => {
-    //   const lookupValues = await fetchDataLookupGrid(header, data);
-    //   setLookupValues(lookupValues);
-    // };
     const getDataLookupGrid = async (header, data) => {
       let _dataLookup = await mapDataWithLookup(header, data);
       setLookupValues(_dataLookup.dataLookup);
@@ -168,7 +164,6 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
   }, [rowData]);
 
   useEffect(() => {
-    // onChange && onChange({ headerTable: JSON.stringify(columnsConfig), dataRow: JSON.stringify(rowData) });
     onChange && onChange({ headerTable: columnsConfig, dataRow: rowData });
   }, [columnsConfig, rowData]);
 
@@ -435,8 +430,6 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
       onChange && onChange({ headerTable: columnsConfig, dataRow: updatedRowData });
     }
   };
-
-  console.log("Render GridAgTable:", rowData); // Kiểm tra render và dữ liệu ban đầu
 
   return (
     <div className="ag-grid-table">
