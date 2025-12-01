@@ -66,6 +66,8 @@ export function GridRenderer(props) {
     // props.field.dataRow có thể undefined => lưu [] nếu không có
     configFieldOrigin[id] = deepClone(props?.field?.dataRow ? props.field.dataRow : []);
   }
+  // console.log("configFieldOrigin:", configFieldOrigin);
+  // console.log("props:", props);
   // =====================================================
   const containerId = `gridag-container-${domId}`;
   if (!dataGrid[ids]) {
@@ -74,12 +76,14 @@ export function GridRenderer(props) {
 
   dataGrid[ids].headerTable = props?.field?.headerTable ? props?.field?.headerTable : [];
   if (!value || value === "undefined" || value === "") {
+    console.log("Vào đây:");
     if (indexes && typeof indexes[_parent] != "undefined" && indexes[_parent]) {
       //Tạo rowKey mới cho tất cả các dòng nếu đây là grid trong dynamic list (bản chất là clone của grid có indexes[_parent] == 0)
       // let _dataRow = props?.field?.dataRow ? props?.field?.dataRow : [];
       let id = null;
       let _dataRow = [];
       Object.keys(configFieldOrigin).forEach((key) => {
+        console.log("Found configFieldOrigin for ids:", ids, "key:", key);
         if (ids.includes(key)) {
           id = key;
         }
