@@ -12,10 +12,10 @@ export default function SettingTicketList() {
   const [isDetailCategory, setIsDetailCategory] = useState<boolean>(false);
 
   const menuCategorySMS = [
-    {
-      title: "Quy trình xử lý hỗ trợ",
-      is_tab: "tab_one",
-    },
+    // {
+    //   title: "Quy trình xử lý hỗ trợ",
+    //   is_tab: "tab_one",
+    // },
     {
       title: "Danh mục hỗ trợ",
       is_tab: "tab_two",

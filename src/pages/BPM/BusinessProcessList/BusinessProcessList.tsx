@@ -1053,7 +1053,7 @@ export default function BusinessProcessList() {
   };
 
   return (
-    <div className={`page-content page-business-process-list${isNoItem ? " bg-white" : ""} card-box`}>
+    <div className={`page-content page-business-process-list${isNoItem ? " bg-white" : ""}`}>
       <div className="container-header">
         <TitleAction title={isRegimeKanban ? "Danh sách đối tượng" : "Danh sách quy trình"} />
         <div className="container-left">
@@ -1125,6 +1125,7 @@ export default function BusinessProcessList() {
               params={params}
               setParams={setParams}
               listIdChecked={listIdChecked}
+              listSaveSearch={listSaveSearch}
               showDialogConfirmDelete={showDialogConfirmDelete}
               titleSearch="Tên quy trình"
               disableDeleteAll={permissions["PROCESS_MANAGEMENT_DELETE"] == 1 ? false : true}
