@@ -29,7 +29,7 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
   const refBoxConfig = useRef(null);
 
   const [width, setWidth] = useState(0);
-  const [dataRole, setDataRole] = useState([
+  const [dataRole, setDataRole] = useState<any>([
     {
       id: "",
       name: "",

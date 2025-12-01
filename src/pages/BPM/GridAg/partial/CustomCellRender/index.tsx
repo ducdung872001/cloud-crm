@@ -125,14 +125,14 @@ const CustomCellRender = (props) => {
           } else {
             return (
               <div className="text-truncate" title={props?.value ? props.value : null}>
-                {props?.value ? props.value : null}
+                {props?.value ? formatNumber(props?.value) : ""}
               </div>
             );
           }
         case "select":
           return (
-            <div className="text-truncate" title={props.value}>
-              {props.value}
+            <div className="text-truncate" title={props.options.find((opt) => opt.value === props.value)?.label || props.value}>
+              {props.options.find((opt) => opt.value === props.value)?.label || props.value}
             </div>
           );
         case "lookup":
@@ -141,11 +141,6 @@ const CustomCellRender = (props) => {
         case "checkbox":
           return (
             <div className="text-truncate" title={props?.value ? props.value.toString() : "false"}>
-              {/* {props.value === "true" ? (
-                <Icon name="Checked" style={{ width: "14px", height: "14px" }} />
-              ) : (
-                <Icon name="Times" style={{ width: "2rem", height: "2rem" }} />
-              )} */}
               <div style={{ minHeight: "4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                 <Checkbox
                   checked={props.value === "true"}
@@ -165,21 +160,6 @@ const CustomCellRender = (props) => {
                   className={`circle-button-radio ${props.value === "true" ? "active" : ""}`}
                   onClick={() => {
                     handleChangeValue();
-                    // let currentValue = checkedMap[props.data.rowKey] ? checkedMap[props.data.rowKey][props.colDef.field] || false : false;
-                    // setCheckedMap((prev) => {
-                    //   let newCheckedMap = { ...prev };
-                    //   if (!newCheckedMap[props.data.rowKey]) {
-                    //     newCheckedMap[props.data.rowKey] = {};
-                    //   }
-                    //   newCheckedMap[props.data.rowKey][props.colDef.field] = !currentValue;
-                    //   // Chỉ cho phép một radio được chọn trong cùng một cột
-                    //   Object.keys(newCheckedMap).forEach((rowKey) => {
-                    //     if (rowKey !== props.data.rowKey) {
-                    //       newCheckedMap[rowKey][props.colDef.field] = false;
-                    //     }
-                    //   });
-                    //   return newCheckedMap;
-                    // });
                   }}
                 />
               </div>

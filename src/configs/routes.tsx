@@ -178,6 +178,12 @@ import MarketingAutomationListV2 from "pages/MarketingAutomation/MarketingAutoma
 import CreateMarketingAutomationV2 from "pages/MarketingAutomation/CreateMarketingAutomation/CreateMarketingAutomationV2";
 import { useCookies } from "react-cookie";
 import OrderTracking from "pages/OrderTracking";
+import OrganizationList from "pages/Organization/OrganizationList";
+import Package from "pages/Package";
+import ExtensionList from "pages/Extension/ExtensionList";
+import UserList from "pages/User/UserList";
+import FieldMannagement from "pages/FieldManagement/FieldManagement";
+import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -403,12 +409,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="SettingSell" />,
               code: "",
             },
-            {
-              title: "settingProcess", // Cài đặt quy trình phê duyệt (V1 - old)
-              path: urls.setting_process,
-              icon: <Icon name="SettingSell" />,
-              code: "",
-            },
+            // {
+            //   title: "settingProcess", // Cài đặt quy trình phê duyệt (V1 - old)
+            //   path: urls.setting_process,
+            //   icon: <Icon name="SettingSell" />,
+            //   code: "",
+            // },
             {
               title: "settingCode",
               path: urls.setting_code,
@@ -612,7 +618,7 @@ export const menu: IMenuItem[] = [
           code: "MENU_SELL",
           children: [
             {
-              title: "treatmentHistory", // Lịch sử điều trị
+              title: "treatmentHistory", // Thực hiện dịch vụ
               path: urls.treatment_history,
               icon: <Icon name="TraetmentHistory" />,
               code: "TREATMENT_HISTORY",
@@ -899,10 +905,62 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="SettingJob" />,
               code: "",
             },
+            {
+              title: "manageDefaultProcesses",
+              path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
+              code: "BPM",
+              icon: <Icon name="CashBook" />,
+            },
           ],
         },
       ]
     : []),
+
+  {
+    title: "organizationalManagement",
+    path: urls.organization,
+    icon: <Icon name="Partner" />,
+    code: "RESOURCE",
+    children: [
+      {
+        title: "listOfOrganizations",
+        path: urls.organization,
+        icon: <Icon name="Partner" />,
+        code: "ORGANIZATION_MANAGEMENT",
+      },
+      {
+        title: "userAdministration",
+        path: urls.user,
+        icon: <Icon name="Customer" />,
+        code: "RESOURCE",
+      },
+      {
+        title: "servicePackageManagement",
+        path: urls.package_manage,
+        icon: <Icon name="Beauty" />,
+        code: "RESOURCE",
+      },
+      {
+        title: "renewalList",
+        path: urls.extension_list,
+        icon: <Icon name="Renewal" />,
+        code: "RENEWAL_LIST",
+      },
+      {
+        title: "fieldManagement",
+        path: urls.field_management,
+        icon: <Icon name="FieldMannagement" />,
+        code: "FIELD_MANAGEMENT",
+      },
+      {
+        title: "resourceManagement", // Quản trị tài nguyên
+        path: urls.resource_management,
+        icon: <Icon name="SettingJob" />,
+        code: "RESOURCE",
+      },
+    ],
+  },
+
   ...(checkSubdomainTNPM || checkSubdomainGREENSPA
     ? [
         // {
@@ -1064,12 +1122,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="FileSharing" style={{ width: 35, height: 35, marginLeft: -5 }} />,
               code: "",
             },
-            {
-              title: "resourceManagement", // Quản trị tài nguyên
-              path: urls.resource_management,
-              icon: <Icon name="SettingJob" />,
-              code: "RESOURCE",
-            },
+            // {
+            //   title: "resourceManagement", // Quản trị tài nguyên
+            //   path: urls.resource_management,
+            //   icon: <Icon name="SettingJob" />,
+            //   code: "RESOURCE",
+            // },
           ]
         : []),
     ],
@@ -1709,6 +1767,10 @@ export const routes: IRouter[] = [
     component: <BusinessProcessList />,
   },
   {
+    path: urls.manage_default_processes,
+    component: <ManageDefaultProcesses />,
+  },
+  {
     path: urls.process_simulation,
     component: <ProcessSimulation />,
   },
@@ -1736,5 +1798,25 @@ export const routes: IRouter[] = [
   {
     path: urls.upload_document,
     component: <UploadDocument />,
+  },
+  {
+    path: urls.user,
+    component: <UserList />,
+  },
+  {
+    path: urls.organization,
+    component: <OrganizationList />,
+  },
+  {
+    path: urls.package_manage,
+    component: <Package />,
+  },
+  {
+    path: urls.extension_list,
+    component: <ExtensionList />,
+  },
+  {
+    path: urls.field_management,
+    component: <FieldMannagement />,
   },
 ];

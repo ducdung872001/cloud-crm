@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { IActionModal, IOption } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
-import CustomerAttributeService from "services/CustomerAttributeService";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -19,8 +18,6 @@ import GirdService from "services/GridService";
 import { BindingFieldMap } from "./BindingFieldMap";
 import Checkbox from "components/checkbox/checkbox";
 import { useGridAg } from "../../GridAgContext";
-import { set } from "lodash";
-import CheckboxList from "components/checkbox/checkboxList";
 
 export default function ModalAddColumnAg(props: any) {
   const { onShow, onHide, data, listColumn, setListColumn, setIsChangeColumns, typeNo, isEdit, location } = props;
@@ -40,7 +37,13 @@ export default function ModalAddColumnAg(props: any) {
   const [listCustomerAttribute, setListCustomerAttribute] = useState<IOption[]>(null);
   const [isLoadingCustomerAttribute, setIsLoadingCustomerAttribute] = useState<boolean>(false);
   const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([]);
+  const [listParams, setListParams] = useState<any[]>([]);
+  const [listColumnBinding, setListColumnBinding] = useState<any[]>([]);
   const [detailLookup, setDetailLookup] = useState<any>("");
+  const [lookupLabel, setLookupLabel] = useState<any>({
+    key: "",
+    type: "",
+  });
   const [numberFormat, setNumberFormat] = useState<any>("");
 
   const [listBindingField, setListBindingField] = useState<any[]>([]);
@@ -54,52 +57,8 @@ export default function ModalAddColumnAg(props: any) {
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [checkFieldName, setCheckFieldName] = useState(false);
 
-  const [listLookup, setListLookup] = useState<IOption[]>([
-    {
-      value: "reason",
-      label: "Loại nguyên nhân",
-    },
-    {
-      value: "project_catalog",
-      label: "Loại dự án",
-    },
-    {
-      value: "project_realty",
-      label: "Dự án",
-    },
-    {
-      value: "unit",
-      label: "Đơn vị tính",
-    },
-    {
-      value: "material",
-      label: "Vật tư",
-    },
-    {
-      value: "field",
-      label: "Lĩnh vực",
-    },
-    {
-      value: "business_category",
-      label: "Ngành nghề kinh doanh",
-    },
-    {
-      value: "supplier",
-      label: "Nhà cung cấp",
-    },
-    {
-      value: "investor",
-      label: "Chủ đầu tư",
-    },
-    {
-      value: "procurement_type",
-      label: "Loại yêu cầu mua sắm",
-    },
-    {
-      value: "work_category",
-      label: "Công việc",
-    },
-  ]);
+  const [startDateTimeRange, setStartDateTimeRange] = useState(null);
+  const [endDateTimeRange, setEndDateTimeRange] = useState(null);
 
   useEffect(() => {
     if (data?.parentId) {
@@ -108,11 +67,15 @@ export default function ModalAddColumnAg(props: any) {
     if ((data?.type == "select" || data?.type == "multiselect") && data?.options) {
       setAddFieldAttributes(data?.options);
     }
-    if (data?.type == "lookup" && data?.options) {
+    if (data?.type == "lookup" || data?.type == "binding") {
       setDetailLookup(data?.lookup);
+      setListParams(data?.paramLookup?.length ? data?.paramLookup : [{ value: "", key: "" }]);
+      setLookupLabel({
+        key: data?.fieldLabelLookup?.key || "",
+        type: data?.fieldLabelLookup?.type || "",
+      });
     }
     if (data?.type == "binding") {
-      setDetailLookup(data?.lookup);
       setDetailBindingField(
         data?.listBindingField?.length
           ? data?.listBindingField.map((item) => ({
@@ -121,6 +84,23 @@ export default function ModalAddColumnAg(props: any) {
               readOnly: item.readOnly || false,
             }))
           : []
+      );
+      setListColumnBinding(
+        data?.listBindingField
+          ? data?.listBindingField.map((item) => ({
+              value: item.value,
+              label: item.label,
+              readOnly: item.readOnly || false,
+              type: item.type || "text",
+            }))
+          : [
+              {
+                value: "",
+                label: "",
+                readOnly: false,
+                type: "text",
+              },
+            ]
       );
     }
     // if (data?.type == "number" && data?.options) {
@@ -163,22 +143,41 @@ export default function ModalAddColumnAg(props: any) {
     );
   };
 
-  //! đoạn này xử lý vấn đề lấy giá trị tham chiếu của trường lookup
-  const handleDetailLookup = (item) => {
-    setDetailLookup(item?.value);
-    if (BindingFieldMap[item?.value] && BindingFieldMap[item?.value].length > 0) {
-      setListBindingField(
-        BindingFieldMap[item?.value].map((item) => {
-          return { ...item, readOnly: true };
-        })
-      );
-    }
-    setDetailBindingField([]);
+  //! đoạn này xử lý vấn đề lấy giá trị của các cột binding khi thêm nhiều
+  const handleChangeListColumnBinding = (e, idx, type) => {
+    const value = type === "readOnly" ? e.target.checked : type === "type" ? e.value : e.target.value;
+    setListColumnBinding((current) =>
+      current.map((obj, index) => {
+        if (index === idx) {
+          return {
+            ...obj,
+            ...(type === "value" ? { value: value } : {}),
+            ...(type === "label" ? { label: value } : {}),
+            ...(type === "readOnly" ? { readOnly: value } : {}),
+            ...(type === "type" ? { type: value } : {}),
+          };
+        }
+        return obj;
+      })
+    );
   };
-  //! đoạn này xử lý vấn đề lấy giá trị tham chiếu của trường lookup
-  const handleChangeBindingField = (item) => {
-    setDetailBindingField([...detailBindingField, item]);
-    setListBindingField(listBindingField.filter((x) => x.value !== item.value));
+
+  //! đoạn này xử lý vấn đề lấy giá trị của params khi thêm nhiều
+  const handleChangeParams = (e, idx, type) => {
+    const value = e.target.value;
+    setListParams((current) =>
+      current.map((obj, index) => {
+        if (index === idx) {
+          return {
+            ...obj,
+            ...(type === "value" ? { value: value } : {}),
+            ...(type === "key" ? { key: value } : {}),
+            // value: value
+          };
+        }
+        return obj;
+      })
+    );
   };
 
   //! xóa đi 1 item attribute
@@ -187,6 +186,22 @@ export default function ModalAddColumnAg(props: any) {
     result.splice(idx, 1);
 
     setAddFieldAttributes(result);
+  };
+
+  //! xóa đi 1 item params
+  const handleRemoveItemParams = (idx) => {
+    const result = [...listParams];
+    result.splice(idx, 1);
+
+    setListParams(result);
+  };
+
+  //! xóa đi 1 item params
+  const handleRemoveItemListColumnsBinding = (idx) => {
+    const result = [...listColumnBinding];
+    result.splice(idx, 1);
+
+    setListColumnBinding(result);
   };
 
   // đoạn này sẽ xử lý thay đổi nội dung
@@ -233,6 +248,7 @@ export default function ModalAddColumnAg(props: any) {
         position: data?.position ?? "0",
         parentId: data?.parentId ?? "0",
         regex: data?.regex ?? "",
+        lookupUri: data?.lookupUri ?? "",
       } as any),
     [data, onShow]
   );
@@ -262,10 +278,10 @@ export default function ModalAddColumnAg(props: any) {
     key = key.replace(new RegExp(`[^A-Za-z0-9]`, "g"), "");
 
     //Chỉ set lại nếu là trường hợp thêm mới
-    if (!data?.id) {
+    if (!data?.id && !isEdit) {
       setFormData({ ...formData, values: { ...formData.values, key: key } });
     }
-  }, [formData?.values["name"]]);
+  }, [formData?.values["name"], isEdit]);
 
   useEffect(() => {
     //Nếu rỗng thì thay đổi
@@ -284,7 +300,7 @@ export default function ModalAddColumnAg(props: any) {
           type: "text",
           fill: true,
           required: true,
-          disabled: isEdit,
+          // disabled: isEdit,
           error: checkFieldName,
           message: "Tên trường thông tin này đã tồn tại",
         },
@@ -320,6 +336,32 @@ export default function ModalAddColumnAg(props: any) {
               } else {
                 setDetailLookup("");
               }
+              setListParams([
+                {
+                  value: "",
+                  key: "",
+                },
+              ]);
+            } else if (e?.value === "binding") {
+              if (data && data.type === "lookup" && data.lookup) {
+                setDetailLookup(data.lookup);
+              } else {
+                setDetailLookup("");
+              }
+              setListParams([
+                {
+                  value: "",
+                  key: "",
+                },
+              ]);
+              setListColumnBinding([
+                {
+                  value: "",
+                  label: "",
+                  readOnly: false,
+                  type: "text",
+                },
+              ]);
             } else if (e?.value === "number") {
               if (data && data.type === "number" && data.options && JSON.parse(data?.options).numberFormat) {
                 setNumberFormat(JSON.parse(data?.options).numberFormat);
@@ -537,28 +579,15 @@ export default function ModalAddColumnAg(props: any) {
     };
   }, [values]);
 
-  const listBindingFieldContactOrg = [
-    {
-      value: "position",
-      label: "Chức vụ người liên hệ",
-      key: "ChucVu_NguoiLienHe",
-    },
-    {
-      value: "phone",
-      label: "Số điện thoại người liên hệ",
-      key: "SoDienThoai_NguoiLienHe",
-    },
-    {
-      value: "email",
-      label: "Email người liên hệ",
-      key: "Email_NguoiLienHe",
-    },
-  ];
-
   const onSubmit = async () => {
     // e.preventDefault();
+    if ((formData.values["type"] == "binding" || formData.values["type"] == "lookup") && !formData.values?.["lookupUri"]) {
+      showToast("Đường dẫn API tham chiếu không được bỏ trống", "error");
+      setIsSubmit(false);
+      return;
+    }
 
-    const _detailBindingField = detailBindingField.map((item) => {
+    const _detailBindingField = listColumnBinding.map((item) => {
       let key = convertToId(item.label) || "";
       key = key.replace(new RegExp(`[^A-Za-z0-9]`, "g"), "") + "_" + formData.values["key"];
       return {
@@ -568,11 +597,9 @@ export default function ModalAddColumnAg(props: any) {
         readOnly: item.readOnly,
         haveCheckbox: item.haveCheckbox || 0,
         haveRadio: item.haveRadio || 0,
+        type: item.type || "text",
       };
     });
-
-    let includeContactOrg = false;
-    let readOnlyContactOrg = true;
 
     let list_column = [];
 
@@ -580,37 +607,59 @@ export default function ModalAddColumnAg(props: any) {
       list_column = [
         ...listColumn,
         {
-          name: formData.values["name"],
-          key: formData.values["key"],
-          type: formData.values["type"],
-          required: formData.values["required"] == "1" ? true : false,
-          isSum: formData.values["isSum"] == "1" ? true : false,
-          options: addFieldAttributes || [],
-          position: formData.values["position"],
-          lookup: detailLookup,
-          regex: formData.values["regex"],
-          listBindingField: _detailBindingField || [],
-          readOnly: formData.values["readOnly"] == "1" ? 1 : 0,
-          haveCheckbox: formData.values["haveCheckbox"] == "1" ? 1 : 0,
-          haveRadio: formData.values["haveRadio"] == "1" ? 1 : 0,
-          formula: JSON.stringify({
-            formula: selectedFormula,
-          }),
-          timeRange: JSON.stringify({
-            startDate: startDateTimeRange || "",
-            endDate: endDateTimeRange || "",
-          }),
+          ...{
+            name: formData.values["name"],
+            key: formData.values["key"],
+            type: formData.values["type"],
+            required: formData.values["required"] == "1" ? true : false,
+            isSum: formData.values["isSum"] == "1" ? true : false,
+            position: formData.values["position"],
+            readOnly: formData.values["readOnly"] == "1" ? 1 : 0,
+            haveCheckbox: formData.values["haveCheckbox"] == "1" ? 1 : 0,
+            haveRadio: formData.values["haveRadio"] == "1" ? 1 : 0,
+          },
+          ...(formData.values["type"] == "text" || formData.values["type"] == "number" ? { regex: formData.values["regex"] } : {}),
+          ...(formData.values["type"] == "lookup" || formData.values["type"] == "binding"
+            ? {
+                lookupUri: formData.values["lookupUri"],
+                lookup: detailLookup,
+                paramLookup: listParams.filter((item) => item.value && item.key) || [],
+                fieldLabelLookup: lookupLabel,
+              }
+            : {}),
+          ...(formData.values["type"] == "binding"
+            ? {
+                listBindingField: _detailBindingField.filter((item) => item.value && item.label) || [],
+              }
+            : {}),
+          ...(formData.values["type"] == "select"
+            ? {
+                options: addFieldAttributes,
+              }
+            : {}),
+          ...(formData.values["type"] == "formula"
+            ? {
+                formula: JSON.stringify({
+                  formula: selectedFormula,
+                }),
+              }
+            : {}),
+          ...(formData.values["type"] == "time_range"
+            ? {
+                timeRange: JSON.stringify({
+                  startDate: startDateTimeRange || "",
+                  endDate: endDateTimeRange || "",
+                }),
+              }
+            : {}),
         },
         ...(formData.values["type"] == "binding" && _detailBindingField?.length
           ? _detailBindingField.map((item, index) => {
               if (item?.value) {
-                includeContactOrg = item.value == "contactOrg" ? true : false;
-                readOnlyContactOrg = item.readOnly;
                 return {
                   name: item?.label,
                   key: item?.key,
-                  type: item.value == "contactOrg" ? "binding" : "text",
-                  lookup: item.value == "contactOrg" ? "contact_org" : "",
+                  type: item?.type || "text",
                   required: false,
                   isSum: true,
                   options: [],
@@ -619,11 +668,6 @@ export default function ModalAddColumnAg(props: any) {
                   regex: "",
                   isBinding: true,
                   bindingField: item?.value, //Binding trong binding
-                  ...(item?.value == "contactOrg"
-                    ? {
-                        listBindingField: listBindingFieldContactOrg,
-                      }
-                    : {}),
                 };
               } else {
                 return {};
@@ -632,10 +676,12 @@ export default function ModalAddColumnAg(props: any) {
           : []),
       ];
     } else {
+      // Trường hợp chỉnh sửa cột
       list_column = listColumn.map((item) => {
         if (item.key === data?.key) {
           return {
             ...item,
+            name: formData.values["name"],
             required: formData.values["required"] == "1" ? true : false,
             isSum: formData.values["isSum"] == "1" ? true : false,
             position: formData.values["position"],
@@ -645,34 +691,19 @@ export default function ModalAddColumnAg(props: any) {
             options: addFieldAttributes || [],
             listBindingField: _detailBindingField || [],
             regex: formData.values["regex"],
+            ...(item.type == "lookup" || item.type == "binding"
+              ? {
+                  lookupUri: formData.values["lookupUri"],
+                  lookup: detailLookup,
+                  paramLookup: listParams.filter((item) => item.value && item.key) || [],
+                  fieldLabelLookup: lookupLabel,
+                }
+              : {}),
+            // ...(item.type == "binding" ? { listBindingField: _detailBindingField.filter((item) => item.value && item.label) || [] } : {}),
           };
         }
         return item;
       });
-    }
-
-    if (includeContactOrg) {
-      let indexContactOrg = list_column.findIndex((item) => item.bindingField == "contactOrg");
-      let listColumnBindingContactOrg = listBindingFieldContactOrg.map((item) => {
-        return {
-          name: item.label,
-          key: item.key,
-          type: "text",
-          lookup: "",
-          required: false,
-          isSum: false,
-          readOnly: readOnlyContactOrg ? 1 : 0,
-          haveCheckbox: 0,
-          haveRadio: 0,
-          options: [],
-          position: formData.values["position"],
-          regex: "",
-          isBinding: true,
-          bindingField: item.value,
-        };
-      });
-      // Thêm các phần tử mới vào list_column sau vị trí indexContactOrg
-      list_column.splice(indexContactOrg + 1, 0, ...listColumnBindingContactOrg);
     }
 
     let dataSubmit = {
@@ -713,9 +744,6 @@ export default function ModalAddColumnAg(props: any) {
     }
   };
 
-  const [startDateTimeRange, setStartDateTimeRange] = useState(null);
-  const [endDateTimeRange, setEndDateTimeRange] = useState(null);
-
   const actions = useMemo<IActionModal>(
     () => ({
       actions_right: {
@@ -754,6 +782,9 @@ export default function ModalAddColumnAg(props: any) {
       endDateTimeRange,
       addFieldAttributes,
       data,
+      listParams,
+      lookupLabel,
+      listColumnBinding,
     ]
   );
 
@@ -809,6 +840,9 @@ export default function ModalAddColumnAg(props: any) {
   const handleClearForm = (acc) => {
     onHide(acc);
     setAddFieldAttributes([{ value: "", label: "" }]);
+    setListParams([{ value: "", key: "" }]);
+    setLookupLabel({ key: "", type: "" });
+    setListColumnBinding([{ value: "", label: "", readOnly: false, type: "text" }]);
     setDetailLookup("");
     setNumberFormat("");
     setShowFields(false);
@@ -868,7 +902,7 @@ export default function ModalAddColumnAg(props: any) {
         staticBackdrop={true}
         toggle={() => !isSubmit && handleClearForm(false)}
         className="modal-add-column-new"
-        size="lg"
+        size="xl"
       >
         <form className="form-customer-attribute-source">
           <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} cột`} toggle={() => !isSubmit && handleClearForm(true)} />
@@ -944,87 +978,260 @@ export default function ModalAddColumnAg(props: any) {
 
               {/* Trường hợp là lookup */}
               {formData?.values["type"] == "lookup" || formData?.values["type"] == "binding" ? (
-                <div className="form-group">
-                  <SelectCustom
-                    id="options"
-                    name="options"
-                    label="Thông tin tham chiếu"
+                //   <div className="form-group">
+                //     <SelectCustom
+                //       id="options"
+                //       name="options"
+                //       label="Thông tin tham chiếu"
+                //       fill={true}
+                //       required={true}
+                //       options={listLookup}
+                //       disabled={isEdit}
+                //       value={detailLookup}
+                //       onChange={(e) => handleDetailLookup(e)}
+                //       isFormatOptionLabel={true}
+                //       placeholder="Chọn tham chiếu"
+                //     />
+                //   </div>
+                // ) :
+                <div className="form-group-uri">
+                  <Input
+                    label="Đường dẫn API tham chiếu"
                     fill={true}
                     required={true}
-                    options={listLookup}
-                    disabled={isEdit}
-                    value={detailLookup}
-                    onChange={(e) => handleDetailLookup(e)}
-                    isFormatOptionLabel={true}
-                    placeholder="Chọn tham chiếu"
+                    value={formData?.values["lookupUri"] || ""}
+                    placeholder="Nhập đường dẫn API tham chiếu"
+                    onChange={(e) => {
+                      setFormData({ ...formData, values: { ...formData.values, lookupUri: e.target.value } });
+                    }}
                   />
-                </div>
-              ) : null}
-              {formData?.values["type"] == "binding" ? (
-                <div className="form-group binding">
-                  <div className="formula-input">
-                    <SelectCustom
-                      id="bindingField"
-                      name="bindingField"
-                      label="Chọn trường tham chiếu"
-                      fill={true}
-                      required={true}
-                      // isMulti={true}
-                      special={true}
-                      disabled={isEdit}
-                      options={listBindingField}
-                      // value={detailBindingField}
-                      onChange={(e) => {
-                        handleChangeBindingField(e);
-                      }}
-                      isFormatOptionLabel={true}
-                      placeholder="Chọn trường tham chiếu"
-                    />
-                  </div>
-                </div>
-              ) : null}
-              {/* Vùng listing sẵn các field đã chọn */}
-              {detailBindingField.length ? (
-                <div className="form-group-binding">
-                  <label>Các trường tham chiếu đã chọn</label>
-                  <div className="binding-list">
-                    {detailBindingField &&
-                      (detailBindingField || []).map((item, index) => {
-                        return (
-                          <div key={index} className="binding-list-item">
-                            {item.label}
-                            <div className="checkbox">
-                              <Checkbox
-                                label={"Chỉ xem"}
-                                disabled={isEdit}
-                                checked={item.readOnly}
-                                onChange={(e) => {
-                                  let _detailBindingField = detailBindingField.map((x) => {
-                                    if (x.value == item.value) {
-                                      x.readOnly = e.target.checked;
-                                    }
-                                    return x;
-                                  });
-                                  setDetailBindingField(_detailBindingField);
-                                }}
+                  <div className="list__params">
+                    <div>
+                      <span style={{ fontSize: 14, fontWeight: "700" }}>Tham số API</span>
+                    </div>
+                    {listParams.map((item, idx) => {
+                      return (
+                        <div key={idx} className="attribute__item">
+                          <div className="list-field-attribute">
+                            <div className="form-group">
+                              <Input
+                                // label={idx == 0 ? 'Lựa chọn' : ''}
+                                fill={true}
+                                required={true}
+                                value={item.key}
+                                placeholder="Nhập key"
+                                onChange={(e) => handleChangeParams(e, idx, "key")}
                               />
                             </div>
-                            <div className="icon-delete">
-                              <Icon
-                                name="Times"
-                                onClick={(e) => {
-                                  if (!isEdit) {
-                                    let _detailBindingField = detailBindingField.filter((x) => x.value != item.value);
-                                    setDetailBindingField(_detailBindingField);
-                                    setListBindingField([...listBindingField, { ...item, readOnly: true }]);
-                                  }
-                                }}
+                            <div className="form-group">
+                              <Input
+                                // label={idx == 0 ? 'Lựa chọn' : ''}
+                                fill={true}
+                                required={true}
+                                value={item.value}
+                                placeholder="Nhập giá trị"
+                                onChange={(e) => handleChangeParams(e, idx, "value")}
                               />
                             </div>
                           </div>
+                          {idx == 0 ? (
+                            <span className="add-attribute">
+                              <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
+                                <span
+                                  className="icon-add"
+                                  onClick={() => {
+                                    setListParams([...listParams, { value: "", key: "" }]);
+                                  }}
+                                >
+                                  <Icon name="PlusCircleFill" />
+                                </span>
+                              </Tippy>
+                            </span>
+                          ) : (
+                            <span className="remove-attribute">
+                              <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
+                                <span className="icon-remove" onClick={() => handleRemoveItemParams(idx)}>
+                                  <Icon name="Trash" />
+                                </span>
+                              </Tippy>
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="list__binding">
+                    <div>
+                      <span style={{ fontSize: 14, fontWeight: "700" }}>Trường dữ liệu hiển thị</span>
+                    </div>
+                    <div className="attribute__item">
+                      <div className="list-field-attribute">
+                        <div className="form-group" style={{ width: "calc(50% - 1.6rem)" }}>
+                          <Input
+                            // label={idx == 0 ? 'Lựa chọn' : ''}
+                            fill={true}
+                            required={true}
+                            value={lookupLabel.key}
+                            placeholder="Nhập trường dữ liệu hiển thị"
+                            onChange={(e) => {
+                              setLookupLabel({
+                                ...lookupLabel,
+                                key: e.target.value,
+                              });
+                            }}
+                          />
+                        </div>
+                        <div className="form-group" style={{ width: "calc(50% - 1.6rem)" }}>
+                          <SelectCustom
+                            id={`type-binding`}
+                            name={`type-binding`}
+                            fill={true}
+                            required={true}
+                            options={[
+                              { value: "text", label: "Text" },
+                              { value: "number", label: "Number" },
+                              { value: "date", label: "Date" },
+                              { value: "checkbox", label: "Checkbox" },
+                            ]}
+                            value={lookupLabel.type}
+                            onChange={(e) => {
+                              setLookupLabel({
+                                ...lookupLabel,
+                                type: e.value,
+                              });
+                            }}
+                            isFormatOptionLabel={true}
+                            placeholder="Chọn kiểu dữ liệu"
+                          />
+                        </div>
+                        <span className="remove-attribute"></span>
+                      </div>
+                    </div>
+                  </div>
+                  {formData?.values["type"] == "binding" ? (
+                    <div className="list__binding">
+                      <div>
+                        <span style={{ fontSize: 14, fontWeight: "700" }}>Các cột tham chiếu</span>
+                      </div>
+                      <div className="attribute__item_header">
+                        <div className="list-field-attribute">
+                          <div className="form-group">Tên cột</div>
+                          <div className="form-group">Trường dữ liệu</div>
+                          <div className="form-group">Kiểu dữ liệu</div>
+                          <div className="form-group">Chỉ xem</div>
+                        </div>
+                      </div>
+                      {listColumnBinding.map((item, idx) => {
+                        return (
+                          <div key={idx} className="attribute__item">
+                            <div className="list-field-attribute">
+                              <div className="form-group">
+                                <Input
+                                  // label={idx == 0 ? 'Lựa chọn' : ''}
+                                  fill={true}
+                                  required={true}
+                                  value={item.label}
+                                  placeholder="Nhập tên cột"
+                                  onChange={(e) => handleChangeListColumnBinding(e, idx, "label")}
+                                  readOnly={isEdit}
+                                  onBlur={(e) => {
+                                    // Kiểm tra trùng tên cột binding
+                                    const isDuplicate = listColumnBinding.some(
+                                      (item, index) =>
+                                        convertToId(item.label).replace(new RegExp(`[^A-Za-z0-9]`, "g"), "") ===
+                                          convertToId(e.target.value).replace(new RegExp(`[^A-Za-z0-9]`, "g"), "") && index !== idx
+                                    );
+                                    if (isDuplicate) {
+                                      showToast("Tên cột binding không được trùng nhau", "error");
+                                      handleChangeListColumnBinding(
+                                        {
+                                          target: { value: "" },
+                                        },
+                                        idx,
+                                        "label"
+                                      );
+                                      return;
+                                    }
+                                  }}
+                                />
+                              </div>
+                              <div className="form-group">
+                                <Input
+                                  // label={idx == 0 ? 'Lựa chọn' : ''}
+                                  fill={true}
+                                  required={true}
+                                  value={item.value}
+                                  readOnly={isEdit}
+                                  placeholder="Nhập trường dữ liệu"
+                                  onChange={(e) => handleChangeListColumnBinding(e, idx, "value")}
+                                />
+                              </div>
+                              <div className="form-group">
+                                <SelectCustom
+                                  id={`type-binding-${idx}`}
+                                  name={`type-binding-${idx}`}
+                                  fill={true}
+                                  required={true}
+                                  disabled={isEdit}
+                                  options={[
+                                    { value: "text", label: "Text" },
+                                    { value: "number", label: "Number" },
+                                    { value: "date", label: "Date" },
+                                    { value: "checkbox", label: "Checkbox" },
+                                  ]}
+                                  value={item.type || "text"}
+                                  onChange={(e) => handleChangeListColumnBinding(e, idx, "type")}
+                                  isFormatOptionLabel={true}
+                                  placeholder="Chọn kiểu dữ liệu"
+                                />
+                              </div>
+                              <div className="form-group">
+                                <div className="readonly">
+                                  <Checkbox
+                                    checked={item.readOnly}
+                                    onChange={(e) => {
+                                      if (!isEdit) {
+                                        handleChangeListColumnBinding(e, idx, "readOnly");
+                                      }
+                                    }}
+                                  />
+                                  {/* <span>Chỉ xem</span> */}
+                                </div>
+                              </div>
+                            </div>
+                            {isEdit ? (
+                              <span></span>
+                            ) : (
+                              <>
+                                {idx == 0 ? (
+                                  <span className="add-attribute">
+                                    <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
+                                      <span
+                                        className="icon-add"
+                                        onClick={() => {
+                                          setListColumnBinding([...listColumnBinding, { value: "", label: "", readOnly: false, type: "text" }]);
+                                        }}
+                                      >
+                                        <Icon name="PlusCircleFill" />
+                                      </span>
+                                    </Tippy>
+                                  </span>
+                                ) : (
+                                  <span className="remove-attribute">
+                                    <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
+                                      <span className="icon-remove" onClick={() => handleRemoveItemListColumnsBinding(idx)}>
+                                        <Icon name="Trash" />
+                                      </span>
+                                    </Tippy>
+                                  </span>
+                                )}
+                              </>
+                            )}
+                          </div>
                         );
                       })}
-                  </div>
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
 

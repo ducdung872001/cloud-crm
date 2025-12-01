@@ -615,7 +615,92 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
     }
   };
 
+  /**
+   * Tìm tất cả các component có type === "grid" trong mảng components,
+   * bỏ qua component có id === excludeId.
+   * Tránh trả về duplicate dựa trên id (nếu có).
+   */
+  function findAllGrids(components: any[] | undefined, excludeId?: string): any[] {
+    const results: any[] = [];
+    const seen = new Set<string | undefined>();
+
+    function walk(comps?: any[]) {
+      if (!Array.isArray(comps) || comps.length === 0) return;
+      for (const c of comps) {
+        const id = c.id;
+        // Nếu là grid và không phải excludeId và chưa thấy trước đó
+        if (c.type === "grid" && id !== excludeId && !seen.has(id)) {
+          results.push(c);
+          seen.add(id);
+        }
+        // Duyệt con nếu có
+        if (Array.isArray(c.components) && c.components.length > 0) {
+          walk(c.components);
+        }
+      }
+    }
+
+    walk(components);
+    return results;
+  }
+  function canParseJSON(value: any): boolean {
+    try {
+      JSON.parse(value);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  const checkValidateForm = (config) => {
+    // Check validate các bảng grid
+    let allGrid = findAllGrids(initFormSchema?.components);
+    let listKeyGrid = Object.keys(config) || [];
+    if (listKeyGrid.length > 0) {
+      for (let i = 0; i < listKeyGrid.length; i++) {
+        let key = listKeyGrid[i];
+        let grid = allGrid.find((el) => el.key === key);
+        if (grid) {
+          const isParsable = canParseJSON(config[key]);
+          if (!isParsable) {
+            console.error("Dữ liệu bảng không đúng định dạng JSON");
+            continue;
+          }
+          const dataGrid = JSON.parse(config[key]);
+          const dataRows = dataGrid?.dataRow || [];
+          const headerTable = dataGrid?.headerTable || [];
+          for (let index = 0; index < dataRows.length; index++) {
+            const element = dataRows[index];
+            let rowNumber = index + 1;
+            for (let j = 0; j < headerTable.length; j++) {
+              const field = headerTable[j];
+              if (field?.required && !element[field.key]) {
+                showToast(`Dữ liệu bảng ${grid?.label || ""} - Dòng ${rowNumber}: Các trường bắt buộc không được bỏ trống`, "error");
+                return false;
+              }
+              const optionRegex = {
+                phoneRegex: PHONE_REGEX_NEW,
+                emailRegex: EMAIL_REGEX,
+              };
+              if (field.regex && element[field.key] && !element[field.key]?.match(optionRegex[field.regex])) {
+                showToast(`Dữ liệu bảng ${grid?.label || ""} - Dòng ${rowNumber}: Dữ liệu không hợp lệ`, "error");
+                return false;
+              }
+            }
+          }
+        }
+      }
+    }
+    // Check validate các bảng grid
+    return true;
+  };
+
   const onSubmit = async (config) => {
+    let checkValidate = checkValidateForm(config);
+    if (!checkValidate) {
+      setIsSubmit(false);
+      return;
+    }
     setIsSubmit(false);
 
     const isJump = (config?.option_jump && +config?.option_jump) || null;
@@ -630,6 +715,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
       // ...(isJump ? {isJump: isJump === 'jump' ? 1 : isJump === 'jump_to_first' ? 2  : 0} : {})
       ...(isJump ? { isJump: isJump } : {}),
     };
+
     if (config?.invitationDate && config?.closedDate) {
       if (config.invitationDate >= config.closedDate) {
         showToast("Thời gian mời thầu không được lớn hơn thời gian đóng thầu", "error");

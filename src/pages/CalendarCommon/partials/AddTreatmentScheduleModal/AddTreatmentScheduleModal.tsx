@@ -152,6 +152,21 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
     }
   }, [onShow, idData]);
 
+  // Open 'Khách đến' modal: fetch latest schedule details first so modal shows updated data
+  const handleOpenCustomerArrived = async () => {
+    if (idData) {
+      setIsSubmittingCustomerArrived(true);
+      try {
+        await getDetailTreatmentSchedule(idData);
+      } catch (e) {
+        // ignore
+      }
+      setIsSubmittingCustomerArrived(false);
+    }
+
+    setShowModalCustomerArrived(true);
+  };
+
   const [dataListNotification, setDataListNotification] = useState<IDataListNotificationProps[]>([]);
 
   const [dataApplyNotification, setDataApplyNotification] = useState({
@@ -1622,10 +1637,10 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
                       type="button"
                       color="primary"
                       variant="outline"
-                      onClick={(e) => setShowModalCustomerArrived(true)}
-                      disabled={isSubmit || isSubmittingCustomerArrived || isReloadingFromChild}
+                      onClick={(e) => handleOpenCustomerArrived()}
+                      // disabled={isSubmit || isSubmittingCustomerArrived || isReloadingFromChild}
                     >
-                      Khách đến
+                      {isSubmittingCustomerArrived ? "Đang tải..." : "Khách đến"}
                     </Button>
                     <Button
                       onClick={() => !isSubmit && handClearForm(false)}

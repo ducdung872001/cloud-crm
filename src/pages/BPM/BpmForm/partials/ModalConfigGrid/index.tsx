@@ -8,7 +8,7 @@ import "./index.scss";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Button from "components/button/button";
-import GridAg from "pages/BPM/GridAg";
+import GridAg, { GridAgHandle } from "pages/BPM/GridAg";
 
 export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -38,8 +38,22 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
   }, [values]);
 
   const handleSubmit = () => {
+    let latestRowData = handleGetLatest();
     onHide(false);
-    callBack(dataConfigGrid);
+    callBack({
+      headerTable: dataConfigGrid?.headerTable || [],
+      dataRow: latestRowData || [],
+    });
+  };
+
+  // ref trỏ đến GridAg (mà GridAg sẽ forward ref tới GridAgTable)
+  const gridRef = useRef<GridAgHandle | null>(null);
+
+  const handleGetLatest = () => {
+    // Gọi hàm getLatestRowData được expose từ GridAgTable thông qua GridAg
+    const latest = gridRef.current?.getLatestRowData() ?? [];
+    return latest;
+    // bạn có thể set state, gửi lên server, hoặc xử lý tiếp ở đây
   };
 
   const actions = useMemo<IActionModal>(
@@ -150,7 +164,7 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
           </div>
           <ModalBody>
             <div className="list-form-group">
-              <GridAg location={"configForm"} setDataConfigGrid={setDataConfigGrid} dataGrid={dataConfig} />
+              <GridAg ref={gridRef} location={"configForm"} setDataConfigGrid={setDataConfigGrid} dataGrid={dataConfig} />
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

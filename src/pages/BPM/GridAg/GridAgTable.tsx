@@ -1,11 +1,11 @@
-import React, { useMemo, useState, useRef, useEffect, Fragment } from "react";
+import React, { useMemo, useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 
 import { ColDef } from "ag-grid-community";
-import { defaultNote, generateColumns, getDataConfig, getDataGrid, getListComment } from "./function/getDataGrid";
+import { defaultNote, generateColumns, getDataConfig, getDataGrid, getListComment, mapDataWithLookup } from "./function/getDataGrid";
 import "./GridAgTable.scss";
 import FullWidthRenderer from "./partial/FullWidthRenderer";
 import { sampleColumns, sampleData } from "./sampleData";
@@ -24,9 +24,11 @@ import ModalCommentAg from "./partial/ModalCommentAg";
 import { filterData } from "./function/filterData";
 import { IGridAgTable } from ".";
 
-const GridAgTable = (
-  props: IGridAgTable // location: "iframe" | "configViewer", setDataConfigGrid, dataGrid, onChange, configField
-) => {
+export interface GridAgTableHandle {
+  getLatestRowData: () => any[];
+}
+
+const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgTable, ref) => {
   const {
     typeNo,
     setTypeNo,
@@ -107,7 +109,7 @@ const GridAgTable = (
   };
 
   const params: any =
-    location && location == "configViewer" ? configField : location && location == "configForm" ? configFieldModal : getSearchParameters();
+    location && location == "viewAndHandle" ? configField : location && location == "configForm" ? configFieldModal : getSearchParameters();
   const enableAddRow = !params?.enableAddRow || params?.enableAddRow == "false" ? false : true;
   const enableFilter = !params?.enableFilter || params?.enableFilter == "false" ? false : true;
   const enableAddColumns = !params?.enableAddColumns || params?.enableAddColumns == "false" ? false : true;
@@ -125,7 +127,7 @@ const GridAgTable = (
       setDataFetch(config);
       setIsLoading(false);
     };
-    if (location && location == "configViewer") {
+    if (location && location == "viewAndHandle") {
       handleGetCheckComment();
     }
     if (isFetchData && location && location == "iframe") {
@@ -140,7 +142,6 @@ const GridAgTable = (
   }, [isFetchData, location, dataGrid]);
 
   useEffect(() => {
-    // let dataGridHeader = dataGrid?.headerTable && JSON.parse(dataGrid.headerTable) ? JSON.parse(dataGrid.headerTable) : [];
     let dataGridHeader =
       dataGrid?.headerTable && dataGrid.headerTable
         ? typeof dataGrid.headerTable === "string"
@@ -148,11 +149,18 @@ const GridAgTable = (
           : dataGrid.headerTable
         : [];
     setColumnsConfig(dataGridHeader);
-    // let dataGridRow = dataGrid?.dataRow && JSON.parse(dataGrid.dataRow) ? JSON.parse(dataGrid.dataRow) : [];
     let dataGridRow =
       dataGrid?.dataRow && dataGrid.dataRow ? (typeof dataGrid.dataRow === "string" ? JSON.parse(dataGrid.dataRow) : dataGrid.dataRow) : [];
-    setRowData(dataGridRow);
-    // onChange && onChange({ headerTable: dataGrid.headerTable, dataRow: dataGrid.dataRow });
+    // const getDataLookupGrid = async (header, data) => {
+    //   const lookupValues = await fetchDataLookupGrid(header, data);
+    //   setLookupValues(lookupValues);
+    // };
+    const getDataLookupGrid = async (header, data) => {
+      let _dataLookup = await mapDataWithLookup(header, data);
+      setLookupValues(_dataLookup.dataLookup);
+      setRowData(_dataLookup.dataWithLookup);
+    };
+    getDataLookupGrid(dataGridHeader, dataGridRow);
   }, [dataGrid]);
 
   useEffect(() => {
@@ -308,7 +316,7 @@ const GridAgTable = (
     const newRow: any = { rowKey: uuid };
     cols.forEach((col: ColDef) => {
       if (col.field && col.field !== "rowKey") {
-        if (col.cellRendererParams.type === "number") {
+        if (col.cellRendererParams.type === "number" || col.cellEditorParams?.type === "lookup" || col.cellEditorParams?.type === "binding") {
           newRow[col.field] = 0; // Các ô dữ liệu trống
         } else {
           newRow[col.field] = ""; // Các ô dữ liệu trống
@@ -383,12 +391,29 @@ const GridAgTable = (
     setLoading(false);
   };
 
-  const getLatestRowData = () => {
+  const getLatestRowData = useCallback(() => {
     //Lấy data mới nhất trên lưới
-    const _rowData = [];
-    gridRef.current.api.forEachNode((node) => _rowData.push(node.data));
-    return _rowData;
-  };
+    const _rowData: any[] = [];
+    try {
+      if (gridRef.current && gridRef.current.api && typeof gridRef.current.api.forEachNode === "function") {
+        gridRef.current.api.forEachNode((node) => _rowData.push(node.data));
+        return _rowData;
+      }
+    } catch (e) {
+      // ignore and fallback
+    }
+    // fallback: trả về state rowData nếu api không có
+    return rowData || [];
+  }, [rowData]);
+
+  // Expose getLatestRowData cho component cha thông qua ref
+  useImperativeHandle(
+    ref,
+    () => ({
+      getLatestRowData,
+    }),
+    [getLatestRowData]
+  );
 
   const handleFilterData = () => {
     const _rowData = getLatestRowData();
@@ -405,12 +430,13 @@ const GridAgTable = (
   const onCellValueChanged = () => {
     // params.data là dòng vừa được sửa
     // rowData là state, nhưng để chắc chắn, bạn nên lấy dữ liệu mới nhất từ gridRef
-    if (location == "configViewer") {
+    if (location == "viewAndHandle") {
       const updatedRowData = getLatestRowData();
-      // onChange && onChange({ headerTable: JSON.stringify(columnsConfig), dataRow: JSON.stringify(updatedRowData) });
       onChange && onChange({ headerTable: columnsConfig, dataRow: updatedRowData });
     }
   };
+
+  console.log("Render GridAgTable:", rowData); // Kiểm tra render và dữ liệu ban đầu
 
   return (
     <div className="ag-grid-table">
@@ -580,6 +606,6 @@ const GridAgTable = (
       ></ModalCommentAg>
     </div>
   );
-};
+});
 
 export default GridAgTable;

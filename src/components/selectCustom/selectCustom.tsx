@@ -56,6 +56,7 @@ interface SelectCustomProps {
   icon?: React.ReactElement;
   iconClickEvent?: React.ReactEventHandler;
   isShowDropdownIcon?: boolean;
+  styleCustom?: any;
 }
 
 export default function SelectCustom(props: SelectCustomProps) {

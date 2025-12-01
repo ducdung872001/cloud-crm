@@ -150,7 +150,7 @@ export default function OrderRequestList() {
   const getListOpportunity = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await OrderRequestService.list(paramsSearch);
+    const response = await OrderRequestService.listOne(paramsSearch);
 
     if (response.code === 0) {
       const result = response.result;

@@ -644,7 +644,7 @@ export default function ProcessedObjectList() {
   }, []);
 
   return (
-    <div className={`page-content page__process_object${isNoItem ? " bg-white" : ""} card-box`}>
+    <div className={`page-content page__process_object${isNoItem ? " bg-white" : ""}`}>
       <TitleAction title="Danh sách hồ sơ" titleActions={titleActions} />
 
       {/* <div className="action-navigation">

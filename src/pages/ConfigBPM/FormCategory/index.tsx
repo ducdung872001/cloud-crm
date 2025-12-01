@@ -135,7 +135,7 @@ export default function FormCategory(props: any) {
 
   const titles = ["STT", "Mã biểu mẫu", "Tên biểu mẫu"];
 
-  const dataFormat = ["text-center", "", "text-center"];
+  const dataFormat = ["text-center", "", "text-left"];
 
   const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.code, item.name];
 

@@ -81,7 +81,7 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
       setParams((prevParams) => ({ ...prevParams, page: page }));
     },
     chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, limit: limit }));
+      setParams((prevParams) => ({ ...prevParams, limit: limit, page: 1 }));
     },
   });
 
@@ -154,7 +154,7 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
     ],
   };
 
-  const titles = ["STT", "Loại khách hàng", "Tên trường thông tin", "Kiểu dữ liệu", "Thứ tự hiển thị", "Thuộc nhóm"];
+  const titles = ["STT", "Loại khách hàng", "Tên trường thông tin", "Kiểu dữ liệu", "Bắt buộc", "Thứ tự hiển thị", "Thuộc nhóm"];
 
   const dataFormat = ["text-center", "", "", "text-center", "text-center", ""];
 
@@ -172,6 +172,9 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
     getCustTypeName(item.custType),
     item.name,
     item.datatype,
+    item.required === 1 ? 
+      <Icon name='Checked' style={{width: 20, fill:'var(--success-color'}} />
+      : null,
     item.position,
     item.parentName
   ];
