@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useMemo, useRef, useState, useContext } fro
 import _ from "lodash";
 import moment from "moment";
 import Tippy from "@tippyjs/react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import Icon from "components/icon";
 import Badge from "components/badge/badge";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -10,27 +10,28 @@ import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
-import { ITicketFilterRequest } from "model/ticket/TicketRequestModel";
-import { ITicketResponseModel } from "model/ticket/TicketResponseModel";
+import { IWarrantyFilterRequest } from "model/warranty/WarrantyRequestModel";
+import { IWarrantyResponseModel } from "model/warranty/WarrantyResponseModel";
 import { ContextType, UserContext } from "contexts/userContext";
+import WarrantyService from "services/WarrantyService";
 import { showToast } from "utils/common";
 import { isDifferenceObj, getPageOffset } from "reborn-util";
-import TicketService from "services/TicketService";
-import AddTicketModal from "./partials/AddEditTicketModal/AddTicketModal";
-import TableTicket from "./partials/TableTicket/TableTicket";
-import BusinessProcessService from "services/BusinessProcessService";
-import SelectCustom from "components/selectCustom/selectCustom";
-import Loading from "components/loading";
-import { getListColumns } from "./partials/getListColumns";
-import ModalSigner from "./partials/ModalSigner";
+import TableWarranty from "./partials/TableWarranty/TableWarranty";
+import KanbanWarranty from "./partials/KanbanWarranty/KanbanWarranty";
+import AddWarrantyModal from "./partials/AddEditWarrantyModal/AddWarrantyModal";
 import AddTransferVotes from "pages/Common/AddTransferVotes";
-import KanbanTicketProcess from "./partials/KanbanTicketProcess";
+import SelectCustom from "components/selectCustom/selectCustom";
+import KanbanWarrantyProcess from "./partials/KanbanWarrantyProcess";
+import ModalSigner from "./partials/ModalSigner";
+import BusinessProcessService from "services/BusinessProcessService";
+import { getListColumns } from "./partials/getListColumns";
+import Loading from "components/loading";
 
 import "tippy.js/animations/scale.css";
-import "./TicketList.scss";
+import "./WarrantyList.scss";
 
-export default function TicketListProcess() {
-  document.title = "Tiếp nhận hỗ trợ";
+export default function WarrantyList() {
+  document.title = "Tiếp nhận bảo hành";
 
   const isMounted = useRef(false);
 
@@ -40,28 +41,28 @@ export default function TicketListProcess() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
-  const [listTicket, setListTicket] = useState<ITicketResponseModel[]>([]);
-  const [dataTicket, setDataTicket] = useState<ITicketResponseModel>(null);
+  const [listWarranty, setListWarranty] = useState<IWarrantyResponseModel[]>([]);
+  const [dataWarranty, setDataWarranty] = useState<IWarrantyResponseModel>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isLoadingKanban, setIsLoadingKanban] = useState<boolean>(false);
   const [isService, setIsService] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
-
-  const [hasSignature, setHasSignature] = useState<boolean>(false);
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(false);
 
-  const [params, setParams] = useState<ITicketFilterRequest>({
+  const [isLoadingKanban, setIsLoadingKanban] = useState<boolean>(false);
+    const [hasSignature, setHasSignature] = useState<boolean>(false);
+
+  const [params, setParams] = useState<IWarrantyFilterRequest>({
     phone: "",
   });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách hỗ trợ",
+      name: "Danh sách bảo hành",
       is_active: true,
     },
   ]);
@@ -69,19 +70,11 @@ export default function TicketListProcess() {
   const customerFilterList: IFilterItem[] = useMemo(
     () => [
       {
-        key: "supportId",
-        name: "Quy trình hỗ trợ",
+        key: "departmentId",
+        name: "Phòng ban",
         type: "select",
         is_featured: true,
-        params: { type: 1 },
-        value: searchParams.get("supportId") ?? "",
-      },
-      {
-        key: "ticketCategoryId",
-        name: "Loại hỗ trợ",
-        type: "select",
-        is_featured: true,
-        value: searchParams.get("ticketCategoryId") ?? "",
+        value: searchParams.get("departmentId") ?? "",
       },
       {
         key: "status",
@@ -124,7 +117,7 @@ export default function TicketListProcess() {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Hỗ trợ",
+    name: "Phiếu bảo hành",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -136,14 +129,14 @@ export default function TicketListProcess() {
 
   const abortController = new AbortController();
 
-  const getListTicket = async (paramsSearch: ITicketFilterRequest) => {
+  const getListWarranty = async (paramsSearch: IWarrantyFilterRequest) => {
     setIsLoading(true);
 
-    const response = await TicketService.list(paramsSearch, abortController.signal);
+    const response = await WarrantyService.list(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
       const result = response.result;
-      setListTicket(result.items);
+      setListWarranty(result.items);
       setPagination({
         ...pagination,
         page: +result.page,
@@ -151,7 +144,7 @@ export default function TicketListProcess() {
         totalItem: +result.total,
         totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
       });
-      if (+result.total === 0 && !params?.name && +result.page === 1) {
+      if (+result.total === 0 && !params?.phone && +result.page === 1) {
         setIsNoItem(true);
       }
     } else if (response.code == 400) {
@@ -177,7 +170,7 @@ export default function TicketListProcess() {
       return;
     }
     if (isMounted.current === true) {
-      getListTicket(params);
+      getListWarranty(params);
       const paramsTemp = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
@@ -213,29 +206,14 @@ export default function TicketListProcess() {
             {
               title: "Thêm mới",
               callback: () => {
-                setDataTicket(null);
+                setDataWarranty(null);
                 setShowModalAdd(true);
               },
             },
-            // {
-            //   title: "Kanban",
-            //   callback: () => {
-            //     setIsRegimeKanban(true);
-            //   },
-            // },
             {
               title: "Kanban",
-              // icon: <Icon name="Fullscreen" />,
               callback: () => {
                 setIsRegimeKanban(true);
-                // if (processId == -1) {
-                //   setProcessId(listTicket && listTicket.length > 0 && +listTicket[0].id);
-                //   setProcessName(listTicket[0]?.name);
-                // } else {
-                //   setProcessId(processId);
-                //   // setValueApproach(null);
-                //   // setParams({ ...params, processId: processId });
-                // }
               },
             },
           ]),
@@ -246,34 +224,35 @@ export default function TicketListProcess() {
     "STT",
     "Mã phiếu",
     "Tên khách hàng",
-    "Danh mục hỗ trợ",
+    "Dịch vụ bảo hành",
+    "Lí do bảo hành",
     "Ngày tiếp nhận",
     "Ngày dự kiến xong",
-    "Người tạo phiếu",
     "Bộ phận xử lý",
     "Trạng thái xử lý",
   ];
+  const dataFormat = ["text-center", "text-center", "", "", "", "text-center", "text-center", "text-center", "text-center"];
 
-  const dataFormat = ["text-center", "", "", "", "text-center", "text-center", "", "text-center", "text-center"];
+  const dataSize = ["auto", "auto", "auto", "auto", "auto", 20, "auto", 16, "auto"];
 
-  const dataSize = ["auto", "auto", "auto", "auto", 20, "auto", "auto", 16, "auto"];
-
-  const dataMappingArray = (item: ITicketResponseModel, index: number) => [
+  const dataMappingArray = (item: IWarrantyResponseModel, index: number) => [
     getPageOffset(params) + index + 1,
     item.code,
     <span
       key={item.id}
       style={{ cursor: "pointer" }}
       onClick={() => {
-        navigate(`/detail_ticket/ticketId/${item.id}`);
+        navigate(`/detail_warranty/warrantyId/${item.id}`);
       }}
     >
       {item.customerName}
     </span>,
-    item.supportName,
+    item.serviceName,
+    <span key={item.id} style={{ color: "#dc3545" }}>
+      {item.reasonName}
+    </span>,
     item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "",
     item.endDate ? moment(item.endDate).format("DD/MM/YYYY HH:mm") : "",
-    item.creatorName,
     <div
       key={item.id}
       className="processing__department"
@@ -319,11 +298,11 @@ export default function TicketListProcess() {
       status: status,
     };
 
-    const response = await TicketService.updateStatus(body);
+    const response = await WarrantyService.updateStatus(body);
 
     if (response.code === 0) {
       showToast(`${status == 1 ? "Tiếp tục" : "Tạm dừng"} thành công`, "success");
-      getListTicket(params);
+      getListWarranty(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -336,14 +315,14 @@ export default function TicketListProcess() {
 
     const param = {
       objectId: item.id,
-      objectType: 1,
+      objectType: 2,
     };
 
-    const response = await TicketService.resetTransferVotes(param);
+    const response = await WarrantyService.resetTransferVotes(param);
 
     if (response.code === 0 && response.result > 0) {
       showToast(`Trình lại duyệt phiếu thành công`, "success");
-      getListTicket(params);
+      getListWarranty(params);
 
       setTimeout(() => {
         setHasTransferVotes(true);
@@ -389,39 +368,39 @@ export default function TicketListProcess() {
     setShowDialog(true);
   };
 
-  const actionsTable = (item: ITicketResponseModel): IAction[] => {
+  const actionsTable = (item: IWarrantyResponseModel) => {
     return [
-        ...(item.processId
-            ? [
-                {
-                title: "Xem lịch sử xử lý",
-                icon: <Icon name="ImpactHistory" />,
-                callback: () => {
-                    setDataObject(item);
-                    setHasHistorySignature(true);
-                },
-                },
-            ]
-            : []),
-    
-        ...(!item.processId
-            ? [
-                {
-                title: "Trình xử lý",
-                icon: <Icon name="FingerTouch" className="icon-warning" />,
-                callback: () => {
-                    setDataObject(item);
-                    setHasSignature(true);
-                    // handleCheckValidateSignature(item, "signature");
-                },
-                },
-            ]
-            : []),
+      ...(item.processId
+          ? [
+              {
+              title: "Xem lịch sử xử lý",
+              icon: <Icon name="ImpactHistory" />,
+              callback: () => {
+                  setDataObject(item);
+                  setHasHistorySignature(true);
+              },
+              },
+          ]
+          : []),
+  
+      ...(!item.processId
+          ? [
+              {
+              title: "Trình xử lý",
+              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              callback: () => {
+                  setDataObject(item);
+                  setHasSignature(true);
+                  // handleCheckValidateSignature(item, "signature");
+              },
+              },
+          ]
+          : []),
       {
         title: "Xem chi tiết",
         icon: <Icon name="Eye" />,
         callback: () => {
-          navigate(`/detail_ticket/ticketId/${item.id}`);
+          navigate(`/detail_warranty/warrantyId/${item.id}`);
         },
       },
       ...(!item.status
@@ -430,7 +409,7 @@ export default function TicketListProcess() {
               title: "Sửa",
               icon: <Icon name="Pencil" />,
               callback: () => {
-                setDataTicket(item);
+                setDataWarranty(item);
                 setShowModalAdd(true);
               },
             },
@@ -494,11 +473,11 @@ export default function TicketListProcess() {
   }, [isCollapsedSidebar]);
 
   const onDelete = async (id: number) => {
-    const response = await TicketService.delete(id);
+    const response = await WarrantyService.delete(id);
 
     if (response.code === 0) {
-      showToast("Xóa hỗ trợ thành công", "success");
-      getListTicket(params);
+      showToast("Xóa bảo hành thành công", "success");
+      getListWarranty(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -506,7 +485,7 @@ export default function TicketListProcess() {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: ITicketResponseModel) => {
+  const showDialogConfirmDelete = (item?: IWarrantyResponseModel) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -515,7 +494,7 @@ export default function TicketListProcess() {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "hỗ trợ cho khách hàng " : `${listIdChecked.length} hỗ trợ cho khách hàng đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "phiếu bảo hành cho khách hàng " : `${listIdChecked.length} phiếu bảo hành cho khách hàng đã chọn`}
           {item ? <strong>{item.customerName}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -533,7 +512,7 @@ export default function TicketListProcess() {
 
   const bulkActionList: BulkActionItemModel[] = [
     {
-      title: "Xóa hỗ trợ",
+      title: "Xóa phiếu bảo hành",
       callback: () => showDialogConfirmDelete(),
     },
   ];
@@ -607,7 +586,7 @@ export default function TicketListProcess() {
       name: search,
       page: page,
       limit: 10,
-      type: 2,
+      type: 4,
     };
     const response = await BusinessProcessService.list(param);
     const optionProcess =
@@ -821,37 +800,38 @@ export default function TicketListProcess() {
   }, [processId]);
 
   return (
-    <div className={`page-content page-ticket${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Tiếp nhận hỗ trợ" titleActions={titleActions} />
+    <div className={`page-content page-warranty${isNoItem ? " bg-white" : ""}`}>
+      <TitleAction title="Tiếp nhận bảo hành" titleActions={titleActions} />
       <div className="card-box d-flex flex-column">
         <div className={`${isRegimeKanban ? "d-none" : ""}`}>
-          <div className="option-improve">
-            <Tippy content="Tải lại trang" delay={[120, 100]} placement="left" animation="scale">
-              <span className="icon-item icon-reload" onClick={() => getListTicket(params)}>
-                <Icon name="BackupRestore" />
-              </span>
-            </Tippy>
+          <div
+            className="option-improve"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsCollapsedSidebar(!isCollapsedSidebar);
+            }}
+          >
             {isCollapsedSidebar ? (
               <Tippy content="Thoát khỏi chế độ toàn màn hình (f)" placement="left" delay={[120, 100]} animation="scale">
-                <span className="icon-item" onClick={() => setIsCollapsedSidebar(false)}>
+                <span className="icon-item">
                   <Icon name="FullscreenExit" />
                 </span>
               </Tippy>
             ) : (
               <Tippy content="Toàn màn hình (f)" delay={[120, 100]} placement="left" animation="scale">
-                <span className="icon-item" onClick={() => setIsCollapsedSidebar(true)}>
+                <span className="icon-item">
                   <Icon name="Fullscreen" />
                 </span>
               </Tippy>
             )}
           </div>
-          <TableTicket
+          <TableWarranty
             params={params}
             setParams={setParams}
             listSaveSearch={listSaveSearch}
             customerFilterList={customerFilterList}
             titles={titles}
-            listTicket={listTicket}
+            listWarranty={listWarranty}
             pagination={pagination}
             dataMappingArray={dataMappingArray}
             dataFormat={dataFormat}
@@ -861,13 +841,17 @@ export default function TicketListProcess() {
             actionsTable={actionsTable}
             isLoading={isLoading}
             isNoItem={isNoItem}
-            setDataTicket={setDataTicket}
+            setDataWarranty={setDataWarranty}
             setShowModalAdd={showModalAdd}
             isPermissions={isPermissions}
             isService={isService}
             dataSize={dataSize}
           />
         </div>
+        {/* <div className={`${isRegimeKanban ? "" : "d-none"}`}>
+          <KanbanWarranty data={listWarranty} />
+        </div> */}
+
         <div className={`${isRegimeKanban ? "" : "d-none"}`}>
           {/* <KanbanTicket data={listTicket} isRegimeKanban={isRegimeKanban} /> */}
           {/* <div style={{ width: "45rem", paddingTop: "2rem", paddingRight: "2rem", paddingLeft: "2rem" }}>
@@ -896,31 +880,33 @@ export default function TicketListProcess() {
             <Loading />
           </div>
           <div className={`${!isLoadingKanban ? "" : "d-none"}`}>
-            <KanbanTicketProcess 
+            <KanbanWarrantyProcess 
               // processId={processId}
-              processCode={"NVTK"}
-             />
+              processCode={"QTBH"}
+              />
           </div>
         </div>
       </div>
 
+      
       <ModalSigner
         onShow={hasSignature}
         onHide={(reload) => {
         if (reload) {
-            getListTicket(params);
+            getListWarranty(params);
         }
         setDataObject(null);
         setHasSignature(false);
         }}
         data={dataObject}
       />
-      <AddTicketModal
+
+      <AddWarrantyModal
         onShow={showModalAdd}
-        data={dataTicket}
+        data={dataWarranty}
         onHide={(reload) => {
           if (reload) {
-            getListTicket(params);
+            getListWarranty(params);
           }
           setShowModalAdd(false);
         }}
@@ -929,16 +915,16 @@ export default function TicketListProcess() {
         onShow={hasTransferVotes}
         onHide={(reload) => {
           if (reload) {
-            getListTicket(params);
+            getListWarranty(params);
           }
 
           setHasTransferVotes(false);
         }}
         dataProps={{
-          objectId: dataTicket?.id,
-          objectType: 1,
+          objectId: dataWarranty?.id,
+          objectType: 2,
         }}
-        type="ticket"
+        type="warranty"
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>

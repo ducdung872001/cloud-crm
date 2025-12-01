@@ -11,10 +11,10 @@ export default function SettingWarrantyList() {
   const [isDetailCategory, setIsDetailCategory] = useState<boolean>(false);
 
   const menuCategorySMS = [
-    {
-      title: "Quy trình xử lý bảo hành",
-      is_tab: "tab_one",
-    },
+    // {
+    //   title: "Quy trình xử lý bảo hành",
+    //   is_tab: "tab_one",
+    // },
     {
       title: "Danh mục hỗ trợ bảo hành",
       is_tab: "tab_two",
@@ -45,15 +45,16 @@ export default function SettingWarrantyList() {
           </ul>
         )}
       </div>
-      {isDetailCategory && tab === "tab_one" ? (
-        <WarrantyProcList
-          onBackProps={(isBack) => {
-            if (isBack) {
-              setIsDetailCategory(false);
-            }
-          }}
-        />
-      ) : (
+      {
+      // isDetailCategory && tab === "tab_one" ? (
+      //   <WarrantyProcList
+      //     onBackProps={(isBack) => {
+      //       if (isBack) {
+      //         setIsDetailCategory(false);
+      //       }
+      //     }}
+      //   />
+      // ) : (
         isDetailCategory && (
           <WarrantyCategoryList
             onBackProps={(isBack) => {
@@ -62,7 +63,7 @@ export default function SettingWarrantyList() {
               }
             }}
           />
-        )
+        // )
       )}
     </div>
   );
