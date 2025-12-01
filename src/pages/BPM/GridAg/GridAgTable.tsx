@@ -50,8 +50,9 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     setCheckedMap,
   } = useGridAg();
   const gridRef = useRef<any>(null);
-  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction } = props;
-  const idGrid = configField?.fieldName || dataGrid?.fieldName || "";
+  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction, domId } = props;
+
+  const idGrid = domId;
   const COLUMN_WIDTH_STORAGE_KEY = "gridag_column_widths" + idGrid;
   const linkingConfig = configField?.linkingConfig ? JSON.parse(configField.linkingConfig) : null;
   const [linkingConfigDeparture, setLinkingConfigDeparture] = useState(null);

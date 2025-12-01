@@ -24,6 +24,22 @@ import GridAg from "pages/BPM/GridAg";
 
 export const gridType = "grid";
 
+// helper deep clone (structuredClone nếu hỗ trợ, fallback JSON)
+const deepClone = (obj) => {
+  if (typeof structuredClone === "function") {
+    try {
+      return structuredClone(obj);
+    } catch (e) {
+      // fallback
+    }
+  }
+  try {
+    return JSON.parse(JSON.stringify(obj));
+  } catch (e) {
+    return obj;
+  }
+};
+
 let dataGrid = {
   // Phải khai báo bên ngoài hàm để giữ trạng thái, nếu khai báo bên trong thì sẽ bị reload liên tục
   // headerTable: JSON.stringify([]),
@@ -31,29 +47,63 @@ let dataGrid = {
 };
 let configField = {};
 
+// configFieldOrigin để lưu lại cấu hình gốc ban đầu của field, không bị thay đổi khi người dùng chỉnh sửa trong GridAg
+let configFieldOrigin = {};
+
 export function GridRenderer(props) {
-  const { disabled, errors = [], field, readonly, value } = props;
-  const { description, id, label } = field;
+  const { disabled, errors = [], field, readonly, value, domId, indexes } = props;
+  const { description, id, label, _parent } = field;
   const { formId } = useContext(FormContext);
 
-  const errorMessageId = errors.length === 0 ? undefined : `${prefixId(id, formId)}-error-message`;
+  const errorMessageId = errors.length === 0 ? undefined : `${prefixId(domId, formId)}-error-message`;
 
   // Tạo 1 div placeholder
-  const containerId = `gridag-container-${id}`;
-  if (!dataGrid[id]) {
-    dataGrid[id] = {};
+  // const ids = id + (typeof indexes[_parent] != "undefined" ? "_" + indexes[_parent] : "");
+  const ids = domId ? domId : id + (indexes && typeof indexes[_parent] !== "undefined" ? "_" + indexes[_parent] : "");
+  // === LƯU TRẠNG THÁI BAN ĐẦU (init) VÀO configFieldOrigin ===
+  // Chỉ lưu 1 lần cho mỗi instance ids (trước khi có onChange)
+  if (!configFieldOrigin[id]) {
+    // props.field.dataRow có thể undefined => lưu [] nếu không có
+    configFieldOrigin[id] = deepClone(props?.field?.dataRow ? props.field.dataRow : []);
+  }
+  // =====================================================
+  const containerId = `gridag-container-${domId}`;
+  if (!dataGrid[ids]) {
+    dataGrid[ids] = {};
   }
 
-  console.log("GridRenderer props:", props);
-  dataGrid[id].headerTable = props?.field?.headerTable ? props?.field?.headerTable : [];
+  dataGrid[ids].headerTable = props?.field?.headerTable ? props?.field?.headerTable : [];
   if (!value || value === "undefined" || value === "") {
-    dataGrid[id].dataRow = props?.field?.dataRow ? props?.field?.dataRow : [];
+    if (indexes && typeof indexes[_parent] != "undefined" && indexes[_parent]) {
+      //Tạo rowKey mới cho tất cả các dòng nếu đây là grid trong dynamic list (bản chất là clone của grid có indexes[_parent] == 0)
+      // let _dataRow = props?.field?.dataRow ? props?.field?.dataRow : [];
+      let id = null;
+      let _dataRow = [];
+      Object.keys(configFieldOrigin).forEach((key) => {
+        if (ids.includes(key)) {
+          id = key;
+        }
+      });
+      if (id) {
+        _dataRow = configFieldOrigin[id];
+      } else {
+        _dataRow = props?.field?.dataRow ? JSON.parse(JSON.stringify(props.field.dataRow)) : []; // clone sâu trước khi gán
+      }
+
+      _dataRow = _dataRow.map((row, index) => {
+        return { ...row, rowKey: `${ids}_row_${index}_${row.rowKey}` };
+      });
+      dataGrid[ids].dataRow = _dataRow;
+    } else {
+      dataGrid[ids].dataRow = props?.field?.dataRow ? props?.field?.dataRow : [];
+    }
   } else {
     try {
       //Hiện tại chỉ cho sửa được dataRow, headerTable cố định từ đầu
       let _dataGrid = JSON.parse(value) ? JSON.parse(value) : {};
       // dataGrid[id].headerTable = _dataGrid.headerTable ? _dataGrid.headerTable : [];
-      dataGrid[id].dataRow = _dataGrid.dataRow ? _dataGrid.dataRow : [];
+      // dataGrid[ids].dataRow = _dataGrid.dataRow ? _dataGrid.dataRow : [];
+      dataGrid[ids].dataRow = _dataGrid.dataRow ? JSON.parse(JSON.stringify(_dataGrid.dataRow)) : []; // clone sâu trước khi gán
     } catch (e) {
       console.error("Invalid JSON in grid value", e);
     }
@@ -62,7 +112,7 @@ export function GridRenderer(props) {
   // Khi GridAg thay đổi
   function handleGridChange(newValue) {
     props.onChange({
-      field, // object field từ props
+      field: field, // object field từ props
       value: JSON.stringify(newValue),
     });
   }
@@ -76,9 +126,10 @@ export function GridRenderer(props) {
     const container = document.getElementById(containerId);
     if (container && props.onChange && field) {
       // Điều kiện container và props.onChange và field quan trọng
-      configField[id] = field;
+      configField[ids] = field;
       ReactDOM.render(
         <GridAg
+          domId={domId}
           location={"viewAndHandle"}
           onChange={(e) => {
             handleGridChange(e);
@@ -86,8 +137,8 @@ export function GridRenderer(props) {
           onAction={(action) => {
             handleOnAction(action);
           }}
-          dataGrid={dataGrid[id]}
-          configField={configField[id]}
+          dataGrid={dataGrid[ids]}
+          configField={configField[ids]}
         />,
         container
       );

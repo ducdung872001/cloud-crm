@@ -294,14 +294,9 @@ const FormViewerComponent = (props: any) => {
       let components = schema.components;
       const newValues = data;
 
-      console.log("Changed data:components", components);
-      console.log("Changed data:newValues", newValues);
-
       for (const key in newValues) {
         if (!_.isEqual(newValues[key], prevValues[key])) {
           const keyFind = components.find((el) => el.key === key || el.path === key);
-          console.log("Key keyFind:", keyFind);
-
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
           if (keyFind?.properties?.bindingTarget) {
             /**
