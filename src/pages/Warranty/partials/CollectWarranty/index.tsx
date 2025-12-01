@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo, Fragment, useCallback, useContext 
 import { useNavigate } from "react-router-dom";
 import { IActionModal, IOption } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
-import { IAddTicketModalProps } from "model/ticket/PropsModel";
-import { ITicketRequestModel } from "model/ticket/TicketRequestModel";
+import { IAddWarrantyModelProps } from "model/warranty/PropsModel";
+import { IWarrantyRequestModel } from "model/warranty/WarrantyRequestModel";
 import Icon from "components/icon";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -14,8 +14,8 @@ import { useActiveElement } from "utils/hookCustom";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import FileService from "services/FileService";
-import TicketService from "services/TicketService";
-import TicketCategoryService from "services/TicketCategoryService";
+import WarrantyService from "services/WarrantyService";
+import WarrantyCategoryService from "services/WarrantyCategoryService";
 import CustomerService from "services/CustomerService";
 import { EMAIL_REGEX } from "utils/constant";
 import { UserContext, ContextType } from "contexts/userContext";
@@ -23,7 +23,7 @@ import "./index.scss";
 import { useLocation } from "react-router-dom";
 import Button from "components/button/button";
 
-export default function CollectTicket() {
+export default function CollectWarranty() {
   // const { onShow, data, idCustomer, saleflowId, sieId } = props;
   const location = useLocation();
 
@@ -45,7 +45,7 @@ export default function CollectTicket() {
   const [listSupport, setListSupport] = useState<IOption[]>(null);
   const [isLoadingSupport, setIsLoadingSupport] = useState<boolean>(false);
 
-  const [listImageTicket, setListImageTicket] = useState([]);
+  const [listImageWarranty, setListImageWarranty] = useState([]);
 
   // Chọn lý do bảo hành
   const onSelectOpenSupport = async () => {
@@ -55,7 +55,7 @@ export default function CollectTicket() {
 
     if (!listSupport || listSupport.length === 0) {
       setIsLoadingSupport(true);
-      const response = await TicketCategoryService.list(param);
+      const response = await WarrantyCategoryService.list(param);
       if (response.code === 0) {
         const dataOption = response.result;
         setListSupport([
@@ -245,7 +245,7 @@ export default function CollectTicket() {
       disabled: false,
     },
     {
-      label: "Nội dung hỗ trợ",
+      label: "Nội dung bảo hành",
       name: "content",
       type: "textarea",
       fill: true,
@@ -298,7 +298,7 @@ export default function CollectTicket() {
 
   useEffect(() => {
     const result = JSON.parse(formData.values.docLink).map((item) => item.url);
-    setListImageTicket(result);
+    setListImageWarranty(result);
   }, [formData.values.docLink]);
 
   useEffect(() => {
@@ -321,18 +321,18 @@ export default function CollectTicket() {
     }
     setIsSubmit(true);
 
-    const body: ITicketRequestModel = {
-      ...(formData.values as ITicketRequestModel),
+    const body: IWarrantyRequestModel = {
+      ...(formData.values as IWarrantyRequestModel),
       ...{ supportId: 85, clientId: "ieabgaiifh", qrCode: code },
     };
 
     console.log("body", body);
     // return;
 
-    const response = await TicketService.collect(body, { processCode: "NVTK" });
+    const response = await WarrantyService.collect(body, { processCode: "QTBH" });
 
     if (response.code === 0) {
-      showToast(`Tạo phiếu hỗ trợ thành công`, "success");
+      showToast(`Tạo phiếu bảo hành thành công`, "success");
       setSuccesSubmit(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -438,12 +438,12 @@ export default function CollectTicket() {
 
   const processUploadSuccess = (data) => {
     const result = data?.fileUrl;
-    setListImageTicket([...listImageTicket, result]);
+    setListImageWarranty([...listImageWarranty, result]);
   };
 
   useEffect(() => {
-    if (listImageTicket && listImageTicket.length > 0) {
-      const result = listImageTicket.map((item) => {
+    if (listImageWarranty && listImageWarranty.length > 0) {
+      const result = listImageWarranty.map((item) => {
         return {
           type: "image",
           url: item,
@@ -451,7 +451,7 @@ export default function CollectTicket() {
       });
       setFormData({ ...formData, values: { ...formData.values, docLink: JSON.stringify(result) } });
     }
-  }, [listImageTicket]);
+  }, [listImageWarranty]);
 
   const handleRemoveImageItem = (idx) => {
     const result = JSON.parse(formData.values.docLink);
@@ -464,14 +464,14 @@ export default function CollectTicket() {
   };
   return (
     <Fragment>
-      <div className="page-collect-ticket">
-        <form className="form-ticket-group" onSubmit={(e) => onSubmit(e)}>
+      <div className="page-collect-warranty">
+        <form className="form-warranty-group" onSubmit={(e) => onSubmit(e)}>
           <div className="header-form">
-            <h1>PHIẾU HỖ TRỢ</h1>
+            <h1>PHIẾU BẢO HÀNH</h1>
           </div>
           {succesSubmit ? (
             <div className="list-form-group" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-              NỘP PHIẾU HỖ TRỢ THÀNH CÔNG, CHÚNG TÔI SẼ LIÊN HỆ VỚI BẠN TRONG THỜI GIAN SỚM NHẤT
+              NỘP PHIẾU BẢO HÀNH THÀNH CÔNG, CHÚNG TÔI SẼ LIÊN HỆ VỚI BẠN TRONG THỜI GIAN SỚM NHẤT
               <Button onClick={handleGoBack} type="button" color="primary" size="large" className="custom-button-rollback">
                 Quay lại
               </Button>
@@ -480,7 +480,7 @@ export default function CollectTicket() {
             <>
               <ModalBody>
                 <div className="list-form-group">
-                  <div className="wrapper-field-ticket-service">
+                  <div className="wrapper-field-warranty-service">
                     <div className="list-field">
                       {listFieldVoteInfo.map((field, index) => (
                         <FieldCustomize

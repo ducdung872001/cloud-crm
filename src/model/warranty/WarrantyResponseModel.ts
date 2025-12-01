@@ -28,6 +28,7 @@ export interface IWarrantyResponseModel {
   bsnId?: number;
   lstWarrantyProcess?: any;
   executorId?: number;
+  processId?: number;
 }
 
 export interface IWarrantyViewerResponseModel {
