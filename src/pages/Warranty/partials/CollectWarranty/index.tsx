@@ -329,7 +329,7 @@ export default function CollectWarranty() {
     console.log("body", body);
     // return;
 
-    const response = await WarrantyService.collect(body, { processCode: "QTTKDM" });
+    const response = await WarrantyService.collect(body, { processCode: "QTBH" });
 
     if (response.code === 0) {
       showToast(`Tạo phiếu bảo hành thành công`, "success");

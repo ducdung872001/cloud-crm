@@ -329,7 +329,7 @@ export default function CollectTicket() {
     console.log("body", body);
     // return;
 
-    const response = await TicketService.collect(body, { processCode: "QTTKDM" });
+    const response = await TicketService.collect(body, { processCode: "NVTK" });
 
     if (response.code === 0) {
       showToast(`Tạo phiếu hỗ trợ thành công`, "success");

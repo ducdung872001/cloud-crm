@@ -854,7 +854,7 @@ export default function WarrantyList() {
 
         <div className={`${isRegimeKanban ? "" : "d-none"}`}>
           {/* <KanbanTicket data={listTicket} isRegimeKanban={isRegimeKanban} /> */}
-          <div style={{ width: "45rem", paddingTop: "2rem", paddingRight: "2rem", paddingLeft: "2rem" }}>
+          {/* <div style={{ width: "45rem", paddingTop: "2rem", paddingRight: "2rem", paddingLeft: "2rem" }}>
             <SelectCustom
               id="processId"
               name="processId"
@@ -875,14 +875,14 @@ export default function WarrantyList() {
               }}
               loadOptionsPaginate={loadOptionProcess}
             />
-          </div>
+          </div> */}
           <div className={`${isLoadingKanban ? "" : "d-none"}`}>
             <Loading />
           </div>
           <div className={`${!isLoadingKanban ? "" : "d-none"}`}>
             <KanbanWarrantyProcess 
               // processId={processId}
-              processCode={valueProcess?.code}
+              processCode={"QTBH"}
               />
           </div>
         </div>

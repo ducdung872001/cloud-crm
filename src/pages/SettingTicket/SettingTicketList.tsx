@@ -12,10 +12,10 @@ export default function SettingTicketList() {
   const [isDetailCategory, setIsDetailCategory] = useState<boolean>(false);
 
   const menuCategorySMS = [
-    {
-      title: "Quy trình xử lý hỗ trợ",
-      is_tab: "tab_one",
-    },
+    // {
+    //   title: "Quy trình xử lý hỗ trợ",
+    //   is_tab: "tab_one",
+    // },
     {
       title: "Danh mục hỗ trợ",
       is_tab: "tab_two",
@@ -50,15 +50,17 @@ export default function SettingTicketList() {
           </ul>
         )}
       </div>
-      {isDetailCategory && tab === "tab_one" ? (
-        <TicketProcList
-          onBackProps={(isBack) => {
-            if (isBack) {
-              setIsDetailCategory(false);
-            }
-          }}
-        />
-      ) : isDetailCategory && tab === "tab_two" ? (
+      {
+      // isDetailCategory && tab === "tab_one" ? (
+      //   <TicketProcList
+      //     onBackProps={(isBack) => {
+      //       if (isBack) {
+      //         setIsDetailCategory(false);
+      //       }
+      //     }}
+      //   />
+      // ) : 
+      isDetailCategory && tab === "tab_two" ? (
         <TicketCategoryList
           onBackProps={(isBack) => {
             if (isBack) {
