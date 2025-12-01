@@ -637,8 +637,8 @@ export default function CampaignMarketingList() {
       {!isDetailCampaignMA && <TitleAction title="Ngân sách truyền thông" titleActions={titleActions} />}
 
       <div className="card-box d-flex flex-column">
-        <div className={`${isRegimeKanban ? "d-none" : "quick__search"}`}>
-          <div className={`${isRegimeKanban ? "d-none" : "quick__search--right"}`}>
+        {/* <div className={`${isRegimeKanban ? "d-none" : "quick__search"}`}> */}
+          {/* <div className={`${isRegimeKanban ? "d-none" : "quick__search--right"}`}> */}
             {/* {width < 1920 && width > 768 && listApproach.length > 4 ? (
                 <Swiper
                   onInit={(core: SwiperCore) => {
@@ -671,7 +671,7 @@ export default function CampaignMarketingList() {
                   })}
                 </Swiper>
               ) : ( */}
-            <div className="list__relationship">
+            {/* <div className="list__relationship">
               {listApproach.map((item, idx) => {
                 return item.label ? (
                   <div
@@ -687,10 +687,10 @@ export default function CampaignMarketingList() {
                   </div>
                 ) : null;
               })}
-            </div>
+            </div> */}
             {/* )} */}
-          </div>
-        </div>
+          {/* </div> */}
+        {/* </div> */}
         <div className={`${isRegimeKanban ? "d-none" : ""}`}>
           <SearchBox
             name="Tên ngân sách truyền thông"

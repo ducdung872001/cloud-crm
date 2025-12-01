@@ -50,8 +50,9 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     setCheckedMap,
   } = useGridAg();
   const gridRef = useRef<any>(null);
-  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction } = props;
-  const idGrid = configField?.fieldName || dataGrid?.fieldName || "";
+  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction, domId } = props;
+
+  const idGrid = domId;
   const COLUMN_WIDTH_STORAGE_KEY = "gridag_column_widths" + idGrid;
   const linkingConfig = configField?.linkingConfig ? JSON.parse(configField.linkingConfig) : null;
   const [linkingConfigDeparture, setLinkingConfigDeparture] = useState(null);
@@ -151,10 +152,6 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     setColumnsConfig(dataGridHeader);
     let dataGridRow =
       dataGrid?.dataRow && dataGrid.dataRow ? (typeof dataGrid.dataRow === "string" ? JSON.parse(dataGrid.dataRow) : dataGrid.dataRow) : [];
-    // const getDataLookupGrid = async (header, data) => {
-    //   const lookupValues = await fetchDataLookupGrid(header, data);
-    //   setLookupValues(lookupValues);
-    // };
     const getDataLookupGrid = async (header, data) => {
       let _dataLookup = await mapDataWithLookup(header, data);
       setLookupValues(_dataLookup.dataLookup);
@@ -168,7 +165,6 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
   }, [rowData]);
 
   useEffect(() => {
-    // onChange && onChange({ headerTable: JSON.stringify(columnsConfig), dataRow: JSON.stringify(rowData) });
     onChange && onChange({ headerTable: columnsConfig, dataRow: rowData });
   }, [columnsConfig, rowData]);
 
@@ -435,8 +431,6 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
       onChange && onChange({ headerTable: columnsConfig, dataRow: updatedRowData });
     }
   };
-
-  console.log("Render GridAgTable:", rowData); // Kiểm tra render và dữ liệu ban đầu
 
   return (
     <div className="ag-grid-table">
