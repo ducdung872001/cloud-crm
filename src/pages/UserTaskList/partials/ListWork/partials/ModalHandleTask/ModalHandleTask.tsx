@@ -179,10 +179,8 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
   }, [dataWork, onShow]);
 
   const [formSchema, setFormSchema] = useState(defaultSchema); // Lưu trữ schema
-  // console.log("formSchema", formSchema);
 
   const [initFormSchema, setInitFormSchema] = useState(defaultSchema); // Lưu trữ schema
-  // console.log("initFormSchema", initFormSchema);
 
   // Callback để nhận schema khi người dùng thay đổi trong FormEditor
   const handleSchemaSubmit = (newSchema, reject, contextData) => {
@@ -704,7 +702,6 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
     // });
     // setIsSubmit(false);
     // return;
-
     if (!checkValidate) {
       setIsSubmit(false);
       return;
