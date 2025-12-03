@@ -538,6 +538,8 @@ const FormViewerComponent = (props: any) => {
 
       //1. Loại là select
       if (formField.type == "select") {
+        //valuesKey là Input values key đối với loại select là I
+        let key = formField?.valuesKey|| formField?.key;  
         let fields = formField?.properties?.binding || ""; //Trả về departmentId
         let apiUrl = formField?.properties?.apiUrl || "";
         let paramsUrl = formField?.properties?.paramsUrl || "";
@@ -567,9 +569,9 @@ const FormViewerComponent = (props: any) => {
 
           let dataOption;
           if (apiUrl) {
-            dataOption = await SelectOptionEform(formField.key, apiUrl, { ...params, status: 1 });
+            dataOption = await SelectOptionEform(key, apiUrl, { ...params, status: 1 });
           } else {
-            dataOption = await SelectOptionData(formField.key, params);
+            dataOption = await SelectOptionData(key, params);
           }
           formField.values = dataOption || [];
           delete formField.valuesKey; //Phải xóa đi mới hiển thị lên được
@@ -1069,9 +1071,15 @@ const FormViewerComponent = (props: any) => {
         // Lấy ra các tham số được gán khởi tạo
         // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
         let key = component.valuesKey;
-        let params = component.properties?.params || "";
-        params = [];
-        filterItems.push({ key, params, compKey: component.key, type: "select", apiUrl: apiUrl });
+        let paramsUrl = component?.properties?.paramsUrl || "";
+        const paramsTotal = Object.fromEntries(
+          paramsUrl.split(",").map((part) => {
+            const [key, ...rest] = part.split("=");
+            const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
+            return [key.trim(), value];
+          })
+        );
+        filterItems.push({ key, paramsTotal, compKey: component.key, type: "select", apiUrl: apiUrl });
       }
 
       //Lặp cấp L1
