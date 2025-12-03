@@ -370,7 +370,7 @@ export const menu: IMenuItem[] = [
               title: "listQuotationsNew", // Danh sách báo giá mới
               path: urls.quoteNew,
               icon: <Icon name="Invoice" />,
-              code: "",
+              code: "QUOTATIONNEW",
             },
             {
               title: "createContract", // Tạo hợp đồng
