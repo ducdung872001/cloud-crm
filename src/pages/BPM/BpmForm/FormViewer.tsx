@@ -26,7 +26,7 @@ declare global {
 import "@bpmn-io/form-js/dist/assets/form-js.css";
 import "@bpmn-io/form-js/dist/assets/form-js-editor.css";
 import "@bpmn-io/form-js/dist/assets/form-js-playground.css";
-import _ from "lodash";
+import _, { set } from "lodash";
 import { SelectOptionEform } from "utils/apiSelectCommon";
 import { CallApiCommon } from "utils/callApiCommon";
 // import { SelectOptionEform } from "utils/apiSelectCommon";
@@ -48,6 +48,7 @@ const FormViewerComponent = (props: any) => {
     isLoading,
     setShowPopupCustom,
     setCodePopupCustom,
+    onOpenCallCustomerModal
   } = props;
 
   // const formContainerRef = useRef(null);
@@ -260,6 +261,27 @@ const FormViewerComponent = (props: any) => {
         removeBtns.forEach((btn: any) => (btn.style.display = ""));
       }
     });
+  };
+
+  const getParamsPropertiesEform = (apiParams, formData) => {
+    let paramsTotal = {}
+    if (apiParams) {
+      const params = apiParams.replace(/curr\.(\w+)/g, (match, key) => {
+        const value = formData[key];
+        return value !== undefined && value !== null ? value : "null";
+      });
+
+      paramsTotal ={
+        ...Object.fromEntries(
+        params.split(",").map(part => {
+          const [key, ...rest] = part.split("=");
+          const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
+          return [key.trim(), value];
+        })
+      )};
+    }
+
+    return paramsTotal;
   }
 
   useEffect(() => {
@@ -537,6 +559,8 @@ const FormViewerComponent = (props: any) => {
 
       //1. Loại là select
       if (formField.type == "select") {
+        //valuesKey là Input values key đối với loại select là I
+        let key = formField?.valuesKey|| formField?.key;  
         let fields = formField?.properties?.binding || ""; //Trả về departmentId
         let apiUrl = formField?.properties?.apiUrl || "";
         let paramsUrl = formField?.properties?.paramsUrl || "";
@@ -547,7 +571,7 @@ const FormViewerComponent = (props: any) => {
             const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
             return [key.trim(), value];
           })
-        );
+        );;
 
         //Tồn tại trường binding
         if (fields) {
@@ -566,9 +590,9 @@ const FormViewerComponent = (props: any) => {
 
           let dataOption;
           if (apiUrl) {
-            dataOption = await SelectOptionEform(formField.key, apiUrl, { ...params, status: 1 });
+            dataOption = await SelectOptionEform(key, apiUrl, { ...params, status: 1 });
           } else {
-            dataOption = await SelectOptionData(formField.key, params);
+            dataOption = await SelectOptionData(key, params);
           }
           formField.values = dataOption || [];
           delete formField.valuesKey; //Phải xóa đi mới hiển thị lên được
@@ -635,6 +659,12 @@ const FormViewerComponent = (props: any) => {
           }
 
           rerenderForm(updatedFormSchema, formData);
+        }
+
+        const typeButton = attrs?.typeButton;
+        if (typeButton === "CALL_CUSTOMER_POPUP") {   
+          const paramsTotal = getParamsPropertiesEform(attrs?.apiParams, formData);
+          onOpenCallCustomerModal(paramsTotal);
         }
       }
 
@@ -1068,9 +1098,15 @@ const FormViewerComponent = (props: any) => {
         // Lấy ra các tham số được gán khởi tạo
         // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
         let key = component.valuesKey;
-        let params = component.properties?.params || "";
-        params = [];
-        filterItems.push({ key, params, compKey: component.key, type: "select", apiUrl: apiUrl });
+        let paramsUrl = component?.properties?.paramsUrl || "";
+        const paramsTotal = Object.fromEntries(
+          paramsUrl.split(",").map((part) => {
+            const [key, ...rest] = part.split("=");
+            const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
+            return [key.trim(), value];
+          })
+        );
+        filterItems.push({ key, paramsTotal, compKey: component.key, type: "select", apiUrl: apiUrl });
       }
 
       //Lặp cấp L1

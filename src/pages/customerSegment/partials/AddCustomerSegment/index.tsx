@@ -161,6 +161,26 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
     if (response.code === 0) {
       const result = response.result.items;
       const changeDataResult = result.map((item) => {
+        // Xử lý options - swap giá trị cho trường giới tính
+        let options = [];
+        
+        // Hardcode options cho giới tính nếu không có từ API
+        if (item.name === "gender" || item.name === "sex") {
+          options = [
+            { value: 2, label: "Nam" },
+            { value: 1, label: "Nữ" },
+          ];
+        } else if (item.source === "data") {
+          options = [...item.data].map((el) => {
+            return {
+              value: el.id,
+              label: el.name,
+            };
+          });
+        } else if (item.data) {
+          options = item.data;
+        }
+
         return {
           name: capitalizeFirstLetter(item.title),
           fieldName: item.name,
@@ -169,23 +189,15 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
               ? ""
               : item.name === "source_id"
               ? "select"
+              : item.name === "gender" || item.name === "sex"
+              ? "select"
               : item.source
               ? "select"
               : item.type === "string"
               ? "text"
               : item.type,
           dataType: item.name === "birthday" ? "" : item.name === "source_id" ? "select" : item.type,
-          options:
-            item.source === "data"
-              ? [...item.data].map((el) => {
-                  return {
-                    value: el.id,
-                    label: el.name,
-                  };
-                })
-              : item.data
-              ? item.data
-              : [],
+          options: options,
           source: item.source === "api" || item.name === "source_id" ? item.path : "",
           dataAttribute: item.attId ? true : false,
         };
