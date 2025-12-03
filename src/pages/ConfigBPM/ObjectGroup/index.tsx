@@ -79,7 +79,7 @@ export default function ObjectGroupList(props: any) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListOjectGroup(result);
+      setListOjectGroup(result.items);
 
       setPagination({
         ...pagination,
@@ -139,11 +139,11 @@ export default function ObjectGroupList(props: any) {
     ],
   };
 
-  const titles = ["STT", "Tên loại đối tượng", "Thứ tự"];
+  const titles = ["STT", "Tên loại đối tượng", "Kiểu đối tượng", "Thứ tự"];
 
-  const dataFormat = ["text-center", "", "text-center"];
+  const dataFormat = ["text-center", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.position];
+  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.type, item.position];
 
   const actionsTable = (item: any): IAction[] => {
     return [

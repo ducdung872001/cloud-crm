@@ -547,6 +547,16 @@ export default function ModalAddOpportunity(props: any) {
         showToast(`Tạo mới cơ hội thành công`, "success");
         setIdResponse(result.id);
         setIsSubmit(false);
+        setLstMenu([
+          {
+            id: 1,
+            name: "Thông tin cơ hội",
+          },
+          {
+            id: 2,
+            name: "Quản lý chiến dịch",
+          },
+        ]);
 
         const data = {
           id: result.id,
@@ -597,6 +607,17 @@ export default function ModalAddOpportunity(props: any) {
     setDataRes(null);
     setIdResponse(null);
     setDetailCustomer(null);
+    setActiveItemMenu(1);
+    setLstMenu([
+      {
+        id: 1,
+        name: "Thông tin cơ hội",
+      },
+      // {
+      //   id: 2,
+      //   name: "Quản lý chiến dịch",
+      // },
+    ]);
   };
 
   const actions = useMemo<IActionModal>(
@@ -635,16 +656,16 @@ export default function ModalAddOpportunity(props: any) {
 
   const [activeItemMenu, setActiveItemMenu] = useState<number>(1);
 
-  const lstMenu = [
+  const [lstMenu, setLstMenu] = useState([
     {
       id: 1,
       name: "Thông tin cơ hội",
     },
-    {
-      id: 2,
-      name: "Quản lý chiến dịch",
-    },
-  ];
+    // {
+    //   id: 2,
+    //   name: "Quản lý chiến dịch",
+    // },
+  ]);
 
   const [nxStep, setNxStep] = useState({
     step_one: true,
@@ -833,7 +854,6 @@ export default function ModalAddOpportunity(props: any) {
     };
 
     const response = await CampaignOpportunityService.list(param);
-
     if (response.code === 0) {
       const result = response.result;
       setLstCampaign(result.items);
@@ -843,7 +863,26 @@ export default function ModalAddOpportunity(props: any) {
   };
 
   useEffect(() => {
-    if (onShow && activeItemMenu == 2) {
+    if (data?.customerId) {
+      setLstMenu([
+        {
+          id: 1,
+          name: "Thông tin cơ hội",
+        },
+        {
+          id: 2,
+          name: "Quản lý chiến dịch",
+        },
+      ]);
+    } else {
+      setLstMenu([
+        {
+          id: 1,
+          name: "Thông tin cơ hội",
+        },
+      ]);
+    }
+    if (onShow && activeItemMenu == 2 && data?.customerId) {
       handleGetCampaign();
     }
   }, [onShow, activeItemMenu, data]);
@@ -1097,29 +1136,31 @@ export default function ModalAddOpportunity(props: any) {
                 </div>
               ) : (
                 <div className="box__campaign--b2b">
-                  <div className="action--campaign">
-                    <Button
-                      color="success"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsCreate(!isCreate);
+                  {lstCampaign.length >= 1 ? null : (
+                    <div className="action--campaign">
+                      <Button
+                        color="success"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setIsCreate(!isCreate);
 
-                        if (!isCreate) {
-                          setValueStepTwo({
-                            dataSale: null,
-                            dataCampaign: null,
-                            dataPipeline: null,
-                            dataCustomer: null,
-                            startDate: null,
-                            endDate: null,
-                            expectedRevenue: 0,
-                          });
-                        }
-                      }}
-                    >
-                      {isCreate ? "Quay lại" : "Thêm mới"}
-                    </Button>
-                  </div>
+                          if (!isCreate) {
+                            setValueStepTwo({
+                              dataSale: null,
+                              dataCampaign: null,
+                              dataPipeline: null,
+                              dataCustomer: null,
+                              startDate: null,
+                              endDate: null,
+                              expectedRevenue: 0,
+                            });
+                          }
+                        }}
+                      >
+                        {isCreate ? "Quay lại" : "Thêm mới"}
+                      </Button>
+                    </div>
+                  )}
                   {isCreate ? (
                     <div className="lst__form--b2b">
                       <div className="form-group">

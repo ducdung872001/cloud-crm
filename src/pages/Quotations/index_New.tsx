@@ -13,86 +13,71 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
 import { handDownloadFileOrigin, showToast } from "utils/common";
-import { convertToId, getPageOffset, isDifferenceObj, removeAccents } from "reborn-util";
-import FSQuoteService from "services/FSQuoteService";
+import { convertToId, getPageOffset, getSearchParameters, isDifferenceObj, removeAccents } from "reborn-util";
+import QuoteService from "services/QuoteService";
 import { ContextType, UserContext } from "contexts/userContext";
-import AddFS from "./partials/AddFs";
-import AddFsFormQuote from "./partials/AddFsFormQuoteBackup";
-import AddTemplateFSQuote from "pages/Common/AddTemplateFSQuote";
+import AddQuote from "./partials/AddQuote";
+import AddFormQuote from "./partials/AddFormQuoteBackup";
 import CopyItemModal from "./partials/CopyItemModal";
-import AddSignerFSAndQuote from "pages/Common/AddSignerFSAndQuote";
+import AddTemplateFSQuote from "pages/Common/AddTemplateFSQuote";
+import ModelSinger from "pages/SettingProcess/partials/ProcessedObjectList/partials/ModalSigner/index";
 import ViewHistorySignature from "pages/Common/ViewHistorySignature";
 import { CustomExportReport } from "exports/customExportReport";
 import { useSearchParams } from "react-router-dom";
 import SheetFieldQuoteFormService from "services/SheetFieldQuoteFormService";
-import KanbanFSQuoteProcess from "./partials/KanbanFSQuoteProcess";
-import BusinessProcessService from "services/BusinessProcessService";
-import "./index.scss";
 import SelectCustom from "components/selectCustom/selectCustom";
+import BusinessProcessService from "services/BusinessProcessService";
+import KanbanQuotationsProcess from "./KanbanQuotationsProcess";
 
-export default function FsQuote() {
-  document.title = "Danh sách FS";
+import "./index.scss";
+
+export default function QuotationsNew() {
+  document.title = "Danh sách báo giá mới";
 
   const isMounted = useRef(false);
-
   const checkIsKanban = localStorage.getItem("isKanbanBusinessProcess");
-  const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(checkIsKanban ? JSON.parse(checkIsKanban) : false);
-  
 
   const { name, dataInfoEmployee } = useContext(UserContext) as ContextType;
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [listFsQuote, setListFsQuote] = useState([]);
-  const [dataFsQuote, setDataFsQuote] = useState(null);
-  console.log("dataFsQuote", dataFsQuote);
+  const takeParamsUrl = getSearchParameters();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [listQuote, setListQuote] = useState([]);
+  const [dataQuote, setDataQuote] = useState(null);
+  const [dataObject, setDataObject] = useState(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
-  const [showModalSetingFS, setShowModalSetingFS] = useState<boolean>(false);
-  const [showModalChooseTemplate, setShowModalChooseTemplate] = useState<boolean>(false);
+  const [showModalSetingQuote, setShowModalSetingQuote] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
+  const [showModalChooseTemplate, setShowModalChooseTemplate] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [hasCopyQuote, setHasCopyQuote] = useState<boolean>(false);
   const [hasSignature, setHasSignature] = useState<boolean>(false);
   const [hasHistorySignature, setHasHistorySignature] = useState<boolean>(false);
-  const [params, setParams] = useState({
-    name: "",
-    limit: 10,
+  const [contractId, setContractId] = useState<number>(() => {
+    return takeParamsUrl?.contractId ? takeParamsUrl?.contractId : null;
   });
 
-  const [listSaveSearch] = useState<ISaveSearch[]>([
-    {
-      key: "all",
-      name: "Danh sách FS",
-      is_active: true,
-    },
-  ]);
+  // Kanban for Order Request: states and helpers
+  const checkProcessQuotationId = (localStorage.getItem("processQuotationId") && JSON.parse(localStorage.getItem("processQuotationId"))) || null;
+  const checkProcessQuotationName = localStorage.getItem("processQuotationName") || null;
+  const checkProcessQuotationCode = localStorage.getItem("processQuotationCode") || null;
 
-  useEffect(() => {
-  localStorage.setItem("isKanbanBusinessProcess", JSON.stringify(isRegimeKanban));
-  }, [isRegimeKanban]);
-
-  // Kanban process selection state
-  const checkProcessQuotationId = (localStorage.getItem("processQuotationId") && JSON.parse(localStorage.getItem("processQuotationId"))) || -1;
-  const checkProcessQuotationName = localStorage.getItem("processQuotationName");
-
-  const [processQuotationId, setProcessQuotationId] = useState<number>(checkProcessQuotationId || -1);
-  const [processQuotationName, setProcessQuotationName] = useState<string>(checkProcessQuotationName ? checkProcessQuotationName : "Chọn quy trình");
-  const [valueProcessQuotation, setValueProcessQuotation] = useState<any>(null);
+  const [processQuotationId, setProcessQuotationId] = useState<number | null>(checkProcessQuotationId);
+  const [processQuotationName, setProcessQuotationName] = useState<string | null>(checkProcessQuotationName);
+  const [processQuotationCode, setProcessQuotationCode] = useState<string>(
+    checkProcessQuotationCode || "QTBG"
+  );
   const [isLoadingKanbanQuotation, setIsLoadingKanbanQuotation] = useState<boolean>(false);
+  const [valueProcessQuotation, setValueProcessQuotation] = useState<any>(null);
 
-  useEffect(() => {
-    setValueProcessQuotation({ value: processQuotationId, label: processQuotationName });
-  }, [processQuotationId]);
 
-  useEffect(() => {
-    // warm options
-    void loadOptionProcessQuotation("", undefined, { page: 1 });
-  }, []);
 
+
+  // Async options loader for select (order request processes). Uses type:3 as requested.
   const loadOptionProcessQuotation = async (search, loadedOptions, { page }) => {
     const param: any = {
       name: search,
@@ -119,22 +104,44 @@ export default function FsQuote() {
       return {
         options: optionProcess,
         hasMore: response.result.loadMoreAble,
-        additional: { page: page + 1 },
+        additional: {
+          page: page + 1,
+        },
       };
     }
 
     return { options: [], hasMore: false };
   };
 
+  // Handler when selecting a process for order-request Kanban
   const handleChangeValueProcessQuotation = (e) => {
     setIsLoadingKanbanQuotation(true);
     setValueProcessQuotation(e);
     setProcessQuotationId(+e.value);
     setProcessQuotationName(e.label);
+    setProcessQuotationCode(e.code);
+
+    // Persist selection
     localStorage.setItem("processQuotationId", JSON.stringify(+e.value));
     localStorage.setItem("processQuotationName", e.label);
-    setTimeout(() => setIsLoadingKanbanQuotation(false), 250);
+    localStorage.setItem("processQuotationCode", e.code);
+    
+    setTimeout(() => setIsLoadingKanbanQuotation(false), 500);
   };
+
+  useEffect(() => {
+    setValueProcessQuotation({ value: processQuotationId, label: processQuotationName, code: processQuotationCode });
+  }, [processQuotationId, processQuotationCode]);
+
+  const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(
+    checkIsKanban ? JSON.parse(checkIsKanban) : false
+  );
+  
+
+  const [params, setParams] = useState({
+    name: "",
+    limit: 10,
+  });
 
   const customerFilterList = useMemo(
     () =>
@@ -165,9 +172,29 @@ export default function FsQuote() {
     [searchParams]
   );
 
+  useEffect(() => {
+    if (contractId) {
+      setParams((prevParams) => ({ ...prevParams, contractId: contractId }));
+      setShowModalAdd(true);
+    }
+  }, [contractId]);
+
+  // LocalStorage sync cho Kanban
+  useEffect(() => {
+    localStorage.setItem("isKanbanBusinessProcess", JSON.stringify(isRegimeKanban));
+  }, [isRegimeKanban]);
+
+  const [listSaveSearch] = useState<ISaveSearch[]>([
+    {
+      key: "all",
+      name: "Danh sách báo giá mới",
+      is_active: true,
+    },
+  ]);
+
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "FS",
+    name: "Báo giá",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -177,14 +204,14 @@ export default function FsQuote() {
     },
   });
 
-  const getListFsQuote = async (paramsSearch) => {
+  const getListQuote = async (paramsSearch) => {
     setIsLoading(true);
 
-    const response = await FSQuoteService.list(paramsSearch);
+    const response = await QuoteService.list(paramsSearch);
 
     if (response.code === 0) {
       const result = response.result;
-      setListFsQuote(result.items);
+      setListQuote(result.items);
 
       setPagination({
         ...pagination,
@@ -220,7 +247,7 @@ export default function FsQuote() {
     }
 
     if (isMounted.current === true) {
-      getListFsQuote(params);
+      getListQuote(params);
       const paramsTemp: any = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
@@ -239,59 +266,29 @@ export default function FsQuote() {
 
   const titleActions: ITitleActions = {
     actions: [
-      ...(!showModalSetingFS || !hasHistorySignature
+      ...(!showModalSetingQuote && !hasHistorySignature
         ? [
             {
-              title: "Sao chép mẫu",
-              disabled: !isLoading && listFsQuote.length === 0,
+              title: isRegimeKanban ? "Danh sách" : "Kanban",
+              color: "primary" as const,
               callback: () => {
-                setHasCopyQuote(true);
+                setIsRegimeKanban((prev) => !prev);
               },
             },
           ]
         : []),
-      {
-        title: !showModalSetingFS || !hasHistorySignature ? "Thêm mới" : "Quay lại",
-        callback: () => {
-          if (showModalAdd) {
-            setShowModalAdd(false);
-          } else {
-            setDataFsQuote(null);
-            setShowModalAdd(true);
-          }
-        },
-      },
-      {
-        title: "Kanban",
-        color: "primary",
-        callback: () => {
-          setIsRegimeKanban((prev) => !prev);
-          setHasHistorySignature(false);
-        },
-      },
     ],
   };
 
-  const titles = ["STT", "Tên FS", "Ngày tạo", "Ngày ban hành", "Người lập", "Trạng thái"];
+  const titles = ["STT", "Tên báo giá", "Ngày tạo", "Ngày hết hạn", "Ngày ban hành", "Người lập", "Trạng thái"];
 
-  const dataFormat = ["text-center", "", "text-center", "text-center", "", "text-center"];
+  const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", "", "text-center"];
 
   const dataMappingArray = (item, index: number) => [
     getPageOffset(params) + index + 1,
-    <span
-      onClick={() => {
-        setDataFsQuote({
-          ...item,
-          template: item.fsAttachment,
-        });
-        setHasHistorySignature(true);
-      }}
-      style={{ cursor: "pointer" }}
-      className="btn__navigation"
-    >
-      {item.name}
-    </span>,
-    item.createdDate ? moment(item.createdDate).format("DD/MM/YYYY") : "",
+    item.name,
+    item.quoteDate ? moment(item.quoteDate).format("DD/MM/YYYY") : "",
+    item.expiredDate ? moment(item.expiredDate).format("DD/MM/YYYY") : "",
     item.approvedDate ? moment(item.approvedDate).format("DD/MM/YYYY") : "",
     item.employeeName,
     <Badge
@@ -343,7 +340,6 @@ export default function FsQuote() {
       return resultTitle;
     }
   };
-
   const removePunctuationAndCamelCase = (str) => {
     str = removeAccents(str);
 
@@ -358,6 +354,7 @@ export default function FsQuote() {
   const handleExportDataFS = async (data, item: any) => {
     const changeName = removePunctuationAndCamelCase(item.name);
     const titleExport = await handleTitleExport(item.sheetId);
+
     CustomExportReport({
       fileName: changeName,
       title: item.name,
@@ -371,16 +368,16 @@ export default function FsQuote() {
     if (!item) return;
 
     const params = {
-      fsId: item.id,
+      quoteId: item.id,
     };
 
-    const response = await FSQuoteService.fsFormLst(params);
+    const response = await QuoteService.quoteFormLst(params);
 
     if (response.code === 0) {
       const result = response.result;
 
       if (result.length === 0) {
-        showToast("Không hợp lệ để trình ký. Vui lòng cung cấp dữ liệu cho cấu hình FS và thử lại !", "warning");
+        showToast("Không hợp lệ để trình ký. Vui lòng cung cấp dữ liệu cho cấu hình báo giá và thử lại !", "warning");
       } else {
         if (result[0]["dataTbody"]) {
           if (type === "signature") {
@@ -389,7 +386,7 @@ export default function FsQuote() {
             handleExportDataFS(result, item);
           }
         } else {
-          showToast(`Không hợp lệ để ${type === "export" ? "tải xuống" : "trình ký"}. Dữ liệu cấu hình fs không được để trống !`, "warning");
+          showToast(`Không hợp lệ để ${type === "export" ? "tải xuống" : "trình ký"}. Dữ liệu cấu hình báo giá không được để trống !`, "warning");
         }
       }
     } else {
@@ -399,32 +396,40 @@ export default function FsQuote() {
 
   const actionsTable = (item): IAction[] => {
     return [
-      ...(item?.fsAttachment
-        ? [
-            {
-              title: "Tải xuống file FS",
-              icon: <Icon name="Download" />,
-              callback: () => {
-                if (item.fsType === 1) {
-                  let fieldName = convertToId(item.name) || "";
-                  const name = `${fieldName}.xlsx`;
-                  handDownloadFileOrigin(item.fsAttachment, name);
-                } else {
-                  handleCheckValidateSignature(item, "export");
-                }
-              },
-            },
-          ]
-        : []),
+      {
+        title: "Tải xuống file báo giá",
+        icon: <Icon name="Download" />,
+        callback: () => {
+          if(item.quoteType === 1){
+            const fieldName = convertToId(item.name) || "";
+            const type = item.quoteAttachment?.includes(".docx")
+                  ? "docx"
+                  : item.quoteAttachment?.includes(".xlsx")
+                  ? "xlsx"
+                  : item.quoteAttachment?.includes(".pdf")
+                  ? "pdf"
+                  : item.quoteAttachment?.includes(".pptx")
+                  ? "pptx"
+                  : item.quoteAttachment?.includes(".zip")
+                  ? "zip"
+                  : "rar";
+            const name = `${fieldName}.${type}`;
+            handDownloadFileOrigin(item.quoteAttachment, name);
+            
+          } else {
+            handleCheckValidateSignature(item, "export");
+          }
+        },
+      },
       ...(item.status
         ? [
             {
               title: "Xem lịch sử ký",
               icon: <Icon name="ImpactHistory" />,
               callback: () => {
-                setDataFsQuote({
+                setDataQuote({
                   ...item,
-                  template: item.fsAttachment,
+                  template: item.quoteAttachment
                 });
                 setHasHistorySignature(true);
               },
@@ -437,38 +442,44 @@ export default function FsQuote() {
               title: "Trình ký",
               icon: <Icon name="FingerTouch" className="icon-warning" />,
               callback: () => {
-                setDataFsQuote(item);
-                if (item.fsType === 2) {
-                  handleCheckValidateSignature(item, "signature");
-                } else {
-                  setHasSignature(true);
-                }
+                // Lấy thông tin quy trình từ Quản lý quy trình (select trong Kanban)
+                setDataObject({
+                  ...item,
+                  processId: processQuotationId || null,
+                  processName: processQuotationName || null,
+                  processCode: processQuotationCode || null
+                });
+                setHasSignature(true);
+                // handleCheckValidateSignature(item, "signature");
               },
             },
-
-            ...(item.fsType === 2
-              ? [
-                  {
-                    title: "Cấu hình FS",
-                    icon: <Icon name="Settings" />,
-                    callback: () => {
-                      setDataFsQuote(item);
-                      if (item.sheetId) {
-                        setShowModalSetingFS(true);
-                      } else {
-                        setShowModalChooseTemplate(true);
-                      }
-                    },
-                  },
-                ]
-              : []),
-
+          ]
+        : []),
+      // {
+      //   title: "Xem chi tiết FS",
+      //   icon: <Icon name="Eye" />,
+      //   callback: () => {
+      //     setDataQuote(item);
+      //     setViewDetailFs(true);
+      //   },
+      // },
+      ...(!item.status
+        ? [
+            item.quoteType === 2 &&
+            {
+              title: "Cấu hình báo giá",
+              icon: <Icon name="Settings" />,
+              callback: () => {
+                setDataQuote(item);
+                item.sheetId ? setShowModalSetingQuote(true) : setShowModalChooseTemplate(true);
+              },
+            },
             {
               title: "Sửa",
               icon: <Icon name="Pencil" />,
               callback: () => {
-                setDataFsQuote(item);
                 setShowModalAdd(true);
+                setDataQuote(item);
               },
             },
             {
@@ -479,8 +490,7 @@ export default function FsQuote() {
               },
             },
           ]
-        : []),
-      ...(item.status === 1
+        : item.status === 1
         ? [
             {
               title: "Tạm dừng trình ký",
@@ -490,8 +500,7 @@ export default function FsQuote() {
               },
             },
           ]
-        : []),
-      ...(item.status === 4
+        : item.status === 4
         ? [
             {
               title: "Tiếp tục trình ký",
@@ -509,18 +518,14 @@ export default function FsQuote() {
             },
           ]
         : []),
-      ...(item.status === 2 && item.fsType === 2
+      ...(item.status === 2 && item.quoteType === 2
         ? [
             {
-              title: "Cấu hình FS",
+              title: "Cấu hình báo giá",
               icon: <Icon name="Settings" />,
               callback: () => {
-                setDataFsQuote(item);
-                if (item.sheetId) {
-                  setShowModalSetingFS(true);
-                } else {
-                  setShowModalChooseTemplate(true);
-                }
+                setDataQuote(item);
+                item.sheetId ? setShowModalSetingQuote(true) : setShowModalChooseTemplate(true);
               },
             },
           ]
@@ -540,11 +545,11 @@ export default function FsQuote() {
   };
 
   const onDelete = async (id: number) => {
-    const response = await FSQuoteService.delete(id);
+    const response = await QuoteService.delete(id);
 
     if (response.code === 0) {
-      showToast("Xóa fs thành công", "success");
-      getListFsQuote(params);
+      showToast("Xóa báo giá thành công", "success");
+      getListQuote(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -561,7 +566,7 @@ export default function FsQuote() {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "fs " : `${listIdChecked.length} fs đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "báo giá " : `${listIdChecked.length} báo giá đã chọn`}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -585,11 +590,11 @@ export default function FsQuote() {
       status: status,
     };
 
-    const response = await FSQuoteService.updateStatus(body);
+    const response = await QuoteService.updateStatus(body);
 
     if (response.code === 0) {
       showToast(`${status == 1 ? "Tiếp tục" : "Tạm dừng"} thành công`, "success");
-      getListFsQuote(params);
+      getListQuote(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -602,14 +607,14 @@ export default function FsQuote() {
 
     const param = {
       objectId: item.id,
-      objectType: 1,
+      objectType: 2,
     };
 
-    const response = await FSQuoteService.resetSignature(param);
+    const response = await QuoteService.resetSignature(param);
 
     if (response.code === 0 && response.result > 0) {
       showToast(`Trình lại trình ký thành công`, "success");
-      getListFsQuote(params);
+      getListQuote(params);
 
       setTimeout(() => {
         setHasSignature(true);
@@ -631,7 +636,7 @@ export default function FsQuote() {
       message: (
         <Fragment>
           Bạn có chắc chắn muốn {status == "play" ? "tiếp tục" : status == "inital" ? "trình lại" : "tạm dừng"} trình ký{" "}
-          {item ? "fs " : `${listIdChecked.length} fs đã chọn`}
+          {item ? "báo giá " : `${listIdChecked.length} báo giá đã chọn`}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -657,224 +662,258 @@ export default function FsQuote() {
 
   const bulkActionList: BulkActionItemModel[] = [
     {
-      title: "Xóa fs",
+      title: "Xóa báo giá",
       callback: () => showDialogConfirmDelete(),
     },
   ];
 
   return (
-    <div className={`page-content page__fs${isNoItem ? " bg-white" : ""}`}>
-      <div className="action-navigation">
-        <div className="action-backup" style={showModalSetingFS || hasHistorySignature ? { marginBottom: "1.6rem" } : {}}>
+  <div className={`page-content page__quote${isNoItem ? " bg-white" : ""}`}>
+    {/* Header với nút chuyển đổi List/Kanban */}
+    <div className="action-navigation">
+      <div className="action-backup" style={showModalSetingQuote || hasHistorySignature ? { marginBottom: "1.6rem" } : {}}>
+        
+        {/* Breadcrumb */}
+        <>
           <h1
             onClick={() => {
-              setShowModalSetingFS(false);
+              setShowModalSetingQuote(false);
               setHasHistorySignature(false);
             }}
             className="title-first"
             title="Quay lại"
           >
-            Danh sách FS
+            Danh sách báo giá mới
           </h1>
-          {showModalSetingFS && (
+          {showModalSetingQuote && (
             <Fragment>
               <Icon
                 name="ChevronRight"
                 onClick={() => {
-                  setShowModalSetingFS(false);
+                  setShowModalSetingQuote(false);
                 }}
               />
-              <h1 className="title-last">Cấu hình FS</h1>
+              <h1 className="title-last">Cấu hình báo giá</h1>
             </Fragment>
           )}
-
-
           {hasHistorySignature && (
             <Fragment>
               <Icon
                 name="ChevronRight"
                 onClick={() => {
                   setHasHistorySignature(false);
-                  setDataFsQuote(null);
                 }}
               />
               <h1 className="title-last">Xem lịch sử ký</h1>
             </Fragment>
           )}
-        </div>
-        {!showModalSetingFS && !hasHistorySignature && <TitleAction title="" titleActions={titleActions} />}
+        </>
       </div>
+      {!showModalSetingQuote && !hasHistorySignature && <TitleAction title="" titleActions={titleActions} />}
+    </div>
 
-      <div className="card-box d-flex flex-column">
-        {/* Kanban View (inline, same flow as other sections) */}
-        <div className={`${!hasHistorySignature ? (isRegimeKanban ? "" : "d-none") : "d-none"}`}>
+    <div className="card-box d-flex flex-column">
 
-          <div className={`${isLoadingKanbanQuotation ? "" : "d-none"}`}>
-            <Loading />
-          </div>
-
-          <div className={`${!isLoadingKanbanQuotation ? "" : "d-none"}`}>
-            <KanbanFSQuoteProcess processCode="QTFS" />
-          </div>
-        </div>
-
-        <div className={`${showModalSetingFS || hasHistorySignature || isRegimeKanban ? "d-none" : ""}`}>
-          <SearchBox
-            name="Tên FS"
-            params={params}
-            isSaveSearch={true}
-            listSaveSearch={listSaveSearch}
-            isFilter={true}
-            listFilterItem={customerFilterList}
-            updateParams={(paramsNew) => setParams(paramsNew)}
+      {/* List View - Danh sách báo giá */}
+      <div className={`${isRegimeKanban || showModalSetingQuote || hasHistorySignature ? "d-none" : ""}`}>
+        <SearchBox
+          name="Tên báo giá"
+          params={params}
+          isSaveSearch={true}
+          listSaveSearch={listSaveSearch}
+          isFilter={true}
+          listFilterItem={customerFilterList}
+          updateParams={(paramsNew) => setParams(paramsNew)}
+        />
+        {!isLoading && listQuote && listQuote.length > 0 ? (
+          <BoxTable
+            name="Báo giá"
+            titles={titles}
+            items={listQuote}
+            isPagination={true}
+            dataPagination={pagination}
+            dataMappingArray={(item, index) => dataMappingArray(item, index)}
+            dataFormat={dataFormat}
+            isBulkAction={true}
+            listIdChecked={listIdChecked}
+            bulkActionItems={bulkActionList}
+            striped={true}
+            setListIdChecked={(listId) => setListIdChecked(listId)}
+            actions={actionsTable}
+            actionType="inline"
           />
-          {!isLoading && listFsQuote && listFsQuote.length > 0 ? (
-            <BoxTable
-              name="FS"
-              titles={titles}
-              items={listFsQuote}
-              isPagination={true}
-              dataPagination={pagination}
-              dataMappingArray={(item, index) => dataMappingArray(item, index)}
-              dataFormat={dataFormat}
-              isBulkAction={true}
-              listIdChecked={listIdChecked}
-              bulkActionItems={bulkActionList}
-              striped={true}
-              setListIdChecked={(listId) => setListIdChecked(listId)}
-              actions={actionsTable}
-              actionType="inline"
-            />
-          ) : isLoading ? (
-            <Loading />
-          ) : (
-            <Fragment>
-              {isPermissions ? (
-                <SystemNotification type="no-permission" />
-              ) : isNoItem ? (
-                <SystemNotification
-                  description={
-                    <span>
-                      Hiện tại chưa có fs nào. <br />
-                      Hãy thêm mới fs đầu tiên nhé!
-                    </span>
-                  }
-                  type="no-item"
-                  titleButton="Thêm mới fs"
-                  action={() => {
-                    setDataFsQuote(null);
-                    setShowModalAdd(true);
-                  }}
-                />
-              ) : (
-                <SystemNotification
-                  description={
-                    <span>
-                      Không có dữ liệu trùng khớp.
-                      <br />
-                      Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
-                    </span>
-                  }
-                  type="no-result"
-                />
-              )}
-            </Fragment>
-          )}
-        </div>
-
-        <div className={`${showModalSetingFS ? "" : "d-none"}`}>
-          <AddFsFormQuote
-            onShow={showModalSetingFS}
-            onHide={(reload) => {
-              if (reload) {
-                getListFsQuote(params);
-              }
-
-              setShowModalSetingFS(false);
-            }}
-            disable={dataFsQuote?.status === 2 ? true : false}
-            idFS={dataFsQuote?.id}
-            dataFsQuote={dataFsQuote}
-          />
-        </div>
-
-        <div className={`${hasHistorySignature ? "" : "d-none"}`}>
-          {dataFsQuote &&
-            (dataFsQuote.fsType === 1 && dataFsQuote.fsAttachment ? (
-              <ViewHistorySignature
-                type="fs"
-                onShow={hasHistorySignature}
-                data={dataFsQuote}
-                fsAttachment={true}
-                onHide={() => setHasHistorySignature(false)}
-                buttonDownload={true}
+        ) : isLoading ? (
+          <Loading />
+        ) : (
+          <Fragment>
+            {isPermissions ? (
+              <SystemNotification type="no-permission" />
+            ) : isNoItem ? (
+              <SystemNotification
+                description={
+                  <span>
+                    Hiện tại chưa có báo giá nào. <br />
+                    Hãy thêm mới báo giá đầu tiên nhé!
+                  </span>
+                }
+                type="no-item"
+                titleButton="Thêm mới báo giá"
+                action={() => {
+                  setDataQuote(null);
+                  setShowModalAdd(true);
+                }}
               />
             ) : (
-              <ViewHistorySignature type="fs" onShow={hasHistorySignature} data={dataFsQuote} onHide={() => setHasHistorySignature(false)} />
-            ))}
+              <SystemNotification
+                description={
+                  <span>
+                    Không có dữ liệu trùng khớp.
+                    <br />
+                    Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
+                  </span>
+                }
+                type="no-result"
+              />
+            )}
+          </Fragment>
+        )}
+      </div>
+
+      {/* Kanban View (Order Request Kanban) */}
+      <div className={`${!hasHistorySignature ? (isRegimeKanban ? "" : "d-none") : "d-none"}`}>
+        {/* Select quy trình (nếu muốn hiển thị) - đang bị comment trong code gốc */}
+        <div style={{ width: "45rem", padding: "2rem" }}>
+          <SelectCustom
+            id=""
+            name="name"
+            fill={true}
+            required={true}
+            options={[]}
+            value={valueProcessQuotation}
+            onChange={(e) => {
+              if (e.value !== processQuotationId) {
+                setIsLoadingKanbanQuotation(true);
+                handleChangeValueProcessQuotation(e);
+              }
+            }}
+            isAsyncPaginate={true}
+            placeholder="Chọn quy trình"
+            additional={{ page: 1 }}
+            loadOptionsPaginate={loadOptionProcessQuotation}
+          />
         </div>
 
-        
+        {/* Loading khi đổi quy trình */}
+        <div className={`${isLoadingKanbanQuotation ? "" : "d-none"}`}>
+          <Loading />
+        </div>
+
+        {/* Hiển thị Kanban */}
+        <div className={`${!isLoadingKanbanQuotation ? "" : "d-none"}`}>
+          <KanbanQuotationsProcess 
+            processCode={processQuotationCode}
+          />
+        </div>
       </div>
-      <AddFS
-        onShow={showModalAdd}
-        onHide={(reload) => {
-          if (reload) {
-            getListFsQuote(params);
-          }
 
-          setShowModalAdd(false);
-          setDataFsQuote(null);
-        }}
-        data={dataFsQuote}
-      />
-      <CopyItemModal
-        onShow={hasCopyQuote}
-        lstData={listFsQuote}
-        onHide={(reload) => {
-          if (reload) {
-            getListFsQuote(params);
-          }
-          setHasCopyQuote(false);
-        }}
-      />
-      <AddSignerFSAndQuote
-        onShow={hasSignature}
-        onHide={(reload) => {
-          if (reload) {
-            getListFsQuote(params);
-          }
+      {/* Cấu hình báo giá */}
+      <div className={`${showModalSetingQuote ? "" : "d-none"}`}>
+        <AddFormQuote
+          onShow={showModalSetingQuote}
+          onHide={(reload) => {
+            if (reload) {
+              getListQuote(params);
+            }
+            setShowModalSetingQuote(false);
+          }}
+          disable={dataQuote?.status === 2 ? true : false}
+          idQuote={dataQuote?.id}
+          dataQuote={dataQuote}
+        />
+      </div>
 
-          setHasSignature(false);
-        }}
-        dataProps={{
-          objectId: dataFsQuote?.id,
-          objectType: 1,
-        }}
-      />
-      <AddTemplateFSQuote
-        onShow={showModalChooseTemplate}
-        data={dataFsQuote}
-        type="fs"
-        onHide={(reload) => {
-          if (reload) {
-            setShowModalSetingFS(true);
-          }
-
-          setShowModalChooseTemplate(false);
-        }}
-        callBack={(data) => {
-          const updateData = listFsQuote.map((item) => {
-            return {
-              ...item,
-              sheetId: item.id === data.id ? data.sheetId : item.sheetId,
-            };
-          });
-          setListFsQuote(updateData);
-          setDataFsQuote(data);
-        }}
-      />
-      <Dialog content={contentDialog} isOpen={showDialog} />
+      {/* Xem lịch sử ký */}
+      <div className={`${hasHistorySignature ? "" : "d-none"}`}>
+        {dataQuote &&
+          (dataQuote.quoteType === 1 && dataQuote.quoteAttachment ? (
+            <ViewHistorySignature
+              type="quote"
+              onShow={hasHistorySignature}
+              data={dataQuote}
+              fsAttachment={true}
+              onHide={() => setHasHistorySignature(false)}
+              buttonDownload={true}
+            />
+          ) : (
+            <ViewHistorySignature
+              type="quote"
+              onShow={hasHistorySignature}
+              data={dataQuote}
+              onHide={() => setHasHistorySignature(false)}
+            />
+          ))}
+      </div>
     </div>
-  );
-}
+
+    {/* Modals */}
+    <AddQuote
+      onShow={showModalAdd}
+      contractId={contractId}
+      onHide={(reload) => {
+        if (reload) {
+          getListQuote(params);
+        }
+        setShowModalAdd(false);
+      }}
+      data={dataQuote}
+    />
+
+    <CopyItemModal
+      onShow={hasCopyQuote}
+      lstData={listQuote}
+      onHide={(reload) => {
+        if (reload) {
+          getListQuote(params);
+        }
+        setHasCopyQuote(false);
+      }}
+    />
+
+    <ModelSinger
+      onShow={hasSignature}
+      onHide={(reload) => {
+        if (reload) {
+          getListQuote(params);
+        }
+        setHasSignature(false);
+      }}
+      data={dataObject}
+    />
+
+    <AddTemplateFSQuote
+      onShow={showModalChooseTemplate}
+      data={dataQuote}
+      type="quote"
+      onHide={(reload) => {
+        if (reload) {
+          setShowModalSetingQuote(true);
+        }
+        setShowModalChooseTemplate(false);
+      }}
+      callBack={(data) => {
+        const updateData = listQuote.map((item) => {
+          return {
+            ...item,
+            sheetId: item.id === data.id ? data.sheetId : item.sheetId,
+          };
+        });
+
+        setListQuote(updateData);
+        setDataQuote(data);
+      }}
+    />
+
+    <Dialog content={contentDialog} isOpen={showDialog} />
+  </div>
+);
+};

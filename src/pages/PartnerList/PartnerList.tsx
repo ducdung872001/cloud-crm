@@ -49,6 +49,7 @@ import PermissionService from "services/PermissionService";
 import PartnerService from "services/PartnerService";
 import ModalAddPartner from "./partials/ModalAddPartner";
 import ReportPartner from "./partials/ReportPartner";
+import XmlAddPartner from "./partials/XmlAddPartner";
 // import PurchaseInvoiceList from "./partials/PurchaseInvoice/PurchaseInvoiceList";
 
 export default function PartnerList() {
@@ -469,6 +470,21 @@ export default function PartnerList() {
 
     return (
       <div className="lst__action--cell">
+        {isUserRoot && (
+          <div
+            className="item__action update"
+            onClick={() => {
+              setDataPartner(data.dataItem);
+              setShowModalAddXml(true);
+            }}
+          >
+            <Tippy content="Sửa">
+              <span className="icon__item icon__update">
+                <Icon name="SettingCashbook" />
+              </span>
+            </Tippy>
+          </div>
+        )}
         {permissions["PARTNER_UPDATE"] == 1 && (
           <div
             className="item__action update"
@@ -1103,10 +1119,19 @@ export default function PartnerList() {
     },
   ];
 
+  let isUserRoot = localStorage.getItem("user.root") == "1" ? true : false;
+
   const titleActions: ITitleActions = {
     actions: [
       ...(activeTitleHeader !== 3
         ? [
+            isUserRoot && {
+              title: "Thêm mới bằng XML",
+              callback: () => {
+                setDataPartner(null);
+                setShowModalAddXml(true);
+              },
+            },
             permissions["PARTNER_ADD"] == 1 && {
               title: "Thêm mới",
               callback: () => {
@@ -1165,6 +1190,7 @@ export default function PartnerList() {
   };
 
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
+  const [showModalAddXml, setShowModalAddXml] = useState<boolean>(false);
   const [showModalCompanyAdd, setShowModalCompanyAdd] = useState<boolean>(false);
   const [dataPartner, setDataPartner] = useState<ICustomerResponse>(null);
 
@@ -1616,6 +1642,17 @@ export default function PartnerList() {
               getListPartner(params);
             }
             setShowModalAdd(false);
+          }}
+        />
+        <XmlAddPartner
+          onShow={showModalAddXml}
+          // onShow={true}
+          data={dataPartner}
+          onHide={(reload, nextModal) => {
+            if (reload) {
+              getListPartner(params);
+            }
+            setShowModalAddXml(false);
           }}
         />
 

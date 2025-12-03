@@ -39,6 +39,7 @@ export default function Modal(props: ModalProps) {
     "ag-menu",
     "ag-list",
     "Toastify__toast-container",
+    "custom__modal--phone",
     // bọn này để tránh việc click vào menu của ag-grid bị đóng dialog
     ...(staticBackdrop ? ["modal-backdrop"] : []),
   ]);

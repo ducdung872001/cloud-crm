@@ -3224,6 +3224,8 @@ export const urls = {
   fs: "/fs",
   // báo giá
   quote: "/quote",
+  // báo giá mới
+  quoteNew: "/quoteNew",
   report_login: "/report_login",
   // Phiếu xuất kho
   create_outbound_delivery: "/create_outbound_delivery",
