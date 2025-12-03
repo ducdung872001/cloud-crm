@@ -81,6 +81,8 @@ export default function ModalTerminateEndEvent({ onShow, onHide, dataNode, proce
         ...result,
       };
       setData(data);
+      // If workflow info exists on the result, set the select value so it displays when modal opens
+      setDataWorkflow(result?.workflowId ? { value: result.workflowId, label: result.workflowName } : null);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -172,6 +174,7 @@ export default function ModalTerminateEndEvent({ onShow, onHide, dataNode, proce
   const handleClear = (acc) => {
     onHide(acc);
     setData(null);
+    setDataWorkflow(null);
   };
 
   const loadedOptionWorkflow = async (search, loadedOptions, { page }) => {

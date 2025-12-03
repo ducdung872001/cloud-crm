@@ -50,15 +50,17 @@ export default function SettingTicketList() {
           </ul>
         )}
       </div>
-      {isDetailCategory && tab === "tab_one" ? (
-        <TicketProcList
-          onBackProps={(isBack) => {
-            if (isBack) {
-              setIsDetailCategory(false);
-            }
-          }}
-        />
-      ) : isDetailCategory && tab === "tab_two" ? (
+      {
+      // isDetailCategory && tab === "tab_one" ? (
+      //   <TicketProcList
+      //     onBackProps={(isBack) => {
+      //       if (isBack) {
+      //         setIsDetailCategory(false);
+      //       }
+      //     }}
+      //   />
+      // ) : 
+      isDetailCategory && tab === "tab_two" ? (
         <TicketCategoryList
           onBackProps={(isBack) => {
             if (isBack) {

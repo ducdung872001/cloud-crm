@@ -40,7 +40,6 @@ import moment from "moment";
 import ObjectExtraInfoService from "services/ObjectExtraInfoService";
 import ObjectAttributeService from "services/ObjectAttributeService";
 
-
 interface IAddObjectProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
@@ -67,10 +66,10 @@ export default function AddObject(props: IAddObjectProps) {
   const [validateFieldEmployee, setValidateFieldEmployee] = useState<boolean>(false);
 
   useEffect(() => {
-    if(onShow && data){
-      setDetailObjectType(data.groupId ? {value: data.groupId, label: data.groupName} : null)
+    if (onShow && data) {
+      setDetailObjectType(data.groupId ? { value: data.groupId, label: data.groupName } : null);
     }
-  }, [data, onShow])
+  }, [data, onShow]);
 
   const values = useMemo(
     () =>
@@ -78,12 +77,12 @@ export default function AddObject(props: IAddObjectProps) {
         // objectId: data?.objectId ?? null,
         // objectName: data?.objectName ?? '',
         groupId: data?.groupId ?? 0,
-        name: data?.name ?? '',
+        name: data?.name ?? "",
         // employeeId: data?.employeeId ?? null,
         // startTime: data?.startTime ?? '',
         // endTime: data?.endTime ?? '',
         // processId: data?.processId ?? null,
-        status: data?.status ?? null
+        status: data?.status ?? null,
       } as any),
     [data, onShow]
   );
@@ -141,17 +140,14 @@ export default function AddObject(props: IAddObjectProps) {
   const handleChangeValueObjectType = (e) => {
     setValidateFieldObjectType(false);
     setDetailObjectType(e);
-    setFormData({ ...formData, values: {...formData.values, groupId: e.value }})
+    setFormData({ ...formData, values: { ...formData.values, groupId: e.value } });
   };
-
-
 
   const handleChangeValueObject = (e) => {
     setValidateFieldObject(false);
     setDetailObject(e);
-    setFormData({ ...formData, values: {...formData.values, objectId: e.value, objectName: e.label }})
+    setFormData({ ...formData, values: { ...formData.values, objectId: e.value, objectName: e.label } });
   };
-
 
   const loadOptionCustomer = async (search, loadedOptions, { page }) => {
     const param: ICustomerFilterRequest = {
@@ -231,7 +227,6 @@ export default function AddObject(props: IAddObjectProps) {
     return { options: [], hasMore: false };
   };
 
-
   const loadOptionService = async (search, loadedOptions, { page }) => {
     const param: any = {
       keyword: search,
@@ -301,9 +296,8 @@ export default function AddObject(props: IAddObjectProps) {
   //? đoạn này xử lý vấn đề thay đổi nhân viên phụ trách
   const handleChangeValueEmployee = (e) => {
     setValidateFieldEmployee(false);
-    setDetailEmployee(e)
-    setFormData({ ...formData, values: {...formData.values, employeeId: e.value }})
-
+    setDetailEmployee(e);
+    setFormData({ ...formData, values: { ...formData.values, employeeId: e.value } });
   };
 
   const startDay = new Date(formData.values.startDate).getTime();
@@ -325,23 +319,20 @@ export default function AddObject(props: IAddObjectProps) {
     setFormData({ ...formData, values: { ...formData?.values, endDate: e } });
   };
 
-
-
   const objectType = [
     {
       value: 1,
-      label: 'Khách hàng'
+      label: "Khách hàng",
     },
     {
       value: 2,
-      label: 'Sản phẩm'
+      label: "Sản phẩm",
     },
     {
       value: 3,
-      label: 'Dịch vụ'
-    }
-
-  ]
+      label: "Dịch vụ",
+    },
+  ];
 
   const handleClearForm = (acc) => {
     onHide(acc);
@@ -365,7 +356,7 @@ export default function AddObject(props: IAddObjectProps) {
     //   return;
     // }
 
-    if(!setDetailObjectType){
+    if (!setDetailObjectType) {
       setValidateFieldObjectType(true);
       return;
     }
@@ -384,7 +375,6 @@ export default function AddObject(props: IAddObjectProps) {
     //   setCheckFieldEndDate(true);
     //   return;
     // }
-
 
     setIsSubmit(true);
     const body = {
@@ -494,8 +484,6 @@ export default function AddObject(props: IAddObjectProps) {
   const [isLoadingContract, setIsLoadingContract] = useState<boolean>(false);
   const [mapObjectAttribute, setMapObjectAttribute] = useState<any>(null);
 
-  console.log('mapObjectAttribute', mapObjectAttribute);
-  
   const getObjectAttributes = async (groupId) => {
     // if (!mapObjectAttribute || mapObjectAttribute.length === 0) {
     //   const response = await ObjectAttributeService.listAll(groupId);
@@ -504,12 +492,12 @@ export default function AddObject(props: IAddObjectProps) {
     //     setMapObjectAttribute(dataOption || {});
     //   }
     // }
-    
+
     const response = await ObjectAttributeService.listAll(groupId);
-      if (response.code === 0) {
-        const dataOption = response.result;
-        setMapObjectAttribute(dataOption || {});
-      }
+    if (response.code === 0) {
+      const dataOption = response.result;
+      setMapObjectAttribute(dataOption || {});
+    }
   };
 
   const onSelectOpenEmployee = async (data?: any) => {
@@ -547,17 +535,15 @@ export default function AddObject(props: IAddObjectProps) {
   };
 
   useEffect(() => {
-    if(detailObjectType?.value && onShow){
+    if (detailObjectType?.value && onShow) {
       getObjectAttributes(detailObjectType?.value);
     }
-    
 
     if (data && onShow) {
       onSelectOpenEmployee();
       onSelectOpenContact();
       onSelectOpenContract();
       onSelectOpenCustomer();
-
     }
   }, [detailObjectType, onShow]);
 
@@ -663,14 +649,12 @@ export default function AddObject(props: IAddObjectProps) {
     updateCustomerAttribute(contactAttribute.id, value);
   };
 
-
-
   /**
    * Hiển thị giá trị theo công thức
    * @param attributes
    * @param isFormula
    */
-   const getCustomerAttributeFormula = (attributes) => {
+  const getCustomerAttributeFormula = (attributes) => {
     let attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
     let attrObj = {};
     (objectExtraInfos || []).map((item, idx) => {
@@ -972,7 +956,7 @@ export default function AddObject(props: IAddObjectProps) {
 
               <div className="form-group">
                 <SelectCustom
-                  key={formData.values.groupId }
+                  key={formData.values.groupId}
                   id="groupId"
                   name="groupId"
                   label="Chọn loại hồ sơ"
@@ -1002,7 +986,7 @@ export default function AddObject(props: IAddObjectProps) {
                   placeholder="Tên hồ sơ"
                   onChange={(e) => {
                     const value = e.target.value;
-                    setFormData({ ...formData, values: {...formData.values, name: value }})
+                    setFormData({ ...formData, values: { ...formData.values, name: value } });
                   }}
                 />
               </div>
@@ -1020,14 +1004,14 @@ export default function AddObject(props: IAddObjectProps) {
                               </label>
                             ) : null} */}
                             {/* {eformAttribute.parentId ? ( */}
-                              <div
-                                // className={`form-group ${eformAttribute.name.length >= 38 || lstEformAttribute[1].length == 2 ? "special-case" : ""}`}
-                                className={`form-group `}
-                                id={`Field${convertToId(eformAttribute.name)}`}
-                                key={`index_${key}_${index}`}
-                              >
-                                {getControlByType(eformAttribute)}
-                              </div>
+                            <div
+                              // className={`form-group ${eformAttribute.name.length >= 38 || lstEformAttribute[1].length == 2 ? "special-case" : ""}`}
+                              className={`form-group `}
+                              id={`Field${convertToId(eformAttribute.name)}`}
+                              key={`index_${key}_${index}`}
+                            >
+                              {getControlByType(eformAttribute)}
+                            </div>
                             {/* ) : null} */}
                           </Fragment>
                         ))}
@@ -1089,8 +1073,6 @@ export default function AddObject(props: IAddObjectProps) {
                   message={endDay < startDay ? "Ngày kết thúc lớn hơn ngày bắt đầu" : "Vui lòng chọn ngày kết thúc"}
                 />
               </div> */}
-
-              
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

@@ -4,9 +4,9 @@ import Icon from "components/icon";
 import { showToast } from "utils/common";
 import "./index.scss";
 import BusinessProcessService from "services/BusinessProcessService";
-import 'bpmn-js/dist/assets/diagram-js.css';
-import 'bpmn-js/dist/assets/bpmn-js.css';
-import BpmnViewer from 'bpmn-js/lib/NavigatedViewer';
+import "bpmn-js/dist/assets/diagram-js.css";
+import "bpmn-js/dist/assets/bpmn-js.css";
+import BpmnViewer from "bpmn-js/lib/NavigatedViewer";
 import ModalUserTask from "pages/BPM/BusinessProcessCreate/partials/ModalUserTask";
 import ModalServiceTask from "pages/BPM/BusinessProcessCreate/partials/ModalServiceTask";
 import ModalScriptTask from "pages/BPM/BusinessProcessCreate/partials/ModalScriptTask";
@@ -24,7 +24,6 @@ import ModalSequenceFlow from "pages/BPM/BusinessProcessCreate/partials/ModalSeq
 
 export default function ViewProcess(props) {
   const { dataObject } = props;
-  console.log('dataObject', dataObject);
 
   const modelerRef = useRef(null);
   const bpmnModeler = useRef(null);
@@ -64,16 +63,16 @@ export default function ViewProcess(props) {
 
   useEffect(() => {
     if (dataObject?.potId) {
-        getLogObject(dataObject.potId);
+      getLogObject(dataObject.potId);
     }
-    if(dataObject?.processId){
+    if (dataObject?.processId) {
       getDetailBusinessProcess(dataObject?.processId);
     }
   }, [dataObject]);
 
   const getLogObject = async (objectId) => {
     const body = {
-      potId:objectId,
+      potId: objectId,
     };
 
     const response = await BusinessProcessService.processedObjectLog(body);
@@ -87,7 +86,7 @@ export default function ViewProcess(props) {
     } else {
       showToast("Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
-  }
+  };
 
   const getDetailBusinessProcess = async (id) => {
     const response = await BusinessProcessService.getDetailDiagram(id);
@@ -95,29 +94,28 @@ export default function ViewProcess(props) {
     if (response.code == 0) {
       const result = response.result;
       if (result) {
-        setProcessReferData(
-            {
-                value: result.id,
-                label: result.name,
-                config: result.config
-            }
-        );
+        setProcessReferData({
+          value: result.id,
+          label: result.name,
+          config: result.config,
+        });
       }
-
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
-  }
+  };
   useEffect(() => {
     // Khởi tạo BpmnJS modeler
     bpmnModeler.current = new BpmnViewer({
       container: modelerRef.current,
-      width: '100%',
+      width: "100%",
       // height: '600px',
-      height:' calc(100vh - 165px)'
+      height: " calc(100vh - 165px)",
     });
-    
-    const initialDiagram = processReferData?.config || `<?xml version="1.0" encoding="UTF-8"?>
+
+    const initialDiagram =
+      processReferData?.config ||
+      `<?xml version="1.0" encoding="UTF-8"?>
       <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
         <process id="Process_1" isExecutable="true">
           
@@ -132,92 +130,98 @@ export default function ViewProcess(props) {
       </definitions>`;
 
     // Nhập quy trình vào modeler
-    bpmnModeler.current.importXML(initialDiagram).then(({ warnings }) => {
-      if (warnings.length) {
-        console.warn('Warnings', warnings);
-      }
+    bpmnModeler.current
+      .importXML(initialDiagram)
+      .then(({ warnings }) => {
+        if (warnings.length) {
+          console.warn("Warnings", warnings);
+        }
 
-      if(logObject && logObject.length > 0){
-        logObject.map(item => {
-          // 0-chưa vào, 1-đang dừng ở đó, 2-hoàn thành
-          changeNodeColor(item.nodeId, '#FF5733', item.status === 2 ? '#33CC33' : item.status === 3 ? '#DDDDDD' : item.status === 1 ? '#FFC300' : item.status === -1 ? 'red' : 'white', bpmnModeler.current);
-        })
-      }
+        if (logObject && logObject.length > 0) {
+          logObject.map((item) => {
+            // 0-chưa vào, 1-đang dừng ở đó, 2-hoàn thành
+            changeNodeColor(
+              item.nodeId,
+              "#FF5733",
+              item.status === 2 ? "#33CC33" : item.status === 3 ? "#DDDDDD" : item.status === 1 ? "#FFC300" : item.status === -1 ? "red" : "white",
+              bpmnModeler.current
+            );
+          });
+        }
+      })
+      .catch((err) => {
+        console.error("Error importing BPMN diagram", err);
+      });
 
-    }).catch(err => {
-      console.error('Error importing BPMN diagram', err);
+    bpmnModeler.current.on("element.click", (event) => {
+      console.log("eventCLick", event);
+      // setNodeId(event.element.id)
     });
 
-    bpmnModeler.current.on('element.click', (event) => {
-      console.log('eventCLick', event);
-      // setNodeId(event.element.id)
-    })
-
-    bpmnModeler.current.on('element.dblclick', (event) => {
+    bpmnModeler.current.on("element.dblclick", (event) => {
       const element = event.element;
-      if (element.type === 'bpmn:SendTask') {
-        console.log('Send Task được click:', element);
+      if (element.type === "bpmn:SendTask") {
+        console.log("Send Task được click:", element);
         setIsModalSendTask(true);
         setDataNode(element);
         //SendTask popup
       }
-      if (element.type === 'bpmn:ReceiveTask') {
+      if (element.type === "bpmn:ReceiveTask") {
         setIsModalReceiveTask(true);
         setDataNode(element);
       }
 
-      if (element.type === 'bpmn:UserTask') {
+      if (element.type === "bpmn:UserTask") {
         // console.log('User Task được click:', element);
         //Bật cửa sổ popup cho phép cấu hình form-js
         setIsModalUserTask(true);
         setDataNode(element);
       }
-      if (element.type === 'bpmn:ServiceTask') {
+      if (element.type === "bpmn:ServiceTask") {
         // console.log('Service Task được click:', element);
         setIsModalServiceTask(true);
         setDataNode(element);
       }
-      if (element.type === 'bpmn:ScriptTask') {
+      if (element.type === "bpmn:ScriptTask") {
         setIsModalScriptTask(true);
         setDataNode(element);
       }
-      if (element.type === 'bpmn:ManualTask') {
+      if (element.type === "bpmn:ManualTask") {
         setIsModalManualTask(true);
         setDataNode(element);
       }
-      if (element.type === 'bpmn:BusinessRuleTask') {
+      if (element.type === "bpmn:BusinessRuleTask") {
         setIsModalBusinessRuleTask(true);
         setDataNode(element);
       }
-      if (element.type === 'bpmn:CallActivity') {
+      if (element.type === "bpmn:CallActivity") {
         setIsModalCallActivityTask(true);
         setDataNode(element);
       }
-      if (element.type === 'bpmn:ParallelGateway') {
+      if (element.type === "bpmn:ParallelGateway") {
         setIsModalParallelGateway(true);
         setDataNode(element);
       }
-      if (element.type === 'bpmn:ExclusiveGateway') {
+      if (element.type === "bpmn:ExclusiveGateway") {
         setIsModalExclusiveGateway(true);
         setDataNode(element);
       }
-      if (element.type === 'bpmn:InclusiveGateway') {
+      if (element.type === "bpmn:InclusiveGateway") {
         setIsModalInclusiveGateway(true);
         setDataNode(element);
       }
-      if (element.type === 'bpmn:ComplexGateway') {
+      if (element.type === "bpmn:ComplexGateway") {
         setIsModalComplexGateway(true);
         setDataNode(element);
       }
-      if (element.type === 'bpmn:SubProcess') {
+      if (element.type === "bpmn:SubProcess") {
         setIsModalSubprocess(true);
         setDataNode(element);
       }
-      if(element.type === "bpmn:SequenceFlow"){
+      if (element.type === "bpmn:SequenceFlow") {
         setIsModalSequenceFlow(true);
         setDataNode(element);
       }
-
     });
 
     return () => {
@@ -227,66 +231,68 @@ export default function ViewProcess(props) {
   }, [processReferData, logObject]);
 
   const changeNodeColor = (elementId, strokeColor, fillColor, viewer) => {
-    const elementRegistry = viewer.get('elementRegistry');
-    
+    const elementRegistry = viewer.get("elementRegistry");
+
     // Lấy node dựa trên ID
     const element = elementRegistry.get(elementId);
-    
+
     if (element) {
       // Lấy phần tử SVG tương ứng
       const gfx = elementRegistry.getGraphics(element);
-      
+
       // Thay đổi màu viền và màu nền
-      const shape = gfx.querySelector('rect, path');  // Tìm phần tử SVG của node
+      const shape = gfx.querySelector("rect, path"); // Tìm phần tử SVG của node
       // shape.style.stroke = strokeColor;  // Màu viền
-      shape.style.fill = fillColor;      // Màu nền
+      shape.style.fill = fillColor; // Màu nền
     } else {
       console.error(`Không tìm thấy element với ID: ${elementId}`);
     }
-  }
-  
+  };
+
   // Hàm phóng to
   const handleZoomIn = () => {
-    const canvas = bpmnModeler.current.get('canvas');
+    const canvas = bpmnModeler.current.get("canvas");
     const currentZoom = canvas.zoom();
     canvas.zoom(currentZoom + 0.2); // Tăng tỷ lệ zoom
   };
 
   // Hàm thu nhỏ
   const handleZoomOut = () => {
-    const canvas = bpmnModeler.current.get('canvas');
+    const canvas = bpmnModeler.current.get("canvas");
     const currentZoom = canvas.zoom();
     canvas.zoom(currentZoom - 0.2); // Giảm tỷ lệ zoom
   };
-
 
   return (
     <div className="box__view--process">
       <div className="view-process">
         <div
-            ref={modelerRef}
-            style={{
-                // border: '1px solid #ccc',
-                // height: '56rem',
-                backgroundColor: 'white'
-            }}
+          ref={modelerRef}
+          style={{
+            // border: '1px solid #ccc',
+            // height: '56rem',
+            backgroundColor: "white",
+          }}
         />
         <div className="zoom-buttons">
-            <div className="zoom-btn zoom-in" onClick={handleZoomIn}>+</div>
-            <div className="zoom-btn zoom-out" onClick={handleZoomOut}>−</div>
-            <div className="zoom-btn zoom-out" onClick={() => setShowGuide(!showGuide)}>?</div>
+          <div className="zoom-btn zoom-in" onClick={handleZoomIn}>
+            +
+          </div>
+          <div className="zoom-btn zoom-out" onClick={handleZoomOut}>
+            −
+          </div>
+          <div className="zoom-btn zoom-out" onClick={() => setShowGuide(!showGuide)}>
+            ?
+          </div>
         </div>
-    </div>
-      
-      {showGuide ? 
+      </div>
+
+      {showGuide ? (
         <div className="note__process">
-          <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span className="hight-line">Lưu ý:</span>
-            <div 
-              style={{marginTop: -5, cursor: 'pointer'}}
-              onClick={() =>  setShowGuide(false)}
-            >
-              <Icon name="Times" style={{width: 15, height: 15}}/>
+            <div style={{ marginTop: -5, cursor: "pointer" }} onClick={() => setShowGuide(false)}>
+              <Icon name="Times" style={{ width: 15, height: 15 }} />
             </div>
           </div>
 
@@ -313,7 +319,7 @@ export default function ViewProcess(props) {
             </div>
           </div>
         </div>
-      : null}
+      ) : null}
 
       <ModalUserTask
         onShow={isModalUserTask}
@@ -522,7 +528,6 @@ export default function ViewProcess(props) {
           //   setModalConfigCondition(false);
           //   setDataNode(null);
           // }
-          
         }}
       />
     </div>
