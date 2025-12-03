@@ -24,6 +24,8 @@ import moment from "moment";
 import ModalConfirmRelease from "./partials/ModalConfirmRelease/ModalConfirmRelease";
 import ModalCustomPopup from "./partials/ModalCustomPopup";
 import ModalSelectJump from "./partials/ModalSelectJump/ModalSelectJump";
+import AddPhoneModal from "pages/CallCenter/partials/AddPhoneModal";
+import { ICustomerResponse } from "model/customer/CustomerResponseModel";
 
 const defaultSchema = {
   type: "default",
@@ -62,6 +64,8 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
   const [keyForm, setKeyForm] = useState(null);
   const [dataSchema, setDataSchema] = useState(null);
   const [dataSchemaDraft, setDataSchemaDraft] = useState(null);
+  const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
+  
 
   //Lấy danh sách các ghi chú để gửi sang portal
   const [listNodeDocument, setListNodeDocument] = useState([]);
@@ -81,6 +85,9 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
 
   const [showPopupCustom, setShowPopupCustom] = useState(false);
   const [codePopupCustom, setCodePopupCustom] = useState("");
+  const [showPopupCallCustomer, setShowPopupCallCustomer] = useState(false);
+  console.log('showPopupCallCustomer', showPopupCallCustomer);
+  
 
   const cutString = (str, char) => {
     const index = str.indexOf(char);
@@ -1069,6 +1076,8 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                     onSchemaSubmit={handleSchemaSubmit}
                     setShowPopupCustom={setShowPopupCustom}
                     setCodePopupCustom={setCodePopupCustom}
+                    setShowPopupCallCustomer={setShowPopupCallCustomer}
+                    setDataCustomer={setDataCustomer}
                     dataInit={dataInit}
                     contextData={{
                       nodeId: contextData?.nodeId,
@@ -1190,6 +1199,12 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
           setShowSelectJump(false);
         }}
       />
+
+      <AddPhoneModal 
+        onShow={showPopupCallCustomer} 
+        dataCustomer={dataCustomer} 
+        onHide={() => setShowPopupCallCustomer(false)} />
+      
     </Fragment>
   );
 }
