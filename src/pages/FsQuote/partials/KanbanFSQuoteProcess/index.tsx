@@ -28,7 +28,7 @@ const statusColor = {
 };
 
 const KanbanFsQuoteProcess = (props: any) => {
-  const { processId, processCode } = props;
+  const { processCode } = props;
 
   //Xử lý các hành động trên item
   const callBackAction = (item, action) => {
@@ -120,10 +120,10 @@ const KanbanFsQuoteProcess = (props: any) => {
         </Draggable>
       );
     },
-    [processId, callBackAction, processCode]
+    [callBackAction, processCode]
   );
 
-  return <KanbanBpm processId={processId} processCode={processCode} itemShow={itemSetup} />;
+  return <KanbanBpm processCode={processCode} itemShow={itemSetup} />;
 };
 
 export default memo(KanbanFsQuoteProcess);

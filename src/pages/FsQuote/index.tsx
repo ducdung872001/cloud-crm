@@ -708,33 +708,13 @@ export default function FsQuote() {
       <div className="card-box d-flex flex-column">
         {/* Kanban View (inline, same flow as other sections) */}
         <div className={`${!hasHistorySignature ? (isRegimeKanban ? "" : "d-none") : "d-none"}`}>
-          <div style={{ width: "45rem", padding: "2rem" }}>
-            <SelectCustom
-              id=""
-              name="name"
-              fill={true}
-              required={true}
-              options={[]}
-              value={valueProcessQuotation}
-              onChange={(e) => {
-                if (e.value !== processQuotationId) {
-                  setIsLoadingKanbanQuotation(true);
-                  handleChangeValueProcessQuotation(e);
-                }
-              }}
-              isAsyncPaginate={true}
-              placeholder="Chọn quy trình"
-              additional={{ page: 1 }}
-              loadOptionsPaginate={loadOptionProcessQuotation}
-            />
-          </div>
 
           <div className={`${isLoadingKanbanQuotation ? "" : "d-none"}`}>
             <Loading />
           </div>
 
           <div className={`${!isLoadingKanbanQuotation ? "" : "d-none"}`}>
-            <KanbanFSQuoteProcess processId={processQuotationId} processCode={valueProcessQuotation?.code} />
+            <KanbanFSQuoteProcess processCode="QTFS" />
           </div>
         </div>
 

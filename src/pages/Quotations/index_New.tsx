@@ -62,12 +62,14 @@ export default function QuotationsNew() {
   });
 
   // Kanban for Order Request: states and helpers
-  const checkProcessQuotationId = (localStorage.getItem("processQuotationId") && JSON.parse(localStorage.getItem("processQuotationId"))) || -1;
-  const checkProcessQuotationName = localStorage.getItem("processQuotationName");
+  const checkProcessQuotationId = (localStorage.getItem("processQuotationId") && JSON.parse(localStorage.getItem("processQuotationId"))) || null;
+  const checkProcessQuotationName = localStorage.getItem("processQuotationName") || null;
+  const checkProcessQuotationCode = localStorage.getItem("processQuotationCode") || null;
 
-  const [processQuotationId, setProcessQuotationId] = useState<number>(1518);
-  const [processQuotationName, setProcessQuotationName] = useState<string>(
-    checkProcessQuotationName ? checkProcessQuotationName : "Chọn quy trình"
+  const [processQuotationId, setProcessQuotationId] = useState<number | null>(checkProcessQuotationId);
+  const [processQuotationName, setProcessQuotationName] = useState<string | null>(checkProcessQuotationName);
+  const [processQuotationCode, setProcessQuotationCode] = useState<string>(
+    checkProcessQuotationCode || "QTBG"
   );
   const [isLoadingKanbanQuotation, setIsLoadingKanbanQuotation] = useState<boolean>(false);
   const [valueProcessQuotation, setValueProcessQuotation] = useState<any>(null);
@@ -117,17 +119,19 @@ export default function QuotationsNew() {
     setValueProcessQuotation(e);
     setProcessQuotationId(+e.value);
     setProcessQuotationName(e.label);
+    setProcessQuotationCode(e.code);
 
     // Persist selection
     localStorage.setItem("processQuotationId", JSON.stringify(+e.value));
     localStorage.setItem("processQuotationName", e.label);
+    localStorage.setItem("processQuotationCode", e.code);
     
     setTimeout(() => setIsLoadingKanbanQuotation(false), 500);
   };
 
   useEffect(() => {
-    setValueProcessQuotation({ value: processQuotationId, label: processQuotationName });
-  }, [processQuotationId]);
+    setValueProcessQuotation({ value: processQuotationId, label: processQuotationName, code: processQuotationCode });
+  }, [processQuotationId, processQuotationCode]);
 
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(
     checkIsKanban ? JSON.parse(checkIsKanban) : false
@@ -266,7 +270,7 @@ export default function QuotationsNew() {
         ? [
             {
               title: isRegimeKanban ? "Danh sách" : "Kanban",
-              color: "primary",
+              color: "primary" as const,
               callback: () => {
                 setIsRegimeKanban((prev) => !prev);
               },
@@ -442,7 +446,8 @@ export default function QuotationsNew() {
                 setDataObject({
                   ...item,
                   processId: processQuotationId || null,
-                  processName: processQuotationName || null
+                  processName: processQuotationName || null,
+                  processCode: processQuotationCode || null
                 });
                 setHasSignature(true);
                 // handleCheckValidateSignature(item, "signature");
@@ -806,8 +811,7 @@ export default function QuotationsNew() {
         {/* Hiển thị Kanban */}
         <div className={`${!isLoadingKanbanQuotation ? "" : "d-none"}`}>
           <KanbanQuotationsProcess 
-            processId={processQuotationId} 
-            processCode={valueProcessQuotation?.code}
+            processCode={processQuotationCode}
           />
         </div>
       </div>
