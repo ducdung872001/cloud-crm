@@ -48,7 +48,7 @@ const FormViewerComponent = (props: any) => {
     isLoading,
     setShowPopupCustom,
     setCodePopupCustom,
-    setShowPopupCallCustomer
+    onOpenCallCustomerModal
   } = props;
 
   // const formContainerRef = useRef(null);
@@ -261,6 +261,27 @@ const FormViewerComponent = (props: any) => {
         removeBtns.forEach((btn: any) => (btn.style.display = ""));
       }
     });
+  };
+
+  const getParamsPropertiesEform = (apiParams, formData) => {
+    let paramsTotal = {}
+    if (apiParams) {
+      const params = apiParams.replace(/curr\.(\w+)/g, (match, key) => {
+        const value = formData[key];
+        return value !== undefined && value !== null ? value : "null";
+      });
+
+      paramsTotal ={
+        ...Object.fromEntries(
+        params.split(",").map(part => {
+          const [key, ...rest] = part.split("=");
+          const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
+          return [key.trim(), value];
+        })
+      )};
+    }
+
+    return paramsTotal;
   }
 
   useEffect(() => {
@@ -550,7 +571,7 @@ const FormViewerComponent = (props: any) => {
             const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
             return [key.trim(), value];
           })
-        );
+        );;
 
         //Tồn tại trường binding
         if (fields) {
@@ -640,11 +661,10 @@ const FormViewerComponent = (props: any) => {
           rerenderForm(updatedFormSchema, formData);
         }
 
-        const typeButton = formField?.properties?.typeButton;
-        if (typeButton === "CALL_CUSTOMER_POPUP") {          
-          if (setShowPopupCallCustomer) {
-            setShowPopupCallCustomer(true);
-          }
+        const typeButton = attrs?.typeButton;
+        if (typeButton === "CALL_CUSTOMER_POPUP") {   
+          const paramsTotal = getParamsPropertiesEform(attrs?.apiParams, formData);
+          onOpenCallCustomerModal(paramsTotal);
         }
       }
 

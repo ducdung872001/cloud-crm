@@ -24,8 +24,8 @@ import moment from "moment";
 import ModalConfirmRelease from "./partials/ModalConfirmRelease/ModalConfirmRelease";
 import ModalCustomPopup from "./partials/ModalCustomPopup";
 import ModalSelectJump from "./partials/ModalSelectJump/ModalSelectJump";
-import AddPhoneModal from "pages/CallCenter/partials/AddPhoneModal";
 import { ICustomerResponse } from "model/customer/CustomerResponseModel";
+import ModalCallCustomer from "./partials/ModalCallCustomer";
 
 const defaultSchema = {
   type: "default",
@@ -85,9 +85,8 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
 
   const [showPopupCustom, setShowPopupCustom] = useState(false);
   const [codePopupCustom, setCodePopupCustom] = useState("");
-  const [showPopupCallCustomer, setShowPopupCallCustomer] = useState(false);
-  console.log('showPopupCallCustomer', showPopupCallCustomer);
-  
+  const [showPopupCallCustomer, setShowPopupCallCustomer] = useState(true);
+  const [customerId, setCustomerId] = useState(null);  
 
   const cutString = (str, char) => {
     const index = str.indexOf(char);
@@ -1077,7 +1076,11 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                     setShowPopupCustom={setShowPopupCustom}
                     setCodePopupCustom={setCodePopupCustom}
                     setShowPopupCallCustomer={setShowPopupCallCustomer}
-                    setDataCustomer={setDataCustomer}
+                    onOpenCallCustomerModal={(data) => {
+                      console.log('data', data);
+                      setCustomerId(data?.customerId);
+                      setShowPopupCallCustomer(true);
+                    }}
                     dataInit={dataInit}
                     contextData={{
                       nodeId: contextData?.nodeId,
@@ -1200,9 +1203,9 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
         }}
       />
 
-      <AddPhoneModal 
+      <ModalCallCustomer 
         onShow={showPopupCallCustomer} 
-        dataCustomer={dataCustomer} 
+        customerId={customerId} 
         onHide={() => setShowPopupCallCustomer(false)} />
       
     </Fragment>
