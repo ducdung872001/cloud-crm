@@ -25,6 +25,11 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  detailByType: (type: string) => {
+    return fetch(`${urlsApi.objectGroup.detail}?type=${type}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
   delete: (id: number) => {
     return fetch(`${urlsApi.objectGroup.delete}?id=${id}`, {
       method: "DELETE",

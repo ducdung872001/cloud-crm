@@ -42,6 +42,7 @@ i18n.use(initReactI18next).init({
           customerSegments: "Customer Segmentation",
 
           quote: "Quote",
+          listQuotationsNew: "Danh sách báo giá mới",
           // đoạn này là children của quote
           createQuote: "Create quote",
           listQuotations: "List quotations",
@@ -275,6 +276,7 @@ i18n.use(initReactI18next).init({
           // đoạn này là children của báo giá
           createQuote: "Tạo báo giá",
           listQuotations: "Danh sách báo giá",
+          listQuotationsNew: "Danh sách báo giá mới",
           listFS: "Danh sách FS",
 
           contract: "Hợp đồng",

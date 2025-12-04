@@ -55,6 +55,7 @@ import MarketingAutomationService from "services/MarketingAutomationService";
 import KpiContact from "./KpiContact";
 import SettingPineline from "./SettingPipeline/SettingPineline";
 import { set } from "lodash";
+import BusinessProcessService from "services/BusinessProcessService";
 
 interface IDataApproach {
   id?: number;
@@ -243,6 +244,7 @@ export default function CreateCampaign() {
 
   const handleDetailData = async () => {
     const response = await CampaignService.detail(+id);
+    console.log("response detail campaign: ", response);
 
     if (response.code === 0) {
       const result: any = response.result;
@@ -276,6 +278,13 @@ export default function CreateCampaign() {
           value: result.employeeId,
           label: result.employeeName,
           avatar: result.employeeAvatar,
+        });
+      }
+      if (result.processId) {
+        setDataProcess({
+          value: result.processId,
+          label: result.processName,
+          code: result.processCode,
         });
       }
 
@@ -793,6 +802,42 @@ export default function CreateCampaign() {
     }
   }, [parentCampaign]);
 
+  const [dataProcess, setDataProcess] = useState(null);
+  //! đoạn này xử lý vấn đề lấy ra danh sách nhân viên
+  const loadedOptionProcess = async (search, loadedOptions, { page }) => {
+    const param: IEmployeeFilterRequest = {
+      name: search,
+      page: page,
+      limit: 10,
+    };
+
+    const response = await BusinessProcessService.list(param);
+
+    if (response.code === 0) {
+      const dataOption = response.result.items;
+
+      return {
+        options: [
+          ...(dataOption.length > 0
+            ? dataOption.map((item) => {
+                return {
+                  value: item.id,
+                  label: item.name,
+                  code: item.code,
+                };
+              })
+            : []),
+        ],
+        hasMore: response.result.loadMoreAble,
+        additional: {
+          page: page + 1,
+        },
+      };
+    }
+
+    return { options: [], hasMore: false };
+  };
+
   // lấy người phụ trách
   const [checkFieldEmployee, setCheckFieldEmployee] = useState<boolean>(false);
   const [dataEmployee, setDataEmployee] = useState(null);
@@ -913,6 +958,11 @@ export default function CreateCampaign() {
       return item.value;
     });
     setFormData({ ...formData, values: { ...formData?.values, coordinators: JSON.stringify(newCoordinators) } });
+  };
+
+  const handleChangeValueProcess = (e) => {
+    setDataProcess(e);
+    setFormData({ ...formData, values: { ...formData?.values, processId: e.value, processName: e.label, processCode: e?.code || "" } });
   };
 
   //Chọn dịch vụ
@@ -3603,6 +3653,27 @@ export default function CreateCampaign() {
                   }}
                   loadOptionsPaginate={loadedOptionEmployee}
                   formatOptionLabel={formatOptionLabelEmployee}
+                />
+              </div>
+              <div className="form-group">
+                <SelectCustom
+                  id="processId"
+                  name="processId"
+                  label="Quy trình chiến dịch"
+                  options={[]}
+                  fill={true}
+                  // isMulti={true}
+                  value={dataProcess}
+                  required={false}
+                  onChange={(e) => handleChangeValueProcess(e)}
+                  isAsyncPaginate={true}
+                  // isFormatOptionLabel={true}
+                  placeholder="Chọn quy trình"
+                  additional={{
+                    page: 1,
+                  }}
+                  loadOptionsPaginate={loadedOptionProcess}
+                  // formatOptionLabel={formatOptionLabelEmployee}
                 />
               </div>
             </div>
