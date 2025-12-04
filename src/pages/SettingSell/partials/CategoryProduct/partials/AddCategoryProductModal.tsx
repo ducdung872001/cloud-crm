@@ -55,6 +55,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
       type: "text",
       fill: true,
       required: true,
+      maxLength: 50,
     },
     {
       label: "Thứ tự hiển thị",
