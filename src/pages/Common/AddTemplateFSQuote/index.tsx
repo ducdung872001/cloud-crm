@@ -12,6 +12,7 @@ import SheetQuoteFormService from "services/SheetQuoteFormService";
 import SheetFieldQuoteFormService from "services/SheetFieldQuoteFormService";
 import { showToast } from "utils/common";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
+import { SystemNotification } from "components/systemNotification/systemNotification";
 
 import "./index.scss";
 
@@ -27,6 +28,7 @@ export default function AddTemplateFSQuote(props: IAddTemplateFSQuoteProps) {
   const { onShow, onHide, data, type, callBack } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [lstTemplate, setLstTemplate] = useState([]);
   const [dataTemplate, setDataTemplate] = useState(null);
@@ -57,6 +59,8 @@ export default function AddTemplateFSQuote(props: IAddTemplateFSQuoteProps) {
   const handleViewTemplate = async (idSheet: number) => {
     if (!idSheet) return;
 
+    setIsLoading(true);
+
     const params = {
       sheetId: idSheet,
     };
@@ -64,7 +68,7 @@ export default function AddTemplateFSQuote(props: IAddTemplateFSQuoteProps) {
     const response = await SheetFieldQuoteFormService.lst(params);
 
     if (response.code === 0) {
-      const result = [...response.result.items];
+      const result = response.result?.items ? [...response.result.items] : [];
 
       const changeResult = result.map((item) => {
         const newItem: any = {
@@ -84,7 +88,12 @@ export default function AddTemplateFSQuote(props: IAddTemplateFSQuoteProps) {
       const resultTitle = result.map((item) => item.name);
 
       setDataViewDetail({ lstData: changeResult, lstTitle: resultTitle });
+    } else {
+      setDataViewDetail({ lstData: [], lstTitle: [] });
+      showToast(response.message || "Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
     }
+
+    setIsLoading(false);
   };
 
   const handleClearForm = (acc) => {
@@ -196,59 +205,61 @@ export default function AddTemplateFSQuote(props: IAddTemplateFSQuoteProps) {
           <ModalBody>
             {hasViewDetail ? (
               <div className="view__detail--template">
-                {dataViewDetail ? (
-                  <div className="box__view">
-                    <h2 className="title-form">{data?.name}</h2>
+                {!isLoading && dataViewDetail ? (
+                    <div className="box__view">
+                      <h2 className="title-form">{data?.name}</h2>
 
-                    <table className="table__template">
-                      <thead>
-                        <tr>
-                          {dataViewDetail.lstTitle.map((title, idx) => {
-                            return <th key={idx}>{title}</th>;
-                          })}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          {dataViewDetail.lstData.map((item, idx) => {
-                            return (
-                              <td key={idx}>
-                                {item.type === "text" ? (
-                                  <Input
-                                    name={Object.keys(item)[0]}
-                                    fill={true}
-                                    value={Object.values(item)[0] as string}
-                                    placeholder={`Nhập ${item.placeholder}`}
-                                    disabled={true}
-                                  />
-                                ) : item.type === "number" ? (
-                                  <NummericInput
-                                    name={Object.keys(item)[0]}
-                                    fill={true}
-                                    value={Object.values(item)[0] as number}
-                                    thousandSeparator={true}
-                                    placeholder={`Nhập ${item.placeholder}`}
-                                    disabled={true}
-                                  />
-                                ) : (
-                                  <SelectCustom
-                                    name={Object.keys(item)[0]}
-                                    fill={true}
-                                    options={item.lstOption || []}
-                                    value={Object.values(item)[0]}
-                                    placeholder={`Chọn ${item.placeholder}`}
-                                    disabled={true}
-                                  />
-                                )}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
+                      <table className="table__template">
+                        <thead>
+                          <tr>
+                            {dataViewDetail.lstTitle.map((title, idx) => {
+                              return <th key={idx}>{title}</th>;
+                            })}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            {dataViewDetail.lstData.map((item, idx) => {
+                              return (
+                                <td key={idx}>
+                                  {item.type === "text" ? (
+                                    <Input
+                                      name={Object.keys(item)[0]}
+                                      fill={true}
+                                      value={Object.values(item)[0] as string}
+                                      placeholder={`Nhập ${item.placeholder}`}
+                                      disabled={true}
+                                    />
+                                  ) : item.type === "number" ? (
+                                    <NummericInput
+                                      name={Object.keys(item)[0]}
+                                      fill={true}
+                                      value={Object.values(item)[0] as number}
+                                      thousandSeparator={true}
+                                      placeholder={`Nhập ${item.placeholder}`}
+                                      disabled={true}
+                                    />
+                                  ) : (
+                                    <SelectCustom
+                                      name={Object.keys(item)[0]}
+                                      fill={true}
+                                      options={item.lstOption || []}
+                                      value={Object.values(item)[0]}
+                                      placeholder={`Chọn ${item.placeholder}`}
+                                      disabled={true}
+                                    />
+                                  )}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                ) : isLoading ? (
                   <Loading />
+                ): (
+                  <SystemNotification description={<span>Hiện tại chưa có mẫu báo giá nào.</span>} type="no-item" />
                 )}
               </div>
             ) : (
@@ -284,8 +295,10 @@ export default function AddTemplateFSQuote(props: IAddTemplateFSQuoteProps) {
                       );
                     })}
                   </div>
-                ) : (
+                ) : isLoading ? (
                   <Loading />
+                ): (
+                  <SystemNotification description={<span>Hiện tại chưa có mẫu báo giá nào.</span>} type="no-item" />
                 )}
               </div>
             )}

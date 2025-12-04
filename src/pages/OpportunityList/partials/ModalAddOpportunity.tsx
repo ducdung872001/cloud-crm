@@ -237,8 +237,9 @@ export default function ModalAddOpportunity(props: any) {
 
   const handleChangeValueProduct = (e) => {
     setValidateStepOne({ ...validateStepOne, validateProduct: false });
-    setValueStepOne({ ...valueStepOne, dataProduct: e });
-    setFormDataOne({ ...formDataOne, productId: e.value });
+    // set selected product and clear any selected service
+    setValueStepOne((prev) => ({ ...prev, dataProduct: e, dataService: null }));
+    setFormDataOne((prev) => ({ ...prev, productId: e.value, serviceId: 0 }));
   };
   //! End xử lý sản phẩm
 
@@ -290,8 +291,9 @@ export default function ModalAddOpportunity(props: any) {
 
   const handleChangeValueService = (e) => {
     setValidateStepOne({ ...validateStepOne, validateService: false });
-    setFormDataOne({ ...formDataOne, serviceId: e.value });
-    setValueStepOne({ ...valueStepOne, dataService: e });
+    // set selected service and clear any selected product
+    setValueStepOne((prev) => ({ ...prev, dataService: e, dataProduct: null }));
+    setFormDataOne((prev) => ({ ...prev, serviceId: e.value, productId: 0 }));
   };
   //! End xử lý dịch vụ
 
@@ -943,6 +945,7 @@ export default function ModalAddOpportunity(props: any) {
     }
   }, [data?.customerId, onShow, isCreate]);
 
+  console.log("optionChoose", valueStepOne.optionChoose);
   return (
     <Fragment>
       <Modal
@@ -1010,7 +1013,21 @@ export default function ModalAddOpportunity(props: any) {
                         { value: "1", label: "Dịch vụ" },
                       ]}
                       value={valueStepOne.optionChoose}
-                      onChange={(e) => setValueStepOne({ ...valueStepOne, optionChoose: e.target.value })}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setValueStepOne((prev) => ({
+                          ...prev,
+                          optionChoose: val,
+                          // when switching option, clear the other selection
+                          dataProduct: val === "1" ? null : prev.dataProduct,
+                          dataService: val === "0" ? null : prev.dataService,
+                        }));
+                        setFormDataOne((prev) => ({
+                          ...prev,
+                          productId: val === "1" ? 0 : prev.productId,
+                          serviceId: val === "0" ? 0 : prev.serviceId,
+                        }));
+                      }}
                     />
                   </div>
 
