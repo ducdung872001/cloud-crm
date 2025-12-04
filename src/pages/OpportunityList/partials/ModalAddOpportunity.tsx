@@ -1,10 +1,12 @@
 import React, { Fragment, useState, useEffect, useMemo, useContext } from "react";
 import _ from "lodash";
 import { IAction, IActionModal } from "model/OtherModel";
+import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import RadioList from "components/radio/radioList";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { showToast } from "utils/common";
+import { isDifferenceObj } from "reborn-util";
 import ServiceService from "services/ServiceService";
 import ProductService from "services/ProductService";
 import ContactService from "services/ContactService";
@@ -21,6 +23,7 @@ import CampaignPipelineService from "services/CampaignPipelineService";
 import CampaignService from "services/CampaignService";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import Icon from "components/icon";
+import Dialog, { IContentDialog } from "components/dialog/dialog";
 import NummericInput from "components/input/numericInput";
 import EmployeeService from "services/EmployeeService";
 import BoxTable from "components/boxTable/boxTable";
@@ -35,8 +38,10 @@ export default function ModalAddOpportunity(props: any) {
 
   const [dataRes, setDataRes] = useState(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const [showDialog, setShowDialog] = useState<boolean>(false);
 
   const [idResponse, setIdResponse] = useState<number>(null);
 
@@ -632,22 +637,15 @@ export default function ModalAddOpportunity(props: any) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              handClearForm(idResponse ? true : false);
+              !isDifferenceObj(formDataOne, valuesStepOne) ? onHide(false) : showDialogConfirmCancel();
             },
-          },
-          {
-            title: "Tạo mới",
-            type: "submit",
-            color: "primary",
-            // disabled:
-            //   isSubmit || nxStep?.step_one || activeItemMenu == 1
-            //     ? data?.id
-            //       ? idResponse
-            //         ? true
-            //         : false
-            //       : _.isEqual(formDataOne, valuesStepOne)
-            //     : _.isEqual(formDataTwo, valueStepTwo),
-            is_loading: isSubmit,
+            },
+            {
+              title: data ? "Cập nhật" : "Tạo mới",
+              type: "submit",
+              color: "primary",
+              disabled: isSubmit || !isDifferenceObj(formDataOne, valuesStepOne),
+              is_loading: isSubmit,
           },
           ,
         ],
@@ -655,6 +653,30 @@ export default function ModalAddOpportunity(props: any) {
     }),
     [formDataOne, valuesStepOne, isSubmit, data, idResponse]
   );
+
+  const showDialogConfirmCancel = () => {
+      const contentDialog: IContentDialog = {
+        color: "warning",
+        className: "dialog-cancel",
+        isCentered: true,
+        isLoading: false,
+        title: <Fragment>{`Hủy bỏ thao tác ${data ? "chỉnh sửa" : "thêm mới"}`}</Fragment>,
+        message: <Fragment>Bạn có chắc chắn muốn hủy bỏ? Thao tác này không thể khôi phục.</Fragment>,
+        cancelText: "Quay lại",
+        cancelAction: () => {
+          setShowDialog(false);
+          setContentDialog(null);
+        },
+        defaultText: "Xác nhận",
+        defaultAction: () => {
+          onHide(false);
+          setShowDialog(false);
+          setContentDialog(null);
+        },
+      };
+      setContentDialog(contentDialog);
+      setShowDialog(true);
+    };
 
   const [activeItemMenu, setActiveItemMenu] = useState<number>(1);
 
@@ -959,7 +981,7 @@ export default function ModalAddOpportunity(props: any) {
       >
         <form className="form-create-opportunity-b2b-group" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader
-            title={` ${nxStep.step_one ? "Tạo cơ hội" : "Cập nhật cơ hội"}`}
+            title={` ${data ? "Cập nhật cơ hội" : "Tạo cơ hội"}`}
             toggle={() => !isSubmit && handClearForm(nxStep.step_one ? false : true)}
           />
           <ModalBody>
@@ -1356,6 +1378,7 @@ export default function ModalAddOpportunity(props: any) {
           />
         </form>
       </Modal>
+      <Dialog content={contentDialog} isOpen={showDialog} />
     </Fragment>
   );
 }
