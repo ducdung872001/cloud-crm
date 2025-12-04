@@ -1266,6 +1266,12 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
   const vForm: any = formData?.values ?? values;
   const vdata: any = data;
 
+  const processor = vdata?.processor
+    ? JSON.parse(vdata.processor)
+    : vForm?.processor
+    ? JSON.parse(vForm.processor)
+    : {};
+
   const kafkaData = {
     employeeId: vdata?.consultantId ?? vForm?.consultantId ?? null,
     employeeName: vdata?.consultantName ?? vForm?.consultantName ?? "",
@@ -1276,9 +1282,10 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
 
   const kafkaBody = {
     data: JSON.stringify(kafkaData),
-    processId: vdata?.processId ?? vForm?.processId ?? 0,
-    potId: vdata?.id ?? vForm?.potId ?? 0,
-    nodeId: vdata?.nodeId ?? vForm?.nodeId ?? 0,
+     processId: processor.processId ?? 0,
+     potId: processor.potId ?? 0,
+     nodeId: processor.nodeId ?? "",
+     currentRequestId: processor.currentRequestId ?? "",
   };
 
   try {
