@@ -3163,6 +3163,7 @@ export const urls = {
   order_tracking: "/order_tracking",
   // quản lý cơ hội
   management_opportunity: "/management_opportunity",
+  management_opportunity_new: "/management_opportunity_new",
   // tổng đài
   call_center: "/call_center",
   //email
@@ -3224,6 +3225,8 @@ export const urls = {
   fs: "/fs",
   // báo giá
   quote: "/quote",
+  // báo giá mới
+  quoteNew: "/quoteNew",
   report_login: "/report_login",
   // Phiếu xuất kho
   create_outbound_delivery: "/create_outbound_delivery",

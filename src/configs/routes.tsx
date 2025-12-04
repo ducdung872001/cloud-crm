@@ -113,6 +113,7 @@ import CreateOffers from "pages/Offer/CreateOffers/CreateOffers";
 import OfferList from "pages/Offer/OfferList/OfferList";
 import FsQuote from "pages/FsQuote";
 import Quotations from "pages/Quotations";
+import QuotationsNew from "pages/Quotations/index_New";
 import SettingProcess from "pages/SettingProcess/SettingProcess";
 import DetailContract from "pages/Contract/DetailContract/DetailContract";
 import SaleFlowList from "pages/SaleFlow/SaleFlowList";
@@ -184,6 +185,7 @@ import ExtensionList from "pages/Extension/ExtensionList";
 import UserList from "pages/User/UserList";
 import FieldMannagement from "pages/FieldManagement/FieldManagement";
 import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
+import ManagementOpportunityNew from "pages/ManagementOpportunityNew";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -374,6 +376,12 @@ export const menu: IMenuItem[] = [
               code: "",
             },
             {
+              title: "listQuotationsNew", // Danh sách báo giá mới
+              path: urls.quoteNew,
+              icon: <Icon name="Invoice" />,
+              code: "QUOTATIONNEW",
+            },
+            {
               title: "createContract", // Tạo hợp đồng
               path: urls.create_contract,
               icon: <Icon name="PlusCircleFill" />,
@@ -527,6 +535,16 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="OpportunityManagement" />,
         code: "",
       },
+      ...(checkUserRoot
+        ? [
+            {
+              title: "salesManagementNew", // Quản lý cơ hội mới
+              path: urls.management_opportunity_new,
+              icon: <Icon name="OpportunityManagement" />,
+              code: "",
+            },
+          ]
+        : []),
       ...(!checkSubdomainTNEX
         ? [
             {
@@ -1272,6 +1290,10 @@ export const routes: IRouter[] = [
     path: urls.management_opportunity,
     component: <ManagementOpportunity />,
   },
+  {
+    path: urls.management_opportunity_new,
+    component: <ManagementOpportunityNew />,
+  },
 
   //Quy trình bán hàng
   {
@@ -1701,6 +1723,10 @@ export const routes: IRouter[] = [
   {
     path: urls.quote,
     component: <Quotations />,
+  },
+  {
+    path: urls.quoteNew,
+    component: <QuotationsNew />,
   },
   {
     path: urls.setting_process,

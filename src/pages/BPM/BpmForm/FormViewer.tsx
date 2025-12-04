@@ -1060,7 +1060,7 @@ const FormViewerComponent = (props: any) => {
       // Kiểm tra nếu component có type là 'select'
       if (component.type === "group") {
         if (!component.label?.includes("▼") && !component.label?.includes("▲")) {
-          component.label += " ▲";
+          // component.label += " ▲";
           component.properties = {
             ...component.properties,
             labelId: `group-label-${component.key}`,
@@ -1071,7 +1071,7 @@ const FormViewerComponent = (props: any) => {
         component.components?.forEach((componentL1) => {
           if (componentL1.type === "group") {
             if (!componentL1.label?.includes("▼") && !componentL1.label?.includes("▲")) {
-              componentL1.label += " ▲";
+              // componentL1.label += " ▲";
               componentL1.properties = {
                 ...componentL1.properties,
                 labelId: `group-label-${componentL1.key}`,
@@ -1082,7 +1082,7 @@ const FormViewerComponent = (props: any) => {
             componentL1.components?.forEach((componentL2) => {
               if (componentL2.type === "group") {
                 if (!componentL2.label?.includes("▼") && !componentL2.label?.includes("▲")) {
-                  componentL2.label += " ▲";
+                  // componentL2.label += " ▲";
                   componentL2.properties = {
                     ...componentL2.properties,
                     labelId: `group-label-${componentL2.key}`,
@@ -1362,6 +1362,7 @@ const FormViewerComponent = (props: any) => {
           label.style.cursor = "pointer";
 
           label.addEventListener("click", () => {
+            return; // Đóng tạm vì đang không chạy đúng chức năng
             // 🔁 Duyệt lên để tìm group wrapper (cha chứa toàn bộ field)
             let parent = label.parentElement;
             while (parent && !parent.classList.contains("fjs-form-field")) {

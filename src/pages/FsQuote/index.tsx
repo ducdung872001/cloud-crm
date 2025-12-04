@@ -25,13 +25,19 @@ import ViewHistorySignature from "pages/Common/ViewHistorySignature";
 import { CustomExportReport } from "exports/customExportReport";
 import { useSearchParams } from "react-router-dom";
 import SheetFieldQuoteFormService from "services/SheetFieldQuoteFormService";
-
+import KanbanFSQuoteProcess from "./partials/KanbanFSQuoteProcess";
+import BusinessProcessService from "services/BusinessProcessService";
 import "./index.scss";
+import SelectCustom from "components/selectCustom/selectCustom";
 
 export default function FsQuote() {
   document.title = "Danh sách FS";
 
   const isMounted = useRef(false);
+
+  const checkIsKanban = localStorage.getItem("isKanbanBusinessProcess");
+  const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(checkIsKanban ? JSON.parse(checkIsKanban) : false);
+  
 
   const { name, dataInfoEmployee } = useContext(UserContext) as ContextType;
 
@@ -64,6 +70,71 @@ export default function FsQuote() {
       is_active: true,
     },
   ]);
+
+  useEffect(() => {
+  localStorage.setItem("isKanbanBusinessProcess", JSON.stringify(isRegimeKanban));
+  }, [isRegimeKanban]);
+
+  // Kanban process selection state
+  const checkProcessQuotationId = (localStorage.getItem("processQuotationId") && JSON.parse(localStorage.getItem("processQuotationId"))) || -1;
+  const checkProcessQuotationName = localStorage.getItem("processQuotationName");
+
+  const [processQuotationId, setProcessQuotationId] = useState<number>(checkProcessQuotationId || -1);
+  const [processQuotationName, setProcessQuotationName] = useState<string>(checkProcessQuotationName ? checkProcessQuotationName : "Chọn quy trình");
+  const [valueProcessQuotation, setValueProcessQuotation] = useState<any>(null);
+  const [isLoadingKanbanQuotation, setIsLoadingKanbanQuotation] = useState<boolean>(false);
+
+  useEffect(() => {
+    setValueProcessQuotation({ value: processQuotationId, label: processQuotationName });
+  }, [processQuotationId]);
+
+  useEffect(() => {
+    // warm options
+    void loadOptionProcessQuotation("", undefined, { page: 1 });
+  }, []);
+
+  const loadOptionProcessQuotation = async (search, loadedOptions, { page }) => {
+    const param: any = {
+      name: search,
+      page: page,
+      limit: 10,
+      type: 3,
+    };
+    const response = await BusinessProcessService.list(param);
+    const optionProcess: any[] = page === 1 ? [] : [];
+
+    if (response.code === 0) {
+      const dataOption = response.result.items;
+
+      if (dataOption.length > 0) {
+        dataOption.map((item: any) => {
+          optionProcess.push({
+            value: item.id,
+            label: item.name,
+            code: item.code,
+          });
+        });
+      }
+
+      return {
+        options: optionProcess,
+        hasMore: response.result.loadMoreAble,
+        additional: { page: page + 1 },
+      };
+    }
+
+    return { options: [], hasMore: false };
+  };
+
+  const handleChangeValueProcessQuotation = (e) => {
+    setIsLoadingKanbanQuotation(true);
+    setValueProcessQuotation(e);
+    setProcessQuotationId(+e.value);
+    setProcessQuotationName(e.label);
+    localStorage.setItem("processQuotationId", JSON.stringify(+e.value));
+    localStorage.setItem("processQuotationName", e.label);
+    setTimeout(() => setIsLoadingKanbanQuotation(false), 250);
+  };
 
   const customerFilterList = useMemo(
     () =>
@@ -188,6 +259,14 @@ export default function FsQuote() {
             setDataFsQuote(null);
             setShowModalAdd(true);
           }
+        },
+      },
+      {
+        title: "Kanban",
+        color: "primary",
+        callback: () => {
+          setIsRegimeKanban((prev) => !prev);
+          setHasHistorySignature(false);
         },
       },
     ],
@@ -608,6 +687,8 @@ export default function FsQuote() {
               <h1 className="title-last">Cấu hình FS</h1>
             </Fragment>
           )}
+
+
           {hasHistorySignature && (
             <Fragment>
               <Icon
@@ -625,7 +706,19 @@ export default function FsQuote() {
       </div>
 
       <div className="card-box d-flex flex-column">
-        <div className={`${showModalSetingFS || hasHistorySignature ? "d-none" : ""}`}>
+        {/* Kanban View (inline, same flow as other sections) */}
+        <div className={`${!hasHistorySignature ? (isRegimeKanban ? "" : "d-none") : "d-none"}`}>
+
+          <div className={`${isLoadingKanbanQuotation ? "" : "d-none"}`}>
+            <Loading />
+          </div>
+
+          <div className={`${!isLoadingKanbanQuotation ? "" : "d-none"}`}>
+            <KanbanFSQuoteProcess processCode="QTFS" />
+          </div>
+        </div>
+
+        <div className={`${showModalSetingFS || hasHistorySignature || isRegimeKanban ? "d-none" : ""}`}>
           <SearchBox
             name="Tên FS"
             params={params}
@@ -720,6 +813,8 @@ export default function FsQuote() {
               <ViewHistorySignature type="fs" onShow={hasHistorySignature} data={dataFsQuote} onHide={() => setHasHistorySignature(false)} />
             ))}
         </div>
+
+        
       </div>
       <AddFS
         onShow={showModalAdd}

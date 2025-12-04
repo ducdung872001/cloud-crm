@@ -26,6 +26,7 @@ export default function AddObjectGroupModal(props: any) {
       ({
         id: data?.id ?? 0,
         name: data?.name ?? "",
+        type: data?.type ?? "",
         position: data?.position ?? 0,
       } as IContractPipelineRequest),
     [data, onShow]
@@ -53,6 +54,12 @@ export default function AddObjectGroupModal(props: any) {
           type: "text",
           fill: true,
           required: true,
+        },
+        {
+          label: "Kiểu đối tượng",
+          name: "type",
+          type: "text",
+          fill: true,
         },
         {
           label: "Thứ tự",

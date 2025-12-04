@@ -192,6 +192,8 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
   const handleSchemaSubmit = (newSchema, reject, contextData) => {
     // setFormSchema(newSchema); // Cập nhật schema mới
     setDataSchema(newSchema);
+    console.log("newSchema", newSchema);
+
     onSubmit(newSchema);
   };
 
