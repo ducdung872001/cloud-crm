@@ -9,13 +9,14 @@ export interface IGridAgTable {
   onChange?: (data) => void; // Hàm gọi khi có thay đổi dữ liệu (dùng trong configViewer)
   onAction?: (action: any) => void; // Hàm gọi khi có hành động trên grid
   configField?: any; // Dùng trong configViewer để truyền tham số thay vì lấy từ URL
+  domId?: string; // key để ép React remount lại component khi cần thiết
 }
 
 export type GridAgHandle = GridAgTableHandle; // tái sử dụng type từ GridAgTable
 
 // Chuyển tiếp ref ra ngoài để component cha của cha có thể gọi getLatestRowData()
 const GridAg = forwardRef<GridAgHandle, IGridAgTable>((props, ref) => {
-  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction } = props;
+  const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction, domId } = props;
   const innerGridRef = useRef<GridAgTableHandle | null>(null);
 
   // Expose method getLatestRowData ra component cha của cha
@@ -32,6 +33,7 @@ const GridAg = forwardRef<GridAgHandle, IGridAgTable>((props, ref) => {
   return (
     <GridAgProvider>
       <GridAgTable
+        domId={domId}
         ref={innerGridRef}
         location={location}
         setDataConfigGrid={setDataConfigGrid}

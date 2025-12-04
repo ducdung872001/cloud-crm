@@ -24,6 +24,8 @@ import moment from "moment";
 import ModalConfirmRelease from "./partials/ModalConfirmRelease/ModalConfirmRelease";
 import ModalCustomPopup from "./partials/ModalCustomPopup";
 import ModalSelectJump from "./partials/ModalSelectJump/ModalSelectJump";
+import { ICustomerResponse } from "model/customer/CustomerResponseModel";
+import ModalCallCustomer from "./partials/ModalCallCustomer";
 
 const defaultSchema = {
   type: "default",
@@ -62,6 +64,8 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
   const [keyForm, setKeyForm] = useState(null);
   const [dataSchema, setDataSchema] = useState(null);
   const [dataSchemaDraft, setDataSchemaDraft] = useState(null);
+  const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
+  
 
   //Lấy danh sách các ghi chú để gửi sang portal
   const [listNodeDocument, setListNodeDocument] = useState([]);
@@ -81,6 +85,8 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
 
   const [showPopupCustom, setShowPopupCustom] = useState(false);
   const [codePopupCustom, setCodePopupCustom] = useState("");
+  const [showPopupCallCustomer, setShowPopupCallCustomer] = useState(true);
+  const [customerId, setCustomerId] = useState(null);  
 
   const cutString = (str, char) => {
     const index = str.indexOf(char);
@@ -179,15 +185,15 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
   }, [dataWork, onShow]);
 
   const [formSchema, setFormSchema] = useState(defaultSchema); // Lưu trữ schema
-  // console.log("formSchema", formSchema);
 
   const [initFormSchema, setInitFormSchema] = useState(defaultSchema); // Lưu trữ schema
-  // console.log("initFormSchema", initFormSchema);
 
   // Callback để nhận schema khi người dùng thay đổi trong FormEditor
   const handleSchemaSubmit = (newSchema, reject, contextData) => {
     // setFormSchema(newSchema); // Cập nhật schema mới
     setDataSchema(newSchema);
+    console.log("newSchema", newSchema);
+
     onSubmit(newSchema);
   };
 
@@ -697,6 +703,13 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
 
   const onSubmit = async (config) => {
     let checkValidate = checkValidateForm(config);
+    // console.log("config", config);
+    // console.log("config:formViewerRef", formViewerRef);
+    // Object.keys(config).forEach((key) => {
+    //   console.log(`Key: ${key}, Value: ${typeof config[key] == "string" ? JSON.parse(config[key]) : config[key]}`); // Sử dụng JSON.parse nếu giá trị là chuỗi JSON
+    // });
+    // setIsSubmit(false);
+    // return;
     if (!checkValidate) {
       setIsSubmit(false);
       return;
@@ -1064,6 +1077,12 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                     onSchemaSubmit={handleSchemaSubmit}
                     setShowPopupCustom={setShowPopupCustom}
                     setCodePopupCustom={setCodePopupCustom}
+                    setShowPopupCallCustomer={setShowPopupCallCustomer}
+                    onOpenCallCustomerModal={(data) => {
+                      console.log('data', data);
+                      setCustomerId(data?.customerId);
+                      setShowPopupCallCustomer(true);
+                    }}
                     dataInit={dataInit}
                     contextData={{
                       nodeId: contextData?.nodeId,
@@ -1185,6 +1204,12 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
           setShowSelectJump(false);
         }}
       />
+
+      <ModalCallCustomer 
+        onShow={showPopupCallCustomer} 
+        customerId={customerId} 
+        onHide={() => setShowPopupCallCustomer(false)} />
+      
     </Fragment>
   );
 }
