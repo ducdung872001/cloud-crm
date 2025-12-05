@@ -5,6 +5,10 @@ import FileService from "services/FileService";
 import { uploadDocumentFormData } from "utils/document";
 import Icon from "components/icon";
 import ModalViewDocument from "pages/BPM/UploadDocument/ModalViewDocument/ModalViewDocument";
+import { handDownloadFileOrigin } from "utils/common";
+import ImgExcel from "assets/images/img-excel.png";
+import ImgWord from "assets/images/img-word.png";
+import ImgPowerpoint from "assets/images/img-powerpoint.png";
 
 /**
  * AttachmentUploader (V9 logic preserved)
@@ -87,7 +91,7 @@ const AttachmentUploader: React.FC<Props> = ({
   maxFiles = 10,
   accept = DEFAULT_ACCEPT,
   className = "",
-  placeholderLabel = "Tải tài liệu",
+  placeholderLabel = "Tải tệp",
   inputId = "imageUpload",
   showToast,
 }) => {
@@ -122,6 +126,8 @@ const AttachmentUploader: React.FC<Props> = ({
   };
 
   const processUploadSuccess = (data: any) => {
+    console.log("processUploadSuccess data", data);
+
     if (!data) {
       safeShowToast("Upload thành công nhưng server không trả về data.");
       return;
@@ -135,8 +141,8 @@ const AttachmentUploader: React.FC<Props> = ({
     const result: UploadedItem = {
       url,
       type: ext ?? "image",
-      name: data.name,
-      size: data.size,
+      name: data.fileName,
+      size: data.fileSize,
     };
     setList((prev) => {
       const next = multiple ? [...prev, result] : [result];
@@ -312,19 +318,29 @@ const AttachmentUploader: React.FC<Props> = ({
           <img src={item.url} alt={item.name ?? "image"} />
         ) : (
           <div className="file-preview">
-            <FileIcon type={item.type} />
-            <div className="file-meta">
-              <div className="file-name" title={item.name ?? item.url}>
-                {item.name ?? item.url}
-              </div>
+            <div className="file-preview-top">
+              <FileIcon type={item.type} />
               {typeof item.size === "number" && <div className="file-size">{formatBytes(item.size)}</div>}
             </div>
+            <div className="file-name" title={item.name ?? item.url}>
+              {item.name ?? item.url}
+            </div>
+            {/* <div className="file-name" title={item.name ?? item.url}>
+              {"File type: " + (item.type ?? "Unknowm")}
+            </div> */}
           </div>
         )}
         <span className="icon-delete-image" onClick={() => handleRemoveImageItem(idx)} title="Xoá">
           <Icon name="Trash" />
         </span>
-        <a href={item.url} className="icon-download" onClick={() => {}} title="Tải xuống">
+        <a
+          href={item.url}
+          className="icon-download"
+          onClick={() => {
+            handDownloadFileOrigin(item.url, item.name ?? "Attachment");
+          }}
+          title="Tải xuống"
+        >
           <Icon name="DownLoadNew" />
         </a>
         <span
@@ -347,7 +363,7 @@ const AttachmentUploader: React.FC<Props> = ({
   };
 
   return (
-    <div className={`attachments ${className}`}>
+    <div className={`attachments ${className} ${multiple ? "" : "attachments-single"}`}>
       <label className="title-attachment">{placeholderLabel}</label>
       <div
         ref={containerRef}
@@ -361,11 +377,11 @@ const AttachmentUploader: React.FC<Props> = ({
       >
         {list.length === 0 ? (
           // use a non-label element so single click only focuses (not open dialog)
-          <div className="action-upload-image" role="button" aria-label="Tải tài liệu (double click để mở)">
+          <div className="action-upload-image" role="button" aria-label="Tải tệp (double click để mở)">
             <div className="wrapper-upload">
               <IconUpload />
-              Tải tài liệu lên
-              <div className="hint">(Kéo thả hoặc dùng Ctrl+V; double-click để chọn file)</div>
+              Tải tệp lên
+              {multiple ? <div className="hint">(Kéo thả hoặc dùng Ctrl+V; double-click để chọn file)</div> : null}
             </div>
           </div>
         ) : (
@@ -374,7 +390,7 @@ const AttachmentUploader: React.FC<Props> = ({
               {list.map((item, idx) => renderPreview(item, idx))}
               {list.length < maxFiles && multiple ? (
                 // use non-label so single click won't open file dialog
-                <div className="add-image" role="button" title="Thêm tài liệu (double click để mở)">
+                <div className="add-image" role="button" title="Thêm tệp (double click để mở)">
                   <IconPlus />
                 </div>
               ) : null}
@@ -485,6 +501,35 @@ const SvgFileGeneric: React.FC = () => (
 
 const FileIcon: React.FC<{ type: string }> = ({ type }) => {
   const t = (type || "").toLowerCase();
+  if (t === "xlsx" || t === "xls" || t === "docx" || t === "doc" || t === "pptx" || t === "ppt") {
+    return (
+      <div className={`file-icon`} aria-hidden>
+        <img
+          src={t == "xlsx" || t == "xls" ? ImgExcel : t === "docx" || t === "doc" ? ImgWord : t === "pptx" || t === "ppt" ? ImgPowerpoint : ""}
+          alt="File Type"
+          style={{ width: 25, height: 25 }}
+        />
+      </div>
+    );
+  } else if (t === "pdf") {
+    return (
+      <div className={`file-icon file-pdf`} aria-hidden>
+        <SvgPdf />
+      </div>
+    );
+  } else if (t === "txt") {
+    return (
+      <div className={`file-icon file-txt`} aria-hidden>
+        <SvgTxt />
+      </div>
+    );
+  } else {
+    return (
+      <div className={`file-icon file-other`} aria-hidden>
+        <SvgFileGeneric />
+      </div>
+    );
+  }
   if (t === "xlsx" || t === "xls") {
     return (
       <div className={`file-icon file-excel`} aria-hidden>
@@ -513,16 +558,4 @@ const FileIcon: React.FC<{ type: string }> = ({ type }) => {
       </div>
     );
   }
-  if (t === "txt") {
-    return (
-      <div className={`file-icon file-txt`} aria-hidden>
-        <SvgTxt />
-      </div>
-    );
-  }
-  return (
-    <div className={`file-icon file-other`} aria-hidden>
-      <SvgFileGeneric />
-    </div>
-  );
 };

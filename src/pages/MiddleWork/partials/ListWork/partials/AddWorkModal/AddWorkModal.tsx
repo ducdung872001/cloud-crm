@@ -1252,9 +1252,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
           name: "docLink",
           type: "custom",
           snippet: (
-            <div className="attachments">
-              <AttachmentUploader value={listImageWork} onChange={handleChange} multiple={true} maxFiles={10} />
-            </div>
+            <AttachmentUploader value={listImageWork} placeholderLabel="Tải tài liệu lên" onChange={handleChange} multiple={true} maxFiles={10} />
           ),
         },
         // {
