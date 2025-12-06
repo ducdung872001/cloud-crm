@@ -455,7 +455,11 @@ export default function ModalAddPartner(props: any) {
       handleClear(true);
       takeInfoPartner && takeInfoPartner(response.result);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      if (response.error) {
+        showToast(response.error, "error");
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      }
     }
 
     setIsSubmit(false);
