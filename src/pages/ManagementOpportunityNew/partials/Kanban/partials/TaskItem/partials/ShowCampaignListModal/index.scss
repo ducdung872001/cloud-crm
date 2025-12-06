@@ -1,0 +1,32 @@
+.show_campaign_list_modal {
+    
+    .modal-body {
+      padding: 0;
+    }
+  
+    .show_campaign_list {
+      padding: 1.6rem 0;
+      max-height: 42rem;
+      overflow: auto;
+
+      .item__campaign {
+        padding: 1rem 1.6rem;
+        font-size: 1.5rem;
+        font-weight: 500;
+        border-top: 1px solid var(--extra-color-20);
+  
+        &:last-child {
+          border-bottom: 1px solid var(--extra-color-20);
+        }
+      }
+  
+      .__even {
+        background-color: var(--primary-color-30);
+      }
+  
+      .__odd {
+        background-color: var(--extra-color-10);
+      }
+    }
+  }
+  

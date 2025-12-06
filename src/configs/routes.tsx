@@ -185,6 +185,7 @@ import ExtensionList from "pages/Extension/ExtensionList";
 import UserList from "pages/User/UserList";
 import FieldMannagement from "pages/FieldManagement/FieldManagement";
 import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
+import ManagementOpportunityNew from "pages/ManagementOpportunityNew";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -534,6 +535,16 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="OpportunityManagement" />,
         code: "",
       },
+      ...(checkUserRoot
+        ? [
+            {
+              title: "salesManagementNew", // Quản lý cơ hội mới
+              path: urls.management_opportunity_new,
+              icon: <Icon name="OpportunityManagement" />,
+              code: "",
+            },
+          ]
+        : []),
       ...(!checkSubdomainTNEX
         ? [
             {
@@ -1278,6 +1289,10 @@ export const routes: IRouter[] = [
   {
     path: urls.management_opportunity,
     component: <ManagementOpportunity />,
+  },
+  {
+    path: urls.management_opportunity_new,
+    component: <ManagementOpportunityNew />,
   },
 
   //Quy trình bán hàng

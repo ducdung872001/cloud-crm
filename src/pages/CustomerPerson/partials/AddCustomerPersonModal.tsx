@@ -129,6 +129,19 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
         };
       });
       setRelatedCustomers(changeRelations);
+      if (result.cgpId) {
+        setCgpData({
+          value: result.cgpId,
+          label: result?.cgpName || result?.groupName || "",
+        });
+        setFormData((prev) => ({
+          ...prev,
+          values: {
+            ...prev.values,
+            cgpId: result.cgpId,
+          },
+        }));
+      }
     } else {
       showToast("Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
@@ -378,7 +391,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
     const param: any = {
       name: search,
       page: page,
-      limit: 1000,
+      limit: 10,
     };
 
     const response = await CustomerGroupService.list(param);
@@ -442,7 +455,10 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
 
   useEffect(() => {
     if (data?.cgpId) {
-      setCgpData({ value: data.cgpId, label: data?.cgpName || "" });
+      setCgpData({
+        value: data.cgpId,
+        label: data?.cgpName || data?.groupName || "",
+      });
     }
     // if (data?.employeeId) {
     //   onSelectOpenEmployee();
@@ -973,6 +989,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
       relatedCustomers,
       countCheckAddCareer,
       countCheckAddCgp,
+      cgpData,
     ]
   );
 

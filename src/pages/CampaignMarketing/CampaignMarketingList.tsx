@@ -30,6 +30,7 @@ import Badge from "components/badge/badge";
 import CampaignMarketingService from "services/CampaignMarketingService";
 import ModalAddCampaignMA from "./partials/ModalAddCampaignMA";
 import Kanban from "./Kanban/Kanban";
+import KanbanProcess from "./KanbanProcess";
 import Image from "components/image";
 import ModalAllocateBudget from "./ModalAllocateBudget/ModalAllocateBudget";
 import ChangeStatusCampaign from "./ChangeStatusCampaign/ChangeStatusCampaign";
@@ -817,6 +818,19 @@ export default function CampaignMarketingList() {
             setIsModalReport={setIsModalReport}
             setIsMarketingChannelInternal={setIsMarketingChannelInternal}
           />
+
+          {/* <KanbanProcess 
+            listApproach={listApproach}
+            showDialogConfirmDeleteChannel={showDialogConfirmDeleteChannel}
+            showDialogConfirmDelete={showDialogConfirmDelete}
+            setIsChangeStatusCampaign={setIsChangeStatusCampaign}
+            setDataCampaignMA={setDataCampaignMA}
+            setIsModalAllocateBudget={setIsModalAllocateBudget}
+            setIsModalGiveGoal={setIsModalGiveGoal}
+            setChannelItemData={setChannelItemData}
+            setIsModalReport={setIsModalReport}
+            setIsMarketingChannelInternal={setIsMarketingChannelInternal}
+          /> */}
         </div>
       </div>
 

@@ -15,10 +15,9 @@ import { showToast } from "utils/common";
 import { getPageOffset } from "reborn-util";
 import CustomerService from "services/CustomerService";
 import "./OpportunityList.scss";
-import ModalAddOpportunity from "./partials/ModalAddOpportunity";
 import { useSearchParams } from "react-router-dom";
 import ReportOpportunity from "./partials/ReportOpportunity";
-import { use } from "i18next";
+import ModalAddOpp from "./partials/ModalAddOpp";
 
 export default function OpportunityList() {
   document.title = "Danh sách cơ hội";
@@ -331,7 +330,7 @@ export default function OpportunityList() {
         )}
       </div>
 
-      <ModalAddOpportunity
+      <ModalAddOpp
         onShow={showModalAdd}
         data={dataOpportunity}
         onHide={(reload) => {

@@ -40,6 +40,13 @@ import { uploadDocumentFormData } from "utils/document";
 import "./AddWorkModal.scss";
 import CampaignOpportunityService from "services/CampaignOpportunityService";
 import { ICampaignOpportunityFilterRequest } from "model/campaignOpportunity/CampaignOpportunityRequestModel";
+import AttachmentUploader, { UploadedItem } from "components/attachmentUpload";
+type UploadResult = {
+  fileUrl?: string;
+  url?: string;
+  extension?: string;
+  // optional other fields from server
+};
 
 interface IDataListNotificationProps {
   method: string[];
@@ -1138,6 +1145,11 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
 
   const [hasPeriodicSchedule, setHasPeriodicSchedule] = useState<boolean>(true);
 
+  // memoize handler để ref ổn định
+  const handleChange = useCallback((newList: UploadedItem[]) => {
+    setListImageWork(newList);
+  }, []);
+
   const listField = useMemo(
     () =>
       [
@@ -1239,47 +1251,54 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
           name: "docLink",
           type: "custom",
           snippet: (
-            <div className="attachments">
-              <label className="title-attachment">Tải tài liệu</label>
-              <div className={listImageWork.length >= 5 ? "list-image-scroll" : "wrapper-list-image"}>
-                {listImageWork.length === 0 ? (
-                  <label htmlFor="imageUpload" className="action-upload-image">
-                    <div className="wrapper-upload">
-                      <Icon name="Upload" />
-                      Tải tài liệu lên
-                    </div>
-                  </label>
-                ) : (
-                  <Fragment>
-                    <div className="d-flex align-items-center">
-                      {listImageWork.map((item, idx) => (
-                        <div key={idx} className="image-item">
-                          <img
-                            src={item.type == "xlsx" ? ImgExcel : item.type === "docx" ? ImgWord : item.type === "pptx" ? ImgPowerpoint : item.url}
-                            alt="image-warranty"
-                          />
-                          <span className="icon-delete" onClick={() => handleRemoveImageItem(idx)}>
-                            <Icon name="Trash" />
-                          </span>
-                        </div>
-                      ))}
-                      <label htmlFor="imageUpload" className="add-image">
-                        <Icon name="PlusCircleFill" />
-                      </label>
-                    </div>
-                  </Fragment>
-                )}
-              </div>
-              <input
-                type="file"
-                accept="image/*,.xlsx,.xls,.doc,.docx,.ppt,.pptx,.txt,.pdf"
-                className="d-none"
-                id="imageUpload"
-                onChange={(e) => handleUploadDocument(e)}
-              />
-            </div>
+            <AttachmentUploader value={listImageWork} placeholderLabel="Tải tài liệu lên" onChange={handleChange} multiple={true} maxFiles={10} />
           ),
         },
+        // {
+        //   name: "docLink",
+        //   type: "custom",
+        //   snippet: (
+        //     <div className="attachments">
+        //       <label className="title-attachment">Tải tài liệu</label>
+        //       <div className={listImageWork.length >= 5 ? "list-image-scroll" : "wrapper-list-image"}>
+        //         {listImageWork.length === 0 ? (
+        //           <label htmlFor="imageUpload" className="action-upload-image">
+        //             <div className="wrapper-upload">
+        //               <Icon name="Upload" />
+        //               Tải tài liệu lên
+        //             </div>
+        //           </label>
+        //         ) : (
+        //           <Fragment>
+        //             <div className="d-flex align-items-center">
+        //               {listImageWork.map((item, idx) => (
+        //                 <div key={idx} className="image-item">
+        //                   <img
+        //                     src={item.type == "xlsx" ? ImgExcel : item.type === "docx" ? ImgWord : item.type === "pptx" ? ImgPowerpoint : item.url}
+        //                     alt="image-warranty"
+        //                   />
+        //                   <span className="icon-delete" onClick={() => handleRemoveImageItem(idx)}>
+        //                     <Icon name="Trash" />
+        //                   </span>
+        //                 </div>
+        //               ))}
+        //               <label htmlFor="imageUpload" className="add-image">
+        //                 <Icon name="PlusCircleFill" />
+        //               </label>
+        //             </div>
+        //           </Fragment>
+        //         )}
+        //       </div>
+        //       <input
+        //         type="file"
+        //         accept="image/*,.xlsx,.xls,.doc,.docx,.ppt,.pptx,.txt,.pdf"
+        //         className="d-none"
+        //         id="imageUpload"
+        //         onChange={(e) => handleUploadDocument(e)}
+        //       />
+        //     </div>
+        //   ),
+        // },
         {
           name: "wteId",
           type: "custom",
@@ -1962,6 +1981,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
         isOpen={onShow}
         isCentered={true}
         staticBackdrop={true}
+        size="lg"
         toggle={() => !isSubmit && handleClearForm(false)}
         className="modal-add-work"
       >

@@ -418,7 +418,7 @@ export default function EmailList() {
                 <span
                   className="__connect"
                   onClick={() => {
-                    navigate("/user_setting");
+                    navigate("/setting_account");
                   }}
                 >
                   <Icon name="BackupRestore" />
@@ -434,7 +434,7 @@ export default function EmailList() {
           </div>
         )}
       </div>
-      {/* <AddEmailModal
+      <AddEmailModal
         onShow={showModalAdd}
         data={dataEmail}
         onHide={(reload) => {
@@ -453,7 +453,7 @@ export default function EmailList() {
           }
           setShowModalSendEmail(false);
         }}
-      /> */}
+      />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );

@@ -33,7 +33,7 @@ const KanbanTicketProcess = (props: any) => {
   //Xử lý các hành động trên item
   const callBackAction = (item, action) => {
     if (action === "delete") {
-      console.log("Xoá yêu cầu đặt hàng", item);
+      console.log("Xoá yêu cầu hỗ trợ", item);
       // showDialogConfirmDelete(item);
     }
   };
@@ -70,7 +70,7 @@ const KanbanTicketProcess = (props: any) => {
                   </div>
                   <div>
                     <span style={{ fontSize: 12, fontWeight: "500", marginLeft: 5 }}>
-                      {orderRequest?.note ? orderRequest?.note : "Không tìm thấy yêu cầu đặt hàng"}
+                      {orderRequest?.note ? orderRequest?.note : "Không tìm thấy yêu cầu hỗ trợ"}
                     </span>
                   </div>
                 </div>

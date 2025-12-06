@@ -3163,6 +3163,7 @@ export const urls = {
   order_tracking: "/order_tracking",
   // quản lý cơ hội
   management_opportunity: "/management_opportunity",
+  management_opportunity_new: "/management_opportunity_new",
   // tổng đài
   call_center: "/call_center",
   //email
