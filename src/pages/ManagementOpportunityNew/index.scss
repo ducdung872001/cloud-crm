@@ -307,10 +307,40 @@
 
     .quick__search {
       width: 100%;
-      padding: 2rem 2rem 0.6rem 2rem;
+      padding: 0.6rem 0.6rem 0.6rem 2rem; // trên, dưới, phải, trái
       display: flex;
       align-items: center;
       gap: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      .filter-kanban {
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: start;
+        border: 1px dashed var(--border-color);
+        padding: 0.5rem 1rem;
+        border-radius: 3px;
+        gap: 0 1rem;
+        .btn--filter-kanban {
+          display: flex;
+          align-items: center;
+          gap: 0 0.5rem;
+          cursor: pointer;
+          font-size: 1.4rem;
+          font-weight: 500;
+          color: var(--text-primary-color);
+          &:hover {
+            background-color: var(--extra-color-50);
+            color: var(--white-color);
+            border-radius: 3px;
+            padding: 0.3rem 0.6rem;
+          }
+        }
+        .btn--active {
+          color: var(--white-color);
+          background-color: rgb(4, 112, 76);
+        }
+      }
       // justify-content: space-between;
       @media (min-width: 2000px) {
         gap: 0 3rem;
