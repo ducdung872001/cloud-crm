@@ -1,0 +1,392 @@
+/* AttachmentUploader styles (SCSS)
+   V9 logic preserved + V3-like file icons styling
+*/
+
+$border: #e1e1e1;
+$bg: #fafafa;
+$primary: #1a73e8;
+$text: #333;
+$muted: #888;
+$item-bg: #fff;
+$item-border: #eee;
+
+.attachments {
+  margin: 8px 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: $text;
+
+  .title-attachment {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .wrapper-list-image,
+  .list-image-scroll {
+    min-height: 80px;
+    border: 1px dashed $border;
+    padding: 10px;
+    border-radius: 6px;
+    background: $bg;
+    position: relative;
+    transition: background 120ms ease, border-color 120ms ease;
+    outline: none;
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(#1a73e8, 0.08);
+      border-color: $primary;
+    }
+  }
+
+  .list-image-scroll {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .action-upload-image {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: $text;
+
+    .wrapper-upload {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+
+      .hint {
+        font-size: 12px;
+        color: $muted;
+        margin-left: 10px;
+      }
+    }
+  }
+
+  .d-flex {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .image-item-attach {
+    width: 9rem;
+    height: 9rem;
+    position: relative;
+    cursor: pointer;
+    background-color: var(--extra-color-10);
+    border-radius: 0.3rem;
+
+    & + .image-item {
+      margin-left: 1rem;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 0.5rem;
+    }
+
+    .icon-delete-image {
+      display: none;
+    }
+    .icon-download {
+      display: none;
+    }
+    .icon-view {
+      display: none;
+    }
+
+    &:hover {
+      img {
+        opacity: 0.2;
+      }
+
+      .icon-delete {
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        svg {
+          width: 2rem;
+          height: 2rem;
+          fill: var(--error-color);
+        }
+      }
+      .icon-delete-image {
+        position: absolute;
+        top: 1px;
+        right: 1px;
+        border-radius: 4px;
+        border: 1px solid red;
+        svg {
+          fill: red;
+        }
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        user-select: none;
+      }
+      .icon-download {
+        position: absolute;
+        top: 65px;
+        right: 0px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.5);
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        user-select: none;
+        svg {
+          stroke: rgba(0, 0, 0, 0.7);
+        }
+      }
+      .icon-view {
+        position: absolute;
+        top: 66px;
+        right: 67px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.5);
+        width: 22px;
+        height: 22px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        user-select: none;
+      }
+    }
+  }
+
+  .image-item {
+    display: inline-block;
+    position: relative;
+    margin-right: 8px;
+    width: 100px;
+    height: 100px;
+    border-radius: 6px;
+    // overflow: hidden;
+    background: $item-bg;
+    border: 1px solid $item-border;
+    vertical-align: top;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .icon-delete-image {
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      border-radius: 4px;
+      border: 1px solid red;
+      svg {
+        fill: red;
+      }
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      user-select: none;
+    }
+    .icon-download {
+      position: absolute;
+      top: 65px;
+      right: 0px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.5);
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      user-select: none;
+      svg {
+        stroke: rgba(0, 0, 0, 0.7);
+      }
+    }
+    .icon-view {
+      position: absolute;
+      top: 66px;
+      right: 67px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.5);
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      user-select: none;
+    }
+  }
+
+  .add-image {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    margin-right: 8px;
+    border-radius: 6px;
+    background: #f0f6ff;
+    color: $primary;
+    cursor: pointer;
+    border: 1px dashed lighten($primary, 35%);
+    font-size: 20px;
+  }
+
+  .file-preview {
+    // display: flex;
+    // align-items: center;
+    gap: 8px;
+    padding: 1px 2px 4px 2px;
+    height: 100%;
+    .file-preview-top {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      .file-size {
+        width: 80%;
+        font-size: 11px;
+        color: $muted;
+      }
+    }
+  }
+
+  /* file-icon wrapper (holds the SVG) */
+  .file-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    // flex: 0 0 36px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  /* apply fills for specific types if you want to override within CSS */
+  .file-pdf svg rect {
+    fill: #e73f3f;
+  }
+  .file-word svg rect {
+    fill: #2b59c3;
+  }
+  .file-excel svg rect {
+    fill: #1a8f1a;
+  }
+  .file-ppt svg rect {
+    fill: #b84b00;
+  }
+  .file-txt svg rect {
+    fill: #6c757d;
+  }
+  .file-other svg rect {
+    fill: #6c757d;
+  }
+
+  .file-meta {
+    max-width: 160px;
+    overflow: hidden;
+
+    // .file-name {
+    //   font-size: 12px;
+    //   white-space: nowrap;
+    //   overflow: hidden;
+    //   text-overflow: ellipsis;
+    // }
+  }
+  .file-name {
+    padding-left: 3px;
+    font-size: 12px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;
+  }
+
+  .drag-over {
+    border-color: $primary;
+    background: #eef6ff;
+  }
+
+  .d-none {
+    display: none;
+  }
+
+  /* upload progress indicator */
+  .upload-progress {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    z-index: 10;
+
+    .progress-bar {
+      height: 8px;
+      background: $primary;
+      border-radius: 999px;
+      flex: 1 1 auto;
+      transition: width 200ms linear;
+    }
+    .progress-text {
+      font-size: 12px;
+      color: $text;
+      min-width: 42px;
+      text-align: right;
+    }
+  }
+}
+.attachments-single {
+  max-width: 12rem;
+}
+
+/* small icon tweaks outside .attachments for consistent sizing */
+.icon-svg,
+.icon-trash,
+.icon-plus {
+  display: inline-block;
+  vertical-align: middle;
+}

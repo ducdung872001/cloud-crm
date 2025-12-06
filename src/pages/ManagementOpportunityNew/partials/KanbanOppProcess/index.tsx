@@ -28,7 +28,7 @@ const statusColor = {
 };
 
 const KanbanOppProcess = (props: any) => {
-  const { processId, processCode } = props;
+  const { processId, processCode, params, setLoadinglistColumns } = props;
 
   //Xử lý các hành động trên item
   const callBackAction = (item, action) => {
@@ -123,7 +123,9 @@ const KanbanOppProcess = (props: any) => {
     [processId, callBackAction, processCode]
   );
 
-  return <KanbanBpm processId={processId} processCode={processCode} itemShow={itemSetup} />;
+  return (
+    <KanbanBpm processId={processId} processCode={processCode} itemShow={itemSetup} params={params} setLoadinglistColumns={setLoadinglistColumns} />
+  );
 };
 
 export default memo(KanbanOppProcess);

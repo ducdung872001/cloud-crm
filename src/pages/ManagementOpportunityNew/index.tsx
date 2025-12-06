@@ -21,11 +21,8 @@ import { showToast } from "utils/common";
 import CampaignOpportunityService from "services/CampaignOpportunityService";
 import DetailManagementOpportunity from "./partials/DetailManagementOpportunity";
 import "./index.scss";
-import CampaignApproachService from "services/CampaignApproachService";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Grid } from "swiper";
-import { useWindowDimensions } from "utils/hookCustom";
-import { ICampaignApproachFilterRequest } from "model/campaignApproach/CampaignApproachRequestModel";
 import { ICustomPlaceholderResponse } from "model/customPlaceholder/CustomPlaceholderResponseModel";
 import AddCustomerEmailModal from "pages/CustomerPerson/partials/DetailPerson/partials/ListDetailTab/partials/CustomerEmailList/partials/AddCustomerEmailModal";
 import AddCustomerSMSModal from "pages/CustomerPerson/partials/DetailPerson/partials/ListDetailTab/partials/CustomerSMSList/partials/AddCustomerSMSModal";
@@ -40,7 +37,6 @@ import { ICampaignResponseModel } from "model/campaign/CampaignResponseModel";
 import SelectCustom from "components/selectCustom/selectCustom";
 import AddOpportunityAllocation from "./partials/AddOpportunityAllocation";
 import { ContextType, UserContext } from "contexts/userContext";
-import CampaignPipelineService from "services/CampaignPipelineService";
 import ImageThirdGender from "assets/images/third-gender.png";
 import ReportOpportunity from "pages/OpportunityList/partials/ReportOpportunity";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
@@ -49,6 +45,7 @@ import CustomerService from "services/CustomerService";
 import { ICustomerFilterRequest } from "model/customer/CustomerRequestModel";
 import AddMgmtOppModal from "./partials/AddMgmtOppModal";
 import KanbanOppProcess from "./partials/KanbanOppProcess";
+import Button from "components/button/button";
 
 export default function ManagementOpportunityNew() {
   document.title = "Chăm sóc cơ hội";
@@ -64,8 +61,6 @@ export default function ManagementOpportunityNew() {
 
   const isMounted = useRef(false);
   const swiperPipelineRef = useRef(null);
-  const swiperRelationshipRef = useRef(null);
-  const { width } = useWindowDimensions();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [listManagementOpportunity, setListManagementOpportunity] = useState<ICampaignOpportunityResponseModel[]>([]);
@@ -79,7 +74,6 @@ export default function ManagementOpportunityNew() {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [idCampaign, setIdCampaign] = useState<number>(null);
   const [isDetailManagementOpportunity, setIsDetailManagementOpportunity] = useState<boolean>(false);
-  const [showModalChanceProbability, setShowModalChanceProbability] = useState<boolean>(false);
   //email
   const [dataCustomer, setDataCustomer] = useState(null);
   const [showModalSendEmail, setShowModalSendEmail] = useState<boolean>(false);
@@ -100,28 +94,6 @@ export default function ManagementOpportunityNew() {
   //schedule
   const [showModalAddConsultationScheduleModal, setShowModalAddConsultationScheduleModal] = useState<boolean>(false);
 
-  const colorData = [
-    "#E98E4C",
-    "#ED6665",
-    "#FFBF00",
-    "#9966CC",
-    "#6A5ACD",
-    "#007FFF",
-    "#993300",
-    "#F0DC82",
-    "#CC5500",
-    "#C41E3A",
-    "#ACE1AF",
-    "#7FFF00",
-    "#FF7F50",
-    "#BEBEBE",
-    "#FF00FF",
-    "#C3CDE6",
-    "#FFFF00",
-    "#40826D",
-    "#704214",
-  ];
-
   const takeParamsUrl = getSearchParameters();
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(checkIsKanban ? JSON.parse(checkIsKanban) : false);
   useEffect(() => {
@@ -134,16 +106,6 @@ export default function ManagementOpportunityNew() {
   }, [kanbanTab]);
 
   const [listCampaign, setListCampaign] = useState<IOption[]>([]);
-  const [listPipeline, setListPipeline] = useState([]);
-
-  const [listApproach, setListApproach] = useState([]);
-
-  const [listConvertRate, setListConvertList] = useState([]);
-
-  // const [contractType, setContractType] = useState<number>(() => {
-  //   return takeParamsUrl?.campaignId ? takeParamsUrl?.campaignId : -1;
-  //   // return -1;
-  // });
 
   const [contractType, setContractType] = useState(checkCampaignId ? JSON.parse(checkCampaignId) : -1);
 
@@ -171,28 +133,6 @@ export default function ManagementOpportunityNew() {
     return takeParamsUrl?.approachId ? takeParamsUrl?.approachId : -1;
   });
 
-  // useEffect(() => {
-  //   setParams({ ...params, campaignId: contractType, approachId: -1, page: 1 });
-
-  //   setApproachId(-1);
-  //   setValueApproach(null);
-
-  //   setValueCampaign({
-  //     value: contractType,
-  //     label: campaignName,
-  //   });
-
-  //   if (contractType === -1) {
-  //     setListPipeline([]);
-  //     setListApproach([]);
-  //     setListConvertList([]);
-  //   } else {
-  //     getOptionPipeline(contractType);
-  //     getOptionApproach(contractType);
-  //     getListConvertRate(contractType);
-  //   }
-  // }, [contractType]);
-
   const [params, setParams] = useState<ICampaignOpportunityFilterRequest>({
     name: "",
     campaignId: -1,
@@ -203,90 +143,8 @@ export default function ManagementOpportunityNew() {
     customerId: -1,
   });
 
-  const [dataOfApproach, setDataOfApproach] = useState([]);
-
-  const [dataOfApproachStart, setDataOfApproachStart] = useState([]);
-  const [dataOfApproachFail, setDataOfApproachFail] = useState([]);
-  const [dataOfApproachSuccess, setDataOfApproachSuccess] = useState([]);
-
-  const getDataOfApproach = async (paramsSearch, kanbanTab, approachName) => {
-    const response =
-      kanbanTab === 1
-        ? await CampaignOpportunityService.list(paramsSearch, abortController.signal)
-        : await CampaignOpportunityService.listViewSale(paramsSearch, abortController.signal);
-
-    if (response.code === 0) {
-      const result = response.result;
-      const newData = {
-        // approachId: paramsSearch.approachId,
-        approachName: approachName,
-        value: result?.items,
-        hasMore: result?.loadMoreAble,
-        page: result?.page,
-      };
-      setDataOfApproach((oldArray) => [...oldArray, newData]);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-  };
-
-  const getDataOfApproachSpecial = async (kanbanTab, campaignId, pipelineId, status) => {
-    const param = {
-      campaignId: campaignId,
-      limit: 10,
-      page: 1,
-      approachId: -1,
-      pipelineId: pipelineId || -1,
-      status: status,
-      saleId: dataEmployee?.value || -1,
-      customerId: detailCustomer?.value || -1,
-    };
-    const response =
-      kanbanTab === 1
-        ? await CampaignOpportunityService.list(param, abortController.signal)
-        : await CampaignOpportunityService.listViewSale(param, abortController.signal);
-
-    if (response.code === 0) {
-      const result = response.result;
-      if (status === 2) {
-        setDataOfApproachSuccess(result);
-      } else if (status === 4) {
-        setDataOfApproachFail(result);
-      } else {
-        setDataOfApproachStart(result);
-      }
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-  };
-
   const [detailCustomer, setDetailCustomer] = useState(null);
   const [dataEmployee, setDataEmployee] = useState(null);
-
-  useEffect(() => {
-    if (listApproach && listApproach.length > 0) {
-      setDataOfApproach([]);
-      listApproach.map((item) => {
-        const param = {
-          // name: "",
-          campaignId: contractType,
-          limit: 10,
-          approachId: item.value,
-          pipelineId: pipelineId || -1,
-          page: 1,
-          saleId: dataEmployee?.value || -1,
-          customerId: detailCustomer?.value || -1,
-        };
-        getDataOfApproach(param, kanbanTab, item.label);
-      });
-    }
-  }, [listApproach, kanbanTab, contractType, pipelineId, dataEmployee, detailCustomer]);
-
-  useEffect(() => {
-    getDataOfApproachSpecial(kanbanTab, contractType, pipelineId, 2);
-    getDataOfApproachSpecial(kanbanTab, contractType, pipelineId, 4);
-    getDataOfApproachSpecial(kanbanTab, contractType, pipelineId, 0);
-  }, [kanbanTab, contractType, pipelineId, dataEmployee, detailCustomer]);
 
   const customerFilterList: IFilterItem[] = useMemo(
     () => [
@@ -385,16 +243,6 @@ export default function ManagementOpportunityNew() {
     setIsLoading(false);
   };
 
-  // useEffect(() => {
-  //   const paramsTemp = _.cloneDeep(params);
-  //   searchParams.forEach(async (key, value) => {
-  //     paramsTemp[value] = key;
-  //   });
-
-  //   // setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
-  //   setContractType(+paramsTemp.campaignId)
-  // }, []);
-
   useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true;
@@ -416,10 +264,6 @@ export default function ManagementOpportunityNew() {
         setSearchParams(paramsTemp as Record<string, string | string[]>);
       }
     }
-    //tạm ẩn đi
-    // return () => {
-    //   abortController.abort();
-    // };
   }, [params, kanbanTab]);
 
   const { dataBranch } = useContext(UserContext) as ContextType;
@@ -435,7 +279,6 @@ export default function ManagementOpportunityNew() {
                 setTabActive("all");
                 setIsRegimeKanban(!isRegimeKanban);
                 setApproachId(-1);
-                clearKanban();
                 setParams({ ...params, approachId: -1 });
               },
             },
@@ -478,7 +321,6 @@ export default function ManagementOpportunityNew() {
                   }
                 } else {
                   setContractType(contractType);
-                  setValueApproach(null);
                   setParams({ ...params, campaignId: contractType, approachId: -1 });
                 }
               },
@@ -502,8 +344,6 @@ export default function ManagementOpportunityNew() {
       key={item.id}
       className="percent__finish--opportunity"
       onClick={() => {
-        // if (item?.status == 1 || item?.status == 4) {
-        setShowModalChanceProbability(true);
         setIdCampaign(item.campaignId);
         setIdManagementOpportunity(item.id);
         // }
@@ -758,16 +598,7 @@ export default function ManagementOpportunityNew() {
       campaignType: 2, // 0 - Lọc lấy chiến dịch cha, 1, - Lọc lấy chiến dịch con, 2- Lọc chiến dịch lấy con và độc lập
     };
     const response = await CampaignService.list(param);
-    const optionCampaign =
-      page === 1
-        ? [
-            {
-              value: -1,
-              label: "Tất cả chiến dịch",
-              type: null,
-            },
-          ]
-        : [];
+    const optionCampaign = [];
 
     if (response.code === 0) {
       const dataOption = response.result.items;
@@ -804,7 +635,6 @@ export default function ManagementOpportunityNew() {
       setIsRegimeKanban(false);
       setTabActive("all");
     }
-    clearKanban();
   };
 
   const getCampaignList = async () => {
@@ -835,153 +665,6 @@ export default function ManagementOpportunityNew() {
   useEffect(() => {
     getCampaignList();
   }, []);
-
-  //lấy danh sách pha (pipeline)
-  const getOptionPipeline = async (campaignId) => {
-    const body: any = {
-      campaignId,
-    };
-
-    const response = await CampaignPipelineService.list(body);
-    if (response.code === 0) {
-      const result = response.result;
-      setListPipeline([
-        ...(result.length > 0
-          ? result.map((item, index) => {
-              return {
-                value: item.id,
-                label: item.name,
-                color: colorData[index],
-                campaignId: item.campaignId,
-              };
-            })
-          : []),
-      ]);
-    }
-  };
-
-  const handlClickOptionPipeline = (e, value) => {
-    if (value == pipelineId) {
-      setPipelineId(-1);
-      // setParams({ ...params, approachId: -1 });
-    } else {
-      setPipelineId(value);
-      // setParams({ ...params, approachId: value });
-    }
-  };
-
-  //call danh sách quy trình (approach)
-  const [valueApproach, setValueApproach] = useState(null);
-  const getOptionApproach = async (campaignId) => {
-    const body: ICampaignApproachFilterRequest = {
-      campaignId,
-    };
-
-    const response = await CampaignApproachService.list(body);
-
-    if (response.code === 0) {
-      const dataOption = response.result;
-
-      setListApproach([
-        ...(dataOption.length > 0
-          ? dataOption.map((item, index) => {
-              return {
-                value: item.id,
-                label: item.name,
-                color: colorData[index],
-                // activities: item.activities,
-                lstCampaignActivity: item.lstCampaignActivity,
-                campaignId: item.campaignId,
-                step: item.step,
-                slaConfig: item.slaConfig ? JSON.parse(item.slaConfig).processTime : null,
-                updateTime: item.updateTime,
-              };
-            })
-          : []),
-      ]);
-    }
-  };
-
-  const handlClickOptionApproach = (e, value) => {
-    if (value == approachId) {
-      setApproachId(-1);
-      setParams({ ...params, approachId: -1 });
-    } else {
-      setApproachId(value);
-      setParams({ ...params, approachId: value });
-    }
-  };
-
-  const [opportunityIdList, setOpportunityIdList] = useState([]);
-
-  const [customerIdlist, setCustomerIdList] = useState([]);
-
-  const [dataCustomerList, setDataCustomerList] = useState([]);
-
-  const [columnList, setColumnList] = useState(undefined);
-
-  const [checkColumn, setCheckColumn] = useState(null);
-
-  useEffect(() => {
-    if (opportunityIdList && opportunityIdList.length > 0) {
-      const checkCustomerList = [];
-      const checkDataCustomerList = [];
-      opportunityIdList.map((item) => {
-        if (checkCustomerList.length === 0) {
-          checkCustomerList.push(item.customerId);
-          checkDataCustomerList.push({
-            name: item.customerName,
-            id: item.customerId,
-            phoneMasked: item.customerPhone,
-            emailMasked: item.customerEmail,
-            address: item.customerAddress,
-            employeeName: item.employeeName,
-            coyId: item.id,
-            approachId: item.approachId,
-          });
-        } else {
-          if (!checkCustomerList.includes(item.customerId)) {
-            checkCustomerList.push(item.customerId);
-            checkDataCustomerList.push({
-              name: item.customerName,
-              id: item.customerId,
-              phoneMasked: item.customerPhone,
-              emailMasked: item.customerEmail,
-              address: item.customerAddress,
-              employeeName: item.employeeName,
-              coyId: item.id,
-              approachId: item.approachId,
-            });
-          }
-        }
-      });
-      setCustomerIdList(checkCustomerList);
-      setDataCustomerList(checkDataCustomerList);
-    } else if (opportunityIdList && opportunityIdList.length === 0) {
-      setCustomerIdList([]);
-      setDataCustomerList([]);
-    }
-  }, [opportunityIdList]);
-
-  const clearKanban = () => {
-    setOpportunityIdList([]);
-    setCustomerIdList([]);
-    setDataCustomerList([]);
-    setColumnList(undefined);
-    setCheckColumn(null);
-    setKanbanTab(1);
-  };
-
-  const getListConvertRate = async (campaignId) => {
-    const response = await CampaignService.listConvertRate(campaignId);
-
-    if (response.code === 0) {
-      const result = response.result;
-      setListConvertList(result);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-  };
 
   const listKanbanTab = [
     {
@@ -1078,7 +761,6 @@ export default function ManagementOpportunityNew() {
   };
 
   // khách hàng
-  const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
   const [checkFieldCustomer, setCheckFieldCustomer] = useState<boolean>(false);
 
   //! đoạn này xử lý vấn đề lấy ra danh sách khách hàng
@@ -1147,103 +829,31 @@ export default function ManagementOpportunityNew() {
 
   console.log("valueCampaign", valueCampaign);
 
+  const [paramsKanban, setParamsKanban] = useState<any>({});
+
+  // useEffect(() => {
+  //   const tempParams: any = {};
+
+  //   if (detailCustomer?.value) {
+  //     tempParams.customerId = detailCustomer.value;
+  //   }
+
+  //   if (dataEmployee?.value) {
+  //     tempParams.saleId = dataEmployee.value;
+  //   }
+
+  //   setParamsKanban(tempParams);
+  // }, [detailCustomer?.value, dataEmployee?.value]);
+
+  const [isFilterKanban, setIsFilterKanban] = useState<boolean>(false);
+  const [loadinglistColumns, setLoadinglistColumns] = useState<boolean>(false);
+
   return (
     <div className={`page-content page__management--opportunity${isNoItem ? " bg-white" : ""}`}>
       {!isDetailManagementOpportunity && <TitleAction title="Chăm sóc cơ hội" titleActions={titleActions} />}
 
       {!isDetailManagementOpportunity ? (
         <div className="card-box d-flex flex-column">
-          <div className={`${isRegimeKanban ? "kanban_view_sale" : "d-none"}`}>
-            <div className="kanban_tab">
-              {listKanbanTab.map((item, index) => (
-                <div
-                  key={index}
-                  className="box_tab"
-                  style={
-                    kanbanTab === item.value
-                      ? { borderBottom: "2px solid #015aa4" }
-                      : {
-                          borderBottom: "2px solid var(--extra-color-10)",
-                          color: listCampaignViewSale && listCampaignViewSale.length > 0 ? "" : "var(--extra-color-20)",
-                        }
-                  }
-                  onClick={() => {
-                    if (item.value === 2) {
-                      if (listCampaignViewSale && listCampaignViewSale.length > 0) {
-                        setContractType(+listCampaignViewSale[0].id);
-                        setCampaignName(listCampaignViewSale[0]?.name);
-                        setCampaignType(listCampaignViewSale[0]?.type);
-                        setKanbanTab(item.value);
-                      } else {
-                        showToast("Bạn chưa tham gia chiến dịch nào", "warning");
-                      }
-                    } else if (item.value === 1) {
-                      setKanbanTab(item.value);
-                    }
-                  }}
-                >
-                  <span>{item.name}</span>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ padding: "0 2rem 0 2rem" }}>
-              {listCampaignViewSale.length > 0 && kanbanTab === 2 ? (
-                <ul className="quick__search--left-swiper" style={{ width: "100%" }}>
-                  <Swiper
-                    onInit={(core: SwiperCore) => {
-                      swiperPipelineRef.current = core.el;
-                    }}
-                    className="relationship-slider"
-                    grid={{
-                      rows: 1,
-                    }}
-                    navigation={true}
-                    modules={[Grid, Navigation]}
-                    slidesPerView={5}
-                    spaceBetween={10}
-                  >
-                    {listCampaignViewSale &&
-                      listCampaignViewSale.length > 0 &&
-                      listCampaignViewSale.map((item, idx) => {
-                        return (
-                          <SwiperSlide key={idx} className="list__relationship--slide">
-                            {item.name.length > 30 ? (
-                              <Tippy content={item.name}>
-                                <li
-                                  key={idx}
-                                  className={`${item.id == contractType ? "active" : "unactive"}`}
-                                  onClick={(e) => {
-                                    e && e.preventDefault();
-                                    setContractType(+item.id);
-                                    setCampaignName(item.name);
-                                  }}
-                                >
-                                  {trimContent(item.name, 30, true, true)}
-                                </li>
-                              </Tippy>
-                            ) : (
-                              <li
-                                key={idx}
-                                className={`${item.id == contractType ? "active" : "unactive"}`}
-                                onClick={(e) => {
-                                  e && e.preventDefault();
-                                  setContractType(+item.id);
-                                  setCampaignName(item.name);
-                                }}
-                              >
-                                {item.name}
-                              </li>
-                            )}
-                          </SwiperSlide>
-                        );
-                      })}
-                  </Swiper>
-                </ul>
-              ) : null}
-            </div>
-          </div>
-
           <div className="quick__search">
             {kanbanTab === 1 && tabActive != "report" ? (
               <>
@@ -1266,7 +876,7 @@ export default function ManagementOpportunityNew() {
                   />
                 </div>
                 {isRegimeKanban ? (
-                  <>
+                  <div className="filter-kanban">
                     <div style={{ width: "30rem" }}>
                       <SelectCustom
                         id="saleId"
@@ -1276,6 +886,7 @@ export default function ManagementOpportunityNew() {
                         fill={true}
                         value={dataEmployee}
                         // required={true}
+                        disabled={isFilterKanban || loadinglistColumns}
                         isClearable={true}
                         isShowDropdownIcon={dataEmployee?.value ? false : true}
                         onChange={(e) => handleChangeValueEmployee(e)}
@@ -1297,6 +908,7 @@ export default function ManagementOpportunityNew() {
                         options={[]}
                         fill={true}
                         value={detailCustomer}
+                        disabled={isFilterKanban || loadinglistColumns}
                         // required={true}
                         isClearable={true}
                         isShowDropdownIcon={detailCustomer?.value ? false : true}
@@ -1313,119 +925,39 @@ export default function ManagementOpportunityNew() {
                         message="Khách hàng không được bỏ trống"
                       />
                     </div>
-                  </>
+                    <Button
+                      className={`"btn--primary btn--filter-kanban" ${isFilterKanban ? "btn--active" : ""}`}
+                      onClick={() => {
+                        if (loadinglistColumns) {
+                          return;
+                        }
+                        if (!valueCampaign?.processCode) {
+                          showToast("Vui lòng chọn chiến dịch có quy trình bán hàng để lọc!", "error");
+                          return;
+                        }
+                        if (!detailCustomer?.value && !dataEmployee?.value && !isFilterKanban) {
+                          showToast("Vui lòng chọn ít nhất 1 tiêu chí để lọc!", "error");
+                          return;
+                        }
+                        if (!isFilterKanban) {
+                          setParamsKanban({
+                            customerId: detailCustomer?.value ? detailCustomer.value : -1,
+                            saleId: dataEmployee?.value ? dataEmployee.value : -1,
+                          });
+                        } else {
+                          setParamsKanban(null);
+                          setDetailCustomer(null);
+                          setDataEmployee(null);
+                        }
+                        setIsFilterKanban(!isFilterKanban);
+                      }}
+                    >
+                      <Icon name="Filter" style={{ width: 16, marginRight: 8, fill: "#fff" }} />
+                      {isFilterKanban ? "Bỏ lọc" : "Lọc"}
+                    </Button>
+                  </div>
                 ) : null}
               </>
-            ) : null}
-
-            {tabActive != "report" ? (
-              <div className={`${isRegimeKanban ? "d-none" : "quick__search--right"}`} style={contractType == -1 ? { width: "0%" } : {}}>
-                {width < 1920 && width > 768 && listApproach.length > 4 ? (
-                  <Swiper
-                    onInit={(core: SwiperCore) => {
-                      swiperRelationshipRef.current = core.el;
-                    }}
-                    className="relationship-slider"
-                    grid={{
-                      rows: 1,
-                    }}
-                    navigation={true}
-                    modules={[Grid, Navigation]}
-                    slidesPerView={4}
-                    spaceBetween={5}
-                  >
-                    {listApproach.map((item, idx) => {
-                      return item.label ? (
-                        <SwiperSlide key={idx} className="list__relationship--slide">
-                          <div
-                            className={`item-relationship ${item.value == approachId ? "active__item-block" : ""}`}
-                            style={{ backgroundColor: item.color, color: item.colorText }}
-                            onClick={(e) => {
-                              e && e.preventDefault();
-                              handlClickOptionApproach(e, item.value);
-                            }}
-                          >
-                            {item.label}
-                          </div>
-                        </SwiperSlide>
-                      ) : null;
-                    })}
-                  </Swiper>
-                ) : (
-                  <div className="list__relationship" style={isRegimeKanban ? { marginTop: "24px" } : {}}>
-                    {listApproach.map((item, idx) => {
-                      return item.label ? (
-                        <div
-                          key={idx}
-                          className={`relationship-item ${item.value == approachId ? "active__relationship--item" : ""}`}
-                          style={{ backgroundColor: item.color, color: item.colorText }}
-                          onClick={(e) => {
-                            e && e.preventDefault();
-                            handlClickOptionApproach(e, item.value);
-                          }}
-                        >
-                          {item.label}
-                        </div>
-                      ) : null;
-                    })}
-                  </div>
-                )}
-              </div>
-            ) : null}
-
-            {listPipeline && listPipeline.length > 0 ? (
-              <div className={`${isRegimeKanban ? "quick__search--right" : "d-none"}`} style={contractType == -1 ? { width: "0%" } : {}}>
-                {width < 1920 && width > 768 && listPipeline.length > 4 ? (
-                  <Swiper
-                    onInit={(core: SwiperCore) => {
-                      swiperRelationshipRef.current = core.el;
-                    }}
-                    className="relationship-slider"
-                    grid={{
-                      rows: 1,
-                    }}
-                    navigation={true}
-                    modules={[Grid, Navigation]}
-                    slidesPerView={4}
-                    spaceBetween={5}
-                  >
-                    {listPipeline.map((item, idx) => {
-                      return item.label ? (
-                        <SwiperSlide key={idx} className="list__relationship--slide">
-                          <div
-                            className={`item-relationship ${item.value == pipelineId ? "active__item-block" : ""}`}
-                            style={{ backgroundColor: item.color, color: item.colorText }}
-                            onClick={(e) => {
-                              e && e.preventDefault();
-                              handlClickOptionPipeline(e, item.value);
-                            }}
-                          >
-                            {item.label}
-                          </div>
-                        </SwiperSlide>
-                      ) : null;
-                    })}
-                  </Swiper>
-                ) : (
-                  <div className="list__relationship" style={isRegimeKanban ? { marginTop: "24px" } : {}}>
-                    {listPipeline.map((item, idx) => {
-                      return item.label ? (
-                        <div
-                          key={idx}
-                          className={`relationship-item ${item.value == pipelineId ? "active__relationship--item" : ""}`}
-                          style={{ backgroundColor: item.color, color: item.colorText }}
-                          onClick={(e) => {
-                            e && e.preventDefault();
-                            handlClickOptionPipeline(e, item.value);
-                          }}
-                        >
-                          {item.label}
-                        </div>
-                      ) : null;
-                    })}
-                  </div>
-                )}
-              </div>
             ) : null}
           </div>
           <div className={`${isRegimeKanban ? "d-none" : ""}`}>
@@ -1501,7 +1033,7 @@ export default function ManagementOpportunityNew() {
 
           <div className={`${isRegimeKanban ? "" : "d-none"}`}>
             {valueCampaign?.processCode ? (
-              <KanbanOppProcess processCode={valueCampaign.processCode} />
+              <KanbanOppProcess processCode={valueCampaign.processCode} params={paramsKanban} setLoadinglistColumns={setLoadinglistColumns} />
             ) : (
               <div
                 style={{
