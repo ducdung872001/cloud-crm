@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo, useContext } from "react";
-import _, { set } from "lodash";
+import _ from "lodash";
 import { IAction, IActionModal } from "model/OtherModel";
 import RadioList from "components/radio/radioList";
 import SelectCustom from "components/selectCustom/selectCustom";
@@ -31,6 +31,8 @@ import CampaignOpportunityService from "services/CampaignOpportunityService";
 export default function ModalAddOpp(props: any) {
   const { onShow, onHide, data, takeInfoOpportunity } = props;
 
+  console.log("data modal add opp: ", data);
+
   const { dataBranch } = useContext(UserContext) as ContextType;
 
   const [dataRes, setDataRes] = useState(null);
@@ -52,6 +54,10 @@ export default function ModalAddOpp(props: any) {
   useEffect(() => {
     if (data && onShow) {
       setDataRes(data);
+      if (data?.extraItems) {
+        const extraItems = JSON.parse(data.extraItems);
+        setListOrtherItem(extraItems);
+      }
 
       if (data.customerId) {
         setDetailCustomer({
@@ -654,7 +660,7 @@ export default function ModalAddOpp(props: any) {
             },
           },
           {
-            title: "Tạo mới",
+            title: `${data?.id ? "Cập nhật" : "Tạo mới"}`,
             type: "submit",
             color: "primary",
             // disabled:
@@ -1125,8 +1131,6 @@ export default function ModalAddOpp(props: any) {
                               ]}
                               value={item.type}
                               onChange={(e) => {
-                                console.log("e.target.value", e.target.value);
-
                                 setListOrtherItem((prevState) => {
                                   const newState = [...prevState];
                                   newState[index].type = e.target.value;

@@ -126,8 +126,6 @@ const AttachmentUploader: React.FC<Props> = ({
   };
 
   const processUploadSuccess = (data: any) => {
-    console.log("processUploadSuccess data", data);
-
     if (!data) {
       safeShowToast("Upload thành công nhưng server không trả về data.");
       return;

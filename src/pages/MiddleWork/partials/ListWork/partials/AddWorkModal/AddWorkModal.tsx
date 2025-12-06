@@ -1145,7 +1145,6 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
 
   const [hasPeriodicSchedule, setHasPeriodicSchedule] = useState<boolean>(true);
 
-  console.log("listImageWork", listImageWork);
   // memoize handler để ref ổn định
   const handleChange = useCallback((newList: UploadedItem[]) => {
     setListImageWork(newList);
