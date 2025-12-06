@@ -16,6 +16,7 @@ import { IActionModal } from "model/OtherModel";
 import { ModalFooter } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import "./index.scss";
+import { F } from "lodash/fp";
 
 interface IAddCustomerSegmentProps {
   data: any;
@@ -32,6 +33,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+  const [errorName, setErrorName] = useState("");
 
   /*
     [
@@ -1616,8 +1618,24 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
               required={true}
               disabled={disableFieldCommom}
               placeholder="Nhập tên phân khúc"
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (value.length > 100) {
+                  setErrorName("Tên phân khúc không được vượt quá 100 ký tự");
+                } else {
+                  setErrorName("");
+                }
+
+                setFormData({ ...formData, name: value });
+             }}
             />
+            {errorName && (
+              <p style={{ color: "red", marginTop: "4px", fontSize: "13px" }}>
+                {errorName}
+              </p>
+            )}
+
           </div>
           <div className="form-group">
             <TextArea
