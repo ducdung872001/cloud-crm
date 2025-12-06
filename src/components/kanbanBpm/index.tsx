@@ -69,7 +69,9 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
 
   useEffect(() => {
     if (!processId && !processCode) return;
-    setLoadinglistColumns(true);
+    if (setLoadinglistColumns) {
+      setLoadinglistColumns(true);
+    }
     getListStepProcess(processId, processCode);
   }, [processId, processCode]);
 
@@ -125,7 +127,9 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
       showToast("Có lỗi khi lấy dữ liệu bước", "error");
     } finally {
       setIsLoadingKanban(false);
-      setLoadinglistColumns(false);
+      if (setLoadinglistColumns) {
+        setLoadinglistColumns(false);
+      }
     }
   };
 
