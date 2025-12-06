@@ -255,11 +255,11 @@ export default function QuickCreateOpp(props: any) {
   const [showModalContact, setShowModalContact] = useState(false);
   const [countCheck, setCountCheck] = useState(0);
   useEffect(() => {
-    if (!showModalContact) {
+    if (onShow && !showModalContact) {
       setCountCheck(countCheck + 1);
       loadedOptionContact("", undefined, { page: 1 });
     }
-  }, [showModalContact]);
+  }, [showModalContact, onShow]);
 
   const formatOptionLabelContact = ({ label, avatar }) => {
     return (
