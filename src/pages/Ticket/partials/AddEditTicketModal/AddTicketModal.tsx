@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, Fragment, useCallback, useContext } from "react";
+import moment from "moment";
 import { IActionModal, IOption } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IAddTicketModalProps } from "model/ticket/PropsModel";
@@ -305,32 +306,43 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
     },
   ];
 
-  const listFieldDate: IFieldCustomize[] = [
-    {
-      label: "Ngày tiếp nhận",
-      name: "startDate",
-      type: "date",
-      fill: true,
-      required: true,
-      hasSelectTime: true,
-      icon: <Icon name="Calendar" />,
-      iconPosition: "left",
-      maxDate: new Date(formData?.values?.endDate),
-      placeholder: "Nhập ngày tiếp nhận",
-    },
-    {
-      label: "Ngày dự kiến kết thúc",
-      name: "endDate",
-      type: "date",
-      fill: true,
-      required: true,
-      hasSelectTime: true,
-      icon: <Icon name="Calendar" />,
-      iconPosition: "left",
-      placeholder: "Chọn ngày dự kiến kết thúc",
-      minDate: new Date(formData?.values?.startDate),
-    },
-  ];
+  const listFieldDate: IFieldCustomize[] = useMemo(() => {
+    const startDate = formData?.values?.startDate ? moment(formData.values.startDate) : null;
+    const endDate = formData?.values?.endDate ? moment(formData.values.endDate) : null;
+    
+    const isEndDateBeforeStartDate = startDate && endDate && endDate.isBefore(startDate);
+    
+    return [
+      {
+        label: "Ngày tiếp nhận",
+        name: "startDate",
+        type: "date",
+        fill: true,
+        required: true,
+        hasSelectTime: true,
+        icon: <Icon name="Calendar" />,
+        iconPosition: "left",
+        maxDate: formData?.values?.endDate ? new Date(formData.values.endDate) : undefined,
+        placeholder: "Nhập ngày tiếp nhận",
+        messageWarning: "Ngày và giờ bắt đầu phải nhỏ hơn ngày và giờ kết thúc",
+        isWarning: isEndDateBeforeStartDate ? false : false,
+      },
+      {
+        label: "Ngày dự kiến kết thúc",
+        name: "endDate",
+        type: "date",
+        fill: true,
+        required: true,
+        hasSelectTime: true,
+        icon: <Icon name="Calendar" />,
+        iconPosition: "left",
+        placeholder: "Chọn ngày dự kiến kết thúc",
+        minDate: formData?.values?.startDate ? new Date(formData.values.startDate) : undefined,
+        messageWarning: "Ngày và giờ kết thúc phải lớn hơn ngày và giờ bắt đầu",
+        isWarning: isEndDateBeforeStartDate ? true : false,
+      },
+    ];
+  }, [formData?.values?.startDate, formData?.values?.endDate]);
 
   useEffect(() => {
     if (detailCustomer) {
@@ -387,7 +399,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       onHide(true);
       setListSupport([]);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
