@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo, useContext } from "react";
-import _ from "lodash";
+import _, { set } from "lodash";
 import { IAction, IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import RadioList from "components/radio/radioList";
@@ -13,7 +13,7 @@ import ContactService from "services/ContactService";
 import CustomerService from "services/CustomerService";
 import ImageThirdGender from "assets/images/third-gender.png";
 import { ContextType, UserContext } from "contexts/userContext";
-import "./ModalAddOpportunity.scss";
+import "./index.scss";
 import WorkProjectService from "services/WorkProjectService";
 import ImgPushCustomer from "assets/images/img-push.png";
 import AddContactModal from "pages/Contact/partials/AddContactModal";
@@ -31,8 +31,8 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import { formatCurrency } from "reborn-util";
 import CampaignOpportunityService from "services/CampaignOpportunityService";
 
-export default function ModalAddOpportunity(props: any) {
-  const { onShow, onHide, data } = props;
+export default function ModalAddOpp(props: any) {
+  const { onShow, onHide, data, takeInfoOpportunity } = props;
 
   const { dataBranch } = useContext(UserContext) as ContextType;
 
@@ -46,6 +46,13 @@ export default function ModalAddOpportunity(props: any) {
   const [idResponse, setIdResponse] = useState<number>(null);
 
   const [detailCustomer, setDetailCustomer] = useState(null);
+
+  const [listOrtherItem, setListOrtherItem] = useState<any[]>([
+    {
+      type: "0",
+      item: null,
+    },
+  ]);
 
   useEffect(() => {
     if (data && onShow) {
@@ -242,8 +249,9 @@ export default function ModalAddOpportunity(props: any) {
 
   const handleChangeValueProduct = (e) => {
     setValidateStepOne({ ...validateStepOne, validateProduct: false });
-    setValueStepOne({ ...valueStepOne, dataProduct: e });
-    setFormDataOne({ ...formDataOne, productId: e.value });
+    // set selected product and clear any selected service
+    setValueStepOne((prev) => ({ ...prev, dataProduct: e, dataService: null }));
+    setFormDataOne((prev) => ({ ...prev, productId: e.value, serviceId: 0 }));
   };
   //! End xử lý sản phẩm
 
@@ -295,8 +303,9 @@ export default function ModalAddOpportunity(props: any) {
 
   const handleChangeValueService = (e) => {
     setValidateStepOne({ ...validateStepOne, validateService: false });
-    setFormDataOne({ ...formDataOne, serviceId: e.value });
-    setValueStepOne({ ...valueStepOne, dataService: e });
+    // set selected service and clear any selected product
+    setValueStepOne((prev) => ({ ...prev, dataService: e, dataProduct: null }));
+    setFormDataOne((prev) => ({ ...prev, serviceId: e.value, productId: 0 }));
   };
   //! End xử lý dịch vụ
 
@@ -531,6 +540,7 @@ export default function ModalAddOpportunity(props: any) {
     const bodyFromOne = {
       ...changeFormDataOne,
       ...(idResponse ? { id: idResponse } : {}),
+      extraItems: JSON.stringify(listOrtherItem),
     };
 
     const bodyFromTwo = {
@@ -563,12 +573,16 @@ export default function ModalAddOpportunity(props: any) {
           },
         ]);
 
-        const data = {
-          id: result.id,
-          label: result.productName || result.serviceName,
-          customerId: detailCustomer.customerId,
-          customerName: detailCustomer.customerName,
-        };
+        if (takeInfoOpportunity) {
+          const data = {
+            id: result.id,
+            label: result.customerName + " - " + result.productName || result.serviceName,
+            customerId: detailCustomer.customerId,
+            customerName: detailCustomer.customerName,
+          };
+
+          takeInfoOpportunity(data);
+        }
 
         handClearForm(true);
       } else {
@@ -595,6 +609,12 @@ export default function ModalAddOpportunity(props: any) {
 
   const handClearForm = (reload) => {
     reload ? onHide(true) : onHide(false);
+    setListOrtherItem([
+      {
+        type: "0",
+        item: null,
+      },
+    ]);
     setValueStepOne({
       optionChoose: "0",
       dataProduct: null,
@@ -649,7 +669,7 @@ export default function ModalAddOpportunity(props: any) {
         ],
       },
     }),
-    [formDataOne, valuesStepOne, isSubmit, data, idResponse]
+    [formDataOne, valuesStepOne, isSubmit, data, idResponse, listOrtherItem]
   );
 
   const showDialogConfirmCancel = () => {
@@ -965,6 +985,8 @@ export default function ModalAddOpportunity(props: any) {
     }
   }, [data?.customerId, onShow, isCreate]);
 
+  console.log("listOrtherItem>>>", listOrtherItem);
+
   return (
     <Fragment>
       <Modal
@@ -973,10 +995,10 @@ export default function ModalAddOpportunity(props: any) {
         isCentered={true}
         staticBackdrop={true}
         toggle={() => !isSubmit && handClearForm(false)}
-        className="modal-create-opportunity-b2b"
-        size={nxStep.step_two && activeItemMenu == 2 ? "lg" : "md"}
+        className="modal-add-opp"
+        size={"lg"}
       >
-        <form className="form-create-opportunity-b2b-group" onSubmit={(e) => onSubmit(e)}>
+        <form className="form-modal-add-opp" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader
             title={` ${data ? "Cập nhật cơ hội" : "Tạo cơ hội"}`}
             toggle={() => !isSubmit && handClearForm(nxStep.step_one ? false : true)}
@@ -1004,6 +1026,19 @@ export default function ModalAddOpportunity(props: any) {
               )}
               {activeItemMenu === 1 ? (
                 <div className="list-form-group">
+                  {/* <div className="form-group" style={{ width: "100%" }}>
+                    <Input
+                      id="name"
+                      name="name"
+                      label="Tên cơ hội"
+                      fill={true}
+                      value={detailCustomer}
+                      onChange={(e) => {
+                        setFormDataOne({ ...formDataOne, name: e.value });
+                      }}
+                      placeholder="Nhập tên cơ hội"
+                    />
+                  </div> */}
                   <div className="form-group" style={{ width: "100%" }}>
                     <SelectCustom
                       id="customer"
@@ -1026,13 +1061,27 @@ export default function ModalAddOpportunity(props: any) {
                   <div className="form-group">
                     <RadioList
                       name="option"
-                      title="Chọn chào sản phẩm hoặc dịch vụ"
+                      title="Sản phẩm/Dịch vụ chính"
                       options={[
                         { value: "0", label: "Sản phẩm" },
                         { value: "1", label: "Dịch vụ" },
                       ]}
                       value={valueStepOne.optionChoose}
-                      onChange={(e) => setValueStepOne({ ...valueStepOne, optionChoose: e.target.value })}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setValueStepOne((prev) => ({
+                          ...prev,
+                          optionChoose: val,
+                          // when switching option, clear the other selection
+                          dataProduct: val === "1" ? null : prev.dataProduct,
+                          dataService: val === "0" ? null : prev.dataService,
+                        }));
+                        setFormDataOne((prev) => ({
+                          ...prev,
+                          productId: val === "1" ? 0 : prev.productId,
+                          serviceId: val === "0" ? 0 : prev.serviceId,
+                        }));
+                      }}
                     />
                   </div>
 
@@ -1082,6 +1131,111 @@ export default function ModalAddOpportunity(props: any) {
                       error={validateStepOne.validateService && valueStepOne.optionChoose === "1"}
                       message="Dịch vụ không được để trống"
                     />
+                  </div>
+                  <div className="form-group form-group-orther">
+                    <div className="group-title">Sản phẩm/Dịch vụ khác</div>
+                    {listOrtherItem.map((item, index) => {
+                      return (
+                        <div className="form-group-item">
+                          <div className="form-group-radio">
+                            <RadioList
+                              key={"optionOrther_" + index}
+                              name={"optionOrther_" + index}
+                              options={[
+                                { value: "0", label: "Sản phẩm" },
+                                { value: "1", label: "Dịch vụ" },
+                              ]}
+                              value={item.type}
+                              onChange={(e) => {
+                                console.log("e.target.value", e.target.value);
+
+                                setListOrtherItem((prevState) => {
+                                  const newState = [...prevState];
+                                  newState[index].type = e.target.value;
+                                  return newState;
+                                });
+                              }}
+                            />
+                          </div>
+
+                          <div className={`form-group-select ${item.type == "1" ? "d-none" : ""}`}>
+                            <SelectCustom
+                              id="productOrher"
+                              name="productOrher"
+                              fill={true}
+                              required={item.type === "0" ? true : false}
+                              options={[]}
+                              value={item.item}
+                              onChange={(e) => {
+                                setListOrtherItem((prevState) => {
+                                  const newState = [...prevState];
+                                  newState[index].item = e;
+                                  return newState;
+                                });
+                              }}
+                              isFormatOptionLabel={true}
+                              isAsyncPaginate={true}
+                              loadOptionsPaginate={loadedOptionProduct}
+                              placeholder="Chọn sản phẩm"
+                              additional={{
+                                page: 1,
+                              }}
+                              formatOptionLabel={formatOptionLabelProduct}
+                              disabled={item.type === "1" || isLoading}
+                            />
+                          </div>
+                          <div className={`form-group-select ${item.type == "0" ? "d-none" : ""}`}>
+                            <SelectCustom
+                              id="serviceIdOrher"
+                              name="serviceIdOrher"
+                              fill={true}
+                              required={item.type === "1" ? true : false}
+                              options={[]}
+                              value={item.item}
+                              onChange={(e) => {
+                                setListOrtherItem((prevState) => {
+                                  const newState = [...prevState];
+                                  newState[index].item = e;
+                                  return newState;
+                                });
+                              }}
+                              isFormatOptionLabel={true}
+                              isAsyncPaginate={true}
+                              loadOptionsPaginate={loadedOptionService}
+                              placeholder="Chọn dịch vụ"
+                              additional={{
+                                page: 1,
+                              }}
+                              formatOptionLabel={formatOptionLabelService}
+                              disabled={item.type === "0" || isLoading}
+                              isLoading={isLoading}
+                            />
+                          </div>
+                          <div className="item-role--action">
+                            {index == 0 ? (
+                              <div
+                                className="action-item action-item--add"
+                                onClick={() => {
+                                  setListOrtherItem((prevState) => [...prevState, { type: "0", item: null }]);
+                                }}
+                              >
+                                <Icon name="PlusCircleFill" />
+                              </div>
+                            ) : null}
+                            {listOrtherItem.length > 1 && index != 0 ? (
+                              <div
+                                className="action-item action-item--delete"
+                                onClick={() => {
+                                  setListOrtherItem((prevState) => prevState.filter((_, i) => i !== index));
+                                }}
+                              >
+                                <Icon name="Trash" />
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                   <div className="form-group">
                     <SelectCustom

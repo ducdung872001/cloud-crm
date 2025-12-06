@@ -6,6 +6,7 @@ import BusinessProcessService from "services/BusinessProcessService";
 import { showToast } from "utils/common";
 import ColumnComponent from "./ColumnComponent";
 import HistoryKanbanBpm from "./HistoryKanbanBpm";
+import isEqual from "lodash/isEqual";
 
 const colorData = [
   "#E98E4C",
@@ -33,10 +34,12 @@ type Props = {
   processId?: any;
   processCode?: any;
   itemShow: (item: any, idx: number) => React.ReactNode;
+  params?: any;
+  setLoadinglistColumns?: (loading: boolean) => void;
 };
 
-export default function KanbanBpm({ processId, processCode, itemShow }: Props) {
-  const [listStepProcess, setListStepProcess] = useState<any[]>([]);
+export default function KanbanBpm({ processId, processCode, itemShow, params, setLoadinglistColumns }: Props) {
+  // const [listStepProcess, setListStepProcess] = useState<any[]>([]);
   const [columns, setColumns] = useState<any[]>([]);
   const [isLoadingKanban, setIsLoadingKanban] = useState<boolean>(false);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -49,10 +52,24 @@ export default function KanbanBpm({ processId, processCode, itemShow }: Props) {
       abortControllerRef.current?.abort();
     };
   }, []);
-  console.log("KanbanBpm: RENDER KanbanBpm useEffect processId/processCode", processId, processCode);
+
+  // Tăng version khi params (theo nội dung) thay đổi, và reset các column state để ColumnComponent sẽ fetch lại page 1
+  useEffect(() => {
+    setColumns((prevCols) =>
+      prevCols.map((c) => ({
+        ...c,
+        items: [],
+        page: 0,
+        hasMore: true,
+        isLoading: false,
+        params: params,
+      }))
+    );
+  }, [params]);
+
   useEffect(() => {
     if (!processId && !processCode) return;
-
+    setLoadinglistColumns(true);
     getListStepProcess(processId, processCode);
   }, [processId, processCode]);
 
@@ -61,8 +78,6 @@ export default function KanbanBpm({ processId, processCode, itemShow }: Props) {
     const body: any = {
       ...(pid ? { processId: pid } : {}),
       ...(pCode ? { processCode: pCode } : {}),
-      // processId: pid,
-      // processCode: pCode || "",
       limit: 100,
     };
     console.log("KanbanBpm: getListStepProcess body", body);
@@ -71,19 +86,18 @@ export default function KanbanBpm({ processId, processCode, itemShow }: Props) {
       const response = await BusinessProcessService.listStep(body);
       if (response.code === 0) {
         const dataOption = response.result.items;
-        setListStepProcess(
-          dataOption.length > 0
-            ? dataOption.map((item: any, index: number) => ({
-                id: item.id,
-                value: item.id,
-                label: item.stepName,
-                color: colorData[index % colorData.length],
-                processId: item.processId,
-                processCode: pCode || "",
-                // NOTE: do not fetch items here — Column will fetch its own initial page
-              }))
-            : []
-        );
+        // setListStepProcess(
+        //   dataOption.length > 0
+        //     ? dataOption.map((item: any, index: number) => ({
+        //         id: item.id,
+        //         value: item.id,
+        //         label: item.stepName,
+        //         color: colorData[index % colorData.length],
+        //         processId: item.processId,
+        //         processCode: pCode || "",
+        //       }))
+        //     : []
+        // );
 
         // initialize columns state skeleton (items empty) so parent has the structure for DnD
         setColumns(
@@ -91,6 +105,7 @@ export default function KanbanBpm({ processId, processCode, itemShow }: Props) {
             ? dataOption.map((item: any, index: number) => ({
                 id: item.id,
                 title: item.stepName,
+                label: item.stepName,
                 color: colorData[index % colorData.length],
                 processId: item.processId,
                 processCode: pCode || "",
@@ -98,6 +113,7 @@ export default function KanbanBpm({ processId, processCode, itemShow }: Props) {
                 hasMore: true,
                 page: 0,
                 isLoading: false,
+                params: params,
               }))
             : []) as any[]
         );
@@ -109,6 +125,7 @@ export default function KanbanBpm({ processId, processCode, itemShow }: Props) {
       showToast("Có lỗi khi lấy dữ liệu bước", "error");
     } finally {
       setIsLoadingKanban(false);
+      setLoadinglistColumns(false);
     }
   };
 
@@ -172,14 +189,14 @@ export default function KanbanBpm({ processId, processCode, itemShow }: Props) {
             }}
           >
             <DragDropContext onDragEnd={onDragEnd}>
-              {listStepProcess.map((colDef, idx) => {
-                const columnState = columns.find((c) => c.id === colDef.id);
+              {columns.map((colDef, idx) => {
+                // const columnState = columns.find((c) => c.id === colDef.id);
                 return (
                   <ColumnComponent
                     key={colDef.id}
                     columnDef={colDef} // minimal definition; Column will fetch its own items
-                    columnState={columnState} // may be undefined initially
-                    droppableId={idx.toString()} // keep using index as droppableId to be compatible with onDragEnd logic
+                    columnState={colDef} // may be undefined initially
+                    droppableId={colDef.id.toString()} // keep using index as droppableId to be compatible with onDragEnd logic
                     index={idx}
                     itemShow={itemShow}
                     onInitLoad={handleInitLoad}

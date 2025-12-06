@@ -3,6 +3,7 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 import Loading from "components/loading";
 import BusinessProcessService from "services/BusinessProcessService";
 import { showToast } from "utils/common";
+import { isEqual } from "lodash";
 
 type ColumnDef = {
   id: any;
@@ -22,6 +23,7 @@ type ColumnState = {
   page?: number;
   isLoading?: boolean;
   processId?: any;
+  params?: any;
 };
 
 type ColumnProps = {
@@ -34,6 +36,7 @@ type ColumnProps = {
   onAppend: (columnId: any, payload: { items: any[]; hasMore: boolean; page: number }) => void;
   setLoading: (columnId: any, loading: boolean) => void;
   setShowHistory: (item: any) => void;
+  // params?: any;
 };
 
 /**
@@ -52,6 +55,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
   onAppend,
   setLoading,
   setShowHistory,
+  // params,
 }) => {
   const id = columnDef.id;
   const processId = columnDef?.processId || null;
@@ -63,13 +67,14 @@ const ColumnComponent: React.FC<ColumnProps> = ({
 
   // helper to call API
   const getDataOfStep = useCallback(
-    async (page = 1) => {
+    async (page = 1, params = null) => {
       if (!processId && !processCode) return { items: [], hasMore: false, page };
       try {
         abortRef.current = new AbortController();
-        const params = {
+        const param = {
           ...(processId ? { processId: processId } : {}),
           ...(processCode ? { processCode: processCode } : {}),
+          ...(params ? params : {}),
           // processId,
           // processCode,
           workflowId: id,
@@ -77,7 +82,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
           page,
         };
         // return;
-        const response = await BusinessProcessService.listWorkflowCloud(params, abortRef.current.signal);
+        const response = await BusinessProcessService.listWorkflowCloud(param, abortRef.current.signal);
         if (response.code === 0) {
           const result = response.result;
           return {
@@ -107,14 +112,18 @@ const ColumnComponent: React.FC<ColumnProps> = ({
   // khởi tạo dữ liệu ban đầu cho cột nếu chưa có : nếu parent chưa cung cấp items (hoặc page === 0), thì fetch trang 1
   useEffect(() => {
     let mounted = true;
-    const shouldLoadInitial =
-      !columnState ||
-      (Array.isArray(columnState.items) && columnState.items.length === 0 && (columnState.page === 0 || columnState.page === undefined));
+    console.log("ColumnComponent: useEffect init load:", id, columnState);
+
+    const shouldLoadInitial = !columnState || (Array.isArray(columnState.items) && (columnState.page === 0 || columnState.page === undefined));
+
+    console.log("ColumnComponent: shouldLoadInitial:", shouldLoadInitial);
+
     if (shouldLoadInitial) {
       (async () => {
         setLocalLoading(true);
         setLoading(id, true);
-        const res = await getDataOfStep(1);
+        const res = await getDataOfStep(1, columnState?.params || null);
+        console.log("ColumnComponent: getDataOfStep:", 1);
         if (!mounted) return;
         onInitLoad(id, { items: res.items, hasMore: res.hasMore, page: res.page });
         setLocalLoading(false);
@@ -144,7 +153,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
       setLocalLoading(true);
       try {
         const nextPage = (col.page || 1) + 1;
-        const res = await getDataOfStep(nextPage);
+        const res = await getDataOfStep(nextPage, columnState?.params || null);
         // Cập nhật lên parent
         onAppend(id, { items: res.items, hasMore: res.hasMore, page: res.page });
       } catch (err) {
@@ -277,6 +286,12 @@ function areEqual(prev: ColumnProps, next: ColumnProps) {
     const bLast = bState!.items[bLen - 1]?.id ?? null;
     if (aFirst !== bFirst || aLast !== bLast) return false;
   }
+
+  const prevParams = aState.params ?? null;
+  const nextParams = bState.params ?? null;
+  console.log("areEqual params:", prevParams, nextParams, isEqual(prevParams, nextParams));
+
+  if (!isEqual(prevParams, nextParams)) return false;
 
   return true;
 }
