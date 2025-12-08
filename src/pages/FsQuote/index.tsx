@@ -262,7 +262,7 @@ export default function FsQuote() {
         },
       },
       {
-        title: "Kanban",
+        title: isRegimeKanban ? "Danh Sách FS" : "Kanban",
         color: "primary",
         callback: () => {
           setIsRegimeKanban((prev) => !prev);
