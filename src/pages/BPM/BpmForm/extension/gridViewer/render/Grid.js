@@ -173,8 +173,7 @@ export function GridRenderer(props) {
     try {
       //Hiện tại chỉ cho sửa được dataRow, headerTable cố định từ đầu
       let _dataGrid = JSON.parse(value) ? JSON.parse(value) : {};
-      // dataGrid[id].headerTable = _dataGrid.headerTable ? _dataGrid.headerTable : [];
-      // dataGrid[ids].dataRow = _dataGrid.dataRow ? _dataGrid.dataRow : [];
+      // dataGrid[ids].headerTable = _dataGrid.headerTable ? JSON.parse(JSON.stringify(_dataGrid.headerTable)) : []; // clone sâu trước khi gán
       dataGrid[ids].dataRow = _dataGrid.dataRow ? JSON.parse(JSON.stringify(_dataGrid.dataRow)) : []; // clone sâu trước khi gán
     } catch (e) {
       console.error("Invalid JSON in grid value", e);
