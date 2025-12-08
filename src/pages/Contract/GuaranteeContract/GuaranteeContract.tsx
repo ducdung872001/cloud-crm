@@ -522,28 +522,39 @@ export default function GuaranteeContractList() {
       field: "competencyName",
     },
     {
-      headerName: "Ngày bắt đầu",
+      headerName: "Ngày bắt đầu 1",
       field: "startDate",
+      cellStyle: { display: 'flex', justifyContent: 'center'},
     },
     {
       headerName: "Ngày hết hạn",
       field: "endDate",
+      cellStyle: { display: 'flex', justifyContent: 'center'},
       //   cellRenderer: LinkToCustomer,
     },
     {
       headerName: "Giá trị bảo lãnh",
       field: "value",
+      cellStyle: { display: 'flex', justifyContent: 'flex-end'},
     },
     {
       headerName: "Giá trị hợp đồng",
       field: "contractValue",
+      cellStyle: { display: 'flex', justifyContent: 'flex-end'},
     },
     // {
     //   headerName: "Trạng thái",
     //   field: "status",
     //   cellRenderer: BoxViewStatus,
     // },
-    { headerName: "Hành động", cellRenderer: ActionRenderer, width: 180, resizable: false, suppressSizeToFit: true },
+    { 
+      headerName: "Hành động", 
+      cellRenderer: ActionRenderer, 
+      width: 180, 
+      resizable: false, 
+      suppressSizeToFit: true,
+      cellStyle: { display: 'flex', justifyContent: 'center'},
+    },
     {
       headerName: "",
       field: "addColumn",

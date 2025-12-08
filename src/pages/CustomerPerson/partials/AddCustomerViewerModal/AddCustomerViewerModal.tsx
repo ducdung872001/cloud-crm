@@ -137,16 +137,8 @@ export default function AddCustomerViewerModal(props: IAddCustomerViewerModalPro
     const response = await CustomerService.lstCustomerViewer(id);
 
     if (response.code === 0) {
-      const result = response.result;
-
-      if (result.length) {
-        // setLstViewerCustomer(
-        //   result.filter((item) => {
-        //     item.employeeId != id || item.employeeId != dataCustomer.employeeId;
-        //   })
-        // );
-        setLstViewerCustomer(result);
-      }
+      const result = response.result || [];
+      setLstViewerCustomer(result);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
