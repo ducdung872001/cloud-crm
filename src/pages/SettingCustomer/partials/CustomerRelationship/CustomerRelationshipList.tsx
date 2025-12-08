@@ -71,7 +71,7 @@ export default function CustomerRelationshipList(props: ICustomerRelationshipLis
     const response = await RelationShipService.list(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
-      const result = response.result.items;
+      const result = response.result;
       setListRelationShip(result);
 
       setPagination({

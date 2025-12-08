@@ -72,7 +72,7 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
     const response = await CustomerGroupService.list(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
-      const result = response.result.items;
+      const result = response.result;
       setListCustomerGroup(result);
 
       setPagination({
