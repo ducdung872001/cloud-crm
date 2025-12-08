@@ -170,6 +170,7 @@ export default function KpiTemplateList(props: any) {
   ];
 
   const actionsTable = (item: IKpiTemplateResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       permissions["KPI_TEMPLATE_UPDATE"] == 1 && {
         title: "Sửa",
@@ -181,9 +182,12 @@ export default function KpiTemplateList(props: any) {
       },
       permissions["KPI_TEMPLATE_DELETE"] == 1 && {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];
@@ -200,6 +204,35 @@ export default function KpiTemplateList(props: any) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listKpiTemplate.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return KpiTemplateService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} mẫu API`, "success");
+        getListKpiTemplate(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có mẫu API nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: IKpiTemplateResponse) => {
     const contentDialog: IContentDialog = {
@@ -220,7 +253,16 @@ export default function KpiTemplateList(props: any) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

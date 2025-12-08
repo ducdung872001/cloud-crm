@@ -194,6 +194,7 @@ export default function TemplateZaloList(props: ITemplateZaloListProps) {
   ];
 
   const actionsTable = (item: ITemplateZaloResponseModel): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       {
         title: "Sửa",
@@ -205,9 +206,12 @@ export default function TemplateZaloList(props: ITemplateZaloListProps) {
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];

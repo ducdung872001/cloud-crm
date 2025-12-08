@@ -352,6 +352,7 @@ export default function ServiceList(props: IServiceListProps) {
   ];
 
   const actionsTable = (item: IServiceRespone): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       ...(tab === "tab_one"
         ? [
@@ -381,9 +382,12 @@ export default function ServiceList(props: IServiceListProps) {
             },
             permissions["SERVICE_DELETE"] == 1 && {
               title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
+              icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmDelete(item);
+                }
               },
             },
           ]
@@ -404,6 +408,35 @@ export default function ServiceList(props: IServiceListProps) {
     setContentDialog(null);
   };
 
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listService.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return ServiceService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} dịch vụ `, "success");
+        getListService(params,tab);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có dịch vụ nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
+
   const showDialogConfirmDelete = (item?: IServiceRespone) => {
     const contentDialog: IContentDialog = {
       color: "error",
@@ -423,7 +456,16 @@ export default function ServiceList(props: IServiceListProps) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

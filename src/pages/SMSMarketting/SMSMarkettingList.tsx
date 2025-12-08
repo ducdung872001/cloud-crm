@@ -293,6 +293,7 @@ export default function SMSMarkettingList() {
   ];
 
   const actionsTable = (item: ISendSMSResponseModel): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       ...(item.statusAction == 0
         ? ([
@@ -314,9 +315,12 @@ export default function SMSMarkettingList() {
             },
             permissions["SMS_REQUEST_DELETE"] == 1 && {
               title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
+              icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmDelete(item);
+                }
               },
             },
           ] as IAction[])
@@ -347,6 +351,35 @@ export default function SMSMarkettingList() {
     setContentDialog(null);
   };
 
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listSMSMarketing.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return SendSMSService.deleteSendSMS(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} SMS marketing`, "success");
+        getListSMSMarketing(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có SMS marketing nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
+
   const showDialogConfirmCancel = (item?: ISendSMSResponseModel) => {
     const contentDialog: IContentDialog = {
       color: "warning",
@@ -361,7 +394,16 @@ export default function SMSMarkettingList() {
         setContentDialog(null);
       },
       defaultText: "Xác nhận",
-      defaultAction: () => onCancel(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

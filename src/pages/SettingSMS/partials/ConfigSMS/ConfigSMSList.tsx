@@ -146,6 +146,7 @@ export default function ConfigSMSList(props: IConfigSMSListProps) {
   ];
 
   const actionsTable = (item: IConfigCodeResponseModel): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       permissions["GLOBAL_CONFIG_UPDATE"] == 1 && {
         title: "Sửa",
@@ -157,9 +158,12 @@ export default function ConfigSMSList(props: IConfigSMSListProps) {
       },
       permissions["GLOBAL_CONFIG_DELETE"] == 1 && {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];
@@ -176,6 +180,35 @@ export default function ConfigSMSList(props: IConfigSMSListProps) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listConfigSMS.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return ConfigCodeService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} cấu hình SMS`, "success");
+        getListConfigSMS(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có cấu hình SMS nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: IConfigCodeResponseModel) => {
     const contentDialog: IContentDialog = {
@@ -197,7 +230,16 @@ export default function ConfigSMSList(props: IConfigSMSListProps) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

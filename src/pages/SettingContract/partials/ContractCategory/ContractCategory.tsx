@@ -144,6 +144,8 @@ export default function ContractCategoryList(props: any) {
   ];
 
   const actionsTable = (item: IContractPipelineResponse): IAction[] => {
+        const isCheckedItem = listIdChecked?.includes(item.id);
+
     return [
       permissions["CONTRACT_UPDATE"] == 1 && {
         title: "Sửa",
@@ -155,9 +157,12 @@ export default function ContractCategoryList(props: any) {
       },
       permissions["CONTRACT_DELETE"] == 1 && {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
-          showDialogConfirmDelete(item);
+          if (!isCheckedItem) {
+            showDialogConfirmDelete(item);
+          }
         },
       },
     ].filter((action) => action);
@@ -175,6 +180,35 @@ export default function ContractCategoryList(props: any) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listContractCategory.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return ContractCategoryService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} loại hợp đồng`, "success");
+        getListContractCategory(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có loại hợp đồng nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: IContractPipelineResponse) => {
     const contentDialog: IContentDialog = {
@@ -195,7 +229,16 @@ export default function ContractCategoryList(props: any) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

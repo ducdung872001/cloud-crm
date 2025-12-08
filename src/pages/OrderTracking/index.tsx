@@ -42,7 +42,7 @@ const statusColor = {
 };
 
 export default function OrderTracking() {
-  document.title = "Danh sách yêu cầu mua hàng";
+  document.title = "Danh sách yêu cầu đặt hàng";
 
   const isMounted = useRef(false);
 
@@ -64,7 +64,7 @@ export default function OrderTracking() {
   const [listSaveSearch, setListSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách yêu cầu mua hàng",
+      name: "Danh sách yêu cầu đặt hàng",
       is_active: true,
     },
     // {
@@ -245,12 +245,16 @@ export default function OrderTracking() {
   ];
 
   const actionsTable = (item: IWorkTypeResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];
@@ -268,6 +272,35 @@ export default function OrderTracking() {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listOrderTracking.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return OrderRequestService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} yêu cầu đặt hàng`, "success");
+        getListOrderTracking(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có yêu cầu đặt hàng nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: IWorkTypeResponse) => {
     const contentDialog: IContentDialog = {
@@ -288,7 +321,16 @@ export default function OrderTracking() {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
@@ -383,7 +425,7 @@ export default function OrderTracking() {
 
   return (
     <div className={`page-content page-order-tracking${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Danh sách yêu cầu mua hàng" titleActions={titleActions} />
+      <TitleAction title="Danh sách yêu cầu đặt hàng" titleActions={titleActions} />
       <div className={`${isRegimeKanban ? "d-none" : ""}`}>
         <div className="card-box d-flex flex-column">
           <SearchBox
@@ -401,7 +443,7 @@ export default function OrderTracking() {
             <>
               {!isLoading && listOrderTracking && listOrderTracking.length > 0 ? (
                 <BoxTable
-                  name="Danh sách yêu cầu mua hàng"
+                  name="Yêu cầu đặt hàng"
                   titles={titles}
                   items={listOrderTracking}
                   isPagination={true}

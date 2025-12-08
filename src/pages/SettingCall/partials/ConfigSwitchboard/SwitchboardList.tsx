@@ -169,6 +169,7 @@ export default function SwitchboardList(props: ISwitchboardListProps) {
   ];
 
   const actionsTable = (item: ISwitchboardResponseModel): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [  
       {
         title: "Đổi trạng thái",
@@ -187,9 +188,12 @@ export default function SwitchboardList(props: ISwitchboardListProps) {
       },
       permissions["CALL_CONFIG_DELETE"] == 1 && {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];
@@ -207,6 +211,35 @@ export default function SwitchboardList(props: ISwitchboardListProps) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listSwitchboard.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return SwitchboardService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} tổng đài`, "success");
+        getListSwitchboard(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có tổng đài nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: ISwitchboardResponseModel) => {
     const contentDialog: IContentDialog = {
@@ -227,7 +260,16 @@ export default function SwitchboardList(props: ISwitchboardListProps) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

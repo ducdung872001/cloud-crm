@@ -172,6 +172,7 @@ export default function FunctionalManagementList(props: IFunctionalManagementLis
   ];
 
   const actionsTable = (item: IFunctionalManagementResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       {
         title: "Sửa",
@@ -183,9 +184,12 @@ export default function FunctionalManagementList(props: IFunctionalManagementLis
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];
@@ -203,6 +207,35 @@ export default function FunctionalManagementList(props: IFunctionalManagementLis
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listFunctionalManagement.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return FunctionalManagementService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} chức năng`, "success");
+        getListFunctionalManagement(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có chức năng nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: IFunctionalManagementResponse) => {
     const contentDialog: IContentDialog = {
@@ -223,7 +256,16 @@ export default function FunctionalManagementList(props: IFunctionalManagementLis
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

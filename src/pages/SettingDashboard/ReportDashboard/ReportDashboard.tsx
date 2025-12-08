@@ -142,6 +142,7 @@ export default function ReportDashboard(props: any) {
   ];
 
   const actionsTable = (item: any): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       {
         title: "Thêm quyền xem",
@@ -169,9 +170,12 @@ export default function ReportDashboard(props: any) {
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ].filter((action) => action);
@@ -189,6 +193,35 @@ export default function ReportDashboard(props: any) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listReportDashboard.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return ReportChartService.deleteReportDashboard(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} mẫu báo cáo DashBoard`, "success");
+        getListReportDashboard(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có mẫu báo cáo DashBoard nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: any) => {
     const contentDialog: IContentDialog = {
@@ -209,7 +242,16 @@ export default function ReportDashboard(props: any) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

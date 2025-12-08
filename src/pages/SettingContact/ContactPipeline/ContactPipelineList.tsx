@@ -157,6 +157,7 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
   ];
 
   const actionsTable = (item: IContactPipelineResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       permissions["CONTACT_UPDATE"] == 1 && {
         title: "Sửa",
@@ -168,9 +169,12 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
       },
       permissions["CONTACT_DELETE"] == 1 && {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
-          showDialogConfirmDelete(item);
+          if (!isCheckedItem) {
+            showDialogConfirmDelete(item);
+          }
         },
       },
     ].filter((action) => action);
@@ -188,6 +192,34 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
     setShowDialog(false);
     setContentDialog(null);
   };
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listContactPipeline.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return ContactPipelineService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} loại liên hệ`, "success");
+        getListContactPipeline(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có loại liên hệ nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: IContactPipelineResponse) => {
     const contentDialog: IContentDialog = {
@@ -208,7 +240,16 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
@@ -216,7 +257,7 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
 
   const bulkActionList: BulkActionItemModel[] = [
     permissions["CONTACT_DELETE"] == 1 && {
-      title: "Xóa vòng đời",
+      title: "Xóa loại liên hệ",
       callback: () => showDialogConfirmDelete(),
     },
   ];
@@ -247,7 +288,7 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên vòng đời"
+          name="Tên loại liên hệ"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -255,7 +296,7 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
         />
         {!isLoading && listContactPipeline && listContactPipeline.length > 0 ? (
           <BoxTable
-            name="Danh sách vòng đời"
+            name="Loại liên hệ"
             titles={titles}
             items={listContactPipeline}
             isPagination={false}
@@ -280,12 +321,12 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa có vòng đời nào. <br />
-                    Hãy thêm mới vòng đời đầu tiên nhé!
+                    Hiện tại chưa có loại liên hệ nào. <br />
+                    Hãy thêm mới loại liên hệ đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới vòng đời"
+                titleButton="Thêm mới loại liên hệ"
                 action={() => {
                   setDataContactPipeline(null);
                   setShowModalAdd(true);

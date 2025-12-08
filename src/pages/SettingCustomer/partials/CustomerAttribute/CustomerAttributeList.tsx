@@ -180,6 +180,7 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
   ];
 
   const actionsTable = (item: ICustomerAttributeResponse): IAction[] => {
+        const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       permissions["CUSTOMER_ATTRIBUTE_UPDATE"] == 1 && {
         title: "Sửa",
@@ -191,9 +192,12 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
       },
       permissions["CUSTOMER_ATTRIBUTE_DELETE"] == 1 && {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
-          showDialogConfirmDelete(item);
+          if (!isCheckedItem) {
+            showDialogConfirmDelete(item);
+          }
         },
       },
     ].filter((action) => action);
@@ -211,6 +215,35 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listCustomerAttribute.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return CustomerAttributeService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} trường thông tin khách hàng`, "success");
+        getListCustomerAttribute(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có trường thông tin khách hàng nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: ICustomerAttributeResponse) => {
     const contentDialog: IContentDialog = {
@@ -231,7 +264,16 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

@@ -293,6 +293,7 @@ export default function ProductList(props: IProductListProps) {
   ];
 
   const actionsTable = (item: IProductResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       ...(tab === "tab_one"
         ? [
@@ -323,9 +324,12 @@ export default function ProductList(props: IProductListProps) {
             },
             permissions["PRODUCT_DELETE"] == 1 && {
               title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
+              icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmDelete(item);
+                }
               },
             },
           ]
@@ -346,6 +350,35 @@ export default function ProductList(props: IProductListProps) {
     setContentDialog(null);
   };
 
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listProduct.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return ProductService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} danh mục sản phẩm`, "success");
+        getListProduct(params,tab);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có danh mục sản phẩm nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
+
   const showDialogConfirmDelete = (item?: IProductResponse) => {
     const contentDialog: IContentDialog = {
       color: "error",
@@ -365,7 +398,16 @@ export default function ProductList(props: IProductListProps) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

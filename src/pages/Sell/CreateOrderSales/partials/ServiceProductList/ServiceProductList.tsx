@@ -173,6 +173,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
     const response = await BoughtServiceService.delete(id);
     if (response.code === 0) {
       showToast("Xóa dịch vụ thành công", "success");
+      setListIdChecked((prev) => prev.filter((checkedId) => checkedId !== id));
       getListProductInvoiceService();
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -185,6 +186,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
     const response = await BoughtProductService.delete(id);
     if (response.code === 0) {
       showToast("Xóa sản phẩm thành công", "success");
+      setListIdChecked((prev) => prev.filter((checkedId) => checkedId !== id));
       getListProductInvoiceService();
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -245,16 +247,18 @@ export default function ServiceProductList(props: IServiceProductListProps) {
       },
       defaultText: "Xóa",
       defaultAction: () => {
-        if (listIdChecked.length > 0) {
-          onDeleteAllServiceProduct();
-          return;
-        }
+        
         if (item?.bptId) {
           onDeleteProduct(item.bptId);
           return;
         }
         if (item?.bseId) {
           onDeleteService(item.bseId);
+          return;
+        }
+        
+        if (listIdChecked.length > 0) {
+          onDeleteAllServiceProduct();
           return;
         }
       },

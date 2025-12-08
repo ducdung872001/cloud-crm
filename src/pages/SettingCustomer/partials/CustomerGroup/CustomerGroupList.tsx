@@ -145,6 +145,7 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
   ];
 
   const actionsTable = (item: ICustomerGroupResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       permissions["CUSTOMER_GROUP_UPDATE"] == 1 && {
         title: "Sửa",
@@ -156,9 +157,12 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
       },
       permissions["CUSTOMER_GROUP_DELETE"] == 1 && {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
-          showDialogConfirmDelete(item);
+          if (!isCheckedItem) {
+            showDialogConfirmDelete(item);
+          }
         },
       },
     ].filter((action) => action);
@@ -176,6 +180,35 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+      const selectedIds = listIdChecked || [];
+      if (!selectedIds.length) return;
+  
+      const arrPromises = selectedIds.map((selectedId) => {
+        const found = listCustomerGroup.find((item) => item.id === selectedId);
+        if (found?.id) {
+          return CustomerGroupService.delete(found.id);
+        } else {
+          return Promise.resolve(null);
+        }
+      });
+      Promise.all(arrPromises)
+      .then((results) => {
+        const checkbox = results.filter (Boolean)?.length ||0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} nhóm khách hàng`, "success");
+          getListCustomerGroup(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có nhóm khách hàng nào được xóa", "error");
+        }
+     })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+    }
 
   const showDialogConfirmDelete = (item?: ICustomerGroupResponse) => {
     const contentDialog: IContentDialog = {
@@ -196,7 +229,16 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

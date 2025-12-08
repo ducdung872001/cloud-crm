@@ -200,6 +200,7 @@ export default function SubsystemAdministrationList(props: ISubsystemAdministrat
   console.log(dataSubsystemAdministration);
 
   const actionsTable = (item: ISubsystemAdministrationResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       {
         title: "Sửa",
@@ -211,9 +212,12 @@ export default function SubsystemAdministrationList(props: ISubsystemAdministrat
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];
@@ -231,6 +235,35 @@ export default function SubsystemAdministrationList(props: ISubsystemAdministrat
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listSubsystemAdministration.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return SubsystemAdministrationService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} phân hệ`, "success");
+        getListSubsystemAdministration(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có phân hệ nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: ISubsystemAdministrationResponse) => {
     const contentDialog: IContentDialog = {
@@ -251,7 +284,16 @@ export default function SubsystemAdministrationList(props: ISubsystemAdministrat
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
