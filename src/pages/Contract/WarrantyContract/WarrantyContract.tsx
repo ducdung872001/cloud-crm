@@ -302,10 +302,12 @@ export default function WarrantyContract() {
     {
       headerName: "Ngày bắt đầu",
       field: "startDate",
+      cellStyle: { display: 'flex', justifyContent: 'center'},
     },
     {
       headerName: "Ngày hết hạn",
       field: "endDate",
+      cellStyle: { display: 'flex', justifyContent: 'center'},
     },
     {
       headerName: "Đơn vị thực hiện",

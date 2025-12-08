@@ -57,6 +57,33 @@ export default function ModalViewDocument(props: any) {
           },
         ]);
       }
+
+      if (dataDoc.fileUrl.includes(".jpg")) {
+        setFileContract([
+          {
+            uri: dataDoc.fileUrl,
+            fileType: "jpg",
+          },
+        ]);
+      }
+
+      if (dataDoc.fileUrl.includes(".png")) {
+        setFileContract([
+          {
+            uri: dataDoc.fileUrl,
+            fileType: "png",
+          },
+        ]);
+      }
+
+      if (dataDoc.fileUrl.includes(".svg")) {
+        setFileContract([
+          {
+            uri: dataDoc.fileUrl,
+            fileType: "svg",
+          },
+        ]);
+      }
     }
   }, [dataDoc]);
 

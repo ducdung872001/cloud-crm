@@ -313,6 +313,7 @@ i18n.use(initReactI18next).init({
           opportunityList: "Danh sách cơ hội",
           orderRequestList: "Yêu cầu mua hàng",
           salesManagement: "Chăm sóc cơ hội",
+          salesManagementNew: "Chăm sóc cơ hội mới",
           salesFlow: "Quy trình bán hàng",
           invoicesManagement: "Quản lý bán hàng",
 
