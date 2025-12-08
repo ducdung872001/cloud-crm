@@ -112,18 +112,14 @@ const ColumnComponent: React.FC<ColumnProps> = ({
   // khởi tạo dữ liệu ban đầu cho cột nếu chưa có : nếu parent chưa cung cấp items (hoặc page === 0), thì fetch trang 1
   useEffect(() => {
     let mounted = true;
-    console.log("ColumnComponent: useEffect init load:", id, columnState);
 
     const shouldLoadInitial = !columnState || (Array.isArray(columnState.items) && (columnState.page === 0 || columnState.page === undefined));
-
-    console.log("ColumnComponent: shouldLoadInitial:", shouldLoadInitial);
 
     if (shouldLoadInitial) {
       (async () => {
         setLocalLoading(true);
         setLoading(id, true);
         const res = await getDataOfStep(1, columnState?.params || null);
-        console.log("ColumnComponent: getDataOfStep:", 1);
         if (!mounted) return;
         onInitLoad(id, { items: res.items, hasMore: res.hasMore, page: res.page });
         setLocalLoading(false);
@@ -134,7 +130,7 @@ const ColumnComponent: React.FC<ColumnProps> = ({
       mounted = false;
       if (abortRef.current) abortRef.current.abort();
     };
-  }, [columnState, getDataOfStep, id, onInitLoad, setLoading]);
+  }, [columnState?.params, getDataOfStep, id, onInitLoad, setLoading]);
 
   // Cuộn xuống gần đáy sẽ tải thêm trang
   const handleScroll = useCallback(
@@ -289,7 +285,6 @@ function areEqual(prev: ColumnProps, next: ColumnProps) {
 
   const prevParams = aState.params ?? null;
   const nextParams = bState.params ?? null;
-  console.log("areEqual params:", prevParams, nextParams, isEqual(prevParams, nextParams));
 
   if (!isEqual(prevParams, nextParams)) return false;
 
