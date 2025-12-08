@@ -284,6 +284,7 @@ export default function CalendarCommon() {
   const [params, setParams] = useState<IScheduleCommonFilterRequest>({
     types: [2, 3].join(),
     sources: [1, 2].join(),
+    page: 1,
   });
 
   useEffect(() => {

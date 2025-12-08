@@ -35,6 +35,7 @@ export default function CustomerSchedule({ idCustomer }) {
     sources: 2,
     branchId: dataBranch?.value,
     lstId: idEmployee,
+    page: 1,
   });
 
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -57,7 +58,7 @@ export default function CustomerSchedule({ idCustomer }) {
     const response = await ScheduleCommonService.listCommon(paramsSearch, abortController.signal);
 
     if (response.code == 0) {
-      const result = (response.result || []).map((item) => {
+      const result = (response.result.items || []).map((item) => {
         return {
           id: item.id,
           title: item.title,
