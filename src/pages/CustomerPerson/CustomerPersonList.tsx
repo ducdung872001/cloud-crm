@@ -59,6 +59,7 @@ import ReportCustomer from "./partials/ReportCustomer";
 import FilterAdvanceModal from "./partials/FilterAdvanceModal/FilterAdvanceModal";
 import ModalExportCustomer from "./ModalExportCustomer/ModalExportCustomer";
 import { addDays } from "components/addDays/addDays";
+import SplitDataCustomerModal from "./partials/SplitDataCustomerModal";
 // import PurchaseInvoiceList from "./partials/PurchaseInvoice/PurchaseInvoiceList";
 
 export default function CustomerPersonList() {
@@ -762,6 +763,8 @@ export default function CustomerPersonList() {
     [searchParams, cityId]
   );
 
+  //modal chia data khách hàng TNEX
+  const [isModalSplitData, setIsModalSplitData] = useState(false);
   const [isModalFilterAdvance, setIsModalFilterAdvance] = useState(false);
   const [filterAdvance, setFilterAdvance] = useState(() => {
     return (takeParamsUrl.sourceIds || takeParamsUrl.employeeIds || takeParamsUrl.callStatuses || takeParamsUrl.customerExtraInfo) &&
@@ -847,7 +850,7 @@ export default function CustomerPersonList() {
 
     if (response.code === 0) {
       const result = response.result;
-      setListRelationship(result);
+      setListRelationship(result?.items);
     }
   };
 
@@ -2884,7 +2887,7 @@ export default function CustomerPersonList() {
               })}
             </ul>
             <div className="quick__search--right">
-              {width < 1440 && width > 768 && listRelationship.length > 6 ? (
+              {width < 1440 && width > 768 && listRelationship?.length > 6 ? (
                 <Swiper
                   onInit={(core: SwiperCore) => {
                     swiperRelationshipRef.current = core.el;
@@ -2898,7 +2901,7 @@ export default function CustomerPersonList() {
                   slidesPerView={6}
                   spaceBetween={8}
                 >
-                  {listRelationship.map((item, idx) => {
+                  {listRelationship?.map((item, idx) => {
                     return (
                       <SwiperSlide key={idx} className="list__relationship--slide">
                         <div
@@ -2917,7 +2920,7 @@ export default function CustomerPersonList() {
                 </Swiper>
               ) : (
                 <div className="list__relationship">
-                  {listRelationship.map((item, idx) => {
+                  {listRelationship?.map((item, idx) => {
                     return (
                       <div
                         key={idx}
@@ -3288,17 +3291,28 @@ export default function CustomerPersonList() {
           ) : null}
 
           {checkSubdomainTNEX ? (
-            <div style={{ margin: "1.5rem 2rem -1.5rem 2rem", fontSize: 14, fontWeight: "400" }}>
-              Hiển thị kết quả từ {pagination?.page > 1 ? (pagination?.page - 1) * pagination?.sizeLimit + 1 : 1} -{" "}
-              {isNaN(
-                pagination?.page * pagination?.sizeLimit < pagination?.totalItem ? pagination?.page * pagination?.sizeLimit : pagination?.totalItem
-              )
-                ? 1
-                : pagination?.page * pagination?.sizeLimit < pagination?.totalItem
-                ? pagination?.page * pagination?.sizeLimit
-                : pagination?.totalItem}{" "}
-              trên tổng
-              {` ${isNaN(pagination?.totalItem) ? 1 : pagination?.totalItem}`}
+            <div className="header-table-tnex" >
+              <div style={{ fontSize: 14, fontWeight: "400" }}>
+                Hiển thị kết quả từ {pagination?.page > 1 ? (pagination?.page - 1) * pagination?.sizeLimit + 1 : 1} -{" "}
+                {isNaN(
+                  pagination?.page * pagination?.sizeLimit < pagination?.totalItem ? pagination?.page * pagination?.sizeLimit : pagination?.totalItem
+                )
+                  ? 1
+                  : pagination?.page * pagination?.sizeLimit < pagination?.totalItem
+                  ? pagination?.page * pagination?.sizeLimit
+                  : pagination?.totalItem}{" "}
+                trên tổng
+                {` ${isNaN(pagination?.totalItem) ? 1 : pagination?.totalItem}`}
+              </div>
+
+              <div 
+                className="button-split-data"
+                onClick={() => {
+                  setIsModalSplitData(true);
+                }}
+              >
+                <span style={{fontSize: 14, fontWeight: '500'}}>Chia dữ liệu</span>
+              </div>
             </div>
           ) : null}
 
@@ -3576,6 +3590,17 @@ export default function CustomerPersonList() {
         setFilterAdvance={setFilterAdvance}
         onHide={() => {
           setIsModalFilterAdvance(false);
+        }}
+      />
+
+      <SplitDataCustomerModal
+        onShow={isModalSplitData}
+        data={null}
+        onHide={(reload) => {
+          if (reload) {
+            getListCustomer(params, activeTitleHeader);
+          }
+          setIsModalSplitData(false);
         }}
       />
     </Fragment>
