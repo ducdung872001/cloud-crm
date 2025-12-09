@@ -170,14 +170,17 @@ export default function ContactAttributeList(props: IContactAttributeListProps) 
   ];
 
   const actionsTable = (item: IContactAttributeResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["CONTRACT_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataContactAttribute(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["CONTRACT_DELETE"] == 1 && {

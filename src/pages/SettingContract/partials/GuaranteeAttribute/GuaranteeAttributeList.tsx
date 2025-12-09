@@ -161,15 +161,18 @@ export default function GuaranteeAttributeList(props: IContractAttributeListProp
   ];
 
   const actionsTable = (item: IContractAttributeResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["GUARANTEE_UPDATE"] == 1 && 
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataGuaranteeAttribute(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["GUARANTEE_DELETE"] == 1 && 

@@ -176,7 +176,7 @@ export default function BrandNameList(props: IBrandNameListProps) {
   ];
 
   const actionsTable = (item: IBrandNameResponseModel): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       ...(!item.whitelist?.isUat
       ? [
@@ -184,10 +184,13 @@ export default function BrandNameList(props: IBrandNameListProps) {
             title: "Kích hoạt WhiteList",
             icon: <Icon 
                       name="FingerTouch" 
-                      className="icon-warning" 
+                      className={isCheckedItem ?"icon-disabled": "icon-warning"} 
                     />,
+                    disabled: isCheckedItem,
             callback: () => {
+              if (!isCheckedItem) {
               showDialogConfirmApprove(item, true);
+              }
               
             },
           },
@@ -195,18 +198,24 @@ export default function BrandNameList(props: IBrandNameListProps) {
       : [
         {
           title: "Tạm dừng WhiteList",
-          icon: <Icon name="Pause"/>,
+          icon: <Icon name="Pause" className={isCheckedItem ? "icon-disabled" : ""}/>,
+          disabled: isCheckedItem,
           callback: () => {
+            if (!isCheckedItem) {
               showDialogConfirmPause(item, false)
+            }
           },
         },
       ]),
       permissions["BRANDNAME_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataBrandName(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["BRANDNAME_DELETE"] == 1 && {

@@ -153,29 +153,38 @@ export default function SettingPromotionList(props: any) {
 
   const [dataEdit, setDataEdit] = useState(null);
   const actionsTable = (item: any): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Xem Khuyến mãi",
-        icon: <Icon name="Eye" />,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIsPreviewEform(true);
+          }
         },
       },
 
       {
         title: "Cài đặt Khuyến mãi",
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="Settings" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIsSettingEform(true);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataEdit(item);
           setShowEditPrm(true);
+          }
         },
       },
       {

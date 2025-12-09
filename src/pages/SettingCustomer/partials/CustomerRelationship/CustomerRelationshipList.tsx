@@ -144,14 +144,17 @@ export default function CustomerRelationshipList(props: ICustomerRelationshipLis
   ];
 
   const actionsTable = (item: IRelationShipResposne): IAction[] => {
-        const isCheckedItem = listIdChecked?.includes(item.id);
+        const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["RELATIONSHIP_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataRelationShip(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["RELATIONSHIP_DELETE"] == 1 && {

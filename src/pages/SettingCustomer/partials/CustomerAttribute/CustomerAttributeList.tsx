@@ -180,14 +180,17 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
   ];
 
   const actionsTable = (item: ICustomerAttributeResponse): IAction[] => {
-        const isCheckedItem = listIdChecked?.includes(item.id);
+        const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["CUSTOMER_ATTRIBUTE_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCustomerAttribute(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["CUSTOMER_ATTRIBUTE_DELETE"] == 1 && {

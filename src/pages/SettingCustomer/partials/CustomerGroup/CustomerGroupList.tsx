@@ -145,14 +145,17 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
   ];
 
   const actionsTable = (item: ICustomerGroupResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["CUSTOMER_GROUP_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCustomerGroup(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["CUSTOMER_GROUP_DELETE"] == 1 && {

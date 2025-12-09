@@ -267,25 +267,31 @@ export default function ProcessedObjectList() {
   };
 
   const actionsTable = (item): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Export OLA",
-        icon: <Icon name="Download" />,
+        icon: <Icon name="Download" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           // exportCallback(item, 'excel', 'ola');
           setDataObject(item);
           setModalSelectProcess(true);
+          }
         },
       },
       ...(item.processId
         ? [
             {
               title: "Xem lịch sử xử lý",
-              icon: <Icon name="ImpactHistory" />,
+              icon: <Icon name="ImpactHistory" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataObject(item);
                 setHasHistorySignature(true);
+                }
               },
             },
           ]
@@ -295,31 +301,40 @@ export default function ProcessedObjectList() {
         ? [
             {
               title: "Trình xử lý",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataObject(item);
                 setHasSignature(true);
                 // handleCheckValidateSignature(item, "signature");
+                }
               },
             },
           ]
         : []),
       {
         title: "Debug",
-        icon: <Icon name="Debug" style={{ width: 18 }} className="icon-error" />,
+        icon: <Icon name="Debug" style={{ width: 18 }} className={isCheckedItem? "icon-disabled":"icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setShowDebug(item);
           setDataObject(item);
+          }
         },
       },
       ...(!item.status
         ? [
             {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setShowModalAdd(true);
                 setDataObject(item);
+                }
               },
             },
             {
@@ -337,9 +352,12 @@ export default function ProcessedObjectList() {
         ? [
             {
               title: "Tạm dừng xử lý",
-              icon: <Icon name="WarningCircle" className="icon-warning" />,
+              icon: <Icon name="WarningCircle" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "pending");
+                }
               },
             },
           ]
@@ -347,16 +365,22 @@ export default function ProcessedObjectList() {
         ? [
             {
               title: "Tiếp tục xử lý",
-              icon: <Icon name="InfoCircle" className="icon-success" />,
+              icon: <Icon name="InfoCircle" className={isCheckedItem?"icon-disabled" : "icon-success"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "play");
+                }
               },
             },
             {
               title: "Xử lý lại",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "inital");
+                }
               },
             },
           ]

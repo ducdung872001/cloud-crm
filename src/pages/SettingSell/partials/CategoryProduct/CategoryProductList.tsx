@@ -147,14 +147,17 @@ export default function CategoryProductList(props: ICategoryServiceListProps) {
   ];
 
   const actionsTable = (item: ICategoryServiceResponseModel): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["PRODUCT_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCategoryProduct(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["PRODUCT_DELETE"] == 1 && {

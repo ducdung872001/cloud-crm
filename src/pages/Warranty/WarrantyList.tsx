@@ -360,35 +360,44 @@ export default function WarrantyList() {
   };
 
   const actionsTable = (item: IWarrantyResponseModel) => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       ...(!item.status
         ? [
             {
               title: "Chuyển phiếu",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataWarranty(item);
                 setHasTransferVotes(true);
+                }
               },
             },
           ]
         : []),
       {
         title: "Xem chi tiết",
-        icon: <Icon name="Eye" />,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           navigate(`/detail_warranty/warrantyId/${item.id}`);
+          }
         },
       },
       ...(!item.status
         ? [
             {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataWarranty(item);
                 setShowModalAdd(true);
+                }
               },
             },
             {
@@ -407,9 +416,12 @@ export default function WarrantyList() {
         ? [
             {
               title: "Tạm dừng duyệt phiếu",
-              icon: <Icon name="WarningCircle" className="icon-warning" />,
+              icon: <Icon name="WarningCircle" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "pending");
+                }
               },
             },
           ]
@@ -418,16 +430,22 @@ export default function WarrantyList() {
         ? [
             {
               title: "Tiếp tục duyệt phiếu",
-              icon: <Icon name="InfoCircle" className="icon-success" />,
+              icon: <Icon name="InfoCircle" className={isCheckedItem?"icon-disabled" : "icon-success"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "play");
+                }
               },
             },
             {
               title: "Duyệt phiếu lại",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "inital");
+                }
               },
             },
           ]

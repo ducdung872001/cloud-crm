@@ -169,14 +169,17 @@ export default function ProductUnitList(props: IProductUnitListProps) {
   };
 
   const actionsTable = (item: IUnitResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["UNIT_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataUnit(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["UNIT_DELETE"] == 1 && {

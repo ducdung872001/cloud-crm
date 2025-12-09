@@ -146,14 +146,17 @@ export default function PartnerSMSList(props: IPartnerSMSListProps) {
   ];
 
   const actionsTable = (item: IPartnerSMSResponseModel): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["PARTNER_SMS_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataPartnerSMS(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["PARTNER_SMS_DELETE"] == 1 && {

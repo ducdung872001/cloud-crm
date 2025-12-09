@@ -162,31 +162,40 @@ export default function ContractEform(props: any) {
   ];
 
   const actionsTable = (item: any): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
         {
             title: "Xem biểu mẫu",
-            icon: <Icon name="Eye" />,
+            icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+              if (!isCheckedItem) {
                 setDataContractEform(item);
                 setIsPreviewEform(true);
+              }
             },
         },
 
         {
             title: "Cài đặt biểu mẫu",
-            icon: <Icon name="Settings" />,
+            icon: <Icon name="Settings" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+              if (!isCheckedItem) {
                 setDataContractEform(item);
                 setIsSettingEform(true);
+              }
             },
         },
         {
             title: "Sửa",
-            icon: <Icon name="Pencil" />,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+              if (!isCheckedItem) {
                 setDataContractEform(item);
                 setShowModalAddEform(true);
+              }
             },
         },
         {

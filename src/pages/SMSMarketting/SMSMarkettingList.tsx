@@ -293,24 +293,30 @@ export default function SMSMarkettingList() {
   ];
 
   const actionsTable = (item: ISendSMSResponseModel): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       ...(item.statusAction == 0
         ? ([
             permissions["SMS_REQUEST_IMPORT"] == 1 && {
               title: "Phê duyệt",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 onApprove(item.id);
+                }
               },
             },
             permissions["SMS_REQUEST_UPDATE"] == 1 && {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setIdSendSMS(item.id);
                 setShowPageSendSMS(true);
                 setCheckAdd(true);
+                }
               },
             },
             permissions["SMS_REQUEST_DELETE"] == 1 && {

@@ -151,14 +151,17 @@ export default function SettingWarrantyList(props) {
   const dataMappingArray = (item: IWarrantyCategoryResponse, index: number) => [getPageOffset(params) + index + 1, item.name, item.position];
 
   const actionsTable = (item: IWarrantyCategoryResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["WARRANTY_CATEGORY_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataSettingWarranty(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["WARRANTY_CATEGORY_DELETE"] == 1 && {

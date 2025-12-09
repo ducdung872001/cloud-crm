@@ -203,14 +203,17 @@ export default function BranchList(props: IBranchListProps) {
   ];
 
   const actionsTable = (item: IKpiDatasourceResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["KPI_DATASOURCE_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataKpiDatasource(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["KPI_DATASOURCE_DELETE"] == 1 && {

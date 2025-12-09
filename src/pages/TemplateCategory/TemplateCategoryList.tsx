@@ -114,14 +114,17 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
   ];
 
   const actionsTable = (item: ITemplateCategoryResponseModel): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["TEMPLATE_CATEGORY_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setShowModalAdd(true);
           setDataTemplateCategory(item);
+          }
         },
       },
       permissions["TEMPLATE_CATEGORY_DELETE"] == 1 && {

@@ -134,25 +134,31 @@ export default function CashbookReport(props: IBranchListProps) {
   ];
 
   const actionsTable = (item: IBeautyBranchResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return item.headquarter === 1
       ? [
           permissions["BEAUTY_BRANCH_UPDATE"] == 1 && {
             title: "Sửa",
-            icon: <Icon name="Pencil" />,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+              if (!isCheckedItem) {
               setDataBranch(item);
               setShowModalAdd(true);
+              }
             },
           },
         ]
       : [
           permissions["BEAUTY_BRANCH_UPDATE"] == 1 && {
             title: "Sửa",
-            icon: <Icon name="Pencil" />,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+              if (!isCheckedItem) {
               setDataBranch(item);
               setShowModalAdd(true);
+              }
             },
           },
           permissions["BEAUTY_BRANCH_DELETE"] == 1 && {

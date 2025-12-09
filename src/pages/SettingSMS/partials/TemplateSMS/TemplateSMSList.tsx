@@ -144,14 +144,17 @@ export default function TemplateSMSList(props: ITemplateSMSListProps) {
   ];
 
   const actionsTable = (item: ITemplateSMSResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["TEMPLATE_SMS_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataTemplateSMS(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["TEMPLATE_SMS_DELETE"] == 1 && {

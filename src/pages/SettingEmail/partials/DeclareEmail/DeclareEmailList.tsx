@@ -150,18 +150,24 @@ export default function DeclareEmailList(props: IDeclareEmailListProps) {
     return [
       {
         title: "Kiểm tra Email",
-        icon: <Icon name="Test" style={{width: 20, height: 20}}/>,
+        icon: <Icon name="Test" className={isCheckedItem ? "icon-disabled" : ""} style={{width: 20, height: 20}}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIsCheckEmail(true);
-          setDataEmailConfig(item)
+          setDataEmailConfig(item);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataEmailConfig(item);
           setShowModalAdd(true);
+          }
         },
       },
       {

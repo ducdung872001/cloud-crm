@@ -132,22 +132,28 @@ export default function SettingQuoteForm() {
   const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.description, item.position];
 
   const actionsTable = (item: any): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Cấu hình",
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="Settings" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataQuoteForm(item);
           setShowModalAddConfig(true);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataQuoteForm(item);
           setShowModalAdd(true);
+          }
         },
       },
       {

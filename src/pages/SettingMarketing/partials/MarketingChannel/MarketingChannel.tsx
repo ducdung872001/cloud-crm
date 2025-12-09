@@ -142,14 +142,17 @@ export default function MarketingChannel(props: any) {
   const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.code, item.position];
 
   const actionsTable = (item: any): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataMarketingChannel(item);
           setShowModalAddChannel(true);
+          }
         },
       },
       {

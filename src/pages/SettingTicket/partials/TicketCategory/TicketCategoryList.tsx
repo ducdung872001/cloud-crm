@@ -140,14 +140,17 @@ export default function SettingTicketList(props) {
   const dataMappingArray = (item: ITicketCategoryResponse, index: number) => [getPageOffset(params) + index + 1, item.name, item.position];
 
   const actionsTable = (item: ITicketCategoryResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["TICKET_CATEGORY_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataSettingTicket(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["TICKET_CATEGORY_DELETE"] == 1 && {

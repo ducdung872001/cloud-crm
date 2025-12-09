@@ -146,14 +146,17 @@ export default function PartnerCallList(props: IPartnerCallListProps) {
   ];
 
   const actionsTable = (item: IPartnerCallResponseModel): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["PARTNER_CALL_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataPartnerCall(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["PARTNER_CALL_DELETE"] == 1 && {

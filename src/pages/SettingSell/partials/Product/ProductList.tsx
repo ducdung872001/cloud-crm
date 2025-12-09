@@ -293,33 +293,42 @@ export default function ProductList(props: IProductListProps) {
   ];
 
   const actionsTable = (item: IProductResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       ...(tab === "tab_one"
         ? [
             {
               title: "Đặc trưng khách hàng",
-              icon: <Icon name="Tag" style={{ width: 18 }} />,
+              icon: <Icon name="Tag" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 18 }} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setIdProduct(item.id);
                 setShowModalConfig(true);
+                }
               },
             },
             {
               title: "Chi tiết sản phẩm",
-              icon: <Icon name="CollectInfo" style={{ width: 17 }} />,
+              icon: <Icon name="CollectInfo" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 17 }} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataProduct(item);
                 setShowModalDetail(true);
+                }
               },
             },
             permissions["PRODUCT_UPDATE"] == 1 && {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setIdProduct(item.id);
                 setShowModalAdd(true);
                 setDataProduct(item);
+                }
               },
             },
             permissions["PRODUCT_DELETE"] == 1 && {

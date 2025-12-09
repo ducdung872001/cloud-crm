@@ -169,21 +169,27 @@ export default function SwitchboardList(props: ISwitchboardListProps) {
   ];
 
   const actionsTable = (item: ISwitchboardResponseModel): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [  
       {
         title: "Đổi trạng thái",
-        icon: <Icon name="ResetPassword" className="icon-warning" />,
+        icon: <Icon name="ResetPassword" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmChangeStatus(item);
+          }
         },
       },    
       permissions["CALL_CONFIG_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataSwitchboard(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["CALL_CONFIG_DELETE"] == 1 && {

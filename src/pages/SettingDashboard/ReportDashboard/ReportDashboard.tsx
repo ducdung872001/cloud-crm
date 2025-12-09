@@ -142,30 +142,39 @@ export default function ReportDashboard(props: any) {
   ];
 
   const actionsTable = (item: any): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;;
     return [
       {
         title: "Thêm quyền xem",
-        icon: <Icon name="UserAdd" className="icon-success" />,
+        icon: <Icon name="UserAdd" className={isCheckedItem?"icon-disabled" : "icon-success"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIsAddRole(item);
           setDataReportDashboard(item);
+          }
         },
       },
       {
         title: "Cài đặt mẫu báo cáo",
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="Settings" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIsSetting(true);
           setDataReportDashboard(item);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataReportDashboard(item);
           setShowModalAdd(true);
+          }
         },
       },
       {

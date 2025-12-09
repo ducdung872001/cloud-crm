@@ -170,14 +170,17 @@ export default function KpiTemplateList(props: any) {
   ];
 
   const actionsTable = (item: IKpiTemplateResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["KPI_TEMPLATE_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataKpiTemplate(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["KPI_TEMPLATE_DELETE"] == 1 && {

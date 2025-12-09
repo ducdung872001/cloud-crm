@@ -184,14 +184,17 @@ export default function KpiGoalList(props: IKpiGoalListProps) {
   ];
 
   const actionsTable = (item: IKpiGoalResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["KPI_GOAL_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataKpiGoal(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["KPI_GOAL_DELETE"] == 1 && {

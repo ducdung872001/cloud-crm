@@ -146,14 +146,17 @@ export default function ConfigCallList(props: IConfigCallListProps) {
   ];
 
   const actionsTable = (item: IConfigCodeResponseModel): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["GLOBAL_CONFIG_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setShowModalAdd(true);
           setDataConfigCall(item);
+          }
         },
       },
       permissions["GLOBAL_CONFIG_DELETE"] == 1 && {

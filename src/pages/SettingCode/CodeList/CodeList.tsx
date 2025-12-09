@@ -151,15 +151,18 @@ export default function dsCodeList(props: any) {
   ];
 
   const actionsTable = (item: any): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
     //   permissions["CATEGORY_PROJECT_UPDATE"] == 1 && 
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCode(item);
           setShowModalAdd(true);
+          }
         },
       },
     //   permissions["CATEGORY_PROJECT_DELETE"] == 1 && 

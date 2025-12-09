@@ -184,25 +184,31 @@ export default function CustomerSegment() {
   ];
 
   const actionsTable = (item): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Xem",
-        icon: <Icon name="Eye" />,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCustomerSegment(item);
           setShowModalAdd(true);
           setIsViewModalAdd(true);
+          }
         },
       },
       ...(item.status !== "canceled"
         ? [
             {
               title: "Chuyển trạng thái",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataCustomerSegment(item);
                 setIsChangeStatus(true);
+                }
               },
             },
           ]
@@ -211,10 +217,13 @@ export default function CustomerSegment() {
         ? [
             {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataCustomerSegment(item);
                 setShowModalAdd(true);
+                }
               },
             },
           ]

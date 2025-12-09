@@ -145,14 +145,17 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
   ];
 
   const actionsTable = (item: ICustomerSourceResponse): IAction[] => {
-      const isCheckedItem = listIdChecked?.includes(item.id);
+      const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["CUSTOMER_SOURCE_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCustomerSource(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["CUSTOMER_SOURCE_DELETE"] == 1 && {

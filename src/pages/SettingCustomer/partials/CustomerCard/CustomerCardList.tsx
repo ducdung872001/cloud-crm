@@ -149,14 +149,17 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
   ];
 
   const actionsTable = (item: ICardResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["CARD_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCard(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["CARD_DELETE"] == 1 && {

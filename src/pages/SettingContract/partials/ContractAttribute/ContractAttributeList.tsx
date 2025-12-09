@@ -160,14 +160,17 @@ export default function ContractAttributeList(props: IContractAttributeListProps
   ];
 
   const actionsTable = (item: IContractAttributeResponse): IAction[] => {
-        const isCheckedItem = listIdChecked?.includes(item.id);
+        const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["CONTRACT_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataContractAttribute(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["CONTRACT_DELETE"] == 1 && {

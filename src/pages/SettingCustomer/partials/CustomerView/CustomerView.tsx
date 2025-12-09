@@ -141,22 +141,28 @@ export default function CustomerView(props: any) {
   ];
 
   const actionsTable = (item: any): IAction[] => {
-        const isCheckedItem = listIdChecked?.includes(item.id);
+        const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Cài đặt cấu trúc",
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="Settings" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIsSettingCustomerView(true);
           setDataCustomerView(item);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCustomerView(item);
           setShowModalAdd(true);
+          }
         },
       },
       {

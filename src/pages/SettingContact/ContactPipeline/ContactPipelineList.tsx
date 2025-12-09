@@ -157,14 +157,17 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
   ];
 
   const actionsTable = (item: IContactPipelineResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["CONTACT_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataContactPipeline(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["CONTACT_DELETE"] == 1 && {

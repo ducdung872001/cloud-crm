@@ -352,32 +352,41 @@ export default function ServiceList(props: IServiceListProps) {
   ];
 
   const actionsTable = (item: IServiceRespone): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       ...(tab === "tab_one"
         ? [
             {
               title: "Đặc trưng khách hàng",
-              icon: <Icon name="Tag" style={{ width: 18 }} />,
+              icon: <Icon name="Tag" style={{ width: 18 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataService(item);
                 setShowModalConfig(true);
+                }
               },
             },
             {
               title: "Chi tiết dịch vụ",
-              icon: <Icon name="CollectInfo" style={{ width: 17 }} />,
+              icon: <Icon name="CollectInfo" style={{ width: 17 }} className={isCheckedItem ? "icon-disabled" : ""} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataService(item);
                 setShowModalDetail(true);
+                }
               },
             },
             permissions["SERVICE_UPDATE"] == 1 && {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataService(item);
                 setIsAddEditService(!isAddEditService);
+                }
               },
             },
             permissions["SERVICE_DELETE"] == 1 && {
