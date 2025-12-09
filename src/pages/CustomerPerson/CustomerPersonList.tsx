@@ -850,7 +850,7 @@ export default function CustomerPersonList() {
 
     if (response.code === 0) {
       const result = response.result;
-      setListRelationship(result);
+      setListRelationship(result?.items);
     }
   };
 
@@ -2887,7 +2887,7 @@ export default function CustomerPersonList() {
               })}
             </ul>
             <div className="quick__search--right">
-              {width < 1440 && width > 768 && listRelationship.length > 6 ? (
+              {width < 1440 && width > 768 && listRelationship?.length > 6 ? (
                 <Swiper
                   onInit={(core: SwiperCore) => {
                     swiperRelationshipRef.current = core.el;
@@ -2901,7 +2901,7 @@ export default function CustomerPersonList() {
                   slidesPerView={6}
                   spaceBetween={8}
                 >
-                  {listRelationship.map((item, idx) => {
+                  {listRelationship?.map((item, idx) => {
                     return (
                       <SwiperSlide key={idx} className="list__relationship--slide">
                         <div
@@ -2920,7 +2920,7 @@ export default function CustomerPersonList() {
                 </Swiper>
               ) : (
                 <div className="list__relationship">
-                  {listRelationship.map((item, idx) => {
+                  {listRelationship?.map((item, idx) => {
                     return (
                       <div
                         key={idx}
