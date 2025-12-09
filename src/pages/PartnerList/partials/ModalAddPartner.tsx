@@ -359,7 +359,7 @@ export default function ModalAddPartner(props: any) {
         setValidateRegex({ ...validateRegex, phone: false });
       }
 
-      if (formData?.values?.email && !new RegExp(PHONE_REGEX).test(formData?.values.email)) {
+      if (formData?.values?.email && !new RegExp(EMAIL_REGEX).test(formData?.values.email)) {
         setValidateRegex({ ...validateRegex, email: true });
       } else {
         setValidateRegex({ ...validateRegex, email: false });
