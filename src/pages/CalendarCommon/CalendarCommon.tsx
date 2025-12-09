@@ -327,7 +327,7 @@ export default function CalendarCommon() {
           status: item.status,
         };
       });
-      setListSchedule(result);
+      setListSchedule(result.items);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
