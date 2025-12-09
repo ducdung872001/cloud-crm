@@ -35,6 +35,7 @@ export function UploadFileRenderer(props) {
 
   // Khi UploadFile thay đổi
   function handleUploadFileChange(newValue) {
+    console.log("handleUploadFileChange", newValue);
     props.onChange({
       field: field, // object field từ props
       value: JSON.stringify(newValue),

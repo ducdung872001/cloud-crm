@@ -72,7 +72,7 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
     const response = await CustomerSourceService.list(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
-      const result = response.result.items;
+      const result = response.result;
       setListCustomerSource(result);
 
       setPagination({

@@ -348,7 +348,6 @@ export default function AddFS(props: IAddFSProps) {
     const body = {
       ...formData.values,
       ...(data ? { id: data.id } : {}),
-      status: 0,
     };
 
     const response = await FSQuoteService.update(body);
