@@ -101,6 +101,10 @@ export default function ModalAddField(props: any) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
       return;
     }
+
+    if(formData?.values.rate && +formData?.values.rate < 0){
+        return;
+    }
     setIsSubmit(true);
 
     const body: any = {

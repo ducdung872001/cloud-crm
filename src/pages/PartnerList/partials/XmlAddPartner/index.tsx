@@ -201,6 +201,8 @@ export default function XmlAddPartner(props: any) {
         email: "emailMasked",
       };
       const mapped = mapConfigData(initFormSchema, data, mapPartnerAttribute, partnerExtraInfos, exceptionField);
+      console.log("mapped>>>", mapped);
+
       setDataInit(mapped);
     }
   }, [initFormSchema, data, mapPartnerAttribute, partnerExtraInfos, onShow]);

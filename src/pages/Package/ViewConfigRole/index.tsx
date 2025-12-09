@@ -73,7 +73,7 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
   const getListPermissionRole = async (makeReload: boolean) => {
     makeReload && setIsLoading(true);
 
-    const response = await RolePermissionService.rolePermission(data?.id, params?.name);
+    const response = await RolePermissionService.packagePermission(data?.id, params?.name);
 
     if (response.code === 0) {
       const result = response.result;
@@ -117,12 +117,12 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
   //! đoạn này xử lý vấn đề thêm quyền cho một nhóm quyền
   const getPermissionDepartmentAdd = async (resourceId, actions) => {
     const body = {
-      roleId: data?.id,
+      packageId: data?.id,
       resourceId: resourceId,
       actions: JSON.stringify(actions),
     };
 
-    const response = await RolePermissionService.permissionRoleAdd(body);
+    const response = await RolePermissionService.packagePermissionAdd(body);
 
     if (response.code === 0) {
       showToast("Thêm quyền thành công", "success");
@@ -137,7 +137,7 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
   //! đoạn này xử lý vấn đề xóa đi 1 quyền cho nhóm quyền
   const getPermissionDepartmentDelete = async (resourceId, actions) => {
     const body = {
-      roleId: data?.id,
+      packageId: data?.id,
       resourceId: resourceId,
       actions: JSON.stringify(actions),
     };
@@ -165,14 +165,14 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
     let arrPromise = [];
     dataRole.map(() => {
       const body = {
-        roleId: data?.id,
+        packageId: data?.id,
         resourceId: resourceId,
         actions: JSON.stringify(JSON.parse(actions || "[]")),
       };
 
       // eslint-disable-next-line prefer-const
       let promise = new Promise((resolve, reject) => {
-        RolePermissionService.permissionRoleAdd(body).then((res) => {
+        RolePermissionService.packagePermissionAdd(body).then((res) => {
           resolve(res);
         });
       });
@@ -184,15 +184,15 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
       showToast("Thêm quyền thành công", "success");
 
       //Lặp để checked
-      dataRole.map((jobTitle) => {
-        // eslint-disable-next-line prefer-const
-        let arrCheck = Array.prototype.slice.call(
-          document.querySelector(`#resource_row_${resourceId}_${jobTitle.id}`).querySelectorAll('input[type="checkbox"]')
-        );
-        (arrCheck || []).map((checkItem) => {
-          checkItem.checked = true;
-        });
-      });
+      // dataRole.map((jobTitle) => {
+      //   // eslint-disable-next-line prefer-const
+      //   let arrCheck = Array.prototype.slice.call(
+      //     document.querySelector(`#resource_row_${resourceId}_${jobTitle.id}`).querySelectorAll('input[type="checkbox"]')
+      //   );
+      //   (arrCheck || []).map((checkItem) => {
+      //     checkItem.checked = true;
+      //   });
+      // });
     });
 
     //Load lại quyền cho tài khoản này => Để test luôn
@@ -226,21 +226,21 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
       arrPromise.push(promise);
     });
 
-    Promise.all(arrPromise).then((result) => {
-      // console.log("result =>", result);
-      showToast("Gỡ quyền thành công", "success");
+    // Promise.all(arrPromise).then((result) => {
+    //   // console.log("result =>", result);
+    //   showToast("Gỡ quyền thành công", "success");
 
-      //Lặp để unchecked
-      dataRole.map((jobTitle) => {
-        // eslint-disable-next-line prefer-const
-        let arrCheck = Array.prototype.slice.call(
-          document.querySelector(`#resource_row_${resourceId}_${jobTitle.id}`).querySelectorAll('input[type="checkbox"]')
-        );
-        (arrCheck || []).map((checkItem) => {
-          checkItem.checked = false;
-        });
-      });
-    });
+    //   //Lặp để unchecked
+    //   dataRole.map((jobTitle) => {
+    //     // eslint-disable-next-line prefer-const
+    //     let arrCheck = Array.prototype.slice.call(
+    //       document.querySelector(`#resource_row_${resourceId}_${jobTitle.id}`).querySelectorAll('input[type="checkbox"]')
+    //     );
+    //     (arrCheck || []).map((checkItem) => {
+    //       checkItem.checked = false;
+    //     });
+    //   });
+    // });
 
     //Load lại quyền cho tài khoản này => Để test luôn
     reloadPermissions();
@@ -262,14 +262,14 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
     resources.map((resource, idxResource) => {
       dataRole.map((jobTitle, idx) => {
         const body = {
-          roleId: data?.id,
+          packageId: data?.id,
           resourceId: resource.id,
           actions: JSON.stringify(JSON.parse(resource?.actions || "[]")),
         };
 
         // eslint-disable-next-line prefer-const
         let promise = new Promise((resolve, reject) => {
-          RolePermissionService.permissionRoleAdd(body).then((res) => {
+          RolePermissionService.packagePermissionAdd(body).then((res) => {
             resolve(res);
           });
         });
@@ -277,15 +277,15 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
       });
 
       //Lặp để checked
-      dataRole.map((jobTitle) => {
-        // eslint-disable-next-line prefer-const
-        let arrCheck = Array.prototype.slice.call(
-          document.querySelector(`#resource_row_${resource.id}_${jobTitle.id}`).querySelectorAll('input[type="checkbox"]')
-        );
-        (arrCheck || []).map((checkItem) => {
-          checkItem.checked = true;
-        });
-      });
+      // dataRole.map((jobTitle) => {
+      //   // eslint-disable-next-line prefer-const
+      //   let arrCheck = Array.prototype.slice.call(
+      //     document.querySelector(`#resource_row_${resource.id}_${jobTitle.id}`).querySelectorAll('input[type="checkbox"]')
+      //   );
+      //   (arrCheck || []).map((checkItem) => {
+      //     checkItem.checked = true;
+      //   });
+      // });
     });
 
     Promise.all(arrPromise).then((result) => {
@@ -312,7 +312,7 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
     resources.map((resource, idxResource) => {
       dataRole.map(() => {
         const body = {
-          roleId: data?.id,
+          packageId: data?.id,
           resourceId: resource.id,
           actions: JSON.stringify(JSON.parse(resource?.actions || "[]")),
         };
@@ -328,15 +328,15 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
       });
 
       //Lặp để unchecked
-      dataRole.map((jobTitle) => {
-        // eslint-disable-next-line prefer-const
-        let arrCheck = Array.prototype.slice.call(
-          document.querySelector(`#resource_row_${resource.id}_${jobTitle.id}`).querySelectorAll('input[type="checkbox"]')
-        );
-        (arrCheck || []).map((checkItem) => {
-          checkItem.checked = false;
-        });
-      });
+      // dataRole.map((jobTitle) => {
+      //   // eslint-disable-next-line prefer-const
+      //   let arrCheck = Array.prototype.slice.call(
+      //     document.querySelector(`#resource_row_${resource.id}_${jobTitle.id}`).querySelectorAll('input[type="checkbox"]')
+      //   );
+      //   (arrCheck || []).map((checkItem) => {
+      //     checkItem.checked = false;
+      //   });
+      // });
     });
 
     Promise.all(arrPromise).then((result) => {
@@ -468,7 +468,7 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
                                   }}
                                 />
                               </div>
-                              {element?.lstRolePermission.map((permission, subIdxPermission) => {
+                              {element?.lstPackagePermission.map((permission, subIdxPermission) => {
                                 const mapData = ["", "", "", "", "", ""];
                                 const checked = JSON.parse(permission?.actions ? permission.actions : "[]");
                                 JSON.parse(element?.actions ? element.actions : "[]").map((box) => {
@@ -478,7 +478,7 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
                                 return (
                                   <div
                                     key={`idx_${subIdxPermission}`}
-                                    id={`resource_row_${element.id}_${permission.roleId}`}
+                                    id={`resource_row_${element.id}_${permission.packageId}`}
                                     className={`permission__check department__permission--${dataRole.length}`}
                                   >
                                     {mapData.map((dataItem: any, idxBox) => {
@@ -532,7 +532,6 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
         </CustomScrollbar>
       </ModalBody>
       <ModalFooter actions={actions} />
-      
     </div>
   );
 }

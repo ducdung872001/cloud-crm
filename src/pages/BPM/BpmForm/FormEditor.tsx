@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FormEditor } from "@bpmn-io/form-js-editor";
-import i18next from "i18next";
 import "./FormEditor.scss";
 import Icon from "components/icon";
 import Tippy from "@tippyjs/react";
-import Button from "components/button/button";
 
 import "@bpmn-io/form-js/dist/assets/form-js.css";
 import "@bpmn-io/form-js/dist/assets/form-js-editor.css";
@@ -14,6 +12,8 @@ import ButtonExportNode from "../BusinessProcessCreate/components/ButtonExportNo
 // Grid
 import GridExtension from "./extension/grid/render";
 import PropertiesPanelGridPropertiesPanel from "./extension/grid/propertiesPanel";
+import UploadFileExtension from "./extension/uploadFile/render";
+import PropertiesPanelUploadFilePropertiesPanel from "./extension/uploadFile/propertiesPanel";
 import ModalConfigGrid from "./partials/ModalConfigGrid";
 import ModalConfigLinkingGrid from "./partials/ModalConfigLinkingGrid";
 
@@ -51,6 +51,8 @@ const FormEditorComponent = ({
         // Đóng tạm vì gây lỗi khi build lên môi trường production
         GridExtension,
         PropertiesPanelGridPropertiesPanel,
+        UploadFileExtension,
+        PropertiesPanelUploadFilePropertiesPanel,
       ],
 
       // load properties panel extension
