@@ -73,7 +73,7 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListCustomerGroup(result);
+      setListCustomerGroup(result.items);
 
       setPagination({
         ...pagination,

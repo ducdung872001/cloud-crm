@@ -72,7 +72,7 @@ export default function CustomerRelationshipList(props: ICustomerRelationshipLis
 
     if (response.code === 0) {
       const result = response.result;
-      setListRelationShip(result);
+      setListRelationShip(result.items);
 
       setPagination({
         ...pagination,

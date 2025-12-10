@@ -73,7 +73,7 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
 
     if (response.code === 0) {
       const result = response.result;
-      setListCustomerSource(result);
+      setListCustomerSource(result.items);
 
       setPagination({
         ...pagination,

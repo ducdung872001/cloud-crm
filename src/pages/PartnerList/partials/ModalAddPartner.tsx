@@ -12,8 +12,8 @@ import { AddCustomerModalProps } from "model/customer/PropsModel";
 import { ICustomerRequest } from "model/customer/CustomerRequestModel";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { useActiveElement, useOnClickOutside } from "utils/hookCustom";
-import { EMAIL_REGEX, PHONE_REGEX } from "utils/constant";
-import { SelectOptionData } from "utils/selectCommon";
+import { EMAIL_REGEX, PARTNER_CODE_REGEX, PARTNER_NAME_REGEX, PHONE_REGEX, TAX_CODE_REGEX } from "utils/constant";
+import { SelectOptionData } from "utils/selectCommon"
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import { convertToId } from "reborn-util";
@@ -51,7 +51,7 @@ export default function ModalAddPartner(props: any) {
   const [partnerExtraInfos, setPartnerExtraInfos] = useState<any>([]);
   const [isShowPhone, setIsShowPhone] = useState<boolean>(false);
   const [isShowEmail, setIsShowEmail] = useState<boolean>(false);
-  const [activeCode, setActiveCode] = useState(false);
+  const [activeCode, setActiveCode] = useState(true);
   const [listCustomer, setListCustomer] = useState<IOption[]>(null);
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
 
@@ -187,11 +187,19 @@ export default function ModalAddPartner(props: any) {
       : []),
     {
       name: "name",
-      rules: "required",
+      rules: "required|regex",
+    },
+    {
+      name: "taxCode",
+      rules: "regex",
     },
     {
       name: "phone",
       rules: "nullable|regex",
+    },
+    {
+      name: "code",
+      rules: "regex",
     },
     {
       name: "email",
@@ -215,14 +223,19 @@ export default function ModalAddPartner(props: any) {
           name: "name",
           type: "text",
           fill: true,
-          required: true,
+          required: true, // Chỉ kiểm tra bắt buộc nhập. Không kiểm tra format.
+          regex: new RegExp(PARTNER_NAME_REGEX),
+          messageErrorRegex: "Tên đối tác sai định dạng",
+          
         },
         {
           label: "Mã đối tác",
           name: "code",
           type: "text",
           fill: true,
-          disabled: activeCode,
+          // disabled: activeCode,
+          regex: new RegExp(PARTNER_CODE_REGEX),
+          messageErrorRegex: "Mã đối tác sai định dạng",
         },
       ] as IFieldCustomize[],
     [activeCode]
@@ -260,6 +273,8 @@ export default function ModalAddPartner(props: any) {
           type: "text",
           fill: true,
           required: false,
+          regex: new RegExp(TAX_CODE_REGEX),
+          messageErrorRegex: "Mã số thuế sai định dạng",
         },
         {
           label: "Người đại diện pháp luật",
