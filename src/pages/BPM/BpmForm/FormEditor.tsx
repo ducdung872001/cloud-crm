@@ -9,11 +9,13 @@ import "@bpmn-io/form-js/dist/assets/form-js-editor.css";
 import "@bpmn-io/form-js/dist/assets/form-js-playground.css";
 import ButtonExportNode from "../BusinessProcessCreate/components/ButtonExportNode/ButtonExportNode";
 
-// Grid
+// Extension
 import GridExtension from "./extension/grid/render";
 import PropertiesPanelGridPropertiesPanel from "./extension/grid/propertiesPanel";
 import UploadFileExtension from "./extension/uploadFile/render";
 import PropertiesPanelUploadFilePropertiesPanel from "./extension/uploadFile/propertiesPanel";
+import MaskedInputExtension from "./extension/maskedInput/render";
+import PropertiesPanelMaskedInputPropertiesPanel from "./extension/maskedInput/propertiesPanel";
 import ModalConfigGrid from "./partials/ModalConfigGrid";
 import ModalConfigLinkingGrid from "./partials/ModalConfigLinkingGrid";
 
@@ -53,6 +55,8 @@ const FormEditorComponent = ({
         PropertiesPanelGridPropertiesPanel,
         UploadFileExtension,
         PropertiesPanelUploadFilePropertiesPanel,
+        MaskedInputExtension,
+        PropertiesPanelMaskedInputPropertiesPanel,
       ],
 
       // load properties panel extension

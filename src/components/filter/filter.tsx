@@ -113,6 +113,24 @@ export default function Filter(props: FilterProps) {
     }
   };
 
+  // Determine carousel display and width based on breakpoints
+  let carouselStyle: any = { width: "100%" };
+  let displayCarousel = false;
+  if (listFilterItem.length > 4) {
+    if (width >= 1880) {
+      displayCarousel = true;
+      carouselStyle = { width: isCollapsedSidebar ? "100rem" : "86rem" };
+    }
+    if (width >= 1133) {
+      displayCarousel = true;
+      carouselStyle = { width: isCollapsedSidebar ? "90rem" : "76rem" };
+    }
+    if (width >= 768) {
+      displayCarousel = true;
+      carouselStyle = { width: isCollapsedSidebar ? "80rem" : "66rem" };
+    }
+  }
+ 
   return (
     <div className="filter-container d-flex">
       {isShowFilterList && (
@@ -167,12 +185,8 @@ export default function Filter(props: FilterProps) {
           )}
         </div>
       )}
-      {width < 1819 && width >= 768 && listFilterItem.length > 4 ? (
-        <div
-          className="filter-box"
-          style={{ width: isCollapsedSidebar ? "90rem" : `76rem` }}
-          // style={{ width: `${listFilterItem.length * (width > 1440 ? 12 : 9)}rem` }}
-        >
+      {displayCarousel ? (
+        <div className="filter-box" style={carouselStyle}>
           <Button
             type="button"
             color="secondary"

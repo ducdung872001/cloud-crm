@@ -1,0 +1,12 @@
+.upload-file-group {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.upload-file-group input {
+  width: 100%;
+}
+.upload-file-group .upload-file-value {
+  margin-left: 4px;
+}
