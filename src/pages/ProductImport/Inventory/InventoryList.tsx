@@ -201,14 +201,17 @@ export default function InventoryList() {
   };
 
   const actionsTable = (item: IInventoryResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["INVENTORY_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataInventory(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["INVENTORY_DELETE"] == 1 && {

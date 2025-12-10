@@ -245,7 +245,7 @@ export default function OrderTracking() {
   ];
 
   const actionsTable = (item: IWorkTypeResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Xóa",

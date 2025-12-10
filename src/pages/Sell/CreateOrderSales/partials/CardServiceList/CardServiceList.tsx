@@ -108,12 +108,16 @@ export default function CardServiceList(props: ICardServiceListProps) {
   ];
 
   const actionsTable = (item: ICardInvoiceServiceResponse): IAction[] => {
+        const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+                    disabled: isCheckedItem,
         callback: () => {
+                    if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+                    }
         },
       },
     ];

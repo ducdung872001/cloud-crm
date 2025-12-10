@@ -233,23 +233,35 @@ export default function Package() {
   ];
 
   const actionsTable = (item: any): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: item.status === 1 ? "Đang hiệu lực" : "Tạm dừng",
-        icon: <Icon name={!item.status ? "WarningCircle" : "CheckedCircle"} className={!item.status ? "icon-warning" : "icon-success"} />,
+        icon: <Icon name={!item.status ? "WarningCircle" : "CheckedCircle"} className={
+        isCheckedItem
+          ? "icon-disabled"
+          : !item.status
+          ? "icon-warning"
+          : "icon-success"
+      } />,
+      disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirm(item);
+          }
         },
       },
       ...(item.status !== 1
         ? [
             {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataPackage(item);
                 setShowModalAdd(true);
+                }
               },
             },
             {

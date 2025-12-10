@@ -194,7 +194,7 @@ export default function EmailList() {
   ];
 
   const actionsTable = (item: IEmailResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     // console.log('item', item);
 
     return [
@@ -207,13 +207,16 @@ export default function EmailList() {
       // },
       permissions["CUSTOMER_ADD"] == 1 && {
         title: "Phản hồi",
-        icon: <Icon name="Reply" />,
+        icon: <Icon name="Reply" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           // showDialogConfirmDelete(item);
           setDataEmail({
             emailFrom: item?.emailFrom || "",
           });
           setShowModalAdd(true);
+          }
         },
       },
       permissions["CUSTOMER_DELETE"] == 1 && {

@@ -131,11 +131,14 @@ export default function ServiceProductList(props: IServiceProductListProps) {
   ];
 
   const actionsTable = (item: IProductInvoiceServiceResponse): IAction[] => {
+        const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                    disabled: isCheckedItem,
         callback: async () => {
+                    if (!isCheckedItem) {
           if (item.bptId > 0) {
             const response = await BoughtProductService.detail(item.bptId);
             if (response.code === 0) {
@@ -157,13 +160,17 @@ export default function ServiceProductList(props: IServiceProductListProps) {
               showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
             }
           }
+        }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+                    disabled: isCheckedItem,
         callback: () => {
+                    if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+                    }
         },
       },
     ];

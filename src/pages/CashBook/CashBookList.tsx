@@ -267,15 +267,18 @@ export default function CashBookList() {
   const dataFormat = ["text-center", "", "text-center", "", "", "text-right"];
 
   const actionsTable = (item: ICashBookResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["CASHBOOK_UPDATE"] == 1 && {
         title: `Sửa phiếu ${item.type == 1 ? "thu" : "chi"}`,
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCashBook(item);
           setTypeProps(item.type);
           setShowModalCashBook(true);
+          }
         },
       },
       permissions["CASHBOOK_DELETE"] == 1 && {

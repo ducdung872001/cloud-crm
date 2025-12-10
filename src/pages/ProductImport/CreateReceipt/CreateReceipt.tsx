@@ -110,14 +110,17 @@ export default function CreateReceipt() {
   ];
 
   const actionsTable = (item: IInvoiceDetailResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataInvoiceDetail(item);
           setShowModalAdd(true);
+          }
         },
       },
       {

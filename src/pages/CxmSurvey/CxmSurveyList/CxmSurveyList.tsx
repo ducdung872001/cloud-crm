@@ -258,23 +258,29 @@ export default function CxmSurveyList(props: any) {
   };
 
   const actionsTable = (item: any): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return item.headquarter === 1
       ? [
           {
             title: item.status == 2 ? "Đang hoạt động" : "Ngưng hoạt động",
-            icon: <Icon name={item.status == 2 ? "Lock" : "Unlock"} />,
+            icon: <Icon name={item.status == 2 ? "Lock" : "Unlock"} className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+              if (!isCheckedItem) {
               showDialogConfirmActiveBuilding(item);
+              }
             },
           },
 
           {
             title: "Sửa",
-            icon: <Icon name="Pencil" />,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+              if (!isCheckedItem) {
               setDataSurvey(item);
               setShowModalAddCxmSurvey(true);
+              }
             },
           },
         ]
@@ -288,10 +294,13 @@ export default function CxmSurveyList(props: any) {
           // },
           {
             title: "Sửa",
-            icon: <Icon name="Pencil" />,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+              if (!isCheckedItem) {
               setDataSurvey(item);
               setShowModalAddCxmSurvey(true);
+              }
             },
           },
           {

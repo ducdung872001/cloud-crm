@@ -271,47 +271,63 @@ export default function DepartmentDirectoryList(props: IDepartmentDirectoryListP
   ];
 
   const actionsTable = (item: IDepartmentResponse): IAction[] => {
+        const isCheckedItem = listIdChecked?.length > 0;
     return item.leadership === 1
       ? [
           {
             title: "Đơn giá",
-            icon: <Icon name="Dollar" />,
+            icon: <Icon name="Dollar" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               setDataDepartment(item);
               setShowModalUnitPrice(true);
+                        }
             },
           },
           permissions["DEPARTMENT_UPDATE"] == 1 && {
             title: "Sửa",
-            icon: <Icon name="Pencil" />,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               setIdDepartment(item.id);
               setShowModalAdd(true);
+                        }
             },
           },
         ]
       : [
           {
             title: "Đơn giá",
-            icon: <Icon name="Dollar" />,
+            icon: <Icon name="Dollar" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               setDataDepartment(item);
               setShowModalUnitPrice(true);
+                        }
             },
           },
           permissions["DEPARTMENT_UPDATE"] == 1 && {
             title: "Sửa",
-            icon: <Icon name="Pencil" />,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               setIdDepartment(item.id);
               setShowModalAdd(true);
+                        }
             },
           },
           permissions["DEPARTMENT_DELETE"] == 1 && {
             title: "Xóa",
-            icon: <Icon name="Trash" className="icon-error" />,
+            icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+            disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               showDialogConfirmDelete(item);
+                        }
             },
           },
         ];

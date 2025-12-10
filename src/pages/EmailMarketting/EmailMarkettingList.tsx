@@ -325,29 +325,34 @@ export default function EmailMarkettingList() {
   ];
 
   const actionsTable = (item: ISendEmailResponseModel): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       ...(item.statusAction == 0
         ? ([
             permissions["EMAIL_REQUEST_IMPORT"] == 1 && {
               title: "Phê duyệt",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 if(listEmailConfig && listEmailConfig.length > 0){
                   onApprove(item.id);
                 } else {
                   showDialogCheckResourceEmail();
                 }
-
+              }
               },
             },
             permissions["EMAIL_REQUEST_UPDATE"] == 1 && {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setIdSendEmail(item.id);
                 setShowPageSendEmail(true);
                 setCheckAdd(true);
+                }
               },
             },
             permissions["EMAIL_REQUEST_DELETE"] == 1 && {
@@ -365,9 +370,12 @@ export default function EmailMarkettingList() {
         ? ([
             permissions["EMAIL_REQUEST_IMPORT"] == 1 && {
               title: "Hủy yêu cầu",
-              icon: <Icon name="TimesCircle" className="icon-error" />,
+              icon: <Icon name="TimesCircle" className={isCheckedItem? "icon-disabled":"icon-error"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmCancel(item);
+                }
               },
             },
           ] as IAction[])

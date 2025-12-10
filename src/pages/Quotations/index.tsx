@@ -323,12 +323,14 @@ export default function Quotations() {
   };
 
   const actionsTable = (item): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Tải xuống file báo giá",
-        icon: <Icon name="Download" />,
+        icon: <Icon name="Download" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           if(item.quoteType === 1){
             let fieldName = convertToId(item.name) || "";
             const type = item.quoteAttachment?.includes(".docx")
@@ -348,19 +350,23 @@ export default function Quotations() {
           } else {
             handleCheckValidateSignature(item, "export");
           }
+        }
         },
       },
       ...(item.status
         ? [
             {
               title: "Xem lịch sử ký",
-              icon: <Icon name="ImpactHistory" />,
+              icon: <Icon name="ImpactHistory" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataQuote({
                   ...item,
                   template: item.quoteAttachment
                 });
                 setHasHistorySignature(true);
+              }
               },
             },
           ]
@@ -369,14 +375,17 @@ export default function Quotations() {
         ? [
             {
               title: "Trình ký",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataQuote(item);
                 if(item.quoteType === 2){
                   handleCheckValidateSignature(item, "signature");
                 } else {
                   setHasSignature(true);
                 }
+              }
               },
             },
           ]
@@ -394,18 +403,24 @@ export default function Quotations() {
             item.quoteType === 2 &&
             {
               title: "Cấu hình báo giá",
-              icon: <Icon name="Settings" />,
+              icon: <Icon name="Settings" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataQuote(item);
                 item.sheetId ? setShowModalSetingQuote(true) : setShowModalChooseTemplate(true);
+                }
               },
             },
             {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setShowModalAdd(true);
                 setDataQuote(item);
+                }
               },
             },
             {
@@ -423,9 +438,12 @@ export default function Quotations() {
         ? [
             {
               title: "Tạm dừng trình ký",
-              icon: <Icon name="WarningCircle" className="icon-warning" />,
+              icon: <Icon name="WarningCircle" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "pending");
+                }
               },
             },
           ]
@@ -433,16 +451,22 @@ export default function Quotations() {
         ? [
             {
               title: "Tiếp tục trình ký",
-              icon: <Icon name="InfoCircle" className="icon-success" />,
+              icon: <Icon name="InfoCircle" className={isCheckedItem?"icon-disabled" : "icon-success"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "play");
+                }
               },
             },
             {
               title: "Trình ký lại",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "inital");
+                }
               },
             },
           ]
@@ -451,10 +475,13 @@ export default function Quotations() {
         ? [
             {
               title: "Cấu hình báo giá",
-              icon: <Icon name="Settings" />,
+              icon: <Icon name="Settings" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataQuote(item);
                 item.sheetId ? setShowModalSetingQuote(true) : setShowModalChooseTemplate(true);
+                }
               },
             },
           ]

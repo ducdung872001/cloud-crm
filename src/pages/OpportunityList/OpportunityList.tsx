@@ -188,14 +188,17 @@ export default function OpportunityList() {
   ];
 
   const actionsTable = (item: IWorkTypeResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.includes(item.id);
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataOpportunity(item);
           setShowModalAdd(true);
+          }
         },
       },
       {

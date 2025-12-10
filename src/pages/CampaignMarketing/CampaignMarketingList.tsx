@@ -305,6 +305,7 @@ export default function CampaignMarketingList() {
   ];
 
   const actionsTable = (item: any): IAction[] => {
+        const isCheckedItem = listIdChecked?.length > 0;
     return [
       // {
       //   title: "Xem chi tiết",
@@ -316,18 +317,24 @@ export default function CampaignMarketingList() {
       // },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" style={{ width: 18 }} />,
+        icon: <Icon name="Pencil" style={{ width: 18 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIdCampaignMA(item.id);
           setDataCampaignMA(item);
           setShowModalAdd(true);
+          }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" style={{ width: 19 }} />,
+        icon: <Icon name="Trash" className={isCheckedItem? "icon-disabled":"icon-error"} style={{ width: 19 }} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];

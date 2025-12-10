@@ -468,42 +468,58 @@ export default function OrderInvoiceList() {
   };
 
   const actionsTable = (item: IOrderResponseModel): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Xem chi tiết",
-        icon: <Icon name="Eye" />,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIdOrderInvoice(item.id);
           setDataInvoice(item);
           setShowModalDetail(true);
+          }
         },
       },
       {
         title: "Chỉnh sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           navigate(`/order?id=${item.id}&type=edit`);
+          }
         },
       },
       {
         title: "Đang xử lý",
-        icon: <Icon name="WarningCircle" className="icon-warning" />,
+        icon: <Icon name="WarningCircle" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item, "processing");
+          }
         },
       },
       {
         title: "Duyệt hóa đơn",
-        icon: <Icon name="FingerTouch" className="icon-warning" />,
+        icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item, "confirm");
+          }
         },
       },
       {
         title: "Hủy hóa đơn",
-        icon: <Icon name="TimesCircleFill" className="icon-error" />,
+        icon: <Icon name="TimesCircleFill" className={isCheckedItem? "icon-disabled":"icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item, "cancel");
+          }
         },
       },
     ];
