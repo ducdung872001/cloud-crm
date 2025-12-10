@@ -263,25 +263,93 @@ const FormViewerComponent = (props: any) => {
     });
   };
 
+  /**
+   Hàm này dùng để biến đổi dữ liệu được nhập ở properties với value =  curr.[fieldKey]
+   => thành dạng {key: value}
+   */
   const getParamsPropertiesEform = (apiParams, formData) => {
     let paramsTotal = {}
     if (apiParams) {
       const params = apiParams.replace(/curr\.(\w+)/g, (match, key) => {
         const value = formData[key];
         return value !== undefined && value !== null ? value : "null";
-      });
-
-      paramsTotal ={
-        ...Object.fromEntries(
-        params.split(",").map(part => {
-          const [key, ...rest] = part.split("=");
-          const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
-          return [key.trim(), value];
-        })
-      )};
+      });      
+      paramsTotal = convertDataParamsProperties(params);     
     }
-
     return paramsTotal;
+  };
+
+  const convertDataParamsProperties = (params) => {
+    const data = Object.fromEntries(
+      params.split(",").map(part => {
+        const [key, ...rest] = part.split("=");
+        const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
+        return [key.trim(), value];
+      })
+    );     
+    return data;
+  }
+
+  //Xủ lý dữ liệu khởi tạo ban đầu 
+  const walkInitData = (components, potId, processId) => {
+    let filterItems = [];
+    if (components && components.length > 0) {
+      components.forEach(comp => {
+        let apiUrl = comp?.properties?.apiUrl || "";
+        if (comp.type === "group") {
+          if (!comp.label?.includes("▼") && !comp.label?.includes("▲")) {
+            comp.properties = {
+              ...comp.properties,
+              labelId: `group-label-${comp.key}`,
+            };
+          };
+        };
+
+        if (comp.type === "select" && comp.valuesKey) {
+          // Lấy valuesKey từ component,
+          // Lấy ra các tham số được gán khởi tạo
+          // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
+          let key = comp.valuesKey;
+          let paramsUrl = comp?.properties?.paramsUrl || "";
+          const paramsTotal = convertDataParamsProperties(paramsUrl);
+          filterItems.push({ key, paramsTotal, compKey: comp.key, type: "select", apiUrl: apiUrl });
+        };
+
+        //Lịch sử phê duyệt
+        if (comp.type === "table") {
+          let params = comp.properties || "";
+          if (params && params?.type == "approval" && params?.controlType == "list") {
+            filterItems.push({ key: comp.id, params: { groupCode: params?.groupCode, potId, processId }, type: "log" });
+          }
+        }
+    
+        if (Array.isArray(comp.components) && comp.components.length > 0) {
+          walkInitData(comp.components, potId, processId);
+        }
+      });
+    };
+
+    return filterItems;
+  }
+
+  //Đăng ký lắng nghe sự kiện scroll/option trong component select
+  const walkGetOptionSelect = (components, dataOption, filterItem) => {
+    let filterItems = [];
+    if (components && components.length > 0) {
+      components.forEach(comp => {
+        if (comp.type === "select" && comp.key == filterItem.compKey) {
+          // Cập nhật lại vào component trường values
+          comp.values = dataOption || [];
+          delete comp.valuesKey;
+        }
+    
+        if (Array.isArray(comp.components) && comp.components.length > 0) {
+          walkGetOptionSelect(comp.components, dataOption, filterItem);
+        }
+      });
+    };
+
+    return filterItems;
   }
 
   useEffect(() => {
@@ -565,13 +633,7 @@ const FormViewerComponent = (props: any) => {
         let apiUrl = formField?.properties?.apiUrl || "";
         let paramsUrl = formField?.properties?.paramsUrl || "";
 
-        const paramsTotal = Object.fromEntries(
-          paramsUrl.split(",").map((part) => {
-            const [key, ...rest] = part.split("=");
-            const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
-            return [key.trim(), value];
-          })
-        );;
+        const paramsTotal = convertDataParamsProperties(paramsUrl);
 
         //Tồn tại trường binding
         if (fields) {
@@ -620,19 +682,10 @@ const FormViewerComponent = (props: any) => {
               // Nếu không có giá trị, trả về `null`, ngược lại trả về giá trị
               return value !== undefined && value !== null ? value : "null";
             });
-
             params.apiParams = apiParams;
           }
 
-          const paramsTotal = Object.fromEntries(
-            apiParams.split(",").map((part) => {
-              const [key, ...rest] = part.split("=");
-              const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
-              return [key.trim(), value];
-            })
-          );
-
-          // console.log("params from api =>", params);
+          const paramsTotal = convertDataParamsProperties(apiParams);
           // const resp = await RestService.post(params);
           const resp = await CallApiCommon(attrs?.apiUrl, { ...paramsTotal });
 
@@ -644,13 +697,10 @@ const FormViewerComponent = (props: any) => {
           let updatedFormSchema = null;
           if (attrs.apiOutputType == "array") {
             updatedFormSchema = bindingToTable(attrs, resp);
-            // console.log("F1 =>", updatedFormSchema);
           }
 
           //2. object|scalar => Ra trường nào đó
           if (attrs.apiOutputType == "object") {
-            // console.log("F2 =>");
-
             //Lấy ra các trường target cần phải binding
             // console.log("object type =>", attrs.apiOutputType);
 
@@ -670,7 +720,6 @@ const FormViewerComponent = (props: any) => {
 
       //Trường hợp reset co callback => Thực hiện callback
       if (formField?.action == "reset") {
-        // console.log("reset action");
         let attrs = formField?.properties;
         if (attrs?.callback) {
           document.location = attrs.callback;
@@ -679,7 +728,6 @@ const FormViewerComponent = (props: any) => {
 
       if (formField?.action == "submit") {
         const codeTemplateEform = formField?.properties?.codeTemplateEform;
-        // console.log("codeTemplateEform", codeTemplateEform);
         if (codeTemplateEform) {
           if (setShowPopupCustom) {
             setShowPopupCustom(true);
@@ -818,8 +866,6 @@ const FormViewerComponent = (props: any) => {
      * Tìm kiếm trên trường => Load theo từ khóa
      */
     formViewerRef.current.on("formField.search", async (event) => {
-      // // console.log('event search =>', event);
-      // // console.log('event search value =>', event.value);
       const name = event.value;
       const formField = event.formField;
 
@@ -851,8 +897,6 @@ const FormViewerComponent = (props: any) => {
       formSchema.components.forEach((component) => {
         // Kiểm tra nếu component có type là 'iframe'
         if (component.type === "button") {
-          // console.log("iframe", component.url);
-
           //Đoạn xử lý dùng theo link tương đối không cần phải nhập trước https://
           let componentUrl = "";
           if (component.url?.includes("https://")) {
@@ -939,8 +983,6 @@ const FormViewerComponent = (props: any) => {
     updatedFormSchema.components.forEach((component) => {
       // Kiểm tra nếu component có type là 'iframe'
       if (component.type === "iframe" && component.url) {
-        // console.log("iframe", component.url);
-
         //Đoạn xử lý dùng theo link tương đối không cần phải nhập trước https://
         let componentUrl = "";
         if (component.url?.includes("https://") || component.url?.includes("http://")) {
@@ -1052,171 +1094,133 @@ const FormViewerComponent = (props: any) => {
     const nodeId = contextData?.nodeId;
     const potId = contextData?.potId;
     const processId = contextData?.processId;
-    let filterItems = [];
+    let filterItems = walkInitData(updatedFormSchema.components, potId, processId);
 
     //Kiểm tra có các trường hợp select (mà có valuesKey => Thực hiện khởi tạo dữ liệu)
-    updatedFormSchema.components.forEach((component) => {
-      let apiUrl = component?.properties?.apiUrl || "";
-      // Kiểm tra nếu component có type là 'select'
-      if (component.type === "group") {
-        if (!component.label?.includes("▼") && !component.label?.includes("▲")) {
-          // component.label += " ▲";
-          component.properties = {
-            ...component.properties,
-            labelId: `group-label-${component.key}`,
-          };
-        }
+    // updatedFormSchema.components.forEach((component) => {
+    //   let apiUrl = component?.properties?.apiUrl || "";
+    //   // Kiểm tra nếu component có type là 'select'
+    //   if (component.type === "group") {
+    //     if (!component.label?.includes("▼") && !component.label?.includes("▲")) {
+    //       // component.label += " ▲";
+    //       component.properties = {
+    //         ...component.properties,
+    //         labelId: `group-label-${component.key}`,
+    //       };
+    //     }
 
-        // Xử lý các group lồng nhau
-        component.components?.forEach((componentL1) => {
-          if (componentL1.type === "group") {
-            if (!componentL1.label?.includes("▼") && !componentL1.label?.includes("▲")) {
-              // componentL1.label += " ▲";
-              componentL1.properties = {
-                ...componentL1.properties,
-                labelId: `group-label-${componentL1.key}`,
-              };
-            }
+    //     // Xử lý các group lồng nhau
+    //     component.components?.forEach((componentL1) => {
+    //       if (componentL1.type === "group") {
+    //         if (!componentL1.label?.includes("▼") && !componentL1.label?.includes("▲")) {
+    //           // componentL1.label += " ▲";
+    //           componentL1.properties = {
+    //             ...componentL1.properties,
+    //             labelId: `group-label-${componentL1.key}`,
+    //           };
+    //         }
 
-            // Nếu có group sâu hơn nữa
-            componentL1.components?.forEach((componentL2) => {
-              if (componentL2.type === "group") {
-                if (!componentL2.label?.includes("▼") && !componentL2.label?.includes("▲")) {
-                  // componentL2.label += " ▲";
-                  componentL2.properties = {
-                    ...componentL2.properties,
-                    labelId: `group-label-${componentL2.key}`,
-                  };
-                }
-              }
-            });
-          }
-        });
-      }
-      if (component.type === "select" && component.valuesKey) {
-        // Lấy valuesKey từ component,
-        // Lấy ra các tham số được gán khởi tạo
-        // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
-        let key = component.valuesKey;
-        let paramsUrl = component?.properties?.paramsUrl || "";
-        const paramsTotal = Object.fromEntries(
-          paramsUrl.split(",").map((part) => {
-            const [key, ...rest] = part.split("=");
-            const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
-            return [key.trim(), value];
-          })
-        );
-        filterItems.push({ key, paramsTotal, compKey: component.key, type: "select", apiUrl: apiUrl });
-      }
+    //         // Nếu có group sâu hơn nữa
+    //         componentL1.components?.forEach((componentL2) => {
+    //           if (componentL2.type === "group") {
+    //             if (!componentL2.label?.includes("▼") && !componentL2.label?.includes("▲")) {
+    //               // componentL2.label += " ▲";
+    //               componentL2.properties = {
+    //                 ...componentL2.properties,
+    //                 labelId: `group-label-${componentL2.key}`,
+    //               };
+    //             }
+    //           }
+    //         });
+    //       }
+    //     });
+    //   }
+    //   if (component.type === "select" && component.valuesKey) {
+    //     // Lấy valuesKey từ component,
+    //     // Lấy ra các tham số được gán khởi tạo
+    //     // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
+    //     let key = component.valuesKey;
+    //     let paramsUrl = component?.properties?.paramsUrl || "";
+    //     const paramsTotal = convertDataParamsProperties(paramsUrl);
+    //     filterItems.push({ key, paramsTotal, compKey: component.key, type: "select", apiUrl: apiUrl });
+    //   }
 
-      //Lặp cấp L1
-      if (component.type == "group") {
-        let componentsL1 = component.components;
-        componentsL1.forEach((componentL1) => {
-          // Kiểm tra nếu component có type là 'select'
-          if (componentL1.type === "select" && componentL1.valuesKey) {
-            // Lấy valuesKey từ component,
-            // Lấy ra các tham số được gán khởi tạo
-            // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
-            let key = componentL1.valuesKey;
-            let paramsUrl = componentL1?.properties?.paramsUrl || "";
-            const paramsTotal = Object.fromEntries(
-              paramsUrl.split(",").map((part) => {
-                const [key, ...rest] = part.split("=");
-                const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
-                return [key.trim(), value];
-              })
-            );
-            // let params = componentL1.properties?.params || "";
-            // params = [];
-            filterItems.push({ key, paramsTotal, compKey: componentL1.key, type: "select" });
-          }
+    //   //Lặp cấp L1
+    //   if (component.type == "group") {
+    //     let componentsL1 = component.components;
+    //     componentsL1.forEach((componentL1) => {
+    //       // Kiểm tra nếu component có type là 'select'
+    //       if (componentL1.type === "select" && componentL1.valuesKey) {
+    //         // Lấy valuesKey từ component,
+    //         // Lấy ra các tham số được gán khởi tạo
+    //         // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
+    //         let key = componentL1.valuesKey;
+    //         let paramsUrl = componentL1?.properties?.paramsUrl || "";
+    //         const paramsTotal = convertDataParamsProperties(paramsUrl);
+    //         filterItems.push({ key, paramsTotal, compKey: componentL1.key, type: "select" });
+    //       }
 
-          //Lặp cấp L2
-          if (componentL1.type == "group") {
-            let componentsL2 = componentL1.components;
-            componentsL2.forEach((componentL2) => {
-              // Kiểm tra nếu component có type là 'select'
-              if (componentL2.type === "select" && componentL2.valuesKey) {
-                // Lấy valuesKey từ component,
-                // Lấy ra các tham số được gán khởi tạo
-                // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
-                let key = componentL2.valuesKey;
-                let paramsUrl = componentL2?.properties?.paramsUrl || "";
-                const paramsTotal = Object.fromEntries(
-                  paramsUrl.split(",").map((part) => {
-                    const [key, ...rest] = part.split("=");
-                    const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
-                    return [key.trim(), value];
-                  })
-                );
-                // let params = componentL2.properties?.params || "";
-                // params = [];
-                filterItems.push({ key, paramsTotal, compKey: componentL2.key, type: "select" });
-              }
+    //       //Lặp cấp L2
+    //       if (componentL1.type == "group") {
+    //         let componentsL2 = componentL1.components;
+    //         componentsL2.forEach((componentL2) => {
+    //           // Kiểm tra nếu component có type là 'select'
+    //           if (componentL2.type === "select" && componentL2.valuesKey) {
+    //             // Lấy valuesKey từ component,
+    //             // Lấy ra các tham số được gán khởi tạo
+    //             // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
+    //             let key = componentL2.valuesKey;
+    //             let paramsUrl = componentL2?.properties?.paramsUrl || "";
+    //             const paramsTotal = convertDataParamsProperties(paramsUrl);
+    //             filterItems.push({ key, paramsTotal, compKey: componentL2.key, type: "select" });
+    //           }
 
-              //Lặp cấp L3
-              if (componentL2.type == "group") {
-                let componentsL3 = componentL2.components;
-                componentsL3.forEach((componentL3) => {
-                  // Kiểm tra nếu component có type là 'select'
-                  if (componentL3.type === "select" && componentL3.valuesKey) {
-                    // Lấy valuesKey từ component,
-                    // Lấy ra các tham số được gán khởi tạo
-                    // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
-                    let key = componentL3.valuesKey;
-                    let paramsUrl = componentL3?.properties?.paramsUrl || "";
-                    const paramsTotal = Object.fromEntries(
-                      paramsUrl.split(",").map((part) => {
-                        const [key, ...rest] = part.split("=");
-                        const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
-                        return [key.trim(), value];
-                      })
-                    );
-                    // let params = componentL3.properties?.params || "";
-                    // params = [];
-                    filterItems.push({ key, paramsTotal, compKey: componentL3.key, type: "select" });
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
+    //           //Lặp cấp L3
+    //           if (componentL2.type == "group") {
+    //             let componentsL3 = componentL2.components;
+    //             componentsL3.forEach((componentL3) => {
+    //               // Kiểm tra nếu component có type là 'select'
+    //               if (componentL3.type === "select" && componentL3.valuesKey) {
+    //                 // Lấy valuesKey từ component,
+    //                 // Lấy ra các tham số được gán khởi tạo
+    //                 // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
+    //                 let key = componentL3.valuesKey;
+    //                 let paramsUrl = componentL3?.properties?.paramsUrl || "";
+    //                 const paramsTotal = convertDataParamsProperties(paramsUrl);
+    //                 filterItems.push({ key, paramsTotal, compKey: componentL3.key, type: "select" });
+    //               }
+    //             });
+    //           }
+    //         });
+    //       }
+    //     });
+    //   }
 
-      //Lịch sử phê duyệt
-      if (component.type === "table") {
-        let params = component.properties || "";
-        if (params && params?.type == "approval" && params?.controlType == "list") {
-          filterItems.push({ key: component.id, params: { groupCode: params?.groupCode, potId, processId }, type: "log" });
-        }
-      }
+    //   //Lịch sử phê duyệt
+    //   if (component.type === "table") {
+    //     let params = component.properties || "";
+    //     if (params && params?.type == "approval" && params?.controlType == "list") {
+    //       filterItems.push({ key: component.id, params: { groupCode: params?.groupCode, potId, processId }, type: "log" });
+    //     }
+    //   }
 
-      //Xử lý khởi tạo cho thằng dynamicList
-      if (component.type == "dynamiclist") {
-        let nestedComponents = component.components;
-        nestedComponents.forEach((nestedComponent) => {
-          // Kiểm tra nếu component có type là 'select'
-          if (nestedComponent.type === "select" && nestedComponent.valuesKey) {
-            // Lấy valuesKey từ component,
-            // Lấy ra các tham số được gán khởi tạo
-            // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
-            let key = nestedComponent.valuesKey;
-            let paramsUrl = nestedComponent?.properties?.paramsUrl || "";
-            const paramsTotal = Object.fromEntries(
-              paramsUrl.split(",").map((part) => {
-                const [key, ...rest] = part.split("=");
-                const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
-                return [key.trim(), value];
-              })
-            );
-            // let params = nestedComponent.properties?.params || "";
-            // params = [];
-            filterItems.push({ key, paramsTotal, compKey: nestedComponent.key, type: "select" });
-          }
-        });
-      }
-    });
+    //   //Xử lý khởi tạo cho thằng dynamicList
+    //   if (component.type == "dynamiclist") {
+    //     let nestedComponents = component.components;
+    //     nestedComponents.forEach((nestedComponent) => {
+    //       // Kiểm tra nếu component có type là 'select'
+    //       if (nestedComponent.type === "select" && nestedComponent.valuesKey) {
+    //         // Lấy valuesKey từ component,
+    //         // Lấy ra các tham số được gán khởi tạo
+    //         // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
+    //         let key = nestedComponent.valuesKey;
+    //         let paramsUrl = nestedComponent?.properties?.paramsUrl || "";
+    //         const paramsTotal = convertDataParamsProperties(paramsUrl);
+    //         filterItems.push({ key, paramsTotal, compKey: nestedComponent.key, type: "select" });
+    //       }
+    //     });
+    //   }
+    // });
 
     //Lặp tiến hành binding
     for (let index = 0; index < filterItems.length; index++) {
@@ -1230,75 +1234,73 @@ const FormViewerComponent = (props: any) => {
         } else {
           dataOption = await SelectOptionData(filterItem.key, filterItem.paramsTotal);
         }
-
         //Lưu trang là số 1 => Đăng ký lắng nghe sự kiện scroll
-        updatedFormSchema.components.forEach((component) => {
-          // Kiểm tra nếu component có type là 'select'
-          if (component.type === "select" && component.key == filterItem.compKey) {
-            // Cập nhật lại vào component trường values
-            // console.log("dataOption =>", dataOption);
-            // console.log("valuesKey =>", component.key);
-            component.values = dataOption || [];
-            delete component.valuesKey;
-          }
+        walkGetOptionSelect(updatedFormSchema.components, dataOption, filterItem);
+        
+        // updatedFormSchema.components.forEach((component) => {
+        //   // Kiểm tra nếu component có type là 'select'
+        //   if (component.type === "select" && component.key == filterItem.compKey) {
+        //     // Cập nhật lại vào component trường values
+        //     // console.log("dataOption =>", dataOption);
+        //     // console.log("valuesKey =>", component.key);
+        //     component.values = dataOption || [];
+        //     delete component.valuesKey;
+        //   }
 
-          //Lặp cấp L1
-          if (component.type == "group") {
-            let componentsL1 = component.components;
-            componentsL1.forEach((componentL1) => {
-              if (componentL1.type === "select" && componentL1.key == filterItem.compKey) {
-                componentL1.values = dataOption || [];
-                delete componentL1.valuesKey;
-              }
+        //   //Lặp cấp L1
+        //   if (component.type == "group") {
+        //     let componentsL1 = component.components;
+        //     componentsL1.forEach((componentL1) => {
+        //       if (componentL1.type === "select" && componentL1.key == filterItem.compKey) {
+        //         componentL1.values = dataOption || [];
+        //         delete componentL1.valuesKey;
+        //       }
 
-              //Lặp cấp L2
-              if (componentL1.type == "group") {
-                let componentsL2 = componentL1.components;
-                componentsL2.forEach((componentL2) => {
-                  if (componentL2.type === "select" && componentL2.key == filterItem.compKey) {
-                    componentL2.values = dataOption || [];
-                    delete componentL2.valuesKey;
-                  }
+        //       //Lặp cấp L2
+        //       if (componentL1.type == "group") {
+        //         let componentsL2 = componentL1.components;
+        //         componentsL2.forEach((componentL2) => {
+        //           if (componentL2.type === "select" && componentL2.key == filterItem.compKey) {
+        //             componentL2.values = dataOption || [];
+        //             delete componentL2.valuesKey;
+        //           }
 
-                  //Lặp cấp L3
-                  if (componentL2.type == "group") {
-                    let componentsL3 = componentL2.components;
-                    componentsL3.forEach((componentL3) => {
-                      if (componentL3.type === "select" && componentL3.key == filterItem.compKey) {
-                        componentL3.values = dataOption || [];
-                        delete componentL3.valuesKey;
-                      }
-                    });
-                  }
-                });
-              }
-            });
-          }
+        //           //Lặp cấp L3
+        //           if (componentL2.type == "group") {
+        //             let componentsL3 = componentL2.components;
+        //             componentsL3.forEach((componentL3) => {
+        //               if (componentL3.type === "select" && componentL3.key == filterItem.compKey) {
+        //                 componentL3.values = dataOption || [];
+        //                 delete componentL3.valuesKey;
+        //               }
+        //             });
+        //           }
+        //         });
+        //       }
+        //     });
+        //   }
 
-          if (component.type == "dynamiclist") {
-            let nestedComponents = component.components;
-            nestedComponents.forEach((nestedComponent) => {
-              // Kiểm tra nếu component có type là 'select'
-              if (nestedComponent.type === "select" && nestedComponent.key == filterItem.compKey) {
-                // Cập nhật lại vào component trường values
-                // console.log("valuesKey =>", nestedComponent.key);
-                nestedComponent.values = dataOption || [];
-                delete nestedComponent.valuesKey;
-              }
-            });
-          }
-        });
+        //   if (component.type == "dynamiclist") {
+        //     let nestedComponents = component.components;
+        //     nestedComponents.forEach((nestedComponent) => {
+        //       // Kiểm tra nếu component có type là 'select'
+        //       if (nestedComponent.type === "select" && nestedComponent.key == filterItem.compKey) {
+        //         // Cập nhật lại vào component trường values
+        //         nestedComponent.values = dataOption || [];
+        //         delete nestedComponent.valuesKey;
+        //       }
+        //     });
+        //   }
+        // });
       }
 
       if (filterItem.type == "log") {
         const dataOption = await ApprovedObjectService.list(filterItem.params);
-
         // Thực hiện binding ngược lại vào table
         updatedFormSchema.components.forEach((component) => {
           // Kiểm tra nếu component có type là 'select'
           if (component.type === "table" && component.id == filterItem.key) {
             // Cập nhật lại vào component trường values
-            // console.log("valuesKey =>", component.key);
             component.dataSource = dataOption?.result || [];
           }
         });

@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo, useContext } from "react";
-import _, { set } from "lodash";
+import _ from "lodash";
 import { IAction, IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import RadioList from "components/radio/radioList";
@@ -34,6 +34,8 @@ import CampaignOpportunityService from "services/CampaignOpportunityService";
 export default function ModalAddOpp(props: any) {
   const { onShow, onHide, data, takeInfoOpportunity } = props;
 
+  console.log("data modal add opp: ", data);
+
   const { dataBranch } = useContext(UserContext) as ContextType;
 
   const [dataRes, setDataRes] = useState(null);
@@ -57,6 +59,10 @@ export default function ModalAddOpp(props: any) {
   useEffect(() => {
     if (data && onShow) {
       setDataRes(data);
+      if (data?.extraItems) {
+        const extraItems = JSON.parse(data.extraItems);
+        setListOrtherItem(extraItems);
+      }
 
       if (data.customerId) {
         setDetailCustomer({
@@ -356,11 +362,11 @@ export default function ModalAddOpp(props: any) {
   const [showModalContact, setShowModalContact] = useState(false);
   const [countCheck, setCountCheck] = useState(0);
   useEffect(() => {
-    if (!showModalContact) {
+    if (onShow && !showModalContact) {
       setCountCheck(countCheck + 1);
       loadedOptionContact("", undefined, { page: 1 });
     }
-  }, [showModalContact]);
+  }, [showModalContact, onShow]);
 
   const formatOptionLabelContact = ({ label, avatar }) => {
     return (
@@ -1147,8 +1153,6 @@ export default function ModalAddOpp(props: any) {
                               ]}
                               value={item.type}
                               onChange={(e) => {
-                                console.log("e.target.value", e.target.value);
-
                                 setListOrtherItem((prevState) => {
                                   const newState = [...prevState];
                                   newState[index].type = e.target.value;
