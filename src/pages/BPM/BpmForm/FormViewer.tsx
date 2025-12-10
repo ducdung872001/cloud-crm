@@ -10,6 +10,7 @@ import ApprovedObjectService from "services/ApprovedObjectService";
 import Loading from "components/loading";
 // import FormattedNumberField from "./FormattedNumberField";
 import GridExtension from "./extension/gridViewer/render";
+import UploadFileExtension from "./extension/uploadFile/render";
 // import RenderExtension from './extension/range/render';
 // import HiddenRenderExtension from './extension/hidden/render';
 // import NumberRenderExtension from './extension/number/render';
@@ -48,7 +49,7 @@ const FormViewerComponent = (props: any) => {
     isLoading,
     setShowPopupCustom,
     setCodePopupCustom,
-    onOpenCallCustomerModal
+    onOpenCallCustomerModal,
   } = props;
 
   // const formContainerRef = useRef(null);
@@ -261,40 +262,40 @@ const FormViewerComponent = (props: any) => {
         removeBtns.forEach((btn: any) => (btn.style.display = ""));
       }
     });
-  };
+  }
 
   /**
    Hàm này dùng để biến đổi dữ liệu được nhập ở properties với value =  curr.[fieldKey]
    => thành dạng {key: value}
    */
   const getParamsPropertiesEform = (apiParams, formData) => {
-    let paramsTotal = {}
+    let paramsTotal = {};
     if (apiParams) {
       const params = apiParams.replace(/curr\.(\w+)/g, (match, key) => {
         const value = formData[key];
         return value !== undefined && value !== null ? value : "null";
-      });      
-      paramsTotal = convertDataParamsProperties(params);     
+      });
+      paramsTotal = convertDataParamsProperties(params);
     }
     return paramsTotal;
   };
 
   const convertDataParamsProperties = (params) => {
     const data = Object.fromEntries(
-      params.split(",").map(part => {
+      params.split(",").map((part) => {
         const [key, ...rest] = part.split("=");
         const value = rest.join("=").trim(); // ghép lại phần sau dấu "="
         return [key.trim(), value];
       })
-    );     
+    );
     return data;
-  }
+  };
 
-  //Xủ lý dữ liệu khởi tạo ban đầu 
+  //Xủ lý dữ liệu khởi tạo ban đầu
   const walkInitData = (components, potId, processId) => {
     let filterItems = [];
     if (components && components.length > 0) {
-      components.forEach(comp => {
+      components.forEach((comp) => {
         let apiUrl = comp?.properties?.apiUrl || "";
         if (comp.type === "group") {
           if (!comp.label?.includes("▼") && !comp.label?.includes("▲")) {
@@ -302,8 +303,8 @@ const FormViewerComponent = (props: any) => {
               ...comp.properties,
               labelId: `group-label-${comp.key}`,
             };
-          };
-        };
+          }
+        }
 
         if (comp.type === "select" && comp.valuesKey) {
           // Lấy valuesKey từ component,
@@ -313,7 +314,7 @@ const FormViewerComponent = (props: any) => {
           let paramsUrl = comp?.properties?.paramsUrl || "";
           const paramsTotal = convertDataParamsProperties(paramsUrl);
           filterItems.push({ key, paramsTotal, compKey: comp.key, type: "select", apiUrl: apiUrl });
-        };
+        }
 
         //Lịch sử phê duyệt
         if (comp.type === "table") {
@@ -322,35 +323,35 @@ const FormViewerComponent = (props: any) => {
             filterItems.push({ key: comp.id, params: { groupCode: params?.groupCode, potId, processId }, type: "log" });
           }
         }
-    
+
         if (Array.isArray(comp.components) && comp.components.length > 0) {
           walkInitData(comp.components, potId, processId);
         }
       });
-    };
+    }
 
     return filterItems;
-  }
+  };
 
   //Đăng ký lắng nghe sự kiện scroll/option trong component select
   const walkGetOptionSelect = (components, dataOption, filterItem) => {
     let filterItems = [];
     if (components && components.length > 0) {
-      components.forEach(comp => {
+      components.forEach((comp) => {
         if (comp.type === "select" && comp.key == filterItem.compKey) {
           // Cập nhật lại vào component trường values
           comp.values = dataOption || [];
           delete comp.valuesKey;
         }
-    
+
         if (Array.isArray(comp.components) && comp.components.length > 0) {
           walkGetOptionSelect(comp.components, dataOption, filterItem);
         }
       });
-    };
+    }
 
     return filterItems;
-  }
+  };
 
   useEffect(() => {
     // Khởi tạo Viewer
@@ -365,6 +366,7 @@ const FormViewerComponent = (props: any) => {
         // Đóng tạm vì gây lỗi khi build lên môi trường production
         // RenderExtension,
         GridExtension,
+        UploadFileExtension,
       ],
 
       // components: {
@@ -628,7 +630,7 @@ const FormViewerComponent = (props: any) => {
       //1. Loại là select
       if (formField.type == "select") {
         //valuesKey là Input values key đối với loại select là I
-        let key = formField?.valuesKey|| formField?.key;  
+        let key = formField?.valuesKey || formField?.key;
         let fields = formField?.properties?.binding || ""; //Trả về departmentId
         let apiUrl = formField?.properties?.apiUrl || "";
         let paramsUrl = formField?.properties?.paramsUrl || "";
@@ -712,7 +714,7 @@ const FormViewerComponent = (props: any) => {
         }
 
         const typeButton = attrs?.typeButton;
-        if (typeButton === "CALL_CUSTOMER_POPUP") {   
+        if (typeButton === "CALL_CUSTOMER_POPUP") {
           const paramsTotal = getParamsPropertiesEform(attrs?.apiParams, formData);
           onOpenCallCustomerModal(paramsTotal);
         }
@@ -1236,49 +1238,51 @@ const FormViewerComponent = (props: any) => {
         }
         //Lưu trang là số 1 => Đăng ký lắng nghe sự kiện scroll
         walkGetOptionSelect(updatedFormSchema.components, dataOption, filterItem);
+
+        // walkGetOptionSelect(updatedFormSchema.components, dataOption, filterItem);
         
         // updatedFormSchema.components.forEach((component) => {
-        //   // Kiểm tra nếu component có type là 'select'
-        //   if (component.type === "select" && component.key == filterItem.compKey) {
-        //     // Cập nhật lại vào component trường values
-        //     // console.log("dataOption =>", dataOption);
-        //     // console.log("valuesKey =>", component.key);
-        //     component.values = dataOption || [];
-        //     delete component.valuesKey;
-        //   }
+        // //   // Kiểm tra nếu component có type là 'select'
+        // //   if (component.type === "select" && component.key == filterItem.compKey) {
+        // //     // Cập nhật lại vào component trường values
+        // //     // console.log("dataOption =>", dataOption);
+        // //     // console.log("valuesKey =>", component.key);
+        // //     component.values = dataOption || [];
+        // //     delete component.valuesKey;
+        // //   }
 
-        //   //Lặp cấp L1
-        //   if (component.type == "group") {
-        //     let componentsL1 = component.components;
-        //     componentsL1.forEach((componentL1) => {
-        //       if (componentL1.type === "select" && componentL1.key == filterItem.compKey) {
-        //         componentL1.values = dataOption || [];
-        //         delete componentL1.valuesKey;
-        //       }
+        // //   //Lặp cấp L1
+        // //   if (component.type == "group") {
+        // //     let componentsL1 = component.components;
+        // //     componentsL1.forEach((componentL1) => {
+        // //       if (componentL1.type === "select" && componentL1.key == filterItem.compKey) {
+        // //         componentL1.values = dataOption || [];
+        // //         delete componentL1.valuesKey;
+        // //       }
 
-        //       //Lặp cấp L2
-        //       if (componentL1.type == "group") {
-        //         let componentsL2 = componentL1.components;
-        //         componentsL2.forEach((componentL2) => {
-        //           if (componentL2.type === "select" && componentL2.key == filterItem.compKey) {
-        //             componentL2.values = dataOption || [];
-        //             delete componentL2.valuesKey;
-        //           }
+        // //       //Lặp cấp L2
+        // //       if (componentL1.type == "group") {
+        // //         let componentsL2 = componentL1.components;
+        // //         componentsL2.forEach((componentL2) => {
+        // //           if (componentL2.type === "select" && componentL2.key == filterItem.compKey) {
+        // //             componentL2.values = dataOption || [];
+        // //             delete componentL2.valuesKey;
+        // //           }
 
-        //           //Lặp cấp L3
-        //           if (componentL2.type == "group") {
-        //             let componentsL3 = componentL2.components;
-        //             componentsL3.forEach((componentL3) => {
-        //               if (componentL3.type === "select" && componentL3.key == filterItem.compKey) {
-        //                 componentL3.values = dataOption || [];
-        //                 delete componentL3.valuesKey;
-        //               }
-        //             });
-        //           }
-        //         });
-        //       }
-        //     });
-        //   }
+        // //           //Lặp cấp L3
+        // //           if (componentL2.type == "group") {
+        // //             let componentsL3 = componentL2.components;
+        // //             componentsL3.forEach((componentL3) => {
+        // //               if (componentL3.type === "select" && componentL3.key == filterItem.compKey) {
+        // //                 componentL3.values = dataOption || [];
+        // //                 delete componentL3.valuesKey;
+        // //               }
+        // //             });
+        // //           }
+        // //         });
+        // //       }
+        // //     });
+        // //   }
 
         //   if (component.type == "dynamiclist") {
         //     let nestedComponents = component.components;

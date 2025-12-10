@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import "./index.scss";
 import Loading from "components/loading";
@@ -39,12 +39,15 @@ type Props = {
 };
 
 export default function KanbanBpm({ processId, processCode, itemShow, params, setLoadinglistColumns }: Props) {
-  // const [listStepProcess, setListStepProcess] = useState<any[]>([]);
+  const [listStepProcess, setListStepProcess] = useState<any[]>([]);
   const [columns, setColumns] = useState<any[]>([]);
   const [isLoadingKanban, setIsLoadingKanban] = useState<boolean>(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [showHistory, setShowHistory] = useState<boolean>(false);
   const [itemHistory, setItemHistory] = useState<any>(null);
+
+  const processIdRef = useRef<any>(null);
+  const processCodeRef = useRef<any>(null);
 
   useEffect(() => {
     abortControllerRef.current = new AbortController();
@@ -53,25 +56,34 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
     };
   }, []);
 
-  // Tăng version khi params (theo nội dung) thay đổi, và reset các column state để ColumnComponent sẽ fetch lại page 1
-  useEffect(() => {
-    setColumns((prevCols) =>
-      prevCols.map((c) => ({
-        ...c,
-        items: [],
-        page: 0,
-        hasMore: true,
-        isLoading: false,
-        params: params,
-      }))
-    );
-  }, [params]);
-
   useEffect(() => {
     if (!processId && !processCode) return;
-    setLoadinglistColumns(true);
-    getListStepProcess(processId, processCode);
-  }, [processId, processCode]);
+
+    if (processIdRef.current === processId && processCodeRef.current === processCode) {
+      // chỉ update cột nếu params khác nội dung (deep-equal)
+      setColumns((prevCols) => {
+        let changed = false;
+        const next = prevCols.map((c) => {
+          if (isEqual(c.params, params)) return c;
+          changed = true;
+          return {
+            ...c,
+            items: [],
+            page: 0,
+            hasMore: true,
+            isLoading: false,
+            params: params,
+          };
+        });
+        return changed ? next : prevCols;
+      });
+    } else {
+      if (setLoadinglistColumns) setLoadinglistColumns(true);
+      getListStepProcess(processId, processCode);
+      processIdRef.current = processId;
+      processCodeRef.current = processCode;
+    }
+  }, [processId, processCode, params, setLoadinglistColumns]);
 
   const getListStepProcess = async (pid?: any, pCode?: any) => {
     setIsLoadingKanban(true);
@@ -80,26 +92,24 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
       ...(pCode ? { processCode: pCode } : {}),
       limit: 100,
     };
-    console.log("KanbanBpm: getListStepProcess body", body);
 
     try {
       const response = await BusinessProcessService.listStep(body);
       if (response.code === 0) {
         const dataOption = response.result.items;
-        // setListStepProcess(
-        //   dataOption.length > 0
-        //     ? dataOption.map((item: any, index: number) => ({
-        //         id: item.id,
-        //         value: item.id,
-        //         label: item.stepName,
-        //         color: colorData[index % colorData.length],
-        //         processId: item.processId,
-        //         processCode: pCode || "",
-        //       }))
-        //     : []
-        // );
+        setListStepProcess(
+          dataOption.length > 0
+            ? dataOption.map((item: any, index: number) => ({
+                id: item.id,
+                value: item.id,
+                label: item.stepName,
+                color: colorData[index % colorData.length],
+                processId: item.processId,
+                processCode: pCode || "",
+              }))
+            : []
+        );
 
-        // initialize columns state skeleton (items empty) so parent has the structure for DnD
         setColumns(
           (dataOption.length > 0
             ? dataOption.map((item: any, index: number) => ({
@@ -109,7 +119,7 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
                 color: colorData[index % colorData.length],
                 processId: item.processId,
                 processCode: pCode || "",
-                items: [], // will be filled by Column via callbacks
+                items: [],
                 hasMore: true,
                 page: 0,
                 isLoading: false,
@@ -125,11 +135,13 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
       showToast("Có lỗi khi lấy dữ liệu bước", "error");
     } finally {
       setIsLoadingKanban(false);
-      setLoadinglistColumns(false);
+      if (setLoadinglistColumns) {
+        setLoadinglistColumns(false);
+      }
     }
   };
 
-  // Parent handlers called by Column to set/append items for that column
+  // Parent handlers — đã memo để giữ reference ổn định
   const handleInitLoad = useCallback((columnId: any, payload: { items: any[]; hasMore: boolean; page: number }) => {
     setColumns((prev) =>
       prev.map((c) =>
@@ -158,6 +170,15 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
     setColumns((prev) => prev.map((c) => (c.id === columnId ? { ...c, isLoading: loading } : c)));
   }, []);
 
+  // memo hoá handler setShowHistory (không truyền inline trong map)
+  const handleSetShowHistory = useCallback(
+    (item: any) => {
+      setShowHistory(true);
+      setItemHistory(item);
+    },
+    [setShowHistory, setItemHistory]
+  );
+
   const onDragEnd = async (result: any) => {
     if (!result.destination) return;
 
@@ -168,44 +189,41 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
     const destIdx = parseInt(destination.droppableId, 10);
 
     const dragItem = newColumns[srcIdx].items[source.index];
-    // update local data
     newColumns[srcIdx].items.splice(source.index, 1);
     newColumns[destIdx].items.splice(destination.index, 0, dragItem);
 
     setColumns(newColumns);
-
-    // ... keep any server update logic you have (e.g. call to update status)
   };
+
+  // build map id->columnState để lấy cùng reference object (fast & stable)
+  const columnsById = useMemo(() => {
+    const m = new Map<any, any>();
+    for (const c of columns) {
+      m.set(c.id, c);
+    }
+    return m;
+  }, [columns]);
 
   return (
     <>
       <div className={`wrapper-kanban-bpm ${showHistory ? "d-none" : ""}`}>
         <div className="__special-kanban--business-process">
-          <div
-            className="box__task--kanban"
-            style={{
-              width: "100%",
-              marginBottom: "1.5rem",
-            }}
-          >
+          <div className="box__task--kanban" style={{ width: "100%", marginBottom: "1.5rem" }}>
             <DragDropContext onDragEnd={onDragEnd}>
-              {columns.map((colDef, idx) => {
-                // const columnState = columns.find((c) => c.id === colDef.id);
+              {listStepProcess.map((colDef, idx) => {
+                const columnState = columnsById.get(colDef.id); // stable reference if columns unchanged
                 return (
                   <ColumnComponent
                     key={colDef.id}
-                    columnDef={colDef} // minimal definition; Column will fetch its own items
-                    columnState={colDef} // may be undefined initially
-                    droppableId={colDef.id.toString()} // keep using index as droppableId to be compatible with onDragEnd logic
+                    columnDef={colDef}
+                    columnState={columnState}
+                    droppableId={colDef.id.toString()}
                     index={idx}
-                    itemShow={itemShow}
+                    itemShow={itemShow} // ensure itemShow (prop from parent) is stable (see note)
                     onInitLoad={handleInitLoad}
                     onAppend={handleAppend}
                     setLoading={setColumnLoading}
-                    setShowHistory={(item) => {
-                      setShowHistory(true);
-                      setItemHistory(item);
-                    }}
+                    setShowHistory={handleSetShowHistory} // stable ref
                   />
                 );
               })}
