@@ -29,7 +29,7 @@ export default function InfoPerson(props: IInfoPersonProps) {
       setIsLoading(true);
       const dataOption = await SelectOptionData("relationshipId");
       if (dataOption) {
-        setListRelationship([{ value: "", label: "Chọn mối quan hệ" }, ...(dataOption.length > 0 ? dataOption : [])]);
+        setListRelationship(dataOption.length > 0 ? dataOption : []);
       }
       setIsLoading(false);
     }
@@ -47,10 +47,10 @@ export default function InfoPerson(props: IInfoPersonProps) {
 
   const values = useMemo(
     () =>
-      ({
-        id: data.id,
-        relationshipId: data.relationshipId ?? null,
-      } as IUpdateOneRelationshipRequest),
+    ({
+      id: data.id,
+      relationshipId: data.relationshipId ?? null,
+    } as IUpdateOneRelationshipRequest),
     [data]
   );
 
@@ -137,6 +137,12 @@ export default function InfoPerson(props: IInfoPersonProps) {
                   formData={formData}
                 />
               ))}
+              {/* Hiển thị thông báo nếu listField rỗng */}
+              {listField.length === 0 && (
+                <p style={{ textAlign: 'center'}}>
+                  Chưa load được mối quan hệ.
+                </p>
+              )}
             </div>
             <Button type="submit" className="d-none" />
           </form>
