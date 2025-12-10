@@ -406,16 +406,6 @@
           height: 2rem;
         }
 
-        &.disabled {
-  opacity: .5;
-  pointer-events: none;
-  cursor: not-allowed;
-
-  .icon__item svg {
-    fill: var(--text-extra-color) !important;
-  }
-}
-
         &.add__view {
           svg {
             fill: var(--success-darker-color);
