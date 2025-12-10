@@ -24,6 +24,16 @@ import AttachmentUploader from "components/attachmentUpload";
 
 export const uploadFileType = "uploadFile";
 
+function isValidJSON(value) {
+  if (typeof value !== "string") return false;
+  try {
+    JSON.parse(value);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 export function UploadFileRenderer(props) {
   const { disabled, errors = [], field, readonly, value, domId } = props;
   const { description, id, label } = field;
@@ -46,9 +56,23 @@ export function UploadFileRenderer(props) {
     const container = document.getElementById(containerId);
     if (container && props.onChange && field) {
       // Điều kiện container và props.onChange và field quan trọng
+      let _value = [];
+      if (isValidJSON(value)) {
+        _value = JSON.parse(value);
+      } else if (typeof value === "string" && value.length > 0) {
+        _value = [
+          {
+            url: value,
+            type: "",
+            name: "",
+            size: null,
+          },
+        ];
+      }
+      console.log("UploadFileRenderer render", _value);
       ReactDOM.render(
         <AttachmentUploader
-          value={value ? JSON.parse(value) : []}
+          value={_value}
           placeholderLabel=""
           onChange={handleUploadFileChange}
           multiple={field.multiple ? field.multiple : false}

@@ -381,8 +381,14 @@
       .fjs-inline-label {
         label {
           font-size: 1.4rem !important;
-          font-weight: 500 !important;
+          font-weight: 700 !important;
         }
+      }
+    }
+    .fjs-form-field-uploadFile {
+      label {
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
       }
     }
   }
