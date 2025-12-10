@@ -5,7 +5,30 @@ import classNames from "classnames";
  * Instead of importing the SVG in a way that your bundler may transform it into a React component,
  * we keep the SVG content as a string here and create a proper data URL:
  */
-const IconGridSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M312 80l0 88 88 0 0-72c0-8.8-7.2-16-16-16l-72 0zm-48 0l-80 0 0 88 80 0 0-88zM136 80L64 80c-8.8 0-16 7.2-16 16l0 72 88 0 0-88zM0 216L0 96C0 60.7 28.7 32 64 32l320 0c35.3 0 64 28.7 64 64l0 320c0 35.3-28.7 64-64 64L64 480c-35.3 0-64-28.7-64-64L0 216zm48 80l88 0 0-80-88 0 0 80zm0 48l0 72c0 8.8 7.2 16 16 16l72 0 0-88-88 0zm136 88l80 0 0-88-80 0 0 88zm128 0l72 0c8.8 0 16-7.2 16-16l0-72-88 0 0 88zm88-136l0-80-88 0 0 80 88 0zm-216 0l80 0 0-80-80 0 0 80z"/></svg>`;
+const IconGridSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title desc">
+  <title id="title">3x3 grid inside square</title>
+  <desc id="desc">Rounded square frame with a 3x3 grid. Grid cells are white and separated by thin black strokes.</desc>
+
+  <!-- Rounded square frame (transparent fill to match other icons) -->
+  <rect x="4" y="4" width="56" height="56" rx="6" fill="none" stroke="#111827" stroke-width="2"/>
+
+  <!-- 3x3 grid centered in the square:
+       Each cell is white with a thin black stroke to create the grid lines. -->
+  <g transform="translate(32,32)" aria-hidden="false">
+    <!-- Row 1 -->
+    <rect x="-22" y="-22" width="8" height="8" rx="1.5" fill="#FFFFFF" stroke="#000000" stroke-width="1.2"/>
+    <rect x="-4"  y="-22" width="8" height="8" rx="1.5" fill="#FFFFFF" stroke="#000000" stroke-width="1.2"/>
+    <rect x="14"  y="-22" width="8" height="8" rx="1.5" fill="#FFFFFF" stroke="#000000" stroke-width="1.2"/>
+    <!-- Row 2 -->
+    <rect x="-22" y="-4"  width="8" height="8" rx="1.5" fill="#FFFFFF" stroke="#000000" stroke-width="1.2"/>
+    <rect x="-4"  y="-4"  width="8" height="8" rx="1.5" fill="#FFFFFF" stroke="#000000" stroke-width="1.2"/>
+    <rect x="14"  y="-4"  width="8" height="8" rx="1.5" fill="#FFFFFF" stroke="#000000" stroke-width="1.2"/>
+    <!-- Row 3 -->
+    <rect x="-22" y="14"  width="8" height="8" rx="1.5" fill="#FFFFFF" stroke="#000000" stroke-width="1.2"/>
+    <rect x="-4"  y="14"  width="8" height="8" rx="1.5" fill="#FFFFFF" stroke="#000000" stroke-width="1.2"/>
+    <rect x="14"  y="14"  width="8" height="8" rx="1.5" fill="#FFFFFF" stroke="#000000" stroke-width="1.2"/>
+  </g>
+</svg>`;
 
 export const iconDataUrl = `data:image/svg+xml,${encodeURIComponent(IconGridSvg)}`;
 

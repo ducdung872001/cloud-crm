@@ -7,28 +7,24 @@ import ReactDOM from "react-dom";
  * Instead of importing the SVG in a way that your bundler may transform it into a React component,
  * we keep the SVG content as a string here and create a proper data URL:
  */
-const IconUploadFileSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title desc">
-  <title id="title">Upload file inside square</title>
-  <desc id="desc">Rounded square frame (side = 56) with a slightly larger upload arrow and tray centered inside.</desc>
+const IconMaskedInputSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title desc">
+  <title id="title">Eye inside rectangle (right quarter)</title>
+  <desc id="desc">Rounded rectangle (width 56, height 28). A smaller eye is positioned in the right quarter of the rectangle.</desc>
 
-  <!-- Rounded square: side = 56 (same as previous rectangle width), centered in 64x64 viewBox -->
-  <rect x="4" y="4" width="56" height="56" rx="6" fill="none" stroke="#111827" stroke-width="2"/>
+  <!-- Rounded rectangle: width 56, height 28 (height = 1/2 width), centered vertically in 64x64 viewBox -->
+  <rect x="4" y="18" width="56" height="28" rx="2" fill="none" stroke="#111827" stroke-width="2"/>
 
-  <!-- Larger upload symbol centered in the square -->
-  <g transform="translate(32,32)" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="false">
-    <!-- Arrow shaft (larger) -->
-    <line x1="0" y1="14" x2="0" y2="-12"/>
-    <!-- Arrow head (larger and filled for clarity) -->
-    <path d="M -8 -3 L 0 -14 L 8 -3 Z" fill="#111827" stroke="none"/>
-    <!-- Tray / base line (wider) -->
-    <line x1="-18" y1="18" x2="18" y2="18" stroke="#111827" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- Small downward flares to suggest a tray -->
-    <path d="M -12 18 L -16 10" stroke="#111827" stroke-width="2.2" stroke-linecap="round"/>
-    <path d="M 12 18 L 16 10" stroke="#111827" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Smaller eye placed in the right quarter of the rectangle.
+       Rectangle right quarter spans x = 46..60; center at x = 53. Vertical center of rect is y = 32. -->
+  <g transform="translate(45,32)" fill="none" stroke="#111827" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="false">
+    <!-- Eye outline (smaller than original) -->
+    <path d="M -11 0 C -7 -5 7 -5 11 0 C 7 5 -7 5 -11 0 Z" fill="none"/>
+    <!-- Pupil -->
+    <circle cx="0" cy="0" r="2" fill="#111827" stroke="none"/>
   </g>
 </svg>`;
 
-export const iconDataUrl = `data:image/svg+xml,${encodeURIComponent(IconUploadFileSvg)}`;
+export const iconDataUrl = `data:image/svg+xml,${encodeURIComponent(IconMaskedInputSvg)}`;
 
 /*
  * Import components and utilities from our extension API. Warning: for demo experiments only.
@@ -41,7 +37,7 @@ import "./styles.css";
 
 import AttachmentUploader from "components/attachmentUpload";
 
-export const uploadFileType = "uploadFile";
+export const maskedInputType = "maskedInput";
 
 function isValidJSON(value) {
   if (typeof value !== "string") return false;
@@ -53,7 +49,7 @@ function isValidJSON(value) {
   }
 }
 
-export function UploadFileRenderer(props) {
+export function MaskedInputRenderer(props) {
   const { disabled, errors = [], field, readonly, value, domId } = props;
   const { description, id, label } = field;
   const { formId } = useContext(FormContext);
@@ -62,9 +58,9 @@ export function UploadFileRenderer(props) {
 
   const containerId = `upload-file-container-${domId}`;
 
-  // Khi UploadFile thay đổi
-  function handleUploadFileChange(newValue) {
-    console.log("handleUploadFileChange", newValue);
+  // Khi MaskedInput thay đổi
+  function handleMaskedInputChange(newValue) {
+    console.log("handleMaskedInputChange", newValue);
     props.onChange({
       field: field, // object field từ props
       value: JSON.stringify(newValue),
@@ -88,12 +84,12 @@ export function UploadFileRenderer(props) {
           },
         ];
       }
-      console.log("UploadFileRenderer render", _value);
+      console.log("MaskedInputRenderer render", _value);
       ReactDOM.render(
         <AttachmentUploader
           value={_value}
           placeholderLabel=""
-          onChange={handleUploadFileChange}
+          onChange={handleMaskedInputChange}
           multiple={field.multiple ? field.multiple : false}
           maxFiles={field.maxFiles ? parseInt(field.maxFiles) : 0}
         />,
@@ -108,7 +104,7 @@ export function UploadFileRenderer(props) {
   });
 
   return html`
-    <div class=${formFieldClasses("uploadFile", { errors, disabled, readonly })}>
+    <div class=${formFieldClasses("maskedInput", { errors, disabled, readonly })}>
       <label id=${prefixId(id, formId)}>${label || ""}</label>
       <div id=${containerId}></div>
       ${description ? html`<div class="description">${description}</div>` : null}
@@ -122,13 +118,13 @@ export function UploadFileRenderer(props) {
  * the schema type, UI label and icon, palette group, properties panel entries
  * and much more.
  */
-UploadFileRenderer.config = {
+MaskedInputRenderer.config = {
   /* we can extend the default configuration of existing fields */
   ...Textfield.config,
-  type: uploadFileType,
-  label: "Upload File",
-  name: "Upload File",
-  // iconUrl: `data:image/svg+xml,${encodeURIComponent(IconUploadFile)}`,
+  type: maskedInputType,
+  label: "Masked Input",
+  name: "Masked Input",
+  // iconUrl: `data:image/svg+xml,${encodeURIComponent(IconMaskedInput)}`,
   iconUrl: iconDataUrl,
   propertiesPanelEntries: [
     // danh sách các thuộc tính có thể cấu hình trong properties panel
