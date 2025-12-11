@@ -22,6 +22,15 @@ export const INVOICE_PURCHASE = "IV1";
 //* Hóa đơn khách hàng hoàn trả (dịch vụ|sản phẩm|thẻ dịch vụ)
 export const INVOICE_RETURN_CUSTOMER = "IV2";
 
+//* Mã tên đối tác không được là số
+export const PARTNER_NAME_REGEX = /^[A-Za-zÀ-ỹ\s]*$/;
+
+//* Mã số thuế regex 
+export const TAX_CODE_REGEX = /^(?:\d{10}|\d{13})$/;
+
+//* Mã đối tác 
+export const PARTNER_CODE_REGEX = /^[A-Za-z0-9]+$/;
+
 //* Hóa đơn mua thẻ dịch vụ
 export const INVOICE_PURCHASE_CARD = "IV3";
 
@@ -54,3 +63,10 @@ export const FILE_OTHER_MAX = 209715200;
 
 //Định nghĩa file khác (50M)
 export const FILE_DOC_MAX = 209715200;
+
+//* ĐỊNH NGHĨA REGEX CỦA KHÁCH HÀNG
+
+//*TÀI CHÍNH
+
+// Tháng từ 1 đến 12
+export const MONTH_REPORT_REGEX = /^(0?[1-9]|1[0-2])$/; 
