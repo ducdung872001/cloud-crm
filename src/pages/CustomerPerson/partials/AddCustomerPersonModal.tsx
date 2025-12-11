@@ -143,7 +143,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
         }));
       }
     } else {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+      showToast(response.error ?? response.message ??"Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
   };
 
@@ -1002,7 +1002,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
         setActiveCode(true);
       }
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -1162,7 +1162,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
       clearForm(true);
       takeInfoCustomer && takeInfoCustomer(response.result);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
 
     setIsSubmit(false);
@@ -1371,7 +1371,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
 
   //* Đoạn này nếu như mà lỗi không tải lên được thì bắn ra thông báo
   const onError = (message) => {
-    showToast(message.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+    showToast(message.message ?? message.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
   };
 
   /**
