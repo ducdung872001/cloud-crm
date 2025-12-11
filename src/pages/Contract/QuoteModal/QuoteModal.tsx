@@ -368,7 +368,7 @@ export default function QuoteModal(props: any) {
         <SelectCustom
           id="fsId"
           name="fsId"
-          label="Chọn FS"
+          label="Chọn Fs"
           options={[]}
           fill={true}
           value={valueFS}
