@@ -391,6 +391,15 @@
         font-weight: 700 !important;
       }
     }
+    .fjs-form-field-maskedInput {
+      label {
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+      }
+      .errors {
+        color: red !important;
+      }
+    }
   }
   .fjs-form-field-group > .fjs-form-field-label:first-of-type {
     font-size: 18px !important;

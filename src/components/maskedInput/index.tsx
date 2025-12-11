@@ -1,20 +1,32 @@
 import Icon from "components/icon";
 import Input from "components/input/input";
 import React, { useEffect, useState } from "react";
-import PartnerService from "services/PartnerService";
+import { convertParamsToString } from "reborn-util";
 import { showToast } from "utils/common";
 
+export const fetchData = async (Uri: string, params: any, signal?: AbortSignal) => {
+  if (!Uri) return { code: -1, message: "No lookupUri provided" };
+  return fetch(`${Uri}${convertParamsToString(params)}`, {
+    signal,
+    method: "GET",
+  }).then((res) => res.json());
+};
+
 export default function MaskedInput(props) {
-  const { field, handleUpdate, value, id } = props;
+  const { field, handleUpdate, value, valueOfKey, originalValue, url } = props;
   const [isShow, setIsShow] = useState<boolean>(false);
   const [valueShow, setValueShow] = useState("");
   useEffect(() => {
-    console.log("value>>>", value);
-
     setValueShow(value);
   }, []);
-  const handleShow = async (id: number) => {
-    const response = await PartnerService.viewPhone(id);
+
+  useEffect(() => {
+    if (!originalValue || originalValue == "") {
+      setIsShow(true);
+    }
+  }, [originalValue]);
+  const handleShow = async (valueOfKey: number) => {
+    const response = await fetchData(url, { id: valueOfKey });
 
     if (response.code == 0) {
       const result = response.result;
@@ -29,13 +41,13 @@ export default function MaskedInput(props) {
     }
   };
   useEffect(() => {
-    if (isShow && id) {
-      handleShow(id);
+    if (isShow && valueOfKey) {
+      handleShow(valueOfKey);
     }
-    if (!isShow && id) {
-      setValueShow(value);
+    if (!isShow && valueOfKey) {
+      setValueShow(originalValue);
     }
-  }, [isShow, id]);
+  }, [isShow, valueOfKey]);
   return (
     <Input
       type={field.type}
@@ -52,9 +64,9 @@ export default function MaskedInput(props) {
       //   placeholder={field.placeholder}
       onFocus={field.onFocus}
       onChange={(e) => {
-        if (isShow) {
+        if (isShow || !valueOfKey) {
           setValueShow(e.target.value);
-          handleUpdate(field.name, e.target.value);
+          handleUpdate(e.target.value);
         }
       }}
       onClick={field.onClick}
@@ -73,7 +85,7 @@ export default function MaskedInput(props) {
       //   message={formData?.errors ? formData?.errors[field.name] : ""}
       warning={field.isWarning}
       messageWarning={field.messageWarning}
-      icon={id && (!isShow ? <Icon name="EyeSlash" /> : <Icon name="Eye" />)}
+      icon={valueOfKey && (!isShow ? <Icon name="EyeSlash" /> : <Icon name="Eye" />)}
       iconPosition={field.iconPosition}
       iconClickEvent={() => setIsShow(!isShow)}
     />
