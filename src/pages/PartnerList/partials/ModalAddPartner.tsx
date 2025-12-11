@@ -34,7 +34,6 @@ import PartnerExtraInfoService from "services/PartnerExtraInfoService";
 import PartnerAttributeService from "services/PartnerAttributeService";
 import _ from "lodash";
 import CodeService from "services/CodeService";
-import MaskedInput from "components/maskedInput";
 
 export default function ModalAddPartner(props: any) {
   const { onShow, data, onHide, takeInfoPartner, lstDataOrigin } = props;
@@ -943,23 +942,6 @@ export default function ModalAddPartner(props: any) {
                         formData={formData}
                       />
                     ))}
-                    <MaskedInput
-                      field={{
-                        label: "Số điện thoại",
-                        name: "phone",
-                        type: "text",
-                        fill: true,
-                        regex: new RegExp(PHONE_REGEX),
-                        messageErrorRegex: "Số điện thoại không đúng định dạng",
-                        iconPosition: "right",
-                        required: true,
-                      }}
-                      handleUpdate={(e) => {
-                        console.log("handleUpdate", e);
-                      }}
-                      value={formData?.values?.phone || ""}
-                      id={429}
-                    />
                   </div>
                 </div>
 

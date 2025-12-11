@@ -11,6 +11,7 @@ import Loading from "components/loading";
 // import FormattedNumberField from "./FormattedNumberField";
 import GridExtension from "./extension/gridViewer/render";
 import UploadFileExtension from "./extension/uploadFile/render";
+import MaskedInputExtension from "./extension/maskedInput/render";
 // import RenderExtension from './extension/range/render';
 // import HiddenRenderExtension from './extension/hidden/render';
 // import NumberRenderExtension from './extension/number/render';
@@ -367,6 +368,7 @@ const FormViewerComponent = (props: any) => {
         // RenderExtension,
         GridExtension,
         UploadFileExtension,
+        MaskedInputExtension,
       ],
 
       // components: {

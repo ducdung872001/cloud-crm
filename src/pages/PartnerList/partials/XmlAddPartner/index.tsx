@@ -128,13 +128,16 @@ export default function XmlAddPartner(props: any) {
       });
     });
 
+    let phone = config?.phoneMasked && !config.phoneMasked.includes("*") ? config.phoneMasked : null;
+    let email = config?.emailMasked && !config.emailMasked.includes("*") ? config.emailMasked : null;
+
     let body: any = {
       ...(data ? data : {}),
       avatar: config.avatar ? JSON.parse(config.avatar)[0]?.url : "",
       name: config.name ?? "",
       code: config.code ?? "",
-      phone: config.phone ?? "",
-      email: config.email ?? "",
+      phone: phone,
+      email: email,
       taxCode: config.taxCode ?? "",
       contactId: config.contactId ?? "",
       address: config.address ?? "",
@@ -142,6 +145,11 @@ export default function XmlAddPartner(props: any) {
       bank: JSON.stringify(config.bank),
       businessPartnerExtraInfos: infoExtra,
     };
+
+    console.log("config submit", config);
+    console.log("config body", body);
+    // setIsSubmit(false);
+    // return;
 
     const response = await PartnerService.update(body);
 
