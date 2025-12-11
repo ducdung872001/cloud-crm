@@ -1,4 +1,5 @@
 export interface IBrandNameFilterRequest {
+  id?:number;
   name: string;
   page?: number;
   limit?: number;

@@ -184,24 +184,31 @@ export default function CustomerSegment() {
   ];
 
   const actionsTable = (item): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Xem",
-        icon: <Icon name="Eye" />,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCustomerSegment(item);
           setShowModalAdd(true);
           setIsViewModalAdd(true);
+          }
         },
       },
       ...(item.status !== "canceled"
         ? [
             {
               title: "Chuyển trạng thái",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataCustomerSegment(item);
                 setIsChangeStatus(true);
+                }
               },
             },
           ]
@@ -210,10 +217,13 @@ export default function CustomerSegment() {
         ? [
             {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataCustomerSegment(item);
                 setShowModalAdd(true);
+                }
               },
             },
           ]
@@ -222,9 +232,12 @@ export default function CustomerSegment() {
         ? [
             {
               title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
+              icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+              disabled: isCheckedItem,
               callback: () => {
+              if (!isCheckedItem) {
                 showDialogConfirmDelete(item);
+                }
               },
             },
           ]
@@ -245,6 +258,35 @@ export default function CustomerSegment() {
     setContentDialog(null);
   };
 
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listCustomerSegment.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return CustomerService.deleteFilterAdvanced(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} phân khúc khách hàng`, "success");
+        getListCustomerSegment(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có phân khúc khách hàng nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
+
   const showDialogConfirmDelete = (item?) => {
     const contentDialog: IContentDialog = {
       color: "error",
@@ -264,7 +306,16 @@ export default function CustomerSegment() {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

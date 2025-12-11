@@ -267,24 +267,31 @@ export default function ProcessedObjectList() {
   };
 
   const actionsTable = (item): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Export OLA",
-        icon: <Icon name="Download" />,
+        icon: <Icon name="Download" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           // exportCallback(item, 'excel', 'ola');
           setDataObject(item);
           setModalSelectProcess(true);
+          }
         },
       },
       ...(item.processId
         ? [
             {
               title: "Xem lịch sử xử lý",
-              icon: <Icon name="ImpactHistory" />,
+              icon: <Icon name="ImpactHistory" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataObject(item);
                 setHasHistorySignature(true);
+                }
               },
             },
           ]
@@ -294,38 +301,50 @@ export default function ProcessedObjectList() {
         ? [
             {
               title: "Trình xử lý",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataObject(item);
                 setHasSignature(true);
                 // handleCheckValidateSignature(item, "signature");
+                }
               },
             },
           ]
         : []),
       {
         title: "Debug",
-        icon: <Icon name="Debug" style={{ width: 18 }} className="icon-error" />,
+        icon: <Icon name="Debug" style={{ width: 18 }} className={isCheckedItem? "icon-disabled":"icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setShowDebug(item);
           setDataObject(item);
+          }
         },
       },
       ...(!item.status
         ? [
             {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setShowModalAdd(true);
                 setDataObject(item);
+                }
               },
             },
             {
               title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
+              icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmDelete(item);
+                }
               },
             },
           ]
@@ -333,9 +352,12 @@ export default function ProcessedObjectList() {
         ? [
             {
               title: "Tạm dừng xử lý",
-              icon: <Icon name="WarningCircle" className="icon-warning" />,
+              icon: <Icon name="WarningCircle" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "pending");
+                }
               },
             },
           ]
@@ -343,16 +365,22 @@ export default function ProcessedObjectList() {
         ? [
             {
               title: "Tiếp tục xử lý",
-              icon: <Icon name="InfoCircle" className="icon-success" />,
+              icon: <Icon name="InfoCircle" className={isCheckedItem?"icon-disabled" : "icon-success"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "play");
+                }
               },
             },
             {
               title: "Xử lý lại",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "inital");
+                }
               },
             },
           ]
@@ -361,9 +389,12 @@ export default function ProcessedObjectList() {
         ? [
             {
               title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
+              icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmDelete(item);
+                }
               },
             },
           ]
@@ -384,6 +415,35 @@ export default function ProcessedObjectList() {
     setContentDialog(null);
   };
 
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listObject.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return ProcessedObjectService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} hồ sơ`, "success");
+        getListProcessedObject(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có hồ sơ nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
+
   const showDialogConfirmDelete = (item?) => {
     const contentDialog: IContentDialog = {
       color: "error",
@@ -403,7 +463,16 @@ export default function ProcessedObjectList() {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
