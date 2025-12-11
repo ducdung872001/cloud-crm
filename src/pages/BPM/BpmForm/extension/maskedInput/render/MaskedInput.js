@@ -45,17 +45,10 @@ export function MaskedInputRenderer(props) {
   const { description, id, label } = field;
   const { formId } = useContext(FormContext);
 
-  console.log("MaskedInputRenderer>>>field", field);
-  console.log("MaskedInputRenderer>>>key", field?.properties?.key);
-  console.log("MaskedInputRenderer>>>url", field?.properties?.url);
-  console.log("MaskedInputRenderer", props?.fieldInstance?.expressionContextInfo?.data?.id);
-
   const required = field?.validate?.required ?? false;
-  let key = field?.properties?.key ?? "";
-  let url = field?.properties?.url ?? "";
+  let key = field?.properties?.key ?? ""; // lấy key từ properties
+  let url = field?.properties?.url ?? ""; // lấy url từ properties
   let valueOfKey = props?.fieldInstance?.expressionContextInfo?.data?.[key] ?? "";
-
-  console.log("MaskedInputRenderer>>>valueOfKey", valueOfKey);
 
   if (!originalValue[id]) {
     originalValue[id] = value;
@@ -67,7 +60,6 @@ export function MaskedInputRenderer(props) {
 
   // Khi MaskedInput thay đổi
   function handleMaskedInputChange(newValue) {
-    console.log("handleMaskedInputChange", newValue);
     props.onChange({
       field: field, // object field từ props
       value: newValue,

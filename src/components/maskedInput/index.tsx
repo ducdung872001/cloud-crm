@@ -30,7 +30,6 @@ export default function MaskedInput(props) {
 
     if (response.code == 0) {
       const result = response.result;
-      console.log("result", result);
       setValueShow(result);
 
       //   setFormData({ ...formData, values: { ...formData?.values, phone: result } });
