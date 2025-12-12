@@ -131,11 +131,14 @@ export default function ServiceProductList(props: IServiceProductListProps) {
   ];
 
   const actionsTable = (item: IProductInvoiceServiceResponse): IAction[] => {
+        const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                    disabled: isCheckedItem,
         callback: async () => {
+                    if (!isCheckedItem) {
           if (item.bptId > 0) {
             const response = await BoughtProductService.detail(item.bptId);
             if (response.code === 0) {
@@ -157,13 +160,17 @@ export default function ServiceProductList(props: IServiceProductListProps) {
               showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
             }
           }
+        }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+                    disabled: isCheckedItem,
         callback: () => {
+                    if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+                    }
         },
       },
     ];
@@ -173,6 +180,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
     const response = await BoughtServiceService.delete(id);
     if (response.code === 0) {
       showToast("Xóa dịch vụ thành công", "success");
+      setListIdChecked((prev) => prev.filter((checkedId) => checkedId !== id));
       getListProductInvoiceService();
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -185,6 +193,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
     const response = await BoughtProductService.delete(id);
     if (response.code === 0) {
       showToast("Xóa sản phẩm thành công", "success");
+      setListIdChecked((prev) => prev.filter((checkedId) => checkedId !== id));
       getListProductInvoiceService();
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -245,16 +254,18 @@ export default function ServiceProductList(props: IServiceProductListProps) {
       },
       defaultText: "Xóa",
       defaultAction: () => {
-        if (listIdChecked.length > 0) {
-          onDeleteAllServiceProduct();
-          return;
-        }
+        
         if (item?.bptId) {
           onDeleteProduct(item.bptId);
           return;
         }
         if (item?.bseId) {
           onDeleteService(item.bseId);
+          return;
+        }
+        
+        if (listIdChecked.length > 0) {
+          onDeleteAllServiceProduct();
           return;
         }
       },

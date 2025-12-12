@@ -11,6 +11,7 @@ import Loading from "components/loading";
 // import FormattedNumberField from "./FormattedNumberField";
 import GridExtension from "./extension/gridViewer/render";
 import UploadFileExtension from "./extension/uploadFile/render";
+import MaskedInputExtension from "./extension/maskedInput/render";
 // import RenderExtension from './extension/range/render';
 // import HiddenRenderExtension from './extension/hidden/render';
 // import NumberRenderExtension from './extension/number/render';
@@ -367,6 +368,7 @@ const FormViewerComponent = (props: any) => {
         // RenderExtension,
         GridExtension,
         UploadFileExtension,
+        MaskedInputExtension,
       ],
 
       // components: {
@@ -555,7 +557,6 @@ const FormViewerComponent = (props: any) => {
       if (setShowPopupCustom && codeTemplateEform) {
         setShowPopupCustom(true);
         setCodePopupCustom(codeTemplateEform);
-        console.log("codeTemplateEform", codeTemplateEform);
       }
 
       //1. Loại là select
@@ -993,8 +994,6 @@ const FormViewerComponent = (props: any) => {
           componentUrl = `${process.env.APP_CRM_LINK}${component.url}`;
         }
 
-        console.log("componentUrl", componentUrl);
-
         // Lấy fieldName từ properties.name, nếu không có thì gán giá trị mặc định là 'undefined'
         const fieldName = component?.properties?.name || "undefined";
         const enableAddRow = component?.properties?.enableAddRow || "true";
@@ -1351,8 +1350,6 @@ const FormViewerComponent = (props: any) => {
 
     // Gọi hàm async
     initializeForm();
-    console.log("currFormSchema>>", currFormSchema);
-    console.log("formSchema>>", formSchema);
   }, [formSchema, dataInit, currFormSchema]);
 
   useEffect(() => {

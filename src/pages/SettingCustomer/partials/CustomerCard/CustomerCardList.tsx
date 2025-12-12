@@ -149,20 +149,27 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
   ];
 
   const actionsTable = (item: ICardResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["CARD_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCard(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["CARD_DELETE"] == 1 && {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
-          showDialogConfirmDelete(item);
+          if (!isCheckedItem) {
+            showDialogConfirmDelete(item);
+          }
         },
       },
     ].filter((action) => action);
@@ -179,6 +186,35 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listCard.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return CardService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} thẻ khách hàng`, "success");
+        getListCard(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có thẻ khách hàng nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: ICardResponse) => {
     const contentDialog: IContentDialog = {
@@ -199,7 +235,16 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

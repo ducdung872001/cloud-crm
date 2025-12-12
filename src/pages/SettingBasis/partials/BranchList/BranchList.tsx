@@ -205,45 +205,61 @@ export default function BranchList(props: IBranchListProps) {
   };
 
   const actionsTable = (item: IBeautyBranchResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return item.headquarter === 1
       ? [
           {
             title: item.status == 2 ? "Đang hoạt động" : "Ngưng hoạt động",
-            icon: <Icon name={item.status == 2 ? "Lock" : "Unlock"} />,
+            icon: <Icon name={item.status == 2 ? "Lock" : "Unlock"} className={isCheckedItem ? "icon-disabled" : ""}/>,
+            disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               showDialogConfirmActiveBranch(item);
+                        }
             },
           },
           permissions["BEAUTY_BRANCH_UPDATE"] == 1 && {
             title: "Sửa",
-            icon: <Icon name="Pencil" />,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                    disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               setDataBranch(item);
               setShowModalAdd(true);
+                        }
             },
           },
         ]
       : [
           {
             title: item.status == 2 ? "Đang hoạt động" : "Ngưng hoạt động",
-            icon: <Icon name={item.status == 2 ? "Lock" : "Unlock"} />,
+            icon: <Icon name={item.status == 2 ? "Lock" : "Unlock"} className={isCheckedItem ? "icon-disabled" : ""}/>,
+                    disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               showDialogConfirmActiveBranch(item);
+                        }
             },
           },
           permissions["BEAUTY_BRANCH_UPDATE"] == 1 && {
             title: "Sửa",
-            icon: <Icon name="Pencil" />,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                    disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               setDataBranch(item);
               setShowModalAdd(true);
+                        }
             },
           },
           permissions["BEAUTY_BRANCH_DELETE"] == 1 && {
             title: "Xóa",
-            icon: <Icon name="Trash" className="icon-error" />,
+            icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+                    disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               showDialogConfirmDelete(item);
+                        }
             },
           },
         ];
