@@ -41,17 +41,17 @@ CustomPropertiesProvider.prototype.getGroups = function (field, editField) {
     let configurationIdx = findGroupIdx(groups, "configuration");
 
     if (configurationIdx === -1) {
-      groups.push({ id: "configuration", label: "Configuration", entries: [] });
+      // groups.push({ id: "configuration", label: "Configuration", entries: [] });
       configurationIdx = findGroupIdx(groups, "configuration");
     }
 
-    const configurationGroup = groups[configurationIdx];
+    // const configurationGroup = groups[configurationIdx];
 
     // append our custom entries (using simple preact components)
-    configurationGroup.entries.push(
-      createCustomEntryEnable(field, editField, "multiple", "multiple", "Multiple"),
-      createCustomEntryFieldName(field, editField, "maxFiles", "maxFiles", "Max Files")
-    );
+    // configurationGroup.entries.push(
+    //   createCustomEntryEnable(field, editField, "multiple", "multiple", "Multiple"),
+    //   createCustomEntryFieldName(field, editField, "maxFiles", "maxFiles", "Max Files")
+    // );
     // listEnable.forEach((item) => {
     // configurationGroup.entries.push(createCustomEntryEnable(field, editField, item.id, item.key, item.label));
     // });

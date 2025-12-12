@@ -146,37 +146,50 @@ export default function ObjectGroupList(props: any) {
   const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.type, item.position];
 
   const actionsTable = (item: any): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Cài đặt hồ sơ",
-        icon: <Icon name="SettingTicket" />,
+        icon: <Icon name="SettingTicket" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataObjectGroup(item);
           setShowModalSettingObject(true);
+          }
         },
       },
 
       {
         title: "Cài đặt trường",
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="Settings" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataObjectGroup(item);
           setShowModalSetting(true);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataObjectGroup(item);
           setShowModalAddOjectGroup(true);
+          }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ].filter((action) => action);
@@ -194,6 +207,35 @@ export default function ObjectGroupList(props: any) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listObjectGroup.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return ObjectGroupService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} loại đối tượng`, "success");
+        getListOjectGroup(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có loại đối tượng nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: IContractPipelineResponse) => {
     const contentDialog: IContentDialog = {
@@ -214,7 +256,16 @@ export default function ObjectGroupList(props: any) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

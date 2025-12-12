@@ -35,24 +35,24 @@ import { html, useContext } from "diagram-js/lib/ui";
 
 import "./styles.css";
 
-import AttachmentUploader from "components/attachmentUpload";
+import MaskedInput from "components/maskedInput";
 
 export const maskedInputType = "maskedInput";
 
-function isValidJSON(value) {
-  if (typeof value !== "string") return false;
-  try {
-    JSON.parse(value);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
+let originalValue = {};
 export function MaskedInputRenderer(props) {
   const { disabled, errors = [], field, readonly, value, domId } = props;
   const { description, id, label } = field;
   const { formId } = useContext(FormContext);
+
+  const required = field?.validate?.required ?? false;
+  let key = field?.properties?.key ?? ""; // lấy key từ properties
+  let url = field?.properties?.url ?? ""; // lấy url từ properties
+  let valueOfKey = props?.fieldInstance?.expressionContextInfo?.data?.[key] ?? "";
+
+  if (!originalValue[id]) {
+    originalValue[id] = value;
+  }
 
   const errorMessageId = errors.length === 0 ? undefined : `${prefixId(domId, formId)}-error-message`;
 
@@ -60,10 +60,9 @@ export function MaskedInputRenderer(props) {
 
   // Khi MaskedInput thay đổi
   function handleMaskedInputChange(newValue) {
-    console.log("handleMaskedInputChange", newValue);
     props.onChange({
       field: field, // object field từ props
-      value: JSON.stringify(newValue),
+      value: newValue,
     });
   }
 
@@ -71,27 +70,25 @@ export function MaskedInputRenderer(props) {
     const container = document.getElementById(containerId);
     if (container && props.onChange && field) {
       // Điều kiện container và props.onChange và field quan trọng
-      let _value = [];
-      if (isValidJSON(value)) {
-        _value = JSON.parse(value);
-      } else if (typeof value === "string" && value.length > 0) {
-        _value = [
-          {
-            url: value,
-            type: "",
-            name: "",
-            size: null,
-          },
-        ];
-      }
-      console.log("MaskedInputRenderer render", _value);
       ReactDOM.render(
-        <AttachmentUploader
-          value={_value}
-          placeholderLabel=""
-          onChange={handleMaskedInputChange}
-          multiple={field.multiple ? field.multiple : false}
-          maxFiles={field.maxFiles ? parseInt(field.maxFiles) : 0}
+        <MaskedInput
+          field={{
+            label: "",
+            name: "phone",
+            type: "text",
+            fill: true,
+            // regex: new RegExp(PHONE_REGEX),
+            // messageErrorRegex: "Số điện thoại không đúng định dạng",
+            iconPosition: "right",
+            required: required,
+          }}
+          handleUpdate={(e) => {
+            handleMaskedInputChange(e);
+          }}
+          originalValue={originalValue[id]}
+          value={value}
+          valueOfKey={valueOfKey}
+          url={url}
         />,
         container
       );
@@ -106,6 +103,7 @@ export function MaskedInputRenderer(props) {
   return html`
     <div class=${formFieldClasses("maskedInput", { errors, disabled, readonly })}>
       <label id=${prefixId(id, formId)}>${label || ""}</label>
+      ${required ? html`<span style="color:red" aria-hidden="true" class="fjs-asterix">*</span>` : null}
       <div id=${containerId}></div>
       ${description ? html`<div class="description">${description}</div>` : null}
       ${errors.length > 0 ? html`<div class="errors" id=${errorMessageId}>${errors.join(", ")}</div>` : null}

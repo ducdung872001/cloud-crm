@@ -209,41 +209,54 @@ export default function EmployeeList(props: IEmployeeListProps) {
   ];
 
   const actionsTable = (item: IEmployeeResponse): IAction[] => {
+        const isCheckedItem = listIdChecked?.length > 0;
     return [
       item.status !== 2 &&
         (permissions["EMPLOYEE_ADD"] == 1 || permissions["EMPLOYEE_UPDATE"] == 1) &&
         item.userId && {
           title: "Reset mật khẩu",
-          icon: <Icon name="ResetPassword" className="icon-warning" />,
+          icon: <Icon name="ResetPassword" className={isCheckedItem ? "icon-disabled" :"icon-warning" }/>,
+                      disabled: isCheckedItem,
           callback: () => {
+                      if (!isCheckedItem) {
             setShowPasswordSuccess(true);
             setDataEmployee(item);
+                      }
           },
         },
       permissions["EMPLOYEE_ADD"] == 1 &&
         item.status !== 2 && {
           title: "Tạo tài khoản cho nhân viên",
-          icon: <Icon name="UserAdd" />,
+          icon: <Icon name="UserAdd" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                      disabled: isCheckedItem,
           callback: () => {
+                      if (!isCheckedItem) {
             setDataEmployee(item);
             setShowModalCreateAccountEmployee(true);
+                      }
           },
         },
       permissions["EMPLOYEE_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                    disabled: isCheckedItem,
         callback: () => {
+                    if (!isCheckedItem) {
           setDataEmployee(item);
           setShowModalAdd(true);
+                    }
         },
       },
       item.isOwner === 1
         ? null
         : permissions["EMPLOYEE_DELETE"] == 1 && {
             title: "Xóa",
-            icon: <Icon name="Trash" className="icon-error" />,
+            icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+                        disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               showDialogConfirmDelete(item);
+                        }
             },
           },
     ].filter((action) => action);

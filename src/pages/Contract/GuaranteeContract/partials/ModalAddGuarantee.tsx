@@ -1558,7 +1558,7 @@ export default function ModalAddGuarantee(props: any) {
 
                 <div className="form-group">
                   <DatePickerCustom
-                    label="Ngày ngày hết hạn"
+                    label="Ngày hết hạn"
                     name="endDate"
                     fill={true}
                     value={formData?.values?.endDate}
