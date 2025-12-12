@@ -24,6 +24,37 @@ const defaultSchema = {
 
 const XMLtype = "modalAddPartner"; // Đối tác
 
+const getPartnerAttributes = async () => {
+  let dataOption = null;
+  const response = await PartnerAttributeService.listAll(0);
+  if (response.code === 0) {
+    dataOption = response.result || {};
+    return dataOption;
+  }
+  return dataOption;
+};
+
+const getPartnerExtraInfos = async (id) => {
+  const response = await PartnerExtraInfoService.list(id);
+  return response.result ?? [];
+};
+
+const getOjectGroup = async (type: any) => {
+  const response = await ObjectGroupService.detailByType(type);
+  if (response.code === 0) {
+    const result = response?.result;
+    const configForm = result?.config ? JSON.parse(result.config) : defaultSchema;
+    if (configForm && Object.keys(configForm).length > 0) {
+      return configForm;
+    }
+  } else if (response.code == 400) {
+    showToast(response.message, "error");
+  } else {
+    showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+  }
+  return defaultSchema;
+};
+
 export default function XmlAddPartner(props: any) {
   const { onShow, data, onHide, takeInfoPartner } = props;
 
@@ -47,36 +78,32 @@ export default function XmlAddPartner(props: any) {
     localStorage.setItem("showFullScreenModalPartnerEform", JSON.stringify(showFullScreen));
   }, [showFullScreen]);
 
-  const getPartnerAttributes = async () => {
-    if (!mapPartnerAttribute || mapPartnerAttribute.length === 0) {
-      const response = await PartnerAttributeService.listAll(0);
-      if (response.code === 0) {
-        const dataOption = response.result;
-        setMapPartnerAttribute(dataOption || {});
-      }
-    }
-  };
-
   useEffect(() => {
     if (!onShow) return;
-    getPartnerAttributes();
-    getOjectGroup(XMLtype);
+    //exceptionField để map những field đặc biệt không theo quy tắc chung (ví dụ phone => phoneMasked)
+    const exceptionField = {
+      phone: "phoneMasked",
+      email: "emailMasked",
+    };
+    const getAlldata = async () => {
+      const configInit = await getOjectGroup(XMLtype); // Lấy cấu hình form từ ObjectGroup
+      const mapAttribute = await getPartnerAttributes(); // Lấy các trường thông tin mở rộng của đối tác
+      const extraInfos = data?.id ? await getPartnerExtraInfos(data?.id) : []; // Lấy giá trị của các trường thông tin mở rộng của đối tác nếu có data.id (id của đối tác)
+      const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField); // Map dữ liệu ban đầu vào cấu hình form
+      if (data?.id) {
+        setDataInit(mapped);
+      }
+      setInitFormSchema(configInit);
+      setMapPartnerAttribute(mapAttribute);
+      setPartnerExtraInfos(extraInfos);
+      setIsLoading(false);
+    };
+    if (onShow && XMLtype) {
+      getAlldata();
+    }
   }, [data, onShow, XMLtype]);
 
-  useEffect(() => {
-    //Lấy thông tin contractExtraInfos
-    if (data?.id && mapPartnerAttribute && onShow) {
-      getPartnerExtraInfos();
-    }
-  }, [data, mapPartnerAttribute, onShow]);
-
-  const getPartnerExtraInfos = async () => {
-    const response = await PartnerExtraInfoService.list(data?.id);
-    setPartnerExtraInfos(response.code === 0 ? response.result : []);
-  };
-
   const onSubmit = async (config) => {
-    console.log("dataConfigForm>>>", config);
     setIsSubmit(true);
     // Các trường thông tin bổ sung
     let infoExtra = [];
@@ -101,13 +128,16 @@ export default function XmlAddPartner(props: any) {
       });
     });
 
+    let phone = config?.phoneMasked ?? null; // Lấy theo phoneMasked vì maskedInput trong form lấy theo key này
+    let email = config?.emailMasked ?? null; // Lấy theo emailMasked vì maskedInput trong form lấy theo key này
+
     let body: any = {
       ...(data ? data : {}),
-      avartar: config.avatar ?? "",
+      avatar: config.avatar ? JSON.parse(config.avatar)[0]?.url : "",
       name: config.name ?? "",
       code: config.code ?? "",
-      phone: config.phone ?? "",
-      email: config.email ?? "",
+      phone: phone,
+      email: email,
       taxCode: config.taxCode ?? "",
       contactId: config.contactId ?? "",
       address: config.address ?? "",
@@ -191,37 +221,6 @@ export default function XmlAddPartner(props: any) {
   const handleSchemaSubmit = (newSchema, reject, contextData) => {
     setDataSchema(newSchema);
     onSubmit(newSchema);
-  };
-
-  useEffect(() => {
-    if (data && onShow) {
-      //exceptionField để map những field đặc biệt không theo quy tắc chung (ví dụ phone => phoneMasked)
-      const exceptionField = {
-        phone: "phoneMasked",
-        email: "emailMasked",
-      };
-      const mapped = mapConfigData(initFormSchema, data, mapPartnerAttribute, partnerExtraInfos, exceptionField);
-      console.log("mapped>>>", mapped);
-
-      setDataInit(mapped);
-    }
-  }, [initFormSchema, data, mapPartnerAttribute, partnerExtraInfos, onShow]);
-
-  const getOjectGroup = async (type: any) => {
-    const response = await ObjectGroupService.detailByType(type);
-    if (response.code === 0) {
-      const result = response?.result;
-      const configForm = result?.config ? JSON.parse(result.config) : defaultSchema;
-      if (configForm && Object.keys(configForm).length > 0) {
-        setInitFormSchema(configForm);
-        console.log("configForm>>", configForm);
-      }
-    } else if (response.code == 400) {
-      showToast(response.message, "error");
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-    setIsLoading(false);
   };
 
   return (

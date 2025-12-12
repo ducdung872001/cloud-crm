@@ -114,20 +114,27 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
   ];
 
   const actionsTable = (item: ITemplateCategoryResponseModel): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["TEMPLATE_CATEGORY_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setShowModalAdd(true);
           setDataTemplateCategory(item);
+          }
         },
       },
       permissions["TEMPLATE_CATEGORY_DELETE"] == 1 && {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];
@@ -144,6 +151,35 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listTemplateCategory.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return TemplateCategoryService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} chủ đề SMS`, "success");
+        getListTemplateCategory();
+        setListIdChecked([]);
+      } else {
+        showToast("Không có chủ đề SMS nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: ITemplateCategoryResponseModel) => {
     const contentDialog: IContentDialog = {
@@ -164,7 +200,16 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

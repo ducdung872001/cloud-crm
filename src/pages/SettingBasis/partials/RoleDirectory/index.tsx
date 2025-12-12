@@ -275,33 +275,43 @@ export default function RoleDirectory(props: IDepartmentDirectoryListProps) {
   ];
 
   const actionsTable = (item: IDepartmentResponse): IAction[] => {
+        const isCheckedItem = listIdChecked?.length > 0;
     return item.leadership === 1
       ? [
           permissions["DEPARTMENT_UPDATE"] == 1 && {
             title: "Sửa",
-            icon: <Icon name="Pencil" />,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                        disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               setIdRole(item.id);
               setShowModalAdd(true);
               setDataRole(item);
+                        }
             },
           },
         ]
       : [
           permissions["DEPARTMENT_UPDATE"] == 1 && {
             title: "Sửa",
-            icon: <Icon name="Pencil" />,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                        disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               setIdRole(item.id);
               setShowModalAdd(true);
               setDataRole(item);
+                        }
             },
           },
           permissions["DEPARTMENT_DELETE"] == 1 && {
             title: "Xóa",
-            icon: <Icon name="Trash" className="icon-error" />,
+            icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+                        disabled: isCheckedItem,
             callback: () => {
+                        if (!isCheckedItem) {
               showDialogConfirmDelete(item);
+                        }
             },
           },
         ];

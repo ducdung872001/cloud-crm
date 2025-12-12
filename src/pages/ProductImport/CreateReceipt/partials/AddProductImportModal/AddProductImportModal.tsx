@@ -369,7 +369,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
       setIdProduct(null);
       setListUnitProduct([]);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
