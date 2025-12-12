@@ -225,7 +225,7 @@ export default function ModalAddPartner(props: any) {
           fill: true,
           required: true, // Chỉ kiểm tra bắt buộc nhập. Không kiểm tra format.
           regex: new RegExp(PARTNER_NAME_REGEX),
-          messageErrorRegex: "Tên đối tác sai định dạng",
+          messageErrorRegex: "Tên đối tác chỉ được chứa chữ cái và khoảng trắng.",
           
         },
         {
@@ -235,7 +235,7 @@ export default function ModalAddPartner(props: any) {
           fill: true,
           // disabled: activeCode,
           regex: new RegExp(PARTNER_CODE_REGEX),
-          messageErrorRegex: "Mã đối tác sai định dạng",
+          messageErrorRegex: "Mã đối tác không được chứa ký tự đặc biệt.",
         },
       ] as IFieldCustomize[],
     [activeCode]
@@ -250,7 +250,7 @@ export default function ModalAddPartner(props: any) {
           type: "text",
           fill: true,
           regex: new RegExp(PHONE_REGEX),
-          messageErrorRegex: "Số điện thoại không đúng định dạng",
+          messageErrorRegex: "Số điện thoại phải là số và có độ dài từ 9-11 ký tự.",
           iconPosition: "right",
           icon: data?.id && (!isShowPhone ? <Icon name="EyeSlash" /> : <Icon name="Eye" />),
           iconClickEvent: () => setIsShowPhone(!isShowPhone),
@@ -274,7 +274,7 @@ export default function ModalAddPartner(props: any) {
           fill: true,
           required: false,
           regex: new RegExp(TAX_CODE_REGEX),
-          messageErrorRegex: "Mã số thuế sai định dạng",
+          messageErrorRegex: "Mã số thuế phải gồm 10 số hoặc 13 số.",
         },
         {
           label: "Người đại diện pháp luật",

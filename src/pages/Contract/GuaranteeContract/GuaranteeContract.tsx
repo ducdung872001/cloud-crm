@@ -522,7 +522,7 @@ export default function GuaranteeContractList() {
       field: "competencyName",
     },
     {
-      headerName: "Ngày bắt đầu 1",
+      headerName: "Ngày bắt đầu",
       field: "startDate",
       cellStyle: { display: 'flex', justifyContent: 'center'},
     },
