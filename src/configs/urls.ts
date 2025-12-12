@@ -3007,6 +3007,7 @@ export const urlsApi = {
 
 export const urls = {
   dashboard: "/dashboard",
+  manager_work: "/manager_work",
   //Lĩnh vực BĐS - Đầu mối liên hệ
   contact: "/contact",
   customer: "/customer",
