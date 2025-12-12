@@ -35,6 +35,7 @@ export default function CustomerSchedule({ idCustomer }) {
     sources: 2,
     branchId: dataBranch?.value,
     lstId: idEmployee,
+    page: 1,
   });
 
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -72,7 +73,7 @@ export default function CustomerSchedule({ idCustomer }) {
           status: item.status,
         };
       });
-      setListSchedule(result);
+      setListSchedule(result.items);
 
       setPagination({
         ...pagination,
