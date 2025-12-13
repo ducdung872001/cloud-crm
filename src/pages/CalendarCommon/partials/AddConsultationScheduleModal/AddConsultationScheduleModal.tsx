@@ -1347,7 +1347,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
         <form className="form-add-event" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader
             custom={idData ? true : false}
-            title={idData ? undefined : `${idData ? "Chỉnh sửa" : "Thêm mới"} lịch thực tư vấn`}
+            title={idData ? undefined : `${idData ? "Chỉnh sửa" : "Thêm mới"} lịch tư vấn`}
             toggle={() => !isSubmit && handClearForm(false)}
           >
             {idData ? (
