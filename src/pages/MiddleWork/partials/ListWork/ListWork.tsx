@@ -47,7 +47,7 @@ export default function ListWork(props: IListWorkProps) {
     dataProjectReport,
   } = props;
 
-  const { dataInfoEmployee } = useContext(UserContext) as ContextType;  
+  const { dataInfoEmployee } = useContext(UserContext) as ContextType;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
@@ -668,16 +668,18 @@ export default function ListWork(props: IListWorkProps) {
       },
       ...(item.status == 2 || item.status == 3
         ? [
-          ...(dataInfoEmployee?.isOwner === 1 ? [
-            {
-              title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
-              callback: () => {
-                showDialogConfirmDelete(item);
-              },
-            },
-          ] : [])
-        ]
+            ...(dataInfoEmployee?.isOwner === 1
+              ? [
+                  {
+                    title: "Xóa",
+                    icon: <Icon name="Trash" className="icon-error" />,
+                    callback: () => {
+                      showDialogConfirmDelete(item);
+                    },
+                  },
+                ]
+              : []),
+          ]
         : [
             {
               title: "Sửa",

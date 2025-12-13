@@ -65,7 +65,6 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
   const [dataSchema, setDataSchema] = useState(null);
   const [dataSchemaDraft, setDataSchemaDraft] = useState(null);
   const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
-  
 
   //Lấy danh sách các ghi chú để gửi sang portal
   const [listNodeDocument, setListNodeDocument] = useState([]);
@@ -86,7 +85,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
   const [showPopupCustom, setShowPopupCustom] = useState(false);
   const [codePopupCustom, setCodePopupCustom] = useState("");
   const [showPopupCallCustomer, setShowPopupCallCustomer] = useState(true);
-  const [customerId, setCustomerId] = useState(null);  
+  const [customerId, setCustomerId] = useState(null);
 
   const cutString = (str, char) => {
     const index = str.indexOf(char);
@@ -1079,7 +1078,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                     setCodePopupCustom={setCodePopupCustom}
                     setShowPopupCallCustomer={setShowPopupCallCustomer}
                     onOpenCallCustomerModal={(data) => {
-                      console.log('data', data);
+                      console.log("data", data);
                       setCustomerId(data?.customerId);
                       setShowPopupCallCustomer(true);
                     }}
@@ -1205,11 +1204,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
         }}
       />
 
-      <ModalCallCustomer 
-        onShow={showPopupCallCustomer} 
-        customerId={customerId} 
-        onHide={() => setShowPopupCallCustomer(false)} />
-      
+      <ModalCallCustomer onShow={showPopupCallCustomer} customerId={customerId} onHide={() => setShowPopupCallCustomer(false)} />
     </Fragment>
   );
 }

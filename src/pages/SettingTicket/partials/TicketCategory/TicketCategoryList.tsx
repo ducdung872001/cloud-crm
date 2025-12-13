@@ -140,20 +140,27 @@ export default function SettingTicketList(props) {
   const dataMappingArray = (item: ITicketCategoryResponse, index: number) => [getPageOffset(params) + index + 1, item.name, item.position];
 
   const actionsTable = (item: ITicketCategoryResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["TICKET_CATEGORY_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataSettingTicket(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["TICKET_CATEGORY_DELETE"] == 1 && {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];
@@ -170,6 +177,35 @@ export default function SettingTicketList(props) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listTicketCategory.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return TicketCategoryService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} danh mục hỗ trợ`, "success");
+        getListTicketCategory(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có danh mục hỗ trợ nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: ITicketCategoryResponse) => {
     const contentDialog: IContentDialog = {
@@ -190,7 +226,16 @@ export default function SettingTicketList(props) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

@@ -125,8 +125,21 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
         };
       });
       setRelatedCustomers(changeRelations);
+      if (result.cgpId) {
+        setCgpData({
+          value: result.cgpId,
+          label: result?.cgpName || result?.groupName || "",
+        });
+        setFormData((prev) => ({
+          ...prev,
+          values: {
+            ...prev.values,
+            cgpId: result.cgpId,
+          },
+        }));
+      }
     } else {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+      showToast(response.error ?? response.message ??"Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
   };
 
@@ -735,7 +748,6 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
         //   isLoading: isLoadingContact,
         // },
         {
-          label: "Người đại diện pháp luật",
           name: "contactId",
           type: "custom",
           snippet: (
@@ -834,7 +846,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     const param: any = {
       name: search,
       page: page,
-      limit: 1000,
+      limit: 10,
     };
 
     const response = await CustomerGroupService.list(param);
@@ -895,6 +907,15 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
       setFormData({ ...formData, values: { ...formData?.values, cgpId: e.value } });
     }
   };
+
+  useEffect(() => {
+      if (data?.cgpId) {
+        setCgpData({
+          value: data.cgpId,
+          label: data?.cgpName || data?.groupName || "",
+        });
+      }
+    }, [data, onShow]);
 
   useEffect(() => {
     if (relatedCustomers.length > 0) {
@@ -1077,6 +1098,8 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
       formData,
       countCheckAddCareer,
       countCheckAddCgp,
+      cgpData,
+      dataContact,
     ]
   );
 
@@ -1089,7 +1112,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     } else if (response.code == 400) {
       showToast("Bạn không có quyền xem số điện thoại !", "error");
     } else {
-      showToast(response.message, "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
   };
 
@@ -1111,7 +1134,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     } else if (response.code == 400) {
       showToast("Bạn không có quyền xem email !", "error");
     } else {
-      showToast(response.message, "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
   };
 
@@ -1204,7 +1227,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
       setCustomerExtraInfos([]);
       takeInfoCustomer && takeInfoCustomer(response.result);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
 
     setIsSubmit(false);

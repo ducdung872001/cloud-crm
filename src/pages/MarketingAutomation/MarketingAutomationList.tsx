@@ -242,6 +242,8 @@ export default function MarketingAutomationList() {
   };
 
   const actionsTable = (item: any): IAction[] => {
+      const isCheckedItem = listIdChecked?.length > 0;
+
     return [
       // ...(item.status !== 1
       //   ? [
@@ -271,10 +273,13 @@ export default function MarketingAutomationList() {
 
       {
         title: "Cài đặt MA",
-        icon: <Icon name="Settings" style={{ width: 18 }} />,
+        icon: <Icon name="Settings" style={{ width: 18 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           navigate(`/marketing_automation_setting/${item.id}`);
           //   setShowModalConfig(true);
+          }
         },
       },
 
@@ -289,24 +294,30 @@ export default function MarketingAutomationList() {
 
       {
         title: "Đẩy vào quy trình BPM",
-        icon: <Icon name="FingerTouch" className="icon-warning" style={item.isSetup ? {} : { fill: "var(--extra-color-30)" }} />,
+        icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} style={item.isSetup ? {} : { fill: "var(--extra-color-30)" }} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           if (item.isSetup) {
             setShowModalInitBpm(true);
             setIdCampaign(item.id);
           } else {
             showToast("Vui lòng cài đặt chương trình trước khi phê duyệt", "error");
           }
+        }
         },
       },
 
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           //   setIdCampaign(item.id);
           //   // setShowModalAdd(true);
           navigate(`/edit_marketing_automation/${item.id}`);
+          }
         },
       },
 
@@ -314,9 +325,12 @@ export default function MarketingAutomationList() {
         ? [
             {
               title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
+              icon: <Icon name="Trash" className={isCheckedItem? "icon-disabled":"icon-error"}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmDelete(item);
+                }
               },
             },
           ]

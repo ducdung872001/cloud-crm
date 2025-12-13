@@ -714,7 +714,18 @@ export default function AddContactModal(props: AddContactModalProps) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} liên hệ thành công`, "success");
       clearForm(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      if (response.error) {
+        setFormData((prevState) => ({ 
+          ...prevState, 
+          errors: { 
+            ...prevState.errors,
+            name: response.error 
+          } 
+        }));
+        showToast(response.error, "error");
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      }
       setIsSubmit(false);
     }
   };

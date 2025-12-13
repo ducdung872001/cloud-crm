@@ -160,20 +160,27 @@ export default function ObjectAttributeList(props: any) {
   ];
 
   const actionsTable = (item: any): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataObjectAttribute(item);
           setShowModalAdd(true);
+          }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ].filter((action) => action);
@@ -191,6 +198,35 @@ export default function ObjectAttributeList(props: any) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listObjectAttribute.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return ContractAttributeService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} trường thông tin `, "success");
+        getListObjectAttribute(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có trường thông tin nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: any) => {
     const contentDialog: IContentDialog = {
@@ -211,7 +247,16 @@ export default function ObjectAttributeList(props: any) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

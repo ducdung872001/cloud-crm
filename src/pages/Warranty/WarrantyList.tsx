@@ -360,41 +360,54 @@ export default function WarrantyList() {
   };
 
   const actionsTable = (item: IWarrantyResponseModel) => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       ...(!item.status
         ? [
             {
               title: "Chuyển phiếu",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataWarranty(item);
                 setHasTransferVotes(true);
+                }
               },
             },
           ]
         : []),
       {
         title: "Xem chi tiết",
-        icon: <Icon name="Eye" />,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           navigate(`/detail_warranty/warrantyId/${item.id}`);
+          }
         },
       },
       ...(!item.status
         ? [
             {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataWarranty(item);
                 setShowModalAdd(true);
+                }
               },
             },
             {
               title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
+              icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmDelete(item);
+                }
               },
             },
           ]
@@ -403,9 +416,12 @@ export default function WarrantyList() {
         ? [
             {
               title: "Tạm dừng duyệt phiếu",
-              icon: <Icon name="WarningCircle" className="icon-warning" />,
+              icon: <Icon name="WarningCircle" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "pending");
+                }
               },
             },
           ]
@@ -414,16 +430,22 @@ export default function WarrantyList() {
         ? [
             {
               title: "Tiếp tục duyệt phiếu",
-              icon: <Icon name="InfoCircle" className="icon-success" />,
+              icon: <Icon name="InfoCircle" className={isCheckedItem?"icon-disabled" : "icon-success"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "play");
+                }
               },
             },
             {
               title: "Duyệt phiếu lại",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "inital");
+                }
               },
             },
           ]
@@ -462,6 +484,35 @@ export default function WarrantyList() {
     setContentDialog(null);
   };
 
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listWarranty.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return WarrantyService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} bảo hành`, "success");
+        getListWarranty(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có bảo hành nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
+
   const showDialogConfirmDelete = (item?: IWarrantyResponseModel) => {
     const contentDialog: IContentDialog = {
       color: "error",
@@ -481,7 +532,16 @@ export default function WarrantyList() {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

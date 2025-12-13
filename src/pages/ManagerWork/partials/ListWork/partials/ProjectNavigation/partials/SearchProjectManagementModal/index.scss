@@ -1,0 +1,17 @@
+.modal__search--project {
+  .form__search--project--group {
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 3.2rem;
+
+      .form-group {
+        width: calc(50% - 1.6rem);
+      }
+
+      #FieldName {
+        width: 100%;
+      }
+    }
+  }
+}

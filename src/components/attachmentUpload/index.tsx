@@ -361,11 +361,11 @@ const AttachmentUploader: React.FC<Props> = ({
   };
 
   return (
-    <div className={`attachments ${className} ${multiple ? "" : "attachments-single"}`}>
+    <div className={`attachments-common ${className ? className : ""} ${multiple ? "" : "attachments-common-single"}`}>
       <label className="title-attachment">{placeholderLabel}</label>
       <div
         ref={containerRef}
-        className={list.length >= 5 ? "list-image-scroll" : "wrapper-list-image"}
+        className={"wrapper-list-image"}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}

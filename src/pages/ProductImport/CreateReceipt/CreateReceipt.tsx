@@ -110,20 +110,27 @@ export default function CreateReceipt() {
   ];
 
   const actionsTable = (item: IInvoiceDetailResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataInvoiceDetail(item);
           setShowModalAdd(true);
+          }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];
@@ -158,6 +165,7 @@ export default function CreateReceipt() {
       if (result.length > 0) {
         showToast("Xóa sản phẩm thành công", "success");
         getListInvoiceDetail(params);
+        setListIdChecked([]);
       } else {
         showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }

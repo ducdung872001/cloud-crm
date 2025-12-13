@@ -10,7 +10,8 @@ $muted: #888;
 $item-bg: #fff;
 $item-border: #eee;
 
-.attachments {
+.attachments-common {
+  width: 100%;
   margin: 8px 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   color: $text;
@@ -37,6 +38,10 @@ $item-border: #eee;
       border-color: $primary;
     }
   }
+  .wrapper-list-image {
+    width: 100%;
+    overflow: scroll;
+  }
 
   .list-image-scroll {
     overflow-x: auto;
@@ -45,13 +50,15 @@ $item-border: #eee;
 
   .action-upload-image {
     cursor: pointer;
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     color: $text;
 
     .wrapper-upload {
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 8px;
       font-size: 14px;
@@ -72,6 +79,7 @@ $item-border: #eee;
 
   .image-item-attach {
     width: 9rem;
+    min-width: 9rem;
     height: 9rem;
     position: relative;
     cursor: pointer;
@@ -255,8 +263,9 @@ $item-border: #eee;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    min-width: 90px;
+    height: 90px;
     margin-right: 8px;
     border-radius: 6px;
     background: #f0f6ff;
@@ -379,8 +388,8 @@ $item-border: #eee;
     }
   }
 }
-.attachments-single {
-  max-width: 12rem;
+.attachments-common-single {
+  max-width: 112px;
 }
 
 /* small icon tweaks outside .attachments for consistent sizing */

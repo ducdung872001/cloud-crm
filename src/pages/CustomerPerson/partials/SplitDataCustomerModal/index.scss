@@ -1,0 +1,35 @@
+.modal_split-data-customer {
+    .form_split-data-customer {
+        .modal-body {
+            padding: 0;
+        }
+        .list-form-group {
+            padding: 1.6rem;
+            max-height: calc(100vh - 250px);
+            // overflow: auto;
+            // border: 1px solid;
+      
+            .form-group {        
+              .radio-list {
+                display: flex;
+                gap: 0 2rem;
+                .form-group {
+                  display: flex;
+                  align-items: center;
+                  gap: 0 2.2rem;
+                  .base-radio {
+                    margin-top: 0;
+                  }
+                }
+              }
+            }
+
+            .container-list-employee {
+              border: 1px solid;
+            }
+        
+      
+          }
+  }
+}
+  

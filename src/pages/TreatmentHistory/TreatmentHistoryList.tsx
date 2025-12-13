@@ -407,28 +407,38 @@ export default function TreatmentHistoryList() {
   );
 
   const actionsTable = (item: ITreatmentHistoryResponseModel): IAction[] => {
+      const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Xem chi tiết",
-        icon: <Icon name="Eye" />,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataTreatmentHistory(item);
           setShowModalView(true);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataTreatmentHistory(item);
           setShowModalAdd(true);
+          }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem? "icon-disabled":"icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];

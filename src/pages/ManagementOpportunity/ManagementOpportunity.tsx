@@ -535,19 +535,24 @@ export default function ManagementOpportunity() {
 
   const actionsTable = (item: ICampaignOpportunityResponseModel): IAction[] => {
     const activities = item.activities ? JSON.parse(item.activities) : [];
+    const isCheckedItem = listIdChecked?.length > 0;
+
 
     return [
       ...(activities.includes("email") && item.status === 1
         ? [
             {
               title: "Gửi email",
-              icon: <Icon name="EmailFill" style={{ width: 16, marginRight: 5 }} />,
+              icon: <Icon name="EmailFill" style={{ width: 16, marginRight: 5 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataCustomer({
                   name: item.customerName,
                   id: item.customerId,
                 });
                 setShowModalSendEmail(true);
+              }
               },
             },
           ]
@@ -557,13 +562,16 @@ export default function ManagementOpportunity() {
         ? [
             {
               title: "Gửi SMS",
-              icon: <Icon name="SMS" style={{ width: 17, marginRight: 5, marginTop: 3 }} />,
+              icon: <Icon name="SMS" style={{ width: 17, marginRight: 5, marginTop: 3 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataCustomer({
                   name: item.customerName,
                   id: item.customerId,
                 });
                 setShowModalSendSms(true);
+              }
               },
             },
           ]
@@ -573,8 +581,10 @@ export default function ManagementOpportunity() {
         ? [
             {
               title: "Gọi điện",
-              icon: <Icon name="PhoneFill" style={{ width: 14, fill: "#1c8cff", marginRight: 3 }} />,
+              icon: <Icon name="PhoneFill" style={{ width: 14, fill: "#1c8cff", marginRight: 3 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataCustomer({
                   name: item.customerName,
                   id: item.customerId,
@@ -583,6 +593,7 @@ export default function ManagementOpportunity() {
                   employeeName: item.employeeName,
                 });
                 setShowModalPhone(true);
+              }
               },
             },
           ]
@@ -592,13 +603,16 @@ export default function ManagementOpportunity() {
         ? [
             {
               title: "Hẹn gặp",
-              icon: <Icon name="Meeting" style={{ marginRight: 3 }} />,
+              icon: <Icon name="Meeting" style={{ marginRight: 3 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataCustomer({
                   name: item.customerName,
                   id: item.customerId,
                 });
                 setShowModalFace(true);
+              }
               },
             },
           ]
@@ -608,13 +622,16 @@ export default function ManagementOpportunity() {
         ? [
             {
               title: "Nhắn zalo",
-              icon: <Icon name="Zalo" style={{ marginRight: 3 }} />,
+              icon: <Icon name="Zalo" style={{ marginRight: 3 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 // setDataCustomer({
                 //   name: item.customerName,
                 //   id: item.customerId
                 // })
                 // setShowModalFace(true);
+                }
               },
             },
           ]
@@ -624,13 +641,16 @@ export default function ManagementOpportunity() {
         ? [
             {
               title: "Đặt lịch",
-              icon: <Icon name="Calendar" style={{ marginRight: 3 }} />,
+              icon: <Icon name="Calendar" style={{ marginRight: 3 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataCustomer({
                   name: item.customerName,
                   id: item.customerId,
                 });
                 setShowModalAddConsultationScheduleModal(true);
+              }
               },
             },
           ]
@@ -640,44 +660,57 @@ export default function ManagementOpportunity() {
         ? [
             {
               title: "Tạo đơn hàng",
-              icon: <Icon name="Bill" className="icon-invoice" style={{ marginRight: 3 }} />,
-
+              icon: <Icon name="Bill" className={isCheckedItem ? "icon-disabled" :"icon-invoice"} style={{ marginRight: 3 }} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 navigate(`/create_sale_add?customerId=${item.customerId}&campaignId=${item.campaignId}`);
+                }
               },
             },
             {
               title: "Tạo hợp đồng",
-              icon: <Icon name="CreateContract" className="icon-invoice" style={{ marginRight: 3 }} />,
-
+              icon: <Icon name="CreateContract" className={isCheckedItem ? "icon-disabled" :"icon-invoice"} style={{ marginRight: 3 }} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 navigate(`/create_contract?customerId=${item.customerId}&campaignId=${item.campaignId}`);
+                }
               },
             },
           ]
         : []),
       {
         title: "Xem chi tiết",
-        icon: <Icon name="Eye" />,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIdCampaign(item.campaignId);
           setIdManagementOpportunity(item.id);
           setIsDetailManagementOpportunity(true);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" style={{ width: 18 }} />,
+        icon: <Icon name="Pencil" style={{ width: 18 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIdManagementOpportunity(item.id);
           setShowModalAdd(true);
+          }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" style={{ width: 19 }} />,
+        icon: <Icon name="Trash" className={isCheckedItem? "icon-disabled":"icon-error"} style={{ width: 19 }} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];

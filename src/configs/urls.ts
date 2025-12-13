@@ -1941,6 +1941,10 @@ export const urlsApi = {
     getPermissionResources: prefixAdmin + "/permission/resource",
     //API phân quyền theo nhóm quyền
     rolePermission: prefixAdmin + "/rolePermission/info",
+    //API phân quyền theo gói
+    packagePermission: prefixAdmin + "/packagePermission/info",
+    //API thêm quyền cho nhóm quyền
+    packagePermissionAdd: prefixAdmin + "/packagePermission/add",
     //API thêm quyền cho nhóm quyền
     permissionRoleAdd: prefixAdmin + "/rolePermission/add",
     //API xóa quyền được cấp
@@ -3003,6 +3007,7 @@ export const urlsApi = {
 
 export const urls = {
   dashboard: "/dashboard",
+  manager_work: "/manager_work",
   //Lĩnh vực BĐS - Đầu mối liên hệ
   contact: "/contact",
   customer: "/customer",

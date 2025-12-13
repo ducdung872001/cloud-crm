@@ -78,6 +78,7 @@
       // position: relative;
       // max-height: 50rem;
       max-height: calc(100vh - 185px);
+      min-height: calc(100vh - 200px);
       overflow: auto;
       // pointer-events: none;
       .fjs-container .fjs-powered-by {
@@ -252,6 +253,7 @@
       // position: relative;
       // max-height: 50rem;
       max-height: calc(100vh - 185px);
+      min-height: calc(100vh - 200px);
       overflow: auto;
       // pointer-events: none;
       .fjs-container .fjs-powered-by {
@@ -348,6 +350,9 @@
     }
   }
 }
+.loading__wrapper {
+  min-height: calc(100vh - 200px);
+}
 .formContainer {
   margin-top: 2rem;
   .fjs-layout-row {
@@ -381,8 +386,23 @@
       .fjs-inline-label {
         label {
           font-size: 1.4rem !important;
-          font-weight: 500 !important;
+          font-weight: 700 !important;
         }
+      }
+    }
+    .fjs-form-field-uploadFile {
+      label {
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+      }
+    }
+    .fjs-form-field-maskedInput {
+      label {
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+      }
+      .errors {
+        color: red !important;
       }
     }
   }

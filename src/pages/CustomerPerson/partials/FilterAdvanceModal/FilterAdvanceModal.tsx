@@ -187,7 +187,7 @@ export default function FilterAdvanceModal(props: any) {
     const response = await CustomerSourceService.list(param);
 
     if (response.code === 0) {
-      const dataOption = response.result;
+      const dataOption = response.result?.items;
 
       return {
         options: [
@@ -200,10 +200,10 @@ export default function FilterAdvanceModal(props: any) {
               })
             : []),
         ],
-        // hasMore: response.result.loadMoreAble,
-        // additional: {
-        //   page: page + 1,
-        // },
+        hasMore: response.result.loadMoreAble,
+        additional: {
+          page: page + 1,
+        },
       };
     }
 

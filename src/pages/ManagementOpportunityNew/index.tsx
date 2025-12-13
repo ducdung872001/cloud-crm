@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
 import _ from "lodash";
-import Tippy from "@tippyjs/react";
 import moment from "moment";
 import { isDifferenceObj, formatCurrency, getPageOffset, getSearchParameters, trimContent } from "reborn-util";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -21,8 +20,6 @@ import { showToast } from "utils/common";
 import CampaignOpportunityService from "services/CampaignOpportunityService";
 import DetailManagementOpportunity from "./partials/DetailManagementOpportunity";
 import "./index.scss";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
 import { ICustomPlaceholderResponse } from "model/customPlaceholder/CustomPlaceholderResponseModel";
 import AddCustomerEmailModal from "pages/CustomerPerson/partials/DetailPerson/partials/ListDetailTab/partials/CustomerEmailList/partials/AddCustomerEmailModal";
 import AddCustomerSMSModal from "pages/CustomerPerson/partials/DetailPerson/partials/ListDetailTab/partials/CustomerSMSList/partials/AddCustomerSMSModal";
@@ -60,8 +57,6 @@ export default function ManagementOpportunityNew() {
   const checkCampaignType = localStorage.getItem("campaignType");
 
   const isMounted = useRef(false);
-  const swiperPipelineRef = useRef(null);
-
   const [searchParams, setSearchParams] = useSearchParams();
   const [listManagementOpportunity, setListManagementOpportunity] = useState<ICampaignOpportunityResponseModel[]>([]);
 
@@ -827,23 +822,7 @@ export default function ManagementOpportunityNew() {
     }
   };
 
-  console.log("valueCampaign", valueCampaign);
-
   const [paramsKanban, setParamsKanban] = useState<any>({});
-
-  // useEffect(() => {
-  //   const tempParams: any = {};
-
-  //   if (detailCustomer?.value) {
-  //     tempParams.customerId = detailCustomer.value;
-  //   }
-
-  //   if (dataEmployee?.value) {
-  //     tempParams.saleId = dataEmployee.value;
-  //   }
-
-  //   setParamsKanban(tempParams);
-  // }, [detailCustomer?.value, dataEmployee?.value]);
 
   const [isFilterKanban, setIsFilterKanban] = useState<boolean>(false);
   const [loadinglistColumns, setLoadinglistColumns] = useState<boolean>(false);

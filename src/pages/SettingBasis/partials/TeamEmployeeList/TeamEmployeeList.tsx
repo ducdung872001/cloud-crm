@@ -150,21 +150,28 @@ export default function TeamEmployeeList(props: any) {
   ];
 
   const actionsTable = (item: any): IAction[] => {
+        const isCheckedItem = listIdChecked?.length > 0;
     return [  
      
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                    disabled: isCheckedItem,
         callback: () => {
+                    if (!isCheckedItem) {
           setDataTeam(item);
           setShowModalAdd(true);
+                    }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+                    disabled: isCheckedItem,
         callback: () => {
+                    if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+                    }
         },
       },
     ];

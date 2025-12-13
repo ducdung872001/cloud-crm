@@ -194,20 +194,27 @@ export default function TemplateZaloList(props: ITemplateZaloListProps) {
   ];
 
   const actionsTable = (item: ITemplateZaloResponseModel): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
             setDataTemplateZalo(item);
             setIsAddEditTemplateZalo(true);
+          }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];

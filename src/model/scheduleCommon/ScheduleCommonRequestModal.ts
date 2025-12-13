@@ -6,6 +6,7 @@ export interface IScheduleCommonFilterRequest {
   endTime?: string;
   types?: string;
   sources?: string;
+  page: number;
 }
 
 export interface IListRelatedToCustomerCommonFilterRequest {

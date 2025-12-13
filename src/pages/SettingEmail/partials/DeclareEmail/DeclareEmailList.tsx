@@ -146,28 +146,38 @@ export default function DeclareEmailList(props: IDeclareEmailListProps) {
   ];
 
   const actionsTable = (item: IDeclareEmailResponseModel): IAction[] => {
+    const isCheckedItem = listIdChecked?.includes(item.id);
     return [
       {
         title: "Kiểm tra Email",
-        icon: <Icon name="Test" style={{width: 20, height: 20}}/>,
+        icon: <Icon name="Test" className={isCheckedItem ? "icon-disabled" : ""} style={{width: 20, height: 20}}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIsCheckEmail(true);
-          setDataEmailConfig(item)
+          setDataEmailConfig(item);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataEmailConfig(item);
           setShowModalAdd(true);
+          }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];
@@ -185,6 +195,35 @@ export default function DeclareEmailList(props: IDeclareEmailListProps) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listEmailConfig.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return EmailConfigService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} nguồn gửi email`, "success");
+        getListEmailConfig(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có nguồn gửi email nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: IDeclareEmailResponseModel) => {
     const contentDialog: IContentDialog = {
@@ -205,7 +244,16 @@ export default function DeclareEmailList(props: IDeclareEmailListProps) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

@@ -15,6 +15,7 @@ import FullFinancialReportService from "services/fintech/FullFinancialReportServ
 import { showToast } from "utils/common";
 
 import "./ModalAddData.scss";
+import { MONTH_REPORT_REGEX } from "utils/constant";
 
 export default function ModalAddData({ onShow, onHide, dataProps, customerId }) {
   const focusedElement = useActiveElement();
@@ -49,6 +50,14 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       name: "balanceSheet",
       rules: "required",
     },
+    {
+      name: "month",
+      rules: "regex",
+    },
+    {
+      name: "balanceSheet",
+      rules: "required",
+    },
   ];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
@@ -70,6 +79,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           name: "month",
           type: "number",
           fill: true,
+          regex: new RegExp(MONTH_REPORT_REGEX),
+          messageErrorRegex: "Tháng phải là số từ 1 đến 12",
         },
         {
           label: "Kỳ báo cáo (năm)",
@@ -82,7 +93,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           name: "balanceSheet",
           type: "text",
           fill: true,
-          required: false,
+          required: true,
         },
         {
           label: "Báo cáo lưu chuyển tiền tệ",

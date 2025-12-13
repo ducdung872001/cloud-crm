@@ -272,29 +272,39 @@ export default function ImportInvoiceList() {
   ];
 
   const actionsTable = (item: IInvoiceResponse): IAction[] => {
+        const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Xem hóa đơn",
-        icon: <Icon name="Eye" />,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIdImportInvoice(item.id);
           setShowModalViewInvoice(true);
+          }
         },
       },
       ...(item.status !== 3
         ? [
             {
               title: "Trả hàng NCC",
-              icon: <Icon name="Returns" />,
+              icon: <Icon name="Returns" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 // setDataImportInvoice(item);
+                }
               },
             },
             {
               title: "Hủy hóa đơn",
-              icon: <Icon name="TimesCircleFill" className="icon-error" />,
+              icon: <Icon name="TimesCircleFill" className={isCheckedItem? "icon-disabled":"icon-error"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmDelete(item);
+                }
               },
             },
           ]
@@ -315,6 +325,35 @@ export default function ImportInvoiceList() {
     setContentDialog(null);
   };
 
+  const onDeleteAll = () => {
+      const selectedIds = listIdChecked || [];
+      if (!selectedIds.length) return;
+  
+      const arrPromises = selectedIds.map((selectedId) => {
+        const found = listImportInvoice.find((item) => item.id === selectedId);
+        if (found?.id) {
+          return InvoiceService.cancelInvoice(found.id);
+        } else {
+          return Promise.resolve(null);
+        }
+      });
+      Promise.all(arrPromises)
+      .then((results) => {
+        const checkbox = results.filter (Boolean)?.length ||0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} hóa đơn`, "success");
+          getListImportInvoice(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có hóa đơn nào được hủy", "error");
+        }
+     })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+    }
+
   const showDialogConfirmDelete = (item?: IInvoiceResponse) => {
     const contentDialog: IContentDialog = {
       color: "error",
@@ -334,7 +373,16 @@ export default function ImportInvoiceList() {
         setContentDialog(null);
       },
       defaultText: "Xác nhận",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

@@ -14,6 +14,19 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  //API phân quyền theo gói
+  packagePermission: (id: number, name: string) => {
+    return fetch(`${urlsApi.rolePermission.packagePermission}?packageId=${id}&name=${name}&app=crm`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  //API thêm quyền cho gói
+  packagePermissionAdd: (body: any) => {
+    return fetch(urlsApi.rolePermission.packagePermissionAdd, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   //API thêm quyền cho nhóm quyền
   permissionRoleAdd: (body: any) => {
     return fetch(urlsApi.rolePermission.permissionRoleAdd, {

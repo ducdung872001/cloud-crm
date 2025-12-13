@@ -1,0 +1,180 @@
+.wrapper__message--chat--exchange {
+  display: flex;
+  align-items: flex-end;
+  margin: 0 1rem 1rem;
+  background-color: var(--white-color);
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+  .icon-emotion,
+  .isShowEmotion {
+    padding: 0.2rem;
+    cursor: pointer;
+    position: relative;
+    margin-right: 0.2rem;
+    width: 2.8rem;
+    height: 2.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 2.3rem;
+      height: 2.3rem;
+      fill: #aaa;
+
+      &:hover {
+        fill: #a05176;
+      }
+    }
+
+    &:hover {
+      background-color: var(--extra-color-10);
+      border-radius: 50rem;
+    }
+  }
+
+  .isShowEmotion {
+    background-color: var(--extra-color-10);
+    border-radius: 50rem;
+
+    svg {
+      fill: #a05176;
+    }
+  }
+
+  .content-message {
+    width: 89%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .detail-message {
+      border: none;
+      outline: none;
+      width: 100%;
+      flex-shrink: 0;
+      direction: ltr;
+      overflow: auto;
+      resize: none;
+      caret-color: #50335b;
+      max-height: 7.5rem;
+      transition: height 0.3s ease-in;
+      font-size: 1.5rem;
+    }
+  }
+
+  .file-document {
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 50rem;
+
+    .icon-attach--file {
+      cursor: pointer;
+
+      svg {
+        width: 2.8rem;
+        height: 2.8rem;
+        fill: #aaa;
+      }
+    }
+
+    &:hover {
+      background-color: var(--extra-color-10);
+    }
+
+    .popover-option {
+      background-color: var(--white-color);
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      border-radius: 0.5rem;
+
+      .menu-item {
+        padding: 0.5rem;
+        display: flex;
+        flex-direction: column;
+
+        li {
+          border-radius: 0.5rem;
+
+          label {
+            display: flex;
+            align-items: center;
+            gap: 0 0.6rem;
+            font-size: 1.4rem;
+            line-height: 1.2;
+            font-weight: 500;
+            padding: 0.5rem 0.8rem;
+            margin-bottom: 0;
+          }
+
+          .icon-item {
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: var(--extra-color-10);
+            }
+          }
+
+          &:hover {
+            background-color: var(--primary-color-5);
+          }
+        }
+      }
+    }
+  }
+
+  .active {
+    background-color: var(--extra-color-10);
+
+    .icon-attach--file {
+      svg {
+        fill: #b65379;
+      }
+    }
+  }
+
+  .active__send--message,
+  .hide__send--message {
+    padding-left: 0.3rem;
+    width: 2.8rem;
+    height: 2.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 2.2rem;
+      height: 2.2rem;
+      transition: fill 0.5s ease-in-out;
+    }
+  }
+
+  .hide__send--message {
+    cursor: no-drop;
+    svg {
+      fill: #aaa;
+    }
+  }
+
+  .active__send--message {
+    cursor: pointer;
+
+    svg {
+      fill: var(--primary-color-90);
+    }
+
+    .icon-refresh {
+      animation: spinner 1s linear infinite;
+    }
+
+    @keyframes spinner {
+      from {
+        transform: rotate(0);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  }
+}

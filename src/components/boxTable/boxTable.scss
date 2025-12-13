@@ -123,6 +123,10 @@
                   &.icon-warning {
                     fill: var(--warning-color);
                   }
+                  &.icon-disabled {
+                    fill: var(--text-extra-color);
+                    opacity: 0.5;
+                  }
                   &.icon-extra {
                     fill: var(--extra-color-50);
                   }

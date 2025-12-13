@@ -186,6 +186,7 @@ import UserList from "pages/User/UserList";
 import FieldMannagement from "pages/FieldManagement/FieldManagement";
 import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
 import ManagementOpportunityNew from "pages/ManagementOpportunityNew";
+import ManagerWork from "pages/ManagerWork";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -207,6 +208,16 @@ export const menu: IMenuItem[] = [
           icon: <Icon name="Home" />,
           code: "DASHBOARD",
         },
+        ...(checkUserRoot
+          ? [
+              {
+                title: "managerWork", // Quản lý công việc
+                path: urls.manager_work,
+                icon: <Icon name="Job" />,
+                code: "",
+              },
+            ]
+          : []),
         {
           title: "personal", // Cá nhân
           path: urls.personal,
@@ -1175,6 +1186,10 @@ export const routes: IRouter[] = [
   {
     path: urls.dashboard,
     component: <Dashboard />,
+  },
+  {
+    path: urls.manager_work,
+    component: <ManagerWork />,
   },
   {
     path: urls.customer,

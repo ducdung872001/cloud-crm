@@ -1,0 +1,71 @@
+.collapsible {
+  width: 100%;
+
+  &__header {
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: #222;
+    font-size: 14px;
+    line-height: 1;
+    outline: none;
+  }
+
+  &__title {
+    flex: 1 1 auto;
+    text-align: left;
+    display: inline-block;
+  }
+
+  &__icon {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    transition: transform 200ms ease;
+    transform: rotate(0deg);
+    color: #333;
+    vertical-align: middle;
+  }
+
+  &__icon.open {
+    transform: rotate(90deg);
+  }
+
+  /* Content wrapper animated via max-height + opacity */
+  &__content {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition-property: max-height, opacity;
+    transition-timing-function: ease;
+    /* transition-duration is set inline in the component to match the JS prop */
+    will-change: max-height, opacity;
+    box-sizing: border-box;
+  }
+
+  &__content.is-open {
+    opacity: 1;
+  }
+
+  &__inner {
+    padding: 0px 12px;
+    color: #333;
+    font-size: 14px;
+    background: transparent;
+  }
+}
+
+/* Focus ring for keyboard users */
+.collapsible__header:focus {
+  box-shadow: 0 0 0 3px rgba(21, 156, 228, 0.15);
+  border-radius: 4px;
+}
