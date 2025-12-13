@@ -557,7 +557,6 @@ const FormViewerComponent = (props: any) => {
       if (setShowPopupCustom && codeTemplateEform) {
         setShowPopupCustom(true);
         setCodePopupCustom(codeTemplateEform);
-        console.log("codeTemplateEform", codeTemplateEform);
       }
 
       //1. Loại là select
@@ -995,8 +994,6 @@ const FormViewerComponent = (props: any) => {
           componentUrl = `${process.env.APP_CRM_LINK}${component.url}`;
         }
 
-        console.log("componentUrl", componentUrl);
-
         // Lấy fieldName từ properties.name, nếu không có thì gán giá trị mặc định là 'undefined'
         const fieldName = component?.properties?.name || "undefined";
         const enableAddRow = component?.properties?.enableAddRow || "true";
@@ -1353,8 +1350,6 @@ const FormViewerComponent = (props: any) => {
 
     // Gọi hàm async
     initializeForm();
-    console.log("currFormSchema>>", currFormSchema);
-    console.log("formSchema>>", formSchema);
   }, [formSchema, dataInit, currFormSchema]);
 
   useEffect(() => {

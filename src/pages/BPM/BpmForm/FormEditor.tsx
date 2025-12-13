@@ -69,8 +69,6 @@ const FormEditorComponent = ({
     });
 
     formEditorRef.current.on("rendered", () => {
-      console.log("Editor rendered");
-
       // Debug: Kiểm tra các nhóm có sẵn trong palette
       const groups = document.querySelectorAll(".fjs-palette-group");
       groups.forEach((group) => {});
@@ -93,16 +91,11 @@ const FormEditorComponent = ({
     schemaRef.current = initialSchema;
     // Lắng nghe sự kiện thay đổi và gọi callback
     formEditorRef.current.on("changed", (event) => {
-      console.log("event", event);
-
       const schema = formEditorRef.current.getSchema();
 
       // So sánh schema mới với schema cũ để biết component nào thay đổi
       const oldSchema = schemaRef.current;
       const newSchema = schema;
-
-      console.log("oldSchema", oldSchema);
-      console.log("newSchema", newSchema);
 
       onSchemaChange(schema); // Gửi schema mới lên parent component
     });
@@ -170,7 +163,6 @@ const FormEditorComponent = ({
     const handler = (e: CustomEvent) => {
       const { fieldId } = e.detail;
       // Xử lý với fieldId hoặc lưu vào state
-      console.log("fieldId nhận được từ con:", fieldId);
       setFieldId(fieldId);
       setIsConfigOpen(true);
       const editor = formEditorRef.current;
@@ -300,7 +292,6 @@ const FormEditorComponent = ({
 
     try {
       editor.importSchema(newSchema);
-      console.log("Schema updated for field", fieldId);
       return true;
     } catch (err) {
       console.error("importSchema failed", err);

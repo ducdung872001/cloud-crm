@@ -64,7 +64,6 @@ export function UploadFileRenderer(props) {
 
   // Khi UploadFile thay đổi
   function handleUploadFileChange(newValue) {
-    console.log("handleUploadFileChange", newValue);
     props.onChange({
       field: field, // object field từ props
       value: JSON.stringify(newValue),
@@ -88,7 +87,6 @@ export function UploadFileRenderer(props) {
           },
         ];
       }
-      console.log("UploadFileRenderer render", _value);
       ReactDOM.render(
         <AttachmentUploader
           value={_value}

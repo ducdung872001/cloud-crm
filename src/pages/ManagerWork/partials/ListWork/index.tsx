@@ -1,0 +1,60 @@
+import React, { useState } from "react";
+import "./index.scss";
+import SelectCustom from "components/selectCustom/selectCustom";
+import ProjectNavigation from "./partials/ProjectNavigation";
+import WorkTableByGroup from "./partials/WorkTableByGroup";
+
+export default function ListWork() {
+  const [isDetailWork, setIsDetailWork] = useState<boolean>(false);
+  let _isFullPage = localStorage.getItem("isFullPageWorkManagement");
+  const [isFullPage, setIsFullPage] = useState<boolean>(_isFullPage ? (_isFullPage === "true" ? true : false) : false);
+  const [isVertical, setIsVertical] = useState<boolean>(false);
+  const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(false);
+  const [isRegimeReport, setIsRegimeReport] = useState<boolean>(false);
+  const [type, setType] = useState<string>("project");
+  const [idProjectManagement, setIdProjectManagement] = useState<number>(-1);
+  const abortController = new AbortController();
+  const handleDetailWork = (isDetail: boolean, isVerticalWork: boolean) => {
+    setIsDetailWork(isDetail);
+    setIsVertical(isVerticalWork);
+  };
+  //Export
+  const [onShowModalExport, setOnShowModalExport] = useState<boolean>(false);
+  const showProjectManagement = () => {};
+  return (
+    <div className="list-work-manager">
+      {/* <div className="header-list-work">
+        <div className="item-header"></div>
+      </div> */}
+      <div className="body-list-work">
+        <div className={`wrapper-project ${isDetailWork ? "d-none" : ""}`}>
+          <div className={`${isFullPage ? "hide-project-management" : "project-management"} ${!isVertical ? "show__vertical--project" : ""}`}>
+            <ProjectNavigation
+              setType={setType}
+              isRegimeKanban={isRegimeKanban}
+              isFullPage={isFullPage}
+              idProjectManagement={idProjectManagement}
+              setIdProjectManagement={setIdProjectManagement}
+            />
+          </div>
+          <div className={`${isFullPage ? "active-fullpage" : ""} list-project ${isVertical ? "show__vertical--work" : ""}`}>
+            <WorkTableByGroup
+              type="project"
+              idManagement={idProjectManagement}
+              isRegimeKanban={isRegimeKanban}
+              isRegimeReport={isRegimeReport}
+              isFullPage={isFullPage}
+              showProjectManagement={showProjectManagement}
+              handleDetailWork={handleDetailWork}
+              setIsDetailWork={setIsDetailWork}
+              setIsFullPage={setIsFullPage}
+              abortController={abortController}
+              isExportWork={onShowModalExport}
+              onHideExport={() => setOnShowModalExport(false)}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
