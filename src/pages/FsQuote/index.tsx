@@ -802,7 +802,7 @@ export default function FsQuote() {
           />
           {!isLoading && listFsQuote && listFsQuote.length > 0 ? (
             <BoxTable
-              name="FS"
+              name="Danh sách FS"
               titles={titles}
               items={listFsQuote}
               isPagination={true}

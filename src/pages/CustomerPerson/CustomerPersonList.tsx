@@ -1121,7 +1121,7 @@ export default function CustomerPersonList() {
               setShowModalAddScheduler(true);
             }}
           >
-            <Tippy content="Thêm mới lịch sử điều trị">
+            <Tippy content="Thêm mới yêu cầu thực hiện dịch vụ">
               <span className="icon__item icon-invoice">
                 <Icon name="Calendar" />
               </span>
@@ -2249,7 +2249,7 @@ export default function CustomerPersonList() {
         },
       },
       {
-        title: "Thêm mới lịch sử điều trị",
+        title: "Thêm mới yêu cầu thực hiện dịch vụ",
         icon: <Icon name="Calendar" />,
         callback: () => {
           setIdCustomer(item.id);

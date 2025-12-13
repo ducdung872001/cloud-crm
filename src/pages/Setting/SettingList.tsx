@@ -18,7 +18,7 @@ import AddSettingModal from "./partials/AddSettingModal";
 import { getPageOffset } from 'reborn-util';
 
 export default function SettingList() {
-  document.title = "Danh mục";
+  document.title = "Cài đặt cấu hình chung";
 
   const isMounted = useRef(false);
 
@@ -133,7 +133,7 @@ export default function SettingList() {
 
   return (
     <div className={`page-content page-setting${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Danh mục" to={urls.setting} isChildrenTitle={true} titleChildren="Cấu hình" />
+      <TitleAction title="Cài đặt cấu hình chung" to={urls.setting} isChildrenTitle={true} titleChildren="Cấu hình" />
       <div className="card-box d-flex flex-column">
         <SearchBox
           name="Tên cấu hình"
