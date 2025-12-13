@@ -170,7 +170,6 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
         required: true,
         icon: <Icon name="Calendar" />,
         iconPosition: "left",
-        hasSelectTime: true,
         placeholder: "Chọn ngày mở khoản vay",
         isMinDate: true,
         isWarning: isOpeningAfterToday || isOpeningNotBeforeDue,
@@ -188,7 +187,6 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
         required: true,
         icon: <Icon name="Calendar" />,
         iconPosition: "left",
-        hasSelectTime: true,
         placeholder: "Chọn ngày đáo hạn",
         isWarning: isOpeningNotBeforeDue || isDueNotBeforeBadDebt,
         messageWarning: isOpeningNotBeforeDue
@@ -298,7 +296,6 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
         fill: true,
         icon: <Icon name="Calendar" />,
         iconPosition: "left",
-        hasSelectTime: true,
         isWarning: isDueNotBeforeBadDebt,
         messageWarning: isDueNotBeforeBadDebt ? "Phải sau ngày đáo hạn" : "",
       },
@@ -354,15 +351,30 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
 
     setIsSubmit(true);
 
+    // Format date fields to YYYY-MM-DD string to avoid timezone shift
+    const formatDateField = (val) => {
+      if (!val) return val;
+      if (moment.isMoment(val)) return val.format("YYYY-MM-DD");
+      if (moment(val).isValid()) return moment(val).format("YYYY-MM-DD");
+      return val;
+    };
+
     const body = {
       ...(dataProps?.id ? { id: dataProps.id } : {}),
       ...formData.values,
+      openingDate: formatDateField(formData.values.openingDate),
+      dateDue: formatDateField(formData.values.dateDue),
+      badDebtDate: formatDateField(formData.values.badDebtDate),
+      customerId: customerId,
     };
 
     const response = await LoanInformationService.update(body);
 
     if (response.code === 0) {
       showToast(`${dataProps?.id ? "Cập nhật" : "Thêm mới"} khoản vay thành công`, "success");
+      // Reset data và form state
+      setData(null);
+      setFormData({ values: {} });
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra", "error");
