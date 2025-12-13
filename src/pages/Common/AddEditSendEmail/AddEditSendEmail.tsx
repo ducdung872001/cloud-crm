@@ -666,7 +666,6 @@ export default function AddEditSendEmail(props: ISendEmail) {
                 icon: <Icon name="Calendar" />,
                 iconPosition: "left",
                 hasSelectTime: true,
-                onChange: (e) => handleChageValueTimeAt(e),
                 placeholder: "Chọn thời gian gửi mong muốn",
                 isMinDate: true,
               },
@@ -681,11 +680,6 @@ export default function AddEditSendEmail(props: ISendEmail) {
       setFormData({ ...formData, values: { ...formData?.values, timeAt: "" } });
     }
   }, [formData?.values?.timeType]);
-
-  //! đoạn này mình xử lý gửi theo thời gian mong muốn
-  const handleChageValueTimeAt = (e) => {
-    setFormData({ ...formData, values: { ...formData.values, timeAt: e } });
-  };
 
   //* Value nhóm khách hàng
   const [valueCgp, setValueCgp] = useState([]);
