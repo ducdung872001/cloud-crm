@@ -9,7 +9,7 @@ export const dataPackage = [
     name: "Lên lịch hẹn/ Nhắc lịch hẹn/ Thông báo lịch hẹn",
   },
   {
-    name: "Theo dõi lịch sử điều trị",
+    name: "Theo dõi thực hiện dịch vụ",
   },
   {
     name: "Tin nhắn SMS CSKH",

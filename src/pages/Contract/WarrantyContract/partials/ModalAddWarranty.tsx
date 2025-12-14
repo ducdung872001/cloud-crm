@@ -363,6 +363,8 @@ export default function ModalAddWarranty(props: any) {
     const body: ICustomerRequest = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as any),
+          startDate: moment(formData.values.startDate).format('YYYY-MM-DDTHH:mm:ss'),
+          endDate: moment(formData.values.endDate).format('YYYY-MM-DDTHH:mm:ss'),
       contractWarrantyExtraInfos: contractWarrantyExtraInfos,
     };
 

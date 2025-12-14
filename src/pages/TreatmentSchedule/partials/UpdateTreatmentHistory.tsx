@@ -210,7 +210,7 @@ export default function UpdateTreatmentHistory(props: UpdateTreatmentHistoryProp
     const response = await TreamentService.update(body);
 
     if (response.code === 0) {
-      showToast("Cập nhật lịch sử điều trị thành công", "success");
+      showToast("Cập nhật yêu cầu thực hiện dịch vụ thành công", "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -334,7 +334,7 @@ export default function UpdateTreatmentHistory(props: UpdateTreatmentHistoryProp
         className="modal-update-treatmenthistory"
       >
         <form className="form-treatmenthistory-group" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title="Chỉnh sửa lịch sử điều trị" toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title="Chỉnh sửa yêu cầu thực hiện dịch vụ" toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (

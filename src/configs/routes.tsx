@@ -1143,6 +1143,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="Download" />,
         code: "",
       },
+      {
+        title: "settingConfiguration", // Cài đặt danh mục
+        path: urls.setting,
+        icon: <Icon name="Settings" />,
+        code: "",
+      },
       ...(!checkSubdomainTNEX
         ? [
             {
