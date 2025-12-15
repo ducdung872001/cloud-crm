@@ -18,7 +18,7 @@ import { showToast } from "utils/common";
 import WorkOrderService from "services/WorkOrderService";
 import TableWork from "./partials/TableWork/TableWork";
 import KanbanWork from "./partials/KanbanWork/KanbanWork";
-import AddWorkModal from "./partials/AddWorkModal/AddWorkModal";
+import AddWorkModal from "./partials/AddWorkModal";
 import AddWorkInprogressModal from "./partials/AddWorkInprogressModal/AddWorkInprogressModal";
 import ViewWorkInprogressModal from "./partials/ViewWorkInprogressModal/ViewWorkInprogressModal";
 import "tippy.js/animations/scale.css";
@@ -31,6 +31,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import Collapsible from "components/collapse";
 import { it } from "date-fns/locale";
 import { color } from "highcharts";
+import Input from "components/input/input";
 
 export default function WorkTableByGroup(props: IListWorkProps) {
   const isMounted = useRef(false);
@@ -823,8 +824,8 @@ export default function WorkTableByGroup(props: IListWorkProps) {
     <div className={`page-content page-work-table-by-group${isNoItem ? " bg-white" : ""}`}>
       <div className="card-box d-flex flex-column">
         <div className={`${isRegimeKanban || isRegimeReport ? "d-none" : ""}`}>
-          <div className="action-header">
-            <div className="action-header-left">
+          <div className="title-header">
+            <div className="title-header-left">
               <Tippy content="Xem toàn trang" delay={[100, 0]} placement="left" animation="scale-extreme">
                 <div className="full-page">
                   <div
@@ -839,25 +840,9 @@ export default function WorkTableByGroup(props: IListWorkProps) {
                   </div>
                 </div>
               </Tippy>
-              <div className="select-group-by">
-                <SelectCustom
-                  id="groupBy"
-                  name="groupBy"
-                  fill={true}
-                  required={true}
-                  options={[
-                    { label: "Trạng thái công việc", value: "status" },
-                    { label: "Nhân viên phụ trách", value: "employee" },
-                    { label: "Ưu tiên", value: "priority" },
-                    { label: "Loại công việc", value: "workType" },
-                  ]}
-                  value={groupBy}
-                  onChange={(e) => setGroupBy(e)}
-                  placeholder="Nhóm theo"
-                />
-              </div>
+              <div className="title">Tất cả dự án</div>
             </div>
-            <div className="action-header-right">
+            <div className="title-header-right">
               <Tippy content="Thêm công việc" delay={[100, 0]} placement="left" animation="scale-extreme">
                 <div className="add-work">
                   <Button
@@ -871,6 +856,51 @@ export default function WorkTableByGroup(props: IListWorkProps) {
                   </Button>
                 </div>
               </Tippy>
+            </div>
+          </div>
+          <div className="action-header">
+            <div className="action-header-left">
+              <div className="select-group-by">
+                <SelectCustom
+                  id="groupBy"
+                  name="groupBy"
+                  label={"Nhóm theo"}
+                  fill={true}
+                  options={[
+                    { label: "Trạng thái công việc", value: "status" },
+                    { label: "Nhân viên phụ trách", value: "employee" },
+                    { label: "Ưu tiên", value: "priority" },
+                    { label: "Loại công việc", value: "workType" },
+                  ]}
+                  value={groupBy}
+                  onChange={(e) => setGroupBy(e)}
+                  placeholder="Nhóm theo"
+                />
+              </div>
+            </div>
+            <div className="action-header-right">
+              {/* <span>Lọc:</span> */}
+              <div className="filter">
+                <Input
+                  type="text"
+                  placeholder="Tìm kiếm công việc..."
+                  label={""}
+                  fill={true}
+                  className="input-search-work"
+                  value={params.name}
+                  onChange={(e) => setParams({ ...params, name: e.target.value, page: 1 })}
+                />
+                <SelectCustom
+                  id="employeeId"
+                  name="employeeId"
+                  label={"Nhân viên"}
+                  fill={true}
+                  options={[]}
+                  value={""}
+                  onChange={(e) => setGroupBy(e)}
+                  placeholder="Chọn nhân viên"
+                />
+              </div>
             </div>
           </div>
           <div className="list-table">

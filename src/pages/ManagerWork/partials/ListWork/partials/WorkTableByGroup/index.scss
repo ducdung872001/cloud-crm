@@ -4,12 +4,60 @@
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 
+    .title-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.2rem;
+      .title-header-left {
+        padding-top: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0 2rem;
+        justify-content: flex-start;
+        .title {
+          font-size: 2.4rem;
+          font-weight: 600;
+        }
+        .full-page {
+          // position: absolute;
+          // top: 0.8rem;
+          // right: 8.2rem;
+
+          .btn-full-page {
+            svg {
+              width: 2rem;
+              height: 2rem;
+            }
+            // padding: 0.8rem 1rem;
+          }
+        }
+        .select-group-by {
+          min-width: 20rem;
+        }
+      }
+
+      .title-header-right {
+        .add-work {
+          margin-top: 1.2rem;
+          margin-right: 1.2rem;
+
+          .base-button {
+            width: 2.5rem;
+            // padding: 0.8rem 1rem;
+          }
+        }
+      }
+    }
     .action-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-color);
       .action-header-left {
-        padding-top: 1rem;
+        // padding-top: 1rem;
         display: flex;
         align-items: center;
         gap: 0 2rem;
@@ -32,13 +80,15 @@
         }
       }
       .action-header-right {
-        .add-work {
-          margin-right: 1.2rem;
-
-          .base-button {
-            width: 2.5rem;
-            // padding: 0.8rem 1rem;
-          }
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-start;
+        gap: 0 1.6rem;
+        .filter {
+          display: flex;
+          align-items: end;
+          gap: 0 0.8rem;
+          justify-content: flex-start;
         }
       }
     }
@@ -93,12 +143,24 @@
       }
 
       .box-table {
-        margin-top: 0;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
         .box-table__wrapper {
           .table {
+            thead {
+              tr {
+                border: none;
+                th {
+                  padding: 1rem 0.6rem;
+                }
+              }
+            }
             tbody {
               tr {
+                border: none !important;
                 td {
+                  padding: 0.6rem;
                   .content {
                     margin-bottom: 0;
                     cursor: pointer;
@@ -170,6 +232,9 @@
               }
             }
           }
+        }
+        .pagination {
+          padding: 1rem 2rem;
         }
       }
     }
