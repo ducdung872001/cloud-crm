@@ -10,8 +10,7 @@ import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import _ from "lodash";
 import { IContractPipelineFilterRequest } from "model/contractPipeline/ContractPipelineRequestModel";
 import { IContractPipelineResponse } from "model/contractPipeline/ContractPipelineResponseModel";
-import { IAction, ISaveSearch } from "model/OtherModel";
-import AddContractEformModal from "pages/SettingContract/partials/ContractEform/partials/AddContractEformModal";
+import { IAction, ISaveSearch, IFilterItem } from "model/OtherModel";
 import PreviewEformModal from "pages/SettingContract/partials/ContractEform/PreviewEform/PreviewEformModal";
 import SettingEform from "pages/SettingContract/partials/ContractEform/SettingEform/SetttingEform";
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
@@ -36,7 +35,7 @@ export default function SettingPromotionList(props: any) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
-  const [permissions, setPermissions] = useState(getPermissions());
+  const [permissions] = useState(getPermissions());
   const [isSettingEform, setIsSettingEform] = useState<boolean>(false);
   const [isPreviewEform, setIsPreviewEform] = useState(false);
 
@@ -152,12 +151,14 @@ export default function SettingPromotionList(props: any) {
   const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.position, item.position, item.position];
 
   const [dataEdit, setDataEdit] = useState(null);
+  const [dataPreview, setDataPreview] = useState(null);
   const actionsTable = (item: any): IAction[] => {
     return [
       {
         title: "Xem Khuyến mãi",
         icon: <Icon name="Eye" />,
         callback: () => {
+          setDataPreview(item);
           setIsPreviewEform(true);
         },
       },
@@ -232,7 +233,7 @@ export default function SettingPromotionList(props: any) {
     },
   ];
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const customerFilterList: IFilterItem[] = useMemo(
     () => [
       {
@@ -405,12 +406,22 @@ export default function SettingPromotionList(props: any) {
             </div>
           ) : (
             <div>
-              <SettingEform dataContractEform={dataContractEform} setIsPreviewEform={setIsPreviewEform} />
+              <SettingEform dataContractEform={dataPreview} setIsPreviewEform={setIsPreviewEform} />
             </div>
           )}
         </div>
       )}
       <Dialog content={contentDialog} isOpen={showDialog} />
+      {isPreviewEform && dataPreview && (
+      <PreviewEformModal
+        onShow={true}
+        data={dataPreview}
+        onHide={() => {
+          setIsPreviewEform(false);
+          setDataPreview(null);
+        }}
+      />
+      )}
     </div>
   );
 }
