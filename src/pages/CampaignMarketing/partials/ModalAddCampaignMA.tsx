@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useContext } from "react";
+import moment from "moment";
 import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -353,8 +354,25 @@ export default function ModalAddCampaignMA(props: any) {
 
     setIsSubmit(true);
 
+    const parseToMiddayDate = (val) => {
+      if (!val) return val;
+      let d: any = null;
+      try {
+        if (val instanceof Date) d = new Date(val);
+        else if (moment.isMoment && moment.isMoment(val)) d = val.toDate();
+        else if (moment(val).isValid()) d = moment(val).toDate();
+        else return val;
+      } catch (e) {
+        return val;
+      }
+      d.setHours(12, 0, 0, 0);
+      return d;
+    };
+
     const body: any = {
       ...(formData.values as any),
+      startDate: parseToMiddayDate(formData.values?.startDate),
+      endDate: parseToMiddayDate(formData.values?.endDate),
       ...(data ? { id: data.id } : {}),
     };
 
