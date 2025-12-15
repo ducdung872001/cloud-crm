@@ -11,12 +11,21 @@
     padding: 10px 12px;
     background: transparent;
     border: none;
-    cursor: pointer;
+    // cursor: pointer;
     text-align: left;
     color: #222;
     font-size: 14px;
     line-height: 1;
     outline: none;
+    .icon-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: aliceblue;
+    }
   }
 
   &__title {
