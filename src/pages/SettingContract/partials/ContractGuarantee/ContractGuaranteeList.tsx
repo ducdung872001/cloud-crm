@@ -285,7 +285,7 @@ export default function ContractGuaranteeList(props: any) {
         />
         {!isLoading && listContractGuarantee && listContractGuarantee.length > 0 ? (
           <BoxTable
-            name="Tài liệu"
+            name="Danh mục bảo lãnh"
             titles={titles}
             items={listContractGuarantee}
             isPagination={true}

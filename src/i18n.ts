@@ -178,6 +178,7 @@ i18n.use(initReactI18next).init({
           renewalList: "Renewal list",
           userAdministration: "User administration",
           fieldManagement: "Field management",
+          settingConfiguration: "Configuration settings"
         },
         pageDashboard: {
           title: "Dashboard",
@@ -419,6 +420,7 @@ i18n.use(initReactI18next).init({
           renewalList: "Danh sách gia hạn",
           userAdministration: "Quản trị người dùng",
           fieldManagement: "Quản lý lĩnh vực",
+          settingConfiguration: "Cài đặt cấu hình chung"
         },
         pageDashboard: {
           title: "Trang chủ",
