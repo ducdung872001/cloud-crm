@@ -350,7 +350,7 @@ export default function SettingPromotionList(props: any) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khuyến mãi
+            Cài đặt bán hàng
           </h1>
           <Icon
             name="ChevronRight"

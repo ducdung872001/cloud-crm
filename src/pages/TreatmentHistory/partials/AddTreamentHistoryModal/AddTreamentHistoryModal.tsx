@@ -716,8 +716,8 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
   ];
 
   // lấy thông tin ngày bắt đầu tiếp nhận, và ngày cuối cùng tiếp nhận
-  const startDay = moment(formData.values.treatmentStart).format("DD/MM/YYYY HH:mm");
-  const endDay = moment(formData.values.treatmentEnd).format("DD/MM/YYYY HH:mm");
+  const startDay = new Date(formData.values.treatmentStart).getTime();
+  const endDay = new Date(formData.values.treatmentEnd).getTime();
 
   const listField = useMemo(
     () =>
@@ -1045,6 +1045,8 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       {
         ...(formData.values as ITreatmentHistoryRequestModel),
         ...(data ? { id: data.id } : {}),
+        treatmentStart: moment(formData.values.treatmentStart).format('YYYY-MM-DDTHH:mm:ss'),
+        treatmentEnd: moment(formData.values.treatmentEnd).format('YYYY-MM-DDTHH:mm:ss'),
         
       },
     ];
@@ -1052,7 +1054,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
     const response = await TreatmentHistoryService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} lịch điều trị thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} yêu cầu thực hiện dịch vụ thành công`, "success");
       setDetailCustomer(null);
       setListBuyService([]);
       setDetailEmployee(null);
@@ -1169,7 +1171,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       >
         <form className="form-treament-history-group" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader
-            title={`${data ? "Chỉnh sửa" : "Thêm mới"} lịch sử điều trị`}
+            title={`${data ? "Chỉnh sửa" : "Thêm mới"} yêu cầu thực hiện dịch vụ`}
             toggle={() => {
               if (!isSubmit) {
                 onHide(false);

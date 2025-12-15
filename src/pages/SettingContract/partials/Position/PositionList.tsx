@@ -71,7 +71,7 @@ export default function PositionList(props: IPositionListProps) {
     const response = await PositionService.list(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
-      const result = response.result;
+      const result = response.result.items;
       setListPosition(result);
 
       setPagination({
