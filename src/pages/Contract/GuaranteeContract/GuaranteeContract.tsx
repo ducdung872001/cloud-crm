@@ -41,6 +41,7 @@ import ContractGuaranteeService from "services/ContractGuaranteeService";
 import WarningGuaranteeModal from "./WarningGuaranteeModal/WarningGuaranteeModal";
 import ImportModal from "./ImportModal";
 import ReportGuarantee from "./ReportGuarantee";
+import XmlAddGuanrantee from "./XmlAddGuarantee";
 
 export default function GuaranteeContractList() {
   const navigate = useNavigate();
@@ -68,6 +69,7 @@ export default function GuaranteeContractList() {
   const [permissions, setPermissions] = useState(getPermissions());
 
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
+  const [showModalAddXml, setShowModalAddXml] = useState<boolean>(false);
 
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
 
@@ -391,6 +393,22 @@ export default function GuaranteeContractList() {
             </span>
           </Tippy>
         </div>
+
+        {isUserRoot && (
+          <div
+            className="item__action update"
+            onClick={() => {
+              setDataGuarantee(data.dataItem);
+              setShowModalAddXml(true);
+            }}
+          >
+            <Tippy content="Sửa">
+              <span className="icon__item icon__update">
+                <Icon name="SettingCashbook" />
+              </span>
+            </Tippy>
+          </div>
+        )}
 
         {permissions["GUARANTEE_UPDATE"] == 1 && (
           <div
@@ -910,6 +928,8 @@ export default function GuaranteeContractList() {
     };
   }, [params]);
 
+  let isUserRoot = localStorage.getItem("user.root") == "1" ? true : false;
+
   const titleActions: ITitleActions = {
     // actions: [
     //   permissions["CONTRACT_ADD"] == 1 && {
@@ -921,6 +941,13 @@ export default function GuaranteeContractList() {
     // ],
 
     actions: [
+      isUserRoot && {
+        title: "Thêm mới bằng XML",
+        callback: () => {
+          setDataGuarantee(null);
+          setShowModalAddXml(true);
+        },
+      },
       permissions["GUARANTEE_ADD"] == 1 && {
         title: "Thêm mới",
         callback: () => {
@@ -1278,6 +1305,18 @@ export default function GuaranteeContractList() {
               getListGuarantee(params);
             }
             setShowModalAdd(false);
+          }}
+        />
+
+        <XmlAddGuanrantee
+          onShow={showModalAddXml}
+          // onShow={true}
+          data={dataGuarantee}
+          onHide={(reload, nextModal) => {
+            if (reload) {
+              getListGuarantee(params);
+            }
+            setShowModalAddXml(false);
           }}
         />
 
