@@ -72,7 +72,7 @@ export default function CardServiceList(props: IServiceCardListProps) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListCardService(result);
+      setListCardService(result.items);
 
       setPagination({
         ...pagination,
