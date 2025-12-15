@@ -152,12 +152,15 @@ export default function SettingPromotionList(props: any) {
 
   const [dataEdit, setDataEdit] = useState(null);
   const [dataPreview, setDataPreview] = useState(null);
+  const isBulkSelecting = listIdChecked.length > 0;
   const actionsTable = (item: any): IAction[] => {
     return [
       {
         title: "Xem Khuyến mãi",
-        icon: <Icon name="Eye" />,
+        icon: <Icon name="Eye" className={isBulkSelecting ? "icon-disabled" : ""} />,
+        disabled: isBulkSelecting,
         callback: () => {
+          if (isBulkSelecting) return;
           setDataPreview(item);
           setIsPreviewEform(true);
         },
