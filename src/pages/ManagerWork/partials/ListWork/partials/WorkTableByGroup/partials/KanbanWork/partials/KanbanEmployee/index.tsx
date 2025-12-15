@@ -9,7 +9,7 @@ import Icon from "components/icon";
 import Loading from "components/loading";
 import TaskItem from "../TaskItem";
 import ExchangeFast from "../ExchangeFast";
-import AddWorkModal from "../../../AddWorkModal/AddWorkModal";
+import AddWorkModal from "../../../AddWorkModal";
 import { useWindowDimensions } from "utils/hookCustom";
 import "./index.scss";
 
