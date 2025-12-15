@@ -3032,7 +3032,6 @@ export default function FilterComponent(props: any) {
               <div className="container_branch_department_sale">
                 <div style={{ marginTop: "2rem" }}>
                   <div style={{ marginBottom: "8px" }}>
-                    <span style={{ fontSize: "14px", fontWeight: "500" }}>Chi nhánh <span style={{ color: "red" }}>*</span></span>
                     {checkFieldBranch && (
                       <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
                         Vui lòng chọn ít nhất một chi nhánh
@@ -3057,7 +3056,7 @@ export default function FilterComponent(props: any) {
                             }
                             id="branchId"
                             name="branchId"
-                            label={index === 0 ? "" : ""}
+                            label={index === 0 ? "Chi nhánh" : ""}
                             options={[]}
                             fill={true}
                             isMulti={true}
