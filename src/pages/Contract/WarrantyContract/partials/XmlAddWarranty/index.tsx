@@ -13,22 +13,22 @@ import Loading from "components/loading";
 import FormViewerComponent from "pages/BPM/BpmForm/FormViewer";
 import ObjectGroupService from "services/ObjectGroupService";
 import { mapConfigData } from "utils/mapConfigData";
-import GuaranteeAttributeService from "services/GuaranteeAttributeService";
-import GuaranteeExtraInfoService from "services/GuaranteeExtraInfoService";
-import ContractGuaranteeService from "services/ContractGuaranteeService";
 import ContractService from "services/ContractService";
 import moment from "moment";
+import WarrantyAttributeService from "services/WarrantyAttributeService";
+import WarrantyExtraInfoService from "services/WarrantyExtraInfoService";
+import ContractWarrantyService from "services/ContractWarrantyService";
 
 const defaultSchema = {
   type: "default",
   components: [],
 };
 
-const XMLtype = "modalAddGuarantee"; // bảo lãnh
+const XMLtype = "modalAddWarranty"; // bảo hành
 
-const getGuaranteeAttributes = async () => {
+const getWarrantyAttributes = async () => {
   let dataOption = null;
-  const response = await GuaranteeAttributeService.listAll(0);
+  const response = await WarrantyAttributeService.listAll(0);
   if (response.code === 0) {
     dataOption = response.result || {};
     return dataOption;
@@ -36,8 +36,8 @@ const getGuaranteeAttributes = async () => {
   return dataOption;
 };
 
-const getGuaranteeExtraInfos = async (id) => {
-  const response = await GuaranteeExtraInfoService.list(id);
+const getWarrantyExtraInfos = async (id) => {
+  const response = await WarrantyExtraInfoService.list(id);
   return response.result ?? [];
 };
 
@@ -57,13 +57,13 @@ const getOjectGroup = async (type: any) => {
   return defaultSchema;
 };
 
-export default function XmlAddGuanrantee(props: any) {
+export default function XmlAddWarranty(props: any) {
   const { onShow, data, onHide, takeInfoCustomer } = props;
 
   const formContainerRef = useRef(null);
   const formViewerRef = useRef(null);
   const checkUserRoot = localStorage.getItem("user.root");
-  const checkShowFullScreen = localStorage.getItem("showFullScreenModalGuaranteeEform");
+  const checkShowFullScreen = localStorage.getItem("showFullScreenModalWarrantyEform");
   const [showFullScreen, setShowFullScreen] = useState<boolean>(checkShowFullScreen ? JSON.parse(checkShowFullScreen) : false);
   const [initFormSchema, setInitFormSchema] = useState(defaultSchema); // Lưu trữ schema
   const [dataSchema, setDataSchema] = useState(null);
@@ -72,12 +72,12 @@ export default function XmlAddGuanrantee(props: any) {
 
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [guaranteeExtraInfos, setGuaranteeExtraInfos] = useState<any>([]);
+  const [warrantyExtraInfos, setWarrantyExtraInfos] = useState<any>([]);
 
-  const [mapGuaranteeAttribute, setMapGuaranteeAttribute] = useState<any>(null);
+  const [mapWarrantyAttribute, setMapWarrantyAttribute] = useState<any>(null);
 
   useEffect(() => {
-    localStorage.setItem("showFullScreenModalGuaranteeEform", JSON.stringify(showFullScreen));
+    localStorage.setItem("showFullScreenModalWarrantyEform", JSON.stringify(showFullScreen));
   }, [showFullScreen]);
 
   const toFormDate = (value) => {
@@ -146,20 +146,17 @@ const mapAttachmentsFromApi = (attachments: any) => {
     };
     const getAlldata = async () => {
       const configInit = await getOjectGroup(XMLtype);
-      const mapAttribute = await getGuaranteeAttributes();
-      const extraInfos = data?.id ? await getGuaranteeExtraInfos(data?.id) : [];
+      const mapAttribute = await getWarrantyAttributes();
+      const extraInfos = data?.id ? await getWarrantyExtraInfos(data?.id) : [];
       const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField);
 
       if (data?.id) {
 
         mapped.beneficiaryType = String(mapped.beneficiaryType);
-        mapped.issuerType = String(mapped.issuerType);
-        mapped.status = String(mapped.status);
+        mapped.competencyType = String(mapped.competencyType);
 
         mapped.startDate = toFormDate(mapped.startDate);
         mapped.endDate = toFormDate(mapped.endDate);
-        mapped.signDate = toFormDate(mapped.signDate);
-        mapped.establishDate = toFormDate(mapped.establishDate);
         if (mapped.beneficiaryId) {
           if (mapped.beneficiaryType == "0") {
             mapped.beneficiaryId_customer = mapped.beneficiaryId;
@@ -168,11 +165,11 @@ const mapAttachmentsFromApi = (attachments: any) => {
           }
         }
 
-        if (mapped.issuerId) {
-          if (mapped.issuerType == "0") {
-            mapped.issuerId_customer = mapped.issuerId;
+        if (mapped.competencyId) {
+          if (mapped.competencyType == "0") {
+            mapped.competencyId_customer = mapped.competencyId;
           } else {
-            mapped.issuerId_partner = mapped.issuerId;
+            mapped.competencyId_partner = mapped.competencyId;
           }
         }
         mapped.attachments = JSON.stringify(
@@ -181,9 +178,10 @@ const mapAttachmentsFromApi = (attachments: any) => {
         setDataInit(mapped);
       }
 
+      console.log(mapped);
       setInitFormSchema(configInit);
-      setMapGuaranteeAttribute(mapAttribute);
-      setGuaranteeExtraInfos(extraInfos);
+      setMapWarrantyAttribute(mapAttribute);
+      setWarrantyExtraInfos(extraInfos);
       setIsLoading(false);
     };
     if (onShow && XMLtype) {
@@ -196,20 +194,20 @@ const mapAttachmentsFromApi = (attachments: any) => {
 
     // Các trường thông tin bổ sung
     let infoExtra = [];
-    forEach(mapGuaranteeAttribute, (itemInfo) => {
+    forEach(mapWarrantyAttribute, (itemInfo) => {
       forEach(itemInfo, (item) => {
         const info = itemInfo.find((info) => config[info.fieldName] && item.parentId != 0);
         if (info) {
           infoExtra.push({
             ...{
               attributeId: item.id,
-              guaranteeId: data?.id ?? 0,
+              warrantyId: data?.id ?? 0,
               attributeValue:
                 config[item.fieldName] && typeof config[item.fieldName] == "object" ? JSON.stringify(config[item.fieldName]) : config[item.fieldName],
             },
-            ...(guaranteeExtraInfos.find((el) => el.attributeId == item.id)?.id
+            ...(warrantyExtraInfos.find((el) => el.attributeId == item.id)?.id
               ? {
-                id: guaranteeExtraInfos.find((el) => el.attributeId == item.id)?.id,
+                id: warrantyExtraInfos.find((el) => el.attributeId == item.id)?.id,
               }
               : {}),
           });
@@ -217,40 +215,6 @@ const mapAttachmentsFromApi = (attachments: any) => {
       });
     });
 
-    // Lấy contractId ưu tiên từ config (form), sau đó tới data hiện tại
-    const contractId =
-      config?.contractId ??
-      data?.contractId ??
-      data?.contract?.id ??
-      0;
-
-    let contractValue = 0;
-    const localCandidates = [
-      dataInit?.contractValue,
-      data?.contractValue,
-      data?.contract?.dealValue,
-    ];
-
-    for (const value of localCandidates) {
-      const number = Number(value);
-      if (!Number.isNaN(number) && number !== 0) {
-        contractValue = number;
-        break;
-      }
-    }
-
-    if (!contractValue && contractId) {
-      try {
-        const res = await ContractService.detail(+contractId);
-        if (res?.code === 0) {
-          const number = Number(res.result?.dealValue || 0);
-          if (!Number.isNaN(number) && number !== 0) {
-            contractValue = number;
-          }
-        }
-      } catch (e) {
-      }
-    }
 
     let attachmentList: any[] = [];
     try {
@@ -270,38 +234,27 @@ const mapAttachmentsFromApi = (attachments: any) => {
 
     let body: any = {
       ...(data ? data : {}),
-      numberLetter: config.numberLetter ?? "",
-      competencyId: config.competencyId ?? 0, // nghiệp vụ bảo lãnh
-      contractId: config.contractId ?? 0, //hợp đồng bảo lãnh
-      contractAppendixId: config.contractAppendix ?? 0, //Phụ lục hợp đồng
-      guaranteeTypeId: config.guaranteeTypeId ?? 0,
-      bankId: config.bankId ?? 0,
+      name: config?.name ?? "",
+      contractId: config.contractId ?? 0, //hợp đồng bảo hành
+      projectId: config?.contract?.projectId ?? 0, //dự án
       beneficiaryId: (config.beneficiaryType == 0 ? config.beneficiaryId_customer : config.beneficiaryId_partner) ?? 0, //đơn vị thụ hưởng
-      issuerId: (config.issuerType == 0 ? config.issuerId_customer : config.issuerId_partner) ?? 0, // đơn vị phát hành
-      currencyValue: config.currencyValue ?? 0, //giá trị bảo lãnh ngaoij tế
-      currency: config.currency ?? "VNĐ", //loại tiền tệ
-      contractValue, // giá trị hợp đồng
-      value: config.value ?? 0, //giá trị bảo lãnh
-      exchangeRate: config.exchangeRate ?? 1, //tỷ giá
+      competencyId: (config.competencyType == 0 ? config.competencyId_customer : config.competencyId_partner) ?? 0, // đơn vị phát hành
       description: config.description ?? "",
-      status: config.status ?? 1, //trạng thái
       startDate: toApiDate(config.startDate),
       endDate: toApiDate(config.endDate),
-      signDate: toApiDate(config.signDate),
-      establishDate: toApiDate(config.establishDate),
-      signRate: config.signRate ?? 0,
       attachments: JSON.stringify(attachmentUrls ?? []),
       beneficiaryType: config.beneficiaryType ?? 0, //0 - khách hàng, 1 - đối tác
-      issuerType: config.issuerType ?? 0, //0 - khách hàng, 1 - đối tác
+      competencyType: config.competencyType ?? 0, //0 - khách hàng, 1 - đối tác
       branchId: checkUserRoot == "1" ? data?.branchId ?? dataBranch.value ?? null : 0,
-      bank: JSON.stringify(config.bank),
-      guaranteeExtraInfos: infoExtra,
+      contractWarrantyExtraInfos: infoExtra,
     };
 
-    const response = await ContractGuaranteeService.update(body);
+    console.log(body);
+
+    const response = await ContractWarrantyService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} bảo lãnh thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} bảo hành thành công`, "success");
       handleClear(true);
       takeInfoCustomer && takeInfoCustomer(response.result);
     } else {
@@ -357,16 +310,16 @@ const mapAttachmentsFromApi = (attachments: any) => {
         ],
       },
     }),
-    [isSubmit, formViewerRef, mapGuaranteeAttribute, isSubmit, dataSchema, data]
+    [isSubmit, formViewerRef, mapWarrantyAttribute, isSubmit, dataSchema, data]
   );
 
   const handleClear = (acc) => {
     onHide(acc);
-    setGuaranteeExtraInfos([]);
+    setWarrantyExtraInfos([]);
     setDataInit(null);
     setInitFormSchema(defaultSchema);
-    setMapGuaranteeAttribute(null);
-    setGuaranteeExtraInfos([]);
+    setMapWarrantyAttribute(null);
+    setWarrantyExtraInfos([]);
   };
 
   // Callback để nhận schema khi người dùng thay đổi trong FormEditor
@@ -388,12 +341,12 @@ const mapAttachmentsFromApi = (attachments: any) => {
             handleClear(false);
           }
         }}
-        className={showFullScreen ? "modal-guarantee-xml-full" : "modal-guarantee-xml"}
+        className={showFullScreen ? "modal-warranty-xml-full" : "modal-warranty-xml"}
       >
         <form className="form-handle-task" onSubmit={(e) => onSubmit(e)}>
           <div className="container-header">
             <div className="box-title">
-              <h4>{`${data ? "Chỉnh sửa" : "Thêm mới"} bảo lãnh`}</h4>
+              <h4>{`${data ? "Chỉnh sửa" : "Thêm mới"} bảo hành`}</h4>
             </div>
             <div className="container-button">
               {!showFullScreen ? (
