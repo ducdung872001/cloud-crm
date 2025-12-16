@@ -1,0 +1,165 @@
+.wrapper__related--work {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  background: var(--white-color);
+  border-radius: 0.4rem;
+  border: 1.5px dashed #e0e0e0;
+  padding: 1.2rem 0.6rem;
+  overflow-y: auto;
+  max-height: 36rem;
+
+  .add-related--work {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0 0.3rem;
+    background-color: var(--extra-color-10);
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.2rem;
+    cursor: pointer;
+    font-size: 1.4rem;
+
+    svg {
+      width: 1.8rem;
+      height: 1.8rem;
+      fill: var(--extra-color-50);
+    }
+
+    &:hover {
+      font-weight: 500;
+
+      svg {
+        fill: var(--success-color);
+      }
+    }
+  }
+
+  .list__related--work {
+    display: flex;
+    flex-direction: column;
+
+    .related__work-item {
+      background-color: var(--extra-color-10);
+      border-radius: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      overflow: hidden;
+
+      & + .related__work-item {
+        margin-top: 2rem;
+      }
+
+      .info-work {
+        display: flex;
+        flex-direction: column;
+        padding: 1.6rem 1rem 1.6rem 2rem;
+
+        h3 {
+          font-size: 1.5rem;
+          position: relative;
+          margin-bottom: 1rem;
+        }
+
+        .status-work {
+          svg {
+            width: 1.8rem;
+            height: 1.8rem;
+            fill: var(--white-color);
+          }
+        }
+
+        .status-unfulfilled,
+        .status-success,
+        .status-processing,
+        .status-cancelled,
+        .status-pause,
+        .status-processing--waring {
+          display: flex;
+          align-items: center;
+          gap: 0 0.5rem;
+          color: var(--white-color);
+          padding: 0.2rem 0.6rem;
+          border-radius: 0.5rem;
+          font-size: 1.3rem;
+        }
+
+        .status-unfulfilled {
+          background-color: var(--extra-color-50);
+        }
+
+        .status-success {
+          background-color: var(--success-color);
+        }
+
+        .status-processing {
+          background-color: var(--primary-color);
+        }
+
+        .status-processing--waring {
+          background-color: var(--warning-color);
+        }
+
+        .status-cancelled {
+          background-color: var(--error-color);
+        }
+
+        .status-pause {
+          background-color: var(--warning-darker-color);
+        }
+
+        .percent-finish {
+          position: relative;
+          margin-left: 1.6rem;
+          cursor: pointer;
+
+          .value-percent {
+            width: 3rem;
+            height: 3rem;
+
+            .CircularProgressbar-text {
+              font-size: 3rem;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+      .remove__related--work {
+        display: none;
+
+        svg {
+          width: 2.2rem;
+          height: 2.2rem;
+          fill: var(--error-color);
+        }
+      }
+      &:hover {
+        padding-right: 0rem;
+        transition: padding 0.5s ease-in-out;
+
+        .remove__related--work {
+          background-color: rgba(255, 89, 90, 0.2);
+          padding: 0.8rem 1.2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .notification-related--work {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--extra-color-50);
+  }
+
+  ::-webkit-scrollbar-track {
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+}

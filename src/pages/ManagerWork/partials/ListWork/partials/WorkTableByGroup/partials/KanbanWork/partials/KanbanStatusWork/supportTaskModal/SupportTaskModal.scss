@@ -1,0 +1,58 @@
+.modal-support--task {
+  .wrapper__support--task {
+    .modal-body {
+      padding: 0;
+    }
+    .lst__support {
+      padding: 1.6rem;
+      max-height: 48rem;
+      overflow: auto;
+
+      .task-support {
+        padding: 1.2rem 1.6rem;
+        border-radius: 0.5rem;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+
+        & + .task-support {
+          margin-top: 1.6rem;
+        }
+
+        .outstanding {
+          color: var(--text-primary-color);
+          padding: 0.2rem 1rem;
+          border-radius: 5px;
+          align-self: flex-start;
+          font-size: 1.3rem;
+          font-weight: 600;
+          display: inline-block;
+          margin: 0.3rem 0;
+
+          &-one {
+            background-color: #dfe1e6;
+          }
+
+          &-two {
+            background-color: #deebff;
+          }
+
+          &-three {
+            background-color: rgba(var(--success-color-rgb), 0.3);
+          }
+
+          &-four {
+            background-color: #ff463b;
+          }
+
+          &-five {
+            background: rgba(var(--warning-color-rgb), 0.5);
+          }
+        }
+
+        .content {
+          margin-top: 0.5rem;
+          margin-bottom: 0.5rem;
+        }
+      }
+    }
+  }
+}
