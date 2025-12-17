@@ -351,7 +351,14 @@ export default function PaymentBill(props: AddContractModalProps) {
   //? đoạn này xử lý vấn đề thay đổi loại hợp đồng
   const handleChangeValueProject = (e) => {
     setValidateFieldProject(false);
-    setDataPaymentBill({ ...data, projectId: e.value, projectName: e.label });
+    setDataPaymentBill({ 
+      ...data, 
+      projectId: e.value, 
+      projectName: e.label,
+      fsId: null,
+      fsName: null
+    });
+    setDetailFS(null);
   };
 
   const loadOptionFS = async (search, loadedOptions, { page }) => {
@@ -1457,11 +1464,12 @@ export default function PaymentBill(props: AddContractModalProps) {
               value={detailFS}
               onChange={(e) => handleChangeValueFS(e)}
               isAsyncPaginate={true}
-              placeholder="Chọn FS"
+              placeholder={detailProject ? "Chọn FS" : "Vui lòng chọn Dự án trước"}
               additional={{
                 page: 1,
               }}
               loadOptionsPaginate={loadOptionFS}
+              disabled={!detailProject}
               warningHistory={listLogValue?.filter((el) => el.fileName === "fsId")?.length > 0 ? true : false}
               onWarningHistory={() => {
                 if (listLogValue?.filter((el) => el.fileName === "fsId")?.length > 0) {

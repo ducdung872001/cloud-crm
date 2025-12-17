@@ -111,7 +111,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       { 
         label: "Số hợp đồng vay", 
         name: "contractNo", 
-        type: "number", 
+        type: "text", 
         fill: true, 
         required: true, 
       },
