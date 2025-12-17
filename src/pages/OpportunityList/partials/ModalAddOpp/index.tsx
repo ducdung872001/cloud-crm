@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo, useContext } from "react";
 import _ from "lodash";
-import _ from "lodash";
 import { IAction, IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import RadioList from "components/radio/radioList";

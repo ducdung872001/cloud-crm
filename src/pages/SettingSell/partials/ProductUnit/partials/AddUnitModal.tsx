@@ -12,6 +12,7 @@ import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import "./AddUnitModal.scss";
+import ProductList from "../../Product/ProductList";
 
 export default function AddUnitModal(props: AddUnitModalProps) {
   const { onShow, onHide, data } = props;
@@ -53,6 +54,7 @@ export default function AddUnitModal(props: AddUnitModalProps) {
       type: "text",
       fill: true,
       required: true,
+      
     },
     {
       label: "Thứ tự hiển thị",

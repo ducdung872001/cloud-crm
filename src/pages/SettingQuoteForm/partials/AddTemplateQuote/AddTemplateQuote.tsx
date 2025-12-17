@@ -12,6 +12,7 @@ import { showToast } from "utils/common";
 import { useOnClickOutside } from "utils/hookCustom";
 
 import "./AddTemplateQuote.scss";
+import { set } from "lodash";
 
 export default function AddTemplateQuote({ onShow, onHide, data }) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -25,6 +26,7 @@ export default function AddTemplateQuote({ onShow, onHide, data }) {
 
   const [lstFieldChooseFormula, setLstFieldChooseFormula] = useState([]);
   const [isShowFieldChoose, setIsShowFieldChoose] = useState<boolean>(false);
+  const [errorName, setErrorName] = useState("");
 
   useOnClickOutside(refOption, () => setIsShowFieldChoose(false), ["choose__formula"]);
 
@@ -330,8 +332,22 @@ export default function AddTemplateQuote({ onShow, onHide, data }) {
                     fill={true}
                     required={true}
                     placeholder="Nhập tên trường thông tin"
-                    onChange={(e) => handleChangeValueName(e)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+
+                      if (value.length > 300) {
+                        setErrorName("Không được nhập quá 300 ký tự");
+                      } else {
+                        setErrorName("");
+                      }
+                      setFormData({ ...formData, name: value, code: getField(value) });
+                    }}
                   />
+                  {errorName && (
+                    <p style = {{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+                      {errorName}
+                    </p>
+                  )}
                 </div>
 
                 <div className="merge-form">
