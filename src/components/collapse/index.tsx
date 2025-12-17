@@ -160,7 +160,7 @@ const Collapsible: React.FC<Props> = ({
     <div className={`collapsible ${className}`}>
       <button type="button" className="collapsible__header" aria-expanded={open} aria-controls={idRef.current}>
         {header ? header(dataItems) : <span className="collapsible__title">{title}</span>}
-        <div onClick={handleToggle}>
+        <div className="icon-area" onClick={handleToggle}>
           <svg className={`collapsible__icon ${open ? "open" : ""}`} width="25" height="25" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" fill="currentColor" />
           </svg>

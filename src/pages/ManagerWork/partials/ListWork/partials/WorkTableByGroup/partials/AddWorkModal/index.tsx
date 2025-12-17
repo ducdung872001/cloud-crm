@@ -23,9 +23,6 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useActiveElement, useOnClickOutside } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { listTimeSlots, showToast } from "utils/common";
-import ImgExcel from "assets/images/img-excel.png";
-import ImgWord from "assets/images/img-word.png";
-import ImgPowerpoint from "assets/images/img-powerpoint.png";
 import FileService from "services/FileService";
 import { listDay, listHour, listMinute, listNotificationType, listOption } from "pages/CalendarCommon/partials/MockData";
 import ImageThirdGender from "assets/images/third-gender.png";
@@ -37,16 +34,10 @@ import WorkProjectService from "services/WorkProjectService";
 import { ContextType, UserContext } from "contexts/userContext";
 import { uploadDocumentFormData } from "utils/document";
 
-import "./AddWorkModal.scss";
+import "./index.scss";
 import CampaignOpportunityService from "services/CampaignOpportunityService";
 import { ICampaignOpportunityFilterRequest } from "model/campaignOpportunity/CampaignOpportunityRequestModel";
 import AttachmentUploader, { UploadedItem } from "components/attachmentUpload";
-type UploadResult = {
-  fileUrl?: string;
-  url?: string;
-  extension?: string;
-  // optional other fields from server
-};
 
 interface IDataListNotificationProps {
   method: string[];
@@ -1150,155 +1141,33 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     setListImageWork(newList);
   }, []);
 
-  const listField = useMemo(
+  const listFieldAddWork = useMemo(
     () =>
       [
         {
-          label: "Tên công việc",
-          name: "name",
-          type: "text",
-          fill: true,
-          required: true,
-        },
-        {
-          label: "Nội dung công việc",
-          name: "content",
-          type: "textarea",
-          fill: true,
-        },
-        {
-          label: "Bắt đầu",
-          name: "startTime",
-          type: "date",
-          fill: true,
-          required: true,
-          icon: <Icon name="Calendar" />,
-          iconPosition: "left",
-          isWarning: startDay > endDay,
-          hasSelectTime: true,
-          placeholder: "Nhập ngày bắt đầu",
-          messageWarning: "Ngày bắt đầu nhỏ hơn ngày kết thúc",
-        },
-        {
-          label: "Kết thúc",
-          name: "endTime",
-          type: "date",
-          fill: true,
-          required: true,
-          icon: <Icon name="Calendar" />,
-          iconPosition: "left",
-          isWarning: endDay < startDay,
-          hasSelectTime: true,
-          placeholder: "Nhập ngày kết thúc",
-          messageWarning: "Ngày kết thúc lớn hơn ngày bắt đầu",
-        },
-        {
-          name: "workLoad",
+          name: "projectId",
           type: "custom",
           snippet: (
-            <div className="wrapper__workload">
-              <NummericInput
-                id="workLoad"
-                name="workLoad"
-                label="Khối lượng công việc"
-                value={formData?.values?.workLoad}
-                fill={true}
-                placeholder="Nhập khối lượng công việc"
-                required={true}
-                error={validateWordLoad || (formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0)}
-                message={`${
-                  validateWordLoad
-                    ? "Vui lòng nhập khối lượng công việc"
-                    : formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0
-                    ? "Khối lượng công việc cần lớn hơn 0"
-                    : ""
-                }`}
-                onValueChange={(e) => handleChangeValueWorkLoad(e)}
-              />
-
-              <div className="option__time--workload" ref={refContainerTimeWorkLoad}>
-                <div
-                  className="selected__item--workload"
-                  onClick={() => {
-                    setIsOptionTimeWorkLoad(!isOptionTimeWorkLoad);
-                  }}
-                >
-                  {dataTimeWorkLoad.label}
-                  <Icon name="ChevronDown" />
-                </div>
-                {isOptionTimeWorkLoad && (
-                  <ul className="menu__time--workload" ref={refOptionTimeWorkLoad}>
-                    {listOptionTimeWorkLoad.map((item, idx) => (
-                      <li
-                        key={idx}
-                        className={`item--workload ${dataTimeWorkLoad.value === item.value ? "active__item--workload" : ""}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setDataTimeWorkLoad(item);
-                          setIsOptionTimeWorkLoad(false);
-                        }}
-                      >
-                        {item.label}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
+            <SelectCustom
+              id="projectId"
+              name="projectId"
+              label="Dự án"
+              options={[]}
+              fill={true}
+              required={true}
+              value={dataWorkProject}
+              onChange={(e) => handleChangeValueWorkProject(e)}
+              isAsyncPaginate={true}
+              placeholder="Chọn dự án"
+              additional={{
+                page: 1,
+              }}
+              loadOptionsPaginate={loadedOptionWorkProject}
+              error={validateProject}
+              message="Vui lòng chọn dự án"
+            />
           ),
         },
-        {
-          name: "docLink",
-          type: "custom",
-          snippet: (
-            <AttachmentUploader value={listImageWork} placeholderLabel="Tải tài liệu lên" onChange={handleChange} multiple={true} maxFiles={10} />
-          ),
-        },
-        // {
-        //   name: "docLink",
-        //   type: "custom",
-        //   snippet: (
-        //     <div className="attachments">
-        //       <label className="title-attachment">Tải tài liệu</label>
-        //       <div className={listImageWork.length >= 5 ? "list-image-scroll" : "wrapper-list-image"}>
-        //         {listImageWork.length === 0 ? (
-        //           <label htmlFor="imageUpload" className="action-upload-image">
-        //             <div className="wrapper-upload">
-        //               <Icon name="Upload" />
-        //               Tải tài liệu lên
-        //             </div>
-        //           </label>
-        //         ) : (
-        //           <Fragment>
-        //             <div className="d-flex align-items-center">
-        //               {listImageWork.map((item, idx) => (
-        //                 <div key={idx} className="image-item">
-        //                   <img
-        //                     src={item.type == "xlsx" ? ImgExcel : item.type === "docx" ? ImgWord : item.type === "pptx" ? ImgPowerpoint : item.url}
-        //                     alt="image-warranty"
-        //                   />
-        //                   <span className="icon-delete" onClick={() => handleRemoveImageItem(idx)}>
-        //                     <Icon name="Trash" />
-        //                   </span>
-        //                 </div>
-        //               ))}
-        //               <label htmlFor="imageUpload" className="add-image">
-        //                 <Icon name="PlusCircleFill" />
-        //               </label>
-        //             </div>
-        //           </Fragment>
-        //         )}
-        //       </div>
-        //       <input
-        //         type="file"
-        //         accept="image/*,.xlsx,.xls,.doc,.docx,.ppt,.pptx,.txt,.pdf"
-        //         className="d-none"
-        //         id="imageUpload"
-        //         onChange={(e) => handleUploadDocument(e)}
-        //       />
-        //     </div>
-        //   ),
-        // },
         {
           name: "wteId",
           type: "custom",
@@ -1320,88 +1189,59 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
             />
           ),
         },
-        ...(type && type === "opportunity"
-          ? [
-              {
-                name: "opportunityId",
-                type: "custom",
-                snippet: (
-                  <SelectCustom
-                    id="opportunityId"
-                    name="opportunityId"
-                    label="Cơ hội"
-                    options={[]}
-                    fill={true}
-                    required={true}
-                    disabled={disableOpportunity ? true : false}
-                    value={dataWorkOpt}
-                    onChange={(e) => handleChangeValueWorkOpt(e)}
-                    isAsyncPaginate={true}
-                    placeholder="Chọn cơ hội"
-                    additional={{
-                      page: 1,
-                    }}
-                    loadOptionsPaginate={loadedOptionWorkOpt}
-                    error={validateOpt}
-                    message="Vui lòng chọn cơ hội"
-                  />
-                ),
-              },
-              ...(isShowProject
-                ? [
-                    {
-                      name: "projectId",
-                      type: "custom",
-                      snippet: (
-                        <SelectCustom
-                          id="projectId"
-                          name="projectId"
-                          label="Dự án"
-                          options={[]}
-                          fill={true}
-                          required={false}
-                          value={dataWorkProject}
-                          onChange={(e) => handleChangeValueWorkProject(e)}
-                          isAsyncPaginate={true}
-                          placeholder="Chọn dự án"
-                          additional={{
-                            page: 1,
-                          }}
-                          loadOptionsPaginate={loadedOptionWorkProject}
-                          error={validateProject}
-                          message="Vui lòng chọn dự án"
-                        />
-                      ),
-                    },
-                  ]
-                : []),
-            ]
-          : [
-              {
-                name: "projectId",
-                type: "custom",
-                snippet: (
-                  <SelectCustom
-                    id="projectId"
-                    name="projectId"
-                    label="Dự án"
-                    options={[]}
-                    fill={true}
-                    required={true}
-                    value={dataWorkProject}
-                    onChange={(e) => handleChangeValueWorkProject(e)}
-                    isAsyncPaginate={true}
-                    placeholder="Chọn dự án"
-                    additional={{
-                      page: 1,
-                    }}
-                    loadOptionsPaginate={loadedOptionWorkProject}
-                    error={validateProject}
-                    message="Vui lòng chọn dự án"
-                  />
-                ),
-              },
-            ]),
+        {
+          label: "Tên công việc",
+          name: "name",
+          type: "text",
+          fill: true,
+          required: true,
+        },
+        {
+          label: "Nội dung công việc",
+          name: "content",
+          type: "textarea",
+          fill: true,
+        },
+        {
+          name: "docLink",
+          type: "custom",
+          snippet: (
+            <AttachmentUploader value={listImageWork} placeholderLabel="Tải tài liệu lên" onChange={handleChange} multiple={true} maxFiles={10} />
+          ),
+        },
+      ] as IFieldCustomize[],
+    [
+      startDay,
+      endDay,
+      listOptionTimeWorkLoad,
+      isOptionTimeWorkLoad,
+      dataTimeWorkLoad,
+      validateWordLoad,
+      formData?.values,
+      listImageWork,
+      dataWorkProject,
+      dataWorkOpt,
+      validateProject,
+      validateOpt,
+      dataManager,
+      dataEmployee,
+      dataParticipants,
+      dataPeopleInvolved,
+      valueDecisionTime,
+      valueTime,
+      isOptionDecisionTime,
+      dataApplyNotification,
+      dataListNotification,
+      customerId,
+      lstPeriodicSchedule,
+      hasPeriodicSchedule,
+      isChooseStartTime,
+      isChooseEndTime,
+    ]
+  );
+  const listFieldAssign = useMemo(
+    () =>
+      [
         {
           name: "managerId",
           type: "custom",
@@ -1475,246 +1315,85 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
           ),
         },
         {
-          name: "participants",
+          name: "workLoad",
           type: "custom",
           snippet: (
-            <SelectCustom
-              id="customers"
-              name="customers"
-              label="Khách hàng liên quan"
-              fill={true}
-              options={[]}
-              isMulti={true}
-              value={dataPeopleInvolved}
-              onChange={(e) => handleChangeValuePeopleInvolved(e)}
-              isAsyncPaginate={true}
-              isFormatOptionLabel={true}
-              loadOptionsPaginate={loadedOptionPeopleInvolved}
-              placeholder="Chọn người tham gia"
-              additional={{
-                page: 1,
-              }}
-              formatOptionLabel={formatOptionLabelPeopleInvolved}
-              disabled={customerId ? true : false}
-            />
-          ),
-        },
-        {
-          name: "notification",
-          type: "custom",
-          snippet: (
-            <div className="notification-calendar">
-              <div className="info-notification">
-                <div className="setting-time">
-                  <label className="title-time">Cài đặt thời gian thông báo</label>
-                  <div className="desc-choose">
-                    <div className="choose-time">
-                      <SelectCustom
-                        fill={true}
-                        special={true}
-                        value={valueTime}
-                        options={valueDecisionTime.value == "1" ? listDay : valueDecisionTime.value == "2" ? listHour : listMinute}
-                        onChange={(e) => handleChangeValueTime(e)}
-                      />
-                    </div>
-                    <div className="decision-time" ref={refContainerDecisionTime}>
-                      <div
-                        className="select__decision-time"
-                        onClick={() => {
-                          setIsOptionDecisionTime(!isOptionDecisionTime);
+            <div className="wrapper__workload">
+              <NummericInput
+                id="workLoad"
+                name="workLoad"
+                label="Khối lượng công việc"
+                value={formData?.values?.workLoad}
+                fill={true}
+                placeholder="Nhập khối lượng công việc"
+                required={true}
+                error={validateWordLoad || (formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0)}
+                message={`${
+                  validateWordLoad
+                    ? "Vui lòng nhập khối lượng công việc"
+                    : formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0
+                    ? "Khối lượng công việc cần lớn hơn 0"
+                    : ""
+                }`}
+                onValueChange={(e) => handleChangeValueWorkLoad(e)}
+              />
+
+              <div className="option__time--workload" ref={refContainerTimeWorkLoad}>
+                <div
+                  className="selected__item--workload"
+                  onClick={() => {
+                    setIsOptionTimeWorkLoad(!isOptionTimeWorkLoad);
+                  }}
+                >
+                  {dataTimeWorkLoad.label}
+                  <Icon name="ChevronDown" />
+                </div>
+                {isOptionTimeWorkLoad && (
+                  <ul className="menu__time--workload" ref={refOptionTimeWorkLoad}>
+                    {listOptionTimeWorkLoad.map((item, idx) => (
+                      <li
+                        key={idx}
+                        className={`item--workload ${dataTimeWorkLoad.value === item.value ? "active__item--workload" : ""}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setDataTimeWorkLoad(item);
+                          setIsOptionTimeWorkLoad(false);
                         }}
                       >
-                        {valueDecisionTime.label}
-                        <Icon name="ChevronDown" />
-                      </div>
-                      {isOptionDecisionTime && (
-                        <ul className="menu__time" ref={refOptionDecisionTime}>
-                          {listOption.map((item, idx) => {
-                            return (
-                              <li
-                                key={idx}
-                                className={`${valueDecisionTime.value === item.value ? "active__item--item" : "item-time"}`}
-                                onClick={(e) => {
-                                  e && e.preventDefault();
-                                  setValueDecisionTime(item as any);
-                                  setIsOptionDecisionTime(false);
-                                }}
-                              >
-                                {item.label}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="choose-notification">
-                  <CheckboxList
-                    title="Thông báo qua"
-                    options={listNotificationType}
-                    value={dataApplyNotification.method.join()}
-                    onChange={(e) => handleChangeValueNofiType(e)}
-                  />
-                </div>
-              </div>
-
-              <div className="lst__nitification--apply">
-                <div
-                  className={`${dataApplyNotification.method.length <= 0 ? "disabled__apply-notification" : "apply-notification"}`}
-                  title={`${dataApplyNotification.method.length <= 0 ? "Bạn chưa chọn thông báo qua app, email hay sms !" : ""}`}
-                  onClick={() => handApplyNotification()}
-                >
-                  Áp dụng
-                </div>
-
-                {dataListNotification && dataListNotification.length > 0 && (
-                  <div className="list__apply--notification">
-                    {dataListNotification.map((item, idx) => {
-                      return (
-                        <div key={idx} className="apply-item">
-                          <h4 className="name-notification">{`Thông báo trước ${
-                            item.time.day ? `${item.time.day} ngày` : item.time.hour ? `${item.time.hour} giờ` : `${item.time.minute} phút`
-                          } qua ${item.method.join(", ")}`}</h4>
-
-                          <span
-                            title="Xóa"
-                            className="remove-notification"
-                            onClick={(e) => {
-                              e && e.preventDefault();
-                              handleRemoveApplyNotification(idx);
-                            }}
-                          >
-                            <Icon name="Trash" />
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
+                        {item.label}
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </div>
             </div>
           ),
         },
         {
-          name: "periodicSchedule",
-          type: "custom",
-          snippet: (
-            <div className="box__periodic--schedule">
-              <Switch label="Lịch định kỳ" checked={hasPeriodicSchedule} onChange={() => setHasPeriodicSchedule(!hasPeriodicSchedule)} />
-
-              {hasPeriodicSchedule && (
-                <div className="lst__option--periodic--schedule">
-                  {lstPeriodicSchedule.map((item, idx) => {
-                    return (
-                      <div key={idx} className="item__periodic--schedule">
-                        <span className="name__option">{item.name}</span>
-
-                        <div className="choose__setting--schedule">
-                          <div className="lst__choose--time">
-                            {item.time && item.time.length === 0 ? (
-                              <div className="item-empty--time">
-                                <div className="name-empty">Bận</div>
-                                <div className="add--time" onClick={() => handleAddItemTimeEmpty(idx)}>
-                                  <Icon name="PlusCircleFill" />
-                                </div>
-                              </div>
-                            ) : (
-                              item.time.map((el, index) => {
-                                return (
-                                  <div key={index} className="item__choose--time">
-                                    <div className="data__time">
-                                      <div className="form-time" ref={refContainerStartTime}>
-                                        <Input
-                                          name="startTime"
-                                          className="dept-time"
-                                          value={el.start}
-                                          fill={true}
-                                          placeholder="HH:MM"
-                                          autoComplete="off"
-                                          onChange={(e) => handleChangeStartTime(e, index, idx)}
-                                          onClick={() => setIsChooseStartTime(true)}
-                                        />
-
-                                        {isChooseStartTime && (
-                                          <div className="choose__item--time choose__start--time" ref={refOptionStartTime}>
-                                            <ul className="lst__time--choose">
-                                              {timeSlots.map((item, idxs) => {
-                                                return (
-                                                  <li
-                                                    key={idxs}
-                                                    className={`item-choose ${el.start == item.label ? "item-choose--active" : ""}`}
-                                                    onClick={() => {
-                                                      handleChooseStartTime(item.label, index, idx);
-                                                      setIsChooseStartTime(false);
-                                                    }}
-                                                  >
-                                                    {item.label}
-                                                  </li>
-                                                );
-                                              })}
-                                            </ul>
-                                          </div>
-                                        )}
-                                      </div>
-                                      <span className="to-time">đến</span>
-                                      <div className="form-time" ref={refContainerEndTime}>
-                                        <Input
-                                          name="endTime"
-                                          className="dept-time"
-                                          value={el.end}
-                                          fill={true}
-                                          placeholder="HH:MM"
-                                          autoComplete="off"
-                                          onChange={(e) => handleChangeEndTime(e, index, idx)}
-                                          onClick={() => setIsChooseEndTime(true)}
-                                        />
-
-                                        {isChooseEndTime && (
-                                          <div className="choose__item--time choose__end--time" ref={refOptionEndTime}>
-                                            <ul className="lst__time--choose">
-                                              {timeSlots.map((item, idxs) => {
-                                                return (
-                                                  <li
-                                                    key={idxs}
-                                                    className={`item-choose ${el.end == item.label ? "item-choose--active" : ""}`}
-                                                    onClick={() => {
-                                                      handleChooseEndTime(item.label, index, idx);
-                                                      setIsChooseEndTime(false);
-                                                    }}
-                                                  >
-                                                    {item.label}
-                                                  </li>
-                                                );
-                                              })}
-                                            </ul>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                    <div className="action__time">
-                                      <div className="action__time--item action__time--add" onClick={() => handleAddItemTime(idx)}>
-                                        <Icon name="PlusCircleFill" />
-                                      </div>
-                                      {item.time.length > 1 && (
-                                        <div className="action__time--item action__time--delete" onClick={() => handleDeleteItemTime(index, idx)}>
-                                          <Icon name="Trash" />
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                );
-                              })
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          ),
+          label: "Bắt đầu",
+          name: "startTime",
+          type: "date",
+          fill: true,
+          required: true,
+          icon: <Icon name="Calendar" />,
+          iconPosition: "left",
+          isWarning: startDay > endDay,
+          hasSelectTime: true,
+          placeholder: "Nhập ngày bắt đầu",
+          messageWarning: "Ngày bắt đầu nhỏ hơn ngày kết thúc",
+        },
+        {
+          label: "Kết thúc",
+          name: "endTime",
+          type: "date",
+          fill: true,
+          required: true,
+          icon: <Icon name="Calendar" />,
+          iconPosition: "left",
+          isWarning: endDay < startDay,
+          hasSelectTime: true,
+          placeholder: "Nhập ngày kết thúc",
+          messageWarning: "Ngày kết thúc lớn hơn ngày bắt đầu",
         },
         {
           label: "Mức độ ưu tiên",
@@ -1775,7 +1454,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
   const onSubmit = async (e) => {
     e && e.preventDefault();
 
-    const errors = Validate(validations, formData, listField);
+    const errors = Validate(validations, formData, listFieldAddWork);
 
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
@@ -1981,22 +1660,36 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
         isOpen={onShow}
         isCentered={true}
         staticBackdrop={true}
-        size="lg"
+        size="xl"
         toggle={() => !isSubmit && handleClearForm(false)}
-        className="modal-add-work"
+        className="modal-add-work-backlog"
       >
-        <form className="form-add-work" onSubmit={(e) => onSubmit(e)}>
+        <form className="form-add-work-backlog" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader title={`${idWork ? "Chỉnh sửa" : "Thêm mới"} công việc`} toggle={() => !isSubmit && handleClearForm(false)} />
           <ModalBody>
             <div className="list-form-group">
-              {listField.map((field, index) => (
-                <FieldCustomize
-                  key={index}
-                  field={field}
-                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
-                  formData={formData}
-                />
-              ))}
+              <div className="list-form-group__add">
+                <div className="title-work">Nội dung công việc</div>
+                {listFieldAddWork.map((field, index) => (
+                  <FieldCustomize
+                    key={index}
+                    field={field}
+                    handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAddWork, setFormData)}
+                    formData={formData}
+                  />
+                ))}
+              </div>
+              <div className="list-form-group__assign">
+                <div className="title-work">Giao việc</div>
+                {listFieldAssign.map((field, index) => (
+                  <FieldCustomize
+                    key={index}
+                    field={field}
+                    handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAssign, setFormData)}
+                    formData={formData}
+                  />
+                ))}
+              </div>
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

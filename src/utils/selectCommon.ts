@@ -51,6 +51,8 @@ import ProductIdApiService from "services/ProductIdApiService";
 import ServiceIdApiService from "services/ServiceIdApiService";
 import CardServiceIdApiService from "services/CardServiceIdApiService";
 import BeautySalonService from "services/BeautySalonService";
+import ContractGuaranteeService from "services/ContractGuaranteeService";
+import PartnerService from "services/PartnerService";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -80,6 +82,21 @@ export async function SelectOptionData(key: string, params?: any) {
   }
 
   switch (key) {
+    case "guaranteeTypeId" :
+      response = await ContractGuaranteeService.guaranteeTypeList(params);
+    break;
+    case "competencyId" :
+      response = await ContractGuaranteeService.competencyGuaranteeList(params);
+      break;
+    case "contractAppendixId" :
+      response = await ContractService.contractAppendixList(params);
+      break;
+    case "bankId" :
+      response = await ContractGuaranteeService.bankList(params);
+      break;
+    case "partnerId" :
+      response = await PartnerService.list(params);
+      break;
     case "categoryId":
     case "category":
       response = await CategoryService.list(params);
@@ -322,6 +339,9 @@ export async function SelectOptionData(key: string, params?: any) {
         }
         if (key === "marketingSendLeadSource") {
           return { value: item.name, label: `${item.name}` };
+        }
+        if (key === "contractId") {
+          return { value: item.id, label: `${item.name}`,contractValue:item?.dealValue ?? 0 };
         }
         if (key === "serviceId") {
           return {

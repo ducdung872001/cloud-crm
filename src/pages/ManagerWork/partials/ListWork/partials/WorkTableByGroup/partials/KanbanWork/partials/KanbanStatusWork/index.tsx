@@ -10,7 +10,7 @@ import Icon from "components/icon";
 import TaskItem from "../TaskItem";
 import ExchangeFast from "../ExchangeFast";
 import SupportTaskModal from "./supportTaskModal/SupportTaskModal";
-import AddWorkModal from "../../../AddWorkModal/AddWorkModal";
+import AddWorkModal from "../../../AddWorkModal";
 import { useWindowDimensions } from "utils/hookCustom";
 import "./index.scss";
 

@@ -644,8 +644,8 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     const response = await CustomerSourceService.list(param);
 
     if (response.code === 0) {
-      // const dataOption = response.result.items || [];
-      const dataOption = response?.result || [];
+      const dataOption = response.result.items || [];
+      // const dataOption = response?.result || [];
 
       return {
         options: [
@@ -852,8 +852,8 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     const response = await CustomerGroupService.list(param);
 
     if (response.code === 0) {
-      // const dataOption = response.result.items;
-      const dataOption = response.result;
+      const dataOption = response.result.items;
+      // const dataOption = response.result;
 
       return {
         options: [

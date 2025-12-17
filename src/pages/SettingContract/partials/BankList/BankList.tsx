@@ -284,7 +284,7 @@ export default function BankList(props: any) {
         />
         {!isLoading && listBank && listBank.length > 0 ? (
           <BoxTable
-            name="Tài liệu"
+            name="Danh mục ngân hàng"
             titles={titles}
             items={listBank}
             isPagination={true}

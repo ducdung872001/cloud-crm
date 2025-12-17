@@ -15,4 +15,9 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  delete: (id: number) => {
+    return fetch(`${urlsApi.setting.delete}?id=${id}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
 };

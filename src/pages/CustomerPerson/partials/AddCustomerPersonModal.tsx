@@ -397,8 +397,8 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
     const response = await CustomerGroupService.list(param);
 
     if (response.code === 0) {
-      // const dataOption = response.result.items;
-      const dataOption = response.result;
+      const dataOption = response.result.items;
+      // const dataOption = response.result;
 
       return {
         options: [

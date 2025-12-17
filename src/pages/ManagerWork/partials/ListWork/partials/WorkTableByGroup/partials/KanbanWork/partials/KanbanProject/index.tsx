@@ -11,7 +11,7 @@ import { showToast } from "utils/common";
 import Loading from "components/loading";
 import Icon from "components/icon";
 import { SystemNotification } from "components/systemNotification/systemNotification";
-import AddWorkModal from "../../../AddWorkModal/AddWorkModal";
+import AddWorkModal from "../../../AddWorkModal";
 import TaskItem from "../TaskItem";
 import ExchangeFast from "../ExchangeFast";
 import { useWindowDimensions } from "utils/hookCustom";

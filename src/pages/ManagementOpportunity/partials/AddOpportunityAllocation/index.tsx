@@ -93,9 +93,10 @@ export default function AddOpportunityAllocation(props: IAddOpportunityAllocatio
         ],
       },
     }),
-    [isSubmit]
+    [isSubmit, dataEmployee, onHide]
   );
 
+  console.log("dataEmployee", dataEmployee);
   return (
     <Fragment>
       <Modal
