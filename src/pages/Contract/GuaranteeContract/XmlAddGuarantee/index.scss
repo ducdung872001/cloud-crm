@@ -78,6 +78,7 @@
       // position: relative;
       // max-height: 50rem;
       max-height: calc(100vh - 185px);
+      min-height: calc(100vh - 200px);
       overflow: auto;
       // pointer-events: none;
       .fjs-container .fjs-powered-by {
@@ -252,6 +253,7 @@
       // position: relative;
       // max-height: 50rem;
       max-height: calc(100vh - 185px);
+      min-height: calc(100vh - 200px);
       overflow: auto;
       // pointer-events: none;
       .fjs-container .fjs-powered-by {
