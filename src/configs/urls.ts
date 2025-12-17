@@ -1365,6 +1365,7 @@ export const urlsApi = {
   setting: {
     list: prefixAdmin + "/setting/list",
     update: prefixAdmin + "/setting/update",
+    delete: prefixAdmin + "/setting/delete",
   },
   connectGmail: {
     connect: "https://connect.reborn.vn/api/v1/google/access-token",
