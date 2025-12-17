@@ -72,7 +72,7 @@ export default function XmlAddWarranty(props: any) {
 
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [warrantyExtraInfos, setWarrantyExtraInfos] = useState<any>([]);
+  const [contractWarrantyExtraInfos, setWarrantyExtraInfos] = useState<any>([]);
 
   const [mapWarrantyAttribute, setMapWarrantyAttribute] = useState<any>(null);
 
@@ -201,13 +201,13 @@ const mapAttachmentsFromApi = (attachments: any) => {
           infoExtra.push({
             ...{
               attributeId: item.id,
-              warrantyId: data?.id ?? 0,
+              contractWarrantyId: data?.id ?? 0,
               attributeValue:
                 config[item.fieldName] && typeof config[item.fieldName] == "object" ? JSON.stringify(config[item.fieldName]) : config[item.fieldName],
             },
-            ...(warrantyExtraInfos.find((el) => el.attributeId == item.id)?.id
+            ...(contractWarrantyExtraInfos.find((el) => el.attributeId == item.id)?.id
               ? {
-                id: warrantyExtraInfos.find((el) => el.attributeId == item.id)?.id,
+                id: contractWarrantyExtraInfos.find((el) => el.attributeId == item.id)?.id,
               }
               : {}),
           });

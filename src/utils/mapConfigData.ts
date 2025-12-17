@@ -56,7 +56,7 @@ type ExtraInfo = {
   attributeId: number;
   businessPartnerId?: number;
   guaranteeId? : number;
-  warrantyId? : number;
+  contractWarrantyId? : number;
   attributeValue?: any;
   [k: string]: any;
 };
