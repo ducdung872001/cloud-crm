@@ -322,9 +322,9 @@ export default function OrderInvoiceList() {
 
   const dataMappingArray = (item: IOrderResponseModel, index: number, type?: string) => [
     index + 1,
-    item.order_code,
-    moment(item.order_date).format("DD/MM/YYYY"),
-    item.expected_date ? moment(item.expected_date).format("DD/MM/YYYY") : "",
+    item.orderCode,
+    moment(item.orderDate).format("DD/MM/YYYY"),
+    item.expectedDate ? moment(item.expectedDate).format("DD/MM/YYYY") : "",
     name,
     formatCurrency(item.amount),
     item.note,
@@ -390,7 +390,7 @@ export default function OrderInvoiceList() {
         <Fragment>
           Bạn có chắc chắn muốn {type === "cancel" ? "hủy" : type === "processing" ? "xử lý" : "phê duyệt"}{" "}
           {item ? "hóa đơn " : `${listIdChecked.length} hóa đơn đã chọn`}
-          {item ? <strong>{item.order_code}</strong> : ""}? Thao tác này không thể khôi phục.
+          {item ? <strong>{item.orderCode}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",

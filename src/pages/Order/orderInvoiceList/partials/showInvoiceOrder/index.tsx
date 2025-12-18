@@ -11,8 +11,10 @@ import Logo from "assets/images/logo-print.png";
 import { ContextType, UserContext } from "contexts/userContext";
 import { formatCurrency, showToast } from "utils/common";
 import OrderService from "services/OrderService";
+import ProductService from "services/ProductService";
 import PrintSmall from "components/printSmall/printSmall";
 import "./index.scss";
+import EmployeeService from "services/EmployeeService";
 
 interface IShowInvoiceOrderProps {
   onShow: boolean;
@@ -39,8 +41,59 @@ export default function ShowInvoiceOrder(props: IShowInvoiceOrderProps) {
   useEffect(() => {
     if (onShow && id) {
       setInfoInvoice(data);
-      setOrderDetails(data.orderDetails);
       setInfoPrintSmall(data);
+
+      // Gọi API để lấy chi tiết sản phẩm và gán vào orderDetails
+      const fetchProductDetails = async () => {
+        if (data?.orderDetails && data.orderDetails.length > 0) {
+          try {
+            const updatedOrderDetails = await Promise.all(
+              data.orderDetails.map(async (item) => {
+                if (item.objectId) {
+                  try {
+                    const response = await ProductService.detail(item.objectId);
+                    if (response && response.result) {
+                      return {
+                        ...item,
+                        code: response.result.code || item.code,
+                        name: response.result.name || item.name,
+                        unitName: response.result.unitName,
+                      };
+                    }
+                  } catch (error) {
+                  }
+                }
+                return item;
+              })
+            );
+            setOrderDetails(updatedOrderDetails);
+          } catch (error) {
+            setOrderDetails(data.orderDetails);
+          }
+        } else {
+          setOrderDetails(data?.orderDetails || []);
+        }
+      };
+
+      //Gọi API lấy chi tiết nhân viên đặt hàng
+      const fetchSaleDetails = async () => {
+        if (!data?.saleId) return;
+
+        try {
+          const response = await EmployeeService.detail(data.saleId);
+          if (response?.result) {
+            setInfoInvoice((prev) => ({
+              ...prev,
+              sale: response.result.name, 
+            }));
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      fetchSaleDetails();
+      fetchProductDetails();
     }
   }, [onShow, id, data]);
 
@@ -49,10 +102,10 @@ export default function ShowInvoiceOrder(props: IShowInvoiceOrderProps) {
   const dataFormat = ["", "", "", "text-right", "text-right", "text-right", "text-right", ""];
 
   const dataMappingArray = (item) => [
-    item.object.code,
-    item.object.name,
+    item.code,
+    item.name,
     moment(item.expiry_date).format("DD/MM/YYYY"),
-    item?.unit?.name,
+    item.unitName,
     formatCurrency(+item.cost),
     +item.quantity,
     formatCurrency(+item.cost * +item.quantity),
@@ -88,7 +141,7 @@ export default function ShowInvoiceOrder(props: IShowInvoiceOrderProps) {
             color: "primary",
             variant: "outline",
             callback: () => {
-              action === "edit" ? navigate("/order/list") : onHide();
+              action === "edit" ? navigate("/order_invoice_list") : onHide();
             },
           },
         ],
@@ -109,7 +162,7 @@ export default function ShowInvoiceOrder(props: IShowInvoiceOrderProps) {
         className={classNames("modal__invoice--order")}
       >
         <div className="wrapper__info">
-          <ModalHeader title={`Xem chi tiết hóa đơn - ${data?.orderCode || infoInvoice?.orderCode || ""}`} toggle={() => onHide()} />
+          <ModalHeader title={`Xem chi tiết hóa đơn - ${data?.orderCode || infoInvoice?.orderCode || ""}`} toggle={() => navigate("/order_invoice_list")} />
           <ModalBody>
             {infoInvoice?.id && (
               <div ref={refPrintInvoice} className="body--info">
@@ -155,7 +208,7 @@ export default function ShowInvoiceOrder(props: IShowInvoiceOrderProps) {
                             </strong>
                           </div>
                           <div className="item-top">
-                            NV đặt hàng: <strong className="ml-1">{infoInvoice?.sale?.full_name || ""}</strong>
+                            NV đặt hàng: <strong className="ml-1">{infoInvoice?.sale || ""}</strong>
                           </div>
                           <div className="item-top">
                             Ghi chú: <strong className="ml-1">{infoInvoice?.note}</strong>
