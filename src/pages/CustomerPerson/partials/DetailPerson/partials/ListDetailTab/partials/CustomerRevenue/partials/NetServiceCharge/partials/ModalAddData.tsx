@@ -121,7 +121,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     [formData.values]
   );
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.values.transactionDate || formData.values.transactionDate === "") {
