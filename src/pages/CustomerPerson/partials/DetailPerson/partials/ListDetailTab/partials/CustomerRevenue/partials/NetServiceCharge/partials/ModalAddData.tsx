@@ -64,6 +64,13 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     };
   }, [values]);
 
+  // Hàm kiểm tra giá trị có nằm ngoài khoảng 0 - 99,999,999 không
+  const isOutOfRange = (value: any): boolean => {
+    if (value === "" || value === undefined || value === null) return false;
+    const num = Number(value);
+    return isNaN(num) || num < 0 || num > 99999999;
+  };
+
   const listField = useMemo(
     () =>
       [
@@ -77,19 +84,24 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           iconPosition: "left",
           hasSelectTime: true,
           placeholder: "Nhập ngày giao dịch",
+          messageWarning: "Ngày giao dịch là bắt buộc",
         },
         {
           label: "Phí quản lý tài khoản",
           name: "accountManagement",
           type: "number",
           fill: true,
-          required: false,
+          required: true,
+          isWarning: isOutOfRange(formData.values.accountManagement),
+          messageWarning: "Chỉ được phép nhập giá trị trong khoảng từ 0 đến 99,999,999",
         },
         {
           label: "Phí giao dịch",
           name: "transactionFee",
           type: "number",
           fill: true,
+          isWarning: isOutOfRange(formData.values.transactionFee),
+          messageWarning: "Chỉ được phép nhập giá trị trong khoảng từ 0 đến 99,999,999",
         },
         {
           label: "Phí bảo lãnh",
@@ -97,36 +109,63 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           type: "number",
           fill: true,
           required: false,
+          isWarning: isOutOfRange(formData.values.guaranteeFee),
+          messageWarning: "Chỉ được phép nhập giá trị trong khoảng từ 0 đến 99,999,999",
         },
         {
           label: "TF",
           name: "tf",
           type: "number",
           fill: true,
+          isWarning: isOutOfRange(formData.values.tf),
+          messageWarning: "Chỉ được phép nhập giá trị trong khoảng từ 0 đến 99,999,999",
         },
         {
           label: "FX",
           name: "fx",
           type: "number",
           fill: true,
+          isWarning: isOutOfRange(formData.values.fx),
+          messageWarning: "Chỉ được phép nhập giá trị trong khoảng từ 0 đến 99,999,999",
         },
         {
           label: "Khác",
           name: "other",
           type: "number",
           fill: true,
+          isWarning: isOutOfRange(formData.values.other),
+          messageWarning: "Chỉ được phép nhập giá trị trong khoảng từ 0 đến 99,999,999",
         },
       ] as IFieldCustomize[],
-    [formData]
+    [formData.values]
   );
 
-  const onSubmit = async (e) => {
-    e && e.preventDefault();
+  const hasOutOfRangeValue = useMemo(() => {
+    return (
+      isOutOfRange(formData.values.accountManagement) ||
+      isOutOfRange(formData.values.transactionFee) ||
+      isOutOfRange(formData.values.guaranteeFee) ||
+      isOutOfRange(formData.values.tf) ||
+      isOutOfRange(formData.values.fx) ||
+      isOutOfRange(formData.values.other)
+    );
+  }, [formData.values]);
 
-    const errors = Validate(validations, formData, listField);
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    if (Object.keys(errors).length > 0) {
-      setFormData((prevState) => ({ ...prevState, errors: errors }));
+    if (hasOutOfRangeValue) {
+      showToast("Vui lòng kiểm tra lại các trường phí, giá trị phải từ 0 đến 99,999,999", "warning");
+      return;
+    }
+
+    if (!formData.values.transactionDate || formData.values.transactionDate === "") {
+      showToast("Ngày giao dịch là bắt buộc", "warning");
+      return;
+    }
+
+    if (!formData.values.accountManagement && formData.values.accountManagement !== 0) {
+      showToast("Phí quản lý tài khoản là bắt buộc", "warning");
       return;
     }
 
@@ -135,7 +174,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     const body: any = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as any),
-      customerId
+      customerId,
+      transactionDate: moment(formData.values.transactionDate).format('YYYY-MM-DDTHH:mm:ss'),
     };
 
     const response = await NetServiceChargeService.update(body);
@@ -174,7 +214,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
             color: "primary",
             disabled:
               _.isEqual(formData.values, values) ||
-              (formData.errors && Object.keys(formData.errors).length > 0),
+              hasOutOfRangeValue ||
+              isSubmit,
             is_loading: isSubmit,
           },
         ],

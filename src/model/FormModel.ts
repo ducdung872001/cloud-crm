@@ -88,6 +88,7 @@ export interface IFieldCustomize {
 export interface IValidation {
   name: string;
   rules: string;
+  message?: Record<string, string>;
 }
 export interface IFormData {
   values: Record<string, any>;

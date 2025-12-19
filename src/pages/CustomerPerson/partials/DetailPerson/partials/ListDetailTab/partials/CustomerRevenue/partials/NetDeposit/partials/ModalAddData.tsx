@@ -4,6 +4,7 @@ import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import Icon from "components/icon";
+import moment from "moment";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -57,6 +58,13 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     };
   }, [values]);
 
+  // Hàm kiểm tra giá trị có nằm ngoài khoảng 0 - 99,999,999 không
+  const isOutOfRange = (value: any): boolean => {
+    if (value === "" || value === undefined || value === null) return false;
+    const num = Number(value);
+    return isNaN(num) || num < 0 || num > 99999999;
+  };
+
   const listField = useMemo(
     () =>
       [
@@ -65,13 +73,17 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           name: "casa",
           type: "number",
           fill: true,
-          required: false,
+          required: true,
+          isWarning: isOutOfRange(formData.values.casa),
+          messageWarning: "Chỉ được phép nhập giá trị trong khoảng từ 0 đến 99,999,999",
         },
         {
           label: "FD",
           name: "fd",
           type: "number",
           fill: true,
+          isWarning: isOutOfRange(formData.values.fd),
+          messageWarning: "Chỉ được phép nhập giá trị trong khoảng từ 0 đến 99,999,999",
         },
         {
           label: "Khác",
@@ -79,6 +91,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           type: "number",
           fill: true,
           required: false,
+          isWarning: isOutOfRange(formData.values.other),
+          messageWarning: "Chỉ được phép nhập giá trị trong khoảng từ 0 đến 99,999,999",
         },
         {
           label: "Ngày giao dịch",
@@ -95,13 +109,28 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     [formData]
   );
 
-  const onSubmit = async (e) => {
-    e && e.preventDefault();
+  const hasOutOfRangeValue = useMemo(() => {
+    return (
+      isOutOfRange(formData.values.casa) ||
+      isOutOfRange(formData.values.fd) ||
+      isOutOfRange(formData.values.other)
+    );
+  }, [formData.values]);
 
-    const errors = Validate(validations, formData, listField);
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    if (Object.keys(errors).length > 0) {
-      setFormData((prevState) => ({ ...prevState, errors: errors }));
+    if (hasOutOfRangeValue) {
+      showToast("Vui lòng kiểm tra lại các trường phí, giá trị phải từ 0 đến 99,999,999", "warning");
+      return;
+    }
+
+    if (!formData.values.transactionDate || formData.values.transactionDate === "") {
+      showToast("Ngày giao dịch là bắt buộc", "warning");
+      return;
+    }
+    if (!formData.values.casa && formData.values.casa !== 0) {
+      showToast("CASA là bắt buộc", "warning");
       return;
     }
 
@@ -110,7 +139,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     const body: any = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as any),
-      customerId
+      customerId,
+      transactionDate: moment(formData.values.transactionDate).format('YYYY-MM-DDTHH:mm:ss'),
     };
 
     const response = await NetDepositService.update(body);
@@ -149,7 +179,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
             color: "primary",
             disabled:
               _.isEqual(formData.values, values) ||
-              (formData.errors && Object.keys(formData.errors).length > 0),
+              hasOutOfRangeValue ||
+              isSubmit,
             is_loading: isSubmit,
           },
         ],
