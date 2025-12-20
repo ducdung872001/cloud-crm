@@ -78,7 +78,7 @@ export default function SettingWarrantyList(props) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListSettingWarranty(result);
+      setListSettingWarranty(result.items);
 
       setPagination({
         ...pagination,
@@ -277,7 +277,7 @@ export default function SettingWarrantyList(props) {
             className={`title-first`}
             title="Quay lại"
           >
-            Cài đặt hỗ trợ
+            Cài đặt bảo hành
           </h1>
           <Icon
             name="ChevronRight"

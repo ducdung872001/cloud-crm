@@ -66,7 +66,7 @@ export default function CustomerSurvey() {
 
     if (response.code === 0) {
       const result = response.result;
-      setListCustomerSurvey(result);
+      setListCustomerSurvey(result.items);
 
       setPagination({
         ...pagination,

@@ -4,6 +4,7 @@ import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import Icon from "components/icon";
+import moment from "moment";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -65,7 +66,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           name: "casa",
           type: "number",
           fill: true,
-          required: false,
+          required: true,
         },
         {
           label: "FD",
@@ -96,12 +97,14 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
   );
 
   const onSubmit = async (e) => {
-    e && e.preventDefault();
+    e.preventDefault();
 
-    const errors = Validate(validations, formData, listField);
-
-    if (Object.keys(errors).length > 0) {
-      setFormData((prevState) => ({ ...prevState, errors: errors }));
+    if (!formData.values.transactionDate || formData.values.transactionDate === "") {
+      showToast("Ngày giao dịch là bắt buộc", "warning");
+      return;
+    }
+    if (!formData.values.casa && formData.values.casa !== 0) {
+      showToast("CASA là bắt buộc", "warning");
       return;
     }
 
@@ -110,7 +113,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     const body: any = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as any),
-      customerId
+      customerId,
+      transactionDate: moment(formData.values.transactionDate).format('YYYY-MM-DDTHH:mm:ss'),
     };
 
     const response = await NetDepositService.update(body);

@@ -78,6 +78,10 @@ export default function WarrantyList() {
             label: "Tất cả",
           },
           {
+            value: "0",
+            label: "chưa thực hiện",
+          },
+          {
             value: "1",
             label: "Đang thực hiện",
           },
@@ -242,7 +246,7 @@ export default function WarrantyList() {
     <span key={item.id} style={{ color: "#dc3545" }}>
       {item.reasonName}
     </span>,
-    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "",
+    item.startDate ? moment(item.startDate).format("DD/MM/YYYY HH:mm") : "",
     item.endDate ? moment(item.endDate).format("DD/MM/YYYY HH:mm") : "",
     <div
       key={item.id}

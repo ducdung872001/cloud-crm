@@ -721,10 +721,10 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
 
   const isStartAfterEnd = startMoment.isAfter(endMoment);
   const isEndBeforeStart = endMoment.isBefore(startMoment);
-  const isScheduleNextAfterNow = useMemo(() => {
+  const isScheduleNextBeforeNow = useMemo(() => {
     try {
       if (!formData?.values?.scheduleNext) return false;
-      return moment(formData.values.scheduleNext).isAfter(moment());
+      return moment(formData.values.scheduleNext).isBefore(moment(), 'minute'); // so sánh đến phút
     } catch (e) {
       return false;
     }
@@ -858,7 +858,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           placeholder: "Nhập ngày bắt đầu",
           hasSelectTime: true,
           isWarning: isStartAfterEnd,
-          messageWarning: "Ngày bắt đầu nhỏ hơn ngày kết thúc",
+          messageWarning: "Ngày bắt đầu phải nhỏ hơn ngày kết thúc",
         },
         {
           label: "Kết thúc",
@@ -871,7 +871,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           placeholder: "Nhập ngày kết thúc",
           hasSelectTime: true,
           isWarning: isEndBeforeStart,
-          messageWarning: "Ngày kết thúc lớn hơn ngày bắt đầu",
+          messageWarning: "Ngày kết thúc phải lớn hơn ngày bắt đầu",
         },
         {
           label: "Nội dung thực hiện",
@@ -1004,8 +1004,8 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           placeholder: "Nhập thời gian thực hiện tiếp theo",
           hasSelectTime: true,
           isMinDate: true,
-          isWarning: isScheduleNextAfterNow,
-          messageWarning: "Thời gian thực hiện tiếp theo không được lớn hơn thời gian hiện tại",
+          isWarning: isScheduleNextBeforeNow,
+          messageWarning: "Thời gian thực hiện tiếp theo phải lớn hơn thời gian hiện tại",
         },
       ] as IFieldCustomize[],
     [
@@ -1058,8 +1058,11 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
     if (formData?.values?.scheduleNext) {
       const scheduleNextMoment = moment(formData.values.scheduleNext);
       const now = moment();
-      if (scheduleNextMoment.isAfter(now)) {
-        const newErrors = { ...(formData.errors || {}), scheduleNext: "Thời gian thực hiện tiếp theo không được lớn hơn thời gian hiện tại" };
+      if (scheduleNextMoment.isSameOrBefore(now, 'minute')) { // <= hiện tại → lỗi
+        const newErrors = { 
+          ...(formData.errors || {}), 
+          scheduleNext: "Thời gian thực hiện tiếp theo phải lớn hơn thời gian hiện tại" 
+        };
         setFormData((prev) => ({ ...prev, errors: newErrors }));
         return;
       }

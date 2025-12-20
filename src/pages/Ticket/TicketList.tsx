@@ -87,6 +87,10 @@ export default function TicketList() {
             label: "Tất cả",
           },
           {
+            value: "0",
+            label: "Chưa thực hiện",
+          },
+          {
             value: "1",
             label: "Đang thực hiện",
           },
@@ -97,6 +101,10 @@ export default function TicketList() {
           {
             value: "3",
             label: "Đã hủy",
+          },
+          {
+            value: "4",
+            label: "Tạm dừng",
           },
         ],
         value: searchParams.get("status") ?? "",
@@ -249,7 +257,7 @@ export default function TicketList() {
       {item.customerName}
     </span>,
     item.supportName,
-    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "",
+    item.startDate ? moment(item.startDate).format("DD/MM/YYYY HH:mm") : "",
     item.endDate ? moment(item.endDate).format("DD/MM/YYYY HH:mm") : "",
     item.creatorName,
     <div
