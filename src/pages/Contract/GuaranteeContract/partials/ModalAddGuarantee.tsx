@@ -426,6 +426,7 @@ export default function ModalAddGuarantee(props: any) {
   // lấy thông tin ngày bắt đầu và ngày cuối cùng
   const startDay = new Date(formData.values.startDate).getTime();
   const endDay = new Date(formData.values.endDate).getTime();
+  
 
   //Ngày lập
   const [checkFieldEstablishDate, setCheckFieldEstablishDate] = useState<boolean>(false);
@@ -732,10 +733,28 @@ export default function ModalAddGuarantee(props: any) {
 
     setIsSubmit(true);
 
+    // Hàm fix UTC
+    const parseToMiddayDate = (val) => {
+      if (!val) return val;
+      let d: any = null;
+      try {
+        if (val instanceof Date) d = new Date(val);
+        else if (moment.isMoment && moment.isMoment(val)) d = val.toDate();
+        else if (moment(val).isValid()) d = moment(val).toDate();
+        else return val;
+      } catch (e) {
+        return val;
+      }
+      d.setHours(12, 0, 0, 0);
+      return d;
+    };
+
     const body: ICustomerRequest = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as any),
       guaranteeExtraInfos: guaranteeExtraInfos,
+      startDate: parseToMiddayDate(formData.values?.startDate),
+      endDate: parseToMiddayDate(formData.values?.endDate)
     };
 
     const response = await ContractGuaranteeService.update(body);
@@ -1558,7 +1577,7 @@ export default function ModalAddGuarantee(props: any) {
 
                 <div className="form-group">
                   <DatePickerCustom
-                    label="Ngày ngày hết hạn"
+                    label="Ngày hết hạn"
                     name="endDate"
                     fill={true}
                     value={formData?.values?.endDate}
