@@ -66,7 +66,7 @@ export default function CreateOrder() {
     supplier_id: null,
     sale_id: id,
     order_date: moment().format("DD/MM/YYYY"),
-    expected_date: "",
+    expected_date: moment().format("DD/MM/YYYY"),
     note: "",
     payment_method: "cash",
     status: "done",
@@ -566,8 +566,8 @@ export default function CreateOrder() {
       id: changeFormData.id,
       orderCode: "",
       bnsId: 0,
-      orderDate: changeFormData.order_date,
-      expectedDate: changeFormData.expected_date,
+      orderDate: moment(changeFormData.order_date).format('YYYY-MM-DDTHH:mm:ss'),
+      expectedDate: moment(changeFormData.expected_date).format('YYYY-MM-DDTHH:mm:ss'),
       invoiceId: null,
       amount: changeFormData.pay_amount,
       vatAmount: changeFormData.vat_amount,
@@ -843,6 +843,7 @@ export default function CreateOrder() {
                     })
                   )
                 }
+                placeholder="Nhập ngày tạo hóa đơn"
               />
             </div>
             <div className="form-group">
@@ -853,6 +854,7 @@ export default function CreateOrder() {
                 icon={<Icon name="Calendar" />}
                 iconPosition="left"
                 fill={true}
+                required={true}
                 isMinDate={true}
                 onChange={(e) =>
                   setLstTabInvoice((prev) =>
@@ -868,7 +870,7 @@ export default function CreateOrder() {
                     })
                   )
                 }
-                placeholder="DD/MM/YYYY"
+                placeholder="Nhập ngày nhận hàng mong muốn"
               />
             </div>
             <div className="form-group">
@@ -914,9 +916,9 @@ export default function CreateOrder() {
                   conditionCommon.formData.discount_type === "amount"
                     ? setValueDiscount({ ...valueDiscount, amount: e.floatValue || 0 })
                     : setValueDiscount({
-                        ...valueDiscount,
-                        percentage: (e.floatValue || 0) > 100 ? 100 : e.floatValue || 0,
-                      });
+                      ...valueDiscount,
+                      percentage: (e.floatValue || 0) > 100 ? 100 : e.floatValue || 0,
+                    });
                 }}
                 error={false}
                 message="Giảm giá sau VAT nhỏ hơn hoặc bằng Tổng tiền"
