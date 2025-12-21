@@ -859,7 +859,7 @@ export default function CreateOrder() {
                     })
                   )
                 }
-                placeholder="DD/MM/YYYY"
+                placeholder="Nhập ngày tạo hóa đơn"
               />
             </div>
             <div className="form-group">
@@ -870,6 +870,7 @@ export default function CreateOrder() {
                 icon={<Icon name="Calendar" />}
                 iconPosition="left"
                 fill={true}
+                required={true}
                 isMinDate={true}
                 onChange={(e) =>
                   setLstTabInvoice((prev) =>
@@ -885,7 +886,7 @@ export default function CreateOrder() {
                     })
                   )
                 }
-                placeholder="DD/MM/YYYY"
+                placeholder="Nhập ngày nhận hàng mong muốn"
               />
             </div>
             <div className="form-group">
@@ -931,9 +932,9 @@ export default function CreateOrder() {
                   conditionCommon.formData.discount_type === "amount"
                     ? setValueDiscount({ ...valueDiscount, amount: e.floatValue || 0 })
                     : setValueDiscount({
-                        ...valueDiscount,
-                        percentage: (e.floatValue || 0) > 100 ? 100 : e.floatValue || 0,
-                      });
+                      ...valueDiscount,
+                      percentage: (e.floatValue || 0) > 100 ? 100 : e.floatValue || 0,
+                    });
                 }}
                 error={false}
                 message="Giảm giá sau VAT nhỏ hơn hoặc bằng Tổng tiền"

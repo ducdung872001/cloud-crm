@@ -22,14 +22,14 @@ interface IDetailsOrderResponse {
 export interface IOrderResponseModel {
   id: number;
   orderCode: string;
-  order_date: string;
+  orderDate: string;
   amount: number;
   debt_amount: number;
   details: IDetailsOrderResponse[];
   discount: number;
   discount_rate: number;
   discount_type: string;
-  expected_date: string;
+  expectedDate: string;
   note: string;
   pay_amount: number;
   payment_method: string;

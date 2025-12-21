@@ -310,8 +310,8 @@ export default function OrderInvoiceList() {
   const dataMappingArray = (item: any, index: number, type?: string) => [
     index + 1,
     item.orderCode,
-    moment(item.order_date).format("DD/MM/YYYY"),
-    moment(item.expected_date).format("DD/MM/YYYY"),
+    moment(item.orderDate).format("DD/MM/YYYY"),
+    item.expectedDate ? moment(item.expectedDate).format("DD/MM/YYYY") : "",
     name,
     formatCurrency(item.amount),
     item.note,
