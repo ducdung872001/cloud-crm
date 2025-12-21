@@ -16,7 +16,6 @@ import { showToast } from "utils/common";
 import "./ModalAddData.scss";
 
 export default function ModalAddData({ onShow, onHide, dataProps, customerId }) {
-  console.log("dataProps", dataProps);
   const focusedElement = useActiveElement();
 
   const [data, setData] = useState(null);  
