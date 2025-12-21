@@ -18,7 +18,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { statusOrder } from "types/DataInitialModel";
-import { IAction, IFilterItem, IOption, ISaveSearch } from "types/OtherModel";
+import { IAction, IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
 import { IOrderResponseModel } from "types/order/orderResponseModel";
 import { IOrderFilterRequest, IUpdateStatusOrder } from "types/order/orderRequestModel";
 import { ContextType, UserContext } from "contexts/userContext";
@@ -70,16 +70,20 @@ export default function OrderInvoiceList() {
           key: "date",
           name: "Khoảng thời gian",
           type: "date-two",
+          param_name: ["from_date", "to_date"],
           is_featured: true,
           value: searchParams.get("from_date") ?? "",
           value_extra: searchParams.get("to_date") ?? "",
+          is_fmt_text: true,
         },
         {
           key: "received_date",
           name: "Ngày nhận hàng mong muốn",
           type: "date",
+          param_name: ["received_date"],
           is_featured: true,
           value: searchParams.get("received_date") ?? "",
+          is_fmt_text: true,
         },
         {
           key: "status",
@@ -251,17 +255,14 @@ export default function OrderInvoiceList() {
         ],
       };
 
-      return;
+      const response = await OrderService.list({
+        ...changeParams,
+        page_size: type === "all" ? 10000 : type === "current_page" ? 10 : params.page_size,
+        type_export: type,
+      });
 
-      //   const response = await OrderService.list({
-      //     ...changeParams,
-      //     page_size: type === "all" ? 10000 : type === "current_page" ? 10 : params.page_size,
-      //     type_export: type,
-      //   });
-
-      if (response.code === 200) {
-        const result = response.result.data;
-
+      if (response.code === 0) {
+        const result = response.result.items;
         if (extension === "excel") {
           ExportExcel({
             fileName: "HoaDonDatHang",
@@ -271,20 +272,6 @@ export default function OrderInvoiceList() {
             data: result.map((item, idx) => dataMappingArray(item, idx, "export")),
             info: { name, product_store },
           });
-        } else {
-          ExportPdf(
-            TableDocDefinition({
-              info: { name, product_store },
-              title: "Hóa đơn đặt hàng",
-              header: titles,
-              items: result.map((item, idx) => dataMappingArray(item, idx, "export")),
-              customFooter: undefined,
-              options: {
-                smallTable: true,
-              },
-            }),
-            "HoaDonDatHang"
-          );
         }
         showToast("Xuất file thành công", "success");
         setOnShowModalExport(false);
@@ -318,13 +305,13 @@ export default function OrderInvoiceList() {
 
   const titles = ["STT", "Mã hóa đơn", "Ngày đặt hàng", "Ngày nhận hàng mong muốn", "NV đặt hàng", "Tiền hàng tạm tính", "Ghi chú", "Trạng thái"];
 
-  const dataFormat = ["text-center", "", "", "", "", "text-right", "", "text-center"];
+  const dataFormat = ["text-center", "text-center", "text-center", "text-center", "", "text-right", "", "text-center"];
 
-  const dataMappingArray = (item: IOrderResponseModel, index: number, type?: string) => [
+  const dataMappingArray = (item: any, index: number, type?: string) => [
     index + 1,
-    item.order_code,
+    item.orderCode,
     moment(item.order_date).format("DD/MM/YYYY"),
-    item.expected_date ? moment(item.expected_date).format("DD/MM/YYYY") : "",
+    moment(item.expected_date).format("DD/MM/YYYY"),
     name,
     formatCurrency(item.amount),
     item.note,
@@ -390,7 +377,7 @@ export default function OrderInvoiceList() {
         <Fragment>
           Bạn có chắc chắn muốn {type === "cancel" ? "hủy" : type === "processing" ? "xử lý" : "phê duyệt"}{" "}
           {item ? "hóa đơn " : `${listIdChecked.length} hóa đơn đã chọn`}
-          {item ? <strong>{item.order_code}</strong> : ""}? Thao tác này không thể khôi phục.
+          {item ? <strong>{item.orderCode}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",

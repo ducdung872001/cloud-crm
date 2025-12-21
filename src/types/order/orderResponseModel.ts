@@ -21,7 +21,7 @@ interface IDetailsOrderResponse {
 
 export interface IOrderResponseModel {
   id: number;
-  order_code: string;
+  orderCode: string;
   order_date: string;
   amount: number;
   debt_amount: number;

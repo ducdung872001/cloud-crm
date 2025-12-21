@@ -2,7 +2,8 @@ import { columnFormat, columnWidth, formats, styles } from "./config";
 import ExcelJS from "exceljs";
 import moment from "moment";
 import fs from "file-saver";
-import { getCharByCode, removeAccents } from "utils/common";
+import { getCharByCode } from "utils/common";
+import { removeAccents } from "reborn-util";
 
 const getRowData = {
   array: (item) => {
@@ -225,8 +226,8 @@ export async function ExportExcel(userOptions, product_store?: any, name?: strin
 
   const defaultInfo = options.generateInfo
     ? [
-        ["Nhà thuốc:", options.info?.product_store.name ?? product_store?.name],
-        ["Địa chỉ:", options.info?.product_store.address ?? product_store?.address],
+        ["Nhà thuốc:", options.info?.product_store?.name ?? product_store?.name ?? ""],
+        ["Địa chỉ:", options.info?.product_store?.address ?? product_store?.address ?? ""],
         ["Thời gian xuất:", moment().format("DD/MM/YYYY HH:mm:ss")],
         ["Người xuất:", options.info?.name ?? name],
       ]

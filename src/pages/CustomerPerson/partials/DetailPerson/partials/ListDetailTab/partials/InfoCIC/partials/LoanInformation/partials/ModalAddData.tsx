@@ -4,6 +4,7 @@ import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import Icon from "components/icon";
+import moment from "moment";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -15,13 +16,22 @@ import { showToast } from "utils/common";
 import "./ModalAddData.scss";
 
 export default function ModalAddData({ onShow, onHide, dataProps, customerId }) {
+  console.log("dataProps", dataProps);
   const focusedElement = useActiveElement();
 
   const [data, setData] = useState(null);  
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);  
+  const [contentDialog, setContentDialog] = useState<IContentDialog>(null); 
+  
+  useEffect(() => {
+    if (onShow) {
+      setData(dataProps ?? null);
+    } else {
+      setData(null);
+    }
+  }, [onShow, dataProps]);
 
   const values = useMemo(
     () =>
@@ -65,7 +75,36 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     return () => {
       setIsSubmit(false);
     };
-  }, [values]);    
+  }, [values]); 
+  
+  // Logic validate thời gian - dùng useMemo để tối ưu
+  const openingMoment = useMemo(() => moment(formData.values.openingDate), [formData.values.openingDate]);
+  const dueMoment = useMemo(() => moment(formData.values.dateDue), [formData.values.dateDue]);
+  const badDebtMoment = useMemo(() => moment(formData.values.badDebtDate), [formData.values.badDebtDate]);
+  const today = moment().startOf("day");
+
+  const isOpeningAfterToday = openingMoment.isValid() && openingMoment.isAfter(today, "day");
+  const isOpeningNotBeforeDue = openingMoment.isValid() && dueMoment.isValid() && !openingMoment.isBefore(dueMoment, "day");
+  const isDueNotBeforeBadDebt = dueMoment.isValid() && badDebtMoment.isValid() && !dueMoment.isBefore(badDebtMoment, "day");
+
+  // Áp dụng warning trực tiếp lên field
+  useEffect(() => {
+    const newErrors: Record<string, string> = {};
+
+    if (Object.keys(newErrors).length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        errors: { ...prev.errors, ...newErrors }
+      }));
+    } else {
+      // Xóa lỗi nếu đã hợp lệ
+      setFormData(prev => {
+        const { openingDate, dateDue, badDebtDate, ...rest } = prev.errors || {};
+        const hasTimeError = openingDate || dateDue || badDebtDate;
+        return hasTimeError ? { ...prev, errors: rest } : prev;
+      });
+    }
+  },);
 
   const listField = useMemo(
     () =>
@@ -132,9 +171,14 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           required: true,
           icon: <Icon name="Calendar" />,
           iconPosition: "left",
-          hasSelectTime: true,
           placeholder: "Nhập ngày mở khoản vay",
-          messageWarning: "Ngày mở khoản vay nhỏ hơn ngày đáo hạn",
+          isMinDate: true,
+          isWarning: isOpeningAfterToday || isOpeningNotBeforeDue,
+          messageWarning: isOpeningAfterToday
+            ? "Không được lớn hơn ngày hiện tại"
+            : isOpeningNotBeforeDue
+            ? "Phải trước ngày đáo hạn"
+            : "",
         },
         {
           label: "Ngày đáo hạn",
@@ -144,9 +188,13 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           required: true,
           icon: <Icon name="Calendar" />,
           iconPosition: "left",
-          hasSelectTime: true,
           placeholder: "Nhập ngày đáo hạn",
-          messageWarning: "Ngày đáo hạn lớn hơn ngày mở khoản vay",
+          isWarning: isOpeningNotBeforeDue || isDueNotBeforeBadDebt,
+          messageWarning: isOpeningNotBeforeDue
+            ? "Phải sau ngày mở khoản vay"
+            : isDueNotBeforeBadDebt
+            ? "Phải trước ngày phát sinh nợ xấu"
+            : "",
         },
         {
           label: "Số tiền vay",
@@ -247,6 +295,10 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           name: "badDebtDate",
           type: "date",
           fill: true,
+          icon: <Icon name="Calendar" />,
+          iconPosition: "left",
+          isWarning: isDueNotBeforeBadDebt,
+          messageWarning: isDueNotBeforeBadDebt ? "Phải sau ngày đáo hạn" : "",
         },
         {
           label: "Số tiền nợ xấu",
@@ -276,7 +328,12 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           ],
         },
       ] as IFieldCustomize[],
-    [formData]
+    [
+      formData,
+      isOpeningAfterToday,
+      isOpeningNotBeforeDue,
+      isDueNotBeforeBadDebt,
+    ]
   );
 
   const onSubmit = async (e) => {
@@ -287,13 +344,22 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
       return;
-    }    
+    }   
+    
+    // Kiểm tra lại logic thời gian trước khi gửi (phòng thủ thêm lần nữa)
+    if (isOpeningAfterToday || isOpeningNotBeforeDue || isDueNotBeforeBadDebt) {
+      showToast("Vui lòng kiểm tra lại các trường ngày tháng", "warning");
+      return;
+    }
 
     setIsSubmit(true);
 
     const body: any = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as any),
+      openingDate: moment(formData.values.openingDate).format("YYYY-MM-DD HH:mm:ss"),
+      dateDue: moment(formData.values.dateDue).format("YYYY-MM-DD HH:mm:ss"),
+      badDebtDate: moment(formData.values.badDebtDate).format("YYYY-MM-DD HH:mm:ss"),
       customerId
     };
 
@@ -301,6 +367,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} khoản vay tại LPBank thành công`, "success");
+      setData(null);
+      setFormData({ values: {} });
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -331,15 +399,18 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
             title: dataProps?.id ? "Cập nhật" : "Tạo mới",
             type: "submit",
             color: "primary",
-            disabled:              
-              _.isEqual(formData.values, values) ||
-              (formData.errors && Object.keys(formData.errors).length > 0),
+            disabled: isSubmit ||
+              isOpeningAfterToday ||
+              isOpeningNotBeforeDue ||
+              isDueNotBeforeBadDebt ||
+              !isDifferenceObj(formData.values, values) ||
+              Object.keys(formData.errors || {}).length > 0,
             is_loading: isSubmit,
           },
         ],
       },
     }),
-    [formData, values, isSubmit]
+    [formData, values, isSubmit, isOpeningAfterToday, isOpeningNotBeforeDue, isDueNotBeforeBadDebt, formData.errors]
   );
 
   const showDialogConfirmCancel = () => {

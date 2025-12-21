@@ -136,9 +136,9 @@ export default function TemporaryOrderList() {
     // return;
     const response = await OrderService.list(changeParams);
 
-    if (response.code === 200) {
+    if (response.code === 0) {
       const result = response.result;
-      setListTempInvoice(result.data);
+      setListTempInvoice(result.items);
 
       setPagination({
         ...pagination,
@@ -241,15 +241,15 @@ export default function TemporaryOrderList() {
             : []),
         ],
       };
-      return;
-      //   const response = await OrderService.list({
-      //     ...changeParams,
-      //     page_size: type === "all" ? 10000 : type === "current_page" ? 10 : params.page_size,
-      //     type_export: type,
-      //   });
 
-      if (response.code === 200) {
-        const result = response.result.data;
+      const response = await OrderService.list({
+        ...changeParams,
+        page_size: type === "all" ? 10000 : type === "current_page" ? 10 : params.page_size,
+        type_export: type,
+      });
+
+      if (response.code === 0) {
+        const result = response.result.items;
 
         if (extension === "excel") {
           ExportExcel({
@@ -260,21 +260,7 @@ export default function TemporaryOrderList() {
             data: result.map((item, idx) => dataMappingArray(item, idx, "export")),
             info: { name, product_store },
           });
-        } else {
-          ExportPdf(
-            TableDocDefinition({
-              info: { name, product_store },
-              title: "Đơn đặt lưu tạm",
-              header: titles,
-              items: result.map((item, idx) => dataMappingArray(item, idx, "export")),
-              customFooter: undefined,
-              options: {
-                smallTable: true,
-              },
-            }),
-            "DonDatLuuTam"
-          );
-        }
+        } 
         showToast("Xuất file thành công", "success");
         setOnShowModalExport(false);
       } else {
@@ -303,9 +289,9 @@ export default function TemporaryOrderList() {
 
   const dataMappingArray = (item: IOrderResponseModel, index: number, type?: string) => [
     index + 1,
-    item.order_code,
+    item.orderCode,
     moment(item.order_date).format("DD/MM/YYYY"),
-    item.expected_date ? moment(item.expected_date).format("DD/MM/YYYY") : "",
+    moment(item.expected_date).format("DD/MM/YYYY"),
     name,
     formatCurrency(item.amount),
     item.note,
@@ -322,7 +308,7 @@ export default function TemporaryOrderList() {
       message: (
         <Fragment>
           Bạn có chắc chắn muốn hủy {item ? "hóa đơn " : `${listIdChecked.length} hóa đơn đã chọn`}
-          {item ? <strong>{item.order_code}</strong> : ""}? Thao tác này không thể khôi phục.
+          {item ? <strong>{item.orderCode}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",

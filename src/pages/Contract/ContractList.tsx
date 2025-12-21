@@ -707,6 +707,7 @@ export default function ContractList() {
   const [hasHistorySignature, setHasHistorySignature] = useState<boolean>(false);
 
   const ActionRenderer = ({ data }) => {
+    console.log("data action", data?.dataItem?.template);
     return (
       <div className="lst__action--cell">
         <div
