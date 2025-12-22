@@ -51,6 +51,14 @@ export default function AddSettingModal(props: AddSettingProps) {
       rules: "required",
     },
     {
+      name: "startDate",
+      rules: "required",
+    },
+    {
+      name: "endDate",
+      rules: "required",
+    },
+    {
       name: "type",
       rules: "required",
     },
@@ -89,7 +97,7 @@ export default function AddSettingModal(props: AddSettingProps) {
       ]
     },
     {
-      label: "Bắt đầu",
+      label: "Ngày hiệu lực cấu hình",
       name: "startDate",
       type: "date",
       fill: true,
@@ -101,7 +109,7 @@ export default function AddSettingModal(props: AddSettingProps) {
       maxDate: new Date(formData?.values?.endDate),
     },
     {
-      label: "Kết thúc",
+      label: "Ngày kết thúc hiệu lực",
       name: "endDate",
       type: "date",
       fill: true,

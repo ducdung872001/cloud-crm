@@ -13,6 +13,7 @@ import TransactionInformationService from "services/fintech/TransactionInformati
 import { showToast } from "utils/common";
 
 import "./ModalAddData.scss";
+import moment from "moment";
 
 export default function ModalAddData({ onShow, onHide, dataProps, customerId }) {
   const focusedElement = useActiveElement();
@@ -146,7 +147,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     const body: any = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as any),
-      customerId
+      customerId,
+      transactionDate: moment(formData.values.transactionDate).format("YYYY-MM-DD HH:mm:ss"),
     };
 
     const response = await TransactionInformationService.update(body);

@@ -119,9 +119,9 @@ export default function SettingList() {
       ],
     };
 
-  const titles = ["STT", "Tên cấu hình", "Mã cấu hình","Ngày bắt đầu", "Ngày kết thúc", "Giá trị cấu hình", "Kiểu giá trị"];
+  const titles = ["STT", "Tên cấu hình", "Mã cấu hình","Ngày hiệu lực cấu hình", "Ngày kết thúc hiệu lực", "Giá trị cấu hình", "Kiểu giá trị"];
 
-  const dataFormat = ["text-center", "text-center", "text-center","text-center", "text-center", "text-center", "text-center"];
+  const dataFormat = ["text-center", "", "","text-center", "text-center", "text-center", "text-center"];
 
   const dataMappingArray = (item: ISettingResponse, index: number) => [
     getPageOffset(params) + index + 1,
@@ -174,8 +174,8 @@ export default function SettingList() {
         title: <Fragment>Xóa...</Fragment>,
         message: (
           <Fragment>
-            Bạn có chắc chắn muốn xóa cấu hình này
-            {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
+            Bạn có chắc chắn muốn xóa cấu hình 
+            {item ? <strong> {item.name} </strong> : ""}này? Thao tác này không thể khôi phục.
           </Fragment>
         ),
         cancelText: "Hủy",

@@ -65,7 +65,7 @@ export default function CreateOrder() {
     id: null,
     supplier_id: null,
     sale_id: id,
-    order_date: moment().format("DD/MM/YYYY"),
+    order_date: "",
     expected_date: "",
     note: "",
     payment_method: "cash",
@@ -539,6 +539,19 @@ export default function CreateOrder() {
   const handSubmitForm = async (e, type: string) => {
     e.preventDefault();
 
+    if (!conditionCommon.formData.order_date) {
+      showToast("Vui lòng chọn ngày tạo hóa đơn", "error");
+      return;
+    }
+    if (!conditionCommon.formData.sale_id) {
+      showToast("Vui lòng chọn nhân viên đặt hàng", "error");
+      return;
+    }
+    if (conditionCommon.orderDetails.length === 0) {
+      showToast("Vui lòng chọn ít nhất một sản phẩm", "error");
+      return;
+    }
+    
     if (type === "done") {
       setIsSubmit(true);
     } else {
@@ -566,8 +579,8 @@ export default function CreateOrder() {
       id: changeFormData.id,
       orderCode: "",
       bnsId: 0,
-      orderDate: changeFormData.order_date,
-      expectedDate: changeFormData.expected_date,
+      orderDate: moment(changeFormData.order_date).format('YYYY-MM-DDTHH:mm:ss'),
+      expectedDate: moment(changeFormData.expected_date).format('YYYY-MM-DDTHH:mm:ss'),
       invoiceId: null,
       amount: changeFormData.pay_amount,
       vatAmount: changeFormData.vat_amount,
@@ -600,7 +613,10 @@ export default function CreateOrder() {
       setShowModalDetail(true);
       setIdInvoice(response.result.id);
       handClearForm();
-      setIdTab(lstTabInvoice.find((item) => item.is_active).id);
+      const activeTab = lstTabInvoice.find((item) => item.is_active);
+      if (activeTab) {
+        setIdTab(activeTab.id);
+      }
       setDataInvoice(response.result);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
@@ -843,6 +859,7 @@ export default function CreateOrder() {
                     })
                   )
                 }
+                placeholder="Nhập ngày tạo hóa đơn"
               />
             </div>
             <div className="form-group">
@@ -853,6 +870,7 @@ export default function CreateOrder() {
                 icon={<Icon name="Calendar" />}
                 iconPosition="left"
                 fill={true}
+                required={true}
                 isMinDate={true}
                 onChange={(e) =>
                   setLstTabInvoice((prev) =>
@@ -868,7 +886,7 @@ export default function CreateOrder() {
                     })
                   )
                 }
-                placeholder="DD/MM/YYYY"
+                placeholder="Nhập ngày nhận hàng mong muốn"
               />
             </div>
             <div className="form-group">
@@ -914,9 +932,9 @@ export default function CreateOrder() {
                   conditionCommon.formData.discount_type === "amount"
                     ? setValueDiscount({ ...valueDiscount, amount: e.floatValue || 0 })
                     : setValueDiscount({
-                        ...valueDiscount,
-                        percentage: (e.floatValue || 0) > 100 ? 100 : e.floatValue || 0,
-                      });
+                      ...valueDiscount,
+                      percentage: (e.floatValue || 0) > 100 ? 100 : e.floatValue || 0,
+                    });
                 }}
                 error={false}
                 message="Giảm giá sau VAT nhỏ hơn hoặc bằng Tổng tiền"
@@ -952,7 +970,19 @@ export default function CreateOrder() {
                 value={conditionCommon.formData.pay_amount}
                 placeholder="Nhập số tiền thực trả"
                 thousandSeparator={true}
-                onValueChange={(e) =>
+                onValueChange={(e) => {
+                  const payAmount = e.floatValue || 0;
+
+                  // Tính số tiền cần trả (sau giảm giá)
+                  const amountAfterDiscount =
+                    conditionCommon.formData.amount -
+                    (conditionCommon.formData.discount_type === "amount"
+                      ? conditionCommon.formData.discount || 0
+                      : ((conditionCommon.formData.discount || 0) / 100) * conditionCommon.formData.amount);
+
+                  // Công nợ = max(0, cần trả - thực trả)
+                  const debtAmount = Math.max(0, amountAfterDiscount - payAmount);
+
                   setLstTabInvoice((prev) =>
                     prev.map((item) => {
                       if (item.is_active) {
@@ -960,22 +990,16 @@ export default function CreateOrder() {
                           ...item,
                           formData: {
                             ...item.formData,
-                            pay_amount: e.floatValue || 0,
-                            debt_amount:
-                              item.formData.amount -
-                              (item.formData.discount_type === "amount"
-                                ? item.formData.discount
-                                : (item.formData.discount / 100) * item.formData.amount) -
-                              (e.floatValue || 0),
+                            pay_amount: payAmount,
+                            debt_amount: debtAmount,
                           },
                         };
                       }
-
                       return item;
                     })
-                  )
-                }
-                error={false} // validateForm.pay_amount
+                  );
+                }}
+                error={false}
                 message="Khách thực trả nhỏ hơn hoặc bằng Khách hàng cần trả"
               />
             </div>
@@ -1099,7 +1123,13 @@ export default function CreateOrder() {
         onHide={() => setShowMdoalChoose(false)}
         callback={(data) => changeDataChoose(data)}
       />
-      <ShowInvoiceOrder onShow={showModalDetail} onHide={() => setShowModalDetail(false)} data={dataInvoice} id={idInvoice} action="edit" />
+      <ShowInvoiceOrder 
+        onShow={showModalDetail} 
+        onHide={() => setShowModalDetail(false)} 
+        data={dataInvoice} 
+        id={idInvoice} 
+        action="edit" 
+      />
     </div>
   );
 }

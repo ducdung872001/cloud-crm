@@ -1,3 +1,4 @@
+import { json } from 'react-router-dom';
 /* eslint-disable prefer-const */
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
@@ -355,11 +356,25 @@ export function listTimeSlots(startTime, endTime, intervalMinutes) {
 export const handDownloadFileOrigin = (file, nameFile) => {
   if (!file) return;
 
+  let fileUrl: string;
+
+  // Trường hợp 1: file là chuỗi JSON chứa fileUrl
+  if (file.trim().startsWith('{')) {
+    const parsed = JSON.parse(file);
+    if (parsed && typeof parsed.fileUrl === 'string') {
+      fileUrl = parsed.fileUrl;
+    } 
+  } 
+  // Trường hợp 2: file đã là đường dẫn URL trực tiếp
+  else {
+    fileUrl = file;
+  }
+
   // Tạo đối tượng XMLHttpRequest
   const xhr = new XMLHttpRequest();
 
   // Mở kết nối với đường dẫn URL
-  xhr.open("GET", file, true);
+  xhr.open("GET", fileUrl, true);
 
   // Đặt kiểu dữ liệu trả về là blob
   xhr.responseType = "blob";
