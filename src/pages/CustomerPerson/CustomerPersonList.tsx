@@ -3595,10 +3595,13 @@ export default function CustomerPersonList() {
 
       <SplitDataCustomerModal
         onShow={isModalSplitData}
-        data={null}
+        paramsCustomerList={params}
+        pagination={pagination}
+        listIdChecked={listIdChecked}
         onHide={(reload) => {
           if (reload) {
             getListCustomer(params, activeTitleHeader);
+            setListIdChecked([]);
           }
           setIsModalSplitData(false);
         }}

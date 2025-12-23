@@ -168,6 +168,9 @@ export const urlsApi = {
     //lấy tài khoản tổng đài
     getAccountCall: prefixAdmin + "/employeeAgent/employeeId",
     reloadData: prefixAdmin + "/customer/moveToEs",
+
+    // chia data khách hàng Tnex
+    customerAssign: prefixAdmin + "/customer/assign",
   },
 
   partner: {
