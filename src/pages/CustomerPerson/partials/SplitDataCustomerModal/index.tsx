@@ -102,7 +102,7 @@ export default function SplitDataCustomerModal(props: any) {
       strategy: type,
       // ...paramsCustomerList,
       ...(type === "SMART" ? {assignNum: quantityData} : {}),
-      preview: true,
+      // preview: true,
       limit: pagination?.totalItem,
       customerIds: listIdChecked
     }
