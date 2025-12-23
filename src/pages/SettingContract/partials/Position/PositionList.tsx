@@ -72,7 +72,7 @@ export default function PositionList(props: IPositionListProps) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListPosition(result);
+      setListPosition(result.items);
 
       setPagination({
         ...pagination,

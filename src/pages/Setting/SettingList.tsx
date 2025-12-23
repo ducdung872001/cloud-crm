@@ -4,10 +4,10 @@ import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
-import TitleAction from "components/titleAction/titleAction";
+import TitleAction , { ITitleActions }from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
-import Dialog from "components/dialog/dialog";
+import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { IAction, ISaveSearch } from "model/OtherModel";
 import { ISettingFilterRequest } from "model/setting/SettingRequestModel";
 import { ISettingResponse } from "model/setting/SettingResponseModel";
@@ -16,9 +16,10 @@ import { urls } from "configs/urls";
 import SettingService from "services/SettingService";
 import AddSettingModal from "./partials/AddSettingModal";
 import { getPageOffset } from 'reborn-util';
+import moment from "moment";
 
 export default function SettingList() {
-  document.title = "Danh mục";
+  document.title = "Cài đặt cấu hình chung";
 
   const isMounted = useRef(false);
 
@@ -106,14 +107,28 @@ export default function SettingList() {
     };
   }, [params]);
 
-  const titles = ["STT", "Tên cấu hình", "Mã cấu hình", "Giá trị cấu hình", "Kiểu giá trị"];
+  const titleActions: ITitleActions = {
+      actions: [
+        {
+          title: "Thêm mới",
+          callback: () => {
+              setDataSetting(null);
+              setShowModalAdd(true);
+          },
+        }
+      ],
+    };
 
-  const dataFormat = ["text-center", "", "", "text-center", "text-center"];
+  const titles = ["STT", "Tên cấu hình", "Mã cấu hình","Ngày hiệu lực cấu hình", "Ngày kết thúc hiệu lực", "Giá trị cấu hình", "Kiểu giá trị"];
+
+  const dataFormat = ["text-center", "", "","text-center", "text-center", "text-center", "text-center"];
 
   const dataMappingArray = (item: ISettingResponse, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     item.code,
+    item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "",
+    item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
     item.value,
     item.type
   ];
@@ -128,12 +143,61 @@ export default function SettingList() {
           setShowModalAdd(true);
         },
       },
+      {
+        title: "Xóa",
+        icon: <Icon name="Trash" className="icon-error"/>,
+        callback: () => {
+          showDialogConfirmDelete(item);
+        },
+      },
     ];
   };
 
+  const onDelete = async (id: number) => {
+      const response = await SettingService.delete(id);
+      if (response.code === 0) {
+        showToast("Xóa cấu hình thành công", "success");
+        getListSetting(params);
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      }
+      setShowDialog(false);
+      setContentDialog(null);
+    };
+
+  const showDialogConfirmDelete = (item?: ISettingResponse) => {
+      const contentDialog: IContentDialog = {
+        color: "error",
+        className: "dialog-delete",
+        isCentered: true,
+        isLoading: true,
+        title: <Fragment>Xóa...</Fragment>,
+        message: (
+          <Fragment>
+            Bạn có chắc chắn muốn xóa cấu hình 
+            {item ? <strong> {item.name} </strong> : ""}này? Thao tác này không thể khôi phục.
+          </Fragment>
+        ),
+        cancelText: "Hủy",
+        cancelAction: () => {
+          setShowDialog(false);
+          setContentDialog(null);
+        },
+        defaultText: "Xóa",
+        defaultAction: () => {
+          if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        },
+      };
+      setContentDialog(contentDialog);
+      setShowDialog(true);
+    };
+
   return (
     <div className={`page-content page-setting${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Danh mục" to={urls.setting} isChildrenTitle={true} titleChildren="Cấu hình" />
+      <TitleAction title="Cài đặt cấu hình chung" titleActions={titleActions} to={urls.setting} isChildrenTitle={true} titleChildren="Cấu hình" />
       <div className="card-box d-flex flex-column">
         <SearchBox
           name="Tên cấu hình"

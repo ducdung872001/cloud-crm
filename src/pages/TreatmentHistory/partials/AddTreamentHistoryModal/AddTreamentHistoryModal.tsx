@@ -716,8 +716,19 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
   ];
 
   // lấy thông tin ngày bắt đầu tiếp nhận, và ngày cuối cùng tiếp nhận
-  const startDay = moment(formData.values.treatmentStart).format("DD/MM/YYYY HH:mm");
-  const endDay = moment(formData.values.treatmentEnd).format("DD/MM/YYYY HH:mm");
+  const startMoment = useMemo(() => moment(formData.values.treatmentStart), [formData.values.treatmentStart]);
+  const endMoment = useMemo(() => moment(formData.values.treatmentEnd), [formData.values.treatmentEnd]);
+
+  const isStartAfterEnd = startMoment.isAfter(endMoment);
+  const isEndBeforeStart = endMoment.isBefore(startMoment);
+  const isScheduleNextBeforeNow = useMemo(() => {
+    try {
+      if (!formData?.values?.scheduleNext) return false;
+      return moment(formData.values.scheduleNext).isBefore(moment(), 'minute'); // so sánh đến phút
+    } catch (e) {
+      return false;
+    }
+  }, [formData?.values?.scheduleNext]);
 
   const listField = useMemo(
     () =>
@@ -846,8 +857,8 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           iconPosition: "left",
           placeholder: "Nhập ngày bắt đầu",
           hasSelectTime: true,
-          isWarning: startDay > endDay,
-          messageWarning: "Ngày bắt đầu nhỏ hơn ngày kết thúc",
+          isWarning: isStartAfterEnd,
+          messageWarning: "Ngày bắt đầu phải nhỏ hơn ngày kết thúc",
         },
         {
           label: "Kết thúc",
@@ -859,8 +870,8 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           required: true,
           placeholder: "Nhập ngày kết thúc",
           hasSelectTime: true,
-          isWarning: endDay < startDay,
-          messageWarning: "Ngày kết thúc lớn hơn ngày bắt đầu",
+          isWarning: isEndBeforeStart,
+          messageWarning: "Ngày kết thúc phải lớn hơn ngày bắt đầu",
         },
         {
           label: "Nội dung thực hiện",
@@ -992,6 +1003,9 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           iconPosition: "left",
           placeholder: "Nhập thời gian thực hiện tiếp theo",
           hasSelectTime: true,
+          isMinDate: true,
+          isWarning: isScheduleNextBeforeNow,
+          messageWarning: "Thời gian thực hiện tiếp theo phải lớn hơn thời gian hiện tại",
         },
       ] as IFieldCustomize[],
     [
@@ -1007,10 +1021,11 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       isLoadingEmployee,
       detailService,
       data,
-      startDay,
-      endDay,
-      data,
-      formData?.values,
+      isStartAfterEnd,
+      isEndBeforeStart,
+      listAttactment,
+      isLoadingFile,
+      showProgress,
     ]
   );
 
@@ -1039,12 +1054,28 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       return;
     }
 
+    // Validate: 'scheduleNext' must not be greater than current time
+    if (formData?.values?.scheduleNext) {
+      const scheduleNextMoment = moment(formData.values.scheduleNext);
+      const now = moment();
+      if (scheduleNextMoment.isSameOrBefore(now, 'minute')) { // <= hiện tại → lỗi
+        const newErrors = { 
+          ...(formData.errors || {}), 
+          scheduleNext: "Thời gian thực hiện tiếp theo phải lớn hơn thời gian hiện tại" 
+        };
+        setFormData((prev) => ({ ...prev, errors: newErrors }));
+        return;
+      }
+    }
+
     setIsSubmit(true);
 
     const body: ITreatmentHistoryRequestModel[] = [
       {
         ...(formData.values as ITreatmentHistoryRequestModel),
         ...(data ? { id: data.id } : {}),
+        treatmentStart: moment(formData.values.treatmentStart).format('YYYY-MM-DDTHH:mm:ss'),
+        treatmentEnd: moment(formData.values.treatmentEnd).format('YYYY-MM-DDTHH:mm:ss'),
         
       },
     ];
@@ -1052,7 +1083,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
     const response = await TreatmentHistoryService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} lịch điều trị thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} yêu cầu thực hiện dịch vụ thành công`, "success");
       setDetailCustomer(null);
       setListBuyService([]);
       setDetailEmployee(null);
@@ -1060,7 +1091,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       setDetailCard(null);
       onHide(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -1095,8 +1126,8 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
             color: "primary",
             disabled:
               isSubmit ||
-              startDay > endDay ||
-              endDay < startDay ||
+              isStartAfterEnd ||
+              isEndBeforeStart ||
               !isDifferenceObj(formData.values, values) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
@@ -1104,7 +1135,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
         ],
       },
     }),
-    [formData, values, isSubmit, startDay, endDay]
+    [formData, values, isSubmit, isStartAfterEnd, isEndBeforeStart]
   );
 
   const showDialogConfirmCancel = () => {
@@ -1169,7 +1200,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       >
         <form className="form-treament-history-group" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader
-            title={`${data ? "Chỉnh sửa" : "Thêm mới"} lịch sử điều trị`}
+            title={`${data ? "Chỉnh sửa" : "Thêm mới"} yêu cầu thực hiện dịch vụ`}
             toggle={() => {
               if (!isSubmit) {
                 onHide(false);

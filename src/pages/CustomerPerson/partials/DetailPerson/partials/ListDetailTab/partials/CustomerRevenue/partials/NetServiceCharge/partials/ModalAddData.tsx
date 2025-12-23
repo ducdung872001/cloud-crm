@@ -77,13 +77,14 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           iconPosition: "left",
           hasSelectTime: true,
           placeholder: "Nhập ngày giao dịch",
+          messageWarning: "Ngày giao dịch là bắt buộc",
         },
         {
           label: "Phí quản lý tài khoản",
           name: "accountManagement",
           type: "number",
           fill: true,
-          required: false,
+          required: true,
         },
         {
           label: "Phí giao dịch",
@@ -117,16 +118,19 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           fill: true,
         },
       ] as IFieldCustomize[],
-    [formData]
+    [formData.values]
   );
 
   const onSubmit = async (e) => {
-    e && e.preventDefault();
+    e.preventDefault();
 
-    const errors = Validate(validations, formData, listField);
+    if (!formData.values.transactionDate || formData.values.transactionDate === "") {
+      showToast("Ngày giao dịch là bắt buộc", "warning");
+      return;
+    }
 
-    if (Object.keys(errors).length > 0) {
-      setFormData((prevState) => ({ ...prevState, errors: errors }));
+    if (!formData.values.accountManagement && formData.values.accountManagement !== 0) {
+      showToast("Phí quản lý tài khoản là bắt buộc", "warning");
       return;
     }
 
@@ -135,7 +139,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     const body: any = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as any),
-      customerId
+      customerId,
+      transactionDate: moment(formData.values.transactionDate).format('YYYY-MM-DDTHH:mm:ss'),
     };
 
     const response = await NetServiceChargeService.update(body);

@@ -31,6 +31,7 @@ import WarningWarrantyModal from "./WarningWarrantyModal/WarningWarrantyModal";
 import ImportModal from "./ImportModal";
 import ModalAddWarranty from "./partials/ModalAddWarranty";
 import ReportWaranty from "./ReportWaranty";
+import XmlAddWarranty from "./partials/XmlAddWarranty";
 
 export default function WarrantyContract() {
   const navigate = useNavigate();
@@ -52,6 +53,8 @@ export default function WarrantyContract() {
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
 
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
+  const [showModalAddXml, setShowModalAddXml] = useState<boolean>(false);
+  
 
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
 
@@ -212,6 +215,22 @@ export default function WarrantyContract() {
             </span>
           </Tippy>
         </div>
+
+        {isUserRoot && (
+          <div
+            className="item__action update"
+            onClick={() => {
+              setDataWarranty(data.dataItem);
+              setShowModalAddXml(true);
+            }}
+          >
+            <Tippy content="Sửa">
+              <span className="icon__item icon__update">
+                <Icon name="SettingCashbook" />
+              </span>
+            </Tippy>
+          </div>
+        )}
 
         <div
           className="item__action update"
@@ -672,8 +691,17 @@ export default function WarrantyContract() {
     };
   }, [params]);
 
+  let isUserRoot = localStorage.getItem("user.root") == "1" ? true : false;
+
   const titleActions: ITitleActions = {
     actions: [
+      isUserRoot && {
+        title: "Thêm mới bằng XML",
+        callback: () => {
+          setDataWarranty(null);
+          setShowModalAddXml(true);
+        },
+      },
       {
         title: "Thêm mới",
         callback: () => {
@@ -1004,6 +1032,17 @@ export default function WarrantyContract() {
               getListWarranty(params);
             }
             setShowModalAdd(false);
+          }}
+        />
+        <XmlAddWarranty
+          onShow={showModalAddXml}
+          // onShow={true}
+          data={dataWarranty}
+          onHide={(reload, nextModal) => {
+            if (reload) {
+              getListWarranty(params);
+            }
+            setShowModalAddXml(false);
           }}
         />
 

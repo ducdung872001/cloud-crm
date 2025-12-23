@@ -1,0 +1,145 @@
+.modal-add-rating {
+  .form-rating-group {
+    .modal-body {
+      padding: 0;
+    }
+
+    .box__rating {
+      padding: 1.6rem;
+      max-height: 48rem;
+      overflow: auto;
+    }
+
+    .history__rating {
+      .item-history {
+        border-radius: 0.5rem;
+        border: 1px dashed var(--extra-color-50);
+        padding: 0.8rem 1.2rem;
+
+        & + .item-history {
+          margin-top: 1rem;
+        }
+
+        .view-rating,
+        .note,
+        .person-rating {
+          display: flex;
+          align-items: center;
+          gap: 0;
+
+          .key {
+            position: relative;
+            width: 12rem;
+            flex-shrink: 0;
+
+            &::after {
+              content: ":";
+              position: absolute;
+              right: 0.3rem;
+            }
+          }
+        }
+
+        .note,
+        .person-rating {
+          .value {
+            color: var(--extra-color-50);
+            font-weight: 500;
+            font-size: 1.4rem;
+          }
+        }
+
+        .view-rating {
+          .value {
+            display: flex;
+            align-items: center;
+            gap: 0 0.5rem;
+
+            .number-rating {
+              svg {
+                width: 2rem;
+                height: 2rem;
+                fill: var(--warning-color);
+              }
+            }
+          }
+        }
+
+        .note {
+          padding: 0.3rem 0;
+        }
+      }
+    }
+
+    .lst__rating {
+      border-top: 1px solid var(--extra-color-50);
+      margin-top: 2.8rem;
+      padding-top: 1.5rem;
+
+      .title {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 3.2rem;
+    }
+
+    .form-group {
+      width: 100%;
+    }
+
+    .box-rating {
+      display: flex;
+      align-items: center;
+
+      .title {
+        width: 7.5rem;
+        margin-bottom: 0;
+        position: relative;
+        padding-right: 0.8rem;
+
+        &::after {
+          content: ":";
+          position: absolute;
+          right: 0.5rem;
+        }
+      }
+
+      .star-rating {
+        display: flex;
+        align-items: center;
+        gap: 0 0.3rem;
+
+        .star {
+          cursor: pointer;
+
+          svg {
+            width: 2rem;
+            height: 2rem;
+            fill: var(--extra-color-50);
+          }
+        }
+
+        .on {
+          .star {
+            svg {
+              fill: var(--warning-color);
+            }
+          }
+        }
+
+        .off {
+          .star {
+            svg {
+              fill: var(--extra-color-50);
+            }
+          }
+        }
+      }
+    }
+  }
+}

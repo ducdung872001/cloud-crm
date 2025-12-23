@@ -413,6 +413,7 @@ export default function FilterComponent(props: any) {
   //! Đoạn này xử lý lv-1
   const handlePushRule = (data, lstData) => {
     if (!data) return;
+    setCheckFieldRule(false);
 
     let mergeData = [];
 
@@ -480,6 +481,8 @@ export default function FilterComponent(props: any) {
   };
 
   const handChangeValueTypeItem = (e, idx, type) => {
+    setCheckFieldRule(false);
+    
     let value = null;
     if (type === "input") {
       value = e.target.value;
@@ -507,6 +510,8 @@ export default function FilterComponent(props: any) {
   };
 
   const handleDeleteItemField = (idx) => {
+    setCheckFieldRule(false);
+    
     const newData = [...formData.rule];
 
     newData.splice(idx, 1);
@@ -683,6 +688,7 @@ export default function FilterComponent(props: any) {
 
   const handlePushRuleBlock = (data, idx, lstData) => {
     if (!data) return;
+    setCheckFieldRule(false);
 
     let mergeData = [];
 
@@ -771,6 +777,8 @@ export default function FilterComponent(props: any) {
   };
 
   const handChangeValueTypeBlockItem = (e, ids, idx, type) => {
+    setCheckFieldRule(false);
+    
     let value = null;
     if (type === "input") {
       value = e.target.value;
@@ -1036,6 +1044,7 @@ export default function FilterComponent(props: any) {
 
   const handlePushRuleChildrenBlock = (data, ids, idx, lstData) => {
     if (!data) return;
+    setCheckFieldRule(false);
 
     let mergeData = [];
 
@@ -1143,6 +1152,8 @@ export default function FilterComponent(props: any) {
   };
 
   const handChangeValueChildrenTypeBlockItem = (e, index, ids, idx, type) => {
+    setCheckFieldRule(false);
+    
     let value = null;
     if (type === "input") {
       value = e.target.value;
@@ -1733,6 +1744,7 @@ export default function FilterComponent(props: any) {
 
   const handleChangeValueBranch = (e, ind) => {
     // setValueBranch(e);
+    setCheckFieldBranch(false);
 
     setListBranchValue((current) =>
       current.map((obj, index) => {
@@ -2026,6 +2038,8 @@ export default function FilterComponent(props: any) {
   const [checkFieldSales, setCheckFieldSales] = useState<boolean>(false);
   const [lstIdSale, setLstIdSale] = useState([]);
   const [indexSale, setIndexSale] = useState<number>(null);
+  const [checkFieldRule, setCheckFieldRule] = useState<boolean>(false);
+  const [checkFieldBranch, setCheckFieldBranch] = useState<boolean>(false);
 
   //! đoạn này xử lý vấn đề lấy ra danh sách nhân viên
   const loadedOptionSales = async (search, loadedOptions, { page }) => {
@@ -2144,8 +2158,74 @@ export default function FilterComponent(props: any) {
     }
   }, [listSales, selectAllSales]);
 
+  // Hàm kiểm tra giá trị rule có hợp lệ không
+  const validateRuleValue = (rule) => {
+    if (rule.operator === "none") {
+      return true;
+    }
+    
+    if (!rule.value && rule.value !== 0) {
+      return false;
+    }
+    if (typeof rule.value === "string" && rule.value.trim() === "") {
+      return false;
+    }
+    if (Array.isArray(rule.value) && rule.value.length === 0) {
+      return false;
+    }
+    return true;
+  };
+
+  // Hàm kiểm tra tất cả rules trong một mảng
+  const validateRules = (rules) => {
+    if (!rules || rules.length === 0) {
+      return false;
+    }
+    return rules.every((rule) => validateRuleValue(rule));
+  };
+
+  const validateBlockRules = (blockRules) => {
+    if (!blockRules || blockRules.length === 0) {
+      return true; 
+    }
+    return blockRules.every((block) => {
+      const rulesValid = validateRules(block.rule);
+      const childrenValid = validateBlockRules(block.blockRule);
+      return rulesValid && childrenValid;
+    });
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
+
+    // Reset validation errors
+    setCheckFieldRule(false);
+    setCheckFieldBranch(false);
+
+    // Validate điều kiện lọc
+    const hasRules = formData.rule && formData.rule.length > 0;
+    const rulesValid = hasRules && validateRules(formData.rule);
+    const blockRulesValid = validateBlockRules(formData.blockRule);
+
+    if (!hasRules || !rulesValid || !blockRulesValid) {
+      setCheckFieldRule(true);
+      showToast("Vui lòng thêm ít nhất một điều kiện lọc và điền đầy đủ giá trị", "error");
+      return;
+    }
+
+    // Validate chi nhánh
+    const hasBranchSelected =
+      listBranchId.level0.length > 0 ||
+      listBranchId.level1.length > 0 ||
+      listBranchId.level2.length > 0 ||
+      listBranchId.level3.length > 0 ||
+      listBranchId.level4.length > 0;
+
+    if (!hasBranchSelected) {
+      setCheckFieldBranch(true);
+      showToast("Vui lòng chọn ít nhất một chi nhánh", "error");
+      return;
+    }
 
     if (dataRule) {
       const newData = [...listRuleData];
@@ -2177,6 +2257,8 @@ export default function FilterComponent(props: any) {
     setListBranchDelete2([]);
     setListBranchDelete3([]);
     setCheckFieldSales(false);
+    setCheckFieldRule(false);
+    setCheckFieldBranch(false);
     setLstIdSale([]);
     setListSales([]);
   };
@@ -2209,6 +2291,8 @@ export default function FilterComponent(props: any) {
     setListBranchDelete2([]);
     setListBranchDelete3([]);
     setCheckFieldSales(false);
+    setCheckFieldRule(false);
+    setCheckFieldBranch(false);
     setLstIdSale([]);
     setListSales([]);
   };
@@ -2268,6 +2352,11 @@ export default function FilterComponent(props: any) {
 
               <div className="form-group">
                 <span className="name-group">Điều kiện lọc</span>
+                {checkFieldRule && (
+                  <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+                    Vui lòng thêm ít nhất một điều kiện lọc và điền đầy đủ giá trị
+                  </div>
+                )}
                 <div className="desc__filter">
                   <div className="lv__item lv__1">
                     {/* đoạn này là chọn các loại điều kiện */}
@@ -2942,9 +3031,17 @@ export default function FilterComponent(props: any) {
 
               <div className="container_branch_department_sale">
                 <div style={{ marginTop: "2rem" }}>
+                  <div style={{ marginBottom: "8px" }}>
+                    <span style={{ fontSize: "14px", fontWeight: "500" }}>Chi nhánh <span style={{ color: "red" }}>*</span></span>
+                    {checkFieldBranch && (
+                      <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+                        Vui lòng chọn ít nhất một chi nhánh
+                      </div>
+                    )}
+                  </div>
                   {listBranchValue.map((item, index) => {
                     return (
-                      <div className="box_branch" style={index > 0 ? { marginTop: 20 } : {}}>
+                      <div key={index} className="box_branch" style={index > 0 ? { marginTop: 20 } : {}}>
                         <div className="select_branch">
                           <SelectCustom
                             key={
@@ -2960,7 +3057,6 @@ export default function FilterComponent(props: any) {
                             }
                             id="branchId"
                             name="branchId"
-                            label={index === 0 ? "Chi nhánh" : ""}
                             options={[]}
                             fill={true}
                             isMulti={true}
@@ -3005,9 +3101,7 @@ export default function FilterComponent(props: any) {
                                 ? loadedOptionBranchLevel_4
                                 : ""
                             }
-                            // formatOptionLabel={formatOptionLabelEmployee}
-                            // error={checkFieldEmployee}
-                            // message="Người phụ trách không được bỏ trống"
+                            error={index === 0 && checkFieldBranch}
                           />
                         </div>
 

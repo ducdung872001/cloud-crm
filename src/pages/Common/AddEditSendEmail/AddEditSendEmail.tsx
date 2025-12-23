@@ -22,6 +22,7 @@ import Image from "components/image";
 import Loading from "components/loading";
 import Radio from "components/radio/radio";
 import Input from "components/input/input";
+import moment from "moment";
 import NummericInput from "components/input/numericInput";
 import Checkbox from "components/checkbox/checkbox";
 import CustomScrollbar from "components/customScrollbar";
@@ -632,6 +633,15 @@ export default function AddEditSendEmail(props: ISendEmail) {
     setFilterUser(newCustomers);
     setListIdCustomer(newIdCustomers);
   };
+  
+  const isTimeAtBeforeNow = useMemo(() => {
+    try {
+      if (!formData?.values?.timeAt || formData?.values?.timeType !== "2") return false;
+      return moment(formData.values.timeAt).isSameOrBefore(moment(), 'minute');  // Kiểm tra đến phút
+    } catch (e) {
+      return false;
+    }
+  }, [formData?.values?.timeAt, formData?.values?.timeType]);
 
   const listFieldSetupEmail = useMemo(
     () =>
@@ -666,9 +676,11 @@ export default function AddEditSendEmail(props: ISendEmail) {
                 icon: <Icon name="Calendar" />,
                 iconPosition: "left",
                 hasSelectTime: true,
-                onChange: (e) => handleChageValueTimeAt(e),
                 placeholder: "Chọn thời gian gửi mong muốn",
                 isMinDate: true,
+                minDate: moment().toDate(),
+                isWarning: isTimeAtBeforeNow,
+                messageWarning: "Thời gian gửi phải lớn hơn thời gian hiện tại",
               },
             ] as IFieldCustomize[])
           : []),
@@ -681,11 +693,6 @@ export default function AddEditSendEmail(props: ISendEmail) {
       setFormData({ ...formData, values: { ...formData?.values, timeAt: "" } });
     }
   }, [formData?.values?.timeType]);
-
-  //! đoạn này mình xử lý gửi theo thời gian mong muốn
-  const handleChageValueTimeAt = (e) => {
-    setFormData({ ...formData, values: { ...formData.values, timeAt: e } });
-  };
 
   //* Value nhóm khách hàng
   const [valueCgp, setValueCgp] = useState([]);
@@ -1293,6 +1300,20 @@ export default function AddEditSendEmail(props: ISendEmail) {
       return;
     }
 
+    if (formData?.values?.timeType === "2" && formData?.values?.timeAt) {
+      const timeAtMoment = moment(formData.values.timeAt);
+      const now = moment();
+      
+      if (timeAtMoment.isSameOrBefore(now, 'minute')) {
+        const newErrors = { 
+          ...(formData.errors || {}), 
+          timeAt: "Thời gian gửi phải lớn hơn thời gian hiện tại" 
+        };
+        setFormData((prev) => ({ ...prev, errors: newErrors }));
+        return;  // Chặn submit
+      }
+    }
+
     setIsSubmit(true);
 
     const newFormData = _.cloneDeep(formData.values);
@@ -1305,6 +1326,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
     const body: ISendEmailRequestModel = {
       ...(result as ISendEmailRequestModel),
       ...(data ? { id: data?.id } : {}),
+      timeAt: moment(newFormData.timeAt).format("YYYY-MM-DD HH:mm:ss"),
     };
 
     const response = await SendEmailService.sendEmail(body);

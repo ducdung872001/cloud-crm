@@ -150,6 +150,7 @@ export default function SettingPromotionList(props: any) {
   const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", ""];
 
   const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.position, item.position, item.position];
+  const [dataSetting, setDataSetting] = useState(null);
 
   const [dataEdit, setDataEdit] = useState(null);
   const actionsTable = (item: any): IAction[] => {
@@ -172,7 +173,8 @@ export default function SettingPromotionList(props: any) {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setIsSettingEform(true);
+            setDataSetting(item);
+            setIsSettingEform(true);
           }
         },
       },
@@ -350,7 +352,7 @@ export default function SettingPromotionList(props: any) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khuyến mãi
+            Cài đặt bán hàng
           </h1>
           <Icon
             name="ChevronRight"
@@ -456,7 +458,7 @@ export default function SettingPromotionList(props: any) {
             </div>
           ) : (
             <div>
-              <SettingEform dataContractEform={dataContractEform} setIsPreviewEform={setIsPreviewEform} />
+              <SettingEform dataContractEform={dataSetting} setIsPreviewEform={setIsPreviewEform} />
             </div>
           )}
         </div>

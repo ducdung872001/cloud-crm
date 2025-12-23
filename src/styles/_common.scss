@@ -2777,7 +2777,8 @@ pre code {
       width: 100%;
       height: calc(100% - env(safe-area-inset-bottom) - env(safe-area-inset-top) - 5.7rem);
       &__wrapper {
-        padding: 2.4rem 3.2rem 3.2rem;
+        // padding: 2.4rem 3.2rem 3.2rem;
+        padding: 1.4rem 1.2rem 3.2rem;
       }
       .page-content {
         min-height: calc(100% - 11.3rem);

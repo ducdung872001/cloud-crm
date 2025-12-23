@@ -138,6 +138,19 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
           },
         }));
       }
+      if (result.contactId){
+        setDataContact({
+          value:result.contactId,
+          label: result?.contactName||"",
+        });
+        setFormData((prev) => ({
+          ...prev,
+          values: {
+            ...prev.values,
+            contactId: result.contactId,
+          },
+        }));
+      }
     } else {
       showToast(response.error ?? response.message ??"Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
@@ -644,8 +657,8 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     const response = await CustomerSourceService.list(param);
 
     if (response.code === 0) {
-      // const dataOption = response.result.items || [];
-      const dataOption = response?.result || [];
+      const dataOption = response.result.items || [];
+      // const dataOption = response?.result || [];
 
       return {
         options: [
@@ -852,8 +865,8 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     const response = await CustomerGroupService.list(param);
 
     if (response.code === 0) {
-      // const dataOption = response.result.items;
-      const dataOption = response.result;
+      const dataOption = response.result.items;
+      // const dataOption = response.result;
 
       return {
         options: [

@@ -1368,6 +1368,7 @@ export const urlsApi = {
   setting: {
     list: prefixAdmin + "/setting/list",
     update: prefixAdmin + "/setting/update",
+    delete: prefixAdmin + "/setting/delete",
   },
   connectGmail: {
     connect: "https://connect.reborn.vn/api/v1/google/access-token",
@@ -3010,6 +3011,7 @@ export const urlsApi = {
 
 export const urls = {
   dashboard: "/dashboard",
+  manager_work: "/manager_work",
   //Lĩnh vực BĐS - Đầu mối liên hệ
   contact: "/contact",
   customer: "/customer",

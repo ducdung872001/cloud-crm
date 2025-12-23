@@ -36,7 +36,7 @@ export default function AddSettingWarrantyModel(props: IAddSettingWarrantyModalP
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:50",
     },
   ];
 
@@ -91,7 +91,7 @@ export default function AddSettingWarrantyModel(props: IAddSettingWarrantyModalP
       showToast(`${data ? "Cập nhật" : "Thêm mới"} ${nameCommom} thành công`, "success");
       onHide(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };

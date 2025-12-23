@@ -164,6 +164,7 @@ i18n.use(initReactI18next).init({
           settingZalo: "Setting zalo",
           settingJob: "Setting job",
           settingProject: "Setting project",
+          managerWork: "Manage work",
           settingReport: "Setting report",
           integratedMonitoring: "Integrated monitoring",
           settingCode: "Setting code",
@@ -177,6 +178,7 @@ i18n.use(initReactI18next).init({
           renewalList: "Renewal list",
           userAdministration: "User administration",
           fieldManagement: "Field management",
+          settingConfiguration: "Configuration settings"
         },
         pageDashboard: {
           title: "Dashboard",
@@ -404,6 +406,7 @@ i18n.use(initReactI18next).init({
           settingZalo: "Cài đặt Zalo",
           settingJob: "Cài đặt công việc",
           settingProject: "Cài đặt dự án",
+          managerWork: "Quản lý công việc",
           settingReport: "Cài đặt báo cáo",
           integratedMonitoring: "Giám sát tích hợp",
           settingCode: "Cài đặt mã",
@@ -417,6 +420,7 @@ i18n.use(initReactI18next).init({
           renewalList: "Danh sách gia hạn",
           userAdministration: "Quản trị người dùng",
           fieldManagement: "Quản lý lĩnh vực",
+          settingConfiguration: "Cài đặt cấu hình chung"
         },
         pageDashboard: {
           title: "Trang chủ",

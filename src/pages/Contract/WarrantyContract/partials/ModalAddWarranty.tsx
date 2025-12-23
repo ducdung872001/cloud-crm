@@ -363,6 +363,8 @@ export default function ModalAddWarranty(props: any) {
     const body: ICustomerRequest = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as any),
+          startDate: moment(formData.values.startDate).format('YYYY-MM-DDTHH:mm:ss'),
+          endDate: moment(formData.values.endDate).format('YYYY-MM-DDTHH:mm:ss'),
       contractWarrantyExtraInfos: contractWarrantyExtraInfos,
     };
 
@@ -1011,7 +1013,7 @@ export default function ModalAddWarranty(props: any) {
 
                 <div className="form-group">
                   <DatePickerCustom
-                    label="Ngày ngày hết hạn"
+                    label="Ngày hết hạn"
                     name="endDate"
                     fill={true}
                     value={formData?.values?.endDate}

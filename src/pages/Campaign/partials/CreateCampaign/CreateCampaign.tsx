@@ -1166,6 +1166,9 @@ export default function CreateCampaign() {
     setDataSourceProvider(newArr);
   };
 
+    const [checkFieldBranch, setcheckFieldBranch] = useState<boolean>(false);
+
+
   ///phương pháp thứ 2
   const defaultFormDataMethod2 = {
     id: null,
@@ -1454,6 +1457,17 @@ export default function CreateCampaign() {
     return { options: [], hasMore: false };
   };
 
+  const formatOptionLabelBranch = ({ label, avatar }) => {
+    return (
+      <div className="selected--item" style={{ marginBottom: "3px" }}>
+        {/* <div className="avatar">
+          <img src={avatar || ImageThirdGender} alt={label} />
+        </div> */}
+        {label}
+      </div>
+    );
+  };
+
   //reload lại danh sách option chi nhánh của các cấp
   useEffect(() => {
     // if (dataBranch) {
@@ -1475,7 +1489,7 @@ export default function CreateCampaign() {
 
   const handleChangeValueBranch = (e, ind) => {
     // setValueBranch(e);
-
+    setcheckFieldBranch(false);
     setListBranchValue((current) =>
       current.map((obj, index) => {
         if (index === ind) {
@@ -2019,6 +2033,31 @@ export default function CreateCampaign() {
     //   return;
     // }
 
+    if (!formData?.values?.name?.trim()) {
+      showToast("Tên chiến dịch không được bỏ trống", "error");
+      return;
+    }
+
+    if (!formData?.values?.averageConvertRate?.trim()) {
+      showToast("Tỷ lệ chuyển đổi toàn chiến dịch không được bỏ trống", "error");
+      return;
+    }
+
+    if (formData.values.type === "per" && !isParent && formData.values?.saleDistributionType === "basic") {
+      const hasBranchSelected = listBranchId.level0.length > 0 || 
+                                listBranchId.level1.length > 0 || 
+                                listBranchId.level2.length > 0 || 
+                                listBranchId.level3.length > 0 || 
+                                listBranchId.level4.length > 0;
+      
+      if (!hasBranchSelected) {
+        setcheckFieldBranch(true);
+        showToast("Vui lòng chọn ít nhất một chi nhánh", "error");
+        return;
+      }
+    }
+
+
     if (!formData?.values?.employeeId) {
       setCheckFieldEmployee(true);
       return;
@@ -2062,7 +2101,7 @@ export default function CreateCampaign() {
       // setValueBranch([]);
       // setDataDepartment([])
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
 
     setIsSubmit(false);
@@ -3766,13 +3805,13 @@ export default function CreateCampaign() {
               </div>
 
               <div className="form-group">
-                <Input
+                <NummericInput
                   label="Tỷ lệ chuyển đổi toàn chiến dịch (%)"
                   name="averageConvertRate"
                   fill={true}
                   required={true}
                   value={formData?.values?.averageConvertRate}
-                  placeholder="Tỷ lệ chuyển đổi toàn chiến dịch (%)"
+                  placeholder="Nhập giá trị tỷ lệ chuyển đổi toàn chiến dịch (%)"
                   onChange={(e) => {
                     const value = e.target.value;
                     setFormData({ ...formData, values: { ...formData?.values, averageConvertRate: value } });
@@ -3897,6 +3936,7 @@ export default function CreateCampaign() {
                             setDataDepartment([]);
                             setDepartmentId([]);
                             setListSales([]);
+                            setcheckFieldBranch(false);
 
                             if (value === "advance") {
                               setListRuleData([]);
@@ -3997,9 +4037,9 @@ export default function CreateCampaign() {
                                       ? loadedOptionBranchLevel_4
                                       : ""
                                   }
-                                  // formatOptionLabel={formatOptionLabelEmployee}
-                                  // error={checkFieldEmployee}
-                                  // message="Người phụ trách không được bỏ trống"
+                                  formatOptionLabel={formatOptionLabelBranch}
+                                  error={checkFieldBranch}
+                                  message="Chi nhánh không được bỏ trống"
                                 />
                               </div>
 
