@@ -71,7 +71,7 @@ export default function SettingTicketList(props) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListTicketCategory(result);
+      setListTicketCategory(result.items);
 
       setPagination({
         ...pagination,

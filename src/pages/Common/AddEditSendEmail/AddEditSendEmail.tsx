@@ -1326,6 +1326,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
     const body: ISendEmailRequestModel = {
       ...(result as ISendEmailRequestModel),
       ...(data ? { id: data?.id } : {}),
+      timeAt: moment(newFormData.timeAt).format("YYYY-MM-DD HH:mm:ss"),
     };
 
     const response = await SendEmailService.sendEmail(body);
