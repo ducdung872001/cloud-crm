@@ -78,6 +78,7 @@ export default function ModalAddOpp(props: any) {
         dataContact: data?.contactId ? { value: data?.contactId, label: data.contactName } : null,
         dataProject: data?.projectId ? { value: data?.projectId, label: data.projectName } : null,
         optionChoose: data?.productId ? "0" : "1",
+        dataCoordinators: [], // load sau khi có detailCustomer
       });
 
       setFormDataTwo({
@@ -95,16 +96,33 @@ export default function ModalAddOpp(props: any) {
   }, [data, onShow]);
 
   const valuesStepOne = useMemo(
-    () =>
-      ({
+    () => {
+      let coordinators = [];
+
+      // Parse coordinators từ backend
+      if (dataRes?.coordinators) {
+        if (typeof dataRes.coordinators === 'string') {
+          try {
+            coordinators = JSON.parse(dataRes.coordinators);
+          } catch (error) {
+            console.error('Error parsing coordinators:', error);
+            coordinators = [];
+          }
+        } else if (Array.isArray(dataRes.coordinators)) {
+          coordinators = dataRes.coordinators;
+        }
+      }
+
+      return ({
         id: dataRes ? dataRes.id : null,
         customerId: dataRes?.customerId ?? 0,
         projectId: dataRes ? dataRes.projectId : 0, // dự án
         productId: dataRes ? dataRes.productId : 0, // sản phẩm
         serviceId: dataRes ? dataRes.serviceId : 0, // dịch vụ
         contactId: dataRes ? dataRes.contactId : null, // người quyết định
-        coordinators: dataRes ? dataRes.coordinators : [], // người phối hợp
-      } as any),
+        coordinators: coordinators, // người phối hợp
+      } as any);
+    },
     [onShow, dataRes]
   );
 
@@ -178,8 +196,30 @@ export default function ModalAddOpp(props: any) {
     if (detailCustomer) {
       loadedOptionContact("", undefined, { page: 1 });
       loadedOptionCoordinator("", undefined, { page: 1 });
+
+      // Load coordinators data nếu đang edit
+      if (dataRes?.coordinators) {
+        let coordinatorIds = [];
+        
+        // Parse coordinators nếu là string JSON
+        if (typeof dataRes.coordinators === 'string') {
+          try {
+            coordinatorIds = JSON.parse(dataRes.coordinators);
+          } catch (error) {
+            console.error('Error parsing coordinators:', error);
+            coordinatorIds = [];
+          }
+        } else if (Array.isArray(dataRes.coordinators)) {
+          coordinatorIds = dataRes.coordinators;
+        }
+        
+        // Load thông tin đầy đủ của coordinators
+        if (coordinatorIds.length > 0) {
+          loadCoordinatorsData(coordinatorIds);
+        }
+      }
     }
-  }, [detailCustomer]);
+  }, [detailCustomer, dataRes]);
 
   useEffect(() => {
     setFormDataOne(valuesStepOne);
@@ -316,7 +356,6 @@ export default function ModalAddOpp(props: any) {
   //! End xử lý dịch vụ
 
   const [isLoadingOption, setIsLoadingOption] = useState<boolean>(false);
-
   //? Start xử lý người quyết định
   //? Start xử lý người quyết định
   const loadedOptionContact = async (search, loadedOptions, { page }) => {
@@ -460,7 +499,7 @@ export default function ModalAddOpp(props: any) {
   };
 
   const [isLoadingOptionCoordinator, setIsLoadingOptionCoordinator] = useState<boolean>(false);
-
+    const [loadedCoordinators, setLoadedCoordinators] = useState<any[]>([]);
   //* Start xử lý người phối hợp
   const loadedOptionCoordinator = async (search, loadedOptions, { page }) => {
     const param = {
@@ -516,6 +555,39 @@ export default function ModalAddOpp(props: any) {
     const changeE = [...e].map((item) => item.value);
     setFormDataOne({ ...formDataOne, coordinators: changeE });
     setValueStepOne({ ...valueStepOne, dataCoordinators: e });
+  };
+
+  // Load thông tin đầy đủ coordinators từ array IDs
+  const loadCoordinatorsData = async (coordinatorIds: number[]) => {
+    if (!coordinatorIds || coordinatorIds.length === 0 || !detailCustomer?.value) {
+      setLoadedCoordinators([]);
+      return;
+    }
+
+    try {
+      const response = await ContactService.list({
+        customerId: detailCustomer.value,
+        page: 1,
+        limit: 100,
+      });
+
+      if (response.code === 0) {
+        const allContacts = response.result.items;
+        const selectedCoordinators = allContacts
+          .filter((contact) => coordinatorIds.includes(contact.id))
+          .map((contact) => ({
+            value: contact.id,
+            label: contact.name,
+            avatar: contact.avatar,
+          }));
+
+        setLoadedCoordinators(selectedCoordinators);
+        setValueStepOne((prev) => ({ ...prev, dataCoordinators: selectedCoordinators }));
+      }
+    } catch (error) {
+      console.error("Error loading coordinators:", error);
+      setLoadedCoordinators([]);
+    }
   };
 
   const onSubmit = async (e) => {

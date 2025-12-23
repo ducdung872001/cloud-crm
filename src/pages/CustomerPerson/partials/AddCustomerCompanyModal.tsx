@@ -138,6 +138,19 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
           },
         }));
       }
+      if (result.contactId){
+        setDataContact({
+          value:result.contactId,
+          label: result?.contactName||"",
+        });
+        setFormData((prev) => ({
+          ...prev,
+          values: {
+            ...prev.values,
+            contactId: result.contactId,
+          },
+        }));
+      }
     } else {
       showToast(response.error ?? response.message ??"Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
