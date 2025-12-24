@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useMemo, useContext } from "react";
+import React, { Fragment, useState, useMemo, useContext, useEffect } from "react";
 import { IActionModal } from "model/OtherModel";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -12,17 +12,19 @@ import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import { ContextType, UserContext } from "contexts/userContext";
 import EmployeeService from "services/EmployeeService";
 import ImageThirdGender from "assets/images/third-gender.png";
+import Icon from "components/icon";
 
 export default function SplitDataCustomerModal(props: any) {
-  const { onShow, onHide, data } = props;
+  const { onShow, onHide, paramsCustomerList, pagination, listIdChecked } = props;  
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [type, setType] = useState("1");
+  const [type, setType] = useState("SMART");
   const [quantityData, setQuantityData] = useState(null);
-
+  const [listEmployee, setListEmployee] = useState([]);
+  const [checkFieldEmployee, setCheckFieldEmployee] = useState(false);
+  
   const loadedOptionEmployee = async (search, loadedOptions, { page }) => {
     const param: IEmployeeFilterRequest = {
       name: search,
@@ -33,9 +35,11 @@ export default function SplitDataCustomerModal(props: any) {
 
     const response = await EmployeeService.list(param);
 
-    if (response.code === 0) {
-      const dataOption = response.result.items;
-
+    if (response.code === 0) {      
+      const dataOption = (response.result.items || []).filter((item) => {
+        return !listEmployee.some((el) => el.value === item.id);
+      });
+    
       return {
         options: [
           ...(dataOption.length > 0
@@ -44,6 +48,7 @@ export default function SplitDataCustomerModal(props: any) {
                   value: item.id,
                   label: item.name,
                   avatar: item.avatar,
+                  departmentName: item.departmentName
                 };
               })
             : []),
@@ -58,6 +63,12 @@ export default function SplitDataCustomerModal(props: any) {
     return { options: [], hasMore: false };
   };
 
+  useEffect(() => {
+    if(onShow){
+      loadedOptionEmployee("", undefined, { page: 1 });
+    }
+  }, [listEmployee]);
+
   const formatOptionLabelEmployee = ({ label, avatar }) => {
     return (
       <div className="selected--item">
@@ -70,32 +81,40 @@ export default function SplitDataCustomerModal(props: any) {
   };
 
   const handleChangeValueEmployee = (e) => {
-    // setCheckFieldEmployee(false);
-    // setDataEmployee(e);
+    setCheckFieldEmployee(false);
+    setListEmployee((pre) => [e, ...pre]);
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    setIsSubmit(true);
-
-    // if(!valueMA){
-    //     setCheckFieldMA(true);
-    //     return;
-    // }
-
-    const body = {
-        // maId: valueMA.value,
-        // customerIds: data
+    if(listEmployee?.length === 0){
+      setCheckFieldEmployee(true);
+      return;
     }
 
-    const response = await CustomerService.addCustomerMA(body);
+    setIsSubmit(true);
+
+    const listEmployeeId = listEmployee.map(item => item.value);
+
+    const body = {
+      employeesAssign: listEmployeeId || [],
+      strategy: type,
+      // ...paramsCustomerList,
+      ...(type === "SMART" ? {assignNum: quantityData} : {}),
+      // preview: true,
+      limit: pagination?.totalItem,
+      customerIds: listIdChecked
+    }
+
+    console.log('body', body);
+    const response = await CustomerService.customerAssign(body);
 
     if (response.code === 0) {
-      showToast("Thêm khách hàng vào chương trình MA thành công", "success");
+      showToast("Chia dữ liệu khách hàng thành công", "success");
       handleClearForm(true);
     } else {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
+      showToast(response?.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
     }
 
     setIsSubmit(false);
@@ -103,7 +122,8 @@ export default function SplitDataCustomerModal(props: any) {
 
   const handleClearForm = (acc) => {
     onHide(acc);
-    setType("1");
+    setType("SMART");
+    setListEmployee([]);
   };
 
   const actions = useMemo<IActionModal>(
@@ -114,7 +134,7 @@ export default function SplitDataCustomerModal(props: any) {
             title: "Hủy",
             color: "primary",
             variant: "outline",
-            disabled: isSubmit,
+            // disabled: isSubmit,
             callback: () => {
                 handleClearForm(false)
             //   !valueMA ? handleClearForm(false) : showDialogConfirmCancel();
@@ -165,7 +185,7 @@ export default function SplitDataCustomerModal(props: any) {
         isOpen={onShow}
         isCentered={true}
         staticBackdrop={true}
-        toggle={() => !isSubmit && handleClearForm(false)}
+        toggle={() => handleClearForm(false)}
         className="modal_split-data-customer"
       >
         <form className="form_split-data-customer" onSubmit={(e) => onSubmit(e)}>
@@ -175,8 +195,8 @@ export default function SplitDataCustomerModal(props: any) {
               <div className="form-group">
                 <RadioList
                   options={[
-                    { value: "1", label: "Chia cố định" },
-                    { value: "2", label: "Chia đều" },
+                    { value: "SMART", label: "Chia cố định" },
+                    { value: "EVEN", label: "Chia đều" },
                   ]}
                   title="Cách thực hiện:"
                   name="type"
@@ -184,14 +204,14 @@ export default function SplitDataCustomerModal(props: any) {
                   onChange={(e) => {
                     const value = e.target.value;
                     setType(value);
-                    if(value === "2"){
+                    if(value === "EVEN"){
                       setQuantityData(null);
                     }
                   }}
                 />
               </div>
 
-              {type === "1" ? 
+              {type === "SMART" ? 
                 <div className="form-group">
                   <NummericInput
                     label={'Số lượng khách hàng:'}
@@ -208,6 +228,7 @@ export default function SplitDataCustomerModal(props: any) {
               <div className="container-list-employee">
                 <div className="form-group">
                   <SelectCustom
+                    key={listEmployee.length}
                     id="employeeId"
                     name="employeeId"
                     label="Danh sách nhân viên"
@@ -215,7 +236,7 @@ export default function SplitDataCustomerModal(props: any) {
                     fill={true}
                     // value={valueMA}
                     required={true}
-                    // onChange={(e) => handleChangeValueMA(e)}
+                    onChange={(e) => handleChangeValueEmployee(e)}
                     isAsyncPaginate={true}
                     isFormatOptionLabel={true}
                     placeholder="Chọn nhân viên"
@@ -224,10 +245,45 @@ export default function SplitDataCustomerModal(props: any) {
                     }}
                     loadOptionsPaginate={loadedOptionEmployee}
                     formatOptionLabel={formatOptionLabelEmployee}
-                  // error={checkFieldEmployee}
-                  // message="Nhân viên không được để trống"
+                    error={checkFieldEmployee}
+                    message="Nhân viên không được để trống"
                   />
                 </div>
+
+                {listEmployee && listEmployee.length > 0 ? 
+                  <div className="container-list-employee">
+                    {/* <div>
+                      <span style={{fontSize: 14, fontWeight: '700'}}>Danh sách nhân viên</span>
+                    </div> */}
+
+                    <div className="list-employee">
+                      {listEmployee.map((item, index) => (
+                        <div key={index} className="item-employee">
+                          <div className="avatar">
+                            <img src={item?.avatar || ImageThirdGender} alt={'Trung nguyen'} />
+                          </div>
+                          <div className="name-employee">
+                            <div>
+                              <span style={{fontSize: 14, fontWeight: '500'}}>{item?.label}</span>
+                            </div>
+                            <div>
+                              <span style={{fontSize: 12, fontWeight: '500', color: 'var(--extra-color-50)'}}>{item?.departmentName}</span>
+                            </div>
+                          </div>
+                          <div className="button-delete-employee" 
+                            onClick={() => {
+                              const newArray = [...listEmployee];
+                              newArray.splice(index, 1);
+                              setListEmployee(newArray);
+                            }}
+                          >
+                            <Icon name="Trash" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                : null}
               </div>
             </div>
           </ModalBody>
