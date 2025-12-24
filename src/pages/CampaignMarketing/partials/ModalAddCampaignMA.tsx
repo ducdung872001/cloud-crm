@@ -352,16 +352,6 @@ export default function ModalAddCampaignMA(props: any) {
   const onSubmit = async (e) => {
     e && e.preventDefault();
 
-    // Kiểm tra lỗi ngày bắt đầu
-    if (!formData.values?.startDate) {
-      setCheckFieldStartDate(true);
-    }
-
-    // Kiểm tra lỗi ngày kết thúc
-    if (!formData.values?.endDate) {
-      setCheckFieldEndDate(true);
-    }
-
     // Kiểm tra lỗi ngày và ngăn submit nếu có lỗi
     const startDateError = !formData.values?.startDate || moment(startDay).isSameOrAfter(moment(endDay));
     const endDateError = !formData.values?.endDate || moment(endDay).isSameOrBefore(moment(startDay));
