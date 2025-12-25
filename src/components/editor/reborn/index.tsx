@@ -107,10 +107,16 @@ const RebornEditor = (props: EditorProps) => {
 
   useEffect(() => {
     if (dataText) {
-      const { insertText } = editor;
-      insertText(dataText);
+      try {
+        // Focus vào editor trước khi insert
+        ReactEditor.focus(editor);
+        // Insert text tại vị trí hiện tại
+        editor.insertText(dataText);
+      } catch (error) {
+        console.error("Error inserting text:", error);
+      }
     }
-  }, [dataText]);  
+  }, [dataText, editor]);  
 
   const handleDOMBeforeInput = useCallback(
     (e: InputEvent) => {
