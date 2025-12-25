@@ -9,4 +9,5 @@ export interface ISendSMS {
   idSendSMS?: number;
   paramCustomerProps?: ICustomerSchedulerFilterRequest;
   customerIdList?: any;
+  isView?: boolean;
 }

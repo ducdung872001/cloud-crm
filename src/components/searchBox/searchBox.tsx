@@ -199,15 +199,15 @@ export default function SearchBox(props: SearchBoxProps) {
                         },
                       ]
                     : []),
-                    
+
                   ...(filterItem.key === "marketingSendLeadSource"
-                  ? [
-                      {
-                        value: "Chưa có nguồn Marketing",
-                        label: "Chưa có nguồn Marketing",
-                      },
-                    ]
-                  : []),
+                    ? [
+                        {
+                          value: "Chưa có nguồn Marketing",
+                          label: "Chưa có nguồn Marketing",
+                        },
+                      ]
+                    : []),
                   ...(filterItem.key === "employeeId"
                     ? [
                         {
@@ -290,11 +290,9 @@ export default function SearchBox(props: SearchBoxProps) {
         />
       )}
       <div
-        className={`search-container d-flex align-items-center${
-          isFilter && listFilterItem && listFilterItem.length > 0 ? " has-filter" : ""
-        }${isSaveSearch && onSaveSearch ? " has-save-search" : ""}${
-          width < 768 ? " search-container--mobile-stack" : ""
-        }`}
+        className={`search-container d-flex align-items-center${isFilter && listFilterItem && listFilterItem.length > 0 ? " has-filter" : ""}${
+          isSaveSearch && onSaveSearch ? " has-save-search" : ""
+        }${width < 768 ? " search-container--mobile-stack" : ""}`}
       >
         <div className="filter-search">
           {isFilter && filterItems?.length > 0 && (
@@ -302,7 +300,9 @@ export default function SearchBox(props: SearchBoxProps) {
               name={name}
               listFilterItem={filterItems}
               isShowFilterList={isShowFilterList}
-              onChangeFilter={(listFilter) => setFilterItems(listFilter)}
+              onChangeFilter={(listFilter) => {
+                setFilterItems(listFilter);
+              }}
             />
           )}
         </div>

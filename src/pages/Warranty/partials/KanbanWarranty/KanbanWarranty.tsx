@@ -40,7 +40,7 @@ export default function KanbanWarranty(props: IKanbanWarrantyProps) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListStatusWarranty(result);
+      setListStatusWarranty(result.items);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -53,20 +53,20 @@ export default function KanbanWarranty(props: IKanbanWarrantyProps) {
   }, []);
 
   useEffect(() => {
-    const result = listStatusWarranty.map((item) => {
-      return {
-        id: item.id,
-        title: item.name,
-        items: data.filter((element) => {
-          return element.statusId === item.id;
-        }),
-      };
-    });
+    if (listStatusWarranty && listStatusWarranty?.length > 0) {
+      const result = listStatusWarranty.map((item) => {
+        return {
+          id: item.id,
+          title: item.name,
+          items: data.filter((element) => {
+            return element.statusId === item.id;
+          }),
+        };
+      });
 
-    setColumns(result);
+      setColumns(result);
+    }
   }, [listStatusWarranty, data]);
-
-  console.log("colums : ", columns);
 
   //? đoạn này xử lý vấn đề call api cập nhật trạng thái bảo hành
   const handleUpdateStatusWarranty = async () => {
