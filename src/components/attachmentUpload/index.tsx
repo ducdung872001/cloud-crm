@@ -9,6 +9,7 @@ import { handDownloadFileOrigin } from "utils/common";
 import ImgExcel from "assets/images/img-excel.png";
 import ImgWord from "assets/images/img-word.png";
 import ImgPowerpoint from "assets/images/img-powerpoint.png";
+import Loading from "components/loading";
 
 /**
  * AttachmentUploader (V9 logic preserved)
@@ -97,6 +98,7 @@ const AttachmentUploader: React.FC<Props> = ({
 }) => {
   const [list, setList] = useState<UploadedItem[]>(value ?? []);
   const [showProgress, setShowProgress] = useState<number>(0);
+  const [waitingUrl, setWaitingUrl] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -142,6 +144,7 @@ const AttachmentUploader: React.FC<Props> = ({
       name: data.fileName,
       size: data.fileSize,
     };
+    setWaitingUrl(false);
     setList((prev) => {
       const next = multiple ? [...prev, result] : [result];
       return next;
@@ -166,7 +169,7 @@ const AttachmentUploader: React.FC<Props> = ({
   const handUploadFile = async (file: File) => {
     try {
       if (FileService && typeof (FileService as any).uploadFile === "function") {
-        const maybe = (FileService as any).uploadFile({ data: file, onSuccess: processUploadSuccess, onError });
+        const maybe = (FileService as any).uploadFile({ data: file, onSuccess: processUploadSuccess, onError, onProgress });
         if (maybe && typeof (maybe as Promise<any>).then === "function") {
           const resp = await maybe;
           if (resp && (resp.fileUrl || resp.url)) processUploadSuccess(resp);
@@ -208,6 +211,7 @@ const AttachmentUploader: React.FC<Props> = ({
   const handleIncomingFile = (file: File) => {
     if (!file) return;
     const checkFile = file.type || "";
+    setWaitingUrl(true);
     if (checkFile.startsWith("image")) {
       handUploadFile(file);
     } else {
@@ -373,35 +377,43 @@ const AttachmentUploader: React.FC<Props> = ({
         onDoubleClick={handleDoubleClick}
         tabIndex={0}
       >
-        {list.length === 0 ? (
-          // use a non-label element so single click only focuses (not open dialog)
-          <div className="action-upload-image" role="button" aria-label="Tải tệp (double click để mở)">
-            <div className="wrapper-upload">
-              <IconUpload />
-              Tải tệp lên
-              {multiple ? <div className="hint">(Kéo thả hoặc dùng Ctrl+V; double-click để chọn file)</div> : null}
-            </div>
-          </div>
-        ) : (
-          <Fragment>
-            <div className="d-flex align-items-center">
-              {list.map((item, idx) => renderPreview(item, idx))}
-              {list.length < maxFiles && multiple ? (
-                // use non-label so single click won't open file dialog
-                <div className="add-image" role="button" title="Thêm tệp (double click để mở)">
-                  <IconPlus />
+        {!waitingUrl ? (
+          <>
+            {list.length === 0 ? (
+              // use a non-label element so single click only focuses (not open dialog)
+              <div className="action-upload-image" role="button" aria-label="Tải tệp (double click để mở)">
+                <div className="wrapper-upload">
+                  <IconUpload />
+                  Tải tệp lên
+                  {multiple ? <div className="hint">(Kéo thả hoặc dùng Ctrl+V; double-click để chọn file)</div> : null}
                 </div>
-              ) : null}
-            </div>
-          </Fragment>
+              </div>
+            ) : (
+              <Fragment>
+                <div className="d-flex align-items-center">
+                  {list.map((item, idx) => renderPreview(item, idx))}
+                  {list.length < maxFiles && multiple ? (
+                    // use non-label so single click won't open file dialog
+                    <div className="add-image" role="button" title="Thêm tệp (double click để mở)">
+                      <IconPlus />
+                    </div>
+                  ) : null}
+                </div>
+              </Fragment>
+            )}
+          </>
+        ) : (
+          <div className="loading-upload">
+            <Loading />
+          </div>
         )}
 
-        {showProgress > 0 && (
+        {/* {showProgress > 0 && (
           <div className="upload-progress" aria-hidden>
             <div className="progress-bar" style={{ width: `${showProgress}%` }} />
             <span className="progress-text">{Math.round(showProgress)}%</span>
           </div>
-        )}
+        )} */}
       </div>
 
       <input ref={inputRef} type="file" accept={accept} className="d-none" id={inputId} onChange={handleUploadDocument} multiple={multiple} />
