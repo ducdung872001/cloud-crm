@@ -35,7 +35,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
 
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
 
-  const [listSupport, setListSupport] = useState<IOption[]>(null);
+  const [listSupport, setListSupport] = useState<IOption[]>([]);
   const [isLoadingSupport, setIsLoadingSupport] = useState<boolean>(false);
 
   const [listImageTicket, setListImageTicket] = useState([]);
@@ -46,11 +46,11 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       type: 1,
     };
 
-    if (!listSupport || listSupport.length === 0) {
+    if (listSupport || listSupport.length === 0) {
       setIsLoadingSupport(true);
       const response = await TicketCategoryService.list(param);
       if (response.code === 0) {
-        const dataOption = response.result;
+        const dataOption = response.result.items;
         setListSupport([
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
@@ -215,7 +215,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       label: "Danh mục hỗ trợ",
       name: "supportId",
       type: "select",
-      fill: true,
+      fill: true, 
       required: true,
       options: listSupport,
       onMenuOpen: onSelectOpenSupport,

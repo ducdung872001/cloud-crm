@@ -284,6 +284,7 @@ export default function CalendarCommon() {
   const [params, setParams] = useState<IScheduleCommonFilterRequest>({
     types: [2, 3].join(),
     sources: [1, 2].join(),
+    page: 1,
   });
 
   useEffect(() => {
@@ -326,7 +327,7 @@ export default function CalendarCommon() {
           status: item.status,
         };
       });
-      setListSchedule(result);
+      setListSchedule(result.items);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }

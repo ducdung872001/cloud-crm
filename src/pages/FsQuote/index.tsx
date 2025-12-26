@@ -398,13 +398,16 @@ export default function FsQuote() {
   };
 
   const actionsTable = (item): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       ...(item?.fsAttachment
         ? [
             {
               title: "Tải xuống file FS",
-              icon: <Icon name="Download" />,
+              icon: <Icon name="Download" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 if (item.fsType === 1) {
                   let fieldName = convertToId(item.name) || "";
                   const name = `${fieldName}.xlsx`;
@@ -412,6 +415,7 @@ export default function FsQuote() {
                 } else {
                   handleCheckValidateSignature(item, "export");
                 }
+              }
               },
             },
           ]
@@ -420,13 +424,16 @@ export default function FsQuote() {
         ? [
             {
               title: "Xem lịch sử ký",
-              icon: <Icon name="ImpactHistory" />,
+              icon: <Icon name="ImpactHistory" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataFsQuote({
                   ...item,
                   template: item.fsAttachment,
                 });
                 setHasHistorySignature(true);
+              }
               },
             },
           ]
@@ -435,14 +442,17 @@ export default function FsQuote() {
         ? [
             {
               title: "Trình ký",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataFsQuote(item);
                 if (item.fsType === 2) {
                   handleCheckValidateSignature(item, "signature");
                 } else {
                   setHasSignature(true);
                 }
+              }
               },
             },
 
@@ -450,14 +460,17 @@ export default function FsQuote() {
               ? [
                   {
                     title: "Cấu hình FS",
-                    icon: <Icon name="Settings" />,
+                    icon: <Icon name="Settings" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                    disabled: isCheckedItem,
                     callback: () => {
+                      if (!isCheckedItem) {
                       setDataFsQuote(item);
                       if (item.sheetId) {
                         setShowModalSetingFS(true);
                       } else {
                         setShowModalChooseTemplate(true);
                       }
+                    }
                     },
                   },
                 ]
@@ -465,17 +478,23 @@ export default function FsQuote() {
 
             {
               title: "Sửa",
-              icon: <Icon name="Pencil" />,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataFsQuote(item);
                 setShowModalAdd(true);
+                }
               },
             },
             {
               title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
+              icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+              disabled: isCheckedItem,
               callback: () => {
-                showDialogConfirmDelete(item);
+                if (!isCheckedItem) {
+                  showDialogConfirmDelete(item);
+                }
               },
             },
           ]
@@ -484,9 +503,12 @@ export default function FsQuote() {
         ? [
             {
               title: "Tạm dừng trình ký",
-              icon: <Icon name="WarningCircle" className="icon-warning" />,
+              icon: <Icon name="WarningCircle" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "pending");
+                }
               },
             },
           ]
@@ -495,16 +517,22 @@ export default function FsQuote() {
         ? [
             {
               title: "Tiếp tục trình ký",
-              icon: <Icon name="InfoCircle" className="icon-success" />,
+              icon: <Icon name="InfoCircle" className={isCheckedItem?"icon-disabled" : "icon-success"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "play");
+                }
               },
             },
             {
               title: "Trình ký lại",
-              icon: <Icon name="FingerTouch" className="icon-warning" />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 showDialogConfirmStatus(item, "inital");
+                }
               },
             },
           ]
@@ -513,14 +541,17 @@ export default function FsQuote() {
         ? [
             {
               title: "Cấu hình FS",
-              icon: <Icon name="Settings" />,
+              icon: <Icon name="Settings" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              disabled: isCheckedItem,
               callback: () => {
+                if (!isCheckedItem) {
                 setDataFsQuote(item);
                 if (item.sheetId) {
                   setShowModalSetingFS(true);
                 } else {
                   setShowModalChooseTemplate(true);
                 }
+              }
               },
             },
           ]
@@ -529,9 +560,12 @@ export default function FsQuote() {
         ? [
             {
               title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
+              icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+              disabled: isCheckedItem,
               callback: () => {
-                showDialogConfirmDelete(item);
+                if (!isCheckedItem) {
+                  showDialogConfirmDelete(item);
+                }
               },
             },
           ]
@@ -552,6 +586,35 @@ export default function FsQuote() {
     setContentDialog(null);
   };
 
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listFsQuote.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return FSQuoteService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} FS `, "success");
+        getListFsQuote(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có FS nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
+
   const showDialogConfirmDelete = (item?) => {
     const contentDialog: IContentDialog = {
       color: "error",
@@ -571,7 +634,16 @@ export default function FsQuote() {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
@@ -730,7 +802,7 @@ export default function FsQuote() {
           />
           {!isLoading && listFsQuote && listFsQuote.length > 0 ? (
             <BoxTable
-              name="FS"
+              name="Danh sách FS"
               titles={titles}
               items={listFsQuote}
               isPagination={true}

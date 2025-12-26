@@ -28,6 +28,7 @@ import Input from "components/input/input";
 import SelectCustom from "components/selectCustom/selectCustom";
 import TextArea from "components/textarea/textarea";
 import RadioList from "components/radio/radioList";
+import { name } from "jssip";
 
 export default function ModalSelectAttribute(props: any) {
   const { onShow, onHide , dataContractEform} = props;
@@ -516,15 +517,29 @@ export default function ModalSelectAttribute(props: any) {
   ];
 
   const listFieldFirst = useMemo(
-    () =>
-      [
+    () => {
+      return [
         {
           label: "Tên trường",
           name: "name",
           type: "text",
           fill: true,
-          required: true
+          required: true,
+          placeholder: "Nhập tên trường",
+          icon: <Icon name="Edit" />,
+          iconPosition: "left",
+          validate: [
+            {
+              name: "maxLength",
+              message: "Không được nhập quá 50 ký tự",
+              value: 50,
+            }
+          ],
+
+          messageWarning: "Không được nhập quá 50 ký tự",
+          isWarning: formData?.values?.name?.length > 50 ? true : false,
         },
+
         {
           label: "Kiểu dữ liệu",
           name: "datatype",
@@ -610,7 +625,7 @@ export default function ModalSelectAttribute(props: any) {
         },
       ] as IFieldCustomize[],
     [listContractAttribute, isLoadingContractAttribute, data]
-  ); 
+}, [values]); 
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
@@ -787,6 +802,16 @@ export default function ModalSelectAttribute(props: any) {
 
   const onSubmit = async () => {
     // e.preventDefault();
+    
+    if (!data?.addFieldAttributes && (formData.values['datatype'] == 'dropdown' || formData.values['datatype'] == 'radio' || formData.values['datatype'] == 'multiselect')) {
+      showToast("Vui lòng thêm lựa chọn cho trường thông tin", "error");
+      return;
+    }
+
+    if (!data?.selectedFormula && (formData.values['datatype'] == 'formula')) {
+      showToast("Vui lòng nhập công thức cho trường thông tin", "error");
+      return;
+    }
 
     const errors = Validate(validations, formData, [...listFieldFirst, ...listFieldSecond]);
     if (Object.keys(errors).length > 0) {
@@ -1122,6 +1147,7 @@ export default function ModalSelectAttribute(props: any) {
                         title="Định dạng số"
                         name="numberFormat"
                         value={numberFormat}
+                        required={true}
                         onChange={(e) => setNumberFormat(e?.target.value)}
                       />
                     </div>

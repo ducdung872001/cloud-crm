@@ -86,10 +86,10 @@ export default function XmlAddPartner(props: any) {
       email: "emailMasked",
     };
     const getAlldata = async () => {
-      const configInit = await getOjectGroup(XMLtype);
-      const mapAttribute = await getPartnerAttributes();
-      const extraInfos = data?.id ? await getPartnerExtraInfos(data?.id) : [];
-      const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField);
+      const configInit = await getOjectGroup(XMLtype); // Lấy cấu hình form từ ObjectGroup
+      const mapAttribute = await getPartnerAttributes(); // Lấy các trường thông tin mở rộng của đối tác
+      const extraInfos = data?.id ? await getPartnerExtraInfos(data?.id) : []; // Lấy giá trị của các trường thông tin mở rộng của đối tác nếu có data.id (id của đối tác)
+      const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField); // Map dữ liệu ban đầu vào cấu hình form
       if (data?.id) {
         setDataInit(mapped);
       }
@@ -128,13 +128,16 @@ export default function XmlAddPartner(props: any) {
       });
     });
 
+    let phone = config?.phoneMasked ?? null; // Lấy theo phoneMasked vì maskedInput trong form lấy theo key này
+    let email = config?.emailMasked ?? null; // Lấy theo emailMasked vì maskedInput trong form lấy theo key này
+
     let body: any = {
       ...(data ? data : {}),
       avatar: config.avatar ? JSON.parse(config.avatar)[0]?.url : "",
       name: config.name ?? "",
       code: config.code ?? "",
-      phone: config.phone ?? "",
-      email: config.email ?? "",
+      phone: phone,
+      email: email,
       taxCode: config.taxCode ?? "",
       contactId: config.contactId ?? "",
       address: config.address ?? "",

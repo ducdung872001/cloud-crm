@@ -22,7 +22,7 @@ export default function AddUnitModal(props: AddUnitModalProps) {
   const focusedElement = useActiveElement();
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-
+  
   const values = useMemo(
     () =>
       ({
@@ -54,7 +54,7 @@ export default function AddUnitModal(props: AddUnitModalProps) {
       type: "text",
       fill: true,
       required: true,
-      
+
     },
     {
       label: "Thứ tự hiển thị",

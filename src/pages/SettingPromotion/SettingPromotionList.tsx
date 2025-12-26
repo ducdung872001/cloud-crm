@@ -153,35 +153,48 @@ export default function SettingPromotionList(props: any) {
 
   const [dataEdit, setDataEdit] = useState(null);
   const actionsTable = (item: any): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Xem Khuyến mãi",
-        icon: <Icon name="Eye" />,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIsPreviewEform(true);
+          }
         },
       },
 
       {
         title: "Cài đặt Khuyến mãi",
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="Settings" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setIsSettingEform(true);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataEdit(item);
           setShowEditPrm(true);
+          }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ].filter((action) => action);
@@ -199,6 +212,35 @@ export default function SettingPromotionList(props: any) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listContractEform.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return ContractEformService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} khuyến mãi`, "success");
+        getListContractEform(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có khuyến mãi nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: IContractPipelineResponse) => {
     const contentDialog: IContentDialog = {
@@ -219,7 +261,16 @@ export default function SettingPromotionList(props: any) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
@@ -299,7 +350,7 @@ export default function SettingPromotionList(props: any) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khuyến mãi
+            Cài đặt bán hàng
           </h1>
           <Icon
             name="ChevronRight"

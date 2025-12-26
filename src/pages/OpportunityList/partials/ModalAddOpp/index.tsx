@@ -666,7 +666,7 @@ export default function ModalAddOpp(props: any) {
             },
             {
               title: data ? "Cập nhật" : "Tạo mới",
-              type: "submit",
+              type: "submit", 
               color: "primary",
               disabled: isSubmit || !isDifferenceObj(formDataOne, valuesStepOne),
               is_loading: isSubmit,

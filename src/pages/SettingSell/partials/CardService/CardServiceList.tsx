@@ -72,7 +72,7 @@ export default function CardServiceList(props: IServiceCardListProps) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListCardService(result);
+      setListCardService(result.items);
 
       setPagination({
         ...pagination,
@@ -151,20 +151,27 @@ export default function CardServiceList(props: IServiceCardListProps) {
   ];
 
   const actionsTable = (item: ICardServiceResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["CARD_SERVICE_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataCardService(item);
           setShowModalAdd(true);
+          }
         },
       },
       permissions["CARD_SERVICE_DELETE"] == 1 && {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ].filter((action) => action);
@@ -182,6 +189,35 @@ export default function CardServiceList(props: IServiceCardListProps) {
     setShowDialog(false);
     setContentDialog(null);
   };
+
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listCardService.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return CardServiceService.delete(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
+    .then((results) => {
+      const checkbox = results.filter (Boolean)?.length ||0;
+      if (checkbox > 0) {
+        showToast(`Xóa thành công ${checkbox} thẻ dịch vụ`, "success");
+        getListCardService(params);
+        setListIdChecked([]);
+      } else {
+        showToast("Không có thẻ dịch vụ nào được xóa", "error");
+      }
+   })
+    .finally(() => {
+      setShowDialog(false);
+      setContentDialog(null);
+    });
+  }
 
   const showDialogConfirmDelete = (item?: ICardServiceResponse) => {
     const contentDialog: IContentDialog = {
@@ -202,7 +238,16 @@ export default function CardServiceList(props: IServiceCardListProps) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => onDelete(item.id),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+      }
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

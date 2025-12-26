@@ -191,11 +191,17 @@ export default function AddCustomerViewerModal(props: IAddCustomerViewerModalPro
       return !lstViewerCustomer.some((el) => el.employeeId === item.id);
     });
 
+  const handleClear = () => {
+    setIdEmployee(null);
+    onHide();
+    setLstEmployee([]);
+  }
+
   return (
     <Fragment>
-      <Modal isFade={true} isOpen={onShow} isCentered={true} staticBackdrop={true} size="lg" toggle={() => onHide()} className="modal-add-viewer">
+      <Modal isFade={true} isOpen={onShow} isCentered={true} staticBackdrop={true} size="lg" toggle={() => handleClear()} className="modal-add-viewer">
         <div className="form__add--viewer">
-          <ModalHeader title="Thêm người xem" toggle={() => onHide()} />
+          <ModalHeader title="Thêm người xem" toggle={() => handleClear()} />
           <ModalBody>
             <div className="box__viewer--lst">
               <div className="add__viewers">
@@ -264,7 +270,7 @@ export default function AddCustomerViewerModal(props: IAddCustomerViewerModalPro
 
                 {lstViewerCustomer && lstViewerCustomer.length >= 0 ? (
                   <div className="lst__viewers">
-                    <div className="item-viewer">
+                    {/* <div className="item-viewer">
                       <div className="item-viewer--left">
                         <div className="avatar-viewer">
                           <Image src={avatar || ImgThirdGender} alt={name} />
@@ -276,7 +282,7 @@ export default function AddCustomerViewerModal(props: IAddCustomerViewerModalPro
                           </span>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                     {dataCustomer &&
                       dataCustomer.employeeId &&
                       lstEmployee.length > 0 &&
