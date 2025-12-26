@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import Icon from "components/icon";
 import Loading from "components/loading";
 import BoxTable from "components/boxTable/boxTable";
@@ -15,9 +15,10 @@ import { ITemplateCategoryResponseModel } from "model/templateCategory/TemplateC
 import { ITemplateCategoryListProps } from "model/templateCategory/PropsModel";
 import { getPermissions } from "utils/common";
 import AddTemplateCategory from "./partials/AddTemplateCategory";
-import { getPageOffset } from 'reborn-util';
+import { getPageOffset } from "reborn-util";
 
 import "./TemplateCategoryList.scss";
+import _ from "lodash";
 
 export default function TemplateCategoryList(props: ITemplateCategoryListProps) {
   const { titleProps, nameProps, typeProps, onBackProps } = props;
@@ -25,6 +26,7 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
   const name = typeProps === "1" ? "SMS" : "Email";
 
   document.title = `Chủ đề ${name}`;
+  const isMounted = useRef(false);
 
   const [listTemplateCategory, setListTemplateCategory] = useState<ITemplateCategoryResponseModel[]>([]);
   const [dataTemplateCategory, setDataTemplateCategory] = useState<ITemplateCategoryResponseModel>(null);
@@ -37,6 +39,7 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [params, setParams] = useState<ITemplateCategoryFilterRequest>({
     name: "",
+    limit: 10,
   });
   const [permissions, setPermissions] = useState(getPermissions());
 
@@ -59,14 +62,37 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
     },
   });
 
-  const getListTemplateCategory = async () => {
+  const abortController = new AbortController();
+
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+    if (isMounted.current === true) {
+      getListTemplateCategory(params);
+      const paramsTemp = _.cloneDeep(params);
+      if (paramsTemp.limit === 10) {
+        delete paramsTemp["limit"];
+      }
+      Object.keys(paramsTemp).map(function (key) {
+        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
+      });
+    }
+
+    return () => {
+      abortController.abort();
+    };
+  }, [params]);
+
+  const getListTemplateCategory = async (paramsSearch) => {
     setIsLoading(true);
 
-    const response = await TemplateCategoryService.list();
+    const response = await TemplateCategoryService.list(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
       const result = response.result;
-      setListTemplateCategory(result);
+      setListTemplateCategory(result?.items ? result.items : result ?? []);
 
       setPagination({
         ...pagination,
@@ -88,7 +114,7 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
   };
 
   useEffect(() => {
-    getListTemplateCategory();
+    getListTemplateCategory(params);
   }, []);
 
   const titleActions: ITitleActions = {
@@ -107,23 +133,19 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
 
   const dataFormat = ["text-center", "", "text-center"];
 
-  const dataMappingArray = (item: ITemplateCategoryResponseModel, index: number) => [
-    getPageOffset(params) + index + 1,
-    item.name,
-    item.position
-  ];
+  const dataMappingArray = (item: ITemplateCategoryResponseModel, index: number) => [getPageOffset(params) + index + 1, item.name, item.position];
 
   const actionsTable = (item: ITemplateCategoryResponseModel): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       permissions["TEMPLATE_CATEGORY_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setShowModalAdd(true);
-          setDataTemplateCategory(item);
+            setShowModalAdd(true);
+            setDataTemplateCategory(item);
           }
         },
       },
@@ -133,7 +155,7 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item);
+            showDialogConfirmDelete(item);
           }
         },
       },
@@ -144,7 +166,7 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
 
     if (response.code === 0) {
       showToast(`Xóa chủ đề ${name} thành công`, "success");
-      getListTemplateCategory();
+      getListTemplateCategory(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -165,21 +187,21 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} chủ đề SMS`, "success");
-        getListTemplateCategory();
-        setListIdChecked([]);
-      } else {
-        showToast("Không có chủ đề SMS nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} chủ đề SMS`, "success");
+          getListTemplateCategory(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có chủ đề SMS nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+  };
 
   const showDialogConfirmDelete = (item?: ITemplateCategoryResponseModel) => {
     const contentDialog: IContentDialog = {
@@ -205,11 +227,11 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
@@ -299,7 +321,7 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
         data={dataTemplateCategory}
         onHide={(reload) => {
           if (reload) {
-            getListTemplateCategory();
+            getListTemplateCategory(params);
           }
           setShowModalAdd(false);
         }}

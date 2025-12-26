@@ -177,6 +177,13 @@ export default function ModalAddCampaignMA(props: any) {
     setFormData({ ...formData, values: { ...formData?.values, endDate: e } });
   };
 
+  // Kiểm tra lỗi ngày
+  const hasDateErrors = useMemo(() => {
+    const startDateError = checkFieldStartDate || moment(startDay).isSameOrAfter(moment(endDay));
+    const endDateError = checkFieldEndDate || moment(endDay).isSameOrBefore(moment(startDay));
+    return startDateError || endDateError;
+  }, [checkFieldStartDate, checkFieldEndDate, startDay, endDay]);
+
   // người phụ trách
   const [checkFieldEmployee, setCheckFieldEmployee] = useState<boolean>(false);
   const [dataEmployee, setDataEmployee] = useState(null);
@@ -345,6 +352,16 @@ export default function ModalAddCampaignMA(props: any) {
   const onSubmit = async (e) => {
     e && e.preventDefault();
 
+    // Kiểm tra lỗi ngày và ngăn submit nếu có lỗi
+    const startDateError = !formData.values?.startDate || moment(startDay).isSameOrAfter(moment(endDay));
+    const endDateError = !formData.values?.endDate || moment(endDay).isSameOrBefore(moment(startDay));
+
+    if (startDateError || endDateError) {
+      if (startDateError) setCheckFieldStartDate(true);
+      if (endDateError) setCheckFieldEndDate(true);
+      return;
+    }
+
     // const errors = Validate(validations, formData);
 
     // if (Object.keys(errors).length > 0) {
@@ -416,13 +433,13 @@ export default function ModalAddCampaignMA(props: any) {
             title: idData ? "Cập nhật" : "Tạo mới",
             type: "submit",
             color: "primary",
-            disabled: isSubmit || !isDifferenceObj(formData.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
+            disabled: isSubmit || !isDifferenceObj(formData.values, values) || (formData.errors && Object.keys(formData.errors).length > 0) || hasDateErrors,
             is_loading: isSubmit,
           },
         ],
       },
     }),
-    [formData, values, isSubmit, idData, checkFieldEmployee]
+    [formData, values, isSubmit, idData, checkFieldEmployee, hasDateErrors]
   );
 
   const showDialogConfirmCancel = () => {
@@ -531,8 +548,8 @@ export default function ModalAddCampaignMA(props: any) {
                   required={false}
                   iconPosition="left"
                   icon={<Icon name="Calendar" />}
-                  error={checkFieldStartDate || startDay > endDay}
-                  message={startDay > endDay ? "Ngày bắt đầu nhỏ hơn ngày kết thúc" : "Vui lòng chọn ngày bắt đầu"}
+                  error={checkFieldStartDate || moment(startDay).isSameOrAfter(moment(endDay))}
+                  message={moment(startDay).isSameOrAfter(moment(endDay)) ? "Ngày bắt đầu nhỏ hơn ngày kết thúc" : "Vui lòng chọn ngày bắt đầu"}
                 />
               </div>
 
@@ -547,8 +564,8 @@ export default function ModalAddCampaignMA(props: any) {
                   required={false}
                   iconPosition="left"
                   icon={<Icon name="Calendar" />}
-                  error={checkFieldEndDate || endDay < startDay}
-                  message={endDay < startDay ? "Ngày kết thúc lớn hơn ngày bắt đầu" : "Vui lòng chọn ngày kết thúc"}
+                  error={checkFieldEndDate || moment(endDay).isSameOrBefore(moment(startDay))}
+                  message={moment(endDay).isSameOrBefore(moment(startDay)) ? "Ngày kết thúc lớn hơn ngày bắt đầu" : "Vui lòng chọn ngày kết thúc"}
                 />
               </div>
 

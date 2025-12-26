@@ -15,8 +15,8 @@ export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
   beautySalon: {
     list: prefixRebornVn + "/beautySalon/list",
-    approve: prefixRebornVn + "/api/beautySalon/approve",
-    delete: prefixRebornVn + "/api/beautySalon/delete",
+    approve: prefixRebornVn + "/beautySalon/approve",
+    delete: prefixRebornVn + "/beautySalon/delete",
   },
   user: {
     create: prefixAuthenticator + "/user/create",

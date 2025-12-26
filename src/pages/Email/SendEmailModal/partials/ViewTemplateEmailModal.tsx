@@ -55,15 +55,36 @@ export default function ViewTemplateEmailModal(props: IAddTemplateEmailModelProp
 
   const dataFormat = ["text-center", "", ""];
 
+  const handleSelectTemplate = (item: ITemplateEmailResponseModel) => {
+    console.log("Template selected:", item);
+    callback && callback(item);
+    onHide(false);
+  };
+
   const dataMappingArray = (item: ITemplateEmailResponseModel, index: number) => [
     index + 1,
-    item.title,
+    <span 
+      key={`title-${item.id}`}
+      style={{ cursor: "pointer", textDecoration: "underline" }} 
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSelectTemplate(item);
+      }}
+    >
+      {item.title}
+    </span>,
     <Tippy key={item.id} content={removeHtmlTags(item.content)} delay={[120, 100]} placement="bottom" animation="scale">
-      <p style={{ cursor: "pointer" }} onClick={() => {
-        //Xử lý khi được click vào
-        callback && callback(item);
-        onHide(false);
-      }}>{trimContent(item.content, 120, true, true)}</p>
+      <p 
+        style={{ cursor: "pointer" }} 
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleSelectTemplate(item);
+        }}
+      >
+        {trimContent(item.content, 120, true, true)}
+      </p>
     </Tippy>,
   ];
 
