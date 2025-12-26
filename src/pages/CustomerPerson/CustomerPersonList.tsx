@@ -3330,7 +3330,12 @@ export default function CustomerPersonList() {
               <div 
                 className="button-split-data"
                 onClick={() => {
-                  setIsModalSplitData(true);
+                  if(listIdChecked && listIdChecked.length > 0){
+                    setIsModalSplitData(true);
+                  } else {
+                    showToast("Vui lòng chọn dữ liệu khách hàng", "warning");
+                  }
+                  
                 }}
               >
                 <span style={{fontSize: 14, fontWeight: '500'}}>Chia dữ liệu</span>

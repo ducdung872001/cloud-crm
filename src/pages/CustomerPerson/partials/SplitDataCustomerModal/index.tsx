@@ -13,6 +13,7 @@ import { ContextType, UserContext } from "contexts/userContext";
 import EmployeeService from "services/EmployeeService";
 import ImageThirdGender from "assets/images/third-gender.png";
 import Icon from "components/icon";
+import TeamEmployeeService from "services/TeamEmployeeService";
 
 export default function SplitDataCustomerModal(props: any) {
   const { onShow, onHide, paramsCustomerList, pagination, listIdChecked } = props;  
@@ -23,8 +24,12 @@ export default function SplitDataCustomerModal(props: any) {
   const [type, setType] = useState("SMART");
   const [quantityData, setQuantityData] = useState(null);
   const [listEmployee, setListEmployee] = useState([]);
-  const [checkFieldEmployee, setCheckFieldEmployee] = useState(false);
+  console.log('listEmployee', listEmployee);
   
+  const [checkFieldEmployee, setCheckFieldEmployee] = useState(false);
+  const [teamEmployee, setTeamEmployee] = useState(null);
+  const [checkFieldTeamEmployee, setCheckFieldTeamEmployee] = useState(false);
+
   const loadedOptionEmployee = async (search, loadedOptions, { page }) => {
     const param: IEmployeeFilterRequest = {
       name: search,
@@ -85,6 +90,62 @@ export default function SplitDataCustomerModal(props: any) {
     setListEmployee((pre) => [e, ...pre]);
   };
 
+  const loadedOptionTeamEmployee = async (search, loadedOptions, { page }) => {
+    const param: any = {
+      name: search,
+      page: page,
+      limit: 10,
+    };
+
+    const response = await TeamEmployeeService.list(param);
+
+    if (response.code === 0) {      
+      const dataOption = response.result || [];
+    
+      return {
+        options: [
+          ...(dataOption.length > 0
+            ? dataOption.map((item) => {
+                return {
+                  value: item.id,
+                  label: item.name,                };
+              })
+            : []),
+        ],
+        hasMore: response.result.loadMoreAble,
+        additional: {
+          page: page + 1,
+        },
+      };
+    }
+
+    return { options: [], hasMore: false };
+  };
+
+  const handleChangeTeamEmployee = (e) => {
+    setCheckFieldTeamEmployee(false);
+    setTeamEmployee(e);
+    getListEmployeeFromTeam(e.value);
+  };
+
+  const getListEmployeeFromTeam = async (groupId: any) => {
+    const params = {
+      groupId: groupId,
+      limit: 1000
+    }
+    const response = await TeamEmployeeService.listEmployee(params);
+
+    if (response.code == 0) {
+      const result = response.result?.items || [];
+      const listId = result?.map(item => {
+        return item.employee?.id;
+      })
+      setListEmployee(listId);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
 
@@ -95,7 +156,7 @@ export default function SplitDataCustomerModal(props: any) {
 
     setIsSubmit(true);
 
-    const listEmployeeId = listEmployee.map(item => item.value);
+    const listEmployeeId = type === "SMART" ? listEmployee.map(item => item.value) : listEmployee;
 
     const body = {
       employeesAssign: listEmployeeId || [],
@@ -107,7 +168,6 @@ export default function SplitDataCustomerModal(props: any) {
       customerIds: listIdChecked
     }
 
-    console.log('body', body);
     const response = await CustomerService.customerAssign(body);
 
     if (response.code === 0) {
@@ -124,6 +184,7 @@ export default function SplitDataCustomerModal(props: any) {
     onHide(acc);
     setType("SMART");
     setListEmployee([]);
+    setQuantityData(null);
   };
 
   const actions = useMemo<IActionModal>(
@@ -191,7 +252,7 @@ export default function SplitDataCustomerModal(props: any) {
         <form className="form_split-data-customer" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader title={`Chia dữ liệu khách hàng`} toggle={() => !isSubmit && handleClearForm(false)} />
           <ModalBody>
-            <div className="list-form-group">
+            <div className= "list-form-group" style={type === 'EVEN' ? {overflow: 'visible'} : {}}>
               <div className="form-group">
                 <RadioList
                   options={[
@@ -204,8 +265,12 @@ export default function SplitDataCustomerModal(props: any) {
                   onChange={(e) => {
                     const value = e.target.value;
                     setType(value);
+                    if("SMART"){
+                      setTeamEmployee(null);
+                    }
                     if(value === "EVEN"){
                       setQuantityData(null);
+                      setListEmployee([]);
                     }
                   }}
                 />
@@ -226,36 +291,56 @@ export default function SplitDataCustomerModal(props: any) {
               : null}
 
               <div className="container-list-employee">
-                <div className="form-group">
-                  <SelectCustom
-                    key={listEmployee.length}
-                    id="employeeId"
-                    name="employeeId"
-                    label="Danh sách nhân viên"
-                    options={[]}
-                    fill={true}
-                    // value={valueMA}
-                    required={true}
-                    onChange={(e) => handleChangeValueEmployee(e)}
-                    isAsyncPaginate={true}
-                    isFormatOptionLabel={true}
-                    placeholder="Chọn nhân viên"
-                    additional={{
-                      page: 1,
-                    }}
-                    loadOptionsPaginate={loadedOptionEmployee}
-                    formatOptionLabel={formatOptionLabelEmployee}
-                    error={checkFieldEmployee}
-                    message="Nhân viên không được để trống"
-                  />
-                </div>
+                {type === "SMART" ? 
+                  <div className="form-group">
+                    <SelectCustom
+                      key={listEmployee.length}
+                      id="employeeId"
+                      name="employeeId"
+                      label="Danh sách nhân viên"
+                      options={[]}
+                      fill={true}
+                      // value={valueMA}
+                      required={true}
+                      onChange={(e) => handleChangeValueEmployee(e)}
+                      isAsyncPaginate={true}
+                      isFormatOptionLabel={true}
+                      placeholder="Chọn nhân viên"
+                      additional={{
+                        page: 1,
+                      }}
+                      loadOptionsPaginate={loadedOptionEmployee}
+                      formatOptionLabel={formatOptionLabelEmployee}
+                      error={checkFieldEmployee}
+                      message="Nhân viên không được để trống"
+                    />
+                  </div>
+                  :
+                    <div className="form-group">
+                      <SelectCustom
+                        id="groupId"
+                        name="groupId"
+                        label="Nhóm nhân viên"
+                        options={[]}
+                        fill={true}
+                        value={teamEmployee}
+                        required={true}
+                        onChange={(e) => handleChangeTeamEmployee(e)}
+                        isAsyncPaginate={true}
+                        isFormatOptionLabel={true}
+                        placeholder="Chọn nhóm nhân viên"
+                        additional={{
+                          page: 1,
+                        }}
+                        loadOptionsPaginate={loadedOptionTeamEmployee}
+                        error={checkFieldTeamEmployee}
+                        message="Nhóm Nhân viên không được để trống"
+                      />
+                    </div>
+                  }
 
-                {listEmployee && listEmployee.length > 0 ? 
+                {/* {listEmployee && listEmployee.length > 0 ? 
                   <div className="container-list-employee">
-                    {/* <div>
-                      <span style={{fontSize: 14, fontWeight: '700'}}>Danh sách nhân viên</span>
-                    </div> */}
-
                     <div className="list-employee">
                       {listEmployee.map((item, index) => (
                         <div key={index} className="item-employee">
@@ -283,7 +368,7 @@ export default function SplitDataCustomerModal(props: any) {
                       ))}
                     </div>
                   </div>
-                : null}
+                : null} */}
               </div>
             </div>
           </ModalBody>
