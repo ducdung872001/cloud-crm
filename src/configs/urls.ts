@@ -3055,6 +3055,7 @@ export const urls = {
   contract: "/contract",
   offer: "/offer",
   create_contract: "/create_contract",
+  create_contract_xml: "/create_contract_xml",
   edit_contract: "/edit_contract/:id?",
   detail_contract: "/detail_contract/contractId/:id?",
   detail_project: "/detail_project/projectId/:id?",

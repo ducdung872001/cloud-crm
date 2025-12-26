@@ -53,6 +53,9 @@ import CardServiceIdApiService from "services/CardServiceIdApiService";
 import BeautySalonService from "services/BeautySalonService";
 import ContractGuaranteeService from "services/ContractGuaranteeService";
 import PartnerService from "services/PartnerService";
+import ContractCategoryService from "services/ContractCategoryService";
+import FSQuoteService from "services/FSQuoteService";
+import { add } from "lodash";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -93,6 +96,12 @@ export async function SelectOptionData(key: string, params?: any) {
       break;
     case "bankId" :
       response = await ContractGuaranteeService.bankList(params);
+      break;
+    case "fsId" :
+      response = await FSQuoteService.list(params);
+      break;
+    case "contractCategoryId" :
+      response = await ContractCategoryService.list(params);
       break;
     case "partnerId" :
       response = await PartnerService.list(params);
@@ -320,7 +329,10 @@ export async function SelectOptionData(key: string, params?: any) {
     if (response.code === 0) {
       return [...(response.result.items ? response.result.items : response.result)].map((item) => {
         if (key === "customer" || key === "customerId") {
-          return { value: item.id, label: `${item.name} - ${item.phoneMasked}` };
+          return { value: item.id, label: `${item.name} - ${item.phoneMasked}`, 
+          taxCodeCustomer: `${item.taxCode}`,
+          addressCustomer: `${item.address}`, 
+          phoneMaskedCustomer: `${item.phoneMasked}` };
         }
         if (key === "categoryItemId") {
           return { value: item.id, label: `${item.name}` };
