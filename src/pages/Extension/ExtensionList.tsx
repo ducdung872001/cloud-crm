@@ -210,6 +210,7 @@ export default function ExtensionList() {
           </Tippy>
 
           <SearchBox
+            name={"theo tên tổ chức"}
             params={params}
             isSaveSearch={true}
             listSaveSearch={listSaveSearch}

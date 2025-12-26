@@ -26,7 +26,7 @@ export default function ModalAddField(props: any) {
         code: data?.code ?? "",
         name: data?.name ?? "",
         rate: data?.rate ?? "",
-        position: data?.position ?? 0
+        position: data?.position ?? 0,
       } as any),
     [data, onShow]
   );
@@ -57,37 +57,37 @@ export default function ModalAddField(props: any) {
     },
   ];
 
-
   const listField = useMemo(
     () =>
       [
         {
-            label: "Tên gói lĩnh vực",
-            name: "name",
-            type: "text",
-            fill: true,
-            required: true,
+          label: "Tên gói lĩnh vực",
+          name: "name",
+          type: "text",
+          fill: true,
+          required: true,
         },
         {
-            label: "Mã lĩnh vực",
-            name: "code",
-            type: "text",
-            fill: true,
-            required: true,
+          label: "Mã lĩnh vực",
+          name: "code",
+          type: "text",
+          fill: true,
+          required: true,
         },
         {
-            label: "Tỉ lệ",
-            name: "rate",
-            type: "text",
-            fill: true,
-            required: true,
+          label: "Tỉ lệ",
+          name: "rate",
+          type: "number",
+          maxValue: 999999999,
+          fill: true,
+          required: true,
         },
         {
-            label: "Thứ tự hiển thị",
-            name: "position",
-            type: "number",
-            fill: true,
-            required: false,
+          label: "Thứ tự hiển thị",
+          name: "position",
+          type: "number",
+          fill: true,
+          required: false,
         },
       ] as IFieldCustomize[],
     [formData.values]
@@ -102,8 +102,8 @@ export default function ModalAddField(props: any) {
       return;
     }
 
-    if(formData?.values.rate && +formData?.values.rate < 0){
-        return;
+    if (formData?.values.rate && +formData?.values.rate < 0) {
+      return;
     }
     setIsSubmit(true);
 
