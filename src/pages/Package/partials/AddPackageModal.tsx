@@ -207,6 +207,7 @@ export default function AddPackageModal(props: any) {
           label: "Tên gói",
           name: "name",
           type: "text",
+          maxLength: 100,
           fill: true,
           required: true,
         },
@@ -261,12 +262,14 @@ export default function AddPackageModal(props: any) {
                 label: "Số tháng tặng",
                 name: "periodBonus",
                 type: "number",
+                maxValue: 999999999,
                 fill: true,
               },
               {
                 label: "Giá gốc",
                 name: "price",
                 type: "number",
+                maxValue: 999999999,
                 fill: true,
                 disabled: formData?.values?.packageType === 5,
               },
@@ -274,6 +277,7 @@ export default function AddPackageModal(props: any) {
                 label: "Giá ưu đãi",
                 name: "priceDiscount",
                 type: "number",
+                maxValue: 999999999,
                 fill: true,
                 required: true,
               },
@@ -291,6 +295,7 @@ export default function AddPackageModal(props: any) {
                 label: "Số lượng chi nhánh tối đa",
                 name: "maxBranch",
                 type: "number",
+                maxValue: 999999999,
                 fill: true,
                 required: true,
                 placeholder:
@@ -302,6 +307,7 @@ export default function AddPackageModal(props: any) {
                 label: "Số lượng tài khoản tối đa",
                 name: "maxAccount",
                 type: "number",
+                maxValue: 999999999,
                 fill: true,
                 required: true,
                 placeholder:
@@ -394,6 +400,10 @@ export default function AddPackageModal(props: any) {
     const errors = Validate(validations, formData, listField);
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
+      return;
+    }
+    if (formData.values?.price && formData.values?.priceDiscount && Number(formData.values?.priceDiscount) > Number(formData.values?.price)) {
+      showToast("Giá ưu đãi không được lớn hơn giá gốc", "error");
       return;
     }
     setIsSubmit(true);

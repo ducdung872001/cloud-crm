@@ -10,7 +10,7 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
-import { isDifferenceObj } from 'reborn-util';
+import { isDifferenceObj } from "reborn-util";
 import "./AddTemplateCategory.scss";
 
 export default function AddTemplateCategory(props: AddTemplateCategoryModalProps) {
@@ -24,10 +24,10 @@ export default function AddTemplateCategory(props: AddTemplateCategoryModalProps
 
   const values = useMemo(
     () =>
-    ({
-      name: data?.name ?? "",
-      position: data?.position?.toString() ?? "0",
-    } as ITemplateCategoryRequestModel),
+      ({
+        name: data?.name ?? "",
+        position: data?.position?.toString() ?? "0",
+      } as ITemplateCategoryRequestModel),
     [data, onShow]
   );
 
@@ -43,6 +43,7 @@ export default function AddTemplateCategory(props: AddTemplateCategoryModalProps
       label: "Tên chủ đề",
       name: "name",
       type: "text",
+      maxLength: 100,
       fill: true,
       required: true,
     },
@@ -51,7 +52,7 @@ export default function AddTemplateCategory(props: AddTemplateCategoryModalProps
       name: "position",
       type: "number",
       fill: true,
-    }
+    },
   ];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
