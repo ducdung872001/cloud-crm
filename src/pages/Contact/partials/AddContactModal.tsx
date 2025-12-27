@@ -43,9 +43,11 @@ import CustomerService from "services/CustomerService";
 import { ContextType, UserContext } from "contexts/userContext";
 import ImageThirdGender from "assets/images/third-gender.png";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
+import SelectUrlCustom from "components/selectUrlCustom/selectUrlCustom";
 
 export default function AddContactModal(props: AddContactModalProps) {
   const { onShow, onHide, data, idCustomer } = props;
+  console.log("data in modal contact >>>>", data);
 
   const parser = new Parser();
   const { dataBranch } = useContext(UserContext) as ContextType;
@@ -1546,6 +1548,88 @@ export default function AddContactModal(props: AddContactModalProps) {
                   disabled={!formData?.values?.pipelineId ? true : false}
                 />
               </div>
+
+              <div className="form-group">
+                <SelectUrlCustom
+                  label="Chức vụ"
+                  url="/adminapi/position/list"
+                  // isLoadAll={true}
+                  searchKey="name"
+                  labelKey="name"
+                  valueKey="id"
+                  value={
+                    formData?.values?.positionId
+                      ? {
+                          value: formData.values.positionId,
+                          label: formData.values.positionName ?? "Đang tải...",
+                        }
+                      : null
+                  }
+                  onChange={(option) => {
+                    setFormData({
+                      ...formData,
+                      values: {
+                        ...formData?.values,
+                        positionId: option?.value,
+                        positionName: option?.label,
+                      },
+                    });
+                  }}
+                  fill={true}
+                  placeholder="Chọn chức vụ..."
+                />
+              </div>
+
+              <div className="form-group">
+                <SelectUrlCustom
+                  label="Chức vụ"
+                  url="/adminapi/position/list"
+                  // isLoadAll={true}
+                  isMulti={true} // --- GIỮ NGUYÊN ---
+                  searchKey="name"
+                  labelKey="name"
+                  valueKey="id"
+                  value={
+                    formData?.values?.positions?.map((item) => ({
+                      value: item.id,
+                      label: item.name,
+                    })) || []
+                  }
+                  onChange={(options) => {
+                    setFormData({
+                      ...formData,
+                      values: {
+                        ...formData?.values,
+                        // Lưu lại dạng mảng object gốc để lần sau hiển thị lại được
+                        positions: options.map((opt) => ({
+                          id: opt.value,
+                          name: opt.label,
+                        })),
+                      },
+                    });
+                  }}
+                  fill={true}
+                  placeholder="Chọn các chức vụ..."
+                />
+              </div>
+
+              {/* <div className="form-group">
+                <SelectUrlCustom
+                  label="Chọn nhân viên"
+                  isMulti={true}
+                  value={[
+                    { value: 101, label: "Nguyễn Văn A" },
+                    { value: 102, label: "Trần Thị B" },
+                  ]}
+                  onChange={(opts) => {
+                    console.log("Danh sách đã chọn:", opts);
+
+                    // Cách map để lưu xuống DB:
+                    const ids = opts.map((o) => o.value); // [101, 102, 103]
+                  }}
+                  fill={true}
+                />
+              </div> */}
 
               {listField.map((field, index) =>
                 field.label === "Ghi chú" ? (

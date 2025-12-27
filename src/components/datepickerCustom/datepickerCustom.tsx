@@ -112,17 +112,11 @@ export default function DatePickerCustom(props: DatePickerCustomProps) {
   };
 
   function parseDateString(dateStr: string): Date | null {
-    if (typeof dateStr == "object") {
-      return dateStr;
-    } else if (typeof dateStr == "string") {
-      const parts = dateStr.split("/");
-      if (parts.length !== 3) return null;
-      const [day, month, year] = parts.map(Number);
-      if (isNaN(day) || isNaN(month) || isNaN(year) || day < 1 || day > 31 || month < 1 || month > 12) return null;
-      return new Date(year, month - 1, day);
-    } else {
-      return null;
-    }
+    const parts = dateStr.split("/");
+    if (parts.length !== 3) return null;
+    const [day, month, year] = parts.map(Number);
+    if (isNaN(day) || isNaN(month) || isNaN(year) || day < 1 || day > 31 || month < 1 || month > 12) return null;
+    return new Date(year, month - 1, day);
   }
 
   const inputComponent = () => {

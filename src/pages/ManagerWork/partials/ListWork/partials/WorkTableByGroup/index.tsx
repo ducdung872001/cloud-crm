@@ -32,6 +32,7 @@ import Collapsible from "components/collapse";
 import { it } from "date-fns/locale";
 import { color } from "highcharts";
 import Input from "components/input/input";
+import DetailWorkModal from "./partials/TestModal/DetailWorkModal";
 
 export default function WorkTableByGroup(props: IListWorkProps) {
   const isMounted = useRef(false);
@@ -74,6 +75,8 @@ export default function WorkTableByGroup(props: IListWorkProps) {
   const [params, setParams] = useState<IWorkOrderFilterRequest>({
     name: "",
   });
+
+  const [showModalDetail, setShowModalDetail] = useState<boolean>(false);
 
   useEffect(() => {
     if (idManagement) {
@@ -669,8 +672,8 @@ export default function WorkTableByGroup(props: IListWorkProps) {
         title: "Xem chi tiết",
         icon: <Icon name="Eye" />,
         callback: () => {
-          handleDetailWork(item, listWork.length);
-          setIsDetailWork(true);
+          setIdWork(item.id);
+          setShowModalDetail(true);
         },
       },
       ...(item.status == 2 || item.status == 3
@@ -794,6 +797,7 @@ export default function WorkTableByGroup(props: IListWorkProps) {
   };
 
   const headerCollapsible = useCallback((item, index) => {
+    console.log("itemSetup item", item);
     return (
       <div className="collapse-header">
         <div className="group-name" style={{ backgroundColor: item?.color }}>
@@ -1015,6 +1019,8 @@ export default function WorkTableByGroup(props: IListWorkProps) {
         }}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
+
+      <DetailWorkModal onShow={showModalDetail} idData={idWork} onHide={() => setShowModalDetail(false)} />
     </div>
   );
 }

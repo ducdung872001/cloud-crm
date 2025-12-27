@@ -20,8 +20,8 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  listAll: (signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contactAttribute.listAll}`, {
+  listAll: (params?: any, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.contactAttribute.listAll}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
