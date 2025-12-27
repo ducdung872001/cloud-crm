@@ -10,7 +10,7 @@ import { IBeautyBranchRequest } from "model/beautyBranch/BeautyBranchRequestMode
 import { AddBeautyBranchModalProps } from "model/beautyBranch/PropsModel";
 import { PHONE_REGEX, EMAIL_REGEX } from "utils/constant";
 import { showToast } from "utils/common";
-import { createArrayFromTo, createArrayFromToR, getMaxDay, isDifferenceObj } from 'reborn-util';
+import { createArrayFromTo, createArrayFromToR, getMaxDay, isDifferenceObj } from "reborn-util";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { useActiveElement } from "utils/hookCustom";
 import BeautyBranchService from "services/BeautyBranchService";
@@ -32,7 +32,7 @@ export default function EditParentBranch(props: any) {
     setIsLoading(true);
 
     const response = await BeautyBranchService.detail(branchId);
-    
+
     if (response.code === 0) {
       const result = response.result;
       setData(result);
@@ -41,14 +41,13 @@ export default function EditParentBranch(props: any) {
     }
 
     setIsLoading(false);
-  }
+  };
 
   useEffect(() => {
-    if(branchId){
-        getDetailBranch()
+    if (branchId) {
+      getDetailBranch();
     }
-    
-  },[branchId, onShow])
+  }, [branchId, onShow]);
 
   const [isLoadingBeautyBranch, setIsLoadingBeautyBranch] = useState<boolean>(false);
   const [listBeautyBranch, setListBeautyBranch] = useState<IOption[]>(null);
@@ -57,14 +56,15 @@ export default function EditParentBranch(props: any) {
     if (!listBeautyBranch || listBeautyBranch.length === 0) {
       setIsLoadingBeautyBranch(true);
       const dataOption = await SelectOptionData("beautyBranch");
-      
+      console.log("dataOption>>", dataOption);
+
       if (dataOption) {
         const newData = [...dataOption];
         newData.unshift({
-            value:'',
-            label:'Không có chi nhánh cha'
-        })
-        setListBeautyBranch([...(newData.length > 0 ? newData : [])]);
+          value: "",
+          label: "Không có chi nhánh cha",
+        });
+        setListBeautyBranch([...(newData.length > 0 ? newData : [])].filter((item) => item.value != branchId));
       }
       setIsLoadingBeautyBranch(false);
     }
@@ -82,24 +82,24 @@ export default function EditParentBranch(props: any) {
 
   const values = useMemo(
     () =>
-    ({
-      parentId: data?.parentId ?? "",
-      avatar: data?.avatar ?? "",
-      name: data?.name ?? "",
-      alias: data?.alias ?? "",
-      address: data?.address ?? "",
-      foundingDay: data?.foundingDay ?? '',
-      foundingMonth: data?.foundingMonth ?? '',
-      foundingYear: data?.foundingYear ?? '',
-      website: data?.website ?? "",
-      description: data?.description ?? "",
-      code: data?.code ?? "",
-      doctorNum: data?.doctorNum.toString() ?? "0",
-      contact: data?.contact ?? "",
-      phone: data?.phone ?? "",
-      email: data?.email ?? "",
-      goodAt: data?.goodAt ?? "",
-    } as IBeautyBranchRequest),
+      ({
+        parentId: data?.parentId ?? "",
+        avatar: data?.avatar ?? "",
+        name: data?.name ?? "",
+        alias: data?.alias ?? "",
+        address: data?.address ?? "",
+        foundingDay: data?.foundingDay ?? "",
+        foundingMonth: data?.foundingMonth ?? "",
+        foundingYear: data?.foundingYear ?? "",
+        website: data?.website ?? "",
+        description: data?.description ?? "",
+        code: data?.code ?? "",
+        doctorNum: data?.doctorNum.toString() ?? "0",
+        contact: data?.contact ?? "",
+        phone: data?.phone ?? "",
+        email: data?.email ?? "",
+        goodAt: data?.goodAt ?? "",
+      } as IBeautyBranchRequest),
     [data, onShow]
   );
 
@@ -108,7 +108,6 @@ export default function EditParentBranch(props: any) {
     //   name: "parentId",
     //   rules: "required",
     // },
-  
   ];
 
   const listFieldBasic: IFieldCustomize[] = [
@@ -147,7 +146,7 @@ export default function EditParentBranch(props: any) {
     setIsSubmit(true);
     const body: IBeautyBranchRequest = {
       ...(formData.values as IBeautyBranchRequest),
-      ...(data ? { id: data.id } : {})      
+      ...(data ? { id: data.id } : {}),
     };
     const response = await BeautyBranchService.update(body);
 

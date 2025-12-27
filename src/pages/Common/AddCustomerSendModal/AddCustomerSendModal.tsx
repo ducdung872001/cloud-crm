@@ -23,7 +23,7 @@ const AddCustomerSendModal = (props: IAddCustomerSendEmailModalProps) => {
   const { onShow, callBack, onHide, listIdCustomer, lstCustomer, type } = props;
 
   const isMounted = useRef(false);
-  const { dataBranch} = useContext(UserContext) as ContextType;
+  const { dataBranch } = useContext(UserContext) as ContextType;
   const [listCustomer, setListCustomer] = useState<ICustomerResponse[]>([]);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -47,11 +47,10 @@ const AddCustomerSendModal = (props: IAddCustomerSendEmailModalProps) => {
   });
 
   useEffect(() => {
-    if(dataBranch){
-      setParams({...params, branchId: dataBranch.value})
+    if (dataBranch) {
+      setParams({ ...params, branchId: dataBranch.value });
     }
-    
-  }, [dataBranch])
+  }, [dataBranch]);
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
@@ -171,7 +170,7 @@ const AddCustomerSendModal = (props: IAddCustomerSendEmailModalProps) => {
 
   return (
     <Fragment>
-      <Modal isFade={true} isOpen={onShow} isCentered={true} staticBackdrop={true} toggle={() => onHide()} className="modal-add-customer">
+      <Modal isFade={true} isOpen={onShow} isCentered={true} staticBackdrop={true} size="xl" toggle={() => onHide()} className="modal-add-customer">
         <div className="wrapper-customer">
           <ModalHeader
             title="Chọn khách hàng"

@@ -35,7 +35,7 @@ export default function SMSMarkettingList() {
     return +item;
   });
 
-  const mbtId = (takeParamsUrl && takeParamsUrl?.mbtId);
+  const mbtId = takeParamsUrl && takeParamsUrl?.mbtId;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [listSMSMarketing, setListSMSMarketing] = useState<ISendSMSResponseModel[]>([]);
@@ -58,10 +58,10 @@ export default function SMSMarkettingList() {
       }
     }
 
-    if(mbtId){
+    if (mbtId) {
       setShowPageSendSMS(true);
     }
-  }, [customerIdlist, checkadd, mbtId ]);
+  }, [customerIdlist, checkadd, mbtId]);
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
@@ -292,6 +292,8 @@ export default function SMSMarkettingList() {
     ),
   ];
 
+  const [isView, setIsView] = useState<boolean>(false);
+
   const actionsTable = (item: ISendSMSResponseModel): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
@@ -299,23 +301,36 @@ export default function SMSMarkettingList() {
         ? ([
             permissions["SMS_REQUEST_IMPORT"] == 1 && {
               title: "Phê duyệt",
-              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ? "icon-disabled" : "icon-warning"} />,
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                onApprove(item.id);
+                  onApprove(item.id);
+                }
+              },
+            },
+            permissions["SMS_REQUEST_VIEW"] == 1 && {
+              title: "Xem chi tiết",
+              icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""} />,
+              disabled: isCheckedItem,
+              callback: () => {
+                if (!isCheckedItem) {
+                  setIdSendSMS(item.id);
+                  setShowPageSendSMS(true);
+                  setCheckAdd(true);
+                  setIsView(true);
                 }
               },
             },
             permissions["SMS_REQUEST_UPDATE"] == 1 && {
               title: "Sửa",
-              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                setIdSendSMS(item.id);
-                setShowPageSendSMS(true);
-                setCheckAdd(true);
+                  setIdSendSMS(item.id);
+                  setShowPageSendSMS(true);
+                  setCheckAdd(true);
                 }
               },
             },
@@ -325,7 +340,7 @@ export default function SMSMarkettingList() {
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                showDialogConfirmDelete(item);
+                  showDialogConfirmDelete(item);
                 }
               },
             },
@@ -370,21 +385,21 @@ export default function SMSMarkettingList() {
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} SMS marketing`, "success");
-        getListSMSMarketing(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có SMS marketing nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} SMS marketing`, "success");
+          getListSMSMarketing(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có SMS marketing nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+  };
 
   const showDialogConfirmCancel = (item?: ISendSMSResponseModel) => {
     const contentDialog: IContentDialog = {
@@ -405,11 +420,11 @@ export default function SMSMarkettingList() {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
@@ -544,12 +559,14 @@ export default function SMSMarkettingList() {
         <AddEditSendSMS
           onShow={showPageSendSMS}
           idSendSMS={idSendSMS}
+          isView={isView}
           onHide={(isHide) => {
             if (isHide) {
               getListSMSMarketing(params);
             }
             setShowPageSendSMS(false);
             setCheckAdd(false);
+            setIsView(false);
           }}
           onBackProps={() => setShowPageSendSMS(false)}
           customerIdList={customerIdlist}

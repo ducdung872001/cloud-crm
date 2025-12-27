@@ -1,4 +1,32 @@
 .page-partner {
+  .text-left {
+    text-align: left !important;
+  }
+
+  .text-center {
+    text-align: center !important;
+  }
+
+  .ag-header-cell.text-left,
+  .ag-cell.text-left {
+    text-align: left !important;
+    justify-content: flex-start !important;
+    
+    .ag-header-cell-label {
+      justify-content: flex-start !important;
+    }
+  }
+
+  .ag-header-cell.text-center,
+  .ag-cell.text-center {
+    text-align: center !important;
+    justify-content: center !important;
+    
+    .ag-header-cell-label {
+      justify-content: center !important;
+    }
+  }
+
   .card-box {
     .quick__search {
       width: 100%;
@@ -307,6 +335,7 @@
     .lst__action--cell {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.8rem;
 
       .item__action {
@@ -351,6 +380,7 @@
     .has__phone {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0 1rem;
 
       .isEye {

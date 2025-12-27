@@ -130,7 +130,7 @@ export default function Filter(props: FilterProps) {
       carouselStyle = { width: isCollapsedSidebar ? "80rem" : "66rem" };
     }
   }
- 
+
   return (
     <div className="filter-container d-flex">
       {isShowFilterList && (

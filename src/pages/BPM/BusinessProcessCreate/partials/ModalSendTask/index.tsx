@@ -186,10 +186,16 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
         );
       }
 
+      const executionMode =
+        result?.executionMode && JSON.parse(result.executionMode)
+          ? JSON.parse(result.executionMode)
+          : { payloadHandling: 0 };
+
       const data = {
         ...result,
         recipient: recipient?.type || "Người dùng",
         errorHandling: errorHandling?.type || "Retry",
+        payloadHandling: executionMode.payloadHandling ?? null,
       };
 
       setData(data);
@@ -219,6 +225,8 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
       nodeId: dataNode?.id ?? null,
       processId: childProcessId ?? processId ?? null,
       workflowId: data?.workflowId ?? null,
+      executionMode: data?.executionMode ?? null,
+      payloadHandling: data?.payloadHandling ?? null,
     }),
     [onShow, data, dataNode, processId, childProcessId]
   );
@@ -265,6 +273,27 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
   //     }
   //   }
   // }, [formData.errorHandling]);
+
+  useEffect(() => {
+    if (formData?.payloadHandling === 1) {
+      setListInputVar((current) => {
+        const existing = current?.find((it) => it.name === "listData");
+        if (existing) return current;
+        const newFirst = {
+          name: "listData",
+          attributeMapping: "",
+          attributeMappingId: "",
+          mappingType: 1,
+          checkName: false,
+          checkMapping: false,
+        };
+        const rest = (current || []).filter((it) => it.name !== "listData");
+        return [newFirst, ...rest];
+      });
+    } else {
+      setListInputVar((current) => (current || []).filter((it) => it.name !== "listData"));
+    }
+  }, [formData?.payloadHandling]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -354,6 +383,9 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
       nodeId: dataNode?.id ?? null,
       processId: formData?.processId ?? null,
       workflowId: formData?.workflowId ?? null,
+      executionMode: JSON.stringify({
+        payloadHandling: formData.payloadHandling,
+      }),
     };
     console.log("body", body);
 
@@ -825,6 +857,44 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
                 />
               </div>
 
+              <div className="form-group">
+                <SelectCustom
+                  id="payloadHandling"
+                  name="payloadHandling"
+                  label="Dạng xử lý dữ liệu"
+                  fill={true}
+                  special={true}
+                  required={true}
+                  options={[
+                    {
+                      value: 0,
+                      label: "Xử lý thông thường",
+                    },
+                    {
+                      value: 1,
+                      label: "Xử lý từng phần tử trong lô param ",
+                    },
+                  ]}
+                  value={
+                    formData.payloadHandling !== null
+                      ? {
+                        value: formData.payloadHandling,
+                        label:
+                          formData.payloadHandling === 0
+                            ? "Xử lý thông thường"
+                            : "Xử lý từng phần tử trong lô param"
+                      }
+                      : null
+                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, payloadHandling: e.value });
+                  }}
+                  isAsyncPaginate={false}
+                  isFormatOptionLabel={false}
+                  placeholder="Chọn dạng xử lý dữ liệu"
+                />
+              </div>
+
               <div className="container-inputVar">
                 <div>
                   <span style={{ fontSize: 14, fontWeight: "700" }}>Biến đầu vào</span>
@@ -838,7 +908,8 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
                             name="nameInput"
                             label={index === 0 ? "Tên tham số đầu vào" : ""}
                             fill={true}
-                            required={false}
+                            disabled={item.name === "listData"}
+                            required={item.name === "listData"}
                             error={item.checkName}
                             message="Tên tham số đầu vào không được để trống"
                             placeholder={"Tên tham số đầu vào"}
@@ -858,7 +929,7 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
                         </div>
                         <div className="item-inputVar">
                           {index === 0 ? (
-                            <div>
+                            <div style={{marginBottom: "5px"}}>
                               <span style={{ fontSize: 14, fontWeight: "700" }}>Biến quy trình</span>
                             </div>
                           ) : null}
@@ -981,7 +1052,7 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
                           </Tippy>
                         </div>
 
-                        {listInputVar.length > 1 ? (
+                        {listInputVar.length > 1 && item.name !== "listData" ? (
                           <div className="remove-attribute" style={index === 0 ? { marginTop: "3.2rem" } : {}}>
                             <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
                               <span

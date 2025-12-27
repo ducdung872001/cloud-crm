@@ -41,6 +41,17 @@ $item-border: #eee;
   .wrapper-list-image {
     width: 100%;
     overflow: scroll;
+    .loading-upload {
+      height: 80px;
+      .loading__wrapper {
+        min-height: 80px;
+        height: 80px;
+        svg {
+          height: 3rem;
+          width: 3rem;
+        }
+      }
+    }
   }
 
   .list-image-scroll {

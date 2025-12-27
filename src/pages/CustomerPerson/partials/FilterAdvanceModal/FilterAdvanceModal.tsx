@@ -180,7 +180,7 @@ export default function FilterAdvanceModal(props: any) {
   //! đoạn này xử lý call api lấy ra thông tin nguồn khách hàng
   const loadOptionCustomerSource = async (search, loadedOptions, { page }) => {
     const param: any = {
-      keyword: search,
+      name: search,
       page: page,
       limit: 100,
     };

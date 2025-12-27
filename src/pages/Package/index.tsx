@@ -204,15 +204,25 @@ export default function Package() {
 
   const titles = ["STT", "Tên ứng dụng", "Tên gói", "Loại gói", "Giá gốc", "Giá ưu đãi", "Thời gian", "Số tháng tặng", "Phân quyền", "Trạng thái"];
 
-  const dataFormat = ["text-center", "", "text-left", "text-left", "text-right", "text-right", "text-right", "text-right", "text-center", "text-center"];
-
+  const dataFormat = [
+    "text-center",
+    "",
+    "text-left",
+    "text-left",
+    "text-right",
+    "text-right",
+    "text-right",
+    "text-right",
+    "text-center",
+    "text-center",
+  ];
 
   // IPackageResponseModel
   const dataMappingArray = (item: any, index: number) => [
     getPageOffset(params) + index + 1,
     item.code,
-    <div style={{width: '20rem'}}>
-      {item.name}
+    <div style={{ width: "20rem" }} title={item.name}>
+      {item.name.length > 30 ? item.name.slice(0, 30) + "..." : item.name}
     </div>,
     getPackageTypeName(item.packageType),
     formatCurrency(item.price, ",", "đ"),
@@ -237,17 +247,16 @@ export default function Package() {
     return [
       {
         title: item.status === 1 ? "Đang hiệu lực" : "Tạm dừng",
-        icon: <Icon name={!item.status ? "WarningCircle" : "CheckedCircle"} className={
-        isCheckedItem
-          ? "icon-disabled"
-          : !item.status
-          ? "icon-warning"
-          : "icon-success"
-      } />,
-      disabled: isCheckedItem,
+        icon: (
+          <Icon
+            name={!item.status ? "WarningCircle" : "CheckedCircle"}
+            className={isCheckedItem ? "icon-disabled" : !item.status ? "icon-warning" : "icon-success"}
+          />
+        ),
+        disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirm(item);
+            showDialogConfirm(item);
           }
         },
       },
@@ -255,12 +264,12 @@ export default function Package() {
         ? [
             {
               title: "Sửa",
-              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                setDataPackage(item);
-                setShowModalAdd(true);
+                  setDataPackage(item);
+                  setShowModalAdd(true);
                 }
               },
             },
@@ -270,7 +279,7 @@ export default function Package() {
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                showDialogConfirmDelete(item);
+                  showDialogConfirmDelete(item);
                 }
               },
             },
@@ -305,21 +314,21 @@ export default function Package() {
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} gói dịch vụ`, "success");
-        getListPackage(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có gói dịch vụ nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} gói dịch vụ`, "success");
+          getListPackage(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có gói dịch vụ nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+  };
 
   const showDialogConfirmDelete = (item?: any) => {
     const contentDialog: IContentDialog = {
@@ -345,11 +354,11 @@ export default function Package() {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
@@ -384,8 +393,25 @@ export default function Package() {
       title: <Fragment>{item.status === 1 ? "Đang hiệu lực" : "Tạm dừng"}...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn chuyển sang trạng thái <strong>{item.status === 1 ? "tạm dừng" : "đang hiệu lực"}</strong> cho gói
-          {item ? <strong> {item.name}</strong> : ""}? Thao tác này không thể khôi phục.
+          Bạn có chắc chắn muốn chuyển sang trạng thái <strong>{item.status === 1 ? "tạm dừng" : "đang hiệu lực"}</strong> cho gói {` `}
+          {item ? (
+            <div
+              style={{
+                display: "inline-block",
+                maxWidth: "15rem",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                verticalAlign: "bottom",
+                fontWeight: 700,
+              }}
+            >
+              {" "}
+              {item.name}
+            </div>
+          ) : (
+            ""
+          )}
+          ? Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",
@@ -435,7 +461,7 @@ export default function Package() {
             </Fragment>
           )}
         </div>
-        {(
+        {
           <Button
             className="btn__add--department"
             onClick={(e) => {
@@ -446,10 +472,10 @@ export default function Package() {
           >
             Thêm mới
           </Button>
-        )}
+        }
       </div>
 
-      {showConfig ? 
+      {showConfig ? (
         <div className="card-box d-flex flex-column">
           <ViewConfigRole
             data={dataRole}
@@ -458,7 +484,7 @@ export default function Package() {
             }}
           />
         </div>
-        : 
+      ) : (
         <div className="card-box d-flex flex-column">
           <SearchBox
             name="Tên gói giá"
@@ -520,7 +546,7 @@ export default function Package() {
             </Fragment>
           )}
         </div>
-      }
+      )}
       <AddPackageModal
         onShow={showModalAdd}
         data={dataPackage}

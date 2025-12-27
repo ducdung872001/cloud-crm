@@ -715,13 +715,15 @@ export default function AddContactModal(props: AddContactModalProps) {
       clearForm(true);
     } else {
       if (response.error) {
-        setFormData((prevState) => ({ 
-          ...prevState, 
-          errors: { 
-            ...prevState.errors,
-            name: response.error 
-          } 
-        }));
+        if (response.error.includes("Số điện thoại đã tồn tại")) {
+          setFormData((prevState) => ({
+            ...prevState,
+            errors: {
+              ...prevState.errors,
+              phone: response.error,
+            },
+          }));
+        }
         showToast(response.error, "error");
       } else {
         showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -1352,6 +1354,8 @@ export default function AddContactModal(props: AddContactModalProps) {
     setDetailEmployee(null);
     setLstCoordinator([]);
   };
+
+  console.log("formData =>", formData);
 
   return (
     <Fragment>

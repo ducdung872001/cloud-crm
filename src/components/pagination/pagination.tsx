@@ -173,7 +173,7 @@ export function Pagination(props: PaginationProps) {
             {totalPage > displayNumber && (
               <li className={`page-prev ${page === 1 ? "disabled" : ""}`} onClick={page > 1 ? () => setPage(page - 1) : undefined}>
                 <Icon name="ChevronLeft" />
-                {(width > 1550 && isCollapsedSidebar) || width > 1750 ? "Trang trước " : ""}
+                {/* {(width > 1550 && isCollapsedSidebar) || width > 1750 ? "Trang trước " : ""} */}
               </li>
             )}
             <li className={`page-item${page === 1 ? " active" : ""}`} onClick={() => setPage(1)}>
@@ -230,7 +230,7 @@ export function Pagination(props: PaginationProps) {
             )}
             {totalPage > displayNumber && (
               <li className={`page-next ${page === totalPage ? "disabled" : ""}`} onClick={page < totalPage ? () => setPage(page + 1) : undefined}>
-                {(width > 1550 && isCollapsedSidebar) || width > 1750 ? "Trang sau " : ""}
+                {/* {(width > 1550 && isCollapsedSidebar) || width > 1750 ? "Trang sau " : ""} */}
                 <Icon name="ChevronRight" />
               </li>
             )}

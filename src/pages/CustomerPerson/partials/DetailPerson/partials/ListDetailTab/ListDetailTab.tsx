@@ -28,6 +28,11 @@ import ProductNeeds from "./partials/ProductNeeds";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Grid } from "swiper";
 
+type TabChild = {
+  title: string;
+  tab_children: string;
+};
+
 export default function ListDetailTab(props: IListTabDetailProps) {
   const { data } = props;
 
@@ -146,8 +151,6 @@ export default function ListDetailTab(props: IListTabDetailProps) {
   const [listTabs, setListTabs] = useState(() => {
     return lstTabLocalStorage && lstTabLocalStorage.length > 0 ? lstTabLocalStorage : listTabItems;
   });
-  console.log('listTabs', listTabs);
-  
 
   const handleOnDragEnd = (result) => {
     // Nếu không có đích đến, thoát ra
@@ -167,8 +170,51 @@ export default function ListDetailTab(props: IListTabDetailProps) {
     localStorage.setItem("lstTabDetailCustomer", JSON.stringify(_.cloneDeep(items)));
   };
 
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  // State cho tooltip: null = ẩn; nếu có thì chứa toạ độ (px)
+  const [menuPos, setMenuPos] = useState<{ left: number; top: number } | null>(null);
+
+  // State lưu item.children hiện tại (được hover)
+  // const [hoveredChildren, setHoveredChildren] = useState<TabChild[] | null>(null);
+  const [hoveredItem, setHoveredItem] = useState(null);
+
+  function handleMouseEnter(e: React.MouseEvent<HTMLLIElement>, item?: any) {
+    const li = e.currentTarget; // thẻ li đang hover
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    const liRect = li.getBoundingClientRect();
+    const wrapperRect = wrapper.getBoundingClientRect();
+
+    // Toạ độ li so với wrapper (bao gồm scroll offset của wrapper)
+    const relative = {
+      left: liRect.left - wrapperRect.left + wrapper.scrollLeft,
+      top: liRect.top - wrapperRect.top + wrapper.scrollTop,
+      right: liRect.right - wrapperRect.left + wrapper.scrollLeft,
+      bottom: liRect.bottom - wrapperRect.top + wrapper.scrollTop,
+      width: liRect.width,
+      height: liRect.height,
+    };
+    // hoặc lưu vào state để dùng vị trí này (ví dụ show menu)
+    // Hiển thị tooltip ngay bên dưới li (sử dụng relative.left và relative.bottom)
+    setMenuPos({
+      left: Math.max(0, relative.left),
+      top: Math.max(0, relative.bottom),
+    });
+
+    // Lưu children để hiển thị trong tooltip
+    setHoveredItem(item);
+  }
+
+  function handleMouseLeave() {
+    // Ân tooltip
+    setMenuPos(null);
+    setHoveredItem(null);
+  }
+
   return (
-    <div className="wrapper-tab">
+    <div className="wrapper-tab" ref={wrapperRef}>
       <div className="list-tab">
         <DragDropContext onDragEnd={handleOnDragEnd}>
           <Droppable droppableId="tabs" direction="horizontal">
@@ -179,6 +225,7 @@ export default function ListDetailTab(props: IListTabDetailProps) {
                     {(provided) => (
                       <li
                         key={idx}
+                        onMouseEnter={(e) => handleMouseEnter(e, item)}
                         className={`${item.is_active === tab ? "active" : ""} ${item.is_tab_children ? "confirm-children" : ""}`}
                         onClick={(e) => {
                           e.preventDefault();
@@ -192,93 +239,51 @@ export default function ListDetailTab(props: IListTabDetailProps) {
                         }}
                       >
                         {item.title}
-
-                        {item.children && (
-                          <div className="box__menu--lv2">
-                            <ul className="menu-lv2--list">
-                              {item.children.map((el, index) => (
-                                <li
-                                  key={index}
-                                  className={`children-item ${el.tab_children === tabChildren ? "active-lv2-children" : ""}`}
-                                  onClick={() => {
-                                    setTabChildren(el.tab_children);
-                                  }}
-                                >
-                                  {el.title}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
                       </li>
                     )}
                   </Draggable>
                 ))}
-                {/* <Swiper
-                  onInit={(core: SwiperCore) => {
-                    swiperRelationshipRef.current = core.el;
-                  }}
-                  className="tab-slider"
-                  grid={{
-                    rows: 1,
-                  }}
-                  navigation={true}
-                  modules={[Grid, Navigation]}
-                  slidesPerView={6}
-                  spaceBetween={8}
-                >
-                  {listTabs.map((item, idx) => {
-                    return (
-                      <SwiperSlide key={idx} className="list__tab--slide">
-                        <Draggable key={item.is_active} draggableId={item.is_active} index={idx}>
-                          {(provided) => (
-                            <li
-                              key={idx}
-                              className={`${item.is_active === tab ? "active" : ""} ${item.is_tab_children ? "confirm-children" : ""}`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setTab(item.is_active);
-                              }}
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              style={{
-                                ...provided.draggableProps.style,
-                              }}
-                            >
-                              {item.title}
-
-                              {item.children && (
-                                <div className="box__menu--lv2">
-                                  <ul className="menu-lv2--list">
-                                    {item.children.map((el, index) => (
-                                      <li
-                                        key={index}
-                                        className={`children-item ${el.tab_children === tabChildren ? "active-lv2-children" : ""}`}
-                                        onClick={() => {
-                                          setTabChildren(el.tab_children);
-                                        }}
-                                      >
-                                        {el.title}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-                            </li>
-                          )}
-                        </Draggable>
-                      </SwiperSlide>
-                    );
-                  })}
-                </Swiper> */}
                 {provided.placeholder}
               </ul>
             )}
           </Droppable>
-          
         </DragDropContext>
       </div>
+      {/* Tooltip / popup hiển thị tại toạ độ tính được và dùng hoveredChildren */}
+      {menuPos && hoveredItem && hoveredItem?.children && hoveredItem?.children?.length && (
+        <div
+          className="hover-tooltip"
+          style={{
+            position: "absolute",
+            left: `${menuPos.left}px`,
+            top: `${menuPos.top}px`,
+            zIndex: 2147483647,
+          }}
+          onMouseLeave={() => {
+            // ẩn khi rời tooltip
+            handleMouseLeave();
+          }}
+        >
+          <ul className="hover-children-list">
+            {hoveredItem.children.map((c, i) => (
+              <li
+                key={i}
+                className={`hover-child-item ${c.tab_children === tabChildren ? "active-lv2-children" : ""}`}
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  setTab(hoveredItem.is_active);
+                  setTabChildren(c.tab_children);
+                  // ẩn tooltip sau khi chọn
+                  setMenuPos(null);
+                  setHoveredItem(null);
+                }}
+              >
+                {c.title}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className="details-tab">
         {tab === "tab_one" ? (
           tabChildren === "tab_children_one" ? (

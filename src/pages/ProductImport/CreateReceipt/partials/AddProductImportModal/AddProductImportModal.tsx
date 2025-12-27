@@ -21,6 +21,7 @@ import { useDebounce } from "utils/hookCustom";
 import ImageThirdGender from "assets/images/third-gender.png";
 import { isDifferenceObj } from "reborn-util";
 import "./AddProductImportModal.scss";
+import moment from "moment";
 
 interface IOptionData {
   value: string;
@@ -351,6 +352,8 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
     const body: IInvoiceDetailRequest = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as IInvoiceDetailRequest),
+            mfgDate: moment(formData.values.mfgDate).format('YYYY-MM-DDTHH:mm:ss'),
+            expiryDate: moment(formData.values.expiryDate).format('YYYY-MM-DDTHH:mm:ss'),
     };
 
     // let arrExchange = (listUnitProduct || []).filter((item) => item.value == body.unitId.toString());

@@ -576,4 +576,12 @@ export default {
     }).then((res) => res.json());
   },
 
+  // chia data khách hàng Tnex
+  customerAssign: (body: any) => {
+    return fetch(urlsApi.customer.customerAssign, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+
 };

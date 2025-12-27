@@ -6,19 +6,58 @@
   padding: 0.4rem 1.5rem 2rem;
   border-left: 1px solid var(--extra-color-50);
   // max-height: 58rem;
+  position: relative;
+  /* existing styles ... keep your previous rules here */
+
+  /* tooltip styles */
+  .hover-tooltip {
+    background: #fff;
+    color: #222;
+    padding: 6px 8px;
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    pointer-events: auto;
+    transform: translateY(4px);
+  }
+
+  /* list inside tooltip */
+  .hover-children-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    min-width: 160px;
+  }
+
+  .hover-child-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .hover-child-item:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .active-lv2-children {
+    background: rgba(0, 0, 0, 0.06);
+    font-weight: 600;
+  }
 
   .list-tab {
     .action__option--title {
+      overflow: scroll;
       border-radius: 0.8rem 0.8rem 0 0;
       border-bottom: 1px solid var(--border-color);
       padding: 0 1rem;
-      height: 5rem;
+      height: 6rem;
       letter-spacing: 0.25px;
       font-size: 1.4rem;
       line-height: 2rem;
       color: var(--text-extra-color);
       display: flex;
       align-items: center;
+      // overflow: scroll;
 
       li {
         display: flex;
@@ -29,6 +68,10 @@
         transition: color 0.2s ease-in-out;
         position: relative;
         margin: 0 1rem;
+        white-space: nowrap;
+        // overflow: hidden;
+        // text-overflow: ellipsis;
+        // min-width: fit-content;
 
         &:nth-child(3) {
           padding: 1.5rem 0 1.2rem 0.6rem;
@@ -73,6 +116,7 @@
         &:hover {
           .box__menu--lv2 {
             display: block;
+            z-index: 9999;
           }
         }
       }
@@ -124,14 +168,14 @@
         align-items: center;
         position: relative;
         padding: 0 3.2rem;
-  
+
         .swiper-button-prev,
         .swiper-button-next {
           cursor: pointer;
           background-color: var(--extra-color-10);
           box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
           padding: 1rem 0.6rem;
-  
+
           &::after {
             font-size: 2.4rem;
             text-align: center;
@@ -139,25 +183,25 @@
             font-weight: 500;
           }
         }
-  
+
         .swiper-button-disabled {
           cursor: no-drop;
           opacity: 0.8;
           background-color: var(--extra-color-5);
           pointer-events: all;
         }
-  
+
         .swiper-button-prev {
           left: 0 !important;
-  
+
           &::after {
             // content: "\276C";
           }
         }
-  
+
         .swiper-button-next {
           right: 0 !important;
-  
+
           &::after {
             // content: "\276D";
           }
@@ -167,10 +211,9 @@
         //     height: 600px;
         //     border: 1px solid;
         //   }
-          
+
         // }
-        
-  
+
         .list__tab--slide {
           display: flex;
           align-items: center;
@@ -186,7 +229,7 @@
             white-space: nowrap;
             opacity: 0.9;
           }
-  
+
           .active__item-block {
             border: 1px dashed var(--black-color);
             box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
@@ -202,22 +245,22 @@
             transition: color 0.2s ease-in-out;
             position: relative;
             margin: 0 1rem;
-    
+
             &:nth-child(3) {
               padding: 1.5rem 0 1.2rem 0.6rem;
             }
-    
+
             svg {
               width: 1.8rem;
               height: 1.8rem;
               fill: var(--text-extra-color);
             }
-    
+
             &:hover,
             &.active {
               border-bottom-color: var(--primary-color);
               color: var(--text-primary-color);
-    
+
               svg {
                 fill: var(--text-primary-color);
               }
@@ -227,7 +270,7 @@
             }
             &.confirm-children {
               position: relative;
-    
+
               &::after {
                 content: "";
                 width: 0;
@@ -238,18 +281,18 @@
                 margin-left: 1rem;
               }
             }
-    
+
             .box__menu--lv2 {
               display: block;
             }
-    
+
             &:hover {
               .box__menu--lv2 {
                 display: block;
               }
             }
           }
-    
+
           .box__menu--lv2 {
             position: absolute;
             top: 5rem;
@@ -259,14 +302,14 @@
             background-color: var(--white-color);
             border-radius: 0.3rem;
             box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-    
+
             .menu-lv2--list {
               display: flex;
               flex-direction: column;
               gap: 0.2rem 0;
               padding: 0.6rem;
               width: 100%;
-    
+
               .children-item {
                 display: flex;
                 align-items: center;
@@ -279,26 +322,21 @@
                 cursor: pointer;
                 border: none;
                 margin: 0;
-    
+
                 &:hover {
                   background: var(--primary-color-5);
                 }
               }
-    
+
               .active-lv2-children {
                 cursor: default;
                 background: var(--primary-color-5);
               }
             }
           }
-          
         }
-
-        
       }
     }
-
-    
   }
 
   .details-tab {

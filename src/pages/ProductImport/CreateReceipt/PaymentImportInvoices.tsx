@@ -418,7 +418,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
           </div>
           {formData?.paymentType == 2 && (
             <div className="form-group">
-              <FileUpload type="avatar" label="Ảnh chứng từ" />
+              <FileUpload type="avatar" label="Ảnh chứng từ" formData={formData} setFormData={setFormData} />
             </div>
           )}
           <div className="action__import--order">

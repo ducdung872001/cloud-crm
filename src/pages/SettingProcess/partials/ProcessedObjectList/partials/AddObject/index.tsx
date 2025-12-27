@@ -114,7 +114,7 @@ export default function AddObject(props: IAddObjectProps) {
     const response = await ObjectGroupService.list(param);
 
     if (response.code === 0) {
-      const dataOption = response.result;
+      const dataOption = response.result?.items;
 
       return {
         options: [
@@ -127,10 +127,10 @@ export default function AddObject(props: IAddObjectProps) {
               })
             : []),
         ],
-        // hasMore: response.result.loadMoreAble,
-        // additional: {
-        //   page: page + 1,
-        // },
+        hasMore: response.result.loadMoreAble,
+        additional: {
+          page: page + 1,
+        },
       };
     }
 

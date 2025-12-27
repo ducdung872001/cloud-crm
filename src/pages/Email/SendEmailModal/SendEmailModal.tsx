@@ -25,6 +25,7 @@ import { ITemplateEmailResponseModel } from "model/templateEmail/TemplateEmailRe
 import RebornEditor from "components/editor/reborn";
 import SelectCustom from "components/selectCustom/selectCustom";
 import { ICustomerFilterRequest } from "model/customer/CustomerRequestModel";
+import PlaceholderService from "services/PlaceholderService";
 
 export default function SendEmailModal(props: IAddEmailModelProps) {
   const { onShow, onHide, data } = props;
@@ -38,6 +39,31 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
   const [showModalViewTemplateEmail, setShowModalViewTemplateEmail] = useState<boolean>(false);
   const [convertContent, setConvertContent] = useState<string>("");
   console.log("convertContent", convertContent);
+
+  //! lấy mã code email fill vào nội dung
+  const [dataCodeEmail, setDataCodeEmail] = useState<string>("");
+
+  // State cho placeholder
+  const [listApproach, setListApproach] = useState<any>([
+    {
+      value: "customer",
+      label: "Khách hàng",
+      color: "#9966CC",
+      isActive: true,
+      listPlaceholder: [],
+    },
+  ]);
+
+  const [placeholder, setPlaceholder] = useState<any>(listApproach[0]);
+
+  useEffect(() => {
+    for (let i = 0; i < listApproach.length; i++) {
+      const element = listApproach[i];
+      if (element.value == placeholder.value) {
+        setPlaceholder(element);
+      }
+    }
+  }, [listApproach]);
 
   const validateCheckEmail = (value) => {
     if (value && !value.includes("*")) {
@@ -287,6 +313,53 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
     setConvertContent(serialize({ children: dataContent }));
   };
 
+  // Hàm lấy danh sách placeholder khách hàng
+  const getListplaceholderCustomer = async () => {
+    console.log("getListplaceholderCustomer called");
+    const param = {};
+    const response = await PlaceholderService.customer(param);
+
+    if (response.code === 0) {
+      const result = response.result.items;
+      console.log("Placeholder items:", result);
+      const newListplaceholderCustomer = result.map((item) => ({
+        code: "{{" + item.name + "}}",
+        name: item.title,
+      }));
+
+      setListApproach((prevList) =>
+        prevList.map((item) => ({
+          ...item,
+          listPlaceholder:
+            item.value == "customer"
+              ? newListplaceholderCustomer.map((item) => ({ value: item.code, label: item.name, code: item.code }))
+              : item.listPlaceholder,
+        }))
+      );
+    } else {
+      console.error("Error fetching placeholders:", response.message);
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+  };
+
+  const fetchPlaceholder = async () => {
+    console.log("fetchPlaceholder called, placeholder:", placeholder);
+    if (placeholder.value == "customer") {
+      await getListplaceholderCustomer();
+    }
+  };
+
+  // đoạn này lấy mã email
+  const handlePointerContent = (data) => {
+    console.log("Selected placeholder:", data);
+    const value = data.code;
+    setDataCodeEmail(value);
+    // Reset về rỗng sau một khoảng thời gian ngắn để có thể chọn lại cùng giá trị
+    setTimeout(() => {
+      setDataCodeEmail("");
+    }, 100);
+  };
+
   useEffect(() => {
     setFormData({ ...formData, values: values, errors: {} });
     setIsSubmit(false);
@@ -302,9 +375,12 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
    */
   const loadTemplateEmail = async (item: ITemplateEmailResponseModel) => {
     if (item) {
+      console.log("Loading template:", item);
       console.log("item.content =>", item.content);
       setConvertContent(item.content);
       setFormData({ ...formData, values: { ...formData.values, title: item.title, content: item.content } });
+      // Chuyển về nội dung tự soạn sau khi chọn mẫu
+      setIsContent("1");
     }
   };
 
@@ -387,6 +463,7 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
         setContentDialog(null);
         setDataCustomer(null);
         setConvertContent("");
+        setDataCodeEmail("");
       },
     };
     setContentDialog(contentDialog);
@@ -430,6 +507,7 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
             onHide(false);
             setDataCustomer(null);
             setConvertContent("");
+            setDataCodeEmail("");
           }
         }}
         className="modal-send-email"
@@ -443,6 +521,7 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
                 onHide(false);
                 setDataCustomer(null);
                 setConvertContent("");
+                setDataCodeEmail("");
               }
             }}
           />
@@ -458,12 +537,25 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
               ))}
 
               <div className="form-group">
-                {/* TODO: lỗi phần này do trình soạn thảo */}
+                <SelectCustom
+                  id="placeholder"
+                  name="placeholder"
+                  label="Chọn trường thông tin khách hàng"
+                  options={placeholder.listPlaceholder}
+                  fill={true}
+                  value={null}
+                  onMenuOpen={() => fetchPlaceholder()}
+                  onChange={(e) => handlePointerContent(e)}
+                  placeholder={"Chọn trường thông tin " + placeholder.label}
+                />
+              </div>
+
+              <div className="form-group">
                 <RebornEditor
                   name="content"
                   fill={true}
                   initialValue={formData?.values["content"] ? formData?.values["content"] : ""}
-                  // dataText={dataCodeEmail}
+                  dataText={dataCodeEmail}
                   onChangeContent={(e) => handleChangeContent(e)}
                 />
               </div>

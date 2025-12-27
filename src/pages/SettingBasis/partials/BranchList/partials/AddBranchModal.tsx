@@ -8,7 +8,7 @@ import { IActionModal, IOption } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IBeautyBranchRequest } from "model/beautyBranch/BeautyBranchRequestModel";
 import { AddBeautyBranchModalProps } from "model/beautyBranch/PropsModel";
-import { PHONE_REGEX, EMAIL_REGEX } from "utils/constant";
+import { PHONE_REGEX, EMAIL_REGEX, WEB_URL_REGEX } from "utils/constant";
 import { showToast } from "utils/common";
 import { createArrayFromTo, createArrayFromToR, getMaxDay, isDifferenceObj } from "reborn-util";
 import Validate, { handleChangeValidate } from "utils/validate";
@@ -94,6 +94,10 @@ export default function AddBranchModal(props: AddBeautyBranchModalProps) {
       name: "email",
       rules: "regex",
     },
+    {
+      name: "website",
+      rules: "regex",
+    },
   ];
 
   const listFieldBasic = useMemo(
@@ -168,6 +172,7 @@ export default function AddBranchModal(props: AddBeautyBranchModalProps) {
       name: "website",
       type: "text",
       fill: true,
+      regex: new RegExp(WEB_URL_REGEX),
       placeholder: "https://www.example.com",
     },
     {

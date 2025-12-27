@@ -5,7 +5,7 @@ bundle/
 node_modules/
 dist/
 .vscode/
-
+.DS_Store
 # misc
 .env
 .env.prod
