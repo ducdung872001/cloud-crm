@@ -332,7 +332,10 @@ export async function SelectOptionData(key: string, params?: any) {
           return { value: item.id, label: `${item.name} - ${item.phoneMasked}`, 
           taxCodeCustomer: `${item.taxCode}`,
           addressCustomer: `${item.address}`, 
-          phoneMaskedCustomer: `${item.phoneMasked}` };
+          phoneMaskedCustomer: `${item.phoneMasked}`,
+          sourceName: `${item.sourceName}`,
+          groupName: `${item.groupName}`,
+          taxcode_customer: `${item.taxCode}`};
         }
         if (key === "categoryItemId") {
           return { value: item.id, label: `${item.name}` };
@@ -369,6 +372,22 @@ export async function SelectOptionData(key: string, params?: any) {
             label: `${item.name}`,
             product_price: item.price || 0,
             product_discount: item.discount || 0,
+          };
+        }
+        if(key === "partnerId"){
+          return {
+            value: item.id,
+            label: `${item.name}`,
+            taxCodePartner: `${item.taxCode}`,
+            phoneMaskedPartner: `${item.phoneMasked}`,
+            addressPartner: `${item.address}`,
+            taxcode_partner: `${item.taxCode}`,
+          };
+        }
+        if( key === "projectId"){
+          return {
+            value: item.id,
+            label: `${item.name}`,
           };
         }
         if (key === "boughtCardServiceByCustomerId") {

@@ -469,8 +469,7 @@ export default function PaymentBill(props: AddContractModalProps) {
     const response = await ContractPipelineService.list(param);
 
     if (response.code === 0) {
-      const dataOption = response.result;
-
+      const dataOption = response.result.items;
       return {
         options: [
           ...(dataOption.length > 0
