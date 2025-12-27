@@ -633,8 +633,13 @@ const FormViewerComponent = (props: any) => {
         let fields = formField?.properties?.binding || ""; //Trả về departmentId
         let apiUrl = formField?.properties?.apiUrl || "";
         let paramsUrl = formField?.properties?.paramsUrl || "";
-
-        const paramsTotal = convertDataParamsProperties(paramsUrl);
+        let apiParams = formField?.properties?.apiParams || "";
+        let paramsTotal = {};
+        if(apiParams){
+          paramsTotal = getParamsPropertiesEform(apiParams, formData);
+        } else {
+          paramsTotal = convertDataParamsProperties(paramsUrl);
+        }
 
         //Tồn tại trường binding
         if (fields) {
@@ -647,7 +652,7 @@ const FormViewerComponent = (props: any) => {
             params = {
               ...params,
               [field]: value,
-              ...(paramsUrl ? { ...paramsTotal } : {}),
+              ...(paramsUrl || apiParams ? { ...paramsTotal } : {}),
             };
           }
 

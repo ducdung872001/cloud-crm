@@ -329,6 +329,8 @@ export function ValidateField(field: IFieldCustomize, validation: IValidation, v
         break;
       case "regex":
         if (!validateIsEmptyOrNull(valueForm) && field.regex) {
+          console.log("okokok>", field.regex, valueForm.toString());
+
           if (!field.regex.test(valueForm.toString())) {
             message = field.messageErrorRegex ?? ":name: không đúng định dạng";
           }

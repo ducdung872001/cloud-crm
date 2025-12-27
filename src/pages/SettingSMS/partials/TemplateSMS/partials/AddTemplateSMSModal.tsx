@@ -151,6 +151,7 @@ export default function AddTemplateSMSModal(props: AddTemplateSMSModalProps) {
           name: "title",
           type: "text",
           fill: true,
+          maxLength: 300,
           required: true,
         },
         {

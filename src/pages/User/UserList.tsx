@@ -85,6 +85,10 @@ export default function UserList() {
             value: "mod",
             label: "Quản trị viên",
           },
+          {
+            value: "user",
+            label: "Người dùng",
+          },
         ],
         value: searchParams.get("role") ?? "",
       },

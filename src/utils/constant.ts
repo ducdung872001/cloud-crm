@@ -1,18 +1,16 @@
 export const EMAIL_REGEX =
   "(^((([a-z]|d|[!#$%&'*+-/=?^_`{|}~]|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF])+(.([a-z]|d|[!#$%&'*+-/=?^_`{|}~]|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF])+)*)|((x22)((((x20|x09)*(x0dx0a))?(x20|x09)+)?(([x01-x08x0bx0cx0e-x1fx7f]|x21|[x23-x5b]|[x5d-x7e]|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF])|(([x01-x09x0bx0cx0d-x7f]|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF]))))*(((x20|x09)*(x0dx0a))?(x20|x09)+)?(x22)))@((([a-z]|d|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF])|(([a-z]|d|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF])([a-z]|d|-|.|_|~|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF])*([a-z]|d|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF]))).)+(([a-z]|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF])|(([a-z]|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF])([a-z]|d|-|.|_|~|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF])*([a-z]|[u00A0-uD7FFuF900-uFDCFuFDF0-uFFEF]))).?$)|(\\*)";
 
-// số điên thoại của đối tác 
+// số điên thoại của đối tác
 const TEN_DIGIT_NUMBER = "^\\d{10}$";
 const TEN_DIGITS_WITH_SEPARATORS = "^(\\d{3}[- .]?){2}\\d{4}$";
 const TEN_DIGITS_WITH_PARENTHESIS = "^((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$";
-const INTERNATIONAL_PREFIX = "^(\\(\\+\\d{1,3}\\)[ .-]?\\d{3}[ .-]?\\d{3}[ .-]?\\d{3,4}|\\+\\d{1,3}[ .-]?\\d{3}[ .-]?\\d{3}[ .-]?\\d{3,4}|\\+?\\d{1}[ .-]?\\d{3}[ .-]?\\d{3}[ .-]?\\d{4}|\\d{10,11})$";
+const INTERNATIONAL_PREFIX =
+  "^(\\(\\+\\d{1,3}\\)[ .-]?\\d{3}[ .-]?\\d{3}[ .-]?\\d{3,4}|\\+\\d{1,3}[ .-]?\\d{3}[ .-]?\\d{3}[ .-]?\\d{3,4}|\\+?\\d{1}[ .-]?\\d{3}[ .-]?\\d{3}[ .-]?\\d{4}|\\d{10,11})$";
+// Biểu thức chính quy kiểm tra định dạng URL website hợp lệ (hỗ trợ http, https, www, domain, path, query)
+export const WEB_URL_REGEX = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/;
 
-export const PHONE_REGEX = [
-  TEN_DIGIT_NUMBER,
-  TEN_DIGITS_WITH_SEPARATORS,
-  TEN_DIGITS_WITH_PARENTHESIS,
-  INTERNATIONAL_PREFIX
-].join("|");
+export const PHONE_REGEX = [TEN_DIGIT_NUMBER, TEN_DIGITS_WITH_SEPARATORS, TEN_DIGITS_WITH_PARENTHESIS, INTERNATIONAL_PREFIX].join("|");
 
 export const PHONE_REGEX_NEW = /^0[0-9]{9}$/;
 // Mã hóa đơn
@@ -25,10 +23,10 @@ export const INVOICE_RETURN_CUSTOMER = "IV2";
 //* Mã tên đối tác không được là số
 export const PARTNER_NAME_REGEX = /^[A-Za-zÀ-ỹ\s]*$/;
 
-//* Mã số thuế regex 
+//* Mã số thuế regex
 export const TAX_CODE_REGEX = /^(?:\d{10}|\d{13})$/;
 
-//* Mã đối tác 
+//* Mã đối tác
 export const PARTNER_CODE_REGEX = /^[A-Za-z0-9]+$/;
 
 //* Hóa đơn mua thẻ dịch vụ
@@ -69,4 +67,4 @@ export const FILE_DOC_MAX = 209715200;
 //*TÀI CHÍNH
 
 // Tháng từ 1 đến 12
-export const MONTH_REPORT_REGEX = /^(0?[1-9]|1[0-2])$/; 
+export const MONTH_REPORT_REGEX = /^(0?[1-9]|1[0-2])$/;

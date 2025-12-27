@@ -717,7 +717,7 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="ReceiveTicket" />,
               code: "KANBAN_V2",
             },
-            ...(sourceDomain == "rebornjsc.reborn.vn"
+            ...(sourceDomain == "rebornjsc.reborn.vn" || sourceDomain == "localhost"
               ? [
                   {
                     title: "feedbackEnhancement", // Góp ý cải tiến

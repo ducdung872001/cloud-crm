@@ -56,6 +56,7 @@ import PartnerService from "services/PartnerService";
 import ContractCategoryService from "services/ContractCategoryService";
 import FSQuoteService from "services/FSQuoteService";
 import { add } from "lodash";
+import PackageService from "services/PackageService";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -85,16 +86,16 @@ export async function SelectOptionData(key: string, params?: any) {
   }
 
   switch (key) {
-    case "guaranteeTypeId" :
+    case "guaranteeTypeId":
       response = await ContractGuaranteeService.guaranteeTypeList(params);
-    break;
-    case "competencyId" :
+      break;
+    case "competencyId":
       response = await ContractGuaranteeService.competencyGuaranteeList(params);
       break;
-    case "contractAppendixId" :
+    case "contractAppendixId":
       response = await ContractService.contractAppendixList(params);
       break;
-    case "bankId" :
+    case "bankId":
       response = await ContractGuaranteeService.bankList(params);
       break;
     case "fsId" :
@@ -103,7 +104,7 @@ export async function SelectOptionData(key: string, params?: any) {
     case "contractCategoryId" :
       response = await ContractCategoryService.list(params);
       break;
-    case "partnerId" :
+    case "partnerId":
       response = await PartnerService.list(params);
       break;
     case "categoryId":
@@ -324,6 +325,12 @@ export async function SelectOptionData(key: string, params?: any) {
         limit: 1000,
       });
       break;
+    case "packageId":
+      response = await PackageService.lst({
+        ...params,
+        limit: 1000,
+      });
+      break;
   }
   if (response) {
     if (response.code === 0) {
@@ -356,7 +363,7 @@ export async function SelectOptionData(key: string, params?: any) {
           return { value: item.name, label: `${item.name}` };
         }
         if (key === "contractId") {
-          return { value: item.id, label: `${item.name}`,contractValue:item?.dealValue ?? 0 };
+          return { value: item.id, label: `${item.name}`, contractValue: item?.dealValue ?? 0 };
         }
         if (key === "serviceId") {
           return {
