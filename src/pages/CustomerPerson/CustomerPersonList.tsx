@@ -3261,7 +3261,7 @@ export default function CustomerPersonList() {
 
                     const values = field.attributeValue?.split("::") || [];
                     return (
-                      <div key={key} className="item_advance">
+                      <div key={key} className={values?.length > 1 ? "item_advance" : 'd-none'}>
                         <div className="advance_text">
                           <div>
                             <span style={{ fontSize: 14, fontWeight: 400 }}>
