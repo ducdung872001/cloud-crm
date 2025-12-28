@@ -86,7 +86,7 @@ export default function CustomerPersonList() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [listCustomer, setListCustomer] = useState<ICustomerResponse[]>([]);  
-  const [listIdChecked, setListIdChecked] = useState<number[]>([]);
+  const [listIdChecked, setListIdChecked] = useState<number[]>([]);  
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showModalDebt, setShowModalDebt] = useState<boolean>(false);

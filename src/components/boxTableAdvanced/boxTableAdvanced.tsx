@@ -82,6 +82,8 @@ export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
   };
 
   const onGridReady = (params) => {
+    gridApiRef.current = params.api;
+    params.api.addEventListener("selectionChanged", onSelectionChanged);
     if(!saveColumnName) return;
     const savedOrder = localStorage.getItem(saveColumnName);
     if (savedOrder) {
