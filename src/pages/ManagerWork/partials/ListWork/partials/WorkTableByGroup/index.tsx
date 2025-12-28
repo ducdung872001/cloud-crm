@@ -794,7 +794,6 @@ export default function WorkTableByGroup(props: IListWorkProps) {
   };
 
   const headerCollapsible = useCallback((item, index) => {
-    console.log("itemSetup item", item);
     return (
       <div className="collapse-header">
         <div className="group-name" style={{ backgroundColor: item?.color }}>

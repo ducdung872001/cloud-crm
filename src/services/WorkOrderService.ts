@@ -35,7 +35,7 @@ export default {
   //   }).then((res) => res.json());
   // },
 
-  update: (body: IWorkOrderRequestModel) => {
+  update: (body: any) => {
     return fetch(urlsApi.workOrder.update, {
       method: "POST",
       body: JSON.stringify(body),
