@@ -195,21 +195,17 @@ export default function CreateContractsXML(props: any) {
           mapped.partnerId = mapped.businessPartnerId;
         }
 
-        // map lại peopleinvolves chỉ lấy id
+        // map lại peopleinvolves chỉ lấy contactid để hiển thị trong form
         if (mapped.peopleInvolved) {
-          let peopleInvolved = [];
           try {
             const people = JSON.parse(mapped.peopleInvolved);
-            if (Array.isArray(people)) {
-              people.forEach((item) => {
-                if (item && item.value) {
-                  peopleInvolved.push(item.value);
-                }
-              });
-            }
-          } catch (error) {
+            mapped.contactId =
+              Array.isArray(people) && people.length > 0
+                ? people[0]?.value ?? null
+                : null;
+          } catch {
+            mapped.contactId = null;
           }
-          mapped.peopleInvolved = peopleInvolved.length > 0 ? peopleInvolved[0] : null;
         }
       }
 
