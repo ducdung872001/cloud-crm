@@ -1571,7 +1571,7 @@ export default function PaymentBill(props: AddContractModalProps) {
               label="Ngày ký"
               name="signDate"
               fill={true}
-              value={data?.signDate?.toString()}
+              value={data?.signDate}
               onChange={(e) => handleChangeValueSignDate(e)}
               placeholder="Chọn ngày ký"
               required={true}
@@ -1598,7 +1598,7 @@ export default function PaymentBill(props: AddContractModalProps) {
               label="Ngày hiệu lực"
               name="affectedDate"
               fill={true}
-              value={data?.affectedDate?.toString()}
+              value={data?.affectedDate}
               onChange={(e) => handleChangeValueAffectedDate(e)}
               placeholder="Chọn ngày hiệu lực"
               required={true}
@@ -1625,7 +1625,7 @@ export default function PaymentBill(props: AddContractModalProps) {
               label="Ngày hết hạn"
               name="endDate"
               fill={true}
-              value={data?.endDate?.toString()}
+              value={data?.endDate}
               onChange={(e) => handleChangeValueEndDate(e)}
               placeholder="Chọn ngày hết hạn"
               required={true}
@@ -1652,7 +1652,7 @@ export default function PaymentBill(props: AddContractModalProps) {
               label="Ngày đến hạn điều chỉnh giá"
               name="adjustDate"
               fill={true}
-              value={data?.adjustDate?.toString()}
+              value={data?.adjustDate}
               onChange={(e) => handleChangeValueAdjustDate(e)}
               placeholder="Chọn ngày"
               required={false}
@@ -1660,7 +1660,7 @@ export default function PaymentBill(props: AddContractModalProps) {
               icon={<Icon name="Calendar" />}
               isMaxDate={false}
               error={validateFieldAdjustDate}
-              message="Vui lòng chọn ngày đến hạn điều chính giá"
+              message="Vui lòng chọn ngày đến hạn điều chỉnh giá"
               warningHistory={listLogValue?.filter((el) => el.fileName === "adjustDate")?.length > 0 ? true : false}
               onWarningHistory={() => {
                 if (listLogValue?.filter((el) => el.fileName === "adjustDate")?.length > 0) {

@@ -1243,6 +1243,10 @@ export const routes: IRouter[] = [
     component: <CreateContracts />,
   },
   {
+    path: urls.edit_contract_xml,
+    component: <CreateContractsXML />,
+  },
+  {
     path: urls.contract,
     component: <ContractList />,
   },

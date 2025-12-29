@@ -808,8 +808,8 @@ export default function ContractList() {
           <div
             className="item__action update"
               onClick={() => {
-              setDataContract(data.dataItem);
-              setShowModalAddXml(true);
+              // setDataContract(data.dataItem);
+              navigate(`/edit_contract_xml/${data.id}`);
         }}
           >
             <Tippy content="Sửa XML">

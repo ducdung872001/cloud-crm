@@ -1,9 +1,9 @@
 /* eslint-disable prefer-const */
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
 import { showToast } from "utils/common";
 import "./index.scss";
 import { ContextType, UserContext } from "contexts/userContext";
-import _, { forEach } from "lodash";
+import _, { forEach, map } from "lodash";
 import Button from "components/button/button";
 import Loading from "components/loading";
 import FormViewerComponent from "pages/BPM/BpmForm/FormViewer";
@@ -13,10 +13,18 @@ import ContractService from "services/ContractService";
 import moment from "moment";
 import ContractAttributeService from "services/ContractAttributeService";
 import ContractExtraInfoService from "services/ContractExtraInfoService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { name } from "jssip";
 import { ca } from "date-fns/locale";
 import { pipe, template } from "lodash/fp";
+import ContractCategoryService from "services/ContractCategoryService";
+import EmployeeService from "services/EmployeeService";
+import ContractPipelineService from "services/ContractPipelineService";
+import WorkProjectService from "services/WorkProjectService";
+import ContactService from "services/ContactService";
+import PartnerService from "services/PartnerService";
+import TitleAction from "components/titleAction/titleAction";
+import Dialog, { IContentDialog } from "components/dialog/dialog";
 
 const defaultSchema = {
   type: "default",
@@ -57,8 +65,11 @@ const getOjectGroup = async (type: any) => {
 };
 
 export default function CreateContractsXML(props: any) {
-  const { data, onHide, takeInfoCustomer } = props;
+  const { data, takeInfoCustomer } = props;
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  document.title = `${id && +id > 0 ? "Cập nhật" : "Tạo"} hợp đồng`;
 
   const formContainerRef = useRef(null);
   const formViewerRef = useRef(null);
@@ -108,108 +119,113 @@ export default function CreateContractsXML(props: any) {
     return value ? moment(value, ["MM-DD-YYYY", moment.ISO_8601]).format("YYYY-MM-DDTHH:mm:ss") : "";
   };
 
-  const mapAttachmentsFromApi = (attachments: any) => {
-    if (!attachments) return [];
+  const mapTemplate = (template: any) => {
+    if (!template) return "";
 
-    let parsed = attachments;
-
-    try {
-      parsed = typeof attachments === "string" ? JSON.parse(attachments) : attachments;
-    } catch (e) {
-      return [];
+    // nếu BE trả string thì parse
+    let data = template;
+    if (typeof template === "string") {
+      try {
+        data = JSON.parse(template);
+      } catch {
+        return "";
+      }
     }
 
-    if (!Array.isArray(parsed)) return [];
+    // nếu không đúng format
+    if (!data.fileUrl) return "";
 
-    return parsed
-      .map((item) => {
-        // Chấp nhận cả dạng string url lẫn object { url, name, type, size }
-        const url =
-          typeof item === "string"
-            ? item
-            : item && typeof item === "object"
-              ? item.url || item.path || item.link || ""
-              : "";
+    const fileName = data.fileName || data.fileUrl.split("/").pop() || "file.pdf";
+    const ext = fileName.split(".").pop()?.toLowerCase() || "pdf";
 
-        if (!url) return null;
-
-        const fallbackName = decodeURIComponent(url.split("/").pop() || "file.pdf");
-        const name =
-          typeof item === "object" && item?.name
-            ? item.name
-            : fallbackName;
-        const ext =
-          typeof item === "object" && item?.type
-            ? item.type
-            : name.split(".").pop()?.toLowerCase() || "file";
-
-        return {
-          uid: typeof item === "object" && item?.uid ? item.uid : url,
-          url,
-          name,
-          type: ext,
-          size: (typeof item === "object" && item?.size) || 1,
-          status: "done",
-        };
-      })
-      .filter(Boolean);
+    return JSON.stringify([
+      {
+        uid: data.fileUrl,
+        url: data.fileUrl,
+        name: fileName,
+        type: ext,
+        size: 1,        // fake size cho upload component
+        status: "done", // QUAN TRỌNG cho FormViewer / Upload
+      },
+    ]);
   };
 
 
+  const getContractDetail = async (id) => {
+    const res = await ContractService.detail(id);
+    if (res.code === 0) return res.result;
+    return null;
+  };
+
   useEffect(() => {
-    //exceptionField để map những field đặc biệt không theo quy tắc chung (ví dụ phone => phoneMasked)
+    // exceptionField để map những field đặc biệt không theo quy tắc chung (ví dụ phone => phoneMasked)
     const exceptionField = {
       phone: "phoneMasked",
       email: "emailMasked",
     };
-    const getAlldata = async () => {
+    const init = async () => {
+      setIsLoading(true);
+
       const configInit = await getOjectGroup(XMLtype);
       const mapAttribute = await getContractsAttributes();
-      const extraInfos = data?.id ? await getContractsExtraInfos(data?.id) : [];
-      const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField);
+      let contractData = null;
+      if (id) {
+        contractData = await getContractDetail(id);
+      }
+      const extraInfos = contractData?.id ? await getContractsExtraInfos(contractData.id) : [];
+      const mapped = mapConfigData(configInit, contractData, mapAttribute, extraInfos, exceptionField);
 
-      if (data?.id) {
-
-        mapped.beneficiaryType = String(mapped.beneficiaryType);
-        mapped.competencyType = String(mapped.competencyType);
+      if (mapped) {
 
         mapped.endDate = toFormDate(mapped.endDate);
         mapped.signDate = toFormDate(mapped.signDate);
         mapped.affectedDate = toFormDate(mapped.affectedDate);
         mapped.adjustDate = toFormDate(mapped.adjustDate);
-        if (mapped.beneficiaryId) {
-          if (mapped.beneficiaryType == "0") {
-            mapped.beneficiaryId_customer = mapped.beneficiaryId;
-          } else {
-            mapped.beneficiaryId_partner = mapped.beneficiaryId;
-          }
+        mapped.template = mapTemplate(mapped.template);
+
+        mapped.contractCategoryId = mapped.categoryId;
+
+        // Check xem là khách hàng hay đối tác
+        if (mapped.customerId) {
+          mapped.typeContract = "1"; // Khách hàng
+          mapped.custType = mapped.custType ?? 0;
+        } else if (mapped.businessPartnerId) {
+          mapped.typeContract = "0"; // Đối tác
+          mapped.taxcode_partner = mapped.taxCode || "";
+          mapped.partnerId = mapped.businessPartnerId;
         }
 
-        if (mapped.competencyId) {
-          if (mapped.competencyType == "0") {
-            mapped.competencyId_customer = mapped.competencyId;
-          } else {
-            mapped.competencyId_partner = mapped.competencyId;
+        // map lại peopleinvolves chỉ lấy id
+        if (mapped.peopleInvolved) {
+          let peopleInvolved = [];
+          try {
+            const people = JSON.parse(mapped.peopleInvolved);
+            if (Array.isArray(people)) {
+              people.forEach((item) => {
+                if (item && item.value) {
+                  peopleInvolved.push(item.value);
+                }
+              });
+            }
+          } catch (error) {
           }
+          mapped.peopleInvolved = peopleInvolved.length > 0 ? peopleInvolved[0] : null;
         }
-        mapped.attachments = JSON.stringify(
-          mapAttachmentsFromApi(mapped.attachments)
-        );
-        setDataInit(mapped);
       }
 
-      console.log(mapped);
+      console.log("hhhhhhhh", mapped);
       setInitFormSchema(configInit);
       setMapContractsAttribute(mapAttribute);
       setContractsExtraInfos(extraInfos);
+      setDataInit(mapped);
       setIsLoading(false);
     };
-    if (XMLtype) {
-      getAlldata();
-    }
-  }, [data, XMLtype]);
+
+    init();
+  }, [id]);
 
   const onSubmit = async (config) => {
+    console.log("Submit config:", config);
     setIsSubmit(true);
 
     // Các trường thông tin bổ sung
@@ -235,47 +251,116 @@ export default function CreateContractsXML(props: any) {
       });
     });
 
-
-    let attachmentList: any[] = [];
-    try {
-      attachmentList = typeof config.attachments === "string" ? JSON.parse(config.attachments ?? "[]") : config.attachments ?? [];
-    } catch (e) {
-      attachmentList = [];
+    //lấy ra categoryName theo categoryId call api chi tiết
+    if (config.contractCategoryId) {
+      const response = await ContractCategoryService.detail(config.contractCategoryId);
+      if (response.code === 0) {
+        config.categoryName = response.result?.name || "";
+      }
+    }
+    //lấy ra employeeName theo employeeId call api chi tiết
+    if (config.employeeId) {
+      const response = await EmployeeService.detail(config.employeeId);
+      if (response.code === 0) {
+        config.employeeName = response.result?.name || "";
+      }
+    }
+    //lấy ra pipelineName theo pipelineId call api chi tiết
+    if (config.pipelineId) {
+      const response = await ContractPipelineService.detail(config.pipelineId);
+      if (response.code === 0) {
+        config.pipelineName = response.result?.name || "";
+      }
+    }
+    //lấy ra projectName theo projectId call api chi tiết
+    if (config.projectId) {
+      const response = await WorkProjectService.detail(config.projectId);
+      if (response.code === 0) {
+        config.projectName = response.result?.name || "";
+      }
     }
 
-    const attachmentUrls = attachmentList
-      ?.map((item: any) => {
-        if (!item) return null;
-        if (typeof item === "string") return item;
-        if (typeof item === "object") return item.url || item.path || item.link || null;
-        return null;
-      })
-      .filter(Boolean);
+    if (config.contactId) {
+      const response = await ContactService.detail(config.contactId);
+      if (response.code === 0) {
+        config.contactName = response.result?.name || "";
+      }
+    }
+
+    if (config.partnerId) {
+      const response = await PartnerService.detail(config.partnerId);
+      if (response.code === 0) {
+        config.businessPartnerName = response.result?.name || "";
+      }
+    }
+
+    const convertTemplate = (template: string) => {
+      if (!template) return null;
+
+      const files = JSON.parse(template);
+
+      if (!Array.isArray(files) || files.length === 0) return null;
+
+      const file = files[0];
+
+      return JSON.stringify({
+        fileUrl: file.url,
+        fileName: file.name,
+      });
+    };
+
+    // Xác định loại hợp đồng (Khách hàng hay Đối tác)
+    let typeContract = "1"; // Khách hàng
+    if (config.partnerId && !config.customerId) {
+      typeContract = "0"; // Đối tác
+    }
 
     let body: any = {
       ...(data ? data : {}),
       name: config.name || "",
-      bussinessPartnerId: config.bussinessPartnerId || null,
-      categoryId: config.categoryId || null,
-      custType : config.custType ?? 0,
-      customerId : config.customerId || null,
-      taxCode: config.taxCode || "",
+      categoryId: config.contractCategoryId || null,
       contractNo: config.contractNo || "",
       dealValue: config.dealValue || 0,
       employeeId: config.employeeId || null,
       fsId: config.fsId || null,
       pipelineId: config.pipelineId || null,
       projectId: config.projectId || null,
-      requestId: config.requestId || null,
+      requestId: config.requestId || 0,
+      requestCode: config.requestCode || "",
+      stageId: config.stageId || 0,
+      stageName: config.stageName || "",
+      products: config.products || [],
       timestamp: config.timestamp || null,
-      peopleInvoleved: config.peopleInvolved || null,
+      peopleInvolved: JSON.stringify([{ value: config.contactId, label: config.contactName, }]),
       signDate: toApiDate(config.signDate),
       affectedDate: toApiDate(config.affectedDate),
-      adjusadjustDate: toApiDate(config.adjustDate),
+      adjustDate: toApiDate(config.adjustDate),
       endDate: toApiDate(config.endDate),
-      template: JSON.stringify(attachmentUrls || "" ),
+      template: convertTemplate(config.template),
+      categoryName: config.categoryName || "",
+      employeeName: config.employeeName || "",
+      pipelineName: config.pipelineName || "",
+      projectName: config.projectName || "",
       branchId: checkUserRoot == "1" ? data?.branchId ?? dataBranch.value ?? null : 0,
       contractExtraInfos: infoExtra,
+      typeContract: typeContract,
+      // Phân biệt giữa Khách hàng và Đối tác
+      ...(typeContract === "1"
+        ? {
+          customerId: config.customerId,
+          custType: config.custType ?? 0,
+          taxCode: config.taxcode_customer || "",
+          businessPartnerId: null,
+          businessPartnerName: "",
+        }
+        : {
+          businessPartnerId: config.partnerId,
+          businessPartnerName: config.businessPartnerName || "",
+          customerId: null,
+          custType: null,
+          taxCode: config.taxcode_partner || "",
+        }
+      ),
     };
 
     console.log(body);
@@ -284,8 +369,8 @@ export default function CreateContractsXML(props: any) {
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} bảo hành thành công`, "success");
-      handleClear(true);
       takeInfoCustomer && takeInfoCustomer(response.result);
+      navigate(`/contract`);
     } else {
       if (response.error) {
         showToast(response.error, "error");
@@ -295,15 +380,6 @@ export default function CreateContractsXML(props: any) {
     }
 
     setIsSubmit(false);
-  };
-
-  const handleClear = (acc) => {
-    onHide(acc);
-    setContractsExtraInfos([]);
-    setDataInit(null);
-    setInitFormSchema(defaultSchema);
-    setMapContractsAttribute(null);
-    setContractsExtraInfos([]);
   };
 
   const handleSubmit = async () => {
@@ -331,12 +407,38 @@ export default function CreateContractsXML(props: any) {
     setDataSchema(newSchema);
     onSubmit(newSchema);
   };
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+
+  const showDialogConfirmDelete = () => {
+    const contentDialog: IContentDialog = {
+      color: "error",
+      className: "dialog-delete",
+      isCentered: true,
+      isLoading: false,
+      title: <Fragment>Hủy thay đổi hợp đồng</Fragment>,
+      message: <Fragment>Bạn có chắc chắn muốn hủy thay đổi hợp đồng này? Thao tác này không thể khôi phục.</Fragment>,
+      cancelText: "Quay lại",
+      cancelAction: () => {
+        setShowDialog(false);
+        setContentDialog(null);
+      },
+      defaultText: "Xác nhận",
+      defaultAction: () => {
+        setShowDialog(false);
+        setContentDialog(null);
+
+        //Chuyển hướng về trang danh sách
+        navigate("/contract");
+      },
+    };
+    setContentDialog(contentDialog);
+    setShowDialog(true);
+  };
 
   return (
     <div className="page-content page-create-contracts-xml">
-      <div className="action-navigation">
-        <h1>TẠO HỢP ĐỒNG</h1>
-      </div>
+      <TitleAction title={`${id && +id > 0 ? "Cập nhật" : "Tạo"} hợp đồng`} />
       <div style={{ display: "flex", marginBottom: 10 }}>
         {tabData.map((item, index) => (
           <div
@@ -360,8 +462,8 @@ export default function CreateContractsXML(props: any) {
               {/* Form Viewer để hiển thị form => truyền vào nodeId, processId, và potId */}
               {initFormSchema?.components?.length == 0 ? (
                 <div className="loading-center">
-                <Loading />
-              </div>
+                  <Loading />
+                </div>
               ) : (
                 <div style={{ width: "100%", pointerEvents: "auto" }}>
                   <FormViewerComponent
@@ -384,11 +486,13 @@ export default function CreateContractsXML(props: any) {
             </div>
             <div className="container-footer" style={{ marginTop: "1.5rem", display: "flex", justifyContent: "flex-end", gap: "12px", paddingTop: "1rem", borderTop: "1px solid #e9ecef" }}>
               <Button
-                onClick={() => handleClear(false)}
-                type="button"
-                color="primary"
+                color="destroy"
                 variant="outline"
                 disabled={isSubmit}
+                onClick={(e) => {
+                  e.preventDefault();
+                  showDialogConfirmDelete();
+                }}
               >
                 Hủy
               </Button>
@@ -398,12 +502,13 @@ export default function CreateContractsXML(props: any) {
                 color="primary"
                 disabled={isSubmit}
               >
-                {isSubmit ? "Đang xử lý..." : (data ? "Cập nhật" : "Tạo mới")}
+                {isSubmit ? "Đang xử lý..." : (id && +id > 0 ? "Cập nhật" : "Tạo mới")}
               </Button>
             </div>
           </form>
         </div>
       </div>
+      <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );
 }
