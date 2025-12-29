@@ -1,11 +1,11 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useContext } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
-import { IAction, IActionModal, IOption } from "model/OtherModel";
-import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
+import { IAction, IActionModal } from "model/OtherModel";
+import { IFormData, IValidation } from "model/FormModel";
 import { useActiveElement } from "utils/hookCustom";
-import { handDownloadFileOrigin, showToast } from "utils/common";
-import { convertToId, getPageOffset, isDifferenceObj } from "reborn-util";
+import { showToast } from "utils/common";
+import { getPageOffset, isDifferenceObj } from "reborn-util";
 import "./EmployeeListModal.scss";
 import Icon from "components/icon";
 import { SystemNotification } from "components/systemNotification/systemNotification";
@@ -23,18 +23,13 @@ import TeamEmployeeService from "services/TeamEmployeeService";
 
 export default function EmployeeListModal(props: any) {
   const { onShow, onHide, dataTeam } = props;
-
   const focusedElement = useActiveElement();
   const { dataBranch } = useContext(UserContext) as ContextType;
-
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [dataEmployee, setDataEmployee] = useState(null);
-  console.log("dataEmployee", dataEmployee);
-
   const [isAddEmployee, setIsAddEmployee] = useState(false);
   const [params, setParams] = useState({
     name: "",
@@ -60,7 +55,8 @@ export default function EmployeeListModal(props: any) {
   });
 
   const [employeeList, setEmployeeList] = useState([]);
-
+  console.log('employeeList', employeeList);
+  
   const abortController = new AbortController();
 
   const getListEmployee = async (paramsSearch: any) => {
@@ -269,12 +265,13 @@ export default function EmployeeListModal(props: any) {
       page: page,
       limit: 10,
       branchId: dataBranch.value,
-    };
-
+    };    
     const response = await EmployeeService.list(param);
 
     if (response.code === 0) {
-      const dataOption = response.result.items;
+      const dataOption = (response.result.items || []).filter((item) => {
+        return !employeeList.some((el) => el.employee?.id === item.id);
+      });
 
       return {
         options: [
@@ -299,6 +296,12 @@ export default function EmployeeListModal(props: any) {
 
     return { options: [], hasMore: false };
   };
+
+  useEffect(() => {
+    if(onShow){
+      loadedOptionEmployee("", undefined, { page: 1 });
+    }
+  }, [employeeList]);
 
   const formatOptionLabelEmployee = ({ label, avatar, departmentName, jteName }) => {
     return (
@@ -523,6 +526,7 @@ export default function EmployeeListModal(props: any) {
                 <div className="list-form-group">
                   <div className="form-group">
                     <SelectCustom
+                      key={employeeList?.length}
                       id="employeeId"
                       name="employeeId"
                       label="Nhân viên"

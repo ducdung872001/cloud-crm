@@ -19,6 +19,7 @@ interface IBoxTableAdvancedProps {
   setWidthColumns?: any;
   dataPagination?: PaginationProps;
   autoFill?: boolean;
+  saveColumnName?: string;
 }
 
 export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
@@ -37,6 +38,7 @@ export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
     widthColumns,
     setWidthColumns,
     dragColumnDefs = true,
+    saveColumnName,
   } = props;
 
   const gridApiRef = useRef(null);
@@ -66,6 +68,35 @@ export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
     setWidthColumns([...widthColumns, changeTakeActualWidth]);
   };
 
+  const onColumnMoved = (params) => {
+    if(!saveColumnName) return;
+    const columnOrder = params.columnApi
+      .getColumnState()
+      .map(col => col.colId);
+    
+    console.log('columnOrder', columnOrder);
+    localStorage.setItem(
+      saveColumnName,
+      JSON.stringify(columnOrder)
+    );
+  };
+
+  const onGridReady = (params) => {
+    gridApiRef.current = params.api;
+    params.api.addEventListener("selectionChanged", onSelectionChanged);
+    if(!saveColumnName) return;
+    const savedOrder = localStorage.getItem(saveColumnName);
+    if (savedOrder) {
+      params.columnApi.applyColumnState({
+        state: JSON.parse(savedOrder).map((colId, index) => ({
+          colId,
+          order: index
+        })),
+        applyOrder: true
+      });
+    }
+  };
+
   return (
     <div className="table__ag--template">
       <div className={`ag-theme-alpine ${isImage ? "ag-theme-alpine--image" : ""}`}>
@@ -82,12 +113,14 @@ export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
           domLayout="autoHeight"
           suppressMovableColumns={dragColumnDefs}
           suppressRowClickSelection={true}
-          onGridReady={(params) => {
-            gridApiRef.current = params.api;
-            params.api.addEventListener("selectionChanged", onSelectionChanged);
-          }}
+          // onGridReady={(params) => {
+          //   gridApiRef.current = params.api;
+          //   params.api.addEventListener("selectionChanged", onSelectionChanged);
+          // }}
           onColumnResized={onColumnResized}
           onGridSizeChanged={(params) => (autoFill ? params.api.sizeColumnsToFit() : false)}
+          onColumnMoved={onColumnMoved}
+          onGridReady={onGridReady}
         />
       </div>
       {isPagination && (
