@@ -25,57 +25,93 @@
             }
 
             .container-list-employee {
-              .container-list-employee {
-                overflow: auto;
-                max-height: calc(100vh - 395px);
-                padding-right: 10px;
-                .list-employee{
-                  display: flex;
-                  flex-direction: column;
-
-                  .item-employee {
-                    display: flex;
-                    align-items: center;
-                    gap: 0 0.5rem;
-                    line-height: 1.1;
-                    border: 1px dashed var(--border-color);
-                    padding: 1rem;
-                    border-radius: 8px;
-                    margin-bottom: 1rem;
-            
-                    .avatar {
-                      width: 2.6rem;
-                      height: 2.6rem;
-                      border-radius: 50rem;
-                      overflow: hidden;
-                      flex-shrink: 0;
-            
-                      img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                      }
-                    }
-
-                    .name-employee {
-                      flex: 1;
-                    }
-
-                    .button-delete-employee {
-                      cursor: pointer;
-                      svg {
-                        width: 2rem;
-                        height: 2rem;
-                      }
-                      &:hover {
-                        svg {
-                          fill: var(--error-darker-color);
+              .tab-department{
+                display: flex;
+                .button-department {
+                  border-bottom: 1px solid var(--border-color);
+                  font-size: 12px;
+                  font-weight: 500;
+                  padding: 0.2rem 1rem;
+                  color: var(--border-color);
+                  cursor: pointer;
+                }
+              }
+              .container-table-employee{
+                .box-table {
+                  margin-top: 1rem;
+                  .box-table__wrapper{
+                    .table-striped {
+                      thead {
+                        tr {
+                          th {
+                            .base-bulk-action{
+                              ul {
+                                .select-count{
+                                  margin-top: 0.5rem;
+                                }
+                                .base-bulk-action__button{
+                                  display: none;
+                                }
+                              }
+                            }
+                          }
                         }
                       }
                     }
                   }
                 }
               }
+              // .container-list-employee {
+              //   overflow: auto;
+              //   max-height: calc(100vh - 395px);
+              //   padding-right: 10px;
+              //   .list-employee{
+              //     display: flex;
+              //     flex-direction: column;
+
+              //     .item-employee {
+              //       display: flex;
+              //       align-items: center;
+              //       gap: 0 0.5rem;
+              //       line-height: 1.1;
+              //       border: 1px dashed var(--border-color);
+              //       padding: 1rem;
+              //       border-radius: 8px;
+              //       margin-bottom: 1rem;
+            
+              //       .avatar {
+              //         width: 2.6rem;
+              //         height: 2.6rem;
+              //         border-radius: 50rem;
+              //         overflow: hidden;
+              //         flex-shrink: 0;
+            
+              //         img {
+              //           width: 100%;
+              //           height: 100%;
+              //           object-fit: cover;
+              //         }
+              //       }
+
+              //       .name-employee {
+              //         flex: 1;
+              //       }
+
+              //       .button-delete-employee {
+              //         cursor: pointer;
+              //         svg {
+              //           width: 2rem;
+              //           height: 2rem;
+              //         }
+              //         &:hover {
+              //           svg {
+              //             fill: var(--error-darker-color);
+              //           }
+              //         }
+              //       }
+              //     }
+              //   }
+              // }
             }
         
       
