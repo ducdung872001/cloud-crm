@@ -35,13 +35,14 @@ export default function SplitDataCustomerModal(props: any) {
   const [checkFieldTeamEmployee, setCheckFieldTeamEmployee] = useState(false);
   const [tableEmployee, setTableEmployee] = useState([]);
   const [listIdCheckedEmployee, setListIdCheckedEmployee] = useState<number[]>([]);
+  console.log('listIdCheckedEmployee', listIdCheckedEmployee);
+  
   const [tabDepartment, setTabDepartment] = useState(1);
   
   const [params, setParams] = useState<any>({
     name: "",
-    limit: 30,
+    limit: 100,
     page: 1,
-    departmentId: 297
   });
 
   const [paginationEmployee, setPaginationEmployee] = useState<PaginationProps>({
@@ -58,13 +59,31 @@ export default function SplitDataCustomerModal(props: any) {
 
   const abortController = new AbortController();
 
-  const getListTableEmployee = async (paramsSearch: any) => {
+  const getListTableEmployee = async (paramsSearch: any, tabDepartment) => {
     setIsLoading(true);
-    const response = await EmployeeService.list(paramsSearch, abortController.signal);
+    let response = null;
 
+    if(tabDepartment === 1){
+      const paramsTeamSale = {
+        ...paramsSearch,
+        groupId: 8
+      }
+      response = await TeamEmployeeService.listEmployee(paramsTeamSale, abortController.signal);
+    }
+
+    if(tabDepartment === 2){
+      response = await EmployeeService.list(paramsSearch, abortController.signal);
+    }
+    
     if (response.code === 0) {
       const result = response.result;
-      setTableEmployee(result?.items);
+      const data = tabDepartment === 1 ? (result?.items || []).map(el => {
+        return el.employee
+      }) : result?.items;
+
+      console.log('data', data);
+      
+      setTableEmployee(data);
       setPaginationEmployee({
         ...paginationEmployee,
         page: +result.page,
@@ -84,8 +103,8 @@ export default function SplitDataCustomerModal(props: any) {
 
   const dataMappingArray = (item: any, index: number) => [
     getPageOffset(params) + index + 1,
-    item.name,
-    item.departmentName
+    item.name || item?.employee?.name,
+    item.departmentName || item?.employee?.departmentName,
   ];
 
   const actionsTable = (item: any): IAction[] => {
@@ -131,9 +150,9 @@ export default function SplitDataCustomerModal(props: any) {
   useEffect(() => {
     if(onShow){
       loadedOptionEmployee("", undefined, { page: 1 });
-      getListTableEmployee(params);
+      getListTableEmployee(params, tabDepartment);
     }
-  }, [listEmployee, params, onShow]);
+  }, [listEmployee, params, onShow, tabDepartment]);
 
   const loadedOptionTeamEmployee = async (search, loadedOptions, { page }) => {
     const param: any = {
@@ -248,7 +267,7 @@ export default function SplitDataCustomerModal(props: any) {
     setListIdCheckedEmployee([]);
     setParams({
       name: "",
-      limit: 30,
+      limit: 100,
       page: 1
     });
     setTabDepartment(1);
@@ -374,7 +393,7 @@ export default function SplitDataCustomerModal(props: any) {
                           style={tabDepartment === 1 ? {borderBottom: '1.5px solid #004353', color: '#004353'} : {}}
                           onClick={() => {
                             setTabDepartment(1);
-                            setParams((prevParams) => ({ ...prevParams, departmentId: 297 }));
+                            setListIdCheckedEmployee([]);
                           }}
                           >Phòng Telesale</div>
                         <div 
@@ -382,7 +401,7 @@ export default function SplitDataCustomerModal(props: any) {
                           style={tabDepartment === 2 ? {borderBottom: '1.5px solid #004353', color: '#004353'} : {}}
                           onClick={() => {
                             setTabDepartment(2);
-                            setParams((prevParams) => ({ ...prevParams, departmentId: -1 }));
+                            setListIdCheckedEmployee([]);
                           }}
                           >Tất cả</div>
                       </div>
