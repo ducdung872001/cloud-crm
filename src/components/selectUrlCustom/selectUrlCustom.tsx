@@ -1,4 +1,4 @@
-import React, { Fragment, ReactElement, useRef, useState } from "react";
+import React, { Fragment, ReactElement, useEffect, useRef, useState } from "react";
 import Select, { components } from "react-select";
 import { AsyncPaginate } from "react-select-async-paginate";
 import { IOption } from "model/OtherModel";
@@ -53,7 +53,7 @@ interface SelectCustomProps {
   labelKey?: string;
   valueKey?: string;
   defaultParams?: any;
-  mapResultData?: (result: any) => any[]; // Hàm map dữ liệu custom
+  mapResultData?: (result: any) => any[];
   isFormatOptionLabel?: boolean;
   formatOptionLabel?: any;
   additional?: any;
@@ -64,6 +64,8 @@ interface SelectCustomProps {
   icon?: React.ReactElement;
   iconClickEvent?: React.ReactEventHandler;
   isShowDropdownIcon?: boolean;
+  maxHeight?: string | number;
+  idQueryKey?: string;
 }
 
 export default function SelectUrlCustom(props: SelectCustomProps) {
@@ -113,9 +115,12 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
     icon,
     iconClickEvent,
     isShowDropdownIcon = true,
+    maxHeight = "104px",
+    idQueryKey = valueKey,
   } = props;
 
   const [onFocusSelect, setOnFocusSelect] = useState<boolean>(false);
+  const [internalValue, setInternalValue] = useState<any>(isMulti ? [] : null);
 
   const hasValueParams = () => {
     if (isMulti && Array.isArray(value)) {
@@ -123,6 +128,61 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
     }
     return value !== null && value !== undefined && value !== "";
   };
+
+  useEffect(() => {
+    if (!value || !url) {
+      setInternalValue(isMulti ? [] : null);
+      return;
+    }
+
+    const isFullObject = isMulti
+      ? Array.isArray(value) && value.every((item) => typeof item === "object" && item !== null && "label" in item)
+      : typeof value === "object" && value !== null && "label" in value;
+
+    if (isFullObject) {
+      setInternalValue(value);
+      return;
+    }
+
+    const fetchInitialValue = async () => {
+      try {
+        const queryVal = Array.isArray(value) ? value.join(",") : value;
+
+        const params = {
+          ...defaultParams,
+          [idQueryKey]: queryVal,
+          page: 1,
+          limit: isMulti ? (Array.isArray(value) ? value.length : 10) : 1,
+        };
+
+        const res = await fetchData(url, params);
+
+        if (res && res.code === 0) {
+          const dataList = res.result?.items || res.result?.content || res.result || [];
+          let mappedData = [];
+          if (mapResultData) {
+            mappedData = mapResultData(dataList);
+          } else {
+            mappedData = dataList.map((item) => ({
+              label: item[labelKey],
+              value: item[valueKey],
+              ...item,
+            }));
+          }
+          if (isMulti) {
+            setInternalValue(mappedData);
+          } else {
+            const exactItem = mappedData.find((i) => String(i.value) === String(value));
+            setInternalValue(exactItem || mappedData[0] || null);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching initial value:", error);
+      }
+    };
+
+    fetchInitialValue();
+  }, [value, url, isMulti, idQueryKey, valueKey, labelKey]);
 
   const [onHasValue, setOnHasValue] = useState<boolean>(hasValueParams());
 
@@ -146,7 +206,12 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
 
       if (res && res.code === 0) {
         const dataList = res.result?.items || res.result?.content || res.result || [];
-        const totalPages = res.result?.totalPages || 0;
+        const totalElements = res.result?.total || res.result?.totalElements || 0;
+
+        let totalPages = res.result?.totalPages || 0;
+        if (totalPages === 0 && totalElements > 0) {
+          totalPages = Math.ceil(totalElements / currentLimit);
+        }
 
         let mappedOptions = [];
 
@@ -159,7 +224,6 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
             ...item,
           }));
         }
-
         const hasMoreData = isLoadAll ? false : page < totalPages;
 
         return {
@@ -181,6 +245,8 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
   };
 
   const handleOnChange = (e: any) => {
+    setInternalValue(e);
+
     if (isMulti) {
       setOnHasValue(e && e.length > 0);
     } else {
@@ -190,6 +256,15 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
     if (refSelect) refSelect.current?.blur();
 
     if (onChange) onChange(e);
+  };
+
+  const dynamicStyles = {
+    valueContainer: (provided) => ({
+      ...provided,
+      maxHeight: isMulti ? maxHeight : "auto",
+      overflowY: "auto",
+      alignItems: "flex-start",
+    }),
   };
 
   // --- renderer ---
@@ -206,7 +281,8 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
           className={`select-custom ${isFormatOptionLabel ? "select__custom-label" : ""} ${isMulti ? "select__custom-multi" : ""}`}
           isSearchable={isSearchable ?? !readOnly}
           defaultValue={defaultValue ?? null}
-          value={value ?? null}
+          // value={value ?? null}
+          value={internalValue}
           loadOptions={internalLoadOptionsPaginate}
           placeholder={placeholder ?? " "}
           isLoading={isLoading}
@@ -240,6 +316,7 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
           isClearable={isClearable}
           components={{ DropdownIndicator: CustomDropdownIndicator }}
           selectRef={refSelect ?? refSelectDefault}
+          styles={dynamicStyles}
         />
       );
     }
@@ -289,6 +366,7 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
         onMenuOpen={onMenuOpen}
         formatOptionLabel={formatOptionLabel}
         components={{ DropdownIndicator: CustomDropdownIndicator }}
+        styles={dynamicStyles}
       />
     );
   };

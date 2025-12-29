@@ -1,51 +1,52 @@
 import { get } from "min-dash";
 import { h } from "preact";
 
-// Import Type để check
-// Lưu ý: Chuỗi này phải khớp với biến 'selectUrlType' bên render
 const SELECT_URL_TYPE = "selectUrl";
 
-export default function CustomPropertiesProvider(propertiesPanel) {
+// Inject 'modeling' để thực hiện update dữ liệu
+export default function CustomPropertiesProvider(propertiesPanel, modeling) {
   this.propertiesPanel = propertiesPanel;
+  this.modeling = modeling;
   propertiesPanel.registerProvider(this, 500);
 }
 
-CustomPropertiesProvider.$inject = ["propertiesPanel"];
+CustomPropertiesProvider.$inject = ["propertiesPanel", "modeling"];
 
-CustomPropertiesProvider.prototype.getGroups = function (field, editField) {
+CustomPropertiesProvider.prototype.getGroups = function (field) {
   return (groups) => {
-    // Chỉ xử lý nếu là component SelectUrlCustom
+    // Chỉ xử lý nếu là component SelectUrl
     if (!field || field.type !== SELECT_URL_TYPE) {
       return groups;
     }
 
-    // Tìm hoặc tạo nhóm "Configuration" (thường gọi là General hoặc tạo nhóm riêng)
-    // Ở đây ta dùng nhóm "general" có sẵn hoặc tạo nhóm mới tên "api-config"
     const generalGroupIdx = findGroupIdx(groups, "general");
 
-    // Nếu muốn tạo nhóm riêng cho API
     let apiGroup = {
       id: "api-configuration",
       label: "API Configuration",
       entries: [],
     };
 
-    // 1. Thêm ô nhập URL
-    apiGroup.entries.push(createCustomEntryText(field, editField, "url", "url", "API URL Endpoint"));
+    // Lấy modeling từ instance
+    const modeling = this.modeling;
 
-    // 2. Thêm Checkbox Load All
-    apiGroup.entries.push(createCustomEntryCheckbox(field, editField, "isLoadAll", "isLoadAll", "Load All (Max 200)"));
+    // 1. URL
+    apiGroup.entries.push(createCustomEntryText(field, modeling, "url", "url", "API URL Endpoint"));
+    // 2. Load All
+    apiGroup.entries.push(createCustomEntryCheckbox(field, modeling, "isLoadAll", "isLoadAll", "Load All (Max 200)"));
+    // 3. Multi Select
+    apiGroup.entries.push(createCustomEntryCheckbox(field, modeling, "isMulti", "isMulti", "Multi Select"));
+    // 4. Advanced Config Keys
+    apiGroup.entries.push(createCustomEntryText(field, modeling, "labelKey", "labelKey", "Label Key (Default: name)"));
+    apiGroup.entries.push(createCustomEntryText(field, modeling, "valueKey", "valueKey", "Value Key (Default: id)"));
+    apiGroup.entries.push(createCustomEntryText(field, modeling, "searchKey", "searchKey", "Search Param (Default: name)"));
 
-    // 3. Thêm Checkbox Multi Select
-    apiGroup.entries.push(createCustomEntryCheckbox(field, editField, "isMulti", "isMulti", "Multi Select"));
-
-    // 4. Cấu hình Key (Advanced)
-    apiGroup.entries.push(createCustomEntryText(field, editField, "labelKey", "labelKey", "Label Key (Default: name)"));
-    apiGroup.entries.push(createCustomEntryText(field, editField, "valueKey", "valueKey", "Value Key (Default: id)"));
-    apiGroup.entries.push(createCustomEntryText(field, editField, "searchKey", "searchKey", "Search Param (Default: name)"));
-
-    // Chèn nhóm API vào sau nhóm General (index 0)
-    groups.splice(1, 0, apiGroup);
+    // Chèn vào sau nhóm General
+    if (generalGroupIdx !== -1) {
+      groups.splice(generalGroupIdx + 1, 0, apiGroup);
+    } else {
+      groups.push(apiGroup);
+    }
 
     return groups;
   };
@@ -53,75 +54,62 @@ CustomPropertiesProvider.prototype.getGroups = function (field, editField) {
 
 // --- Helper Functions ---
 
-// 1. Helper tạo Input Text (Sửa lại từ hàm createCustomEntryFieldName của bạn)
-function createCustomEntryText(field, editField, id, key, label) {
-  const SimpleTextEntry = (props) => {
-    const { setValue } = props;
-    // Lấy value từ properties (quan trọng: path là ['properties', key])
-    const currentValue = get(field, ["properties", key]) || "";
-
-    return h("div", { className: "bio-properties-panel-entry", "data-entry-id": id }, [
-      h("label", { className: "bio-properties-panel-label", htmlFor: id }, label),
-      h("div", { className: "bio-properties-panel-textfield" }, [
-        h("input", {
-          id,
-          className: "bio-properties-panel-input",
-          type: "text",
-          value: currentValue,
-          onInput: (evt) => setValue(evt.target.value), // Cập nhật tạm thời
-          onChange: (evt) => setValue(evt.target.value), // Cập nhật khi blur/enter
-        }),
-      ]),
-    ]);
-  };
-
+function createCustomEntryText(field, modeling, id, key, label) {
   return {
     id,
-    component: SimpleTextEntry,
+    component: (props) => {
+      const currentValue = get(field, ["properties", key]) || "";
+      return h("div", { className: "bio-properties-panel-entry", "data-entry-id": id }, [
+        h("label", { className: "bio-properties-panel-label", htmlFor: id }, label),
+        h("div", { className: "bio-properties-panel-textfield" }, [
+          h("input", {
+            id,
+            className: "bio-properties-panel-input",
+            type: "text",
+            value: currentValue,
+            onInput: (evt) => props.setValue(evt.target.value),
+            onChange: (evt) => props.setValue(evt.target.value),
+          }),
+        ]),
+      ]);
+    },
     getValue: () => get(field, ["properties", key]),
     setValue: (val) => {
-      // Lưu vào field.properties.<key>
-      // Lưu ý: form-js thường lưu custom config trong object `properties`
+      // Logic update chuẩn sử dụng modeling.editFormField
       const newProperties = { ...field.properties, [key]: val };
-      editField(field, ["properties"], newProperties);
+      modeling.editFormField(field, { properties: newProperties });
     },
-    isEdited: () => false, // Đơn giản hóa
+    isEdited: () => false,
   };
 }
 
-// 2. Helper tạo Checkbox (Sửa lại từ createCustomEntryEnable)
-function createCustomEntryCheckbox(field, editField, id, key, label) {
-  const SimpleCheckboxEntry = (props) => {
-    const { setValue } = props;
-    const currentValue = get(field, ["properties", key]) || false;
-
-    return h("div", { className: "bio-properties-panel-entry", "data-entry-id": id }, [
-      h("div", { style: { display: "flex", alignItems: "center", height: "100%" } }, [
-        h("input", {
-          id,
-          type: "checkbox",
-          className: "bio-properties-panel-input",
-          checked: currentValue,
-          onChange: (evt) => setValue(evt.target.checked),
-          style: { margin: "0 8px 0 0" },
-        }),
-        h("label", { className: "bio-properties-panel-label", htmlFor: id, style: { margin: 0 } }, label),
-      ]),
-    ]);
-  };
-
+function createCustomEntryCheckbox(field, modeling, id, key, label) {
   return {
     id,
-    component: SimpleCheckboxEntry,
+    component: (props) => {
+      const currentValue = get(field, ["properties", key]) || false;
+      return h("div", { className: "bio-properties-panel-entry", "data-entry-id": id }, [
+        h("div", { style: { display: "flex", alignItems: "center", height: "100%" } }, [
+          h("input", {
+            id,
+            type: "checkbox",
+            className: "bio-properties-panel-input",
+            checked: currentValue,
+            onChange: (evt) => props.setValue(evt.target.checked),
+            style: { margin: "0 8px 0 0" },
+          }),
+          h("label", { className: "bio-properties-panel-label", htmlFor: id, style: { margin: 0 } }, label),
+        ]),
+      ]);
+    },
     getValue: () => get(field, ["properties", key]),
     setValue: (val) => {
       const newProperties = { ...field.properties, [key]: val };
-      editField(field, ["properties"], newProperties);
+      modeling.editFormField(field, { properties: newProperties });
     },
   };
 }
 
-/* helper */
 function findGroupIdx(groups, id) {
   return groups.findIndex((g) => g.id === id);
 }

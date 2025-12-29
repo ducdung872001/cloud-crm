@@ -8,6 +8,11 @@
     z-index: 9;
     border-radius: 0.3rem;
 
+    // .css-1dyz3mf {
+    //   max-height: 104px;
+    //   overflow-y: auto;
+    // }
+
     div[class*="-control"] {
       box-shadow: none;
       font-size: 1.4rem;
@@ -26,7 +31,10 @@
     div[class*="-menu"] {
       font-size: 1.4rem;
     }
-    div[class*="-ValueContainer"],
+    div[class*="-ValueContainer"] {
+      max-height: 15px;
+      overflow-y: auto;
+    }
     div[class*="-singleValue"],
     div[class*="-Input"] {
       padding: 0;
@@ -47,7 +55,8 @@
       }
     }
     span[class*="-indicatorSeparator"] {
-      display: none;
+      // display: none;
+      display: block;
     }
     div[class*="-indicatorContainer"] {
       padding: 0;

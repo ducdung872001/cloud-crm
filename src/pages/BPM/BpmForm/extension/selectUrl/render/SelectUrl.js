@@ -2,16 +2,18 @@ import classNames from "classnames";
 import React from "react";
 import ReactDOM from "react-dom";
 import { html, useContext } from "diagram-js/lib/ui";
-import { FormContext } from "@bpmn-io/form-js";
+import { FormContext, Select } from "@bpmn-io/form-js";
 import SelectUrlCustom from "components/selectUrlCustom/selectUrlCustom";
 
-// import "./styles.css";
-
-// Định nghĩa Type
 export const selectUrlType = "selectUrl";
 
-// Icon hiển thị trên Palette
-const IconSelectUrlSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h10v2H7v-2z" fill="currentColor"/></svg>`;
+const IconSelectUrlSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 40" width="65" height="35" role="img" aria-labelledby="url-title url-desc">
+  <title id="url-title">URL Input Selector</title>
+  <rect x="2" y="2" width="64" height="36" rx="2" fill="none" stroke="#111827" stroke-width="2"/>
+  <text x="30" y="21" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-size="11" font-weight="600" fill="#111827" stroke="none">URL</text>
+  <path d="M 48 16 L 56 16 L 52 23 Z" fill="#111827" stroke="none"/>
+</svg>`;
+
 export const iconSelectUrlDataUrl = `data:image/svg+xml,${encodeURIComponent(IconSelectUrlSvg)}`;
 
 export function SelectUrlRenderer(props) {
@@ -20,8 +22,6 @@ export function SelectUrlRenderer(props) {
   const { formId } = useContext(FormContext);
 
   const required = field?.validate?.required ?? false;
-
-  // Lấy cấu hình từ properties
   const url = field?.properties?.url ?? "";
   const isLoadAll = field?.properties?.isLoadAll ?? false;
   const isMulti = field?.properties?.isMulti ?? false;
@@ -39,7 +39,6 @@ export function SelectUrlRenderer(props) {
     });
   }
 
-  // Render Component React
   setTimeout(() => {
     const container = document.getElementById(containerId);
     if (container && props.onChange && field) {
@@ -81,52 +80,13 @@ export function SelectUrlRenderer(props) {
   `;
 }
 
-// --- CẤU HÌNH QUAN TRỌNG ---
 SelectUrlRenderer.config = {
+  ...Select.config,
   type: selectUrlType,
-  label: "Select URL Custom",
-  group: "selection",
+  label: "Select URL",
   iconUrl: iconSelectUrlDataUrl,
   propertiesPanelEntries: ["key", "label", "description", "disabled", "required", "readonly"],
-
-  // Hàm khởi tạo dữ liệu khi kéo thả
-  create: function (fieldFactory, incomingProperties) {
-    const type = selectUrlType;
-    // Tự sinh ID
-    const id = nextId(type);
-
-    // Log ra console để debug xem ID có sinh ra không (F12 để xem)
-    console.log("Creating SelectUrl with ID/Key:", id);
-
-    // Trả về object định nghĩa field
-    // LƯU Ý: Không spread `...incomingProperties` ở root để tránh bị ghi đè key rỗng
-    return {
-      id: id,
-      key: id, // Bắt buộc phải có và không được rỗng
-      type: type,
-      label: "Select URL Custom",
-
-      // Các custom properties nằm trong object properties
-      properties: {
-        url: "",
-        isLoadAll: false,
-        isMulti: false,
-        labelKey: "name",
-        valueKey: "id",
-        searchKey: "name",
-        // Nếu muốn lấy thêm props khác từ incoming thì nhét vào đây, nhưng cẩn thận
-        ...(incomingProperties && incomingProperties.properties ? incomingProperties.properties : {}),
-      },
-    };
-  },
 };
-
-// --- Helpers ---
-
-// Hàm sinh ID đơn giản
-function nextId(prefix) {
-  return prefix + "_" + Math.random().toString(36).substring(2, 9);
-}
 
 function formFieldClasses(type, { errors = [], disabled = false, readonly = false } = {}) {
   if (!type) {

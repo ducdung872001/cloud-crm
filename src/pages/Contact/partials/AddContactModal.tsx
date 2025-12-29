@@ -1552,7 +1552,7 @@ export default function AddContactModal(props: AddContactModalProps) {
               <div className="form-group">
                 <SelectUrlCustom
                   label="Chức vụ"
-                  url="/adminapi/position/list"
+                  url="/adminapi/customer/list_paid"
                   // isLoadAll={true}
                   searchKey="name"
                   labelKey="name"
@@ -1583,9 +1583,10 @@ export default function AddContactModal(props: AddContactModalProps) {
               <div className="form-group">
                 <SelectUrlCustom
                   label="Chức vụ"
-                  url="/adminapi/position/list"
+                  url="/adminapi/customer/list_paid"
                   // isLoadAll={true}
-                  isMulti={true} // --- GIỮ NGUYÊN ---
+                  isMulti={true}
+                  // maxHeight={"50px"}
                   searchKey="name"
                   labelKey="name"
                   valueKey="id"
