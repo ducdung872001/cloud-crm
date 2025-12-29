@@ -652,7 +652,8 @@ export function ListFilterChoose(props: ListFilterChooseProps) {
   const listStringFields = ["Trangthaikhoanvaycashloan", "Trangthaikhoanvaycreditline", "TrangThaiKhoanVayTBoss"];
 
   // Lọc ra các phần tử có key KHÔNG nằm trong listStringFields
-  const filteredList = listFilterItem.filter((item) => !listStringFields.includes(item.key));
+  // const filteredList = listFilterItem.filter((item) => !listStringFields.includes(item.key));
+  const filteredList = [...listFilterItem];
 
   const removeValueFilter = (key) => {
     const listFilterItemNew = _.cloneDeep(listFilterItem);
@@ -678,7 +679,7 @@ export function ListFilterChoose(props: ListFilterChooseProps) {
                   if (item.type !== "date" && item.type !== "date-two") {
                     return (
                       <li key={index}>
-                        {item.name}:
+                        {item.name}: {' '}
                         {item.type === "select" || item.type === "radio"
                           ? item.list && item.list.length > 0
                             ? item.list.find((i) => i.value === item.value)?.label
