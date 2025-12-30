@@ -507,6 +507,15 @@ export default function PaymentBill(props: AddContractModalProps) {
   const [validateFieldDeliveryDate, setValidateFieldDeliveryDate] = useState<boolean>(false);
   const [validateFieldBillStartDate, setValidateFieldBillStartDate] = useState<boolean>(false);
 
+  const convertDateForPicker = (dateValue: any): Date | null => {
+    if (!dateValue) return null;
+    if (dateValue instanceof Date) return dateValue;
+    if (typeof dateValue === "string") {
+      return new Date(dateValue);
+    }
+    return null;
+  };
+
   //! đoạn này xử lý vấn đề thay đổi ngày ký
   const handleChangeValueSignDate = (e) => {
     setValidateFieldSignDate(false);
@@ -1017,7 +1026,7 @@ export default function PaymentBill(props: AddContractModalProps) {
             label={contractAttribute.name}
             name={contractAttribute.name}
             fill={true}
-            value={getContractAttributeValue(contractAttribute.id)}
+            value={convertDateForPicker(getContractAttributeValue(contractAttribute.id))}
             onChange={(e) => {
               const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
               updateContractAttribute(contractAttribute.id, newDate);
@@ -1571,7 +1580,7 @@ export default function PaymentBill(props: AddContractModalProps) {
               label="Ngày ký"
               name="signDate"
               fill={true}
-              value={data?.signDate}
+              value={convertDateForPicker(data?.signDate)}
               onChange={(e) => handleChangeValueSignDate(e)}
               placeholder="Chọn ngày ký"
               required={true}
@@ -1598,7 +1607,7 @@ export default function PaymentBill(props: AddContractModalProps) {
               label="Ngày hiệu lực"
               name="affectedDate"
               fill={true}
-              value={data?.affectedDate}
+              value={convertDateForPicker(data?.affectedDate)}
               onChange={(e) => handleChangeValueAffectedDate(e)}
               placeholder="Chọn ngày hiệu lực"
               required={true}
@@ -1625,7 +1634,7 @@ export default function PaymentBill(props: AddContractModalProps) {
               label="Ngày hết hạn"
               name="endDate"
               fill={true}
-              value={data?.endDate}
+              value={convertDateForPicker(data?.endDate)}
               onChange={(e) => handleChangeValueEndDate(e)}
               placeholder="Chọn ngày hết hạn"
               required={true}
@@ -1652,7 +1661,7 @@ export default function PaymentBill(props: AddContractModalProps) {
               label="Ngày đến hạn điều chỉnh giá"
               name="adjustDate"
               fill={true}
-              value={data?.adjustDate}
+              value={convertDateForPicker(data?.adjustDate)}
               onChange={(e) => handleChangeValueAdjustDate(e)}
               placeholder="Chọn ngày"
               required={false}
