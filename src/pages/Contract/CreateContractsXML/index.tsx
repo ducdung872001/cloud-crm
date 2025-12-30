@@ -313,6 +313,7 @@ export default function CreateContractsXML(props: any) {
 
     let body: any = {
       ...(data ? data : {}),
+      ...(id && +id > 0 ? { id: +id } : {}),
       name: config.name || "",
       categoryId: config.contractCategoryId || null,
       contractNo: config.contractNo || "",
@@ -364,7 +365,7 @@ export default function CreateContractsXML(props: any) {
     const response = await ContractService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} bảo hành thành công`, "success");
+      showToast(`${id && +id > 0  ? "Cập nhật" : "Thêm mới"} bảo hành thành công`, "success");
       takeInfoCustomer && takeInfoCustomer(response.result);
       navigate(`/contract`);
     } else {
