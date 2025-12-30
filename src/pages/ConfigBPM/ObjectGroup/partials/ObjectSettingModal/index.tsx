@@ -45,12 +45,12 @@ export default function ObjectSettingModal(props: any) {
 
     if (response.code === 0) {
       showToast(`Cập nhật biểu mẫu thành công`, "success");
-      handleClear(true);
+      setInitFormSchema(formSchema); 
+      setIsSubmit(false);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
-    setIsSubmit(false);
   };
 
   const handleClear = (acc) => {
@@ -69,7 +69,7 @@ export default function ObjectSettingModal(props: any) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              handleClear(false);
+              handleClear(true);
             },
           },
           {
@@ -102,7 +102,7 @@ export default function ObjectSettingModal(props: any) {
           <ModalHeader
             title={`Cài đặt đối tượng`}
             toggle={() => {
-              !isSubmit && onHide(false);
+              !isSubmit && onHide(true);
             }}
           />
           <ModalBody>
