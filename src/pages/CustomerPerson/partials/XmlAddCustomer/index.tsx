@@ -10,7 +10,7 @@ import Tippy from "@tippyjs/react";
 import CustomerService from "services/CustomerService";
 import CustomerExtraInfoService from "services/CustomerExtraInfoService";
 import CustomerAttributeService from "services/CustomerAttributeService";
-import _, { forEach } from "lodash";
+import _, { forEach, map } from "lodash";
 import Button from "components/button/button";
 import Loading from "components/loading";
 import FormViewerComponent from "pages/BPM/BpmForm/FormViewer";
@@ -79,6 +79,11 @@ export default function XmlAddCustomer(props: any) {
     localStorage.setItem("showFullScreenModalCustomerEform", JSON.stringify(showFullScreen));
   }, [showFullScreen]);
 
+  const toFormDate = (value) => {
+    if (!value) return "";
+    return moment(value).format("YYYY-MM-DD");
+  };
+
   const toApiDate = (value: any) => {
     return value ? moment(value, ["MM-DD-YYYY", moment.ISO_8601]).format("YYYY-MM-DDTHH:mm:ss") : "";
   };
@@ -96,6 +101,43 @@ export default function XmlAddCustomer(props: any) {
       const extraInfos = data?.id ? await getCustomerExtraInfos(data?.id) : []; // Lấy giá trị của các trường thông tin mở rộng của khách hàng nếu có data.id (id của khách hàng)
       const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField); // Map dữ liệu ban đầu vào cấu hình form
       if (data?.id) {
+        
+        mapped.custType = String(mapped.custType);
+        mapped.gender = String(mapped.gender);
+        mapped.isExternal = String(mapped.isExternal);
+        mapped.customers = mapped.relationIds[0];
+
+        mapped.birthday = toFormDate(mapped.birthday);
+
+        if (mapped.address) {
+          if (mapped.custType == "0") {
+            mapped.address = mapped.address;
+          } else {
+            mapped.addressBusinesses = mapped.address;
+          }
+        }
+        if (mapped.careers) {
+          if (mapped.custType == "0") {
+            mapped.careerId = mapped.careers[0];
+          } else {
+            mapped.professionId = mapped.careers[0];
+          }
+        }
+        if (mapped.name) {
+          if (mapped.custType == "0") {
+            mapped.namePerson = mapped.name;
+          } else {
+            mapped.nameCompany = mapped.name;
+          }
+        }
+        if (mapped.sourceId) {
+          if (mapped.custType == "0") {
+            mapped.sourceId = mapped.sourceId;
+          } else {
+            mapped.targetId = mapped.sourceId;
+          }
+        }
+
         setDataInit(mapped);
       }
       setInitFormSchema(configInit);
@@ -142,7 +184,7 @@ export default function XmlAddCustomer(props: any) {
       avatar: config.avartar ? JSON.parse(config.avartar)[0]?.url : "",
       birthday: toApiDate(config.birthday),
       branchId: checkUserRoot == "1" ? data?.branchId ?? dataBranch.value ?? null : 0,
-      careers:"[" + ((config.custType == 0 ? config.careerId : config.professionId) ?? 0) + "]",
+      careers: [(config.custType == 0 ? config.careerId : config.professionId) ?? 0],
       cgpId: config.cgpId ?? "",
       code: config.code ?? "",
       contactId: config.contactId ?? 0,

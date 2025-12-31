@@ -1131,6 +1131,22 @@ export default function CustomerPersonList() {
           </div>
         )}
 
+        {isUserRoot && (
+          <div
+            className="item__action update"
+            onClick={() => {
+              setDataCustomer(data.dataItem);
+              setShowModalAddXml(true);
+            }}
+          >
+            <Tippy content="Sửa">
+              <span className="icon__item icon__update">
+                <Icon name="SettingCashbook" />
+              </span>
+            </Tippy>
+          </div>
+        )}
+        
         {permissions["CUSTOMER_UPDATE"] == 1 && (
           <div
             className="item__action update"
