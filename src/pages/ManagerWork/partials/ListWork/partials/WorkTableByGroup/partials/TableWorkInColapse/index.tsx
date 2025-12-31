@@ -131,7 +131,7 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
   const titles = [
     // "STT",
     "Tên công việc",
-    "Người nhận việc",
+    "Người thực hiện",
     "Thời gian",
     //  "Thuộc dự án",
     "Tiến độ",
@@ -140,71 +140,50 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
 
   const dataFormat = ["text-left", "", "", "", "", "text-center", "text-center"];
 
-  const dataMappingArray = (item: IWorkOrderResponseModel, index: number, type?: string) =>
-    type !== "export"
-      ? [
-          // getPageOffset(params) + index + 1,
-          <span
-            key={item.id}
-            className="name-work"
-            onClick={() => {
-              // setIsDetailWork(true);
-              // handleDetailWork(item, listWork.length);
-            }}
-          >
-            {item.name}
-          </span>,
-          // item?.employeeName ?? <i>Chưa có</i>,
-          <a>Giao việc</a>,
-          item.startTime || item.endTime ? `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}` : "",
-          // item.projectName,
-          <div
-            key={item.id}
-            className="percent__finish--work"
-            onClick={() => {
-              if (item.percent !== 100 && item.status !== 0 && item.status !== 2 && item.status !== 3 && item.status !== 4) {
-                // setShowModalWorkInprogress(true);
-                // setIdWork(item.id);
-              } else if (item.status == 2 || item.status == 3 || item.status == 4) {
-                // setIdWork(item.id);
-                // setShowModalViewWorkInprogress(true);
-              } else {
-                showToast("Công việc đang trong trạng thái chưa được thực hiện", "warning");
-              }
-            }}
-          >
-            <CircularProgressbar value={item.percent || 0} text={`${item.percent || 0}%`} className="value-percent" />
-          </div>,
-          item.status == 0 ? (
-            handleUnfulfilled(item.startTime)
-          ) : item.status == 1 ? (
-            handleProcessing(item.startTime, item.endTime)
-          ) : item.status == 2 ? (
-            <span className="status-success">Đã hoàn thành</span>
-          ) : item.status == 3 ? (
-            <span className="status-cancelled">Đã hủy</span>
-          ) : (
-            <span className="status-pause">Tạm dừng</span>
-          ),
-        ]
-      : [
-          getPageOffset(params) + index + 1,
-          item.name,
-          item.employeeName,
-          `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}`,
-          item.projectName,
-          `${item.percent || 0}%`,
-          item.status == 0
-            ? "Chưa thực hiện"
-            : item.status == 1
-            ? "Đang thực hiện"
-            : item.status == 2
-            ? "Đã hoàn thành"
-            : item.status == 3
-            ? "Đã hủy"
-            : "Tạm dừng",
-        ];
-
+  const dataMappingArray = (item: IWorkOrderResponseModel, index: number, type?: string) => [
+    // getPageOffset(params) + index + 1,
+    <span
+      key={item.id}
+      className="name-work"
+      onClick={() => {
+        // setIsDetailWork(true);
+        // handleDetailWork(item, listWork.length);
+      }}
+    >
+      {item.name}
+    </span>,
+    item?.employeeName ?? <a>Giao việc</a>,
+    item.startTime || item.endTime ? `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}` : "",
+    // item.projectName,
+    <div
+      key={item.id}
+      className="percent__finish--work"
+      onClick={() => {
+        if (item.percent !== 100 && item.status !== 0 && item.status !== 2 && item.status !== 3 && item.status !== 4) {
+          // setShowModalWorkInprogress(true);
+          // setIdWork(item.id);
+        } else if (item.status == 2 || item.status == 3 || item.status == 4) {
+          // setIdWork(item.id);
+          // setShowModalViewWorkInprogress(true);
+        } else {
+          showToast("Công việc đang trong trạng thái chưa được thực hiện", "warning");
+        }
+      }}
+    >
+      <CircularProgressbar value={item.percent || 0} text={`${item.percent || 0}%`} className="value-percent" />
+    </div>,
+    item.status == 0 ? (
+      handleUnfulfilled(item.startTime)
+    ) : item.status == 1 ? (
+      handleProcessing(item.startTime, item.endTime)
+    ) : item.status == 2 ? (
+      <span className="status-success">Đã hoàn thành</span>
+    ) : item.status == 3 ? (
+      <span className="status-cancelled">Đã hủy</span>
+    ) : (
+      <span className="status-pause">Tạm dừng</span>
+    ),
+  ];
   //! đoạn này xử lý vấn đề hiển thị thông tin xem bao giờ thực hiện
   const handleUnfulfilled = (time) => {
     const currentTime = new Date().getTime();

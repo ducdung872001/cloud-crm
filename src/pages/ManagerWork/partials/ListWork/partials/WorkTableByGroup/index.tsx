@@ -1,19 +1,13 @@
-import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import _ from "lodash";
-import moment from "moment";
 import Tippy from "@tippyjs/react";
-import { isDifferenceObj, getPageOffset } from "reborn-util";
 import { useSearchParams } from "react-router-dom";
-import { CircularProgressbar } from "react-circular-progressbar";
 import Icon from "components/icon";
 import Button from "components/button/button";
-import Dialog, { IContentDialog } from "components/dialog/dialog";
-import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
-import { BulkActionItemModel } from "components/bulkAction/bulkAction";
-import { IListWorkProps } from "model/workOrder/PropsModel";
-import { IAction, IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
-import { IGroupsFilterRequest, IWorkOrderFilterRequest } from "model/workOrder/WorkOrderRequestModel";
-import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
+import Dialog from "components/dialog/dialog";
+
+import { IFilterItem, ISaveSearch } from "model/OtherModel";
+import { IGroupsFilterRequest } from "model/workOrder/WorkOrderRequestModel";
 import { showToast } from "utils/common";
 import WorkOrderService from "services/WorkOrderService";
 import AddWorkModal from "./partials/AddWorkModal";
@@ -26,23 +20,10 @@ import Collapsible from "components/collapse";
 import Input from "components/input/input";
 import TableWorkInColapse from "./partials/TableWorkInColapse";
 
-export default function WorkTableByGroup(props: any) {
-  const isMounted = useRef(false);
+const listColors = ["#FFC43C", "#00b499", "#0091FF", "#F76808", "#12A594", "#E5484D"];
 
-  const {
-    idManagement,
-    isRegimeKanban,
-    isRegimeReport,
-    isFullPage,
-    handleDetailWork,
-    showProjectManagement,
-    setIsDetailWork,
-    abortController,
-    isExportWork,
-    setIsFullPage,
-    onHideExport,
-    dataProjectReport,
-  } = props;
+export default function WorkTableByGroup(props: any) {
+  const { idManagement, isRegimeKanban, isRegimeReport, isFullPage, showProjectManagement, abortController, setIsFullPage } = props;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [listGroupWork, setListGroupWork] = useState<any[]>([]);
@@ -461,7 +442,7 @@ export default function WorkTableByGroup(props: any) {
                   dataItems={{
                     title: groupItem?.name || "Chưa phân nhóm",
                     count: groupItem?.total || 0,
-                    color: "#FFC43C", // #00b499
+                    color: listColors[groupIndex % listColors.length],
                   }}
                   isOpen={groupItem.isOpen || false}
                   title={""}
