@@ -84,11 +84,10 @@ export default function CustomerPersonList() {
   const checkUserRoot = localStorage.getItem("user.root");
   const swiperRelationshipRef = useRef(null);
   const targetBsnId_customer = localStorage.getItem("targetBsnId_customer");
-
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [listCustomer, setListCustomer] = useState<ICustomerResponse[]>([]);  
-  const [listIdChecked, setListIdChecked] = useState<number[]>([]);
+  const [listIdChecked, setListIdChecked] = useState<number[]>([]);  
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showModalDebt, setShowModalDebt] = useState<boolean>(false);
@@ -97,12 +96,10 @@ export default function CustomerPersonList() {
   const [showModalAddMA, setShowModalAddMA] = useState<boolean>(false);
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
   const [isBatch, setIsBatch] = useState<boolean>(false);
-
   const { width } = useWindowDimensions();
   const takeParamsUrl = getSearchParameters();
   console.log('takeParamsUrl', takeParamsUrl);
   
-
   //! đoạn này call API mối quan hệ khách hàng
   const [listRelationship, setListRelationship] = useState<IRelationShipResposne[]>([]);
   const [idRelationship, setIdRelationship] = useState<number>(() => {
@@ -3045,7 +3042,6 @@ export default function CustomerPersonList() {
                     listSaveSearch={listSaveSearch}
                     listFilterItem={checkSubdomainTNEX ? customerFilterListTNEX : customerFilterList}
                     updateParams={(paramsNew) => {
-                      console.log('paramsNew', paramsNew);
                       
                       if (activeTitleHeader === 1) {
                         // setParams(paramsNew);
@@ -3060,7 +3056,6 @@ export default function CustomerPersonList() {
                             || Object.keys(paramsNew).find((el) => el === "LyDo") 
                             || Object.keys(paramsNew).find((el) => el === "marketingSendLeadSource") 
                             
-
                             //Trường ngày
                             || Object.keys(paramsNew).find((el) => el === "cashLoanApproveStartDate") 
                             || Object.keys(paramsNew).find((el) => el === "cashLoanApproveEndDate")
@@ -3106,7 +3101,6 @@ export default function CustomerPersonList() {
                             // 🔹 Field số tiền phê duyệt
                             if (hasField("sotienpheduyetcashloan")) {
                               customerExtraInfoParamsNew = customerExtraInfoParamsNew.filter((el) => el.fieldName !== "sotienpheduyetcashloan");
-
                               customerExtraInfo.push({
                                 fieldName: "sotienpheduyetcashloan",
                                 attributeValueNumber: paramsNew["sotienpheduyetcashloan"],
@@ -3114,7 +3108,6 @@ export default function CustomerPersonList() {
                                 operator: "gte"
                               });
                             }
-
 
                             // 🔹 Hàm xử lý các field ngày (dùng chung cho cashloan, creditline, TBoss)
                             const handleDateRange = (startKey, endKey, fieldName) => {
@@ -3145,7 +3138,6 @@ export default function CustomerPersonList() {
                                 });
                               }
                             };
-
 
                             // Gọi xử lý các nhóm ngày
                             handleDateRange("cashLoanApproveStartDate", "cashLoanApproveEndDate", "ngaypheduyetcashloan");
@@ -3296,7 +3288,7 @@ export default function CustomerPersonList() {
 
                     const values = field.attributeValue?.split("::") || [];
                     return (
-                      <div key={key} className="item_advance">
+                      <div key={key} className={values?.length > 1 ? "item_advance" : 'd-none'}>
                         <div className="advance_text">
                           <div>
                             <span style={{ fontSize: 14, fontWeight: 400 }}>
@@ -3357,7 +3349,12 @@ export default function CustomerPersonList() {
               <div 
                 className="button-split-data"
                 onClick={() => {
-                  setIsModalSplitData(true);
+                  if(listIdChecked && listIdChecked.length > 0){
+                    setIsModalSplitData(true);
+                  } else {
+                    showToast("Vui lòng chọn dữ liệu khách hàng", "warning");
+                  }
+                  
                 }}
               >
                 <span style={{fontSize: 14, fontWeight: '500'}}>Chia dữ liệu</span>
@@ -3383,6 +3380,7 @@ export default function CustomerPersonList() {
                   takeChangeDataCustomer(lstData);
                   setListIdChecked(listId);
                 }}
+                saveColumnName={'customerListTable'}
               />
             ) : isLoading ? (
               <Loading />

@@ -56,6 +56,10 @@ export interface ITableWorkOrderProps {
   setShowModalAdd: any;
   isNoItem: boolean;
 }
+export interface ITableWorkInColapsedProps {
+  paramsFilter: any;
+  isOpen: boolean;
+}
 
 export interface IKanbanWorkProps {
   isKanban: boolean;
