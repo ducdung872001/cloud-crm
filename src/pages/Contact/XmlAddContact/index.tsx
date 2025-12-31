@@ -127,8 +127,8 @@ export default function XmlAddContact(props: any) {
       });
     });
 
-    let phone = config?.phoneMasked ?? null; // Lấy theo phoneMasked vì maskedInput trong form lấy theo key này
-    let email = config?.emailMasked ?? null; // Lấy theo emailMasked vì maskedInput trong form lấy theo key này
+    let phone = config?.phoneMasked ?? null;
+    let email = config?.emailMasked ?? null;
 
     let body: any = {
       ...(data ? data : {}),
@@ -144,7 +144,7 @@ export default function XmlAddContact(props: any) {
       cardvisitFront: config.cardvisitFront ? JSON.parse(config.cardvisitFront)[0]?.url : "",
       cardvisitBack: config.cardvisitBack ? JSON.parse(config.cardvisitBack)[0]?.url : "",
       department: config.department ?? null,
-      coordinators: config.coordinators ?? null,
+      coordinators: config.coordinators ? JSON.stringify(config.coordinators) : config.coordinators ?? null,
       primaryCustomerId: config.primaryCustomerId ?? null,
       contactExtraInfos: infoExtra,
     };

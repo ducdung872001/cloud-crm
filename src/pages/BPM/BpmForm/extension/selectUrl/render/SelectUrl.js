@@ -22,9 +22,13 @@ export function SelectUrlRenderer(props) {
   const { formId } = useContext(FormContext);
 
   const required = field?.validate?.required ?? false;
-  const url = field?.properties?.url ?? "";
-  const isLoadAll = field?.properties?.isLoadAll ?? false;
-  const isMulti = field?.properties?.isMulti ?? false;
+  const rawUrl = field?.properties?.url;
+  const rawIsLoadAll = field?.properties?.isLoadAll;
+  const rawIsMulti = field?.properties?.isMulti;
+  const url = rawUrl ?? "";
+  const isLoadAll = rawIsLoadAll === true || rawIsLoadAll === "true";
+  const isMulti = rawIsMulti === true || rawIsMulti === "true";
+
   const labelKey = field?.properties?.labelKey ?? "name";
   const valueKey = field?.properties?.valueKey ?? "id";
   const searchKey = field?.properties?.searchKey ?? "name";

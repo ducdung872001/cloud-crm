@@ -3,7 +3,6 @@ import { h } from "preact";
 
 const SELECT_URL_TYPE = "selectUrl";
 
-// Inject 'modeling' để thực hiện update dữ liệu
 export default function CustomPropertiesProvider(propertiesPanel, modeling) {
   this.propertiesPanel = propertiesPanel;
   this.modeling = modeling;
@@ -14,7 +13,6 @@ CustomPropertiesProvider.$inject = ["propertiesPanel", "modeling"];
 
 CustomPropertiesProvider.prototype.getGroups = function (field) {
   return (groups) => {
-    // Chỉ xử lý nếu là component SelectUrl
     if (!field || field.type !== SELECT_URL_TYPE) {
       return groups;
     }
@@ -27,21 +25,15 @@ CustomPropertiesProvider.prototype.getGroups = function (field) {
       entries: [],
     };
 
-    // Lấy modeling từ instance
     const modeling = this.modeling;
 
-    // 1. URL
     apiGroup.entries.push(createCustomEntryText(field, modeling, "url", "url", "API URL Endpoint"));
-    // 2. Load All
     apiGroup.entries.push(createCustomEntryCheckbox(field, modeling, "isLoadAll", "isLoadAll", "Load All (Max 200)"));
-    // 3. Multi Select
     apiGroup.entries.push(createCustomEntryCheckbox(field, modeling, "isMulti", "isMulti", "Multi Select"));
-    // 4. Advanced Config Keys
     apiGroup.entries.push(createCustomEntryText(field, modeling, "labelKey", "labelKey", "Label Key (Default: name)"));
     apiGroup.entries.push(createCustomEntryText(field, modeling, "valueKey", "valueKey", "Value Key (Default: id)"));
     apiGroup.entries.push(createCustomEntryText(field, modeling, "searchKey", "searchKey", "Search Param (Default: name)"));
 
-    // Chèn vào sau nhóm General
     if (generalGroupIdx !== -1) {
       groups.splice(generalGroupIdx + 1, 0, apiGroup);
     } else {
@@ -51,8 +43,6 @@ CustomPropertiesProvider.prototype.getGroups = function (field) {
     return groups;
   };
 };
-
-// --- Helper Functions ---
 
 function createCustomEntryText(field, modeling, id, key, label) {
   return {
@@ -75,7 +65,6 @@ function createCustomEntryText(field, modeling, id, key, label) {
     },
     getValue: () => get(field, ["properties", key]),
     setValue: (val) => {
-      // Logic update chuẩn sử dụng modeling.editFormField
       const newProperties = { ...field.properties, [key]: val };
       modeling.editFormField(field, { properties: newProperties });
     },
