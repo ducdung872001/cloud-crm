@@ -6,7 +6,7 @@
       height: 58rem;
       max-height: 58.2rem;
       overflow: auto;
-      padding: 2rem 10rem 0rem;
+      padding: 2rem 2rem 0rem;
 
       .lst__data--exchange {
         display: flex;
@@ -331,7 +331,7 @@
 
     .chat-content {
       width: calc(100% - 20rem);
-      margin: 0.5rem auto 0rem;
+      margin: 0.5rem auto 0.5rem;
       background-color: var(--white-color);
       border-radius: 0.5rem;
       padding: 0.6rem 1.2rem;

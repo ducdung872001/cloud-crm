@@ -12,6 +12,7 @@ import Loading from "components/loading";
 import GridExtension from "./extension/gridViewer/render";
 import UploadFileExtension from "./extension/uploadFile/render";
 import MaskedInputExtension from "./extension/maskedInput/render";
+import SelectUrlExtension from "./extension/selectUrl/render";
 // import RenderExtension from './extension/range/render';
 // import HiddenRenderExtension from './extension/hidden/render';
 // import NumberRenderExtension from './extension/number/render';
@@ -291,7 +292,7 @@ const FormViewerComponent = (props: any) => {
   };
 
   //Xủ lý dữ liệu khởi tạo ban đầu
-  const walkInitData = (components, potId, processId, filterItems) => {    
+  const walkInitData = (components, potId, processId, filterItems) => {
     if (components && components.length > 0) {
       components.forEach((comp) => {
         let apiUrl = comp?.properties?.apiUrl || "";
@@ -304,13 +305,13 @@ const FormViewerComponent = (props: any) => {
           }
         }
 
-        if (comp.type === "select" && comp.valuesKey) {          
+        if (comp.type === "select" && comp.valuesKey) {
           // Lấy valuesKey từ component,
           // Lấy ra các tham số được gán khởi tạo
           // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
           let key = comp?.properties?.keyApi || comp.valuesKey || comp.key;
           let paramsUrl = comp?.properties?.paramsUrl || "";
-          const paramsTotal = convertDataParamsProperties(paramsUrl);          
+          const paramsTotal = convertDataParamsProperties(paramsUrl);
           filterItems.push({ key, paramsTotal, compKey: comp.key, type: "select", apiUrl: apiUrl });
         }
 
@@ -326,7 +327,7 @@ const FormViewerComponent = (props: any) => {
           walkInitData(comp.components, potId, processId, filterItems);
         }
       });
-    }    
+    }
 
     return filterItems;
   };
@@ -366,6 +367,7 @@ const FormViewerComponent = (props: any) => {
         GridExtension,
         UploadFileExtension,
         MaskedInputExtension,
+        SelectUrlExtension,
       ],
 
       // components: {
@@ -626,14 +628,14 @@ const FormViewerComponent = (props: any) => {
 
       //1. Loại là select
       if (formField.type == "select") {
-        //valuesKey là Input values key đối với loại select là Input Data        
+        //valuesKey là Input values key đối với loại select là Input Data
         let key = formField?.properties?.keyApi || formField?.valuesKey || formField?.key;
         let fields = formField?.properties?.binding || ""; //Trả về departmentId
         let apiUrl = formField?.properties?.apiUrl || "";
         let paramsUrl = formField?.properties?.paramsUrl || "";
         let apiParams = formField?.properties?.apiParams || "";
         let paramsTotal = {};
-        if(apiParams){
+        if (apiParams) {
           paramsTotal = getParamsPropertiesEform(apiParams, formData);
         } else {
           paramsTotal = convertDataParamsProperties(paramsUrl);
@@ -652,6 +654,7 @@ const FormViewerComponent = (props: any) => {
               [field]: value,
               ...(paramsUrl || apiParams ? { ...paramsTotal } : {}),
             };
+            console.log("params", params);
           }
 
           let dataOption;
@@ -1095,7 +1098,7 @@ const FormViewerComponent = (props: any) => {
     const potId = contextData?.potId;
     const processId = contextData?.processId;
     let filterItems = [];
-    walkInitData(updatedFormSchema.components, potId, processId, filterItems);    
+    walkInitData(updatedFormSchema.components, potId, processId, filterItems);
     //Kiểm tra có các trường hợp select (mà có valuesKey => Thực hiện khởi tạo dữ liệu)
     // updatedFormSchema.components.forEach((component) => {
     //   let apiUrl = component?.properties?.apiUrl || "";
@@ -1224,7 +1227,7 @@ const FormViewerComponent = (props: any) => {
 
     //Lặp tiến hành binding
     for (let index = 0; index < filterItems.length; index++) {
-      let filterItem = filterItems[index];      
+      let filterItem = filterItems[index];
       if (filterItem.type == "select") {
         //Đã là 1 dạng list gồm {label, value}
         let dataOption;
@@ -1235,7 +1238,7 @@ const FormViewerComponent = (props: any) => {
         }
         //Lưu trang là số 1 => Đăng ký lắng nghe sự kiện scroll
         walkGetOptionSelect(updatedFormSchema.components, dataOption, filterItem);
-        
+
         // updatedFormSchema.components.forEach((component) => {
         //   // Kiểm tra nếu component có type là 'select'
         //   if (component.type === "select" && component.key == filterItem.compKey) {

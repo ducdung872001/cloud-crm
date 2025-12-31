@@ -54,6 +54,7 @@ import BeautySalonService from "services/BeautySalonService";
 import ContractGuaranteeService from "services/ContractGuaranteeService";
 import PartnerService from "services/PartnerService";
 import PackageService from "services/PackageService";
+import ContactStatusService from "services/ContactStatusService";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -258,6 +259,10 @@ export async function SelectOptionData(key: string, params?: any) {
 
     case "contact_pipelineId":
       response = await ContactPipelineService.list(params);
+      console.log("response >>>>>>>>>>>>", response);
+      break;
+    case "statusId":
+      response = await ContactStatusService.listForContact(params);
       break;
 
     case "cityId":

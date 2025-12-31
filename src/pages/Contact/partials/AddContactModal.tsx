@@ -43,9 +43,11 @@ import CustomerService from "services/CustomerService";
 import { ContextType, UserContext } from "contexts/userContext";
 import ImageThirdGender from "assets/images/third-gender.png";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
+import SelectUrlCustom from "components/selectUrlCustom/selectUrlCustom";
 
 export default function AddContactModal(props: AddContactModalProps) {
   const { onShow, onHide, data, idCustomer } = props;
+  console.log("data in modal contact >>>>", data);
 
   const parser = new Parser();
   const { dataBranch } = useContext(UserContext) as ContextType;

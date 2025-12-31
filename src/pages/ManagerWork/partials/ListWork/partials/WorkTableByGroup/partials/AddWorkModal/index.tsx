@@ -427,7 +427,11 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
       rules: "required",
     },
     {
-      name: "projectId",
+      name: "startTime",
+      rules: "required",
+    },
+    {
+      name: "endTime",
       rules: "required",
     },
   ];
@@ -911,11 +915,11 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
 
   // Thông báo
   useEffect(() => {
-    // if (dataListNotification.length > 0) {
-    //   setFormData({ ...formData, values: { ...formData?.values, notification: dataListNotification } });
-    // } else {
-    //   setFormData({ ...formData, values: { ...formData?.values, notification: [] } });
-    // }
+    if (dataListNotification.length > 0) {
+      setFormData({ ...formData, values: { ...formData?.values, notification: dataListNotification } });
+    } else {
+      setFormData({ ...formData, values: { ...formData?.values, notification: [] } });
+    }
   }, [dataListNotification]);
 
   // lấy thông tin ngày bắt đầu, ngày kết thúc
@@ -1152,7 +1156,6 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
               fill={true}
               required={true}
               value={dataWorkProject}
-              disabled={dataWorkProject?.value}
               onChange={(e) => handleChangeValueWorkProject(e)}
               isAsyncPaginate={true}
               placeholder="Chọn dự án"
@@ -1458,45 +1461,29 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
       return;
     }
 
-    // if (!formData?.values?.workLoad) {
-    //   setValidateWordLoad(true);
-    //   return;
-    // }
+    if (!formData?.values?.workLoad) {
+      setValidateWordLoad(true);
+      return;
+    }
+
+    if (type !== "opportunity" && !formData?.values?.projectId) {
+      setValidateProject(true);
+      return;
+    } else if (type === "opportunity" && !formData?.values?.opportunityId) {
+      setValidateOpt(true);
+      return;
+    }
 
     setIsSubmit(true);
 
-    // const body: IWorkOrderRequestModel = {
-    //   ...(data ? { id: data?.id } : {}),
-    //   ...(formData.values as IWorkOrderRequestModel),
-    //   docLink: JSON.stringify(formData.values.docLink),
-    //   customers: JSON.stringify(formData.values.customers),
-    //   participants: JSON.stringify(formData.values.participants),
-    //   notification: JSON.stringify(formData.values.notification),
-    // };
-
-    let body = {};
-    if (data?.id) {
-      body = {
-        id: data?.id,
-        ...(formData.values as IWorkOrderRequestModel),
-        docLink: JSON.stringify(formData.values.docLink),
-        customers: JSON.stringify(formData.values.customers),
-        participants: JSON.stringify(formData.values.participants),
-        notification: JSON.stringify(formData.values.notification),
-      };
-    } else {
-      body = {
-        projectId: formData.values?.projectId,
-        wteId: formData.values?.wteId,
-        name: formData.values?.name,
-        content: formData.values?.content,
-        docLink: JSON.stringify(formData.values.docLink),
-      };
-    }
-
-    // console.log("body", body);
-    // setIsSubmit(false);
-    // return;
+    const body: IWorkOrderRequestModel = {
+      ...(data ? { id: data?.id } : {}),
+      ...(formData.values as IWorkOrderRequestModel),
+      docLink: JSON.stringify(formData.values.docLink),
+      customers: JSON.stringify(formData.values.customers),
+      participants: JSON.stringify(formData.values.participants),
+      notification: JSON.stringify(formData.values.notification),
+    };
 
     const response = await WorkOrderService.update(body);
 
@@ -1558,15 +1545,15 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
             title: idWork ? "Cập nhật" : "Tạo mới",
             type: "submit",
             color: "primary",
-            disabled: false,
-            // isSubmit ||
-            // startDay > endDay ||
-            // endDay < startDay ||
-            // validateWordLoad ||
-            // validateProject ||
-            // (formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0) ||
-            // _.isEqual(formData.values, values) ||
-            // (formData.errors && Object.keys(formData.errors).length > 0),
+            disabled:
+              isSubmit ||
+              startDay > endDay ||
+              endDay < startDay ||
+              validateWordLoad ||
+              validateProject ||
+              (formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0) ||
+              _.isEqual(formData.values, values) ||
+              (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },
         ],
@@ -1692,19 +1679,17 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                   />
                 ))}
               </div>
-              {idWork ? (
-                <div className="list-form-group__assign">
-                  <div className="title-work">Giao việc</div>
-                  {listFieldAssign.map((field, index) => (
-                    <FieldCustomize
-                      key={index}
-                      field={field}
-                      handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAssign, setFormData)}
-                      formData={formData}
-                    />
-                  ))}
-                </div>
-              ) : null}
+              <div className="list-form-group__assign">
+                <div className="title-work">Giao việc</div>
+                {listFieldAssign.map((field, index) => (
+                  <FieldCustomize
+                    key={index}
+                    field={field}
+                    handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAssign, setFormData)}
+                    formData={formData}
+                  />
+                ))}
+              </div>
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />
