@@ -39,7 +39,6 @@ export default function ListWork() {
           </div>
           <div className={`${isFullPage ? "active-fullpage" : ""} list-project ${isVertical ? "show__vertical--work" : ""}`}>
             <WorkTableByGroup
-              type="project"
               idManagement={idProjectManagement}
               isRegimeKanban={isRegimeKanban}
               isRegimeReport={isRegimeReport}
