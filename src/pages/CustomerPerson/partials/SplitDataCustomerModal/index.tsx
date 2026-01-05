@@ -80,8 +80,6 @@ export default function SplitDataCustomerModal(props: any) {
       const data = tabDepartment === 1 ? (result?.items || []).map(el => {
         return el.employee
       }) : result?.items;
-
-      console.log('data', data);
       
       setTableEmployee(data);
       setPaginationEmployee({
