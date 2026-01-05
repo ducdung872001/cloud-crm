@@ -25,6 +25,17 @@
             }
 
             .container-list-employee {
+              .tab-department{
+                display: flex;
+                .button-department {
+                  border-bottom: 1px solid var(--border-color);
+                  font-size: 12px;
+                  font-weight: 500;
+                  padding: 0.2rem 1rem;
+                  color: var(--border-color);
+                  cursor: pointer;
+                }
+              }
               .container-table-employee{
                 .box-table {
                   margin-top: 1rem;
