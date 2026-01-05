@@ -13,10 +13,20 @@
   }
   
   .page-guarantee {
-    .action-navigation {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
+  // Căn trái các header cụ thể
+  .table__ag--template {
+    .ag-header-cell.text-left {
+      .ag-header-cell-label {
+        justify-content: flex-start !important;
+      }
+      text-align: left !important;
+    }
+  }
+
+  .action-navigation {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
   
       .action-backup {
         display: flex;
