@@ -1076,7 +1076,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
         ...(data ? { id: data.id } : {}),
         treatmentStart: moment(formData.values.treatmentStart).format('YYYY-MM-DDTHH:mm:ss'),
         treatmentEnd: moment(formData.values.treatmentEnd).format('YYYY-MM-DDTHH:mm:ss'),
-        
+        scheduleNext: moment(formData.values.scheduleNext).format('YYYY-MM-DDTHH:mm:ss'),
       },
     ];
 

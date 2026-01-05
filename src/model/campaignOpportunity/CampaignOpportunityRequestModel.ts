@@ -40,6 +40,11 @@ export interface IChangeEmployeeRequestModel {
   refId: number;
 }
 
+export interface IChangeSaleRequestModel {
+  saleId: number;
+  refId: number;
+}
+
 // trao đổi công việc
 export interface IOpportunityExchangeFilterRequest {
   coyId?: number;

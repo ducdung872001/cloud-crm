@@ -3,7 +3,7 @@ export interface ITicketFilterRequest {
   status?: number;
   startDate?: string;
   endDate?: string;
-  phone?: string;
+  customerPhone?: string;
   customerId?: number;
   page?: number;
   limit?: number;

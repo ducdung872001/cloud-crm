@@ -89,53 +89,41 @@ export default function XmlAddGuanrantee(props: any) {
     return value ? moment(value, ["MM-DD-YYYY", moment.ISO_8601]).format("YYYY-MM-DDTHH:mm:ss") : "";
   };
 
-const mapAttachmentsFromApi = (attachments: any) => {
-  if (!attachments) return [];
+  const mapAttachmentsFromApi = (attachments: any) => {
+    if (!attachments) return [];
 
-  let parsed = attachments;
+    let parsed = attachments;
 
-  try {
-    parsed = typeof attachments === "string" ? JSON.parse(attachments) : attachments;
-  } catch (e) {
-    return [];
-  }
+    try {
+      parsed = typeof attachments === "string" ? JSON.parse(attachments) : attachments;
+    } catch (e) {
+      return [];
+    }
 
-  if (!Array.isArray(parsed)) return [];
+    if (!Array.isArray(parsed)) return [];
 
-  return parsed
-    .map((item) => {
-      // Chấp nhận cả dạng string url lẫn object { url, name, type, size }
-      const url =
-        typeof item === "string"
-          ? item
-          : item && typeof item === "object"
-            ? item.url || item.path || item.link || ""
-            : "";
+    return parsed
+      .map((item) => {
+        // Chấp nhận cả dạng string url lẫn object { url, name, type, size }
+        const url = typeof item === "string" ? item : item && typeof item === "object" ? item.url || item.path || item.link || "" : "";
 
-      if (!url) return null;
+        if (!url) return null;
 
-      const fallbackName = decodeURIComponent(url.split("/").pop() || "file.pdf");
-      const name =
-        typeof item === "object" && item?.name
-          ? item.name
-          : fallbackName;
-      const ext =
-        typeof item === "object" && item?.type
-          ? item.type
-          : name.split(".").pop()?.toLowerCase() || "file";
+        const fallbackName = decodeURIComponent(url.split("/").pop() || "file.pdf");
+        const name = typeof item === "object" && item?.name ? item.name : fallbackName;
+        const ext = typeof item === "object" && item?.type ? item.type : name.split(".").pop()?.toLowerCase() || "file";
 
-      return {
-        uid: typeof item === "object" && item?.uid ? item.uid : url,
-        url,
-        name,
-        type: ext,
-        size: (typeof item === "object" && item?.size) || 1,
-        status: "done",
-      };
-    })
-    .filter(Boolean);
-};
-
+        return {
+          uid: typeof item === "object" && item?.uid ? item.uid : url,
+          url,
+          name,
+          type: ext,
+          size: (typeof item === "object" && item?.size) || 1,
+          status: "done",
+        };
+      })
+      .filter(Boolean);
+  };
 
   useEffect(() => {
     if (!onShow) return;
@@ -151,7 +139,6 @@ const mapAttachmentsFromApi = (attachments: any) => {
       const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField);
 
       if (data?.id) {
-
         mapped.beneficiaryType = String(mapped.beneficiaryType);
         mapped.issuerType = String(mapped.issuerType);
         mapped.status = String(mapped.status);
@@ -175,9 +162,7 @@ const mapAttachmentsFromApi = (attachments: any) => {
             mapped.issuerId_partner = mapped.issuerId;
           }
         }
-        mapped.attachments = JSON.stringify(
-          mapAttachmentsFromApi(mapped.attachments)
-        );
+        mapped.attachments = JSON.stringify(mapAttachmentsFromApi(mapped.attachments));
         setDataInit(mapped);
       }
 
@@ -209,8 +194,8 @@ const mapAttachmentsFromApi = (attachments: any) => {
             },
             ...(guaranteeExtraInfos.find((el) => el.attributeId == item.id)?.id
               ? {
-                id: guaranteeExtraInfos.find((el) => el.attributeId == item.id)?.id,
-              }
+                  id: guaranteeExtraInfos.find((el) => el.attributeId == item.id)?.id,
+                }
               : {}),
           });
         }
@@ -218,18 +203,10 @@ const mapAttachmentsFromApi = (attachments: any) => {
     });
 
     // Lấy contractId ưu tiên từ config (form), sau đó tới data hiện tại
-    const contractId =
-      config?.contractId ??
-      data?.contractId ??
-      data?.contract?.id ??
-      0;
+    const contractId = config?.contractId ?? data?.contractId ?? data?.contract?.id ?? 0;
 
     let contractValue = 0;
-    const localCandidates = [
-      dataInit?.contractValue,
-      data?.contractValue,
-      data?.contract?.dealValue,
-    ];
+    const localCandidates = [dataInit?.contractValue, data?.contractValue, data?.contract?.dealValue];
 
     for (const value of localCandidates) {
       const number = Number(value);
@@ -248,8 +225,7 @@ const mapAttachmentsFromApi = (attachments: any) => {
             contractValue = number;
           }
         }
-      } catch (e) {
-      }
+      } catch (e) {}
     }
 
     let attachmentList: any[] = [];
@@ -444,7 +420,7 @@ const mapAttachmentsFromApi = (attachments: any) => {
                     onValidationError={() => {
                       setIsSubmit(false);
                     }}
-                    setDataSchemaDraft={(data) => { }}
+                    setDataSchemaDraft={(data) => {}}
                     isLoading={isLoading}
                     setIsLoading={setIsLoading}
                   />
