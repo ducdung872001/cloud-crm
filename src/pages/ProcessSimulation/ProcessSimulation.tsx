@@ -155,7 +155,7 @@ export default function ProcessSimulation(props: any) {
     item.fromNodeId,
     item.toNodeId,
     item.potId,
-    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY") : "",
+    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm:ss") : "",
     <Badge
       key={index}
       variant={
