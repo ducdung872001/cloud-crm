@@ -47,7 +47,6 @@ import SelectUrlCustom from "components/selectUrlCustom/selectUrlCustom";
 
 export default function AddContactModal(props: AddContactModalProps) {
   const { onShow, onHide, data, idCustomer } = props;
-  console.log("data in modal contact >>>>", data);
 
   const parser = new Parser();
   const { dataBranch } = useContext(UserContext) as ContextType;
@@ -1050,7 +1049,6 @@ export default function AddContactModal(props: AddContactModalProps) {
 
     setContactExtraInfos([...contactExtraInfos]);
 
-    // console.log(contactExtraInfos);
     setFormData({ ...formData, values: { ...formData?.values, timestamp: new Date().getTime() } });
   };
 
