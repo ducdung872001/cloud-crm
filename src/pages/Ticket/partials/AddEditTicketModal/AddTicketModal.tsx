@@ -49,7 +49,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       setIsLoadingSupport(true);
       const response = await TicketCategoryService.list(param);
       if (response.code === 0) {
-        const dataOption = response.result;
+        const dataOption = response.result.items;
         setListSupport([
           ...(dataOption.length > 0
             ? dataOption.map((item) => {

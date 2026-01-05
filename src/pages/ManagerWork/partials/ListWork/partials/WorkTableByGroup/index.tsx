@@ -12,32 +12,24 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IListWorkProps } from "model/workOrder/PropsModel";
 import { IAction, IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
-import { IWorkOrderFilterRequest } from "model/workOrder/WorkOrderRequestModel";
+import { IGroupsFilterRequest, IWorkOrderFilterRequest } from "model/workOrder/WorkOrderRequestModel";
 import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
 import { showToast } from "utils/common";
 import WorkOrderService from "services/WorkOrderService";
-import TableWork from "./partials/TableWork/TableWork";
-import KanbanWork from "./partials/KanbanWork/KanbanWork";
 import AddWorkModal from "./partials/AddWorkModal";
 import AddWorkInprogressModal from "./partials/AddWorkInprogressModal/AddWorkInprogressModal";
 import ViewWorkInprogressModal from "./partials/ViewWorkInprogressModal/ViewWorkInprogressModal";
 import "tippy.js/animations/scale.css";
 import "./index.scss";
-import { ExportExcel } from "exports";
-import ExportModal from "components/exportModal/exportModal";
-import JobReport from "./partials/JobReport/JobReport";
-import { ContextType, UserContext } from "contexts/userContext";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Collapsible from "components/collapse";
-import { it } from "date-fns/locale";
-import { color } from "highcharts";
 import Input from "components/input/input";
+import TableWorkInColapse from "./partials/TableWorkInColapse";
 
-export default function WorkTableByGroup(props: IListWorkProps) {
+export default function WorkTableByGroup(props: any) {
   const isMounted = useRef(false);
 
   const {
-    type,
     idManagement,
     isRegimeKanban,
     isRegimeReport,
@@ -52,16 +44,13 @@ export default function WorkTableByGroup(props: IListWorkProps) {
     dataProjectReport,
   } = props;
 
-  const { dataInfoEmployee } = useContext(UserContext) as ContextType;
-
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isNoItem, setIsNoItem] = useState<boolean>(false);
-  const [listWork, setListWork] = useState<IWorkOrderResponseModel[]>([]);
-  const [listIdChecked, setListIdChecked] = useState<number[]>([]);
+  const [listGroupWork, setListGroupWork] = useState<any[]>([]);
+
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [groupBy, setGroupBy] = useState<any>("status");
 
   // đoạn này cập nhập tiến động công việc
@@ -70,24 +59,23 @@ export default function WorkTableByGroup(props: IListWorkProps) {
 
   // đoạn này hiển thị danh sách cập nhật tiến độ công việc
   const [showModalViewWorkInprogress, setShowModalViewWorkInprogress] = useState<boolean>(false);
+  const [showModalDetail, setShowModalDetail] = useState<boolean>(false);
 
-  const [params, setParams] = useState<IWorkOrderFilterRequest>({
-    name: "",
-  });
+  // useEffect(() => {
+  //   if (idManagement) {
+  //     const newParams = { ...params };
+  //     setParams({ ...newParams, projectId: idManagement });
+  //   }
+  // }, [idManagement]);
+
+  console.log("listGroupWork>>>", listGroupWork);
 
   useEffect(() => {
-    if (idManagement) {
-      if (type === "opportunity") {
-        const newParams = { ...params };
-        delete newParams["projectId"];
-        setParams({ ...newParams, opportunityId: idManagement, workType: type });
-      } else {
-        const newParams = { ...params };
-        delete newParams["opportunityId"];
-        setParams({ ...newParams, projectId: idManagement, workType: type });
-      }
-    }
-  }, [idManagement, type]);
+    getGroupWork({
+      groupBy: groupBy,
+      projectId: idManagement,
+    });
+  }, [idManagement, groupBy]);
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
@@ -323,477 +311,26 @@ export default function WorkTableByGroup(props: IListWorkProps) {
     [searchParams, filterByKanban, isRegimeKanban]
   );
 
-  const [pagination, setPagination] = useState<PaginationProps>({
-    ...DataPaginationDefault,
-    name: "Công việc",
-    isChooseSizeLimit: true,
-    setPage: (page) => {
-      setParams((prevParams) => ({ ...prevParams, page: page }));
-    },
-    chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, limit: limit }));
-    },
-  });
-
   const abortControllerChild = new AbortController();
 
-  const getListWork = async (paramsSearch: IWorkOrderFilterRequest) => {
-    setIsLoading(true);
+  const getGroupWork = async (paramsSearch: IGroupsFilterRequest) => {
+    const response = await WorkOrderService.groups(paramsSearch, abortController.signal);
 
-    if (type === "project") {
-      delete paramsSearch["opportunityId"];
-    } else {
-      delete paramsSearch["projectId"];
-    }
-
-    // Nếu là báo cáo công việc thì lấy id của dự án từ báo cáo
-    if (dataProjectReport) {
-      paramsSearch = { ...paramsSearch, projectId: dataProjectReport.id };
-    }
-
-    const response = await WorkOrderService.list(paramsSearch, abortController.signal);
-
-    if (response.code === 0) {
-      const result = response.result;
-
-      setListWork(result.items);
-      handleDetailWork(null, result.items?.length);
-      setPagination({
-        ...pagination,
-        page: +result.page,
-        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
-        totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
-      });
-      if (+result.total === 0 && !params?.name && +result.page === 1) {
-        setIsNoItem(true);
+    if (response.code === 0 && response?.result?.buckets) {
+      //  response.result;
+      if (response.result.buckets.length === 0) {
+        setListGroupWork([]);
+      } else {
+        setListGroupWork(response.result.buckets.map((item) => item));
       }
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      return null;
     }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
-    searchParams.forEach(async (key, value) => {
-      paramsTemp[value] = key;
-    });
-    setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
-    if (isMounted.current === true) {
-      getListWork(params);
-      const paramsTemp = _.cloneDeep(params);
-      if (paramsTemp.limit === 10) {
-        delete paramsTemp["limit"];
-      }
-      Object.keys(paramsTemp).map(function (key) {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-      if (isDifferenceObj(searchParams, paramsTemp)) {
-        if (paramsTemp.page === 1) {
-          delete paramsTemp["page"];
-        }
-        if (!dataProjectReport) {
-          setSearchParams(paramsTemp as Record<string, string | string[]>);
-        }
-      }
-    }
-    return () => {
-      abortControllerChild.abort();
-    };
-  }, [params]);
-
-  const [dataOfApproachStart, setDataOfApproachStart] = useState([]);
-  const [dataOfApproachDo, setDataOfApproachDo] = useState([]);
-  const [dataOfApproachFail, setDataOfApproachFail] = useState([]);
-  const [dataOfApproachSuccess, setDataOfApproachSuccess] = useState([]);
-  const [dataOfApproachPending, setDataOfApproachPending] = useState([]);
-
-  const getDataOfStatus = async (idManagement, status) => {
-    if (dataProjectReport) {
-      return;
-    }
-    const param: any = {
-      limit: 10,
-      page: 1,
-      status: status,
-      workType: type,
-    };
-    if (type === "project") {
-      param.projectId = idManagement;
-    } else {
-      param.opportunityId = idManagement;
-    }
-
-    const response = await WorkOrderService.list(param, abortController.signal);
-
-    if (response.code === 0) {
-      const result = response.result;
-      if (status === 0) {
-        setDataOfApproachStart(result);
-      } else if (status === 1) {
-        setDataOfApproachDo(result);
-      } else if (status === 2) {
-        setDataOfApproachSuccess(result);
-      } else if (status === 3) {
-        setDataOfApproachFail(result);
-      } else {
-        setDataOfApproachPending(result);
-      }
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-  };
-
-  useEffect(() => {
-    if (idManagement) {
-      // Nguyên nhân gây ra thông báo lỗi: Invalid number value: null
-      getDataOfStatus(idManagement, 0);
-      getDataOfStatus(idManagement, 1);
-      getDataOfStatus(idManagement, 2);
-      getDataOfStatus(idManagement, 3);
-      getDataOfStatus(idManagement, 4);
-    }
-  }, [idManagement]);
-  useEffect(() => {
-    getDataOfStatus(idManagement, 0);
-    getDataOfStatus(idManagement, 1);
-    getDataOfStatus(idManagement, 2);
-    getDataOfStatus(idManagement, 3);
-    getDataOfStatus(idManagement, 4);
-  }, [type]);
-
-  //Export
-  const optionsExport: IOption[] = useMemo(
-    () => [
-      {
-        value: "all",
-        label: "Tất cả công việc",
-      },
-      {
-        value: "current_page",
-        label: "Trên trang này",
-        disabled: pagination.totalItem === 0,
-      },
-      {
-        value: "current_search",
-        label: `${pagination.totalItem} công việc phù hợp với kết quả tìm kiếm hiện tại`,
-        disabled: pagination.totalItem === 0 || !isDifferenceObj(params, { keyword: "" }),
-      },
-    ],
-    [pagination, params]
-  );
-
-  const titles = [
-    // "STT",
-    "Tên công việc",
-    "Người nhận việc",
-    "Thời gian",
-    //  "Thuộc dự án",
-    "Tiến độ",
-    "Trạng thái công việc",
-  ];
-
-  const dataFormat = ["text-left", "", "", "", "", "text-center", "text-center"];
-
-  const dataMappingArray = (item: IWorkOrderResponseModel, index: number, type?: string) =>
-    type !== "export"
-      ? [
-          // getPageOffset(params) + index + 1,
-          <span
-            key={item.id}
-            className="name-work"
-            onClick={() => {
-              setIsDetailWork(true);
-              handleDetailWork(item, listWork.length);
-            }}
-          >
-            {item.name}
-          </span>,
-          // item?.employeeName ?? <i>Chưa có</i>,
-          <a>Giao việc</a>,
-          item.startTime || item.endTime ? `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}` : "",
-          // item.projectName,
-          <div
-            key={item.id}
-            className="percent__finish--work"
-            onClick={() => {
-              if (item.percent !== 100 && item.status !== 0 && item.status !== 2 && item.status !== 3 && item.status !== 4) {
-                setShowModalWorkInprogress(true);
-                setIdWork(item.id);
-              } else if (item.status == 2 || item.status == 3 || item.status == 4) {
-                setIdWork(item.id);
-                setShowModalViewWorkInprogress(true);
-              } else {
-                showToast("Công việc đang trong trạng thái chưa được thực hiện", "warning");
-              }
-            }}
-          >
-            <CircularProgressbar value={item.percent || 0} text={`${item.percent || 0}%`} className="value-percent" />
-          </div>,
-          item.status == 0 ? (
-            handleUnfulfilled(item.startTime)
-          ) : item.status == 1 ? (
-            handleProcessing(item.startTime, item.endTime)
-          ) : item.status == 2 ? (
-            <span className="status-success">Đã hoàn thành</span>
-          ) : item.status == 3 ? (
-            <span className="status-cancelled">Đã hủy</span>
-          ) : (
-            <span className="status-pause">Tạm dừng</span>
-          ),
-        ]
-      : [
-          getPageOffset(params) + index + 1,
-          item.name,
-          item.employeeName,
-          `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}`,
-          item.projectName,
-          `${item.percent || 0}%`,
-          item.status == 0
-            ? "Chưa thực hiện"
-            : item.status == 1
-            ? "Đang thực hiện"
-            : item.status == 2
-            ? "Đã hoàn thành"
-            : item.status == 3
-            ? "Đã hủy"
-            : "Tạm dừng",
-        ];
-
-  const formatExcel = ["center", "top", "top", "center", "top", "center", "center"];
-
-  const exportCallback = useCallback(
-    async (type, extension) => {
-      const response = await WorkOrderService.list({
-        ...params,
-        page: type === "current_page" ? 1 : params.page,
-        limit: type === "all" || type === "current_search" ? 10000 : params.limit,
-      });
-
-      if (response.code === 0) {
-        const result = response.result.items;
-
-        if (extension === "excel") {
-          ExportExcel({
-            fileName: "CongViec",
-            title: "Công việc",
-            header: titles,
-            formatExcel: formatExcel,
-            data: result.map((item, idx) => dataMappingArray(item, idx, "export")),
-            info: { name },
-          });
-        }
-        showToast("Xuất file thành công", "success");
-        onHideExport();
-      } else {
-        showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
-        onHideExport();
-      }
-    },
-    [params]
-  );
-
-  //! đoạn này xử lý vấn đề hiển thị thông tin xem bao giờ thực hiện
-  const handleUnfulfilled = (time) => {
-    const currentTime = new Date().getTime();
-    const startTime = new Date(time).getTime();
-
-    if (currentTime < startTime) {
-      if ((startTime - currentTime) / (24 * 60 * 60 * 1000) >= 1) {
-        return <span className="status-unfulfilled">{`Bắt đầu sau ${Math.round((startTime - currentTime) / (24 * 60 * 60 * 1000))} ngày`}</span>;
-      } else if ((startTime - currentTime) / (60 * 60 * 1000) >= 1) {
-        return <span className="status-unfulfilled">{`Bắt đầu sau ${Math.round((startTime - currentTime) / (60 * 60 * 1000))} giờ`}</span>;
-      } else {
-        return <span className="status-unfulfilled">{`Bắt đầu sau ${Math.round((startTime - currentTime) / (60 * 1000))} phút`}</span>;
-      }
-    } else {
-      if ((currentTime - startTime) / (24 * 60 * 60 * 1000) >= 1) {
-        //thời gian hiện tại - nếu thời gian kết thúc >= 1 ngày thì trả về ngày, không thì trả về giờ
-        return <span className="status-cancelled">{`Trễ thực hiện ${Math.round((currentTime - startTime) / (24 * 60 * 60 * 1000))} ngày`}</span>;
-      } else if ((currentTime - startTime) / (60 * 60 * 1000) >= 1) {
-        //thời gian hiện tại - nếu thời gian kết thúc >= 1 giờ thì trả về giờ, không thì trả về phút
-        return <span className="status-cancelled">{`Trễ thực hiện ${Math.round((currentTime - startTime) / (60 * 60 * 1000))} giờ`}</span>;
-      } else {
-        return <span className="status-cancelled">{`Trễ thực hiện ${Math.round((currentTime - startTime) / (60 * 1000))} phút`}</span>;
-      }
-    }
-  };
-
-  const handleProcessing = (start, end) => {
-    const currentTime = new Date().getTime();
-    const startTime = new Date(start).getTime();
-    const endTime = new Date(end).getTime();
-
-    const calculatorTime = (endTime - startTime) / 3;
-
-    if (startTime > currentTime) {
-      return <span className="status-processing">Đang thực hiện</span>;
-    } else if (currentTime >= startTime && currentTime <= endTime) {
-      if (endTime - currentTime >= calculatorTime) {
-        return <span className="status-processing">Đang thực hiện</span>;
-      } else {
-        if ((endTime - currentTime) / (24 * 60 * 60 * 1000) >= 1) {
-          return <span className="status-processing--waring">{`Còn ${Math.round((endTime - currentTime) / (24 * 60 * 60 * 1000))} ngày`}</span>;
-        } else if ((endTime - currentTime) / (60 * 60 * 1000) >= 1) {
-          return <span className="status-processing--waring">{`Còn ${Math.round((endTime - currentTime) / (60 * 60 * 1000))} giờ`}</span>;
-        } else {
-          return <span className="status-processing--waring">{`Còn ${Math.round((endTime - currentTime) / (60 * 1000))} phút`}</span>;
-        }
-      }
-    } else {
-      if ((currentTime - endTime) / (24 * 60 * 60 * 1000) >= 1) {
-        return <span className="status-cancelled">{`Quá hạn ${Math.round((currentTime - endTime) / (24 * 60 * 60 * 1000))} ngày`}</span>;
-      } else if ((currentTime - endTime) / (60 * 60 * 1000) >= 1) {
-        return <span className="status-cancelled">{`Quá hạn ${Math.round((currentTime - endTime) / (60 * 60 * 1000))} giờ`}</span>;
-      } else {
-        return (
-          <span className="status-cancelled">{`Quá hạn ${
-            Math.round((currentTime - endTime) / (60 * 1000)) === 0 ? 1 : Math.round((currentTime - endTime) / (60 * 1000))
-          } phút`}</span>
-        );
-      }
-    }
-  };
-
-  const actionsTable = (item: IWorkOrderResponseModel): IAction[] => {
-    return [
-      {
-        title: "Xem chi tiết",
-        icon: <Icon name="Eye" />,
-        callback: () => {
-          handleDetailWork(item, listWork.length);
-          setIsDetailWork(true);
-        },
-      },
-      ...(item.status == 2 || item.status == 3
-        ? [
-            ...(dataInfoEmployee?.isOwner === 1
-              ? [
-                  {
-                    title: "Xóa",
-                    icon: <Icon name="Trash" className="icon-error" />,
-                    callback: () => {
-                      showDialogConfirmDelete(item);
-                    },
-                  },
-                ]
-              : []),
-          ]
-        : [
-            {
-              title: "Sửa",
-              icon: <Icon name="Pencil" />,
-              callback: () => {
-                setIdWork(item?.id);
-                setShowModalAdd(true);
-              },
-            },
-            {
-              title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
-              callback: () => {
-                showDialogConfirmDelete(item);
-              },
-            },
-          ]),
-    ];
-  };
-
-  const onDelete = async (id: number) => {
-    const response = await WorkOrderService.delete(id);
-
-    if (response.code === 0) {
-      showToast("Xóa công việc thành công", "success");
-      reLoadListWork();
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-    setShowDialog(false);
-    setContentDialog(null);
-  };
-
-  const onDeleteAllWork = () => {
-    const arrPromise = [];
-
-    listIdChecked.map((item) => {
-      const promise = new Promise((resolve, reject) => {
-        WorkOrderService.delete(item).then((res) => {
-          resolve(res);
-        });
-      });
-
-      arrPromise.push(promise);
-    });
-
-    Promise.all(arrPromise).then((result) => {
-      if (result.length > 0) {
-        showToast("Xóa công việc thành công", "success");
-        reLoadListWork();
-        setListIdChecked([]);
-      } else {
-        showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-      }
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  };
-
-  const showDialogConfirmDelete = (item?: IWorkOrderResponseModel) => {
-    const contentDialog: IContentDialog = {
-      color: "error",
-      className: "dialog-delete",
-      isCentered: true,
-      isLoading: true,
-      title: <Fragment>Xóa...</Fragment>,
-      message: (
-        <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "công việc " : `${listIdChecked.length} công việc đã chọn`}
-          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Xóa",
-      defaultAction: () => {
-        if (listIdChecked.length > 0) {
-          onDeleteAllWork();
-        } else {
-          onDelete(item.id);
-        }
-      },
-    };
-    setContentDialog(contentDialog);
-    setShowDialog(true);
-  };
-
-  const bulkActionList: BulkActionItemModel[] = [
-    {
-      title: "Xóa công việc",
-      callback: () => showDialogConfirmDelete(),
-    },
-  ];
-
-  const reLoadListWork = () => {
-    getListWork(params);
-    getDataOfStatus(idManagement, 0);
-    getDataOfStatus(idManagement, 1);
-    getDataOfStatus(idManagement, 2);
-    getDataOfStatus(idManagement, 3);
-    getDataOfStatus(idManagement, 4);
   };
 
   const headerCollapsible = useCallback((item, index) => {
+    console.log("itemSetup item", item);
     return (
       <div className="collapse-header">
         <div className="group-name" style={{ backgroundColor: item?.color }}>
@@ -820,7 +357,7 @@ export default function WorkTableByGroup(props: IListWorkProps) {
     );
   }, []);
   return (
-    <div className={`page-content page-work-table-by-group${isNoItem ? " bg-white" : ""}`}>
+    <div className={`page-content page-work-table-by-group`}>
       <div className="card-box d-flex flex-column">
         <div className={`${isRegimeKanban || isRegimeReport ? "d-none" : ""}`}>
           <div className="title-header">
@@ -867,12 +404,12 @@ export default function WorkTableByGroup(props: IListWorkProps) {
                   fill={true}
                   options={[
                     { label: "Trạng thái công việc", value: "status" },
-                    { label: "Nhân viên phụ trách", value: "employee" },
-                    { label: "Ưu tiên", value: "priority" },
-                    { label: "Loại công việc", value: "workType" },
+                    { label: "Nhân viên phụ trách", value: "priority" },
+                    { label: "Ưu tiên", value: "employee" },
+                    { label: "Loại công việc", value: "wte" },
                   ]}
                   value={groupBy}
-                  onChange={(e) => setGroupBy(e)}
+                  onChange={(e) => setGroupBy(e.value)}
                   placeholder="Nhóm theo"
                 />
               </div>
@@ -886,8 +423,8 @@ export default function WorkTableByGroup(props: IListWorkProps) {
                   label={""}
                   fill={true}
                   className="input-search-work"
-                  value={params.name}
-                  onChange={(e) => setParams({ ...params, name: e.target.value, page: 1 })}
+                  // value={params.name}
+                  // onChange={(e) => setParams({ ...params, name: e.target.value, page: 1 })}
                 />
                 <SelectCustom
                   id="employeeId"
@@ -902,107 +439,82 @@ export default function WorkTableByGroup(props: IListWorkProps) {
               </div>
             </div>
           </div>
-          <div className="list-table">
-            <Collapsible
-              header={headerCollapsible}
-              dataItems={{
-                title: "Công việc chưa phân công",
-                count: 3,
-                color: "#FFC43C",
-              }}
-              title={""}
-              defaultOpen={true}
-              className="collapsible-work-by-group"
-              //  children,
-              animationDuration={500}
-              onToggle={(open) => {
-                // console.log("Toggled:", open);
+          {listGroupWork.length === 0 ? (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100px",
+                fontSize: "18px",
+                color: "#555",
               }}
             >
-              <TableWork
-                params={params}
-                setParams={setParams}
-                listSaveSearch={listSaveSearch}
-                customerFilterList={customerFilterList}
-                titles={titles}
-                listWork={listWork}
-                pagination={pagination}
-                dataMappingArray={dataMappingArray}
-                dataFormat={dataFormat}
-                listIdChecked={listIdChecked}
-                setListIdChecked={setListIdChecked}
-                bulkActionList={bulkActionList}
-                actionsTable={actionsTable}
-                isLoading={isLoading}
-                isNoItem={isNoItem}
-                setIdWork={setIdWork}
-                setShowModalAdd={setShowModalAdd}
-              />
-            </Collapsible>
-            <Collapsible
-              header={headerCollapsible}
-              dataItems={{
-                title: "Đang thực hiện",
-                count: 5,
-                color: "#00b499",
-              }}
-              title={""}
-              defaultOpen={true}
-              className="collapsible-work-by-group"
-              //  children,
-              animationDuration={500}
-              onToggle={(open) => {
-                // console.log("Toggled:", open);
-              }}
-            >
-              <TableWork
-                params={params}
-                setParams={setParams}
-                listSaveSearch={listSaveSearch}
-                customerFilterList={customerFilterList}
-                titles={titles}
-                listWork={listWork}
-                pagination={pagination}
-                dataMappingArray={dataMappingArray}
-                dataFormat={dataFormat}
-                listIdChecked={listIdChecked}
-                setListIdChecked={setListIdChecked}
-                bulkActionList={bulkActionList}
-                actionsTable={actionsTable}
-                isLoading={isLoading}
-                isNoItem={isNoItem}
-                setIdWork={setIdWork}
-                setShowModalAdd={setShowModalAdd}
-              />
-            </Collapsible>
-          </div>
+              <span>
+                Hiện tại chưa có công việc nào. <br />
+              </span>
+            </div>
+          ) : (
+            <div className="list-table">
+              {listGroupWork.map((groupItem, groupIndex) => (
+                <Collapsible
+                  key={groupItem?.key || groupIndex}
+                  header={headerCollapsible}
+                  dataItems={{
+                    title: groupItem?.name || "Chưa phân nhóm",
+                    count: groupItem?.total || 0,
+                    color: "#FFC43C", // #00b499
+                  }}
+                  isOpen={groupItem.isOpen || false}
+                  title={""}
+                  defaultOpen={false}
+                  className="collapsible-work-by-group"
+                  //  children,
+                  animationDuration={500}
+                  onToggle={(open) => {
+                    setListGroupWork((prevState) => {
+                      return prevState.map((item, index) => {
+                        if (index === groupIndex) {
+                          return { ...item, isOpen: open };
+                        } else {
+                          return { ...item, isOpen: false };
+                        }
+                      });
+                    });
+                  }}
+                >
+                  <TableWorkInColapse
+                    isOpen={groupItem.isOpen || false}
+                    paramsFilter={{
+                      groupBy: groupBy,
+                      groupValue: groupItem?.key == null ? -2 : groupItem?.key,
+                      projectId: idManagement,
+                    }}
+                  />
+                </Collapsible>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <AddWorkModal
-        type={type}
         onShow={showModalAdd}
         idWork={idWork}
         idManagement={idManagement}
         onHide={(reload) => {
           if (reload) {
-            reLoadListWork();
+            // reLoadListWork();
           }
           setShowModalAdd(false);
         }}
-      />
-      <ExportModal
-        name="Công việc"
-        onShow={isExportWork}
-        onHide={() => onHideExport()}
-        options={optionsExport}
-        callback={(type, extension) => exportCallback(type, extension)}
       />
       <AddWorkInprogressModal
         onShow={showModalWorkInprogress}
         idWork={idWork}
         onHide={(reload) => {
           if (reload) {
-            reLoadListWork();
+            // reLoadListWork();
           }
           setShowModalWorkInprogress(false);
         }}
@@ -1015,6 +527,8 @@ export default function WorkTableByGroup(props: IListWorkProps) {
         }}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
+
+      <DetailWorkModal onShow={showModalDetail} idData={idWork} onHide={() => setShowModalDetail(false)} />
     </div>
   );
 }

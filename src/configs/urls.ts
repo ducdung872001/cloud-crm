@@ -1699,6 +1699,7 @@ export const urlsApi = {
   workOrder: {
     listBpmWorkOrder: prefixBpm + "/workOrder/list",
     list: prefixAdmin + "/workOrder/list",
+    groups: prefixAdmin + "/workOrder/groups",
     update: prefixAdmin + "/workOrder/update",
     updateEmployee: prefixAdmin + "/workOrder/update/employee",
     updatePause: prefixAdmin + "/workOrder/update/pause",
@@ -3055,7 +3056,9 @@ export const urls = {
   contract: "/contract",
   offer: "/offer",
   create_contract: "/create_contract",
+  create_contract_xml: "/create_contract_xml",
   edit_contract: "/edit_contract/:id?",
+  edit_contract_xml: "/edit_contract_xml/:id?",
   detail_contract: "/detail_contract/contractId/:id?",
   detail_project: "/detail_project/projectId/:id?",
 

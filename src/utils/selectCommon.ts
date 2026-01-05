@@ -53,7 +53,11 @@ import CardServiceIdApiService from "services/CardServiceIdApiService";
 import BeautySalonService from "services/BeautySalonService";
 import ContractGuaranteeService from "services/ContractGuaranteeService";
 import PartnerService from "services/PartnerService";
+import ContractCategoryService from "services/ContractCategoryService";
+import FSQuoteService from "services/FSQuoteService";
+import { add } from "lodash";
 import PackageService from "services/PackageService";
+import ContactStatusService from "services/ContactStatusService";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -95,6 +99,12 @@ export async function SelectOptionData(key: string, params?: any) {
     case "bankId":
       response = await ContractGuaranteeService.bankList(params);
       break;
+    case "fsId" :
+      response = await FSQuoteService.list(params);
+      break;
+    case "contractCategoryId" :
+      response = await ContractCategoryService.list(params);
+      break;
     case "partnerId":
       response = await PartnerService.list(params);
       break;
@@ -122,6 +132,7 @@ export async function SelectOptionData(key: string, params?: any) {
     case "supplier":
       break;
     case "customer":
+    case "customers":
     case "customerId":
       response = await CustomerService.filter(params);
       break;
@@ -247,6 +258,8 @@ export async function SelectOptionData(key: string, params?: any) {
       response = await ContactService.list(params);
       break;
     case "contractId":
+    case "HopDong":
+    case "Lookup":
       response = await ContractService.list(params);
       break;
     case "templateEmailId":
@@ -258,6 +271,10 @@ export async function SelectOptionData(key: string, params?: any) {
 
     case "contact_pipelineId":
       response = await ContactPipelineService.list(params);
+      console.log("response >>>>>>>>>>>>", response);
+      break;
+    case "statusId":
+      response = await ContactStatusService.listForContact(params);
       break;
 
     case "cityId":
@@ -327,7 +344,13 @@ export async function SelectOptionData(key: string, params?: any) {
     if (response.code === 0) {
       return [...(response.result.items ? response.result.items : response.result)].map((item) => {
         if (key === "customer" || key === "customerId") {
-          return { value: item.id, label: `${item.name} - ${item.phoneMasked}` };
+          return { value: item.id, label: `${item.name} - ${item.phoneMasked}`, 
+          taxCodeCustomer: `${item.taxCode}`,
+          addressCustomer: `${item.address}`, 
+          phoneMaskedCustomer: `${item.phoneMasked}`,
+          sourceName: `${item.sourceName}`,
+          groupName: `${item.groupName}`,
+          taxcode_customer: `${item.taxCode}`};
         }
         if (key === "categoryItemId") {
           return { value: item.id, label: `${item.name}` };
@@ -364,6 +387,22 @@ export async function SelectOptionData(key: string, params?: any) {
             label: `${item.name}`,
             product_price: item.price || 0,
             product_discount: item.discount || 0,
+          };
+        }
+        if(key === "partnerId"){
+          return {
+            value: item.id,
+            label: `${item.name}`,
+            taxCodePartner: `${item.taxCode}`,
+            phoneMaskedPartner: `${item.phoneMasked}`,
+            addressPartner: `${item.address}`,
+            taxcode_partner: `${item.taxCode}`,
+          };
+        }
+        if( key === "projectId"){
+          return {
+            value: item.id,
+            label: `${item.name}`,
           };
         }
         if (key === "boughtCardServiceByCustomerId") {
