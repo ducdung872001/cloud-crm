@@ -492,7 +492,7 @@ export default function ListWork(props: IListWorkProps) {
     "Thời gian",
     type == "opportunity" ? "Thuộc cơ hội" : "Thuộc dự án",
     "Tiến độ",
-    "Trạng thái công việc",
+    "Trạng thái công việcc",
   ];
 
   const dataFormat = ["text-center", "", "", "", "", "text-center", "text-center"];

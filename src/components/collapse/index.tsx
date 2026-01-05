@@ -13,6 +13,7 @@ type Props = {
   onToggle?: (open: boolean) => void;
   header?: (item: any, idx?: number) => React.ReactNode;
   dataItems?: any;
+  isOpen?: boolean;
 };
 
 /**
@@ -32,6 +33,7 @@ const Collapsible: React.FC<Props> = ({
   onToggle,
   header,
   dataItems,
+  isOpen,
 }) => {
   const [open, setOpen] = React.useState<boolean>(defaultOpen);
   const [maxHeight, setMaxHeight] = React.useState<string>(defaultOpen ? "auto" : "0px");
@@ -43,6 +45,12 @@ const Collapsible: React.FC<Props> = ({
   React.useEffect(() => {
     maxHeightRef.current = maxHeight;
   }, [maxHeight]);
+
+  React.useEffect(() => {
+    if (typeof isOpen === "boolean") {
+      setOpen(isOpen);
+    }
+  }, [isOpen]);
 
   const handleToggle = () => {
     setOpen((prev) => {

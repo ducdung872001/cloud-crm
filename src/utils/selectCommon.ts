@@ -57,6 +57,7 @@ import ContractCategoryService from "services/ContractCategoryService";
 import FSQuoteService from "services/FSQuoteService";
 import { add } from "lodash";
 import PackageService from "services/PackageService";
+import ContactStatusService from "services/ContactStatusService";
 
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
@@ -131,6 +132,7 @@ export async function SelectOptionData(key: string, params?: any) {
     case "supplier":
       break;
     case "customer":
+    case "customers":
     case "customerId":
       response = await CustomerService.filter(params);
       break;
@@ -256,6 +258,8 @@ export async function SelectOptionData(key: string, params?: any) {
       response = await ContactService.list(params);
       break;
     case "contractId":
+    case "HopDong":
+    case "Lookup":
       response = await ContractService.list(params);
       break;
     case "templateEmailId":
@@ -267,6 +271,10 @@ export async function SelectOptionData(key: string, params?: any) {
 
     case "contact_pipelineId":
       response = await ContactPipelineService.list(params);
+      console.log("response >>>>>>>>>>>>", response);
+      break;
+    case "statusId":
+      response = await ContactStatusService.listForContact(params);
       break;
 
     case "cityId":

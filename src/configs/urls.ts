@@ -1699,6 +1699,7 @@ export const urlsApi = {
   workOrder: {
     listBpmWorkOrder: prefixBpm + "/workOrder/list",
     list: prefixAdmin + "/workOrder/list",
+    groups: prefixAdmin + "/workOrder/groups",
     update: prefixAdmin + "/workOrder/update",
     updateEmployee: prefixAdmin + "/workOrder/update/employee",
     updatePause: prefixAdmin + "/workOrder/update/pause",

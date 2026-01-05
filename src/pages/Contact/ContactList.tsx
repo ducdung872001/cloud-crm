@@ -41,6 +41,7 @@ import Popover from "components/popover/popover";
 import moment from "moment";
 import ExchangeFast from "./ExchangeFast";
 import ImportModal from "./ImportModal";
+import XmlAddContact from "./XmlAddContact";
 
 export default function ContactList() {
   document.title = "Danh sách người liên hệ";
@@ -64,6 +65,7 @@ export default function ContactList() {
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
+  const [showModalAddXml, setShowModalAddXml] = useState<boolean>(false);
   //modal exchange
   const [showModalExchange, setShowModalExchange] = useState<boolean>(false);
 
@@ -94,7 +96,6 @@ export default function ContactList() {
   const takeParamsUrl = getSearchParameters();
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(false);
   const [listPipeline, setListPipeline] = useState<IOption[]>([]);
-  // console.log("listPipeline", listPipeline);
 
   const [listStatus, setListStatus] = useState([]);
   const [contractType, setContractType] = useState<number>(() => {
@@ -356,6 +357,7 @@ export default function ContactList() {
 
   const ActionRenderer = (props) => {
     let data = props.data;
+    console.log("data in action renderer><><><><><><><><", data);
     let params = props.params;
 
     return (
@@ -369,11 +371,25 @@ export default function ContactList() {
         >
           <Tippy content="Thông tin trao đổi">
             <span className="icon__item icon__update">
-              <Icon name="Note" style={{width: 15.5, height: 15.5,  fill: '#1c8cff'}}/>
+              <Icon name="Note" style={{ width: 15.5, height: 15.5, fill: "#1c8cff" }} />
             </span>
           </Tippy>
         </div>
-
+        {isUserRoot && (
+          <div
+            className="item__action update"
+            onClick={() => {
+              setDataContact(data.dataItem);
+              setShowModalAddXml(true);
+            }}
+          >
+            <Tippy content="Sửa">
+              <span className="icon__item icon__update">
+                <Icon name="SettingCashbook" />
+              </span>
+            </Tippy>
+          </div>
+        )}
         {permissions["CONTRACT_UPDATE"] == 1 && (
           <div
             className="item__action update"
@@ -405,14 +421,9 @@ export default function ContactList() {
 
   const linkContactExchange = ({ data }) => {
     return (
-      <div
-        className="contact-exchange"
-        onClick={() => {
-        }}
-      >
+      <div className="contact-exchange" onClick={() => {}}>
         Xem thêm
       </div>
-
     );
   };
 
@@ -649,11 +660,12 @@ export default function ContactList() {
                     .join("")
                 : null,
             emails:
-              item.emails && JSON.parse(item.emails) && 
-              (JSON.parse(item.emails).length > 0
-                ? JSON.parse(item.emails).filter((el) => el.isPrimary === 1)[0]?.email || ""
-                : JSON.parse(item.emails).email
-              ) || "",
+              (item.emails &&
+                JSON.parse(item.emails) &&
+                (JSON.parse(item.emails).length > 0
+                  ? JSON.parse(item.emails).filter((el) => el.isPrimary === 1)[0]?.email || ""
+                  : JSON.parse(item.emails).email)) ||
+              "",
             // JSON.parse(item.emails)
             //   .map((item, il) => (item.isPrimary === 1 ? item.email : null))
             //   .join(", "),
@@ -880,6 +892,8 @@ export default function ContactList() {
     };
   }, [params, listCustomer]);
 
+  let isUserRoot = localStorage.getItem("user.root") == "1" ? true : false;
+
   const titleActions: ITitleActions = {
     actions: [
       ...(isRegimeKanban
@@ -896,6 +910,13 @@ export default function ContactList() {
             },
           ]
         : [
+            isUserRoot && {
+              title: "Thêm mới bằng XML",
+              callback: () => {
+                setDataContact(null);
+                setShowModalAddXml(true);
+              },
+            },
             permissions["CONTACT_ADD"] == 1 && {
               title: "Tạo liên hệ",
               callback: () => {
@@ -1240,7 +1261,7 @@ export default function ContactList() {
               emails:
                 item.emails && JSON.parse(item.emails) && JSON.parse(item.emails).length > 0
                   ? JSON.parse(item.emails).filter((el) => el.isPrimary === 1)[0]?.email || ""
-                  : (JSON.parse(item.emails)?.email || ''),
+                  : JSON.parse(item.emails)?.email || "",
               // JSON.parse(item.emails)
               //   .map((item, il) => (item.isPrimary === 1 ? item.email : null))
               //   .join(", ") || '',
@@ -1596,16 +1617,16 @@ export default function ContactList() {
         type="contact_profile"
         name="Nhập danh sách người liên hệ"
       /> */}
-        <ImportModal
-          name="Nhập danh sách người liên hệ"
-          onShow={showModalImport}
-          onHide={(reload) => {
-            if (reload) {
-              getListContact(params);
-            }
-            setShowModalImport(false);
-          }}
-        />
+      <ImportModal
+        name="Nhập danh sách người liên hệ"
+        onShow={showModalImport}
+        onHide={(reload) => {
+          if (reload) {
+            getListContact(params);
+          }
+          setShowModalImport(false);
+        }}
+      />
       <AddContactModal
         onShow={showModalAdd}
         data={dataContact}
@@ -1615,6 +1636,17 @@ export default function ContactList() {
           }
           setShowModalAdd(false);
           setDataContact(null);
+        }}
+      />
+      <XmlAddContact
+        onShow={showModalAddXml}
+        // onShow={true}
+        data={dataContact}
+        onHide={(reload, nextModal) => {
+          if (reload) {
+            getListContact(params);
+          }
+          setShowModalAddXml(false);
         }}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />

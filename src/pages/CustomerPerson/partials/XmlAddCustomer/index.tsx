@@ -7,16 +7,15 @@ import { showToast } from "utils/common";
 import "./index.scss";
 import { ContextType, UserContext } from "contexts/userContext";
 import Tippy from "@tippyjs/react";
-import _, { forEach } from "lodash";
+import CustomerService from "services/CustomerService";
+import CustomerExtraInfoService from "services/CustomerExtraInfoService";
+import CustomerAttributeService from "services/CustomerAttributeService";
+import _, { forEach, map } from "lodash";
 import Button from "components/button/button";
 import Loading from "components/loading";
 import FormViewerComponent from "pages/BPM/BpmForm/FormViewer";
 import ObjectGroupService from "services/ObjectGroupService";
 import { mapConfigData } from "utils/mapConfigData";
-import GuaranteeAttributeService from "services/GuaranteeAttributeService";
-import GuaranteeExtraInfoService from "services/GuaranteeExtraInfoService";
-import ContractGuaranteeService from "services/ContractGuaranteeService";
-import ContractService from "services/ContractService";
 import moment from "moment";
 
 const defaultSchema = {
@@ -24,11 +23,11 @@ const defaultSchema = {
   components: [],
 };
 
-const XMLtype = "modalAddGuarantee"; // bảo lãnh
+const XMLtype = "modalAddCustomer"; // Khách hàng
 
-const getGuaranteeAttributes = async () => {
+const getCustomerAttributes = async () => {
   let dataOption = null;
-  const response = await GuaranteeAttributeService.listAll(0);
+  const response = await CustomerAttributeService.listAll(0);
   if (response.code === 0) {
     dataOption = response.result || {};
     return dataOption;
@@ -36,8 +35,8 @@ const getGuaranteeAttributes = async () => {
   return dataOption;
 };
 
-const getGuaranteeExtraInfos = async (id) => {
-  const response = await GuaranteeExtraInfoService.list(id);
+const getCustomerExtraInfos = async (id) => {
+  const response = await CustomerExtraInfoService.list(id,0);
   return response.result ?? [];
 };
 
@@ -57,13 +56,13 @@ const getOjectGroup = async (type: any) => {
   return defaultSchema;
 };
 
-export default function XmlAddGuanrantee(props: any) {
+export default function XmlAddCustomer(props: any) {
   const { onShow, data, onHide, takeInfoCustomer } = props;
 
   const formContainerRef = useRef(null);
   const formViewerRef = useRef(null);
   const checkUserRoot = localStorage.getItem("user.root");
-  const checkShowFullScreen = localStorage.getItem("showFullScreenModalGuaranteeEform");
+  const checkShowFullScreen = localStorage.getItem("showFullScreenModalCustomerEform");
   const [showFullScreen, setShowFullScreen] = useState<boolean>(checkShowFullScreen ? JSON.parse(checkShowFullScreen) : false);
   const [initFormSchema, setInitFormSchema] = useState(defaultSchema); // Lưu trữ schema
   const [dataSchema, setDataSchema] = useState(null);
@@ -72,12 +71,12 @@ export default function XmlAddGuanrantee(props: any) {
 
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [guaranteeExtraInfos, setGuaranteeExtraInfos] = useState<any>([]);
+  const [customerExtraInfos, setCustomerExtraInfos] = useState<any>([]);
 
-  const [mapGuaranteeAttribute, setMapGuaranteeAttribute] = useState<any>(null);
+  const [mapCustomerAttribute, setMapCustomerAttribute] = useState<any>(null);
 
   useEffect(() => {
-    localStorage.setItem("showFullScreenModalGuaranteeEform", JSON.stringify(showFullScreen));
+    localStorage.setItem("showFullScreenModalCustomerEform", JSON.stringify(showFullScreen));
   }, [showFullScreen]);
 
   const toFormDate = (value) => {
@@ -89,42 +88,6 @@ export default function XmlAddGuanrantee(props: any) {
     return value ? moment(value, ["MM-DD-YYYY", moment.ISO_8601]).format("YYYY-MM-DDTHH:mm:ss") : "";
   };
 
-  const mapAttachmentsFromApi = (attachments: any) => {
-    if (!attachments) return [];
-
-    let parsed = attachments;
-
-    try {
-      parsed = typeof attachments === "string" ? JSON.parse(attachments) : attachments;
-    } catch (e) {
-      return [];
-    }
-
-    if (!Array.isArray(parsed)) return [];
-
-    return parsed
-      .map((item) => {
-        // Chấp nhận cả dạng string url lẫn object { url, name, type, size }
-        const url = typeof item === "string" ? item : item && typeof item === "object" ? item.url || item.path || item.link || "" : "";
-
-        if (!url) return null;
-
-        const fallbackName = decodeURIComponent(url.split("/").pop() || "file.pdf");
-        const name = typeof item === "object" && item?.name ? item.name : fallbackName;
-        const ext = typeof item === "object" && item?.type ? item.type : name.split(".").pop()?.toLowerCase() || "file";
-
-        return {
-          uid: typeof item === "object" && item?.uid ? item.uid : url,
-          url,
-          name,
-          type: ext,
-          size: (typeof item === "object" && item?.size) || 1,
-          status: "done",
-        };
-      })
-      .filter(Boolean);
-  };
-
   useEffect(() => {
     if (!onShow) return;
     //exceptionField để map những field đặc biệt không theo quy tắc chung (ví dụ phone => phoneMasked)
@@ -133,42 +96,53 @@ export default function XmlAddGuanrantee(props: any) {
       email: "emailMasked",
     };
     const getAlldata = async () => {
-      const configInit = await getOjectGroup(XMLtype);
-      const mapAttribute = await getGuaranteeAttributes();
-      const extraInfos = data?.id ? await getGuaranteeExtraInfos(data?.id) : [];
-      const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField);
-
+      const configInit = await getOjectGroup(XMLtype); // Lấy cấu hình form từ ObjectGroup
+      const mapAttribute = await getCustomerAttributes(); // Lấy các trường thông tin mở rộng của khách hàng
+      const extraInfos = data?.id ? await getCustomerExtraInfos(data?.id) : []; // Lấy giá trị của các trường thông tin mở rộng của khách hàng nếu có data.id (id của khách hàng)
+      const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField); // Map dữ liệu ban đầu vào cấu hình form
       if (data?.id) {
-        mapped.beneficiaryType = String(mapped.beneficiaryType);
-        mapped.issuerType = String(mapped.issuerType);
-        mapped.status = String(mapped.status);
+        
+        mapped.custType = String(mapped.custType);
+        mapped.gender = String(mapped.gender);
+        mapped.isExternal = String(mapped.isExternal);
+        mapped.customers = mapped.relationIds[0];
 
-        mapped.startDate = toFormDate(mapped.startDate);
-        mapped.endDate = toFormDate(mapped.endDate);
-        mapped.signDate = toFormDate(mapped.signDate);
-        mapped.establishDate = toFormDate(mapped.establishDate);
-        if (mapped.beneficiaryId) {
-          if (mapped.beneficiaryType == "0") {
-            mapped.beneficiaryId_customer = mapped.beneficiaryId;
+        mapped.birthday = toFormDate(mapped.birthday);
+
+        if (mapped.address) {
+          if (mapped.custType == "0") {
+            mapped.address = mapped.address;
           } else {
-            mapped.beneficiaryId_partner = mapped.beneficiaryId;
+            mapped.addressBusinesses = mapped.address;
+          }
+        }
+        if (mapped.careers) {
+          if (mapped.custType == "0") {
+            mapped.careerId = mapped.careers[0];
+          } else {
+            mapped.professionId = mapped.careers[0];
+          }
+        }
+        if (mapped.name) {
+          if (mapped.custType == "0") {
+            mapped.namePerson = mapped.name;
+          } else {
+            mapped.nameCompany = mapped.name;
+          }
+        }
+        if (mapped.sourceId) {
+          if (mapped.custType == "0") {
+            mapped.sourceId = mapped.sourceId;
+          } else {
+            mapped.targetId = mapped.sourceId;
           }
         }
 
-        if (mapped.issuerId) {
-          if (mapped.issuerType == "0") {
-            mapped.issuerId_customer = mapped.issuerId;
-          } else {
-            mapped.issuerId_partner = mapped.issuerId;
-          }
-        }
-        mapped.attachments = JSON.stringify(mapAttachmentsFromApi(mapped.attachments));
         setDataInit(mapped);
       }
-
       setInitFormSchema(configInit);
-      setMapGuaranteeAttribute(mapAttribute);
-      setGuaranteeExtraInfos(extraInfos);
+      setMapCustomerAttribute(mapAttribute);
+      setCustomerExtraInfos(extraInfos);
       setIsLoading(false);
     };
     if (onShow && XMLtype) {
@@ -178,23 +152,22 @@ export default function XmlAddGuanrantee(props: any) {
 
   const onSubmit = async (config) => {
     setIsSubmit(true);
-
     // Các trường thông tin bổ sung
     let infoExtra = [];
-    forEach(mapGuaranteeAttribute, (itemInfo) => {
+    forEach(mapCustomerAttribute, (itemInfo) => {
       forEach(itemInfo, (item) => {
         const info = itemInfo.find((info) => config[info.fieldName] && item.parentId != 0);
         if (info) {
           infoExtra.push({
             ...{
               attributeId: item.id,
-              guaranteeId: data?.id ?? 0,
+              customerId: data?.id ?? 0,
               attributeValue:
                 config[item.fieldName] && typeof config[item.fieldName] == "object" ? JSON.stringify(config[item.fieldName]) : config[item.fieldName],
             },
-            ...(guaranteeExtraInfos.find((el) => el.attributeId == item.id)?.id
+            ...(customerExtraInfos.find((el) => el.attributeId == item.id)?.id
               ? {
-                  id: guaranteeExtraInfos.find((el) => el.attributeId == item.id)?.id,
+                  id: customerExtraInfos.find((el) => el.attributeId == item.id)?.id,
                 }
               : {}),
           });
@@ -202,82 +175,48 @@ export default function XmlAddGuanrantee(props: any) {
       });
     });
 
-    // Lấy contractId ưu tiên từ config (form), sau đó tới data hiện tại
-    const contractId = config?.contractId ?? data?.contractId ?? data?.contract?.id ?? 0;
-
-    let contractValue = 0;
-    const localCandidates = [dataInit?.contractValue, data?.contractValue, data?.contract?.dealValue];
-
-    for (const value of localCandidates) {
-      const number = Number(value);
-      if (!Number.isNaN(number) && number !== 0) {
-        contractValue = number;
-        break;
-      }
-    }
-
-    if (!contractValue && contractId) {
-      try {
-        const res = await ContractService.detail(+contractId);
-        if (res?.code === 0) {
-          const number = Number(res.result?.dealValue || 0);
-          if (!Number.isNaN(number) && number !== 0) {
-            contractValue = number;
-          }
-        }
-      } catch (e) {}
-    }
-
-    let attachmentList: any[] = [];
-    try {
-      attachmentList = typeof config.attachments === "string" ? JSON.parse(config.attachments ?? "[]") : config.attachments ?? [];
-    } catch (e) {
-      attachmentList = [];
-    }
-
-    const attachmentUrls = attachmentList
-      ?.map((item: any) => {
-        if (!item) return null;
-        if (typeof item === "string") return item;
-        if (typeof item === "object") return item.url || item.path || item.link || null;
-        return null;
-      })
-      .filter(Boolean);
+    let phone = config?.phoneMasked ?? null; // Lấy theo phoneMasked vì maskedInput trong form lấy theo key này
+    let email = config?.emailMasked ?? null; // Lấy theo emailMasked vì maskedInput trong form lấy theo key này
 
     let body: any = {
       ...(data ? data : {}),
-      numberLetter: config.numberLetter ?? "",
-      competencyId: config.competencyId ?? 0, // nghiệp vụ bảo lãnh
-      contractId: config.contractId ?? 0, //hợp đồng bảo lãnh
-      contractAppendixId: config.contractAppendix ?? 0, //Phụ lục hợp đồng
-      guaranteeTypeId: config.guaranteeTypeId ?? 0,
-      bankId: config.bankId ?? 0,
-      beneficiaryId: (config.beneficiaryType == 0 ? config.beneficiaryId_customer : config.beneficiaryId_partner) ?? 0, //đơn vị thụ hưởng
-      issuerId: (config.issuerType == 0 ? config.issuerId_customer : config.issuerId_partner) ?? 0, // đơn vị phát hành
-      currencyValue: config.currencyValue ?? 0, //giá trị bảo lãnh ngaoij tế
-      currency: config.currency ?? "VNĐ", //loại tiền tệ
-      contractValue, // giá trị hợp đồng
-      value: config.value ?? 0, //giá trị bảo lãnh
-      exchangeRate: config.exchangeRate ?? 1, //tỷ giá
-      description: config.description ?? "",
-      status: config.status ?? 1, //trạng thái
-      startDate: toApiDate(config.startDate),
-      endDate: toApiDate(config.endDate),
-      signDate: toApiDate(config.signDate),
-      establishDate: toApiDate(config.establishDate),
-      signRate: config.signRate ?? 0,
-      attachments: JSON.stringify(attachmentUrls ?? []),
-      beneficiaryType: config.beneficiaryType ?? 0, //0 - khách hàng, 1 - đối tác
-      issuerType: config.issuerType ?? 0, //0 - khách hàng, 1 - đối tác
+      address: (config.custType == 0 ? config.address : config.addressBusinesses) ?? "",
+      avatar: config.avartar ? JSON.parse(config.avartar)[0]?.url : "",
+      birthday: toApiDate(config.birthday),
       branchId: checkUserRoot == "1" ? data?.branchId ?? dataBranch.value ?? null : 0,
-      bank: JSON.stringify(config.bank),
-      guaranteeExtraInfos: infoExtra,
+      careers: [(config.custType == 0 ? config.careerId : config.professionId) ?? 0],
+      cgpId: config.cgpId ?? "",
+      code: config.code ?? "",
+      contactId: config.contactId ?? 0,
+      custType: config.custType ?? 0,
+      customerExtraInfos: infoExtra,
+      customerRelationIds:"[" + (config.customers ?? 0) + "]",
+      email: config.email ?? "",
+      employeeId: config.employeeId ?? 0,
+      employeeTitle: config.employeeTitle ?? "",
+      firstCall: config.firstCall ?? "",
+      gender: config.gender ?? 0,
+      height: config.height ?? 0,
+      isExternal: config.isExternal ?? "0",
+      maritalStatus: config.maritalStatus ?? 0,
+      name: (config.custType == 0 ? config.namePerson : config.nameCompany) ?? "",
+      phone: config.phone ?? "",
+      profileLink: config.profileLink ?? "",
+      profileStatus: config.profileStatus ?? "0",
+      recommenderPhone: config.recommenderPhone ?? "",
+      relationIds: [config.customers ?? 0],
+      secondProfileLink: config.secondProfileLink ?? "",
+      secondProfileStatus: config.secondProfileStatus ?? "0",
+      sourceId: (config.custType == 0 ? config.sourceId : config.targetId) ?? 0,
+      taxCode: (config.custType == 1 ? config.taxCode : "") ?? "",
+      trademark: (config.custType == 1 ? config.trademark : "") ?? "",
+      weight: config.weight ?? 0,
     };
 
-    const response = await ContractGuaranteeService.update(body);
+    const response = await CustomerService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} bảo lãnh thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} khách hàng thành công`, "success");
       handleClear(true);
       takeInfoCustomer && takeInfoCustomer(response.result);
     } else {
@@ -333,16 +272,16 @@ export default function XmlAddGuanrantee(props: any) {
         ],
       },
     }),
-    [isSubmit, formViewerRef, mapGuaranteeAttribute, isSubmit, dataSchema, data]
+    [isSubmit, formViewerRef, mapCustomerAttribute, isSubmit, dataSchema, data]
   );
 
   const handleClear = (acc) => {
     onHide(acc);
-    setGuaranteeExtraInfos([]);
+    setCustomerExtraInfos([]);
     setDataInit(null);
     setInitFormSchema(defaultSchema);
-    setMapGuaranteeAttribute(null);
-    setGuaranteeExtraInfos([]);
+    setMapCustomerAttribute(null);
+    setCustomerExtraInfos([]);
   };
 
   // Callback để nhận schema khi người dùng thay đổi trong FormEditor
@@ -364,12 +303,12 @@ export default function XmlAddGuanrantee(props: any) {
             handleClear(false);
           }
         }}
-        className={showFullScreen ? "modal-guarantee-xml-full" : "modal-guarantee-xml"}
+        className={showFullScreen ? "modal-customer-xml-full" : "modal-customer-xml"}
       >
         <form className="form-handle-task" onSubmit={(e) => onSubmit(e)}>
           <div className="container-header">
             <div className="box-title">
-              <h4>{`${data ? "Chỉnh sửa" : "Thêm mới"} bảo lãnh`}</h4>
+              <h4>{`${data ? "Chỉnh sửa" : "Thêm mới"} khách hàng`}</h4>
             </div>
             <div className="container-button">
               {!showFullScreen ? (

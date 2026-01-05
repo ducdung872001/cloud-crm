@@ -98,7 +98,7 @@ export default function SearchProjectManagementModal(props: ISearchProjectManage
       name: search,
       page: page,
       limit: 10,
-      departmentId: dataDepartment?.value,
+      departmentId: dataDepartment?.value || null,
     };
 
     const response = await EmployeeService.list(param);
@@ -129,8 +129,10 @@ export default function SearchProjectManagementModal(props: ISearchProjectManage
   };
 
   useEffect(() => {
-    loadedOptionEmployee("", undefined, { page: 1 });
-  }, [dataDepartment]);
+    if (onShow) {
+      loadedOptionEmployee("", undefined, { page: 1 });
+    }
+  }, [dataDepartment, onShow]);
 
   //? đoạn này xử lý vấn đề thay đổi người quản lý dự án
   const handleChangeValueEmployee = (e) => {
