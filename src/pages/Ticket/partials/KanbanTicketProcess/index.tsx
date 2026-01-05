@@ -41,6 +41,7 @@ const KanbanTicketProcess = (props: any) => {
   // Cài đặt hiển thị item
   const itemSetup = useCallback(
     (item, index) => {
+      console.log("itemSetup item", item);
       const orderRequest = item?.orderRequest || {};
       const customerInfo = JSON.parse(orderRequest?.customerInfo || "{}");
       return (

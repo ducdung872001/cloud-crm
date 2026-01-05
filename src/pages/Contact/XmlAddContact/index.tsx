@@ -7,28 +7,26 @@ import { showToast } from "utils/common";
 import "./index.scss";
 import { ContextType, UserContext } from "contexts/userContext";
 import Tippy from "@tippyjs/react";
+import ContactService from "services/ContactService";
+import ContactExtraInfoService from "services/ContactExtraInfoService";
+import ContactAttributeService from "services/ContactAttributeService";
 import _, { forEach } from "lodash";
 import Button from "components/button/button";
 import Loading from "components/loading";
 import FormViewerComponent from "pages/BPM/BpmForm/FormViewer";
 import ObjectGroupService from "services/ObjectGroupService";
 import { mapConfigData } from "utils/mapConfigData";
-import GuaranteeAttributeService from "services/GuaranteeAttributeService";
-import GuaranteeExtraInfoService from "services/GuaranteeExtraInfoService";
-import ContractGuaranteeService from "services/ContractGuaranteeService";
-import ContractService from "services/ContractService";
-import moment from "moment";
 
 const defaultSchema = {
   type: "default",
   components: [],
 };
 
-const XMLtype = "modalAddGuarantee"; // bảo lãnh
+const XMLtype = "modalAddContact";
 
-const getGuaranteeAttributes = async () => {
+const getContactAttributes = async () => {
   let dataOption = null;
-  const response = await GuaranteeAttributeService.listAll(0);
+  const response = await ContactAttributeService.listAll(0);
   if (response.code === 0) {
     dataOption = response.result || {};
     return dataOption;
@@ -36,8 +34,8 @@ const getGuaranteeAttributes = async () => {
   return dataOption;
 };
 
-const getGuaranteeExtraInfos = async (id) => {
-  const response = await GuaranteeExtraInfoService.list(id);
+const getContactExtraInfos = async (id) => {
+  const response = await ContactExtraInfoService.list(id);
   return response.result ?? [];
 };
 
@@ -57,13 +55,13 @@ const getOjectGroup = async (type: any) => {
   return defaultSchema;
 };
 
-export default function XmlAddGuanrantee(props: any) {
-  const { onShow, data, onHide, takeInfoCustomer } = props;
+export default function XmlAddContact(props: any) {
+  const { onShow, data, onHide, takeInfoContact } = props;
 
   const formContainerRef = useRef(null);
   const formViewerRef = useRef(null);
   const checkUserRoot = localStorage.getItem("user.root");
-  const checkShowFullScreen = localStorage.getItem("showFullScreenModalGuaranteeEform");
+  const checkShowFullScreen = localStorage.getItem("showFullScreenModalContactEform");
   const [showFullScreen, setShowFullScreen] = useState<boolean>(checkShowFullScreen ? JSON.parse(checkShowFullScreen) : false);
   const [initFormSchema, setInitFormSchema] = useState(defaultSchema); // Lưu trữ schema
   const [dataSchema, setDataSchema] = useState(null);
@@ -72,58 +70,12 @@ export default function XmlAddGuanrantee(props: any) {
 
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [guaranteeExtraInfos, setGuaranteeExtraInfos] = useState<any>([]);
-
-  const [mapGuaranteeAttribute, setMapGuaranteeAttribute] = useState<any>(null);
+  const [contactExtraInfos, setContactExtraInfos] = useState<any>([]);
+  const [mapContactAttribute, setMapContactAttribute] = useState<any>(null);
 
   useEffect(() => {
-    localStorage.setItem("showFullScreenModalGuaranteeEform", JSON.stringify(showFullScreen));
+    localStorage.setItem("showFullScreenModalContactEform", JSON.stringify(showFullScreen));
   }, [showFullScreen]);
-
-  const toFormDate = (value) => {
-    if (!value) return "";
-    return moment(value).format("YYYY-MM-DD");
-  };
-
-  const toApiDate = (value: any) => {
-    return value ? moment(value, ["MM-DD-YYYY", moment.ISO_8601]).format("YYYY-MM-DDTHH:mm:ss") : "";
-  };
-
-  const mapAttachmentsFromApi = (attachments: any) => {
-    if (!attachments) return [];
-
-    let parsed = attachments;
-
-    try {
-      parsed = typeof attachments === "string" ? JSON.parse(attachments) : attachments;
-    } catch (e) {
-      return [];
-    }
-
-    if (!Array.isArray(parsed)) return [];
-
-    return parsed
-      .map((item) => {
-        // Chấp nhận cả dạng string url lẫn object { url, name, type, size }
-        const url = typeof item === "string" ? item : item && typeof item === "object" ? item.url || item.path || item.link || "" : "";
-
-        if (!url) return null;
-
-        const fallbackName = decodeURIComponent(url.split("/").pop() || "file.pdf");
-        const name = typeof item === "object" && item?.name ? item.name : fallbackName;
-        const ext = typeof item === "object" && item?.type ? item.type : name.split(".").pop()?.toLowerCase() || "file";
-
-        return {
-          uid: typeof item === "object" && item?.uid ? item.uid : url,
-          url,
-          name,
-          type: ext,
-          size: (typeof item === "object" && item?.size) || 1,
-          status: "done",
-        };
-      })
-      .filter(Boolean);
-  };
 
   useEffect(() => {
     if (!onShow) return;
@@ -133,42 +85,16 @@ export default function XmlAddGuanrantee(props: any) {
       email: "emailMasked",
     };
     const getAlldata = async () => {
-      const configInit = await getOjectGroup(XMLtype);
-      const mapAttribute = await getGuaranteeAttributes();
-      const extraInfos = data?.id ? await getGuaranteeExtraInfos(data?.id) : [];
-      const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField);
-
+      const configInit = await getOjectGroup(XMLtype); // Lấy cấu hình form từ ObjectGroup
+      const mapAttribute = await getContactAttributes();
+      const extraInfos = data?.id ? await getContactExtraInfos(data?.id) : [];
+      const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField); // Map dữ liệu ban đầu vào cấu hình form
       if (data?.id) {
-        mapped.beneficiaryType = String(mapped.beneficiaryType);
-        mapped.issuerType = String(mapped.issuerType);
-        mapped.status = String(mapped.status);
-
-        mapped.startDate = toFormDate(mapped.startDate);
-        mapped.endDate = toFormDate(mapped.endDate);
-        mapped.signDate = toFormDate(mapped.signDate);
-        mapped.establishDate = toFormDate(mapped.establishDate);
-        if (mapped.beneficiaryId) {
-          if (mapped.beneficiaryType == "0") {
-            mapped.beneficiaryId_customer = mapped.beneficiaryId;
-          } else {
-            mapped.beneficiaryId_partner = mapped.beneficiaryId;
-          }
-        }
-
-        if (mapped.issuerId) {
-          if (mapped.issuerType == "0") {
-            mapped.issuerId_customer = mapped.issuerId;
-          } else {
-            mapped.issuerId_partner = mapped.issuerId;
-          }
-        }
-        mapped.attachments = JSON.stringify(mapAttachmentsFromApi(mapped.attachments));
         setDataInit(mapped);
       }
-
       setInitFormSchema(configInit);
-      setMapGuaranteeAttribute(mapAttribute);
-      setGuaranteeExtraInfos(extraInfos);
+      setMapContactAttribute(mapAttribute);
+      setContactExtraInfos(extraInfos);
       setIsLoading(false);
     };
     if (onShow && XMLtype) {
@@ -178,23 +104,22 @@ export default function XmlAddGuanrantee(props: any) {
 
   const onSubmit = async (config) => {
     setIsSubmit(true);
-
     // Các trường thông tin bổ sung
     let infoExtra = [];
-    forEach(mapGuaranteeAttribute, (itemInfo) => {
+    forEach(mapContactAttribute, (itemInfo) => {
       forEach(itemInfo, (item) => {
         const info = itemInfo.find((info) => config[info.fieldName] && item.parentId != 0);
         if (info) {
           infoExtra.push({
             ...{
               attributeId: item.id,
-              guaranteeId: data?.id ?? 0,
+              contactId: data?.id ?? 0,
               attributeValue:
                 config[item.fieldName] && typeof config[item.fieldName] == "object" ? JSON.stringify(config[item.fieldName]) : config[item.fieldName],
             },
-            ...(guaranteeExtraInfos.find((el) => el.attributeId == item.id)?.id
+            ...(contactExtraInfos.find((el) => el.attributeId == item.id)?.id
               ? {
-                  id: guaranteeExtraInfos.find((el) => el.attributeId == item.id)?.id,
+                  id: contactExtraInfos.find((el) => el.attributeId == item.id)?.id,
                 }
               : {}),
           });
@@ -202,84 +127,34 @@ export default function XmlAddGuanrantee(props: any) {
       });
     });
 
-    // Lấy contractId ưu tiên từ config (form), sau đó tới data hiện tại
-    const contractId = config?.contractId ?? data?.contractId ?? data?.contract?.id ?? 0;
-
-    let contractValue = 0;
-    const localCandidates = [dataInit?.contractValue, data?.contractValue, data?.contract?.dealValue];
-
-    for (const value of localCandidates) {
-      const number = Number(value);
-      if (!Number.isNaN(number) && number !== 0) {
-        contractValue = number;
-        break;
-      }
-    }
-
-    if (!contractValue && contractId) {
-      try {
-        const res = await ContractService.detail(+contractId);
-        if (res?.code === 0) {
-          const number = Number(res.result?.dealValue || 0);
-          if (!Number.isNaN(number) && number !== 0) {
-            contractValue = number;
-          }
-        }
-      } catch (e) {}
-    }
-
-    let attachmentList: any[] = [];
-    try {
-      attachmentList = typeof config.attachments === "string" ? JSON.parse(config.attachments ?? "[]") : config.attachments ?? [];
-    } catch (e) {
-      attachmentList = [];
-    }
-
-    const attachmentUrls = attachmentList
-      ?.map((item: any) => {
-        if (!item) return null;
-        if (typeof item === "string") return item;
-        if (typeof item === "object") return item.url || item.path || item.link || null;
-        return null;
-      })
-      .filter(Boolean);
+    let phone = config?.phoneMasked ?? null;
+    let email = config?.emailMasked ?? null;
 
     let body: any = {
       ...(data ? data : {}),
-      numberLetter: config.numberLetter ?? "",
-      competencyId: config.competencyId ?? 0, // nghiệp vụ bảo lãnh
-      contractId: config.contractId ?? 0, //hợp đồng bảo lãnh
-      contractAppendixId: config.contractAppendix ?? 0, //Phụ lục hợp đồng
-      guaranteeTypeId: config.guaranteeTypeId ?? 0,
-      bankId: config.bankId ?? 0,
-      beneficiaryId: (config.beneficiaryType == 0 ? config.beneficiaryId_customer : config.beneficiaryId_partner) ?? 0, //đơn vị thụ hưởng
-      issuerId: (config.issuerType == 0 ? config.issuerId_customer : config.issuerId_partner) ?? 0, // đơn vị phát hành
-      currencyValue: config.currencyValue ?? 0, //giá trị bảo lãnh ngaoij tế
-      currency: config.currency ?? "VNĐ", //loại tiền tệ
-      contractValue, // giá trị hợp đồng
-      value: config.value ?? 0, //giá trị bảo lãnh
-      exchangeRate: config.exchangeRate ?? 1, //tỷ giá
-      description: config.description ?? "",
-      status: config.status ?? 1, //trạng thái
-      startDate: toApiDate(config.startDate),
-      endDate: toApiDate(config.endDate),
-      signDate: toApiDate(config.signDate),
-      establishDate: toApiDate(config.establishDate),
-      signRate: config.signRate ?? 0,
-      attachments: JSON.stringify(attachmentUrls ?? []),
-      beneficiaryType: config.beneficiaryType ?? 0, //0 - khách hàng, 1 - đối tác
-      issuerType: config.issuerType ?? 0, //0 - khách hàng, 1 - đối tác
-      branchId: checkUserRoot == "1" ? data?.branchId ?? dataBranch.value ?? null : 0,
-      bank: JSON.stringify(config.bank),
-      guaranteeExtraInfos: infoExtra,
+      avatar: config.avatar ? JSON.parse(config.avatar)[0]?.url : "",
+      name: config.name ?? "",
+      phone: phone,
+      email: email,
+      positionId: config.positionId ?? null,
+      employeeId: config.employeeId ?? null,
+      note: config.note ?? "",
+      pipelineId: config.pipelineId ?? null,
+      statusId: config.statusId ?? null,
+      cardvisitFront: config.cardvisitFront ? JSON.parse(config.cardvisitFront)[0]?.url : "",
+      cardvisitBack: config.cardvisitBack ? JSON.parse(config.cardvisitBack)[0]?.url : "",
+      department: config.department ?? null,
+      coordinators: config.coordinators ? JSON.stringify(config.coordinators) : config.coordinators ?? null,
+      primaryCustomerId: config.primaryCustomerId ?? null,
+      contactExtraInfos: infoExtra,
     };
 
-    const response = await ContractGuaranteeService.update(body);
+    const response = await ContactService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} bảo lãnh thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} người liên hệ thành công`, "success");
       handleClear(true);
-      takeInfoCustomer && takeInfoCustomer(response.result);
+      takeInfoContact && takeInfoContact(response.result);
     } else {
       if (response.error) {
         showToast(response.error, "error");
@@ -333,16 +208,16 @@ export default function XmlAddGuanrantee(props: any) {
         ],
       },
     }),
-    [isSubmit, formViewerRef, mapGuaranteeAttribute, isSubmit, dataSchema, data]
+    [isSubmit, formViewerRef, mapContactAttribute, isSubmit, dataSchema, data]
   );
 
   const handleClear = (acc) => {
     onHide(acc);
-    setGuaranteeExtraInfos([]);
+    setContactExtraInfos([]);
     setDataInit(null);
     setInitFormSchema(defaultSchema);
-    setMapGuaranteeAttribute(null);
-    setGuaranteeExtraInfos([]);
+    setMapContactAttribute(null);
+    setContactExtraInfos([]);
   };
 
   // Callback để nhận schema khi người dùng thay đổi trong FormEditor
@@ -364,12 +239,12 @@ export default function XmlAddGuanrantee(props: any) {
             handleClear(false);
           }
         }}
-        className={showFullScreen ? "modal-guarantee-xml-full" : "modal-guarantee-xml"}
+        className={showFullScreen ? "modal-contact-xml-full" : "modal-contact-xml"}
       >
         <form className="form-handle-task" onSubmit={(e) => onSubmit(e)}>
           <div className="container-header">
             <div className="box-title">
-              <h4>{`${data ? "Chỉnh sửa" : "Thêm mới"} bảo lãnh`}</h4>
+              <h4>{`${data ? "Chỉnh sửa" : "Thêm mới"} người liên hệ`}</h4>
             </div>
             <div className="container-button">
               {!showFullScreen ? (
@@ -420,6 +295,7 @@ export default function XmlAddGuanrantee(props: any) {
                     onValidationError={() => {
                       setIsSubmit(false);
                     }}
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
                     setDataSchemaDraft={(data) => {}}
                     isLoading={isLoading}
                     setIsLoading={setIsLoading}

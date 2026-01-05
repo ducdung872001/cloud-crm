@@ -59,6 +59,7 @@ export default function WorkTableByGroup(props: any) {
 
   // đoạn này hiển thị danh sách cập nhật tiến độ công việc
   const [showModalViewWorkInprogress, setShowModalViewWorkInprogress] = useState<boolean>(false);
+  const [showModalDetail, setShowModalDetail] = useState<boolean>(false);
 
   // useEffect(() => {
   //   if (idManagement) {
@@ -329,6 +330,7 @@ export default function WorkTableByGroup(props: any) {
   };
 
   const headerCollapsible = useCallback((item, index) => {
+    console.log("itemSetup item", item);
     return (
       <div className="collapse-header">
         <div className="group-name" style={{ backgroundColor: item?.color }}>
@@ -457,6 +459,7 @@ export default function WorkTableByGroup(props: any) {
             <div className="list-table">
               {listGroupWork.map((groupItem, groupIndex) => (
                 <Collapsible
+                  key={groupItem?.key || groupIndex}
                   header={headerCollapsible}
                   dataItems={{
                     title: groupItem?.name || "Chưa phân nhóm",
@@ -524,6 +527,8 @@ export default function WorkTableByGroup(props: any) {
         }}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
+
+      <DetailWorkModal onShow={showModalDetail} idData={idWork} onHide={() => setShowModalDetail(false)} />
     </div>
   );
 }
