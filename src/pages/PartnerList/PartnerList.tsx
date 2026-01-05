@@ -371,9 +371,8 @@ export default function PartnerList() {
                   <div className="lst__columns--show">
                     <div className="summary__qty--column">
                       <span className="title__show--column">Các trường hiển thị trong bảng</span>
-                      <span className="qty-total">{`${lstFieldActive.length + defaultFieldTableDis.length}/${
-                        lstFieldActive.length + lstFieldUnActive.length + defaultFieldTableDis.length
-                      }`}</span>
+                      <span className="qty-total">{`${lstFieldActive.length + defaultFieldTableDis.length}/${lstFieldActive.length + lstFieldUnActive.length + defaultFieldTableDis.length
+                        }`}</span>
                     </div>
                     <div className="lst__items lst__items--show">
                       {(lstFieldActive || defaultFieldTableDis) &&
@@ -599,7 +598,7 @@ export default function PartnerList() {
     { headerName: "dataItem", field: "data", hide: true },
     { headerName: "Tên đối tác", field: "name", cellRenderer: LinkToAction, headerClass: "text-left", cellClass: "text-left" },
     { headerName: "Mã đối tác", field: "code", headerClass: "text-left", cellClass: "text-left" },
-    { headerName: "Mã số thuế", field: "taxCode", cellClass: "text-center", headerClass: "text-center" },
+    { headerName: "Mã số thuế", field: "taxCode", cellClass: "text-left", headerClass: "text-left" },
     {
       headerName: "Điện thoại",
       //   width: 135,
@@ -960,8 +959,8 @@ export default function PartnerList() {
 
       const checkDataLocalStorage = takeFieldActiveContact
         ? result.filter((item) => {
-            return !takeFieldActiveContact.some((el) => el.fieldName === item.fieldName);
-          })
+          return !takeFieldActiveContact.some((el) => el.fieldName === item.fieldName);
+        })
         : result;
 
       setLstFieldUnActive(checkDataLocalStorage);
@@ -1133,21 +1132,21 @@ export default function PartnerList() {
     actions: [
       ...(activeTitleHeader !== 3
         ? [
-            isUserRoot && {
-              title: "Thêm mới bằng XML",
-              callback: () => {
-                setDataPartner(null);
-                setShowModalAddXml(true);
-              },
+          isUserRoot && {
+            title: "Thêm mới bằng XML",
+            callback: () => {
+              setDataPartner(null);
+              setShowModalAddXml(true);
             },
-            permissions["PARTNER_ADD"] == 1 && {
-              title: "Thêm mới",
-              callback: () => {
-                setDataPartner(null);
-                setShowModalAdd(true);
-              },
+          },
+          permissions["PARTNER_ADD"] == 1 && {
+            title: "Thêm mới",
+            callback: () => {
+              setDataPartner(null);
+              setShowModalAdd(true);
             },
-          ]
+          },
+        ]
         : []),
     ],
     actions_extra: [
