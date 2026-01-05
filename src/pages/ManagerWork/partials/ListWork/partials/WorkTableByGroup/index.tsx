@@ -59,6 +59,7 @@ export default function WorkTableByGroup(props: any) {
 
   // đoạn này hiển thị danh sách cập nhật tiến độ công việc
   const [showModalViewWorkInprogress, setShowModalViewWorkInprogress] = useState<boolean>(false);
+  const [showModalDetail, setShowModalDetail] = useState<boolean>(false);
 
   // useEffect(() => {
   //   if (idManagement) {
@@ -458,6 +459,7 @@ export default function WorkTableByGroup(props: any) {
             <div className="list-table">
               {listGroupWork.map((groupItem, groupIndex) => (
                 <Collapsible
+                  key={groupItem?.key || groupIndex}
                   header={headerCollapsible}
                   dataItems={{
                     title: groupItem?.name || "Chưa phân nhóm",
