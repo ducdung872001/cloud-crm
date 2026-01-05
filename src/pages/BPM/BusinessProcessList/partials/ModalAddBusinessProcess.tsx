@@ -594,8 +594,6 @@ export default function ModalAddBusinessProcess(props: any) {
     if (response.code === 0) {
       const dataOption = response.result.items;
 
-      console.log("dataOption", dataOption);
-
       return {
         options: [
           ...(dataOption.length > 0
