@@ -18,8 +18,8 @@ import { showToast } from "utils/common";
 import AdjustmentSlipService from "services/AdjustmentSlipService";
 import "./ChooseProduct.scss";
 
-export default function ChooseProduct(props: IChooseProductModalProps) {
-  const { onShow, onHide, lstBatchNoProduct, satId, inventory } = props;
+export default function ChooseProduct(props) {
+  const { onShow, onHide, lstBatchNoProduct, satId, inventory, takeData} = props;
 
   const isMounted = useRef(false);
 
@@ -150,46 +150,10 @@ export default function ChooseProduct(props: IChooseProductModalProps) {
 
   //! đoạn này xử lý vấn đề thêm mới sản phẩm vào phiếu
   const handleCreateProduct = async () => {
-    const arrayPromise = [];
-
     setIsSubmit(true);
-
-    const changeDataPro = [...dataProduct].map((item: IWarehouseProResponse) => {
-      const newData: IAddUpdateProRequest = {
-        id: 0,
-        productId: item.productId,
-        productName: item.productName,
-        productAvatar: item.productAvatar,
-        batchNo: item.batchNo,
-        unitId: item.unitId,
-        unitName: item.unitName,
-        reason: "",
-        availQty: item.quantity,
-        offsetQty: 0,
-        satId: satId,
-        inventoryId: item.inventoryId,
-        inventoryName: item.inventoryName,
-      };
-
-      const promise = new Promise((resolve, reject) => {
-        AdjustmentSlipService.addUpdatePro(newData).then((res) => resolve(res));
-      });
-
-      arrayPromise.push(promise);
-    });
-
-    Promise.all(arrayPromise).then((result) => {
-      if (result.length > 0) {
-        setListIdChecked([]);
-        setDataProduct([]);
-        showToast("Chọn sản phẩm thành công", "success");
-        onHide(true);
-        setIsSubmit(false);
-      } else {
-        showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-        setIsSubmit(false);
-      }
-    });
+    takeData(dataProduct);
+    onHide(false);
+    setIsSubmit(false);
   };
 
   return (

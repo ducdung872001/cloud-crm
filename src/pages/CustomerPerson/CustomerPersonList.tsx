@@ -62,6 +62,7 @@ import { addDays } from "components/addDays/addDays";
 import SplitDataCustomerModal from "./partials/SplitDataCustomerModal";
 import { StyleHeaderTable } from "components/StyleHeaderTable/StyleHeaderTable";
 // import PurchaseInvoiceList from "./partials/PurchaseInvoice/PurchaseInvoiceList";
+import XmlAddCustomer from "./partials/XmlAddCustomer";
 
 export default function CustomerPersonList() {
   const [showPageSendSMS, setShowPageSendSMS] = useState<boolean>(false);
@@ -1127,6 +1128,22 @@ export default function CustomerPersonList() {
           </div>
         )}
 
+        {isUserRoot && (
+          <div
+            className="item__action update"
+            onClick={() => {
+              setDataCustomer(data.dataItem);
+              setShowModalAddXml(true);
+            }}
+          >
+            <Tippy content="Sửa">
+              <span className="icon__item icon__update">
+                <Icon name="SettingCashbook" />
+              </span>
+            </Tippy>
+          </div>
+        )}
+        
         {permissions["CUSTOMER_UPDATE"] == 1 && (
           <div
             className="item__action update"
@@ -2113,10 +2130,19 @@ export default function CustomerPersonList() {
     },
   ];
 
+  let isUserRoot = localStorage.getItem("user.root") == "1" ? true : false;
+
   const titleActions: ITitleActions = {
     actions: [
       ...(activeTitleHeader !== 3
         ? [
+            isUserRoot && {
+              title: "Thêm mới bằng XML",
+              callback: () => {
+                setDataCustomer(null);
+                setShowModalAddXml(true);
+              },
+            },
             permissions["CUSTOMER_ADD"] == 1 && {
               title: "Thêm mới",
               callback: () => {
@@ -2315,6 +2341,7 @@ export default function CustomerPersonList() {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showModalCompanyAdd, setShowModalCompanyAdd] = useState<boolean>(false);
   const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
+  const [showModalAddXml, setShowModalAddXml] = useState<boolean>(false);
 
   const [titleProps, setTitleProps] = useState<string>("");
   const [showModalAddScheduler, setShowModalAddScheduler] = useState<boolean>(false);
@@ -3418,6 +3445,18 @@ export default function CustomerPersonList() {
             }
           }}
           zaloUserId={dataCustomer?.zaloUserId}
+        />
+
+        <XmlAddCustomer
+          onShow={showModalAddXml}
+          // onShow={true}
+          data={dataCustomer}
+          onHide={(reload, nextModal) => {
+            if (reload) {
+              getListCustomer(params);
+            }
+            setShowModalAddXml(false);
+          }}
         />
 
         {/* Khách hàng doanh nghiệp */}
