@@ -453,8 +453,6 @@ const FormViewerComponent = (props: any) => {
         if (component.type == "select") {
           let dataSelect = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
-          // console.log('dataSelect', dataSelect);
-          // console.log('target', target);
           
           if (target) {
             const listTarget = target.split(",").map((item) => item.trim()) || [];

@@ -209,7 +209,6 @@ export default function CreateContractsXML(props: any) {
         }
       }
 
-      console.log("hhhhhhhh", mapped);
       setInitFormSchema(configInit);
       setMapContractsAttribute(mapAttribute);
       setContractsExtraInfos(extraInfos);
@@ -221,7 +220,6 @@ export default function CreateContractsXML(props: any) {
   }, [id]);
 
   const onSubmit = async (config) => {
-    console.log("Submit config:", config);
     setIsSubmit(true);
 
     // Các trường thông tin bổ sung
@@ -360,7 +358,6 @@ export default function CreateContractsXML(props: any) {
       ),
     };
 
-    console.log(body);
 
     const response = await ContractService.update(body);
 
