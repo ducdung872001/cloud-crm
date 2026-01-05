@@ -2906,10 +2906,10 @@ export const urlsApi = {
   ///BPM
 
   artifact: {
-    list: prefixBpm + "/artifact/list",
-    update: prefixBpm + "/artifact/update",
+    list: prefixAdmin + "/artifact/list",
+    update: prefixAdmin + "/artifact/update",
     detail: prefixBpm + "/artifact/get",
-    delete: prefixBpm + "/artifact/delete",
+    delete: prefixAdmin + "/artifact/delete",
   },
 
   processedObject: {
