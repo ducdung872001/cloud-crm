@@ -383,13 +383,13 @@ const FormViewerComponent = (props: any) => {
     let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
       let { schema, data } = event;
-
-      let components = schema.components;
+      
+      let components = schema.components;      
       const newValues = data;
 
       for (const key in newValues) {
         if (!_.isEqual(newValues[key], prevValues[key])) {
-          const keyFind = components.find((el) => el.key === key || el.path === key);
+          const keyFind = components.find((el) => el.key === key || el.path === key || el.id);
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
           if (keyFind?.properties?.bindingTarget) {
             /**
@@ -432,7 +432,7 @@ const FormViewerComponent = (props: any) => {
     //   container.addEventListener("click", handleClick);
     // }
 
-    const updateExpressionField = (components, schema, data) => {
+    const updateExpressionField = (components, schema, data) => {      
       components.forEach((component) => {
         if (component.type === "expression") {
           let dataExpression = data[component.key]; //Lấy ra key
@@ -453,7 +453,7 @@ const FormViewerComponent = (props: any) => {
         if (component.type == "select") {
           let dataSelect = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
-
+          
           if (target) {
             const listTarget = target.split(",").map((item) => item.trim()) || [];
 

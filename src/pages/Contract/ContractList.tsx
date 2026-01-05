@@ -52,6 +52,7 @@ import StatisticContract from "./StatisticContract/StatisticContract";
 import ImportModal from "./ImportModal";
 import ChangeSignedStatusModal from "./ChangeSignedStatusModal/ChangeSignedStatusModal";
 import ChangeContractStatusModal from "./ChangeContractStatusModal/ChangeContractStatusModal";
+import CreateContractsXML from "./CreateContractsXML";
 
 // contractStatus	(Trạng thái hợp đồng)
 // Chưa phê duyệt	0
@@ -110,6 +111,8 @@ export default function ContractList() {
   const [showModalPlaceholder, setShowModalPlaceholder] = useState<boolean>(false);
   const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
   const [showModalPhone, setShowModalPhone] = useState<boolean>(false);
+  const [showModalAddXml, setShowModalAddXml] = useState<boolean>(false);
+
 
   const [isLoadingPipeline, setIsLoadingPipeline] = useState<boolean>(false);
   // const [contractType, setContractType] = useState<number>(() => {
@@ -800,20 +803,37 @@ export default function ContractList() {
           </div>
         ) : null}
         {permissions["CONTRACT_UPDATE"] == 1 && (
+          <>
+        {isUserRoot && (
           <div
             className="item__action update"
-            onClick={() => {
-              setDataContract(data.dataItem);
-              // setShowModalAdd(true);
-              navigate(`/edit_contract/${data.id}`);
-            }}
+              onClick={() => {
+              // setDataContract(data.dataItem);
+              navigate(`/edit_contract_xml/${data.id}`);
+        }}
           >
-            <Tippy content="Sửa">
+            <Tippy content="Sửa XML">
               <span className="icon__item icon__update">
-                <Icon name="Pencil" />
+              <Icon name="SettingCashbook" />
               </span>
             </Tippy>
+         </div>
+        )}
+
+         <div
+            className="item__action update"
+            onClick={() => {
+            setDataContract(data.dataItem);
+            navigate(`/edit_contract/${data.id}`);
+         }}
+          >
+          <Tippy content="Sửa">
+            <span className="icon__item icon__update">
+              <Icon name="Pencil" />
+            </span>
+          </Tippy>
           </div>
+         </>
         )}
         {permissions["CONTRACT_DELETE"] == 1 && data.dataItem.status !== 2 && (
           <div className="item__action delete" onClick={() => showDialogConfirmDelete(data)}>
@@ -1010,6 +1030,7 @@ export default function ContractList() {
       field: "name",
       width: 280,
       cellRenderer: LinkToAction,
+      headerClass: "text-left",
     },
     {
       headerName: "Giá trị hợp đồng",
@@ -1019,15 +1040,18 @@ export default function ContractList() {
     {
       headerName: "Giai đoạn hợp đồng",
       field: "pipelineName",
+      headerClass: "text-left",
     },
     {
       headerName: "Quy trình hợp đồng",
       field: "approachName",
+      headerClass: "text-left",
     },
     {
       headerName: "Tên công ty",
       field: "customerName",
       cellRenderer: LinkToCustomer,
+      headerClass: "text-left",
     },
     // {
     //   headerName: "Trạng thái",
@@ -1475,7 +1499,7 @@ export default function ContractList() {
       abortController.abort();
     };
   }, [params, paramsTab2]);
-
+  let isUserRoot = localStorage.getItem("user.root") == "1" ? true : false;
   const titleActions: ITitleActions = {
     // actions: [
     //   permissions["CONTRACT_ADD"] == 1 && {
@@ -1499,7 +1523,15 @@ export default function ContractList() {
             },
           ]
         : [
-            permissions["CONTRACT_ADD"] == 1 && {
+            permissions["CONTRACT_ADD"] == 1 && 
+            isUserRoot && {
+            title: "Thêm mới bằng XML",
+               callback: () => {
+                navigate("/create_contract_xml");
+
+              },
+            },
+            {
               title: "Thêm mới",
               callback: () => {
                 navigate("/create_contract");
