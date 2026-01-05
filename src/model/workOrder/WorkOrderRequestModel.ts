@@ -20,6 +20,10 @@ export interface IWorkOrderFilterRequest {
   biddingName?: any;
   filters?: any;
 }
+export interface IGroupsFilterRequest {
+  groupBy?: string;
+  projectId?: number;
+}
 
 export interface IWorkOrderRequestModel {
   id?: number;

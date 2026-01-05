@@ -31,8 +31,13 @@
       border: none;
       border-bottom: 1px solid var(--extra-color-30);
     }
+
     .ag-header-cell-label {
-      // justify-content: center;
+      justify-content: center !important;
+    }
+
+    .ag-header-cell {
+      text-align: center !important;
     }
 
     .ag-pinned-left-header {

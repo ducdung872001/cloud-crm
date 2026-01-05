@@ -282,7 +282,7 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
       name: search,
       page: page,
       limit: 10,
-      departmentId: dataDepartment?.value,
+      departmentId: dataDepartment?.value || 0,
     };
 
     const response = await EmployeeService.list(param);
@@ -313,7 +313,9 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
   };
 
   useEffect(() => {
-    loadedOptionEmployee("", [], { page: 1 });
+    if (onShow) {
+      loadedOptionEmployee("", [], { page: 1 });
+    }
   }, [dataDepartment]);
 
   //? đoạn này xử lý vấn đề thay đổi người quản lý dự án
