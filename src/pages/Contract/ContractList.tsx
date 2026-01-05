@@ -1030,6 +1030,7 @@ export default function ContractList() {
       field: "name",
       width: 280,
       cellRenderer: LinkToAction,
+      headerClass: "text-left",
     },
     {
       headerName: "Giá trị hợp đồng",
@@ -1039,15 +1040,18 @@ export default function ContractList() {
     {
       headerName: "Giai đoạn hợp đồng",
       field: "pipelineName",
+      headerClass: "text-left",
     },
     {
       headerName: "Quy trình hợp đồng",
       field: "approachName",
+      headerClass: "text-left",
     },
     {
       headerName: "Tên công ty",
       field: "customerName",
       cellRenderer: LinkToCustomer,
+      headerClass: "text-left",
     },
     // {
     //   headerName: "Trạng thái",

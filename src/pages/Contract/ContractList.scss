@@ -13,6 +13,15 @@
 }
 
 .page-contract {
+  .table__ag--template {
+    .ag-header-cell.text-left {
+      .ag-header-cell-label {
+        justify-content: flex-start !important;
+      }
+      text-align: left !important;
+    }
+  }
+
   .action-navigation {
     display: flex;
     align-items: flex-start;
