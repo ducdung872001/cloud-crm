@@ -99,7 +99,7 @@ export default function InventoryList() {
 
     if (response.code === 0) {
       const result = response.result;
-      setListInventory(result.items);
+      setListInventory(result.items ?? result);
 
       setPagination({
         ...pagination,
