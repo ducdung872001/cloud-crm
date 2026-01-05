@@ -267,9 +267,7 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
     }),
   };
 
-  // --- renderer ---
   const renderSelectComponent = () => {
-    // API select
     if (url) {
       return (
         <AsyncPaginate
@@ -321,7 +319,6 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
       );
     }
 
-    // normal select
     return (
       <Select
         id={id}
@@ -373,11 +370,11 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
 
   return (
     <div
-      className={`base-select${fill ? " base-select-fill" : ""}${onFocusSelect ? " on-focus" : ""}${error ? " invalid" : ""}${
+      className={`select-url${fill ? " select-url-fill" : ""}${onFocusSelect ? " on-focus" : ""}${error ? " invalid" : ""}${
         warning ? " warning" : ""
       }${onHasValue ? " has-value" : ""}${label ? " has-label" : ""}${label && labelPosition ? ` has-label__${labelPosition}` : ""}${
         className ? " " + className : ""
-      }${disabled ? " has-disabled" : ""} ${icon ? "base-select-icon" : ""}`}
+      }${disabled ? " has-disabled" : ""} ${icon ? "select-url-icon" : ""}`}
     >
       {label && (
         <Fragment>
