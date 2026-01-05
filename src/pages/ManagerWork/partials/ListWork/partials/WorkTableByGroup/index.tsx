@@ -509,7 +509,7 @@ export default function WorkTableByGroup(props: any) {
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
 
-      <DetailWorkModal onShow={showModalDetail} idData={idWork} onHide={() => setShowModalDetail(false)} />
+      {/* <DetailWorkModal onShow={showModalDetail} idData={idWork} onHide={() => setShowModalDetail(false)} /> */}
     </div>
   );
 }
