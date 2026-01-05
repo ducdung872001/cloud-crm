@@ -310,7 +310,7 @@ export default function CashBookList() {
     .then((results) => {
       const checkbox = results.filter (Boolean)?.length ||0;
       if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} thu/chi`, "success");
+        showToast(`Xóa thành công`, "success");
         getListCashBook(params);
         setListIdChecked([]);
       } else {
@@ -332,9 +332,12 @@ export default function CashBookList() {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa
-          {item ? `${item.type == 1 ? "phiếu thu" : "phiếu chi"}` : `${listIdChecked.length} phiếu ${item.type == 1 ? "thu" : "chi"}  đã chọn`}
-          {item ? <strong></strong> : ""}? Thao tác này không thể khôi phục.
+          Bạn có chắc chắn muốn xóa{" "}
+          {item
+            ? `${item.type === 1 ? "phiếu thu" : "phiếu chi"}`
+            : `${listIdChecked.length} phiếu đã chọn`
+          }?
+          Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",
