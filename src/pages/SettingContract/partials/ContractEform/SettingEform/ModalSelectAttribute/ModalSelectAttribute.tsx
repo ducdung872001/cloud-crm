@@ -32,6 +32,7 @@ import { name } from "jssip";
 
 export default function ModalSelectAttribute(props: any) {
   const { onShow, onHide, dataContractEform } = props;
+  const { onShow, onHide, dataContractEform } = props;
 
   const isMounted = useRef(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -523,20 +524,7 @@ export default function ModalSelectAttribute(props: any) {
           name: "name",
           type: "text",
           fill: true,
-          required: true,
-          placeholder: "Nhập tên trường",
-          icon: <Icon name="Edit" />,
-          iconPosition: "left",
-          validate: [
-            {
-              name: "maxLength",
-              message: "Không được nhập quá 50 ký tự",
-              value: 50,
-            }
-          ],
-
-          messageWarning: "Không được nhập quá 50 ký tự",
-          isWarning: formData?.values?.name?.length > 50 ? true : false,
+          required: true
         },
 
         {
@@ -623,7 +611,7 @@ export default function ModalSelectAttribute(props: any) {
         },
       ] as IFieldCustomize[],
     [listContractAttribute, isLoadingContractAttribute, data]
-}, [values]); 
+  ); 
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
