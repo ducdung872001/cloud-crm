@@ -34,6 +34,8 @@ export default function RegisterFetch() {
       }
       config.headers["Hostname"] = location.hostname || "";
       //config.headers["Hostname"] = "rebornjsc.reborn.vn";
+      // config.headers["Hostname"] = location.hostname || "";
+      // config.headers["Hostname"] = "rebornjsc.reborn.vn";
       // config.headers["Hostname"] = "kcn.reborn.vn";
       // config.headers["Hostname"] = "boutique2shop.reborn.vn";
       // https://ducnang24.reborn.vn/crm/setting_account

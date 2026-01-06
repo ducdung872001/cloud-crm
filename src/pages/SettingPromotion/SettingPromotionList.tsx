@@ -10,8 +10,7 @@ import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import _ from "lodash";
 import { IContractPipelineFilterRequest } from "model/contractPipeline/ContractPipelineRequestModel";
 import { IContractPipelineResponse } from "model/contractPipeline/ContractPipelineResponseModel";
-import { IAction, ISaveSearch } from "model/OtherModel";
-import AddContractEformModal from "pages/SettingContract/partials/ContractEform/partials/AddContractEformModal";
+import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
 import PreviewEformModal from "pages/SettingContract/partials/ContractEform/PreviewEform/PreviewEformModal";
 import SettingEform from "pages/SettingContract/partials/ContractEform/SettingEform/SetttingEform";
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
@@ -39,6 +38,7 @@ export default function SettingPromotionList(props: any) {
   const [permissions, setPermissions] = useState(getPermissions());
   const [isSettingEform, setIsSettingEform] = useState<boolean>(false);
   const [isPreviewEform, setIsPreviewEform] = useState(false);
+  const [dataPreview, setDataPreview] = useState(null);
 
   const [params, setParams] = useState<IContractPipelineFilterRequest>({
     name: "",
@@ -150,6 +150,7 @@ export default function SettingPromotionList(props: any) {
   const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", ""];
 
   const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.position, item.position, item.position];
+  const [dataSetting, setDataSetting] = useState(null);
 
   const [dataEdit, setDataEdit] = useState(null);
   const actionsTable = (item: any): IAction[] => {
@@ -161,7 +162,8 @@ export default function SettingPromotionList(props: any) {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setIsPreviewEform(true);
+            setDataPreview(item);
+            setIsPreviewEform(true);
           }
         },
       },
@@ -172,7 +174,8 @@ export default function SettingPromotionList(props: any) {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setIsSettingEform(true);
+            setDataSetting(item);
+            setIsSettingEform(true);
           }
         },
       },
@@ -456,12 +459,22 @@ export default function SettingPromotionList(props: any) {
             </div>
           ) : (
             <div>
-              <SettingEform dataContractEform={dataContractEform} setIsPreviewEform={setIsPreviewEform} />
+              <SettingEform dataContractEform={dataSetting} setIsPreviewEform={setIsPreviewEform} />
             </div>
           )}
         </div>
       )}
       <Dialog content={contentDialog} isOpen={showDialog} />
+      {isPreviewEform && (
+        <PreviewEformModal
+          onShow={isPreviewEform}
+          onHide={() => {
+            setIsPreviewEform(false);
+            setDataPreview(null);
+          }}
+          data={dataPreview}
+        />
+      )}
     </div>
   );
 }

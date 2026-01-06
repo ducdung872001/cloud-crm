@@ -6,6 +6,7 @@ import { IWarrantyRequestModel } from "model/warranty/WarrantyRequestModel";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import { IWarrantyCategoryFilterRequest } from "model/warrantyCategory/WarrantyCategoryRequestModel";
 import Icon from "components/icon";
+import moment from "moment";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
@@ -393,6 +394,8 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
       ...(formData.values as IWarrantyRequestModel),
       ...(saleflowId ? { saleflowId: saleflowId } : {}),
       ...(sieId ? { sieId: sieId } : {}),
+      startDate: moment(formData.values.startDate).format('YYYY-MM-DDTHH:mm:ss'),
+      endDate: moment(formData.values.endDate).format('YYYY-MM-DDTHH:mm:ss'),
     };
 
     const response = await WarrantyService.update(body);

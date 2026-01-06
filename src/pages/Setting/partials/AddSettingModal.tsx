@@ -11,6 +11,8 @@ import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from 'reborn-util';
+import Icon from "components/icon";
+import moment from "moment";
 
 export default function AddSettingModal(props: AddSettingProps) {
   const { onShow, onHide, data } = props;
@@ -27,9 +29,13 @@ export default function AddSettingModal(props: AddSettingProps) {
       name: data?.name ?? "",
       value: data?.value ?? "",
       code: data?.code ?? "",
+      type: data?.type ?? "",
+      startDate: data?.startDate ?? "",
+      endDate: data?.endDate ?? "",
     } as ISettingRequest),
     [data, onShow]
   );
+  const [formData, setFormData] = useState<IFormData>({ values: values });
 
   const validations: IValidation[] = [
     {
@@ -38,6 +44,22 @@ export default function AddSettingModal(props: AddSettingProps) {
     },
     {
       name: "value",
+      rules: "required",
+    },
+    {
+      name: "code",
+      rules: "required",
+    },
+    {
+      name: "startDate",
+      rules: "required",
+    },
+    {
+      name: "endDate",
+      rules: "required",
+    },
+    {
+      name: "type",
       rules: "required",
     },
   ];
@@ -51,6 +73,54 @@ export default function AddSettingModal(props: AddSettingProps) {
       required: true,
     },
     {
+      label: "Mã cấu hình",
+      name: "code",
+      type: "text",
+      fill: true,
+      required: true,
+    },
+    {
+      label: "Kiểu giá trị",
+      name: "type",
+      type: "select",
+      fill: true,
+      required: true,
+      options: [
+        {
+          value: "string",
+          label: "String",
+        },
+        {
+          value: "number",
+          label: "Number",
+        },
+      ]
+    },
+    {
+      label: "Ngày hiệu lực cấu hình",
+      name: "startDate",
+      type: "date",
+      fill: true,
+      required: true,
+      icon: <Icon name="Calendar" />,
+      iconPosition: "left",
+      hasSelectTime: false,
+      placeholder: "Nhập ngày bắt đầu",
+      maxDate: new Date(formData?.values?.endDate),
+    },
+    {
+      label: "Ngày kết thúc hiệu lực",
+      name: "endDate",
+      type: "date",
+      fill: true,
+      required: true,
+      icon: <Icon name="Calendar" />,
+      iconPosition: "left",
+      hasSelectTime: false,
+      placeholder: "Nhập ngày kết thúc",
+      minDate: new Date(formData?.values?.startDate),
+    },
+    {
       label: "Giá trị cấu hình",
       name: "value",
       type: "text",
@@ -59,7 +129,7 @@ export default function AddSettingModal(props: AddSettingProps) {
     },
   ];
 
-  const [formData, setFormData] = useState<IFormData>({ values: values });
+ 
 
   useEffect(() => {
     setFormData({ ...formData, values: values, errors: {} });
@@ -82,12 +152,14 @@ export default function AddSettingModal(props: AddSettingProps) {
     const body: ISettingRequest = {
       ...(formData.values as ISettingRequest),
       ...(data ? { id: data.id } : {}),
+      startDate: moment(formData.values.startDate).format('YYYY-MM-DDTHH:mm:ss'),
+      endDate: moment(formData.values.endDate).format('YYYY-MM-DDTHH:mm:ss'),
     };
 
     const response = await SettingService.update(body);
 
     if (response.code === 0) {
-      showToast("Cập nhật cấu hình thành công", "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} biểu mẫu thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -127,7 +199,7 @@ export default function AddSettingModal(props: AddSettingProps) {
       className: "dialog-cancel",
       isCentered: true,
       isLoading: false,
-      title: <Fragment>Hủy bỏ thao tác chỉnh sửa</Fragment>,
+      title: <Fragment>{`Hủy bỏ thao tác ${data ? "chỉnh sửa" : "thêm mới"}`}</Fragment>,
       message: <Fragment>Bạn có chắc chắn muốn hủy bỏ? Thao tác này không thể khôi phục.</Fragment>,
       cancelText: "Quay lại",
       cancelAction: () => {
@@ -181,7 +253,7 @@ export default function AddSettingModal(props: AddSettingProps) {
         className="modal-add-setting"
       >
         <form className="form-setting-group" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title="Chỉnh sửa cấu hình" toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} cấu hình`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (

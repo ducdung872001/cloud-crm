@@ -14,7 +14,7 @@ import Icon from "components/icon";
 
 interface DatePickerCustomProps {
   id?: string;
-  value?: string;
+  value?: any;
   name?: string;
   className?: string;
   onChange?: any;
@@ -111,6 +111,14 @@ export default function DatePickerCustom(props: DatePickerCustomProps) {
     return calculatorTime ? currentDate.getTime() < selectedDate.getTime() : currentDate.getTime();
   };
 
+  function parseDateString(dateStr: string): Date | null {
+    const parts = dateStr.split("/");
+    if (parts.length !== 3) return null;
+    const [day, month, year] = parts.map(Number);
+    if (isNaN(day) || isNaN(month) || isNaN(year) || day < 1 || day > 31 || month < 1 || month > 12) return null;
+    return new Date(year, month - 1, day);
+  }
+
   const inputComponent = () => {
     return (
       <Fragment>
@@ -145,7 +153,8 @@ export default function DatePickerCustom(props: DatePickerCustomProps) {
             moment(value, hasSelectTime ? "HH:mm DD/MM/yyyy" : "DD/MM/yyyy", true).isValid() &&
             moment(value, hasSelectTime ? "HH:mm DD/MM/yyyy" : "DD/MM/yyyy", true).toDate()
           }
-          value={value ? (isFmtText ? value : moment(value).format(fmtValue)) : ""}
+          // value={value ? (isFmtText ? value : moment(value).format(fmtValue)) : ""}
+          value={value ? (isFmtText ? value : moment(parseDateString(value)).format(fmtValue)) : ""}
           showYearDropdown
           showMonthDropdown
           showTimeSelect={hasSelectTime}

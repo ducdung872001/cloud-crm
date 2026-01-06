@@ -50,7 +50,7 @@ interface IFilterUser {
 }
 
 export default function AddEditSendSMS(props: ISendSMS) {
-  const { onHide, onShow, idSendSMS, listIdCustomerProps, paramCustomerProps, onBackProps, type, customerIdList } = props;
+  const { onHide, onShow, idSendSMS, listIdCustomerProps, paramCustomerProps, onBackProps, type, customerIdList, isView } = props;
 
   const navigate = useNavigate();
   //? biến này tạo ra với mục đích submit form
@@ -1052,7 +1052,9 @@ export default function AddEditSendSMS(props: ISendSMS) {
     setIsLimitCustomer(false);
   };
 
-  const actions = useMemo<IActionModal>(
+  console.log("isView", isView);
+
+  const actions = useMemo<any>(
     () => ({
       actions_right: {
         buttons: [
@@ -1062,26 +1064,30 @@ export default function AddEditSendSMS(props: ISendSMS) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              !isDifferenceObj(formData.values, values) ? handClearForm() : showDialogConfirmCancel();
+              !isDifferenceObj(formData.values, values) || isView ? handClearForm() : showDialogConfirmCancel();
             },
           },
-          {
-            title: idSendSMS ? "Chỉnh sửa" : "Gửi",
-            type: "submit",
-            color: "primary",
-            disabled:
-              isSubmit ||
-              !content.length ||
-              isLimitCustomer ||
-              !isDifferenceObj(formData.values, values) ||
-              (formData.values.receiverType == "1" ? !formData.values.limit : false) ||
-              (formData.values.receiverType == "1" && formData.values.limit ? formData.values.limit > totalEstimate : false),
-            is_loading: isSubmit,
-          },
+          ...(!isView
+            ? [
+                {
+                  title: idSendSMS ? "Chỉnh sửa" : "Gửi",
+                  type: "submit",
+                  color: "primary",
+                  disabled:
+                    isSubmit ||
+                    !content.length ||
+                    isLimitCustomer ||
+                    !isDifferenceObj(formData.values, values) ||
+                    (formData.values.receiverType == "1" ? !formData.values.limit : false) ||
+                    (formData.values.receiverType == "1" && formData.values.limit ? formData.values.limit > totalEstimate : false),
+                  is_loading: isSubmit,
+                },
+              ]
+            : []),
         ],
       },
     }),
-    [isSubmit, content, listIdCustomer, isLimitCustomer, formData.values, idSendSMS, totalEstimate]
+    [isSubmit, content, listIdCustomer, isLimitCustomer, formData.values, idSendSMS, totalEstimate, isView]
   );
 
   const showDialogConfirmCancel = () => {

@@ -3805,13 +3805,13 @@ export default function CreateCampaign() {
               </div>
 
               <div className="form-group">
-                <Input
+                <NummericInput
                   label="Tỷ lệ chuyển đổi toàn chiến dịch (%)"
                   name="averageConvertRate"
                   fill={true}
                   required={true}
                   value={formData?.values?.averageConvertRate}
-                  placeholder="Tỷ lệ chuyển đổi toàn chiến dịch (%)"
+                  placeholder="Nhập giá trị tỷ lệ chuyển đổi toàn chiến dịch (%)"
                   onChange={(e) => {
                     const value = e.target.value;
                     setFormData({ ...formData, values: { ...formData?.values, averageConvertRate: value } });

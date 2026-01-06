@@ -60,6 +60,7 @@ import FilterAdvanceModal from "./partials/FilterAdvanceModal/FilterAdvanceModal
 import ModalExportCustomer from "./ModalExportCustomer/ModalExportCustomer";
 import { addDays } from "components/addDays/addDays";
 import SplitDataCustomerModal from "./partials/SplitDataCustomerModal";
+import { StyleHeaderTable } from "components/StyleHeaderTable/StyleHeaderTable";
 // import PurchaseInvoiceList from "./partials/PurchaseInvoice/PurchaseInvoiceList";
 
 export default function CustomerPersonList() {
@@ -1433,6 +1434,7 @@ export default function CustomerPersonList() {
     { headerName: sourceDomain === "hasedu.reborn.vn" ? "Tên học sinh" : "Tên khách hàng", field: "name", cellRenderer: LinkToAction },
     {
       headerName: "Điện thoại",
+      headerComponent: StyleHeaderTable,
       width: 135,
       field: "phoneMasked",
       cellRenderer: PhoneToAction,
@@ -1444,7 +1446,7 @@ export default function CustomerPersonList() {
           { headerName: "Nguồn khách hàng", width: 140, field: "sourceName" },
           {
             headerName: "Follow 1",
-            // width: 155,
+            headerComponent: StyleHeaderTable,
             field: "teleSaleCall",
             cellRenderer: TelesaleCall,
             cellRendererParams: { index: 0 },
@@ -1452,21 +1454,39 @@ export default function CustomerPersonList() {
           },
           {
             headerName: "Follow 2",
-            // width: 155,
+            headerComponent: StyleHeaderTable,
             field: "teleSaleCall",
             cellRenderer: TelesaleCall,
             cellRendererParams: { index: 1 },
           },
           {
             headerName: "Follow 3",
-            // width: 155,
+            headerComponent: StyleHeaderTable,
             field: "teleSaleCall",
             cellRenderer: TelesaleCall,
             cellRendererParams: { index: 2 },
           },
-          { headerName: "Ngày CRM nhận dữ liệu", width: 140, field: "syncTime" },
-          { headerName: "Ngày nhận phụ trách", width: 140, field: "employeeAssignDate" },
-          { headerName: "Ngày phân bổ cho Telesale", width: 140, field: "saleAssignDate" },
+          { 
+            headerName: "Ngày CRM nhận dữ liệu",
+            headerComponent: StyleHeaderTable,
+            width: 140, 
+            field: "syncTime", 
+            cellStyle: { display: 'flex', justifyContent: 'center'}
+          },
+          { 
+            headerName: "Ngày nhận phụ trách", 
+            headerComponent: StyleHeaderTable,
+            width: 140, 
+            field: "employeeAssignDate",
+            cellStyle: { display: 'flex', justifyContent: 'center'},
+          },
+          { 
+            headerName: "Ngày phân bổ cho Telesale", 
+            headerComponent: StyleHeaderTable,
+            width: 140, 
+            field: "saleAssignDate",
+            cellStyle: { display: 'flex', justifyContent: 'center'},
+          },
         ]
       : []),
 
@@ -1477,6 +1497,7 @@ export default function CustomerPersonList() {
     // { headerName: "Công nợ", width: 100, field: "debt", type: "rightAligned", cellRenderer: DeptToAction },
     {
       headerName: "Tạo cơ hội",
+      headerComponent: StyleHeaderTable,
       field: "createOpportunities",
       width: 220,
       cellRenderer: CreateOpporToAction,
@@ -1485,6 +1506,7 @@ export default function CustomerPersonList() {
     },
     {
       headerName: "Hành động",
+      headerComponent: StyleHeaderTable,
       width: isBeauty && isBeauty == "1" ? 185 : 155,
       field: "action",
       cellRendererParams: { params },
@@ -3595,10 +3617,13 @@ export default function CustomerPersonList() {
 
       <SplitDataCustomerModal
         onShow={isModalSplitData}
-        data={null}
+        paramsCustomerList={params}
+        pagination={pagination}
+        listIdChecked={listIdChecked}
         onHide={(reload) => {
           if (reload) {
             getListCustomer(params, activeTitleHeader);
+            setListIdChecked([]);
           }
           setIsModalSplitData(false);
         }}

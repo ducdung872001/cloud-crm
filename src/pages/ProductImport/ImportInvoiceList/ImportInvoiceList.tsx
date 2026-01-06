@@ -272,38 +272,38 @@ export default function ImportInvoiceList() {
   ];
 
   const actionsTable = (item: IInvoiceResponse): IAction[] => {
-        const isCheckedItem = listIdChecked?.length > 0;
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Xem hóa đơn",
-        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setIdImportInvoice(item.id);
-          setShowModalViewInvoice(true);
+            setIdImportInvoice(item.id);
+            setShowModalViewInvoice(true);
           }
         },
       },
       ...(item.status !== 3
         ? [
-            {
-              title: "Trả hàng NCC",
-              icon: <Icon name="Returns" className={isCheckedItem ? "icon-disabled" : ""}/>,
-              disabled: isCheckedItem,
-              callback: () => {
-                if (!isCheckedItem) {
-                // setDataImportInvoice(item);
-                }
-              },
-            },
+            // {
+            //   title: "Trả hàng NCC",
+            //   icon: <Icon name="Returns" className={isCheckedItem ? "icon-disabled" : ""}/>,
+            //   disabled: isCheckedItem,
+            //   callback: () => {
+            //     if (!isCheckedItem) {
+            //     // setDataImportInvoice(item);
+            //     }
+            //   },
+            // },
             {
               title: "Hủy hóa đơn",
-              icon: <Icon name="TimesCircleFill" className={isCheckedItem? "icon-disabled":"icon-error"} />,
+              icon: <Icon name="TimesCircleFill" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                showDialogConfirmDelete(item);
+                  showDialogConfirmDelete(item);
                 }
               },
             },
@@ -326,20 +326,20 @@ export default function ImportInvoiceList() {
   };
 
   const onDeleteAll = () => {
-      const selectedIds = listIdChecked || [];
-      if (!selectedIds.length) return;
-  
-      const arrPromises = selectedIds.map((selectedId) => {
-        const found = listImportInvoice.find((item) => item.id === selectedId);
-        if (found?.id) {
-          return InvoiceService.cancelInvoice(found.id);
-        } else {
-          return Promise.resolve(null);
-        }
-      });
-      Promise.all(arrPromises)
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    const arrPromises = selectedIds.map((selectedId) => {
+      const found = listImportInvoice.find((item) => item.id === selectedId);
+      if (found?.id) {
+        return InvoiceService.cancelInvoice(found.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    });
+    Promise.all(arrPromises)
       .then((results) => {
-        const checkbox = results.filter (Boolean)?.length ||0;
+        const checkbox = results.filter(Boolean)?.length || 0;
         if (checkbox > 0) {
           showToast(`Xóa thành công ${checkbox} hóa đơn`, "success");
           getListImportInvoice(params);
@@ -347,12 +347,12 @@ export default function ImportInvoiceList() {
         } else {
           showToast("Không có hóa đơn nào được hủy", "error");
         }
-     })
+      })
       .finally(() => {
         setShowDialog(false);
         setContentDialog(null);
       });
-    }
+  };
 
   const showDialogConfirmDelete = (item?: IInvoiceResponse) => {
     const contentDialog: IContentDialog = {
@@ -378,11 +378,11 @@ export default function ImportInvoiceList() {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

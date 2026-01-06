@@ -15,8 +15,8 @@ export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
   beautySalon: {
     list: prefixRebornVn + "/beautySalon/list",
-    approve: prefixRebornVn + "/api/beautySalon/approve",
-    delete: prefixRebornVn + "/api/beautySalon/delete",
+    approve: prefixRebornVn + "/beautySalon/approve",
+    delete: prefixRebornVn + "/beautySalon/delete",
   },
   user: {
     create: prefixAuthenticator + "/user/create",
@@ -168,6 +168,9 @@ export const urlsApi = {
     //lấy tài khoản tổng đài
     getAccountCall: prefixAdmin + "/employeeAgent/employeeId",
     reloadData: prefixAdmin + "/customer/moveToEs",
+
+    // chia data khách hàng Tnex
+    customerAssign: prefixAdmin + "/customer/assign",
   },
 
   partner: {
@@ -1365,6 +1368,7 @@ export const urlsApi = {
   setting: {
     list: prefixAdmin + "/setting/list",
     update: prefixAdmin + "/setting/update",
+    delete: prefixAdmin + "/setting/delete",
   },
   connectGmail: {
     connect: "https://connect.reborn.vn/api/v1/google/access-token",

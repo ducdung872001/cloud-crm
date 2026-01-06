@@ -13,6 +13,7 @@ import TransactionInformationService from "services/fintech/TransactionInformati
 import { showToast } from "utils/common";
 
 import "./ModalAddData.scss";
+import moment from "moment";
 
 export default function ModalAddData({ onShow, onHide, dataProps, customerId }) {
   const focusedElement = useActiveElement();
@@ -25,18 +26,18 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
 
   const values = useMemo(
     () =>
-    ({
-      casa: data?.casa ?? "",
-      fd: data?.fd ?? "",
-      trf: data?.trf ?? "",
-      loan: data?.loan ?? "",
-      currency: data?.currency ?? "",
-      exchageRate: data?.exchageRate ?? "",
-      transactionHistory: data?.transactionHistory ?? "",
-      transactionFrequency: data?.transactionFrequency ?? "",
-      transactionDate: data?.transactionDate ?? "",
-      customerId: data?.customerId ?? "",
-    } as any),
+      ({
+        casa: data?.casa ?? "",
+        fd: data?.fd ?? "",
+        trf: data?.trf ?? "",
+        loan: data?.loan ?? "",
+        currency: data?.currency ?? "",
+        exchageRate: data?.exchageRate ?? "",
+        transactionHistory: data?.transactionHistory ?? "",
+        transactionFrequency: data?.transactionFrequency ?? "",
+        transactionDate: data?.transactionDate ?? "",
+        customerId: data?.customerId ?? "",
+      } as any),
     [onShow, data]
   );
 
@@ -76,6 +77,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           icon: <Icon name="Calendar" />,
           iconPosition: "left",
           hasSelectTime: true,
+          minDate: moment().toDate(),
           placeholder: "Nhập ngày giao dịch",
         },
         {
@@ -146,7 +148,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     const body: any = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as any),
-      customerId
+      customerId,
+      transactionDate: moment(formData.values.transactionDate).format("YYYY-MM-DD HH:mm:ss"),
     };
 
     const response = await TransactionInformationService.update(body);
@@ -183,9 +186,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
             title: dataProps?.id ? "Cập nhật" : "Tạo mới",
             type: "submit",
             color: "primary",
-            disabled:
-              _.isEqual(formData.values, values) ||
-              (formData.errors && Object.keys(formData.errors).length > 0),
+            disabled: _.isEqual(formData.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },
         ],

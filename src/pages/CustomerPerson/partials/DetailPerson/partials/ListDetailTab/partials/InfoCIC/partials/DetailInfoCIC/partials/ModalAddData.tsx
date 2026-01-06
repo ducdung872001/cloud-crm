@@ -72,15 +72,6 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
   const isOpeningNotBeforeDue = openingMoment.isValid() && dueMoment.isValid() && !openingMoment.isBefore(dueMoment, "day");
   const isDueNotBeforeBadDebt = dueMoment.isValid() && badDebtMoment.isValid() && !dueMoment.isBefore(badDebtMoment, "day");
 
-  const isScheduleNextAfterNow = useMemo(() => {
-      try {
-        if (!formData?.values?.scheduleNext) return false;
-        return moment(formData.values.scheduleNext).isAfter(moment());
-      } catch (e) {
-        return false;
-      }
-    }, [formData?.values?.scheduleNext]);
-
   // Áp dụng warning trực tiếp lên field
   useEffect(() => {
     const newErrors: Record<string, string> = {};
@@ -111,7 +102,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       { 
         label: "Số hợp đồng vay", 
         name: "contractNo", 
-        type: "number", 
+        type: "text", 
         fill: true, 
         required: true, 
       },
@@ -351,20 +342,12 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
 
     setIsSubmit(true);
 
-    // Format date fields to YYYY-MM-DD string to avoid timezone shift
-    const formatDateField = (val) => {
-      if (!val) return val;
-      if (moment.isMoment(val)) return val.format("YYYY-MM-DD");
-      if (moment(val).isValid()) return moment(val).format("YYYY-MM-DD");
-      return val;
-    };
-
     const body = {
       ...(dataProps?.id ? { id: dataProps.id } : {}),
       ...formData.values,
-      openingDate: formatDateField(formData.values.openingDate),
-      dateDue: formatDateField(formData.values.dateDue),
-      badDebtDate: formatDateField(formData.values.badDebtDate),
+      openingDate: moment(formData.values.openingDate).format("YYYY-MM-DD HH:mm:ss"),
+      dateDue: moment(formData.values.dateDue).format("YYYY-MM-DD HH:mm:ss"),
+      badDebtDate: moment(formData.values.badDebtDate).format("YYYY-MM-DD HH:mm:ss"),
       customerId: customerId,
     };
 
