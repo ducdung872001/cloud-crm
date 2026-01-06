@@ -130,7 +130,8 @@ export default function SearchBox(props: SearchBoxProps) {
       searchParams["vehicleId"] ||
       searchParams["steId"] ||
       searchParams["buildingId"] ||
-      searchParams["scrId"]
+      searchParams["scrId"] ||
+      searchParams["packageId"]
     ) {
       const filterItemsFinal = [];
       if (listFilterItem) {
@@ -174,6 +175,7 @@ export default function SearchBox(props: SearchBoxProps) {
               "steId",
               "scrId",
               "buildingId",
+              "packageId",
             ].includes(filterItem.key)
           ) {
             const dataOption = await SelectOptionData(filterItem.key, filterItem.params);

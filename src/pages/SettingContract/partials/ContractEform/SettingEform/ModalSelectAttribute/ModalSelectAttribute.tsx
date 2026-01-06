@@ -18,7 +18,7 @@ import { IContractAttributeResponse } from "model/contractAttribute/ContractAttr
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import Checkbox from "components/checkbox/checkbox";
 import { useActiveElement, useOnClickOutside } from "utils/hookCustom";
-import { Parser } from 'formula-functionizer';
+import { Parser } from "formula-functionizer";
 import { IContractAttributeFilterRequest, IContractAttributeRequest } from "model/contractAttribute/ContractAttributeRequest";
 import { convertToId, getPageOffset, isDifferenceObj } from "reborn-util";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -31,25 +31,24 @@ import RadioList from "components/radio/radioList";
 import { name } from "jssip";
 
 export default function ModalSelectAttribute(props: any) {
-  const { onShow, onHide , dataContractEform} = props;
+  const { onShow, onHide, dataContractEform } = props;
 
   const isMounted = useRef(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [lstAttribute, setLstAttribute] = useState([]);
-  console.log('lstAttribute', lstAttribute);
+  console.log("lstAttribute", lstAttribute);
   const [lstAttributeSelected, setLstAttributeSelected] = useState([]);
-  console.log('lstAttributeSelected', lstAttributeSelected);
-  
+  console.log("lstAttributeSelected", lstAttributeSelected);
 
   useEffect(() => {
-    if(lstAttribute && lstAttribute.length > 0){
-      const listSelected = lstAttribute.filter(el => el.selected === true)
-      setLstAttributeSelected(listSelected)
+    if (lstAttribute && lstAttribute.length > 0) {
+      const listSelected = lstAttribute.filter((el) => el.selected === true);
+      setLstAttributeSelected(listSelected);
     } else {
-      setLstAttributeSelected([])
+      setLstAttributeSelected([]);
     }
-  }, [lstAttribute])
-  
+  }, [lstAttribute]);
+
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -102,15 +101,15 @@ export default function ModalSelectAttribute(props: any) {
     if (response.code === 0) {
       const result = response.result;
       let newList = [];
-      if(result?.items){
-        result?.items.map(el => {
+      if (result?.items) {
+        result?.items.map((el) => {
           newList.push({
             ...el,
-            selected: false
-          })
-        })
+            selected: false,
+          });
+        });
       }
-      
+
       // setLstAttribute(result.items);
       setLstAttribute(newList);
 
@@ -134,15 +133,14 @@ export default function ModalSelectAttribute(props: any) {
   };
 
   useEffect(() => {
-    if(onShow && params){
+    if (onShow && params) {
       handleGetAttribute(params);
     }
   }, [onShow, params]);
 
+  const titles = ["", "STT", "Tên trường", "Kiểu dữ liệu", "Thứ tự hiển thị"];
 
-  const titles = ["","STT", "Tên trường", "Kiểu dữ liệu", "Thứ tự hiển thị"];
-
-  const dataFormat = ["text-center","text-center", "", "", "text-center"];
+  const dataFormat = ["text-center", "text-center", "", "", "text-center"];
 
   const handChangeLink = (link, id) => {
     const regex = new RegExp("undefined", "g");
@@ -162,50 +160,49 @@ export default function ModalSelectAttribute(props: any) {
   const handleSelectAttribute = async (item) => {
     const body = {
       attributeId: item.id,
-      eformId: dataContractEform?.id
-    }
+      eformId: dataContractEform?.id,
+    };
 
-    console.log('body', body);
+    console.log("body", body);
 
     const response = await ContractEformService.updateEformExtraInfo(body);
 
     if (response.code === 0) {
-      onHide(true)
+      onHide(true);
       showToast(`Thêm trường thông tin biểu mẫu thành công`, "success");
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
-    
-  }
+  };
 
   const dataMappingArray = (item, index: number) => [
-    <div style={{justifyContent:'flex-end', display:'flex'}}>
+    <div style={{ justifyContent: "flex-end", display: "flex" }}>
       <Checkbox
-          checked={item.selected}
-          onChange={(e) => {    
-            setLstAttribute((current) =>
-              current.map((obj, idx) => {
-                if (index === idx) {
-                  return { ...obj, selected: !item.selected };
-                }
-                return obj;
-              })
-            );
-          }}
+        checked={item.selected}
+        onChange={(e) => {
+          setLstAttribute((current) =>
+            current.map((obj, idx) => {
+              if (index === idx) {
+                return { ...obj, selected: !item.selected };
+              }
+              return obj;
+            })
+          );
+        }}
       />
     </div>,
-    getPageOffset(params) +index + 1,
-    <span 
-      key={item.id} 
+    getPageOffset(params) + index + 1,
+    <span
+      key={item.id}
       // className='style-name'
-      onClick = {() => {
+      onClick={() => {
         // handleSelectAttribute(item)
       }}
     >
       {item.name}
     </span>,
-    item.datatype || 'text',
-    item.position
+    item.datatype || "text",
+    item.position,
   ];
 
   const actionsTable = (item: any): IAction[] => {
@@ -280,13 +277,13 @@ export default function ModalSelectAttribute(props: any) {
             },
           },
           {
-            title:  "Xác nhận",
+            title: "Xác nhận",
             // type: "submit",
             color: "primary",
             disabled: lstAttributeSelected?.length > 0 ? false : true,
             // is_loading: isSubmit,
             callback: () => {
-              handleSubmit(lstAttributeSelected)
+              handleSubmit(lstAttributeSelected);
             },
           },
         ],
@@ -304,10 +301,10 @@ export default function ModalSelectAttribute(props: any) {
 
   const handleSubmit = (lstAttributeSelected) => {
     const arrPromise = [];
-    
+
     lstAttributeSelected.map((item) => {
       const promise = new Promise((resolve, reject) => {
-        ContractEformService.updateEformExtraInfo({attributeId: item.id, eformId: dataContractEform?.id}).then((res) => {
+        ContractEformService.updateEformExtraInfo({ attributeId: item.id, eformId: dataContractEform?.id }).then((res) => {
           resolve(res);
         });
       });
@@ -315,19 +312,17 @@ export default function ModalSelectAttribute(props: any) {
       arrPromise.push(promise);
     });
 
-    console.log('arrPromise',arrPromise);
-    
+    console.log("arrPromise", arrPromise);
 
     Promise.all(arrPromise).then((result) => {
       if (result.length > 0) {
         showToast(`Thêm trường thông tin biểu mẫu thành công`, "success");
-        onHide(true)
+        onHide(true);
       } else {
         showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
     });
-  }
-
+  };
 
   ////Thêm trường thông tin
 
@@ -348,44 +343,48 @@ export default function ModalSelectAttribute(props: any) {
 
   const [listContractAttribute, setListContractAttribute] = useState<IOption[]>(null);
   const [isLoadingContractAttribute, setIsLoadingContractAttribute] = useState<boolean>(false);
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: '', label: '' }]);
+  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: "", label: "" }]);
   const [detailLookup, setDetailLookup] = useState<any>("contract");
-  const [numberFormat, setNumberFormat] = useState<any>('');
+  const [numberFormat, setNumberFormat] = useState<any>("");
   const [contractAttributeFields, setContractAttributeFields] = useState<any>(null); //Khởi tạo null là quan trọng
-  
+
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [checkFieldName, setCheckFieldName] = useState(false);
-  
+
   useEffect(() => {
-    setData(dataContractAttribute)
-  }, [dataContractAttribute])
+    setData(dataContractAttribute);
+  }, [dataContractAttribute]);
 
-  const [listLookup, setListLookup] = useState<IOption[]>([{
-    value: "customer",
-    label: "Khách hàng"
-  }, {
-    value: "employee",
-    label: "Nhân viên"
-  }, {
-    value: "contact",
-    label: "Liên hệ"
-  }, {
-    value: "contract",
-    label: "Hợp đồng"
-  }]);
-
+  const [listLookup, setListLookup] = useState<IOption[]>([
+    {
+      value: "customer",
+      label: "Khách hàng",
+    },
+    {
+      value: "employee",
+      label: "Nhân viên",
+    },
+    {
+      value: "contact",
+      label: "Liên hệ",
+    },
+    {
+      value: "contract",
+      label: "Hợp đồng",
+    },
+  ]);
 
   /**
    * Lấy ra nhóm trường thông tin cha
    */
-   const onSelectOpenContractAttribute = async () => {
+  const onSelectOpenContractAttribute = async () => {
     setIsLoadingContractAttribute(true);
 
     const params: IContractAttributeFilterRequest = {
-      isParent: 1
-    }
+      isParent: 1,
+    };
     const response = await ContractEformService.listEformAttribute(params);
 
     if (response.code === 0) {
@@ -393,11 +392,11 @@ export default function ModalSelectAttribute(props: any) {
       setListContractAttribute([
         ...(dataOption.length > 0
           ? dataOption.map((item) => {
-            return {
-              value: item.id,
-              label: item.name,
-            };
-          })
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            })
           : []),
       ]);
     }
@@ -413,20 +412,20 @@ export default function ModalSelectAttribute(props: any) {
       setListContractAttribute([]);
     }
 
-    if ((data?.datatype == 'dropdown' || data?.datatype == 'radio' || data?.datatype == 'multiselect') && data?.attributes) {
+    if ((data?.datatype == "dropdown" || data?.datatype == "radio" || data?.datatype == "multiselect") && data?.attributes) {
       setAddFieldAttributes(JSON.parse(data?.attributes));
     }
 
-    if (data?.datatype == 'lookup' && data?.attributes) {
-      setDetailLookup(JSON.parse(data?.attributes).refType || 'contract');
+    if (data?.datatype == "lookup" && data?.attributes) {
+      setDetailLookup(JSON.parse(data?.attributes).refType || "contract");
     }
 
-    if (data?.datatype == 'number' && data?.attributes) {
-      setNumberFormat(JSON.parse(data?.attributes).numberFormat || '');
+    if (data?.datatype == "number" && data?.attributes) {
+      setNumberFormat(JSON.parse(data?.attributes).numberFormat || "");
     }
 
-    if (data?.datatype == 'formula' && data?.attributes) {
-      setSelectedFormula(JSON.parse(data?.attributes).formula || '');
+    if (data?.datatype == "formula" && data?.attributes) {
+      setSelectedFormula(JSON.parse(data?.attributes).formula || "");
     }
   }, [data]);
 
@@ -455,17 +454,17 @@ export default function ModalSelectAttribute(props: any) {
     if (response.code === 0) {
       const dataOption = response.result;
 
-      console.log('dataOption =>', dataOption);
+      console.log("dataOption =>", dataOption);
 
       Object.keys(dataOption).forEach((key) => {
-        (dataOption[key] || []).map(item => {
-          if (item.datatype == 'number' && item.fieldName) {
+        (dataOption[key] || []).map((item) => {
+          if (item.datatype == "number" && item.fieldName) {
             arrField.push("contractAttribute_" + item.fieldName);
           }
         });
       });
 
-      console.log('Fields =>', arrField);
+      console.log("Fields =>", arrField);
 
       //Lưu lại
       setContractAttributeFields(arrField);
@@ -487,17 +486,17 @@ export default function ModalSelectAttribute(props: any) {
 
   const values = useMemo(
     () =>
-    ({
-      name: data?.name ?? "",
-      fieldName: data?.fieldName || "",
-      required: data?.required ? "1" : "",
-      readonly: data?.readonly ? "1" : "",
-      uniqued: data?.uniqued ? "1" : "",
-      datatype: data?.datatype ?? "text",
-      attributes: data?.attributes ?? null,
-      position: data?.position ?? "0",
-      parentId: data?.parentId ?? "0",
-    } as IContractAttributeRequest),
+      ({
+        name: data?.name ?? "",
+        fieldName: data?.fieldName || "",
+        required: data?.required ? "1" : "",
+        readonly: data?.readonly ? "1" : "",
+        uniqued: data?.uniqued ? "1" : "",
+        datatype: data?.datatype ?? "text",
+        attributes: data?.attributes ?? null,
+        position: data?.position ?? "0",
+        parentId: data?.parentId ?? "0",
+      } as IContractAttributeRequest),
     [data, onShow]
   );
 
@@ -546,40 +545,39 @@ export default function ModalSelectAttribute(props: any) {
           type: "select",
           fill: true,
           required: true,
-          onChange: (e => {
-            if (e?.value == 'dropdown') {
-              if (data && data.datatype === 'dropdown' && data.attributes) {
+          onChange: (e) => {
+            if (e?.value == "dropdown") {
+              if (data && data.datatype === "dropdown" && data.attributes) {
                 setAddFieldAttributes(JSON.parse(data?.attributes));
               } else {
-                setAddFieldAttributes([{ value: '', label: '' }]);
+                setAddFieldAttributes([{ value: "", label: "" }]);
               }
-            } else if (e?.value == 'multiselect') {
-              if (data && data.datatype === 'multiselect' && data.attributes) {
+            } else if (e?.value == "multiselect") {
+              if (data && data.datatype === "multiselect" && data.attributes) {
                 setAddFieldAttributes(JSON.parse(data?.attributes));
               } else {
-                setAddFieldAttributes([{ value: '', label: '' }]);
+                setAddFieldAttributes([{ value: "", label: "" }]);
               }
-            } else if (e?.value == 'radio') {
-              if (data && data.datatype === 'radio' && data.attributes) {
+            } else if (e?.value == "radio") {
+              if (data && data.datatype === "radio" && data.attributes) {
                 setAddFieldAttributes(JSON.parse(data?.attributes));
               } else {
-                setAddFieldAttributes([{ value: '', label: '' }]);
+                setAddFieldAttributes([{ value: "", label: "" }]);
               }
-            } else if (e?.value === 'lookup') {
-              if (data && data.datatype === 'lookup' && data.attributes && JSON.parse(data?.attributes).refType) {
+            } else if (e?.value === "lookup") {
+              if (data && data.datatype === "lookup" && data.attributes && JSON.parse(data?.attributes).refType) {
                 setDetailLookup(JSON.parse(data?.attributes).refType);
               } else {
-                setDetailLookup('contract');
+                setDetailLookup("contract");
               }
-            } else if (e?.value === 'number') {
-              if (data && data.datatype === 'number' && data.attributes && JSON.parse(data?.attributes).numberFormat) {
+            } else if (e?.value === "number") {
+              if (data && data.datatype === "number" && data.attributes && JSON.parse(data?.attributes).numberFormat) {
                 setNumberFormat(JSON.parse(data?.attributes).numberFormat);
               } else {
-                setNumberFormat('');
+                setNumberFormat("");
               }
             }
-
-          }),
+          },
           options: [
             {
               value: "text",
@@ -646,7 +644,7 @@ export default function ModalSelectAttribute(props: any) {
           snippet: (
             <Input
               fill={true}
-              label= 'Mã trường thông tin'
+              label="Mã trường thông tin"
               required={false}
               value={formData.values?.fieldName}
               placeholder="Mã trường thông tin"
@@ -656,8 +654,8 @@ export default function ModalSelectAttribute(props: any) {
               }}
               error={checkFieldName}
               message="Mã trường thông tin này đã tồn tại"
-          />
-          )
+            />
+          ),
         },
         {
           label: "Thuộc nhóm",
@@ -676,21 +674,23 @@ export default function ModalSelectAttribute(props: any) {
           fill: true,
           required: false,
         },
-        ...(formData?.values['datatype'] == 'formula' ? [] : [
-          {
-            label: `Trường bắt buộc nhập?`,
-            name: "required",
-            type: "checkbox",
-            options: [
+        ...(formData?.values["datatype"] == "formula"
+          ? []
+          : [
               {
-                value: "1",
-                label: "Bắt buộc"
-              }
-            ],
-            required: false,
-          }
-        ]),
-        
+                label: `Trường bắt buộc nhập?`,
+                name: "required",
+                type: "checkbox",
+                options: [
+                  {
+                    value: "1",
+                    label: "Bắt buộc",
+                  },
+                ],
+                required: false,
+              },
+            ]),
+
         {
           label: `Chỉ cho phép đọc?`,
           name: "readonly",
@@ -698,8 +698,8 @@ export default function ModalSelectAttribute(props: any) {
           options: [
             {
               value: "1",
-              label: "Chỉ cho phép đọc"
-            }
+              label: "Chỉ cho phép đọc",
+            },
           ],
           required: false,
         },
@@ -710,13 +710,20 @@ export default function ModalSelectAttribute(props: any) {
           options: [
             {
               value: "1",
-              label: "Kiểm trùng dữ liệu"
-            }
+              label: "Kiểm trùng dữ liệu",
+            },
           ],
           required: false,
         },
       ] as IFieldCustomize[],
-    [listContractAttribute, isLoadingContractAttribute, formData?.values["name"], formData?.values["fieldName"], formData?.values['datatype'], checkFieldName]
+    [
+      listContractAttribute,
+      isLoadingContractAttribute,
+      formData?.values["name"],
+      formData?.values["fieldName"],
+      formData?.values["datatype"],
+      checkFieldName,
+    ]
   );
 
   const listFieldNumberFormat = [
@@ -736,36 +743,36 @@ export default function ModalSelectAttribute(props: any) {
       value: "1,234.567",
       label: "1,234.567",
     },
-  ]
+  ];
 
   const checkDuplicated = async (fieldName, valueFieldName) => {
     const param = {
       id: 0,
-      fieldName: fieldName
-    }
+      fieldName: fieldName,
+    };
     const response = await ContractEformService.checkDuplicated(param);
-    if(response.code === 0){
+    if (response.code === 0) {
       const result = response.result;
-      if(fieldName === result.fieldName){
-        if(!isDifferenceObj(fieldName, valueFieldName)){
-          setCheckFieldName(false)
+      if (fieldName === result.fieldName) {
+        if (!isDifferenceObj(fieldName, valueFieldName)) {
+          setCheckFieldName(false);
         } else {
-          setCheckFieldName(true)
+          setCheckFieldName(true);
         }
       } else {
-        setCheckFieldName(false)
+        setCheckFieldName(false);
       }
     }
-  }
+  };
 
   useEffect(() => {
     // if(formData.values?.fieldName){
-      checkDuplicated(formData.values?.fieldName, values.fieldName)
-    // } 
-  }, [formData.values?.fieldName, values.fieldName ])
+    checkDuplicated(formData.values?.fieldName, values.fieldName);
+    // }
+  }, [formData.values?.fieldName, values.fieldName]);
 
   useEffect(() => {
-    if (formData?.values['datatype'] == 'formula') {
+    if (formData?.values["datatype"] == "formula") {
       if (contractAttributeFields == null) {
         getContractAttributes();
       }
@@ -774,22 +781,22 @@ export default function ModalSelectAttribute(props: any) {
 
   useEffect(() => {
     //Nếu rỗng thì thay đổi
-    let fieldName = convertToId(formData.values['name']) || "";
-    fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, 'g'), '');
+    let fieldName = convertToId(formData.values["name"]) || "";
+    fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, "g"), "");
 
     //Chỉ set lại nếu là trường hợp thêm mới
     if (!data?.id) {
       setFormData({ ...formData, values: { ...formData.values, fieldName: fieldName } });
-    }    
-  }, [formData?.values['name']]);
+    }
+  }, [formData?.values["name"]]);
 
   useEffect(() => {
     //Nếu rỗng thì thay đổi
-    let fieldName = formData.values['fieldName'] || "";
-    fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, 'g'), '');
-    
+    let fieldName = formData.values["fieldName"] || "";
+    fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, "g"), "");
+
     setFormData({ ...formData, values: { ...formData.values, fieldName: fieldName } });
-  }, [formData?.values['fieldName']]);
+  }, [formData?.values["fieldName"]]);
 
   useEffect(() => {
     setFormData({ ...formData, values: values, errors: {} });
@@ -823,22 +830,29 @@ export default function ModalSelectAttribute(props: any) {
     const body: IContractAttributeRequest = {
       ...(formData.values as IContractAttributeRequest),
       ...(data ? { id: data.id } : {}),
-      ...(
-        (formData.values['datatype'] == 'dropdown' || formData.values['datatype'] == 'radio' || formData.values['datatype'] == 'multiselect') ? {
-          attributes: addFieldAttributes ? JSON.stringify(addFieldAttributes) : null
-        } : {}),
+      ...(formData.values["datatype"] == "dropdown" || formData.values["datatype"] == "radio" || formData.values["datatype"] == "multiselect"
+        ? {
+            attributes: addFieldAttributes ? JSON.stringify(addFieldAttributes) : null,
+          }
+        : {}),
 
-      ...((formData.values['datatype'] == 'lookup') ? {
-        attributes: detailLookup ? JSON.stringify({ refType: detailLookup }) : null
-      } : {}),
+      ...(formData.values["datatype"] == "lookup"
+        ? {
+            attributes: detailLookup ? JSON.stringify({ refType: detailLookup }) : null,
+          }
+        : {}),
 
-      ...((formData.values['datatype'] == 'number') ? {
-        attributes: detailLookup ? JSON.stringify({ numberFormat: numberFormat }) : null
-      } : {}),
+      ...(formData.values["datatype"] == "number"
+        ? {
+            attributes: detailLookup ? JSON.stringify({ numberFormat: numberFormat }) : null,
+          }
+        : {}),
 
-      ...((formData.values['datatype'] == 'formula') ? {
-        attributes: selectedFormula ? JSON.stringify({ formula: selectedFormula }) : null
-      } : {}),
+      ...(formData.values["datatype"] == "formula"
+        ? {
+            attributes: selectedFormula ? JSON.stringify({ formula: selectedFormula }) : null,
+          }
+        : {}),
     };
 
     const response = await ContractEformService.updateEformAttribute(body);
@@ -846,13 +860,13 @@ export default function ModalSelectAttribute(props: any) {
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} trường thông tin biểu mẫu thành công`, "success");
       setIsAddAttribute(false);
-      setAddFieldAttributes([{ value: '', label: '' }]);
-      setDetailLookup('contract');
-      setNumberFormat('');
+      setAddFieldAttributes([{ value: "", label: "" }]);
+      setDetailLookup("contract");
+      setNumberFormat("");
       setShowFields(false);
       setData(null);
       setFormData({ ...formData, values: values, errors: {} });
-      setContractAttributeFields(null)
+      setContractAttributeFields(null);
       handleGetAttribute(params);
       setIsSubmit(false);
     } else {
@@ -861,27 +875,24 @@ export default function ModalSelectAttribute(props: any) {
     }
   };
 
-
   const checkFieldAttributes = (dataAttribute: any, dataCheckField: any) => {
     const fieldAttributes = [...dataAttribute];
-    let result = true
+    let result = true;
     if (fieldAttributes && fieldAttributes.length > 0 && dataCheckField && dataCheckField.length > 0) {
       if (fieldAttributes.length !== dataCheckField.length) {
-        result = false
+        result = false;
       } else {
         fieldAttributes.map((item, index) => {
-
           // dataCheckField.map(el => {
           if (fieldAttributes[index].value !== dataCheckField[index].value) {
-            result = false
+            result = false;
           }
           // })
-        })
+        });
       }
-
     }
     return result;
-  }
+  };
 
   const actionsAdd = useMemo<IActionModal>(
     () => ({
@@ -903,12 +914,12 @@ export default function ModalSelectAttribute(props: any) {
             disabled:
               isSubmit ||
               (!isDifferenceObj(formData.values, values) &&
-                ((formData.values['datatype'] == 'dropdown' || formData.values['datatype'] == 'radio' || formData.values['datatype'] == 'multiselect')
-                  ? checkFieldAttributes(addFieldAttributes, dataCheck) : true) &&
-                (formData.values['datatype'] == 'lookup' ? (detailLookup === (dataCheck ? dataCheck?.refType : 'contract')) : true) &&
-                (formData.values['datatype'] == 'number' ? (numberFormat === (dataCheck ? dataCheck?.numberFormat : '')) : true)
-              ) ||
-              (formData.values['datatype'] == 'number' && (!numberFormat)) ||
+                (formData.values["datatype"] == "dropdown" || formData.values["datatype"] == "radio" || formData.values["datatype"] == "multiselect"
+                  ? checkFieldAttributes(addFieldAttributes, dataCheck)
+                  : true) &&
+                (formData.values["datatype"] == "lookup" ? detailLookup === (dataCheck ? dataCheck?.refType : "contract") : true) &&
+                (formData.values["datatype"] == "number" ? numberFormat === (dataCheck ? dataCheck?.numberFormat : "") : true)) ||
+              (formData.values["datatype"] == "number" && !numberFormat) ||
               (formData.errors && Object.keys(formData.errors).length > 0) ||
               checkFieldName,
             is_loading: isSubmit,
@@ -924,17 +935,17 @@ export default function ModalSelectAttribute(props: any) {
 
   const cancelAdd = () => {
     setIsAddAttribute(false);
-    setAddFieldAttributes([{ value: '', label: '' }]);
+    setAddFieldAttributes([{ value: "", label: "" }]);
     setDetailLookup("contract");
-    setNumberFormat('');
+    setNumberFormat("");
     setShowFields(false);
     setData(null);
     setIsSubmit(false);
     setDataContractAttribute(null);
     setFormData({ ...formData, values: values, errors: {} });
     setCheckFieldName(false);
-    setContractAttributeFields(null)
-  }
+    setContractAttributeFields(null);
+  };
 
   const showDialogConfirmCancel = () => {
     const contentDialog: IContentDialog = {
@@ -992,7 +1003,7 @@ export default function ModalSelectAttribute(props: any) {
 
   /**
    * Data là dữ liệu cần chèn
-   * @param data 
+   * @param data
    */
   const handlePointerContent = (data) => {
     let content = selectedFormula || "";
@@ -1005,60 +1016,56 @@ export default function ModalSelectAttribute(props: any) {
 
   return (
     <Fragment>
-      <Modal 
-        isFade={true} 
-        isOpen={onShow} 
-        isCentered={true} 
-        staticBackdrop={true} 
+      <Modal
+        isFade={true}
+        isOpen={onShow}
+        isCentered={true}
+        staticBackdrop={true}
         toggle={() => {
           onHide();
           cancelAdd();
-        }} 
+        }}
         className="modal-select-attribute"
         size="xl"
       >
         <div className="box__select--attribute">
-          <ModalHeader 
-            title={isAddAttribute ? `${data ? 'Chỉnh sửa trường thông tin' : 'Thêm mới trường thông tin'}` : `Chọn trường thông tin biểu mẫu`} 
+          <ModalHeader
+            title={isAddAttribute ? `${data ? "Chỉnh sửa trường thông tin" : "Thêm mới trường thông tin"}` : `Chọn trường thông tin biểu mẫu`}
             toggle={() => {
               onHide();
               cancelAdd();
-            }} 
+            }}
           />
           <ModalBody>
             <div className="view__option">
-              <div style={{display:'flex', justifyContent:'flex-end', marginTop: 10, marginRight: 10}}>
-                {isAddAttribute ? 
-                  // <Button
-                  //   // type="submit"
-                  //   color="primary"
-                  //   // disabled={}
-                  //   onClick = {() => {
-                  //     cancelAdd()
-                  //   }}
-                  // >
-                  //   Quay lại
-                  // </Button>
-                  null
-                  :
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 10, marginRight: 10 }}>
+                {isAddAttribute ? //   // type="submit" // <Button
+                //   color="primary"
+                //   // disabled={}
+                //   onClick = {() => {
+                //     cancelAdd()
+                //   }}
+                // >
+                //   Quay lại
+                // </Button>
+                null : (
                   <Button
-                      // type="submit"
-                      color="primary"
-                      // disabled={}
-                      onClick = {() => {
-                        // setDataEformAttribute(null);
-                        // setShowModalAdd(true);
-                        setIsAddAttribute(true)
-                      }}
+                    // type="submit"
+                    color="primary"
+                    // disabled={}
+                    onClick={() => {
+                      // setDataEformAttribute(null);
+                      // setShowModalAdd(true);
+                      setIsAddAttribute(true);
+                    }}
                   >
-                      Thêm mới
+                    Thêm mới
                   </Button>
-                }
+                )}
               </div>
-              {!isAddAttribute ? 
+              {!isAddAttribute ? (
                 <div>
                   {!isLoading && lstAttribute && lstAttribute.length > 0 ? (
-
                     <BoxTable
                       name="Trường thông tin"
                       titles={titles}
@@ -1081,7 +1088,7 @@ export default function ModalSelectAttribute(props: any) {
                     <SystemNotification description={<span>Hiện tại chưa có trường thông tin nào.</span>} type="no-item" />
                   )}
                 </div>
-                :
+              ) : (
                 <div className="list-form-group">
                   {listFieldFirst.map((field, index) => (
                     <FieldCustomize
@@ -1093,53 +1100,54 @@ export default function ModalSelectAttribute(props: any) {
                   ))}
 
                   {/* Trường hợp là dropdown hoặc radio */}
-                  {
-                    formData?.values['datatype'] == 'dropdown' ||
-                      formData?.values['datatype'] == 'radio' ||
-                      formData?.values['datatype'] == 'multiselect' ?
-                      <div className="list__attribute">
-                        {addFieldAttributes.map((item, idx) => {
-                          return (
-                            <div key={idx} className="attribute__item">
-                              <div className="list-field-attribute">
-                                <div className="form-group">
-                                  <Input
-                                    label="Lựa chọn"
-                                    fill={true}
-                                    required={true}
-                                    value={item.label}
-                                    placeholder="Nhập lựa chọn"
-                                    onChange={(e) => handleChangeValueAttributeItem(e, idx)}
-                                  />
-                                </div>
+                  {formData?.values["datatype"] == "dropdown" ||
+                  formData?.values["datatype"] == "radio" ||
+                  formData?.values["datatype"] == "multiselect" ? (
+                    <div className="list__attribute">
+                      {addFieldAttributes.map((item, idx) => {
+                        return (
+                          <div key={idx} className="attribute__item">
+                            <div className="list-field-attribute">
+                              <div className="form-group">
+                                <Input
+                                  label="Lựa chọn"
+                                  fill={true}
+                                  required={true}
+                                  value={item.label}
+                                  placeholder="Nhập lựa chọn"
+                                  onChange={(e) => handleChangeValueAttributeItem(e, idx)}
+                                />
                               </div>
-                              {
-                                idx == 0 ? <span className="add-attribute">
-                                  <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
-                                    <span
-                                      className="icon-add"
-                                      onClick={() => {
-                                        setAddFieldAttributes([...addFieldAttributes, { value: '', label: '' }]);
-                                      }}
-                                    >
-                                      <Icon name="PlusCircleFill" />
-                                    </span>
-                                  </Tippy>
-                                </span> : <span className="remove-attribute">
-                                  <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
-                                    <span className="icon-remove" onClick={() => handleRemoveItemAttribute(idx)}>
-                                      <Icon name="Trash" />
-                                    </span>
-                                  </Tippy>
-                                </span>
-                              }
                             </div>
-                          );
-                        })}
-                      </div> : null
-                  }
+                            {idx == 0 ? (
+                              <span className="add-attribute">
+                                <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
+                                  <span
+                                    className="icon-add"
+                                    onClick={() => {
+                                      setAddFieldAttributes([...addFieldAttributes, { value: "", label: "" }]);
+                                    }}
+                                  >
+                                    <Icon name="PlusCircleFill" />
+                                  </span>
+                                </Tippy>
+                              </span>
+                            ) : (
+                              <span className="remove-attribute">
+                                <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
+                                  <span className="icon-remove" onClick={() => handleRemoveItemAttribute(idx)}>
+                                    <Icon name="Trash" />
+                                  </span>
+                                </Tippy>
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : null}
 
-                  {formData?.values['datatype'] == 'number' ?
+                  {formData?.values["datatype"] == "number" ? (
                     <div className="form-group-number">
                       <RadioList
                         options={listFieldNumberFormat}
@@ -1151,11 +1159,11 @@ export default function ModalSelectAttribute(props: any) {
                         onChange={(e) => setNumberFormat(e?.target.value)}
                       />
                     </div>
-                    : null}
+                  ) : null}
 
                   {/* Trường hợp là lookup */}
-                  {
-                    formData?.values['datatype'] == 'lookup' ? <div className="form-group">
+                  {formData?.values["datatype"] == "lookup" ? (
+                    <div className="form-group">
                       <SelectCustom
                         id="attributes"
                         name="attributes"
@@ -1168,12 +1176,12 @@ export default function ModalSelectAttribute(props: any) {
                         isFormatOptionLabel={true}
                         placeholder="Chọn tham chiếu"
                       />
-                    </div> : null
-                  }
+                    </div>
+                  ) : null}
 
                   {/* Trường hợp là formula */}
-                  {
-                    formData?.values['datatype'] == 'formula' ? <div className="form-group formula">
+                  {formData?.values["datatype"] == "formula" ? (
+                    <div className="form-group formula">
                       <div className="formula-input">
                         <TextArea
                           label="Công thức tính"
@@ -1185,37 +1193,47 @@ export default function ModalSelectAttribute(props: any) {
                             setSelectedFormula(e?.target?.value);
                             handleChangeContent(e);
                           }}
-                          onClick={e => {
+                          onClick={(e) => {
                             handleChangeContent(e);
                           }}
                         />
-                        <Icon name="Plus" width={24} height={24} title={'Thêm trường công thức'}
-                          onClick={e => {
+                        <Icon
+                          name="Plus"
+                          width={24}
+                          height={24}
+                          title={"Thêm trường công thức"}
+                          onClick={(e) => {
                             setShowFields(true);
-                          }} />
+                          }}
+                        />
                       </div>
 
                       {/* Vùng listing sẵn các field để lựa chọn */}
-                      {
-                        showFields && 
-                          <div className="formula-list" ref={refShowField}>
-                            {
-                              contractAttributeFields.length > 0 ?
-                                contractAttributeFields && (contractAttributeFields || []).map(item => {                          
-                                  return <label onClick={() => {
+                      {showFields && (
+                        <div className="formula-list" ref={refShowField}>
+                          {contractAttributeFields.length > 0 ? (
+                            contractAttributeFields &&
+                            (contractAttributeFields || []).map((item) => {
+                              return (
+                                <label
+                                  onClick={() => {
                                     handlePointerContent(item);
-                                    setShowFields(false)
-                                  }}>{item}</label>
-                                })
-                              : 
-                              <div style={{ justifyContent:'center', display:'flex', width: '100%'}}>
-                                <span style={{fontSize: 14, color: '#757575'}}>Chưa có dữ liệu</span>
-                              </div>
-                            }
-                          </div>
-                      }
-                    </div> : null
-                  }
+                                    setShowFields(false);
+                                  }}
+                                >
+                                  {item}
+                                </label>
+                              );
+                            })
+                          ) : (
+                            <div style={{ justifyContent: "center", display: "flex", width: "100%" }}>
+                              <span style={{ fontSize: 14, color: "#757575" }}>Chưa có dữ liệu</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
 
                   {listFieldSecond.map((field, index) => (
                     <FieldCustomize
@@ -1226,8 +1244,7 @@ export default function ModalSelectAttribute(props: any) {
                     />
                   ))}
                 </div>
-              }
-
+              )}
             </div>
           </ModalBody>
           <ModalFooter actions={isAddAttribute ? actionsAdd : actions} />

@@ -12,6 +12,7 @@ import Loading from "components/loading";
 import GridExtension from "./extension/gridViewer/render";
 import UploadFileExtension from "./extension/uploadFile/render";
 import MaskedInputExtension from "./extension/maskedInput/render";
+import SelectUrlExtension from "./extension/selectUrl/render";
 // import RenderExtension from './extension/range/render';
 // import HiddenRenderExtension from './extension/hidden/render';
 // import NumberRenderExtension from './extension/number/render';
@@ -291,7 +292,7 @@ const FormViewerComponent = (props: any) => {
   };
 
   //Xủ lý dữ liệu khởi tạo ban đầu
-  const walkInitData = (components, potId, processId, filterItems) => {    
+  const walkInitData = (components, potId, processId, filterItems) => {
     if (components && components.length > 0) {
       components.forEach((comp) => {
         let apiUrl = comp?.properties?.apiUrl || "";
@@ -304,13 +305,13 @@ const FormViewerComponent = (props: any) => {
           }
         }
 
-        if (comp.type === "select" && comp.valuesKey) {          
+        if (comp.type === "select" && comp.valuesKey) {
           // Lấy valuesKey từ component,
           // Lấy ra các tham số được gán khởi tạo
           // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
           let key = comp?.properties?.keyApi || comp.valuesKey || comp.key;
           let paramsUrl = comp?.properties?.paramsUrl || "";
-          const paramsTotal = convertDataParamsProperties(paramsUrl);          
+          const paramsTotal = convertDataParamsProperties(paramsUrl);
           filterItems.push({ key, paramsTotal, compKey: comp.key, type: "select", apiUrl: apiUrl });
         }
 
@@ -326,7 +327,7 @@ const FormViewerComponent = (props: any) => {
           walkInitData(comp.components, potId, processId, filterItems);
         }
       });
-    }    
+    }
 
     return filterItems;
   };
@@ -366,6 +367,7 @@ const FormViewerComponent = (props: any) => {
         GridExtension,
         UploadFileExtension,
         MaskedInputExtension,
+        SelectUrlExtension,
       ],
 
       // components: {
@@ -381,13 +383,13 @@ const FormViewerComponent = (props: any) => {
     let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
       let { schema, data } = event;
-
-      let components = schema.components;
+      
+      let components = schema.components;      
       const newValues = data;
 
       for (const key in newValues) {
         if (!_.isEqual(newValues[key], prevValues[key])) {
-          const keyFind = components.find((el) => el.key === key || el.path === key);
+          const keyFind = components.find((el) => el.key === key || el.path === key || el.id);
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
           if (keyFind?.properties?.bindingTarget) {
             /**
@@ -430,7 +432,7 @@ const FormViewerComponent = (props: any) => {
     //   container.addEventListener("click", handleClick);
     // }
 
-    const updateExpressionField = (components, schema, data) => {
+    const updateExpressionField = (components, schema, data) => {      
       components.forEach((component) => {
         if (component.type === "expression") {
           let dataExpression = data[component.key]; //Lấy ra key
@@ -451,7 +453,7 @@ const FormViewerComponent = (props: any) => {
         if (component.type == "select") {
           let dataSelect = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
-
+          
           if (target) {
             const listTarget = target.split(",").map((item) => item.trim()) || [];
 
@@ -626,13 +628,18 @@ const FormViewerComponent = (props: any) => {
 
       //1. Loại là select
       if (formField.type == "select") {
-        //valuesKey là Input values key đối với loại select là Input Data        
+        //valuesKey là Input values key đối với loại select là Input Data
         let key = formField?.properties?.keyApi || formField?.valuesKey || formField?.key;
         let fields = formField?.properties?.binding || ""; //Trả về departmentId
         let apiUrl = formField?.properties?.apiUrl || "";
         let paramsUrl = formField?.properties?.paramsUrl || "";
-
-        const paramsTotal = convertDataParamsProperties(paramsUrl);
+        let apiParams = formField?.properties?.apiParams || "";
+        let paramsTotal = {};
+        if (apiParams) {
+          paramsTotal = getParamsPropertiesEform(apiParams, formData);
+        } else {
+          paramsTotal = convertDataParamsProperties(paramsUrl);
+        }
 
         //Tồn tại trường binding
         if (fields) {
@@ -645,8 +652,9 @@ const FormViewerComponent = (props: any) => {
             params = {
               ...params,
               [field]: value,
-              ...(paramsUrl ? { ...paramsTotal } : {}),
+              ...(paramsUrl || apiParams ? { ...paramsTotal } : {}),
             };
+            console.log("params", params);
           }
 
           let dataOption;
@@ -1090,7 +1098,7 @@ const FormViewerComponent = (props: any) => {
     const potId = contextData?.potId;
     const processId = contextData?.processId;
     let filterItems = [];
-    walkInitData(updatedFormSchema.components, potId, processId, filterItems);    
+    walkInitData(updatedFormSchema.components, potId, processId, filterItems);
     //Kiểm tra có các trường hợp select (mà có valuesKey => Thực hiện khởi tạo dữ liệu)
     // updatedFormSchema.components.forEach((component) => {
     //   let apiUrl = component?.properties?.apiUrl || "";
@@ -1219,7 +1227,7 @@ const FormViewerComponent = (props: any) => {
 
     //Lặp tiến hành binding
     for (let index = 0; index < filterItems.length; index++) {
-      let filterItem = filterItems[index];      
+      let filterItem = filterItems[index];
       if (filterItem.type == "select") {
         //Đã là 1 dạng list gồm {label, value}
         let dataOption;

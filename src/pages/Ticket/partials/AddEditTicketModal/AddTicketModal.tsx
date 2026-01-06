@@ -149,7 +149,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
                 return {
                   value: item.id,
                   label: `${item.name} - ${item.phoneMasked}`,
-                  phone: item.phoneMasked,
+                  phone: item.phoneUnmasked,
                   email: item.emailMasked,
                   name: item.name,
                   employeeId: item.employeeId,

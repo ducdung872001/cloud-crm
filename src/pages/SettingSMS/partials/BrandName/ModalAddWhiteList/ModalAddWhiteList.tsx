@@ -189,7 +189,7 @@ export default function ModalAddWhiteList(props: any) {
   const validationsWhiteList: IValidation[] = [
     {
       name: "contact",
-      rules: "required",
+      rules: "required|regex",
     },
   ];
 

@@ -6,6 +6,7 @@ import {
   IOpportunityProcessUpdateRequestModel,
   IChangeEmployeeRequestModel,
   IOpportunityExchangeFilterRequest,
+  IChangeSaleRequestModel,
 } from "model/campaignOpportunity/CampaignOpportunityRequestModel";
 
 export default {
@@ -57,6 +58,12 @@ export default {
   },
   changeEmployee: (body: IChangeEmployeeRequestModel) => {
     return fetch(`${urlsApi.campaignOpportunity.changeEmployee}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  changeSale: (body: IChangeSaleRequestModel) => {
+    return fetch(`${urlsApi.campaignOpportunity.changeSale}`, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());

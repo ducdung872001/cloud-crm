@@ -309,6 +309,8 @@ export default function AddTemplateQuote({ onShow, onHide, data }) {
     [isSubmit, hasAddField, dataField, formData]
   );
 
+  const isOverLength = formData.name.length > 300;
+
   return (
     <Fragment>
       <Modal
@@ -332,24 +334,12 @@ export default function AddTemplateQuote({ onShow, onHide, data }) {
                     fill={true}
                     required={true}
                     placeholder="Nhập tên trường thông tin"
-                    onChange={(e) => {
-                      const value = e.target.value;
-
-                      if (value.length > 300) {
-                        setErrorName("Không được nhập quá 300 ký tự");
-                      } else {
-                        setErrorName("");
-                      }
-                      setFormData({ ...formData, name: value, code: getField(value) });
-                    }}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    error={isOverLength}
+                    message="Không được nhập quá 300 ký tự"
                   />
-                  {errorName && (
-                    <p style = {{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-                      {errorName}
-                    </p>
-                  )}
-                </div>
 
+                </div>
                 <div className="merge-form">
                   <div className="form-group">
                     <Input

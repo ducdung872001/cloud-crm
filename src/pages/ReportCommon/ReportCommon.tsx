@@ -25,7 +25,7 @@ export default function ReportCommon() {
 
   const { name, dataBranch } = useContext(UserContext) as ContextType;
 
-  const [valueBranch, setValueBranch] = useState(null);  
+  const [valueBranch, setValueBranch] = useState(null);
 
   const [params, setParams] = useState<IReportCommonFilterRequest>({
     fromTime: "",
@@ -34,23 +34,23 @@ export default function ReportCommon() {
 
   const branchList = async () => {
     const param: IBeautyBranchFilterRequest = {
-      name: '',
+      name: "",
       page: 1,
       limit: 10,
     };
     const response = await BeautyBranchService.list(param);
-    
-    if (response.code === 0){
+
+    if (response.code === 0) {
       const dataOption = response.result.items;
-      if(dataOption?.length === 1){     
-        setValueBranch({value: dataOption[0].id, label: dataOption[0].name})    
+      if (dataOption?.length === 1) {
+        setValueBranch({ value: dataOption[0].id, label: dataOption[0].name });
       }
     }
-  }
+  };
 
   useEffect(() => {
-    branchList()
-  }, []) 
+    branchList();
+  }, []);
 
   //? đoạn này xử lý vấn đề call api lấy ra danh sách chi nhánh
   const loadOptionBranch = async (search, loadedOptions, { page }) => {
@@ -90,11 +90,10 @@ export default function ReportCommon() {
     setValueBranch(e);
   };
 
-
   useEffect(() => {
-    if(dataBranch){    
-      setValueBranch(dataBranch)
-      setParams((prevParams) => ({ ...prevParams, branchId: dataBranch.value}));
+    if (dataBranch) {
+      setValueBranch(dataBranch);
+      setParams((prevParams) => ({ ...prevParams, branchId: dataBranch.value }));
     }
   }, [dataBranch]);
 
@@ -237,7 +236,7 @@ export default function ReportCommon() {
               />
             </div> */}
             <div className="form-group">
-              <AdvancedDateFilter updateParams={takeFromTimeAndToTime} />
+              <AdvancedDateFilter updateParams={takeFromTimeAndToTime} defaultKey="thisWeek" />
             </div>
           </div>
         </div>

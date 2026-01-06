@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useMemo, useContext, useEffect } from "react";
-import { IActionModal } from "model/OtherModel";
+import { IAction, IActionModal } from "model/OtherModel";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { showToast } from "utils/common";
@@ -11,8 +11,14 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import { ContextType, UserContext } from "contexts/userContext";
 import EmployeeService from "services/EmployeeService";
-import ImageThirdGender from "assets/images/third-gender.png";
-import Icon from "components/icon";
+import TeamEmployeeService from "services/TeamEmployeeService";
+import { SystemNotification } from "components/systemNotification/systemNotification";
+import Loading from "components/loading";
+import BoxTable from "components/boxTable/boxTable";
+import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
+import { getPageOffset } from "reborn-util";
+import { BulkActionItemModel } from "components/bulkAction/bulkAction";
+import TableTeamEmployee from "./partials/TableTeamEmployee";
 
 export default function SplitDataCustomerModal(props: any) {
   const { onShow, onHide, paramsCustomerList, pagination, listIdChecked } = props;  
@@ -22,9 +28,89 @@ export default function SplitDataCustomerModal(props: any) {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [type, setType] = useState("SMART");
   const [quantityData, setQuantityData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [listEmployee, setListEmployee] = useState([]);
   const [checkFieldEmployee, setCheckFieldEmployee] = useState(false);
+  const [teamEmployee, setTeamEmployee] = useState(null);
+  const [checkFieldTeamEmployee, setCheckFieldTeamEmployee] = useState(false);
+  const [tableEmployee, setTableEmployee] = useState([]);
+  const [listIdCheckedEmployee, setListIdCheckedEmployee] = useState<number[]>([]);
+  console.log('listIdCheckedEmployee', listIdCheckedEmployee);
   
+  const [tabDepartment, setTabDepartment] = useState(1);
+  
+  const [params, setParams] = useState<any>({
+    name: "",
+    limit: 100,
+    page: 1,
+  });
+
+  const [paginationEmployee, setPaginationEmployee] = useState<PaginationProps>({
+    ...DataPaginationDefault,
+    name: "nhân viên",
+    isChooseSizeLimit: true,
+    setPage: (page) => {
+      setParams((prevParams) => ({ ...prevParams, page: page }));
+    },
+    chooseSizeLimit: (limit) => {
+      setParams((prevParams) => ({ ...prevParams, limit: limit, page: 1 }));
+    },
+  });
+
+  const abortController = new AbortController();
+
+  const getListTableEmployee = async (paramsSearch: any, tabDepartment) => {
+    setIsLoading(true);
+    let response = null;
+
+    if(tabDepartment === 1){
+      const paramsTeamSale = {
+        ...paramsSearch,
+        groupId: 8
+      }
+      response = await TeamEmployeeService.listEmployee(paramsTeamSale, abortController.signal);
+    }
+
+    if(tabDepartment === 2){
+      response = await EmployeeService.list(paramsSearch, abortController.signal);
+    }
+    
+    if (response.code === 0) {
+      const result = response.result;
+      const data = tabDepartment === 1 ? (result?.items || []).map(el => {
+        return el.employee
+      }) : result?.items;
+
+      console.log('data', data);
+      
+      setTableEmployee(data);
+      setPaginationEmployee({
+        ...paginationEmployee,
+        page: +result.page,
+        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
+        totalItem: +result.total,
+        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
+      });
+
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+    setIsLoading(false);
+  };
+
+  const titles = ["STT", "Tên nhân viên",  "Phòng ban"];
+  const dataFormat = ["text-center", "", ""];
+
+  const dataMappingArray = (item: any, index: number) => [
+    getPageOffset(params) + index + 1,
+    item.name || item?.employee?.name,
+    item.departmentName || item?.employee?.departmentName,
+  ];
+
+  const actionsTable = (item: any): IAction[] => {
+    return [];
+  };
+
   const loadedOptionEmployee = async (search, loadedOptions, { page }) => {
     const param: IEmployeeFilterRequest = {
       name: search,
@@ -34,7 +120,6 @@ export default function SplitDataCustomerModal(props: any) {
     };
 
     const response = await EmployeeService.list(param);
-
     if (response.code === 0) {      
       const dataOption = (response.result.items || []).filter((item) => {
         return !listEmployee.some((el) => el.value === item.id);
@@ -59,43 +144,98 @@ export default function SplitDataCustomerModal(props: any) {
         },
       };
     }
-
     return { options: [], hasMore: false };
   };
 
   useEffect(() => {
     if(onShow){
       loadedOptionEmployee("", undefined, { page: 1 });
+      getListTableEmployee(params, tabDepartment);
     }
-  }, [listEmployee]);
+  }, [listEmployee, params, onShow, tabDepartment]);
 
-  const formatOptionLabelEmployee = ({ label, avatar }) => {
-    return (
-      <div className="selected--item">
-        <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
-        </div>
-        {label}
-      </div>
-    );
+  const loadedOptionTeamEmployee = async (search, loadedOptions, { page }) => {
+    const param: any = {
+      name: search,
+      page: page,
+      limit: 10,
+    };
+
+    const response = await TeamEmployeeService.list(param);
+    if (response.code === 0) {      
+      const dataOption = response.result || [];
+      return {
+        options: [
+          ...(dataOption.length > 0
+            ? dataOption.map((item) => {
+                return {
+                  value: item.id,
+                  label: item.name,                
+                };
+              })
+            : []),
+        ],
+        hasMore: response.result.loadMoreAble,
+        additional: {
+          page: page + 1,
+        },
+      };
+    }
+    return { options: [], hasMore: false };
   };
 
-  const handleChangeValueEmployee = (e) => {
-    setCheckFieldEmployee(false);
-    setListEmployee((pre) => [e, ...pre]);
+  const handleChangeTeamEmployee = (e) => {
+    setCheckFieldTeamEmployee(false);
+    setTeamEmployee(e);
+    getListEmployeeFromTeam(e.value);
   };
+
+  const getListEmployeeFromTeam = async (groupId: any) => {
+    const params = {
+      groupId: groupId,
+      limit: 1000
+    }
+    const response = await TeamEmployeeService.listEmployee(params);
+
+    if (response.code == 0) {
+      const result = response.result?.items || [];
+      const listId = result?.map(item => {
+        return item.employee?.id;
+      })
+      setListEmployee(listId);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+  };
+
+  const bulkActionList: BulkActionItemModel[] = [
+    {
+      title: "Xóa nhóm nhân viên",
+      callback: () => {},
+    },
+  ];
 
   const onSubmit = async (e) => {
     e.preventDefault();
-
-    if(listEmployee?.length === 0){
-      setCheckFieldEmployee(true);
+    
+    if(type === "SMART"){
+      if(!quantityData){
+        showToast("Vui lòng nhập số khách hàng cho mỗi nhân viên", "error");
+        return;
+      }
+      if(listIdCheckedEmployee?.length === 0){
+        showToast("Vui lòng chọn nhân viên", "error");
+        return;
+      }
+    }
+    if(type === "EVEN" && !teamEmployee){
+      setCheckFieldTeamEmployee(true);
       return;
     }
 
     setIsSubmit(true);
 
-    const listEmployeeId = listEmployee.map(item => item.value);
+    const listEmployeeId = type === "SMART" ? listIdCheckedEmployee : listEmployee;
 
     const body = {
       employeesAssign: listEmployeeId || [],
@@ -107,7 +247,6 @@ export default function SplitDataCustomerModal(props: any) {
       customerIds: listIdChecked
     }
 
-    console.log('body', body);
     const response = await CustomerService.customerAssign(body);
 
     if (response.code === 0) {
@@ -116,7 +255,6 @@ export default function SplitDataCustomerModal(props: any) {
     } else {
       showToast(response?.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
     }
-
     setIsSubmit(false);
   };
 
@@ -124,6 +262,15 @@ export default function SplitDataCustomerModal(props: any) {
     onHide(acc);
     setType("SMART");
     setListEmployee([]);
+    setQuantityData(null);
+    setTableEmployee([]);
+    setListIdCheckedEmployee([]);
+    setParams({
+      name: "",
+      limit: 100,
+      page: 1
+    });
+    setTabDepartment(1);
   };
 
   const actions = useMemo<IActionModal>(
@@ -151,7 +298,7 @@ export default function SplitDataCustomerModal(props: any) {
         ],
       },
     }),
-    [isSubmit]
+    [isSubmit, teamEmployee, quantityData, listIdCheckedEmployee, listEmployee, type]
   );
 
   const showDialogConfirmCancel = () => {
@@ -177,6 +324,7 @@ export default function SplitDataCustomerModal(props: any) {
     setContentDialog(contentDialog);
     setShowDialog(true);
   };
+  
 
   return (
     <Fragment>
@@ -187,11 +335,15 @@ export default function SplitDataCustomerModal(props: any) {
         staticBackdrop={true}
         toggle={() => handleClearForm(false)}
         className="modal_split-data-customer"
+        size="lg"
       >
         <form className="form_split-data-customer" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader title={`Chia dữ liệu khách hàng`} toggle={() => !isSubmit && handleClearForm(false)} />
           <ModalBody>
-            <div className="list-form-group">
+            <div 
+              className= "list-form-group" 
+              style={type === 'EVEN' && !teamEmployee ? {overflow: 'visible'} : {}}
+            >
               <div className="form-group">
                 <RadioList
                   options={[
@@ -204,8 +356,13 @@ export default function SplitDataCustomerModal(props: any) {
                   onChange={(e) => {
                     const value = e.target.value;
                     setType(value);
+                    if("SMART"){
+                      setTeamEmployee(null);
+                      setListEmployee([]);
+                    }
                     if(value === "EVEN"){
                       setQuantityData(null);
+                      setListIdCheckedEmployee([]);
                     }
                   }}
                 />
@@ -214,7 +371,7 @@ export default function SplitDataCustomerModal(props: any) {
               {type === "SMART" ? 
                 <div className="form-group">
                   <NummericInput
-                    label={'Số lượng khách hàng:'}
+                    label={'Số khách hàng cho mỗi nhân viên:'}
                     value={quantityData}
                     fill={true}
                     required={true}
@@ -226,64 +383,97 @@ export default function SplitDataCustomerModal(props: any) {
               : null}
 
               <div className="container-list-employee">
-                <div className="form-group">
-                  <SelectCustom
-                    key={listEmployee.length}
-                    id="employeeId"
-                    name="employeeId"
-                    label="Danh sách nhân viên"
-                    options={[]}
-                    fill={true}
-                    // value={valueMA}
-                    required={true}
-                    onChange={(e) => handleChangeValueEmployee(e)}
-                    isAsyncPaginate={true}
-                    isFormatOptionLabel={true}
-                    placeholder="Chọn nhân viên"
-                    additional={{
-                      page: 1,
-                    }}
-                    loadOptionsPaginate={loadedOptionEmployee}
-                    formatOptionLabel={formatOptionLabelEmployee}
-                    error={checkFieldEmployee}
-                    message="Nhân viên không được để trống"
-                  />
-                </div>
-
-                {listEmployee && listEmployee.length > 0 ? 
-                  <div className="container-list-employee">
-                    {/* <div>
+                {type === "SMART" ? 
+                  <div>
+                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
                       <span style={{fontSize: 14, fontWeight: '700'}}>Danh sách nhân viên</span>
-                    </div> */}
-
-                    <div className="list-employee">
-                      {listEmployee.map((item, index) => (
-                        <div key={index} className="item-employee">
-                          <div className="avatar">
-                            <img src={item?.avatar || ImageThirdGender} alt={'Trung nguyen'} />
-                          </div>
-                          <div className="name-employee">
-                            <div>
-                              <span style={{fontSize: 14, fontWeight: '500'}}>{item?.label}</span>
-                            </div>
-                            <div>
-                              <span style={{fontSize: 12, fontWeight: '500', color: 'var(--extra-color-50)'}}>{item?.departmentName}</span>
-                            </div>
-                          </div>
-                          <div className="button-delete-employee" 
-                            onClick={() => {
-                              const newArray = [...listEmployee];
-                              newArray.splice(index, 1);
-                              setListEmployee(newArray);
-                            }}
-                          >
-                            <Icon name="Trash" />
-                          </div>
-                        </div>
-                      ))}
+                      <div className="tab-department">
+                        <div 
+                          className="button-department" 
+                          style={tabDepartment === 1 ? {borderBottom: '1.5px solid #004353', color: '#004353'} : {}}
+                          onClick={() => {
+                            setTabDepartment(1);
+                            setListIdCheckedEmployee([]);
+                          }}
+                          >Phòng Telesale</div>
+                        <div 
+                          className="button-department"
+                          style={tabDepartment === 2 ? {borderBottom: '1.5px solid #004353', color: '#004353'} : {}}
+                          onClick={() => {
+                            setTabDepartment(2);
+                            setListIdCheckedEmployee([]);
+                          }}
+                          >Tất cả</div>
+                      </div>
+                    </div>
+                    <div className="container-table-employee">
+                      {!isLoading && tableEmployee && tableEmployee.length > 0 ? (
+                        <BoxTable
+                          name="Nhân viên"
+                          titles={titles}
+                          items={tableEmployee}
+                          isPagination={true}
+                          dataPagination={paginationEmployee}
+                          dataMappingArray={(item, index) => dataMappingArray(item, index)}
+                          dataFormat={dataFormat}
+                          striped={true}
+                          isBulkAction={true}
+                          listIdChecked={listIdCheckedEmployee}
+                          bulkActionItems={bulkActionList}
+                          setListIdChecked={(listId) => setListIdCheckedEmployee(listId)}
+                          actions={actionsTable}
+                          actionType="inline"
+                        />
+                      ) : isLoading ? (
+                        <Loading />
+                      ) : (
+                        <Fragment>
+                          <SystemNotification
+                              description={
+                                <span>
+                                  Không có dữ liệu trùng khớp.
+                                  <br />
+                                  Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
+                                </span>
+                              }
+                              type="no-result"
+                            />
+                        </Fragment>
+                      )}
                     </div>
                   </div>
-                : null}
+                  :
+                    <div>
+                      <div className="form-group">
+                        <SelectCustom
+                          id="groupId"
+                          name="groupId"
+                          label="Nhóm nhân viên"
+                          options={[]}
+                          fill={true}
+                          value={teamEmployee}
+                          required={true}
+                          onChange={(e) => handleChangeTeamEmployee(e)}
+                          isAsyncPaginate={true}
+                          isFormatOptionLabel={true}
+                          placeholder="Chọn nhóm nhân viên"
+                          additional={{
+                            page: 1,
+                          }}
+                          loadOptionsPaginate={loadedOptionTeamEmployee}
+                          error={checkFieldTeamEmployee}
+                          message="Nhóm Nhân viên không được để trống"
+                        />
+                      </div>
+                      {teamEmployee?.value ? 
+                        <div>
+                          <TableTeamEmployee
+                            groupId={teamEmployee?.value}
+                          />
+                        </div>
+                      : null}
+                    </div>
+                  }
               </div>
             </div>
           </ModalBody>

@@ -592,7 +592,7 @@ export default function ModalAddBusinessProcess(props: any) {
     const response = await ObjectGroupService.list(param);
 
     if (response.code === 0) {
-      const dataOption = response.result;
+      const dataOption = response.result.items;
 
       return {
         options: [

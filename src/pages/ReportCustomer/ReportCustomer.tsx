@@ -35,7 +35,7 @@ export default function ReportCustomer() {
             </div>
             <div className="__right">
               <div className="form-group">
-                <AdvancedDateFilter updateParams={takeFromTimeAndToTime} />
+                <AdvancedDateFilter updateParams={takeFromTimeAndToTime} defaultKey="thisWeek" />
               </div>
             </div>
           </div>

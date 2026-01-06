@@ -48,7 +48,7 @@ export default function TicketList() {
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(false);
 
   const [params, setParams] = useState<ITicketFilterRequest>({
-    phone: "",
+    customerPhone: "",
   });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([

@@ -164,7 +164,7 @@ export default function TopCampaignsCustomer(props) {
     <div className="card-box page__top--campaign">
       <div className="title__common d-flex align-items-start">
         <h2 className="name-common">Top 3 chiến dịch về số lượng khách hàng</h2>
-        <div
+        {/* <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}
           onClick={() => setShowOption(!showOption)}
@@ -190,7 +190,7 @@ export default function TopCampaignsCustomer(props) {
               })}
             </div>
           )}
-        </div>
+        </div> */}
         {/* <div className="report-filter">
           <div className="form-group">
             <AdvancedDateFilter updateParams={takeFromTimeAndToTime} />
