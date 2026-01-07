@@ -501,19 +501,35 @@ export default function ProjectList() {
     },
     { headerName: "Id", field: "id", hide: true },
     { headerName: "dataItem", field: "data", hide: true },
-    { headerName: "Tên dự án", field: "name", cellRenderer: LinkToAction, headerClass: "header-left" },
-    { headerName: "Mã dự án", field: "code" },
+    {
+      headerName: "Tên dự án",
+      field: "name",
+      cellRenderer: LinkToAction,
+      headerClass: "header-left",
+    },
+    {
+      headerName: "Mã dự án",
+      field: "code",
+      headerClass: "header-left",
+    },
     {
       headerName: "Ngày bắt đầu",
       field: "startTime",
       cellRenderer: RendererStartTime,
+      headerClass: "header-center",
     },
     {
       headerName: "Ngày hết hạn",
       field: "endTime",
       cellRenderer: RendererEndTime,
+      headerClass: "header-center",
     },
-    { headerName: "Báo cáo dự án", field: "report", cellRenderer: LinkToReport },
+    {
+      headerName: "Báo cáo dự án",
+      field: "report",
+      cellRenderer: LinkToReport,
+      headerClass: "header-center",
+    },
 
     {
       headerName: "Hành động",
