@@ -76,7 +76,7 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListContactPipeline(result);
+      setListContactPipeline(result?.items || []);
 
       setPagination({
         ...pagination,
@@ -161,12 +161,12 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
     return [
       permissions["CONTACT_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setDataContactPipeline(item);
-          setShowModalAdd(true);
+            setDataContactPipeline(item);
+            setShowModalAdd(true);
           }
         },
       },
@@ -184,7 +184,7 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
   };
 
   const onDelete = async (id: number) => {
-    const response =  await ContactPipelineService.delete(id);
+    const response = await ContactPipelineService.delete(id);
 
     if (response.code === 0) {
       showToast("Xóa loại liên hệ thành công", "success");
@@ -208,21 +208,21 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} loại liên hệ`, "success");
-        getListContactPipeline(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có loại liên hệ nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} loại liên hệ`, "success");
+          getListContactPipeline(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có loại liên hệ nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+  };
 
   const showDialogConfirmDelete = (item?: IContactPipelineResponse) => {
     const contentDialog: IContentDialog = {
@@ -248,11 +248,11 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
@@ -302,7 +302,7 @@ export default function ContactPipeline(props: IContactPipelineListProps) {
             name="Loại liên hệ"
             titles={titles}
             items={listContactPipeline}
-            isPagination={false}
+            isPagination={true}
             dataPagination={pagination}
             dataMappingArray={(item, index) => dataMappingArray(item, index)}
             dataFormat={dataFormat}
