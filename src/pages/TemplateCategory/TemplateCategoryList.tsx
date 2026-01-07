@@ -212,8 +212,23 @@ export default function TemplateCategoryList(props: ITemplateCategoryListProps) 
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? `chủ đề ${name}` : `${listIdChecked.length} chủ đề ${name} đã chọn`}
-          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
+          Bạn có chắc chắn muốn xóa {item ? `chủ đề ${name} ` : `${listIdChecked.length} chủ đề ${name} đã chọn`}
+          {item ? (
+            <div
+              style={{
+                fontWeight: 600,
+                fontSize: 14,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {item.name}
+            </div>
+          ) : (
+            ""
+          )}
+          ? Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",

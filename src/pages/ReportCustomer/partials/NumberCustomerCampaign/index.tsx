@@ -145,7 +145,7 @@ export default function NumberCustomerCampaign(props) {
     <div className="card-box page__customer--campaign">
       <div className="title__common d-flex align-items-start">
         <h2 className="name-common">Số lượng khách hàng theo chiến dịch</h2>
-        <div
+        {/* <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}
           onClick={() => setShowOption(!showOption)}
@@ -171,7 +171,7 @@ export default function NumberCustomerCampaign(props) {
               })}
             </div>
           )}
-        </div>
+        </div> */}
         {/* <div className="report-filter">
           <div className="form-group">
             <AdvancedDateFilter updateParams={takeFromTimeAndToTime} />

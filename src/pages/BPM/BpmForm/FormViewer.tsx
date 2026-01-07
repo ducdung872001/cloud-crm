@@ -268,9 +268,7 @@ const FormViewerComponent = (props: any) => {
    Hàm này dùng để biến đổi dữ liệu được nhập ở properties với value =  curr.[fieldKey]
    => thành dạng {key: value}
    */
-  const getParamsPropertiesEform = (apiParams, formData, keyGroup?) => {
-    console.log('formData123', formData[keyGroup]);
-    
+  const getParamsPropertiesEform = (apiParams, formData, keyGroup?) => {    
     let paramsTotal = {};
     if (apiParams) {
       const params = apiParams.replace(/curr\.(\w+)/g, (match, key) => {
@@ -622,16 +620,13 @@ const FormViewerComponent = (props: any) => {
       console.log("Event focus =>", event);
 
       let formData = formViewerRef.current._getState().data;
-      console.log('formData', formData);
       
       const nodeId = contextData?.nodeId;
       const potId = contextData?.potId;
       const processId = contextData?.processId;
 
       //Nếu là select, thì cần được load lại danh sách dựa trên thông tin ràng buộc
-      const formField = event.formField;
-      console.log('formField.path', formField.path);
-      
+      const formField = event.formField;      
 
       //1. Loại là select
       if (formField.type == "select") {
@@ -671,7 +666,6 @@ const FormViewerComponent = (props: any) => {
           } else {
             dataOption = await SelectOptionData(key, params);
           }
-          console.log('dataOption123', dataOption);
           
           formField.values = dataOption || [];
           delete formField.valuesKey; //Phải xóa đi mới hiển thị lên được

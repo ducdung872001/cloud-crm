@@ -694,6 +694,8 @@ export const urlsApi = {
     delete: prefixAdmin + "/campaignOpportunity/delete",
     // Đổi người phụ trách cơ hội
     changeEmployee: prefixAdmin + "/campaignOpportunity/change/employee",
+    // Chuyển đổi trạng thái cơ hội
+    changeSale: prefixAdmin + "/campaignOpportunity/change/sale",
     // Thêm mới hoặc cập nhập xác suất cơ hội
     opportunityProcessUpdate: prefixAdmin + "/opportunityProcess/update",
     // Xóa 1 xác suất cơ hội
@@ -1701,6 +1703,7 @@ export const urlsApi = {
     list: prefixAdmin + "/workOrder/list",
     groups: prefixAdmin + "/workOrder/groups",
     update: prefixAdmin + "/workOrder/update",
+    updateInitProcess: prefixAdmin + "/workOrder/update-init-process",
     updateEmployee: prefixAdmin + "/workOrder/update/employee",
     updatePause: prefixAdmin + "/workOrder/update/pause",
     listPause: prefixAdmin + "/workOrder/list/pause",
@@ -1742,9 +1745,9 @@ export const urlsApi = {
     // cập nhật mức độ ưu tiên công việc
     updatePriorityLevel: prefixAdmin + "/workOrder/update/priorityLevel",
     //exportOLA
-    exportOLA: prefixAdmin + "/ola/export",
+    exportOLA: prefixBpm + "/ola/export",
     //exportSLA
-    exportSLA: prefixAdmin + "/sla/export",
+    exportSLA: prefixBpm + "/sla/export",
     // Giao công việc đàm phán, thương thảo hợp đồng mẫu
     assignNegotiationWork: prefixApplication + "/workAssignment",
     // Lấy thông tin chi tiết công việc đàm phán, thương thảo hợp đồng mẫu
@@ -2906,10 +2909,10 @@ export const urlsApi = {
   ///BPM
 
   artifact: {
-    list: prefixBpm + "/artifact/list",
-    update: prefixBpm + "/artifact/update",
+    list: prefixAdmin + "/artifact/list",
+    update: prefixAdmin + "/artifact/update",
     detail: prefixBpm + "/artifact/get",
-    delete: prefixBpm + "/artifact/delete",
+    delete: prefixAdmin + "/artifact/delete",
   },
 
   processedObject: {
