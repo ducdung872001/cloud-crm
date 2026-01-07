@@ -501,7 +501,7 @@ export default function ProjectList() {
     },
     { headerName: "Id", field: "id", hide: true },
     { headerName: "dataItem", field: "data", hide: true },
-    { headerName: "Tên dự án", field: "name", cellRenderer: LinkToAction },
+    { headerName: "Tên dự án", field: "name", cellRenderer: LinkToAction, headerClass: "header-left" },
     { headerName: "Mã dự án", field: "code" },
     {
       headerName: "Ngày bắt đầu",
@@ -534,6 +534,8 @@ export default function ProjectList() {
   ];
 
   const [columnDefs, setColumnDefs] = useState<any>(defaultValueColumnDefs);
+
+  console.log("columnDefs", columnDefs);
 
   useEffect(() => {
     if (activeTitleHeader === 1) {
