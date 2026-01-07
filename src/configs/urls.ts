@@ -1703,6 +1703,7 @@ export const urlsApi = {
     list: prefixAdmin + "/workOrder/list",
     groups: prefixAdmin + "/workOrder/groups",
     update: prefixAdmin + "/workOrder/update",
+    updateInitProcess: prefixAdmin + "/workOrder/update-init-process",
     updateEmployee: prefixAdmin + "/workOrder/update/employee",
     updatePause: prefixAdmin + "/workOrder/update/pause",
     listPause: prefixAdmin + "/workOrder/list/pause",

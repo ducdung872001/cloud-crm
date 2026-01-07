@@ -1,7 +1,7 @@
-.modal-add-work-backlog {
-  .form-add-work-backlog {
+.modal-assign-work-backlog {
+  .form-assign-work-backlog {
     .modal-body {
-      max-height: 55rem;
+      height: calc(100vh - 20rem);
       padding: 0;
     }
 
