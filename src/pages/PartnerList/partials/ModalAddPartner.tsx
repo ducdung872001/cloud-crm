@@ -13,7 +13,7 @@ import { ICustomerRequest } from "model/customer/CustomerRequestModel";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { useActiveElement, useOnClickOutside } from "utils/hookCustom";
 import { EMAIL_REGEX, PARTNER_CODE_REGEX, PARTNER_NAME_REGEX, PHONE_REGEX, TAX_CODE_REGEX } from "utils/constant";
-import { SelectOptionData } from "utils/selectCommon"
+import { SelectOptionData } from "utils/selectCommon";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import { convertToId } from "reborn-util";
@@ -226,7 +226,6 @@ export default function ModalAddPartner(props: any) {
           required: true, // Chỉ kiểm tra bắt buộc nhập. Không kiểm tra format.
           regex: new RegExp(PARTNER_NAME_REGEX),
           messageErrorRegex: "Tên đối tác sai định dạng",
-          
         },
         {
           label: "Mã đối tác",

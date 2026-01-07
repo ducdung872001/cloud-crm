@@ -51,6 +51,7 @@ i18n.use(initReactI18next).init({
           contract: "Contract",
           // đoạn này là children của contract
           createContract: "Create contract",
+          createContractXML: "Create contract XML",
           listContract: "List contract",
           listWarranty: "List warranty",
           guaranteeContract: "List of guarantee",
@@ -284,6 +285,7 @@ i18n.use(initReactI18next).init({
           contract: "Hợp đồng",
           // đoạn này là children của hợp đồng
           createContract: "Tạo hợp đồng",
+          createContractXML: "Tạo hợp đồng XML",
           listContract: "Danh sách hợp đồng",
           listWarranty: "Danh sách bảo hành",
           guaranteeContract: "Danh sách bảo lãnh",

@@ -281,7 +281,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
               </div>
               <div className="content-message">
                 <h2>Chưa có cuộc trao đổi công việc nào</h2>
-                <p>Hãy bắt đầu cuộc trao đổi đầu tiên nhé!</p>
+                {/* <p>Hãy bắt đầu cuộc trao đổi đầu tiên nhé!</p> */}
               </div>
             </div>
           )}

@@ -62,6 +62,7 @@ import { addDays } from "components/addDays/addDays";
 import SplitDataCustomerModal from "./partials/SplitDataCustomerModal";
 import { StyleHeaderTable } from "components/StyleHeaderTable/StyleHeaderTable";
 // import PurchaseInvoiceList from "./partials/PurchaseInvoice/PurchaseInvoiceList";
+import XmlAddCustomer from "./partials/XmlAddCustomer";
 
 export default function CustomerPersonList() {
   const [showPageSendSMS, setShowPageSendSMS] = useState<boolean>(false);
@@ -85,8 +86,8 @@ export default function CustomerPersonList() {
   const targetBsnId_customer = localStorage.getItem("targetBsnId_customer");
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [listCustomer, setListCustomer] = useState<ICustomerResponse[]>([]);  
-  const [listIdChecked, setListIdChecked] = useState<number[]>([]);  
+  const [listCustomer, setListCustomer] = useState<ICustomerResponse[]>([]);
+  const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showModalDebt, setShowModalDebt] = useState<boolean>(false);
@@ -97,8 +98,8 @@ export default function CustomerPersonList() {
   const [isBatch, setIsBatch] = useState<boolean>(false);
   const { width } = useWindowDimensions();
   const takeParamsUrl = getSearchParameters();
-  console.log('takeParamsUrl', takeParamsUrl);
-  
+  console.log("takeParamsUrl", takeParamsUrl);
+
   //! đoạn này call API mối quan hệ khách hàng
   const [listRelationship, setListRelationship] = useState<IRelationShipResposne[]>([]);
   const [idRelationship, setIdRelationship] = useState<number>(() => {
@@ -774,7 +775,7 @@ export default function CustomerPersonList() {
           callStatuses: [],
           customerExtraInfo: [],
         };
-  });  
+  });
 
   useEffect(() => {
     // if (filterAdvance.employeeIds.length > 0 || filterAdvance.sourceIds.length > 0 || filterAdvance.callStatuses.length > 0) {
@@ -830,7 +831,7 @@ export default function CustomerPersonList() {
     contactType,
     ...(checkSubdomainTNEX ? { queryFromTnex: 1 } : {}),
     // branchId: 0
-  });   
+  });
 
   const [paramsCustomerPartner, setParamsCustomerPartner] = useState({
     name: "",
@@ -879,8 +880,7 @@ export default function CustomerPersonList() {
       setParams((prevParams) => ({ ...prevParams, limit: limit, page: 1 }));
     },
   });
-  console.log('pagination', pagination);
-  
+  console.log("pagination", pagination);
 
   const [paginationPartner, setPaginationPartner] = useState<PaginationProps>({
     ...DataPaginationDefault,
@@ -1122,6 +1122,22 @@ export default function CustomerPersonList() {
             <Tippy content="Thêm mới yêu cầu thực hiện dịch vụ">
               <span className="icon__item icon-invoice">
                 <Icon name="Calendar" />
+              </span>
+            </Tippy>
+          </div>
+        )}
+
+        {isUserRoot && (
+          <div
+            className="item__action update"
+            onClick={() => {
+              setDataCustomer(data.dataItem);
+              setShowModalAddXml(true);
+            }}
+          >
+            <Tippy content="Sửa">
+              <span className="icon__item icon__update">
+                <Icon name="SettingCashbook" />
               </span>
             </Tippy>
           </div>
@@ -1463,26 +1479,26 @@ export default function CustomerPersonList() {
             cellRenderer: TelesaleCall,
             cellRendererParams: { index: 2 },
           },
-          { 
+          {
             headerName: "Ngày CRM nhận dữ liệu",
             headerComponent: StyleHeaderTable,
-            width: 140, 
-            field: "syncTime", 
-            cellStyle: { display: 'flex', justifyContent: 'center'}
+            width: 140,
+            field: "syncTime",
+            cellStyle: { display: "flex", justifyContent: "center" },
           },
-          { 
-            headerName: "Ngày nhận phụ trách", 
+          {
+            headerName: "Ngày nhận phụ trách",
             headerComponent: StyleHeaderTable,
-            width: 140, 
+            width: 140,
             field: "employeeAssignDate",
-            cellStyle: { display: 'flex', justifyContent: 'center'},
+            cellStyle: { display: "flex", justifyContent: "center" },
           },
-          { 
-            headerName: "Ngày phân bổ cho Telesale", 
+          {
+            headerName: "Ngày phân bổ cho Telesale",
             headerComponent: StyleHeaderTable,
-            width: 140, 
+            width: 140,
             field: "saleAssignDate",
-            cellStyle: { display: 'flex', justifyContent: 'center'},
+            cellStyle: { display: "flex", justifyContent: "center" },
           },
         ]
       : []),
@@ -2113,10 +2129,19 @@ export default function CustomerPersonList() {
     },
   ];
 
+  let isUserRoot = localStorage.getItem("user.root") == "1" ? true : false;
+
   const titleActions: ITitleActions = {
     actions: [
       ...(activeTitleHeader !== 3
         ? [
+            isUserRoot && {
+              title: "Thêm mới bằng XML",
+              callback: () => {
+                setDataCustomer(null);
+                setShowModalAddXml(true);
+              },
+            },
             permissions["CUSTOMER_ADD"] == 1 && {
               title: "Thêm mới",
               callback: () => {
@@ -2151,7 +2176,6 @@ export default function CustomerPersonList() {
       },
     ],
   };
-
 
   const [showModalAddViewer, setShowModalAddViewer] = useState<boolean>(false);
 
@@ -2315,6 +2339,7 @@ export default function CustomerPersonList() {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showModalCompanyAdd, setShowModalCompanyAdd] = useState<boolean>(false);
   const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
+  const [showModalAddXml, setShowModalAddXml] = useState<boolean>(false);
 
   const [titleProps, setTitleProps] = useState<string>("");
   const [showModalAddScheduler, setShowModalAddScheduler] = useState<boolean>(false);
@@ -2468,7 +2493,7 @@ export default function CustomerPersonList() {
 
   const reloadData = async (listIdCustomer) => {
     const body = {
-      lstId: listIdCustomer
+      lstId: listIdCustomer,
     };
 
     const response = await CustomerService.reloadData(body);
@@ -2479,11 +2504,11 @@ export default function CustomerPersonList() {
         showToast("Chạy lại dữ liệu thành công", "success");
         getListCustomer(params, activeTitleHeader);
         setListIdChecked([]);
-      }, 2000)
+      }, 2000);
     } else {
       showToast(response.message || "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
-  }
+  };
 
   const [showModalOther, setShowModalOther] = useState<boolean>(false);
 
@@ -2906,7 +2931,7 @@ export default function CustomerPersonList() {
               })}
             </ul>
             <div className="quick__search--right">
-              {width < 1440 && width > 768 && listRelationship?.length > 6 ? (
+              {/* {width < 1440 && width > 768 && listRelationship?.length > 6 ? (
                 <Swiper
                   onInit={(core: SwiperCore) => {
                     swiperRelationshipRef.current = core.el;
@@ -2930,6 +2955,7 @@ export default function CustomerPersonList() {
                             e && e.preventDefault();
                             handlClickOptionRelationship(e, item.id);
                           }}
+                          title={item.name}
                         >
                           {item.name}
                         </div>
@@ -2937,25 +2963,25 @@ export default function CustomerPersonList() {
                     );
                   })}
                 </Swiper>
-              ) : (
-                <div className="list__relationship">
-                  {listRelationship?.map((item, idx) => {
-                    return (
-                      <div
-                        key={idx}
-                        className={`relationship-item ${item.id == idRelationship ? "active__relationship--item" : ""}`}
-                        style={{ backgroundColor: item.color, color: item.colorText }}
-                        onClick={(e) => {
-                          e && e.preventDefault();
-                          handlClickOptionRelationship(e, item.id);
-                        }}
-                      >
-                        {item.name}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              ) : ( */}
+              <div className="list__relationship">
+                {listRelationship?.map((item, idx) => {
+                  return (
+                    <div
+                      key={idx}
+                      className={`relationship-item ${item.id == idRelationship ? "active__relationship--item" : ""}`}
+                      style={{ backgroundColor: item.color, color: item.colorText }}
+                      onClick={(e) => {
+                        e && e.preventDefault();
+                        handlClickOptionRelationship(e, item.id);
+                      }}
+                    >
+                      {item.name}
+                    </div>
+                  );
+                })}
+              </div>
+              {/* )} */}
             </div>
           </div>
           <div className="search__box--customer">
@@ -3015,47 +3041,38 @@ export default function CustomerPersonList() {
                     listSaveSearch={listSaveSearch}
                     listFilterItem={checkSubdomainTNEX ? customerFilterListTNEX : customerFilterList}
                     updateParams={(paramsNew) => {
-                      
                       if (activeTitleHeader === 1) {
                         // setParams(paramsNew);
                         if (checkSubdomainTNEX) {
                           // Hàm tiện ích kiểm tra field tồn tại
                           const hasField = (key) => Object.prototype.hasOwnProperty.call(paramsNew, key);
                           if (
-                            Object.keys(paramsNew).find((el) => el === "Trangthaikhoanvaycashloan") 
-                            || Object.keys(paramsNew).find((el) => el === "Trangthaikhoanvaycreditline") 
-                            || Object.keys(paramsNew).find((el) => el === "TrangThaiKhoanVayTBoss") 
-                            || Object.keys(paramsNew).find((el) => el === "TrangthaiOnboard") 
-                            || Object.keys(paramsNew).find((el) => el === "LyDo") 
-                            || Object.keys(paramsNew).find((el) => el === "marketingSendLeadSource") 
-                            
+                            Object.keys(paramsNew).find((el) => el === "Trangthaikhoanvaycashloan") ||
+                            Object.keys(paramsNew).find((el) => el === "Trangthaikhoanvaycreditline") ||
+                            Object.keys(paramsNew).find((el) => el === "TrangThaiKhoanVayTBoss") ||
+                            Object.keys(paramsNew).find((el) => el === "TrangthaiOnboard") ||
+                            Object.keys(paramsNew).find((el) => el === "LyDo") ||
+                            Object.keys(paramsNew).find((el) => el === "marketingSendLeadSource") ||
                             //Trường ngày
-                            || Object.keys(paramsNew).find((el) => el === "cashLoanApproveStartDate") 
-                            || Object.keys(paramsNew).find((el) => el === "cashLoanApproveEndDate")
-                            || Object.keys(paramsNew).find((el) => el === "sotienpheduyetcashloan")
+                            Object.keys(paramsNew).find((el) => el === "cashLoanApproveStartDate") ||
+                            Object.keys(paramsNew).find((el) => el === "cashLoanApproveEndDate") ||
+                            Object.keys(paramsNew).find((el) => el === "sotienpheduyetcashloan")
                           ) {
+                            let customerExtraInfoParamsNew = (paramsNew?.customerExtraInfo && JSON.parse(paramsNew?.customerExtraInfo)) || [];
 
-                            let customerExtraInfoParamsNew = paramsNew?.customerExtraInfo && JSON.parse(paramsNew?.customerExtraInfo) || []                            
-                            
                             let customerExtraInfo = [];
 
                             // 🔹 Các field kiểu text (Có datatype/operator)
-                            const listStringFields = [
-                              "Trangthaikhoanvaycashloan",
-                              "Trangthaikhoanvaycreditline",
-                              "TrangThaiKhoanVayTBoss"
-                            ];
+                            const listStringFields = ["Trangthaikhoanvaycashloan", "Trangthaikhoanvaycreditline", "TrangThaiKhoanVayTBoss"];
 
                             listStringFields.forEach((field) => {
                               if (hasField(field)) {
-                                customerExtraInfoParamsNew = customerExtraInfoParamsNew.filter(
-                                  (el) => el.fieldName !== field
-                                );
+                                customerExtraInfoParamsNew = customerExtraInfoParamsNew.filter((el) => el.fieldName !== field);
                                 customerExtraInfo.push({
                                   fieldName: field,
                                   attributeValue: paramsNew[field],
                                   datatype: paramsNew[field] === "empty" ? "string" : "list_string",
-                                  operator: paramsNew[field] === "empty" ? "eq" : "in"
+                                  operator: paramsNew[field] === "empty" ? "eq" : "in",
                                 });
                                 delete paramsNew[field];
                               }
@@ -3066,7 +3083,7 @@ export default function CustomerPersonList() {
                               if (hasField(field)) {
                                 customerExtraInfo.push({
                                   fieldName: field,
-                                  attributeValue: paramsNew[field]
+                                  attributeValue: paramsNew[field],
                                 });
                               }
                             });
@@ -3078,28 +3095,24 @@ export default function CustomerPersonList() {
                                 fieldName: "sotienpheduyetcashloan",
                                 attributeValueNumber: paramsNew["sotienpheduyetcashloan"],
                                 datatype: "number",
-                                operator: "gte"
+                                operator: "gte",
                               });
                             }
 
                             // 🔹 Hàm xử lý các field ngày (dùng chung cho cashloan, creditline, TBoss)
                             const handleDateRange = (startKey, endKey, fieldName) => {
                               if (hasField(startKey)) {
-                                customerExtraInfoParamsNew = customerExtraInfoParamsNew.filter(
-                                  (el) => el.fieldName !== fieldName
-                                );
+                                customerExtraInfoParamsNew = customerExtraInfoParamsNew.filter((el) => el.fieldName !== fieldName);
 
                                 customerExtraInfo.push({
                                   fieldName,
                                   attributeValueDate: paramsNew[startKey],
                                   datatype: "date",
-                                  operator: "gte"
+                                  operator: "gte",
                                 });
                               } else {
                                 // Nếu không có startKey thì cũng xoá field cũ (nếu có)
-                                customerExtraInfoParamsNew = customerExtraInfoParamsNew.filter(
-                                  (el) => el.fieldName !== fieldName
-                                );
+                                customerExtraInfoParamsNew = customerExtraInfoParamsNew.filter((el) => el.fieldName !== fieldName);
                               }
 
                               if (hasField(endKey)) {
@@ -3107,7 +3120,7 @@ export default function CustomerPersonList() {
                                   fieldName,
                                   attributeValueDate: addDays(paramsNew[endKey], 1),
                                   datatype: "date",
-                                  operator: "lt"
+                                  operator: "lt",
                                 });
                               }
                             };
@@ -3119,9 +3132,8 @@ export default function CustomerPersonList() {
 
                             setParams({
                               ...paramsNew,
-                              customerExtraInfo: JSON.stringify([...customerExtraInfoParamsNew, ...customerExtraInfo])
+                              customerExtraInfo: JSON.stringify([...customerExtraInfoParamsNew, ...customerExtraInfo]),
                             });
-
                           } else if (filterAdvance.customerExtraInfo.length > 0 && takeUrlFilterAdvance) {
                             setParams(paramsNew);
                           } else {
@@ -3256,12 +3268,15 @@ export default function CustomerPersonList() {
                   ) : null}
 
                   {statusFieldsTnex.map(({ key, label }) => {
-                    const field = params?.customerExtraInfo && JSON.parse(params?.customerExtraInfo) && JSON.parse(params?.customerExtraInfo).find((el) => el.fieldName === key);
+                    const field =
+                      params?.customerExtraInfo &&
+                      JSON.parse(params?.customerExtraInfo) &&
+                      JSON.parse(params?.customerExtraInfo).find((el) => el.fieldName === key);
                     if (!field) return null;
 
                     const values = field.attributeValue?.split("::") || [];
                     return (
-                      <div key={key} className={values?.length > 1 ? "item_advance" : 'd-none'}>
+                      <div key={key} className={values?.length > 1 ? "item_advance" : "d-none"}>
                         <div className="advance_text">
                           <div>
                             <span style={{ fontSize: 14, fontWeight: 400 }}>
@@ -3298,14 +3313,13 @@ export default function CustomerPersonList() {
                       </div>
                     );
                   })}
-                  
                 </div>
               ) : null}
             </div>
           ) : null}
 
           {checkSubdomainTNEX ? (
-            <div className="header-table-tnex" >
+            <div className="header-table-tnex">
               <div style={{ fontSize: 14, fontWeight: "400" }}>
                 Hiển thị kết quả từ {pagination?.page > 1 ? (pagination?.page - 1) * pagination?.sizeLimit + 1 : 1} -{" "}
                 {isNaN(
@@ -3319,18 +3333,17 @@ export default function CustomerPersonList() {
                 {` ${isNaN(pagination?.totalItem) ? 1 : pagination?.totalItem}`}
               </div>
 
-              <div 
+              <div
                 className="button-split-data"
                 onClick={() => {
-                  if(listIdChecked && listIdChecked.length > 0){
+                  if (listIdChecked && listIdChecked.length > 0) {
                     setIsModalSplitData(true);
                   } else {
                     showToast("Vui lòng chọn dữ liệu khách hàng", "warning");
                   }
-                  
                 }}
               >
-                <span style={{fontSize: 14, fontWeight: '500'}}>Chia dữ liệu</span>
+                <span style={{ fontSize: 14, fontWeight: "500" }}>Chia dữ liệu</span>
               </div>
             </div>
           ) : null}
@@ -3353,7 +3366,7 @@ export default function CustomerPersonList() {
                   takeChangeDataCustomer(lstData);
                   setListIdChecked(listId);
                 }}
-                saveColumnName={'customerListTable'}
+                saveColumnName={"customerListTable"}
               />
             ) : isLoading ? (
               <Loading />
@@ -3411,6 +3424,7 @@ export default function CustomerPersonList() {
               getListCustomer(params, activeTitleHeader);
             }
             setShowModalAdd(false);
+            setDataCustomer(null);
 
             //Nếu true thì bật cái kia
             if (nextModal) {
@@ -3429,10 +3443,24 @@ export default function CustomerPersonList() {
               getListCustomer(params, activeTitleHeader);
             }
             setShowModalCompanyAdd(false);
+            setDataCustomer(null);
 
             if (nextModal) {
               setShowModalAdd(true);
             }
+          }}
+        />
+
+        <XmlAddCustomer
+          onShow={showModalAddXml}
+          // onShow={true}
+          data={dataCustomer}
+          onHide={(reload, nextModal) => {
+            if (reload) {
+              getListCustomer(params);
+            }
+            setDataCustomer(null);
+            setShowModalAddXml(false);
           }}
         />
 

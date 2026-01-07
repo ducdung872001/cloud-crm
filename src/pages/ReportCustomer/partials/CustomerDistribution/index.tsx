@@ -155,7 +155,7 @@ export default function CustomerDistribution(props) {
     <div className="card-box page__customer--distribution">
       <div className="title__common d-flex align-items-start">
         <h2 className="name-common">Phân bố khách hàng theo tỉnh thành</h2>
-        <div
+        {/* <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}
           onClick={() => setShowOption(!showOption)}
@@ -181,7 +181,7 @@ export default function CustomerDistribution(props) {
               })}
             </div>
           )}
-        </div>
+        </div> */}
         {/* <div className="report-filter">
           <div className="form-group">
             <AdvancedDateFilter updateParams={takeFromTimeAndToTime} />

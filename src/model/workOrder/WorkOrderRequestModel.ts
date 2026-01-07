@@ -20,6 +20,10 @@ export interface IWorkOrderFilterRequest {
   biddingName?: any;
   filters?: any;
 }
+export interface IGroupsFilterRequest {
+  groupBy?: string;
+  projectId?: number;
+}
 
 export interface IWorkOrderRequestModel {
   id?: number;
@@ -42,6 +46,7 @@ export interface IWorkOrderRequestModel {
   percent: number;
   priorityLevel: string | number;
   notification: string;
+  creatorId?: number;
 }
 
 export interface IUpdateParticipantRequestModel {

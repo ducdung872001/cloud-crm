@@ -77,7 +77,7 @@ export default function ContractPipelineList(props: IContractPipelineListProps) 
 
     if (response.code === 0) {
       const result = response.result;
-      setListContractPipeline(result);
+      setListContractPipeline(result.items);
 
       setPagination({
         ...pagination,

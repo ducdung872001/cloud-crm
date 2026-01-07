@@ -4,14 +4,17 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import { IActionModal } from "model/OtherModel";
 import EmployeeService from "services/EmployeeService";
 import ImageThirdGender from "assets/images/third-gender.png";
+import CampaignOpportunityService from "services/CampaignOpportunityService";
+import { showToast } from "utils/common";
 
 interface IAddOpportunityAllocationProps {
   onShow: boolean;
   onHide: (reload?: boolean) => void;
+  refIds?: number[];
 }
 
 export default function AddOpportunityAllocation(props: IAddOpportunityAllocationProps) {
-  const { onShow, onHide } = props;
+  const { onShow, onHide, refIds = [] } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [dataEmployee, setDataEmployee] = useState(null);
@@ -68,6 +71,39 @@ export default function AddOpportunityAllocation(props: IAddOpportunityAllocatio
 
   const onSubmit = async (e) => {
     e && e.preventDefault();
+
+    if (!dataEmployee || !refIds || refIds.length === 0) {
+      showToast("Vui lòng chọn nhân viên", "error");
+      return;
+    }
+
+    setIsSubmit(true);
+
+    try {
+      // Gọi API changeSale cho từng opportunity
+      const promises = refIds.map((refId) =>
+        CampaignOpportunityService.changeSale({
+          saleId: dataEmployee.value,
+          refId: refId,
+        })
+      );
+
+      const responses = await Promise.all(promises);
+
+      // Kiểm tra xem tất cả các request có thành công không
+      const allSuccess = responses.every((res) => res.code === 0);
+
+      if (allSuccess) {
+        showToast("Giao cơ hội thành công", "success");
+        onHide(true);
+      } else {
+        showToast("Có lỗi xảy ra khi giao cơ hội", "error");
+      }
+    } catch (error) {
+      showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    } finally {
+      setIsSubmit(false);
+    }
   };
 
   const actions = useMemo<IActionModal>(

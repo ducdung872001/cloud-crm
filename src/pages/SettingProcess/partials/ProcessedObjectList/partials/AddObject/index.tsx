@@ -76,7 +76,7 @@ export default function AddObject(props: IAddObjectProps) {
       ({
         // objectId: data?.objectId ?? null,
         // objectName: data?.objectName ?? '',
-        groupId: data?.groupId ?? 0,
+        groupId: data?.groupId ?? null,
         name: data?.name ?? "",
         // employeeId: data?.employeeId ?? null,
         // startTime: data?.startTime ?? '',

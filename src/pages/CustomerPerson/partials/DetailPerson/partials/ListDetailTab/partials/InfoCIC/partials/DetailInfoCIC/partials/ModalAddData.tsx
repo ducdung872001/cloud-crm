@@ -35,8 +35,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       contractNo: data?.contractNo ?? "",
       creditLimit: data?.creditLimit ?? "",
       creditRating: data?.creditRating ?? "",
-      openingDate: data?.openingDate ?? "",
-      dateDue: data?.dateDue ?? "",
+      openingDate: data?.openingDate ? moment(data?.openingDate) : "",
+      dateDue: data?.dateDue ? moment(data?.dateDue) : "",
       loan: data?.loan ?? "",
       currency: data?.currency ?? "",
       exchangeRate: data?.exchangeRate ?? "",
@@ -47,7 +47,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       collateral: data?.collateral ?? "",
       collateralAsset: data?.collateralAsset ?? "",
       groupDebt: data?.groupDebt ?? "",
-      badDebtDate: data?.badDebtDate ?? "",
+      badDebtDate: data?.badDebtDate ? moment(data?.badDebtDate) : "",
       badDebtAmount: data?.badDebtAmount ?? "",
       badDebtType: data?.badDebtType ?? "",
       customerId: data?.customerId ?? customerId ?? "",
@@ -77,19 +77,19 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     const newErrors: Record<string, string> = {};
 
     if (Object.keys(newErrors).length > 0) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        errors: { ...prev.errors, ...newErrors }
+        errors: { ...prev.errors, ...newErrors },
       }));
     } else {
       // Xóa lỗi nếu đã hợp lệ
-      setFormData(prev => {
+      setFormData((prev) => {
         const { openingDate, dateDue, badDebtDate, ...rest } = prev.errors || {};
         const hasTimeError = openingDate || dateDue || badDebtDate;
         return hasTimeError ? { ...prev, errors: rest } : prev;
       });
     }
-  },);
+  });
 
   const validations: IValidation[] = [
     { name: "contractNo", rules: "required" },
@@ -99,18 +99,18 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
 
   const listField = useMemo<IFieldCustomize[]>(
     () => [
-      { 
-        label: "Số hợp đồng vay", 
-        name: "contractNo", 
-        type: "text", 
-        fill: true, 
-        required: true, 
+      {
+        label: "Số hợp đồng vay",
+        name: "contractNo",
+        type: "text",
+        fill: true,
+        required: true,
       },
-      { 
-        label: "Hạn mức tín dụng", 
-        name: "creditLimit", 
-        type: "number", 
-        fill: true, 
+      {
+        label: "Hạn mức tín dụng",
+        name: "creditLimit",
+        type: "number",
+        fill: true,
       },
       {
         label: "Xếp hạng tín dụng",
@@ -164,11 +164,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
         placeholder: "Chọn ngày mở khoản vay",
         isMinDate: true,
         isWarning: isOpeningAfterToday || isOpeningNotBeforeDue,
-        messageWarning: isOpeningAfterToday
-          ? "Không được lớn hơn ngày hiện tại"
-          : isOpeningNotBeforeDue
-          ? "Phải trước ngày đáo hạn"
-          : "",
+        messageWarning: isOpeningAfterToday ? "Không được lớn hơn ngày hiện tại" : isOpeningNotBeforeDue ? "Phải trước ngày đáo hạn" : "",
       },
       {
         label: "Ngày đáo hạn",
@@ -180,34 +176,30 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
         iconPosition: "left",
         placeholder: "Chọn ngày đáo hạn",
         isWarning: isOpeningNotBeforeDue || isDueNotBeforeBadDebt,
-        messageWarning: isOpeningNotBeforeDue
-          ? "Phải sau ngày mở khoản vay"
-          : isDueNotBeforeBadDebt
-          ? "Phải trước ngày phát sinh nợ xấu"
-          : "",
+        messageWarning: isOpeningNotBeforeDue ? "Phải sau ngày mở khoản vay" : isDueNotBeforeBadDebt ? "Phải trước ngày phát sinh nợ xấu" : "",
       },
-      { 
-        label: "Số tiền vay", 
-        name: "loan", 
-        type: "number", 
-        fill: true, 
-      },
-      { 
-        label: "Loại tiền tệ", 
-        name: "currency", 
-        type: "text", 
-        fill: true, 
-      },
-      { 
-        label: "Tỷ giá quy đổi", 
-        name: "exchangeRate", 
-        type: "number", 
+      {
+        label: "Số tiền vay",
+        name: "loan",
+        type: "number",
         fill: true,
       },
-      { 
-        label: "Lãi suất", 
-        name: "interestRate", 
-        type: "number", 
+      {
+        label: "Loại tiền tệ",
+        name: "currency",
+        type: "text",
+        fill: true,
+      },
+      {
+        label: "Tỷ giá quy đổi",
+        name: "exchangeRate",
+        type: "number",
+        fill: true,
+      },
+      {
+        label: "Lãi suất",
+        name: "interestRate",
+        type: "number",
         fill: true,
       },
       {
@@ -253,31 +245,31 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           {
             value: "3",
             label: "Bị trễ hạn",
-          }
+          },
         ],
       },
-      { 
-        label: "Lịch sử thanh toán khoản vay", 
-        name: "paymentHistory", 
-        type: "textarea", 
+      {
+        label: "Lịch sử thanh toán khoản vay",
+        name: "paymentHistory",
+        type: "textarea",
         fill: true,
       },
-      { 
-        label: "Tài sản đảm bảo", 
-        name: "collateral", 
-        type: "text", 
+      {
+        label: "Tài sản đảm bảo",
+        name: "collateral",
+        type: "text",
         fill: true,
       },
-      { 
-        label: "Giá trị tài sản đảm bảo", 
-        name: "collateralAsset", 
-        type: "number", 
+      {
+        label: "Giá trị tài sản đảm bảo",
+        name: "collateralAsset",
+        type: "number",
         fill: true,
       },
-      { 
-        label: "Nhóm nợ", 
-        name: "groupDebt", 
-        type: "number", 
+      {
+        label: "Nhóm nợ",
+        name: "groupDebt",
+        type: "number",
         fill: true,
       },
       {
@@ -290,10 +282,10 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
         isWarning: isDueNotBeforeBadDebt,
         messageWarning: isDueNotBeforeBadDebt ? "Phải sau ngày đáo hạn" : "",
       },
-      { 
-        label: "Số tiền nợ xấu", 
-        name: "badDebtAmount", 
-        type: "number", 
+      {
+        label: "Số tiền nợ xấu",
+        name: "badDebtAmount",
+        type: "number",
         fill: true,
       },
       {
@@ -314,15 +306,11 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           {
             value: "5",
             label: "Nhóm 5",
-          }
+          },
         ],
       },
     ],
-    [
-      isOpeningAfterToday,
-      isOpeningNotBeforeDue,
-      isDueNotBeforeBadDebt,
-    ]
+    [isOpeningAfterToday, isOpeningNotBeforeDue, isDueNotBeforeBadDebt]
   );
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -330,7 +318,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
 
     const errors = Validate(validations, formData, listField);
     if (Object.keys(errors).length > 0) {
-      setFormData(prev => ({ ...prev, errors }));
+      setFormData((prev) => ({ ...prev, errors }));
       return;
     }
 
@@ -345,9 +333,9 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     const body = {
       ...(dataProps?.id ? { id: dataProps.id } : {}),
       ...formData.values,
-      openingDate: moment(formData.values.openingDate).format("YYYY-MM-DD HH:mm:ss"),
-      dateDue: moment(formData.values.dateDue).format("YYYY-MM-DD HH:mm:ss"),
-      badDebtDate: moment(formData.values.badDebtDate).format("YYYY-MM-DD HH:mm:ss"),
+      openingDate: moment(formData.values.openingDate).format("YYYY-MM-DD[T]HH:mm:ss"),
+      dateDue: moment(formData.values.dateDue).format("YYYY-MM-DD[T]HH:mm:ss"),
+      badDebtDate: moment(formData.values.badDebtDate).format("YYYY-MM-DD[T]HH:mm:ss"),
       customerId: customerId,
     };
 
@@ -375,16 +363,15 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              isDifferenceObj(formData.values, values)
-                ? showDialogConfirmCancel()
-                : onHide(false);
+              isDifferenceObj(formData.values, values) ? showDialogConfirmCancel() : onHide(false);
             },
           },
           {
             title: dataProps?.id ? "Cập nhật" : "Tạo mới",
             type: "submit",
             color: "primary",
-            disabled: isSubmit ||
+            disabled:
+              isSubmit ||
               isOpeningAfterToday ||
               isOpeningNotBeforeDue ||
               isDueNotBeforeBadDebt ||
@@ -417,9 +404,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
   const checkKeyDown = useCallback(
     (e) => {
       if (e.keyCode === 27 && !showDialog) {
-        isDifferenceObj(formData.values, values)
-          ? showDialogConfirmCancel()
-          : onHide(false);
+        isDifferenceObj(formData.values, values) ? showDialogConfirmCancel() : onHide(false);
       }
     },
     [formData.values, values, showDialog]
@@ -434,10 +419,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     <Fragment>
       <Modal isFade isOpen={onShow} isCentered staticBackdrop toggle={() => !isSubmit && onHide(false)} className="modal-cic-info">
         <form className="form-add-data" onSubmit={onSubmit}>
-          <ModalHeader
-            title={`${dataProps?.id ? "Chỉnh sửa" : "Thêm mới"} khoản vay tại các TCTD`}
-            toggle={() => !isSubmit && onHide(false)}
-          />
+          <ModalHeader title={`${dataProps?.id ? "Chỉnh sửa" : "Thêm mới"} khoản vay tại các TCTD`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, idx) => (

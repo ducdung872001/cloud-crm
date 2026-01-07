@@ -131,7 +131,7 @@ export default function CustomerGrowth(props) {
     <div className="card-box page__customer--growth">
       <div className="title__common d-flex align-items-start">
         <h2 className="name-common">Tăng trưởng số lượng khách hàng</h2>
-        <div
+        {/* <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}
           onClick={() => setShowOption(!showOption)}
@@ -157,7 +157,7 @@ export default function CustomerGrowth(props) {
               })}
             </div>
           )}
-        </div>
+        </div> */}
         {/* <div className="report-filter">
           <div className="form-group">
             <AdvancedDateFilter updateParams={takeFromTimeAndToTime} />

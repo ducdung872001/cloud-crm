@@ -2019,9 +2019,11 @@ export default function ManagementOpportunity() {
       {/* Giao cơ hội */}
       <AddOpportunityAllocation
         onShow={isOpportunityAllocation}
+        refIds={listIdChecked}
         onHide={(reload) => {
           if (reload) {
-            //
+            setListIdChecked([]);
+            getListManagementOpportunity(params, kanbanTab);
           }
 
           setIsOpportunityAllocation(false);

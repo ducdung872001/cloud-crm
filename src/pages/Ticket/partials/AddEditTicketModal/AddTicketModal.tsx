@@ -49,7 +49,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       setIsLoadingSupport(true);
       const response = await TicketCategoryService.list(param);
       if (response.code === 0) {
-        const dataOption = response.result;
+        const dataOption = response.result.items;
         setListSupport([
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
@@ -148,7 +148,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
                 return {
                   value: item.id,
                   label: `${item.name} - ${item.phoneMasked}`,
-                  phone: item.phoneMasked,
+                  phone: item.phoneUnmasked,
                   email: item.emailMasked,
                   name: item.name,
                   employeeId: item.employeeId,

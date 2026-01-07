@@ -322,6 +322,7 @@
             fill: var(--success-darker-color);
           }
         }
+
         &.create__sales,
         &.view__contract,
         &.update {
@@ -357,6 +358,7 @@
         color: var(--primary-color);
       }
     }
+
     .report-project-label {
       cursor: pointer;
       text-decoration: none;
@@ -516,6 +518,25 @@
         line-height: 2;
         font-weight: 500;
         color: var(--primary-color-90);
+      }
+    }
+
+    // Alignment rules for ag-Grid columns in ProjectList
+    .ag-theme-alpine {
+
+      // Text columns: left-aligned for readability
+      .ag-cell[col-id="name"],
+      .ag-cell[col-id="code"] {
+        text-align: left !important;
+      }
+
+      // Fixed data columns: centered
+      .ag-cell[col-id="idx"],
+      .ag-cell[col-id="startTime"],
+      .ag-cell[col-id="endTime"],
+      .ag-cell[col-id="report"],
+      .ag-cell[col-id="action"] {
+        text-align: center !important;
       }
     }
   }

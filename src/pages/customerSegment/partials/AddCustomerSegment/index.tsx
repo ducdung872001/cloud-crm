@@ -106,6 +106,13 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
     blockRule: [],
   };
 
+  const normalizeOptions = (items = []) =>
+    (items || []).map((e) => {
+      const value = e?.value ?? e?.id ?? e?.code ?? e?.key ?? e;
+      const label = e?.label ?? e?.name ?? `${e?.value ?? e?.id ?? e}`;
+      return { value, label };
+    });
+
   const capitalizeFirstLetter = (str) => {
     return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
   };
@@ -171,14 +178,9 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
             { value: 1, label: "Nữ" },
           ];
         } else if (item.source === "data") {
-          options = [...item.data].map((el) => {
-            return {
-              value: el.id,
-              label: el.name,
-            };
-          });
+          options = normalizeOptions(item.data);
         } else if (item.data) {
-          options = item.data;
+          options = normalizeOptions(item.data);
         }
 
         return {
@@ -250,7 +252,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
       rule.map(async (condition) => {
         const field = fields.find((f) => f.fieldName === condition.fieldName);
 
-        if (field && field.type === "select" && field.source) {
+        if (field && (field.type === "select" || field.type === "radio") && field.source) {
           try {
             const checkFieldSource = field.source.startsWith("https");
             setIsLoadingSource(true);
@@ -279,12 +281,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
 
             setIsLoadingSource(false);
 
-            const changeDataResult = data.map((item) => {
-              return {
-                value: item.id,
-                label: item.name,
-              };
-            });
+            const changeDataResult = normalizeOptions(data);
 
             return {
               ...condition,
@@ -296,7 +293,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
             console.error(`Error fetching data from source: ${field.source}`, error);
             return condition;
           }
-        } else if (field && field.type === "select") {
+        } else if (field && (field.type === "select" || field.type === "radio")) {
           return {
             ...condition,
             type: field.type,
@@ -484,7 +481,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
       value = e.floatValue;
     } else if (type === "date") {
       value = e;
-    } else if (type === "select") {
+    } else if (type === "select" || type === "radio") {
       value = e.value;
       label = e.label;
     } else {
@@ -619,12 +616,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
     if (response.code === 0) {
       const result = response.result.items ? response.result.items : response.result;
 
-      const changeDataResult = result.map((item) => {
-        return {
-          value: item.id,
-          label: item.name,
-        };
-      });
+      const changeDataResult = normalizeOptions(result);
 
       setFormData({
         ...formData,
@@ -792,7 +784,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
       value = e.floatValue;
     } else if (type === "date") {
       value = e;
-    } else if (type === "select") {
+    } else if (type === "select" || type === "radio") {
       value = e.value;
       label = e.label;
     } else {
@@ -973,12 +965,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
     if (response.code === 0) {
       const result = response.result.items ? response.result.items : response.result;
 
-      const changeDataResult = result.map((item) => {
-        return {
-          value: item.id,
-          label: item.name,
-        };
-      });
+      const changeDataResult = normalizeOptions(result);
 
       setFormData({
         ...formData,
@@ -1179,7 +1166,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
       value = e.floatValue;
     } else if (type === "date") {
       value = e;
-    } else if (type === "select") {
+    } else if (type === "select" || type === "radio") {
       value = e.value;
       label = e.label;
     } else {
@@ -1411,12 +1398,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
     if (response.code === 0) {
       const result = response.result.items ? response.result.items : response.result;
 
-      const changeDataResult = result.map((item) => {
-        return {
-          value: item.id,
-          label: item.name,
-        };
-      });
+      const changeDataResult = normalizeOptions(result);
 
       setFormData({
         ...formData,
@@ -1801,12 +1783,12 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
                                       placeholder={`Chọn ${item.name.toLowerCase()}`}
                                       disabled={disableFieldCommom}
                                     />
-                                  ) : item.type === "select" || item.type === "dropdown" ? (
+                                  ) : item.type === "select" || item.type === "dropdown" || item.type === "radio" ? (
                                     <SelectCustom
                                       name={item.name}
                                       fill={true}
                                       options={item.options || []}
-                                      special={item.type === "dropdown" || item.type === "select" ? true : false}
+                                      special={item.type === "dropdown" || item.type === "select" || item.type === "radio" ? true : false}
                                       value={
                                         item.value
                                           ? {
@@ -2090,12 +2072,12 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
                                                 placeholder={`Chọn ${el.name.toLowerCase()}`}
                                                 disabled={disableFieldCommom}
                                               />
-                                            ) : el.type === "select" || el.type === "dropdown" ? (
+                                            ) : el.type === "select" || el.type === "dropdown" || el.type === "radio" ? (
                                               <SelectCustom
                                                 name={el.name}
                                                 fill={true}
                                                 options={el.options || []}
-                                                special={el.type === "dropdown" || el.type === "select" ? true : false}
+                                                special={el.type === "dropdown" || el.type === "select" || el.type === "radio" ? true : false}
                                                 value={
                                                   el.value
                                                     ? {
@@ -2373,12 +2355,12 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
                                                               placeholder={`Chọn ${ol.name.toLowerCase()}`}
                                                               disabled={disableFieldCommom}
                                                             />
-                                                          ) : ol.type === "select" || ol.type === "dropdown" ? (
+                                                          ) : ol.type === "select" || ol.type === "dropdown" || ol.type === "radio" ? (
                                                             <SelectCustom
                                                               name={ol.name}
                                                               fill={true}
                                                               options={ol.options || []}
-                                                              special={ol.type === "dropdown" || ol.type === "select" ? true : false}
+                                                              special={ol.type === "dropdown" || ol.type === "select" || ol.type === "radio" ? true : false}
                                                               value={
                                                                 ol.value
                                                                   ? {

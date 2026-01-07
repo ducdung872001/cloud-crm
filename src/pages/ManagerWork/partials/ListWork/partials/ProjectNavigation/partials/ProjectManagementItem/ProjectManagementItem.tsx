@@ -68,6 +68,8 @@ export default function ProjectManagementItem(props: any) {
     }
   }, [isShowChildren, data, idProjectManagement]);
 
+  console.log("data project item:", idProjectManagement);
+
   return (
     <Fragment>
       {data.parentId === 0 && (
@@ -77,6 +79,7 @@ export default function ProjectManagementItem(props: any) {
               className={`project__management-lv1 ${data?.id === idProjectManagement ? "active__project-management" : ""}`}
               onClick={() => {
                 setIdProjectManagement(data?.id);
+                localStorage.setItem("projectWorkManagement", JSON.stringify(data));
               }}
             >
               <div

@@ -58,7 +58,8 @@ export default function CustomerSchedule({ idCustomer }) {
     const response = await ScheduleCommonService.listCommon(paramsSearch, abortController.signal);
 
     if (response.code == 0) {
-      const result = (response.result || []).map((item) => {
+      let _result = response.result;
+      const result = (_result?.items ? _result?.items : _result || []).map((item) => {
         return {
           id: item.id,
           title: item.title,
@@ -73,7 +74,7 @@ export default function CustomerSchedule({ idCustomer }) {
           status: item.status,
         };
       });
-      setListSchedule(result.items);
+      setListSchedule(result);
 
       setPagination({
         ...pagination,

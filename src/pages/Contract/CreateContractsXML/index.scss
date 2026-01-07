@@ -1,0 +1,637 @@
+.modal-contract-xml-full {
+  .modal-dialog--xxl {
+    max-width: 98%;
+  }
+  .form-handle-task {
+    .modal-body {
+      padding: 0;
+      /* Toàn màn hình với màu nền mờ */
+    }
+    .container-header {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.6rem;
+      border-bottom: 1px solid var(--border-color);
+      border-top-left-radius: 0.3rem;
+      border-top-right-radius: 0.3rem;
+      .box-title {
+        display: flex;
+        align-items: center;
+        gap: 0 1rem;
+      }
+
+      .container-button {
+        display: flex;
+        align-items: center;
+      }
+      h4 {
+        font-size: 1.8rem;
+        margin: 0;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        // width: calc(100% - 3rem);
+        font-weight: 700;
+        span {
+          font-weight: 400;
+        }
+      }
+      .btn-close {
+        opacity: 0.5;
+        svg {
+          fill: var(--black-color);
+          color: var(--black-color);
+        }
+        &:hover,
+        &:focus {
+          opacity: 0.75;
+          background: none;
+          box-shadow: none;
+        }
+      }
+      .btn-setting {
+        opacity: 0.5;
+        margin-right: 10px;
+        svg {
+          fill: var(--black-color);
+          color: var(--black-color);
+          width: 2.1rem;
+          height: 2.1rem;
+        }
+        &:hover,
+        &:focus {
+          opacity: 0.75;
+          background: none;
+          box-shadow: none;
+          svg {
+            fill: var(--primary-color);
+          }
+        }
+      }
+    }
+
+    .container_handle_task-modal {
+      // border: 1px dashed var(--border-color);
+      // padding: 1.6rem;
+      // position: relative;
+      // max-height: 50rem;
+      max-height: calc(100vh - 185px);
+      min-height: calc(100vh - 200px);
+      overflow: auto;
+      // pointer-events: none;
+      .fjs-container .fjs-powered-by {
+        display: none !important;
+      }
+
+      .container-header {
+        display: flex;
+        justify-content: space-between;
+
+        .container-button {
+          display: flex;
+          gap: 0 1rem;
+          .button-action {
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 0rem 1rem;
+            height: 28px;
+            align-items: center;
+            justify-content: center;
+            // margin-right: 10px;
+            cursor: pointer;
+            &:hover {
+              background-color: var(--primary-color-90);
+              color: white;
+            }
+          }
+        }
+      }
+
+      .overlay {
+        // border: 1px solid;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        // background-color: rgba(212, 212, 212, 0.5); /* Nền mờ đen */
+        z-index: 9999; /* Đảm bảo lớp mờ nằm trên mọi thứ */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      /* Nội dung ở giữa lớp mờ */
+      .overlay-content {
+        color: #ed1b34;
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 10px 10px 1px 10px;
+        // background: rgba(251, 251, 251, 0.1); /* Nền mờ cho nội dung */
+        background-color: white;
+        border-radius: 10px;
+        pointer-events: all;
+      }
+
+      .overlayProcessed {
+        // border: 1px solid;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(56, 55, 55, 0.5); /* Nền mờ đen */
+        z-index: 9999; /* Đảm bảo lớp mờ nằm trên mọi thứ */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      .overlay-content-Processed {
+        color: white;
+        font-size: 1.5rem;
+        text-align: center;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.1); /* Nền mờ cho nội dung */
+        border-radius: 10px;
+        pointer-events: all;
+      }
+    }
+
+    .fjs-container .fjs-select-display {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .fjs-container .cds--grid {
+      max-inline-size: 100%;
+      width: 100%;
+      
+      .cds--row {
+        width: 100%;
+        margin: 0;
+        
+        .cds--col {
+          width: 100%;
+          padding: 0 0.75rem;
+        }
+      }
+    }
+  }
+}
+
+.modal-contract-xml {
+  .form-handle-task {
+    .modal-body {
+      padding: 0;
+      /* Toàn màn hình với màu nền mờ */
+    }
+    .container-header {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.6rem;
+      border-bottom: 1px solid var(--border-color);
+      border-top-left-radius: 0.3rem;
+      border-top-right-radius: 0.3rem;
+      .box-title {
+        display: flex;
+        align-items: center;
+        gap: 0 1rem;
+      }
+
+      .container-button {
+        display: flex;
+        align-items: center;
+      }
+      h4 {
+        font-size: 1.8rem;
+        margin: 0;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        // width: calc(100% - 3rem);
+        font-weight: 700;
+        span {
+          font-weight: 400;
+        }
+      }
+      .btn-close {
+        opacity: 0.5;
+        svg {
+          fill: var(--black-color);
+          color: var(--black-color);
+        }
+        &:hover,
+        &:focus {
+          opacity: 0.75;
+          background: none;
+          box-shadow: none;
+        }
+      }
+      .btn-setting {
+        opacity: 0.5;
+        margin-right: 10px;
+        svg {
+          fill: var(--black-color);
+          color: var(--black-color);
+          width: 2.1rem;
+          height: 2.1rem;
+        }
+        &:hover,
+        &:focus {
+          opacity: 0.75;
+          background: none;
+          box-shadow: none;
+          svg {
+            fill: var(--primary-color);
+          }
+        }
+      }
+    }
+
+    .container_handle_task-modal {
+      // border: 1px dashed var(--border-color);
+      // padding: 1.6rem;
+      // position: relative;
+      // max-height: 50rem;
+      max-height: calc(100vh - 185px);
+      min-height: calc(100vh - 200px);
+      overflow: auto;
+      // pointer-events: none;
+      .fjs-container .fjs-powered-by {
+        display: none !important;
+      }
+
+      .container-header {
+        display: flex;
+        justify-content: space-between;
+
+        .container-button {
+          display: flex;
+          gap: 0 1rem;
+          .button-action {
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 0rem 1rem;
+            height: 28px;
+            align-items: center;
+            justify-content: center;
+            // margin-right: 10px;
+            cursor: pointer;
+            &:hover {
+              background-color: var(--primary-color-90);
+              color: white;
+            }
+          }
+        }
+      }
+
+      .overlay {
+        // border: 1px solid;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        // background-color: rgba(212, 212, 212, 0.5); /* Nền mờ đen */
+        z-index: 9999; /* Đảm bảo lớp mờ nằm trên mọi thứ */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      /* Nội dung ở giữa lớp mờ */
+      .overlay-content {
+        color: #ed1b34;
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 10px 10px 1px 10px;
+        // background: rgba(251, 251, 251, 0.1); /* Nền mờ cho nội dung */
+        background-color: white;
+        border-radius: 10px;
+        pointer-events: all;
+      }
+
+      .overlayProcessed {
+        // border: 1px solid;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        // background-color: rgba(56, 55, 55, 0.5); /* Nền mờ đen */
+        z-index: 9999; /* Đảm bảo lớp mờ nằm trên mọi thứ */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      .overlay-content-Processed {
+        color: white;
+        font-size: 1.5rem;
+        text-align: center;
+        padding: 20px;
+        // background: rgba(255, 255, 255, 0.1); /* Nền mờ cho nội dung */
+        border-radius: 10px;
+        pointer-events: all;
+      }
+    }
+
+    .fjs-container .fjs-select-display {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .fjs-container .cds--grid {
+      max-inline-size: 100%;
+      width: 100%;
+      
+      .cds--row {
+        width: 100%;
+        margin: 0;
+        
+        .cds--col {
+          width: 100%;
+          padding: 0 0.75rem;
+        }
+      }
+    }
+  }
+}
+// Page layout styles
+.page-create-contracts-xml {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 5.7rem - 2.8rem);
+  min-height: calc(100vh - 5.7rem - 2.8rem);
+
+  .action-navigation {
+    flex-shrink: 0;
+    padding: 1.6rem 0;
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+      padding-bottom: 5px;
+    }
+  }
+
+  .tab-hidden {
+  visibility: hidden;
+  position: absolute;
+  inset: 0;
+}
+.loading-center {
+  flex: 1;
+  display: flex;
+  align-items: center;     /* giữa theo chiều dọc */
+  justify-content: center; /* giữa theo chiều ngang */
+}
+
+
+  .card-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .form-handle-task {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+
+    .container_handle_task-modal {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 185px);
+      min-height: calc(100vh - 200px);
+      overflow: auto;
+      padding: 1.6rem;
+      position: relative;
+
+      > div {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .fjs-container {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+
+        .fjs-powered-by {
+          display: none !important;
+        }
+
+        .fjs-form {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+        }
+      }
+    }
+
+    .container-footer {
+      flex-shrink: 0;
+      padding: 1.6rem;
+      border-top: 1px solid var(--border-color);
+    }
+  }
+}
+
+.formContainer {
+  width: 100%;
+  height: 100%;
+  margin-top: 2rem;
+  
+  .fjs-layout-row {
+    padding: 0 !important;
+    margin-bottom: 1.6rem !important;
+    width: 100%;
+    
+    .fjs-layout-column {
+      width: 100%;
+      flex: 1;
+      padding: 0 0.75rem;
+      
+      &:first-child {
+        padding-left: 0;
+      }
+      
+      &:last-child {
+        padding-right: 0;
+      }
+    }
+  }
+  
+  .fjs-form-field {
+    width: 100%;
+    margin-bottom: 1.6rem !important;
+    
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+    
+    .fjs-input-group,
+    .fjs-select,
+    .fjs-textarea {
+      width: 100%;
+    }
+  }
+  
+  .fjs-form-field-dynamiclist {
+    margin-bottom: 1.6rem !important;
+    width: 100%;
+  }
+  
+  .fjs-form-field-label {
+    color: var(--text-primary-color);
+    cursor: text;
+    font-size: 1.4rem !important;
+    font-weight: 700;
+    line-height: 2rem;
+    margin-bottom: 0.8rem !important;
+    width: 100%;
+    
+    .fjs-asterix {
+      color: red;
+    }
+  }
+  
+  .fjs-input-group {
+    height: 40px;
+    border: 1px solid var(--border-color);
+    width: 100%;
+    margin-bottom: 0.5rem;
+    
+    .fjs-input {
+      width: 100%;
+    }
+  }
+  
+  .fjs-select {
+    margin-bottom: 0.5rem;
+  }
+  
+  .fjs-textarea {
+    margin-bottom: 0.5rem;
+  }
+  
+  .fjs-element {
+    width: 100%;
+    margin-bottom: 1.6rem !important;
+    
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+    
+    .fjs-form-field-checklist {
+      width: 100%;
+      margin-bottom: 1rem;
+      
+      .fjs-inline-label {
+        width: 100%;
+        margin-bottom: 0.8rem;
+        
+        label {
+          font-size: 1.4rem !important;
+          font-weight: 700 !important;
+        }
+      }
+    }
+    
+    .fjs-form-field-uploadFile {
+      width: 100%;
+      margin-bottom: 1rem;
+      
+      label {
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 0.8rem;
+        display: block;
+      }
+    }
+  }
+  
+  .fjs-form-field-group {
+    width: 100%;
+    margin-bottom: 1.6rem !important;
+    
+    > .fjs-form-field-label:first-of-type {
+      font-size: 18px !important;
+      font-weight: 400 !important;
+      margin-bottom: 1.2rem !important;
+    }
+  }
+  
+  .fjs-form-field-dynamiclist {
+    margin-bottom: 1.6rem !important;
+    
+    > .fjs-form-field-label:first-of-type {
+      font-size: 18px !important;
+      font-weight: 400 !important;
+      margin-bottom: 1.2rem !important;
+    }
+  }
+  
+  // Đảm bảo grid layout scale đúng
+  .cds--grid {
+    width: 100%;
+    max-width: 100%;
+    
+    .cds--row {
+      width: 100%;
+      margin-bottom: 1.6rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      .cds--col {
+        width: 100%;
+        padding: 0 0.75rem;
+        
+        &:first-child {
+          padding-left: 0;
+        }
+        
+        &:last-child {
+          padding-right: 0;
+        }
+      }
+    }
+  }
+  
+  // Đảm bảo select dropdown scale đúng
+  .fjs-select-display {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}

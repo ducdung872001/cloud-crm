@@ -312,6 +312,34 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
     }
   };
 
+  const handChangeDataProps = (data) => {
+    if (!data || data.length === 0) return;
+
+    const converData = data.map((item) => {
+      return {
+        id: item.id ?? 0,
+        productId: item.productId ?? item.productId,
+        productName: item.productName ?? "",
+        productAvatar: item.productAvatar ?? "",
+        batchNo: item.batchNo ?? "",
+        unitId: item.unitId ?? null,
+        unitName: item.unitName ?? (item.unit?.name ?? ""),
+        reason: "",
+        availQty: item.quantity ?? item.availQty ?? 0,
+        offsetQty: 0,
+        satId: satId ?? null,
+        inventoryId: item.inventoryId ?? dataInventory?.value ?? null,
+        inventoryName: item.inventoryName ?? dataInventory?.label ?? "",
+      };
+    });
+    
+    setLstProducts((prev) => {
+      const existKeys = new Set(prev.map((p) => `${p.productId}_${p.batchNo}`));
+      const filtered = converData.filter((c) => !existKeys.has(`${c.productId}_${c.batchNo}`));
+      return [...prev, ...filtered];
+    });
+  };
+
   return (
     <div className="wrapper__add--adjustment--slip">
       <div className="action-navigation">
@@ -528,6 +556,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
         lstBatchNoProduct={lstBatchNoProduct}
         satId={satId}
         inventory={dataInventory}
+        takeData={(data) => handChangeDataProps(data)}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>

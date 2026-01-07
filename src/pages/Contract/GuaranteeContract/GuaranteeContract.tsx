@@ -524,20 +524,24 @@ export default function GuaranteeContractList() {
       headerName: "Số thư bảo lãnh",
       field: "numberLetter",
       cellRenderer: LinkToAction,
+      headerClass: "text-left",
     },
     {
       headerName: "Hợp đồng gốc",
       field: "contractName",
       width: 280,
       cellRenderer: ContractLinkToAction,
+      headerClass: "text-left",
     },
     {
       headerName: "Loại bảo lãnh",
       field: "guaranteeTypeName",
+      headerClass: "text-left",
     },
     {
       headerName: "Nghiệp vụ bảo lãnh",
       field: "competencyName",
+      headerClass: "text-left",
     },
     {
       headerName: "Ngày bắt đầu",

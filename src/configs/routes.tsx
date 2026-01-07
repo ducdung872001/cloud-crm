@@ -187,6 +187,7 @@ import FieldMannagement from "pages/FieldManagement/FieldManagement";
 import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
 import ManagementOpportunityNew from "pages/ManagementOpportunityNew";
 import ManagerWork from "pages/ManagerWork";
+import CreateContractsXML from "pages/Contract/CreateContractsXML";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -398,6 +399,16 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="PlusCircleFill" />,
               code: "",
             },
+            ...(checkUserRoot
+          ? [
+              {
+                title: "createContractXML", // Tạo hợp đồng XML
+                path: urls.create_contract_xml,
+                icon: <Icon name="PlusCircleFill" />,
+                code: "",
+              },
+            ]
+          : []),
             {
               title: "listContract", // Danh sách hợp đồng
               path: urls.contract,
@@ -1224,8 +1235,16 @@ export const routes: IRouter[] = [
     component: <CreateContracts />,
   },
   {
+    path: urls.create_contract_xml,
+    component: <CreateContractsXML />,
+  },
+  {
     path: urls.edit_contract,
     component: <CreateContracts />,
+  },
+  {
+    path: urls.edit_contract_xml,
+    component: <CreateContractsXML />,
   },
   {
     path: urls.contract,

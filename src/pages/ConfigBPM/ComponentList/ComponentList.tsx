@@ -18,7 +18,7 @@ import ArtifactService from "services/ArtifactService";
 import ModalAddComponent from "./partials/ModalAddComponent";
 
 export default function ComponentList(props: any) {
-  document.title = "Danh sách loại hợp đồng";
+  document.title = "Danh mục thành phần chung";
 
   const { onBackProps } = props;
 
@@ -43,14 +43,14 @@ export default function ComponentList(props: any) {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách loại hợp đồng",
+      name: "Danh mục thành phần chung",
       is_active: true,
     },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "loại hợp đồng",
+    name: "thành phần",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));

@@ -12,7 +12,16 @@ export default function ListWork() {
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(false);
   const [isRegimeReport, setIsRegimeReport] = useState<boolean>(false);
   const [type, setType] = useState<string>("project");
-  const [idProjectManagement, setIdProjectManagement] = useState<number>(-1);
+  // localStorage.setItem("projectIdWorkManagement", takeIdProjectManagement.toString());
+  const takeIdProjectManagement =
+    localStorage.getItem("projectWorkManagement") &&
+    JSON.parse(localStorage.getItem("projectWorkManagement")) &&
+    JSON.parse(localStorage.getItem("projectWorkManagement"))?.id
+      ? JSON.parse(localStorage.getItem("projectWorkManagement"))?.id
+      : -1;
+  console.log("projectWorkManagement:", takeIdProjectManagement);
+
+  const [idProjectManagement, setIdProjectManagement] = useState<number>(takeIdProjectManagement);
   const abortController = new AbortController();
   const handleDetailWork = (isDetail: boolean, isVerticalWork: boolean) => {
     setIsDetailWork(isDetail);
@@ -39,7 +48,6 @@ export default function ListWork() {
           </div>
           <div className={`${isFullPage ? "active-fullpage" : ""} list-project ${isVertical ? "show__vertical--work" : ""}`}>
             <WorkTableByGroup
-              type="project"
               idManagement={idProjectManagement}
               isRegimeKanban={isRegimeKanban}
               isRegimeReport={isRegimeReport}

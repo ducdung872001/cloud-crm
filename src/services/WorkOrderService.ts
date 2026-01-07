@@ -13,11 +13,18 @@ import {
   IUpdateRatingRequestModal,
   IUpdatePriorityLevelRequestModal,
   IAssignNegotiationWorkRequestModal,
+  IGroupsFilterRequest,
 } from "model/workOrder/WorkOrderRequestModel";
 
 export default {
   list: (params: IWorkOrderFilterRequest, signal?: AbortSignal) => {
     return fetch(`${urlsApi.workOrder.list}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  groups: (params: IGroupsFilterRequest, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.workOrder.groups}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
@@ -35,8 +42,14 @@ export default {
   //   }).then((res) => res.json());
   // },
 
-  update: (body: any) => {
+  update: (body: IWorkOrderRequestModel) => {
     return fetch(urlsApi.workOrder.update, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  updateInitProcess: (body: IWorkOrderRequestModel) => {
+    return fetch(urlsApi.workOrder.updateInitProcess, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());

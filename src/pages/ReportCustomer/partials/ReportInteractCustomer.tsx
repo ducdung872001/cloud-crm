@@ -171,14 +171,14 @@ export default function ReportInteractCustomer(props: ReportRevenueProps) {
         color: "#32CD32",
       },
     ],
-    exporting: {
-      enabled: false,
-      buttons: {
-        contextButton: {
-          menuItems: ["image/png", "image/jpeg", "application/pdf"],
-        },
-      },
-    },
+    // exporting: {
+    //   enabled: false,
+    //   buttons: {
+    //     contextButton: {
+    //       menuItems: ["image/png", "image/jpeg", "application/pdf"],
+    //     },
+    //   },
+    // },
   });
 
   useEffect(() => {
@@ -271,7 +271,7 @@ export default function ReportInteractCustomer(props: ReportRevenueProps) {
     <div className={`card-box report-revenue${classNames ? ` ${classNames}` : ""}`}>
       <div className="title__common d-flex align-items-start">
         <h2 className="name-common">Tương tác khách hàng</h2>
-        <div
+        {/* <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}
           onClick={() => setShowOption(!showOption)}
@@ -297,7 +297,7 @@ export default function ReportInteractCustomer(props: ReportRevenueProps) {
               })}
             </div>
           )}
-        </div>
+        </div> */}
         <div className="report-filter">
           {/* <div className="form-group">
             <SelectCustom

@@ -18,6 +18,7 @@ import MaskedInputExtension from "./extension/maskedInput/render";
 import PropertiesPanelMaskedInputPropertiesPanel from "./extension/maskedInput/propertiesPanel";
 import ModalConfigGrid from "./partials/ModalConfigGrid";
 import ModalConfigLinkingGrid from "./partials/ModalConfigLinkingGrid";
+import SelectUrlExtention from "./extension/selectUrl/render";
 
 interface FormEditorProps {
   initialSchema: any;
@@ -57,6 +58,7 @@ const FormEditorComponent = ({
         PropertiesPanelUploadFilePropertiesPanel,
         MaskedInputExtension,
         PropertiesPanelMaskedInputPropertiesPanel,
+        SelectUrlExtention,
       ],
 
       // load properties panel extension

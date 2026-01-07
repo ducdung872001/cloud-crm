@@ -35,7 +35,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
         exchageRate: data?.exchageRate ?? "",
         transactionHistory: data?.transactionHistory ?? "",
         transactionFrequency: data?.transactionFrequency ?? "",
-        transactionDate: data?.transactionDate ?? "",
+        transactionDate: data?.transactionDate ? moment(data?.transactionDate).toDate() : "",
         customerId: data?.customerId ?? "",
       } as any),
     [onShow, data]
@@ -149,7 +149,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as any),
       customerId,
-      transactionDate: moment(formData.values.transactionDate).format("YYYY-MM-DD HH:mm:ss"),
+      // transactionDate: moment(formData.values.transactionDate).format("YYYY-MM-DD HH:mm:ss"),
+      transactionDate: moment(formData.values.transactionDate).format("YYYY-MM-DD[T]HH:mm:ss"),
     };
 
     const response = await TransactionInformationService.update(body);
