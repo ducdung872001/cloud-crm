@@ -66,16 +66,16 @@ export default function ModalAddGuarantee(props: any) {
         data.cusIssuerPartner
           ? { value: data.cusIssuerPartner?.id, label: data.cusIssuerPartner?.name }
           : data.issuerPartner
-          ? { value: data.issuerPartner?.id, label: data.issuerPartner?.name }
-          : null
+            ? { value: data.issuerPartner?.id, label: data.issuerPartner?.name }
+            : null
       );
 
       setDataBeneficiary(
         data.cusBeneficialPartner
           ? { value: data.cusBeneficialPartner?.id, label: data.cusBeneficialPartner?.name }
           : data.beneficialPartner
-          ? { value: data.beneficialPartner?.id, label: data.beneficialPartner?.name }
-          : null
+            ? { value: data.beneficialPartner?.id, label: data.beneficialPartner?.name }
+            : null
       );
       setDataStatus(data.status ? { value: data.status, label: data.status === 1 ? "Đang hoạt động" : "Không hoạt động" } : null);
 
@@ -90,14 +90,14 @@ export default function ModalAddGuarantee(props: any) {
           extension: attachment.includes(".docx")
             ? "docx"
             : attachment.includes(".xlsx")
-            ? "xlsx"
-            : attachment.includes(".pdf")
-            ? "pdf"
-            : attachment.includes(".pptx")
-            ? "pptx"
-            : attachment.includes(".zip")
-            ? "zip"
-            : "rar",
+              ? "xlsx"
+              : attachment.includes(".pdf")
+                ? "pdf"
+                : attachment.includes(".pptx")
+                  ? "pptx"
+                  : attachment.includes(".zip")
+                    ? "zip"
+                    : "rar",
         });
       }
     }
@@ -172,31 +172,31 @@ export default function ModalAddGuarantee(props: any) {
 
   const values = useMemo(
     () =>
-      ({
-        numberLetter: data?.numberLetter ?? "",
-        competencyId: data?.competencyId ?? 0, // nghiệp vụ bảo lãnh
-        contractId: data?.contractId ?? 0, //hợp đồng bảo lãnh
-        contractAppendixId: data?.contractAppendix ?? 0, //Phụ lục hợp đồng
-        guaranteeTypeId: data?.guaranteeTypeId ?? 0,
-        bankId: data?.bankId ?? 0,
-        beneficiaryId: data?.beneficiaryId ?? 0, //đơn vị thụ hưởng
-        issuerId: data?.issuerId ?? 0, // đơn vị phát hành
-        currencyValue: data?.currencyValue ?? 0, //giá trị bảo lãnh ngaoij tế
-        currency: data?.currency ?? "VNĐ", //loại tiền tệ
-        contractValue: data?.contractValue ?? 0, // giá trị hợp đồng
-        value: data?.value ?? 0, //giá trị bảo lãnh
-        exchangeRate: data?.exchangeRate ?? 1, //tỷ giá
-        description: data?.description ?? "",
-        status: data?.status ?? 1, //trạng thái
-        startDate: data?.startDate ?? "", //ngày bắt đầu
-        endDate: data?.endDate ?? "", //ngày kết thúc
-        signDate: data?.signDate ?? "", //ngày kí quỹ
-        establishDate: data?.establishDate ?? "", //ngày thành lập,
-        signRate: data?.signRate ?? 0,
-        attachments: "[]",
-        beneficiaryType: data?.beneficiaryType?.toString() ?? "0", //0 - khách hàng, 1 - đối tác
-        issuerType: data?.issuerType?.toString() ?? "0", //0 - khách hàng, 1 - đối tác
-      } as any),
+    ({
+      numberLetter: data?.numberLetter ?? "",
+      competencyId: data?.competencyId ?? 0, // nghiệp vụ bảo lãnh
+      contractId: data?.contractId ?? 0, //hợp đồng bảo lãnh
+      contractAppendixId: data?.contractAppendix ?? 0, //Phụ lục hợp đồng
+      guaranteeTypeId: data?.guaranteeTypeId ?? 0,
+      bankId: data?.bankId ?? 0,
+      beneficiaryId: data?.beneficiaryId ?? 0, //đơn vị thụ hưởng
+      issuerId: data?.issuerId ?? 0, // đơn vị phát hành
+      currencyValue: data?.currencyValue ?? 0, //giá trị bảo lãnh ngaoij tế
+      currency: data?.currency ?? "VNĐ", //loại tiền tệ
+      contractValue: data?.contractValue ?? 0, // giá trị hợp đồng
+      value: data?.value ?? 0, //giá trị bảo lãnh
+      exchangeRate: data?.exchangeRate ?? 1, //tỷ giá
+      description: data?.description ?? "",
+      status: data?.status ?? 1, //trạng thái
+      startDate: data?.startDate ?? "", //ngày bắt đầu
+      endDate: data?.endDate ?? "", //ngày kết thúc
+      signDate: data?.signDate ?? "", //ngày kí quỹ
+      establishDate: data?.establishDate ?? "", //ngày thành lập,
+      signRate: data?.signRate ?? 0,
+      attachments: "[]",
+      beneficiaryType: data?.beneficiaryType?.toString() ?? "0", //0 - khách hàng, 1 - đối tác
+      issuerType: data?.issuerType?.toString() ?? "0", //0 - khách hàng, 1 - đối tác
+    } as any),
     [data, onShow]
   );
 
@@ -254,11 +254,11 @@ export default function ModalAddGuarantee(props: any) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -297,11 +297,11 @@ export default function ModalAddGuarantee(props: any) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -340,12 +340,12 @@ export default function ModalAddGuarantee(props: any) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                  dealValue: item.dealValue,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+                dealValue: item.dealValue,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -384,11 +384,11 @@ export default function ModalAddGuarantee(props: any) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -475,11 +475,11 @@ export default function ModalAddGuarantee(props: any) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -518,11 +518,11 @@ export default function ModalAddGuarantee(props: any) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -561,11 +561,11 @@ export default function ModalAddGuarantee(props: any) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -594,11 +594,11 @@ export default function ModalAddGuarantee(props: any) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -732,9 +732,22 @@ export default function ModalAddGuarantee(props: any) {
 
     setIsSubmit(true);
 
+    // Format các trường ngày tháng về YYYY-MM-DDTHH:mm:ss để tránh vấn đề timezone
+    const toApiDate = (value: any) => {
+      return value ? moment(value).format("YYYY-MM-DDTHH:mm:ss") : "";
+    };
+
+    const formattedValues = {
+      ...formData.values,
+      establishDate: toApiDate(formData.values.establishDate),
+      signDate: toApiDate(formData.values.signDate),
+      startDate: toApiDate(formData.values.startDate),
+      endDate: toApiDate(formData.values.endDate),
+    };
+
     const body: ICustomerRequest = {
       ...(data ? { id: data?.id } : {}),
-      ...(formData.values as any),
+      ...(formattedValues as any),
       guaranteeExtraInfos: guaranteeExtraInfos,
     };
 
@@ -1100,8 +1113,8 @@ export default function ModalAddGuarantee(props: any) {
             iconPosition="left"
             icon={<Icon name="Calendar" />}
             isMaxDate={false}
-            // error={validateFieldSignDate}
-            // message={`Vui lòng chọn ngày ký`}
+          // error={validateFieldSignDate}
+          // message={`Vui lòng chọn ngày ký`}
           />
         );
         break;
@@ -1424,10 +1437,10 @@ export default function ModalAddGuarantee(props: any) {
                     onChange={(e) => handleChangeValueCurrency(e)}
                     isAsyncPaginate={false}
                     placeholder="Chọn loại tiền tệ"
-                    // additional={{
-                    //     page: 1,
-                    // }}
-                    // loadOptionsPaginate={loadOptionCategory}
+                  // additional={{
+                  //     page: 1,
+                  // }}
+                  // loadOptionsPaginate={loadOptionCategory}
                   />
                 </div>
 
@@ -1558,7 +1571,7 @@ export default function ModalAddGuarantee(props: any) {
 
                 <div className="form-group">
                   <DatePickerCustom
-                    label="Ngày ngày hết hạn"
+                    label="Ngày hết hạn"
                     name="endDate"
                     fill={true}
                     value={formData?.values?.endDate}
@@ -1774,10 +1787,10 @@ export default function ModalAddGuarantee(props: any) {
                     onChange={(e) => handleChangeValueStatus(e)}
                     isAsyncPaginate={false}
                     placeholder="Chọn trạng thái"
-                    // additional={{
-                    //     page: 1,
-                    // }}
-                    // loadOptionsPaginate={loadOptionCategory}
+                  // additional={{
+                  //     page: 1,
+                  // }}
+                  // loadOptionsPaginate={loadOptionCategory}
                   />
                 </div>
 
@@ -1798,8 +1811,8 @@ export default function ModalAddGuarantee(props: any) {
                           takeFileAdd={takeFileAdd}
                           infoFile={infoFile}
                           setInfoFile={setInfoFile}
-                          // setIsLoadingFile={setIsLoadingFile}
-                          // dataAttachment={data}
+                        // setIsLoadingFile={setIsLoadingFile}
+                        // dataAttachment={data}
                         />
                       </div>
                       {/* )} */}
@@ -1834,9 +1847,7 @@ export default function ModalAddGuarantee(props: any) {
                             ) : null}
                             {guaranteeAttribute.parentId ? (
                               <div
-                                className={`form-group ${
-                                  guaranteeAttribute.name.length >= 38 || lstGuaranteeAttribute[1].length == 2 ? "special-case" : ""
-                                }`}
+                                className={`form-group ${guaranteeAttribute.name.length >= 38 || lstGuaranteeAttribute[1].length == 2 ? "special-case" : ""}`}
                                 id={`Field${convertToId(guaranteeAttribute.name)}`}
                                 key={`index_${key}_${index}`}
                               >
