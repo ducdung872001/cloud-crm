@@ -10,7 +10,7 @@ import AddWorkRatingModal from "../AddWorkRatingModal/AddWorkRatingModal";
 import AddWorkInprogressModal from "../AddWorkInprogressModal/AddWorkInprogressModal";
 import EmployeeService from "services/EmployeeService";
 import WorkOrderService from "services/WorkOrderService";
-import "./DetailWorkModal.scss";
+import "./index.scss";
 import UpdatePeopleInvolved from "../DetailWork/partials/UpdatePeopleInvolved/UpdatePeopleInvolved";
 import UpdateRelatedWork from "../DetailWork/partials/UpdateRelatedWork/UpdateRelatedWork";
 import ContentExchangeWork from "../DetailWork/partials/ContentExchangeWork/ContentExchangeWork";
@@ -19,6 +19,7 @@ import ResizableLayout from "components/resizableLayout/ResizableLayout";
 import Button from "components/button/button";
 import Tippy from "@tippyjs/react";
 import { IActionModal } from "model/OtherModel";
+import { truncate } from "reborn-util";
 
 interface IDetailWorkModalProps {
   onShow: boolean;
@@ -40,7 +41,8 @@ const DetailWorkModal = (props: IDetailWorkModalProps) => {
   const [hover, setHover] = useState<number>(0);
   const [disabledRating, setDisabledRating] = useState<boolean>(false);
   const checkShowFullScreen = localStorage.getItem("showFullScreenModalPartnerEform");
-  const [showFullScreen, setShowFullScreen] = useState<boolean>(checkShowFullScreen ? JSON.parse(checkShowFullScreen) : false);
+  // const [showFullScreen, setShowFullScreen] = useState<boolean>(checkShowFullScreen ? JSON.parse(checkShowFullScreen) : false);
+  const [showFullScreen, setShowFullScreen] = useState<boolean>(true);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
   const actions = useMemo<IActionModal>(
@@ -221,7 +223,7 @@ const DetailWorkModal = (props: IDetailWorkModalProps) => {
               <h4>Chi tiết công việc</h4>
             </div>
             <div className="container-button">
-              {!showFullScreen ? (
+              {/* {!showFullScreen ? (
                 <Tippy content="Mở rộng">
                   <div
                     style={{ marginBottom: 4, marginRight: 5, cursor: "pointer" }}
@@ -243,7 +245,7 @@ const DetailWorkModal = (props: IDetailWorkModalProps) => {
                     <Icon name="ZoomOutScreen" />
                   </div>
                 </Tippy>
-              )}
+              )} */}
               <Button type="button" className="btn-close" color="transparent" onlyIcon={true} onClick={onHide}>
                 <Icon name="Times" />
               </Button>

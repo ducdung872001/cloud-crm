@@ -92,7 +92,7 @@ export default function CreateOrder() {
 
     const response = await OrderService.detail(id);
 
-    if (response.code === 200) {
+    if (response.code === 0) {
       const result = response.result;
 
       const changeDataDetails = (result.details || []).map((item) => {
@@ -551,7 +551,7 @@ export default function CreateOrder() {
       showToast("Vui lòng chọn ít nhất một sản phẩm", "error");
       return;
     }
-    
+
     if (type === "done") {
       setIsSubmit(true);
     } else {
@@ -579,8 +579,8 @@ export default function CreateOrder() {
       id: changeFormData.id,
       orderCode: "",
       bnsId: 0,
-      orderDate: moment(changeFormData.order_date).format('YYYY-MM-DDTHH:mm:ss'),
-      expectedDate: moment(changeFormData.expected_date).format('YYYY-MM-DDTHH:mm:ss'),
+      orderDate: moment(changeFormData.order_date).format("YYYY-MM-DDTHH:mm:ss"),
+      expectedDate: moment(changeFormData.expected_date).format("YYYY-MM-DDTHH:mm:ss"),
       invoiceId: null,
       amount: changeFormData.pay_amount,
       vatAmount: changeFormData.vat_amount,
@@ -932,9 +932,9 @@ export default function CreateOrder() {
                   conditionCommon.formData.discount_type === "amount"
                     ? setValueDiscount({ ...valueDiscount, amount: e.floatValue || 0 })
                     : setValueDiscount({
-                      ...valueDiscount,
-                      percentage: (e.floatValue || 0) > 100 ? 100 : e.floatValue || 0,
-                    });
+                        ...valueDiscount,
+                        percentage: (e.floatValue || 0) > 100 ? 100 : e.floatValue || 0,
+                      });
                 }}
                 error={false}
                 message="Giảm giá sau VAT nhỏ hơn hoặc bằng Tổng tiền"
@@ -1123,13 +1123,7 @@ export default function CreateOrder() {
         onHide={() => setShowMdoalChoose(false)}
         callback={(data) => changeDataChoose(data)}
       />
-      <ShowInvoiceOrder 
-        onShow={showModalDetail} 
-        onHide={() => setShowModalDetail(false)} 
-        data={dataInvoice} 
-        id={idInvoice} 
-        action="edit" 
-      />
+      <ShowInvoiceOrder onShow={showModalDetail} onHide={() => setShowModalDetail(false)} data={dataInvoice} id={idInvoice} action="edit" />
     </div>
   );
 }

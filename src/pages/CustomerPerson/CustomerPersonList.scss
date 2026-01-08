@@ -19,6 +19,7 @@
           cursor: pointer;
           font-weight: 500;
           border: 1px solid var(--extra-color-50);
+          white-space: nowrap;
 
           &:first-child {
             border-top-left-radius: 0.5rem;
@@ -95,6 +96,7 @@
             justify-content: center;
 
             .item-relationship {
+              min-width: 4rem;
               padding: 0.7rem 1.8rem;
               text-align: center;
               font-size: 1.4rem;
@@ -102,8 +104,10 @@
               font-weight: 500;
               border-radius: 0.5rem;
               flex: 1;
-              white-space: nowrap;
               opacity: 0.9;
+              white-space: nowrap;
+              // overflow: hidden;
+              // text-overflow: ellipsis;
             }
 
             .active__item-block {
@@ -119,9 +123,14 @@
           align-items: center;
           gap: 0 0.6rem;
           transition: all 0.3s ease-in-out;
+          overflow-y: auto;
+          padding-bottom: 0.5rem;
 
           .relationship-item,
           .active__relationship--item {
+            white-space: nowrap;
+            // overflow: hidden;
+            // text-overflow: ellipsis;
             padding: 0.7rem 1.8rem;
             text-align: center;
             font-size: 1.4rem;
@@ -139,6 +148,14 @@
             box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
             opacity: 1;
           }
+        }
+      }
+      @media (max-width: 1000px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.2rem 0;
+        .quick__search--right {
+          width: 100%;
         }
       }
     }
@@ -201,7 +218,7 @@
         align-items: center;
         gap: 2.4rem;
         color: var(--text-primary-color);
-        
+
         li {
           display: block;
           border-bottom: 3px solid transparent;
@@ -216,19 +233,24 @@
         }
       }
 
-      .list-partner{
+      .list-partner {
         // border: 1px solid;
         margin-top: 2rem;
         padding: 0 2rem 0 2rem;
-  
+
         .list__relationship {
           display: flex;
           align-items: center;
           gap: 0 0.6rem;
           transition: all 0.3s ease-in-out;
-  
+          overflow-y: auto;
+          padding-bottom: 0.5rem;
+
           .relationship-item,
           .active__relationship--item {
+            white-space: nowrap;
+            // overflow: hidden;
+            // text-overflow: ellipsis;
             padding: 0.7rem 1.8rem;
             text-align: center;
             font-size: 1.4rem;
@@ -236,11 +258,11 @@
             font-weight: 500;
             border-radius: 0.5rem;
           }
-  
+
           .relationship-item {
             opacity: 0.9;
           }
-  
+
           .active__relationship--item {
             border: 1px dashed var(--black-color);
             box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
@@ -249,20 +271,20 @@
         }
       }
 
-      .desc__search{
+      .desc__search {
         display: flex;
         padding-right: 2rem;
 
         .search-container {
           padding: 2.4rem 0 0 2rem;
         }
-        
-        .form-group-filter{
+
+        .form-group-filter {
           display: flex;
           // align-items: flex-end;
           justify-content: center;
 
-          .button-filter-advance{
+          .button-filter-advance {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -279,7 +301,6 @@
             &:hover {
               background-color: var(--primary-color-30);
             }
-
           }
         }
       }
@@ -297,7 +318,7 @@
         border-radius: 3px;
         background-color: var(--extra-color-20);
         display: flex;
-      
+
         .advance_text {
           display: flex;
           gap: 0.5rem;
@@ -317,7 +338,6 @@
           }
         }
       }
-      
     }
 
     .header-table-tnex {
@@ -325,7 +345,7 @@
       display: flex;
       justify-content: space-between;
 
-      .button-split-data{
+      .button-split-data {
         border-radius: 8px;
         padding: 0.5rem 1.6rem;
         background-color: #004353;

@@ -54,10 +54,7 @@ const normalizeAttachmentPayload = (payload: any, originFile?: File) => {
     (payload.extension || payload.type || getFileExtension(fileName) || getFileExtension(fileUrl))?.toString().toLowerCase() || "";
   const mineType = (payload.mineType || payload.mimeType || payload.fileType || originFile?.type || "")?.toString().toLowerCase();
   const fileType = (payload.fileType || (mineType && mineType.includes("/") ? mineType.split("/")[0] : mineType) || "")?.toString().toLowerCase();
-  const isImage =
-    fileType === "image" ||
-    (mineType && mineType.startsWith("image")) ||
-    FILE_IMAGE_EXTENSIONS.includes(extensionCandidate);
+  const isImage = fileType === "image" || (mineType && mineType.startsWith("image")) || FILE_IMAGE_EXTENSIONS.includes(extensionCandidate);
 
   return {
     width: payload.width ?? null,
@@ -158,9 +155,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
 
     try {
       const parsed = JSON.parse(normalized);
-      const mapping = (Array.isArray(parsed) ? parsed : [parsed])
-        .map((item) => normalizeAttachmentPayload(item))
-        .filter((item) => item);
+      const mapping = (Array.isArray(parsed) ? parsed : [parsed]).map((item) => normalizeAttachmentPayload(item)).filter((item) => item);
       setListAttactment(mapping);
     } catch (error) {
       setListAttactment([]);
@@ -174,23 +169,23 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
 
   const values = useMemo(
     () =>
-    ({
-      customerId: data?.customerId ?? null,
-      customerPhone: detailCustomer?.phoneMasked ?? "",
-      serviceId: data?.serviceId ?? null,
-      treatmentStart: data?.treatmentStart ?? new Date(),
-      treatmentEnd: data?.treatmentEnd ?? "",
-      procDesc: data?.procDesc ?? "",
-      afterProof: data?.afterProof ?? "",
-      prevProof: data?.prevProof ?? "",
-      scheduleNext: data?.scheduleNext ?? "",
-      employeeId: data?.employeeId ?? null,
-      note: data?.note ?? "",
-      treatmentTh: data?.totalTreatment ?? 0,
-      serviceNumber: data?.serviceNumber ?? null,
-      cardNumber: data?.cardNumber ?? null,
-      commits: normalizeCommitsString(data?.commits),
-    } as ITreatmentHistoryRequestModel),
+      ({
+        customerId: data?.customerId ?? null,
+        customerPhone: detailCustomer?.phoneMasked ?? "",
+        serviceId: data?.serviceId ?? null,
+        treatmentStart: data?.treatmentStart ?? new Date(),
+        treatmentEnd: data?.treatmentEnd ?? "",
+        procDesc: data?.procDesc ?? "",
+        afterProof: data?.afterProof ?? "",
+        prevProof: data?.prevProof ?? "",
+        scheduleNext: data?.scheduleNext ?? "",
+        employeeId: data?.employeeId ?? null,
+        note: data?.note ?? "",
+        treatmentTh: data?.totalTreatment ?? 0,
+        serviceNumber: data?.serviceNumber ?? null,
+        cardNumber: data?.cardNumber ?? null,
+        commits: normalizeCommitsString(data?.commits),
+      } as ITreatmentHistoryRequestModel),
     [data, onShow, detailCustomer?.phoneMasked]
   );
 
@@ -253,13 +248,13 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-              return {
-                value: item.id,
-                label: item.name,
-                avatar: item.avatar,
-                phoneMasked: item.phoneMasked,
-              };
-            })
+                return {
+                  value: item.id,
+                  label: item.name,
+                  avatar: item.avatar,
+                  phoneMasked: item.phoneMasked,
+                };
+              })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -340,18 +335,18 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       setListBuyService([
         ...(dataOption.length > 0
           ? dataOption.map((item) => {
-            return {
-              value: item.id,
-              serviceId: item.serviceId,
-              label: item.serviceName,
-              avatar: item.serviceAvatar,
-              isCombo: item.isCombo,
-              treatmentNum: item.treatmentNum,
-              totalTreatment: item.totalTreatment + 1,
-              serviceNumber: item.serviceNumber,
-              cardNumber: item.cardNumber,
-            };
-          })
+              return {
+                value: item.id,
+                serviceId: item.serviceId,
+                label: item.serviceName,
+                avatar: item.serviceAvatar,
+                isCombo: item.isCombo,
+                treatmentNum: item.treatmentNum,
+                totalTreatment: item.totalTreatment + 1,
+                serviceNumber: item.serviceNumber,
+                cardNumber: item.cardNumber,
+              };
+            })
           : []),
       ]);
 
@@ -479,12 +474,12 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-              return {
-                value: item.id,
-                label: item.name,
-                avatar: item.avatar,
-              };
-            })
+                return {
+                  value: item.id,
+                  label: item.name,
+                  avatar: item.avatar,
+                };
+              })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -511,12 +506,12 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-              return {
-                value: item.id,
-                label: item.name,
-                avatar: item.avatar,
-              };
-            })
+                return {
+                  value: item.id,
+                  label: item.name,
+                  avatar: item.avatar,
+                };
+              })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -570,14 +565,14 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
     const type = link.includes(".docx")
       ? "docx"
       : link.includes(".xlsx")
-        ? "xlsx"
-        : link.includes(".pdf") || link.includes(".PDF")
-          ? "pdf"
-          : link.includes(".pptx")
-            ? "pptx"
-            : link.includes(".zip")
-              ? "zip"
-              : "rar";
+      ? "xlsx"
+      : link.includes(".pdf") || link.includes(".PDF")
+      ? "pdf"
+      : link.includes(".pptx")
+      ? "pptx"
+      : link.includes(".zip")
+      ? "zip"
+      : "rar";
     const fallbackName = name || convertToFileName(link.split("/").pop());
     const nameDownload = `${fallbackName}.${type}`;
 
@@ -633,24 +628,19 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       return;
     }
 
-    uploadDocumentFormData(
-      file,
-      (response) => appendAttachment(response, file),
-      onError,
-      onProgress
-    );
+    uploadDocumentFormData(file, (response) => appendAttachment(response, file), onError, onProgress);
   };
 
   const onError = (message) => {
-      setIsLoadingFile(false);
-      showToast(message.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
-    };
+    setIsLoadingFile(false);
+    showToast(message.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+  };
 
-    useEffect(() => {
-        if (isLoadingFile === false) {
-          setShowProgress(0);
-        }
-      }, [isLoadingFile]);
+  useEffect(() => {
+    if (isLoadingFile === false) {
+      setShowProgress(0);
+    }
+  }, [isLoadingFile]);
 
   useEffect(() => {
     setFormData((prevState) => {
@@ -724,7 +714,7 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
   const isScheduleNextBeforeNow = useMemo(() => {
     try {
       if (!formData?.values?.scheduleNext) return false;
-      return moment(formData.values.scheduleNext).isBefore(moment(), 'minute'); // so sánh đến phút
+      return moment(formData.values.scheduleNext).isBefore(moment(), "minute"); // so sánh đến phút
     } catch (e) {
       return false;
     }
@@ -836,13 +826,13 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
           type: "custom",
           snippet: (
             <NummericInput
-              label="Buổi điều trị thứ"
+              label="Buổi thực hiện thứ"
               name="treatmentTh"
               value={formData?.values?.treatmentTh}
               placeholder="Nhập số buổi"
               fill={true}
               warning={formData?.values?.treatmentTh > detailService?.treatmentNum}
-              messageWarning="Đã vượt quá số buổi điều trị"
+              messageWarning="Đã vượt quá số buổi thực hiện"
               disabled={true}
             />
           ),
@@ -945,22 +935,14 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
                     <div className="d-flex align-items-center">
                       {listAttactment.map((item, idx) => (
                         <div key={idx} className={isAttachmentImage(item) ? "image-item" : "file-item"}>
-                          <img
-                            src={getAttachmentThumbnail(item)}
-                            alt="image-warranty"
-                          />
+                          <img src={getAttachmentThumbnail(item)} alt="image-warranty" />
                           {!isAttachmentImage(item) && (
                             <div className="file-name">
-                              <h5 style={{ fontSize: 14 }}>
-                                {item?.fileName || convertToFileName(item?.fileUrl || item?.url)}
-                              </h5>
+                              <h5 style={{ fontSize: 14 }}>{item?.fileName || convertToFileName(item?.fileUrl || item?.url)}</h5>
                             </div>
                           )}
                           <Tippy content="Tải xuống">
-                            <span
-                              className="icon-download"
-                              onClick={() => download(item?.fileUrl || item?.url, item?.fileName)}
-                            >
+                            <span className="icon-download" onClick={() => download(item?.fileUrl || item?.url, item?.fileName)}>
                               <Icon name="Download" />
                             </span>
                           </Tippy>
@@ -1058,10 +1040,11 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
     if (formData?.values?.scheduleNext) {
       const scheduleNextMoment = moment(formData.values.scheduleNext);
       const now = moment();
-      if (scheduleNextMoment.isSameOrBefore(now, 'minute')) { // <= hiện tại → lỗi
-        const newErrors = { 
-          ...(formData.errors || {}), 
-          scheduleNext: "Thời gian thực hiện tiếp theo phải lớn hơn thời gian hiện tại" 
+      if (scheduleNextMoment.isSameOrBefore(now, "minute")) {
+        // <= hiện tại → lỗi
+        const newErrors = {
+          ...(formData.errors || {}),
+          scheduleNext: "Thời gian thực hiện tiếp theo phải lớn hơn thời gian hiện tại",
         };
         setFormData((prev) => ({ ...prev, errors: newErrors }));
         return;
@@ -1074,9 +1057,9 @@ export default function AddTreamentHistoryModal(props: IAddTreatmentHistoryModel
       {
         ...(formData.values as ITreatmentHistoryRequestModel),
         ...(data ? { id: data.id } : {}),
-        treatmentStart: moment(formData.values.treatmentStart).format('YYYY-MM-DDTHH:mm:ss'),
-        treatmentEnd: moment(formData.values.treatmentEnd).format('YYYY-MM-DDTHH:mm:ss'),
-        scheduleNext: moment(formData.values.scheduleNext).format('YYYY-MM-DDTHH:mm:ss'),
+        treatmentStart: moment(formData.values.treatmentStart).format("YYYY-MM-DDTHH:mm:ss"),
+        treatmentEnd: moment(formData.values.treatmentEnd).format("YYYY-MM-DDTHH:mm:ss"),
+        scheduleNext: moment(formData.values.scheduleNext).format("YYYY-MM-DDTHH:mm:ss"),
       },
     ];
 

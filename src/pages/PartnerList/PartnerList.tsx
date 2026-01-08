@@ -371,8 +371,9 @@ export default function PartnerList() {
                   <div className="lst__columns--show">
                     <div className="summary__qty--column">
                       <span className="title__show--column">Các trường hiển thị trong bảng</span>
-                      <span className="qty-total">{`${lstFieldActive.length + defaultFieldTableDis.length}/${lstFieldActive.length + lstFieldUnActive.length + defaultFieldTableDis.length
-                        }`}</span>
+                      <span className="qty-total">{`${lstFieldActive.length + defaultFieldTableDis.length}/${
+                        lstFieldActive.length + lstFieldUnActive.length + defaultFieldTableDis.length
+                      }`}</span>
                     </div>
                     <div className="lst__items lst__items--show">
                       {(lstFieldActive || defaultFieldTableDis) &&
@@ -591,29 +592,45 @@ export default function PartnerList() {
       width: 70,
       resizable: false,
       suppressSizeToFit: true,
-      cellClass: "text-center",
-      headerClass: "text-center",
+      cellStyle: { display: "flex", justifyContent: "center" },
+      headerClass: "header-center",
     },
     { headerName: "Id", field: "id", hide: true },
     { headerName: "dataItem", field: "data", hide: true },
-    { headerName: "Tên đối tác", field: "name", cellRenderer: LinkToAction, headerClass: "text-left", cellClass: "text-left" },
-    { headerName: "Mã đối tác", field: "code", headerClass: "text-left", cellClass: "text-left" },
-    { headerName: "Mã số thuế", field: "taxCode", cellClass: "text-left", headerClass: "text-left" },
+    {
+      headerName: "Tên đối tác",
+      field: "name",
+      cellRenderer: LinkToAction,
+      headerClass: "header-left",
+      cellStyle: { display: "flex", justifyContent: "flex-start" },
+    },
+    {
+      headerName: "Mã đối tác",
+      field: "code",
+      headerClass: "header-left",
+      cellStyle: { display: "flex", justifyContent: "flex-start" },
+    },
+    {
+      headerName: "Mã số thuế",
+      field: "taxCode",
+      headerClass: "header-left",
+      cellStyle: { display: "flex", justifyContent: "flex-start" },
+    },
     {
       headerName: "Điện thoại",
       //   width: 135,
       field: "phoneMasked",
       cellRenderer: PhoneToAction,
       cellRendererParams: { isShowPhone, valueShowPhone, idPartner },
-      cellClass: "text-center",
-      headerClass: "text-center",
+      cellStyle: { display: "flex", justifyContent: "center" },
+      headerClass: "header-center",
     },
     {
       headerName: "Địa chỉ",
       // width: 135,
       field: "address",
-      headerClass: "text-left",
-      cellClass: "text-left",
+      headerClass: "header-left",
+      cellStyle: { display: "flex", justifyContent: "flex-start" },
     },
 
     // {
@@ -628,8 +645,7 @@ export default function PartnerList() {
       field: "action",
       cellRendererParams: { params },
       cellRenderer: ActionRenderer,
-      cellClass: "text-center",
-      headerClass: "text-center",
+      headerClass: "header-center",
     },
     {
       headerName: "",
@@ -959,8 +975,8 @@ export default function PartnerList() {
 
       const checkDataLocalStorage = takeFieldActiveContact
         ? result.filter((item) => {
-          return !takeFieldActiveContact.some((el) => el.fieldName === item.fieldName);
-        })
+            return !takeFieldActiveContact.some((el) => el.fieldName === item.fieldName);
+          })
         : result;
 
       setLstFieldUnActive(checkDataLocalStorage);
@@ -1132,21 +1148,21 @@ export default function PartnerList() {
     actions: [
       ...(activeTitleHeader !== 3
         ? [
-          isUserRoot && {
-            title: "Thêm mới bằng XML",
-            callback: () => {
-              setDataPartner(null);
-              setShowModalAddXml(true);
+            isUserRoot && {
+              title: "Thêm mới bằng XML",
+              callback: () => {
+                setDataPartner(null);
+                setShowModalAddXml(true);
+              },
             },
-          },
-          permissions["PARTNER_ADD"] == 1 && {
-            title: "Thêm mới",
-            callback: () => {
-              setDataPartner(null);
-              setShowModalAdd(true);
+            permissions["PARTNER_ADD"] == 1 && {
+              title: "Thêm mới",
+              callback: () => {
+                setDataPartner(null);
+                setShowModalAdd(true);
+              },
             },
-          },
-        ]
+          ]
         : []),
     ],
     actions_extra: [

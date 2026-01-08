@@ -125,6 +125,7 @@ export default function OrderInvoiceList() {
       from_date: paramsSearch.from_date,
       to_date: paramsSearch.to_date,
       keyword: paramsSearch.keyword,
+      status: paramsSearch.status,
       filters: [
         ...(paramsSearch.date
           ? [
@@ -459,53 +460,53 @@ export default function OrderInvoiceList() {
     return [
       {
         title: "Xem chi tiết",
-        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setIdOrderInvoice(item.id);
-          setDataInvoice(item);
-          setShowModalDetail(true);
+            setIdOrderInvoice(item.id);
+            setDataInvoice(item);
+            setShowModalDetail(true);
           }
         },
       },
       {
         title: "Chỉnh sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          navigate(`/order?id=${item.id}&type=edit`);
+            navigate(`/order?id=${item.id}&type=edit`);
           }
         },
       },
       {
         title: "Đang xử lý",
-        icon: <Icon name="WarningCircle" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+        icon: <Icon name="WarningCircle" className={isCheckedItem ? "icon-disabled" : "icon-warning"} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item, "processing");
+            showDialogConfirmDelete(item, "processing");
           }
         },
       },
       {
         title: "Duyệt hóa đơn",
-        icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+        icon: <Icon name="FingerTouch" className={isCheckedItem ? "icon-disabled" : "icon-warning"} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item, "confirm");
+            showDialogConfirmDelete(item, "confirm");
           }
         },
       },
       {
         title: "Hủy hóa đơn",
-        icon: <Icon name="TimesCircleFill" className={isCheckedItem? "icon-disabled":"icon-error"} />,
+        icon: <Icon name="TimesCircleFill" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item, "cancel");
+            showDialogConfirmDelete(item, "cancel");
           }
         },
       },
@@ -536,7 +537,9 @@ export default function OrderInvoiceList() {
           listSaveSearch={listSaveSearch}
           isFilter={true}
           listFilterItem={listFilter}
-          updateParams={(paramsNew) => setParams(paramsNew)}
+          updateParams={(paramsNew) => {
+            setParams(paramsNew);
+          }}
         />
         {!isLoading && listOrderInvoice && listOrderInvoice.length > 0 ? (
           <BoxTable

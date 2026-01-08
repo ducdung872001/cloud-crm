@@ -268,7 +268,7 @@ const FormViewerComponent = (props: any) => {
    Hàm này dùng để biến đổi dữ liệu được nhập ở properties với value =  curr.[fieldKey]
    => thành dạng {key: value}
    */
-  const getParamsPropertiesEform = (apiParams, formData) => {
+  const getParamsPropertiesEform = (apiParams, formData, keyGroup?) => {    
     let paramsTotal = {};
     if (apiParams) {
       const params = apiParams.replace(/curr\.(\w+)/g, (match, key) => {
@@ -319,7 +319,8 @@ const FormViewerComponent = (props: any) => {
         if (comp.type === "table") {
           let params = comp.properties || "";
           if (params && params?.type == "approval" && params?.controlType == "list") {
-            filterItems.push({ key: comp.id, params: { groupCode: params?.groupCode, potId, processId }, type: "log" });
+            const processIdData = params?.processId || processId;
+            filterItems.push({ key: comp.id, params: { groupCode: params?.groupCode, potId, processIdData }, type: "log" });
           }
         }
 
@@ -619,12 +620,13 @@ const FormViewerComponent = (props: any) => {
       console.log("Event focus =>", event);
 
       let formData = formViewerRef.current._getState().data;
+      
       const nodeId = contextData?.nodeId;
       const potId = contextData?.potId;
       const processId = contextData?.processId;
 
       //Nếu là select, thì cần được load lại danh sách dựa trên thông tin ràng buộc
-      const formField = event.formField;
+      const formField = event.formField;      
 
       //1. Loại là select
       if (formField.type == "select") {
@@ -634,9 +636,10 @@ const FormViewerComponent = (props: any) => {
         let apiUrl = formField?.properties?.apiUrl || "";
         let paramsUrl = formField?.properties?.paramsUrl || "";
         let apiParams = formField?.properties?.apiParams || "";
+        let keyGroup = formField?.properties?.keyGroup || "";
         let paramsTotal = {};
         if (apiParams) {
-          paramsTotal = getParamsPropertiesEform(apiParams, formData);
+          paramsTotal = getParamsPropertiesEform(apiParams, formData, keyGroup);
         } else {
           paramsTotal = convertDataParamsProperties(paramsUrl);
         }
@@ -663,6 +666,7 @@ const FormViewerComponent = (props: any) => {
           } else {
             dataOption = await SelectOptionData(key, params);
           }
+          
           formField.values = dataOption || [];
           delete formField.valuesKey; //Phải xóa đi mới hiển thị lên được
           // rerenderForm(currFormSchema, formData);

@@ -40,7 +40,7 @@ export default function TemplateEmailList(props: ITemplateEmailListProps) {
   const [isAddEditTemplateEmail, setIsAddEditTemplateEmail] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [params, setParams] = useState<ITemplateEmailFilterRequest>({
-    name: "",
+    title: "",
     limit: 10,
   });
 
@@ -197,12 +197,12 @@ export default function TemplateEmailList(props: ITemplateEmailListProps) {
     return [
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setDataTemplateEmail(item);
-          setIsAddEditTemplateEmail(true);
+            setDataTemplateEmail(item);
+            setIsAddEditTemplateEmail(true);
           }
         },
       },
@@ -212,7 +212,7 @@ export default function TemplateEmailList(props: ITemplateEmailListProps) {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item);
+            showDialogConfirmDelete(item);
           }
         },
       },
@@ -245,21 +245,21 @@ export default function TemplateEmailList(props: ITemplateEmailListProps) {
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} mẫu email`, "success");
-        getListTemplateEmail(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có mẫu email nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} mẫu email`, "success");
+          getListTemplateEmail(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có mẫu email nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+  };
 
   const showDialogConfirmDelete = (item?: ITemplateEmailResponseModel) => {
     const contentDialog: IContentDialog = {
@@ -285,11 +285,11 @@ export default function TemplateEmailList(props: ITemplateEmailListProps) {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

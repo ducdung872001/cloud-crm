@@ -1703,6 +1703,7 @@ export const urlsApi = {
     list: prefixAdmin + "/workOrder/list",
     groups: prefixAdmin + "/workOrder/groups",
     update: prefixAdmin + "/workOrder/update",
+    updateInitProcess: prefixAdmin + "/workOrder/update-init-process",
     updateEmployee: prefixAdmin + "/workOrder/update/employee",
     updatePause: prefixAdmin + "/workOrder/update/pause",
     listPause: prefixAdmin + "/workOrder/list/pause",
@@ -1731,6 +1732,8 @@ export const urlsApi = {
     employeeManagers: prefixAdmin + "/employee/managers",
     // Lấy danh sách người nhận việc
     employeeAssignees: prefixAdmin + "/employee/assignees",
+    // Lấy danh sách người nhận việc trong dự án
+    projectEmployeeAssignees: prefixAdmin + "/workProject/getEmployees",
     // danh sách trao đổi trong công việc
     workExchange: prefixAdmin + "/workExchange/list",
     // xóa 1 trao đổi trong công việc
