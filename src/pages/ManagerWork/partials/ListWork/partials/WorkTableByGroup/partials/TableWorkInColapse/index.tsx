@@ -85,8 +85,6 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
     // };
   }, [params]);
 
-  console.log("params isOpen", isOpen);
-
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
     name: "Công việc",
@@ -143,15 +141,31 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
   const dataMappingArray = (item: IWorkOrderResponseModel, index: number, type?: string) => [
     // getPageOffset(params) + index + 1,
     <div>{item?.name || ""}</div>,
+    item?.employeeName ? (
+      <span
+        onClick={() => {
+          setShowModalAssign(true);
+          setIdWork(item.id);
+        }}
+      >
+        {item?.employeeName}
+      </span>
+    ) : (
+      <a
+        onClick={() => {
+          setShowModalAssign(true);
+          setIdWork(item.id);
+        }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "5px",
+        }}
+      >
+        <Icon name="UserPlus" className="icon-assign-work" /> Giao việc
+      </a>
+    ),
 
-    <a
-      onClick={() => {
-        setShowModalAssign(true);
-        setIdWork(item.id);
-      }}
-    >
-      {item?.employeeName ?? "Giao việc"}
-    </a>,
     item.startTime || item.endTime ? `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}` : "",
     // item.projectName,
     <div

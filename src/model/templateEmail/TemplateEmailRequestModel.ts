@@ -1,5 +1,5 @@
 export interface ITemplateEmailFilterRequest {
-  name: string;
+  title: string;
   type?: number;
   tcyId?: number;
   page?: number;
