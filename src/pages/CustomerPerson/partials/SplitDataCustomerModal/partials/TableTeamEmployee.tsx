@@ -14,9 +14,7 @@ export default function TableTeamEmployee(props: any) {
   const isMounted = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
   const [tableEmployee, setTableEmployee] = useState([]);
-  const [listIdCheckedEmployee, setListIdCheckedEmployee] = useState<number[]>([]);
-  console.log('tableEmployee1223', tableEmployee);
-  
+  const [listIdCheckedEmployee, setListIdCheckedEmployee] = useState<number[]>([]);  
   
   const [params, setParams] = useState<any>({
     name: "",

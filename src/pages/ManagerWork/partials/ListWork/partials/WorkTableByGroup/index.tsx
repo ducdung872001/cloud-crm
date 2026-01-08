@@ -303,7 +303,9 @@ export default function WorkTableByGroup(props: any) {
       if (response.result.buckets.length === 0) {
         setListGroupWork([]);
       } else {
-        setListGroupWork(response.result.buckets.map((item) => item));
+        if (response?.result?.buckets?.length) {
+          setListGroupWork(response.result.buckets.map((item) => item));
+        }
       }
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -312,7 +314,6 @@ export default function WorkTableByGroup(props: any) {
   };
 
   const headerCollapsible = useCallback((item, index) => {
-    console.log("itemSetup item", item);
     return (
       <div className="collapse-header">
         <div className="group-name" style={{ backgroundColor: item?.color }}>
@@ -320,21 +321,6 @@ export default function WorkTableByGroup(props: any) {
           {item?.title}
         </div>
         <div className="number-work">{item?.count} công việc</div>
-        <div className="button-add">
-          <Tippy content="Thêm công việc" delay={[100, 0]} placement="left" animation="scale-extreme">
-            <div className="add-work">
-              <Button
-                color="success"
-                onClick={() => {
-                  setIdWork(null);
-                  setShowModalAdd(true);
-                }}
-              >
-                <Icon name="PlusCircle" />
-              </Button>
-            </div>
-          </Tippy>
-        </div>
       </div>
     );
   }, []);

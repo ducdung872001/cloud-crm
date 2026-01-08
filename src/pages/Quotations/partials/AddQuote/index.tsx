@@ -45,7 +45,7 @@ export default function AddQuote(props: IAddQuoteProps) {
   const [infoFile, setInfoFile] = useState(null);
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
   const [showProgress, setShowProgress] = useState(0);
-  
+
   const values = useMemo(
     () =>
       ({
@@ -78,11 +78,11 @@ export default function AddQuote(props: IAddQuoteProps) {
   }, [values]);
 
   useEffect(() => {
-    if(+formData.values.quoteType === 2){
-      setFormData({...formData, values: {...formData.values, quoteAttachment: ''}});
+    if (+formData.values.quoteType === 2) {
+      setFormData({ ...formData, values: { ...formData.values, quoteAttachment: "" } });
       setInfoFile(null);
     }
-  }, [formData.values.quoteType])
+  }, [formData.values.quoteType]);
 
   const loadedOptionSMS = async (search, loadedOptions, { page }) => {
     const param = {
@@ -150,15 +150,20 @@ export default function AddQuote(props: IAddQuoteProps) {
     if (data && onShow) {
       handDetailFormFS(data.fsId);
 
-      if(data.quoteAttachment){
+      if (data.quoteAttachment) {
         setInfoFile({
           fileUrl: data.quoteAttachment,
-          extension: data.quoteAttachment.includes('.docx') ? 'docx'
-                      : data.quoteAttachment.includes('.xlsx') ? 'xlsx'
-                      : (data.quoteAttachment.includes('.pdf') || data.quoteAttachment.includes('.PDF')) ? 'pdf'
-                      : data.quoteAttachment.includes('.pptx') ? 'pptx'
-                      : data.quoteAttachment.includes('.zip') ? 'zip'
-                      : 'rar'
+          extension: data.quoteAttachment.includes(".docx")
+            ? "docx"
+            : data.quoteAttachment.includes(".xlsx")
+            ? "xlsx"
+            : data.quoteAttachment.includes(".pdf") || data.quoteAttachment.includes(".PDF")
+            ? "pdf"
+            : data.quoteAttachment.includes(".pptx")
+            ? "pptx"
+            : data.quoteAttachment.includes(".zip")
+            ? "zip"
+            : "rar",
         });
       }
     }
@@ -298,7 +303,6 @@ export default function AddQuote(props: IAddQuoteProps) {
           value: "1",
           label: "Nhập từ ngoài vào",
         },
-        
       ],
     },
     {
@@ -306,6 +310,7 @@ export default function AddQuote(props: IAddQuoteProps) {
       name: "name",
       type: "text",
       fill: true,
+      maxLength: 300,
       required: true,
     },
     {
@@ -376,7 +381,7 @@ export default function AddQuote(props: IAddQuoteProps) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} báo giá thành công`, "success");
       handleClearForm(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -456,44 +461,43 @@ export default function AddQuote(props: IAddQuoteProps) {
     };
   }, [checkKeyDown]);
 
-    //Tải mẫu báo giá
-    const takeFileAdd = (data) => {
-      if (data) {
-          setIsLoadingFile(true)
-          uploadDocumentFormData(data, onSuccess, onError, onProgress);
-      }
-    };
+  //Tải mẫu báo giá
+  const takeFileAdd = (data) => {
+    if (data) {
+      setIsLoadingFile(true);
+      uploadDocumentFormData(data, onSuccess, onError, onProgress);
+    }
+  };
 
-    const onProgress = (percent) => {    
-      if (percent) {
-        setShowProgress(percent.toFixed(0));
-        // if (percent = 100) {
-        //   setShowProgress(0);
-        // }
-      }
-    };
-  
-    //* Đoạn này nhận link file đã chọn
-    const onSuccess = (data) => {
-      
-      if (data) {
-        setIsLoadingFile(false);
-        setInfoFile(data);
-        setFormData({...formData, values: {...formData.values, quoteAttachment: data.fileUrl}})
-      }
-    };
-  
-    //* Đoạn này nếu như mà lỗi không tải lên được thì bắn ra thông báo
-    const onError = (message) => {
+  const onProgress = (percent) => {
+    if (percent) {
+      setShowProgress(percent.toFixed(0));
+      // if (percent = 100) {
+      //   setShowProgress(0);
+      // }
+    }
+  };
+
+  //* Đoạn này nhận link file đã chọn
+  const onSuccess = (data) => {
+    if (data) {
       setIsLoadingFile(false);
-      showToast(message.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
-    };
+      setInfoFile(data);
+      setFormData({ ...formData, values: { ...formData.values, quoteAttachment: data.fileUrl } });
+    }
+  };
 
-    useEffect(() => {
-      if(!isLoadingFile === false){
-        setShowProgress(0);
-      }
-    }, [isLoadingFile])
+  //* Đoạn này nếu như mà lỗi không tải lên được thì bắn ra thông báo
+  const onError = (message) => {
+    setIsLoadingFile(false);
+    showToast(message.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+  };
+
+  useEffect(() => {
+    if (!isLoadingFile === false) {
+      setShowProgress(0);
+    }
+  }, [isLoadingFile]);
 
   return (
     <Fragment>
@@ -567,33 +571,35 @@ export default function AddQuote(props: IAddQuoteProps) {
                   </div>
                 )}
               </div>
-              {formData.values.quoteType === '1' ? 
-                  <div className="container_template_contract">
-                    <div>
-                      <span className="title_template">File báo giá<span style={{color:'red'}}>*</span></span>
-                    </div>
-                    <div className="box_template">
-                      <div className="box__update--attachment">
-                          {/* {isLoadingFile ? ( */}
-                            <div className={`is__loading--file ${isLoadingFile ? '' : 'd-none'}`}>
-                                <Icon name="Refresh" />
-                                <span className="name-loading">Đang tải...{showProgress}%</span>
-                            </div>
-                            {/* ) : ( */}
-                            <div className={isLoadingFile ? 'd-none' : ''}>
-                              <AddFile
-                                  takeFileAdd={takeFileAdd}
-                                  infoFile={infoFile}
-                                  setInfoFile={setInfoFile}
-                                  // setIsLoadingFile={setIsLoadingFile}
-                                  // dataAttachment={data}
-                              />
-                            </div>
-                          {/* )} */}
+              {formData.values.quoteType === "1" ? (
+                <div className="container_template_contract">
+                  <div>
+                    <span className="title_template">
+                      File báo giá<span style={{ color: "red" }}>*</span>
+                    </span>
+                  </div>
+                  <div className="box_template">
+                    <div className="box__update--attachment">
+                      {/* {isLoadingFile ? ( */}
+                      <div className={`is__loading--file ${isLoadingFile ? "" : "d-none"}`}>
+                        <Icon name="Refresh" />
+                        <span className="name-loading">Đang tải...{showProgress}%</span>
                       </div>
+                      {/* ) : ( */}
+                      <div className={isLoadingFile ? "d-none" : ""}>
+                        <AddFile
+                          takeFileAdd={takeFileAdd}
+                          infoFile={infoFile}
+                          setInfoFile={setInfoFile}
+                          // setIsLoadingFile={setIsLoadingFile}
+                          // dataAttachment={data}
+                        />
+                      </div>
+                      {/* )} */}
                     </div>
                   </div>
-                : null}
+                </div>
+              ) : null}
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

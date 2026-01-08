@@ -72,7 +72,7 @@ export default function ProductUnitList(props: IProductUnitListProps) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListUnit(result);
+      setListUnit(result?.items ?? result);
 
       setPagination({
         ...pagination,
@@ -173,12 +173,12 @@ export default function ProductUnitList(props: IProductUnitListProps) {
     return [
       permissions["UNIT_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setDataUnit(item);
-          setShowModalAdd(true);
+            setDataUnit(item);
+            setShowModalAdd(true);
           }
         },
       },
@@ -188,7 +188,7 @@ export default function ProductUnitList(props: IProductUnitListProps) {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item);
+            showDialogConfirmDelete(item);
           }
         },
       },
@@ -221,21 +221,21 @@ export default function ProductUnitList(props: IProductUnitListProps) {
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} đơn vị sản phẩm`, "success");
-        getListUnit(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có đơn vị sản phẩm nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} đơn vị sản phẩm`, "success");
+          getListUnit(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có đơn vị sản phẩm nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+  };
 
   const showDialogConfirmDelete = (item?: IUnitResponse) => {
     const contentDialog: IContentDialog = {
@@ -261,11 +261,11 @@ export default function ProductUnitList(props: IProductUnitListProps) {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

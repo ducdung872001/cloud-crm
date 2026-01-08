@@ -167,6 +167,12 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  // lấy danh sách người nhận việc trong dự án
+  projectEmployeeAssignees: (params: any) => {
+    return fetch(`${urlsApi.workOrder.projectEmployeeAssignees}${convertParamsToString(params)}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
   // danh sách trao đổi trong công việc
   workExchange: (params: IWorkExchangeFilterRequest) => {
     return fetch(`${urlsApi.workOrder.workExchange}${convertParamsToString(params)}`, {

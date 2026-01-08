@@ -10,7 +10,7 @@
       overflow: auto;
       padding: 1rem;
       &__add {
-        margin-top: 2rem;
+        margin-top: 5rem;
         border: 1px dashed var(--extra-color-50);
         border-radius: 8px;
         display: flex;
@@ -38,7 +38,7 @@
         }
       }
       &__assign {
-        margin-top: 5rem;
+        margin-top: 2rem;
         border: 1px dashed var(--extra-color-50);
         border-radius: 8px;
         display: flex;
@@ -67,7 +67,7 @@
           &:nth-child(7) {
             width: calc(50% - 1.6rem);
           }
-          &:nth-child(5) {
+          &:nth-child(4) {
             position: relative;
 
             .option__time--workload {
@@ -127,17 +127,19 @@
               }
             }
           }
-          &:nth-child(8) {
+          &:nth-child(5) {
             .radio-list {
               .form-group {
                 display: flex;
                 align-items: center;
                 gap: 0 2rem;
+                margin-top: 1.5rem;
 
                 .base-radio {
                   margin-top: 0;
 
                   label {
+                    width: 10rem;
                     padding-left: 2.2rem;
                   }
                 }

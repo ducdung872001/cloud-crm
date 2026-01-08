@@ -24,6 +24,10 @@ import EmployeeAgentService from "services/EmployeeAgentService";
 import JsSIP from 'jssip';
 import * as SIP from 'sip.js';
 import { Inviter, Registerer, URI, UserAgent } from 'sip.js';
+import { useWebRTC } from "components/WebRTCEmbed/hooks/useWebRTC";
+
+
+const { makeCall } = useWebRTC();
 
 interface IParamsCustomerInCallCenter {
   keyword?: string;
@@ -212,10 +216,10 @@ export default function CustomerList(props: ICustomerListProps) {
         title: "Gọi điện",
         icon: <Icon name="ContactPhone" />,
         callback: () => {
-          setDataCustomer(item);
-          setShowModalPhone(true);
+          // setDataCustomer(item);
+          // setShowModalPhone(true);
           // handleMakeCall()
-          // makeCall('0962829352');
+          makeCall('0962829352');
         },
       },
     ];
@@ -226,9 +230,9 @@ export default function CustomerList(props: ICustomerListProps) {
 
   }
 
-  useEffect(() => {
-    getAccountCall()
-  }, [])
+  // useEffect(() => {
+  //   getAccountCall()
+  // }, [])
 
 
   // function makeCall(phoneNumber) {
@@ -390,61 +394,61 @@ export default function CustomerList(props: ICustomerListProps) {
   // };
 
   // Cấu hình SIP User Agent
-  const config = {
-    uri: "sip:athena_101057@pbx-athenaspear-prod.athenafs.io",
-    wsServers: ["wss://pbx-athenaspear-prod.athenafs.io:7443"],
-    authorizationUser: "athena_101057",
-    password: "B44pW9dkW9G9X1dGPo6vcnYFgDES9eDR",
-    traceSip: true, // Log SIP messages for debugging
-  };
+  // const config = {
+  //   uri: "sip:athena_101057@pbx-athenaspear-prod.athenafs.io",
+  //   wsServers: ["wss://pbx-athenaspear-prod.athenafs.io:7443"],
+  //   authorizationUser: "athena_101057",
+  //   password: "B44pW9dkW9G9X1dGPo6vcnYFgDES9eDR",
+  //   traceSip: true, // Log SIP messages for debugging
+  // };
 
-  const audioElement = document.createElement("audio");
-  audioElement.setAttribute("autoPlay", "true");
-  audioElement.style.display = "none"; 
-  remoteAudioRef.current = audioElement;
+  // const audioElement = document.createElement("audio");
+  // audioElement.setAttribute("autoPlay", "true");
+  // audioElement.style.display = "none"; 
+  // remoteAudioRef.current = audioElement;
 
-  document.body.appendChild(audioElement);
+  // document.body.appendChild(audioElement);
 
-  const userAgent = new SIP.WebRTC.Simple({
-    media: {
-        remote: {
-          audio: remoteAudioRef.current, 
-        },
-    },
-    ua: config,
-  });
+  // const userAgent = new SIP.WebRTC.Simple({
+  //   media: {
+  //       remote: {
+  //         audio: remoteAudioRef.current, 
+  //       },
+  //   },
+  //   ua: config,
+  // });
 
-  // Lắng nghe các sự kiện từ User Agent
-  userAgent.on("registered", () => console.log("Registered successfully!"));
-  userAgent.on("unregistered", () => console.log("Unregistered"));
-  userAgent.on("registrationFailed", (error) => console.error("Registration failed:", error));
-  userAgent.on("invite", (session) => console.log("Incoming call:", session));
+  // // Lắng nghe các sự kiện từ User Agent
+  // userAgent.on("registered", () => console.log("Registered successfully!"));
+  // userAgent.on("unregistered", () => console.log("Unregistered"));
+  // userAgent.on("registrationFailed", (error) => console.error("Registration failed:", error));
+  // userAgent.on("invite", (session) => console.log("Incoming call:", session));
 
 
-  const makeCall = (phone) => {
-    // const target = `sip:${phone}@pbx-athenaspear-prod.athenafs.io`; // Số hoặc SIP URI
+  // const makeCall = (phone) => {
+  //   // const target = `sip:${phone}@pbx-athenaspear-prod.athenafs.io`; // Số hoặc SIP URI
 
-    const target = `25603355_0996623235_${phone}@pbx-athenaspear-prod.athenafs.io`
+  //   const target = `25603355_0996623235_${phone}@pbx-athenaspear-prod.athenafs.io`
 
-    userAgent.call(target);
+  //   userAgent.call(target);
 
-    // Lắng nghe sự kiện
-    userAgent.on("ringing", () => {
-      console.log("The call is ringing!");
-    });
+  //   // Lắng nghe sự kiện
+  //   userAgent.on("ringing", () => {
+  //     console.log("The call is ringing!");
+  //   });
 
-    userAgent.on("progress", () => {
-      console.log("The call is ringing!");
-    });
+  //   userAgent.on("progress", () => {
+  //     console.log("The call is ringing!");
+  //   });
 
-    userAgent.on("ended", () => {
-      console.log("The call has ended!");
-    });
+  //   userAgent.on("ended", () => {
+  //     console.log("The call has ended!");
+  //   });
 
-    userAgent.on("failed", (error) => {
-      console.error("Call failed:", error);
-    });
-  }
+  //   userAgent.on("failed", (error) => {
+  //     console.error("Call failed:", error);
+  //   });
+  // }
 
 
   return (

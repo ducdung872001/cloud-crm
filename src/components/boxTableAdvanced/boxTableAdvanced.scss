@@ -33,11 +33,43 @@
     }
 
     .ag-header-cell-label {
-      justify-content: center !important;
+      // justify-content: center !important;
     }
 
     .ag-header-cell {
-      text-align: center !important;
+      // text-align: center !important;
+    }
+
+    /* Chỉ áp dụng cho header có headerClass = 'header-left' */
+    .header-left {
+      .ag-header-cell-label {
+        justify-content: flex-start; /* kéo label sang trái (header container là flex) */
+        /* đảm bảo text header căn trái */
+        .ag-header-cell-text {
+          text-align: left;
+        }
+      }
+    }
+
+    /* Chỉ áp dụng cho header có headerClass = 'header-center' */
+    .header-center {
+      .ag-header-cell-label {
+        justify-content: center;
+        /* đảm bảo text header căn trái */
+        .ag-header-cell-text {
+          text-align: center;
+        }
+      }
+    }
+    /* Chỉ áp dụng cho header có headerClass = 'header-right' */
+    .header-right {
+      .ag-header-cell-label {
+        justify-content: flex-end;
+        /* đảm bảo text header căn phải */
+        .ag-header-cell-text {
+          text-align: end;
+        }
+      }
     }
 
     .ag-pinned-left-header {

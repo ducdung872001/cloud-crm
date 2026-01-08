@@ -1,43 +1,32 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef, useContext } from "react";
 import _ from "lodash";
-import moment from "moment";
 import { getSearchParameters, isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IAddWorkModelProps } from "model/workOrder/PropsModel";
 import { IWorkOrderRequestModel } from "model/workOrder/WorkOrderRequestModel";
-import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import { IWorkProjectFilterRequest } from "model/workProject/WorkProjectRequestModel";
 import { IWorkTypeFilterRequest } from "model/workType/WorkTypeRequestModel";
-import { ICustomerSchedulerFilterRequest } from "model/customer/CustomerRequestModel";
 import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
 import Icon from "components/icon";
-import Input from "components/input/input";
-import Switch from "components/switch/switch";
 import NummericInput from "components/input/numericInput";
 import SelectCustom from "components/selectCustom/selectCustom";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
-import CheckboxList from "components/checkbox/checkboxList";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useActiveElement, useOnClickOutside } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
-import { listTimeSlots, showToast } from "utils/common";
-import FileService from "services/FileService";
-import { listDay, listHour, listMinute, listNotificationType, listOption } from "pages/CalendarCommon/partials/MockData";
+import { showToast } from "utils/common";
+import { listDay, listHour, listMinute } from "pages/CalendarCommon/partials/MockData";
 import ImageThirdGender from "assets/images/third-gender.png";
-import EmployeeService from "services/EmployeeService";
-import CustomerService from "services/CustomerService";
 import WorkTypeService from "services/WorkTypeService";
 import WorkOrderService from "services/WorkOrderService";
 import WorkProjectService from "services/WorkProjectService";
 import { ContextType, UserContext } from "contexts/userContext";
-import { uploadDocumentFormData } from "utils/document";
 
 import "./index.scss";
-import CampaignOpportunityService from "services/CampaignOpportunityService";
-import { ICampaignOpportunityFilterRequest } from "model/campaignOpportunity/CampaignOpportunityRequestModel";
 import AttachmentUploader, { UploadedItem } from "components/attachmentUpload";
+import moment from "moment";
 
 interface IDataListNotificationProps {
   method: string[];
@@ -55,8 +44,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
   const params: any = getSearchParameters();
 
   const takeIdProjectManagement = Object.keys(params).length > 0 && +params?.projectId > 0 ? +params?.projectId : null;
-  const takeIdOptManagement = Object.keys(params).length > 0 && +params?.opportunityId > 0 ? +params?.opportunityId : null;
-  const { dataBranch, id, name, avatar } = useContext(UserContext) as ContextType;
+  const { name, avatar } = useContext(UserContext) as ContextType;
 
   const [data, setData] = useState<IWorkOrderResponseModel>(null);
 
@@ -64,7 +52,6 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
   const refContainerTimeWorkLoad = useRef();
 
   const refOptionDecisionTime = useRef();
-  const refContainerDecisionTime = useRef();
 
   const focusedElement = useActiveElement();
 
@@ -74,7 +61,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
 
   const [validateWordLoad, setValidateWordLoad] = useState<boolean>(false);
   const [validateProject, setValidateProject] = useState<boolean>(false);
-  const [validateOpt, setValidateOpt] = useState<boolean>(false);
+  const [dataManager, setDataManager] = useState(null);
 
   //! đoạn này call API chi tiết khi update
   const getDetailWork = async (id: number) => {
@@ -93,34 +80,28 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
 
       setDataParticipants(takeLstParticipant);
 
-      const takeLstCustomer = (response.result?.lstCustomer || []).map((item) => {
-        return {
-          value: item.id,
-          label: item.name,
-          avatar: item.avatar,
-        };
-      });
-
-      setDataPeopleInvolved(takeLstCustomer);
-
       setDataWorkProject({
         value: result.projectId,
         label: result.projectName,
       });
-      setDataWorkOpt({
-        value: result.opportunityId,
-        label: result.opportunityName,
-      });
 
-      setDataEmployee({
-        value: result.employeeId,
-        label: result.employeeName,
-      });
+      if (result?.employeeId) {
+        setDataEmployee({
+          value: result.employeeId,
+          label: result?.employeeName ?? result.employeeId,
+        });
+      }
 
       if (result.managerId) {
         setDataManager({
           value: result.managerId,
-          label: result.managerName,
+          label: result?.managerName ?? result.managerId,
+        });
+      } else {
+        setDataManager({
+          value: name,
+          label: name,
+          avatar: avatar,
         });
       }
 
@@ -206,69 +187,11 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
     }
   }, [valueDecisionTime]);
 
-  const handleChangeValueTime = (e) => {
-    setValueTime(e);
-  };
-
   const [dataListNotification, setDataListNotification] = useState<IDataListNotificationProps[]>([]);
 
-  const [dataApplyNotification, setDataApplyNotification] = useState({
-    method: [],
-    time: { day: 0, hour: 0, minute: 0 },
-  });
-
-  useEffect(() => {
-    if (valueTime && valueDecisionTime) {
-      if (valueDecisionTime.value == "1") {
-        setDataApplyNotification({ ...dataApplyNotification, time: { day: +valueTime.value, hour: 0, minute: 0 } });
-      } else if (valueDecisionTime.value == "2") {
-        setDataApplyNotification({ ...dataApplyNotification, time: { day: 0, hour: +valueTime.value, minute: 0 } });
-      } else {
-        setDataApplyNotification({ ...dataApplyNotification, time: { day: 0, hour: 0, minute: +valueTime.value } });
-      }
-    }
-  }, [valueTime, valueDecisionTime]);
-
-  const handleChangeValueNofiType = (e) => {
-    setDataApplyNotification({ ...dataApplyNotification, method: e ? e.split(",") : [] });
-  };
-
-  const handApplyNotification = () => {
-    if (dataApplyNotification.method.length > 0) {
-      setDataListNotification([...dataListNotification, dataApplyNotification]);
-      setValueDecisionTime({
-        value: "3",
-        label: "Phút",
-      });
-      setDataApplyNotification({ ...dataApplyNotification, method: [] });
-    }
-  };
-
-  //! xử lý xóa thông báo
-  const handleRemoveApplyNotification = (idx) => {
-    //? đoạn này dùng toán tử (...) trong ES6 để tránh modify trực tiếp mảng ban đầu
-    const newApplyNotification = [...dataListNotification];
-    newApplyNotification.splice(idx, 1);
-    setDataListNotification(newApplyNotification);
-  };
-
-  const [dataManager, setDataManager] = useState(null);
   const [dataEmployee, setDataEmployee] = useState(null);
   const [dataParticipants, setDataParticipants] = useState([]);
   const [dataWorkProject, setDataWorkProject] = useState(null);
-  const [dataWorkOpt, setDataWorkOpt] = useState(null);
-
-  useEffect(() => {
-    if (id && !dataManager) {
-      setDataManager({
-        value: id,
-        label: name,
-        avatar,
-      });
-    } else {
-      setDataManager(null);
-    }
-  }, [id, name, avatar]);
 
   useEffect(() => {
     if (dataProjectProps) {
@@ -277,14 +200,6 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
       setDataWorkProject(null);
     }
   }, [dataProjectProps]);
-
-  useEffect(() => {
-    if (dataOptProps) {
-      setDataWorkOpt(dataOptProps);
-    } else {
-      setDataWorkOpt(null);
-    }
-  }, [dataOptProps]);
 
   //! đoạn này xử lý vấn đề callAPI chi tiết 1 dự án khi thêm mới
   const getDetailProject = async () => {
@@ -309,41 +224,10 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
       setDataParticipants(dataParticipant);
     }
   };
-  //! đoạn này xử lý vấn đề callAPI chi tiết 1 dự án khi thêm mới
-
-  const getDetailOpt = async () => {
-    const response = await CampaignOpportunityService.detail(idManagement ? idManagement : takeIdOptManagement);
-
-    if (response.code == 0) {
-      const result = response.result;
-      setDataWorkOpt({
-        value: result.id,
-        label: result?.opportunity?.id
-          ? result.opportunity.contactName + (result.opportunity.productName ? " - " + result.opportunity.productName : "")
-          : result.customerName,
-      });
-
-      // const dataParticipant = (result?.lstParticipant || []).map((item) => {
-      //   return {
-      //     value: item.id,
-      //     label: item.name,
-      //     avatar: item.avatar,
-      //   };
-      // });
-
-      // setDataParticipants(dataParticipant);
-    }
-  };
 
   useEffect(() => {
-    if (type === "opportunity") {
-      if (onShow && (idManagement > 0 || takeIdOptManagement) && !idWork && !dataOptProps) {
-        getDetailOpt();
-      }
-    } else {
-      if (onShow && (idManagement > 0 || takeIdProjectManagement) && !idWork && !dataProjectProps) {
-        getDetailProject();
-      }
+    if (onShow && (idManagement > 0 || takeIdProjectManagement) && !idWork && !dataProjectProps) {
+      getDetailProject();
     }
   }, [onShow, idManagement, idWork, takeIdProjectManagement, dataProjectProps]);
 
@@ -353,15 +237,13 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
         name: data?.name ?? "",
         content: data?.content ?? "",
         // startTime: idWork ? data?.startTime : startDate ? startDate : moment().format("MM/DD/YYYY"),
-        startTime: idWork ? data?.startTime : startDate ? startDate : new Date(),
-        endTime: idWork ? data?.endTime : endDate ? endDate : "",
+        startTime: data?.startTime ? moment(data?.startTime) : "",
+        endTime: data?.endTime ? moment(data?.endTime) : "",
         workLoad: data?.workLoad ?? "",
         workLoadUnit: data?.workLoadUnit ?? "H",
         wteId: data?.wteId ?? null,
         docLink: JSON.parse(data?.docLink || "[]") ?? [],
-        projectId: data?.projectId ? data?.projectId : type && type === "opportunity" ? null : dataWorkProject?.value,
-        opportunityId: data?.opportunityId ? data?.opportunityId : type && type === "opportunity" ? dataWorkProject?.value : null,
-        managerId: data?.managerId ? data?.managerId : dataManager?.value,
+        projectId: data?.projectId ? data?.projectId : dataWorkProject?.value,
         employeeId: data?.employeeId ? data?.employeeId : null,
         participants: data?.participants ? JSON.parse(data?.participants || "[]") : dataParticipants?.map((item) => item.value),
         customers: JSON.parse(data?.customers || "[]") ?? [],
@@ -370,7 +252,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
         priorityLevel: data?.priorityLevel?.toString() ?? "2",
         notification: JSON.parse(data?.notification || "[]") ?? [],
       } as IWorkOrderRequestModel),
-    [onShow, data, idWork, startDate, endDate, dataManager, dataParticipants, dataWorkProject, statusProps]
+    [onShow, data, idWork, startDate, endDate, dataParticipants, dataWorkProject, statusProps]
   );
 
   const validations: IValidation[] = [
@@ -411,15 +293,12 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
     );
   };
 
-  useEffect(() => {
-    if (dataManager) {
-      setFormData({ ...formData, values: { ...formData?.values, managerId: dataManager.value } });
-    }
-  }, [dataManager]);
-
   //! đoạn này xử lý vấn đề lấy người nhận việc
   const loadedOptionEmployee = async (search, loadedOptions, { page }) => {
-    const response = await WorkOrderService.employeeAssignees({});
+    if (!dataWorkProject) return { options: [], hasMore: false };
+    const response = await WorkOrderService.projectEmployeeAssignees({
+      workProjectId: dataWorkProject ? dataWorkProject.value : null,
+    });
 
     if (response.code === 0) {
       const dataOption = response.result;
@@ -446,15 +325,18 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
     return { options: [], hasMore: false };
   };
 
+  useEffect(() => {
+    if (!dataWorkProject) return;
+    loadedOptionEmployee("", [], {
+      page: 1,
+    });
+  }, [dataWorkProject]);
+
   //? đoạn này xử lý vấn đề thay đổi người nhận việc
   const handleChangeValueEmployee = (e) => {
-    console.log(e);
-
     setDataEmployee(e);
     setFormData({ ...formData, values: { ...formData?.values, employeeId: e.value } });
   };
-
-  console.log("setFormData>>", formData);
 
   //* đoạn này xử lý vấn đề hiển thị hình ảnh người nhận việc
   const formatOptionLabelEmployee = ({ label, avatar }) => {
@@ -515,127 +397,6 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
     }
   }, [dataWorkType]);
 
-  //! đoạn này lấy danh sách khách hàng liên quan
-  const [dataPeopleInvolved, setDataPeopleInvolved] = useState([]);
-
-  const loadedOptionPeopleInvolved = async (search, loadedOptions, { page }) => {
-    const param: ICustomerSchedulerFilterRequest = {
-      keyword: search,
-      page: page,
-      limit: 10,
-      branchId: dataBranch.value,
-    };
-
-    const response = await CustomerService.filter(param);
-
-    if (response.code === 0) {
-      const dataOption = response.result.items;
-
-      return {
-        options: [
-          ...(dataOption.length > 0
-            ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                  avatar: item.avatar,
-                };
-              })
-            : []),
-        ],
-        hasMore: response.result.loadMoreAble,
-        additional: {
-          page: page + 1,
-        },
-      };
-    }
-
-    return { options: [], hasMore: false };
-  };
-
-  useEffect(() => {
-    if (customerId) {
-      setDataPeopleInvolved([{ value: customerId, label: customerName }]);
-    }
-  }, [customerId, onShow]);
-
-  //? đoạn này xử lý vấn đề thay đổi khách hàng liên quan
-  const handleChangeValuePeopleInvolved = (e) => {
-    setDataPeopleInvolved(e);
-  };
-
-  //* đoạn này xử lý vấn đề hiển thị hình ảnh khách hàng liên quan
-  const formatOptionLabelPeopleInvolved = ({ label, avatar }) => {
-    return (
-      <div className="selected--item">
-        <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
-        </div>
-        {label}
-      </div>
-    );
-  };
-
-  useEffect(() => {
-    if (dataPeopleInvolved && dataPeopleInvolved.length > 0) {
-      const listIdPeopleInvolved = dataPeopleInvolved.map((item) => item.value);
-      setFormData({ ...formData, values: { ...formData?.values, customers: listIdPeopleInvolved } });
-    } else {
-      setFormData({ ...formData, values: { ...formData?.values, customers: [] } });
-    }
-  }, [dataPeopleInvolved]);
-
-  const loadedOptionParticipant = async (search, loadedOptions, { page }) => {
-    const param: IEmployeeFilterRequest = {
-      name: search,
-      page: page,
-      limit: 10,
-      branchId: dataBranch.value,
-    };
-
-    const response = await EmployeeService.list(param);
-
-    if (response.code === 0) {
-      const dataOption = response.result.items;
-
-      return {
-        options: [
-          ...(dataOption.length > 0
-            ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                  avatar: item.avatar,
-                };
-              })
-            : []),
-        ],
-        hasMore: response.result.loadMoreAble,
-        additional: {
-          page: page + 1,
-        },
-      };
-    }
-
-    return { options: [], hasMore: false };
-  };
-
-  const handleChangeValueParticipant = (e) => {
-    setDataParticipants(e);
-  };
-
-  //* đoạn này hiển thị hình ảnh người tham gia
-  const formatOptionLabelParticipant = ({ label, avatar }) => {
-    return (
-      <div className="selected--item">
-        <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
-        </div>
-        {label}
-      </div>
-    );
-  };
-
   useEffect(() => {
     if (dataParticipants.length > 0) {
       const listIdParticipants = dataParticipants.map((item) => item.value);
@@ -667,70 +428,6 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
       setFormData({ ...formData, values: { ...formData?.values, docLink: [] } });
     }
   }, [listImageWork]);
-
-  //! đoạn này xử lý hình ảnh
-  const handleUploadDocument = (e) => {
-    e.preventDefault();
-
-    const file = e.target.files[0];
-
-    const checkFile = file.type;
-
-    if (checkFile.startsWith("image")) {
-      handUploadFile(file);
-    }
-
-    if (checkFile.startsWith("application")) {
-      uploadDocumentFormData(file, onSuccess, onError, onProgress);
-    }
-  };
-
-  //* Xử lý tài liệu
-  const [showProgress, setShowProgress] = useState<number>(0);
-
-  const onSuccess = (data) => {
-    if (data) {
-      const result = {
-        url: data.fileUrl,
-        type: data.extension,
-      };
-
-      setListImageWork([...listImageWork, result]);
-    }
-  };
-
-  const onError = (message) => {
-    showToast(message.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
-  };
-
-  const onProgress = (percent) => {
-    if (percent) {
-      setShowProgress(percent);
-
-      if (percent >= 99) {
-        setShowProgress(0);
-      }
-    }
-  };
-
-  const handUploadFile = async (file) => {
-    await FileService.uploadFile({ data: file, onSuccess: processUploadSuccess });
-  };
-
-  const processUploadSuccess = (data) => {
-    const result = data?.fileUrl;
-    const changeResult = {
-      url: result,
-      type: "image",
-    };
-    setListImageWork([...listImageWork, changeResult]);
-  };
-
-  const handleRemoveImageItem = (idx) => {
-    const result = [...listImageWork];
-    result.splice(idx, 1);
-    setListImageWork(result);
-  };
 
   //? đoạn này xử lý vấn đề thay đổi số lượng công việc
   const handleChangeValueWorkLoad = (e) => {
@@ -777,23 +474,9 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
   const handleChangeValueWorkProject = (e) => {
     setValidateProject(false);
     setDataWorkProject(e);
+    setDataEmployee(null);
+    setFormData({ ...formData, values: { ...formData?.values, employeeId: null, projectId: dataWorkProject.value } });
   };
-  //? đoạn này xử lý vấn đề thay đổi cơ hội
-  const handleChangeValueWorkOpt = (e) => {
-    setValidateOpt(false);
-    setDataWorkOpt(e);
-  };
-
-  useEffect(() => {
-    if (dataWorkProject) {
-      setFormData({ ...formData, values: { ...formData?.values, projectId: dataWorkProject.value } });
-    }
-  }, [dataWorkProject]);
-  useEffect(() => {
-    if (dataWorkOpt) {
-      setFormData({ ...formData, values: { ...formData?.values, opportunityId: dataWorkOpt.value } });
-    }
-  }, [dataWorkOpt]);
 
   // Thông báo
   useEffect(() => {
@@ -808,215 +491,15 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
   const startDay = new Date(formData.values.startTime).getTime();
   const endDay = new Date(formData.values.endTime).getTime();
 
-  // Thời gian bắt đầu và kết thúc
-  const addTimePeriodicSchedule = {
-    start: "",
-    end: "",
-  };
-
-  const defaultPeriodicSchedule = [
-    {
-      name: "Chủ nhật",
-      code: "cn",
-      time: [],
-    },
-    {
-      name: "Thứ 2",
-      code: "t2",
-      time: [],
-    },
-    {
-      name: "Thứ 3",
-      code: "t3",
-      time: [],
-    },
-    {
-      name: "Thứ 4",
-      code: "t4",
-      time: [],
-    },
-    {
-      name: "Thứ 5",
-      code: "t5",
-      time: [],
-    },
-    {
-      name: "Thứ 6",
-      code: "t6",
-      time: [],
-    },
-    {
-      name: "Thứ 7",
-      code: "t7",
-      time: [],
-    },
-  ];
-
-  const intervalMinutes = 15;
-  const startTime = moment(new Date()).startOf("day");
-  const endTime = moment(new Date()).endOf("day");
-  const timeSlots = listTimeSlots(startTime, endTime, intervalMinutes);
-
-  const [lstPeriodicSchedule, setLstPeriodicSchedule] = useState(defaultPeriodicSchedule);
-
   const refOptionStartTime = useRef();
-  const refContainerStartTime = useRef();
 
   const refOptionEndTime = useRef();
-  const refContainerEndTime = useRef();
 
   const [isChooseStartTime, setIsChooseStartTime] = useState<boolean>(false);
   const [isChooseEndTime, setIsChooseEndTime] = useState<boolean>(false);
 
   useOnClickOutside(refOptionStartTime, () => setIsChooseStartTime(false), ["choose__start--time"]);
   useOnClickOutside(refOptionEndTime, () => setIsChooseEndTime(false), ["choose__end--time"]);
-
-  const handleAddItemTimeEmpty = (idx) => {
-    setLstPeriodicSchedule((prev) =>
-      prev.map((item, index) => {
-        if (index === idx) {
-          return {
-            ...item,
-            time: [addTimePeriodicSchedule],
-          };
-        }
-
-        return item;
-      })
-    );
-  };
-
-  const handleChangeStartTime = (e, index, idx) => {
-    const value = e.target.value;
-
-    setLstPeriodicSchedule((prev) =>
-      prev.map((item, i) => {
-        if (i === idx) {
-          return {
-            ...item,
-            time: [...item.time].map((el, k) => {
-              if (k === index) {
-                return {
-                  ...el,
-                  start: value,
-                };
-              }
-
-              return el;
-            }),
-          };
-        }
-
-        return item;
-      })
-    );
-  };
-
-  const handleChooseStartTime = (value, index, idx) => {
-    setLstPeriodicSchedule((prev) =>
-      prev.map((item, i) => {
-        if (i === idx) {
-          return {
-            ...item,
-            time: [...item.time].map((el, k) => {
-              if (k === index) {
-                return {
-                  ...el,
-                  start: value,
-                };
-              }
-
-              return el;
-            }),
-          };
-        }
-
-        return item;
-      })
-    );
-  };
-
-  const handleChangeEndTime = (e, index, idx) => {
-    const value = e.target.value;
-
-    setLstPeriodicSchedule((prev) =>
-      prev.map((item, i) => {
-        if (i === idx) {
-          return {
-            ...item,
-            time: [...item.time].map((el, k) => {
-              if (k === index) {
-                return {
-                  ...el,
-                  end: value,
-                };
-              }
-
-              return el;
-            }),
-          };
-        }
-
-        return item;
-      })
-    );
-  };
-
-  const handleChooseEndTime = (value, index, idx) => {
-    setLstPeriodicSchedule((prev) =>
-      prev.map((item, i) => {
-        if (i === idx) {
-          return {
-            ...item,
-            time: [...item.time].map((el, k) => {
-              if (k === index) {
-                return {
-                  ...el,
-                  end: value,
-                };
-              }
-
-              return el;
-            }),
-          };
-        }
-
-        return item;
-      })
-    );
-  };
-
-  const handleAddItemTime = (idx) => {
-    setLstPeriodicSchedule((prev) =>
-      prev.map((item, i) => {
-        if (i === idx) {
-          return {
-            ...item,
-            time: [...item.time, defaultPeriodicSchedule],
-          };
-        }
-
-        return item;
-      })
-    );
-  };
-
-  const handleDeleteItemTime = (index, idx) => {
-    setLstPeriodicSchedule((prev) =>
-      prev.map((item, i) => {
-        if (i === idx) {
-          return {
-            ...item,
-            time: [...item.time].filter((_, k) => k !== index),
-          };
-        }
-
-        return item;
-      })
-    );
-  };
-
-  const [hasPeriodicSchedule, setHasPeriodicSchedule] = useState<boolean>(true);
 
   // memoize handler để ref ổn định
   const handleChange = useCallback((newList: UploadedItem[]) => {
@@ -1094,6 +577,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
       ] as IFieldCustomize[],
     [formData?.values, listImageWork, dataWorkProject, validateProject, dataWorkType]
   );
+
   const listFieldAssign = useMemo(
     () =>
       [
@@ -1121,12 +605,20 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
           type: "custom",
           snippet: (
             <SelectCustom
+              key={
+                dataWorkProject && dataWorkProject?.value
+                  ? dataWorkProject.value
+                  : "null" + "_" + dataEmployee && dataEmployee?.value
+                  ? dataEmployee.value
+                  : "null"
+              }
               id="employeeId"
               name="employeeId"
               label="Người nhận việc"
               options={[]}
               fill={true}
               required={true}
+              disabled={!dataWorkProject}
               value={dataEmployee}
               onChange={(e) => handleChangeValueEmployee(e)}
               isAsyncPaginate={true}
@@ -1137,30 +629,8 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
               }}
               loadOptionsPaginate={loadedOptionEmployee}
               formatOptionLabel={formatOptionLabelEmployee}
-            />
-          ),
-        },
-        {
-          name: "participants",
-          type: "custom",
-          snippet: (
-            <SelectCustom
-              id="participants"
-              name="participants"
-              label="Người tham gia"
-              fill={true}
-              options={[]}
-              isMulti={true}
-              value={dataParticipants}
-              onChange={(e) => handleChangeValueParticipant(e)}
-              isAsyncPaginate={true}
-              isFormatOptionLabel={true}
-              loadOptionsPaginate={loadedOptionParticipant}
-              placeholder="Chọn người tham gia"
-              additional={{
-                page: 1,
-              }}
-              formatOptionLabel={formatOptionLabelParticipant}
+              error={!dataWorkProject}
+              message="Vui lòng chọn dự án trước khi chọn người nhận việc"
             />
           ),
         },
@@ -1220,6 +690,31 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
           ),
         },
         {
+          label: "Mức độ ưu tiên",
+          name: "priorityLevel",
+          type: "radio",
+          options: [
+            {
+              label: "Thấp",
+              value: "1",
+            },
+            {
+              label: "Trung bình",
+              value: "2",
+            },
+            {
+              label: "Cao",
+              value: "3",
+            },
+            {
+              label: "Rất cao",
+              value: "4",
+            },
+          ],
+          fill: true,
+          required: true,
+        },
+        {
           label: "Bắt đầu",
           name: "startTime",
           type: "date",
@@ -1245,31 +740,6 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
           placeholder: "Nhập ngày kết thúc",
           messageWarning: "Ngày kết thúc lớn hơn ngày bắt đầu",
         },
-        {
-          label: "Mức độ ưu tiên",
-          name: "priorityLevel",
-          type: "radio",
-          options: [
-            {
-              label: "Thấp",
-              value: "1",
-            },
-            {
-              label: "Trung bình",
-              value: "2",
-            },
-            {
-              label: "Cao",
-              value: "3",
-            },
-            {
-              label: "Rất cao",
-              value: "4",
-            },
-          ],
-          fill: true,
-          required: true,
-        },
       ] as IFieldCustomize[],
     [
       startDay,
@@ -1281,21 +751,15 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
       formData?.values,
       listImageWork,
       dataWorkProject,
-      dataWorkOpt,
       validateProject,
-      validateOpt,
       dataManager,
       dataEmployee,
       dataParticipants,
-      dataPeopleInvolved,
       valueDecisionTime,
       valueTime,
       isOptionDecisionTime,
-      dataApplyNotification,
       dataListNotification,
       customerId,
-      lstPeriodicSchedule,
-      hasPeriodicSchedule,
       isChooseStartTime,
       isChooseEndTime,
     ]
@@ -1330,8 +794,12 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
       customers: JSON.stringify(formData.values.customers),
       participants: JSON.stringify(formData.values.participants),
       notification: JSON.stringify(formData.values.notification),
+      managerId: 54,
+      // Nếu status == 0 (vừa tạo) và chưa có người nhận việc thì set status = 1 để kích hoạt quy trình, những lần sau status == null để đánh dấu là cập nhật
+      status: data.status === 0 && !data.employeeId ? (formData.values.employeeId ? 1 : null) : null,
     };
 
+    console.log("data>>", data);
     console.log("formData.values>>", formData.values);
 
     console.log("body", body);
@@ -1354,14 +822,11 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
     setDataEmployee(null);
     setDataManager(null);
     setDataParticipants([]);
-    setDataPeopleInvolved([]);
     setDataWorkProject(null);
-    setDataWorkOpt(null);
     setDataWorkType(null);
     setDataTimeWorkLoad({ value: "H", label: "Giờ" });
     setValueDecisionTime({ value: "3", label: "Phút" });
     setValueTime(null);
-    setDataApplyNotification({ method: [], time: { day: 0, hour: 0, minute: 0 } });
     setDataListNotification([]);
     setData(null);
     setListImageWork([]);
@@ -1369,20 +834,6 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
 
   const actions = useMemo<IActionModal>(
     () => ({
-      actions_left: {
-        buttons:
-          startDate && endDate && idWork
-            ? [
-                {
-                  title: "Xoá",
-                  color: "destroy",
-                  variant: "outline",
-                  disabled: isSubmit,
-                  callback: () => showDialogConfirmCancelDelete(idWork),
-                },
-              ]
-            : [],
-      },
       actions_right: {
         buttons: [
           {
@@ -1395,7 +846,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
             },
           },
           {
-            title: idWork ? "Cập nhật" : "Tạo mới",
+            title: "Cập nhật",
             type: "submit",
             color: "primary",
             disabled:
@@ -1414,48 +865,6 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
     }),
     [formData, values, isSubmit, startDay, endDay, validateWordLoad, validateProject, startDate, endDate, idWork]
   );
-
-  const onDelete = async (id?: number) => {
-    const response = await WorkOrderService.delete(id);
-
-    if (response.code == 0) {
-      showToast("Xóa công việc thành công", "success");
-      handleClearForm(true);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-    setShowDialog(false);
-    setContentDialog(null);
-  };
-
-  const showDialogConfirmCancelDelete = (id?: number) => {
-    const contentDialog: IContentDialog = {
-      color: "error",
-      className: "dialog-delete",
-      isCentered: true,
-      isLoading: true,
-      title: <Fragment>Xóa công việc</Fragment>,
-      message: (
-        <Fragment>
-          Bạn có chắc chắn muốn xóa
-          <strong> {data?.name}</strong>? Thao tác này không thể khôi phục.
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Xóa",
-      defaultAction: () => {
-        if (id) {
-          onDelete(id);
-        }
-      },
-    };
-    setContentDialog(contentDialog);
-    setShowDialog(true);
-  };
 
   const showDialogConfirmCancel = () => {
     const contentDialog: IContentDialog = {
@@ -1521,17 +930,6 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
           <ModalHeader title={`${idWork ? "Chỉnh sửa" : "Thêm mới"} công việc`} toggle={() => !isSubmit && handleClearForm(false)} />
           <ModalBody>
             <div className="list-form-group">
-              <div className="list-form-group__add">
-                <div className="title-work">Nội dung công việc</div>
-                {listFieldAddWork.map((field, index) => (
-                  <FieldCustomize
-                    key={index}
-                    field={field}
-                    handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAddWork, setFormData)}
-                    formData={formData}
-                  />
-                ))}
-              </div>
               {idWork ? (
                 <div className="list-form-group__assign">
                   <div className="title-work">Giao việc</div>
@@ -1545,6 +943,17 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
                   ))}
                 </div>
               ) : null}
+              <div className="list-form-group__add">
+                <div className="title-work">Nội dung công việc</div>
+                {listFieldAddWork.map((field, index) => (
+                  <FieldCustomize
+                    key={index}
+                    field={field}
+                    handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAddWork, setFormData)}
+                    formData={formData}
+                  />
+                ))}
+              </div>
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />
