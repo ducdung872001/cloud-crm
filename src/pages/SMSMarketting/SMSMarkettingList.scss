@@ -12,9 +12,18 @@
               }
             }
           }
+
           tbody {
             tr {
               td {
+
+                //thời gian gửi
+                &:nth-child(4),
+                &:nth-child(6) {
+                  text-align: center;
+                  white-space: nowrap;
+                }
+
                 .pending-status,
                 .success-status,
                 .send-pending,
