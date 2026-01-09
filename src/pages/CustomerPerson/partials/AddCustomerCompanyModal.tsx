@@ -725,7 +725,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
           name: "phone",
           type: "text",
           fill: true,
-          regex: new RegExp(PHONE_REGEX),
+          regex: isShowPhone ? new RegExp(PHONE_REGEX) : null,
           messageErrorRegex: "Số điện thoại không đúng định dạng",
           iconPosition: "right",
           icon: data?.id && (!isShowPhone ? <Icon name="EyeSlash" /> : <Icon name="Eye" />),

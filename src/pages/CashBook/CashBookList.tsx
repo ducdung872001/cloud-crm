@@ -651,7 +651,7 @@ export default function CashBookList() {
         </div>
       ) : (
         <div className="cashbook__total type__two">
-          <div className="cashbook__total--export-revenue">
+          {/* <div className="cashbook__total--export-revenue">
             <span
               onClick={() => {
                 setShowModalExport(true);
@@ -659,7 +659,7 @@ export default function CashBookList() {
             >
               <Icon name="Download" /> Xuất báo cáo
             </span>
-          </div>
+          </div> */}
           <div className={`cashbook__total--${prevBalance >= 0 ? "revenue" : "expenditure"}`}>
             Tồn đầu kỳ: <span>{formatCurrency(prevBalance)}</span>
           </div>
