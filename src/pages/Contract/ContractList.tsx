@@ -113,7 +113,6 @@ export default function ContractList() {
   const [showModalPhone, setShowModalPhone] = useState<boolean>(false);
   const [showModalAddXml, setShowModalAddXml] = useState<boolean>(false);
 
-
   const [isLoadingPipeline, setIsLoadingPipeline] = useState<boolean>(false);
   // const [contractType, setContractType] = useState<number>(() => {
   //   return takeParamsUrl?.pipelineId ? takeParamsUrl?.pipelineId : -1;
@@ -804,36 +803,36 @@ export default function ContractList() {
         ) : null}
         {permissions["CONTRACT_UPDATE"] == 1 && (
           <>
-        {isUserRoot && (
-          <div
-            className="item__action update"
-              onClick={() => {
-              // setDataContract(data.dataItem);
-              navigate(`/edit_contract_xml/${data.id}`);
-        }}
-          >
-            <Tippy content="Sửa XML">
-              <span className="icon__item icon__update">
-              <Icon name="SettingCashbook" />
-              </span>
-            </Tippy>
-         </div>
-        )}
+            {isUserRoot && (
+              <div
+                className="item__action update"
+                onClick={() => {
+                  // setDataContract(data.dataItem);
+                  navigate(`/edit_contract_xml/${data.id}`);
+                }}
+              >
+                <Tippy content="Sửa XML">
+                  <span className="icon__item icon__update">
+                    <Icon name="SettingCashbook" />
+                  </span>
+                </Tippy>
+              </div>
+            )}
 
-         <div
-            className="item__action update"
-            onClick={() => {
-            setDataContract(data.dataItem);
-            navigate(`/edit_contract/${data.id}`);
-         }}
-          >
-          <Tippy content="Sửa">
-            <span className="icon__item icon__update">
-              <Icon name="Pencil" />
-            </span>
-          </Tippy>
-          </div>
-         </>
+            <div
+              className="item__action update"
+              onClick={() => {
+                setDataContract(data.dataItem);
+                navigate(`/edit_contract/${data.id}`);
+              }}
+            >
+              <Tippy content="Sửa">
+                <span className="icon__item icon__update">
+                  <Icon name="Pencil" />
+                </span>
+              </Tippy>
+            </div>
+          </>
         )}
         {permissions["CONTRACT_DELETE"] == 1 && data.dataItem.status !== 2 && (
           <div className="item__action delete" onClick={() => showDialogConfirmDelete(data)}>
@@ -1030,28 +1029,30 @@ export default function ContractList() {
       field: "name",
       width: 280,
       cellRenderer: LinkToAction,
-      headerClass: "text-left",
+      headerClass: "header-left",
     },
     {
       headerName: "Giá trị hợp đồng",
       field: "dealValue",
-      type: "rightAligned",
+      // type: "rightAligned",
+      headerClass: "header-right",
+      cellStyle: { display: "flex", justifyContent: "flex-end" },
     },
     {
       headerName: "Giai đoạn hợp đồng",
       field: "pipelineName",
-      headerClass: "text-left",
+      headerClass: "header-left",
     },
     {
       headerName: "Quy trình hợp đồng",
       field: "approachName",
-      headerClass: "text-left",
+      headerClass: "header-left",
     },
     {
       headerName: "Tên công ty",
       field: "customerName",
       cellRenderer: LinkToCustomer,
-      headerClass: "text-left",
+      headerClass: "header-left",
     },
     // {
     //   headerName: "Trạng thái",
@@ -1062,13 +1063,22 @@ export default function ContractList() {
       headerName: "Trạng thái ký",
       field: "status",
       cellRenderer: BoxViewStatus,
+      headerClass: "header-center",
     },
     {
       headerName: "Trạng thái hợp đồng",
       field: "contractStatus",
       cellRenderer: BoxViewContractStatus,
+      headerClass: "header-center",
     },
-    { headerName: "Hành động", cellRenderer: ActionRenderer, width: 180, resizable: false, suppressSizeToFit: true },
+    {
+      headerName: "Hành động",
+      cellRenderer: ActionRenderer,
+      width: 180,
+      resizable: false,
+      suppressSizeToFit: true,
+      headerClass: "header-center",
+    },
     {
       headerName: "",
       field: "addColumn",
@@ -1523,14 +1533,13 @@ export default function ContractList() {
             },
           ]
         : [
-            permissions["CONTRACT_ADD"] == 1 && 
-            isUserRoot && {
-            title: "Thêm mới bằng XML",
-               callback: () => {
-                navigate("/create_contract_xml");
-
+            permissions["CONTRACT_ADD"] == 1 &&
+              isUserRoot && {
+                title: "Thêm mới bằng XML",
+                callback: () => {
+                  navigate("/create_contract_xml");
+                },
               },
-            },
             {
               title: "Thêm mới",
               callback: () => {

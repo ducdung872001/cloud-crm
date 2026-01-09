@@ -46,6 +46,7 @@ export interface IWorkOrderRequestModel {
   percent: number;
   priorityLevel: string | number;
   notification: string;
+  creatorId?: number;
 }
 
 export interface IUpdateParticipantRequestModel {

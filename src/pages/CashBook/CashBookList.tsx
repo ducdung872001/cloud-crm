@@ -106,36 +106,36 @@ export default function CashBookList() {
   }, [tab]);
 
   const cashbookFilterList = useMemo(
-    () => [
-      // ...(+checkUserRoot == 1 ? [
-      //     {
-      //       key: "branchId",
-      //       name: "Chi nhánh",
-      //       type: "select",
-      //       is_featured: true,
-      //       value: searchParams.get("branchId") ?? "",
-      //     },
-      //   ] : []
-      // ),
-      {
-        key: "time_cashbook",
-        name: "Thời gian",
-        type: "date-two",
-        param_name: ["fromTime", "toTime"],
-        is_featured: true,
-        value: searchParams.get("fromTime") ?? "",
-        value_extra: searchParams.get("toTime") ?? "",
-        is_fmt_text: true,
-      },
-      {
-        key: "categoryId",
-        name: "Trạng thái",
-        type: "select",
-        is_featured: true,
-        value: searchParams.get("categoryId") ?? "",
-      },
-      
-    ] as IFilterItem[],
+    () =>
+      [
+        // ...(+checkUserRoot == 1 ? [
+        //     {
+        //       key: "branchId",
+        //       name: "Chi nhánh",
+        //       type: "select",
+        //       is_featured: true,
+        //       value: searchParams.get("branchId") ?? "",
+        //     },
+        //   ] : []
+        // ),
+        {
+          key: "time_cashbook",
+          name: "Thời gian",
+          type: "date-two",
+          param_name: ["fromTime", "toTime"],
+          is_featured: true,
+          value: searchParams.get("fromTime") ?? "",
+          value_extra: searchParams.get("toTime") ?? "",
+          is_fmt_text: true,
+        },
+        {
+          key: "categoryId",
+          name: "Trạng thái",
+          type: "select",
+          is_featured: true,
+          value: searchParams.get("categoryId") ?? "",
+        },
+      ] as IFilterItem[],
     [searchParams]
   );
 
@@ -163,8 +163,8 @@ export default function CashBookList() {
   );
 
   useEffect(() => {
-    if(dataBranch){      
-      setParams((prevParams) => ({ ...prevParams, branchId: dataBranch.value}));
+    if (dataBranch) {
+      setParams((prevParams) => ({ ...prevParams, branchId: dataBranch.value }));
     }
   }, [dataBranch]);
 
@@ -271,13 +271,13 @@ export default function CashBookList() {
     return [
       permissions["CASHBOOK_UPDATE"] == 1 && {
         title: `Sửa phiếu ${item.type == 1 ? "thu" : "chi"}`,
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setDataCashBook(item);
-          setTypeProps(item.type);
-          setShowModalCashBook(true);
+            setDataCashBook(item);
+            setTypeProps(item.type);
+            setShowModalCashBook(true);
           }
         },
       },
@@ -287,7 +287,7 @@ export default function CashBookList() {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item);
+            showDialogConfirmDelete(item);
           }
         },
       },
@@ -307,21 +307,21 @@ export default function CashBookList() {
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} thu/chi`, "success");
-        getListCashBook(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có thu/chi nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công`, "success");
+          getListCashBook(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có thu/chi nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+  };
 
   const showDialogConfirmDelete = (item?: ICashBookResponse) => {
     const contentDialog: IContentDialog = {
@@ -332,9 +332,8 @@ export default function CashBookList() {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa
-          {item ? `${item.type == 1 ? "phiếu thu" : "phiếu chi"}` : `${listIdChecked.length} phiếu ${item.type == 1 ? "thu" : "chi"}  đã chọn`}
-          {item ? <strong></strong> : ""}? Thao tác này không thể khôi phục.
+          Bạn có chắc chắn muốn xóa {item ? `${item.type === 1 ? "phiếu thu" : "phiếu chi"}` : `${listIdChecked.length} phiếu đã chọn`}? Thao tác này
+          không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",
@@ -348,11 +347,11 @@ export default function CashBookList() {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
@@ -406,7 +405,7 @@ export default function CashBookList() {
             <SearchBox
               key={"cashbook"}
               name="Danh sách thu chi"
-              placeholderSearch="Tìm kiếm theo tên/ Ghi chú"
+              placeholderSearch="Tìm kiếm theo Ghi chú"
               params={params}
               isFilter={true}
               listFilterItem={cashbookFilterList}
@@ -574,7 +573,7 @@ export default function CashBookList() {
             <SearchBox
               key={"report"}
               name="Báo cáo thu chi"
-              placeholderSearch="Tìm kiếm theo tên/ Ghi chú"
+              placeholderSearch="Tìm kiếm theo Ghi chú"
               params={params}
               isFilter={true}
               listFilterItem={reportFilterList}
@@ -652,7 +651,7 @@ export default function CashBookList() {
         </div>
       ) : (
         <div className="cashbook__total type__two">
-          <div className="cashbook__total--export-revenue">
+          {/* <div className="cashbook__total--export-revenue">
             <span
               onClick={() => {
                 setShowModalExport(true);
@@ -660,7 +659,7 @@ export default function CashBookList() {
             >
               <Icon name="Download" /> Xuất báo cáo
             </span>
-          </div>
+          </div> */}
           <div className={`cashbook__total--${prevBalance >= 0 ? "revenue" : "expenditure"}`}>
             Tồn đầu kỳ: <span>{formatCurrency(prevBalance)}</span>
           </div>

@@ -138,10 +138,10 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
           },
         }));
       }
-      if (result.contactId){
+      if (result.contactId) {
         setDataContact({
-          value:result.contactId,
-          label: result?.contactName||"",
+          value: result.contactId,
+          label: result?.contactName || "",
         });
         setFormData((prev) => ({
           ...prev,
@@ -152,7 +152,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
         }));
       }
     } else {
-      showToast(response.error ?? response.message ??"Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
   };
 
@@ -725,7 +725,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
           name: "phone",
           type: "text",
           fill: true,
-          regex: new RegExp(PHONE_REGEX),
+          regex: isShowPhone ? new RegExp(PHONE_REGEX) : null,
           messageErrorRegex: "Số điện thoại không đúng định dạng",
           iconPosition: "right",
           icon: data?.id && (!isShowPhone ? <Icon name="EyeSlash" /> : <Icon name="Eye" />),
@@ -922,13 +922,13 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
   };
 
   useEffect(() => {
-      if (data?.cgpId) {
-        setCgpData({
-          value: data.cgpId,
-          label: data?.cgpName || data?.groupName || "",
-        });
-      }
-    }, [data, onShow]);
+    if (data?.cgpId) {
+      setCgpData({
+        value: data.cgpId,
+        label: data?.cgpName || data?.groupName || "",
+      });
+    }
+  }, [data, onShow]);
 
   useEffect(() => {
     if (relatedCustomers.length > 0) {
@@ -1677,7 +1677,14 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     setCustomerExtraInfos([]);
     setIsShowEmail(false);
     setIsShowPhone(false);
+    setDataContact(null);
+    setDataSource(null);
+    setFormData({
+      values: values,
+      errors: {},
+    });
   };
+  console.log("dataContact", dataContact);
 
   return (
     <Fragment>

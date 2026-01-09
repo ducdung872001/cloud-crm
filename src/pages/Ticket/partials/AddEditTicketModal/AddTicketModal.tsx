@@ -309,9 +309,9 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
   const listFieldDate: IFieldCustomize[] = useMemo(() => {
     const startDate = formData?.values?.startDate ? moment(formData.values.startDate) : null;
     const endDate = formData?.values?.endDate ? moment(formData.values.endDate) : null;
-    
+
     const isEndDateBeforeStartDate = startDate && endDate && endDate.isBefore(startDate);
-    
+
     return [
       {
         label: "Ngày tiếp nhận",
@@ -390,20 +390,29 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       ...(formData.values as ITicketRequestModel),
       ...(saleflowId ? { saleflowId: saleflowId } : {}),
       ...(sieId ? { sieId: sieId } : {}),
-      startDate: moment(formData.values.startDate).format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: moment(formData.values.endDate).format('YYYY-MM-DDTHH:mm:ss'),
+      startDate: moment(formData.values.startDate).format("YYYY-MM-DDTHH:mm:ss"),
+      endDate: moment(formData.values.endDate).format("YYYY-MM-DDTHH:mm:ss"),
     };
 
     const response = await TicketService.update(body);
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} hỗ trợ thành công`, "success");
-      onHide(true);
-      setListSupport([]);
+      handleClearForm();
     } else {
       showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
+  };
+
+  const handleClearForm = () => {
+    setFormData({
+      values: values,
+      errors: {},
+    });
+    onHide(true);
+    setListSupport([]);
+    setDetailCustomer(null);
   };
 
   const actions = useMemo<IActionModal>(

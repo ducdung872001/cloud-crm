@@ -96,7 +96,7 @@ export default function CreateOrder() {
     const response = await OrderService.detail(id);
     console.log("OrderService.detail response:", response);
 
-    if (response && (response.code === 0 || response.code === 200)) {
+    if (response && (response.code === 0)) {
       try {
         const result = response.result;
 
@@ -602,7 +602,7 @@ export default function CreateOrder() {
       showToast("Vui lòng chọn ít nhất một sản phẩm", "error");
       return;
     }
-    
+
     if (type === "done") {
       setIsSubmit(true);
     } else {
@@ -629,9 +629,9 @@ export default function CreateOrder() {
     const body = {
       id: changeFormData.id,
       orderCode: "",
-      bsnId: 0,
-      orderDate: moment(changeFormData.order_date).format('YYYY-MM-DDTHH:mm:ss'),
-      expectedDate: moment(changeFormData.expected_date).format('YYYY-MM-DDTHH:mm:ss'),
+      bnsId: 0,
+      orderDate: moment(changeFormData.order_date).format("YYYY-MM-DDTHH:mm:ss"),
+      expectedDate: moment(changeFormData.expected_date).format("YYYY-MM-DDTHH:mm:ss"),
       invoiceId: null,
       amount: changeFormData.pay_amount,
       vatAmount: changeFormData.vat_amount,
@@ -1234,13 +1234,7 @@ export default function CreateOrder() {
         onHide={() => setShowMdoalChoose(false)}
         callback={(data) => changeDataChoose(data)}
       />
-      <ShowInvoiceOrder 
-        onShow={showModalDetail} 
-        onHide={() => setShowModalDetail(false)} 
-        data={dataInvoice} 
-        id={idInvoice} 
-        action="edit" 
-      />
+      <ShowInvoiceOrder onShow={showModalDetail} onHide={() => setShowModalDetail(false)} data={dataInvoice} id={idInvoice} action="edit" />
     </div>
   );
 }

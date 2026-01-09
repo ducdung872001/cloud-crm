@@ -162,7 +162,7 @@ export default function CustomerOverview(props) {
     <div className="card-box page__customer--overview">
       <div className="title__common d-flex align-items-start">
         <h2 className="name-common">Tổng quan khách hàng</h2>
-        <div
+        {/* <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}
           onClick={() => setShowOption(!showOption)}
@@ -188,7 +188,7 @@ export default function CustomerOverview(props) {
               })}
             </div>
           )}
-        </div>
+        </div> */}
         {/* <div className="report-filter">
           <div className="form-group">
             <AdvancedDateFilter updateParams={takeFromTimeAndToTime} />

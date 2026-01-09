@@ -7,7 +7,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import { IWorkOrderFilterRequest } from "model/workOrder/WorkOrderRequestModel";
 import { CircularProgressbar } from "react-circular-progressbar";
 import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
-import { IContentDialog } from "components/dialog/dialog";
+import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
@@ -21,7 +21,7 @@ import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import moment from "moment";
 
 export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
-  const { paramsFilter, isOpen } = props;
+  const { paramsFilter, isOpen, setIdWork, setShowModalAdd, onReload, setShowModalAssign, setShowModalDetail } = props;
   const { dataInfoEmployee } = useContext(UserContext) as ContextType;
 
   const isMounted = useRef(false);
@@ -48,7 +48,7 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
     setParams((prevParams) => ({
       ...prevParams,
       ...paramsTemp,
-      ...{ [paramsFilter.groupBy]: paramsFilter.groupValue, projectId: paramsFilter.projectId },
+      ...{ [paramsFilter.groupBy]: paramsFilter.groupValue, projectId: paramsFilter.projectId, total: paramsFilter.total },
     }));
   }, [paramsFilter]);
 
@@ -85,8 +85,6 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
     // };
   }, [params]);
 
-  console.log("params isOpen", isOpen);
-
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
     name: "Công việc",
@@ -99,8 +97,8 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
     },
   });
 
-  const getListWork = async (paramsSearch: IWorkOrderFilterRequest) => {
-    if (currentParamsFilter.current && !isDifferenceObj(currentParamsFilter.current, paramsSearch)) {
+  const getListWork = async (paramsSearch: IWorkOrderFilterRequest, isReload?: boolean) => {
+    if (currentParamsFilter.current && !isDifferenceObj(currentParamsFilter.current, paramsSearch) && !isReload) {
       return;
     }
     setIsLoading(true);
@@ -131,80 +129,74 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
   const titles = [
     // "STT",
     "Tên công việc",
-    "Người nhận việc",
+    "Người thực hiện",
     "Thời gian",
     //  "Thuộc dự án",
     "Tiến độ",
     "Trạng thái công việc",
   ];
 
-  const dataFormat = ["text-left", "", "", "", "", "text-center", "text-center"];
+  const dataFormat = ["text-left", "", "text-center", "text-center", "text-center", "text-center", "text-center"];
 
-  const dataMappingArray = (item: IWorkOrderResponseModel, index: number, type?: string) =>
-    type !== "export"
-      ? [
-          // getPageOffset(params) + index + 1,
-          <span
-            key={item.id}
-            className="name-work"
-            onClick={() => {
-              // setIsDetailWork(true);
-              // handleDetailWork(item, listWork.length);
-            }}
-          >
-            {item.name}
-          </span>,
-          // item?.employeeName ?? <i>Chưa có</i>,
-          <a>Giao việc</a>,
-          item.startTime || item.endTime ? `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}` : "",
-          // item.projectName,
-          <div
-            key={item.id}
-            className="percent__finish--work"
-            onClick={() => {
-              if (item.percent !== 100 && item.status !== 0 && item.status !== 2 && item.status !== 3 && item.status !== 4) {
-                // setShowModalWorkInprogress(true);
-                // setIdWork(item.id);
-              } else if (item.status == 2 || item.status == 3 || item.status == 4) {
-                // setIdWork(item.id);
-                // setShowModalViewWorkInprogress(true);
-              } else {
-                showToast("Công việc đang trong trạng thái chưa được thực hiện", "warning");
-              }
-            }}
-          >
-            <CircularProgressbar value={item.percent || 0} text={`${item.percent || 0}%`} className="value-percent" />
-          </div>,
-          item.status == 0 ? (
-            handleUnfulfilled(item.startTime)
-          ) : item.status == 1 ? (
-            handleProcessing(item.startTime, item.endTime)
-          ) : item.status == 2 ? (
-            <span className="status-success">Đã hoàn thành</span>
-          ) : item.status == 3 ? (
-            <span className="status-cancelled">Đã hủy</span>
-          ) : (
-            <span className="status-pause">Tạm dừng</span>
-          ),
-        ]
-      : [
-          getPageOffset(params) + index + 1,
-          item.name,
-          item.employeeName,
-          `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}`,
-          item.projectName,
-          `${item.percent || 0}%`,
-          item.status == 0
-            ? "Chưa thực hiện"
-            : item.status == 1
-            ? "Đang thực hiện"
-            : item.status == 2
-            ? "Đã hoàn thành"
-            : item.status == 3
-            ? "Đã hủy"
-            : "Tạm dừng",
-        ];
+  const dataMappingArray = (item: IWorkOrderResponseModel, index: number, type?: string) => [
+    // getPageOffset(params) + index + 1,
+    <div>{item?.name || ""}</div>,
+    item?.employeeName ? (
+      <span
+        onClick={() => {
+          setShowModalAssign(true);
+          setIdWork(item.id);
+        }}
+      >
+        {item?.employeeName}
+      </span>
+    ) : (
+      <a
+        onClick={() => {
+          setShowModalAssign(true);
+          setIdWork(item.id);
+        }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "5px",
+        }}
+      >
+        <Icon name="UserPlus" className="icon-assign-work" /> Giao việc
+      </a>
+    ),
 
+    item.startTime || item.endTime ? `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}` : "",
+    // item.projectName,
+    <div
+      key={item.id}
+      className="percent__finish--work"
+      onClick={() => {
+        if (item.percent !== 100 && item.status !== 0 && item.status !== 2 && item.status !== 3 && item.status !== 4) {
+          // setShowModalWorkInprogress(true);
+          // setIdWork(item.id);
+        } else if (item.status == 2 || item.status == 3 || item.status == 4) {
+          // setIdWork(item.id);
+          // setShowModalViewWorkInprogress(true);
+        } else {
+          showToast("Công việc đang trong trạng thái chưa được thực hiện", "warning");
+        }
+      }}
+    >
+      <CircularProgressbar value={item.percent || 0} text={`${item.percent || 0}%`} className="value-percent" />
+    </div>,
+    item.status == 0 ? (
+      handleUnfulfilled(item.startTime)
+    ) : item.status == 1 ? (
+      handleProcessing(item.startTime, item.endTime)
+    ) : item.status == 2 ? (
+      <span className="status-success">Đã hoàn thành</span>
+    ) : item.status == 3 ? (
+      <span className="status-cancelled">Đã hủy</span>
+    ) : (
+      <span className="status-pause">Tạm dừng</span>
+    ),
+  ];
   //! đoạn này xử lý vấn đề hiển thị thông tin xem bao giờ thực hiện
   const handleUnfulfilled = (time) => {
     const currentTime = new Date().getTime();
@@ -273,41 +265,26 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
         title: "Xem chi tiết",
         icon: <Icon name="Eye" />,
         callback: () => {
-          // handleDetailWork(item, listWork.length);
-          // setIsDetailWork(true);
+          setIdWork(item?.id);
+          setShowModalDetail(true);
         },
       },
-      ...(item.status == 2 || item.status == 3
-        ? [
-            ...(dataInfoEmployee?.isOwner === 1
-              ? [
-                  {
-                    title: "Xóa",
-                    icon: <Icon name="Trash" className="icon-error" />,
-                    callback: () => {
-                      showDialogConfirmDelete(item);
-                    },
-                  },
-                ]
-              : []),
-          ]
-        : [
-            {
-              title: "Sửa",
-              icon: <Icon name="Pencil" />,
-              callback: () => {
-                // setIdWork(item?.id);
-                // setShowModalAdd(true);
-              },
-            },
-            {
-              title: "Xóa",
-              icon: <Icon name="Trash" className="icon-error" />,
-              callback: () => {
-                showDialogConfirmDelete(item);
-              },
-            },
-          ]),
+
+      {
+        title: "Sửa",
+        icon: <Icon name="Pencil" />,
+        callback: () => {
+          setIdWork(item?.id);
+          setShowModalAdd(true);
+        },
+      },
+      {
+        title: "Xóa",
+        icon: <Icon name="Trash" className="icon-error" />,
+        callback: () => {
+          showDialogConfirmDelete(item);
+        },
+      },
     ];
   };
 
@@ -316,7 +293,7 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
 
     if (response.code === 0) {
       showToast("Xóa công việc thành công", "success");
-      reLoadListWork();
+      reLoadListGroupWork(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -340,7 +317,7 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
     Promise.all(arrPromise).then((result) => {
       if (result.length > 0) {
         showToast("Xóa công việc thành công", "success");
-        reLoadListWork();
+        reLoadListGroupWork(true);
         setListIdChecked([]);
       } else {
         showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -388,8 +365,9 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
     },
   ];
 
-  const reLoadListWork = () => {
-    getListWork(params);
+  const reLoadListGroupWork = (isReload?: boolean) => {
+    // getListWork(params, isReload);
+    onReload(isReload);
   };
 
   return (
@@ -406,6 +384,7 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
       /> */}
       {!isLoading && listWork && listWork.length > 0 ? (
         <BoxTable
+          className="table-work-in-colapse"
           name="Công việc"
           titles={titles}
           items={listWork}
@@ -455,6 +434,7 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
           )}
         </Fragment>
       )}
+      <Dialog content={contentDialog} isOpen={showDialog} />
     </Fragment>
   );
 }

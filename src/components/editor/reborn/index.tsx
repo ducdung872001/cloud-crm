@@ -116,43 +116,43 @@ const RebornEditor = (props: EditorProps) => {
         console.error("Error inserting text:", error);
       }
     }
-  }, [dataText, editor]);  
+  }, [dataText, editor]);
 
   const handleDOMBeforeInput = useCallback(
     (e: InputEvent) => {
       queueMicrotask(() => {
-        const pendingDiffs = ReactEditor.androidPendingDiffs(editor)
+        const pendingDiffs = ReactEditor.androidPendingDiffs(editor);
 
         const scheduleFlush = pendingDiffs?.some(({ diff, path }) => {
-          if (!diff.text.endsWith(' ')) {
-            return false
+          if (!diff.text.endsWith(" ")) {
+            return false;
           }
 
-          const { text } = SlateNode.leaf(editor, path)
-          const beforeText = text.slice(0, diff.start) + diff.text.slice(0, -1)
+          const { text } = SlateNode.leaf(editor, path);
+          const beforeText = text.slice(0, diff.start) + diff.text.slice(0, -1);
           if (!(beforeText in SHORTCUTS)) {
-            return
+            return;
           }
 
           const blockEntry = Editor.above(editor, {
             at: path,
-            match: n => SlateElement.isElement(n) && Editor.isBlock(editor, n),
-          })
+            match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
+          });
           if (!blockEntry) {
-            return false
+            return false;
           }
 
-          const [, blockPath] = blockEntry
-          return Editor.isStart(editor, Editor.start(editor, path), blockPath)
-        })
+          const [, blockPath] = blockEntry;
+          return Editor.isStart(editor, Editor.start(editor, path), blockPath);
+        });
 
         if (scheduleFlush) {
-          ReactEditor.androidScheduleFlush(editor)
+          ReactEditor.androidScheduleFlush(editor);
         }
-      })
+      });
     },
     [editor]
-  )
+  );
 
   const editorComponent = () => {
     return (
@@ -170,7 +170,7 @@ const RebornEditor = (props: EditorProps) => {
             <MarkButton format="italic" icon="format_italic" nameIcon="In nghiêng" />
             <MarkButton format="underline" icon="format_underlined" nameIcon="Gạch chân" />
             <MarkButton format="code" icon="code" nameIcon="Code" />
-            <InsertColorPickerButton />
+            {/* <InsertColorPickerButton /> */}
             <BlockButton format="heading-one" icon="looks_one" nameIcon="Thẻ tiêu đề H1" />
             <BlockButton format="heading-two" icon="looks_two" nameIcon="Thẻ tiêu đề H2" />
             <BlockButton format="heading-three" icon="looks_3" nameIcon="Thẻ tiêu đề H3" />
@@ -204,7 +204,6 @@ const RebornEditor = (props: EditorProps) => {
                 }
               }
             }}
-
             onDOMBeforeInput={handleDOMBeforeInput}
           />
         </Slate>
@@ -214,9 +213,11 @@ const RebornEditor = (props: EditorProps) => {
 
   return (
     <div
-      className={`base-editor${fill ? " base-editor-fill" : ""}${error ? " invalid" : ""}${warning ? " warning" : ""}${initialValue ? " has-value" : ""
-        }${label ? " has-label" : ""}${label && labelPosition ? ` has-label__${labelPosition}` : ""}${fillColor ? " base-editor--fill-color" : ""}${disabled ? " has-disabled" : ""
-        }${className ? " " + className : ""}`}
+      className={`base-editor${fill ? " base-editor-fill" : ""}${error ? " invalid" : ""}${warning ? " warning" : ""}${
+        initialValue ? " has-value" : ""
+      }${label ? " has-label" : ""}${label && labelPosition ? ` has-label__${labelPosition}` : ""}${fillColor ? " base-editor--fill-color" : ""}${
+        disabled ? " has-disabled" : ""
+      }${className ? " " + className : ""}`}
     >
       {label ? (
         <Fragment>

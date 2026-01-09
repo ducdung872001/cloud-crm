@@ -1,19 +1,13 @@
-import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import _ from "lodash";
-import moment from "moment";
 import Tippy from "@tippyjs/react";
-import { isDifferenceObj, getPageOffset } from "reborn-util";
 import { useSearchParams } from "react-router-dom";
-import { CircularProgressbar } from "react-circular-progressbar";
 import Icon from "components/icon";
 import Button from "components/button/button";
-import Dialog, { IContentDialog } from "components/dialog/dialog";
-import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
-import { BulkActionItemModel } from "components/bulkAction/bulkAction";
-import { IListWorkProps } from "model/workOrder/PropsModel";
-import { IAction, IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
-import { IGroupsFilterRequest, IWorkOrderFilterRequest } from "model/workOrder/WorkOrderRequestModel";
-import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
+import Dialog from "components/dialog/dialog";
+
+import { IFilterItem, ISaveSearch } from "model/OtherModel";
+import { IGroupsFilterRequest } from "model/workOrder/WorkOrderRequestModel";
 import { showToast } from "utils/common";
 import WorkOrderService from "services/WorkOrderService";
 import AddWorkModal from "./partials/AddWorkModal";
@@ -25,31 +19,19 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import Collapsible from "components/collapse";
 import Input from "components/input/input";
 import TableWorkInColapse from "./partials/TableWorkInColapse";
+import AssignWorkModal from "./partials/AssignWorkModal";
+import DetailWorkModal from "./partials/DetailWorkModal";
+
+const listColors = ["#FFC43C", "#00b499", "#0091FF", "#F76808", "#12A594", "#E5484D"];
 
 export default function WorkTableByGroup(props: any) {
-  const isMounted = useRef(false);
-
-  const {
-    idManagement,
-    isRegimeKanban,
-    isRegimeReport,
-    isFullPage,
-    handleDetailWork,
-    showProjectManagement,
-    setIsDetailWork,
-    abortController,
-    isExportWork,
-    setIsFullPage,
-    onHideExport,
-    dataProjectReport,
-  } = props;
+  const { idManagement, isRegimeKanban, isRegimeReport, isFullPage, showProjectManagement, abortController, setIsFullPage } = props;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [listGroupWork, setListGroupWork] = useState<any[]>([]);
 
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [showModalAssign, setShowModalAssign] = useState<boolean>(false);
 
   const [groupBy, setGroupBy] = useState<any>("status");
 
@@ -321,7 +303,9 @@ export default function WorkTableByGroup(props: any) {
       if (response.result.buckets.length === 0) {
         setListGroupWork([]);
       } else {
-        setListGroupWork(response.result.buckets.map((item) => item));
+        if (response?.result?.buckets?.length) {
+          setListGroupWork(response.result.buckets.map((item) => item));
+        }
       }
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -330,7 +314,6 @@ export default function WorkTableByGroup(props: any) {
   };
 
   const headerCollapsible = useCallback((item, index) => {
-    console.log("itemSetup item", item);
     return (
       <div className="collapse-header">
         <div className="group-name" style={{ backgroundColor: item?.color }}>
@@ -338,24 +321,14 @@ export default function WorkTableByGroup(props: any) {
           {item?.title}
         </div>
         <div className="number-work">{item?.count} công việc</div>
-        <div className="button-add">
-          <Tippy content="Thêm công việc" delay={[100, 0]} placement="left" animation="scale-extreme">
-            <div className="add-work">
-              <Button
-                color="success"
-                onClick={() => {
-                  setIdWork(null);
-                  setShowModalAdd(true);
-                }}
-              >
-                <Icon name="PlusCircle" />
-              </Button>
-            </div>
-          </Tippy>
-        </div>
       </div>
     );
   }, []);
+
+  const projectWork =
+    localStorage.getItem("projectWorkManagement") && JSON.parse(localStorage.getItem("projectWorkManagement"))
+      ? JSON.parse(localStorage.getItem("projectWorkManagement"))
+      : null;
   return (
     <div className={`page-content page-work-table-by-group`}>
       <div className="card-box d-flex flex-column">
@@ -376,7 +349,7 @@ export default function WorkTableByGroup(props: any) {
                   </div>
                 </div>
               </Tippy>
-              <div className="title">Tất cả dự án</div>
+              <div className="title">{projectWork && projectWork?.name ? projectWork?.name : "Danh sách công việc của dự án"}</div>
             </div>
             <div className="title-header-right">
               <Tippy content="Thêm công việc" delay={[100, 0]} placement="left" animation="scale-extreme">
@@ -404,8 +377,8 @@ export default function WorkTableByGroup(props: any) {
                   fill={true}
                   options={[
                     { label: "Trạng thái công việc", value: "status" },
-                    { label: "Nhân viên phụ trách", value: "priority" },
-                    { label: "Ưu tiên", value: "employee" },
+                    { label: "Nhân viên phụ trách", value: "employee" },
+                    { label: "Ưu tiên", value: "priority" },
                     { label: "Loại công việc", value: "wte" },
                   ]}
                   value={groupBy}
@@ -464,7 +437,7 @@ export default function WorkTableByGroup(props: any) {
                   dataItems={{
                     title: groupItem?.name || "Chưa phân nhóm",
                     count: groupItem?.total || 0,
-                    color: "#FFC43C", // #00b499
+                    color: listColors[groupIndex % listColors.length],
                   }}
                   isOpen={groupItem.isOpen || false}
                   title={""}
@@ -486,10 +459,23 @@ export default function WorkTableByGroup(props: any) {
                 >
                   <TableWorkInColapse
                     isOpen={groupItem.isOpen || false}
+                    setIdWork={setIdWork}
+                    setShowModalAdd={setShowModalAdd}
+                    setShowModalAssign={setShowModalAssign}
+                    setShowModalDetail={setShowModalDetail}
                     paramsFilter={{
                       groupBy: groupBy,
                       groupValue: groupItem?.key == null ? -2 : groupItem?.key,
                       projectId: idManagement,
+                      total: groupItem.total,
+                    }}
+                    onReload={(reload) => {
+                      if (reload) {
+                        getGroupWork({
+                          groupBy: groupBy,
+                          projectId: idManagement,
+                        });
+                      }
                     }}
                   />
                 </Collapsible>
@@ -504,9 +490,26 @@ export default function WorkTableByGroup(props: any) {
         idManagement={idManagement}
         onHide={(reload) => {
           if (reload) {
-            // reLoadListWork();
+            getGroupWork({
+              groupBy: groupBy,
+              projectId: idManagement,
+            });
           }
           setShowModalAdd(false);
+        }}
+      />
+      <AssignWorkModal
+        onShow={showModalAssign}
+        idWork={idWork}
+        idManagement={idManagement}
+        onHide={(reload) => {
+          if (reload) {
+            getGroupWork({
+              groupBy: groupBy,
+              projectId: idManagement,
+            });
+          }
+          setShowModalAssign(false);
         }}
       />
       <AddWorkInprogressModal
@@ -526,9 +529,15 @@ export default function WorkTableByGroup(props: any) {
           setShowModalViewWorkInprogress(false);
         }}
       />
-      <Dialog content={contentDialog} isOpen={showDialog} />
 
-      <DetailWorkModal onShow={showModalDetail} idData={idWork} onHide={() => setShowModalDetail(false)} />
+      <DetailWorkModal
+        onShow={showModalDetail}
+        idData={idWork}
+        onHide={() => {
+          setShowModalDetail(false);
+          setIdWork(null);
+        }}
+      />
     </div>
   );
 }

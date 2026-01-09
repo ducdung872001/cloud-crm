@@ -38,48 +38,49 @@ export default function CallHistory(props: ICallHistoryProps) {
   });
 
   const customerFilterList = useMemo(
-    () => [
-      {
-        key: "time_buy",
-        name: "Thời gian gọi gần nhất",
-        type: "date-two",
-        param_name: ["startDate", "endDate"],
-        is_featured: true,
-        value: searchParams.get("startDate") ?? "",
-        value_extra: searchParams.get("endDate") ?? "",
-        is_fmt_text: true,
-      },
-      // ...(+checkUserRoot == 1 ? [
-      //     {
-      //       key: "branchId",
-      //       name: "Chi nhánh",
-      //       type: "select",
-      //       is_featured: true,
-      //       value: searchParams.get("branchId") ?? "",
-      //     },
-      //   ] : []
-      // ),
-      {
-        key: "employeeId",
-        name: "Người phụ trách",
-        type: "select",
-        is_featured: true,
-        value: searchParams.get("employeeId") ?? "",
-      },
-      {
-        key: "customerId",
-        name: "Khách hàng",
-        type: "select",
-        is_featured: true,
-        value: searchParams.get("customerId") ?? "",
-      },
-    ] as IFilterItem[],
+    () =>
+      [
+        {
+          key: "time_buy",
+          name: "Thời gian gọi gần nhất",
+          type: "date-two",
+          param_name: ["startDate", "endDate"],
+          is_featured: true,
+          value: searchParams.get("startDate") ?? "",
+          value_extra: searchParams.get("endDate") ?? "",
+          is_fmt_text: true,
+        },
+        // ...(+checkUserRoot == 1 ? [
+        //     {
+        //       key: "branchId",
+        //       name: "Chi nhánh",
+        //       type: "select",
+        //       is_featured: true,
+        //       value: searchParams.get("branchId") ?? "",
+        //     },
+        //   ] : []
+        // ),
+        {
+          key: "employeeId",
+          name: "Người phụ trách",
+          type: "select",
+          is_featured: true,
+          value: searchParams.get("employeeId") ?? "",
+        },
+        {
+          key: "customerId",
+          name: "Khách hàng",
+          type: "select",
+          is_featured: true,
+          value: searchParams.get("customerId") ?? "",
+        },
+      ] as IFilterItem[],
     [searchParams]
   );
 
   useEffect(() => {
-    if(dataBranch){      
-      setParams((prevParams) => ({ ...prevParams, branchId: dataBranch.value}));
+    if (dataBranch) {
+      setParams((prevParams) => ({ ...prevParams, branchId: dataBranch.value }));
     }
   }, [dataBranch]);
 
@@ -199,7 +200,7 @@ export default function CallHistory(props: ICallHistoryProps) {
 
     return (
       <div className="d-flex align-items-center flex-column view__time--call">
-        <span className="time-end">{moment(end.endTime).format("DD/MM/YYYY HH:mm")}</span>
+        <span className="time-end">{moment(end).format("DD/MM/YYYY HH:mm")}</span>
         <span className="total-item">{result}</span>
       </div>
     );

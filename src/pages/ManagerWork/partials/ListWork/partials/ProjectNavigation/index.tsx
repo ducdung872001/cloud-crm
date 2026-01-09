@@ -25,7 +25,7 @@ export default function ProjectNavigation(props: IProjectManagementListProps) {
 
   const paramsUrl: any = getSearchParameters();
 
-  const takeIdProjectManagement = Object.keys(paramsUrl).length > 0 && paramsUrl?.projectId ? +paramsUrl?.projectId : -1;
+  // const takeIdProjectManagement = Object.keys(paramsUrl).length > 0 && paramsUrl?.projectId ? +paramsUrl?.projectId : -1;
 
   const [listProject, setListProject] = useState(null);
 
@@ -70,8 +70,7 @@ export default function ProjectNavigation(props: IProjectManagementListProps) {
 
   useEffect(() => {
     const paramsTemp = _.cloneDeep(params);
-    setIdProjectManagement(takeIdProjectManagement);
-
+    // setIdProjectManagement(takeIdProjectManagement);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -212,6 +211,7 @@ export default function ProjectNavigation(props: IProjectManagementListProps) {
                     onClick={() => {
                       setIdProjectManagement(-1);
                       setIsShowChildrenProject(false);
+                      localStorage.setItem("projectWorkManagement", JSON.stringify({ id: -1, name: "Tất cả dự án" }));
                     }}
                   >
                     <Icon name="FolderOpen" />

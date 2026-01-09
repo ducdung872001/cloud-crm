@@ -48,6 +48,12 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  updateInitProcess: (body: IWorkOrderRequestModel) => {
+    return fetch(urlsApi.workOrder.updateInitProcess, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
 
   updateEmployee: (body: any) => {
     return fetch(urlsApi.workOrder.updateEmployee, {
@@ -158,6 +164,12 @@ export default {
   // lấy danh sách người nhận việc
   employeeAssignees: () => {
     return fetch(urlsApi.workOrder.employeeAssignees, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  // lấy danh sách người nhận việc trong dự án
+  projectEmployeeAssignees: (params: any) => {
+    return fetch(`${urlsApi.workOrder.projectEmployeeAssignees}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },

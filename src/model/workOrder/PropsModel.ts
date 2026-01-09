@@ -59,6 +59,11 @@ export interface ITableWorkOrderProps {
 export interface ITableWorkInColapsedProps {
   paramsFilter: any;
   isOpen: boolean;
+  setIdWork?: (id: number) => void;
+  setShowModalAdd?: (show: boolean) => void;
+  setShowModalAssign?: (show: boolean) => void;
+  setShowModalDetail?: (show: boolean) => void;
+  onReload?: (reload: boolean) => void;
 }
 
 export interface IKanbanWorkProps {
