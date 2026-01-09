@@ -15,7 +15,7 @@ import { showToast } from "utils/common";
 import { useOnClickOutside } from "utils/hookCustom";
 import WorkOrderService from "services/WorkOrderService";
 import MessageChatWork from "./partials/MessageChatWork";
-import "./ContentExchangeWork.scss";
+import "./index.scss";
 import Fancybox from "components/fancybox/fancybox";
 import Image from "components/image";
 
@@ -24,7 +24,7 @@ interface IContentExchangeWorkProps {
   dataEmployee: any;
 }
 
-export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
+export default function WorkChatArea(props: IContentExchangeWorkProps) {
   const { worId, dataEmployee } = props;
 
   const refEditChat = useRef();
@@ -212,7 +212,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
   };
 
   return (
-    <div className="wrapper__content-exchange--work">
+    <div className="wrapper__chat-area--work">
       <div className="box__exchange">
         <div className="content-exchange">
           {lstDataExchange && dataEmployee && lstDataExchange.length > 0 ? (
