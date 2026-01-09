@@ -54,7 +54,7 @@ export default function WarrantyContract() {
 
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showModalAddXml, setShowModalAddXml] = useState<boolean>(false);
-  
+
 
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
 
@@ -321,12 +321,14 @@ export default function WarrantyContract() {
     {
       headerName: "Ngày bắt đầu",
       field: "startDate",
-      cellStyle: { display: 'flex', justifyContent: 'center'},
+      headerClass: "header-center",
+      cellStyle: { display: 'flex', justifyContent: 'center' },
     },
     {
       headerName: "Ngày hết hạn",
       field: "endDate",
-      cellStyle: { display: 'flex', justifyContent: 'center'},
+      headerClass: "header-center",
+      cellStyle: { display: 'flex', justifyContent: 'center' },
     },
     {
       headerName: "Đơn vị thực hiện",
@@ -336,7 +338,15 @@ export default function WarrantyContract() {
       headerName: "Đơn vị thụ hưởng",
       field: "beneficiaryName",
     },
-    { headerName: "Hành động", cellRenderer: ActionRenderer, width: 180, resizable: false, suppressSizeToFit: true },
+    {
+      headerName: "Hành động",
+      headerClass: "header-center",
+      cellRenderer: ActionRenderer,
+      cellStyle: { display: 'flex', justifyContent: 'center' },
+      width: 180,
+      resizable: false,
+      suppressSizeToFit: true
+    },
     {
       headerName: "",
       field: "addColumn",
@@ -572,8 +582,8 @@ export default function WarrantyContract() {
 
       const checkDataLocalStorage = takeFieldActiveContact
         ? result.filter((item) => {
-            return !takeFieldActiveContact.some((el) => el.fieldName === item.fieldName);
-          })
+          return !takeFieldActiveContact.some((el) => el.fieldName === item.fieldName);
+        })
         : result;
 
       setLstFieldUnActive(checkDataLocalStorage);
@@ -743,27 +753,27 @@ export default function WarrantyContract() {
     getPageOffset(params) + index + 1,
     ...(type !== "export"
       ? [
-          item.name,
+        item.name,
 
-          formatCurrency(item.dealValue, ","),
-          item.approachName,
-          item.pipelineName,
-          <label key={item.id} title={item.customerName}>
-            {/* {trimContent(item.customerName, 17)} */}
-            {item.customerName}
-          </label>,
-          // "456.8", //Diện tích NFA => Các trường thông tin động
-          // "Tòa GSS", //Tên dự án/Tòa nhà
-        ]
+        formatCurrency(item.dealValue, ","),
+        item.approachName,
+        item.pipelineName,
+        <label key={item.id} title={item.customerName}>
+          {/* {trimContent(item.customerName, 17)} */}
+          {item.customerName}
+        </label>,
+        // "456.8", //Diện tích NFA => Các trường thông tin động
+        // "Tòa GSS", //Tên dự án/Tòa nhà
+      ]
       : [
-          item.name,
-          item.contract?.name || "",
-          item.projectName || "",
-          item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "",
-          item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
-          item.competency?.name || "",
-          item.cusBeneficialPartner?.name || "",
-        ]),
+        item.name,
+        item.contract?.name || "",
+        item.projectName || "",
+        item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "",
+        item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
+        item.competency?.name || "",
+        item.cusBeneficialPartner?.name || "",
+      ]),
   ];
 
   const onDelete = async (id: number) => {
@@ -869,14 +879,14 @@ export default function WarrantyContract() {
       const response = await ContractWarrantyService.list(
         type === "all"
           ? {
-              page: 1,
-              limit: 1000,
-            }
+            page: 1,
+            limit: 1000,
+          }
           : {
-              ...params,
-              page: type === "current_page" ? params.page || 1 : 1,
-              limit: type === "all" || type === "current_search" ? 10000 : params.limit,
-            }
+            ...params,
+            page: type === "current_page" ? params.page || 1 : 1,
+            limit: type === "all" || type === "current_search" ? 10000 : params.limit,
+          }
       );
 
       if (response.code === 0) {

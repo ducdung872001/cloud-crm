@@ -261,7 +261,7 @@ export default function SMSMarkettingList() {
     "Trạng thái phê duyệt",
   ];
 
-  const dataFormat = ["text-center", "", "", "", "", "text-center", "", "text-center"];
+  const dataFormat = ["text-center", "", "", "", "text-center", "text-center", "", "text-center"];
 
   const dataSize = ["auto", "auto", "auto", 30, "auto", "auto", "auto", "auto"];
 
@@ -299,54 +299,54 @@ export default function SMSMarkettingList() {
     return [
       ...(item.statusAction == 0
         ? ([
-            permissions["SMS_REQUEST_IMPORT"] == 1 && {
-              title: "Phê duyệt",
-              icon: <Icon name="FingerTouch" className={isCheckedItem ? "icon-disabled" : "icon-warning"} />,
-              disabled: isCheckedItem,
-              callback: () => {
-                if (!isCheckedItem) {
-                  onApprove(item.id);
-                }
-              },
+          permissions["SMS_REQUEST_IMPORT"] == 1 && {
+            title: "Phê duyệt",
+            icon: <Icon name="FingerTouch" className={isCheckedItem ? "icon-disabled" : "icon-warning"} />,
+            disabled: isCheckedItem,
+            callback: () => {
+              if (!isCheckedItem) {
+                onApprove(item.id);
+              }
             },
-            permissions["SMS_REQUEST_VIEW"] == 1 && {
-              title: "Xem chi tiết",
-              icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""} />,
-              disabled: isCheckedItem,
-              callback: () => {
-                if (!isCheckedItem) {
-                  setIdSendSMS(item.id);
-                  setShowPageSendSMS(true);
-                  setCheckAdd(true);
-                  setIsView(true);
-                }
-              },
+          },
+          permissions["SMS_REQUEST_VIEW"] == 1 && {
+            title: "Xem chi tiết",
+            icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""} />,
+            disabled: isCheckedItem,
+            callback: () => {
+              if (!isCheckedItem) {
+                setIdSendSMS(item.id);
+                setShowPageSendSMS(true);
+                setCheckAdd(true);
+                setIsView(true);
+              }
             },
-            permissions["SMS_REQUEST_UPDATE"] == 1 && {
-              title: "Sửa",
-              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
-              disabled: isCheckedItem,
-              callback: () => {
-                if (!isCheckedItem) {
-                  setIdSendSMS(item.id);
-                  setShowPageSendSMS(true);
-                  setCheckAdd(true);
-                }
-              },
+          },
+          permissions["SMS_REQUEST_UPDATE"] == 1 && {
+            title: "Sửa",
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
+            disabled: isCheckedItem,
+            callback: () => {
+              if (!isCheckedItem) {
+                setIdSendSMS(item.id);
+                setShowPageSendSMS(true);
+                setCheckAdd(true);
+              }
             },
-            permissions["SMS_REQUEST_DELETE"] == 1 && {
-              title: "Xóa",
-              icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
-              disabled: isCheckedItem,
-              callback: () => {
-                if (!isCheckedItem) {
-                  showDialogConfirmDelete(item);
-                }
-              },
+          },
+          permissions["SMS_REQUEST_DELETE"] == 1 && {
+            title: "Xóa",
+            icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+            disabled: isCheckedItem,
+            callback: () => {
+              if (!isCheckedItem) {
+                showDialogConfirmDelete(item);
+              }
             },
-          ] as IAction[])
+          },
+        ] as IAction[])
         : item.statusAction == 1
-        ? ([
+          ? ([
             permissions["SMS_REQUEST_IMPORT"] == 1 && {
               title: "Hủy yêu cầu",
               icon: <Icon name="TimesCircle" className="icon-error" />,
@@ -355,7 +355,7 @@ export default function SMSMarkettingList() {
               },
             },
           ] as IAction[])
-        : []),
+          : []),
     ];
   };
 
