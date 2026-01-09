@@ -140,7 +140,14 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
 
   const dataMappingArray = (item: IWorkOrderResponseModel, index: number, type?: string) => [
     // getPageOffset(params) + index + 1,
-    <div>{item?.name || ""}</div>,
+    <a
+      onClick={() => {
+        setIdWork(item?.id);
+        setShowModalDetail(true);
+      }}
+    >
+      {item?.name || ""}
+    </a>,
     item?.employeeName ? (
       <span
         onClick={() => {
@@ -261,14 +268,14 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
 
   const actionsTable = (item: IWorkOrderResponseModel): IAction[] => {
     return [
-      {
-        title: "Xem chi tiết",
-        icon: <Icon name="Eye" />,
-        callback: () => {
-          setIdWork(item?.id);
-          setShowModalDetail(true);
-        },
-      },
+      // {
+      //   title: "Xem chi tiết",
+      //   icon: <Icon name="Eye" />,
+      //   callback: () => {
+      //     setIdWork(item?.id);
+      //     setShowModalDetail(true);
+      //   },
+      // },
 
       {
         title: "Sửa",
