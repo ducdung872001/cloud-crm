@@ -70,7 +70,8 @@ export default function CreateOrder() {
     note: "",
     payment_method: "cash",
     status: "done",
-    pay_amount: 0,
+    pay_amount: null,
+    pay_amount_math: 0,
     debt_amount: 0,
     amount: 0,
     vat_amount: 0,
@@ -85,80 +86,110 @@ export default function CreateOrder() {
   };
 
   const [lstTabInvoice, setLstTabInvoice] = useState([{ id: uuidv4(), is_active: true, orderDetails: [], formData: defaultValue }]);
+  const [hasAPIPayAmount, setHasAPIPayAmount] = useState<boolean>(false);
+  const [shouldSkipAmountUpdate, setShouldSkipAmountUpdate] = useState<boolean>(false);
 
   //TODO: call api chi tiết đơn đặt hàng
   const handleDetailInvoiceOrder = async (id: number) => {
     if (!id) return;
 
     const response = await OrderService.detail(id);
+    console.log("OrderService.detail response:", response);
 
-    if (response.code === 200) {
-      const result = response.result;
+    if (response && (response.code === 0 || response.code === 200)) {
+      try {
+        const result = response.result;
 
-      const changeDataDetails = (result.details || []).map((item) => {
-        return {
-          id: item.id,
-          product_id: item.product_id,
-          name: item.product_name,
-          image: item.image || "",
-          code: item.product_code,
-          numbers: item.numbers.map((el) => {
-            return {
+        const changeDataDetails = (result.orderDetails || []).map((item) => {
+          const numbersArr = item.numbers || [];
+          const foundNumber = numbersArr.find((ol) => ol.number === item.number) || {};
+
+          return {
+            id: item.id,
+            product_id: item.product_id,
+            name: item.product_name,
+            image: item.image || "",
+            code: item.product_code,
+            numbers: numbersArr.map((el) => ({
               label: el.number,
               value: el.number,
               expiry_date: el.expiry_date,
-              inventory: +el.quantity,
+              inventory: +el.quantity || 0,
               warehouse_id: el.id,
-              units: el.units.map((ol) => {
-                return {
-                  value: ol.unit_id,
-                  label: ol.unit_name,
-                  current_cost: ol.current_cost,
-                };
-              }),
-            };
-          }),
-          number: item.number,
-          units: [{ value: item.unit.id, label: item.unit.name }],
-          unit_id: item.unit_id,
-          quantity: item.quantity,
-          inventory: item.numbers.find((ol) => ol.number === item.number).quantity,
-          warehouse_id: item.warehouse_id,
-          cost: item.cost,
-          total_cost: item.quantity * item.cost,
-          vat: item.vat || 0,
-          note: item.note,
-          discount: item.discount || 0,
-          discount_type: item.discount_type || "amount",
-          discount_rate: item.discount_rate || 0,
-          exchange: item.exchange || 1,
-        };
-      });
+              units: (el.units || []).map((ol) => ({
+                value: ol.unit_id,
+                label: ol.unit_name,
+                current_cost: ol.current_cost,
+              })),
+            })),
+            number: item.number,
+            units: item.unit ? [{ value: item.unit.id, label: item.unit.name }] : [],
+            unit_id: item.unit_id,
+            quantity: item.quantity,
+            inventory: foundNumber.quantity || 0,
+            warehouse_id: item.warehouse_id,
+            cost: item.cost,
+            total_cost: item.quantity * item.cost,
+            vat: item.vat || 0,
+            note: item.note,
+            discount: item.discount || 0,
+            discount_type: item.discount_type || "amount",
+            discount_rate: item.discount_rate || 0,
+            exchange: item.exchange || 1,
+          };
+        });
 
-      onSelectOpenEmployee();
+        onSelectOpenEmployee();
 
-      setLstTabInvoice((prev) =>
-        prev.map((item) => {
-          if (item.is_active) {
-            return {
-              ...item,
-              orderDetails: changeDataDetails,
-              formData: {
-                ...item.formData,
-                id: result.id,
-                expected_date: moment(result.expected_date).format("DD/MM/YYYY"),
-                order_date: moment(result.order_date).format("DD/MM/YYYY"),
-                note: result.note,
-                sale_id: result.sale_id,
-              },
-            };
-          }
+        setLstTabInvoice((prev) =>
+          prev.map((item) => {
+            if (item.is_active) {
+              return {
+                ...item,
+                orderDetails: changeDataDetails,
+                formData: {
+                  ...item.formData,
+                  id: result.id,
+                  expected_date: moment(result.expectedDate).format("DD/MM/YYYY"),
+                  order_date: moment(result.orderDate).format("DD/MM/YYYY"),
+                  note: result.note,
+                  sale_id: result.saleId,
+                  amount: result.amount || 0,
+                  discount: result.discount || 0,
+                  discount_type: result.discountType || "amount",
+                  pay_amount: result.payAmount || 0,
+                  total_discount: (result.amount || 0) - (result.payAmount || 0),
+                  vat_amount: result.vatAmount || 0,
+                  payment_method: result.paymentMethod || "cash",
+                  approachId: result.approachId || 0,
+                  saleflowId: result.saleflowId || 0,
+                  supplier_id: result.supplierId,
+                },
+              };
+            }
 
-          return item;
-        })
-      );
+            return item;
+          })
+        );
+
+        // Update discount value display based on loaded discount type
+        if (result.discountType === "percentage") {
+          setValueDiscount({ amount: 0, percentage: result.discount || 0 });
+        } else {
+          setValueDiscount({ amount: result.discount || 0, percentage: 0 });
+        }
+        
+        // Mark that API has pay_amount so it won't be recalculated
+        setHasAPIPayAmount(!!result.payAmount); // Chỉ true nếu payAmount tồn tại và không phải 0 hoặc undefined
+        setShouldSkipAmountUpdate(true); // Skip amount update when API data just loaded
+        console.log("Order detail loaded successfully:", changeDataDetails);
+      } catch (err) {
+        console.error("Error mapping order detail:", err, response);
+        showToast("Có lỗi xử lý dữ liệu chi tiết đơn hàng", "error");
+      }
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+      console.error("API error response:", response);
+      showToast(response?.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
   };
 
@@ -455,12 +486,14 @@ export default function CreateOrder() {
       setTotalInvoice(0);
     }
   }, [conditionCommon.orderDetails, conditionCommon]);
-
+  
+  // Update amount when totalInvoice changes (products added/removed)
   useEffect(() => {
-    const calculator =
-      conditionCommon.formData.discount_type === "amount"
-        ? conditionCommon.formData.discount || 0
-        : ((conditionCommon.formData.discount || 0) / 100) * totalInvoice;
+    // Skip updating amount when API data just loaded to preserve API amount value
+    if (shouldSkipAmountUpdate) {
+      setShouldSkipAmountUpdate(false);
+      return;
+    }
 
     setLstTabInvoice((prev) =>
       prev.map((item) => {
@@ -470,16 +503,13 @@ export default function CreateOrder() {
             formData: {
               ...item.formData,
               amount: totalInvoice,
-              pay_amount: totalInvoice - calculator,
-              need_pay_amount: totalInvoice - calculator,
             },
           };
         }
-
         return item;
       })
     );
-  }, [totalInvoice, conditionCommon.formData.discount, conditionCommon.formData.discount_type, valueDiscount]);
+  }, [totalInvoice, shouldSkipAmountUpdate]);
 
   useEffect(() => {
     if (!totalInvoice) {
@@ -487,52 +517,73 @@ export default function CreateOrder() {
     }
   }, [totalInvoice]);
 
-  //! đoạn này tính toán lại số tiền phải trả khi chọn % hoặc tiền mặt
+  // Recalculate payment amounts when discount or amount changes
   useEffect(() => {
-    if (valueDiscount) {
-      if (conditionCommon.formData.discount_type === "amount") {
-        const calculatorAmount = conditionCommon.formData.amount - (valueDiscount.amount || 0);
+    // Skip calculation only when API pay_amount is present
+    if (hasAPIPayAmount) {
+      // Just recalculate need_pay_amount and debt_amount, keep pay_amount from API
+      const amountValue = conditionCommon.formData.amount || 0;
+      const discountValue = conditionCommon.formData.discount || 0;
+      const discountType = conditionCommon.formData.discount_type;
 
-        setLstTabInvoice((prev) =>
-          prev.map((item) => {
-            if (item.is_active) {
-              return {
-                ...item,
-                formData: {
-                  ...item.formData,
-                  discount: valueDiscount.amount,
-                  pay_amount: calculatorAmount,
-                  total_discount: conditionCommon.formData.amount - calculatorAmount,
-                },
-              };
-            }
+      const totalDiscount = discountType === "amount" ? discountValue : (discountValue / 100) * amountValue;
+      const needPayAmount = Math.max(0, amountValue - totalDiscount);
+      const currentPayAmount = conditionCommon.formData.pay_amount || 0;
+      const debtAmount = Math.max(0, needPayAmount - currentPayAmount);
 
-            return item;
-          })
-        );
-      } else {
-        const calculatorPercentage = conditionCommon.formData.amount - (valueDiscount.percentage / 100) * conditionCommon.formData.amount;
-
-        setLstTabInvoice((prev) =>
-          prev.map((item) => {
-            if (item.is_active) {
-              return {
-                ...item,
-                formData: {
-                  ...item.formData,
-                  discount: valueDiscount.percentage,
-                  pay_amount: calculatorPercentage,
-                  total_discount: conditionCommon.formData.amount - calculatorPercentage,
-                },
-              };
-            }
-
-            return item;
-          })
-        );
-      }
+      setLstTabInvoice((prev) =>
+        prev.map((item) => {
+          if (item.is_active) {
+            return {
+              ...item,
+              formData: {
+                ...item.formData,
+                total_discount: totalDiscount,
+                need_pay_amount: needPayAmount,
+                debt_amount: debtAmount,
+                // Keep pay_amount from API
+              },
+            };
+          }
+          return item;
+        })
+      );
+      return;
     }
-  }, [valueDiscount, conditionCommon.formData.discount_type]);
+
+    const amountValue = conditionCommon.formData.amount || 0;
+    const discountValue = conditionCommon.formData.discount || 0;
+    const discountType = conditionCommon.formData.discount_type;
+
+    // Calculate total_discount
+    const totalDiscount = discountType === "amount" ? discountValue : (discountValue / 100) * amountValue;
+
+    // need_pay_amount = max(0, amount - total_discount)
+    const needPayAmount = Math.max(0, amountValue - totalDiscount);
+
+    // For new orders or no API pay_amount, set pay_amount = need_pay_amount
+    const debtAmount = 0;
+
+    setLstTabInvoice((prev) =>
+      prev.map((item) => {
+        if (item.is_active) {
+          return {
+            ...item,
+            formData: {
+              ...item.formData,
+              total_discount: totalDiscount,
+              need_pay_amount: needPayAmount,
+              pay_amount_math: needPayAmount,
+              debt_amount: debtAmount,
+            },
+          };
+        }
+        return item;
+      })
+    );
+  }, [conditionCommon.formData.discount, conditionCommon.formData.discount_type, conditionCommon.formData.amount, hasAPIPayAmount]);
+
+  console.log("conditionCommon.formData:", conditionCommon.formData);
 
   //* submit form
   const [dataInvoice, setDataInvoice] = useState<any>({});
@@ -578,7 +629,7 @@ export default function CreateOrder() {
     const body = {
       id: changeFormData.id,
       orderCode: "",
-      bnsId: 0,
+      bsnId: 0,
       orderDate: moment(changeFormData.order_date).format('YYYY-MM-DDTHH:mm:ss'),
       expectedDate: moment(changeFormData.expected_date).format('YYYY-MM-DDTHH:mm:ss'),
       invoiceId: null,
@@ -602,11 +653,11 @@ export default function CreateOrder() {
     let response = null;
     console.log("body>>>", body);
 
-    if (changeFormData.id) {
-      response = await OrderService.update(body, changeFormData.id);
-    } else {
+    // if (changeFormData.id) {
+    //   response = await OrderService.update(body, changeFormData.id);
+    // } else {
       response = await OrderService.create(body);
-    }
+    // }
 
     if (response.code === 0) {
       showToast(`Tạo đơn ${type === "done" ? "đặt hàng " : "lưu tạm"} thành công`, "success");
@@ -639,6 +690,8 @@ export default function CreateOrder() {
 
   // table
   const titles = ["Thông tin sản phẩm", "Số lượng", "Đơn giá", "Thành tiền", "Ghi chú"];
+
+  console.log("conditionCommon:", conditionCommon.formData.pay_amount);
 
   return (
     <div className={classNames("wrapper__create-order")}>
@@ -894,7 +947,7 @@ export default function CreateOrder() {
                 name="amount"
                 label="Tổng tiền"
                 fill={true}
-                value={conditionCommon.formData.amount}
+                value={totalInvoice}
                 thousandSeparator={true}
                 disabled={true}
               />
@@ -905,20 +958,40 @@ export default function CreateOrder() {
                   name="discount_type"
                   value={conditionCommon.formData.discount_type}
                   options={lstDiscount}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const newDiscountType = e.target.value;
+                    
+                    // Calculate with new discount type
+                    const amountValue = conditionCommon.formData.amount || 0;
+                    const discountValue = conditionCommon.formData.discount || 0;
+                    const totalDiscountAmount =
+                      newDiscountType === "amount"
+                        ? discountValue
+                        : ((discountValue || 0) / 100) * amountValue;
+
+                    const needPayAmount = Math.max(0, amountValue - totalDiscountAmount);
+                    const currentPayAmount = conditionCommon.formData.pay_amount || 0;
+                    const debtAmount = Math.max(0, needPayAmount - currentPayAmount);
+
                     setLstTabInvoice((prev) =>
                       prev.map((item) => {
                         if (item.is_active) {
                           return {
                             ...item,
-                            formData: { ...item.formData, discount_type: e.target.value },
+                            formData: {
+                              ...item.formData,
+                              discount_type: newDiscountType,
+                              total_discount: totalDiscountAmount,
+                              need_pay_amount: needPayAmount,
+                              debt_amount: debtAmount,
+                            },
                           };
                         }
 
                         return item;
                       })
-                    )
-                  }
+                    );
+                  }}
                 />
               </div>
               <NummericInput
@@ -929,12 +1002,42 @@ export default function CreateOrder() {
                 value={conditionCommon.formData.discount_type === "amount" ? valueDiscount.amount : valueDiscount.percentage}
                 thousandSeparator={true}
                 onValueChange={(e) => {
+                  const newDiscount = e.floatValue || 0;
                   conditionCommon.formData.discount_type === "amount"
-                    ? setValueDiscount({ ...valueDiscount, amount: e.floatValue || 0 })
+                    ? setValueDiscount({ ...valueDiscount, amount: newDiscount })
                     : setValueDiscount({
-                      ...valueDiscount,
-                      percentage: (e.floatValue || 0) > 100 ? 100 : e.floatValue || 0,
-                    });
+                        ...valueDiscount,
+                        percentage: newDiscount > 100 ? 100 : newDiscount,
+                      });
+
+                  // Immediately calculate need_pay_amount and debt_amount when discount changes
+                  const amountValue = conditionCommon.formData.amount || 0;
+                  const totalDiscountAmount =
+                    conditionCommon.formData.discount_type === "amount"
+                      ? newDiscount
+                      : ((newDiscount || 0) / 100) * amountValue;
+
+                  const needPayAmount = Math.max(0, amountValue - totalDiscountAmount);
+                  const currentPayAmount = conditionCommon.formData.pay_amount || 0;
+                  const debtAmount = Math.max(0, needPayAmount - currentPayAmount);
+
+                  setLstTabInvoice((prev) =>
+                    prev.map((item) => {
+                      if (item.is_active) {
+                        return {
+                          ...item,
+                          formData: {
+                            ...item.formData,
+                            discount: newDiscount,
+                            total_discount: totalDiscountAmount,
+                            need_pay_amount: needPayAmount,
+                            debt_amount: debtAmount,
+                          },
+                        };
+                      }
+                      return item;
+                    })
+                  );
                 }}
                 error={false}
                 message="Giảm giá sau VAT nhỏ hơn hoặc bằng Tổng tiền"
@@ -967,21 +1070,26 @@ export default function CreateOrder() {
                 label="Số tiền thực trả"
                 fill={true}
                 required={true}
-                value={conditionCommon.formData.pay_amount}
+                value={conditionCommon.formData.pay_amount ?? conditionCommon.formData.pay_amount_math}
                 placeholder="Nhập số tiền thực trả"
                 thousandSeparator={true}
                 onValueChange={(e) => {
                   const payAmount = e.floatValue || 0;
 
-                  // Tính số tiền cần trả (sau giảm giá)
-                  const amountAfterDiscount =
-                    conditionCommon.formData.amount -
-                    (conditionCommon.formData.discount_type === "amount"
+                  // Calculate total_discount amount based on current discount settings
+                  const totalDiscountAmount =
+                    conditionCommon.formData.discount_type === "amount"
                       ? conditionCommon.formData.discount || 0
-                      : ((conditionCommon.formData.discount || 0) / 100) * conditionCommon.formData.amount);
+                      : ((conditionCommon.formData.discount || 0) / 100) * conditionCommon.formData.amount;
 
-                  // Công nợ = max(0, cần trả - thực trả)
-                  const debtAmount = Math.max(0, amountAfterDiscount - payAmount);
+                  // Calculate need_pay_amount (after discount, edge case: if >= amount then 0)
+                  const needPayAmount = Math.max(0, conditionCommon.formData.amount - totalDiscountAmount);
+
+                  // Debt = max(0, need_pay_amount - pay_amount)
+                  const debtAmount = Math.max(0, needPayAmount - payAmount);
+
+                  // Allow user to override API-provided pay amount by writing to `pay_amount`
+                  setHasAPIPayAmount(false);
 
                   setLstTabInvoice((prev) =>
                     prev.map((item) => {
@@ -991,6 +1099,9 @@ export default function CreateOrder() {
                           formData: {
                             ...item.formData,
                             pay_amount: payAmount,
+                            pay_amount_math: payAmount,
+                            total_discount: totalDiscountAmount,
+                            need_pay_amount: needPayAmount,
                             debt_amount: debtAmount,
                           },
                         };
