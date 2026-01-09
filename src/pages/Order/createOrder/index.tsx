@@ -93,7 +93,6 @@ export default function CreateOrder() {
     if (!id) return;
 
     const response = await OrderService.detail(id);
-    console.log("OrderService.detail response:", response);
 
     if (response && response.code === 0) {
       try {
@@ -181,7 +180,6 @@ export default function CreateOrder() {
         // Mark that API has pay_amount so it won't be recalculated
         setHasAPIPayAmount(!!result.payAmount); // Chỉ true nếu payAmount tồn tại và không phải 0 hoặc undefined
         setShouldSkipAmountUpdate(true); // Skip amount update when API data just loaded
-        console.log("Order detail loaded successfully:", changeDataDetails);
       } catch (err) {
         console.error("Error mapping order detail:", err, response);
         showToast("Có lỗi xử lý dữ liệu chi tiết đơn hàng", "error");
@@ -292,7 +290,6 @@ export default function CreateOrder() {
 
   const changeDataChoose = (data) => {
     if (!data) return;
-    console.log("data>>>", data);
     const changeData = {
       id: 0,
       product_id: data.id,
@@ -518,9 +515,6 @@ export default function CreateOrder() {
 
   // Recalculate payment amounts when discount or amount changes
   useEffect(() => {
-    // Skip calculation only when API pay_amount is present
-    console.log("hasAPIPayAmount:", hasAPIPayAmount);
-    // Just recalculate need_pay_amount and debt_amount, keep pay_amount from API
     const amountValue = conditionCommon.formData.amount || 0;
     const discountValue = conditionCommon.formData.discount || 0;
     const discountType = conditionCommon.formData.discount_type;
@@ -554,8 +548,6 @@ export default function CreateOrder() {
       })
     );
   }, [conditionCommon.formData.discount, conditionCommon.formData.discount_type, conditionCommon.formData.amount, hasAPIPayAmount]);
-
-  console.log("hasAPIPayAmount:conditionCommon.formData:", conditionCommon.formData);
 
   //* submit form
   const [dataInvoice, setDataInvoice] = useState<any>({});
@@ -623,7 +615,6 @@ export default function CreateOrder() {
     };
 
     let response = null;
-    console.log("body>>>", body);
 
     // if (changeFormData.id) {
     //   response = await OrderService.update(body, changeFormData.id);
@@ -662,8 +653,6 @@ export default function CreateOrder() {
 
   // table
   const titles = ["Thông tin sản phẩm", "Số lượng", "Đơn giá", "Thành tiền", "Ghi chú"];
-
-  console.log("conditionCommon:", conditionCommon.formData.pay_amount);
 
   return (
     <div className={classNames("wrapper__create-order")}>
