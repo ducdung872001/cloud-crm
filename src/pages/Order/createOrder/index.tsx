@@ -71,7 +71,6 @@ export default function CreateOrder() {
     payment_method: "cash",
     status: "done",
     pay_amount: null,
-    pay_amount_math: 0,
     debt_amount: 0,
     amount: 0,
     vat_amount: 0,
@@ -96,7 +95,7 @@ export default function CreateOrder() {
     const response = await OrderService.detail(id);
     console.log("OrderService.detail response:", response);
 
-    if (response && (response.code === 0)) {
+    if (response && response.code === 0) {
       try {
         const result = response.result;
 
@@ -178,7 +177,7 @@ export default function CreateOrder() {
         } else {
           setValueDiscount({ amount: result.discount || 0, percentage: 0 });
         }
-        
+
         // Mark that API has pay_amount so it won't be recalculated
         setHasAPIPayAmount(!!result.payAmount); // Chỉ true nếu payAmount tồn tại và không phải 0 hoặc undefined
         setShouldSkipAmountUpdate(true); // Skip amount update when API data just loaded
@@ -486,7 +485,7 @@ export default function CreateOrder() {
       setTotalInvoice(0);
     }
   }, [conditionCommon.orderDetails, conditionCommon]);
-  
+
   // Update amount when totalInvoice changes (products added/removed)
   useEffect(() => {
     // Skip updating amount when API data just loaded to preserve API amount value
@@ -520,49 +519,16 @@ export default function CreateOrder() {
   // Recalculate payment amounts when discount or amount changes
   useEffect(() => {
     // Skip calculation only when API pay_amount is present
-    if (hasAPIPayAmount) {
-      // Just recalculate need_pay_amount and debt_amount, keep pay_amount from API
-      const amountValue = conditionCommon.formData.amount || 0;
-      const discountValue = conditionCommon.formData.discount || 0;
-      const discountType = conditionCommon.formData.discount_type;
-
-      const totalDiscount = discountType === "amount" ? discountValue : (discountValue / 100) * amountValue;
-      const needPayAmount = Math.max(0, amountValue - totalDiscount);
-      const currentPayAmount = conditionCommon.formData.pay_amount || 0;
-      const debtAmount = Math.max(0, needPayAmount - currentPayAmount);
-
-      setLstTabInvoice((prev) =>
-        prev.map((item) => {
-          if (item.is_active) {
-            return {
-              ...item,
-              formData: {
-                ...item.formData,
-                total_discount: totalDiscount,
-                need_pay_amount: needPayAmount,
-                debt_amount: debtAmount,
-                // Keep pay_amount from API
-              },
-            };
-          }
-          return item;
-        })
-      );
-      return;
-    }
-
+    console.log("hasAPIPayAmount:", hasAPIPayAmount);
+    // Just recalculate need_pay_amount and debt_amount, keep pay_amount from API
     const amountValue = conditionCommon.formData.amount || 0;
     const discountValue = conditionCommon.formData.discount || 0;
     const discountType = conditionCommon.formData.discount_type;
 
-    // Calculate total_discount
     const totalDiscount = discountType === "amount" ? discountValue : (discountValue / 100) * amountValue;
-
-    // need_pay_amount = max(0, amount - total_discount)
     const needPayAmount = Math.max(0, amountValue - totalDiscount);
-
-    // For new orders or no API pay_amount, set pay_amount = need_pay_amount
-    const debtAmount = 0;
+    const currentPayAmount = conditionCommon.formData.pay_amount || 0;
+    const debtAmount = Math.max(0, needPayAmount - currentPayAmount);
 
     setLstTabInvoice((prev) =>
       prev.map((item) => {
@@ -570,11 +536,17 @@ export default function CreateOrder() {
           return {
             ...item,
             formData: {
-              ...item.formData,
-              total_discount: totalDiscount,
-              need_pay_amount: needPayAmount,
-              pay_amount_math: needPayAmount,
-              debt_amount: debtAmount,
+              ...{
+                ...item.formData,
+                total_discount: totalDiscount,
+                need_pay_amount: needPayAmount,
+                debt_amount: debtAmount,
+              },
+              ...(!hasAPIPayAmount
+                ? {
+                    pay_amount: needPayAmount,
+                  }
+                : {}),
             },
           };
         }
@@ -583,7 +555,7 @@ export default function CreateOrder() {
     );
   }, [conditionCommon.formData.discount, conditionCommon.formData.discount_type, conditionCommon.formData.amount, hasAPIPayAmount]);
 
-  console.log("conditionCommon.formData:", conditionCommon.formData);
+  console.log("hasAPIPayAmount:conditionCommon.formData:", conditionCommon.formData);
 
   //* submit form
   const [dataInvoice, setDataInvoice] = useState<any>({});
@@ -656,7 +628,7 @@ export default function CreateOrder() {
     // if (changeFormData.id) {
     //   response = await OrderService.update(body, changeFormData.id);
     // } else {
-      response = await OrderService.create(body);
+    response = await OrderService.create(body);
     // }
 
     if (response.code === 0) {
@@ -943,14 +915,7 @@ export default function CreateOrder() {
               />
             </div>
             <div className="form-group">
-              <NummericInput
-                name="amount"
-                label="Tổng tiền"
-                fill={true}
-                value={totalInvoice}
-                thousandSeparator={true}
-                disabled={true}
-              />
+              <NummericInput name="amount" label="Tổng tiền" fill={true} value={totalInvoice} thousandSeparator={true} disabled={true} />
             </div>
             <div className="form-group options__discount">
               <div className="lst__options--discount">
@@ -960,14 +925,11 @@ export default function CreateOrder() {
                   options={lstDiscount}
                   onChange={(e) => {
                     const newDiscountType = e.target.value;
-                    
+
                     // Calculate with new discount type
                     const amountValue = conditionCommon.formData.amount || 0;
                     const discountValue = conditionCommon.formData.discount || 0;
-                    const totalDiscountAmount =
-                      newDiscountType === "amount"
-                        ? discountValue
-                        : ((discountValue || 0) / 100) * amountValue;
+                    const totalDiscountAmount = newDiscountType === "amount" ? discountValue : ((discountValue || 0) / 100) * amountValue;
 
                     const needPayAmount = Math.max(0, amountValue - totalDiscountAmount);
                     const currentPayAmount = conditionCommon.formData.pay_amount || 0;
@@ -1013,9 +975,7 @@ export default function CreateOrder() {
                   // Immediately calculate need_pay_amount and debt_amount when discount changes
                   const amountValue = conditionCommon.formData.amount || 0;
                   const totalDiscountAmount =
-                    conditionCommon.formData.discount_type === "amount"
-                      ? newDiscount
-                      : ((newDiscount || 0) / 100) * amountValue;
+                    conditionCommon.formData.discount_type === "amount" ? newDiscount : ((newDiscount || 0) / 100) * amountValue;
 
                   const needPayAmount = Math.max(0, amountValue - totalDiscountAmount);
                   const currentPayAmount = conditionCommon.formData.pay_amount || 0;
@@ -1070,7 +1030,7 @@ export default function CreateOrder() {
                 label="Số tiền thực trả"
                 fill={true}
                 required={true}
-                value={conditionCommon.formData.pay_amount ?? conditionCommon.formData.pay_amount_math}
+                value={conditionCommon.formData.pay_amount}
                 placeholder="Nhập số tiền thực trả"
                 thousandSeparator={true}
                 onValueChange={(e) => {
@@ -1089,7 +1049,7 @@ export default function CreateOrder() {
                   const debtAmount = Math.max(0, needPayAmount - payAmount);
 
                   // Allow user to override API-provided pay amount by writing to `pay_amount`
-                  setHasAPIPayAmount(false);
+                  // setHasAPIPayAmount(false);
 
                   setLstTabInvoice((prev) =>
                     prev.map((item) => {
@@ -1099,7 +1059,6 @@ export default function CreateOrder() {
                           formData: {
                             ...item.formData,
                             pay_amount: payAmount,
-                            pay_amount_math: payAmount,
                             total_discount: totalDiscountAmount,
                             need_pay_amount: needPayAmount,
                             debt_amount: debtAmount,
