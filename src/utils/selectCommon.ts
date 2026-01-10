@@ -287,11 +287,11 @@ export async function SelectOptionData(key: string, params?: any) {
       response = await KpiService.list(params);
       break;
 
-    case "supportId":
+    case "supportProcessId":
       response = await TicketProcService.list(params);
       break;
 
-    case "ticketCategoryId":
+    case "supportId":
       response = await TicketCategoryService.list(params);
       break;
     case "vehicleId":
