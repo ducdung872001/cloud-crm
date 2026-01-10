@@ -104,8 +104,8 @@ export default function CreateOrder() {
 
           return {
             id: item.id,
-            product_id: item.product_id,
-            name: item.product_name,
+            product_id: item.objectId || item.product_id,
+            name: item.objectName || item.product_name,
             image: item.image || "",
             code: item.product_code,
             numbers: numbersArr.map((el) => ({
@@ -567,6 +567,13 @@ export default function CreateOrder() {
       return;
     }
 
+    // Validate product_id not null
+    const hasInvalidProduct = conditionCommon.orderDetails.some((item) => !item.product_id);
+    if (hasInvalidProduct) {
+      showToast("Có sản phẩm không hợp lệ. Vui lòng kiểm tra lại", "error");
+      return;
+    }
+
     if (type === "done") {
       setIsSubmit(true);
     } else {
@@ -581,6 +588,7 @@ export default function CreateOrder() {
         bsnId: 0,
         objectType: "product",
         objectId: item.product_id,
+        objectName: item.name,
         exchange: item.exchange,
         quantity: item.quantity,
         cost: item.cost,
@@ -589,13 +597,13 @@ export default function CreateOrder() {
         expiryDate: "",
       };
     });
-
+    
     const body = {
       id: changeFormData.id,
       orderCode: "",
       bnsId: 0,
-      orderDate: moment(changeFormData.order_date).format("YYYY-MM-DDTHH:mm:ss"),
-      expectedDate: moment(changeFormData.expected_date).format("YYYY-MM-DDTHH:mm:ss"),
+      orderDate: moment(changeFormData.order_date, "DD/MM/YYYY").startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+      expectedDate: moment(changeFormData.expected_date, "DD/MM/YYYY").startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
       invoiceId: null,
       amount: changeFormData.pay_amount,
       vatAmount: changeFormData.vat_amount,
@@ -616,11 +624,11 @@ export default function CreateOrder() {
 
     let response = null;
 
-    // if (changeFormData.id) {
-    //   response = await OrderService.update(body, changeFormData.id);
-    // } else {
+    if (changeFormData.id) {
+      response = await OrderService.update(body, changeFormData.id);
+    } else {
     response = await OrderService.create(body);
-    // }
+    }
 
     if (response.code === 0) {
       showToast(`Tạo đơn ${type === "done" ? "đặt hàng " : "lưu tạm"} thành công`, "success");

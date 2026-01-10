@@ -79,7 +79,7 @@ export default function WarrantyList() {
           },
           {
             value: "0",
-            label: "chưa thực hiện",
+            label: "Chưa thực hiện",
           },
           {
             value: "1",
