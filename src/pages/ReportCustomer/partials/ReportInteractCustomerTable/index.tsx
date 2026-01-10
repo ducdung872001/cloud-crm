@@ -220,7 +220,7 @@ export default function ReportInteractCustomerTable() {
     "",
   ];
 
-  const dataFormat = ["text-center", "text-center", "", "", "", "", "", "text-center", "", ""];
+  const dataFormat = ["text-center", "text-center", "", "", "", "text-left", "", "text-center", "", ""];
 
   const formatExcel = ["center", "top", "", "", "", "", "", "", "", ""];
 

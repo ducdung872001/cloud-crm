@@ -151,7 +151,7 @@ export default function ProductSoldList() {
 
   const titles = ["STT", "Mã hóa đơn", "Tên sản phẩm", "Tên khách hàng", "Số lô", "Ngày bán", "Đơn vị"];
 
-  const dataFormat = ["text-center", "", "", "", "", "", ""];
+  const dataFormat = ["text-center", "", "", "", "text-center", "", ""];
 
   const dataMappingArray = (item: IBoughtProductResponse, index: number) => [
     getPageOffset(params) + index + 1,
