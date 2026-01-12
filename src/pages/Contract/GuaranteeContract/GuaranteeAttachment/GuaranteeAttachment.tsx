@@ -26,6 +26,7 @@ export default function GuaranteeAttachment(props: any) {
   const [dataAttachment, setDataAttachment] = useState(null);
 
   const [isAddAttachment, setIsAddAttachment] = useState(false);
+  const [listIdChecked, setListIdChecked] = useState<number[]>([]);
 
   const [params, setParams] = useState({
     keyword: "",
@@ -82,46 +83,114 @@ export default function GuaranteeAttachment(props: any) {
   const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.attachmentName];
 
   const actionsTable = (item: any): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Tải xuống",
-        icon: <Icon name="Download" />,
+        icon: <Icon name="Download" className={isCheckedItem ? "icon-disabled" : ""} />,
+        disabled: isCheckedItem,
         callback: () => {
-          let fieldName = convertToId(item.name) || "";
-          fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, "g"), "");
+          if (!isCheckedItem) {
+            let fieldName = convertToId(item.name) || "";
+            fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, "g"), "");
 
-          const type = item.link.includes(".docx")
-            ? "docx"
-            : item.link.includes(".xlsx")
-            ? "xlsx"
-            : item.link.includes(".pdf") || item.link.includes(".PDF")
-            ? "pdf"
-            : item.link.includes(".pptx")
-            ? "pptx"
-            : item.link.includes(".zip")
-            ? "zip"
-            : "rar";
-          const name = `${fieldName}.${type}`;
+            const type = item.link.includes(".docx")
+              ? "docx"
+              : item.link.includes(".xlsx")
+                ? "xlsx"
+                : item.link.includes(".pdf") || item.link.includes(".PDF")
+                  ? "pdf"
+                  : item.link.includes(".pptx")
+                    ? "pptx"
+                    : item.link.includes(".zip")
+                      ? "zip"
+                      : "rar";
+            const name = `${fieldName}.${type}`;
 
-          handDownloadFileOrigin(item.link, name);
+            handDownloadFileOrigin(item.link, name);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
+        disabled: isCheckedItem,
         callback: () => {
-          setDataAttachment(item);
-          setIsAddAttachment(true);
+          if (!isCheckedItem) {
+            setDataAttachment(item);
+            setIsAddAttachment(true);
+          }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
-          showDialogConfirmDelete(item);
+          if (!isCheckedItem) {
+            showDialogConfirmDelete(item);
+          }
         },
       },
     ];
+  };
+
+  const bulkActionList = [
+    {
+      title: "Xóa",
+      icon: <Icon name="Trash" className="icon-error" />,
+      callback: () => {
+        showDialogConfirmDeleteMultiple();
+      },
+    },
+  ];
+
+  const showDialogConfirmDeleteMultiple = () => {
+    const contentDialog: IContentDialog = {
+      color: "error",
+      className: "dialog-delete",
+      isCentered: true,
+      isLoading: true,
+      title: <Fragment>Xóa...</Fragment>,
+      message: (
+        <Fragment>
+          Bạn có chắc chắn muốn xóa {listIdChecked.length} tài liệu đã chọn? Thao tác này không thể khôi phục.
+        </Fragment>
+      ),
+      cancelText: "Hủy",
+      cancelAction: () => {
+        setShowDialog(false);
+        setContentDialog(null);
+      },
+      defaultText: "Xóa",
+      defaultAction: async () => {
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const id of listIdChecked) {
+          const response = await GuaranteeAttachmentService.guaranteeAttachmentDelete(id);
+          if (response.code === 0) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+        }
+
+        if (successCount > 0) {
+          showToast(`Xóa thành công ${successCount} tài liệu`, "success");
+          getListAttachment(params);
+          setListIdChecked([]);
+        }
+        if (errorCount > 0) {
+          showToast(`Xóa thất bại ${errorCount} tài liệu`, "error");
+        }
+
+        setShowDialog(false);
+        setContentDialog(null);
+      },
+    };
+    setContentDialog(contentDialog);
+    setShowDialog(true);
   };
 
   const showDialogConfirmDelete = (item?: any) => {
@@ -133,7 +202,7 @@ export default function GuaranteeAttachment(props: any) {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa tài liệu đã chọn
+          Bạn có chắc chắn muốn xóa tài liệu đã chọn{" "}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -164,7 +233,7 @@ export default function GuaranteeAttachment(props: any) {
       <div className="action-header-attachment">
         <div className="title__actions">
           <ul className="menu-list">
-            <li className={"active"} onClick={(e) => {}}>
+            <li className={"active"} onClick={(e) => { }}>
               {"Danh sách tài liệu"}
             </li>
           </ul>
@@ -200,11 +269,11 @@ export default function GuaranteeAttachment(props: any) {
             dataPagination={pagination}
             dataMappingArray={(item, index) => dataMappingArray(item, index)}
             dataFormat={dataFormat}
-            // listIdChecked={listIdChecked}
+            listIdChecked={listIdChecked}
             isBulkAction={true}
-            // bulkActionItems={bulkActionList}
+            bulkActionItems={bulkActionList}
             striped={true}
-            // setListIdChecked={(listId) => setListIdChecked(listId)}
+            setListIdChecked={(listId) => setListIdChecked(listId)}
             actions={actionsTable}
             actionType="inline"
           />

@@ -243,15 +243,15 @@ export default function ContractList() {
       setListApproach([
         ...(dataOption.length > 0
           ? dataOption.map((item, index) => {
-              return {
-                value: item.id,
-                label: item.name,
-                color: colorData[index],
-                lstContractActivity: item.lstContractActivity,
-                pipelineId: item.pipelineId,
-                step: item.step,
-              };
-            })
+            return {
+              value: item.id,
+              label: item.name,
+              color: colorData[index],
+              lstContractActivity: item.lstContractActivity,
+              pipelineId: item.pipelineId,
+              step: item.step,
+            };
+          })
           : []),
       ]);
     }
@@ -400,7 +400,7 @@ export default function ContractList() {
       },
       {
         key: "contractStatus",
-        name: "Trạng hợp đồng",
+        name: "Trạng thái hợp đồng",
         type: "select",
         list: [
           {
@@ -781,14 +781,14 @@ export default function ContractList() {
               const type = data?.dataItem?.template?.includes(".docx")
                 ? "docx"
                 : data?.dataItem?.template?.includes(".xlsx")
-                ? "xlsx"
-                : data?.dataItem?.template?.includes(".pdf")
-                ? "pdf"
-                : data?.dataItem?.template?.includes(".pptx")
-                ? "pptx"
-                : data?.dataItem?.template?.includes(".zip")
-                ? "zip"
-                : "rar";
+                  ? "xlsx"
+                  : data?.dataItem?.template?.includes(".pdf")
+                    ? "pdf"
+                    : data?.dataItem?.template?.includes(".pptx")
+                      ? "pptx"
+                      : data?.dataItem?.template?.includes(".zip")
+                        ? "zip"
+                        : "rar";
               const name = `${fieldName}.${type}`;
 
               handDownloadFileOrigin(data?.dataItem?.template, name);
@@ -882,9 +882,8 @@ export default function ContractList() {
       <Tippy content="Đổi trạng thái ký">
         <div style={{ display: "flex", justifyContent: "center", marginTop: "0.9rem" }}>
           <span
-            className={`status__item--signature status__item--signature-${
-              !status ? "secondary" : status === 1 ? "primary" : status === 2 ? "success" : status === 3 ? "error" : status === 4 ? "warning" : ""
-            }`}
+            className={`status__item--signature status__item--signature-${!status ? "secondary" : status === 1 ? "primary" : status === 2 ? "success" : status === 3 ? "error" : status === 4 ? "warning" : ""
+              }`}
             onClick={() => {
               if (!status) {
                 showToast("Không thể đổi trạng thái vì hợp đồng chưa được trình ký", "warning");
@@ -897,14 +896,14 @@ export default function ContractList() {
             {!status
               ? "Chưa trình ký"
               : status === 1
-              ? "Đã trình ký"
-              : status === 2
-              ? "Đã phê duyệt"
-              : status === 3
-              ? "Từ chối phê duyệt"
-              : status === 4
-              ? "Tạm dưng luồng ký"
-              : ""}
+                ? "Đã trình ký"
+                : status === 2
+                  ? "Đã phê duyệt"
+                  : status === 3
+                    ? "Từ chối phê duyệt"
+                    : status === 4
+                      ? "Tạm dưng luồng ký"
+                      : ""}
           </span>
         </div>
       </Tippy>
@@ -959,7 +958,7 @@ export default function ContractList() {
           className={`status__item--signature status__item--signature-${
             // !contractStatus ? "secondary" : approachId === -4 ? "error" : approachId === -3 ? "warning" : approachId === 2 ? "success" : "primary"
             getStatusColor(contractStatus)
-          }`}
+            }`}
           onClick={() => {
             if (status === 2) {
               setIsChangeContractStatus(true);
@@ -1319,8 +1318,8 @@ export default function ContractList() {
 
       const checkDataLocalStorage = takeFieldActiveContact
         ? result.filter((item) => {
-            return !takeFieldActiveContact.some((el) => el.fieldName === item.fieldName);
-          })
+          return !takeFieldActiveContact.some((el) => el.fieldName === item.fieldName);
+        })
         : result;
 
       setLstFieldUnActive(checkDataLocalStorage);
@@ -1523,44 +1522,44 @@ export default function ContractList() {
     actions: [
       ...(isRegimeKanban
         ? [
-            {
-              title: "Quay lại",
-              icon: <Icon name="ChevronLeft" />,
-              callback: () => {
-                setIsRegimeKanban(!isRegimeKanban);
-                // localStorage.removeItem("keep_position_kanban_contract");
-              },
+          {
+            title: "Quay lại",
+            icon: <Icon name="ChevronLeft" />,
+            callback: () => {
+              setIsRegimeKanban(!isRegimeKanban);
+              // localStorage.removeItem("keep_position_kanban_contract");
             },
-          ]
+          },
+        ]
         : [
-            permissions["CONTRACT_ADD"] == 1 &&
-              isUserRoot && {
-                title: "Thêm mới bằng XML",
-                callback: () => {
-                  navigate("/create_contract_xml");
-                },
-              },
-            {
-              title: "Thêm mới",
-              callback: () => {
-                navigate("/create_contract");
-              },
+          permissions["CONTRACT_ADD"] == 1 &&
+          isUserRoot && {
+            title: "Thêm mới bằng XML",
+            callback: () => {
+              navigate("/create_contract_xml");
             },
-            {
-              title: "Kanban",
-              // icon: <Icon name="Fullscreen" />,
-              callback: () => {
-                setIsRegimeKanban(true);
-                if (contractType == -1) {
-                  setContractType(listPipeline && listPipeline.length > 0 && +listPipeline[0].value);
-                } else {
-                  setContractType(contractType);
-                  setParams({ ...params, pipelineId: contractType, approachId: -1 });
-                  setParamsTab2({ ...params, pipelineId: contractType, approachId: -1 });
-                }
-              },
+          },
+          {
+            title: "Thêm mới",
+            callback: () => {
+              navigate("/create_contract");
             },
-          ]),
+          },
+          {
+            title: "Kanban",
+            // icon: <Icon name="Fullscreen" />,
+            callback: () => {
+              setIsRegimeKanban(true);
+              if (contractType == -1) {
+                setContractType(listPipeline && listPipeline.length > 0 && +listPipeline[0].value);
+              } else {
+                setContractType(contractType);
+                setParams({ ...params, pipelineId: contractType, approachId: -1 });
+                setParamsTab2({ ...params, pipelineId: contractType, approachId: -1 });
+              }
+            },
+          },
+        ]),
     ],
 
     actions_extra: [
@@ -1603,17 +1602,17 @@ export default function ContractList() {
   const titles = (type: string) => {
     return type
       ? [
-          "STT",
-          "Tên hợp đồng",
-          "Số hợp đồng",
-          "Tên khách hàng",
-          "Giá trị hợp đồng",
-          "Giai đoạn HĐ",
-          "Loại hợp đồng",
-          "Ngày ký",
-          "Ngày hết hạn",
-          "Ngày tạo",
-        ]
+        "STT",
+        "Tên hợp đồng",
+        "Số hợp đồng",
+        "Tên khách hàng",
+        "Giá trị hợp đồng",
+        "Giai đoạn HĐ",
+        "Loại hợp đồng",
+        "Ngày ký",
+        "Ngày hết hạn",
+        "Ngày tạo",
+      ]
       : ["STT", "Tên hợp đồng", "Giá trị hợp đồng", "Giai đoạn HĐ", "Loại HĐ", "Tên công ty"];
   };
 
@@ -1624,57 +1623,57 @@ export default function ContractList() {
     getPageOffset(params) + index + 1,
     ...(type !== "export"
       ? [
-          item.name,
-          // <div className="contract-name">
-          //   <label title={item.name}>
-          //     {
-          //       item.name
-          //       // trimContent(item.name, 15)
-          //     }
-          //   </label>
+        item.name,
+        // <div className="contract-name">
+        //   <label title={item.name}>
+        //     {
+        //       item.name
+        //       // trimContent(item.name, 15)
+        //     }
+        //   </label>
 
-          //   <div>
-          //     <a title={'Gửi email'} onClick={() => {
-          //       setDataContract(item);
-          //       setShowModalSendEmail(true);
-          //     }}>
-          //       <Icon name="EmailFill" style={{ marginRight: 5, cursor: 'pointer', width: 16, }} />
-          //     </a>
-          //     <a title={'Gửi SMS'} onClick={() => {
-          //       setDataContract(item);
-          //       setShowModalAdd(true);
-          //     }}>
-          //       <Icon name="SMS" style={{ marginRight: 5, cursor: 'pointer', width: 17, marginTop: 3 }} title={'Nhắn tin'} />
-          //     </a>
-          //     <a title={'Gọi điện'} onClick={() => {
-          //       setDataContract(item);
-          //       getCustomerInfo(item?.customerId);
-          //     }}>
-          //       <Icon name="PhoneFill" style={{ cursor: 'pointer', width: 13, fill: '#1c8cff' }} title={'Gọi điện'} />
-          //     </a>
-          //   </div>
-          // </div>,
-          formatCurrency(item.dealValue, ","),
-          item.approachName,
-          item.pipelineName,
-          <label key={item.id} title={item.customerName}>
-            {/* {trimContent(item.customerName, 17)} */}
-            {item.customerName}
-          </label>,
-          // "456.8", //Diện tích NFA => Các trường thông tin động
-          // "Tòa GSS", //Tên dự án/Tòa nhà
-        ]
+        //   <div>
+        //     <a title={'Gửi email'} onClick={() => {
+        //       setDataContract(item);
+        //       setShowModalSendEmail(true);
+        //     }}>
+        //       <Icon name="EmailFill" style={{ marginRight: 5, cursor: 'pointer', width: 16, }} />
+        //     </a>
+        //     <a title={'Gửi SMS'} onClick={() => {
+        //       setDataContract(item);
+        //       setShowModalAdd(true);
+        //     }}>
+        //       <Icon name="SMS" style={{ marginRight: 5, cursor: 'pointer', width: 17, marginTop: 3 }} title={'Nhắn tin'} />
+        //     </a>
+        //     <a title={'Gọi điện'} onClick={() => {
+        //       setDataContract(item);
+        //       getCustomerInfo(item?.customerId);
+        //     }}>
+        //       <Icon name="PhoneFill" style={{ cursor: 'pointer', width: 13, fill: '#1c8cff' }} title={'Gọi điện'} />
+        //     </a>
+        //   </div>
+        // </div>,
+        formatCurrency(item.dealValue, ","),
+        item.approachName,
+        item.pipelineName,
+        <label key={item.id} title={item.customerName}>
+          {/* {trimContent(item.customerName, 17)} */}
+          {item.customerName}
+        </label>,
+        // "456.8", //Diện tích NFA => Các trường thông tin động
+        // "Tòa GSS", //Tên dự án/Tòa nhà
+      ]
       : [
-          item.name,
-          item.contractNo,
-          item.customerName || item.businessPartnerName,
-          item.dealValue,
-          item.pipelineName,
-          item.categoryName,
-          item.signDate ? moment(item.signDate).format("DD/MM/YYYY") : "",
-          item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
-          item.createdAt ? moment(item.createdAt).format("DD/MM/YYYY") : "",
-        ]),
+        item.name,
+        item.contractNo,
+        item.customerName || item.businessPartnerName,
+        item.dealValue,
+        item.pipelineName,
+        item.categoryName,
+        item.signDate ? moment(item.signDate).format("DD/MM/YYYY") : "",
+        item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
+        item.createdAt ? moment(item.createdAt).format("DD/MM/YYYY") : "",
+      ]),
   ];
 
   const actionsTable = (item: IContractResponse): IAction[] => {
@@ -1846,14 +1845,14 @@ export default function ContractList() {
       const response = await ContractService.list(
         type === "all"
           ? {
-              page: 1,
-              limit: 1000,
-            }
+            page: 1,
+            limit: 1000,
+          }
           : {
-              ...params,
-              page: type === "current_page" ? params.page || 1 : 1,
-              limit: type === "all" || type === "current_search" ? 10000 : params.limit,
-            }
+            ...params,
+            page: type === "current_page" ? params.page || 1 : 1,
+            limit: type === "all" || type === "current_search" ? 10000 : params.limit,
+          }
       );
 
       if (response.code === 0) {

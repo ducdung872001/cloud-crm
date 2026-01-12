@@ -67,7 +67,7 @@ export default function TemplateCategoryZalo(props: any) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListTemplateCategory(result);
+      setListTemplateCategory(result.items ?? result);
 
       setPagination({
         ...pagination,

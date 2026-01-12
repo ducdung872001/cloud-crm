@@ -105,7 +105,7 @@ export default function XmlAddCustomer(props: any) {
         mapped.custType = String(mapped.custType);
         mapped.gender = String(mapped.gender);
         mapped.isExternal = String(mapped.isExternal);
-        mapped.customers = mapped.relationIds[0];
+        mapped.customers = mapped.relationIds;
 
         mapped.birthday = toFormDate(mapped.birthday);
 
@@ -118,9 +118,9 @@ export default function XmlAddCustomer(props: any) {
         }
         if (mapped.careers) {
           if (mapped.custType == "0") {
-            mapped.careerId = mapped.careers[0];
+            mapped.careerId = mapped.careers;
           } else {
-            mapped.professionId = mapped.careers[0];
+            mapped.professionId = mapped.careers;
           }
         }
         if (mapped.name) {
@@ -190,23 +190,23 @@ export default function XmlAddCustomer(props: any) {
       contactId: config.contactId ?? 0,
       custType: config.custType ?? 0,
       customerExtraInfos: infoExtra,
-      customerRelationIds:"[" + (config.customers ?? 0) + "]",
+      customerRelationIds: config.customers ?? [],
       email: config.email ?? "",
       employeeId: config.employeeId ?? 0,
       employeeTitle: config.employeeTitle ?? "",
       firstCall: config.firstCall ?? "",
       gender: config.gender ?? 0,
       height: config.height ?? 0,
-      isExternal: config.isExternal ?? "0",
+      isExternal: config.isExternal ?? "",
       maritalStatus: config.maritalStatus ?? 0,
       name: (config.custType == 0 ? config.namePerson : config.nameCompany) ?? "",
       phone: config.phone ?? "",
       profileLink: config.profileLink ?? "",
-      profileStatus: config.profileStatus ?? "0",
+      profileStatus: config.profileStatus ?? "",
       recommenderPhone: config.recommenderPhone ?? "",
       relationIds: [config.customers ?? 0],
       secondProfileLink: config.secondProfileLink ?? "",
-      secondProfileStatus: config.secondProfileStatus ?? "0",
+      secondProfileStatus: config.secondProfileStatus ?? "",
       sourceId: (config.custType == 0 ? config.sourceId : config.targetId) ?? 0,
       taxCode: (config.custType == 1 ? config.taxCode : "") ?? "",
       trademark: (config.custType == 1 ? config.trademark : "") ?? "",

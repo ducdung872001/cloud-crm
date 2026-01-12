@@ -42,6 +42,7 @@ interface IFilterUser {
 
 export default function EditPromotion(props: any) {
   const { showEditPrm, setShowEditPrm, data } = props;
+  console.log("data edit prm", data);
   document.title = "Thêm mới khuyến mãi";
 
   const [type, setType] = useState<string>("add");
@@ -182,6 +183,66 @@ export default function EditPromotion(props: any) {
       setListIdCustomer(listIdCustomerProps);
     }
   }, [listIdCustomerProps]);
+
+  // Load data from props when component mounts or data changes
+  useEffect(() => {
+    if (data && Object.keys(data).length > 0) {
+      console.log("Loading data into formData", data);
+      setType("edit");
+      
+      // Parse dates if they exist
+      const startDate = data.startDate ? new Date(data.startDate) : null;
+      const endDate = data.endDate ? new Date(data.endDate) : null;
+      
+      const newFormData = {
+        values: {
+          name: data.name || "",
+          subtotalSelection: data.subtotalSelection || "",
+          prerequisiteSubtotal: data.prerequisiteSubtotal || "",
+          discountType: data.discountType || "",
+          discountValue: data.discountValue || "",
+          discountTypeSelection: data.discountTypeSelection || "",
+          timeType: data.timeType || "",
+          timeAt: data.timeAt || "",
+          startDate: startDate,
+          endDate: endDate,
+          receiverType: data.receiverType || "",
+          limit: data.limit || "",
+        }
+      };
+      
+      console.log("New formData:", newFormData);
+      setFormData(newFormData);
+      
+      // Set isFinishTime if endDate exists
+      if (endDate) {
+        setIsFinishTime(true);
+      }
+      
+      if (data.receiverType === "1") {
+        setOptionOne(true);
+        setOptionTwo(false);
+        setOptionThree(false);
+      } else if (data.receiverType === "2") {
+        setOptionOne(false);
+        setOptionTwo(true);
+        setOptionThree(false);
+      } else if (data.receiverType === "3") {
+        setOptionOne(false);
+        setOptionTwo(false);
+        setOptionThree(true);
+      }
+      if (data.filterCustomerGroup) {
+        setValueCgp(data.filterCustomerGroup);
+      }
+      if (data.filterCareer) {
+        setValueCareer(data.filterCareer);
+      }
+      if (data.filterSource) {
+        setValueSource(data.filterSource);
+      }
+    }
+  }, [data]);
 
   //* Đoạn này xử lý lấy ngành nghề khách hàng
   const handleChangeValueCareer = (data) => {

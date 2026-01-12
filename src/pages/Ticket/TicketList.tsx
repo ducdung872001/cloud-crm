@@ -61,19 +61,19 @@ export default function TicketList() {
   const customerFilterList: IFilterItem[] = useMemo(
     () => [
       {
-        key: "supportId",
+        key: "supportProcessId",
         name: "Quy trình hỗ trợ",
         type: "select",
         is_featured: true,
         params: { type: 1 },
-        value: searchParams.get("supportId") ?? "",
+        value: searchParams.get("supportProcessId") ?? "",
       },
       {
-        key: "ticketCategoryId",
+        key: "supportId",
         name: "Loại hỗ trợ",
         type: "select",
         is_featured: true,
-        value: searchParams.get("ticketCategoryId") ?? "",
+        value: searchParams.get("supportId") ?? "",
       },
       {
         key: "status",

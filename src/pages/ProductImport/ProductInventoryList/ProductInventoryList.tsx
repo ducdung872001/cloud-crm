@@ -45,14 +45,14 @@ export default function ProductInventoryList() {
         },
         ...(+checkUserRoot == 1
           ? [
-              {
-                key: "inventoryId",
-                name: "Kho hàng",
-                type: "select",
-                is_featured: true,
-                value: searchParams.get("inventoryId") ?? "",
-              },
-            ]
+            {
+              key: "inventoryId",
+              name: "Kho hàng",
+              type: "select",
+              is_featured: true,
+              value: searchParams.get("inventoryId") ?? "",
+            },
+          ]
           : []),
       ] as IFilterItem[],
     [searchParams]
@@ -141,7 +141,7 @@ export default function ProductInventoryList() {
 
   const titles = ["STT", "Tên sản phẩm", "Số lô", "Hạn dùng", "Đơn vị tính", "Số lượng tồn kho", "Tên kho"];
 
-  const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", "text-right", ""];
+  const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", "text-center", ""];
 
   const dataMappingArray = (item: IWarehouseResponse, index: number) => [
     getPageOffset(params) + index + 1,

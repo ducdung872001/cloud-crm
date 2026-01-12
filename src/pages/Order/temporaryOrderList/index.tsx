@@ -115,21 +115,21 @@ export default function TemporaryOrderList() {
       filters: [
         ...(params.date
           ? [
-              {
-                name: "date",
-                value: params.date || "",
-                operation: "eq",
-              },
-            ]
+            {
+              name: "date",
+              value: params.date || "",
+              operation: "eq",
+            },
+          ]
           : []),
         ...(paramsSearch.status
           ? [
-              {
-                name: "status",
-                value: "temp",
-                operation: "eq",
-              },
-            ]
+            {
+              name: "status",
+              value: "temp",
+              operation: "eq",
+            },
+          ]
           : []),
       ],
     };
@@ -223,21 +223,21 @@ export default function TemporaryOrderList() {
         filters: [
           ...(params.date
             ? [
-                {
-                  name: "date",
-                  value: params.date || "",
-                  operation: "eq",
-                },
-              ]
+              {
+                name: "date",
+                value: params.date || "",
+                operation: "eq",
+              },
+            ]
             : []),
           ...(params.status
             ? [
-                {
-                  name: "status",
-                  value: params.status,
-                  operation: "eq",
-                },
-              ]
+              {
+                name: "status",
+                value: params.status,
+                operation: "eq",
+              },
+            ]
             : []),
         ],
       };
@@ -260,7 +260,7 @@ export default function TemporaryOrderList() {
             data: result.map((item, idx) => dataMappingArray(item, idx, "export")),
             info: { name, product_store },
           });
-        } 
+        }
         showToast("Xuất file thành công", "success");
         setOnShowModalExport(false);
       } else {
@@ -285,7 +285,7 @@ export default function TemporaryOrderList() {
 
   const titles = ["STT", "Mã hóa đơn", "Ngày đặt hàng", "Ngày nhận hàng mong muốn", "NV đặt hàng", "Tiền hàng tạm tính", "Ghi chú", "Trạng thái"];
 
-  const dataFormat = ["text-center", "", "", "", "", "text-right", "", "text-center"];
+  const dataFormat = ["text-center", "", "text-center", "text-center", "", "text-right", "", "text-center"];
 
   const dataMappingArray = (item: IOrderResponseModel, index: number, type?: string) => [
     index + 1,

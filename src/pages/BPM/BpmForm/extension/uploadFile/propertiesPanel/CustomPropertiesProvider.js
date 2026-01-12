@@ -68,7 +68,7 @@ function createCustomEntryFieldName(field, editField, id, key, label) {
   // Inline Preact functional component — no hooks, no context
   const SimpleTextEntry = (props) => {
     const { setValue } = props;
-    const [inputValue, setInputValue] = useState();
+    const [inputValue, setInputValue] = useState(9);
 
     const currentValue = get(field, [key]);
 
@@ -92,6 +92,7 @@ function createCustomEntryFieldName(field, editField, id, key, label) {
             id,
             className: "bio-properties-panel-input",
             type: "number",
+            min: 9,
             value: inputValue,
             onInput: (evt) => setInputValue(evt.target.value),
             onBlur: (evt) => setValue(evt.target.value === "" ? undefined : evt.target.value),

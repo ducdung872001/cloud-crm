@@ -366,7 +366,7 @@ export default function SettingPromotionList(props: any) {
         <TitleAction title="" titleActions={titleActions} />
       </div>
       {showEditPrm ? (
-        <EditPromotion showEditPrm={showEditPrm} setShowEditPrm={setShowEditPrm} dataEdit={dataEdit} />
+        <EditPromotion showEditPrm={showEditPrm} setShowEditPrm={setShowEditPrm} data={dataEdit} />
       ) : (
         <div>
           <div className="action-navigation">

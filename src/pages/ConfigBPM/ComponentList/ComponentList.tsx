@@ -69,7 +69,7 @@ export default function ComponentList(props: any) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListComponent(result);
+      setListComponent(result.items);
 
       setPagination({
         ...pagination,
@@ -145,12 +145,12 @@ export default function ComponentList(props: any) {
     return [
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setDataComponent(item);
-          setShowModalAddComponent(true);
+            setDataComponent(item);
+            setShowModalAddComponent(true);
           }
         },
       },
@@ -160,7 +160,7 @@ export default function ComponentList(props: any) {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item);
+            showDialogConfirmDelete(item);
           }
         },
       },
@@ -193,20 +193,20 @@ export default function ComponentList(props: any) {
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} loại hợp đồng`, "success");
-        getListComponent(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có loại hợp đồng nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} loại hợp đồng`, "success");
+          getListComponent(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có loại hợp đồng nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
   }
 
   const showDialogConfirmDelete = (item?: any) => {
@@ -233,7 +233,7 @@ export default function ComponentList(props: any) {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
