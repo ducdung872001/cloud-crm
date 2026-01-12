@@ -42,10 +42,6 @@ type Props = {
 
 const DEFAULT_ACCEPT = "image/*,.xlsx,.xls,.doc,.docx,.ppt,.pptx,.txt,.pdf";
 
-function uid() {
-  return Math.random().toString(36).slice(2, 9);
-}
-
 function inferTypeFromName(name: string) {
   const lower = (name || "").toLowerCase();
   if (lower.match(/\.(png|jpg|jpeg|gif|webp|bmp)$/)) return "image";
@@ -265,6 +261,7 @@ const AttachmentUploader: React.FC<Props> = ({
     if (arr.length === 0) return;
     const remaining = maxFiles - list.length;
     const toProcess = multiple ? arr.slice(0, remaining) : [arr[0]];
+
     toProcess.forEach((f) => handleIncomingFile(f));
   };
 
