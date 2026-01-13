@@ -9,8 +9,10 @@ import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
+import Icon from "components/icon";
 
 import "./AddQuoteForm.scss";
+import { validateMaxLength } from "reborn-validation";
 
 export default function AddQuoteForm({ onShow, onHide, data }) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -18,6 +20,7 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
   const focusedElement = useActiveElement();
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+
 
   const values = useMemo(
     () =>
@@ -36,29 +39,50 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
     },
   ];
 
-  const listField: IFieldCustomize[] = [
-    {
-      label: "Tên mẫu báo giá",
-      name: "name",
-      type: "text",
-      fill: true,
-      required: true,
-    },
-    {
-      label: "Thứ tự hiển thị",
-      name: "position",
-      type: "number",
-      fill: true,
-    },
-    {
-      label: "Mô tả mẫu báo giá",
-      name: "description",
-      type: "textarea",
-      fill: true,
-    },
-  ];
-
   const [formData, setFormData] = useState<IFormData>({ values: values });
+
+  const listFieldText: IFieldCustomize[] =  useMemo(() => {
+    return [
+      {
+        label: "Tên mẫu báo giá",
+        name: "name",
+        type: "text",
+        fill: true,
+        required: true,
+        placeholder: "Nhập tên mẫu báo giá",
+        icon: <Icon name="Edit" />,
+        iconPosition: "left",
+        validate: [
+        {
+          name: "required",
+          message: "Không được bỏ trống",
+        },
+        {
+          name: "maxLength",
+          message: "Không được nhập quá 300 ký tự",
+          value: 300,
+        },
+      ],
+
+      messageWarning: "Không được nhập quá 300 ký tự",
+      isWarning: formData?.values?.name?.length > 300 ? true : false,
+
+    },
+
+      {
+        label: "Thứ tự hiển thị",
+        name: "position",
+        type: "number",
+        fill: true,
+      },
+      {
+        label: "Mô tả mẫu báo giá",
+        name: "description",
+        type: "textarea",
+        fill: true,
+      },
+    ]
+  }, [formData]);
 
   useEffect(() => {
     setFormData({ ...formData, values: values, errors: {} });
@@ -72,7 +96,7 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = Validate(validations, formData, listField);
+    const errors = Validate(validations, formData, [...listFieldText]);
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
       return;
@@ -183,13 +207,14 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
           <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} mẫu báo giá`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
-              {listField.map((field, index) => (
+              {listFieldText.map((field, index) => (
                 <FieldCustomize
                   key={index}
                   field={field}
-                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
+                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldText, setFormData)}
                   formData={formData}
                 />
+                
               ))}
             </div>
           </ModalBody>

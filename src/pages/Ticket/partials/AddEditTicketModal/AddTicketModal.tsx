@@ -17,9 +17,10 @@ import FileService from "services/FileService";
 import TicketService from "services/TicketService";
 import TicketCategoryService from "services/TicketCategoryService";
 import CustomerService from "services/CustomerService";
-import { EMAIL_REGEX } from "utils/constant";
+import { EMAIL_REGEX, PHONE_REGEX, PHONE_REGEX_NEW } from "utils/constant";
 import { UserContext, ContextType } from "contexts/userContext";
 import "./AddTicketModal.scss";
+import { validate } from "uuid";
 
 export default function AddTicketModal(props: IAddTicketModalProps) {
   const { onShow, onHide, data, idCustomer, saleflowId, sieId } = props;
@@ -34,7 +35,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
 
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
 
-  const [listSupport, setListSupport] = useState<IOption[]>(null);
+  const [listSupport, setListSupport] = useState<IOption[]>([]);
   const [isLoadingSupport, setIsLoadingSupport] = useState<boolean>(false);
 
   const [listImageTicket, setListImageTicket] = useState([]);
@@ -45,7 +46,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       type: 1,
     };
 
-    if (!listSupport || listSupport.length === 0) {
+    if (listSupport || listSupport.length === 0) {
       setIsLoadingSupport(true);
       const response = await TicketCategoryService.list(param);
       if (response.code === 0) {
@@ -109,7 +110,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
     },
     {
       name: "customerPhone",
-      rules: "required",
+      rules: "required|regex",
     },
     {
       name: "customerEmail",
@@ -214,7 +215,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       label: "Danh mục hỗ trợ",
       name: "supportId",
       type: "select",
-      fill: true,
+      fill: true, 
       required: true,
       options: listSupport,
       onMenuOpen: onSelectOpenSupport,
@@ -259,6 +260,8 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       fill: true,
       required: true,
       disabled: idCustomer ? true : false,
+      regex: new RegExp(PHONE_REGEX_NEW),
+      messageErrorRegex: "Số điện thoại không đúng định dạng",
     },
     {
       label: "Email khách hàng",
@@ -309,9 +312,9 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
   const listFieldDate: IFieldCustomize[] = useMemo(() => {
     const startDate = formData?.values?.startDate ? moment(formData.values.startDate) : null;
     const endDate = formData?.values?.endDate ? moment(formData.values.endDate) : null;
-    
+
     const isEndDateBeforeStartDate = startDate && endDate && endDate.isBefore(startDate);
-    
+
     return [
       {
         label: "Ngày tiếp nhận",
@@ -390,20 +393,29 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       ...(formData.values as ITicketRequestModel),
       ...(saleflowId ? { saleflowId: saleflowId } : {}),
       ...(sieId ? { sieId: sieId } : {}),
-      startDate: moment(formData.values.startDate).format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: moment(formData.values.endDate).format('YYYY-MM-DDTHH:mm:ss'),
+      startDate: moment(formData.values.startDate).format("YYYY-MM-DDTHH:mm:ss"),
+      endDate: moment(formData.values.endDate).format("YYYY-MM-DDTHH:mm:ss"),
     };
 
     const response = await TicketService.update(body);
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} hỗ trợ thành công`, "success");
-      onHide(true);
-      setListSupport([]);
+      handleClearForm();
     } else {
       showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
+  };
+
+  const handleClearForm = () => {
+    setFormData({
+      values: values,
+      errors: {},
+    });
+    onHide(true);
+    setListSupport([]);
+    setDetailCustomer(null);
   };
 
   const actions = useMemo<IActionModal>(

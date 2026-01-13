@@ -1,15 +1,9 @@
 import React, { useState, useCallback, useEffect } from "react";
-import Icon from "components/icon";
 import { getSearchParameters } from "reborn-util";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
-import { fadeIn, fadeOut } from "reborn-util";
 
 import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
 import "./CampaignListParent.scss";
-import ProjectManagementList from "pages/MiddleWork/partials/ProjectManagement/ProjectManagementList";
-import ListWork from "pages/MiddleWork/partials/ListWork/ListWork";
-import OptManagementList from "pages/MiddleWork/partials/OptManagement/OptManagementList";
-import DetailWork from "pages/MiddleWork/partials/ListWork/partials/DetailWork/DetailWork";
 import CampaignManagementList from "./partials/CampaignManagement/CampaignManagementList";
 import CampaignList from "./CampaignList";
 

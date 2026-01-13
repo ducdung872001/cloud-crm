@@ -126,7 +126,7 @@ export default function SearchBox(props: SearchBoxProps) {
       searchParams["contactId"] ||
       searchParams["datatype"] ||
       searchParams["supportId"] ||
-      searchParams["ticketCategoryId"] ||
+      searchParams["supportProcessId"] ||
       searchParams["vehicleId"] ||
       searchParams["steId"] ||
       searchParams["buildingId"] ||
@@ -170,7 +170,7 @@ export default function SearchBox(props: SearchBoxProps) {
               "contactId",
               "datatype",
               "supportId",
-              "ticketCategoryId",
+              "supportProcessId",
               "vehicleId",
               "steId",
               "scrId",

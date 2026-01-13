@@ -18,7 +18,7 @@ import { isDifferenceObj, getPageOffset } from "reborn-util";
 import TicketService from "services/TicketService";
 import AddTicketModal from "./partials/AddEditTicketModal/AddTicketModal";
 import TableTicket from "./partials/TableTicket/TableTicket";
-import KanbanTicket from "./partials/KanbanTicket/KanbanTicket";
+import KanbanTicket from"./partials/KanbanTicket/KanbanTicket";
 import AddTransferVotes from "pages/Common/AddTransferVotes";
 
 import "tippy.js/animations/scale.css";
@@ -62,19 +62,19 @@ export default function TicketList() {
   const customerFilterList: IFilterItem[] = useMemo(
     () => [
       {
-        key: "supportId",
+        key: "supportProcessId",
         name: "Quy trình hỗ trợ",
         type: "select",
         is_featured: true,
         params: { type: 1 },
-        value: searchParams.get("supportId") ?? "",
+        value: searchParams.get("supportProcessId") ?? "",
       },
       {
-        key: "ticketCategoryId",
+        key: "supportId",
         name: "Loại hỗ trợ",
         type: "select",
         is_featured: true,
-        value: searchParams.get("ticketCategoryId") ?? "",
+        value: searchParams.get("supportId") ?? "",
       },
       {
         key: "status",
@@ -382,12 +382,12 @@ export default function TicketList() {
         ? [
             {
               title: "Chuyển phiếu",
-              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"}/>,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ? "icon-disabled" : "icon-warning"} />,
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                setDataTicket(item);
-                setHasTransferVotes(true);
+                  setDataTicket(item);
+                  setHasTransferVotes(true);
                 }
               },
             },
@@ -399,7 +399,7 @@ export default function TicketList() {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          navigate(`/detail_ticket/ticketId/${item.id}`);
+            navigate(`/detail_ticket/ticketId/${item.id}`);
           }
         },
       },
@@ -411,8 +411,8 @@ export default function TicketList() {
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                setDataTicket(item);
-                setShowModalAdd(true);
+                  setDataTicket(item);
+                  setShowModalAdd(true);
                 }
               },
             },
@@ -422,7 +422,7 @@ export default function TicketList() {
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                showDialogConfirmDelete(item);
+                  showDialogConfirmDelete(item);
                 }
               },
             },
@@ -432,7 +432,7 @@ export default function TicketList() {
         ? [
             {
               title: "Tạm dừng duyệt phiếu",
-              icon: <Icon name="WarningCircle" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              icon: <Icon name="WarningCircle" className={isCheckedItem ? "icon-disabled" : "icon-warning"} />,
               disabled: isCheckedItem,
               callback: () => {
                 showDialogConfirmStatus(item, "pending");
@@ -444,7 +444,7 @@ export default function TicketList() {
         ? [
             {
               title: "Tiếp tục duyệt phiếu",
-              icon: <Icon name="InfoCircle" className={isCheckedItem?"icon-disabled" : "icon-success"} />,
+              icon: <Icon name="InfoCircle" className={isCheckedItem ? "icon-disabled" : "icon-success"} />,
               disabled: isCheckedItem,
               callback: () => {
                 showDialogConfirmStatus(item, "play");
@@ -452,7 +452,7 @@ export default function TicketList() {
             },
             {
               title: "Duyệt phiếu lại",
-              icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
+              icon: <Icon name="FingerTouch" className={isCheckedItem ? "icon-disabled" : "icon-warning"} />,
               disabled: isCheckedItem,
               callback: () => {
                 showDialogConfirmStatus(item, "inital");
@@ -507,21 +507,21 @@ export default function TicketList() {
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} hỗ trợ`, "success");
-        getListTicket(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có hỗ trợ nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} hỗ trợ`, "success");
+          getListTicket(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có hỗ trợ nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+  };
 
   const showDialogConfirmDelete = (item?: ITicketResponseModel) => {
     const contentDialog: IContentDialog = {
@@ -547,11 +547,11 @@ export default function TicketList() {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

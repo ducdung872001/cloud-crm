@@ -157,7 +157,9 @@ export default function ImportModal(props: IImportModalProps) {
   const onError = (message) => {
     setIsSubmit(false);
     setIsLoadingFile(false);
-    showToast(message.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+    setAddFile("");
+    showToast(message?.message ?? message?.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+    handClearForm();
   };
 
   const onProgress = (percent) => {
@@ -185,7 +187,7 @@ export default function ImportModal(props: IImportModalProps) {
       setInfoFile(response.result);
       setStep({ stepOne: false, stepTwo: false, stepThree: true });
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+      showToast(response?.message ?? response?.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
 
     setIsSubmit(false);

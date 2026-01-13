@@ -32,14 +32,14 @@ export const uploadDocumentFormData = (
   if (data) {
     let formData = new FormData();
 
-    if(type === 'processData'){
+    if (type === "processData") {
       formData.append("file", data?.file);
       formData.append("processId", data?.processId);
 
-      if(data?.nodeId){
+      if (data?.nodeId) {
         formData.append("nodeId", data?.nodeId);
       }
-      if(data?.subprocessId){
+      if (data?.subprocessId) {
         formData.append("subprocessId", data?.subprocessId);
       }
     } else {
@@ -110,9 +110,15 @@ export const uploadDocumentFormData = (
         } catch (error) {
           onError(error);
         }
+      } else if (xhr.status != 200) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          onError(response);
+        } catch (error) {
+          console.error(error);
+        }
       }
     };
-
     // send file in body
     xhr.send(formData);
   } else {

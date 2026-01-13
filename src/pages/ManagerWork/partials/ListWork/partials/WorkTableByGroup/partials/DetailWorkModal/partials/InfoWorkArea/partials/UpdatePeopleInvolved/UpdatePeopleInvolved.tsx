@@ -119,15 +119,15 @@ export default function UpdatePeopleInvolved(props: IUpdatePeopleInvolvedProps) 
   return (
     <Fragment>
       <div className="update__people">
-        {!isLoading && jobAssign !== null && jobRecipient !== null ? (
+        {!isLoading ? (
           <div className="view-info">
             <div className="view-jobassign">
               <label className="label">Người giao việc</label>
               <div className="info-jobassign">
                 <img src={jobAssign?.avatar ? jobAssign?.avatar : ImageThirdGender} alt={jobAssign?.name} />
                 <div className="info-manager">
-                  <span className="name">{jobAssign?.name}</span>
-                  <span className="belong-department">{jobAssign?.departmentName}</span>
+                  <span className="name">{jobAssign?.name ?? "Chưa có"}</span>
+                  <span className="belong-department">{jobAssign?.departmentName ?? "Chưa có"}</span>
                 </div>
               </div>
             </div>
@@ -137,8 +137,8 @@ export default function UpdatePeopleInvolved(props: IUpdatePeopleInvolvedProps) 
               <div className="info-recipient">
                 <img src={jobRecipient?.avatar ? jobRecipient?.avatar : ImageThirdGender} alt={jobRecipient?.name} />
                 <div className="info-employee">
-                  <span className="name">{jobRecipient?.name}</span>
-                  <span className="belong-department">{jobRecipient?.departmentName}</span>
+                  <span className="name">{jobRecipient?.name ?? "Chưa có"}</span>
+                  <span className="belong-department">{jobRecipient?.departmentName ?? "Chưa có"}</span>
                 </div>
               </div>
             </div>

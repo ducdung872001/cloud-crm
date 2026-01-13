@@ -1732,6 +1732,8 @@ export const urlsApi = {
     employeeManagers: prefixAdmin + "/employee/managers",
     // Lấy danh sách người nhận việc
     employeeAssignees: prefixAdmin + "/employee/assignees",
+    // Lấy danh sách người nhận việc trong dự án
+    projectEmployeeAssignees: prefixAdmin + "/workProject/getEmployees",
     // danh sách trao đổi trong công việc
     workExchange: prefixAdmin + "/workExchange/list",
     // xóa 1 trao đổi trong công việc
