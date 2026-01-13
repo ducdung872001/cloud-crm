@@ -12,6 +12,7 @@ import { showToast } from "utils/common";
 import { useOnClickOutside } from "utils/hookCustom";
 
 import "./AddTemplateQuote.scss";
+import { set } from "lodash";
 
 export default function AddTemplateQuote({ onShow, onHide, data }) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -25,6 +26,7 @@ export default function AddTemplateQuote({ onShow, onHide, data }) {
 
   const [lstFieldChooseFormula, setLstFieldChooseFormula] = useState([]);
   const [isShowFieldChoose, setIsShowFieldChoose] = useState<boolean>(false);
+  const [errorName, setErrorName] = useState("");
 
   useOnClickOutside(refOption, () => setIsShowFieldChoose(false), ["choose__formula"]);
 
@@ -307,6 +309,8 @@ export default function AddTemplateQuote({ onShow, onHide, data }) {
     [isSubmit, hasAddField, dataField, formData]
   );
 
+  const isOverLength = formData.name.length > 300;
+
   return (
     <Fragment>
       <Modal
@@ -330,10 +334,12 @@ export default function AddTemplateQuote({ onShow, onHide, data }) {
                     fill={true}
                     required={true}
                     placeholder="Nhập tên trường thông tin"
-                    onChange={(e) => handleChangeValueName(e)}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    error={isOverLength}
+                    message="Không được nhập quá 300 ký tự"
                   />
-                </div>
 
+                </div>
                 <div className="merge-form">
                   <div className="form-group">
                     <Input
