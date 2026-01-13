@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import _, { set } from "lodash";
+import _ from "lodash";
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { convertParamsToString, createArrayFromTo, createArrayFromToR } from "reborn-util";
@@ -16,7 +16,6 @@ import { IActionModal } from "model/OtherModel";
 import { ModalFooter } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import "./index.scss";
-import { F } from "lodash/fp";
 
 interface IAddCustomerSegmentProps {
   data: any;
@@ -33,7 +32,6 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-
 
   /*
     [
@@ -1577,8 +1575,6 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
     setShowDialog(true);
   };
 
-  const isOverLength = formData.name.length > 100;
-  
   return (
     <div className="add__customer--segment">
       <form className="form__filter--advanced-group" onSubmit={(e) => onSubmit(e)}>
@@ -1603,10 +1599,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
               disabled={disableFieldCommom}
               placeholder="Nhập tên phân khúc"
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              error={isOverLength}
-              message="Không được nhập quá 100 ký tự"
             />
-
           </div>
           <div className="form-group">
             <TextArea
