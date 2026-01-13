@@ -32,7 +32,6 @@ import { name } from "jssip";
 
 export default function ModalSelectAttribute(props: any) {
   const { onShow, onHide, dataContractEform } = props;
-  const { onShow, onHide, dataContractEform } = props;
 
   const isMounted = useRef(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
