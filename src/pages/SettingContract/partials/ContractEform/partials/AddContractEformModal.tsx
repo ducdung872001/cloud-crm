@@ -10,7 +10,6 @@ import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import "./AddContractEformModal.scss";
 import ContractEformService from "services/ContractEformService";
-import Icon from "components/icon";
 
 export default function AddContractEformModal(props: any) {
   const { onShow, onHide, data } = props;
@@ -40,50 +39,25 @@ export default function AddContractEformModal(props: any) {
     },
   ];
 
-  const listFieldText: IFieldCustomize[] = useMemo(() => {
-    return [
+  const listFieldBasic = useMemo(
+    () =>
+      [
         {
           label: "Tên biểu mẫu",
           name: "name",
           type: "text",
           fill: true,
           required: true,
-          placeholder: "Nhập tên biểu mẫu",
-          icon: <Icon name="Edit" />,
-          iconPosition: "left",
-          validate: [
-            {
-              name: "maxLength",
-              message: "Không được nhập quá 300 ký tự",
-              value: 300,
-            }
-          ],
-
-          messageWarning: "Không được nhập quá 300 ký tự",
-          isWarning: formData?.values?.name?.length > 300 ? true : false,
-      },
-
+        },
         {
           label: "Ghi chú",
           name: "note",
           type: "textarea",
           fill: true,
-          placeholder: "Nhập ghi chú",
-          icon: <Icon name="Edit" />,
-          iconPosition: "left",
-          validate: [
-            {
-              name: "maxLength",
-              message: " Không được nhập quá 100 ký tự",
-              value: 100,
-            }
-          ],
-
-          messageWarning: "Không được nhập quá 100 ký tự",
-          isWarning: formData?.values?.note?.length > 100 ? true : false,
         },
-      ]
-    }, [formData]);
+      ] as IFieldCustomize[],
+    [formData?.values]
+  );
 
   useEffect(() => {
     setFormData({ ...formData, values: values, errors: {} });
@@ -97,7 +71,7 @@ export default function AddContractEformModal(props: any) {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = Validate(validations, formData, [...listFieldText]);
+    const errors = Validate(validations, formData, [...listFieldBasic]);
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
       return;
@@ -220,11 +194,11 @@ export default function AddContractEformModal(props: any) {
           <ModalBody>
             <div className="list-form-group">
               <div className="list-field-item list-field-basic">
-                {listFieldText.map((field, index) => (
+                {listFieldBasic.map((field, index) => (
                   <FieldCustomize
                     key={index}
                     field={field}
-                    handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldText, setFormData)}
+                    handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                     formData={formData}
                   />
                 ))}

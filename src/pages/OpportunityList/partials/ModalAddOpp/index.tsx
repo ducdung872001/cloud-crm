@@ -735,13 +735,20 @@ export default function ModalAddOpp(props: any) {
             callback: () => {
               !isDifferenceObj(formDataOne, valuesStepOne) ? onHide(false) : showDialogConfirmCancel();
             },
-            },
-            {
-              title: data ? "Cập nhật" : "Tạo mới",
-              type: "submit", 
-              color: "primary",
-              disabled: isSubmit || !isDifferenceObj(formDataOne, valuesStepOne),
-              is_loading: isSubmit,
+          },
+          {
+            title: `${data?.id ? "Cập nhật" : "Tạo mới"}`,
+            type: "submit",
+            color: "primary",
+            // disabled:
+            //   isSubmit || nxStep?.step_one || activeItemMenu == 1
+            //     ? data?.id
+            //       ? idResponse
+            //         ? true
+            //         : false
+            //       : _.isEqual(formDataOne, valuesStepOne)
+            //     : _.isEqual(formDataTwo, valueStepTwo),
+            is_loading: isSubmit,
           },
           ,
         ],

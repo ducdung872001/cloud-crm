@@ -870,62 +870,6 @@ const FormViewerComponent = (props: any) => {
         }
         //Lưu trang là số 1 => Đăng ký lắng nghe sự kiện scroll
         walkGetOptionSelect(updatedFormSchema.components, dataOption, filterItem);
-
-        // updatedFormSchema.components.forEach((component) => {
-        // //   // Kiểm tra nếu component có type là 'select'
-        // //   if (component.type === "select" && component.key == filterItem.compKey) {
-        // //     // Cập nhật lại vào component trường values
-        // //     // console.log("dataOption =>", dataOption);
-        // //     // console.log("valuesKey =>", component.key);
-        // //     component.values = dataOption || [];
-        // //     delete component.valuesKey;
-        // //   }
-
-        // //   //Lặp cấp L1
-        // //   if (component.type == "group") {
-        // //     let componentsL1 = component.components;
-        // //     componentsL1.forEach((componentL1) => {
-        // //       if (componentL1.type === "select" && componentL1.key == filterItem.compKey) {
-        // //         componentL1.values = dataOption || [];
-        // //         delete componentL1.valuesKey;
-        // //       }
-
-        // //       //Lặp cấp L2
-        // //       if (componentL1.type == "group") {
-        // //         let componentsL2 = componentL1.components;
-        // //         componentsL2.forEach((componentL2) => {
-        // //           if (componentL2.type === "select" && componentL2.key == filterItem.compKey) {
-        // //             componentL2.values = dataOption || [];
-        // //             delete componentL2.valuesKey;
-        // //           }
-
-        // //           //Lặp cấp L3
-        // //           if (componentL2.type == "group") {
-        // //             let componentsL3 = componentL2.components;
-        // //             componentsL3.forEach((componentL3) => {
-        // //               if (componentL3.type === "select" && componentL3.key == filterItem.compKey) {
-        // //                 componentL3.values = dataOption || [];
-        // //                 delete componentL3.valuesKey;
-        // //               }
-        // //             });
-        // //           }
-        // //         });
-        // //       }
-        // //     });
-        // //   }
-
-        //   if (component.type == "dynamiclist") {
-        //     let nestedComponents = component.components;
-        //     nestedComponents.forEach((nestedComponent) => {
-        //       // Kiểm tra nếu component có type là 'select'
-        //       if (nestedComponent.type === "select" && nestedComponent.key == filterItem.compKey) {
-        //         // Cập nhật lại vào component trường values
-        //         nestedComponent.values = dataOption || [];
-        //         delete nestedComponent.valuesKey;
-        //       }
-        //     });
-        //   }
-        // });
       }
 
       if (filterItem.type == "log") {

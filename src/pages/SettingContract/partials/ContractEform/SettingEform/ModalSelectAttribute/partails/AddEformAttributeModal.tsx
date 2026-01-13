@@ -760,9 +760,8 @@ export default function AddEformAttributeModal(props: any) {
                     options={listFieldNumberFormat}
                     className="form-group-number"
                     title="Định dạng số"
-                    name="numberFormat" 
+                    name="numberFormat"
                     value={numberFormat}
-                    required={true}
                     onChange={(e) => setNumberFormat(e?.target.value)}
                   />
                 </div>
