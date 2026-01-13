@@ -228,7 +228,7 @@ export default function RoleDirectory(props: IDepartmentDirectoryListProps) {
     //  "Ghi chú"
   ];
 
-  const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", "text-center", ""];
+  const dataFormat = ["text-center", "", "text-left", "text-center", "text-center", "text-center", ""];
 
   const dataSize = ["auto", "auto", "auto", "auto", "auto", "auto", 18];
 
@@ -275,43 +275,43 @@ export default function RoleDirectory(props: IDepartmentDirectoryListProps) {
   ];
 
   const actionsTable = (item: IDepartmentResponse): IAction[] => {
-        const isCheckedItem = listIdChecked?.length > 0;
+    const isCheckedItem = listIdChecked?.length > 0;
     return item.leadership === 1
       ? [
           permissions["DEPARTMENT_UPDATE"] == 1 && {
             title: "Sửa",
-            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
-                        disabled: isCheckedItem,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
+            disabled: isCheckedItem,
             callback: () => {
-                        if (!isCheckedItem) {
-              setIdRole(item.id);
-              setShowModalAdd(true);
-              setDataRole(item);
-                        }
+              if (!isCheckedItem) {
+                setIdRole(item.id);
+                setShowModalAdd(true);
+                setDataRole(item);
+              }
             },
           },
         ]
       : [
           permissions["DEPARTMENT_UPDATE"] == 1 && {
             title: "Sửa",
-            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
-                        disabled: isCheckedItem,
+            icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
+            disabled: isCheckedItem,
             callback: () => {
-                        if (!isCheckedItem) {
-              setIdRole(item.id);
-              setShowModalAdd(true);
-              setDataRole(item);
-                        }
+              if (!isCheckedItem) {
+                setIdRole(item.id);
+                setShowModalAdd(true);
+                setDataRole(item);
+              }
             },
           },
           permissions["DEPARTMENT_DELETE"] == 1 && {
             title: "Xóa",
             icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
-                        disabled: isCheckedItem,
+            disabled: isCheckedItem,
             callback: () => {
-                        if (!isCheckedItem) {
-              showDialogConfirmDelete(item);
-                        }
+              if (!isCheckedItem) {
+                showDialogConfirmDelete(item);
+              }
             },
           },
         ];
