@@ -232,8 +232,8 @@ export default function CustomerList(props: ICustomerListProps) {
         title: "Gọi điện",
         icon: <Icon name="ContactPhone" />,
         callback: () => {
-          // setDataCustomer(item);
-          // setShowModalPhone(true);
+          setDataCustomer(item);
+          setShowModalPhone(true);
           // handleMakeCall()
           makeCall("0862999272");
         },
