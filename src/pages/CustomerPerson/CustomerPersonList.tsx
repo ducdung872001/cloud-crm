@@ -170,17 +170,17 @@ export default function CustomerPersonList() {
         //       },
         //     ]
         //   : []),
-        {
-          key: "cityId",
-          name: "Khu vực",
-          type: "select",
-          is_featured: true,
-          value: searchParams.get("cityId") ?? "",
-          params: {
-            parentId: 0,
-            limit: 1000,
-          },
-        },
+        // {
+        //   key: "cityId",
+        //   name: "Khu vực",
+        //   type: "select",
+        //   is_featured: true,
+        //   value: searchParams.get("cityId") ?? "",
+        //   params: {
+        //     parentId: 0,
+        //     limit: 1000,
+        //   },
+        // },
 
         // ...(cityId ? [
         //     {

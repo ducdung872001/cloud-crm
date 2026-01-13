@@ -516,7 +516,7 @@ export default function ModalSelectAttribute(props: any) {
     },
   ];
 
-  const listFieldFirst = useMemo(
+  const listFieldFirst: IFieldCustomize[] = useMemo(
     () => {
       return [
         {
@@ -524,7 +524,20 @@ export default function ModalSelectAttribute(props: any) {
           name: "name",
           type: "text",
           fill: true,
-          required: true
+          required: true,
+          placeholder: "Nhập tên trường",
+          icon: <Icon name="Edit" />,
+          iconPosition: "left",
+          validate: [
+          {
+            name: "required",
+            message: "Không được nhập quá 300 ký tự",
+            value: 300,
+          }
+          ],
+
+          messageWarning: "Không được nhập quá 300 ký tự",
+          isWarning: formData?.values?.name?.length > 300 ? true : false,
         },
 
         {
@@ -609,9 +622,8 @@ export default function ModalSelectAttribute(props: any) {
             },
           ],
         },
-      ] as IFieldCustomize[],
-    [listContractAttribute, isLoadingContractAttribute, data]
-  ); 
+      ]
+    }, [listContractAttribute, isLoadingContractAttribute, data]);
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
