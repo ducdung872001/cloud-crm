@@ -63,6 +63,7 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
         },
 
         background_incomingcall_handle: (data: any) => {
+          console.log("Incoming call from:", data.customernumber);
           setIncomingNumber(data.customernumber);
           setCallState("incoming");
         },

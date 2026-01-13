@@ -26,6 +26,7 @@ import * as SIP from "sip.js";
 import { Inviter, Registerer, URI, UserAgent } from "sip.js";
 // import { useWebRTC } from "components/WebRTCEmbed/hooks/useWebRTC";
 import { useSTWebRTC } from "webrtc/useSTWebRTC";
+import WebRtcPhoneModal from "../WebRtcPhoneModal";
 
 // const { makeCall } = useWebRTC();
 interface IParamsCustomerInCallCenter {
@@ -58,6 +59,26 @@ export default function CustomerList(props: ICustomerListProps) {
   const [params, setParams] = useState<IParamsCustomerInCallCenter>({
     keyword: "",
   });
+  const pbxCustomerCode = "d9cf985baac44238b3d930ae569d9f0912";
+
+  const employeeSip470 = "470";
+
+  const employeeSip471 = "471";
+
+  const { callState, incomingNumber, makeCall, answer, hangup, transfer } = useSTWebRTC({
+    extension: checkUserRoot == "1" ? employeeSip470 : employeeSip471,
+    pbxCustomerCode: pbxCustomerCode,
+  });
+
+  useEffect(() => {
+    console.log("Trạng thái tổng đài >>", callState);
+    console.log("Số điện thoại gọi đến >>", incomingNumber);
+    console.log("Số máy lẻ >>", checkUserRoot == "1" ? employeeSip470 : employeeSip471);
+
+    // if (callState == "incoming") {
+    //   setShowModalPhone(true);
+    // }
+  }, [callState, incomingNumber]);
 
   useEffect(() => {
     if (params?.callStatus || params?.startDate || params?.endDate) {
@@ -221,11 +242,6 @@ export default function CustomerList(props: ICustomerListProps) {
     </span>,
   ];
 
-  const { callState, incomingNumber, makeCall, answer, hangup } = useSTWebRTC({
-    extension: "470",
-    pbxCustomerCode: "d9cf985baac44238b3d930ae569d9f0912",
-  });
-
   const actionsTable = (item: ICustomerResponse): IAction[] => {
     return [
       {
@@ -235,7 +251,6 @@ export default function CustomerList(props: ICustomerListProps) {
           setDataCustomer(item);
           setShowModalPhone(true);
           // handleMakeCall()
-          makeCall("0862999272");
         },
       },
     ];
@@ -509,7 +524,18 @@ export default function CustomerList(props: ICustomerListProps) {
         </Fragment>
       )}
 
-      <AddPhoneModal onShow={showModalPhone} dataCustomer={dataCustomer} onHide={() => setShowModalPhone(false)} />
+      <WebRtcPhoneModal
+        onShow={showModalPhone}
+        dataCustomer={dataCustomer}
+        makeCall={makeCall}
+        hangup={hangup}
+        answer={answer}
+        transfer={transfer}
+        callState={callState}
+        incomingNumber={incomingNumber}
+        onHide={() => setShowModalPhone(false)}
+      />
+      {/* <AddPhoneModal onShow={showModalPhone} dataCustomer={dataCustomer} onHide={() => setShowModalPhone(false)} /> */}
       <AddManagementOpportunityModal
         onShow={showModalAddManagementOpportunity}
         idCustomer={idCustomer}
