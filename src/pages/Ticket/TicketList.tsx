@@ -18,10 +18,7 @@ import { isDifferenceObj, getPageOffset } from "reborn-util";
 import TicketService from "services/TicketService";
 import AddTicketModal from "./partials/AddEditTicketModal/AddTicketModal";
 import TableTicket from "./partials/TableTicket/TableTicket";
-<<<<<<< HEAD
 import KanbanTicket from"./partials/KanbanTicket/KanbanTicket";
-=======
->>>>>>> f0c82e22a06188e61cb992b23bffc715554abf3a
 import AddTransferVotes from "pages/Common/AddTransferVotes";
 
 import "tippy.js/animations/scale.css";
@@ -65,19 +62,19 @@ export default function TicketList() {
   const customerFilterList: IFilterItem[] = useMemo(
     () => [
       {
-        key: "supportId",
+        key: "supportProcessId",
         name: "Quy trình hỗ trợ",
         type: "select",
         is_featured: true,
         params: { type: 1 },
-        value: searchParams.get("supportId") ?? "",
+        value: searchParams.get("supportProcessId") ?? "",
       },
       {
-        key: "ticketCategoryId",
+        key: "supportId",
         name: "Loại hỗ trợ",
         type: "select",
         is_featured: true,
-        value: searchParams.get("ticketCategoryId") ?? "",
+        value: searchParams.get("supportId") ?? "",
       },
       {
         key: "status",

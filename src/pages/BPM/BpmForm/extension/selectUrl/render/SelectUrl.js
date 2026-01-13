@@ -2,7 +2,7 @@ import classNames from "classnames";
 import React from "react";
 import ReactDOM from "react-dom";
 import { html, useContext } from "diagram-js/lib/ui";
-import { FormContext, Select } from "@bpmn-io/form-js";
+import { FormContext, Textfield } from "@bpmn-io/form-js";
 import SelectUrlCustom from "components/selectUrlCustom/selectUrlCustom";
 
 export const selectUrlType = "selectUrl";
@@ -32,45 +32,78 @@ export function SelectUrlRenderer(props) {
   const labelKey = field?.properties?.labelKey ?? "name";
   const valueKey = field?.properties?.valueKey ?? "id";
   const searchKey = field?.properties?.searchKey ?? "name";
+  const bindingField = field?.properties?.bindingField ?? "";
 
   const containerId = `select-url-container-${domId}`;
   const errorMessageId = errors.length === 0 ? undefined : `${prefixId(domId, formId)}-error-message`;
 
+  // Giữ hành vi cũ: lưu value dưới dạng JSON string vào model
   function handleChange(option) {
-    props.onChange({
-      field: field,
-      value: option,
-    });
+    if (props.onChange) {
+      props.onChange({
+        field: field,
+        value: JSON.stringify(option),
+      });
+    }
   }
 
-  setTimeout(() => {
-    const container = document.getElementById(containerId);
-    if (container && props.onChange && field) {
-      ReactDOM.render(
-        <SelectUrlCustom
-          id={domId}
-          label={""}
-          placeholder="Chọn dữ liệu..."
-          disabled={disabled || readonly}
-          required={required}
-          fill={true}
-          value={value}
-          url={url}
-          isLoadAll={isLoadAll}
-          isMulti={isMulti}
-          labelKey={labelKey}
-          valueKey={valueKey}
-          searchKey={searchKey}
-          onChange={handleChange}
-        />,
-        container
-      );
+  // Nếu model lưu JSON string thì parse để truyền xuống component
+  let _value = null;
+  try {
+    if (value) {
+      _value = JSON.parse(value);
+    }
+  } catch (error) {
+    console.error("SelectUrlRenderer parse value error:", error);
+  }
 
+  // Mount / update React component (React 17 - đơn giản)
+  const container = typeof document !== "undefined" ? document.getElementById(containerId) : null;
+
+  if (container && props.onChange && field) {
+    const nextRenderProps = {
+      id: domId,
+      label: "",
+      placeholder: "Chọn dữ liệu...",
+      disabled: disabled || readonly,
+      required,
+      fill: true,
+      value: _value,
+      url,
+      isLoadAll,
+      isMulti,
+      labelKey,
+      bindingField,
+      valueKey,
+      searchKey,
+      onChange: handleChange,
+    };
+
+    // Lưu props trước đó trên container để tránh render thừa
+    const prev = container.__selectUrlLastProps;
+
+    const isSame =
+      prev &&
+      prev.disabled === nextRenderProps.disabled &&
+      prev.required === nextRenderProps.required &&
+      prev.isMulti === nextRenderProps.isMulti &&
+      prev.url === nextRenderProps.url &&
+      prev.labelKey === nextRenderProps.labelKey &&
+      JSON.stringify(prev.value) === JSON.stringify(nextRenderProps.value);
+
+    if (!isSame) {
+      ReactDOM.render(<SelectUrlCustom {...nextRenderProps} />, container);
+
+      // lưu last props để lần sau so sánh
+      container.__selectUrlLastProps = nextRenderProps;
+
+      // helper cleanup (unmount khi cần)
       container.__cleanup = () => {
         ReactDOM.unmountComponentAtNode(container);
+        container.__selectUrlLastProps = undefined;
       };
     }
-  });
+  }
 
   return html`
     <div class=${formFieldClasses(selectUrlType, { errors, disabled, readonly })}>
@@ -85,10 +118,11 @@ export function SelectUrlRenderer(props) {
 }
 
 SelectUrlRenderer.config = {
-  ...Select.config,
+  ...Textfield.config,
   type: selectUrlType,
   label: "Select URL",
   iconUrl: iconSelectUrlDataUrl,
+  group: "selection",
   propertiesPanelEntries: ["key", "label", "description", "disabled", "required", "readonly"],
 };
 

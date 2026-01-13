@@ -74,7 +74,7 @@ export default function DeclareEmailList(props: IDeclareEmailListProps) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListEmailConfig(result);
+      setListEmailConfig(result.items ?? result);
 
       setPagination({
         ...pagination,

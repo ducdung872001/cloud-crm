@@ -79,15 +79,15 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
       setIsLoadingReason(true);
       const response = await WarrantyCategoryService.list(param);
       if (response.code === 0) {
-        const dataOption = response.result;
+        const dataOption = response.result.items || response.result;
         setListReason([
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            })
             : []),
         ]);
       }
@@ -151,19 +151,19 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
 
   const values = useMemo(
     () =>
-      ({
-        // executorId: data?.executorId ?? null,
-        // departmentId: data?.departmentId ?? null,
-        customerId: data?.customerId ?? idCustomer ?? null,
-        serviceId: data?.serviceId ?? null,
-        startDate: data?.startDate ?? new Date(),
-        endDate: data?.endDate ?? "",
-        reasonId: data?.reasonId ?? null,
-        docLink: data?.docLink ?? "[]",
-        solution: data?.solution ?? "",
-        note: data?.note ?? "",
-        statusId: data?.statusId ?? null,
-      } as IWarrantyRequestModel),
+    ({
+      // executorId: data?.executorId ?? null,
+      // departmentId: data?.departmentId ?? null,
+      customerId: data?.customerId ?? idCustomer ?? null,
+      serviceId: data?.serviceId ?? null,
+      startDate: data?.startDate ?? new Date(),
+      endDate: data?.endDate ?? "",
+      reasonId: data?.reasonId ?? null,
+      docLink: data?.docLink ?? "[]",
+      solution: data?.solution ?? "",
+      note: data?.note ?? "",
+      statusId: data?.statusId ?? null,
+    } as IWarrantyRequestModel),
     [onShow, data]
   );
 
@@ -251,12 +251,12 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                  avatar: item.avatar,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+                avatar: item.avatar,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,

@@ -9,7 +9,18 @@ import { convertParamsToString } from "reborn-util";
 
 const fetchData = async (Uri: string, params: any, signal?: AbortSignal) => {
   if (!Uri) return { code: -1, message: "No lookupUri provided" };
-  return fetch(`${Uri}${convertParamsToString(params)}`, {
+  let _params = params || {};
+  let _uri = Uri;
+  if (Uri.includes("?")) {
+    const queryString = Uri.split("?")[1];
+    const urlParams = new URLSearchParams(queryString);
+    _params = {
+      ..._params,
+      ...Object.fromEntries(urlParams.entries()),
+    };
+    _uri = Uri.split("?")[0];
+  }
+  return fetch(`${_uri}${convertParamsToString(_params)}`, {
     signal,
     method: "GET",
     headers: {
@@ -66,6 +77,7 @@ interface SelectCustomProps {
   isShowDropdownIcon?: boolean;
   maxHeight?: string | number;
   idQueryKey?: string;
+  bindingField?: string;
 }
 
 export default function SelectUrlCustom(props: SelectCustomProps) {
@@ -117,10 +129,15 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
     isShowDropdownIcon = true,
     maxHeight = "104px",
     idQueryKey = valueKey,
+    bindingField,
   } = props;
+
+  const listBindingField = bindingField ? bindingField.split(",").map((item) => item.trim()) : [];
 
   const [onFocusSelect, setOnFocusSelect] = useState<boolean>(false);
   const [internalValue, setInternalValue] = useState<any>(isMulti ? [] : null);
+
+  const listOptions = useRef([]);
 
   const hasValueParams = () => {
     if (isMulti && Array.isArray(value)) {
@@ -130,29 +147,25 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
   };
 
   useEffect(() => {
-    if (!value || !url) {
-      setInternalValue(isMulti ? [] : null);
-      return;
+    let listId = [];
+    if (isMulti) {
+      if (Array.isArray(value)) {
+        listId = value.map((item) => (typeof item === "object" && item !== null && "value" in item ? item.value : item));
+      }
+    } else {
+      listId.push(typeof value === "object" && value !== null && "value" in value ? value.value : value);
     }
-
-    const isFullObject = isMulti
-      ? Array.isArray(value) && value.every((item) => typeof item === "object" && item !== null && "label" in item)
-      : typeof value === "object" && value !== null && "label" in value;
-
-    if (isFullObject) {
-      setInternalValue(value);
-      return;
-    }
+    // Lọc bỏ các giá trị đã có trong listOptions.current, không cần fetch lại những giá trị đó nữa
+    listId = listId.filter((item) => !listOptions.current.find((opt) => String(opt.value) === String(item)));
 
     const fetchInitialValue = async () => {
       try {
-        const queryVal = Array.isArray(value) ? value.join(",") : value;
-
         const params = {
           ...defaultParams,
-          [idQueryKey]: queryVal,
+          // [idQueryKey]: queryVal,
           page: 1,
-          limit: isMulti ? (Array.isArray(value) ? value.length : 10) : 1,
+          limit: 200,
+          listId: listId,
         };
 
         const res = await fetchData(url, params);
@@ -166,7 +179,12 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
             mappedData = dataList.map((item) => ({
               label: item[labelKey],
               value: item[valueKey],
-              ...item,
+              ...listBindingField.reduce((acc, field) => {
+                if (field in item) {
+                  acc[field] = item[field];
+                }
+                return acc;
+              }, {} as any),
             }));
           }
           if (isMulti) {
@@ -175,13 +193,20 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
             const exactItem = mappedData.find((i) => String(i.value) === String(value));
             setInternalValue(exactItem || mappedData[0] || null);
           }
+          // Nếu item nào trong mappedData có value trùng với 1 phần tử trong listOptions.current thì giữ nguyên, nếu không thì thêm mới vào listOptions.current
+          mappedData.forEach((newItem) => {
+            if (!listOptions.current.find((opt) => String(opt.value) === String(newItem.value))) {
+              listOptions.current.push(newItem);
+            }
+          });
         }
       } catch (error) {
         console.error("Error fetching initial value:", error);
       }
     };
-
-    fetchInitialValue();
+    if (listId.length > 0) {
+      fetchInitialValue();
+    }
   }, [value, url, isMulti, idQueryKey, valueKey, labelKey]);
 
   const [onHasValue, setOnHasValue] = useState<boolean>(hasValueParams());
@@ -221,9 +246,20 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
           mappedOptions = dataList.map((item) => ({
             label: item[labelKey],
             value: item[valueKey],
-            ...item,
+            ...listBindingField.reduce((acc, field) => {
+              if (field in item) {
+                acc[field] = item[field];
+              }
+              return acc;
+            }, {} as any),
           }));
         }
+        // Nếu item nào trong mappedData có value trùng với 1 phần tử trong listOptions.current thì giữ nguyên, nếu không thì thêm mới vào listOptions.current
+        mappedOptions.forEach((newItem) => {
+          if (!listOptions.current.find((opt) => String(opt.value) === String(newItem.value))) {
+            listOptions.current.push(newItem);
+          }
+        });
         const hasMoreData = isLoadAll ? false : page < totalPages;
 
         return {

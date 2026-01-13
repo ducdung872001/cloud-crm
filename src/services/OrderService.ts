@@ -21,7 +21,7 @@ export default {
     }).then((res) => res.json());
   },
   update: (data: any, id: number) => {
-    return fetch(`${urlsApi.order.update}/${id}`, {
+    return fetch(`${urlsApi.order.update}?id=${id}`, {
       method: "POST",
       body: JSON.stringify(data),
     }).then((res) => res.json());
