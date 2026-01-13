@@ -18,6 +18,7 @@ import { isDifferenceObj, getPageOffset } from "reborn-util";
 import TicketService from "services/TicketService";
 import AddTicketModal from "./partials/AddEditTicketModal/AddTicketModal";
 import TableTicket from "./partials/TableTicket/TableTicket";
+import KanbanTicket from"./partials/KanbanTicket/KanbanTicket";
 import AddTransferVotes from "pages/Common/AddTransferVotes";
 
 import "tippy.js/animations/scale.css";

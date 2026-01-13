@@ -196,18 +196,18 @@ export default function CreateContractsXML(props: any) {
         }
 
         // map lại peopleinvolves chỉ lấy contactid để hiển thị trong form
-        if (mapped.peopleInvolved) {
-          try {
-            const people = JSON.parse(mapped.peopleInvolved);
-            mapped.contactId =
-              Array.isArray(people) && people.length > 0
-                ? people[0]?.value ?? null
-                : null;
-          } catch {
-            mapped.contactId = null;
-          }
+        if (!mapped) return mapped;
+
+        if (Array.isArray(mapped.peopleInvolved)) {
+          mapped.peopleInvolved = mapped.peopleInvolved.map(people => ({
+            value: people.value ?? people.id,
+            label: people.label ?? people.name,
+          }));
+        } else {
+          mapped.peopleInvolved = [];
         }
       }
+      console.log("peopleInvolved init:", mapped?.peopleInvolved);
 
       setInitFormSchema(configInit);
       setMapContractsAttribute(mapAttribute);
@@ -220,6 +220,8 @@ export default function CreateContractsXML(props: any) {
   }, [id]);
 
   const onSubmit = async (config) => {
+    console.log("config", config);
+    return;
     setIsSubmit(true);
 
     // Các trường thông tin bổ sung
@@ -274,13 +276,6 @@ export default function CreateContractsXML(props: any) {
       }
     }
 
-    if (config.contactId) {
-      const response = await ContactService.detail(config.contactId);
-      if (response.code === 0) {
-        config.contactName = response.result?.name || "";
-      }
-    }
-
     if (config.partnerId) {
       const response = await PartnerService.detail(config.partnerId);
       if (response.code === 0) {
@@ -326,7 +321,12 @@ export default function CreateContractsXML(props: any) {
       stageName: config.stageName || "",
       products: config.products || [],
       timestamp: config.timestamp || null,
-      peopleInvolved: JSON.stringify([{ value: config.contactId, label: config.contactName, }]),
+      peopleInvolved: JSON.stringify(
+        (config.peopleInvolved || []).map((item: any) => ({
+          value: item.value,
+          label: item.label
+        }))
+      ),
       signDate: toApiDate(config.signDate),
       affectedDate: toApiDate(config.affectedDate),
       adjustDate: toApiDate(config.adjustDate),

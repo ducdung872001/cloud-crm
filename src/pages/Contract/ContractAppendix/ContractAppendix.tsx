@@ -15,7 +15,8 @@ import Loading from "components/loading";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import SearchBox from "components/searchBox/searchBox";
 import ModalAddAppendix from "./patials/ModalAddAppendix";
-
+import { BulkActionItemModel } from "components/bulkAction/bulkAction";
+import { getPermissions } from "utils/common";
 
 export default function ContractAppendix (props: any) {
   const { contractId, detailContract } = props;
@@ -27,6 +28,7 @@ export default function ContractAppendix (props: any) {
   const [listContractAppendix, setListContractAppendix] = useState([]);
   const [isAddAppendixModal, setIsAddAppendixModal] = useState(false);
   const [dataContractAppendix, setDataContractAppendix] = useState(null);
+  const [permissions, setPermissions] = useState(getPermissions());
 
   const [paramsAppendix, setParamsAppendix] = useState({
     name: "",
@@ -41,7 +43,7 @@ export default function ContractAppendix (props: any) {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "báo giá",
+    name: "phụ lục hợp đồng",
     isChooseSizeLimit: true,
     setPage: (page) => {
         setParamsAppendix((prevParams) => ({ ...prevParams, page: page }));
@@ -90,25 +92,62 @@ export default function ContractAppendix (props: any) {
     ];
 
     const actionsTable = (item: any): IAction[] => {
-        
+    const isCheckedItem = listIdChecked?.length > 0;
         return [
             {
                 title: "Sửa",
-                icon: <Icon name="Pencil" />,
+                icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                disabled: isCheckedItem,
                 callback: () => {
+                if (!isCheckedItem) {
                     setDataContractAppendix(item);
                     setIsAddAppendixModal(true);
+                  }
                 },
             },
             {
                 title: "Xóa",
-                icon: <Icon name="Trash" className="icon-error" />,
+                icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+                disabled: isCheckedItem,
                 callback: () => {
-                    showDialogConfirmDelete(item);
+                    if (!isCheckedItem) {
+                        showDialogConfirmDelete(item);
+                    }
                 },
             },
         ];
     };
+
+    const [listIdChecked, setListIdChecked] = useState<number[]>([]);
+
+    const onDeleteAll = () => {
+        const selectedIds = listIdChecked || [];
+        if (!selectedIds.length) return;
+    
+        const arrPromises = selectedIds.map((selectedId) => {
+          const found = listContractAppendix.find((item) => item.id === selectedId);
+          if (found?.id) {
+            return ContractService.contractAppendixDelete(found.id);
+          } else {
+            return Promise.resolve(null);
+          }
+        });
+        Promise.all(arrPromises)
+        .then((results) => {
+          const checkbox = results.filter (Boolean)?.length ||0;
+          if (checkbox > 0) {
+            showToast(`Xóa thành công ${checkbox} phụ lục hợp đồng`, "success");
+            getListContractAppendix(paramsAppendix);
+            setListIdChecked([]);
+          } else {
+            showToast("Không có phụ lục hợp đồng nào được xóa", "error");
+          }
+       })
+        .finally(() => {
+          setShowDialogAppendix(false);
+          setContentDialogAppendix(null);
+        });
+      }
 
     const showDialogConfirmDelete = (item?: any) => {
         const contentDialog: IContentDialog = {
@@ -120,7 +159,7 @@ export default function ContractAppendix (props: any) {
           message: (
             <Fragment>
               Bạn có chắc chắn muốn xóa mốc thanh toán đã chọn
-              {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
+              {item ? <strong> {item.name}</strong> : ""}? Thao tác này không thể khôi phục.
             </Fragment>
           ),
           cancelText: "Hủy",
@@ -130,6 +169,11 @@ export default function ContractAppendix (props: any) {
           },
           defaultText: "Xóa",
           defaultAction: async () => {
+
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
             const response = await ContractService.contractAppendixDelete(item.id);
             if (response.code === 0) {
                 showToast("Xóa tài liệu thành công", "success");
@@ -144,6 +188,13 @@ export default function ContractAppendix (props: any) {
         setContentDialogAppendix(contentDialog);
         setShowDialogAppendix(true);
     };
+
+    const bulkActionList: BulkActionItemModel[] = [
+        permissions["CONTRACT_DELETE"] == 1 && {
+          title: "Xóa phụ lục hợp đồng",
+          callback: () => showDialogConfirmDelete(),
+        },
+      ];
 
     return (
         <div className="card-box wrapper__info--appendix">
@@ -184,18 +235,18 @@ export default function ContractAppendix (props: any) {
                 {!isLoadingAppendix && listContractAppendix && listContractAppendix.length > 0 ? (
 
                     <BoxTable
-                        name="Danh sách báo giá"
+                        name="Danh sách phụ lục"
                         titles={titlesAppendx}
                         items={listContractAppendix}
                         isPagination={true}
                         dataPagination={pagination}
                         dataMappingArray={(item, index) => dataMappingArray(item, index)}
                         dataFormat={dataFormatAppendix}
-                        // listIdChecked={listIdChecked}
+                        listIdChecked={listIdChecked}
                         isBulkAction={true}
-                        // bulkActionItems={bulkActionList}
+                        bulkActionItems={bulkActionList}
                         striped={true}
-                        // setListIdChecked={(listId) => setListIdChecked(listId)}
+                        setListIdChecked={(listId) => setListIdChecked(listId)}
                         actions={actionsTable}
                         actionType="inline"
                     />

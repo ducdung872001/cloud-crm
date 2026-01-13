@@ -33,6 +33,8 @@ export default function RegisterFetch() {
         config.headers["Content-Type"] = "application/json";
       }
       config.headers["Hostname"] = location.hostname || "";
+      //config.headers["Hostname"] = "rebornjsc.reborn.vn";
+      // config.headers["Hostname"] = location.hostname || "";
       // config.headers["Hostname"] = "rebornjsc.reborn.vn";
       // config.headers["Hostname"] = "kcn.reborn.vn";
       // config.headers["Hostname"] = "boutique2shop.reborn.vn";
