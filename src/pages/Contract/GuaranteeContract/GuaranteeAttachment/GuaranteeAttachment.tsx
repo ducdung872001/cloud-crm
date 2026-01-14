@@ -137,7 +137,7 @@ export default function GuaranteeAttachment(props: any) {
 
   const bulkActionList = [
     {
-      title: "Xóa",
+      title: "Xóa tài liệu",
       icon: <Icon name="Trash" className="icon-error" />,
       callback: () => {
         showDialogConfirmDeleteMultiple();
