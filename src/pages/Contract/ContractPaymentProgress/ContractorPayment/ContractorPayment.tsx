@@ -17,6 +17,8 @@ import Badge from "components/badge/badge";
 import AddCashBookModal from "pages/Contract/PaymentProgress/AddCashBookModal/AddCashBookModal";
 import AddContractorPaymentModal from "./partials/AddContractorPaymentModal";
 import ContractorPaymentService from "services/ContractorPaymentService";
+import { getPermissions } from "utils/common";
+import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 
 export default function ContractorPayment (props: any) {
   const { contractId } = props;
@@ -28,7 +30,9 @@ export default function ContractorPayment (props: any) {
   const [isAddPaymentProgress, setIsAddPaymentProgress] = useState(false);
   const [dataPaymentProgress, setDataPaymentProgress] = useState(null);
   const [isModalCashBook, setIsModalCashBook] = useState(false);
-
+  const [listIdChecked, setListIdChecked] = useState<number[]>([]);
+  const [permissions, setPermissions] = useState(getPermissions());
+  
   const [params, setParams] = useState({
     keyword: "",
     limit: 10,
@@ -98,36 +102,75 @@ export default function ContractorPayment (props: any) {
     ];
 
     const actionsTable = (item: any): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
         
         return [
             ...(item.status !== 1 ? [
                 {
                     title: "Thanh toán",
-                    icon: <Icon name="ReceiveMoney" />,
+                    icon: <Icon name="ReceiveMoney" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                    disabled: isCheckedItem,
                     callback: () => {
+                        if (!isCheckedItem) {
                         setDataPaymentProgress(item);
                         setIsModalCashBook(true);
+                        }
                     },
                 },
                 {
                     title: "Sửa",
-                    icon: <Icon name="Pencil" />,
+                    icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+                    disabled: isCheckedItem,
                     callback: () => {
+                        if (!isCheckedItem) {
                         setDataPaymentProgress(item);
                         setIsAddPaymentProgress(true);
+                        }
                     },
                 },
                 {
                     title: "Xóa",
-                    icon: <Icon name="Trash" className="icon-error" />,
+                    icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+                    disabled: isCheckedItem,
                     callback: () => {
+                        if (!isCheckedItem) {
                         showDialogConfirmDelete(item);
+                        }
                     },
                 },
             ] : []),
             
         ];
     };
+
+    const onDeleteAll = () => {
+              const selectedIds = listIdChecked || [];
+              if (!selectedIds.length) return;
+          
+              const arrPromises = selectedIds.map((selectedId) => {
+                const found = paymentProgressList.find((item) => item.id === selectedId);
+                if (found?.id) {
+                  return ContractorPaymentService.delete(found.id);
+                } else {
+                  return Promise.resolve(null);
+                }
+              });
+              Promise.all(arrPromises)
+              .then((results) => {
+                const checkbox = results.filter (Boolean)?.length ||0;
+                if (checkbox > 0) {
+                  showToast(`Xóa thành công ${checkbox} kỳ thanh toán`, "success");
+                  getListPaymentProgress(params);
+                  setListIdChecked([]);
+                } else {
+                  showToast("Không có kỳ thanh toán nào được xóa", "error");
+                }
+             })
+              .finally(() => {
+                setShowDialog(false);
+                setContentDialog(null);
+              });
+            }
 
     const showDialogConfirmDelete = (item?: any) => {
         const contentDialog: IContentDialog = {
@@ -149,6 +192,11 @@ export default function ContractorPayment (props: any) {
           },
           defaultText: "Xóa",
           defaultAction: async () => {
+
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
             const response = await ContractorPaymentService.delete(item.id);
             if (response.code === 0) {
                 showToast("Xóa kỳ thanh toán thành công", "success");
@@ -163,6 +211,13 @@ export default function ContractorPayment (props: any) {
         setContentDialog(contentDialog);
         setShowDialog(true);
     };
+
+    const bulkActionList: BulkActionItemModel[] = [
+              permissions["CONTRACT_DELETE"] == 1 && {
+                title: "Xóa kỳ thanh toán",
+                callback: () => showDialogConfirmDelete(),
+              },
+            ];
 
     return (
         <div className="payment-progress">
@@ -190,18 +245,18 @@ export default function ContractorPayment (props: any) {
                 <div style={{padding: '2rem'}}>
                     {!isLoading && paymentProgressList && paymentProgressList.length > 0 ? (
                         <BoxTable
-                            name="Tiến độ thanh toán"
+                            name="Kỳ thanh toán cho nhà thầu"
                             titles={titles}
                             items={paymentProgressList}
                             isPagination={true}
                             dataPagination={pagination}
                             dataMappingArray={(item, index) => dataMappingArray(item, index)}
                             dataFormat={dataFormat}
-                            // listIdChecked={listIdChecked}
+                            listIdChecked={listIdChecked}
                             isBulkAction={true}
-                            // bulkActionItems={bulkActionList}
+                            bulkActionItems={bulkActionList}
                             striped={true}
-                            // setListIdChecked={(listId) => setListIdChecked(listId)}
+                            setListIdChecked={(listId) => setListIdChecked(listId)}
                             actions={actionsTable}
                             actionType="inline"
                         />

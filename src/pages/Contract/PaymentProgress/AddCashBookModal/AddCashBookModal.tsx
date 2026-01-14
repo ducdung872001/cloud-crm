@@ -28,6 +28,7 @@ import "./AddCashBookModal.scss";
 import { IBeautyBranchFilterRequest } from "model/beautyBranch/BeautyBranchRequestModel";
 import BeautyBranchService from "services/BeautyBranchService";
 import { ContextType, UserContext } from "contexts/userContext";
+import moment from "moment";
 
 export default function AddCashBookModal(props: any) {
   const { onShow, onHide, dataCashBook, type, dataContractPayment, dataContract } = props;
@@ -763,6 +764,7 @@ export default function AddCashBookModal(props: any) {
       ...(dataContractPayment && type === 1 ? { paymentId: dataContractPayment?.id } : {}),
       ...(dataContractPayment && type === 2 ? { investorPaymentId: dataContractPayment?.id } : {}),
       ...(formData.values as ICashbookRequest),
+      transDate: moment(formData.values.transDate).format('YYYY-MM-DDTHH:mm:ss'),
     };
 
     const response = await CashbookService.update(body);
@@ -781,7 +783,7 @@ export default function AddCashBookModal(props: any) {
       setInfoInvoice({ total: 0, debt: 0, paid: 0, discount: 0, fee: 0 });
       setListDebtInvoice([]);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error??"Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };

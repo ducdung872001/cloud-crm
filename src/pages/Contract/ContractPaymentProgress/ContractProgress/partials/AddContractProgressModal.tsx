@@ -11,6 +11,7 @@ import { isDifferenceObj } from "reborn-util";
 import "./AddContractProgressModal.scss";
 import Icon from "components/icon";
 import ContractProgressService from "services/ContractProgressService";
+import moment from "moment";
 
 export default function AddContractProgressModal(props: any) {
   const { onShow, onHide, data, contractId } = props;
@@ -158,6 +159,8 @@ export default function AddContractProgressModal(props: any) {
 
     const body = {
       ...(formData.values as any),
+      startDate: moment(formData.values.startDate).format('YYYY-MM-DDTHH:mm:ss'),
+      endDate: moment(formData.values.endDate).format('YYYY-MM-DDTHH:mm:ss'),
       // ...(data ? { id: data.id } : {}),
     };
 

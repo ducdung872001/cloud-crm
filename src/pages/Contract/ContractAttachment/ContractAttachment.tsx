@@ -16,6 +16,8 @@ import SearchBox from "components/searchBox/searchBox";
 import ContractPaymentService from "services/ContractPaymentService";
 import ContractAttachmentService from "services/ContractAttachmentService";
 import ModalAddAttachment from "./partials/ModalAddAttachment";
+import { getPermissions } from "utils/common";
+import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 
 export default function ContractAttachment(props: any) {
   const { contractId, detailContract } = props;
@@ -27,7 +29,9 @@ export default function ContractAttachment(props: any) {
   const [dataAttachment, setDataAttachment] = useState(null);
 
   const [isAddAttachment, setIsAddAttachment] = useState(false);
-
+  const [listIdChecked, setListIdChecked] = useState<number[]>([]);
+  const [permissions, setPermissions] = useState(getPermissions());
+  
   const [params, setParams] = useState({
     name: "",
     limit: 10,
@@ -83,11 +87,14 @@ export default function ContractAttachment(props: any) {
   const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.attachmentName];
 
   const actionsTable = (item: any): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
         title: "Tải xuống",
-        icon: <Icon name="Download" />,
+        icon: <Icon name="Download" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           let fieldName = convertToId(item.name) || "";
           fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, "g"), "");
 
@@ -105,25 +112,61 @@ export default function ContractAttachment(props: any) {
           const name = `${fieldName}.${type}`;
 
           handDownloadFileOrigin(item.link, name);
+          }
         },
       },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" />,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           setDataAttachment(item);
           setIsAddAttachment(true);
+          }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className="icon-error" />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
         callback: () => {
+          if (!isCheckedItem) {
           showDialogConfirmDelete(item);
+          }
         },
       },
     ];
   };
+
+  const onDeleteAll = () => {
+          const selectedIds = listIdChecked || [];
+          if (!selectedIds.length) return;
+      
+          const arrPromises = selectedIds.map((selectedId) => {
+            const found = attachmentList.find((item) => item.id === selectedId);
+            if (found?.id) {
+              return ContractAttachmentService.contractAttachmentDelete(found.id);
+            } else {
+              return Promise.resolve(null);
+            }
+          });
+          Promise.all(arrPromises)
+          .then((results) => {
+            const checkbox = results.filter (Boolean)?.length ||0;
+            if (checkbox > 0) {
+              showToast(`Xóa thành công ${checkbox} tài liệu`, "success");
+              getListAttachment(params);
+              setListIdChecked([]);
+            } else {
+              showToast("Không có tài liệu nào được xóa", "error");
+            }
+         })
+          .finally(() => {
+            setShowDialog(false);
+            setContentDialog(null);
+          });
+        }
 
   const showDialogConfirmDelete = (item?: any) => {
     const contentDialog: IContentDialog = {
@@ -135,7 +178,7 @@ export default function ContractAttachment(props: any) {
       message: (
         <Fragment>
           Bạn có chắc chắn muốn xóa tài liệu đã chọn
-          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
+          {item ? <strong> {item.name} </strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",
@@ -145,6 +188,12 @@ export default function ContractAttachment(props: any) {
       },
       defaultText: "Xóa",
       defaultAction: async () => {
+
+        if (listIdChecked.length>0) {
+          onDeleteAll();
+          return;
+        }
+
         const response = await ContractAttachmentService.contractAttachmentDelete(item.id);
         if (response.code === 0) {
           showToast("Xóa tài liệu thành công", "success");
@@ -159,6 +208,13 @@ export default function ContractAttachment(props: any) {
     setContentDialog(contentDialog);
     setShowDialog(true);
   };
+
+  const bulkActionList: BulkActionItemModel[] = [
+          permissions["CONTRACT_DELETE"] == 1 && {
+            title: "Xóa tài liệu",
+            callback: () => showDialogConfirmDelete(),
+          },
+        ];
 
   return (
     <div className="card-box wrapper__info--attachment">
@@ -201,11 +257,11 @@ export default function ContractAttachment(props: any) {
             dataPagination={pagination}
             dataMappingArray={(item, index) => dataMappingArray(item, index)}
             dataFormat={dataFormat}
-            // listIdChecked={listIdChecked}
+            listIdChecked={listIdChecked}
             isBulkAction={true}
-            // bulkActionItems={bulkActionList}
+            bulkActionItems={bulkActionList}
             striped={true}
-            // setListIdChecked={(listId) => setListIdChecked(listId)}
+            setListIdChecked={(listId) => setListIdChecked(listId)}
             actions={actionsTable}
             actionType="inline"
           />

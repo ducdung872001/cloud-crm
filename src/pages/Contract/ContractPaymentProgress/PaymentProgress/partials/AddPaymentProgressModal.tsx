@@ -11,6 +11,7 @@ import { isDifferenceObj } from "reborn-util";
 import "./AddPaymentProgressModal.scss";
 import Icon from "components/icon";
 import ContractPaymentService from "services/ContractPaymentService";
+import moment from "moment";
 
 export default function AddPaymentProgressModal(props: any) {
   const { onShow, onHide, data, contractId } = props;
@@ -165,6 +166,9 @@ export default function AddPaymentProgressModal(props: any) {
 
     const body = {
       ...(formData.values as any),
+      taskAssignDate: moment(formData.values.taskAssignDate).format('YYYY-MM-DDTHH:mm:ss'),
+      sendProfileDate: moment(formData.values.sendProfileDate).format('YYYY-MM-DDTHH:mm:ss'),
+      paymentDate: moment(formData.values.paymentDate).format('YYYY-MM-DDTHH:mm:ss'),
       // ...(data ? { id: data.id } : {}),
     };
 
