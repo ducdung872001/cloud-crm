@@ -223,7 +223,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
       const response = await RelationShipService.list();
       if (response.code === 0) {
         const result = response.result;
-        setListCustomerRelationship(result);
+        setListCustomerRelationship(result.items);
       }
       setIsLoadingCustomerRelationship(false);
     }
