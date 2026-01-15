@@ -25,6 +25,7 @@ export default function WebRTCEmbed() {
       config: {
         // extension: 'YOUR_EXTENSION',
         // key: 'PBX_CUSTOMER_CODE',
+
         extension: "470",
         key: "d9cf985baac44238b3d930ae569d9f0912",
 

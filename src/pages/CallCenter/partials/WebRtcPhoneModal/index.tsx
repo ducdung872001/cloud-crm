@@ -166,7 +166,7 @@ export default function WebRtcPhoneModal(props: any) {
                 type: "button",
                 color: "primary",
                 callback: () => {
-                  dataCustomer?.id && dataEmployee?.sip && handTransferCall(employeeSip471);
+                  handTransferCall(employeeSip471);
                 },
               },
               {
@@ -200,7 +200,7 @@ export default function WebRtcPhoneModal(props: any) {
                 type: "button",
                 color: "primary",
                 callback: () => {
-                  dataCustomer?.id && dataEmployee?.sip && handTransferCall(employeeSip471);
+                  handTransferCall(employeeSip471);
                 },
               },
               {

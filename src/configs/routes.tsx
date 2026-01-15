@@ -196,6 +196,7 @@ const rootDomain = getRootDomain(sourceDomain);
 const checkSubdomainTNEX = sourceDomain.includes("tnex");
 const checkSubdomainTNPM = sourceDomain.includes("tnpm") || sourceDomain.includes("localhost");
 const checkSubdomainGREENSPA = sourceDomain.includes("greenspa");
+const checkSubdomainReborn = sourceDomain.includes("localhost") || sourceDomain.includes("rebornjsc") || sourceDomain.includes("kcn");
 // "tnex.reborn.vn"
 
 const checkUserRoot = localStorage.getItem("user.root") == "1";
@@ -209,7 +210,7 @@ export const menu: IMenuItem[] = [
           icon: <Icon name="Home" />,
           code: "DASHBOARD",
         },
-        ...(checkUserRoot
+        ...(checkSubdomainReborn
           ? [
               {
                 title: "managerWork", // Quản lý công việc
@@ -400,15 +401,15 @@ export const menu: IMenuItem[] = [
               code: "",
             },
             ...(checkUserRoot
-          ? [
-              {
-                title: "createContractXML", // Tạo hợp đồng XML
-                path: urls.create_contract_xml,
-                icon: <Icon name="PlusCircleFill" />,
-                code: "",
-              },
-            ]
-          : []),
+              ? [
+                  {
+                    title: "createContractXML", // Tạo hợp đồng XML
+                    path: urls.create_contract_xml,
+                    icon: <Icon name="PlusCircleFill" />,
+                    code: "",
+                  },
+                ]
+              : []),
             {
               title: "listContract", // Danh sách hợp đồng
               path: urls.contract,

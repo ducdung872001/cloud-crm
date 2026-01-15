@@ -81,12 +81,26 @@ export default function InfoWorkArea(props: any) {
     }
   }, [data]);
 
+  const convertTime = (time: string) => {
+    if (!time) return "";
+    return moment(time).format("DD/MM/YYYY HH:mm");
+  };
+
+  const convertWorkLoadUnit = (workLoad: number, unit: string) => {
+    if (workLoad) {
+      if (unit === "D") {
+        return `${workLoad} ngày`;
+      } else if (unit === "H") {
+        return `${workLoad} giờ`;
+      } else if (unit === "M") {
+        return `${workLoad} phút`;
+      }
+    } else {
+      return "";
+    }
+  };
+
   const listInfoBasicItem = [
-    {
-      className: `${data?.content.length > 0 ? "content-work" : ""}`,
-      title: "Nội dung công việc",
-      name: data?.content ? data?.content : ".....................",
-    },
     {
       className: "in-project",
       title: data?.opportunityId ? "Cơ hội" : "Dự án",
@@ -95,27 +109,27 @@ export default function InfoWorkArea(props: any) {
     {
       className: "type-work",
       title: "Loại công việc",
-      name: data?.workTypeName ? data?.workTypeName : ".....................",
+      name: data?.workTypeName ? data?.workTypeName : "",
     },
     {
       className: "time-start",
       title: "Thời gian bắt đầu",
-      name: moment(data?.startTime).format("DD/MM/YYYY HH:mm"),
+      name: convertTime(data?.startTime),
     },
     {
       className: "time-end",
       title: "Thời gian kết thúc",
-      name: moment(data?.endTime).format("DD/MM/YYYY HH:mm"),
+      name: convertTime(data?.endTime),
     },
     {
       className: "amount-work",
       title: "Khối lượng công việc",
-      name: `${data?.workLoad?.toString()} ${data?.workLoadUnit == "D" ? "ngày" : data?.workLoadUnit == "H" ? "giờ" : "phút"}`,
+      name: convertWorkLoadUnit(data?.workLoad, data?.workLoadUnit),
     },
     {
       className: JSON.parse(data?.docLink || "[]").length > 0 ? "related-document" : "",
       title: "Tài liệu liên quan",
-      name: JSON.parse(data?.docLink || "[]").length > 0 ? data?.docLink : ".....................",
+      name: JSON.parse(data?.docLink || "[]").length > 0 ? data?.docLink : "",
     },
   ];
 
@@ -188,7 +202,7 @@ export default function InfoWorkArea(props: any) {
       {data ? (
         <div className="info__work--area" style={{ padding: "15px" }}>
           <div className="info__basic">
-            <h3 className="title-basic">Thông tin chi tiết</h3>
+            <h3 className="title-basic">{data?.name ?? ""}</h3>
             <div className="info__basic--item">
               {listInfoBasicItem.map((item, idx) => (
                 <div key={idx} className={`item ${item.className}`}>

@@ -37,47 +37,66 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
         },
 
         embed_error_handle: (data: any) => {
+          // Xử lý lỗi nhúng
+          console.error("Có lỗi nhúng:", data);
           setError(data?.message || "Embed error");
           setCallState("error");
         },
 
         background_registered_handle: () => {
+          // Đăng ký SIP thành công
+          console.log("Đăng ký SIP thành công");
           setCallState("ready");
         },
 
         background_unregistered_handle: () => {
+          // Đăng xuất SIP
+          console.log("Đăng xuất SIP");
           setCallState("idle");
         },
 
         background_registrationFailed_handle: (data: any) => {
+          // Đăng ký SIP thất bại
+          console.error("Đăng ký SIP thất bại:", data);
           setError(data?.cause || "Registration failed");
           setCallState("error");
         },
 
         background_outgoingcall_handle: () => {
+          // Cuộc gọi đi được thực hiện
+          console.log("Cuộc gọi đi được thực hiện");
           setCallState("calling");
         },
 
         background_outgoingringing_handle: () => {
+          // Cuộc gọi đi đang đổ chuông
+          console.log("Cuộc gọi đi đang đổ chuông");
           setCallState("ringing");
         },
 
         background_incomingcall_handle: (data: any) => {
-          console.log("Incoming call from:", data.customernumber);
+          // Có cuộc gọi đến
+          console.log("Có cuộc gọi đến từ:", data.customernumber);
           setIncomingNumber(data.customernumber);
           setCallState("incoming");
         },
 
         background_accepted_handle: () => {
+          // Cuộc gọi đã được trả lời
+          console.log("Cuộc gọi đã được trả lời");
           setCallState("oncall");
         },
 
         background_ended_handle: () => {
+          // Cuộc gọi đã kết thúc
+          console.log("Cuộc gọi đã kết thúc");
           setIncomingNumber(null);
           setCallState("ended");
         },
 
         background_failed_handle: (data: any) => {
+          // Cuộc gọi thất bại
+          console.error("Cuộc gọi thất bại:", data);
           setError(data?.failed_cause || "Call failed");
           setCallState("error");
         },
@@ -119,6 +138,7 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
 
   const transfer = async (ext: string) => {
     // Chuyển cuộc gọi
+    console.log("Chuyển hướng cuộc gọi:", ext);
     return window.STWebRTCEmbed.transfer(ext);
   };
 
