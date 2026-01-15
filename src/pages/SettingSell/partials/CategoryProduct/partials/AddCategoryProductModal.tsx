@@ -13,6 +13,7 @@ import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import CategoryServiceService from "services/CategoryServiceService";
 import "./AddCategoryProductModal.scss";
+import Icon from "components/icon";
 
 export default function AddCategoryProductModal(props: IAddCategoryServiceModelProps) {
   const { onShow, onHide, data } = props;
@@ -48,14 +49,33 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
     },
   ];
 
-  const listField: IFieldCustomize[] = [
+  const [formData, setFormData] = useState<IFormData>({ values: values });
+
+  const listFieldText: IFieldCustomize[] = useMemo(() => {
+    return [
     {
       label: "Tên danh mục",
       name: "name",
       type: "text",
       fill: true,
       required: true,
-      maxLength: 50,
+      placeholder: "Nhập tên mẫu báo giá",
+      icon: <Icon name="Edit" />,
+      iconPosition: "left",
+      validate: [
+        {
+        name: "required",
+        message: "Không được bỏ trống",
+            },
+            {
+            name: "maxLength",
+            message: "Không được nhập quá 300 ký tự",
+            value: 300,
+            },
+            ],
+      
+        messageWarning: "Không được nhập quá 300 ký tự",
+        isWarning: formData?.values?.name?.length > 300 ? true : false,
     },
     {
       label: "Thứ tự hiển thị",
@@ -66,7 +86,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
     },
   ];
 
-  const [formData, setFormData] = useState<IFormData>({ values: values });
+}, [formData]);
 
   useEffect(() => {
     setFormData({ ...formData, values: values, errors: {} });
@@ -80,7 +100,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = Validate(validations, formData, listField);
+    const errors = Validate(validations, formData, [...listFieldText]);
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
       return;
@@ -192,11 +212,11 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
           <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} danh mục sản phẩm`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
-              {listField.map((field, index) => (
+              {listFieldText.map((field, index) => (
                 <FieldCustomize
                   key={index}
                   field={field}
-                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
+                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldText, setFormData)}
                   formData={formData}
                 />
               ))}

@@ -307,6 +307,7 @@ export default function AddTemplateQuote({ onShow, onHide, data }) {
     [isSubmit, hasAddField, dataField, formData]
   );
 
+  const isOverLength = formData.name.length > 300;
   return (
     <Fragment>
       <Modal
@@ -330,7 +331,9 @@ export default function AddTemplateQuote({ onShow, onHide, data }) {
                     fill={true}
                     required={true}
                     placeholder="Nhập tên trường thông tin"
-                    onChange={(e) => handleChangeValueName(e)}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    error={isOverLength}
+                    message="Không được nhập quá 300 ký tự"
                   />
                 </div>
 

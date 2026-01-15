@@ -1575,6 +1575,8 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
     setShowDialog(true);
   };
 
+  const isOverLenght = formData.name.length > 100;
+
   return (
     <div className="add__customer--segment">
       <form className="form__filter--advanced-group" onSubmit={(e) => onSubmit(e)}>
@@ -1599,6 +1601,9 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
               disabled={disableFieldCommom}
               placeholder="Nhập tên phân khúc"
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              error = {isOverLenght}
+              message = {isOverLenght ? "Tên phân khúc không được vượt quá 100 ký tự" : ""}
+
             />
           </div>
           <div className="form-group">
