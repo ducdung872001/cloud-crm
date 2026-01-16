@@ -105,10 +105,12 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
         });
       }
 
-      setDataWorkType({
-        value: result.wteId,
-        label: result.workTypeName,
-      });
+      if (result.wteId) {
+        setDataWorkType({
+          value: result.wteId,
+          label: result.workTypeName,
+        });
+      }
 
       const takeNotification = JSON.parse(result?.notification);
       setDataListNotification(takeNotification);
@@ -546,6 +548,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
               value={dataWorkType ? dataWorkType : ""}
               onChange={(e) => handleChangeValueWorkType(e)}
               isAsyncPaginate={true}
+              required={true}
               placeholder="Chọn loại công việc"
               additional={{
                 page: 1,
@@ -780,6 +783,11 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
     //   return;
     // }
 
+    if (!formData?.values?.wteId) {
+      showToast("Vui lòng chọn loại công việc", "error");
+      return;
+    }
+
     if (!formData?.values?.projectId) {
       setValidateProject(true);
       return;
@@ -855,6 +863,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
               endDay < startDay ||
               validateWordLoad ||
               validateProject ||
+              !formData?.values?.wteId ||
               (formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0) ||
               _.isEqual(formData.values, values) ||
               (formData.errors && Object.keys(formData.errors).length > 0),

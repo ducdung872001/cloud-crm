@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./index.scss";
 import ListWork from "./partials/ListWork";
 import { lstTitleHeader } from "./constant";
+import KanbanProcess from "./partials/KanbanProcess";
 
 export default function ManagerWork() {
   const takeActiveTitleHeaderManagerWork = localStorage.getItem("activeTitleHeaderManagerWork");
@@ -78,7 +79,9 @@ export default function ManagerWork() {
           {activeTitleViewBy === 1 ? (
             <ListWork activeTitleHeader={activeTitleHeader} />
           ) : activeTitleViewBy === 2 ? (
-            <div className="step-process-work">Kanban theo bước xử lý công việc trong QUY TRÌNH BPM</div>
+            <div className="step-process-work">
+              <KanbanProcess processCode={"QTQLCV"} />
+            </div>
           ) : activeTitleViewBy === 3 ? (
             <div className="status-work">KANBAN theo Trạng thái công việc (số cột cố định)</div>
           ) : null}

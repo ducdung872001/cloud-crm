@@ -235,23 +235,6 @@ export default function MessageChatWork(props: IMessageChatWorkProps) {
     }
   };
 
-  //* Xử lý ảnh
-  const showImage = (url) => {
-    if (url) {
-      setInfoMedia({ ...infoMedia, type: "image", url: url });
-    }
-  };
-
-  const getProgress = (percent) => {
-    if (percent) {
-      setShowProgress(percent);
-
-      if (percent >= 99) {
-        setShowProgress(0);
-      }
-    }
-  };
-
   const handUploadFile = async (file) => {
     await FileService.uploadFile({ data: file, onSuccess: processUploadSuccess });
   };
