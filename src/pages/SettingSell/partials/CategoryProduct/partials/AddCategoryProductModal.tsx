@@ -13,7 +13,7 @@ import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import CategoryServiceService from "services/CategoryServiceService";
 import "./AddCategoryProductModal.scss";
-import Icon from "components/icon";
+
 
 export default function AddCategoryProductModal(props: IAddCategoryServiceModelProps) {
   const { onShow, onHide, data } = props;
@@ -49,10 +49,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
     },
   ];
 
-  const [formData, setFormData] = useState<IFormData>({ values: values });
-
-  const listFieldText: IFieldCustomize[] = useMemo(() => {
-    return [
+  const listField: IFieldCustomize[] = [
     {
       label: "Tên danh mục",
       name: "name",
@@ -60,10 +57,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
       fill: true,
       required: true,
       placeholder: "Nhập tên mẫu báo giá",
-      icon: <Icon name="Edit" />,
-      iconPosition: "left",  
-      messageWarning: "Không được nhập quá 300 ký tự",
-      isWarning: formData?.values?.name?.length > 300 ? true : false,
+      maxLength: 300,
     },
     {
       label: "Thứ tự hiển thị",
@@ -74,7 +68,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
     },
   ];
 
-}, [formData]);
+const [formData, setFormData] = useState<IFormData>({ values: values });
 
   useEffect(() => {
     setFormData({ ...formData, values: values, errors: {} });
@@ -88,7 +82,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = Validate(validations, formData, [...listFieldText]);
+    const errors = Validate(validations, formData, [...listField]);
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
       return;
@@ -200,11 +194,11 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
           <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} danh mục sản phẩm`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
-              {listFieldText.map((field, index) => (
+              {listField.map((field, index) => (
                 <FieldCustomize
                   key={index}
                   field={field}
-                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldText, setFormData)}
+                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}
                 />
               ))}

@@ -9,7 +9,7 @@ import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
-import Icon from "components/icon";
+
 
 import "./AddQuoteForm.scss";
 import { validateMaxLength } from "reborn-validation";
@@ -38,10 +38,9 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
     },
   ];
   
-  const [formData, setFormData] = useState<IFormData>({ values: values });
+  
 
-  const listFieldText: IFieldCustomize[] = useMemo(() => {
-    return [
+  const listField: IFieldCustomize[] = [
     {
       label: "Tên mẫu báo giá",
       name: "name",
@@ -49,11 +48,7 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
       fill: true,
       required: true,
       placeholder: "Nhập tên mẫu báo giá",
-      icon: <Icon name="Edit" />,
-      iconPosition: "left",
-      messageWarning: "Không được nhập quá 300 ký tự",
-      isWarning: formData?.values?.name?.length > 300 ? true : false,
-
+      maxLength: 300,
     },
     {
       label: "Thứ tự hiển thị",
@@ -68,7 +63,8 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
       fill: true,
     },
   ]
-}, [formData]);
+
+  const [formData, setFormData] = useState<IFormData>({ values: values });
 
   useEffect(() => {
     setFormData({ ...formData, values: values, errors: {} });
@@ -82,7 +78,7 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = Validate(validations, formData, [...listFieldText]);
+    const errors = Validate(validations, formData, [...listField]);
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
       return;
@@ -193,11 +189,11 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
           <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} mẫu báo giá`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
-              {listFieldText.map((field, index) => (
+              {listField.map((field, index) => (
                 <FieldCustomize
                   key={index}
                   field={field}
-                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldText, setFormData)}
+                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}
                 />
               ))}
