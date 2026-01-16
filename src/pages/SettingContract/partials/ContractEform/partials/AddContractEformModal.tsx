@@ -63,14 +63,6 @@ export default function AddContractEformModal(props: any) {
           placeholder: "Nhập ghi chú",
           icon: <Icon name="Edit" />,
           iconPosition: "left",
-          validate: [
-            {
-              name: "maxLength",
-              message: " Không được nhập quá 100 ký tự",
-              value: 100,
-            }
-          ],
-
           messageWarning: "Không được nhập quá 100 ký tự",
           isWarning: formData?.values?.note?.length > 100 ? true : false,
         },
