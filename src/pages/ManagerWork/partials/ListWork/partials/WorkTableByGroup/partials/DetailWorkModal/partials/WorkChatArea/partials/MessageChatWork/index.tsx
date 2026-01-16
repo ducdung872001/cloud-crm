@@ -1,27 +1,21 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import HeadlessTippy from "@tippyjs/react/headless";
+import { IMessageChatWorkProps, IMessageChatWorkRequestModal } from "model/workOrder/WorkOrderRequestModel";
 import Icon from "components/icon";
 import { FILE_IMAGE_MAX } from "utils/constant";
 import WorkOrderService from "services/WorkOrderService";
 import { showToast } from "utils/common";
+import EmojiChat from "../EmojiChat/EmojiChat";
+import "./index.scss";
 import { uploadVideoFormData } from "utils/videoFormData";
 // import { uploadImageFromFiles } from "utils/image";
-import { uploadDocumentFormData } from "utils/document";
 import FileService from "services/FileService";
-import EmojiChat from "../EmojiChat";
+import { uploadDocumentFormData } from "utils/document";
 import UploadMedia from "../UploadMedia";
 import UploadDocument from "../UploadDocument";
-import "./index.scss";
 
-interface IContentChatProps {
-  dataMessage: any;
-  worId: number;
-  employeeId: number;
-  onHide: (reload) => void;
-}
-
-export default function ContentChat(props: IContentChatProps) {
-  const { dataMessage, worId, employeeId, onHide } = props;
+export default function MessageChatWork(props: IMessageChatWorkProps) {
+  const { worId, employeeId, takeHeightTextarea, onHide, dataMessage } = props;
 
   const inputRef = useRef(null);
   const textareaRef = useRef(null);
@@ -29,21 +23,6 @@ export default function ContentChat(props: IContentChatProps) {
   const [showModalOption, setShowModalOption] = useState<boolean>(false);
   const [showEmojiChat, setShowEmojiChat] = useState<boolean>(false);
   const [loadingSend, setLoadingSend] = useState<boolean>(false);
-
-  const [infoMedia, setInfoMedia] = useState({
-    type: "",
-    url: "",
-    fileName: "",
-  });
-  const [infoDocument, setInfoDocument] = useState({
-    type: "",
-    url: "",
-    fileSize: 0,
-    fileName: "",
-  });
-
-  const [checkType, setCheckType] = useState<string>(null);
-  const [showProgress, setShowProgress] = useState<number>(0);
 
   const [optionUploadFile] = useState([
     {
@@ -60,25 +39,43 @@ export default function ContentChat(props: IContentChatProps) {
     },
   ]);
 
-  const [messageChat, setMessageChat] = useState({
-    id: null,
-    content: "",
+  const [infoMedia, setInfoMedia] = useState({
+    type: "",
+    url: "",
+    fileName: "",
   });
+
+  const [infoDocument, setInfoDocument] = useState({
+    type: "",
+    url: "",
+    fileSize: 0,
+    fileName: "",
+  });
+
+  const [checkType, setCheckType] = useState<string>(null);
+  const [showProgress, setShowProgress] = useState<number>(0);
+
+  const [messageChat, setMessageChat] = useState<IMessageChatWorkRequestModal>({
+    content: "",
+    worId: worId,
+  });
+
+  useEffect(() => {
+    if (employeeId) {
+      setMessageChat({ ...messageChat, employeeId: employeeId });
+    }
+  }, [employeeId]);
 
   useEffect(() => {
     if (dataMessage) {
       setMessageChat({
         id: dataMessage.id,
         content: dataMessage.content,
+        worId: dataMessage.worId,
+        employeeId: dataMessage.employeeId,
       });
     }
   }, [dataMessage]);
-
-  const [showModalMedia, setShowModalMedia] = useState<boolean>(false);
-  const [showModalDocument, setShowModalDocument] = useState<boolean>(false);
-
-  const conditionWorId = dataMessage ? dataMessage.worId : worId;
-  const conditionEmployeeId = dataMessage ? dataMessage.employeeId : employeeId;
 
   // call api khi click vào icon send
   const handleSendChat = async (e) => {
@@ -88,10 +85,8 @@ export default function ContentChat(props: IContentChatProps) {
 
     setLoadingSend(true);
 
-    const body = {
-      ...messageChat,
-      worId: conditionWorId,
-      employeeId: conditionEmployeeId,
+    const body: IMessageChatWorkRequestModal = {
+      ...(messageChat as IMessageChatWorkRequestModal),
     };
 
     const response = await WorkOrderService.addWorkExchange(body);
@@ -110,10 +105,8 @@ export default function ContentChat(props: IContentChatProps) {
     if (messageChat.content) {
       setLoadingSend(true);
 
-      const body = {
-        ...messageChat,
-        worId: conditionWorId,
-        employeeId: conditionEmployeeId,
+      const body: IMessageChatWorkRequestModal = {
+        ...(messageChat as IMessageChatWorkRequestModal),
       };
 
       const response = await WorkOrderService.addWorkExchange(body);
@@ -128,39 +121,9 @@ export default function ContentChat(props: IContentChatProps) {
     }
   };
 
-  const updateTextareaHeight = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
-    }
-  };
-
   const handleOnKeyDown = (e) => {
-    if (e.altKey && e.key === "Enter") {
-      // Ngăn chặn sự kiện mặc định (ngăn chặn xuống dòng)
+    if (e.key === "Enter") {
       e.preventDefault();
-
-      // Thêm dòng mới vào vị trí hiện tại của con trỏ
-      const { selectionStart, selectionEnd } = e.target;
-      const newText = messageChat.content.slice(0, selectionStart) + "\n" + messageChat.content.slice(selectionEnd);
-
-      // Cập nhật nội dung của textarea
-      setMessageChat({ ...messageChat, content: newText });
-
-      // Cập nhật chiều cao của textarea
-      updateTextareaHeight();
-
-      // Cộng thêm 1 dòng chiều cao
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight + textareaRef.current.offsetHeight}px`;
-
-      // Cập nhật con trỏ sau dòng mới
-      e.target.setSelectionRange(selectionStart + 1, selectionStart + 1);
-    }
-
-    if (e.key === "Enter" && !e.altKey) {
-      e.preventDefault();
-      // Gọi hàm hoặc API tại đây
       handleEnterSendChat();
     }
   };
@@ -168,6 +131,8 @@ export default function ContentChat(props: IContentChatProps) {
   const onClickOutside = () => {
     setShowModalOption(false);
   };
+
+  const [heightTagTextarea, setHeightTagTextarea] = useState(null);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -180,20 +145,21 @@ export default function ContentChat(props: IContentChatProps) {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+      setHeightTagTextarea(textareaRef.current.scrollHeight);
     }
 
     const value = e.target.value;
     setMessageChat({ ...messageChat, content: value });
   };
 
-  const handUploadFile = async (file) => {
-    await FileService.uploadFile({ data: file, onSuccess: processUploadSuccess });
-  };
+  useEffect(() => {
+    if (heightTagTextarea) {
+      takeHeightTextarea(heightTagTextarea);
+    }
+  }, [heightTagTextarea]);
 
-  const processUploadSuccess = (data) => {
-    const result = data?.fileUrl;
-    setInfoMedia({ ...infoMedia, type: "image", url: result });
-  };
+  const [showModalMedia, setShowModalMedia] = useState<boolean>(false);
+  const [showModalDocument, setShowModalDocument] = useState<boolean>(false);
 
   const handleChangeUpload = (e) => {
     e.preventDefault();
@@ -286,9 +252,18 @@ export default function ContentChat(props: IContentChatProps) {
     }
   };
 
+  const handUploadFile = async (file) => {
+    await FileService.uploadFile({ data: file, onSuccess: processUploadSuccess });
+  };
+
+  const processUploadSuccess = (data) => {
+    const result = data?.fileUrl;
+    setInfoMedia({ ...infoMedia, type: "image", url: result });
+  };
+
   return (
     <Fragment>
-      <div className="wrapper__message--chat--exchange">
+      <div className="box__message--chat-exchange">
         <div className={`icon-emotion ${showEmojiChat ? "isShowEmotion" : ""}`}>
           <Icon name="Happy" onClick={() => setShowEmojiChat(!showEmojiChat)} />
           <EmojiChat
@@ -300,7 +275,6 @@ export default function ContentChat(props: IContentChatProps) {
             }}
           />
         </div>
-
         <div className="content-message">
           <textarea
             ref={textareaRef}
@@ -313,7 +287,6 @@ export default function ContentChat(props: IContentChatProps) {
             onChange={handleTextareaChange}
           />
         </div>
-
         <div className={`file-document ${showModalOption ? "active" : ""}`}>
           <HeadlessTippy
             interactive
@@ -361,8 +334,8 @@ export default function ContentChat(props: IContentChatProps) {
           infoMedia={infoMedia}
           onShow={showModalMedia}
           id={messageChat.id}
-          worId={worId}
-          employeeId={conditionEmployeeId}
+          worId={messageChat.worId}
+          employeeId={messageChat.employeeId}
           onHide={(reload) => {
             if (reload) {
               onHide(true);
@@ -371,14 +344,15 @@ export default function ContentChat(props: IContentChatProps) {
             setShowModalMedia(false);
             setInfoMedia({ type: "", url: "", fileName: "" });
           }}
+          content={dataMessage?.content || ""}
         />
         <UploadDocument
           onShow={showModalDocument}
           infoDocument={infoDocument}
           progress={showProgress}
           id={messageChat.id}
-          worId={worId}
-          employeeId={conditionEmployeeId}
+          worId={messageChat.worId}
+          employeeId={messageChat.employeeId}
           onHide={(reload) => {
             if (reload) {
               onHide(true);
@@ -387,6 +361,7 @@ export default function ContentChat(props: IContentChatProps) {
             setShowModalDocument(false);
             setInfoDocument({ type: "", url: "", fileName: "", fileSize: 0 });
           }}
+          content={dataMessage?.content || ""}
         />
       </div>
     </Fragment>
