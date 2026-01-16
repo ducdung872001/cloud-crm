@@ -284,7 +284,7 @@ export default function CompetencyGuaranteeList(props: any) {
         />
         {!isLoading && listCompetencyGuarantee && listCompetencyGuarantee.length > 0 ? (
           <BoxTable
-            name="Tài liệu"
+            name="Nghiệp vụ bảo lãnh"
             titles={titles}
             items={listCompetencyGuarantee}
             isPagination={true}

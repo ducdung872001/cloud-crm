@@ -4,7 +4,8 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import ProjectNavigation from "./partials/ProjectNavigation";
 import WorkTableByGroup from "./partials/WorkTableByGroup";
 
-export default function ListWork() {
+export default function ListWork(props: any) {
+  const { activeTitleHeader } = props;
   const [isDetailWork, setIsDetailWork] = useState<boolean>(false);
   let _isFullPage = localStorage.getItem("isFullPageWorkManagement");
   const [isFullPage, setIsFullPage] = useState<boolean>(_isFullPage ? (_isFullPage === "true" ? true : false) : false);
@@ -48,9 +49,8 @@ export default function ListWork() {
           </div>
           <div className={`${isFullPage ? "active-fullpage" : ""} list-project ${isVertical ? "show__vertical--work" : ""}`}>
             <WorkTableByGroup
+              activeTitleHeader={activeTitleHeader}
               idManagement={idProjectManagement}
-              isRegimeKanban={isRegimeKanban}
-              isRegimeReport={isRegimeReport}
               isFullPage={isFullPage}
               showProjectManagement={showProjectManagement}
               handleDetailWork={handleDetailWork}

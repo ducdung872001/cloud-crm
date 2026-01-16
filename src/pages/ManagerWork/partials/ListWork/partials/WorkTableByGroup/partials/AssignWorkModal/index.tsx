@@ -927,7 +927,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
         className="modal-assign-work-backlog"
       >
         <form className="form-assign-work-backlog" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${idWork ? "Chỉnh sửa" : "Thêm mới"} công việc`} toggle={() => !isSubmit && handleClearForm(false)} />
+          <ModalHeader title={`Giao việc`} toggle={() => !isSubmit && handleClearForm(false)} />
           <ModalBody>
             <div className="list-form-group">
               {idWork ? (

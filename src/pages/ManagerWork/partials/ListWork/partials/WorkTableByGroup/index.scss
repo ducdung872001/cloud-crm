@@ -86,9 +86,12 @@
         gap: 0 1.6rem;
         .filter {
           display: flex;
-          align-items: end;
+          align-items: flex-end;
           gap: 0 0.8rem;
           justify-content: flex-start;
+          .item-filter-right {
+            min-width: 25rem;
+          }
         }
       }
     }
