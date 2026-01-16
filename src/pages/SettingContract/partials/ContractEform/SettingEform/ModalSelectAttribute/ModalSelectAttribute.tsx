@@ -528,7 +528,7 @@ export default function ModalSelectAttribute(props: any) {
           placeholder: "Nhập tên trường",
           icon: <Icon name="Edit" />,
           iconPosition: "left",
-          Maxlength: 100,
+          maxLength: 100
         },
         {
           label: "Kiểu dữ liệu",
