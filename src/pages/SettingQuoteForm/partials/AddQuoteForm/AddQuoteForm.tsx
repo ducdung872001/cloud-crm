@@ -78,7 +78,7 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = Validate(validations, formData, [...listField]);
+    const errors = Validate(validations, formData, listField);
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
       return;

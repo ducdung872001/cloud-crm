@@ -331,7 +331,7 @@ export default function AddTemplateQuote({ onShow, onHide, data }) {
                     required={true}
                     placeholder="Nhập tên trường thông tin"
                     maxLength={100}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) => handleChangeValueName(e)}
                   />
                 </div>
 

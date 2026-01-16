@@ -516,9 +516,8 @@ export default function ModalSelectAttribute(props: any) {
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
-  const listFieldFirst: IFieldCustomize[] = useMemo(
-    () => {
-      return [
+  const listFieldFirst = useMemo(
+    () => [
         {
           label: "Tên trường",
           name: "name",
@@ -526,8 +525,6 @@ export default function ModalSelectAttribute(props: any) {
           fill: true,
           required: true,
           placeholder: "Nhập tên trường",
-          icon: <Icon name="Edit" />,
-          iconPosition: "left",
           maxLength: 100
         },
         {
@@ -611,10 +608,10 @@ export default function ModalSelectAttribute(props: any) {
               label: "Formula",
             },
           ],
-        },
-      ]  
-},  [listContractAttribute, isLoadingContractAttribute, formData]);
-
+        },  
+      ] as IFieldCustomize[],
+    [listContractAttribute, isLoadingContractAttribute, data]
+  );
 
 
   const listFieldSecond = useMemo(
