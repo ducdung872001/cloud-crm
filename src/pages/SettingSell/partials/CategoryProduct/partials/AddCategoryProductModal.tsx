@@ -61,21 +61,9 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
       required: true,
       placeholder: "Nhập tên mẫu báo giá",
       icon: <Icon name="Edit" />,
-      iconPosition: "left",
-      validate: [
-        {
-        name: "required",
-        message: "Không được bỏ trống",
-            },
-            {
-            name: "maxLength",
-            message: "Không được nhập quá 300 ký tự",
-            value: 300,
-            },
-            ],
-      
-        messageWarning: "Không được nhập quá 300 ký tự",
-        isWarning: formData?.values?.name?.length > 300 ? true : false,
+      iconPosition: "left",  
+      messageWarning: "Không được nhập quá 300 ký tự",
+      isWarning: formData?.values?.name?.length > 300 ? true : false,
     },
     {
       label: "Thứ tự hiển thị",

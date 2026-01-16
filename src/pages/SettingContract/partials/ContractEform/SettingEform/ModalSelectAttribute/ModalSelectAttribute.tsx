@@ -528,15 +528,7 @@ export default function ModalSelectAttribute(props: any) {
           placeholder: "Nhập tên trường",
           icon: <Icon name="Edit" />,
           iconPosition: "left",
-          validate: [
-            {
-              name: "maxLength",
-              message: "Không được nhập quá 300 ký tự",
-              value: 300,
-            }
-          ],
-          messageWarning: "Không được nhập quá 300 ký tự",
-          isWarning: formData?.values?.name?.length > 300 ? true : false,
+          Maxlength: 100,
         },
         {
           label: "Kiểu dữ liệu",

@@ -51,18 +51,6 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
       placeholder: "Nhập tên mẫu báo giá",
       icon: <Icon name="Edit" />,
       iconPosition: "left",
-      validate: [
-        {
-        name: "required",
-        message: "Không được bỏ trống",
-        },
-        {
-          name: "maxLength",
-          message: "Không được nhập quá 300 ký tự",
-          value: 300,
-        },
-      ],
-
       messageWarning: "Không được nhập quá 300 ký tự",
       isWarning: formData?.values?.name?.length > 300 ? true : false,
 

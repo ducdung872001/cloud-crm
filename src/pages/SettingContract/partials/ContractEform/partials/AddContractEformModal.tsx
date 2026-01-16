@@ -52,13 +52,6 @@ export default function AddContractEformModal(props: any) {
           placeholder: "Nhập tên biểu mẫu",
           icon: <Icon name="Edit" />,
           iconPosition: "left",
-          validate: [
-            {
-              name: "maxLength",
-              message: "Không được vượt quá 300 ký tự",
-              value: 300,
-            },
-          ],
           messageWarning: "Không được vượt quá 300 ký tự",
           isWarning: formData?.values?.name?.length > 300 ? true : false,
         },
