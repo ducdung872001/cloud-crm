@@ -2,6 +2,7 @@ export interface IContactFilterRequest {
   name?: string;
   page?: number;
   limit?: number;
+  listId?: string;
 }
 
 export interface IContactFieldFilterRequest {

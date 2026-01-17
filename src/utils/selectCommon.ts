@@ -345,12 +345,12 @@ export async function SelectOptionData(key: string, params?: any) {
       return [...(response.result.items ? response.result.items : response.result)].map((item) => {
         if (key === "customer" || key === "customerId") {
           return { value: item.id, label: `${item.name} - ${item.phoneMasked}`, 
-          taxCodeCustomer: `${item.taxCode}`,
-          addressCustomer: `${item.address}`, 
-          phoneMaskedCustomer: `${item.phoneMasked}`,
-          sourceName: `${item.sourceName}`,
-          groupName: `${item.groupName}`,
-          taxcode_customer: `${item.taxCode}`};
+          taxCodeCustomer: String(item.taxCode ?? ""),
+          addressCustomer: String(item.address ?? ""),
+          phoneMaskedCustomer: String(item.phoneMasked ?? ""),
+          sourceName: String(item.sourceName ?? ""),
+          groupName: String(item.groupName ?? ""),
+          taxcode_customer: String(item.taxCode ?? ""),};
         }
         if (key === "categoryItemId") {
           return { value: item.id, label: `${item.name}` };
@@ -393,10 +393,10 @@ export async function SelectOptionData(key: string, params?: any) {
           return {
             value: item.id,
             label: `${item.name}`,
-            taxCodePartner: `${item.taxCode}`,
-            phoneMaskedPartner: `${item.phoneMasked}`,
-            addressPartner: `${item.address}`,
-            taxcode_partner: `${item.taxCode}`,
+            taxCodePartner: String(item.taxCode ?? ""),
+            phoneMaskedPartner: String(item.phoneMasked ?? ""),
+            addressPartner: String(item.address ?? ""),
+            taxcode_partner: String(item.taxCode ?? ""),
           };
         }
         if( key === "projectId"){
