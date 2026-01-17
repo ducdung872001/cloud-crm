@@ -25,6 +25,7 @@ import ContactService from "services/ContactService";
 import PartnerService from "services/PartnerService";
 import TitleAction from "components/titleAction/titleAction";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
+import CustomerService from "services/CustomerService";
 
 const defaultSchema = {
   type: "default",
@@ -265,6 +266,12 @@ export default function CreateContractsXML(props: any) {
         config.pipelineName = response.result?.name || "";
       }
     }
+    if (config.customerId) {
+      const response = await CustomerService.detail(config.customerId);
+      if (response.code === 0) {
+        config.taxcode_customer = response.result?.taxCode || "";
+      }
+    }
     //lấy ra projectName theo projectId call api chi tiết
     if (config.projectId) {
       const response = await WorkProjectService.detail(config.projectId);
@@ -277,6 +284,7 @@ export default function CreateContractsXML(props: any) {
       const response = await PartnerService.detail(config.partnerId);
       if (response.code === 0) {
         config.businessPartnerName = response.result?.name || "";
+        config.taxcode_partner = response.result?.taxCode || "";
       }
     }
 
@@ -336,7 +344,7 @@ export default function CreateContractsXML(props: any) {
         ? {
           customerId: config.customerId,
           custType: config.custType ?? 0,
-          taxCode: config.taxcode_customer || "",
+          taxCode: config.taxcode_customer ?? "",
           businessPartnerId: null,
           businessPartnerName: "",
         }
@@ -345,7 +353,7 @@ export default function CreateContractsXML(props: any) {
           businessPartnerName: config.businessPartnerName || "",
           customerId: null,
           custType: null,
-          taxCode: config.taxcode_partner || "",
+          taxCode: config.taxcode_partner ?? "",
         }
       ),
     };
