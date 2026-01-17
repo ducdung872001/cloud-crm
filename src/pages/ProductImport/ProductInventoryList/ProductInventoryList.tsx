@@ -158,7 +158,7 @@ export default function ProductInventoryList() {
       <TitleAction title="Sản phẩm tồn kho" />
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên sản phẩm, số lô"
+          name="Tên sản phẩm"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}

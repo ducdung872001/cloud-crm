@@ -762,6 +762,7 @@ export default function AddEformAttributeModal(props: any) {
                     title="Định dạng số"
                     name="numberFormat"
                     value={numberFormat}
+                    required={true}
                     onChange={(e) => setNumberFormat(e?.target.value)}
                   />
                 </div>

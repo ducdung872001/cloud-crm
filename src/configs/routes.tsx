@@ -1002,58 +1002,58 @@ export const menu: IMenuItem[] = [
     ],
   },
 
-  ...(checkSubdomainTNPM || checkSubdomainGREENSPA
+  ...(checkSubdomainReborn
     ? [
-        // {
-        //   title: "operate", // Quản lý vận hành
-        //   path: "",
-        //   icon: <Icon name="SettingCashbook" />,
-        //   code: "OPERATION_MANAGEMENT",
-        //   children: [
-        //     {
-        //       title: "spaceCustomer", // Khu vực/căn hộ
-        //       path: urls.spaceCustomer,
-        //       icon: <Icon name="Headquarters" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "electricityIndex", // Chốt chỉ số điện từ bộ phận kĩ thuật
-        //       path: urls.electricityIndex,
-        //       icon: <Icon name="KpiCustomer" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "waterIndex", // Chốt chỉ số nước từ bộ phận kĩ thuật
-        //       path: urls.waterIndex,
-        //       icon: <Icon name="KpiCustomer" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "managementFee", // Phí quản lý
-        //       path: urls.managementFee,
-        //       icon: <Icon name="MoneyFill" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "ortherFee", // Chi phí khác
-        //       path: urls.ortherFee,
-        //       icon: <Icon name="MoneyFill" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "vehicleRegistration", // Phí đậu xe
-        //       path: urls.vehicleRegistration,
-        //       icon: <Icon name="Profile" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "vehicle", // Đăng kí phương tiện
-        //       path: urls.vehicle,
-        //       icon: <Icon name="ImportGoods" />,
-        //       code: "",
-        //     },
-        //   ],
-        // },
+        {
+          title: "operate", // Quản lý vận hành
+          path: "",
+          icon: <Icon name="SettingCashbook" />,
+          code: "OPERATION_MANAGEMENT",
+          children: [
+            {
+              title: "spaceCustomer", // Khu vực/căn hộ
+              path: urls.spaceCustomer,
+              icon: <Icon name="Headquarters" />,
+              code: "",
+            },
+            {
+              title: "electricityIndex", // Chốt chỉ số điện từ bộ phận kĩ thuật
+              path: urls.electricityIndex,
+              icon: <Icon name="KpiCustomer" />,
+              code: "",
+            },
+            {
+              title: "waterIndex", // Chốt chỉ số nước từ bộ phận kĩ thuật
+              path: urls.waterIndex,
+              icon: <Icon name="KpiCustomer" />,
+              code: "",
+            },
+            {
+              title: "managementFee", // Phí quản lý
+              path: urls.managementFee,
+              icon: <Icon name="MoneyFill" />,
+              code: "",
+            },
+            {
+              title: "ortherFee", // Chi phí khác
+              path: urls.ortherFee,
+              icon: <Icon name="MoneyFill" />,
+              code: "",
+            },
+            {
+              title: "vehicleRegistration", // Phí đậu xe
+              path: urls.vehicleRegistration,
+              icon: <Icon name="Profile" />,
+              code: "",
+            },
+            {
+              title: "vehicle", // Đăng kí phương tiện
+              path: urls.vehicle,
+              icon: <Icon name="ImportGoods" />,
+              code: "",
+            },
+          ],
+        },
       ]
     : []),
   {

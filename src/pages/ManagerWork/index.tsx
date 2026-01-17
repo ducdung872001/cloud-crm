@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./index.scss";
 import ListWork from "./partials/ListWork";
+import { lstTitleHeader } from "./constant";
+import KanbanProcess from "./partials/KanbanProcess";
 
 export default function ManagerWork() {
   const takeActiveTitleHeaderManagerWork = localStorage.getItem("activeTitleHeaderManagerWork");
@@ -12,20 +14,7 @@ export default function ManagerWork() {
     fromTime: "",
     toTime: "",
   });
-  const lstTitleHeader = [
-    {
-      name: "Tổng quan công việc",
-      type: 1,
-    },
-    {
-      name: "Tất cả công việc",
-      type: 2,
-    },
-    {
-      name: "Công việc của tôi",
-      type: 3,
-    },
-  ];
+
   const [lstTitleViewBy, setLstTitleViewBy] = useState([
     {
       name: "Danh sách công việc",
@@ -43,37 +32,6 @@ export default function ManagerWork() {
 
   const handleChangeActiveTitleHeader = (item: any) => {
     setActiveTitleHeader(item.type);
-    // if (item.type === 2) {
-    //   if (activeTitleViewBy === 2) {
-    //     setActiveTitleViewBy(1); // Đặt lại activeTitleViewBy về 1 khi chọn "Tất cả công việc"
-    //     localStorage.setItem("activeTitleViewBy", "1"); // Lưu item.type vào localStorage
-    //   }
-    //   setLstTitleViewBy([
-    //     {
-    //       name: "Danh sách công việc",
-    //       type: 1,
-    //     },
-    //     {
-    //       name: "Trạng thái công việc",
-    //       type: 3,
-    //     },
-    //   ]);
-    // } else {
-    //   setLstTitleViewBy([
-    //     {
-    //       name: "Danh sách công việc",
-    //       type: 1,
-    //     },
-    //     {
-    //       name: "Bước xử lý công việc",
-    //       type: 2,
-    //     },
-    //     {
-    //       name: "Trạng thái công việc",
-    //       type: 3,
-    //     },
-    //   ]);
-    // }
     localStorage.setItem("activeTitleHeaderManagerWork", item.type.toString()); // Lưu item.type vào localStorage
   };
 
@@ -119,9 +77,11 @@ export default function ManagerWork() {
       ) : (
         <>
           {activeTitleViewBy === 1 ? (
-            <ListWork />
+            <ListWork activeTitleHeader={activeTitleHeader} />
           ) : activeTitleViewBy === 2 ? (
-            <div className="step-process-work">Kanban theo bước xử lý công việc trong QUY TRÌNH BPM</div>
+            <div className="step-process-work">
+              <KanbanProcess processCode={"QTQLCV"} />
+            </div>
           ) : activeTitleViewBy === 3 ? (
             <div className="status-work">KANBAN theo Trạng thái công việc (số cột cố định)</div>
           ) : null}
