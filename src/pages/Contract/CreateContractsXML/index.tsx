@@ -195,19 +195,18 @@ export default function CreateContractsXML(props: any) {
           mapped.partnerId = mapped.businessPartnerId;
         }
 
-        // map lại peopleinvolves chỉ lấy contactid để hiển thị trong form
-        if (!mapped) return mapped;
 
         if (Array.isArray(mapped.peopleInvolved)) {
-          mapped.peopleInvolved = mapped.peopleInvolved.map(people => ({
-            value: people.value ?? people.id,
-            label: people.label ?? people.name,
-          }));
-        } else {
-          mapped.peopleInvolved = [];
+          mapped.peopleInvolved = JSON.stringify(
+            mapped.peopleInvolved.map((item: any) =>
+              typeof item === "object" && item !== null && "value" in item
+                ? item.value
+                : item
+            )
+          );
         }
+
       }
-      console.log("peopleInvolved init:", mapped?.peopleInvolved);
 
       setInitFormSchema(configInit);
       setMapContractsAttribute(mapAttribute);
@@ -220,8 +219,6 @@ export default function CreateContractsXML(props: any) {
   }, [id]);
 
   const onSubmit = async (config) => {
-    console.log("config", config);
-    return;
     setIsSubmit(true);
 
     // Các trường thông tin bổ sung
@@ -321,12 +318,7 @@ export default function CreateContractsXML(props: any) {
       stageName: config.stageName || "",
       products: config.products || [],
       timestamp: config.timestamp || null,
-      peopleInvolved: JSON.stringify(
-        (config.peopleInvolved || []).map((item: any) => ({
-          value: item.value,
-          label: item.label
-        }))
-      ),
+      peopleInvolved: config.peopleInvolved || [],
       signDate: toApiDate(config.signDate),
       affectedDate: toApiDate(config.affectedDate),
       adjustDate: toApiDate(config.adjustDate),
