@@ -23,7 +23,7 @@ import { routes } from "./configs/routes";
 import { ToastContainer } from "react-toastify";
 import LayoutPage from "pages/layout";
 import moment from "moment";
-import { fetchToken, onMessageListener } from "configs/firebaseConfig";
+// import { fetchToken, onMessageListener } from "configs/firebaseConfig";
 import { getAppSSOLink, showToast } from "utils/common";
 import EmployeeService from "services/EmployeeService";
 import { getDomain } from "reborn-util";
@@ -39,6 +39,9 @@ import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import CollectWarranty from "pages/Warranty/partials/CollectWarranty";
 import GridFormNew from "pages/BPM/GridForm";
+import { onMessage } from "firebase/messaging";
+import { messaging, requestPermission } from "firebase-config";
+import NotificationService from "services/NotificationService";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -56,6 +59,7 @@ export default function App() {
   const [isShowFeedback, setIsShowFeedback] = useState<boolean>(false);
   const [isShowChatBot, setIsShowChatBot] = useState<boolean>(false);
   const [dataBeauty, setDataBeauty] = useState(null);
+  const [countUnread, setCountUnread] = useState(0);
 
   fetchConfig();
 
@@ -139,20 +143,20 @@ export default function App() {
     }
   }, [cookies.user, location]);
 
-  useEffect(() => {
-    fetchToken().then((token) => {
-      //cookies.user chỉ để kiểm tra người dùng đăng nhập hay chưa
-      if (cookies.user) {
-        //Gọi API Lưu thông tin token xuống dưới server
-      }
+  // useEffect(() => {
+  //   fetchToken().then((token) => {
+  //     //cookies.user chỉ để kiểm tra người dùng đăng nhập hay chưa
+  //     if (cookies.user) {
+  //       //Gọi API Lưu thông tin token xuống dưới server
+  //     }
 
-      onMessageListener()
-        .then((payload: any) => {
-          //Làm gì đó với dữ liệu nhận được
-        })
-        .catch((err) => console.log("failed: ", err));
-    });
-  }, []);
+  //     onMessageListener()
+  //       .then((payload: any) => {
+  //         //Làm gì đó với dữ liệu nhận được
+  //       })
+  //       .catch((err) => console.log("failed: ", err));
+  //   });
+  // }, []);
 
   const [dataExpired, setDataExpired] = useState({
     numDay: null,
@@ -254,6 +258,29 @@ export default function App() {
     }
   }, [valueLanguage]);
 
+  const getCountUnread = async () => {
+    const response = await NotificationService.countUnread();
+    if (response.code === 0) {
+      const result = response.result;
+      setCountUnread(result);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+  };
+
+  /**
+   * Chỉ request khi tồn tại cookies.token
+   */
+  useEffect(() => {
+    requestPermission(cookies.token);
+
+    onMessage(messaging, (payload) => {
+      console.log("Thông báo nhận được:", payload);
+      alert(`🔥 Notification: ${payload.notification?.title}`);
+      getCountUnread();
+    });
+  }, []);
+
   return (
     <UserContext.Provider
       value={{
@@ -309,4 +336,3 @@ export default function App() {
     </UserContext.Provider>
   );
 }
-                                                                                                                                                                                                                                                                                                     
