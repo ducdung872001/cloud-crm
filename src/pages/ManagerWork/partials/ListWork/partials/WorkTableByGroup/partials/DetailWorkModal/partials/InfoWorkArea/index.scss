@@ -81,46 +81,6 @@
         }
       }
 
-      .status-work {
-        .show-status {
-          .__unfulfilled,
-          .__success,
-          .__processing,
-          .__cancelled,
-          .__pause,
-          .__processing--waring {
-            color: var(--white-color);
-            padding: 0.2rem 0.6rem;
-            border-radius: 0.5rem;
-            font-size: 1.3rem;
-          }
-
-          .__unfulfilled {
-            background-color: var(--extra-color-50);
-          }
-
-          .__success {
-            background-color: var(--success-color);
-          }
-
-          .__processing {
-            background-color: var(--primary-color);
-          }
-
-          .__processing--waring {
-            background-color: var(--warning-color);
-          }
-
-          .__cancelled {
-            background-color: var(--error-color);
-          }
-
-          .__pause {
-            background-color: var(--warning-darker-color);
-          }
-        }
-      }
-
       .content-work {
         flex-direction: column;
         align-items: flex-start;

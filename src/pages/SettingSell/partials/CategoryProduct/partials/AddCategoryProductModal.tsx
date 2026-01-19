@@ -14,6 +14,7 @@ import { isDifferenceObj } from "reborn-util";
 import CategoryServiceService from "services/CategoryServiceService";
 import "./AddCategoryProductModal.scss";
 
+
 export default function AddCategoryProductModal(props: IAddCategoryServiceModelProps) {
   const { onShow, onHide, data } = props;
 
@@ -55,7 +56,8 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
       type: "text",
       fill: true,
       required: true,
-      maxLength: 50,
+      placeholder: "Nhập tên mẫu báo giá",
+      maxLength: 300,
     },
     {
       label: "Thứ tự hiển thị",
@@ -66,7 +68,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
     },
   ];
 
-  const [formData, setFormData] = useState<IFormData>({ values: values });
+const [formData, setFormData] = useState<IFormData>({ values: values });
 
   useEffect(() => {
     setFormData({ ...formData, values: values, errors: {} });
@@ -80,7 +82,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = Validate(validations, formData, listField);
+    const errors = Validate(validations, formData, [...listField]);
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
       return;

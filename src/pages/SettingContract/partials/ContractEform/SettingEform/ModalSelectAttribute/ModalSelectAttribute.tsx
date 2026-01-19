@@ -514,16 +514,18 @@ export default function ModalSelectAttribute(props: any) {
     },
   ];
 
+  const [formData, setFormData] = useState<IFormData>({ values: values });
+
   const listFieldFirst = useMemo(
-    () =>
-      [
+    () => [
         {
           label: "Tên trường",
           name: "name",
           type: "text",
           fill: true,
-          maxLength: 50,
           required: true,
+          placeholder: "Nhập tên trường",
+          maxLength: 100
         },
         {
           label: "Kiểu dữ liệu",
@@ -606,12 +608,11 @@ export default function ModalSelectAttribute(props: any) {
               label: "Formula",
             },
           ],
-        },
+        },  
       ] as IFieldCustomize[],
     [listContractAttribute, isLoadingContractAttribute, data]
   );
 
-  const [formData, setFormData] = useState<IFormData>({ values: values });
 
   const listFieldSecond = useMemo(
     () =>
@@ -795,6 +796,16 @@ export default function ModalSelectAttribute(props: any) {
 
   const onSubmit = async () => {
     // e.preventDefault();
+
+    if (!data?.addFieldAttributes && (formData.values['datatype'] == 'dropdown' || formData.values['datatype'] == 'radio' || formData.values['datatype'] == 'multiselect')) {
+      showToast("Vui lòng thêm lựa chọn cho trường thông tin", "error");
+      return;
+    }
+
+    if (!data?.selectedFormula && (formData.values['datatype'] == 'formula')) {
+      showToast("Vui lòng nhập công thức cho trường thông tin", "error");
+      return;
+    }
 
     const errors = Validate(validations, formData, [...listFieldFirst, ...listFieldSecond]);
     if (Object.keys(errors).length > 0) {
@@ -1131,6 +1142,7 @@ export default function ModalSelectAttribute(props: any) {
                         title="Định dạng số"
                         name="numberFormat"
                         value={numberFormat}
+                        required={true}
                         onChange={(e) => setNumberFormat(e?.target.value)}
                       />
                     </div>

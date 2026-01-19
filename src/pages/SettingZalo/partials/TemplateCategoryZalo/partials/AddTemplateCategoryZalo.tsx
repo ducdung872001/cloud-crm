@@ -44,6 +44,7 @@ export default function AddTemplateCategoryZalo(props: AddTemplateCategoryModalP
       name: "name",
       type: "text",
       fill: true,
+      maxLength: 100,
       required: true,
     },
     {

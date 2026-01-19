@@ -1,28 +1,25 @@
-import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
-import { ITableWorkInColapsedProps, ITableWorkOrderProps } from "model/workOrder/PropsModel";
+import React, { Fragment, useEffect, useRef, useState } from "react";
+import { ITableWorkInColapsedProps } from "model/workOrder/PropsModel";
 import Loading from "components/loading";
 import BoxTable from "components/boxTable/boxTable";
-import SearchBox from "components/searchBox/searchBox";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { IWorkOrderFilterRequest } from "model/workOrder/WorkOrderRequestModel";
-import { CircularProgressbar } from "react-circular-progressbar";
 import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
-import { getPageOffset, isDifferenceObj } from "reborn-util";
+import { isDifferenceObj } from "reborn-util";
 import WorkOrderService from "services/WorkOrderService";
 import { showToast } from "utils/common";
 import { IAction } from "model/OtherModel";
 import Icon from "components/icon";
-import { ContextType, UserContext } from "contexts/userContext";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import moment from "moment";
+import StatusTask from "../StatusTask";
 
 export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
   const { paramsFilter, isOpen, setIdWork, setShowModalAdd, onReload, setShowModalAssign, setShowModalDetail } = props;
-  const { dataInfoEmployee } = useContext(UserContext) as ContextType;
 
   const isMounted = useRef(false);
 
@@ -132,11 +129,19 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
     "Người thực hiện",
     "Thời gian",
     //  "Thuộc dự án",
-    "Tiến độ",
+    // "Tiến độ",
     "Trạng thái công việc",
   ];
 
-  const dataFormat = ["text-left", "", "text-center", "text-center", "text-center", "text-center", "text-center"];
+  const dataFormat = [
+    "text-left",
+    "",
+    "text-center",
+    // "text-center",
+    "text-center",
+    "text-center",
+    "text-center",
+  ];
 
   const dataMappingArray = (item: IWorkOrderResponseModel, index: number, type?: string) => [
     // getPageOffset(params) + index + 1,
@@ -174,97 +179,14 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
     ),
 
     item.startTime || item.endTime ? `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}` : "",
-    // item.projectName,
-    <div
-      key={item.id}
-      className="percent__finish--work"
-      onClick={() => {
-        if (item.percent !== 100 && item.status !== 0 && item.status !== 2 && item.status !== 3 && item.status !== 4) {
-          // setShowModalWorkInprogress(true);
-          // setIdWork(item.id);
-        } else if (item.status == 2 || item.status == 3 || item.status == 4) {
-          // setIdWork(item.id);
-          // setShowModalViewWorkInprogress(true);
-        } else {
-          showToast("Công việc đang trong trạng thái chưa được thực hiện", "warning");
-        }
-      }}
-    >
-      <CircularProgressbar value={item.percent || 0} text={`${item.percent || 0}%`} className="value-percent" />
-    </div>,
-    item.status == 0 ? (
-      handleUnfulfilled(item.startTime)
-    ) : item.status == 1 ? (
-      handleProcessing(item.startTime, item.endTime)
-    ) : item.status == 2 ? (
-      <span className="status-success">Đã hoàn thành</span>
-    ) : item.status == 3 ? (
-      <span className="status-cancelled">Đã hủy</span>
-    ) : (
-      <span className="status-pause">Tạm dừng</span>
-    ),
+    // <div
+    //   key={item.id}
+    //   className="percent__finish--work"
+    // >
+    //   <CircularProgressbar value={item.percent || 0} text={`${item.percent || 0}%`} className="value-percent" />
+    // </div>,
+    <StatusTask {...item} />,
   ];
-  //! đoạn này xử lý vấn đề hiển thị thông tin xem bao giờ thực hiện
-  const handleUnfulfilled = (time) => {
-    const currentTime = new Date().getTime();
-    const startTime = new Date(time).getTime();
-
-    if (currentTime < startTime) {
-      if ((startTime - currentTime) / (24 * 60 * 60 * 1000) >= 1) {
-        return <span className="status-unfulfilled">{`Bắt đầu sau ${Math.round((startTime - currentTime) / (24 * 60 * 60 * 1000))} ngày`}</span>;
-      } else if ((startTime - currentTime) / (60 * 60 * 1000) >= 1) {
-        return <span className="status-unfulfilled">{`Bắt đầu sau ${Math.round((startTime - currentTime) / (60 * 60 * 1000))} giờ`}</span>;
-      } else {
-        return <span className="status-unfulfilled">{`Bắt đầu sau ${Math.round((startTime - currentTime) / (60 * 1000))} phút`}</span>;
-      }
-    } else {
-      if ((currentTime - startTime) / (24 * 60 * 60 * 1000) >= 1) {
-        //thời gian hiện tại - nếu thời gian kết thúc >= 1 ngày thì trả về ngày, không thì trả về giờ
-        return <span className="status-cancelled">{`Trễ thực hiện ${Math.round((currentTime - startTime) / (24 * 60 * 60 * 1000))} ngày`}</span>;
-      } else if ((currentTime - startTime) / (60 * 60 * 1000) >= 1) {
-        //thời gian hiện tại - nếu thời gian kết thúc >= 1 giờ thì trả về giờ, không thì trả về phút
-        return <span className="status-cancelled">{`Trễ thực hiện ${Math.round((currentTime - startTime) / (60 * 60 * 1000))} giờ`}</span>;
-      } else {
-        return <span className="status-cancelled">{`Trễ thực hiện ${Math.round((currentTime - startTime) / (60 * 1000))} phút`}</span>;
-      }
-    }
-  };
-
-  const handleProcessing = (start, end) => {
-    const currentTime = new Date().getTime();
-    const startTime = new Date(start).getTime();
-    const endTime = new Date(end).getTime();
-
-    const calculatorTime = (endTime - startTime) / 3;
-
-    if (startTime > currentTime) {
-      return <span className="status-processing">Đang thực hiện</span>;
-    } else if (currentTime >= startTime && currentTime <= endTime) {
-      if (endTime - currentTime >= calculatorTime) {
-        return <span className="status-processing">Đang thực hiện</span>;
-      } else {
-        if ((endTime - currentTime) / (24 * 60 * 60 * 1000) >= 1) {
-          return <span className="status-processing--waring">{`Còn ${Math.round((endTime - currentTime) / (24 * 60 * 60 * 1000))} ngày`}</span>;
-        } else if ((endTime - currentTime) / (60 * 60 * 1000) >= 1) {
-          return <span className="status-processing--waring">{`Còn ${Math.round((endTime - currentTime) / (60 * 60 * 1000))} giờ`}</span>;
-        } else {
-          return <span className="status-processing--waring">{`Còn ${Math.round((endTime - currentTime) / (60 * 1000))} phút`}</span>;
-        }
-      }
-    } else {
-      if ((currentTime - endTime) / (24 * 60 * 60 * 1000) >= 1) {
-        return <span className="status-cancelled">{`Quá hạn ${Math.round((currentTime - endTime) / (24 * 60 * 60 * 1000))} ngày`}</span>;
-      } else if ((currentTime - endTime) / (60 * 60 * 1000) >= 1) {
-        return <span className="status-cancelled">{`Quá hạn ${Math.round((currentTime - endTime) / (60 * 60 * 1000))} giờ`}</span>;
-      } else {
-        return (
-          <span className="status-cancelled">{`Quá hạn ${
-            Math.round((currentTime - endTime) / (60 * 1000)) === 0 ? 1 : Math.round((currentTime - endTime) / (60 * 1000))
-          } phút`}</span>
-        );
-      }
-    }
-  };
 
   const actionsTable = (item: IWorkOrderResponseModel): IAction[] => {
     return [

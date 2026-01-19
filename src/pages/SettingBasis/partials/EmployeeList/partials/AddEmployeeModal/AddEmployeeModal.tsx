@@ -754,7 +754,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
       if (response.code === 0) {
         showToast(`${data ? "Cập nhật" : "Thêm mới"} nhân viên thành công`, "success");
       } else {
-        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+        showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
     }
     handleClearForm(true);

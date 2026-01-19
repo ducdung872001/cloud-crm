@@ -11,6 +11,7 @@ import { isDifferenceObj } from "reborn-util";
 import "./AddContractEformModal.scss";
 import ContractEformService from "services/ContractEformService";
 
+
 export default function AddContractEformModal(props: any) {
   const { onShow, onHide, data } = props;
 
@@ -30,7 +31,7 @@ export default function AddContractEformModal(props: any) {
     [data, onShow]
   );
 
-  const [formData, setFormData] = useState<IFormData>({ values: values });
+  
 
   const validations: IValidation[] = [
     {
@@ -39,22 +40,28 @@ export default function AddContractEformModal(props: any) {
     },
   ];
 
+  const [formData, setFormData] = useState<IFormData>({ values: values });
+
   const listFieldBasic = useMemo(
-    () =>
-      [
+    () => [
         {
           label: "Tên biểu mẫu",
           name: "name",
           type: "text",
           fill: true,
           required: true,
+          placeholder: "Nhập tên biểu mẫu",
+          maxLength: 300,
         },
         {
           label: "Ghi chú",
           name: "note",
           type: "textarea",
           fill: true,
+          placeholder: "Nhập ghi chú",
+          maxLength: 100,
         },
+
       ] as IFieldCustomize[],
     [formData?.values]
   );

@@ -23,6 +23,7 @@ export interface IWorkOrderFilterRequest {
 export interface IGroupsFilterRequest {
   groupBy?: string;
   projectId?: number;
+  employeeId?: number;
 }
 
 export interface IWorkOrderRequestModel {

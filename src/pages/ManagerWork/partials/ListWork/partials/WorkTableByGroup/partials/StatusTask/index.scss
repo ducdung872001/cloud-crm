@@ -1,0 +1,37 @@
+.show-status-work {
+  .status-work-unfulfilled,
+  .status-work-success,
+  .status-work-processing,
+  .status-work-cancelled,
+  .status-work-pause,
+  .status-work-processing--waring {
+    color: var(--white-color);
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.5rem;
+    font-size: 1.3rem;
+  }
+
+  .status-work-unfulfilled {
+    background-color: var(--extra-color-50);
+  }
+
+  .status-work-success {
+    background-color: var(--success-color);
+  }
+
+  .status-work-processing {
+    background-color: var(--primary-color);
+  }
+
+  .status-work-processing--waring {
+    background-color: var(--warning-color);
+  }
+
+  .status-work-cancelled {
+    background-color: var(--error-color);
+  }
+
+  .status-work-pause {
+    background-color: var(--warning-darker-color);
+  }
+}

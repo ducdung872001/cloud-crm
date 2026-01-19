@@ -11,6 +11,7 @@ import UpdatePeopleInvolved from "./partials/UpdatePeopleInvolved/UpdatePeopleIn
 import UpdateRelatedWork from "./partials/UpdateRelatedWork/UpdateRelatedWork";
 import Loading from "components/loading";
 import "./index.scss";
+import StatusTask from "../../../StatusTask";
 
 export default function InfoWorkArea(props: any) {
   const { idData, onShow, onHide } = props;
@@ -20,15 +21,8 @@ export default function InfoWorkArea(props: any) {
 
   const [isInvolveWorks, setIsInvolveWorks] = useState<boolean>(true);
   const [isInvolveCustomer, setIsInvolveCustomer] = useState<boolean>(true);
-  const [showModalEvaluateWork, setShowModalEvaluateWork] = useState<boolean>(false);
-  const [showModalWorkInprogress, setShowModalWorkInprogress] = useState<boolean>(false);
-  const [rating, setRating] = useState<number>(0);
-  const [hover, setHover] = useState<number>(0);
-  const [disabledRating, setDisabledRating] = useState<boolean>(false);
-  const checkShowFullScreen = localStorage.getItem("showFullScreenModalPartnerEform");
+  // const checkShowFullScreen = localStorage.getItem("showFullScreenModalPartnerEform");
   // const [showFullScreen, setShowFullScreen] = useState<boolean>(checkShowFullScreen ? JSON.parse(checkShowFullScreen) : false);
-  const [showFullScreen, setShowFullScreen] = useState<boolean>(true);
-  const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
   const actions = useMemo<IActionModal>(
     () => ({
@@ -69,17 +63,6 @@ export default function InfoWorkArea(props: any) {
       setData(null);
     }
   }, [idData, onShow]);
-
-  useEffect(() => {
-    if (data && JSON.parse(data.reviews || "[]").length > 0) {
-      const result = JSON.parse(data.reviews || "[]");
-      setRating(result[0]["mark"]);
-      setHover(result[0]["mark"]);
-    } else {
-      setRating(0);
-      setHover(0);
-    }
-  }, [data]);
 
   const convertTime = (time: string) => {
     if (!time) return "";
@@ -137,6 +120,7 @@ export default function InfoWorkArea(props: any) {
   const handleUnfulfilled = (time) => {
     const currentTime = new Date().getTime();
     const startTime = new Date(time).getTime();
+    console.log();
 
     if (currentTime < startTime) {
       if ((startTime - currentTime) / (24 * 60 * 60 * 1000) >= 1) {
@@ -217,26 +201,14 @@ export default function InfoWorkArea(props: any) {
 
               <div className="item inprogress-work">
                 <h4 className="title">Tiến độ</h4>
-                <div className="show-inprogress" onClick={() => setShowModalWorkInprogress(true)}>
+                <div className="show-inprogress">
                   <CircularProgressbar value={data?.percent || 0} text={`${data?.percent || 0}%`} className="value-percent" />
                 </div>
               </div>
 
               <div className="item status-work">
                 <h4 className="title">Trạng thái</h4>
-                <div className="show-status">
-                  {data?.status === 0 ? (
-                    handleUnfulfilled(data?.startTime)
-                  ) : data?.status === 1 ? (
-                    handleProcessing(data?.startTime, data?.endTime)
-                  ) : data?.status === 2 ? (
-                    <span className="__success">Đã hoàn thành</span>
-                  ) : data?.status === 3 ? (
-                    <span className="__cancelled">Đã hủy</span>
-                  ) : (
-                    <span className="__pause">Tạm dừng</span>
-                  )}
-                </div>
+                <StatusTask {...data} />
               </div>
             </div>
           </div>

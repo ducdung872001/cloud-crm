@@ -27,6 +27,7 @@ import { Inviter, Registerer, URI, UserAgent } from "sip.js";
 // import { useWebRTC } from "components/WebRTCEmbed/hooks/useWebRTC";
 import { useSTWebRTC } from "webrtc/useSTWebRTC";
 import WebRtcPhoneModal from "../WebRtcPhoneModal";
+import WebRtcCallIncomeModal from "../WebRtcCallIncomeModal";
 
 // const { makeCall } = useWebRTC();
 interface IParamsCustomerInCallCenter {
@@ -50,6 +51,7 @@ export default function CustomerList(props: ICustomerListProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showModalPhone, setShowModalPhone] = useState<boolean>(false);
+  const [showModalCallIncome, setShowModalCallIncome] = useState<boolean>(false);
   const [listCustomer, setListCustomer] = useState<ICustomerResponse[]>([]);
   const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
   const [showModalAddManagementOpportunity, setShowModalAddManagementOpportunity] = useState<boolean>(false);
@@ -75,9 +77,9 @@ export default function CustomerList(props: ICustomerListProps) {
     console.log("Số điện thoại gọi đến >>", incomingNumber);
     console.log("Số máy lẻ >>", checkUserRoot == "1" ? employeeSip470 : employeeSip471);
 
-    // if (callState == "incoming") {
-    //   setShowModalPhone(true);
-    // }
+    if (callState == "incoming") {
+      setShowModalCallIncome(true);
+    }
   }, [callState, incomingNumber]);
 
   useEffect(() => {
@@ -534,6 +536,18 @@ export default function CustomerList(props: ICustomerListProps) {
         callState={callState}
         incomingNumber={incomingNumber}
         onHide={() => setShowModalPhone(false)}
+      />
+
+      <WebRtcCallIncomeModal
+        onShow={showModalCallIncome}
+        dataCustomer={dataCustomer}
+        makeCall={makeCall}
+        hangup={hangup}
+        answer={answer}
+        transfer={transfer}
+        callState={callState}
+        incomingNumber={incomingNumber}
+        onHide={() => setShowModalCallIncome(false)}
       />
       {/* <AddPhoneModal onShow={showModalPhone} dataCustomer={dataCustomer} onHide={() => setShowModalPhone(false)} /> */}
       <AddManagementOpportunityModal

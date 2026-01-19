@@ -223,6 +223,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
           name: "title",
           type: "text",
           fill: true,
+          maxLength: 100,
           required: true,
         },
         {

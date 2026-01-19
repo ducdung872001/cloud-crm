@@ -17,7 +17,7 @@ import FileService from "services/FileService";
 import TicketService from "services/TicketService";
 import TicketCategoryService from "services/TicketCategoryService";
 import CustomerService from "services/CustomerService";
-import { EMAIL_REGEX } from "utils/constant";
+import { EMAIL_REGEX, PHONE_REGEX, PHONE_REGEX_NEW } from "utils/constant";
 import { UserContext, ContextType } from "contexts/userContext";
 import "./AddTicketModal.scss";
 
@@ -259,6 +259,8 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       fill: true,
       required: true,
       disabled: idCustomer ? true : false,
+      regex: new RegExp(PHONE_REGEX_NEW),
+      messageErrorRegex: "Số điện thoại không đúng định dạng",
     },
     {
       label: "Email khách hàng",

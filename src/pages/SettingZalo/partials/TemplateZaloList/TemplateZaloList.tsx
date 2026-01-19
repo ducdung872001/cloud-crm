@@ -186,11 +186,10 @@ export default function TemplateZaloList(props: ITemplateZaloListProps) {
 
   const dataMappingArray = (item: ITemplateZaloResponseModel, index: number) => [
     getPageOffset(params) + index + 1,
-    item.title,
+    <Tippy key={item.id} content={item.title} delay={[120, 100]} placement="bottom" animation="scale">
+      <p style={{ cursor: "pointer" }}>{trimContent(item.title, 50, true, true)}</p>
+    </Tippy>,
     item.tcyName,
-    // <Tippy key={item.id} content={item.content} delay={[120, 100]} placement="bottom" animation="scale">
-    //   <p style={{ cursor: "pointer" }}>{trimContent(item.content, 120, true, true)}</p>
-    // </Tippy>,
   ];
 
   const actionsTable = (item: ITemplateZaloResponseModel): IAction[] => {

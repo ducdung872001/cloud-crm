@@ -122,10 +122,10 @@ export default function OrderInvoiceList() {
 
     const changeParams = {
       page: paramsSearch.page,
-      from_date: paramsSearch.from_date,
-      to_date: paramsSearch.to_date,
+      from_date: paramsSearch?.from_date || "",
+      to_date: paramsSearch?.to_date || "",
       keyword: paramsSearch.keyword,
-      status: paramsSearch.status,
+      status: paramsSearch?.status || "",
       filters: [
         ...(paramsSearch.date
           ? [
