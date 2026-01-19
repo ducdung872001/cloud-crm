@@ -61,6 +61,8 @@ export default function OrderInvoiceList() {
 
   const [params, setParams] = useState<IOrderFilterRequest>({
     keyword: searchParams.get("keyword") ?? "",
+    page: 1,
+    limit: 10,
   });
 
   const listFilter = useMemo(
@@ -113,7 +115,7 @@ export default function OrderInvoiceList() {
       setParams((prevParams) => ({ ...prevParams, page: page }));
     },
     chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, per_page: limit }));
+      setParams((prevParams) => ({ ...prevParams, limit: limit }));
     },
   });
 
@@ -122,6 +124,7 @@ export default function OrderInvoiceList() {
 
     const changeParams = {
       page: paramsSearch.page,
+      limit: paramsSearch.limit,
       from_date: paramsSearch?.from_date || "",
       to_date: paramsSearch?.to_date || "",
       keyword: paramsSearch.keyword,
@@ -157,9 +160,9 @@ export default function OrderInvoiceList() {
       setPagination({
         ...pagination,
         page: +result.current_page || 1,
-        sizeLimit: params.per_page ?? DataPaginationDefault.sizeLimit,
+        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
         totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(params.per_page ?? DataPaginationDefault.sizeLimit)),
+        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
       });
 
       if (+result.total === 0) {
@@ -187,8 +190,8 @@ export default function OrderInvoiceList() {
     if (isMounted.current === true) {
       getListOrderInvoice(params);
       const paramsTemp = _.cloneDeep(params);
-      if (paramsTemp.per_page === 10) {
-        delete paramsTemp["per_page"];
+      if (paramsTemp.limit === 10) {
+        delete paramsTemp["limit"];
       }
       Object.keys(paramsTemp).map(function (key) {
         paramsTemp[key] === "" ? delete paramsTemp[key] : null;

@@ -42,6 +42,8 @@ import GridFormNew from "pages/BPM/GridForm";
 import { onMessage } from "firebase/messaging";
 import { messaging, requestPermission } from "firebase-config";
 import NotificationService from "services/NotificationService";
+import { useSTWebRTC } from "webrtc/useSTWebRTC";
+import WebRtcCallIncomeModal from "pages/CallCenter/partials/WebRtcCallIncomeModal";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -281,6 +283,27 @@ export default function App() {
     });
   }, []);
 
+  // Khởi tạo tổng đài
+  const checkUserRoot = localStorage.getItem("user.root"); // Để test thôi, xong thì phải lấy theo sip
+  const [showModalCallIncome, setShowModalCallIncome] = useState<boolean>(false);
+  const pbxCustomerCode = "d9cf985baac44238b3d930ae569d9f0912";
+
+  const employeeSip470 = "470";
+
+  const employeeSip471 = "471";
+
+  const { callState, incomingNumber, makeCall, answer, hangup, transfer } = useSTWebRTC({
+    extension: checkUserRoot == "1" ? employeeSip470 : employeeSip471,
+    pbxCustomerCode: pbxCustomerCode,
+  });
+  console.log("Số máy lẻ >>", checkUserRoot == "1" ? employeeSip470 : employeeSip471);
+  useEffect(() => {
+    console.log("Trạng thái tổng đài >>", callState);
+    if (callState == "incoming") {
+      setShowModalCallIncome(true);
+    }
+  }, [callState]);
+
   return (
     <UserContext.Provider
       value={{
@@ -304,6 +327,12 @@ export default function App() {
         setShowModalPackage: setShowModalPackage,
         lastShowModalPayment: lastShowModalPayment,
         setLastShowModalPayment: setLastShowModalPayment,
+        callState: callState,
+        incomingNumber: incomingNumber,
+        makeCall: makeCall,
+        answer: answer,
+        hangup: hangup,
+        transfer: transfer,
       }}
     >
       <MsalProvider instance={msalInstance}>
@@ -332,6 +361,16 @@ export default function App() {
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />
+        <WebRtcCallIncomeModal
+          onShow={showModalCallIncome}
+          makeCall={makeCall}
+          hangup={hangup}
+          answer={answer}
+          transfer={transfer}
+          callState={callState}
+          incomingNumber={incomingNumber}
+          onHide={() => setShowModalCallIncome(false)}
+        />
       </MsalProvider>
     </UserContext.Provider>
   );

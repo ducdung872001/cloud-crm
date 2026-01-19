@@ -56,6 +56,7 @@ import KpiContact from "./KpiContact";
 import SettingPineline from "./SettingPipeline/SettingPineline";
 import { set } from "lodash";
 import BusinessProcessService from "services/BusinessProcessService";
+import moment from "moment";
 
 interface IDataApproach {
   id?: number;
@@ -237,6 +238,11 @@ export default function CreateCampaign() {
     },
   ];
 
+   const formatDate = (date) => {
+      if (!date) return "";
+      return moment(date).isValid() ? moment(date).format("DD/MM/yyyy") : "";
+    };
+
   const [isOptionRank, setIsOptionRank] = useState<boolean>(false);
   useOnClickOutside(refOptionSpecialize, () => setIsOptionRank(false), ["option__rank"]);
 
@@ -294,8 +300,8 @@ export default function CreateCampaign() {
         code: result.code,
         type: result.type,
         cover: result.cover,
-        startDate: result.startDate,
-        endDate: result.endDate,
+        endDate: formatDate(result.endDate),
+        startDate: formatDate(result.startDate),
         position: result.position,
         employeeId: result.employeeId,
         totalRevenue: result.totalRevenue,
@@ -2038,7 +2044,8 @@ export default function CreateCampaign() {
       return;
     }
 
-    if (!formData?.values?.averageConvertRate?.trim()) {
+    const value = formData?.values?.averageConvertRate;
+    if (value === "" || value === null || value === undefined || Number.isNaN(value)) {
       showToast("Tỷ lệ chuyển đổi toàn chiến dịch không được bỏ trống", "error");
       return;
     }
@@ -2084,6 +2091,12 @@ export default function CreateCampaign() {
     const body: ICampaignRequestModel = {
       ...(data || campaignId ? { id: data?.id || campaignId } : {}),
       ...(formData?.values as ICampaignRequestModel),
+      startDate: formData.values.startDate && moment(formData.values.startDate).isValid() 
+        ? moment(formData.values.startDate).format("YYYY-MM-DDTHH:mm:ss") 
+        : "",
+      endDate: formData.values.endDate && moment(formData.values.endDate).isValid() 
+        ? moment(formData.values.endDate).format("YYYY-MM-DDTHH:mm:ss") 
+        : "",
     };
 
     const response = await CampaignService.update(body);

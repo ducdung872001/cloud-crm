@@ -15,6 +15,7 @@ export interface ICampaignOpportunityRequestModel {
   id?: number;
   employeeId?: number;
   expectedRevenue?: number;
+  startDate?: string;
   endDate?: string;
   sourceId?: number;
   refId?: number;

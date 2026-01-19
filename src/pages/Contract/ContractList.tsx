@@ -902,7 +902,7 @@ export default function ContractList() {
                   : status === 3
                     ? "Từ chối phê duyệt"
                     : status === 4
-                      ? "Tạm dưng luồng ký"
+                      ? "Tạm dừng luồng ký"
                       : ""}
           </span>
         </div>

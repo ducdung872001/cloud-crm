@@ -35,10 +35,9 @@ const employeeSip470 = "470";
 const employeeSip471 = "471";
 
 export default function WebRtcCallIncomeModal(props: any) {
-  const { onShow, dataCustomer, onHide, makeCall, hangup, answer, transfer, incomingNumber, callState } = props;
+  const { onShow, onHide, makeCall, hangup, answer, transfer, incomingNumber, callState } = props;
 
   const [dataEmployee, setDataEmployee] = useState(null);
-  const [isCheckCall, setIsCheckCall] = useState<boolean>(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   //! đoạn này xử lý vấn đề lấy ra danh sách nhân viên
@@ -95,34 +94,6 @@ export default function WebRtcCallIncomeModal(props: any) {
     setDataEmployee(e);
   };
 
-  const dataInfoBasicCustomer = [
-    {
-      title: "Khách hàng",
-      name: dataCustomer?.name,
-      className: "outstanding-name",
-    },
-    {
-      title: "Giới tính",
-      name: dataCustomer?.gender == 1 ? "Nữ" : "Nam",
-    },
-    {
-      title: "Điện thoại",
-      name: dataCustomer?.phoneMasked,
-    },
-    {
-      title: "Địa chỉ",
-      name: dataCustomer?.address,
-    },
-    {
-      title: "Người phụ trách",
-      name: dataCustomer?.employeeName,
-    },
-    {
-      title: "Chuyển cuộc gọi",
-      type: true,
-    },
-  ];
-
   // const getPhoneCallCustomer = async (id: number) => {
   //   const response = await CallCenterService.makeCall(id);
 
@@ -132,22 +103,15 @@ export default function WebRtcCallIncomeModal(props: any) {
   // };
 
   useEffect(() => {
-    if (onShow && dataCustomer?.id) {
+    if (onShow) {
       // getPhoneCallCustomer(dataCustomer?.id);
       //   console.log("makeCal>>", dataCustomer);
       //   makeCall("0862999272");
     }
-  }, [onShow, dataCustomer?.id]);
-
-  // useEffect(() => {
-  //   if (onShow && dataCustomer?.id && callState === "incoming") {
-  //     setIsCheckCall(callState == "incoming" ? true : false);
-  //   }
-  // }, [onShow, dataCustomer?.id, incomingNumber, callState]);
+  }, [onShow]);
 
   const handDisconnect = async () => {
     onHide();
-    setIsCheckCall(false);
     hangup();
   };
 
@@ -159,62 +123,36 @@ export default function WebRtcCallIncomeModal(props: any) {
   const actions = useMemo<IActionModal>(
     () => ({
       actions_right: {
-        buttons: isCheckCall
-          ? [
-              {
-                title: "Chuyển cuộc gọi",
-                type: "button",
-                color: "primary",
-                callback: () => {
-                  handTransferCall(employeeSip471);
-                },
-              },
-              {
-                title: "Nghe máy",
-                type: "button",
-                color: "success",
-                callback: () => {
-                  // bh có dữ liệu thì xử lý logic
-                },
-              },
-              {
-                title: "Từ chối",
-                type: "button",
-                color: "destroy",
-                callback: () => {
-                  handDisconnect();
-                },
-              },
-            ]
-          : [
-              {
-                title: "Lịch sử giao dịch",
-                type: "button",
-                color: "primary",
-                callback: () => {
-                  setShowHistoryModal(true);
-                },
-              },
-              {
-                title: "Chuyển cuộc gọi",
-                type: "button",
-                color: "primary",
-                callback: () => {
-                  handTransferCall(employeeSip471);
-                },
-              },
-              {
-                title: "Ngắt kết nối",
-                type: "button",
-                color: "destroy",
-                callback: () => {
-                  handDisconnect();
-                },
-              },
-            ],
+        buttons: [
+          {
+            title: "Từ chối",
+            type: "button",
+            color: "destroy",
+            callback: () => {
+              handDisconnect();
+            },
+          },
+          {
+            title: "Chuyển cuộc gọi",
+            type: "button",
+            color: "primary",
+            callback: () => {
+              handTransferCall(employeeSip471);
+            },
+          },
+          {
+            title: "Nghe máy",
+            type: "button",
+            color: "success",
+            callback: () => {
+              answer();
+              // bh có dữ liệu thì xử lý logic
+            },
+          },
+        ],
       },
     }),
-    [dataCustomer, isCheckCall, dataEmployee]
+    [dataEmployee]
   );
 
   //! đoạn này xử lý kéo thả Element sau này nhiều chỗ dùng có thể tách thành 1 component
@@ -266,88 +204,55 @@ export default function WebRtcCallIncomeModal(props: any) {
   }
 
   useEffect(() => {
-    if (dataCustomer && onShow) {
-      dragElement(document.getElementById("mydiv"));
+    if (onShow) {
+      dragElement(document.getElementById("phonediv"));
     }
-  }, [dataCustomer, onShow]);
+  }, [onShow]);
 
   return (
-    dataCustomer &&
     onShow && (
-      <div id="mydiv" className={`${onShow ? "custom__modal--phone" : "hide__modal--phone"}`} style={!onShow ? { top: "0px", left: "0px" } : {}}>
-        <div className="form__info--customer">
-          <ModalHeader custom={true} id="mydivheader">
+      <div
+        id="phonediv"
+        className={`${onShow ? "custom__modal--phone_income" : "hide__modal--phone_income"}`}
+        style={!onShow ? { top: "0px", left: "0px" } : {}}
+      >
+        <div className="form__info--phone_income">
+          <ModalHeader custom={true} id="phonedivheader">
             <div className="info__header">
-              <div className="info__header--left">
-                <div className="avatar">
-                  <img src={dataCustomer?.avatar ? dataCustomer.avatar : dataCustomer?.gender == 1 ? Female : Male} alt={dataCustomer?.name} />
-                </div>
-                <div className="info__customer">
-                  <h4 className="name">{dataCustomer?.name}</h4>
-                  <h4 className="phone">{dataCustomer?.phoneMasked}</h4>
-                </div>
-              </div>
+              <div className="info__header--left">Cuộc gọi đến</div>
 
-              <div className="info__header--right">
+              {/* <div className="info__header--right">
                 <Icon name="CallPhone" />
-              </div>
+              </div> */}
             </div>
           </ModalHeader>
           <ModalBody>
-            <div className="info__basic--customer">
-              {incomingNumber && isCheckCall && (
-                <div className="incoming--call">
-                  Cuộc gọi đến từ: <span>{incomingNumber}</span>
-                </div>
-              )}
-              {dataInfoBasicCustomer.map((item, idx) => {
-                return (
-                  <div key={idx} className="box-item">
-                    <div className="item-title">
-                      <h4>{item.title}</h4>
-                    </div>
-                    <div className="vertical-tiles" />
-                    {item.name && (
-                      <div className="item-name">
-                        <h4 className={item.className}>{item.name}</h4>
-                      </div>
-                    )}
-                    {item.type && (
-                      <div className="option__employee">
-                        <SelectCustom
-                          id="employeeId"
-                          name="employeeId"
-                          options={[]}
-                          fill={true}
-                          value={dataEmployee}
-                          onChange={(e) => handleChangeValueEmployee(e)}
-                          isAsyncPaginate={true}
-                          isFormatOptionLabel={true}
-                          placeholder="Chọn nhân viên"
-                          additional={{
-                            page: 1,
-                          }}
-                          loadOptionsPaginate={loadedOptionEmployee}
-                          formatOptionLabel={formatOptionLabelEmployee}
-                        />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+            <div className="icon--phone_income">
+              <span>{incomingNumber || "No incoming number"}</span>
+              <div className="border">
+                <Icon name="CallPhone" />
+              </div>
+              <div className="option__employee">
+                <SelectCustom
+                  id="employeeId"
+                  name="employeeId"
+                  options={[]}
+                  fill={true}
+                  value={dataEmployee}
+                  onChange={(e) => handleChangeValueEmployee(e)}
+                  isAsyncPaginate={true}
+                  isFormatOptionLabel={true}
+                  placeholder="Chọn nhân viên nhận cuộc gọi"
+                  additional={{
+                    page: 1,
+                  }}
+                  loadOptionsPaginate={loadedOptionEmployee}
+                  formatOptionLabel={formatOptionLabelEmployee}
+                />
+              </div>
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />
-          <HistoryModal
-            onShow={showHistoryModal}
-            dataCustomer={dataCustomer}
-            onHide={(reload) => {
-              if (reload) {
-                // setReload(reload)
-              }
-              setShowHistoryModal(false);
-            }}
-          />
         </div>
       </div>
     )

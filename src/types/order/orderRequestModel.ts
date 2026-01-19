@@ -1,7 +1,7 @@
 export interface IOrderFilterRequest {
   keyword: string;
   page?: number;
-  per_page?: number;
+  limit?: number;
   page_size?: number;
   type_export?: string;
   from_date?: string;

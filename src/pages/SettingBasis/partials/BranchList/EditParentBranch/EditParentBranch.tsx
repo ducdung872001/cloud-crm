@@ -64,7 +64,9 @@ export default function EditParentBranch(props: any) {
           value: "",
           label: "Không có chi nhánh cha",
         });
-        setListBeautyBranch([...(newData.length > 0 ? newData : [])].filter((item) => item.value != branchId));
+        // Lọc bỏ chi nhánh hiện tại để tránh tự tham chiếu
+        const filteredData = newData.filter((item) => item.value !== branchId);
+        setListBeautyBranch(filteredData);
       }
       setIsLoadingBeautyBranch(false);
     }
@@ -82,24 +84,24 @@ export default function EditParentBranch(props: any) {
 
   const values = useMemo(
     () =>
-      ({
-        parentId: data?.parentId ?? "",
-        avatar: data?.avatar ?? "",
-        name: data?.name ?? "",
-        alias: data?.alias ?? "",
-        address: data?.address ?? "",
-        foundingDay: data?.foundingDay ?? "",
-        foundingMonth: data?.foundingMonth ?? "",
-        foundingYear: data?.foundingYear ?? "",
-        website: data?.website ?? "",
-        description: data?.description ?? "",
-        code: data?.code ?? "",
-        doctorNum: data?.doctorNum.toString() ?? "0",
-        contact: data?.contact ?? "",
-        phone: data?.phone ?? "",
-        email: data?.email ?? "",
-        goodAt: data?.goodAt ?? "",
-      } as IBeautyBranchRequest),
+    ({
+      parentId: data?.parentId ?? "",
+      avatar: data?.avatar ?? "",
+      name: data?.name ?? "",
+      alias: data?.alias ?? "",
+      address: data?.address ?? "",
+      foundingDay: data?.foundingDay ?? "",
+      foundingMonth: data?.foundingMonth ?? "",
+      foundingYear: data?.foundingYear ?? "",
+      website: data?.website ?? "",
+      description: data?.description ?? "",
+      code: data?.code ?? "",
+      doctorNum: data?.doctorNum.toString() ?? "0",
+      contact: data?.contact ?? "",
+      phone: data?.phone ?? "",
+      email: data?.email ?? "",
+      goodAt: data?.goodAt ?? "",
+    } as IBeautyBranchRequest),
     [data, onShow]
   );
 
@@ -140,6 +142,12 @@ export default function EditParentBranch(props: any) {
     const errors = Validate(validations, formData, [...listFieldBasic]);
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
+      return;
+    }
+
+    // Kiểm tra không cho phép chọn chính chi nhánh hiện tại làm chi nhánh cha
+    if (formData.values.parentId && formData.values.parentId === branchId) {
+      showToast("Không thể chọn chính chi nhánh hiện tại làm chi nhánh cha", "error");
       return;
     }
 

@@ -276,7 +276,7 @@ export default function BankList(props: any) {
       </div>
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên danh mục"
+          name="Tên danh mục ngân hàng"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}

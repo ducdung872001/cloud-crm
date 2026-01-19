@@ -34,7 +34,9 @@ export default function AddBranchModal(props: AddBeautyBranchModalProps) {
       setIsLoadingBeautyBranch(true);
       const dataOption = await SelectOptionData("beautyBranch");
       if (dataOption) {
-        setListBeautyBranch([...(dataOption.length > 0 ? dataOption : [])]);
+        // Lọc bỏ chi nhánh hiện tại khi đang chỉnh sửa để tránh tự tham chiếu
+        const filteredData = data?.id ? dataOption.filter((item) => item.value !== data.id) : dataOption;
+        setListBeautyBranch(filteredData.length > 0 ? filteredData : []);
       }
       setIsLoadingBeautyBranch(false);
     }
@@ -52,24 +54,24 @@ export default function AddBranchModal(props: AddBeautyBranchModalProps) {
 
   const values = useMemo(
     () =>
-      ({
-        parentId: data?.parentId ?? "",
-        avatar: data?.avatar ?? "",
-        name: data?.name ?? "",
-        alias: data?.alias ?? "",
-        address: data?.address ?? "",
-        foundingDay: data?.foundingDay ?? "",
-        foundingMonth: data?.foundingMonth ?? "",
-        foundingYear: data?.foundingYear ?? "",
-        website: data?.website ?? "",
-        description: data?.description ?? "",
-        code: data?.code ?? "",
-        doctorNum: data?.doctorNum.toString() ?? "0",
-        contact: data?.contact ?? "",
-        phone: data?.phone ?? "",
-        email: data?.email ?? "",
-        goodAt: data?.goodAt ?? "",
-      } as IBeautyBranchRequest),
+    ({
+      parentId: data?.parentId ?? "",
+      avatar: data?.avatar ?? "",
+      name: data?.name ?? "",
+      alias: data?.alias ?? "",
+      address: data?.address ?? "",
+      foundingDay: data?.foundingDay ?? "",
+      foundingMonth: data?.foundingMonth ?? "",
+      foundingYear: data?.foundingYear ?? "",
+      website: data?.website ?? "",
+      description: data?.description ?? "",
+      code: data?.code ?? "",
+      doctorNum: data?.doctorNum.toString() ?? "0",
+      contact: data?.contact ?? "",
+      phone: data?.phone ?? "",
+      email: data?.email ?? "",
+      goodAt: data?.goodAt ?? "",
+    } as IBeautyBranchRequest),
     [data, onShow]
   );
 
@@ -298,6 +300,12 @@ export default function AddBranchModal(props: AddBeautyBranchModalProps) {
     const errors = Validate(validations, formData, [...listFieldBasic, ...listFieldAdvanced, ...listFieldDescription]);
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
+      return;
+    }
+
+    // Kiểm tra không cho phép chọn chính chi nhánh hiện tại làm chi nhánh cha (khi chỉnh sửa)
+    if (data?.id && formData.values.parentId && formData.values.parentId === data.id) {
+      showToast("Không thể chọn chính chi nhánh hiện tại làm chi nhánh cha", "error");
       return;
     }
 
