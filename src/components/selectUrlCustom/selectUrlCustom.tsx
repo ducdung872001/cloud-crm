@@ -146,68 +146,89 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
     return value !== null && value !== undefined && value !== "";
   };
 
+  // chỉ fetch các id chưa có, cache lại option và setInternalValue đúng theo isMulti để tránh load dư và hiển thị sai dữ liệu
+
   useEffect(() => {
-    let listId = [];
+    let listId: any[] = [];
+
     if (isMulti) {
       if (Array.isArray(value)) {
-        listId = value.map((item) => (typeof item === "object" && item !== null && "value" in item ? item.value : item));
+        listId = value.map(item => typeof item === "object" && item !== null && "value" in item ? item.value : item
+        );
       }
     } else {
-      listId.push(typeof value === "object" && value !== null && "value" in value ? value.value : value);
+      if (value !== null && value !== undefined) {
+        listId = [
+          typeof value === "object" && value !== null && "value" in value
+            ? value.value
+            : value,
+        ];
+      }
     }
-    // Lọc bỏ các giá trị đã có trong listOptions.current, không cần fetch lại những giá trị đó nữa
-    listId = listId.filter((item) => !listOptions.current.find((opt) => String(opt.value) === String(item)));
+
+    // id CHƯA có trong cache-> cần fetch
+    const fetchIds = listId.filter(
+      item => !listOptions.current.some(opt => String(opt.value) === String(item))
+    );
 
     const fetchInitialValue = async () => {
       try {
         const params = {
           ...defaultParams,
-          // [idQueryKey]: queryVal,
           page: 1,
           limit: 200,
-          listId: listId,
+          listId: fetchIds,
         };
 
         const res = await fetchData(url, params);
 
-        if (res && res.code === 0) {
+        if (res?.code === 0) {
           const dataList = res.result?.items || res.result?.content || res.result || [];
-          let mappedData = [];
-          if (mapResultData) {
-            mappedData = mapResultData(dataList);
-          } else {
-            mappedData = dataList.map((item) => ({
+
+          const mappedData = mapResultData
+            ? mapResultData(dataList)
+            : dataList.map(item => ({
               label: item[labelKey],
               value: item[valueKey],
               ...listBindingField.reduce((acc, field) => {
-                if (field in item) {
-                  acc[field] = item[field];
-                }
+                if (field in item) acc[field] = item[field];
                 return acc;
               }, {} as any),
             }));
-          }
-          if (isMulti) {
-            setInternalValue(mappedData);
-          } else {
-            const exactItem = mappedData.find((i) => String(i.value) === String(value));
-            setInternalValue(exactItem || mappedData[0] || null);
-          }
-          // Nếu item nào trong mappedData có value trùng với 1 phần tử trong listOptions.current thì giữ nguyên, nếu không thì thêm mới vào listOptions.current
-          mappedData.forEach((newItem) => {
-            if (!listOptions.current.find((opt) => String(opt.value) === String(newItem.value))) {
+
+          // cache option
+          mappedData.forEach(newItem => {
+            if (!listOptions.current.some(opt => String(opt.value) === String(newItem.value))) {
               listOptions.current.push(newItem);
             }
           });
         }
-      } catch (error) {
-        console.error("Error fetching initial value:", error);
+
+        // SET VALUE SAU KHI CACHE ĐỦ
+        if (isMulti) {
+          setInternalValue(
+            listId
+              .map(id =>
+                listOptions.current.find(opt => String(opt.value) === String(id))
+              )
+              .filter(Boolean)
+          );
+        } else {
+          setInternalValue(
+            listOptions.current.find(opt => String(opt.value) === String(listId[0])) ?? null
+          );
+        }
+      } catch (e) {
+        console.error(e);
       }
     };
+
     if (listId.length > 0) {
       fetchInitialValue();
+    } else {
+      setInternalValue(isMulti ? [] : null);
     }
-  }, [value, url, isMulti, idQueryKey, valueKey, labelKey]);
+  }, [value, url, isMulti]);
 
   const [onHasValue, setOnHasValue] = useState<boolean>(hasValueParams());
 
