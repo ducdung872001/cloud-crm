@@ -17,7 +17,7 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
-import { IAction, IFilterItem, IOption, ISaveSearch } from "types/OtherModel";
+import { IAction, IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
 import { IOrderResponseModel } from "types/order/orderResponseModel";
 import { IOrderFilterRequest, IUpdateStatusOrder } from "types/order/orderRequestModel";
 import { ContextType, UserContext } from "contexts/userContext";
@@ -60,6 +60,8 @@ export default function TemporaryOrderList() {
   const [params, setParams] = useState<IOrderFilterRequest>({
     keyword: searchParams.get("keyword") ?? "",
     status: "temp",
+    page: 1,
+    limit: 10,
   });
 
   const listFilter = useMemo(
@@ -100,7 +102,7 @@ export default function TemporaryOrderList() {
       setParams((prevParams) => ({ ...prevParams, page: page }));
     },
     chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, per_page: limit }));
+      setParams((prevParams) => ({ ...prevParams, limit: limit }));
     },
   });
 
@@ -109,6 +111,7 @@ export default function TemporaryOrderList() {
 
     const changeParams = {
       page: paramsSearch.page,
+      limit: paramsSearch.limit,
       from_date: paramsSearch.from_date,
       to_date: paramsSearch.to_date,
       keyword: paramsSearch.keyword,
@@ -143,9 +146,9 @@ export default function TemporaryOrderList() {
       setPagination({
         ...pagination,
         page: +result.current_page || 1,
-        sizeLimit: params.per_page ?? DataPaginationDefault.sizeLimit,
+        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
         totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(params.per_page ?? DataPaginationDefault.sizeLimit)),
+        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
       });
 
       if (+result.total === 0) {
@@ -173,8 +176,8 @@ export default function TemporaryOrderList() {
     if (isMounted.current === true) {
       getListTempInvoice(params);
       const paramsTemp = _.cloneDeep(params);
-      if (paramsTemp.per_page === 10) {
-        delete paramsTemp["per_page"];
+      if (paramsTemp.limit === 10) {
+        delete paramsTemp["limit"];
       }
       Object.keys(paramsTemp).map(function (key) {
         paramsTemp[key] === "" ? delete paramsTemp[key] : null;
@@ -290,8 +293,8 @@ export default function TemporaryOrderList() {
   const dataMappingArray = (item: IOrderResponseModel, index: number, type?: string) => [
     index + 1,
     item.orderCode,
-    moment(item.order_date).format("DD/MM/YYYY"),
-    moment(item.expected_date).format("DD/MM/YYYY"),
+    moment(item.orderDate).format("DD/MM/YYYY"),
+    moment(item.expectedDate).format("DD/MM/YYYY"),
     name,
     formatCurrency(item.amount),
     item.note,

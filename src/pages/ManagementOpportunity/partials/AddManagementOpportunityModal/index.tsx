@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useContext } from "react";
 import { isDifferenceObj } from "reborn-util";
+import moment from "moment";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IAddCampaignOpportunityModel } from "model/campaignOpportunity/PropsModel";
@@ -41,6 +42,12 @@ export default function AddManagementOpportunityModal(props: IAddCampaignOpportu
   const [isCreateOpportunityB2B, setIsCreateOpportunityB2B] = useState(false);
 
   const [data, setData] = useState<ICampaignOpportunityResponseModel>(null);
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    return moment(date).isValid() ? moment(date).format("DD/MM/yyyy") : "";
+  };
+
 
   const getDetailEmployeeInfo = async () => {
     const response = await EmployeeService.info();
@@ -101,8 +108,8 @@ export default function AddManagementOpportunityModal(props: IAddCampaignOpportu
         refId: result.refId,
         approachId: result.approachId || null,
         expectedRevenue: result.expectedRevenue,
-        endDate: result.endDate,
-        startDate: result.startDate,
+        endDate: formatDate(result.endDate),
+        startDate: formatDate(result.startDate),
         saleId: result.saleId,
         opportunityId: result.opportunityId,
         note: result?.note ?? "",
@@ -388,7 +395,7 @@ export default function AddManagementOpportunityModal(props: IAddCampaignOpportu
     const response = await CustomerSourceService.list(param);
 
     if (response.code === 0) {
-      const dataOption = response.result;
+      const dataOption = response.result.items;
 
       return {
         options: [
@@ -481,6 +488,9 @@ export default function AddManagementOpportunityModal(props: IAddCampaignOpportu
       setDataCustomer(null);
     }
 
+    const formattedStartDate = formatDate(e.startDate);
+    const formattedEndDate = formatDate(e.endDate);
+
     if (e.type === "biz") {
       setDataSourceCustomer(null);
       setFormData({
@@ -489,8 +499,8 @@ export default function AddManagementOpportunityModal(props: IAddCampaignOpportu
           ...formData?.values,
           campaignId: e.value,
           type: e.type,
-          startDate: e.startDate,
-          endDate: e.endDate,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
           customerId: !dataCustomerProps && !idCustomer ? null : formData?.values?.customerId,
           employeeId: null,
           sourceId: null,
@@ -505,8 +515,8 @@ export default function AddManagementOpportunityModal(props: IAddCampaignOpportu
           ...formData?.values,
           campaignId: e.value,
           type: e.type,
-          startDate: e.startDate,
-          endDate: e.endDate,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
           opportunityId: null,
           customerId: !dataCustomerProps && !idCustomer ? null : formData?.values?.customerId,
           pipelineId: null,
@@ -986,6 +996,8 @@ export default function AddManagementOpportunityModal(props: IAddCampaignOpportu
     const body: ICampaignOpportunityRequestModel = {
       ...(formData.values as ICampaignOpportunityRequestModel),
       ...(data ? { id: data.id } : {}),
+      startDate: moment(dataCampaign.startDate).format("YYYY-MM-DDTHH:mm:ss"),
+      endDate: moment(dataCampaign.endDate).format("YYYY-MM-DDTHH:mm:ss"),
       lstCustomerId: listId,
     };
 

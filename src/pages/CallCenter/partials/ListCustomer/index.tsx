@@ -45,37 +45,38 @@ export default function CustomerList(props: ICustomerListProps) {
   const checkUserRoot = localStorage.getItem("user.root");
   const remoteAudioRef = useRef(null);
   const isMounted = useRef(false);
-  const { dataBranch } = useContext(UserContext) as ContextType;
+  const { dataBranch, callState, incomingNumber, makeCall, answer, hangup, transfer } = useContext(UserContext) as ContextType;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showModalPhone, setShowModalPhone] = useState<boolean>(false);
-  const [showModalCallIncome, setShowModalCallIncome] = useState<boolean>(false);
+  const [showModalCallIncome, setShowModalCallIncome] = useState<boolean>(true);
   const [listCustomer, setListCustomer] = useState<ICustomerResponse[]>([]);
   const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
   const [showModalAddManagementOpportunity, setShowModalAddManagementOpportunity] = useState<boolean>(false);
   const [idCustomer, setIdCustomer] = useState<number>(null);
   const [showModalAddConsultationScheduleModal, setShowModalAddConsultationScheduleModal] = useState<boolean>(false);
 
+  console.log("showModalCallIncome>>>", showModalCallIncome);
+
   const [params, setParams] = useState<IParamsCustomerInCallCenter>({
     keyword: "",
   });
-  const pbxCustomerCode = "d9cf985baac44238b3d930ae569d9f0912";
+  // const pbxCustomerCode = "d9cf985baac44238b3d930ae569d9f0912";
 
-  const employeeSip470 = "470";
+  // const employeeSip470 = "470";
 
-  const employeeSip471 = "471";
+  // const employeeSip471 = "471";
 
-  const { callState, incomingNumber, makeCall, answer, hangup, transfer } = useSTWebRTC({
-    extension: checkUserRoot == "1" ? employeeSip470 : employeeSip471,
-    pbxCustomerCode: pbxCustomerCode,
-  });
+  // const { callState, incomingNumber, makeCall, answer, hangup, transfer } = useSTWebRTC({
+  //   extension: checkUserRoot == "1" ? employeeSip470 : employeeSip471,
+  //   pbxCustomerCode: pbxCustomerCode,
+  // });
 
   useEffect(() => {
     console.log("Trạng thái tổng đài >>", callState);
     console.log("Số điện thoại gọi đến >>", incomingNumber);
-    console.log("Số máy lẻ >>", checkUserRoot == "1" ? employeeSip470 : employeeSip471);
 
     if (callState == "incoming") {
       setShowModalCallIncome(true);
@@ -538,7 +539,7 @@ export default function CustomerList(props: ICustomerListProps) {
         onHide={() => setShowModalPhone(false)}
       />
 
-      <WebRtcCallIncomeModal
+      {/* <WebRtcCallIncomeModal
         onShow={showModalCallIncome}
         dataCustomer={dataCustomer}
         makeCall={makeCall}
@@ -548,7 +549,7 @@ export default function CustomerList(props: ICustomerListProps) {
         callState={callState}
         incomingNumber={incomingNumber}
         onHide={() => setShowModalCallIncome(false)}
-      />
+      /> */}
       {/* <AddPhoneModal onShow={showModalPhone} dataCustomer={dataCustomer} onHide={() => setShowModalPhone(false)} /> */}
       <AddManagementOpportunityModal
         onShow={showModalAddManagementOpportunity}

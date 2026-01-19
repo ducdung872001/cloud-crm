@@ -277,7 +277,7 @@ export default function ContractGuaranteeList(props: any) {
       </div>
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên danh mục"
+          name="Tên danh mục bảo lãnh"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}

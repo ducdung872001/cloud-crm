@@ -323,7 +323,7 @@ export default function WebRtcPhoneModal(props: any) {
                           onChange={(e) => handleChangeValueEmployee(e)}
                           isAsyncPaginate={true}
                           isFormatOptionLabel={true}
-                          placeholder="Chọn nhân viên"
+                          placeholder="Chọn nhân viên chuyển hướng"
                           additional={{
                             page: 1,
                           }}
