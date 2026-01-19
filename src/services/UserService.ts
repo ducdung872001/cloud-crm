@@ -79,4 +79,11 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  // lưu FCM thông báo
+  fcmDevice: (body) => {
+    return fetch(urlsApi.user.fcmDevice, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
 };

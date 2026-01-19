@@ -9,6 +9,7 @@ const prefixApplication = "/application";
 const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
+const prefixNotification = "/notification";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -32,6 +33,17 @@ export const urlsApi = {
     detailTimeLogin: prefixAdmin + "/userLogin/daily/list",
     list: prefixAuthenticator + "/user/list",
     delete: prefixAuthenticator + "/user/delete",
+    fcmDevice: prefixNotification + "/fcmDevice/update",
+  },
+  notificationHistory: {
+    list: prefixNotification + "/notificationHistory/list",
+    update: prefixNotification + "/notificationHistory/update",
+    detail: prefixNotification + "/notificationHistory/get",
+    delete: prefixNotification + "/notificationHistory/delete",
+
+    updateUnread: prefixNotification + "/notificationHistory/update/unread",
+    updateReadAll: prefixNotification + "/notificationHistory/update/readAll",
+    countUnread: prefixNotification + "/notificationHistory/count",
   },
 
   customer: {
