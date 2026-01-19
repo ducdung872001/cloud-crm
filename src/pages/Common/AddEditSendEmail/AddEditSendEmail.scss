@@ -128,7 +128,7 @@
           .memo {
             .base-checkbox {
               label {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
               }
             }
           }
@@ -172,11 +172,12 @@
             }
           }
 
-          .box_template{
+          .box_template {
             .box__update--attachment {
               margin-top: 0.8rem;
               margin-bottom: 2rem;
               width: calc(50% - 1.6rem);
+
               .notify-message {
                 background-color: rgba(var(--warning-color-rgb), 0.8);
                 color: var(--white-color);
@@ -184,40 +185,41 @@
                 border-radius: 0.3rem;
                 margin-bottom: 2rem;
               }
+
               .support__upload--file {
                 border: 1.5px dashed var(--extra-color-30);
                 border-radius: 0.3rem;
-      
+
                 .__action-operation {
                   display: flex;
                   align-items: center;
                   justify-content: center;
                   flex-direction: column;
                   padding: 1.5rem 2rem;
-      
+
                   .action-content {
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     flex-direction: column;
-      
+
                     svg {
                       width: 6rem;
                       height: 6rem;
                       fill: var(--primary-color-30);
                     }
-      
+
                     h3 {
                       margin-bottom: 0;
                     }
                   }
-      
+
                   span {
                     color: var(--extra-color-30);
                     font-weight: 500;
                     padding: 1rem 0;
                   }
-      
+
                   .btn-upload--file {
                     background-color: var(--primary-color-90);
                     border-radius: 0.5rem;
@@ -227,18 +229,18 @@
                     justify-content: center;
                     color: var(--white-color);
                     cursor: pointer;
-      
+
                     label {
                       margin: 0;
                       cursor: pointer;
                     }
-      
+
                     &:hover {
                       background-color: var(--primary-color-70);
                     }
                   }
                 }
-      
+
                 .show__file--upload {
                   display: flex;
                   align-items: center;
@@ -246,7 +248,7 @@
                   flex-direction: column;
                   background-color: var(--extra-color-10);
                   padding: 2rem;
-      
+
                   .img__upload {
                     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
                     width: 30rem;
@@ -258,13 +260,13 @@
                     padding: 1rem;
                     display: flex;
                     justify-content: center;
-      
+
                     img {
                       width: 70%;
                       height: 85%;
                       object-fit: contain;
                     }
-    
+
                     .download {
                       background-color: var(--white-color);
                       border-radius: 0.5rem;
@@ -275,7 +277,7 @@
                       justify-content: center;
                       border: 1px solid var(--extra-color-20);
                       cursor: pointer;
-    
+
                       svg {
                         width: 1.8rem;
                         height: 1.8rem;
@@ -283,31 +285,31 @@
                       }
                     }
                   }
-      
+
                   .actions__change-file {
                     margin-top: 1rem;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     gap: 0 2rem;
-      
+
                     .btn-change,
                     .btn-remove {
                       cursor: pointer;
                       font-size: 1.4rem;
                     }
-      
+
                     .btn-change {
                       color: var(--primary-color);
-      
+
                       &:hover {
                         color: var(--primary-color-80);
                       }
                     }
-      
+
                     .btn-remove {
                       color: var(--error-color);
-      
+
                       &:hover {
                         color: rgba(var(--error-color-rgb), 0.8);
                       }
@@ -315,10 +317,11 @@
                   }
                 }
               }
+
               .dragging {
                 border-color: var(--primary-color-50);
               }
-      
+
               .is__loading--file {
                 display: flex;
                 align-items: center;
@@ -328,41 +331,43 @@
                 border-radius: 0.3rem;
                 border: 1.5px dashed var(--extra-color-30);
                 background-color: var(--extra-color-5);
-      
+
                 svg {
                   width: 3rem;
                   height: 3rem;
                   animation: circular 1s linear infinite;
                 }
-      
+
                 .name-loading {
                   font-size: 1.3rem;
                   font-weight: 500;
                   color: var(--extra-color-50);
                 }
-      
+
                 @keyframes circular {
                   from {
                     transform: rotate(0);
                   }
+
                   to {
                     transform: rotate(360deg);
                   }
                 }
               }
             }
-      
-          .file__example {
+
+            .file__example {
               margin-top: 3rem;
-      
+
               a {
-                  padding-left: 0.5rem;
+                padding-left: 0.5rem;
               }
-          }
+            }
           }
 
           .attachments {
             margin-bottom: 2rem;
+
             .title-attachment {
               display: flex;
               align-items: center;
@@ -427,7 +432,7 @@
                 background-color: var(--extra-color-10);
                 border-radius: 0.3rem;
 
-                & + .image-item {
+                &+.image-item {
                   margin-left: 1rem;
                 }
 
@@ -505,6 +510,7 @@
           flex-shrink: 0;
 
           .info-option {
+
             .custom-criteria,
             .setup-sms {
               h3 {
@@ -565,6 +571,7 @@
                         .wrapper__select,
                         .invalid {
                           background: var(--white-color);
+
                           div[class*="-control"] {
                             padding: 0.2rem 0 0.2rem 0.8rem;
                             border: 1px solid var(--border-color);
@@ -573,13 +580,16 @@
                             width: 100%;
                             background: transparent;
                             box-shadow: var(--box-shadow-input);
+
                             &:hover {
                               box-shadow: none;
                             }
-                            & > div {
+
+                            &>div {
                               padding: 0;
                             }
                           }
+
                           span[class*="-indicatorSeparator"] {
                             display: none;
                           }

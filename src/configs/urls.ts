@@ -10,6 +10,8 @@ const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
+const prefixFinance = "https://reborn.vn/finance";
+const prefixWarehouse = "https://reborn.vn/warehouse";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -435,16 +437,16 @@ export const urlsApi = {
   },
 
   productImport: {
-    update: prefixAdmin + "/product_import/update",
-    detail: prefixAdmin + "/product_import/detail",
-    delete: prefixAdmin + "/product_import/delete",
+    update: prefixWarehouse + "/product_import/update",
+    detail: prefixWarehouse + "/product_import/detail",
+    delete: prefixWarehouse + "/product_import/delete",
   },
 
   inventory: {
-    list: prefixAdmin + "/inventory/list",
-    update: prefixAdmin + "/inventory/update",
-    delete: prefixAdmin + "/inventory/delete",
-    import: prefixAdmin + "/inventory/import",
+    list: prefixWarehouse + "/inventory/list",
+    update: prefixWarehouse + "/inventory/update",
+    delete: prefixWarehouse + "/inventory/delete",
+    import: prefixWarehouse + "/inventory/import",
   },
   pom: {
     //định nghĩa pom cho sản phẩm, dịch vụ
@@ -632,11 +634,11 @@ export const urlsApi = {
   },
   //khu vực trải nghiệm khách hàng
   warehouse: {
-    list: prefixAdmin + "/warehouse/list",
+    list: prefixWarehouse + "/warehouse/list",
     //API lấy ra danh sách sản phẩm trong kho
-    productList: prefixAdmin + "/warehouse/product/list",
+    productList: prefixWarehouse + "/warehouse/product/list",
     //API lấy ra thông tin ngày hết hạn / sản xuất dựa trên số lô của sản phẩm
-    infoExpiryDateProductionDate: prefixAdmin + "/warehouse/get_mfg_expired_date",
+    infoExpiryDateProductionDate: prefixWarehouse + "/warehouse/get_mfg_expired_date",
   },
   earnings: {
     filter: prefixAdmin + "/earnings/admin/list",
@@ -2032,19 +2034,19 @@ export const urlsApi = {
   },
   // phiếu điều chỉnh kho
   adjustmentSlip: {
-    temp: prefixAdmin + "/stockAdjust/temp",
-    createAdjSlip: prefixAdmin + "/stockAdjust/create",
-    addUpdatePro: prefixAdmin + "/stockAdjustDetail/update",
+    temp: prefixWarehouse + "/stockAdjust/temp",
+    createAdjSlip: prefixWarehouse + "/stockAdjust/create",
+    addUpdatePro: prefixWarehouse + "/stockAdjustDetail/update",
     // duyệt phiếu điều chỉnh kho
-    approved: prefixAdmin + "/stockAdjust/approved",
+    approved: prefixWarehouse + "/stockAdjust/approved",
     // từ chối điều chỉnh kho
-    cancel: prefixAdmin + "/stockAdjust/cancel",
-    view: prefixAdmin + "/stockAdjust/view",
-    list: prefixAdmin + "/stockAdjust/list",
+    cancel: prefixWarehouse + "/stockAdjust/cancel",
+    view: prefixWarehouse + "/stockAdjust/view",
+    list: prefixWarehouse + "/stockAdjust/list",
     // lấy danh sách sản phẩm có trong kho
-    warehouse: prefixAdmin + "/warehouse/list",
+    warehouse: prefixWarehouse + "/warehouse/list",
     // xóa đi 1 sản phẩm
-    deletePro: prefixAdmin + "/stockAdjustDetail/delete",
+    deletePro: prefixWarehouse + "/stockAdjustDetail/delete",
   },
   kpiDatasource: {
     list: prefixAdmin + "/kpiDatasource/list",
@@ -2971,52 +2973,52 @@ export const urlsApi = {
 
   //Tài chính ngân hàng
   netLoan: {
-    lst: prefixAdmin + "/netLoan/list",
-    update: prefixAdmin + "/netLoan/update",
-    get: prefixAdmin + "/netLoan/get",
-    delete: prefixAdmin + "/netLoan/delete",
+    lst: prefixFinance + "/netLoan/list",
+    update: prefixFinance + "/netLoan/update",
+    get: prefixFinance + "/netLoan/get",
+    delete: prefixFinance + "/netLoan/delete",
   },
   netDeposit: {
-    lst: prefixAdmin + "/netDeposit/list",
-    update: prefixAdmin + "/netDeposit/update",
-    get: prefixAdmin + "/netDeposit/get",
-    delete: prefixAdmin + "/netDeposit/delete",
+    lst: prefixFinance + "/netDeposit/list",
+    update: prefixFinance + "/netDeposit/update",
+    get: prefixFinance + "/netDeposit/get",
+    delete: prefixFinance + "/netDeposit/delete",
   },
   netServiceCharge: {
-    lst: prefixAdmin + "/netServiceCharge/list",
-    update: prefixAdmin + "/netServiceCharge/update",
-    get: prefixAdmin + "/netServiceCharge/get",
-    delete: prefixAdmin + "/netServiceCharge/delete",
+    lst: prefixFinance + "/netServiceCharge/list",
+    update: prefixFinance + "/netServiceCharge/update",
+    get: prefixFinance + "/netServiceCharge/get",
+    delete: prefixFinance + "/netServiceCharge/delete",
   },
   productDemand: {
-    lst: prefixAdmin + "/productDemand/list",
-    update: prefixAdmin + "/productDemand/update",
-    get: prefixAdmin + "/productDemand/get",
-    delete: prefixAdmin + "/productDemand/delete",
+    lst: prefixFinance + "/productDemand/list",
+    update: prefixFinance + "/productDemand/update",
+    get: prefixFinance + "/productDemand/get",
+    delete: prefixFinance + "/productDemand/delete",
   },
   briefFinancialReport: {
-    lst: prefixAdmin + "/briefFinancialReport/list",
-    update: prefixAdmin + "/briefFinancialReport/update",
-    get: prefixAdmin + "/briefFinancialReport/get",
-    delete: prefixAdmin + "/briefFinancialReport/delete",
+    lst: prefixFinance + "/briefFinancialReport/list",
+    update: prefixFinance + "/briefFinancialReport/update",
+    get: prefixFinance + "/briefFinancialReport/get",
+    delete: prefixFinance + "/briefFinancialReport/delete",
   },
   fullFinancialReport: {
-    lst: prefixAdmin + "/fullFinancialReport/list",
-    update: prefixAdmin + "/fullFinancialReport/update",
-    get: prefixAdmin + "/fullFinancialReport/get",
-    delete: prefixAdmin + "/fullFinancialReport/delete",
+    lst: prefixFinance + "/fullFinancialReport/list",
+    update: prefixFinance + "/fullFinancialReport/update",
+    get: prefixFinance + "/fullFinancialReport/get",
+    delete: prefixFinance + "/fullFinancialReport/delete",
   },
   loanInformation: {
-    lst: prefixAdmin + "/loanInformation/list",
-    update: prefixAdmin + "/loanInformation/update",
-    get: prefixAdmin + "/loanInformation/get",
-    delete: prefixAdmin + "/loanInformation/delete",
+    lst: prefixFinance + "/loanInformation/list",
+    update: prefixFinance + "/loanInformation/update",
+    get: prefixFinance + "/loanInformation/get",
+    delete: prefixFinance + "/loanInformation/delete",
   },
   transactionInformation: {
-    lst: prefixAdmin + "/transactionInformation/list",
-    update: prefixAdmin + "/transactionInformation/update",
-    get: prefixAdmin + "/transactionInformation/get",
-    delete: prefixAdmin + "/transactionInformation/delete",
+    lst: prefixFinance + "/transactionInformation/list",
+    update: prefixFinance + "/transactionInformation/update",
+    get: prefixFinance + "/transactionInformation/get",
+    delete: prefixFinance + "/transactionInformation/delete",
   },
 
   application: {
