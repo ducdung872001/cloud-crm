@@ -25,6 +25,7 @@ import ContactService from "services/ContactService";
 import PartnerService from "services/PartnerService";
 import TitleAction from "components/titleAction/titleAction";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
+import CustomerService from "services/CustomerService";
 
 const defaultSchema = {
   type: "default",
@@ -195,19 +196,18 @@ export default function CreateContractsXML(props: any) {
           mapped.partnerId = mapped.businessPartnerId;
         }
 
-        // map lại peopleinvolves chỉ lấy contactid để hiển thị trong form
-        if (!mapped) return mapped;
 
         if (Array.isArray(mapped.peopleInvolved)) {
-          mapped.peopleInvolved = mapped.peopleInvolved.map(people => ({
-            value: people.value ?? people.id,
-            label: people.label ?? people.name,
-          }));
-        } else {
-          mapped.peopleInvolved = [];
+          mapped.peopleInvolved = JSON.stringify(
+            mapped.peopleInvolved.map((item: any) =>
+              typeof item === "object" && item !== null && "value" in item
+                ? item.value
+                : item
+            )
+          );
         }
+
       }
-      console.log("peopleInvolved init:", mapped?.peopleInvolved);
 
       setInitFormSchema(configInit);
       setMapContractsAttribute(mapAttribute);
@@ -220,8 +220,6 @@ export default function CreateContractsXML(props: any) {
   }, [id]);
 
   const onSubmit = async (config) => {
-    console.log("config", config);
-    return;
     setIsSubmit(true);
 
     // Các trường thông tin bổ sung
@@ -268,6 +266,12 @@ export default function CreateContractsXML(props: any) {
         config.pipelineName = response.result?.name || "";
       }
     }
+    if (config.customerId) {
+      const response = await CustomerService.detail(config.customerId);
+      if (response.code === 0) {
+        config.taxcode_customer = response.result?.taxCode || "";
+      }
+    }
     //lấy ra projectName theo projectId call api chi tiết
     if (config.projectId) {
       const response = await WorkProjectService.detail(config.projectId);
@@ -280,6 +284,7 @@ export default function CreateContractsXML(props: any) {
       const response = await PartnerService.detail(config.partnerId);
       if (response.code === 0) {
         config.businessPartnerName = response.result?.name || "";
+        config.taxcode_partner = response.result?.taxCode || "";
       }
     }
 
@@ -321,12 +326,7 @@ export default function CreateContractsXML(props: any) {
       stageName: config.stageName || "",
       products: config.products || [],
       timestamp: config.timestamp || null,
-      peopleInvolved: JSON.stringify(
-        (config.peopleInvolved || []).map((item: any) => ({
-          value: item.value,
-          label: item.label
-        }))
-      ),
+      peopleInvolved: config.peopleInvolved || [],
       signDate: toApiDate(config.signDate),
       affectedDate: toApiDate(config.affectedDate),
       adjustDate: toApiDate(config.adjustDate),
@@ -344,7 +344,7 @@ export default function CreateContractsXML(props: any) {
         ? {
           customerId: config.customerId,
           custType: config.custType ?? 0,
-          taxCode: config.taxcode_customer || "",
+          taxCode: config.taxcode_customer ?? "",
           businessPartnerId: null,
           businessPartnerName: "",
         }
@@ -353,7 +353,7 @@ export default function CreateContractsXML(props: any) {
           businessPartnerName: config.businessPartnerName || "",
           customerId: null,
           custType: null,
-          taxCode: config.taxcode_partner || "",
+          taxCode: config.taxcode_partner ?? "",
         }
       ),
     };

@@ -249,7 +249,7 @@ export default function XmlAddGuanrantee(props: any) {
       numberLetter: config.numberLetter ?? "",
       competencyId: config.competencyId ?? 0, // nghiệp vụ bảo lãnh
       contractId: config.contractId ?? 0, //hợp đồng bảo lãnh
-      contractAppendixId: config.contractAppendix ?? 0, //Phụ lục hợp đồng
+      contractAppendixId: config.contractAppendixId ?? 0, //Phụ lục hợp đồng
       guaranteeTypeId: config.guaranteeTypeId ?? 0,
       bankId: config.bankId ?? 0,
       beneficiaryId: (config.beneficiaryType == 0 ? config.beneficiaryId_customer : config.beneficiaryId_partner) ?? 0, //đơn vị thụ hưởng
