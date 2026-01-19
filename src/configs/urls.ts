@@ -34,17 +34,6 @@ export const urlsApi = {
     detailTimeLogin: prefixAdmin + "/userLogin/daily/list",
     list: prefixAuthenticator + "/user/list",
     delete: prefixAuthenticator + "/user/delete",
-    fcmDevice: prefixNotification + "/fcmDevice/update",
-  },
-  notificationHistory: {
-    list: prefixNotification + "/notificationHistory/list",
-    update: prefixNotification + "/notificationHistory/update",
-    detail: prefixNotification + "/notificationHistory/get",
-    delete: prefixNotification + "/notificationHistory/delete",
-
-    updateUnread: prefixNotification + "/notificationHistory/update/unread",
-    updateReadAll: prefixNotification + "/notificationHistory/update/readAll",
-    countUnread: prefixNotification + "/notificationHistory/count",
   },
 
   customer: {
