@@ -872,7 +872,7 @@ export default function ModalConditionalIntermediateCatchEvent({ onShow, onHide,
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt biểu mẫu"}</h4>
+              <h4>{"Cài đặt Conditional Catch Event"}</h4>
             </div>
 
             <ListButtonHeader

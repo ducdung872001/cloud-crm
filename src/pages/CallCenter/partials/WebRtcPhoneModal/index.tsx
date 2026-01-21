@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { IActionModal } from "model/OtherModel";
 import { IAddPhoneModalProps } from "model/callCenter/PropsModel";
 import { ITransferCallModel } from "model/callCenter/CallCenterRequestModel";
@@ -14,29 +14,12 @@ import EmployeeService from "services/EmployeeService";
 import CallCenterService from "services/CallCenterService";
 import "./index.scss";
 import HistoryModal from "../HistoryModal/HistoryModal";
-import { useSTWebRTC } from "webrtc/useSTWebRTC";
-
-// "config": {
-//     "key": "d9cf985baac44238b3d930ae569d9f0912",
-//     "extension": "470",
-//     "pbx_customer_code": "C1216"
-// }
-
-// "config": {
-//     "key": "d9cf985baac44238b3d930ae569d9f0912",
-//     "extension": "471",
-//     "pbx_customer_code": "C1216"
-// }
-
-const pbxCustomerCode = "d9cf985baac44238b3d930ae569d9f0912";
-
-const employeeSip470 = "470";
-
-const employeeSip471 = "471";
+import { UserContext, ContextType } from "contexts/userContext";
+import CustomerService from "services/CustomerService";
 
 export default function WebRtcPhoneModal(props: any) {
   const { onShow, dataCustomer, onHide, makeCall, hangup, answer, transfer, incomingNumber, callState } = props;
-
+  const user = useContext(UserContext) as ContextType;
   const [dataEmployee, setDataEmployee] = useState(null);
   const [isCheckCall, setIsCheckCall] = useState<boolean>(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
@@ -130,25 +113,40 @@ export default function WebRtcPhoneModal(props: any) {
   //     showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
   //   }
   // };
+  const handShowPhone = async (id: number) => {
+    const response = await CustomerService.viewPhone(id);
+    if (response.code == 0) {
+      const result = response.result;
+      return result;
+    } else if (response.code == 400) {
+      showToast("Bạn không có quyền xem số điện thoại !", "error");
+      return null;
+    } else {
+      showToast(response.message, "error");
+      return null;
+    }
+  };
 
   useEffect(() => {
     if (onShow && dataCustomer?.id) {
-      // getPhoneCallCustomer(dataCustomer?.id);
-      console.log("makeCal>>", dataCustomer);
-      makeCall("0862999272");
+      const fetchAndMakeCall = async () => {
+        if (onShow && dataCustomer?.id) {
+          const phone = await handShowPhone(dataCustomer?.id);
+          if (phone) {
+            makeCall(phone);
+          }
+        }
+      };
+      fetchAndMakeCall();
+      // makeCall("0862999272");
     }
   }, [onShow, dataCustomer?.id]);
-
-  // useEffect(() => {
-  //   if (onShow && dataCustomer?.id && callState === "incoming") {
-  //     setIsCheckCall(callState == "incoming" ? true : false);
-  //   }
-  // }, [onShow, dataCustomer?.id, incomingNumber, callState]);
 
   const handDisconnect = async () => {
     onHide();
     setIsCheckCall(false);
     hangup();
+    setDataEmployee(null);
   };
 
   // chuyển hướng cuộc gọi
@@ -166,7 +164,15 @@ export default function WebRtcPhoneModal(props: any) {
                 type: "button",
                 color: "primary",
                 callback: () => {
-                  handTransferCall(employeeSip471);
+                  if (dataEmployee && dataEmployee?.value) {
+                    // Test chỉ chuyển cho 2 nhân viên có sip 470 và 471
+                    // Test với tài khoản Nguyễn Ngọc Trung trên rebornjsc sdt 0962829352 có id là 81
+                    // Test với tài khoản Hoàng Văn Lợi trên rebornjsc sdt 0862999272 có id là 703
+                    handTransferCall(dataEmployee?.value == 703 ? "471" : dataEmployee?.value == 81 ? "470" : null); // sau này có sip thì truyền sip vào
+                    onHide();
+                  } else {
+                    showToast("Vui lòng chọn nhân viên để chuyển cuộc gọi", "error");
+                  }
                 },
               },
               {
@@ -200,7 +206,15 @@ export default function WebRtcPhoneModal(props: any) {
                 type: "button",
                 color: "primary",
                 callback: () => {
-                  handTransferCall(employeeSip471);
+                  if (dataEmployee && dataEmployee?.value) {
+                    // Test chỉ chuyển cho 2 nhân viên có sip 470 và 471
+                    // Test với tài khoản Nguyễn Ngọc Trung trên rebornjsc sdt 0962829352 có id là 81
+                    // Test với tài khoản Hoàng Văn Lợi trên rebornjsc sdt 0862999272 có id là 703
+                    handTransferCall(dataEmployee?.value == 703 ? "471" : dataEmployee?.value == 81 ? "470" : null);
+                    onHide();
+                  } else {
+                    showToast("Vui lòng chọn nhân viên để chuyển cuộc gọi", "error");
+                  }
                 },
               },
               {

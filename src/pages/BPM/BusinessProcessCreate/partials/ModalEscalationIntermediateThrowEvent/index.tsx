@@ -200,7 +200,7 @@ export default function ModalEscalationIntermediateThrowEvent({ onShow, onHide, 
        <form className="form-escalation-intermediate-throw" onSubmit={(e) => onSubmit(e)}>
          <div className="container-header">
            <div className="box-title">
-             <h4>{"Cài đặt Escalation Intermediate Throw Event"}</h4>
+             <h4>{"Cài đặt Escalation Throw Event"}</h4>
            </div>
            <ListButtonHeader
              data={data}

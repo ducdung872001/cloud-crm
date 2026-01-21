@@ -703,7 +703,7 @@ export default function ModalMessageIntermediateThrowEvent({ onShow, onHide, dat
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt Message Intermediate Throw Event"}</h4>
+              <h4>{"Cài đặt Message Throw Event"}</h4>
             </div>
             <ListButtonHeader
               data={data}

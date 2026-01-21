@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "./contexts/userContext";
@@ -44,6 +44,7 @@ import { messaging, requestPermission } from "firebase-config";
 import NotificationService from "services/NotificationService";
 import { useSTWebRTC } from "webrtc/useSTWebRTC";
 import WebRtcCallIncomeModal from "pages/CallCenter/partials/WebRtcCallIncomeModal";
+import ringtone from "assets/sounds/call_in_sound.wav";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -278,29 +279,92 @@ export default function App() {
 
     onMessage(messaging, (payload) => {
       console.log("Thông báo nhận được:", payload);
-      alert(`🔥 Notification: ${payload.notification?.title}`);
+      // alert(`🔥 Notification: ${payload.notification?.title}`);
       getCountUnread();
     });
   }, []);
 
   // Khởi tạo tổng đài
-  const checkUserRoot = localStorage.getItem("user.root"); // Để test thôi, xong thì phải lấy theo sip
   const [showModalCallIncome, setShowModalCallIncome] = useState<boolean>(false);
   const pbxCustomerCode = "d9cf985baac44238b3d930ae569d9f0912";
-
-  const employeeSip470 = "470";
-
-  const employeeSip471 = "471";
+  const employeeSip470 = "470"; // Test với tài khoản Nguyễn Ngọc Trung trên rebornjsc sdt 0962829352 có id là 81
+  const employeeSip471 = "471"; // Test với tài khoản Hoàng Văn Lợi trên rebornjsc sdt 0862999272 có id là 703
 
   const { callState, incomingNumber, makeCall, answer, hangup, transfer } = useSTWebRTC({
-    extension: checkUserRoot == "1" ? employeeSip470 : employeeSip471,
+    extension: parseInt(dataInfoEmployee?.id) == 81 ? employeeSip470 : parseInt(dataInfoEmployee?.id) == 703 ? employeeSip471 : null, //test tạm thời, sau này lấy theo dataInfoEmployee?.sip
     pbxCustomerCode: pbxCustomerCode,
   });
-  console.log("Số máy lẻ >>", checkUserRoot == "1" ? employeeSip470 : employeeSip471);
+
+  const RINGTONE_SRC = ringtone;
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const unlockedRef = useRef<boolean>(false);
+
+  // Khởi tạo audio và cố gắng unlock bằng user gesture (click/touch)
   useEffect(() => {
-    console.log("Trạng thái tổng đài >>", callState);
+    const audio = new Audio(RINGTONE_SRC);
+    audio.loop = true;
+    audio.preload = "auto";
+    audioRef.current = audio;
+
+    const tryUnlock = async () => {
+      if (unlockedRef.current) return;
+      try {
+        // Thử play rồi pause ngay để unlock audio trên 1 số trình duyệt khi có gesture
+        await audioRef.current?.play();
+        audioRef.current?.pause();
+        audioRef.current!.currentTime = 0;
+        unlockedRef.current = true;
+        // không cần thông báo
+      } catch (err) {
+        // vẫn bị chặn
+      } finally {
+        // chỉ cần thử 1 lần, gỡ listener
+        document.removeEventListener("click", tryUnlock, true);
+        document.removeEventListener("touchstart", tryUnlock, true);
+      }
+    };
+
+    document.addEventListener("click", tryUnlock, true);
+    document.addEventListener("touchstart", tryUnlock, true);
+
+    return () => {
+      try {
+        audioRef.current?.pause();
+        audioRef.current = null;
+      } catch (e) {}
+      document.removeEventListener("click", tryUnlock, true);
+      document.removeEventListener("touchstart", tryUnlock, true);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
     if (callState == "incoming") {
       setShowModalCallIncome(true);
+
+      if (!audio) return;
+
+      (async () => {
+        try {
+          await audio.play();
+          // Nếu play thành công, mark unlocked
+          unlockedRef.current = true;
+        } catch (err) {
+          // Nếu bị chặn bởi autoplay policy, thông báo cho user bấm vào trang để unlock
+          console.warn("Ringtone play blocked by browser autoplay policy:", err);
+          showToast("Trình duyệt chặn phát âm thanh tự động. Vui lòng click/đụng vào trang để bật chuông.", "warning");
+        }
+      })();
+    } else {
+      try {
+        if (!audio.paused) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+      } catch (e) {
+        // ignore
+      }
     }
   }, [callState]);
 
@@ -362,12 +426,14 @@ export default function App() {
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />
         <WebRtcCallIncomeModal
+          // onShow={true}
           onShow={showModalCallIncome}
           makeCall={makeCall}
           hangup={hangup}
           answer={answer}
           transfer={transfer}
           callState={callState}
+          // callState={"oncall"}
           incomingNumber={incomingNumber}
           onHide={() => setShowModalCallIncome(false)}
         />

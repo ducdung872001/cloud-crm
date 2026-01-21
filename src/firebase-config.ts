@@ -1,13 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken } from "firebase/messaging";
-// import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import UserService from "services/UserService";
 
 // Tải FingerprintJS và sinh mã định danh duy nhất
 async function getDeviceId() {
-  // const fp = await FingerprintJS.load();
-  // const result = await fp.get(); // Sinh mã định danh
-  // return result.visitorId; // Trả về ID duy nhất
+  const fp = await FingerprintJS.load();
+  const result = await fp.get(); // Sinh mã định danh
+  return result.visitorId; // Trả về ID duy nhất
 }
 
 function parseJwt(token) {
