@@ -15,6 +15,7 @@ import CallCenterService from "services/CallCenterService";
 import "./index.scss";
 import HistoryModal from "../HistoryModal/HistoryModal";
 import { useSTWebRTC } from "webrtc/useSTWebRTC";
+import Stopwatch from "./partials/Stopwatch";
 
 // "config": {
 //     "key": "d9cf985baac44238b3d930ae569d9f0912",
@@ -30,9 +31,9 @@ import { useSTWebRTC } from "webrtc/useSTWebRTC";
 
 const pbxCustomerCode = "d9cf985baac44238b3d930ae569d9f0912";
 
-const employeeSip470 = "470";
+const employeeSip470 = "470"; // Nguyễn Ngọc Trung
 
-const employeeSip471 = "471";
+const employeeSip471 = "471"; // Hoàng Văn Lợi
 
 export default function WebRtcCallIncomeModal(props: any) {
   const { onShow, onHide, makeCall, hangup, answer, transfer, incomingNumber, callState } = props;
@@ -76,6 +77,7 @@ export default function WebRtcCallIncomeModal(props: any) {
 
     return { options: [], hasMore: false };
   };
+  console.log("dataEmployee>>", dataEmployee);
 
   //! đoạn này xử lý vấn đề hiển thị hình ảnh nhân viên
   const formatOptionLabelEmployee = ({ label, avatar }) => {
@@ -113,6 +115,7 @@ export default function WebRtcCallIncomeModal(props: any) {
   const handDisconnect = async () => {
     onHide();
     hangup();
+    setDataEmployee(null);
   };
 
   // chuyển hướng cuộc gọi
@@ -123,36 +126,56 @@ export default function WebRtcCallIncomeModal(props: any) {
   const actions = useMemo<IActionModal>(
     () => ({
       actions_right: {
-        buttons: [
-          {
-            title: "Từ chối",
-            type: "button",
-            color: "destroy",
-            callback: () => {
-              handDisconnect();
-            },
-          },
-          {
-            title: "Chuyển cuộc gọi",
-            type: "button",
-            color: "primary",
-            callback: () => {
-              handTransferCall(employeeSip471);
-            },
-          },
-          {
-            title: "Nghe máy",
-            type: "button",
-            color: "success",
-            callback: () => {
-              answer();
-              // bh có dữ liệu thì xử lý logic
-            },
-          },
-        ],
+        buttons:
+          callState == "oncall"
+            ? [
+                {
+                  title: "Chuyển cuộc gọi",
+                  type: "button",
+                  color: "primary",
+                  callback: () => {
+                    if (dataEmployee && dataEmployee?.value) {
+                      // Test chỉ chuyển cho 2 nhân viên có sip 470 và 471
+                      // Test với tài khoản Nguyễn Ngọc Trung trên rebornjsc sdt 0962829352 có id là 81
+                      // Test với tài khoản Hoàng Văn Lợi trên rebornjsc sdt 0862999272 có id là 703
+                      handTransferCall(dataEmployee?.value == 703 ? "471" : dataEmployee?.value == 81 ? "470" : null); // sau này có sip thì truyền sip vào
+                      onHide();
+                    } else {
+                      showToast("Vui lòng chọn nhân viên để chuyển cuộc gọi", "error");
+                    }
+                  },
+                },
+                {
+                  title: "Dừng cuộc gọi",
+                  type: "button",
+                  color: "destroy",
+                  callback: () => {
+                    handDisconnect();
+                  },
+                },
+              ]
+            : [
+                {
+                  title: "Từ chối",
+                  type: "button",
+                  color: "destroy",
+                  callback: () => {
+                    handDisconnect();
+                  },
+                },
+                {
+                  title: "Nghe máy",
+                  type: "button",
+                  color: "success",
+                  callback: () => {
+                    answer();
+                    // bh có dữ liệu thì xử lý logic
+                  },
+                },
+              ],
       },
     }),
-    [dataEmployee]
+    [dataEmployee, callState]
   );
 
   //! đoạn này xử lý kéo thả Element sau này nhiều chỗ dùng có thể tách thành 1 component
@@ -229,26 +252,39 @@ export default function WebRtcCallIncomeModal(props: any) {
           <ModalBody>
             <div className="icon--phone_income">
               <span>{incomingNumber || "No incoming number"}</span>
-              <div className="border">
-                <Icon name="CallPhone" />
-              </div>
+
+              {callState == "oncall" ? (
+                <div>
+                  <div>
+                    <Stopwatch isStart={callState === "oncall"} isClear={callState !== "oncall"} className="my-timer" />
+                  </div>
+                  {/* <div>Ghi âm: </div>
+                  <div>Tắt mic: </div> */}
+                </div>
+              ) : (
+                <div className="border">
+                  <Icon name="CallPhone" />
+                </div>
+              )}
               <div className="option__employee">
-                <SelectCustom
-                  id="employeeId"
-                  name="employeeId"
-                  options={[]}
-                  fill={true}
-                  value={dataEmployee}
-                  onChange={(e) => handleChangeValueEmployee(e)}
-                  isAsyncPaginate={true}
-                  isFormatOptionLabel={true}
-                  placeholder="Chọn nhân viên nhận cuộc gọi"
-                  additional={{
-                    page: 1,
-                  }}
-                  loadOptionsPaginate={loadedOptionEmployee}
-                  formatOptionLabel={formatOptionLabelEmployee}
-                />
+                {callState == "oncall" ? (
+                  <SelectCustom
+                    id="employeeId"
+                    name="employeeId"
+                    options={[]}
+                    fill={true}
+                    value={dataEmployee}
+                    onChange={(e) => handleChangeValueEmployee(e)}
+                    isAsyncPaginate={true}
+                    isFormatOptionLabel={true}
+                    placeholder="Chọn nhân viên nhận cuộc gọi"
+                    additional={{
+                      page: 1,
+                    }}
+                    loadOptionsPaginate={loadedOptionEmployee}
+                    formatOptionLabel={formatOptionLabelEmployee}
+                  />
+                ) : null}
               </div>
             </div>
           </ModalBody>
