@@ -132,7 +132,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
   }, [values]);
 
   //! đoạn này xử lý vấn đề lấy loại công việc
-  const [dataWorkType, setDataWorkType] = useState(null);
+  const [dataWorkType, setDataWorkType] = useState<any>(null);
 
   const loadedOptionWorkType = async (search, loadedOptions, { page }) => {
     const param: IWorkTypeFilterRequest = {
