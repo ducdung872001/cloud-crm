@@ -37,6 +37,7 @@ export interface IOrderResponseModel {
   supplier_id: number;
   supplier: any;
   vat_amount: number;
+  employeeName: string;
 }
 
 interface INumbersResponse {

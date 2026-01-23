@@ -25,6 +25,7 @@ import { getInfoLogin, showToast } from "utils/common";
 import { formatCurrency, isDifferenceObj } from "utils/common";
 import OrderService from "services/OrderService";
 import ShowInvoiceOrder from "../orderInvoiceList/partials/showInvoiceOrder";
+import { getPageOffset } from "reborn-util";
 
 export default function TemporaryOrderList() {
   document.title = "Đơn đặt lưu tạm";
@@ -145,7 +146,7 @@ export default function TemporaryOrderList() {
 
       setPagination({
         ...pagination,
-        page: +result.current_page || 1,
+        page: +result.page,
         sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
         totalItem: +result.total,
         totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
@@ -291,11 +292,11 @@ export default function TemporaryOrderList() {
   const dataFormat = ["text-center", "", "text-center", "text-center", "", "text-right", "", "text-center"];
 
   const dataMappingArray = (item: IOrderResponseModel, index: number, type?: string) => [
-    index + 1,
+    getPageOffset(params) + index + 1,
     item.orderCode,
     moment(item.orderDate).format("DD/MM/YYYY"),
     moment(item.expectedDate).format("DD/MM/YYYY"),
-    name,
+    item.employeeName,
     formatCurrency(item.amount),
     item.note,
     ...(type !== "export" ? [<Badge key={index} text="Lưu tạm" variant="warning" />] : ["Lưu tạm"]),

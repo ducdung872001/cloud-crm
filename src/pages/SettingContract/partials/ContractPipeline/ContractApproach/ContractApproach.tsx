@@ -77,7 +77,7 @@ export default function ContractApproachList(props: any) {
 
     if (response.code === 0) {
       const result = response.result;
-      setListContractApproach(result);
+      setListContractApproach(result.items);
 
       setPagination({
         ...pagination,

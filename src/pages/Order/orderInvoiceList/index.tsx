@@ -26,6 +26,7 @@ import { getInfoLogin, showToast } from "utils/common";
 import { formatCurrency, isDifferenceObj } from "utils/common";
 import OrderService from "services/OrderService";
 import ShowInvoiceOrder from "./partials/showInvoiceOrder";
+import { getPageOffset } from "reborn-util";
 
 export default function OrderInvoiceList() {
   document.title = "Hóa đơn đặt hàng";
@@ -159,7 +160,7 @@ export default function OrderInvoiceList() {
 
       setPagination({
         ...pagination,
-        page: +result.current_page || 1,
+        page: +result.page || 1,
         sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
         totalItem: +result.total,
         totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
@@ -312,11 +313,11 @@ export default function OrderInvoiceList() {
   const dataFormat = ["text-center", "text-center", "text-center", "text-center", "", "text-right", "", "text-center"];
 
   const dataMappingArray = (item: any, index: number, type?: string) => [
-    index + 1,
+    getPageOffset(params) + index + 1,
     item.orderCode,
     moment(item.orderDate).format("DD/MM/YYYY"),
     item.expectedDate ? moment(item.expectedDate).format("DD/MM/YYYY") : "",
-    name,
+    item.employeeName,
     formatCurrency(item.amount),
     item.note,
     ...(type !== "export"
