@@ -1407,7 +1407,7 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
       showToast(`${data ? "Cập nhật" : "Thêm mới"} lịch thành công`, "success");
       handClearForm(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
