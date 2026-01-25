@@ -22,6 +22,34 @@ export const urlsApi = {
     approve: prefixRebornVn + "/beautySalon/approve",
     delete: prefixRebornVn + "/beautySalon/delete",
   },
+  businessRule: {
+    list: prefixBpm + "/businessRule/list",
+    update: prefixBpm + "/businessRule/update",
+    updateActive: prefixBpm + "/businessRule/updateActive",
+    detail: prefixBpm + "/businessRule/detail",
+    delete: prefixBpm + "/businessRule/delete",
+  },
+  businessRuleItem: {
+    list: prefixBpm + "/businessRuleItem/list",
+    update: prefixBpm + "/businessRuleItem/update",
+    updateActive: prefixBpm + "/businessRuleItem/updateActive",
+    detail: prefixBpm + "/businessRuleItem/detail",
+    delete: prefixBpm + "/businessRuleItem/delete",
+  },
+  decisionTableInput: {
+    list: prefixBpm + "/decisionTableInput/list",
+    update: prefixBpm + "/decisionTableInput/update",
+    updateActive: prefixBpm + "/decisionTableInput/updateActive",
+    detail: prefixBpm + "/decisionTableInput/detail",
+    delete: prefixBpm + "/decisionTableInput/delete",
+  },
+  decisionTableOutput: {
+    list: prefixBpm + "/decisionTableOutput/list",
+    update: prefixBpm + "/decisionTableOutput/update",
+    updateActive: prefixBpm + "/decisionTableOutput/updateActive",
+    detail: prefixBpm + "/decisionTableOutput/detail",
+    delete: prefixBpm + "/decisionTableOutput/delete",
+  },
   user: {
     create: prefixAuthenticator + "/user/create",
     update: prefixAuthenticator + "/user/admin_update",
@@ -3291,6 +3319,9 @@ export const urls = {
   extension_list: "/extension_list",
   //quản lý lĩnh vực
   field_management: "/field_management",
+  //Loại luật nghiệp vụ
+  business_rule: "/business_rule",
+  business_rule_config: "/bpm/business_rule_config/:id",
 };
 
 export default urls;
