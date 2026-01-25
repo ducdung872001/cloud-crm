@@ -71,7 +71,7 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
     const response = await CardService.list(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
-      const result = response.result;
+      const result = response.result.items;
       setListCard(result);
 
       setPagination({
