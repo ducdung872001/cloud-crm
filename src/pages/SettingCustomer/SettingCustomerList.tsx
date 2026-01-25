@@ -10,6 +10,7 @@ import "./SettingCustomerList.scss";
 import CustomerView from "./partials/CustomerView/CustomerView";
 import CustomerMarketingLead from "./partials/CustomerMarketingLead/CustomerMarketingLead";
 import { getDomain } from "reborn-util";
+import CustomerLoyaltyPointLedger from "./partials/CustomerLoyaltyPointLedger";
 
 export default function SettingCustomerList() {
   document.title = "Cài đặt khách hàng";
@@ -49,6 +50,10 @@ export default function SettingCustomerList() {
       title: "Định nghĩa cấu trúc xem thông tin",
       is_tab: "tab_seven",
     }, 
+    {
+      title: "Lịch sử điểm tích lũy của khách hàng",
+      is_tab: "tab_nine",
+    },
     ...(checkSubdomainTNEX ? [
       {
         title: "Nguồn Marketing gửi Lead",
@@ -141,6 +146,14 @@ export default function SettingCustomerList() {
           />
       ) : isDetailCategory && tab === "tab_eight" ? (
         <CustomerMarketingLead
+            onBackProps={(isBack) => {
+              if (isBack) {
+                setIsDetailCategory(false);
+              }
+            }}
+          />
+      ) : isDetailCategory && tab === "tab_nine" ? (
+        <CustomerLoyaltyPointLedger
             onBackProps={(isBack) => {
               if (isBack) {
                 setIsDetailCategory(false);

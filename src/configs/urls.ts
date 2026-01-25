@@ -427,9 +427,11 @@ export const urlsApi = {
   },
   boughtCard: {
     list: prefixAdmin + "/boughtCardService/list",
+    listLoyaltyPoint: prefixAdmin + "/loyaltyPointLedger/list",
     add: prefixAdmin + "/boughtCardService/update",
     delete: prefixAdmin + "/boughtCardService/delete",
     update: prefixAdmin + "/boughtCardService/update/cardNumber",
+    updateCustomerCard: prefixAdmin + "/boughtCard/update",
     listBoughtCardByCustomerId: prefixAdmin + "/boughtCardService/getBoughtCardServiceByCustomerId",
   },
   product: {
