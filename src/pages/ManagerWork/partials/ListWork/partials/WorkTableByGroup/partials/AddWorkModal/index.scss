@@ -41,6 +41,7 @@
           }
         }
       }
+
       &__assign {
         margin-top: 2rem;
         border: 1px dashed var(--extra-color-50);
@@ -50,6 +51,7 @@
         gap: 0.5rem 2.2rem;
         padding: 2rem 1rem 1rem 1rem;
         position: relative;
+
         .title-work {
           position: absolute;
           top: -18px;
@@ -60,9 +62,11 @@
           font-weight: 600;
           color: var(--text-primary-color);
         }
+
         .form-group {
           width: 100%;
           transition: all 0.5s ease-in-out;
+
           &:nth-child(2),
           &:nth-child(3),
           &:nth-child(4),
@@ -315,8 +319,10 @@
           }
         }
       }
+
       #FieldNotification {
         width: 100%;
+
         .notification-calendar {
           width: 100%;
 
@@ -681,6 +687,51 @@
       }
     }
   }
+
+  .btn-mini-assign {
+    margin-left: auto;
+    // margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 8px;
+    border: 1px solid #1677ff;
+    background: #fff;
+    color: #1677ff;
+    cursor: pointer;
+
+    &:hover {
+      background: #e6f4ff;
+    }
+
+    &.is-hide {
+      border-color: #999;
+      color: #666;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-mini-assign:focus {
+    outline: none;
+  }
+
+  .btn-mini-assign:focus-visible {
+    outline: none;
+  }
+
+  .assign-btn-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin: 8px 0;
+  }
+
   .radio-list {
     .form-group {
       display: flex;

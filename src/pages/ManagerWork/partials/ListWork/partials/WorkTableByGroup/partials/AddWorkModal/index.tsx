@@ -590,14 +590,14 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },
-          {
-            title: showAssign ? "Ẩn giao việc" : "Giao việc",
-            type: "button",
-            color: "primary",
-            variant: "outline",
-            disabled: isSubmit,
-            callback: () => setShowAssign((prev) => !prev),
-          },
+          // {
+          //   title: showAssign ? "Ẩn giao việc" : "Giao việc",
+          //   type: "button",
+          //   color: "primary",
+          //   variant: "outline",
+          //   disabled: isSubmit,
+          //   callback: () => setShowAssign((prev) => !prev),
+          // },
         ],
       },
     }),
@@ -726,6 +726,16 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                     formData={formData}
                   />
                 ))}
+              </div>
+              <div className="assign-btn-wrapper">
+                <button
+                  type="button"
+                  className={`btn-mini-assign ${showAssign ? "is-hide" : "is-show"}`}
+                  onClick={() => setShowAssign((prev) => !prev)}
+                  disabled={isSubmit}
+                >
+                  {showAssign ? "Ẩn giao việc" : "+ Giao việc"}
+                </button>
               </div>
               {(idWork || showAssign) ? (
                 <div className="list-form-group__assign assign-work-panel">
