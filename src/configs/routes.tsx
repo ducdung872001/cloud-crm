@@ -196,7 +196,8 @@ const rootDomain = getRootDomain(sourceDomain);
 const checkSubdomainTNEX = sourceDomain.includes("tnex");
 const checkSubdomainTNPM = sourceDomain.includes("tnpm") || sourceDomain.includes("localhost");
 const checkSubdomainGREENSPA = sourceDomain.includes("greenspa");
-const checkSubdomainReborn = sourceDomain.includes("localhost") || sourceDomain.includes("rebornjsc") || sourceDomain.includes("kcn");
+const checkSubdomainReborn =
+  sourceDomain.includes("localhost") || sourceDomain.includes("rebornjsc") || sourceDomain.includes("kcn") || sourceDomain.includes("jsc");
 // "tnex.reborn.vn"
 
 const checkUserRoot = localStorage.getItem("user.root") == "1";

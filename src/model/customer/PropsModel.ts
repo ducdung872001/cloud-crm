@@ -88,6 +88,11 @@ export interface IServiceProductListProps {
   setListIdService: any;
   setProductIdGetCode: any;
   dataInvoice?: any;
+  // props customer card
+  showModalAddCustomerCard?: boolean;
+  setShowModalAddCustomerCard?: any;
+  dataCustomerCard?: any;
+  setDataCustomerCard?: any;
 }
 
 export interface InfoCardServiceProps {

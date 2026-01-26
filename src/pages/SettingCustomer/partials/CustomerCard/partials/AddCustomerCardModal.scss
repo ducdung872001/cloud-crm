@@ -8,6 +8,86 @@
       .form-group {
         width: calc(50% - 1.6rem);
       }
+
+      .container-inputVar {
+        width: 100%;
+        margin-top: 1.8rem;
+        border: 1px dashed var(--extra-color-50);
+        border-radius: 5px;
+        padding: 1rem;
+
+        .list-item-inputVar {
+          display: flex;
+          gap: 0 1.5rem;
+          margin-top: 1rem;
+          .item-inputVar {
+            width: calc(50% - 1.6rem);
+
+            &:nth-child(2) {
+              .container-select-mapping {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                border: 1px solid var(--border-color);
+                padding: 0 1rem;
+                border-radius: 5px;
+                min-height: 42px;
+
+                .input-text {
+                  width: 100%;
+                  background-color: #f3f3f3;
+                }
+
+                .select-mapping {
+                  width: 100%;
+                }
+
+                .icon-change-select {
+                  cursor: pointer;
+                  svg {
+                    width: 1.8rem;
+                    height: 1.8rem;
+                    fill: var(--warning-color);
+                  }
+                }
+              }
+            }
+          }
+
+          .add-attribute,
+          .remove-attribute {
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.5rem;
+            .icon-add {
+              cursor: pointer;
+              svg {
+                width: 2rem;
+                height: 2rem;
+                fill: var(--primary-color);
+              }
+              &:hover {
+                svg {
+                  fill: var(--primary-color-hover);
+                }
+              }
+            }
+            .icon-remove {
+              cursor: pointer;
+              svg {
+                width: 2rem;
+                height: 2rem;
+                fill: var(--danger-color);
+              }
+              &:hover {
+                svg {
+                  fill: var(--danger-color-hover);
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
