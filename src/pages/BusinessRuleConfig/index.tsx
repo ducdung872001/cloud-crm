@@ -52,6 +52,8 @@ export default function BusinessRuleConfig(props: any) {
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
 
+  console.log("listDecisionInput>>", listDecisionInput);
+
   const [params, setParams] = useState({
     keyWord: "",
     businessRuleId: id ? +id : null,
@@ -525,6 +527,7 @@ export default function BusinessRuleConfig(props: any) {
           titleActions={titleActions}
           titleSearch="Điều kiện"
           disableDeleteAll={permissions["LIST_CAUSE_TYPE_DELETE"] == 1 ? false : true}
+          listSaveSearch={listSaveSearch}
         />
         {!isLoading && (listDecisionInput?.length || listDecisionOutput?.length) ? (
           <BoxTableBusinessRule

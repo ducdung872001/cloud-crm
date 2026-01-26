@@ -3322,7 +3322,7 @@ export const urls = {
   //quản lý lĩnh vực
   field_management: "/field_management",
   //Loại luật nghiệp vụ
-  business_rule: "/business_rule",
+  business_rule: "/bpm/business_rule",
   business_rule_config: "/bpm/business_rule_config/:id",
 };
 

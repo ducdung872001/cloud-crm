@@ -129,7 +129,8 @@ export default function BusinessRule(props: any) {
       // ...(dataInfoEmployee?.isOwner === 1 ? [
 
       // ] : [])
-      permissions["LIST_CAUSE_TYPE_ADD"] == 1 && {
+      // permissions["LIST_CAUSE_TYPE_ADD"] == 1 && {
+      true && {
         icon: <Icon name="Plus" style={{ width: 13, height: 13 }} />,
         title: "Thêm mới",
         callback: () => {
@@ -264,7 +265,7 @@ export default function BusinessRule(props: any) {
     <div className="page-content page-business-rule-list card-box">
       <TitleAction title="Loại luật nghiệp vụ" />
       <div className="d-flex flex-column">
-        {/* <HeaderFilter
+        <HeaderFilter
           params={params}
           setParams={setParams}
           listIdChecked={listIdChecked}
@@ -272,7 +273,8 @@ export default function BusinessRule(props: any) {
           titleActions={titleActions}
           titleSearch="Loại luật nghiệp vụ"
           disableDeleteAll={permissions["LIST_CAUSE_TYPE_DELETE"] == 1 ? false : true}
-        /> */}
+          listSaveSearch={listSaveSearch}
+        />
         {!isLoading && listReason && listReason.length > 0 ? (
           <BoxTable
             name="Danh mục luật nghiệp vụ"

@@ -1852,14 +1852,14 @@ export const routes: IRouter[] = [
     path: urls.manage_default_processes,
     component: <ManageDefaultProcesses />,
   },
-  // {
-  //   path: urls.business_rule,
-  //   component: <BusinessRule />,
-  // },
-  // {
-  //   path: urls.business_rule_config,
-  //   component: <BusinessRuleConfig />,
-  // },
+  {
+    path: urls.business_rule,
+    component: <BusinessRule />,
+  },
+  {
+    path: urls.business_rule_config,
+    component: <BusinessRuleConfig />,
+  },
   {
     path: urls.process_simulation,
     component: <ProcessSimulation />,
