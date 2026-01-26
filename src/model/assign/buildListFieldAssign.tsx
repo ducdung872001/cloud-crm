@@ -1,11 +1,10 @@
 import React from "react";
 import _ from "lodash";
-import { IFieldCustomize} from "model/FormModel";
+import { IFieldCustomize } from "model/FormModel";
 import Icon from "components/icon";
 import NummericInput from "components/input/numericInput";
 import SelectCustom from "components/selectCustom/selectCustom";
-
-// import "./index.scss";
+import WorkOrderService from "services/WorkOrderService";
 
 export type BuildListFieldAssignParams = {
   // data/state
@@ -26,11 +25,12 @@ export type BuildListFieldAssignParams = {
   refContainerTimeWorkLoad: any;
   refOptionTimeWorkLoad: any;
 
-  // handlers
+  // handlers (UI/state update)
   formatOptionLabelManager: (opt: any) => React.ReactNode;
   formatOptionLabelEmployee: (opt: any) => React.ReactNode;
+
+  handleChangeValueManager: (e: any) => void;
   handleChangeValueEmployee: (e: any) => void;
-  loadedOptionEmployee: any;
   handleChangeValueWorkLoad: (e: any) => void;
 
   setIsOptionTimeWorkLoad: (v: boolean) => void;
@@ -56,44 +56,75 @@ export function buildListFieldAssign(p: BuildListFieldAssignParams): IFieldCusto
 
     formatOptionLabelManager,
     formatOptionLabelEmployee,
+
+    handleChangeValueManager,
     handleChangeValueEmployee,
-    loadedOptionEmployee,
     handleChangeValueWorkLoad,
 
     setIsOptionTimeWorkLoad,
     setDataTimeWorkLoad,
   } = p;
 
+  const loadProjectAssignees = async (_search: any, _loadedOptions: any, { page }: { page: number }) => {
+    if (!dataWorkProject?.value) return { options: [], hasMore: false };
+
+    const response = await WorkOrderService.projectEmployeeAssignees({
+      workProjectId: dataWorkProject.value,
+    });
+
+    if (response?.code === 0) {
+      const raw = response?.result;
+      const list = Array.isArray(raw) ? raw : raw?.items ?? [];
+      const hasMore = !!raw?.loadMoreAble;
+
+      return {
+        options: list.map((item: any) => ({
+          value: item.id,
+          label: item.name,
+          avatar: item.avatar,
+        })),
+        hasMore,
+        additional: { page: page + 1 },
+      };
+    }
+
+    return { options: [], hasMore: false };
+  };
+
   return [
-    {
-      name: "managerId",
-      type: "custom",
-      snippet: (
-        <SelectCustom
-          id="managerId"
-          name="managerId"
-          label="Người giao việc"
-          options={dataManager ? [dataManager] : []}
-          fill={true}
-          required={true}
-          readOnly={true}
-          value={dataManager?.value ?? ""}
-          isFormatOptionLabel={true}
-          placeholder="Chọn người giao việc"
-          formatOptionLabel={formatOptionLabelManager}
-        />
-      ),
-    },
+    // {
+    //   name: "managerId",
+    //   type: "custom",
+    //   snippet: (
+    //     <SelectCustom
+    //       key={(dataWorkProject?.value ? dataWorkProject.value : "null") + "_" + (dataManager?.value ?? "null")}
+    //       id="managerId"
+    //       name="managerId"
+    //       label="Người giao việc"
+    //       options={[]}
+    //       fill={true}
+    //       required={true}
+    //       disabled={!dataWorkProject}
+    //       value={dataManager}
+    //       onChange={(e) => handleChangeValueManager(e)}
+    //       isAsyncPaginate={true}
+    //       isFormatOptionLabel={true}
+    //       placeholder="Chọn người giao việc"
+    //       additional={{ page: 1 }}
+    //       loadOptionsPaginate={loadProjectAssignees}
+    //       formatOptionLabel={formatOptionLabelManager}
+    //       error={!dataWorkProject}
+    //       message="Vui lòng chọn dự án trước khi chọn người giao việc"
+    //     />
+    //   ),
+    // }
+    // ,
     {
       name: "employeeId",
       type: "custom",
       snippet: (
         <SelectCustom
-          key={
-            (dataWorkProject?.value ? dataWorkProject.value : "null") +
-            "_" +
-            (dataEmployee?.value ? dataEmployee.value : "null")
-          }
+          key={(dataWorkProject?.value ? dataWorkProject.value : "null") + "_" + (dataEmployee?.value ? dataEmployee.value : "null")}
           id="employeeId"
           name="employeeId"
           label="Người nhận việc"
@@ -107,7 +138,7 @@ export function buildListFieldAssign(p: BuildListFieldAssignParams): IFieldCusto
           isFormatOptionLabel={true}
           placeholder="Chọn người nhận việc"
           additional={{ page: 1 }}
-          loadOptionsPaginate={loadedOptionEmployee}
+          loadOptionsPaginate={loadProjectAssignees}
           formatOptionLabel={formatOptionLabelEmployee}
           error={!dataWorkProject}
           message="Vui lòng chọn dự án trước khi chọn người nhận việc"
@@ -139,10 +170,7 @@ export function buildListFieldAssign(p: BuildListFieldAssignParams): IFieldCusto
           />
 
           <div className="option__time--workload" ref={refContainerTimeWorkLoad}>
-            <div
-              className="selected__item--workload"
-              onClick={() => setIsOptionTimeWorkLoad(!isOptionTimeWorkLoad)}
-            >
+            <div className="selected__item--workload" onClick={() => setIsOptionTimeWorkLoad(!isOptionTimeWorkLoad)}>
               {dataTimeWorkLoad?.label}
               <Icon name="ChevronDown" />
             </div>
@@ -152,9 +180,7 @@ export function buildListFieldAssign(p: BuildListFieldAssignParams): IFieldCusto
                 {listOptionTimeWorkLoad.map((item, idx) => (
                   <li
                     key={idx}
-                    className={`item--workload ${
-                      dataTimeWorkLoad?.value === item.value ? "active__item--workload" : ""
-                    }`}
+                    className={`item--workload ${dataTimeWorkLoad?.value === item.value ? "active__item--workload" : ""}`}
                     onClick={(e) => {
                       e.preventDefault();
                       setDataTimeWorkLoad(item);

@@ -171,7 +171,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           icon: <Icon name="Calendar" />,
           iconPosition: "left",
           placeholder: "Nhập ngày mở khoản vay",
-          isMinDate: true,
+          isMaxDate: true,
           isWarning: isOpeningAfterToday || isOpeningNotBeforeDue,
           messageWarning: isOpeningAfterToday
             ? "Không được lớn hơn ngày hiện tại"
