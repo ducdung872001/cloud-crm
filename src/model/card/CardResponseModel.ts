@@ -7,4 +7,7 @@ export interface ICardResponse {
   payoutMax: number | string;
   payoutMin: number | string;
   bsnId: number;
+  type: number | string;
+  price: number | string;
+  ranking: number;
 }

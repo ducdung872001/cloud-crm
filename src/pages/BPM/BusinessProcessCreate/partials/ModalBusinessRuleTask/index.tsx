@@ -2654,7 +2654,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
                   // />
                   <TableDecisionRule
                     processId={processId}
-                    childProcessId={processId}
+                    childProcessId={childProcessId}
                     dataConfigAdvance={dataConfigAdvance}
                     setDataConfigAdvanceEdit={setDataConfigAdvanceEdit}
                     setHaveError={setHaveError}
