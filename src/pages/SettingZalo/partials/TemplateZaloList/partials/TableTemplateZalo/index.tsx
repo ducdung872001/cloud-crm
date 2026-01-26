@@ -30,7 +30,7 @@ export default function TableTemplateZalo(props: ITableTemplateZaloProps) {
   return (
     <Fragment>
       <SearchBox
-        name="Tên mẫu"
+        name="Tiêu đề tin"
         params={params}
         isFilter={true}
         isSaveSearch={true}

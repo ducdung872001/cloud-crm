@@ -10,7 +10,9 @@ import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 
+
 import "./AddQuoteForm.scss";
+import { validateMaxLength } from "reborn-validation";
 
 export default function AddQuoteForm({ onShow, onHide, data }) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -35,6 +37,8 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
       rules: "required",
     },
   ];
+  
+  
 
   const listField: IFieldCustomize[] = [
     {
@@ -43,6 +47,8 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
       type: "text",
       fill: true,
       required: true,
+      placeholder: "Nhập tên mẫu báo giá",
+      maxLength: 300,
     },
     {
       label: "Thứ tự hiển thị",
@@ -56,7 +62,7 @@ export default function AddQuoteForm({ onShow, onHide, data }) {
       type: "textarea",
       fill: true,
     },
-  ];
+  ]
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 

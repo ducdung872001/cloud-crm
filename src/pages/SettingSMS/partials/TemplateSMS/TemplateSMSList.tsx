@@ -17,7 +17,8 @@ import { showToast } from "utils/common";
 import { getPermissions } from "utils/common";
 import TemplateSMSService from "services/TemplateSMSService";
 import AddTemplateSMSModal from "./partials/AddTemplateSMSModal";
-import { getPageOffset } from 'reborn-util';
+import { getPageOffset, trimContent} from 'reborn-util';
+import Tippy from "@tippyjs/react";
 
 import "./TemplateSMSList.scss";
 
@@ -138,8 +139,12 @@ export default function TemplateSMSList(props: ITemplateSMSListProps) {
   const dataMappingArray = (item: ITemplateSMSResponse, index: number) => [
     getPageOffset(params) + index + 1,
     item.brandname,
-    item.content,
-    item.title,
+    <Tippy key={item.id} content={item.content} delay={[120, 100]} placement="bottom" animation="scale">
+      <p style={{ cursor: "pointer" }}>{trimContent(item.content, 120, true, true)}</p>
+    </Tippy>,
+     <Tippy key={item.id} content={item.title} delay={[120, 100]} placement="bottom" animation="scale">
+      <p style={{ cursor: "pointer" }}>{trimContent(item.title, 120, true, true)}</p>
+    </Tippy>,
     item.categoryName
   ];
 

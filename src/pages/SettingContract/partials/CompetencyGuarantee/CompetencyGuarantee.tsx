@@ -276,7 +276,7 @@ export default function CompetencyGuaranteeList(props: any) {
       </div>
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên danh mục"
+          name="Danh mục nghiệp vụ bảo lãnh"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -284,7 +284,7 @@ export default function CompetencyGuaranteeList(props: any) {
         />
         {!isLoading && listCompetencyGuarantee && listCompetencyGuarantee.length > 0 ? (
           <BoxTable
-            name="Tài liệu"
+            name="Nghiệp vụ bảo lãnh"
             titles={titles}
             items={listCompetencyGuarantee}
             isPagination={true}

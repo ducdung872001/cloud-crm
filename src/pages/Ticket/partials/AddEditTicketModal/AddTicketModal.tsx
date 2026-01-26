@@ -17,7 +17,7 @@ import FileService from "services/FileService";
 import TicketService from "services/TicketService";
 import TicketCategoryService from "services/TicketCategoryService";
 import CustomerService from "services/CustomerService";
-import { EMAIL_REGEX } from "utils/constant";
+import { EMAIL_REGEX, PHONE_REGEX, PHONE_REGEX_NEW } from "utils/constant";
 import { UserContext, ContextType } from "contexts/userContext";
 import "./AddTicketModal.scss";
 
@@ -33,6 +33,8 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
+  const [isShowPhone, setIsShowPhone] = useState<boolean>(false);
+  const [loadingPhone, setLoadingPhone] = useState(false);
 
   const [listSupport, setListSupport] = useState<IOption[]>(null);
   const [isLoadingSupport, setIsLoadingSupport] = useState<boolean>(false);
@@ -202,6 +204,67 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
 
     setIsLoadingCustomer(false);
   };
+  const [valueShowPhone, setValueShowPhone] = useState<string>("");
+
+  const handShowPhone = async (id: number) => {
+      if (!id) return;
+  
+      setLoadingPhone(true);
+      try {
+        const response = await CustomerService.viewPhone(id);
+        if (response.code == 0) {
+          const result = response.result;
+          setValueShowPhone(result);
+        } else if (response.code == 400) {
+          showToast("Bạn không có quyền xem số điện thoại !", "error");
+        } else {
+          showToast(response.message, "error");
+        }
+      } catch (error) {
+        showToast("Có lỗi xảy ra khi lấy số điện thoại. Vui lòng thử lại sau", "error");
+      } finally {
+        setLoadingPhone(false);
+      }
+  };
+
+  useEffect(() => {
+      if (isShowPhone) {
+        const customerId = formData?.values?.customerId || detailCustomer?.value || idCustomer || data?.customerId;
+        if (customerId) {
+          handShowPhone(customerId);
+        } else {
+          showToast("Vui lòng chọn khách hàng trước", "warning");
+          setIsShowPhone(false);
+        }
+      }
+    }, [isShowPhone, formData?.values?.customerId, detailCustomer?.value, idCustomer, data?.customerId]);
+  
+    useEffect(() => {
+      if (!isShowPhone) {
+        setValueShowPhone("");
+        if (detailCustomer?.phone) {
+          setFormData(prev => ({
+            ...prev,
+            values: {
+              ...prev.values,
+              customerPhone: detailCustomer.phone
+            }
+          }));
+        }
+      }
+    }, [isShowPhone, detailCustomer?.phone]);
+
+  useEffect(() => {
+    if (valueShowPhone) {
+      setFormData(prev => ({
+        ...prev,
+        values: {
+          ...prev.values,
+          customerPhone: valueShowPhone
+        }
+      }));
+    }
+  }, [valueShowPhone]);
 
   useEffect(() => {
     if ((idCustomer || data?.customerId) && onShow) {
@@ -209,7 +272,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
     }
   }, [idCustomer, onShow, data?.customerId]);
 
-  const listFieldVoteInfo: any[] = [
+  const listFieldVoteInfo: any[] = useMemo(() => [
     {
       label: "Danh mục hỗ trợ",
       name: "supportId",
@@ -253,12 +316,31 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       disabled: idCustomer ? true : false,
     },
     {
-      label: "Số điện thoại khách hàng",
-      name: "customerPhone",
-      type: "text",
-      fill: true,
-      required: true,
-      disabled: idCustomer ? true : false,
+    label: "Số điện thoại khách hàng",
+    name: "customerPhone",
+    type: "text",
+    fill: true,
+    required: true,
+    disabled: idCustomer ? true : false,
+    regex: new RegExp(PHONE_REGEX_NEW),
+    messageErrorRegex: "Số điện thoại không đúng định dạng",
+    icon: (formData?.values?.customerId || detailCustomer?.value || idCustomer || data?.customerId) ? (
+      <Icon
+        name={isShowPhone ? "Eye" : "EyeSlash"}
+        spin={loadingPhone}
+      />
+    ) : null,
+    iconPosition: "right",
+    iconClickEvent: (formData?.values?.customerId || detailCustomer?.value || idCustomer || data?.customerId) ? ((e) => {
+      e?.preventDefault?.();
+      e?.stopPropagation?.();
+      const customerId = formData?.values?.customerId || detailCustomer?.value || idCustomer || data?.customerId;
+      if (customerId) {
+        setIsShowPhone(!isShowPhone);
+      } else {
+        showToast("Vui lòng chọn khách hàng trước", "warning");
+      }
+    }) : undefined,
     },
     {
       label: "Email khách hàng",
@@ -304,7 +386,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       fill: true,
       required: true,
     },
-  ];
+  ], [listSupport, isLoadingSupport, detailCustomer, idCustomer, isLoadingCustomer, data?.customerId, formData?.values?.customerId, isShowPhone, loadingPhone, idCustomer, data?.customerId]);
 
   const listFieldDate: IFieldCustomize[] = useMemo(() => {
     const startDate = formData?.values?.startDate ? moment(formData.values.startDate) : null;

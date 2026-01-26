@@ -8,6 +8,10 @@ const prefixCs = "/cs";
 const prefixApplication = "/application";
 const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
+const prefixOperation = "https://reborn.vn/operation";
+const prefixNotification = "/notification";
+const prefixFinance = "https://reborn.vn/finance";
+const prefixWarehouse = "https://reborn.vn/warehouse";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -17,6 +21,34 @@ export const urlsApi = {
     list: prefixRebornVn + "/beautySalon/list",
     approve: prefixRebornVn + "/beautySalon/approve",
     delete: prefixRebornVn + "/beautySalon/delete",
+  },
+  businessRule: {
+    list: prefixBpm + "/businessRule/list",
+    update: prefixBpm + "/businessRule/update",
+    updateActive: prefixBpm + "/businessRule/updateActive",
+    detail: prefixBpm + "/businessRule/detail",
+    delete: prefixBpm + "/businessRule/delete",
+  },
+  businessRuleItem: {
+    list: prefixBpm + "/businessRuleItem/list",
+    update: prefixBpm + "/businessRuleItem/update",
+    updateActive: prefixBpm + "/businessRuleItem/updateActive",
+    detail: prefixBpm + "/businessRuleItem/detail",
+    delete: prefixBpm + "/businessRuleItem/delete",
+  },
+  decisionTableInput: {
+    list: prefixBpm + "/decisionTableInput/list",
+    update: prefixBpm + "/decisionTableInput/update",
+    updateActive: prefixBpm + "/decisionTableInput/updateActive",
+    detail: prefixBpm + "/decisionTableInput/detail",
+    delete: prefixBpm + "/decisionTableInput/delete",
+  },
+  decisionTableOutput: {
+    list: prefixBpm + "/decisionTableOutput/list",
+    update: prefixBpm + "/decisionTableOutput/update",
+    updateActive: prefixBpm + "/decisionTableOutput/updateActive",
+    detail: prefixBpm + "/decisionTableOutput/detail",
+    delete: prefixBpm + "/decisionTableOutput/delete",
   },
   user: {
     create: prefixAuthenticator + "/user/create",
@@ -31,6 +63,17 @@ export const urlsApi = {
     detailTimeLogin: prefixAdmin + "/userLogin/daily/list",
     list: prefixAuthenticator + "/user/list",
     delete: prefixAuthenticator + "/user/delete",
+    fcmDevice: prefixNotification + "/fcmDevice/update",
+  },
+  notificationHistory: {
+    list: prefixNotification + "/notificationHistory/list",
+    update: prefixNotification + "/notificationHistory/update",
+    detail: prefixNotification + "/notificationHistory/get",
+    delete: prefixNotification + "/notificationHistory/delete",
+
+    updateUnread: prefixNotification + "/notificationHistory/update/unread",
+    updateReadAll: prefixNotification + "/notificationHistory/update/readAll",
+    countUnread: prefixNotification + "/notificationHistory/count",
   },
 
   customer: {
@@ -222,100 +265,100 @@ export const urlsApi = {
 
   // Khu vực quản lý vận hành ---
   space: {
-    list: prefixAdmin + "/space/list",
-    update: prefixAdmin + "/space/update",
-    detail: prefixAdmin + "/space/get",
-    delete: prefixAdmin + "/space/delete",
+    list: prefixOperation + "/space/list",
+    update: prefixOperation + "/space/update",
+    detail: prefixOperation + "/space/get",
+    delete: prefixOperation + "/space/delete",
   },
   spaceType: {
-    list: prefixAdmin + "/spaceType/list",
-    update: prefixAdmin + "/spaceType/update",
-    detail: prefixAdmin + "/spaceType/get",
-    delete: prefixAdmin + "/spaceType/delete",
+    list: prefixOperation + "/spaceType/list",
+    update: prefixOperation + "/spaceType/update",
+    detail: prefixOperation + "/spaceType/get",
+    delete: prefixOperation + "/spaceType/delete",
   },
   spaceCustomer: {
-    list: prefixAdmin + "/spaceCustomer/list",
-    update: prefixAdmin + "/spaceCustomer/update",
-    detail: prefixAdmin + "/spaceCustomer/get",
-    delete: prefixAdmin + "/spaceCustomer/delete",
+    list: prefixOperation + "/spaceCustomer/list",
+    update: prefixOperation + "/spaceCustomer/update",
+    detail: prefixOperation + "/spaceCustomer/get",
+    delete: prefixOperation + "/spaceCustomer/delete",
   },
   ortherFee: {
-    list: prefixAdmin + "/otherFee/list",
-    update: prefixAdmin + "/otherFee/update",
-    detail: prefixAdmin + "/otherFee/get",
-    delete: prefixAdmin + "/otherFee/delete",
+    list: prefixOperation + "/otherFee/list",
+    update: prefixOperation + "/otherFee/update",
+    detail: prefixOperation + "/otherFee/get",
+    delete: prefixOperation + "/otherFee/delete",
   },
-  // utilityReading: {
-  //   list: prefixAdmin + "/utilityReading/list",
-  //   update: prefixAdmin + "/utilityReading/update",
-  //   detail: prefixAdmin + "/utilityReading/get",
-  //   delete: prefixAdmin + "/utilityReading/delete",
-  // },
+  utilityReading: {
+    list: prefixOperation + "/utilityReading/list",
+    update: prefixOperation + "/utilityReading/update",
+    detail: prefixOperation + "/utilityReading/get",
+    delete: prefixOperation + "/utilityReading/delete",
+  },
   managementFee: {
-    list: prefixAdmin + "/managementFee/list",
-    update: prefixAdmin + "/managementFee/update",
-    detail: prefixAdmin + "/managementFee/get",
-    delete: prefixAdmin + "/managementFee/delete",
+    list: prefixOperation + "/managementFee/list",
+    update: prefixOperation + "/managementFee/update",
+    detail: prefixOperation + "/managementFee/get",
+    delete: prefixOperation + "/managementFee/delete",
   },
   vehicleRegistration: {
-    list: prefixAdmin + "/vehicleRegistration/list",
-    update: prefixAdmin + "/vehicleRegistration/update",
-    detail: prefixAdmin + "/vehicleRegistration/get",
-    delete: prefixAdmin + "/vehicleRegistration/delete",
+    list: prefixOperation + "/vehicleRegistration/list",
+    update: prefixOperation + "/vehicleRegistration/update",
+    detail: prefixOperation + "/vehicleRegistration/get",
+    delete: prefixOperation + "/vehicleRegistration/delete",
   },
   vehicle: {
-    list: prefixAdmin + "/vehicle/list",
-    update: prefixAdmin + "/vehicle/update",
-    detail: prefixAdmin + "/vehicle/get",
-    delete: prefixAdmin + "/vehicle/delete",
+    list: prefixOperation + "/vehicle/list",
+    update: prefixOperation + "/vehicle/update",
+    detail: prefixOperation + "/vehicle/get",
+    delete: prefixOperation + "/vehicle/delete",
   },
   building: {
-    list: prefixAdmin + "/building/list",
-    update: prefixAdmin + "/building/update",
-    detail: prefixAdmin + "/building/get",
-    delete: prefixAdmin + "/building/delete",
+    list: prefixOperation + "/building/list",
+    update: prefixOperation + "/building/update",
+    detail: prefixOperation + "/building/get",
+    delete: prefixOperation + "/building/delete",
   },
   buildingFloor: {
-    list: prefixAdmin + "/buildingFloor/list",
-    update: prefixAdmin + "/buildingFloor/update",
-    detail: prefixAdmin + "/buildingFloor/get",
-    delete: prefixAdmin + "/buildingFloor/delete",
+    list: prefixOperation + "/buildingFloor/list",
+    update: prefixOperation + "/buildingFloor/update",
+    detail: prefixOperation + "/buildingFloor/get",
+    delete: prefixOperation + "/buildingFloor/delete",
   },
   operationProject: {
-    list: prefixAdmin + "/project/list",
-    update: prefixAdmin + "/project/update",
-    detail: prefixAdmin + "/project/get",
-    delete: prefixAdmin + "/project/delete",
+    list: prefixOperation + "/project/list",
+    update: prefixOperation + "/project/update",
+    detail: prefixOperation + "/project/get",
+    delete: prefixOperation + "/project/delete",
   },
   electricityMeter: {
-    list: prefixAdmin + "/electricMeter/list",
-    update: prefixAdmin + "/electricMeter/update",
-    detail: prefixAdmin + "/electricMeter/get",
-    delete: prefixAdmin + "/electricMeter/delete",
+    list: prefixOperation + "/electricMeter/list",
+    update: prefixOperation + "/electricMeter/update",
+    detail: prefixOperation + "/electricMeter/get",
+    delete: prefixOperation + "/electricMeter/delete",
   },
   electricityRate: {
-    list: prefixAdmin + "/electricityRate/list",
-    update: prefixAdmin + "/electricityRate/update",
-    detail: prefixAdmin + "/electricityRate/get",
-    delete: prefixAdmin + "/electricityRate/delete",
+    list: prefixOperation + "/electricityRate/list",
+    update: prefixOperation + "/electricityRate/update",
+    detail: prefixOperation + "/electricityRate/get",
+    delete: prefixOperation + "/electricityRate/delete",
   },
   waterRate: {
-    list: prefixAdmin + "/waterRate/list",
-    update: prefixAdmin + "/waterRate/update",
-    detail: prefixAdmin + "/waterRate/get",
-    delete: prefixAdmin + "/waterRate/delete",
+    list: prefixOperation + "/waterRate/list",
+    update: prefixOperation + "/waterRate/update",
+    detail: prefixOperation + "/waterRate/get",
+    delete: prefixOperation + "/waterRate/delete",
   },
   managementFeeRate: {
-    list: prefixAdmin + "/managementFeeRate/list",
-    update: prefixAdmin + "/managementFeeRate/update",
-    detail: prefixAdmin + "/managementFeeRate/get",
-    delete: prefixAdmin + "/managementFeeRate/delete",
+    list: prefixOperation + "/managementFeeRate/list",
+    update: prefixOperation + "/managementFeeRate/update",
+    detail: prefixOperation + "/managementFeeRate/get",
+    delete: prefixOperation + "/managementFeeRate/delete",
   },
   parkingFee: {
-    list: prefixAdmin + "/parkingFee/list",
-    update: prefixAdmin + "/parkingFee/update",
-    detail: prefixAdmin + "/parkingFee/get",
-    delete: prefixAdmin + "/parkingFee/delete",
+    list: prefixOperation + "/parkingFee/list",
+    update: prefixOperation + "/parkingFee/update",
+    detail: prefixOperation + "/parkingFee/get",
+    delete: prefixOperation + "/parkingFee/delete",
   },
   //--- Khu vực quản lý vận hành
 
@@ -384,9 +427,11 @@ export const urlsApi = {
   },
   boughtCard: {
     list: prefixAdmin + "/boughtCardService/list",
+    listLoyaltyPoint: prefixAdmin + "/loyaltyPointLedger/list",
     add: prefixAdmin + "/boughtCardService/update",
     delete: prefixAdmin + "/boughtCardService/delete",
     update: prefixAdmin + "/boughtCardService/update/cardNumber",
+    updateCustomerCard: prefixAdmin + "/boughtCard/update",
     listBoughtCardByCustomerId: prefixAdmin + "/boughtCardService/getBoughtCardServiceByCustomerId",
   },
   product: {
@@ -422,16 +467,16 @@ export const urlsApi = {
   },
 
   productImport: {
-    update: prefixAdmin + "/product_import/update",
-    detail: prefixAdmin + "/product_import/detail",
-    delete: prefixAdmin + "/product_import/delete",
+    update: prefixWarehouse + "/product_import/update",
+    detail: prefixWarehouse + "/product_import/detail",
+    delete: prefixWarehouse + "/product_import/delete",
   },
 
   inventory: {
-    list: prefixAdmin + "/inventory/list",
-    update: prefixAdmin + "/inventory/update",
-    delete: prefixAdmin + "/inventory/delete",
-    import: prefixAdmin + "/inventory/import",
+    list: prefixWarehouse + "/inventory/list",
+    update: prefixWarehouse + "/inventory/update",
+    delete: prefixWarehouse + "/inventory/delete",
+    import: prefixWarehouse + "/inventory/import",
   },
   pom: {
     //định nghĩa pom cho sản phẩm, dịch vụ
@@ -619,11 +664,11 @@ export const urlsApi = {
   },
   //khu vực trải nghiệm khách hàng
   warehouse: {
-    list: prefixAdmin + "/warehouse/list",
+    list: prefixWarehouse + "/warehouse/list",
     //API lấy ra danh sách sản phẩm trong kho
-    productList: prefixAdmin + "/warehouse/product/list",
+    productList: prefixWarehouse + "/warehouse/product/list",
     //API lấy ra thông tin ngày hết hạn / sản xuất dựa trên số lô của sản phẩm
-    infoExpiryDateProductionDate: prefixAdmin + "/warehouse/get_mfg_expired_date",
+    infoExpiryDateProductionDate: prefixWarehouse + "/warehouse/get_mfg_expired_date",
   },
   earnings: {
     filter: prefixAdmin + "/earnings/admin/list",
@@ -1703,6 +1748,7 @@ export const urlsApi = {
     list: prefixAdmin + "/workOrder/list",
     groups: prefixAdmin + "/workOrder/groups",
     update: prefixAdmin + "/workOrder/update",
+    updateAndInit: prefixAdmin + "/workOrder/save-and-init-process",
     updateInitProcess: prefixAdmin + "/workOrder/update-init-process",
     updateEmployee: prefixAdmin + "/workOrder/update/employee",
     updatePause: prefixAdmin + "/workOrder/update/pause",
@@ -2019,19 +2065,19 @@ export const urlsApi = {
   },
   // phiếu điều chỉnh kho
   adjustmentSlip: {
-    temp: prefixAdmin + "/stockAdjust/temp",
-    createAdjSlip: prefixAdmin + "/stockAdjust/create",
-    addUpdatePro: prefixAdmin + "/stockAdjustDetail/update",
+    temp: prefixWarehouse + "/stockAdjust/temp",
+    createAdjSlip: prefixWarehouse + "/stockAdjust/create",
+    addUpdatePro: prefixWarehouse + "/stockAdjustDetail/update",
     // duyệt phiếu điều chỉnh kho
-    approved: prefixAdmin + "/stockAdjust/approved",
+    approved: prefixWarehouse + "/stockAdjust/approved",
     // từ chối điều chỉnh kho
-    cancel: prefixAdmin + "/stockAdjust/cancel",
-    view: prefixAdmin + "/stockAdjust/view",
-    list: prefixAdmin + "/stockAdjust/list",
+    cancel: prefixWarehouse + "/stockAdjust/cancel",
+    view: prefixWarehouse + "/stockAdjust/view",
+    list: prefixWarehouse + "/stockAdjust/list",
     // lấy danh sách sản phẩm có trong kho
-    warehouse: prefixAdmin + "/warehouse/list",
+    warehouse: prefixWarehouse + "/warehouse/list",
     // xóa đi 1 sản phẩm
-    deletePro: prefixAdmin + "/stockAdjustDetail/delete",
+    deletePro: prefixWarehouse + "/stockAdjustDetail/delete",
   },
   kpiDatasource: {
     list: prefixAdmin + "/kpiDatasource/list",
@@ -2958,52 +3004,52 @@ export const urlsApi = {
 
   //Tài chính ngân hàng
   netLoan: {
-    lst: prefixAdmin + "/netLoan/list",
-    update: prefixAdmin + "/netLoan/update",
-    get: prefixAdmin + "/netLoan/get",
-    delete: prefixAdmin + "/netLoan/delete",
+    lst: prefixFinance + "/netLoan/list",
+    update: prefixFinance + "/netLoan/update",
+    get: prefixFinance + "/netLoan/get",
+    delete: prefixFinance + "/netLoan/delete",
   },
   netDeposit: {
-    lst: prefixAdmin + "/netDeposit/list",
-    update: prefixAdmin + "/netDeposit/update",
-    get: prefixAdmin + "/netDeposit/get",
-    delete: prefixAdmin + "/netDeposit/delete",
+    lst: prefixFinance + "/netDeposit/list",
+    update: prefixFinance + "/netDeposit/update",
+    get: prefixFinance + "/netDeposit/get",
+    delete: prefixFinance + "/netDeposit/delete",
   },
   netServiceCharge: {
-    lst: prefixAdmin + "/netServiceCharge/list",
-    update: prefixAdmin + "/netServiceCharge/update",
-    get: prefixAdmin + "/netServiceCharge/get",
-    delete: prefixAdmin + "/netServiceCharge/delete",
+    lst: prefixFinance + "/netServiceCharge/list",
+    update: prefixFinance + "/netServiceCharge/update",
+    get: prefixFinance + "/netServiceCharge/get",
+    delete: prefixFinance + "/netServiceCharge/delete",
   },
   productDemand: {
-    lst: prefixAdmin + "/productDemand/list",
-    update: prefixAdmin + "/productDemand/update",
-    get: prefixAdmin + "/productDemand/get",
-    delete: prefixAdmin + "/productDemand/delete",
+    lst: prefixFinance + "/productDemand/list",
+    update: prefixFinance + "/productDemand/update",
+    get: prefixFinance + "/productDemand/get",
+    delete: prefixFinance + "/productDemand/delete",
   },
   briefFinancialReport: {
-    lst: prefixAdmin + "/briefFinancialReport/list",
-    update: prefixAdmin + "/briefFinancialReport/update",
-    get: prefixAdmin + "/briefFinancialReport/get",
-    delete: prefixAdmin + "/briefFinancialReport/delete",
+    lst: prefixFinance + "/briefFinancialReport/list",
+    update: prefixFinance + "/briefFinancialReport/update",
+    get: prefixFinance + "/briefFinancialReport/get",
+    delete: prefixFinance + "/briefFinancialReport/delete",
   },
   fullFinancialReport: {
-    lst: prefixAdmin + "/fullFinancialReport/list",
-    update: prefixAdmin + "/fullFinancialReport/update",
-    get: prefixAdmin + "/fullFinancialReport/get",
-    delete: prefixAdmin + "/fullFinancialReport/delete",
+    lst: prefixFinance + "/fullFinancialReport/list",
+    update: prefixFinance + "/fullFinancialReport/update",
+    get: prefixFinance + "/fullFinancialReport/get",
+    delete: prefixFinance + "/fullFinancialReport/delete",
   },
   loanInformation: {
-    lst: prefixAdmin + "/loanInformation/list",
-    update: prefixAdmin + "/loanInformation/update",
-    get: prefixAdmin + "/loanInformation/get",
-    delete: prefixAdmin + "/loanInformation/delete",
+    lst: prefixFinance + "/loanInformation/list",
+    update: prefixFinance + "/loanInformation/update",
+    get: prefixFinance + "/loanInformation/get",
+    delete: prefixFinance + "/loanInformation/delete",
   },
   transactionInformation: {
-    lst: prefixAdmin + "/transactionInformation/list",
-    update: prefixAdmin + "/transactionInformation/update",
-    get: prefixAdmin + "/transactionInformation/get",
-    delete: prefixAdmin + "/transactionInformation/delete",
+    lst: prefixFinance + "/transactionInformation/list",
+    update: prefixFinance + "/transactionInformation/update",
+    get: prefixFinance + "/transactionInformation/get",
+    delete: prefixFinance + "/transactionInformation/delete",
   },
 
   application: {
@@ -3276,6 +3322,9 @@ export const urls = {
   extension_list: "/extension_list",
   //quản lý lĩnh vực
   field_management: "/field_management",
+  //Loại luật nghiệp vụ
+  business_rule: "/bpm/business_rule",
+  business_rule_config: "/bpm/business_rule_config/:id",
 };
 
 export default urls;

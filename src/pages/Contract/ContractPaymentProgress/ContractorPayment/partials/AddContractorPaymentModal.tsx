@@ -11,6 +11,7 @@ import { isDifferenceObj } from "reborn-util";
 import "./AddContractorPaymentModal.scss";
 import Icon from "components/icon";
 import ContractorPaymentService from "services/ContractorPaymentService";
+import moment from "moment";
 
 export default function AddContractorPaymentModal(props: any) {
   const { onShow, onHide, data, contractId } = props;
@@ -140,6 +141,7 @@ export default function AddContractorPaymentModal(props: any) {
 
     const body = {
       ...(formData.values as any),
+      paymentDate: moment(formData.values.paymentDate).format('YYYY-MM-DDTHH:mm:ss'),
       // ...(data ? { id: data.id } : {}),
     };
 

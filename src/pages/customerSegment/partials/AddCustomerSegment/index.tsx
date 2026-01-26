@@ -1575,6 +1575,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
     setShowDialog(true);
   };
 
+
   return (
     <div className="add__customer--segment">
       <form className="form__filter--advanced-group" onSubmit={(e) => onSubmit(e)}>
@@ -1599,6 +1600,8 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
               disabled={disableFieldCommom}
               placeholder="Nhập tên phân khúc"
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              maxLength={100}
+
             />
           </div>
           <div className="form-group">

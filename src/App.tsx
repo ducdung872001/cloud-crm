@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "./contexts/userContext";
@@ -23,7 +23,7 @@ import { routes } from "./configs/routes";
 import { ToastContainer } from "react-toastify";
 import LayoutPage from "pages/layout";
 import moment from "moment";
-import { fetchToken, onMessageListener } from "configs/firebaseConfig";
+// import { fetchToken, onMessageListener } from "configs/firebaseConfig";
 import { getAppSSOLink, showToast } from "utils/common";
 import EmployeeService from "services/EmployeeService";
 import { getDomain } from "reborn-util";
@@ -39,6 +39,12 @@ import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import CollectWarranty from "pages/Warranty/partials/CollectWarranty";
 import GridFormNew from "pages/BPM/GridForm";
+import { onMessage } from "firebase/messaging";
+import { messaging, requestPermission } from "firebase-config";
+import NotificationService from "services/NotificationService";
+import { useSTWebRTC } from "webrtc/useSTWebRTC";
+import WebRtcCallIncomeModal from "pages/CallCenter/partials/WebRtcCallIncomeModal";
+import ringtone from "assets/sounds/call_in_sound.wav";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -56,6 +62,7 @@ export default function App() {
   const [isShowFeedback, setIsShowFeedback] = useState<boolean>(false);
   const [isShowChatBot, setIsShowChatBot] = useState<boolean>(false);
   const [dataBeauty, setDataBeauty] = useState(null);
+  const [countUnread, setCountUnread] = useState(0);
 
   fetchConfig();
 
@@ -139,20 +146,20 @@ export default function App() {
     }
   }, [cookies.user, location]);
 
-  useEffect(() => {
-    fetchToken().then((token) => {
-      //cookies.user chỉ để kiểm tra người dùng đăng nhập hay chưa
-      if (cookies.user) {
-        //Gọi API Lưu thông tin token xuống dưới server
-      }
+  // useEffect(() => {
+  //   fetchToken().then((token) => {
+  //     //cookies.user chỉ để kiểm tra người dùng đăng nhập hay chưa
+  //     if (cookies.user) {
+  //       //Gọi API Lưu thông tin token xuống dưới server
+  //     }
 
-      onMessageListener()
-        .then((payload: any) => {
-          //Làm gì đó với dữ liệu nhận được
-        })
-        .catch((err) => console.log("failed: ", err));
-    });
-  }, []);
+  //     onMessageListener()
+  //       .then((payload: any) => {
+  //         //Làm gì đó với dữ liệu nhận được
+  //       })
+  //       .catch((err) => console.log("failed: ", err));
+  //   });
+  // }, []);
 
   const [dataExpired, setDataExpired] = useState({
     numDay: null,
@@ -254,6 +261,113 @@ export default function App() {
     }
   }, [valueLanguage]);
 
+  const getCountUnread = async () => {
+    const response = await NotificationService.countUnread();
+    if (response.code === 0) {
+      const result = response.result;
+      setCountUnread(result);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+  };
+
+  /**
+   * Chỉ request khi tồn tại cookies.token
+   */
+  useEffect(() => {
+    requestPermission(cookies.token);
+
+    onMessage(messaging, (payload) => {
+      console.log("Thông báo nhận được:", payload);
+      // alert(`🔥 Notification: ${payload.notification?.title}`);
+      getCountUnread();
+    });
+  }, []);
+
+  // Khởi tạo tổng đài
+  const [showModalCallIncome, setShowModalCallIncome] = useState<boolean>(false);
+  const pbxCustomerCode = "d9cf985baac44238b3d930ae569d9f0912";
+  const employeeSip470 = "470"; // Test với tài khoản Nguyễn Ngọc Trung trên rebornjsc sdt 0962829352 có id là 81
+  const employeeSip471 = "471"; // Test với tài khoản Hoàng Văn Lợi trên rebornjsc sdt 0862999272 có id là 703
+
+  const { callState, incomingNumber, makeCall, answer, hangup, transfer } = useSTWebRTC({
+    extension: parseInt(dataInfoEmployee?.id) == 81 ? employeeSip470 : parseInt(dataInfoEmployee?.id) == 703 ? employeeSip471 : null, //test tạm thời, sau này lấy theo dataInfoEmployee?.sip
+    pbxCustomerCode: pbxCustomerCode,
+  });
+
+  const RINGTONE_SRC = ringtone;
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const unlockedRef = useRef<boolean>(false);
+
+  // Khởi tạo audio và cố gắng unlock bằng user gesture (click/touch)
+  useEffect(() => {
+    const audio = new Audio(RINGTONE_SRC);
+    audio.loop = true;
+    audio.preload = "auto";
+    audioRef.current = audio;
+
+    const tryUnlock = async () => {
+      if (unlockedRef.current) return;
+      try {
+        // Thử play rồi pause ngay để unlock audio trên 1 số trình duyệt khi có gesture
+        await audioRef.current?.play();
+        audioRef.current?.pause();
+        audioRef.current!.currentTime = 0;
+        unlockedRef.current = true;
+        // không cần thông báo
+      } catch (err) {
+        // vẫn bị chặn
+      } finally {
+        // chỉ cần thử 1 lần, gỡ listener
+        document.removeEventListener("click", tryUnlock, true);
+        document.removeEventListener("touchstart", tryUnlock, true);
+      }
+    };
+
+    document.addEventListener("click", tryUnlock, true);
+    document.addEventListener("touchstart", tryUnlock, true);
+
+    return () => {
+      try {
+        audioRef.current?.pause();
+        audioRef.current = null;
+      } catch (e) {}
+      document.removeEventListener("click", tryUnlock, true);
+      document.removeEventListener("touchstart", tryUnlock, true);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (callState == "incoming") {
+      setShowModalCallIncome(true);
+
+      if (!audio) return;
+
+      (async () => {
+        try {
+          await audio.play();
+          // Nếu play thành công, mark unlocked
+          unlockedRef.current = true;
+        } catch (err) {
+          // Nếu bị chặn bởi autoplay policy, thông báo cho user bấm vào trang để unlock
+          console.warn("Ringtone play blocked by browser autoplay policy:", err);
+          showToast("Trình duyệt chặn phát âm thanh tự động. Vui lòng click/đụng vào trang để bật chuông.", "warning");
+        }
+      })();
+    } else {
+      try {
+        if (!audio.paused) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, [callState]);
+
   return (
     <UserContext.Provider
       value={{
@@ -277,6 +391,12 @@ export default function App() {
         setShowModalPackage: setShowModalPackage,
         lastShowModalPayment: lastShowModalPayment,
         setLastShowModalPayment: setLastShowModalPayment,
+        callState: callState,
+        incomingNumber: incomingNumber,
+        makeCall: makeCall,
+        answer: answer,
+        hangup: hangup,
+        transfer: transfer,
       }}
     >
       <MsalProvider instance={msalInstance}>
@@ -305,8 +425,19 @@ export default function App() {
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />
+        <WebRtcCallIncomeModal
+          // onShow={true}
+          onShow={showModalCallIncome}
+          makeCall={makeCall}
+          hangup={hangup}
+          answer={answer}
+          transfer={transfer}
+          callState={callState}
+          // callState={"oncall"}
+          incomingNumber={incomingNumber}
+          onHide={() => setShowModalCallIncome(false)}
+        />
       </MsalProvider>
     </UserContext.Provider>
   );
 }
-                                                                                                                                                                                                                                                                                                     

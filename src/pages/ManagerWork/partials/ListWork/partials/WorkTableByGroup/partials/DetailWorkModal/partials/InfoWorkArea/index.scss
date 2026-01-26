@@ -12,16 +12,19 @@
     width: 100%;
 
     .title-basic {
-      font-size: 1.7rem;
-      font-weight: 500;
-      color: #10519f;
-      margin-bottom: 1.2rem;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #061e3b;
+      margin-bottom: 3rem;
     }
 
     .info__basic--item {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 2rem 3rem;
+      border: 1px dashed var(--extra-color-20);
+      padding: 2rem;
+      border-radius: 0.4rem;
 
       .item {
         display: flex;
@@ -74,46 +77,6 @@
               font-size: 3rem;
               font-weight: 600;
             }
-          }
-        }
-      }
-
-      .status-work {
-        .show-status {
-          .__unfulfilled,
-          .__success,
-          .__processing,
-          .__cancelled,
-          .__pause,
-          .__processing--waring {
-            color: var(--white-color);
-            padding: 0.2rem 0.6rem;
-            border-radius: 0.5rem;
-            font-size: 1.3rem;
-          }
-
-          .__unfulfilled {
-            background-color: var(--extra-color-50);
-          }
-
-          .__success {
-            background-color: var(--success-color);
-          }
-
-          .__processing {
-            background-color: var(--primary-color);
-          }
-
-          .__processing--waring {
-            background-color: var(--warning-color);
-          }
-
-          .__cancelled {
-            background-color: var(--error-color);
-          }
-
-          .__pause {
-            background-color: var(--warning-darker-color);
           }
         }
       }

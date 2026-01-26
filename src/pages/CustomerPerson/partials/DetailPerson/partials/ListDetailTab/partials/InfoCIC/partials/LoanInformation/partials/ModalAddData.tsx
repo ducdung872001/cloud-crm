@@ -18,12 +18,12 @@ import "./ModalAddData.scss";
 export default function ModalAddData({ onShow, onHide, dataProps, customerId }) {
   const focusedElement = useActiveElement();
 
-  const [data, setData] = useState(null);  
+  const [data, setData] = useState(null);
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<IContentDialog>(null); 
-  
+  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+
   useEffect(() => {
     if (onShow) {
       setData(dataProps ?? null);
@@ -34,27 +34,27 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
 
   const values = useMemo(
     () =>
-      ({
-        contractNo: data?.contractNo ?? "",
-        creditLimit: data?.creditLimit ?? "",
-        creditRating: data?.creditRating ?? "",
-        openingDate: data?.openingDate ?? "",
-        dateDue: data?.dateDue ?? "",
-        loan: data?.loan ?? "",
-        currency: data?.currency ?? "",
-        exchangeRate: data?.exchangeRate ?? "",
-        interestRate: data?.interestRate ?? "",
-        loanType: data?.loanType ?? "",
-        status: data?.status ?? "",
-        paymentHistory: data?.paymentHistory ?? "",
-        collateral: data?.collateral ?? "",
-        collateralAsset: data?.collateralAsset ?? "",
-        groupDebt: data?.groupDebt ?? "",
-        badDebtDate: data?.badDebtDate ?? "",
-        badDebtAmount: data?.badDebtAmount ?? "",
-        badDebtType: data?.badDebtType ?? "",
-        customerId: data?.customerId ?? "",
-      } as any),
+    ({
+      contractNo: data?.contractNo ?? "",
+      creditLimit: data?.creditLimit ?? "",
+      creditRating: data?.creditRating ?? "",
+      openingDate: data?.openingDate ?? "",
+      dateDue: data?.dateDue ?? "",
+      loan: data?.loan ?? "",
+      currency: data?.currency ?? "",
+      exchangeRate: data?.exchangeRate ?? "",
+      interestRate: data?.interestRate ?? "",
+      loanType: data?.loanType ?? "",
+      status: data?.status ?? "",
+      paymentHistory: data?.paymentHistory ?? "",
+      collateral: data?.collateral ?? "",
+      collateralAsset: data?.collateralAsset ?? "",
+      groupDebt: data?.groupDebt ?? "",
+      badDebtDate: data?.badDebtDate ?? "",
+      badDebtAmount: data?.badDebtAmount ?? "",
+      badDebtType: data?.badDebtType ?? "",
+      customerId: data?.customerId ?? "",
+    } as any),
     [onShow, data]
   );
 
@@ -62,7 +62,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     {
       name: "contractNo",
       rules: "required",
-    },    
+    },
   ];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
@@ -74,8 +74,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     return () => {
       setIsSubmit(false);
     };
-  }, [values]); 
-  
+  }, [values]);
+
   // Logic validate thời gian - dùng useMemo để tối ưu
   const openingMoment = useMemo(() => moment(formData.values.openingDate), [formData.values.openingDate]);
   const dueMoment = useMemo(() => moment(formData.values.dateDue), [formData.values.dateDue]);
@@ -171,13 +171,13 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           icon: <Icon name="Calendar" />,
           iconPosition: "left",
           placeholder: "Nhập ngày mở khoản vay",
-          isMinDate: true,
+          isMaxDate: true,
           isWarning: isOpeningAfterToday || isOpeningNotBeforeDue,
           messageWarning: isOpeningAfterToday
             ? "Không được lớn hơn ngày hiện tại"
             : isOpeningNotBeforeDue
-            ? "Phải trước ngày đáo hạn"
-            : "",
+              ? "Phải trước ngày đáo hạn"
+              : "",
         },
         {
           label: "Ngày đáo hạn",
@@ -192,8 +192,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           messageWarning: isOpeningNotBeforeDue
             ? "Phải sau ngày mở khoản vay"
             : isDueNotBeforeBadDebt
-            ? "Phải trước ngày phát sinh nợ xấu"
-            : "",
+              ? "Phải trước ngày phát sinh nợ xấu"
+              : "",
         },
         {
           label: "Số tiền vay",
@@ -241,7 +241,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
             {
               value: "4",
               label: "Vay thế chấp",
-            },            
+            },
           ],
         },
         {
@@ -343,8 +343,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
       return;
-    }   
-    
+    }
+
     // Kiểm tra lại logic thời gian trước khi gửi (phòng thủ thêm lần nữa)
     if (isOpeningAfterToday || isOpeningNotBeforeDue || isDueNotBeforeBadDebt) {
       showToast("Vui lòng kiểm tra lại các trường ngày tháng", "warning");
@@ -354,18 +354,18 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     setIsSubmit(true);
 
     const body: any = {
-      ...(data ? { id: data?.id } : {}),
+      ...(dataProps ? { id: dataProps?.id } : {}),
       ...(formData.values as any),
-      openingDate: moment(formData.values.openingDate).format("YYYY-MM-DD HH:mm:ss"),
-      dateDue: moment(formData.values.dateDue).format("YYYY-MM-DD HH:mm:ss"),
-      badDebtDate: moment(formData.values.badDebtDate).format("YYYY-MM-DD HH:mm:ss"),
+      openingDate: moment(formData.values.openingDate).format("YYYY-MM-DD[T]HH:mm:ss"),
+      dateDue: moment(formData.values.dateDue).format("YYYY-MM-DD[T]HH:mm:ss"),
+      badDebtDate: moment(formData.values.badDebtDate).format("YYYY-MM-DD[T]HH:mm:ss"),
       customerId
     };
 
     const response = await LoanInformationService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} khoản vay tại LPBank thành công`, "success");
+      showToast(`${dataProps ? "Cập nhật" : "Thêm mới"} khoản vay tại LPBank thành công`, "success");
       setData(null);
       setFormData({ values: {} });
       onHide(true);
@@ -377,7 +377,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
   };
 
   const handleClearForm = (acc) => {
-    onHide(acc);    
+    onHide(acc);
     setData(null);
   };
 
@@ -418,7 +418,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       className: "dialog-cancel",
       isCentered: true,
       isLoading: false,
-      title: <Fragment>{`Hủy bỏ thao tác ${data ? "chỉnh sửa" : "thêm mới"}`}</Fragment>,
+      title: <Fragment>{`Hủy bỏ thao tác ${dataProps ? "chỉnh sửa" : "thêm mới"}`}</Fragment>,
       message: <Fragment>Bạn có chắc chắn muốn hủy bỏ? Thao tác này không thể khôi phục.</Fragment>,
       cancelText: "Quay lại",
       cancelAction: () => {

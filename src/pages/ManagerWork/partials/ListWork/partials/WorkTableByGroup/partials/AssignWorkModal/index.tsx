@@ -105,10 +105,12 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
         });
       }
 
-      setDataWorkType({
-        value: result.wteId,
-        label: result.workTypeName,
-      });
+      if (result.wteId) {
+        setDataWorkType({
+          value: result.wteId,
+          label: result.workTypeName,
+        });
+      }
 
       const takeNotification = JSON.parse(result?.notification);
       setDataListNotification(takeNotification);
@@ -233,25 +235,25 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
 
   const values = useMemo(
     () =>
-      ({
-        name: data?.name ?? "",
-        content: data?.content ?? "",
-        // startTime: idWork ? data?.startTime : startDate ? startDate : moment().format("MM/DD/YYYY"),
-        startTime: data?.startTime ? moment(data?.startTime) : "",
-        endTime: data?.endTime ? moment(data?.endTime) : "",
-        workLoad: data?.workLoad ?? "",
-        workLoadUnit: data?.workLoadUnit ?? "H",
-        wteId: data?.wteId ?? null,
-        docLink: JSON.parse(data?.docLink || "[]") ?? [],
-        projectId: data?.projectId ? data?.projectId : dataWorkProject?.value,
-        employeeId: data?.employeeId ? data?.employeeId : null,
-        participants: data?.participants ? JSON.parse(data?.participants || "[]") : dataParticipants?.map((item) => item.value),
-        customers: JSON.parse(data?.customers || "[]") ?? [],
-        status: statusProps ?? data?.status ?? 0,
-        percent: data?.percent ?? 0,
-        priorityLevel: data?.priorityLevel?.toString() ?? "2",
-        notification: JSON.parse(data?.notification || "[]") ?? [],
-      } as IWorkOrderRequestModel),
+    ({
+      name: data?.name ?? "",
+      content: data?.content ?? "",
+      // startTime: idWork ? data?.startTime : startDate ? startDate : moment().format("MM/DD/YYYY"),
+      startTime: data?.startTime ? moment(data?.startTime) : "",
+      endTime: data?.endTime ? moment(data?.endTime) : "",
+      workLoad: data?.workLoad ?? "",
+      workLoadUnit: data?.workLoadUnit ?? "H",
+      wteId: data?.wteId ?? null,
+      docLink: JSON.parse(data?.docLink || "[]") ?? [],
+      projectId: data?.projectId ? data?.projectId : dataWorkProject?.value,
+      employeeId: data?.employeeId ? data?.employeeId : null,
+      participants: data?.participants ? JSON.parse(data?.participants || "[]") : dataParticipants?.map((item) => item.value),
+      customers: JSON.parse(data?.customers || "[]") ?? [],
+      status: statusProps ?? data?.status ?? 0,
+      percent: data?.percent ?? 0,
+      priorityLevel: data?.priorityLevel?.toString() ?? "2",
+      notification: JSON.parse(data?.notification || "[]") ?? [],
+    } as IWorkOrderRequestModel),
     [onShow, data, idWork, startDate, endDate, dataParticipants, dataWorkProject, statusProps]
   );
 
@@ -307,12 +309,12 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                  avatar: item.avatar,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+                avatar: item.avatar,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -369,11 +371,11 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -453,11 +455,11 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
         options: [
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
+              return {
+                value: item.id,
+                label: item.name,
+              };
+            })
             : []),
         ],
         hasMore: response.result.loadMoreAble,
@@ -546,6 +548,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
               value={dataWorkType ? dataWorkType : ""}
               onChange={(e) => handleChangeValueWorkType(e)}
               isAsyncPaginate={true}
+              required={true}
               placeholder="Chọn loại công việc"
               additional={{
                 page: 1,
@@ -578,6 +581,8 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
     [formData?.values, listImageWork, dataWorkProject, validateProject, dataWorkType]
   );
 
+
+  // đang xử lý phần giao việc
   const listFieldAssign = useMemo(
     () =>
       [
@@ -609,8 +614,8 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
                 dataWorkProject && dataWorkProject?.value
                   ? dataWorkProject.value
                   : "null" + "_" + dataEmployee && dataEmployee?.value
-                  ? dataEmployee.value
-                  : "null"
+                    ? dataEmployee.value
+                    : "null"
               }
               id="employeeId"
               name="employeeId"
@@ -648,13 +653,12 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
                 placeholder="Nhập khối lượng công việc"
                 required={true}
                 error={validateWordLoad || (formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0)}
-                message={`${
-                  validateWordLoad
-                    ? "Vui lòng nhập khối lượng công việc"
-                    : formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0
+                message={`${validateWordLoad
+                  ? "Vui lòng nhập khối lượng công việc"
+                  : formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0
                     ? "Khối lượng công việc cần lớn hơn 0"
                     : ""
-                }`}
+                  }`}
                 onValueChange={(e) => handleChangeValueWorkLoad(e)}
               />
 
@@ -780,6 +784,11 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
     //   return;
     // }
 
+    if (!formData?.values?.wteId) {
+      showToast("Vui lòng chọn loại công việc", "error");
+      return;
+    }
+
     if (!formData?.values?.projectId) {
       setValidateProject(true);
       return;
@@ -855,6 +864,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
               endDay < startDay ||
               validateWordLoad ||
               validateProject ||
+              !formData?.values?.wteId ||
               (formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0) ||
               _.isEqual(formData.values, values) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
@@ -927,7 +937,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
         className="modal-assign-work-backlog"
       >
         <form className="form-assign-work-backlog" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${idWork ? "Chỉnh sửa" : "Thêm mới"} công việc`} toggle={() => !isSubmit && handleClearForm(false)} />
+          <ModalHeader title={`Giao việc`} toggle={() => !isSubmit && handleClearForm(false)} />
           <ModalBody>
             <div className="list-form-group">
               {idWork ? (
@@ -937,7 +947,9 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
                     <FieldCustomize
                       key={index}
                       field={field}
-                      handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAssign, setFormData)}
+                      handleUpdate={(value) =>
+                        handleChangeValidate(value, field, formData, validations, listFieldAssign, setFormData)
+                      }
                       formData={formData}
                     />
                   ))}

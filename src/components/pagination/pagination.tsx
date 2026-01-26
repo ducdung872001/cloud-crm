@@ -131,6 +131,7 @@ export function Pagination(props: PaginationProps) {
                         onClick={() => {
                           chooseSizeLimit(size);
                           setShowSizeLimit(!showSizeLimit);
+                          setPage(1);
                         }}
                         className={`${size == sizeLimit ? "active" : ""}`}
                       >
@@ -150,6 +151,7 @@ export function Pagination(props: PaginationProps) {
                           const value = e.target.value;
                           chooseSizeLimit(value);
                           setLimitTnex(value);
+                          setPage(1);
                         }}
                         onChange={(e) => {
                           const value = e.target.value;

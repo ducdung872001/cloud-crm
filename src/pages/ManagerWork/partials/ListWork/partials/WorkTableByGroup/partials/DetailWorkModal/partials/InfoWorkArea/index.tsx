@@ -11,6 +11,7 @@ import UpdatePeopleInvolved from "./partials/UpdatePeopleInvolved/UpdatePeopleIn
 import UpdateRelatedWork from "./partials/UpdateRelatedWork/UpdateRelatedWork";
 import Loading from "components/loading";
 import "./index.scss";
+import StatusTask from "../../../StatusTask";
 
 export default function InfoWorkArea(props: any) {
   const { idData, onShow, onHide } = props;
@@ -20,15 +21,8 @@ export default function InfoWorkArea(props: any) {
 
   const [isInvolveWorks, setIsInvolveWorks] = useState<boolean>(true);
   const [isInvolveCustomer, setIsInvolveCustomer] = useState<boolean>(true);
-  const [showModalEvaluateWork, setShowModalEvaluateWork] = useState<boolean>(false);
-  const [showModalWorkInprogress, setShowModalWorkInprogress] = useState<boolean>(false);
-  const [rating, setRating] = useState<number>(0);
-  const [hover, setHover] = useState<number>(0);
-  const [disabledRating, setDisabledRating] = useState<boolean>(false);
-  const checkShowFullScreen = localStorage.getItem("showFullScreenModalPartnerEform");
+  // const checkShowFullScreen = localStorage.getItem("showFullScreenModalPartnerEform");
   // const [showFullScreen, setShowFullScreen] = useState<boolean>(checkShowFullScreen ? JSON.parse(checkShowFullScreen) : false);
-  const [showFullScreen, setShowFullScreen] = useState<boolean>(true);
-  const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
   const actions = useMemo<IActionModal>(
     () => ({
@@ -70,23 +64,26 @@ export default function InfoWorkArea(props: any) {
     }
   }, [idData, onShow]);
 
-  useEffect(() => {
-    if (data && JSON.parse(data.reviews || "[]").length > 0) {
-      const result = JSON.parse(data.reviews || "[]");
-      setRating(result[0]["mark"]);
-      setHover(result[0]["mark"]);
+  const convertTime = (time: string) => {
+    if (!time) return "";
+    return moment(time).format("DD/MM/YYYY HH:mm");
+  };
+
+  const convertWorkLoadUnit = (workLoad: number, unit: string) => {
+    if (workLoad) {
+      if (unit === "D") {
+        return `${workLoad} ngày`;
+      } else if (unit === "H") {
+        return `${workLoad} giờ`;
+      } else if (unit === "M") {
+        return `${workLoad} phút`;
+      }
     } else {
-      setRating(0);
-      setHover(0);
+      return "";
     }
-  }, [data]);
+  };
 
   const listInfoBasicItem = [
-    {
-      className: `${data?.content.length > 0 ? "content-work" : ""}`,
-      title: "Nội dung công việc",
-      name: data?.content ? data?.content : ".....................",
-    },
     {
       className: "in-project",
       title: data?.opportunityId ? "Cơ hội" : "Dự án",
@@ -95,27 +92,27 @@ export default function InfoWorkArea(props: any) {
     {
       className: "type-work",
       title: "Loại công việc",
-      name: data?.workTypeName ? data?.workTypeName : ".....................",
+      name: data?.workTypeName ? data?.workTypeName : "",
     },
     {
       className: "time-start",
       title: "Thời gian bắt đầu",
-      name: moment(data?.startTime).format("DD/MM/YYYY HH:mm"),
+      name: convertTime(data?.startTime),
     },
     {
       className: "time-end",
       title: "Thời gian kết thúc",
-      name: moment(data?.endTime).format("DD/MM/YYYY HH:mm"),
+      name: convertTime(data?.endTime),
     },
     {
       className: "amount-work",
       title: "Khối lượng công việc",
-      name: `${data?.workLoad?.toString()} ${data?.workLoadUnit == "D" ? "ngày" : data?.workLoadUnit == "H" ? "giờ" : "phút"}`,
+      name: convertWorkLoadUnit(data?.workLoad, data?.workLoadUnit),
     },
     {
       className: JSON.parse(data?.docLink || "[]").length > 0 ? "related-document" : "",
       title: "Tài liệu liên quan",
-      name: JSON.parse(data?.docLink || "[]").length > 0 ? data?.docLink : ".....................",
+      name: JSON.parse(data?.docLink || "[]").length > 0 ? data?.docLink : "",
     },
   ];
 
@@ -123,6 +120,7 @@ export default function InfoWorkArea(props: any) {
   const handleUnfulfilled = (time) => {
     const currentTime = new Date().getTime();
     const startTime = new Date(time).getTime();
+    console.log();
 
     if (currentTime < startTime) {
       if ((startTime - currentTime) / (24 * 60 * 60 * 1000) >= 1) {
@@ -188,7 +186,7 @@ export default function InfoWorkArea(props: any) {
       {data ? (
         <div className="info__work--area" style={{ padding: "15px" }}>
           <div className="info__basic">
-            <h3 className="title-basic">Thông tin chi tiết</h3>
+            <h3 className="title-basic">{data?.name ?? ""}</h3>
             <div className="info__basic--item">
               {listInfoBasicItem.map((item, idx) => (
                 <div key={idx} className={`item ${item.className}`}>
@@ -203,26 +201,14 @@ export default function InfoWorkArea(props: any) {
 
               <div className="item inprogress-work">
                 <h4 className="title">Tiến độ</h4>
-                <div className="show-inprogress" onClick={() => setShowModalWorkInprogress(true)}>
+                <div className="show-inprogress">
                   <CircularProgressbar value={data?.percent || 0} text={`${data?.percent || 0}%`} className="value-percent" />
                 </div>
               </div>
 
               <div className="item status-work">
                 <h4 className="title">Trạng thái</h4>
-                <div className="show-status">
-                  {data?.status === 0 ? (
-                    handleUnfulfilled(data?.startTime)
-                  ) : data?.status === 1 ? (
-                    handleProcessing(data?.startTime, data?.endTime)
-                  ) : data?.status === 2 ? (
-                    <span className="__success">Đã hoàn thành</span>
-                  ) : data?.status === 3 ? (
-                    <span className="__cancelled">Đã hủy</span>
-                  ) : (
-                    <span className="__pause">Tạm dừng</span>
-                  )}
-                </div>
+                <StatusTask {...data} />
               </div>
             </div>
           </div>

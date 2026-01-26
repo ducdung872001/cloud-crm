@@ -20,6 +20,8 @@ import ModalDebug from "../ModalUserTask/partials/ModalDebug";
 import ListButtonHeader from "../../components/ListButtonHeader/ListButtonHeader";
 import TableDecisionRule from "./partial/TableDecisionRule";
 import { convertDataRowDT } from "./partial/TableDecisionRule/ConvertDataRow";
+import BusinessRuleService from "services/BusinessRuleService";
+import Reference from "./partial/Reference";
 
 export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, processId, changeNameNodeXML, disable }) {
   const endRef = useRef<HTMLDivElement>(null);
@@ -36,8 +38,12 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
   const [isLoadingDataAdvance, setLoadingDataAdvance] = useState(false);
   const [data, setData] = useState(null);
   const [dataAdvance, setDataAdvance] = useState(null);
+  const [dataComplex, setDataComplex] = useState(null);
   const [childProcessId, setChildProcessId] = useState(null);
   const [dataWorkflow, setDataWorkflow] = useState(null);
+  const [dataBusinessRule, setDataBusinessRule] = useState(null);
+  const [listMappingInput, setListMappingInput] = useState([]);
+  const [listMappingOutput, setListMappingOutput] = useState([]);
 
   const [handleErrorData, setHandleErrorData] = useState(null);
 
@@ -75,6 +81,8 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
         getDetailTaskAdvance(dataNode.id);
       } else if (typeNode === "basic") {
         getDetailTask(dataNode.id);
+      } else if (typeNode === "complex") {
+        getDetailTaskComplex(dataNode.id);
       }
     }
   }, [typeNode, dataNode]);
@@ -143,6 +151,73 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     }
     setLoadingDataAdvance(false);
   };
+  const getDetailTaskComplex = async (nodeId) => {
+    const response = await BusinessProcessService.detailBusinessRuleTaskComplex(nodeId);
+
+    if (response.code == 0) {
+      const result = response.result;
+      setDataComplex({
+        ...result,
+        config: result?.config ? JSON.parse(result.config) : null,
+      });
+      if (result.code && result.businessRuleName && result.businessRuleId) {
+        setDataBusinessRule({
+          value: result.code,
+          label: result.businessRuleName,
+          id: result.businessRuleId,
+        });
+      }
+
+      if (result?.mappingInput && typeof JSON.parse(result?.mappingInput) == "object") {
+        let listMapInput = [];
+        Object.keys(JSON.parse(result?.mappingInput)).map((item) => {
+          listMapInput.push({
+            mappingType: JSON.parse(result?.mappingInput)[item].includes("frm_")
+              ? 1
+              : JSON.parse(result?.mappingInput)[item].includes("var_")
+              ? 2
+              : 0, // 0: input, 1: frm, 2: var
+            ruleField: item,
+            ruleFieldName: "",
+            mappingField: JSON.parse(result?.mappingInput)[item],
+            mappingFieldName: "",
+          });
+        });
+        setListMappingInput(listMapInput);
+      }
+
+      if (result?.mappingOutput && typeof JSON.parse(result?.mappingOutput) == "object") {
+        let listMapOutput = [];
+        Object.keys(JSON.parse(result?.mappingOutput)).map((item) => {
+          listMapOutput.push({
+            mappingType: JSON.parse(result?.mappingOutput)[item].includes("frm_")
+              ? 1
+              : JSON.parse(result?.mappingOutput)[item].includes("var_")
+              ? 2
+              : 0, // 0: input, 1: frm, 2: var
+            ruleField: JSON.parse(result?.mappingOutput)[item],
+            ruleFieldName: "",
+            mappingField: item,
+            mappingFieldName: "",
+          });
+        });
+        setListMappingOutput(listMapOutput);
+      }
+
+      setFormDataComplex({
+        id: result?.id ?? null,
+        nodeId: result?.nodeId ?? nodeId,
+        name: result?.name ?? "",
+        code: result?.code ?? "",
+        description: result?.description ?? "",
+        mappingInput: result?.mappingInput ?? "",
+        mappingOutput: result?.mappingOutput ?? "",
+      });
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+    setLoadingDataAdvance(false);
+  };
 
   const getTypeRuleTask = async (id) => {
     const response = await BusinessProcessService.checkType(id);
@@ -186,6 +261,18 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     }),
     [onShow, dataAdvance, dataNode]
   );
+  const valuesComplex = useMemo(
+    () => ({
+      id: null,
+      name: dataComplex?.name ?? "",
+      description: dataComplex?.description ?? "",
+      nodeId: dataNode?.id ?? null,
+      code: dataNode?.id ?? null,
+      mappingInput: dataComplex?.mappingInput ?? "",
+      mappingOutput: dataComplex?.mappingOutput ?? "",
+    }),
+    [onShow, dataComplex, dataNode]
+  );
 
   const [formData, setFormData] = useState(values);
   const [dataConfigAdvance, setDataConfigAdvance] = useState({
@@ -197,6 +284,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     rows: [],
   });
   const [formDataAdvance, setFormDataAdvance] = useState(valuesAdvance);
+  const [formDataComplex, setFormDataComplex] = useState(valuesComplex);
 
   useEffect(() => {
     setFormData(values);
@@ -345,6 +433,19 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     setTypeNode("");
     setHaveTypeNode(false);
     setDataAdvance(null);
+    setDataComplex(null);
+    setListMappingInput([]);
+    setListMappingOutput([]);
+    setFormDataComplex({
+      id: null,
+      nodeId: dataNode?.id ?? null,
+      name: "",
+      code: "",
+      description: "",
+      mappingInput: "",
+      mappingOutput: "",
+    });
+    setDataBusinessRule(null);
     // setDataConfigAdvance({
     //   columns: [],
     //   rows: [],
@@ -1322,6 +1423,39 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     return { options: [], hasMore: false };
   };
 
+  const loadedOptionBusinesRule = async (search, loadedOptions, { page }) => {
+    const params = {
+      name: search,
+      page: page,
+      limit: 10,
+    };
+    const response = await BusinessRuleService.list(params);
+
+    if (response.code === 0) {
+      const options = response.result?.items || [];
+
+      return {
+        options: [
+          ...(options.length > 0
+            ? options.map((item) => {
+                return {
+                  value: item.code,
+                  label: item.name,
+                  id: item.id,
+                };
+              })
+            : []),
+        ],
+        hasMore: response.result.loadMoreAble,
+        additional: {
+          page: page + 1,
+        },
+      };
+    }
+
+    return { options: [], hasMore: false };
+  };
+
   const addNode = async () => {
     const body = {
       name: data?.name,
@@ -1378,6 +1512,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
                     options={[
                       { value: "basic", label: "Cơ bản" },
                       { value: "advance", label: "Nâng cao" },
+                      // { value: "complex", label: "Tham chiếu" },
                     ]}
                     // className="options-auth"
                     // required={true}
@@ -2654,10 +2789,83 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
                   // />
                   <TableDecisionRule
                     processId={processId}
-                    childProcessId={processId}
+                    childProcessId={childProcessId}
                     dataConfigAdvance={dataConfigAdvance}
                     setDataConfigAdvanceEdit={setDataConfigAdvanceEdit}
                     setHaveError={setHaveError}
+                  />
+                )}
+              </div>
+            ) : typeNode == "complex" ? (
+              <div className="complex-container">
+                <div className="list-form-group">
+                  <div className="form-group" style={{ width: "100%" }}>
+                    <Input
+                      id="name"
+                      name="name"
+                      label="Tên nhiệm vụ"
+                      fill={true}
+                      required={true}
+                      placeholder={"Tên nhiệm vụ"}
+                      value={formDataComplex.name}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setFormDataComplex({ ...formDataComplex, name: value });
+                      }}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ width: "100%" }}>
+                    <SelectCustom
+                      // key={listAttribute.length}
+                      id=""
+                      name="name"
+                      label={"Luật nghiệp vụ"}
+                      fill={true}
+                      required={true}
+                      // error={item.checkMapping}
+                      // message="Biến quy trình không được để trống"
+                      options={[]}
+                      value={dataBusinessRule}
+                      onChange={(e) => {
+                        setDataBusinessRule(e);
+                        setListMappingInput([]);
+                        setListMappingOutput([]);
+                        setFormDataComplex({ ...formDataComplex, code: e.value });
+                      }}
+                      isAsyncPaginate={true}
+                      placeholder="Chọn loại luật nghiệp vụ"
+                      additional={{
+                        page: 1,
+                      }}
+                      loadOptionsPaginate={loadedOptionBusinesRule}
+                      // formatOptionLabel={formatOptionLabelAttribute}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ width: "100%" }}>
+                    <TextArea
+                      name="note"
+                      value={formDataComplex.description}
+                      label="Mô tả nhiệm vụ"
+                      row={1}
+                      fill={true}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setFormDataComplex({ ...formDataComplex, description: value });
+                      }}
+                      placeholder="Nhập mô tả"
+                    />
+                  </div>
+                </div>
+                {!dataBusinessRule?.id ? null : (
+                  <Reference
+                    processId={processId}
+                    dataBusinessRule={dataBusinessRule}
+                    listMappingInput={listMappingInput}
+                    setListMappingInput={setListMappingInput}
+                    listMappingOutput={listMappingOutput}
+                    setListMappingOutput={setListMappingOutput}
                   />
                 )}
               </div>

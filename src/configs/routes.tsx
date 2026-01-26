@@ -188,6 +188,8 @@ import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
 import ManagementOpportunityNew from "pages/ManagementOpportunityNew";
 import ManagerWork from "pages/ManagerWork";
 import CreateContractsXML from "pages/Contract/CreateContractsXML";
+import BusinessRule from "pages/BusinessRule";
+import BusinessRuleConfig from "pages/BusinessRuleConfig";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -196,6 +198,8 @@ const rootDomain = getRootDomain(sourceDomain);
 const checkSubdomainTNEX = sourceDomain.includes("tnex");
 const checkSubdomainTNPM = sourceDomain.includes("tnpm") || sourceDomain.includes("localhost");
 const checkSubdomainGREENSPA = sourceDomain.includes("greenspa");
+const checkSubdomainReborn =
+  sourceDomain.includes("localhost") || sourceDomain.includes("rebornjsc") || sourceDomain.includes("kcn") || sourceDomain.includes("jsc");
 // "tnex.reborn.vn"
 
 const checkUserRoot = localStorage.getItem("user.root") == "1";
@@ -209,13 +213,13 @@ export const menu: IMenuItem[] = [
           icon: <Icon name="Home" />,
           code: "DASHBOARD",
         },
-        ...(checkUserRoot
+        ...(checkSubdomainReborn
           ? [
               {
                 title: "managerWork", // Quản lý công việc
                 path: urls.manager_work,
                 icon: <Icon name="Job" />,
-                code: "",
+                code: "WORK_PROJECT",
               },
             ]
           : []),
@@ -400,15 +404,15 @@ export const menu: IMenuItem[] = [
               code: "",
             },
             ...(checkUserRoot
-          ? [
-              {
-                title: "createContractXML", // Tạo hợp đồng XML
-                path: urls.create_contract_xml,
-                icon: <Icon name="PlusCircleFill" />,
-                code: "",
-              },
-            ]
-          : []),
+              ? [
+                  {
+                    title: "createContractXML", // Tạo hợp đồng XML
+                    path: urls.create_contract_xml,
+                    icon: <Icon name="PlusCircleFill" />,
+                    code: "",
+                  },
+                ]
+              : []),
             {
               title: "listContract", // Danh sách hợp đồng
               path: urls.contract,
@@ -951,6 +955,18 @@ export const menu: IMenuItem[] = [
               code: "BPM",
               icon: <Icon name="CashBook" />,
             },
+            {
+              title: "manageDefaultProcesses",
+              path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
+              code: "BPM",
+              icon: <Icon name="CashBook" />,
+            },
+            {
+              title: "business_rule", // Loại luật nghiệp vụ
+              path: urls.business_rule,
+              icon: <Icon name="SettingJob" />,
+              code: "",
+            },
           ],
         },
       ]
@@ -1001,58 +1017,58 @@ export const menu: IMenuItem[] = [
     ],
   },
 
-  ...(checkSubdomainTNPM || checkSubdomainGREENSPA
+  ...(checkSubdomainReborn
     ? [
-        // {
-        //   title: "operate", // Quản lý vận hành
-        //   path: "",
-        //   icon: <Icon name="SettingCashbook" />,
-        //   code: "OPERATION_MANAGEMENT",
-        //   children: [
-        //     {
-        //       title: "spaceCustomer", // Khu vực/căn hộ
-        //       path: urls.spaceCustomer,
-        //       icon: <Icon name="Headquarters" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "electricityIndex", // Chốt chỉ số điện từ bộ phận kĩ thuật
-        //       path: urls.electricityIndex,
-        //       icon: <Icon name="KpiCustomer" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "waterIndex", // Chốt chỉ số nước từ bộ phận kĩ thuật
-        //       path: urls.waterIndex,
-        //       icon: <Icon name="KpiCustomer" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "managementFee", // Phí quản lý
-        //       path: urls.managementFee,
-        //       icon: <Icon name="MoneyFill" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "ortherFee", // Chi phí khác
-        //       path: urls.ortherFee,
-        //       icon: <Icon name="MoneyFill" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "vehicleRegistration", // Phí đậu xe
-        //       path: urls.vehicleRegistration,
-        //       icon: <Icon name="Profile" />,
-        //       code: "",
-        //     },
-        //     {
-        //       title: "vehicle", // Đăng kí phương tiện
-        //       path: urls.vehicle,
-        //       icon: <Icon name="ImportGoods" />,
-        //       code: "",
-        //     },
-        //   ],
-        // },
+        {
+          title: "operate", // Quản lý vận hành
+          path: "",
+          icon: <Icon name="SettingCashbook" />,
+          code: "OPERATION_MANAGEMENT",
+          children: [
+            {
+              title: "spaceCustomer", // Khu vực/căn hộ
+              path: urls.spaceCustomer,
+              icon: <Icon name="Headquarters" />,
+              code: "",
+            },
+            {
+              title: "electricityIndex", // Chốt chỉ số điện từ bộ phận kĩ thuật
+              path: urls.electricityIndex,
+              icon: <Icon name="KpiCustomer" />,
+              code: "",
+            },
+            {
+              title: "waterIndex", // Chốt chỉ số nước từ bộ phận kĩ thuật
+              path: urls.waterIndex,
+              icon: <Icon name="KpiCustomer" />,
+              code: "",
+            },
+            {
+              title: "managementFee", // Phí quản lý
+              path: urls.managementFee,
+              icon: <Icon name="MoneyFill" />,
+              code: "",
+            },
+            {
+              title: "ortherFee", // Chi phí khác
+              path: urls.ortherFee,
+              icon: <Icon name="MoneyFill" />,
+              code: "",
+            },
+            {
+              title: "vehicleRegistration", // Phí đậu xe
+              path: urls.vehicleRegistration,
+              icon: <Icon name="Profile" />,
+              code: "",
+            },
+            {
+              title: "vehicle", // Đăng kí phương tiện
+              path: urls.vehicle,
+              icon: <Icon name="ImportGoods" />,
+              code: "",
+            },
+          ],
+        },
       ]
     : []),
   {
@@ -1835,6 +1851,14 @@ export const routes: IRouter[] = [
   {
     path: urls.manage_default_processes,
     component: <ManageDefaultProcesses />,
+  },
+  {
+    path: urls.business_rule,
+    component: <BusinessRule />,
+  },
+  {
+    path: urls.business_rule_config,
+    component: <BusinessRuleConfig />,
   },
   {
     path: urls.process_simulation,
