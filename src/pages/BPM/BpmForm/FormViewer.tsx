@@ -101,7 +101,7 @@ const FormViewerComponent = (props: any) => {
   };
 
   //Xủ lý dữ liệu khởi tạo ban đầu
-  const walkInitData = (components, potId, processId, filterItems) => {
+  const walkInitData = (components, potId, processId, filterItems, dataInit) => {
     if (components && components.length > 0) {
       components.forEach((comp) => {
         let apiUrl = comp?.properties?.apiUrl || "";
@@ -120,8 +120,23 @@ const FormViewerComponent = (props: any) => {
           // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
           let key = comp?.properties?.keyApi || comp.valuesKey || comp.key;
           let paramsUrl = comp?.properties?.paramsUrl || "";
-          const paramsTotal = convertDataParamsProperties(paramsUrl);
-          filterItems.push({ key, paramsTotal, compKey: comp.key, type: "select", apiUrl: apiUrl });
+          let apiParams = comp?.properties?.apiParams || "";
+
+          let paramsTotal = {};
+          if(dataInit){            
+            paramsTotal = getParamsPropertiesEform(apiParams, dataInit);
+          }
+          
+          const params = convertDataParamsProperties(paramsUrl);
+          filterItems.push({ 
+            key, 
+            paramsTotal: {
+              ...(paramsUrl ? { ...params } : {}),
+              ...(apiParams ? { ...paramsTotal } : {}),
+            },
+            compKey: comp.key, 
+            type: "select", apiUrl: apiUrl 
+          });
         }
 
         //Lịch sử phê duyệt
@@ -134,7 +149,7 @@ const FormViewerComponent = (props: any) => {
         }
 
         if (Array.isArray(comp.components) && comp.components.length > 0) {
-          walkInitData(comp.components, potId, processId, filterItems);
+          walkInitData(comp.components, potId, processId, filterItems, dataInit);
         }
       });
     }
@@ -226,6 +241,23 @@ const FormViewerComponent = (props: any) => {
     // return filterItems;
   };
 
+  //lấy dữ liệu và gắn lại option vào select khi thay đổi trường select khác lấy value làm params truyền vào
+  const walkGetOptionChangeSelect = (components, dataOption, loadApi) => {
+    if (components && components.length > 0) {
+      components.forEach((comp) => {
+        if (comp.type === "select" && comp.key == loadApi) {
+          comp.values = dataOption || [];
+          delete comp.valuesKey;
+        }
+
+        if (Array.isArray(comp.components) && comp.components.length > 0) {
+          walkGetOptionChangeSelect(comp.components, dataOption, loadApi);
+        }
+      });
+    }
+  };
+         
+
   useEffect(() => {
     // Khởi tạo Viewer
     formViewerRef.current = new Form({
@@ -248,6 +280,35 @@ const FormViewerComponent = (props: any) => {
     let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
       let { schema, data } = event;
+      console.log('data', data);
+
+      if(data.commitee){
+        // data.commitee.forEach((row, index) => {
+        //   console.log('Dòng:', index, row);
+        // });
+
+        if (!Array.isArray(data.commitee)) return;
+
+        let needUpdate = false;
+
+        data.commitee.forEach((row, index) => {
+          if (row.rowIndex !== index) {
+            row.rowIndex = index;
+            needUpdate = true;
+          }
+
+          if (!row._rowId) {
+            row._rowId = crypto.randomUUID();
+            needUpdate = true;
+          }
+        });
+
+        console.log('data222', data);
+        
+        // if (needUpdate) {
+        //   formViewerRef.current.importSchema(schema);
+        // }
+      }
 
       let components = schema.components;
       const newValues = data;
@@ -283,7 +344,7 @@ const FormViewerComponent = (props: any) => {
     });
 
     const updateExpressionField = (components, schema, data) => {
-      components.forEach((component) => {
+      components.forEach(async (component) => {
         if (component.type === "expression") {
           let dataExpression = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
@@ -303,6 +364,8 @@ const FormViewerComponent = (props: any) => {
         if (component.type == "select") {
           let dataSelect = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
+          let loadApi = component?.properties?.loadApi;
+          let loadApi_params = component?.properties?.loadApi_params;
 
           if (target) {
             const listTarget = target.split(",").map((item) => item.trim()) || [];
@@ -324,6 +387,14 @@ const FormViewerComponent = (props: any) => {
               }
               // rerenderForm(schema, data);
             }
+          }
+
+          if(loadApi){            
+            const params = {
+              [loadApi_params]: dataSelect
+            }            
+            let dataOption = await SelectOptionData(loadApi, params);
+            walkGetOptionChangeSelect(schema.components, dataOption, loadApi);
           }
         }
 
@@ -445,6 +516,17 @@ const FormViewerComponent = (props: any) => {
       }
     });
 
+    formViewerRef.current.on('formField.hover', async (event) => {
+      console.log('event123', event);
+      if (event.formField.type !== 'select') return;
+     
+      
+    
+      // if (!optionCache[event.formField.key]) {
+      //   optionCache[event.formField.key] = await fetchOptions();
+      // }
+    });
+
     formViewerRef.current.on("formField.focus", async (event) => {
       console.log("Event focus =>", event);
 
@@ -458,7 +540,7 @@ const FormViewerComponent = (props: any) => {
 
       //Nếu là select, thì cần được load lại danh sách dựa trên thông tin ràng buộc
       const formField = event.formField;
-
+    
       //1. Loại là select
       if (formField.type == "select") {
         //valuesKey là Input values key đối với loại select là Input Data
@@ -496,7 +578,6 @@ const FormViewerComponent = (props: any) => {
           } else {
             dataOption = await SelectOptionData(key, params);
           }
-
           formField.values = dataOption || [];
           delete formField.valuesKey; //Phải xóa đi mới hiển thị lên được
           // rerenderForm(currFormSchema, formData);
@@ -919,12 +1000,12 @@ const FormViewerComponent = (props: any) => {
   /**
    * Khởi tạo các dữ liệu động trên form (Master Data trong trường select)
    */
-  const initBindingData = async (updatedFormSchema) => {
+  const initBindingData = async (updatedFormSchema, dataInit) => {
     const nodeId = contextData?.nodeId;
     const potId = contextData?.potId;
     const processId = contextData?.processId;
     let filterItems = [];
-    walkInitData(updatedFormSchema.components, potId, processId, filterItems);
+    walkInitData(updatedFormSchema.components, potId, processId, filterItems, dataInit);
 
     //Lặp tiến hành binding
     for (let index = 0; index < filterItems.length; index++) {
@@ -968,7 +1049,7 @@ const FormViewerComponent = (props: any) => {
       updatedFormSchema = updateButtons(updatedFormSchema);
 
       // Xử lý khởi tạo các trường select trong form
-      updatedFormSchema = await initBindingData(updatedFormSchema);
+      updatedFormSchema = await initBindingData(updatedFormSchema, dataInit);
 
       // Import schema vào Viewer
 
