@@ -48,6 +48,12 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  updateAndInit: (body: IWorkOrderRequestModel) => {
+    return fetch(urlsApi.workOrder.updateAndInit, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   updateInitProcess: (body: IWorkOrderRequestModel) => {
     return fetch(urlsApi.workOrder.updateInitProcess, {
       method: "POST",
