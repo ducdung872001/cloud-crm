@@ -727,16 +727,18 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                   />
                 ))}
               </div>
-              <div className="assign-btn-wrapper">
-                <button
-                  type="button"
-                  className={`btn-mini-assign ${showAssign ? "is-hide" : "is-show"}`}
-                  onClick={() => setShowAssign((prev) => !prev)}
-                  disabled={isSubmit}
-                >
-                  {showAssign ? "Ẩn giao việc" : "+ Giao việc"}
-                </button>
-              </div>
+              {!idWork && (
+                <div className="assign-btn-wrapper">
+                  <button
+                    type="button"
+                    className={`btn-mini-assign ${showAssign ? "is-hide" : "is-show"}`}
+                    onClick={() => setShowAssign((prev) => !prev)}
+                    disabled={isSubmit}
+                  >
+                    {showAssign ? "Ẩn giao việc" : "+ Giao việc"}
+                  </button>
+                </div>
+              )}
               {(idWork || showAssign) ? (
                 <div className="list-form-group__assign assign-work-panel">
                   <div className="title-work">Giao việc</div>
