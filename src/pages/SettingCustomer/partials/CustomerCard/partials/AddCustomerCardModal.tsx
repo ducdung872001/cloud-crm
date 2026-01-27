@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useCallback, useMemo } from "react";
+import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { IActionModal } from "model/OtherModel";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -32,6 +32,16 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
   const [comparePayoutMaxPayoutMin, setComparePayoutMaxPayoutMin] = useState<boolean>(false);
   
   const [listInputVar, setListInputVar] = useState([
+    {
+      name: "",
+      attributeMapping: "",
+      attributeMappingId: "",
+      mappingType: 0,
+      checkName: false,
+      checkMapping: false,
+    },
+  ]);
+  const initialListInputVarRef = useRef<typeof listInputVar>([
     {
       name: "",
       attributeMapping: "",
@@ -230,8 +240,9 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
           checkMapping: false,
         }));
         setListInputVar(parsedListInputVar);
+        initialListInputVarRef.current = JSON.parse(JSON.stringify(parsedListInputVar));
       } catch (error) {
-        setListInputVar([
+        const defaultList = [
           {
             name: "",
             attributeMapping: "",
@@ -240,10 +251,12 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
             checkName: false,
             checkMapping: false,
           },
-        ]);
+        ];
+        setListInputVar(defaultList);
+        initialListInputVarRef.current = JSON.parse(JSON.stringify(defaultList));
       }
     } else if (!data || data.type !== 1) {
-      setListInputVar([
+      const defaultList = [
         {
           name: "",
           attributeMapping: "",
@@ -252,7 +265,9 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
           checkName: false,
           checkMapping: false,
         },
-      ]);
+      ];
+      setListInputVar(defaultList);
+      initialListInputVarRef.current = JSON.parse(JSON.stringify(defaultList));
     }
 
     return () => {
@@ -325,6 +340,11 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
     }
   };
 
+  const isListInputVarChanged = useMemo(() => {
+    if (formData.values.type !== "1") return false;
+    return JSON.stringify(listInputVar) !== JSON.stringify(initialListInputVarRef.current);
+  }, [listInputVar, formData.values.type]);
+
   const actions = useMemo<IActionModal>(
     () => ({
       actions_right: {
@@ -335,7 +355,7 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              !isDifferenceObj(formData.values, values) ? onHide(false) : showDialogConfirmCancel();
+              !isDifferenceObj(formData.values, values) && !isListInputVarChanged ? onHide(false) : showDialogConfirmCancel();
             },
           },
           {
@@ -349,14 +369,14 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
                   warningPayoutMax ||
                   comparePayoutMaxPayoutMin ||
                   comparePayoutMinPayoutMax)) ||
-              !isDifferenceObj(formData.values, values) ||
+              (!isDifferenceObj(formData.values, values) && !isListInputVarChanged) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },
         ],
       },
     }),
-    [formData, values, isSubmit, warningPayoutMin, warningPayoutMax, comparePayoutMaxPayoutMin, comparePayoutMinPayoutMax]
+    [formData, values, isSubmit, warningPayoutMin, warningPayoutMax, comparePayoutMaxPayoutMin, comparePayoutMinPayoutMax, isListInputVarChanged]
   );
 
   const showDialogConfirmCancel = () => {
