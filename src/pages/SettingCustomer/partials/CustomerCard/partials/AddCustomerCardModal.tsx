@@ -218,10 +218,47 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
     setFormData({ ...formData, values: values, errors: {} });
     setIsSubmit(false);
 
+    if (data && data.type === 1 && data.ranking) {
+      try {
+        const rankingObj = typeof data.ranking === 'string' ? JSON.parse(data.ranking) : data.ranking;
+        const parsedListInputVar = Object.entries(rankingObj).map(([name, points]) => ({
+          name,
+          attributeMapping: String(points),
+          attributeMappingId: String(points),
+          mappingType: 0,
+          checkName: false,
+          checkMapping: false,
+        }));
+        setListInputVar(parsedListInputVar);
+      } catch (error) {
+        setListInputVar([
+          {
+            name: "",
+            attributeMapping: "",
+            attributeMappingId: "",
+            mappingType: 0,
+            checkName: false,
+            checkMapping: false,
+          },
+        ]);
+      }
+    } else if (!data || data.type !== 1) {
+      setListInputVar([
+        {
+          name: "",
+          attributeMapping: "",
+          attributeMappingId: "",
+          mappingType: 0,
+          checkName: false,
+          checkMapping: false,
+        },
+      ]);
+    }
+
     return () => {
       setIsSubmit(false);
     };
-  }, [values]);
+  }, [data]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
