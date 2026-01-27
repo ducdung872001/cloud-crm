@@ -1,9 +1,9 @@
 import React, { Fragment, useState, useEffect, useMemo, useRef } from "react";
 import { IActionModal } from "model/OtherModel";
 import Icon from "components/icon";
-import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
+import Modal, { ModalBody, ModalFooter } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
-import { isDifferenceObj, convertToId, createArrayFromToR, createArrayFromTo, convertParamsToString } from "reborn-util";
+import { isDifferenceObj, createArrayFromToR, createArrayFromTo, convertParamsToString } from "reborn-util";
 import "./index.scss";
 import Input from "components/input/input";
 import SelectCustom from "components/selectCustom/selectCustom";
@@ -17,9 +17,10 @@ import Button from "components/button/button";
 import ModalSetting from "../ModalUserTask/partials/ModalSetting";
 import ModalSelectNodeOther from "../ModalSelectNodeOther";
 import ModalDebug from "../ModalUserTask/partials/ModalDebug";
-import ListButtonHeader from "../../components/ListButtonHeader/ListButtonHeader";
-import TableDecisionRule from "./partial/TableDecisionRule";
-import { convertDataRowDT } from "./partial/TableDecisionRule/ConvertDataRow";
+import AdvanceRule from "./partial/AdvanceRule";
+import { convertDataRow } from "./partial/AdvanceRule/ConvertDataRow";
+import Reference from "./partial/Reference";
+import BusinessRuleService from "services/BusinessRuleService";
 
 export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, processId, changeNameNodeXML, disable }) {
   const endRef = useRef<HTMLDivElement>(null);
@@ -36,8 +37,12 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
   const [isLoadingDataAdvance, setLoadingDataAdvance] = useState(false);
   const [data, setData] = useState(null);
   const [dataAdvance, setDataAdvance] = useState(null);
+  const [dataComplex, setDataComplex] = useState(null);
   const [childProcessId, setChildProcessId] = useState(null);
   const [dataWorkflow, setDataWorkflow] = useState(null);
+  const [dataBusinessRule, setDataBusinessRule] = useState(null);
+  const [listMappingInput, setListMappingInput] = useState([]);
+  const [listMappingOutput, setListMappingOutput] = useState([]);
 
   const [handleErrorData, setHandleErrorData] = useState(null);
 
@@ -75,6 +80,8 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
         getDetailTaskAdvance(dataNode.id);
       } else if (typeNode === "basic") {
         getDetailTask(dataNode.id);
+      } else if (typeNode === "complex") {
+        getDetailTaskComplex(dataNode.id);
       }
     }
   }, [typeNode, dataNode]);
@@ -143,6 +150,73 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     }
     setLoadingDataAdvance(false);
   };
+  const getDetailTaskComplex = async (nodeId) => {
+    const response = await BusinessProcessService.detailBusinessRuleTaskComplex(nodeId);
+
+    if (response.code == 0) {
+      const result = response.result;
+      setDataComplex({
+        ...result,
+        config: result?.config ? JSON.parse(result.config) : null,
+      });
+      if (result.code && result.businessRuleName && result.businessRuleId) {
+        setDataBusinessRule({
+          value: result.code,
+          label: result.businessRuleName,
+          id: result.businessRuleId,
+        });
+      }
+
+      if (result?.mappingInput && typeof JSON.parse(result?.mappingInput) == "object") {
+        let listMapInput = [];
+        Object.keys(JSON.parse(result?.mappingInput)).map((item) => {
+          listMapInput.push({
+            mappingType: JSON.parse(result?.mappingInput)[item].includes("frm_")
+              ? 1
+              : JSON.parse(result?.mappingInput)[item].includes("var_")
+              ? 2
+              : 0, // 0: input, 1: frm, 2: var
+            ruleField: item,
+            ruleFieldName: "",
+            mappingField: JSON.parse(result?.mappingInput)[item],
+            mappingFieldName: "",
+          });
+        });
+        setListMappingInput(listMapInput);
+      }
+
+      if (result?.mappingOutput && typeof JSON.parse(result?.mappingOutput) == "object") {
+        let listMapOutput = [];
+        Object.keys(JSON.parse(result?.mappingOutput)).map((item) => {
+          listMapOutput.push({
+            mappingType: JSON.parse(result?.mappingOutput)[item].includes("frm_")
+              ? 1
+              : JSON.parse(result?.mappingOutput)[item].includes("var_")
+              ? 2
+              : 0, // 0: input, 1: frm, 2: var
+            ruleField: JSON.parse(result?.mappingOutput)[item],
+            ruleFieldName: "",
+            mappingField: item,
+            mappingFieldName: "",
+          });
+        });
+        setListMappingOutput(listMapOutput);
+      }
+
+      setFormDataComplex({
+        id: result?.id ?? null,
+        nodeId: result?.nodeId ?? nodeId,
+        name: result?.name ?? "",
+        code: result?.code ?? "",
+        description: result?.description ?? "",
+        mappingInput: result?.mappingInput ?? "",
+        mappingOutput: result?.mappingOutput ?? "",
+      });
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+    setLoadingDataAdvance(false);
+  };
 
   const getTypeRuleTask = async (id) => {
     const response = await BusinessProcessService.checkType(id);
@@ -186,6 +260,18 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     }),
     [onShow, dataAdvance, dataNode]
   );
+  const valuesComplex = useMemo(
+    () => ({
+      id: null,
+      name: dataComplex?.name ?? "",
+      description: dataComplex?.description ?? "",
+      nodeId: dataNode?.id ?? null,
+      code: dataNode?.id ?? null,
+      mappingInput: dataComplex?.mappingInput ?? "",
+      mappingOutput: dataComplex?.mappingOutput ?? "",
+    }),
+    [onShow, dataComplex, dataNode]
+  );
 
   const [formData, setFormData] = useState(values);
   const [dataConfigAdvance, setDataConfigAdvance] = useState({
@@ -197,6 +283,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     rows: [],
   });
   const [formDataAdvance, setFormDataAdvance] = useState(valuesAdvance);
+  const [formDataComplex, setFormDataComplex] = useState(valuesComplex);
 
   useEffect(() => {
     setFormData(values);
@@ -220,29 +307,68 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmit(true);
+    // setIsSubmit(true);
     if (typeNode === "advance") {
-      let dataConfig = convertDataRowDT(dataConfigAdvanceEdit, dataNode?.id);
+      let dataConfig = convertDataRow(dataConfigAdvanceEdit, dataNode?.id);
+
       const body = {
         id: formDataAdvance.id ?? null,
         nodeId: dataNode?.id ?? null,
         name: formDataAdvance.name ?? "",
+        type: "DT",
         description: formDataAdvance.description ?? "",
         inputs: dataConfig?.inputs ? JSON.stringify(dataConfig?.inputs) : null,
         outputs: dataConfig?.outputs ? JSON.stringify(dataConfig?.outputs) : null,
         config: dataConfig?.config ? JSON.stringify(dataConfig?.config) : null,
         rules: dataConfig?.rules || [],
-        otherwise: JSON.stringify(dataConfig.alias || null),
       };
-      // console.log("body", body);
-      // setIsSubmit(false);
+      console.log("dataConfig>>>>", dataConfig);
       // return;
 
       const response = await BusinessProcessService.updateBusinessRuleTaskAdvance(body);
       if (response.code === 0) {
         showToast(`Cập nhật biểu mẫu thành công`, "success");
+        // handleClear(false);
+        // changeNameNodeXML(dataNode, body.name);
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+        setIsSubmit(false);
+      }
+
+      return;
+    }
+
+    if (typeNode === "complex") {
+      let mappingInput = {};
+      if (listMappingInput?.length) {
+        listMappingInput.forEach((item) => {
+          mappingInput[item.ruleField] = item.mappingField;
+        });
+      }
+      let mappingOutput = {};
+      if (listMappingOutput?.length) {
+        listMappingOutput.forEach((item) => {
+          mappingOutput[item.mappingField] = item.ruleField;
+        });
+      }
+
+      const body = {
+        id: formDataComplex.id ?? null,
+        nodeId: dataNode?.id ?? null,
+        code: formDataComplex.code ?? null,
+        name: formDataComplex.name ?? "",
+        description: formDataComplex.description ?? "",
+        mappingInput: JSON.stringify(mappingInput),
+        mappingOutput: JSON.stringify(mappingOutput),
+      };
+
+      const response = await BusinessProcessService.updateBusinessRuleTaskComplex(body);
+      if (response.code === 0) {
+        showToast(`Cập nhật biểu mẫu thành công`, "success");
         handleClear(false);
         changeNameNodeXML(dataNode, body.name);
+        setListMappingInput([]);
+        setListMappingOutput([]);
       } else {
         showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
         setIsSubmit(false);
@@ -345,6 +471,20 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     setTypeNode("");
     setHaveTypeNode(false);
     setDataAdvance(null);
+    setDataComplex(null);
+    setListMappingInput([]);
+    setListMappingOutput([]);
+    setFormDataComplex({
+      id: null,
+      nodeId: dataNode?.id ?? null,
+      name: "",
+      code: "",
+      description: "",
+      mappingInput: "",
+      mappingOutput: "",
+    });
+    setDataBusinessRule(null);
+
     // setDataConfigAdvance({
     //   columns: [],
     //   rows: [],
@@ -1322,6 +1462,39 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     return { options: [], hasMore: false };
   };
 
+  const loadedOptionBusinesRule = async (search, loadedOptions, { page }) => {
+    const params = {
+      name: search,
+      page: page,
+      limit: 10,
+    };
+    const response = await BusinessRuleService.list(params);
+
+    if (response.code === 0) {
+      const options = response.result?.items || [];
+
+      return {
+        options: [
+          ...(options.length > 0
+            ? options.map((item) => {
+                return {
+                  value: item.code,
+                  label: item.name,
+                  id: item.id,
+                };
+              })
+            : []),
+        ],
+        hasMore: response.result.loadMoreAble,
+        additional: {
+          page: page + 1,
+        },
+      };
+    }
+
+    return { options: [], hasMore: false };
+  };
+
   const addNode = async () => {
     const body = {
       name: data?.name,
@@ -1338,8 +1511,6 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
-
-  const [haveError, setHaveError] = useState({});
 
   return (
     <Fragment>
@@ -1358,17 +1529,79 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
             <div className="box-title">
               <h4>{"Cài đặt biểu mẫu"}</h4>
             </div>
-            <ListButtonHeader
-              data={data}
-              dataNode={dataNode}
-              processId={processId}
-              disable={disable}
-              isSubmit={isSubmit}
-              setIsModalClone={() => setIsModalClone(true)}
-              setIsModalSetting={() => setIsModalSetting(true)}
-              setIsModalDebug={() => setIsModalDebug(true)}
-              handleClear={() => handleClear(false)}
-            />
+            <div className="container-button">
+              {disable ? null : (
+                <Tippy content="Sao chép nhiệm vụ khác">
+                  <div>
+                    <Button
+                      onClick={() => {
+                        setIsModalClone(true);
+                      }}
+                      type="button"
+                      className="btn-setting"
+                      color="transparent"
+                      onlyIcon={true}
+                    >
+                      <Icon name="Copy" />
+                    </Button>
+                  </div>
+                </Tippy>
+              )}
+              {disable ? null : (
+                <Tippy content="Cài đặt biến">
+                  <div>
+                    <Button
+                      onClick={() => {
+                        setIsModalSetting(true);
+                      }}
+                      type="button"
+                      className="btn-setting"
+                      color="transparent"
+                      onlyIcon={true}
+                    >
+                      <Icon name="Settings" />
+                    </Button>
+                  </div>
+                </Tippy>
+              )}
+              {disable ? null : (
+                <Tippy content="Debug">
+                  <div>
+                    <Button
+                      onClick={() => {
+                        setIsModalDebug(true);
+                      }}
+                      type="button"
+                      className="btn-setting"
+                      color="transparent"
+                      onlyIcon={true}
+                    >
+                      <Icon name="Debug" style={{ width: 20 }} />
+                    </Button>
+                  </div>
+                </Tippy>
+              )}
+              {disable ? null : (
+                <Tippy content="Lưu Node">
+                  <div>
+                    <Button
+                      onClick={() => {
+                        addNode();
+                      }}
+                      type="button"
+                      className="btn-setting"
+                      color="transparent"
+                      onlyIcon={true}
+                    >
+                      <Icon name="CheckedCircle" style={{ width: 22 }} />
+                    </Button>
+                  </div>
+                </Tippy>
+              )}
+              <Button onClick={() => !isSubmit && handleClear(false)} type="button" className="btn-close" color="transparent" onlyIcon={true}>
+                <Icon name="Times" />
+              </Button>
+            </div>
           </div>
           <ModalBody>
             {!haveTypeNode && !isLoadingType ? (
@@ -1378,6 +1611,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
                     options={[
                       { value: "basic", label: "Cơ bản" },
                       { value: "advance", label: "Nâng cao" },
+                      { value: "complex", label: "Tham chiếu" },
                     ]}
                     // className="options-auth"
                     // required={true}
@@ -2622,7 +2856,6 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
                       }}
                     />
                   </div>
-
                   <div className="form-group" style={{ width: "100%" }}>
                     <TextArea
                       name="note"
@@ -2645,19 +2878,85 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
                     </div>
                   </div>
                 ) : (
-                  // <AdvaceRule
-                  //   dataNode={dataNode}
-                  //   processId={processId}
-                  //   childProcessId={childProcessId}
-                  //   dataConfigAdvance={dataConfigAdvance}
-                  //   setDataConfigAdvanceEdit={setDataConfigAdvanceEdit}
-                  // />
-                  <TableDecisionRule
+                  <AdvanceRule
+                    dataNode={dataNode}
                     processId={processId}
                     childProcessId={childProcessId}
                     dataConfigAdvance={dataConfigAdvance}
                     setDataConfigAdvanceEdit={setDataConfigAdvanceEdit}
-                    setHaveError={setHaveError}
+                  />
+                )}
+              </div>
+            ) : typeNode == "complex" ? (
+              <div className="complex-container">
+                <div className="list-form-group">
+                  <div className="form-group" style={{ width: "100%" }}>
+                    <Input
+                      id="name"
+                      name="name"
+                      label="Tên nhiệm vụ"
+                      fill={true}
+                      required={true}
+                      placeholder={"Tên nhiệm vụ"}
+                      value={formDataComplex.name}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setFormDataComplex({ ...formDataComplex, name: value });
+                      }}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ width: "100%" }}>
+                    <SelectCustom
+                      // key={listAttribute.length}
+                      id=""
+                      name="name"
+                      label={"Luật nghiệp vụ"}
+                      fill={true}
+                      required={true}
+                      // error={item.checkMapping}
+                      // message="Biến quy trình không được để trống"
+                      options={[]}
+                      value={dataBusinessRule}
+                      onChange={(e) => {
+                        setDataBusinessRule(e);
+                        setListMappingInput([]);
+                        setListMappingOutput([]);
+                        setFormDataComplex({ ...formDataComplex, code: e.value });
+                      }}
+                      isAsyncPaginate={true}
+                      placeholder="Chọn loại luật nghiệp vụ"
+                      additional={{
+                        page: 1,
+                      }}
+                      loadOptionsPaginate={loadedOptionBusinesRule}
+                      // formatOptionLabel={formatOptionLabelAttribute}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ width: "100%" }}>
+                    <TextArea
+                      name="note"
+                      value={formDataComplex.description}
+                      label="Mô tả nhiệm vụ"
+                      row={1}
+                      fill={true}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setFormDataComplex({ ...formDataComplex, description: value });
+                      }}
+                      placeholder="Nhập mô tả"
+                    />
+                  </div>
+                </div>
+                {!dataBusinessRule?.id ? null : (
+                  <Reference
+                    processId={processId}
+                    dataBusinessRule={dataBusinessRule}
+                    listMappingInput={listMappingInput}
+                    setListMappingInput={setListMappingInput}
+                    listMappingOutput={listMappingOutput}
+                    setListMappingOutput={setListMappingOutput}
                   />
                 )}
               </div>
