@@ -668,7 +668,7 @@ export default function PartnerList() {
 
   const defaultFieldCustomer = [
     { id: 1, name: "Email", fieldName: "emailMasked", isTable: false },
-    { id: 3, name: "Người đại diện pháp luật", fieldName: "contactId", isTable: false },
+    { id: 3, name: "Người đại diện pháp luật", fieldName: "contactName", isTable: false },
   ];
 
   const defaultFieldTableDis = [
