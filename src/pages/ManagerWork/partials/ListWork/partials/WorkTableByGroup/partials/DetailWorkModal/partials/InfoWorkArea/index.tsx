@@ -268,10 +268,15 @@ export default function InfoWorkArea(props: any) {
               <div className="item content-work">
                 <h4 className="title">Nội dung công việc</h4>
 
-                <div className={`content-wrap ${!isExpanded ? "is-collapsed" : ""}`} ref={wrapRef}>
+                <div className={`content-wrap 
+                  ${!isExpanded ? "is-collapsed" : ""}
+                  ${isOverflow ? "has-overflow" : ""}
+                  `} ref={wrapRef}>
                   <div
                     ref={contentRef}
-                    className={`content ${isExpanded ? "is-expanded" : "is-collapsed"}`}
+                    className={`content 
+                      ${isExpanded ? "is-expanded" : "is-collapsed"}
+                      ${isOverflow ? "has-border" : "no-border"}`}
                     style={!isExpanded ? { maxHeight: `${COLLAPSE_MAX_HEIGHT}px` } : undefined}
                   >
                     {contentText || ""}
