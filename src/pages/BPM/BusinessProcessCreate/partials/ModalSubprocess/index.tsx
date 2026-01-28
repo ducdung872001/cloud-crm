@@ -778,7 +778,7 @@ export default function ModalSubprocess({ onShow, onHide, dataNode, processId, c
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt nhiệm vụ"}</h4>
+              <h4>{"Cài đặt Subprocess"}</h4>
             </div>
             <div className="container-button">
               <div
