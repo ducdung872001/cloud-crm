@@ -43,7 +43,6 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     }
   }, [onShow]);
 
-
   const [dataWorkProject, setDataWorkProject] = useState<any>(null);
   const [dataWorkType, setDataWorkType] = useState<any>(null);
 
@@ -105,6 +104,8 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
         setDataEmployee(null);
       }
 
+      setShowAssign(!!result.employeeId);
+
       setData(result);
     }
   };
@@ -160,33 +161,33 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
       startTime: data?.startTime ?? null,
       endTime: data?.endTime ?? null,
     } as IWorkOrderRequestModel),
-    [onShow, data, idWork, dataWorkProject, statusProps]
+    [onShow, data, idWork, statusProps]
   );
 
-  const validations: IValidation[] = [
-    {
-      name: "name",
-      rules: "required",
-    },
-    {
-      name: "startTime",
-      rules: "required",
-    },
-    {
-      name: "endTime",
-      rules: "required",
-    },
-  ];
+  const validations: IValidation[] = useMemo(() => {
+    const base: IValidation[] = [
+      {
+        name: "name",
+        rules: "required",
+      },
+    ];
+    if (showAssign) {
+      base.push({ name: "startTime", rules: "required" });
+      base.push({ name: "endTime", rules: "required" });
+    }
+    return base;
+  }, [showAssign]);
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
   useEffect(() => {
-    setFormData({ ...formData, values: values, errors: {} });
+    setFormData((prev) => ({ ...prev, values: values, errors: {} }));
     setIsSubmit(false);
 
     return () => {
       setIsSubmit(false);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
 
   const loadedOptionWorkType = async (search, loadedOptions, { page }) => {
@@ -229,7 +230,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
 
   useEffect(() => {
     if (dataWorkType) {
-      setFormData({ ...formData, values: { ...formData?.values, wteId: dataWorkType.value } });
+      setFormData((prev) => ({ ...prev, values: { ...prev?.values, wteId: dataWorkType.value } }));
     }
   }, [dataWorkType]);
 
@@ -242,9 +243,9 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
 
   useEffect(() => {
     if (listImageWork && listImageWork.length > 0) {
-      setFormData({ ...formData, values: { ...formData?.values, docLink: listImageWork } });
+      setFormData((prev) => ({ ...prev, values: { ...prev?.values, docLink: listImageWork } }));
     } else {
-      setFormData({ ...formData, values: { ...formData?.values, docLink: [] } });
+      setFormData((prev) => ({ ...prev, values: { ...prev?.values, docLink: [] } }));
     }
   }, [listImageWork]);
 
@@ -301,7 +302,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
 
   useEffect(() => {
     if (dataWorkProject) {
-      setFormData({ ...formData, values: { ...formData?.values, projectId: dataWorkProject.value } });
+      setFormData((prev) => ({ ...prev, values: { ...prev?.values, projectId: dataWorkProject.value } }));
     }
   }, [dataWorkProject]);
 
@@ -379,7 +380,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
           ),
         },
       ] as IFieldCustomize[],
-    [formData?.values, listImageWork, dataWorkProject, validateProject, dataWorkType, handleChange]
+    [listImageWork, dataWorkProject, validateProject, dataWorkType, handleChange]
   );
 
   const formatOptionLabelManager = (opt: any) => opt?.label ?? opt?.name ?? "";
@@ -457,6 +458,52 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
 
   const submitLockRef = useRef(false);
 
+  const normalizeJsonString = (v, fallback) => {
+    if (typeof v === "string") return v;
+    if (v === null || v === undefined) return fallback;
+    try {
+      return JSON.stringify(v);
+    } catch {
+      return fallback;
+    }
+  };
+
+  const buildWorkOrderBodyForBE = ({ values, includeAssign, id }) => {
+    const v = values ?? {};
+
+    const body: any = {
+      name: v.name ?? "",
+      content: v.content ?? "",
+      wteId: v.wteId ?? null,
+      docLink: normalizeJsonString(v.docLink, "[]"),
+      projectId: v.projectId ?? null,
+      status: v.status ?? 0,
+      managerId: v.managerId ?? null,
+
+      customers: normalizeJsonString(v.customers, "[]"),
+      participants: normalizeJsonString(v.participants, "[]"),
+      notification: normalizeJsonString(v.notification, "{}"),
+    };
+
+    if (includeAssign) {
+      body.employeeId = v.employeeId ?? null;
+      body.workLoad = v.workLoad ?? "";
+      body.priorityLevel = v.priorityLevel ?? null;
+      body.startTime = v.startTime ?? null;
+      body.endTime = v.endTime ?? null;
+    } else {
+      body.employeeId = null;
+      body.workLoad = "";
+      body.priorityLevel = null;
+      body.startTime = null;
+      body.endTime = null;
+    }
+
+    if (id) body.id = id;
+
+    return body;
+  };
+
   const onSubmit = async (e) => {
     e?.preventDefault();
 
@@ -483,36 +530,25 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
       return;
     }
 
-    if (showAssign) {
-      setFormData(prev => ({
-        ...prev,
-        values: {
-          ...prev.values,
-          managerId:
-            Number(prev.values?.managerId) > 0
-              ? prev.values.managerId
-              : prev.values.employeeId,
-        },
-      }));
-    }
-
-
     setIsSubmit(true);
 
     try {
-      const merged: any = {
-        ...(data ?? {}),
-        ...(formData.values ?? {}),
-        id: (data?.id ?? (formData.values as any)?.id) ?? undefined,
-      };
+      const localValues: any = { ...(formData.values ?? {}) };
 
-      const body: any = {
-        ...merged,
-        docLink: JSON.stringify(merged?.docLink ?? []),
-        customers: JSON.stringify(merged?.customers ?? []),
-        participants: JSON.stringify(merged?.participants ?? []),
-        notification: JSON.stringify(merged?.notification ?? {}),
-      };
+      const isUpdate = !!(data?.id ?? localValues?.id);
+      const id = (data?.id ?? localValues?.id) ?? undefined;
+
+      const includeAssign = !!showAssign;
+
+      localValues.customers = localValues.customers ?? "[]";
+      localValues.participants = localValues.participants ?? "[]";
+      localValues.notification = localValues.notification ?? "{}";
+
+      const body = buildWorkOrderBodyForBE({
+        values: localValues,
+        includeAssign,
+        id,
+      });
 
       let response: any;
 
@@ -590,18 +626,10 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },
-          // {
-          //   title: showAssign ? "Ẩn giao việc" : "Giao việc",
-          //   type: "button",
-          //   color: "primary",
-          //   variant: "outline",
-          //   disabled: isSubmit,
-          //   callback: () => setShowAssign((prev) => !prev),
-          // },
         ],
       },
     }),
-    [formData, values, isSubmit, validateProject, idWork, startDate, endDate, showAssign]
+    [formData, values, isSubmit, validateProject, idWork, startDate, endDate]
   );
 
   const onDelete = async (id?: number) => {
@@ -727,19 +755,24 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                   />
                 ))}
               </div>
-              {!idWork && (
-                <div className="assign-btn-wrapper">
-                  <button
-                    type="button"
-                    className={`btn-mini-assign ${showAssign ? "is-hide" : "is-show"}`}
-                    onClick={() => setShowAssign((prev) => !prev)}
+
+              <div className="assign-toggle-wrapper">
+                <label className={`switch ${isSubmit ? "disabled" : ""}`}>
+                  <input
+                    type="checkbox"
+                    checked={showAssign}
+                    onChange={() => !isSubmit && setShowAssign(prev => !prev)}
                     disabled={isSubmit}
-                  >
-                    {showAssign ? "Ẩn giao việc" : "+ Giao việc"}
-                  </button>
-                </div>
-              )}
-              {(idWork || showAssign) ? (
+                  />
+                  <span className="slider" />
+                </label>
+
+                <span className="assign-toggle-label">
+                  Giao việc
+                </span>
+              </div>
+
+              {showAssign && (
                 <div className="list-form-group__assign assign-work-panel">
                   <div className="title-work">Giao việc</div>
                   {listFieldAssign.map((field, index) => (
@@ -753,7 +786,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                     />
                   ))}
                 </div>
-              ) : null}
+              )}
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

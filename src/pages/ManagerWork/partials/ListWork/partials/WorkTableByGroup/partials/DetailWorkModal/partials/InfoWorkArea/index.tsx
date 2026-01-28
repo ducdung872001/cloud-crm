@@ -2,7 +2,7 @@ import Icon from "components/icon";
 import { IActionModal } from "model/OtherModel";
 import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
 import moment from "moment";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef, useLayoutEffect } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import EmployeeService from "services/EmployeeService";
 import WorkOrderService from "services/WorkOrderService";
@@ -172,12 +172,78 @@ export default function InfoWorkArea(props: any) {
         return <span className="__cancelled">{`Quá hạn ${Math.round((currentTime - endTime) / (60 * 60 * 1000))} giờ`}</span>;
       } else {
         return (
-          <span className="__cancelled">{`Quá hạn ${
-            Math.round((currentTime - endTime) / (60 * 1000)) === 0 ? 1 : Math.round((currentTime - endTime) / (60 * 1000))
-          } phút`}</span>
+          <span className="__cancelled">{`Quá hạn ${Math.round((currentTime - endTime) / (60 * 1000)) === 0 ? 1 : Math.round((currentTime - endTime) / (60 * 1000))
+            } phút`}</span>
         );
       }
     }
+  };
+
+  const COLLAPSE_MAX_HEIGHT = 150;
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOverflow, setIsOverflow] = useState(false);
+
+  const contentText = useMemo(() => data?.content || "", [data?.content]);
+  const isOverflowRef = useRef(false);
+  const rafIdRef = useRef<number | null>(null);
+
+  const measureOverflow = () => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    if (isExpanded) return;
+
+    const overflow = el.scrollHeight > el.clientHeight + 1;
+
+    if (overflow !== isOverflowRef.current) {
+      isOverflowRef.current = overflow;
+      setIsOverflow(overflow);
+    }
+  };
+
+
+  const scheduleMeasure = () => {
+    if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+    rafIdRef.current = requestAnimationFrame(() => {
+      rafIdRef.current = null;
+      measureOverflow();
+    });
+  };
+
+
+  useLayoutEffect(() => {
+    scheduleMeasure();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentText, isExpanded]);
+
+  useEffect(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+
+    const ro = new ResizeObserver(() => {
+      scheduleMeasure();
+    });
+
+    ro.observe(wrap);
+
+    return () => {
+      ro.disconnect();
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const toggleExpand = () => {
+    setIsExpanded((prev) => {
+      const next = !prev;
+      if (prev === true && contentRef.current) {
+        contentRef.current.scrollTop = 0;
+      }
+      return next;
+    });
   };
 
   if (!onShow && !data) return null;
@@ -198,6 +264,32 @@ export default function InfoWorkArea(props: any) {
                   )}
                 </div>
               ))}
+
+              <div className="item content-work">
+                <h4 className="title">Nội dung công việc</h4>
+
+                <div className={`content-wrap 
+                  ${!isExpanded ? "is-collapsed" : ""}
+                  ${isOverflow ? "has-overflow" : ""}
+                  `} ref={wrapRef}>
+                  <div
+                    ref={contentRef}
+                    className={`content 
+                      ${isExpanded ? "is-expanded" : "is-collapsed"}
+                      ${isOverflow ? "has-border" : "no-border"}`}
+                    style={!isExpanded ? { maxHeight: `${COLLAPSE_MAX_HEIGHT}px` } : undefined}
+                  >
+                    {contentText || ""}
+                  </div>
+                </div>
+
+                {(isExpanded || isOverflow) && (
+                  <button type="button" className="btn-toggle-content" onClick={toggleExpand}>
+                    {isExpanded ? "Thu gọn" : "Xem thêm"}
+                  </button>
+                )}
+
+              </div>
 
               <div className="item inprogress-work">
                 <h4 className="title">Tiến độ</h4>
