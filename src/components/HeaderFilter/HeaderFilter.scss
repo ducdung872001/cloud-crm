@@ -1,67 +1,67 @@
-.container-header-filter{
+.container-header-filter {
+  display: flex;
+  flex-direction: column;
+  // justify-content: space-between;
+  align-items: start;
+  width: 100%;
+  .header_top {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 2rem;
+    width: 100%;
+    .button_export {
+      border: 1px solid #eeeeef;
+      display: flex;
+      padding: 8px 12px 8px 12px;
+      align-items: center;
+      border-radius: 8px;
+      background-color: #ffffff;
+      margin-right: 1rem;
+      cursor: pointer;
+      .label {
+        font-size: 16px;
+        font-weight: 500;
+        margin-left: 5px;
+      }
+      &:hover {
+        background-color: #eeeeef;
+      }
+    }
+
+    .title-action {
+      padding: 0;
+    }
+  }
+  .header_bottom {
+    display: flex;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
-    .header_left{
-      flex: 1;
-      // display: flex;
-      // justify-content: space-between;
-      align-items: center;
-      gap: 0 1rem;
-      .button_delete{
-        border: 1px solid #EEEEEF;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 4rem;
-        height: 4rem;
-        border-radius: 8px;
-        background: #F8F8F8;
-        // margin-right: 8px;
-        cursor: pointer;
-        svg {
-          width: 1.6rem;
-          height: 1.6rem;
-        }
-        &:hover {
-          background-color: var(--extra-color-20);
-        }
-      }
-      .box_search {
-        // width: 100%;
-        .search-container{
-          // padding: 0 ;
-        }
-      }
-      
-    }
-
-    .header-right{
+    .button_delete {
+      border: 1px solid #eeeeef;
       display: flex;
-      .button_export{
-        border: 1px solid #EEEEEF;
-        display: flex;
-        padding: 8px 12px 8px 12px;
-        align-items: center;
-        border-radius: 8px;
-        background-color: #FFFFFF;
-        margin-right: 1rem;
-        cursor: pointer;
-        .label{
-          font-size: 16px;
-          font-weight: 500;
-          margin-left: 5px;
-        }
-        &:hover {
-          background-color: #EEEEEF;
-        }
+      align-items: center;
+      justify-content: center;
+      width: 4rem;
+      height: 4rem;
+      border-radius: 8px;
+      background: #f8f8f8;
+      // margin-right: 8px;
+      cursor: pointer;
+      svg {
+        width: 1.6rem;
+        height: 1.6rem;
       }
-  
-      .title-action{
-        padding: 0;
+      &:hover {
+        background-color: var(--extra-color-20);
       }
     }
-
-    
+    .box_search {
+      width: 100%;
+      .search-container {
+        // padding: 0 ;
+      }
+    }
   }
+}

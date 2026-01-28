@@ -12,4 +12,5 @@ export interface IDepartmentResponse {
   managerName?: string;
   totalEmployee?: number;
   isSale?: number;
+  defaultRedirect?: string;
 }

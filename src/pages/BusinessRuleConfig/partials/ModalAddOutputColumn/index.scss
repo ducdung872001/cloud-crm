@@ -1,0 +1,35 @@
+.modal-add-output-column {
+  .form-add-reason-group {
+    .modal-body {
+      padding: 0;
+    }
+
+    .list-form-group {
+      display: flex;
+      flex-direction: column;
+      padding: 1.6rem;
+      max-height: 40rem;
+      overflow: auto;
+    }
+
+    .list-field-item {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 3.2rem;
+
+      .form-group {
+        //   &:first-child {
+        width: 100%;
+        //   }
+        // width: calc(50% - 1.6rem);
+      }
+
+      .status_active {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+    }
+  }
+}
