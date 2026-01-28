@@ -188,6 +188,8 @@ import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
 import ManagementOpportunityNew from "pages/ManagementOpportunityNew";
 import ManagerWork from "pages/ManagerWork";
 import CreateContractsXML from "pages/Contract/CreateContractsXML";
+import BusinessRule from "pages/BusinessRule";
+import BusinessRuleConfig from "pages/BusinessRuleConfig";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -217,7 +219,7 @@ export const menu: IMenuItem[] = [
                 title: "managerWork", // Quản lý công việc
                 path: urls.manager_work,
                 icon: <Icon name="Job" />,
-                code: "",
+                code: "WORK_PROJECT",
               },
             ]
           : []),
@@ -952,6 +954,18 @@ export const menu: IMenuItem[] = [
               path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
               code: "BPM",
               icon: <Icon name="CashBook" />,
+            },
+            {
+              title: "manageDefaultProcesses",
+              path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
+              code: "BPM",
+              icon: <Icon name="CashBook" />,
+            },
+            {
+              title: "business_rule", // Loại luật nghiệp vụ
+              path: urls.business_rule,
+              icon: <Icon name="SettingJob" />,
+              code: "",
             },
           ],
         },
@@ -1837,6 +1851,14 @@ export const routes: IRouter[] = [
   {
     path: urls.manage_default_processes,
     component: <ManageDefaultProcesses />,
+  },
+  {
+    path: urls.business_rule,
+    component: <BusinessRule />,
+  },
+  {
+    path: urls.business_rule_config,
+    component: <BusinessRuleConfig />,
   },
   {
     path: urls.process_simulation,
