@@ -166,8 +166,8 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
 
   const validations: IValidation[] = useMemo(() => {
     const base: IValidation[] = [
-      { 
-        name: "name", 
+      {
+        name: "name",
         rules: "required",
       },
     ];
@@ -756,15 +756,20 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                 ))}
               </div>
 
-              <div className="assign-btn-wrapper">
-                <button
-                  type="button"
-                  className={`btn-mini-assign ${showAssign ? "is-hide" : "is-show"}`}
-                  onClick={() => setShowAssign((prev) => !prev)}
-                  disabled={isSubmit}
-                >
-                  {showAssign ? "Ẩn giao việc" : "+ Giao việc"}
-                </button>
+              <div className="assign-toggle-wrapper">
+                <label className={`switch ${isSubmit ? "disabled" : ""}`}>
+                  <input
+                    type="checkbox"
+                    checked={showAssign}
+                    onChange={() => !isSubmit && setShowAssign(prev => !prev)}
+                    disabled={isSubmit}
+                  />
+                  <span className="slider" />
+                </label>
+
+                <span className="assign-toggle-label">
+                  Giao việc
+                </span>
               </div>
 
               {showAssign && (
