@@ -64,6 +64,7 @@ export interface ITableWorkInColapsedProps {
   setShowModalAssign?: (show: boolean) => void;
   setShowModalDetail?: (show: boolean) => void;
   onReload?: (reload: boolean) => void;
+  onReopen?: () => void;
 }
 
 export interface IKanbanWorkProps {

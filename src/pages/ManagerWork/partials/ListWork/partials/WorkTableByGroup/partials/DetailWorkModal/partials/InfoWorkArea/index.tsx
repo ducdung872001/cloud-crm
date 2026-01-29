@@ -97,17 +97,17 @@ export default function InfoWorkArea(props: any) {
     {
       className: "time-start",
       title: "Thời gian bắt đầu",
-      name: convertTime(data?.startTime),
+      name: data?.startTime ? data?.startTime : "Chưa xác định",
     },
     {
       className: "time-end",
       title: "Thời gian kết thúc",
-      name: convertTime(data?.endTime),
+      name: data?.endTime ? data?.endTime : "Chưa xác định",
     },
     {
       className: "amount-work",
       title: "Khối lượng công việc",
-      name: convertWorkLoadUnit(data?.workLoad, data?.workLoadUnit),
+      name: data?.workLoad ? data?.workLoadUnit ? convertWorkLoadUnit(data?.workLoad, data?.workLoadUnit) : `${data?.workLoad}` : "Chưa xác định",
     },
     {
       className: JSON.parse(data?.docLink || "[]").length > 0 ? "related-document" : "",

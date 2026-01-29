@@ -19,7 +19,7 @@ import moment from "moment";
 import StatusTask from "../StatusTask";
 
 export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
-  const { paramsFilter, isOpen, setIdWork, setShowModalAdd, onReload, setShowModalAssign, setShowModalDetail } = props;
+  const { paramsFilter, isOpen, setIdWork, setShowModalAdd, onReload, setShowModalAssign, setShowModalDetail, onReopen } = props;
 
   const isMounted = useRef(false);
 
@@ -51,36 +51,54 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
 
   const abortControllerChild = new AbortController();
 
+  const reopenLockRef = useRef(false);
+  const prevLimitRef = useRef<number | undefined>(undefined);
+  const isReopeningRef = useRef(false);
+
   useEffect(() => {
-    if (paramsFilter.groupValue == 0) {
-      console.log("params changed", params);
+    if (!isOpen) return;
+
+    const currLimit = params?.limit ?? 10;
+    const prevLimit = prevLimitRef.current;
+
+    if (prevLimit === undefined) {
+      prevLimitRef.current = currLimit;
+      return;
     }
 
+    if (currLimit !== prevLimit) {
+      prevLimitRef.current = currLimit;
+
+      if (currLimit > 10 && !reopenLockRef.current) {
+        reopenLockRef.current = true;
+        isReopeningRef.current = true;
+
+        onReopen?.();
+
+        setTimeout(() => {
+          reopenLockRef.current = false;
+          isReopeningRef.current = false;
+          // if (isOpen) {
+          //   getListWork(params, true);
+          // }
+        }, 650);
+      }
+    }
+  }, [params?.limit, isOpen, onReopen]);
+
+  useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true;
       return;
     }
-    if (isMounted.current === true) {
-      if (isOpen) {
-        getListWork(params);
-      }
-      const paramsTemp = _.cloneDeep(params);
-      if (paramsTemp.limit === 10) {
-        delete paramsTemp["limit"];
-      }
-      Object.keys(paramsTemp).map(function (key) {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-      if (isDifferenceObj(searchParams, paramsTemp)) {
-        if (paramsTemp.page === 1) {
-          delete paramsTemp["page"];
-        }
-      }
-    }
-    // return () => {
-    //   abortControllerChild.abort();
-    // };
-  }, [params]);
+
+    if (!isOpen) return;
+
+    if (isReopeningRef.current) return;
+
+    getListWork(params, true);
+  }, [params, isOpen]);
+
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
@@ -106,13 +124,15 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
 
       setListWork(result.items);
       // handleDetailWork(null, result.items?.length);
-      setPagination({
-        ...pagination,
+      const limit = paramsSearch.limit ?? DataPaginationDefault.sizeLimit;
+
+      setPagination((prev) => ({
+        ...prev,
         page: +result.page,
-        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
+        sizeLimit: limit,
         totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
-      });
+        totalPage: Math.ceil(+result.total / +limit),
+      }));
       if (+result.total === 0 && !params?.name && +result.page === 1) {
         setIsNoItem(true);
       }
