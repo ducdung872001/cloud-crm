@@ -98,6 +98,21 @@ export default function WorkTableByGroup(props: any) {
     return key;
   };
 
+  const reopenGroup = (groupIndex: number) => {
+    // đóng
+    setListGroupWork((prev) =>
+      prev.map((it, idx) => (idx === groupIndex ? { ...it, isOpen: false } : it))
+    );
+
+    // mở lại sau khi animation đóng xong (đang để 500ms)
+    setTimeout(() => {
+      setListGroupWork((prev) =>
+        prev.map((it, idx) => (idx === groupIndex ? { ...it, isOpen: true } : it))
+      );
+    }, 550); // 500ms + buffer nhỏ
+  };
+
+
   return (
     <div className={`page-content page-work-table-by-group`}>
       <div className="card-box d-flex flex-column">
@@ -246,6 +261,7 @@ export default function WorkTableByGroup(props: any) {
                       onReload={(reload) => {
                         if (reload) getGroupWork(paramsGetGroupWork);
                       }}
+                      onReopen={() => reopenGroup(groupIndex)}
                     />
                   </Collapsible>
                 );
