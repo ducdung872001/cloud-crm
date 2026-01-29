@@ -78,9 +78,9 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
         setTimeout(() => {
           reopenLockRef.current = false;
           isReopeningRef.current = false;
-          if (isOpen) {
-            getListWork(params, true);
-          }
+          // if (isOpen) {
+          //   getListWork(params, true);
+          // }
         }, 650);
       }
     }
