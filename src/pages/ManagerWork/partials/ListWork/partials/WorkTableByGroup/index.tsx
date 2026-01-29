@@ -73,17 +73,36 @@ export default function WorkTableByGroup(props: any) {
     }
   };
 
-  const headerCollapsible = useCallback((item, index) => {
-    return (
-      <div className="collapse-header">
-        <div className="group-name" style={{ backgroundColor: item?.color }}>
-          <Icon name="Job" />
-          {item?.title}
+  const headerCollapsible = useCallback(
+    (item) => {
+      const index = item?.__index;
+
+      return (
+        <div
+          className="collapse-header"
+          role="button"
+          tabIndex={-1}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            setListGroupWork((prev) =>
+              prev.map((it, idx) =>
+                idx === index ? { ...it, isOpen: !it.isOpen } : { ...it, isOpen: false }
+              )
+            );
+          }}
+        >
+          <div className="group-name" style={{ backgroundColor: item?.color }}>
+            <Icon name="Job" />
+            {item?.title}
+          </div>
+          <div className="number-work">{item?.count} công việc</div>
         </div>
-        <div className="number-work">{item?.count} công việc</div>
-      </div>
-    );
-  }, []);
+      );
+    },
+    [setListGroupWork]
+  );
 
   const projectWork =
     localStorage.getItem("projectWorkManagement") && JSON.parse(localStorage.getItem("projectWorkManagement"))
@@ -233,6 +252,8 @@ export default function WorkTableByGroup(props: any) {
                       title: groupItem?.name || "Chưa phân nhóm",
                       count: groupItem?.total || 0,
                       color: listColors[groupIndex % listColors.length],
+                      __index: groupIndex,
+                      __isOpen: groupItem.isOpen,
                     }}
                     isOpen={groupItem.isOpen || false}
                     title={""}

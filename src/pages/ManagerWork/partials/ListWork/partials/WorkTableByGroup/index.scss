@@ -107,6 +107,12 @@
 
       transition: box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
 
+      *:focus,
+      *:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+      }
+
       &:hover {
         box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
         transform: translateY(-1px);
@@ -126,17 +132,25 @@
       .collapsible__header {
         width: 98%;
         padding: 0;
+        background: #fff;
       }
 
       .collapse-header {
+        // flex: 1;
         display: flex;
         align-items: center;
         justify-content: space-between;
-
+        width: 100%;
         padding: 12px 14px;
-        background: linear-gradient(0deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.02)), var(--pw-surface);
+        background: #fff;
 
         border-bottom: 1px solid var(--pw-border-2);
+      }
+
+      .icon-area {
+        background: #fff;
+        border-radius: 12px;
+        padding: 12px 16px;
       }
 
       .group-name {
