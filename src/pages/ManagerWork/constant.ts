@@ -4,6 +4,7 @@ export const HEADER_VIEW_MODES = {
   overview: 1,
   all: 2,
   mywork: 3,
+  joinedwork: 4,
 };
 export const lstTitleHeader = [
   {
@@ -18,4 +19,8 @@ export const lstTitleHeader = [
     name: "Công việc của tôi",
     type: HEADER_VIEW_MODES.mywork,
   },
+  {
+    name: "Công việc tham gia",
+    type: HEADER_VIEW_MODES.joinedwork,
+  }
 ];
