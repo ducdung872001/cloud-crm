@@ -79,17 +79,25 @@
     border-radius: 12px;
     background: var(--pw-surface-2);
 
+    display: grid;
+    grid-template-columns: 1fr 1fr; // trái | phải
+    gap: 12px;
+
     .action-header-left,
     .action-header-right {
+      display: flex;
       gap: 12px;
+      align-items: flex-end;
     }
 
     .select-group-by {
-      min-width: 220px;
+      flex: 1;
+      min-width: 0;
     }
 
     .filter .item-filter-right {
-      min-width: 240px;
+      flex: 1;
+      min-width: 0;
     }
   }
 
