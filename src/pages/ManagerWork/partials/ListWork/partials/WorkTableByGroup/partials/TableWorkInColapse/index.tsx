@@ -42,11 +42,20 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
-    setParams((prevParams) => ({
-      ...prevParams,
-      ...paramsTemp,
-      ...{ [paramsFilter.groupBy]: paramsFilter.groupValue, projectId: paramsFilter.projectId, total: paramsFilter.total },
-    }));
+
+    setParams((prevParams) => {
+      const next: any = {
+        ...prevParams,
+        ...paramsTemp,
+        [paramsFilter.groupBy]: paramsFilter.groupValue,
+        projectId: paramsFilter.projectId,
+        total: paramsFilter.total,
+      };
+      if (paramsFilter.assignedId != null) next.assignedId = paramsFilter.assignedId;
+      else delete next.assignedId;
+
+      return next;
+    });
   }, [paramsFilter]);
 
   const abortControllerChild = new AbortController();
