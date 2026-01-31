@@ -69,6 +69,7 @@ export default function App() {
   const [lstRole, setLstRole] = useState([]);
 
   const takeSelectedRole = localStorage.getItem("SelectedRole");
+  const defaultRedirectRef = useRef<string>("/customer");
 
   const handleGetRoles = async (token: string) => {
     if (!token) return;
@@ -103,7 +104,8 @@ export default function App() {
           setIsLogin(true);
           if (location.pathname === "/" || location.pathname === "/login") {
             if (cookies.user) {
-              navigate(returnUrl || "/customer"); //"/dashboard"
+              const target = returnUrl || defaultRedirectRef.current || "/customer";
+              navigate(target);
             }
           }
 
@@ -119,7 +121,8 @@ export default function App() {
 
             if (location.pathname === "/" || location.pathname === "/login") {
               if (cookies.user) {
-                navigate(returnUrl || "/customer"); //dashboard
+                const target = returnUrl || defaultRedirectRef.current || "/customer";
+                navigate(target);
               }
             }
           }
@@ -194,6 +197,9 @@ export default function App() {
 
         if (result) {
           const changeResult = result.lstOrgApp[0];
+
+          const defaultRedirect = result?.defaultRedirect;
+          defaultRedirectRef.current = defaultRedirect || "/customer";
 
           // Chuyển đổi startDate và endDate thành đối tượng Date
           const endDate: any = new Date(changeResult?.endDate);
@@ -331,7 +337,7 @@ export default function App() {
       try {
         audioRef.current?.pause();
         audioRef.current = null;
-      } catch (e) {}
+      } catch (e) { }
       document.removeEventListener("click", tryUnlock, true);
       document.removeEventListener("touchstart", tryUnlock, true);
     };

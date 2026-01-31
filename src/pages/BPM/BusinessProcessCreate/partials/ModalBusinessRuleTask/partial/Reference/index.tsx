@@ -265,6 +265,7 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
                 return {
+                  isDisabled: listMappingOutput.some((el) => el.ruleField === item.code),
                   value: item.code,
                   label: item.code + " - " + item.name,
                   id: item.id,
@@ -348,6 +349,30 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
             </div>
           ) : null}
 
+          {tabMapping === "output" ? (
+            <div className="form-group">
+              <SelectCustom
+                key={tabMapping + "_" + dataBusinessRule?.id + listMappingOutput?.length}
+                label={""}
+                id="fieldName"
+                name="fieldName"
+                options={[]}
+                fill={true}
+                value={formData.ruleField ? { value: formData.ruleField, label: formData.ruleFieldName } : null}
+                special={true}
+                required={true}
+                onChange={(e) => handleChangeValueRule(e)}
+                isAsyncPaginate={true}
+                isFormatOptionLabel={false}
+                placeholder="Chọn trường nghiệp vụ"
+                additional={{
+                  page: 1,
+                }}
+                loadOptionsPaginate={loadedOptionOutput}
+              />
+            </div>
+          ) : null}
+
           <div className="form-group">
             <div className={"container-select-mapping"}>
               {formData.mappingType == 0 ? (
@@ -414,29 +439,6 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
               ) : null}
             </div>
           </div>
-          {tabMapping === "output" ? (
-            <div className="form-group">
-              <SelectCustom
-                key={tabMapping + "_" + dataBusinessRule?.id}
-                label={""}
-                id="fieldName"
-                name="fieldName"
-                options={[]}
-                fill={true}
-                value={formData.ruleField ? { value: formData.ruleField, label: formData.ruleFieldName } : null}
-                special={true}
-                required={true}
-                onChange={(e) => handleChangeValueRule(e)}
-                isAsyncPaginate={true}
-                isFormatOptionLabel={false}
-                placeholder="Chọn trường nghiệp vụ"
-                additional={{
-                  page: 1,
-                }}
-                loadOptionsPaginate={loadedOptionOutput}
-              />
-            </div>
-          ) : null}
 
           <div className={"action-children"}>
             <Tippy content={"Thêm mapping"}>
@@ -528,9 +530,9 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
                     <div className="form-group">
                       <Input
                         fill={true}
-                        name="mappingFieldName"
-                        label={index == 0 ? "Biến mapping" : ""}
-                        value={item.mappingFieldName || item.mappingField}
+                        name="ruleFieldName"
+                        label={index == 0 ? "Trường nghiệp vụ" : ""}
+                        value={item.ruleFieldName || item.ruleField}
                         readOnly={true}
                         onChange={(e) => {}}
                         placeholder=""
@@ -539,9 +541,9 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
                     <div className="form-group">
                       <Input
                         fill={true}
-                        name="ruleFieldName"
-                        label={index == 0 ? "Trường nghiệp vụ" : ""}
-                        value={item.ruleFieldName || item.ruleField}
+                        name="mappingFieldName"
+                        label={index == 0 ? "Biến mapping" : ""}
+                        value={item.mappingFieldName || item.mappingField}
                         readOnly={true}
                         onChange={(e) => {}}
                         placeholder=""

@@ -470,7 +470,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
           {/* <CronConfigUI /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt nhiệm vụ"}</h4>
+              <h4>{"Cài đặt Timer Intermediate Catch Event"}</h4>
             </div>
 
             <ListButtonHeader

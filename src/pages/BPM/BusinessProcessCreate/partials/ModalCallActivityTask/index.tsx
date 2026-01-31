@@ -1225,7 +1225,7 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt biểu mẫu"}</h4>
+              <h4>{"Cài đặt Call Activity"}</h4>
             </div>
             <ListButtonHeader
               data={data}
