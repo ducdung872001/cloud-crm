@@ -631,7 +631,7 @@ export default function ModalScriptTask({ onShow, onHide, dataNode, processId, c
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt Script"}</h4>
+              <h4>{"Cài đặt Script Task"}</h4>
             </div>
             <ListButtonHeader
               data={data}
