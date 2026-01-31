@@ -280,35 +280,6 @@ const FormViewerComponent = (props: any) => {
     let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
       let { schema, data } = event;
-      console.log('data', data);
-
-      if(data.commitee){
-        // data.commitee.forEach((row, index) => {
-        //   console.log('Dòng:', index, row);
-        // });
-
-        if (!Array.isArray(data.commitee)) return;
-
-        let needUpdate = false;
-
-        data.commitee.forEach((row, index) => {
-          if (row.rowIndex !== index) {
-            row.rowIndex = index;
-            needUpdate = true;
-          }
-
-          if (!row._rowId) {
-            row._rowId = crypto.randomUUID();
-            needUpdate = true;
-          }
-        });
-
-        console.log('data222', data);
-        
-        // if (needUpdate) {
-        //   formViewerRef.current.importSchema(schema);
-        // }
-      }
 
       let components = schema.components;
       const newValues = data;
@@ -516,24 +487,10 @@ const FormViewerComponent = (props: any) => {
       }
     });
 
-    formViewerRef.current.on('formField.hover', async (event) => {
-      console.log('event123', event);
-      if (event.formField.type !== 'select') return;
-     
-      
-    
-      // if (!optionCache[event.formField.key]) {
-      //   optionCache[event.formField.key] = await fetchOptions();
-      // }
-    });
-
     formViewerRef.current.on("formField.focus", async (event) => {
       console.log("Event focus =>", event);
 
-      let formData = formViewerRef.current._getState().data;
-      console.log('formData21', formData);
-      
-      
+      let formData = formViewerRef.current._getState().data;      
       const nodeId = contextData?.nodeId;
       const potId = contextData?.potId;
       const processId = contextData?.processId;
@@ -892,61 +849,6 @@ const FormViewerComponent = (props: any) => {
 
     // Lặp qua các components trong đầu vào
     walkGetIframeLinks(updatedFormSchema.components, nodeId, potId, processId, workId, procurementType);
-    // updatedFormSchema.components.forEach((component) => {
-    //   // Kiểm tra nếu component có type là 'iframe'
-    //   if (component.type === "iframe" && component.url) {
-    //     //Đoạn xử lý dùng theo link tương đối không cần phải nhập trước https://
-    //     let componentUrl = "";
-    //     if (component.url?.includes("https://") || component.url?.includes("http://")) {
-    //       componentUrl = component.url;
-    //     } else {
-    //       componentUrl = `${process.env.APP_CRM_LINK}${component.url}`;
-    //     }
-
-    //     // Lấy fieldName từ properties.name, nếu không có thì gán giá trị mặc định là 'undefined'
-    //     const fieldName = component?.properties?.name || "undefined";
-    //     const enableAddRow = component?.properties?.enableAddRow || "true";
-    //     const enableAddColumns = component?.properties?.enableAddColumns || "true";
-    //     const enableExport = component?.properties?.enableExport || "true";
-    //     const enableImport = component?.properties?.enableImport || "true";
-    //     const enableAddCmtCell = component?.properties?.enableAddCmtCell || "true";
-    //     const enableAddCmtCol = component?.properties?.enableAddCmtCol || "true";
-    //     const enableSave = component?.properties?.enableSave || "true";
-    //     const enableEditCell = component?.properties?.enableEditCell || "true";
-    //     const documentType = component?.properties?.documentType || "undefined";
-    //     const link = component?.properties?.link || "undefined";
-    //     const apiParams = component?.properties?.apiParams || "undefined";
-
-    //     // Tạo URL mới bằng cách thêm các tham số nodeId, potId, processId
-    //     const url = new URL(componentUrl);
-    //     url.searchParams.append("nodeId", nodeId);
-    //     url.searchParams.append("potId", potId);
-    //     url.searchParams.append("processId", processId);
-    //     url.searchParams.append("fieldName", fieldName);
-    //     url.searchParams.append("documentType", documentType);
-    //     url.searchParams.append("link", link);
-    //     url.searchParams.append("workId", workId);
-    //     if (procurementType) {
-    //       url.searchParams.append("procurementType", procurementType);
-    //     }
-    //     if (apiParams) {
-    //       url.searchParams.append("apiParams", apiParams);
-    //     }
-
-    //     url.searchParams.append("enableAddRow", enableAddRow);
-    //     url.searchParams.append("enableAddColumns", enableAddColumns);
-    //     url.searchParams.append("enableExport", enableExport);
-    //     url.searchParams.append("enableImport", enableImport);
-    //     url.searchParams.append("enableAddCmtCell", enableAddCmtCell);
-    //     url.searchParams.append("enableAddCmtCol", enableAddCmtCol);
-    //     url.searchParams.append("enableSave", enableSave);
-    //     url.searchParams.append("enableEditCell", enableEditCell);
-
-    //     // Cập nhật URL mới vào component
-    //     component.url = url.toString();
-    //     component.sandbox = "allow-forms allow-scripts allow-same-origin";
-    //   }
-    // });
 
     // Trả về dữ liệu đã được cập nhật
     return updatedFormSchema;
@@ -1141,7 +1043,6 @@ const FormViewerComponent = (props: any) => {
 
   return (
     <div>
-      {/* <h2>Form Viewer</h2> */}
       {isLoading ? (
         <Loading />
       ) : (
