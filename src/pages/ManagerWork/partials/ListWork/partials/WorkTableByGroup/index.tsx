@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import _ from "lodash";
+import _, { assign } from "lodash";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Button from "components/button/button";
@@ -277,7 +277,7 @@ export default function WorkTableByGroup(props: any) {
                         groupValue,
                         projectId: idManagement,
                         total: groupItem.total,
-                        employeeId: employeeIdFilter,
+                        assignedId: employeeIdFilter,
                       }}
                       onReload={(reload) => {
                         if (reload) getGroupWork(paramsGetGroupWork);
