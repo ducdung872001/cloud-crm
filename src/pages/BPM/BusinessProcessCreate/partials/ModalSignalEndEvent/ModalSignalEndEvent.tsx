@@ -644,7 +644,7 @@ export default function ModalSignalEndEvent({ onShow, onHide, dataNode, processI
         <form className="form-signal-end-event" onSubmit={(e) => onSubmit(e)}>
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt biểu mẫu"}</h4>
+              <h4>{"Cài đặt Signal End Event"}</h4>
             </div>
             <ListButtonHeader
               data={data}

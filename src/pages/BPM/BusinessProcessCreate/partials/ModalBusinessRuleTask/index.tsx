@@ -194,9 +194,11 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
               : JSON.parse(result?.mappingOutput)[item].includes("var_")
               ? 2
               : 0, // 0: input, 1: frm, 2: var
-            ruleField: JSON.parse(result?.mappingOutput)[item],
+            // ruleField: JSON.parse(result?.mappingOutput)[item],
+            ruleField: item,
             ruleFieldName: "",
-            mappingField: item,
+            // mappingField: item,
+            mappingField: JSON.parse(result?.mappingOutput)[item],
             mappingFieldName: "",
           });
         });
@@ -348,7 +350,8 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
       let mappingOutput = {};
       if (listMappingOutput?.length) {
         listMappingOutput.forEach((item) => {
-          mappingOutput[item.mappingField] = item.ruleField;
+          // mappingOutput[item.mappingField] = item.ruleField;
+          mappingOutput[item.ruleField] = item.mappingField;
         });
       }
 
@@ -1527,7 +1530,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt biểu mẫu"}</h4>
+              <h4>{"Cài đặt Business Rule"}</h4>
             </div>
             <div className="container-button">
               {disable ? null : (

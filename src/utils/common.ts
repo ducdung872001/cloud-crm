@@ -1,4 +1,4 @@
-import { json } from 'react-router-dom';
+import { json } from "react-router-dom";
 /* eslint-disable prefer-const */
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
@@ -75,6 +75,22 @@ export const differenceObj = (orgObj, newObj) => {
   return { ...changes(newObj, orgObj), ...changesReverse(orgObj, newObj) };
 };
 
+// /**
+//  * Format tiền tệ
+//  * @param {*} num
+//  * @param {*} separate
+//  * @param {*} suffixes
+//  * @returns {string|number}
+//  */
+// export const formatCurrency = (num, separate = ",", suffixes = "đ", positionSuffixes = "right") => {
+//   if (num) {
+//     const s = parseInt(num).toString();
+//     const regex = /\B(?=(\d{3})+(?!\d))/g;
+//     return positionSuffixes === "right" ? s.replace(regex, separate) + suffixes : suffixes + s.replace(regex, separate);
+//   } else {
+//     return positionSuffixes === "right" ? 0 + suffixes : suffixes + 0;
+//   }
+// };
 /**
  * Format tiền tệ
  * @param {*} num
@@ -82,30 +98,33 @@ export const differenceObj = (orgObj, newObj) => {
  * @param {*} suffixes
  * @returns {string|number}
  */
-export const formatCurrency = (num, separate = ",", suffixes = "đ", positionSuffixes = "right") => {
-  if (num) {
-    const s = parseInt(num).toString();
+export const formatCurrency = (num, separate = ",", suffixes = "đ", positionSuffixes = "right", decimal = 2) => {
+  if (num || num === 0) {
+    const s = decimal > 0 ? parseFloat(num).toFixed(decimal).toString() : Math.round(num).toString();
+    const [integerPart, decimalPart] = s.split(".");
     const regex = /\B(?=(\d{3})+(?!\d))/g;
-    return positionSuffixes === "right" ? s.replace(regex, separate) + suffixes : suffixes + s.replace(regex, separate);
+    const formattedInteger = integerPart.replace(regex, separate);
+    const formattedNumber = decimal > 0 && decimalPart && parseFloat(decimalPart) > 0 ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+    return positionSuffixes === "right" ? formattedNumber + suffixes : suffixes + formattedNumber;
   } else {
-    return positionSuffixes === "right" ? 0 + suffixes : suffixes + 0;
+    return positionSuffixes === "right"
+      ? `0${decimal > 0 ? "." + "0".repeat(decimal) : ""}${suffixes}`
+      : `${suffixes}0${decimal > 0 ? "." + "0".repeat(decimal) : ""}`;
   }
 };
-
 
 /**
  * Format dung lượng file
  * @param {*} bytes
  */
 
- export const formatFileSize = (bytes: number) => {
+export const formatFileSize = (bytes: number) => {
   if (bytes === 0) return "0 Bytes";
   const k = 1024;
   const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
-
 
 /**
  * Lấy ra thông tin tài khoản đăng nhập là GDP or GPP
@@ -359,12 +378,12 @@ export const handDownloadFileOrigin = (file, nameFile) => {
   let fileUrl: string;
 
   // Trường hợp 1: file là chuỗi JSON chứa fileUrl
-  if (file.trim().startsWith('{')) {
+  if (file.trim().startsWith("{")) {
     const parsed = JSON.parse(file);
-    if (parsed && typeof parsed.fileUrl === 'string') {
+    if (parsed && typeof parsed.fileUrl === "string") {
       fileUrl = parsed.fileUrl;
-    } 
-  } 
+    }
+  }
   // Trường hợp 2: file đã là đường dẫn URL trực tiếp
   else {
     fileUrl = file;

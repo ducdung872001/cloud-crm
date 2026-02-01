@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import _ from "lodash";
+import _, { assign } from "lodash";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Button from "components/button/button";
@@ -40,16 +40,19 @@ export default function WorkTableByGroup(props: any) {
   console.log("listGroupWork>>>", listGroupWork);
 
   useEffect(() => {
-    getGroupWork({
-      groupBy: groupBy,
+    const employeeId =
+      activeTitleHeader === HEADER_VIEW_MODES.mywork
+        ? user?.dataInfoEmployee?.id
+        : undefined;
+
+    const payload = {
+      groupBy,
       projectId: idManagement,
-      // employeeId: activeTitleHeader === HEADER_VIEW_MODES.mywork ? user?.dataInfoEmployee?.id ?? null : null,
-    });
-    setParamsGetGroupWork({
-      groupBy: groupBy,
-      projectId: idManagement,
-      // employeeId: activeTitleHeader === HEADER_VIEW_MODES.mywork ? user?.dataInfoEmployee?.id ?? null : null,
-    });
+      ...(employeeId != null ? { employeeId } : {}),
+    };
+
+    getGroupWork(payload);
+    setParamsGetGroupWork(payload);
   }, [idManagement, groupBy, user?.dataInfoEmployee?.id, activeTitleHeader]);
 
   const getGroupWork = async (paramsSearch: IGroupsFilterRequest) => {
@@ -70,22 +73,65 @@ export default function WorkTableByGroup(props: any) {
     }
   };
 
-  const headerCollapsible = useCallback((item, index) => {
-    return (
-      <div className="collapse-header">
-        <div className="group-name" style={{ backgroundColor: item?.color }}>
-          <Icon name="Job" />
-          {item?.title}
+  const headerCollapsible = useCallback(
+    (item) => {
+      const index = item?.__index;
+
+      return (
+        <div
+          className="collapse-header"
+          role="button"
+          tabIndex={-1}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            setListGroupWork((prev) =>
+              prev.map((it, idx) =>
+                idx === index ? { ...it, isOpen: !it.isOpen } : { ...it, isOpen: false }
+              )
+            );
+          }}
+        >
+          <div className="group-name" style={{ backgroundColor: item?.color }}>
+            <Icon name="Job" />
+            {item?.title}
+          </div>
+          <div className="number-work">{item?.count} công việc</div>
         </div>
-        <div className="number-work">{item?.count} công việc</div>
-      </div>
-    );
-  }, []);
+      );
+    },
+    [setListGroupWork]
+  );
 
   const projectWork =
     localStorage.getItem("projectWorkManagement") && JSON.parse(localStorage.getItem("projectWorkManagement"))
       ? JSON.parse(localStorage.getItem("projectWorkManagement"))
       : null;
+
+  const normalizeKey = (key: any) => {
+    if (key == null) return -2;
+    if (typeof key === "object") {
+      return key.id ?? key.value ?? key.key ?? -2;
+    }
+    return key;
+  };
+
+  const reopenGroup = (groupIndex: number) => {
+    // đóng
+    setListGroupWork((prev) =>
+      prev.map((it, idx) => (idx === groupIndex ? { ...it, isOpen: false } : it))
+    );
+
+    // mở lại sau khi animation đóng xong (đang để 500ms)
+    setTimeout(() => {
+      setListGroupWork((prev) =>
+        prev.map((it, idx) => (idx === groupIndex ? { ...it, isOpen: true } : it))
+      );
+    }, 550); // 500ms + buffer nhỏ
+  };
+
+
   return (
     <div className={`page-content page-work-table-by-group`}>
       <div className="card-box d-flex flex-column">
@@ -191,54 +237,56 @@ export default function WorkTableByGroup(props: any) {
             </div>
           ) : (
             <div className="list-table">
-              {listGroupWork.map((groupItem, groupIndex) => (
-                <Collapsible
-                  key={groupItem?.key || groupIndex}
-                  header={headerCollapsible}
-                  dataItems={{
-                    title: groupItem?.name || "Chưa phân nhóm",
-                    count: groupItem?.total || 0,
-                    color: listColors[groupIndex % listColors.length],
-                  }}
-                  isOpen={groupItem.isOpen || false}
-                  title={""}
-                  defaultOpen={false}
-                  className="collapsible-work-by-group"
-                  //  children,
-                  animationDuration={500}
-                  onToggle={(open) => {
-                    setListGroupWork((prevState) => {
-                      return prevState.map((item, index) => {
-                        if (index === groupIndex) {
-                          return { ...item, isOpen: open };
-                        } else {
-                          return { ...item, isOpen: false };
-                        }
-                      });
-                    });
-                  }}
-                >
-                  <TableWorkInColapse
+              {listGroupWork.map((groupItem, groupIndex) => {
+                const groupValue = normalizeKey(groupItem?.key);
+                const employeeIdFilter =
+                  groupBy === "employee"
+                    ? (groupValue !== -2 ? groupValue : null)
+                    : (activeTitleHeader === HEADER_VIEW_MODES.mywork ? user?.dataInfoEmployee?.id ?? null : null);
+
+                return (
+                  <Collapsible
+                    key={groupItem?.key || groupIndex}
+                    header={headerCollapsible}
+                    dataItems={{
+                      title: groupItem?.name || "Chưa phân nhóm",
+                      count: groupItem?.total || 0,
+                      color: listColors[groupIndex % listColors.length],
+                      __index: groupIndex,
+                      __isOpen: groupItem.isOpen,
+                    }}
                     isOpen={groupItem.isOpen || false}
-                    setIdWork={setIdWork}
-                    setShowModalAdd={setShowModalAdd}
-                    setShowModalAssign={setShowModalAssign}
-                    setShowModalDetail={setShowModalDetail}
-                    paramsFilter={{
-                      groupBy: groupBy,
-                      groupValue: groupItem?.key == null ? -2 : groupItem?.key,
-                      projectId: idManagement,
-                      total: groupItem.total,
-                      employeeId: activeTitleHeader === HEADER_VIEW_MODES.mywork ? user?.dataInfoEmployee?.id ?? null : null,
+                    title={""}
+                    defaultOpen={false}
+                    className="collapsible-work-by-group"
+                    animationDuration={500}
+                    onToggle={(open) => {
+                      setListGroupWork((prevState) =>
+                        prevState.map((item, index) => (index === groupIndex ? { ...item, isOpen: open } : { ...item, isOpen: false }))
+                      );
                     }}
-                    onReload={(reload) => {
-                      if (reload) {
-                        getGroupWork(paramsGetGroupWork);
-                      }
-                    }}
-                  />
-                </Collapsible>
-              ))}
+                  >
+                    <TableWorkInColapse
+                      isOpen={groupItem.isOpen || false}
+                      setIdWork={setIdWork}
+                      setShowModalAdd={setShowModalAdd}
+                      setShowModalAssign={setShowModalAssign}
+                      setShowModalDetail={setShowModalDetail}
+                      paramsFilter={{
+                        groupBy,
+                        groupValue,
+                        projectId: idManagement,
+                        total: groupItem.total,
+                        assignedId: employeeIdFilter,
+                      }}
+                      onReload={(reload) => {
+                        if (reload) getGroupWork(paramsGetGroupWork);
+                      }}
+                      onReopen={() => reopenGroup(groupIndex)}
+                    />
+                  </Collapsible>
+                );
+              })}
             </div>
           )}
         </div>

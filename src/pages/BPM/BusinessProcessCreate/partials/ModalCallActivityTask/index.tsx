@@ -17,7 +17,6 @@ import BpmnJS from "bpmn-js/dist/bpmn-modeler.production.min.js";
 import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-js.css";
 import BpmnViewer from "bpmn-js/lib/NavigatedViewer";
-import Button from "components/button/button";
 import ModalDebug from "../ModalUserTask/partials/ModalDebug";
 import ModalSelectNodeOther from "../ModalSelectNodeOther";
 import ModalSetting from "../ModalUserTask/partials/ModalSetting";
@@ -26,6 +25,7 @@ import ListButtonHeader from "../../components/ListButtonHeader/ListButtonHeader
 export default function ModalCallActivityTask({ onShow, onHide, dataNode, processId, changeNameNodeXML, disable }) {
   const modelerRef = useRef(null);
   const bpmnModeler = useRef(null);
+  const tooltipRef = useRef(null);
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -39,6 +39,7 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
   const [handleErrorData, setHandleErrorData] = useState(null);
   const [dataWorkflow, setDataWorkflow] = useState(null);
   const [childProcessId, setChildProcessId] = useState(null);
+  const [nodeId, setNodeId] = useState(null);
 
   const [listInputVar, setListInputVar] = useState([
     {
@@ -597,6 +598,9 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
 
   const actions = useMemo<IActionModal>(
     () => ({
+      actions_left: {
+        text: nodeId
+      },
       actions_right: {
         buttons: isViewProcess
           ? [
@@ -643,7 +647,7 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
             ],
       },
     }),
-    [formData, values, isSubmit, isViewProcess, dataProcessRefer, disable]
+    [formData, values, isSubmit, isViewProcess, dataProcessRefer, disable, nodeId]
   );
 
   const showDialogConfirmCancel = () => {
@@ -724,6 +728,7 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
     setValidateFieldNode(false);
     setProcessReferData(null);
     setDataWorkflow(null);
+    setNodeId(null);
   };
 
   const loadedOptionProcess = async (search, loadedOptions, { page }) => {
@@ -1101,6 +1106,27 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
         </bpmndi:BPMNDiagram>
       </definitions>`;
 
+    const tooltip = tooltipRef.current;
+    bpmnModeler.current.on("element.hover", function (event) {
+      const element = event.element;
+      const name = element.id || "Unnamed";
+      console.log('element.id', element.id);
+      setNodeId(element.id);
+      
+      // if (element.type === "bpmn:SequenceFlow") {
+      //   console.log("Hover vào SequenceFlow:", element.id);
+      // }
+
+      // Display tooltip
+      tooltip.innerHTML = name;
+      tooltip.style.display = "block";
+
+      // Position the tooltip near the mouse pointer
+      const mousePosition = event.originalEvent;
+      tooltip.style.left = `${mousePosition.clientX + 10}px`; // Adjust for better visibility
+      tooltip.style.top = `${mousePosition.clientY + 10}px`;
+    });
+
     // Nhập quy trình vào modeler
     bpmnModeler.current
       .importXML(initialDiagram)
@@ -1199,7 +1225,7 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt biểu mẫu"}</h4>
+              <h4>{"Cài đặt Call Activity"}</h4>
             </div>
             <ListButtonHeader
               data={data}
@@ -1231,6 +1257,7 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                   <div className="zoom-btn zoom-out" onClick={handleZoomOut}>
                     −
                   </div>
+                  <div style={{ fontSize: 14 }} ref={tooltipRef} />
                 </div>
               </div>
             ) : (
@@ -1318,8 +1345,6 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                       page: 1,
                     }}
                     loadOptionsPaginate={loadedOptionProcess}
-                    // formatOptionLabel={formatOptionLabelCustomer}
-                    // disabled={checkParamsUrl}
                   />
                 </div>
 
@@ -1341,43 +1366,8 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                     onChange={(e) => handleChangeValueNode(e)}
                     error={validateFieldNode}
                     message="Node bắt đầu không được bỏ trống"
-                    // disabled={formData?.processId ? false : true}
                   />
                 </div>
-
-                {/* <div className="container-processRefer">
-                        <RadioList
-                            options={dataProcessRefer}
-                            // className="options-auth"
-                            required={true}
-                            title="Tham chiếu quy trình"
-                            name="authentication"
-                            value={formData.processRefer}
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                setFormData({...formData, processRefer: value})                            
-                            }}
-                        />
-
-                        <div className="box-processRefer">
-                            <div className="item-processRefer">
-                                <Input
-                                    name="processRefer"
-                                    value={processReferData}
-                                    label="Tên quy trình"
-                                    fill={true}
-                                    required={true}
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        setProcessReferData(value);
-                                    }}
-                                    placeholder="Nhập tên quy trình"
-                                />
-                        
-                            </div>
-                        </div>    
-
-                    </div> */}
 
                 <div className="container-inputVar">
                   <div>
@@ -1416,33 +1406,8 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                               }}
                               loadOptionsPaginate={loadedOptionAttributeProcessRefer}
                               disabled={processReferData?.value ? false : true}
-                              // formatOptionLabel={formatOptionLabelEmployee}
-                              // error={checkFieldEform}
-                              // message="Biểu mẫu không được bỏ trống"
-                              // disabled={}
                             />
-                            {/* <Input
-                                          id="nameInput"
-                                          name="nameInput"
-                                          label={index === 0 ? "Tên tham số đầu vào" : ''}
-                                          fill={true}
-                                          required={false}
-                                          error={item.checkName}
-                                          message="Tên tham số đầu vào không được để trống"
-                                          placeholder={"Tên tham số đầu vào"}
-                                          value={item.name}
-                                          onChange={(e) => {
-                                              const value = e.target.value;
-                                              setListInputVar((current) =>
-                                                      current.map((obj, idx) => {
-                                                          if (index === idx) {
-                                                              return { ...obj, name: value, checkName: false };
-                                                          }
-                                                          return obj;
-                                                      })
-                                                  );
-                                          }}
-                                      /> */}
+                            
                           </div>
                           <div className="item-inputVar">
                             {index === 0 ? (
@@ -1481,10 +1446,6 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                                     page: 1,
                                   }}
                                   loadOptionsPaginate={item?.mappingType === 2 ? loadedOptionAttribute : loadedOptionForm}
-                                  // formatOptionLabel={formatOptionLabelEmployee}
-                                  // error={checkFieldEform}
-                                  // message="Biểu mẫu không được bỏ trống"
-                                  // disabled={}
                                 />
                               </div>
                               <Tippy content={item.mappingType === 2 ? "Chuyển chọn trường trong form" : "Chuyển chọn biến"}>
@@ -1596,33 +1557,8 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                                 page: 1,
                               }}
                               loadOptionsPaginate={loadedOptionAttribute}
-                              // formatOptionLabel={formatOptionLabelEmployee}
-                              // error={checkFieldEform}
-                              // message="Biểu mẫu không được bỏ trống"
-                              // disabled={}
                             />
-                            {/* <Input
-                                          id="name"
-                                          name="name"
-                                          label={index === 0 ? "Tên tham số đầu ra" : ''}
-                                          fill={true}
-                                          required={false}
-                                          error={item.checkName}
-                                          message="Tên tham số đầu ra không được để trống"
-                                          placeholder={"Tên tham số đầu ra"}
-                                          value={item.name}
-                                          onChange={(e) => {
-                                              const value = e.target.value;
-                                              setListOutVar((current) =>
-                                                      current.map((obj, idx) => {
-                                                          if (index === idx) {
-                                                              return { ...obj, name: value, checkName: false };
-                                                          }
-                                                          return obj;
-                                                      })
-                                                  );
-                                          }}
-                                      /> */}
+                            
                           </div>
                           <div className="item-outVar">
                             {index === 0 ? (
@@ -1655,17 +1591,12 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                                   }}
                                   isAsyncPaginate={true}
                                   isFormatOptionLabel={false}
-                                  // placeholder={item.mappingType === 2 ? "Chọn biến" : 'Chọn trường trong form'}
                                   placeholder={item.mappingType === 2 ? "Chọn biến" : "Chọn trường trong form"}
                                   additional={{
                                     page: 1,
                                   }}
                                   loadOptionsPaginate={item?.mappingType === 2 ? loadedOptionAttributeProcessRefer : loadedOptionFormProcessRefer}
                                   disabled={processReferData?.value ? false : true}
-                                  // formatOptionLabel={formatOptionLabelEmployee}
-                                  // error={checkFieldEform}
-                                  // message="Biểu mẫu không được bỏ trống"
-                                  // disabled={}
                                 />
                               </div>
                               <Tippy content={item.mappingType === 2 ? "Chuyển chọn trường trong form" : "Chuyển chọn biến"}>
@@ -1742,309 +1673,9 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                     : null}
                 </div>
 
-                {/* <div className="container-trigger-condition">
-                        <div>
-                            <span style={{fontSize: 14, fontWeight: '700'}}>Điều kiện nhận thông điệp <span style={{color: 'red'}}>*</span></span>
-                        </div>
-                        {listTriggerCondition && listTriggerCondition.length > 0 ? 
-                            listTriggerCondition.map((item, index) => (
-                                <div key={index} className="list-item-trigger-condition">
-                                    <div className="item-trigger-condition">
-                                        <Input
-                                            id="key"
-                                            name="key"
-                                            // label={index === 0 ? "Tên tham số đầu ra" : ''}
-                                            fill={true}
-                                            required={true}
-                                            error={item.checkKey}
-                                            message="Key không được để trống"
-                                            placeholder={"Key"}
-                                            value={item.key}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                setListTriggerCondition((current) =>
-                                                        current.map((obj, idx) => {
-                                                            if (index === idx) {
-                                                                return { ...obj, key: value, checkKey: false };
-                                                            }
-                                                            return obj;
-                                                        })
-                                                    );
-                                            }}
-                                        />
-                                    
-                                    </div> 
-                                    <div className="item-trigger-condition">
-                                        <Input
-                                            id="value"
-                                            name="value"
-                                            // label={index === 0 ? "Tên tham số đầu ra" : ''}
-                                            fill={true}
-                                            required={true}
-                                            error={item.checkValue}
-                                            message="Value không được để trống"
-                                            placeholder={"Value"}
-                                            value={item.value}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                setListTriggerCondition((current) =>
-                                                        current.map((obj, idx) => {
-                                                            if (index === idx) {
-                                                                return { ...obj, value: value, checkValue: false };
-                                                            }
-                                                            return obj;
-                                                        })
-                                                    );
-                                            }}
-                                        />
-                                
-                                    </div>
-                                    <div className="add-attribute" >
-                                        <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
-                                            <span
-                                            className="icon-add"
-                                            onClick={() => {
-                                                setListTriggerCondition([
-                                                    ...listTriggerCondition,
-                                                    { 
-                                                        key: '',
-                                                        value: '',
-                                                        checkKey: false,
-                                                        checkValue: false
-                                                    },
-                                                ]);
-                                            }}
-                                            >
-                                            <Icon name="PlusCircleFill" />
-                                            </span>
-                                        </Tippy>
-                                    </div>
-
-                                    {listTriggerCondition.length > 1 ? 
-                                        <div className="remove-attribute">
-                                            <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
-                                                <span className="icon-remove" 
-                                                    onClick={() => {
-                                                        const newList = [...listTriggerCondition];
-                                                            newList.splice(index, 1);
-                                                            setListTriggerCondition(newList);
-                                                        }}
-                                                    >
-                                                    <Icon name="Trash" />
-                                                </span>
-                                            </Tippy>
-                                        </div>
-                                    : null}
-                                </div>
-                            ))
-                        : null}
-                    </div>
-
-                    <div className="container-completion-condition">
-                        <div>
-                            <span style={{fontSize: 14, fontWeight: '700'}}>Điều kiện kết thúc <span style={{color: 'red'}}>*</span></span>
-                        </div>
-                        {listCompletionConditions && listCompletionConditions.length > 0 ? 
-                            listCompletionConditions.map((item, index) => (
-                                <div key={index} className="list-item-completion-condition">
-                                    <div className="item-completion-condition">
-                                        <Input
-                                            id="key"
-                                            name="key"
-                                            // label={index === 0 ? "Tên tham số đầu ra" : ''}
-                                            fill={true}
-                                            required={true}
-                                            error={item.checkKey}
-                                            message="Key không được để trống"
-                                            placeholder={"Key"}
-                                            value={item.key}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                setListCompletionConditions((current) =>
-                                                        current.map((obj, idx) => {
-                                                            if (index === idx) {
-                                                                return { ...obj, key: value, checkKey: false };
-                                                            }
-                                                            return obj;
-                                                        })
-                                                    );
-                                            }}
-                                        />
-                                    
-                                    </div> 
-                                    <div className="item-completion-condition">
-                                        <Input
-                                            id="value"
-                                            name="value"
-                                            // label={index === 0 ? "Tên tham số đầu ra" : ''}
-                                            fill={true}
-                                            required={true}
-                                            error={item.checkValue}
-                                            message="Value không được để trống"
-                                            placeholder={"Value"}
-                                            value={item.value}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                setListCompletionConditions((current) =>
-                                                        current.map((obj, idx) => {
-                                                            if (index === idx) {
-                                                                return { ...obj, value: value, checkValue: false };
-                                                            }
-                                                            return obj;
-                                                        })
-                                                    );
-                                            }}
-                                        />
-                                
-                                    </div>
-                                    <div className="add-attribute" >
-                                        <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
-                                            <span
-                                            className="icon-add"
-                                            onClick={() => {
-                                                setListCompletionConditions([
-                                                    ...listCompletionConditions,
-                                                    { 
-                                                        key: '',
-                                                        value: '',
-                                                        checkKey: false,
-                                                        checkValue: false
-                                                    },
-                                                ]);
-                                            }}
-                                            >
-                                            <Icon name="PlusCircleFill" />
-                                            </span>
-                                        </Tippy>
-                                    </div>
-
-                                    {listCompletionConditions.length > 1 ? 
-                                        <div className="remove-attribute">
-                                            <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
-                                                <span className="icon-remove" 
-                                                    onClick={() => {
-                                                        const newList = [...listCompletionConditions];
-                                                            newList.splice(index, 1);
-                                                            setListCompletionConditions(newList);
-                                                        }}
-                                                    >
-                                                    <Icon name="Trash" />
-                                                </span>
-                                            </Tippy>
-                                        </div>
-                                    : null}
-                                </div>
-                            ))
-                        : null}
-                    </div>
-
-                    <div className="container-parameter-mapping">
-                        <div>
-                            <span style={{fontSize: 14, fontWeight: '700'}}>Phạm vi tham số <span style={{color: 'red'}}>*</span></span>
-                        </div>
-                        {listParameterMapping && listParameterMapping.length > 0 ? 
-                            listParameterMapping.map((item, index) => (
-                                <div key={index} className="list-item-parameter-mapping">
-                                    <div className="item-parameter-mapping">
-                                        <Input
-                                            id="name"
-                                            name="name"
-                                            label={index === 0 ? "Tên tham số" : ''}
-                                            fill={true}
-                                            required={true}
-                                            placeholder={"Tên tham số"}
-                                            value={item.name}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                setListParameterMapping((current) =>
-                                                        current.map((obj, idx) => {
-                                                            if (index === idx) {
-                                                                return { ...obj, name: value, checkName: false };
-                                                            }
-                                                            return obj;
-                                                        })
-                                                    );
-                                            }}
-                                        />
-                                    
-                                    </div> 
-                                    <div className="item-parameter-mapping">
-                                        <SelectCustom
-                                            // key={listAttribute.length}
-                                            id=""
-                                            name="name"
-                                            label={index === 0 ? "Biến quy trình" : ''}
-                                            fill={true}
-                                            required={true}
-                                            error={item.checkMapping}
-                                            message="Biến quy trình không được để trống"
-                                            options={[]}
-                                            value={item.attributeMapping ? {value: item.attributeMapping, label: item.attributeMapping} : null}
-                                            onChange={(e) => {
-                                                setListOutVar((current) =>
-                                                        current.map((obj, idx) => {
-                                                            if (index === idx) {
-                                                                return { ...obj, attributeMapping: e.value, title: e.title, checkMapping: false };
-                                                            }
-                                                            return obj;
-                                                        })
-                                                    );
-                                            }}
-                                            isAsyncPaginate={true}
-                                            placeholder="Chọn biến quy trình"
-                                            additional={{
-                                                page: 1,
-                                            }}
-                                            loadOptionsPaginate={loadedOptionAttribute}
-                                            // formatOptionLabel={formatOptionLabelAttribute}
-                                        />
-                                
-                                    </div>
-                                    <div className="add-attribute" style={index === 0 ? {marginTop: '3.2rem'} : {}}>
-                                        <Tippy content="Thêm" delay={[100, 0]} animation="scale-extreme">
-                                            <span
-                                            className="icon-add"
-                                            onClick={() => {
-                                                setListParameterMapping([
-                                                    ...listParameterMapping,
-                                                    { 
-                                                        name: '',
-                                                        attributeMapping: '',
-                                                        checkName: false,
-                                                        checkMapping: false
-                                                    },
-                                                ]);
-                                            }}
-                                            >
-                                            <Icon name="PlusCircleFill" />
-                                            </span>
-                                        </Tippy>
-                                    </div>
-
-                                    {listParameterMapping.length > 1 ? 
-                                        <div className="remove-attribute" style={index === 0 ? {marginTop: '3.2rem'} : {}}>
-                                            <Tippy content="Xóa" delay={[100, 0]} animation="scale-extreme">
-                                                <span className="icon-remove" 
-                                                    onClick={() => {
-                                                        const newList = [...listParameterMapping];
-                                                            newList.splice(index, 1);
-                                                            setListParameterMapping(newList);
-                                                        }}
-                                                    >
-                                                    <Icon name="Trash" />
-                                                </span>
-                                            </Tippy>
-                                        </div>
-                                    : null}
-                                </div>
-                            ))
-                        : null}
-                    </div> */}
-
                 <div className="container-handleError">
                   <RadioList
                     options={dataHandleError}
-                    // className="options-auth"
                     required={true}
                     title="Xử lý lỗi"
                     name="errorHandling"
@@ -2059,8 +1690,6 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                     <div className="box-handleError">
                       <div className="item-times">
                         <NummericInput
-                          // id="username"
-                          // name="username"
                           label="Số lần"
                           fill={true}
                           required={true}
@@ -2074,8 +1703,6 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                       </div>
                       <div className="item-times">
                         <NummericInput
-                          // id="username"
-                          // name="username"
                           label="Thời gian lặp lại (giây)"
                           fill={true}
                           required={true}
@@ -2107,104 +1734,19 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                           isAsyncPaginate={false}
                           isFormatOptionLabel={false}
                           placeholder="Chọn luồng thay thế"
-                          // additional={{
-                          //     page: 1,
-                          // }}
-                          // loadOptionsPaginate={loadOptionSaleflow}
-                          // formatOptionLabel={formatOptionLabelCustomer}
                         />
                       </div>
                     </div>
                   ) : null}
                 </div>
 
-                {/* <div className="form-group">
-                        <SelectCustom
-                            id="selectVersion"
-                            name="selectVersion"
-                            label="Phiên bản"
-                            fill={true}
-                            special={true}
-                            required={true}
-                            options={[
-                                {
-                                    value: '1.2',
-                                    label: '1.2',
-                                },
-                            ]}
-                            value={formData.selectVersion ? {value: formData.selectVersion, label: formData.selectVersion} : null}
-                            onChange={(e) => {
-                                setFormData({...formData, selectVersion: e.value})
-                            }}
-                            isAsyncPaginate={false}
-                            isFormatOptionLabel={false}
-                            placeholder="Chọn phiên bản"
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <NummericInput
-                            id="timeout"
-                            name="timeout"
-                            label="Thời gian chờ (giây)"
-                            fill={true}
-                            required={true}
-                            placeholder={"Thời gian chờ (giây)"}
-                            value={formData.timeout}
-                            onValueChange={(e) => {
-                                const value = e.floatValue || '';
-                                setFormData({...formData, timeout: value})
-                            }}
-                        />
-                    </div>
-
-                    <div 
-                        className="form-group" 
-                        // style={{width: 'calc(38% - 1.6rem)'}}
-                    >
-                        <SelectCustom
-                            id="executionMode"
-                            name="executionMode"
-                            label="Chế độ thực thi"
-                            fill={true}
-                            special={true}
-                            required={true}
-                            options={[
-                                {
-                                    value: 'synchronous',
-                                    label: 'Đồng bộ'
-                                },
-                                {
-                                    value: 'asynchronous',
-                                    label: 'Bất đồng bộ'
-                                },
-                            ]}
-                            value={formData.executionMode ? {value: formData.executionMode, label: formData.executionMode === 'synchronous' ? 'Đồng bộ' : 'Bất đồng bộ'} : null}
-                            onChange={(e) => {
-                                setFormData({...formData, executionMode: e.value})
-                            }}
-                            isAsyncPaginate={false}
-                            isFormatOptionLabel={false}
-                            placeholder="Chọn chế độ thực thi"
-                            // additional={{
-                            //     page: 1,
-                            // }}
-                            // loadOptionsPaginate={loadOptionSaleflow}
-                            // formatOptionLabel={formatOptionLabelCustomer}
-                            // disabled={checkParamsUrl}
-                        />
-                    </div>         */}
-
                 <div className="form-group">
                   <SelectCustom
-                    // key={listAttribute.length}
                     id=""
                     name="name"
                     label={"Luồng công việc"}
                     fill={true}
                     required={false}
-                    // error={item.checkMapping}
-                    // message="Biến quy trình không được để trống"
                     options={[]}
                     value={dataWorkflow}
                     onChange={(e) => {
@@ -2217,7 +1759,6 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                       page: 1,
                     }}
                     loadOptionsPaginate={loadedOptionWorkflow}
-                    // formatOptionLabel={formatOptionLabelAttribute}
                   />
                 </div>
               </div>
