@@ -77,6 +77,25 @@
               fill: blue;
             }
           }
+          .editor-column {
+            position: absolute;
+            top: 0px;
+            right: 3rem;
+            display: none;
+            width: 3rem;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            cursor: pointer;
+            background-color: var(--primary-color-10);
+            padding-left: 0.4rem;
+
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: blue;
+            }
+          }
           .delete-column {
             position: absolute;
             top: 0px;
@@ -84,6 +103,7 @@
             display: none;
             width: 3rem;
             align-items: center;
+            justify-content: center;
             z-index: 2;
             cursor: pointer;
             background-color: var(--primary-color-10);
@@ -103,6 +123,9 @@
             justify-content: center;
             width: 100%;
             color: blue;
+          }
+          .editor-column {
+            display: flex;
           }
           .delete-column {
             display: flex;

@@ -13,7 +13,8 @@ import BusinessProcessService from "services/BusinessProcessService";
 import { set } from "lodash";
 import { showToast } from "utils/common";
 
-export default function ModalAddColumn({ onShow, onHide, dataNode, processId, setListColumn, listKeyColumn }) {
+export default function ModalAddColumn({ onShow, onHide, dataNode, processId, setListColumn, listKeyColumn, dataColumn, columnIndex = -1 }) {
+  const isEdit = columnIndex >= 0 && dataColumn;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
@@ -30,6 +31,35 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
     options: [],
   });
 
+  const [valueKey, setValueKey] = useState<any>(null);
+
+  useEffect(() => {
+    if (onShow && dataColumn) {
+      setFormData({
+        name: dataColumn.name || "",
+        key: dataColumn.key || "",
+        keyType: dataColumn.keyType ?? 0,
+        compareType: dataColumn.compareType || "equal",
+        type: dataColumn.type || "text",
+        columnType: dataColumn.columnType || "condition",
+        children: dataColumn.children || [],
+        options: dataColumn.options || [],
+      });
+      if (dataColumn.type === "select" || dataColumn.type === "radio" || dataColumn.type === "multiselect") {
+        setAddFieldAttributes(
+          dataColumn.options && dataColumn.options.length > 0
+            ? dataColumn.options.map((opt) => ({ value: opt.value ?? opt, label: opt.label ?? opt }))
+            : [{ value: "", label: "" }]
+        );
+      } else {
+        setAddFieldAttributes([{ value: "", label: "" }]);
+      }
+      setValueKey(dataColumn.key ? { value: dataColumn.key, label: dataColumn.key } : null);
+    }
+  }, [onShow, dataColumn]);
+
+  const listKeyColumnExcludeCurrent = isEdit && dataColumn?.key ? listKeyColumn.filter((k) => k !== dataColumn.key) : listKeyColumn;
+
   const actions = useMemo<IActionModal>(
     () => ({
       actions_right: {
@@ -44,24 +74,23 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
             },
           },
           {
-            title: "Thêm cột",
+            title: isEdit ? "Cập nhật" : "Thêm cột",
             type: "submit",
             color: "primary",
             disabled: isSubmit,
             is_loading: isSubmit,
             callback: async () => {
-              if (listKeyColumn.includes(formData.key)) {
+              if (listKeyColumnExcludeCurrent.includes(formData.key)) {
                 showToast("Biến đã được khai báo ở cột khác", "error");
                 return;
               }
-              // Thêm 1 cột mới vào danh sách cột tại vị trí liền sau của của cột cuối cùng có columnType là condition
               const newColumn = {
                 key: formData.key,
                 name: formData.name,
                 type: formData.type,
                 columnType: formData.columnType,
                 compareType: formData.compareType,
-                options: formData.type === "select" || formData.type === "radio" || formData.type === "multiselect" ? addFieldAttributes : [], // Chỉ thêm options nếu type là select, radio hoặc multiselect
+                options: formData.type === "select" || formData.type === "radio" || formData.type === "multiselect" ? addFieldAttributes : [],
                 children:
                   formData.compareType === "range"
                     ? [
@@ -70,26 +99,34 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
                       ]
                     : [],
               };
-              setListColumn((prev) => {
-                const newList = [...prev];
-                let numberColumnCondition = prev.filter((column) => column.columnType === "condition").length;
-                if (numberColumnCondition === 0) {
-                  const lastConditionIndex = newList.findLastIndex((column) => column.columnType === "stt");
-                  newList.splice(lastConditionIndex + 1, 0, newColumn);
+              if (isEdit && columnIndex >= 0) {
+                setListColumn((prev) => {
+                  const newList = [...prev];
+                  newList[columnIndex] = newColumn;
                   return newList;
-                } else {
-                  const lastConditionIndex = newList.findLastIndex((column) => column.columnType === "condition");
-                  newList.splice(lastConditionIndex + 1, 0, newColumn);
-                  return newList;
-                }
-              });
+                });
+              } else {
+                setListColumn((prev) => {
+                  const newList = [...prev];
+                  const numberColumnCondition = prev.filter((column) => column.columnType === "condition").length;
+                  if (numberColumnCondition === 0) {
+                    const lastConditionIndex = newList.findLastIndex((column) => column.columnType === "stt");
+                    newList.splice(lastConditionIndex + 1, 0, newColumn);
+                    return newList;
+                  } else {
+                    const lastConditionIndex = newList.findLastIndex((column) => column.columnType === "condition");
+                    newList.splice(lastConditionIndex + 1, 0, newColumn);
+                    return newList;
+                  }
+                });
+              }
               clearForm(true);
             },
           },
         ],
       },
     }),
-    [formData, isSubmit, setListColumn, addFieldAttributes]
+    [formData, isSubmit, setListColumn, addFieldAttributes, isEdit, columnIndex, listKeyColumnExcludeCurrent]
   );
 
   const clearForm = (acc) => {
@@ -290,8 +327,6 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
     setAddFieldAttributes(result);
   };
 
-  const [valueKey, setValueKey] = useState<any>(null);
-
   return (
     <Fragment>
       <Modal
@@ -306,7 +341,7 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
         <div className="form-mapping">
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Thêm cột điều kiện"}</h4>
+              <h4>{isEdit ? "Chỉnh sửa cột điều kiện" : "Thêm cột điều kiện"}</h4>
             </div>
           </div>
           <ModalBody>
@@ -336,7 +371,7 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
                           name={"key"}
                           fill={false}
                           value={formData.key}
-                          error={listKeyColumn.includes(formData.key)}
+                          error={listKeyColumnExcludeCurrent.includes(formData.key)}
                           message="Biến đã được khai báo trong cột khác"
                           disabled={false}
                           onChange={(e) => {
@@ -355,7 +390,7 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
                           required={false}
                           options={[]}
                           value={valueKey}
-                          error={listKeyColumn.includes(formData.key)}
+                          error={listKeyColumnExcludeCurrent.includes(formData.key)}
                           message="Biến đã được khai báo trong cột khác"
                           isAsyncPaginate={true}
                           isFormatOptionLabel={false}

@@ -14,7 +14,17 @@ import { set } from "lodash";
 import { convertToId } from "reborn-util";
 import { showToast } from "utils/common";
 
-export default function ModalAddDecision({ onShow, onHide, setListColumn, listKeyColumn }) {
+interface ModalAddDecisionProps {
+  onShow: boolean;
+  onHide: (reload?: any) => void;
+  setListColumn: React.Dispatch<React.SetStateAction<any[]>>;
+  listKeyColumn: any[];
+  dataColumn?: any;
+  columnIndex?: number;
+}
+
+export default function ModalAddDecision({ onShow, onHide, setListColumn, listKeyColumn, dataColumn, columnIndex = -1 }: ModalAddDecisionProps) {
+  const isEdit = columnIndex >= 0 && dataColumn;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
@@ -38,6 +48,44 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
     children: [],
     options: [],
   });
+
+  useEffect(() => {
+    if (onShow && dataColumn) {
+      setFormData({
+        name: dataColumn.name || "",
+        key: dataColumn.key || "",
+        keyType: dataColumn.keyType ?? 0,
+        decisionType: dataColumn.decisionType || "text",
+        type: dataColumn.type || "text",
+        columnType: dataColumn.columnType || "decision",
+        children: dataColumn.children || [],
+        options: dataColumn.options || [],
+      });
+      if (dataColumn.decisionType === "object" && dataColumn.children && dataColumn.children.length > 0) {
+        setListAttribute(
+          dataColumn.children.map((ch) => ({
+            key: ch.key || "",
+            name: ch.name || "",
+            type: ch.type ? { value: typeof ch.type === "string" ? ch.type : ch.type?.value } : null,
+            value: ch.value ?? "",
+          }))
+        );
+      } else {
+        setListAttribute([{ name: "", type: null, key: "", value: "" }]);
+      }
+      if (dataColumn.type === "select" || dataColumn.type === "radio" || dataColumn.type === "multiselect") {
+        setAddFieldAttributes(
+          dataColumn.options && dataColumn.options.length > 0
+            ? dataColumn.options.map((opt) => ({ value: opt.value ?? opt, label: opt.label ?? opt }))
+            : [{ value: "", label: "" }]
+        );
+      } else {
+        setAddFieldAttributes([{ value: "", label: "" }]);
+      }
+    }
+  }, [onShow, dataColumn]);
+
+  const listKeyColumnExcludeCurrent = isEdit && dataColumn?.key ? listKeyColumn.filter((k) => k !== dataColumn.key) : listKeyColumn;
 
   function hasDuplicateKeys(listAttribute: { key: string }[]): boolean {
     const keySet = new Set<string>();
@@ -72,13 +120,13 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
             },
           },
           {
-            title: "Thêm cột",
+            title: isEdit ? "Cập nhật" : "Thêm cột",
             type: "submit",
             color: "primary",
             disabled: isSubmit,
             is_loading: isSubmit,
             callback: async () => {
-              if (listKeyColumn.includes(formData.key)) {
+              if (listKeyColumnExcludeCurrent.includes(formData.key)) {
                 showToast("Cột đã tồn tại", "error");
                 return;
               }
@@ -90,33 +138,39 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
                 showToast("Trường không được trùng nhau", "error");
                 return;
               }
-              setListColumn((prev) => {
-                const newColumn = {
-                  key: formData.key,
-                  name: formData.name,
-                  type: formData.type,
-                  columnType: formData.columnType,
-                  decisionType: formData.decisionType,
-                  options: formData.type === "select" || formData.type === "radio" || formData.type === "multiselect" ? addFieldAttributes : [], // Chỉ thêm options nếu type là select, radio hoặc multiselect
-                  children:
-                    formData.decisionType === "object" && listAttribute.length > 0
-                      ? listAttribute.map((item) => ({
-                          key: item.key,
-                          name: item.name,
-                          type: item.type.value || "text",
-                          value: item.value,
-                        }))
-                      : [],
-                };
-                return [...prev, newColumn];
-              });
+              const newColumn = {
+                key: formData.key,
+                name: formData.name,
+                type: formData.type,
+                columnType: formData.columnType,
+                decisionType: formData.decisionType,
+                options: formData.type === "select" || formData.type === "radio" || formData.type === "multiselect" ? addFieldAttributes : [],
+                children:
+                  formData.decisionType === "object" && listAttribute.length > 0
+                    ? listAttribute.map((item) => ({
+                        key: item.key,
+                        name: item.name,
+                        type: item.type?.value || "text",
+                        value: item.value,
+                      }))
+                    : [],
+              };
+              if (isEdit && columnIndex >= 0) {
+                setListColumn((prev) => {
+                  const newList = [...prev];
+                  newList[columnIndex] = newColumn;
+                  return newList;
+                });
+              } else {
+                setListColumn((prev) => [...prev, newColumn]);
+              }
               clearForm(true);
             },
           },
         ],
       },
     }),
-    [formData, isSubmit, setListColumn, listAttribute, listKeyColumn]
+    [formData, isSubmit, setListColumn, listAttribute, listKeyColumnExcludeCurrent, isEdit, columnIndex, addFieldAttributes]
   );
 
   const clearForm = (acc) => {
@@ -185,7 +239,7 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
         <div className="form-mapping">
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Thêm cột kết quả"}</h4>
+              <h4>{isEdit ? "Chỉnh sửa cột kết quả" : "Thêm cột kết quả"}</h4>
             </div>
           </div>
           <ModalBody>
@@ -196,7 +250,7 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
                   label={`Tên cột`}
                   fill={true}
                   value={formData.name}
-                  error={listKeyColumn.includes(formData.key)}
+                  error={listKeyColumnExcludeCurrent.includes(formData.key)}
                   message={"Cột đã tồn tại"}
                   required={true}
                   onChange={(e) => {

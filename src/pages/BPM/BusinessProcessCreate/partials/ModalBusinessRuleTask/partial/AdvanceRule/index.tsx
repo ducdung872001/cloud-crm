@@ -131,16 +131,22 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
         for (let j = 0; j < newBaseRow.length; j++) {
           let field = newBaseRow[j];
           let fieldBase = row.find((item) => item.key == field.key);
+          const typeOrCompareChanged =
+            field.type !== fieldBase?.type || field.compareType !== fieldBase?.compareType || field.compare !== fieldBase?.compare;
+          const defaultValue = field.type === "number" ? 0 : "";
           if (fieldBase) {
             let newField = {
-              ...fieldBase,
-              value: fieldBase.value,
+              ...field,
+              value: typeOrCompareChanged ? defaultValue : fieldBase.value,
               children:
-                fieldBase?.children && fieldBase?.children?.length > 0
-                  ? fieldBase.children.map((child) => {
+                field?.children && field?.children?.length > 0
+                  ? field.children.map((child, cIdx) => {
+                      const childBase = fieldBase?.children?.[cIdx];
+                      const childTypeChanged = child.type !== childBase?.type;
+                      const childDefault = child.type === "number" ? 0 : "";
                       return {
                         ...child,
-                        value: child?.value || "",
+                        value: typeOrCompareChanged || childTypeChanged ? childDefault : (childBase?.value ?? child?.value ?? ""),
                       };
                     })
                   : [],
@@ -152,12 +158,10 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
               value: field.value,
               children:
                 field?.children && field?.children?.length > 0
-                  ? field.children.map((child) => {
-                      return {
-                        ...child,
-                        value: child?.value || "",
-                      };
-                    })
+                  ? field.children.map((child) => ({
+                      ...child,
+                      value: child?.value || "",
+                    }))
                   : [],
             };
             newRow.push(newField);
@@ -195,6 +199,8 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
 
   const [isShowModalAddColumn, setIsShowModalAddColumn] = useState(false);
   const [isShowModalDecision, setIsShowModalDecision] = useState(false);
+  const [editingColumn, setEditingColumn] = useState<any>(null);
+  const [editingColumnIndex, setEditingColumnIndex] = useState<number>(-1);
   //Biến này dùng để kiểm tra xem các trường bắt buộc đã được điền đầy đủ chưa
   const [checkRequired, setCheckRequired] = useState<boolean>(false);
   const [checkRegex, setCheckRegex] = useState<boolean>(false);
@@ -754,6 +760,21 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
                                   {column?.name}
                                 </div>
                                 <div
+                                  title={"Chỉnh sửa cột"}
+                                  className={"editor-column"}
+                                  onClick={() => {
+                                    setEditingColumn(column);
+                                    setEditingColumnIndex(columnIndex);
+                                    if (column.columnType === "condition") {
+                                      setIsShowModalAddColumn(true);
+                                    } else if (column.columnType === "decision") {
+                                      setIsShowModalDecision(true);
+                                    }
+                                  }}
+                                >
+                                  <Icon name="Pencil" />
+                                </div>
+                                <div
                                   title={"Xoá cột"}
                                   className={"delete-column"}
                                   onClick={() => {
@@ -841,6 +862,7 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
                                                 value={field.value}
                                                 //   disabled={!true ? true : child.readOnly}
                                                 thousandSeparator={true}
+                                                allowNegative={true}
                                                 onValueChange={(e) => {
                                                   handChangeValueItem(rowIndex, fieldIndex, e, "number");
                                                 }}
@@ -863,6 +885,7 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
                                                           value={child.value}
                                                           //   disabled={!true ? true : child.readOnly}
                                                           thousandSeparator={true}
+                                                          allowNegative={true}
                                                           onValueChange={(e) => {
                                                             handChangeValueItem(rowIndex, fieldIndex, e, "number", index);
                                                           }}
@@ -896,6 +919,7 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
                                                           value={child.value}
                                                           //   disabled={true}
                                                           thousandSeparator={true}
+                                                          allowNegative={true}
                                                           placeholder={`Nhập ${child?.name}`}
                                                           isDecimalScale={false}
                                                         />
@@ -1125,6 +1149,7 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
                                                       value={field.value}
                                                       //   disabled={!true ? true : field.readOnly}
                                                       thousandSeparator={true}
+                                                      allowNegative={true}
                                                       onValueChange={(e) => {
                                                         handChangeValueItem(rowIndex, fieldIndex, e, "number");
                                                       }}
@@ -1158,6 +1183,7 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
                                                       value={field.value}
                                                       //   disabled={true}
                                                       thousandSeparator={true}
+                                                      allowNegative={true}
                                                       placeholder={`Nhập ${field?.name}`}
                                                       isDecimalScale={false}
                                                     />
@@ -1312,10 +1338,14 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
         setListColumn={setListColumn}
         dataNode={dataNode}
         processId={childProcessId || processId}
+        dataColumn={editingColumn}
+        columnIndex={editingColumnIndex}
         onHide={(reload) => {
           if (reload) {
           }
           setIsShowModalAddColumn(false);
+          setEditingColumn(null);
+          setEditingColumnIndex(-1);
         }}
       />
       <ModalEditValueIn
@@ -1338,10 +1368,14 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
         onShow={isShowModalDecision}
         setListColumn={setListColumn}
         listKeyColumn={listKeyColumn}
+        dataColumn={editingColumn}
+        columnIndex={editingColumnIndex}
         onHide={(reload) => {
           if (reload) {
           }
           setIsShowModalDecision(false);
+          setEditingColumn(null);
+          setEditingColumnIndex(-1);
         }}
       />
     </div>
