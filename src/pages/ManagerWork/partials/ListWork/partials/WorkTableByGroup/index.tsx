@@ -39,22 +39,6 @@ export default function WorkTableByGroup(props: any) {
 
   console.log("listGroupWork>>>", listGroupWork);
 
-  useEffect(() => {
-    const employeeId =
-      activeTitleHeader === HEADER_VIEW_MODES.mywork
-        ? user?.dataInfoEmployee?.id
-        : undefined;
-
-    const payload = {
-      groupBy,
-      projectId: idManagement,
-      ...(employeeId != null ? { employeeId } : {}),
-    };
-
-    getGroupWork(payload);
-    setParamsGetGroupWork(payload);
-  }, [idManagement, groupBy, user?.dataInfoEmployee?.id, activeTitleHeader]);
-
   const getGroupWork = async (paramsSearch: IGroupsFilterRequest) => {
     const response = await WorkOrderService.groups(paramsSearch, abortController.signal);
 
@@ -72,6 +56,79 @@ export default function WorkTableByGroup(props: any) {
       return null;
     }
   };
+
+  const isMyWork = activeTitleHeader === HEADER_VIEW_MODES.mywork;
+  const isJoinedWork = activeTitleHeader === HEADER_VIEW_MODES.joinedwork;
+
+  useEffect(() => {
+    setListGroupWork([]);
+    if (!idManagement) return;
+
+    if (isMyWork) {
+      const participantId = user?.dataInfoEmployee?.id;
+      if (!participantId) return;
+
+      const payloadV2: IGroupsFilterRequest = { groupBy, projectId: idManagement, participantId };
+      getGroupWorkV2(payloadV2);
+      setParamsGetGroupWork(payloadV2);
+      return;
+    }
+
+    if (isJoinedWork) {
+      const payloadV2: IGroupsFilterRequest = { groupBy, projectId: idManagement };
+      getGroupWorkV2(payloadV2);
+      setParamsGetGroupWork(payloadV2);
+      return;
+    }
+
+    const payload: IGroupsFilterRequest = { groupBy, projectId: idManagement };
+    getGroupWork(payload);
+    setParamsGetGroupWork(payload);
+  }, [idManagement, groupBy, user?.dataInfoEmployee?.id, activeTitleHeader]);
+
+
+  const getGroupWorkV2 = async (paramsSearch: IGroupsFilterRequest) => {
+    const response = await WorkOrderService.groupsV2(paramsSearch, abortController.signal);
+
+    if (response.code !== 0) {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      return null;
+    }
+
+    const raw = response.result;
+
+    if (Array.isArray(raw)) {
+      const keyFieldMap: Record<string, { key: string; name: string }> = {
+        status: { key: "status", name: "statusName" },
+        priority: { key: "priority", name: "priorityName" },
+        employee: { key: "employeeId", name: "employeeName" },
+        wte: { key: "wte", name: "wteName" },
+      };
+
+      const mapCfg = keyFieldMap[paramsSearch.groupBy || "status"] || {
+        key: paramsSearch.groupBy || "status",
+        name: (paramsSearch.groupBy || "status") + "Name",
+      };
+
+      setListGroupWork(
+        raw.map((x: any) => ({
+          key: x?.[mapCfg.key],
+          name: x?.[mapCfg.name],
+          total: x?.total ?? 0,
+          isOpen: false,
+        }))
+      );
+      return;
+    }
+
+    setListGroupWork([]);
+  };
+
+  const reloadGroups = (params: IGroupsFilterRequest) => {
+    if (isMyWork || isJoinedWork) return getGroupWorkV2(params);
+    return getGroupWork(params);
+  };
+
 
   const headerCollapsible = useCallback(
     (item) => {
@@ -246,7 +303,7 @@ export default function WorkTableByGroup(props: any) {
 
                 return (
                   <Collapsible
-                    key={groupItem?.key || groupIndex}
+                    key={`${groupBy}-${groupItem?.key ?? groupIndex}`}
                     header={headerCollapsible}
                     dataItems={{
                       title: groupItem?.name || "Chưa phân nhóm",
@@ -280,7 +337,7 @@ export default function WorkTableByGroup(props: any) {
                         assignedId: employeeIdFilter,
                       }}
                       onReload={(reload) => {
-                        if (reload) getGroupWork(paramsGetGroupWork);
+                        if (reload) reloadGroups(paramsGetGroupWork);
                       }}
                       onReopen={() => reopenGroup(groupIndex)}
                     />
@@ -297,7 +354,7 @@ export default function WorkTableByGroup(props: any) {
         idManagement={idManagement}
         onHide={(reload) => {
           if (reload) {
-            getGroupWork(paramsGetGroupWork);
+            reloadGroups(paramsGetGroupWork);
           }
           setShowModalAdd(false);
         }}
@@ -308,7 +365,7 @@ export default function WorkTableByGroup(props: any) {
         idManagement={idManagement}
         onHide={(reload) => {
           if (reload) {
-            getGroupWork(paramsGetGroupWork);
+            reloadGroups(paramsGetGroupWork);
           }
           setShowModalAssign(false);
         }}

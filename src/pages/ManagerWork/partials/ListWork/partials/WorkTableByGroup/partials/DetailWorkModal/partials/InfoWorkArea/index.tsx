@@ -1,6 +1,6 @@
 import Icon from "components/icon";
 import { IActionModal } from "model/OtherModel";
-import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
+import { IWorkOrderDocFile, IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
 import moment from "moment";
 import React, { useEffect, useMemo, useState, useRef, useLayoutEffect } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
@@ -83,6 +83,24 @@ export default function InfoWorkArea(props: any) {
     }
   };
 
+  const docFiles = useMemo<IWorkOrderDocFile[]>(() => {
+    try {
+      const raw = JSON.parse(data?.docLink || "[]");
+      if (!Array.isArray(raw)) return [];
+
+      return raw
+        .filter((x: any) => x && typeof x.url === "string")
+        .map((x: any) => ({
+          url: x.url,
+          type: x.type,
+          name: x.name,
+          size: typeof x.size === "number" ? x.size : undefined,
+        }));
+    } catch {
+      return [];
+    }
+  }, [data?.docLink]);
+
   const listInfoBasicItem = [
     {
       className: "in-project",
@@ -110,11 +128,21 @@ export default function InfoWorkArea(props: any) {
       name: data?.workLoad ? data?.workLoadUnit ? convertWorkLoadUnit(data?.workLoad, data?.workLoadUnit) : `${data?.workLoad}` : "Chưa xác định",
     },
     {
-      className: JSON.parse(data?.docLink || "[]").length > 0 ? "related-document" : "",
+      className: docFiles.length > 0 ? "related-document" : "",
       title: "Tài liệu liên quan",
-      name: JSON.parse(data?.docLink || "[]").length > 0 ? data?.docLink : "",
+      name: docFiles.length > 0 ? data?.docLink : "",
     },
   ];
+
+  const [isOpenDoc, setIsOpenDoc] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const openDocs = () => {
+    if (docFiles.length === 0) return;
+    setActiveIndex(0);
+    setIsOpenDoc(true);
+  };
+  const closeDocs = () => setIsOpenDoc(false);
 
   //! đoạn này xử lý vấn đề hiển thị thông tin xem bao giờ thực hiện
   const handleUnfulfilled = (time) => {
@@ -246,6 +274,67 @@ export default function InfoWorkArea(props: any) {
     });
   };
 
+  const [docShowRows, setDocShowRows] = useState(1); // mặc định 1 hàng
+  const DOC_PER_ROW = 4;
+
+  const totalDocs = docFiles.length;
+  const totalRows = Math.ceil(totalDocs / DOC_PER_ROW);
+
+  const visibleCount = Math.min(totalDocs, docShowRows * DOC_PER_ROW);
+  const visibleDocs = docFiles.slice(0, visibleCount);
+
+  const canToggleRows = totalRows > 1;
+  const isExpandedRows = docShowRows >= totalRows;
+
+  const toggleDocRows = () => {
+    if (!canToggleRows) return;
+    setDocShowRows((prev) => (prev >= totalRows ? 1 : prev + 1));
+  };
+
+  useEffect(() => {
+    if (!isOpenDoc) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      // tránh bắt phím khi đang nhập liệu
+      const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();
+      const isTyping = tag === "input" || tag === "textarea" || (e.target as HTMLElement | null)?.isContentEditable;
+      if (isTyping) return;
+
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeDocs();
+        return;
+      }
+
+      if (docFiles.length <= 1) return;
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setActiveIndex((i) => (i - 1 + docFiles.length) % docFiles.length);
+        return;
+      }
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setActiveIndex((i) => (i + 1) % docFiles.length);
+        return;
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isOpenDoc, docFiles.length, closeDocs]);
+
+  const modalRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isOpenDoc) {
+      requestAnimationFrame(() => modalRef.current?.focus());
+    }
+  }, [isOpenDoc]);
+
+
+
   if (!onShow && !data) return null;
   return (
     <>
@@ -254,16 +343,147 @@ export default function InfoWorkArea(props: any) {
           <div className="info__basic">
             <h3 className="title-basic">{data?.name ?? ""}</h3>
             <div className="info__basic--item">
-              {listInfoBasicItem.map((item, idx) => (
-                <div key={idx} className={`item ${item.className}`}>
-                  <h4 className="title">{item.title}</h4>
-                  {item.className === "content-work" ? (
-                    <p className="content">{item.name}</p>
-                  ) : (
-                    <h4 className="name">{typeof item.name === "string" && item.name.includes("[") ? "Có tài liệu" : item.name}</h4>
-                  )}
+              {listInfoBasicItem.map((item, idx) => {
+                const isDocItem = item.className === "related-document";
+
+                return (
+                  <div
+                    key={idx}
+                    className={`item ${item.className}`}
+                    role={isDocItem ? "button" : undefined}
+                    tabIndex={isDocItem ? 0 : undefined}
+                    onClick={() => {
+                      if (isDocItem) openDocs();
+                    }}
+                    onKeyDown={(e) => {
+                      if (!isDocItem) return;
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        openDocs();
+                      }
+                    }}
+                    style={isDocItem ? { cursor: "pointer" } : undefined}
+                  >
+                    <h4 className="title">{item.title}</h4>
+
+                    <h4 className="name">
+                      {isDocItem && docFiles.length > 0 ? "Có " + docFiles.length + " ảnh" : ""}
+                    </h4>
+
+                    {isDocItem && docFiles.length > 0 && (
+                      <div className="doc-preview" onClick={(e) => e.stopPropagation()}>
+                        <div className="list-document">
+                          {visibleDocs.map((f, i) => (
+                            <button
+                              key={f.url + i}
+                              type="button"
+                              className="image-item"
+                              onClick={() => {
+                                const globalIndex = docFiles.findIndex((x) => x.url === f.url);
+                                setActiveIndex(globalIndex >= 0 ? globalIndex : 0);
+                                setIsOpenDoc(true);
+                              }}
+                              title={f.name || `Tài liệu ${i + 1}`}
+                            >
+                              <img src={f.url} alt={f.name || `doc-${i + 1}`} loading="lazy" />
+                            </button>
+                          ))}
+                        </div>
+
+                        {canToggleRows && (
+                          <button type="button" className="btn-toggle-docs" onClick={toggleDocRows}>
+                            {isExpandedRows ? "Rút gọn" : "Xem thêm"}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+
+              {isOpenDoc && (
+                <div className="doc-modal-backdrop" onClick={closeDocs}>
+                  <div className="doc-modal" tabIndex={-1} onClick={(e) => e.stopPropagation()}>
+                    <div className="doc-modal__header">
+                      <h3>Tài liệu liên quan ({docFiles.length})</h3>
+                      <button type="button" className="doc-modal__close" onClick={closeDocs}>
+                        ✕
+                      </button>
+                    </div>
+
+                    <div className="doc-modal__body">
+                      <div className="doc-viewer">
+                        <button
+                          type="button"
+                          className="nav-btn"
+                          onClick={() => setActiveIndex((i) => (i - 1 + docFiles.length) % docFiles.length)}
+                          disabled={docFiles.length <= 1}
+                        >
+                          ‹
+                        </button>
+
+                        <div className="doc-image-wrap">
+                          <img
+                            src={docFiles[activeIndex]?.url}
+                            alt={docFiles[activeIndex]?.name || `Tài liệu ${activeIndex + 1}`}
+                            className="doc-image"
+                            loading="lazy"
+                          />
+                          <div className="doc-meta">
+                            {/* <div className="doc-name">{docFiles[activeIndex]?.name || `Tài liệu ${activeIndex + 1}`}</div> */}
+                            <div className="doc-sub">
+                              {docFiles[activeIndex]?.type ? docFiles[activeIndex]?.type.toUpperCase() : ""}
+                              {typeof docFiles[activeIndex]?.size === "number"
+                                ? ` • ${(docFiles[activeIndex].size / 1024).toFixed(1)} KB`
+                                : ""}
+                            </div>
+                            {/* <a
+                              href={docFiles[activeIndex]?.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="doc-open"
+                            >
+                              Mở ảnh trong tab mới
+                            </a> */}
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="nav-btn"
+                          onClick={() => setActiveIndex((i) => (i + 1) % docFiles.length)}
+                          disabled={docFiles.length <= 1}
+                        >
+                          ›
+                        </button>
+                      </div>
+                      {docFiles.length > 1 && (
+                        <div className="doc-thumbs">
+                          {docFiles.map((f, i) => (
+                            <button
+                              key={f.url + i}
+                              type="button"
+                              className={`thumb ${i === activeIndex ? "active" : ""}`}
+                              onClick={() => setActiveIndex(i)}
+                              title={f.name || `Tài liệu ${i + 1}`}
+                            >
+                              <img src={f.url} alt={f.name || `thumb-${i + 1}`} loading="lazy" />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="doc-modal__footer">
+                      <button type="button" onClick={closeDocs}>
+                        Đóng
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              ))}
+              )}
+
 
               <div className="item content-work">
                 <h4 className="title">Nội dung công việc</h4>
