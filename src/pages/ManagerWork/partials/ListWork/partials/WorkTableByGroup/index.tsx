@@ -58,6 +58,7 @@ export default function WorkTableByGroup(props: any) {
   };
 
   const isMyWork = activeTitleHeader === HEADER_VIEW_MODES.mywork;
+  const isJoinedWork = activeTitleHeader === HEADER_VIEW_MODES.joinedwork;
 
   useEffect(() => {
     if (!idManagement) return;
@@ -66,23 +67,22 @@ export default function WorkTableByGroup(props: any) {
       const participantId = user?.dataInfoEmployee?.id;
       if (!participantId) return;
 
-      const payloadV2: IGroupsFilterRequest = {
-        groupBy,
-        projectId: idManagement,
-        participantId,
-      };
-
+      const payloadV2: IGroupsFilterRequest = { groupBy, projectId: idManagement, participantId };
       getGroupWorkV2(payloadV2);
       setParamsGetGroupWork(payloadV2);
-    } else {
-      const payload: IGroupsFilterRequest = {
-        groupBy,
-        projectId: idManagement,
-      };
-
-      getGroupWork(payload);
-      setParamsGetGroupWork(payload);
+      return;
     }
+
+    if (isJoinedWork) {
+      const payloadV2: IGroupsFilterRequest = { groupBy, projectId: idManagement };
+      getGroupWorkV2(payloadV2);
+      setParamsGetGroupWork(payloadV2);
+      return;
+    }
+
+    const payload: IGroupsFilterRequest = { groupBy, projectId: idManagement };
+    getGroupWork(payload);
+    setParamsGetGroupWork(payload);
   }, [idManagement, groupBy, user?.dataInfoEmployee?.id, activeTitleHeader]);
 
 
@@ -97,28 +97,34 @@ export default function WorkTableByGroup(props: any) {
     const raw = response.result;
 
     if (Array.isArray(raw)) {
+      const keyFieldMap: Record<string, { key: string; name: string }> = {
+        status: { key: "status", name: "statusName" },
+        priority: { key: "priority", name: "priorityName" },
+        employee: { key: "employeeId", name: "employeeName" },
+        wte: { key: "wte", name: "wteName" },
+      };
+
+      const mapCfg = keyFieldMap[paramsSearch.groupBy || "status"] || {
+        key: paramsSearch.groupBy || "status",
+        name: (paramsSearch.groupBy || "status") + "Name",
+      };
+
       setListGroupWork(
         raw.map((x: any) => ({
-          key: x.status,
-          name: x.statusName,
-          total: x.total ?? 0,
+          key: x?.[mapCfg.key],
+          name: x?.[mapCfg.name],
+          total: x?.total ?? 0,
           isOpen: false,
         }))
       );
       return;
     }
 
-    if (raw?.buckets?.length) {
-      setListGroupWork(raw.buckets.map((b: any) => ({ ...b })));
-      return;
-    }
-
     setListGroupWork([]);
   };
 
-
   const reloadGroups = (params: IGroupsFilterRequest) => {
-    if (isMyWork) return getGroupWorkV2(params);
+    if (isMyWork || isJoinedWork) return getGroupWorkV2(params);
     return getGroupWork(params);
   };
 
