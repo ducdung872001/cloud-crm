@@ -11,7 +11,7 @@ import { IAction, ISaveSearch } from "model/OtherModel";
 import { IContractPipelineResponse } from "model/contractPipeline/ContractPipelineResponseModel";
 import { showToast } from "utils/common";
 import { getPageOffset } from "reborn-util";
-import {formatCurrency, getPermissions } from "utils/common";
+import { formatCurrency, getPermissions } from "utils/common";
 import _ from "lodash";
 import HeaderFilter from "components/HeaderFilter/HeaderFilter";
 import { ContextType, UserContext } from "contexts/userContext";
@@ -316,6 +316,12 @@ export default function BusinessRuleConfig(props: any) {
                       ? moment(item[titleKey.key]?.value2).format("DD/MM/YYYY")
                       : item[titleKey.key]?.value2}
                   </span>
+                </div>
+              ) : item[titleKey.key]?.operator == "OTHERWISE" ? (
+                <div className="value-operator" key={titleKey.key + "_" + index}>
+                  <div className="operator">
+                    <div className="operator-item"> {item[titleKey.key]?.operator}</div>
+                  </div>
                 </div>
               ) : (
                 <div className="value-operator" key={titleKey.key + "_" + index}>

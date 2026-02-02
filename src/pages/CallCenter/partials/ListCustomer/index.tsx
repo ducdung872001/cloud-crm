@@ -58,8 +58,6 @@ export default function CustomerList(props: ICustomerListProps) {
   const [idCustomer, setIdCustomer] = useState<number>(null);
   const [showModalAddConsultationScheduleModal, setShowModalAddConsultationScheduleModal] = useState<boolean>(false);
 
-  console.log("showModalCallIncome>>>", showModalCallIncome);
-
   const [params, setParams] = useState<IParamsCustomerInCallCenter>({
     keyword: "",
   });
@@ -75,9 +73,6 @@ export default function CustomerList(props: ICustomerListProps) {
   // });
 
   useEffect(() => {
-    console.log("Trạng thái tổng đài >>", callState);
-    console.log("Số điện thoại gọi đến >>", incomingNumber);
-
     if (callState == "incoming") {
       setShowModalCallIncome(true);
     }
