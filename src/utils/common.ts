@@ -93,9 +93,11 @@ export const differenceObj = (orgObj, newObj) => {
 // };
 /**
  * Format tiền tệ
- * @param {*} num
- * @param {*} separate
- * @param {*} suffixes
+ * @param {*} num // Số tiền
+ * @param {*} separate // Ký tự phân cách hàng nghìn
+ * @param {*} suffixes // Đơn vị tiền tệ
+ * @param {*} positionSuffixes // Vị trí đơn vị tiền tệ
+ * @param {*} decimal // Số chữ số thập phân
  * @returns {string|number}
  */
 export const formatCurrency = (num, separate = ",", suffixes = "đ", positionSuffixes = "right", decimal = 2) => {
