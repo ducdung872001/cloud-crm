@@ -61,6 +61,7 @@ export default function WorkTableByGroup(props: any) {
   const isJoinedWork = activeTitleHeader === HEADER_VIEW_MODES.joinedwork;
 
   useEffect(() => {
+    setListGroupWork([]);
     if (!idManagement) return;
 
     if (isMyWork) {
@@ -302,7 +303,7 @@ export default function WorkTableByGroup(props: any) {
 
                 return (
                   <Collapsible
-                    key={groupItem?.key || groupIndex}
+                    key={`${groupBy}-${groupItem?.key ?? groupIndex}`}
                     header={headerCollapsible}
                     dataItems={{
                       title: groupItem?.name || "Chưa phân nhóm",
