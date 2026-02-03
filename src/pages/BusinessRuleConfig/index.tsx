@@ -307,13 +307,17 @@ export default function BusinessRuleConfig(props: any) {
                     {titleKey.type == "Long"
                       ? formatCurrency(item[titleKey.key]?.value, ",", "")
                       : titleKey.type == "Date"
-                      ? moment(item[titleKey.key]?.value).format("DD/MM/YYYY")
+                      ? item[titleKey.key]?.value
+                        ? moment(item[titleKey.key]?.value).format("DD/MM/YYYY")
+                        : ""
                       : item[titleKey.key]?.value}
                     {" --> "}
                     {titleKey.type == "Long"
                       ? formatCurrency(item[titleKey.key]?.value2, ",", "")
                       : titleKey.type == "Date"
-                      ? moment(item[titleKey.key]?.value2).format("DD/MM/YYYY")
+                      ? item[titleKey.key]?.value2
+                        ? moment(item[titleKey.key]?.value2).format("DD/MM/YYYY")
+                        : ""
                       : item[titleKey.key]?.value2}
                   </span>
                 </div>
@@ -349,7 +353,9 @@ export default function BusinessRuleConfig(props: any) {
                       {titleKey.type == "Long"
                         ? formatCurrency(item[titleKey.key]?.value, ",", "")
                         : titleKey.type == "Date"
-                        ? moment(item[titleKey.key]?.value).format("DD/MM/YYYY")
+                        ? item[titleKey.key]?.value
+                          ? moment(item[titleKey.key]?.value).format("DD/MM/YYYY")
+                          : ""
                         : item[titleKey.key]?.value}
                     </span>
                   )}
@@ -376,7 +382,9 @@ export default function BusinessRuleConfig(props: any) {
             : titleKey.type == "Long"
             ? formatCurrency(item[titleKey.key], ",", "")
             : titleKey.type == "Date"
-            ? moment(item[titleKey.key]).format("DD/MM/YYYY")
+            ? item[titleKey.key]
+              ? moment(item[titleKey.key]).format("DD/MM/YYYY")
+              : ""
             : item[titleKey.key];
         }
       }
