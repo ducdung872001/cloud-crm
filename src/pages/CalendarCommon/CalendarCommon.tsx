@@ -288,18 +288,16 @@ export default function CalendarCommon() {
   });
 
   useEffect(() => {
-    if (filterCalendar && idEmployee) {
       setParams({
         ...params,
         lstId: [idEmployee, ...filterCalendar.lstEmployeeId].join(),
-        branchId: filterCalendar.branchId,
+        branchId: filterCalendar.branchId || 0,
         lstCustomerId: filterCalendar.lstCustomerId.join(),
         types: filterCalendar.chooseTypeCalendar.join(),
         sources: filterCalendar.sourcesCalendar.join(),
         startTime: filterCalendar.startTime ? moment(filterCalendar.startTime).format("DD/MM/YYYY") : "",
         endTime: filterCalendar.endTime ? moment(filterCalendar.endTime).format("DD/MM/YYYY") : "",
       });
-    }
   }, [filterCalendar, idEmployee]);
 
   useEffect(() => {
@@ -327,7 +325,7 @@ export default function CalendarCommon() {
           status: item.status,
         };
       });
-      setListSchedule(result.items);
+      setListSchedule(result);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }

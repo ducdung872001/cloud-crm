@@ -598,9 +598,8 @@ export default function CreateOrder() {
       };
     });
     
-    const body = {
+    const body: any = {
       id: changeFormData.id,
-      orderCode: "",
       bnsId: 0,
       orderDate: moment(changeFormData.order_date, "DD/MM/YYYY").startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
       expectedDate: moment(changeFormData.expected_date, "DD/MM/YYYY").startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
@@ -621,6 +620,11 @@ export default function CreateOrder() {
       paymentStatus: "processing",
       orderDetails: orderDetails,
     };
+
+    // Chỉ thêm orderCode khi tạo mới, khi update không gửi để tránh xóa mã cũ
+    if (!changeFormData.id) {
+      body.orderCode = "";
+    }
 
     let response = null;
 

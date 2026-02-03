@@ -24,6 +24,7 @@ export interface IGroupsFilterRequest {
   groupBy?: string;
   projectId?: number;
   employeeId?: number;
+  participantId?: number;
 }
 
 export interface IWorkOrderRequestModel {

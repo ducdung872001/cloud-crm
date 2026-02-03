@@ -18,6 +18,7 @@ import { IActionModal } from "model/OtherModel";
 import PomService from "services/PomService";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
+import CardService from "services/CardService";
 
 export default function ShowPaymentBillModal(props: ShowPaymentBillModalProps) {
   const { onShow, idInvoice, tab } = props;
@@ -37,6 +38,8 @@ export default function ShowPaymentBillModal(props: ShowPaymentBillModalProps) {
   const [dataPomService, setDataPomService] = useState(null);
 
   const [listData, setListData] = useState([]);
+  const [cardInfoMap, setCardInfoMap] = useState<Record<number, { name: string; avatar: string; price: number }>>({});
+
 
   const getPomService = async (lstId) => {
     const params = {
@@ -85,23 +88,55 @@ export default function ShowPaymentBillModal(props: ShowPaymentBillModalProps) {
 
   const getDetailInvoice = async () => {
     setIsLoading(true);
-
+  
     const response = await InvoiceService.listInvoiceDetail(idInvoice);
-
+  
     if (response.code === 0) {
       const result = response.result;
-
-      const takeIdService = result.services && result.services.map((item) => item.serviceId);
+  
+      const takeIdService = result.services?.map((item) => item.serviceId);
       setLstIdService(takeIdService);
       setLstService(result.services);
-
+  
       setDetaiInvoice(result.invoice);
       setDetailBranch(result.beautyBranch);
-
-      tab == "tab_one" ? setListData([...result.products, ...result.services]) : setListData([...result.boughtCardServices]);
+  
+      const mergedList =
+        tab === "tab_one"
+          ? [...result.products, ...result.services, ...(result.boughtCards || [])]
+          : [...result.boughtCardServices];
+  
+      const cardIds = mergedList
+        .map((item: any) => item.cardId)
+        .filter((id): id is number => id !== undefined && id !== null);
+  
+      let cardMap: Record<number, { name: string; avatar: string; price: number }> = {};
+  
+      if (cardIds.length > 0) {
+        const cardRes = await CardService.list({});
+  
+        if (cardRes.code === 0) {
+          const cards = cardRes.result.items || [];
+  
+          cardIds.forEach((cardId) => {
+            const card = cards.find((c: any) => c.id === cardId);
+            if (card) {
+              cardMap[cardId] = {
+                name: card.name || "",
+                avatar: card.avatar || "",
+                price: card.price || 0,
+              };
+            }
+          });
+        }
+      }
+  
+      setCardInfoMap(cardMap);
+      setListData(mergedList);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
+  
     setIsLoading(false);
   };
 
@@ -122,39 +157,60 @@ export default function ShowPaymentBillModal(props: ShowPaymentBillModalProps) {
 
   const dataFormat = ["text-center", "image", "", `${nameCommon ? "text-right" : ""}`, "text-right", "text-right"];
 
-  const dataMappingArray = (item, index: number) => [
-    index + 1,
-    <Image key={index} src={item.avatar || item.productAvatar || item.serviceAvatar || ImageThirdGender} alt={item.name} />,
-    !item.batchNo ? (
-      item.name || item.serviceName
-    ) : (
-      <Fragment>
-        <span>{item.name}</span>
-        <br />
-        <span>
-          <strong>Số lô: </strong>
-          {item.batchNo}
-        </span>
-        <br />
-        <span>
-          <strong>Đơn vị tính: </strong>
-          {item.unitName}
-        </span>
-      </Fragment>
-    ),
-    `${
-      nameCommon
-        ? formatCurrency(
-            item.discount && item.discountUnit == 1
-              ? (item.priceDiscount ? item.priceDiscount : item.price) -
-                  (item.priceDiscount ? item.priceDiscount : item.price) * (item.discount / 100)
-              : (item.priceDiscount ? item.priceDiscount : item.price) - item.discount
-          )
-        : item.cardNumber
-    }`,
-    `${nameCommon ? (item.qty ? item.qty : 1) : formatCurrency(item.cash)}`,
-    `${nameCommon ? formatCurrency(item.fee ? item.fee : "0") : formatCurrency(item.account)}`,
-  ];
+  const dataMappingArray = (item, index: number) => {
+    // Kiểm tra xem item có phải là boughtCard không
+    const cardId = item.cardId;
+    const isBoughtCard = cardId !== undefined && cardId !== null;
+    const cardInfo = isBoughtCard ? cardInfoMap[cardId] : null;
+
+    return [
+      index + 1,
+      <Image 
+        key={index} 
+        src={
+          isBoughtCard && cardInfo?.avatar 
+            ? cardInfo.avatar 
+            : item.avatar || item.productAvatar || item.serviceAvatar || ImageThirdGender
+        } 
+        alt={isBoughtCard && cardInfo?.name ? cardInfo.name : item.name} 
+      />,
+      isBoughtCard ? (
+        <Fragment>
+          <span>{cardInfo?.name || item.name}</span>
+        </Fragment>
+      ) : !item.batchNo ? (
+        item.name || item.serviceName
+      ) : (
+        <Fragment>
+          <span>{item.name}</span>
+          <br />
+          <span>
+            <strong>Số lô: </strong>
+            {item.batchNo}
+          </span>
+          <br />
+          <span>
+            <strong>Đơn vị tính: </strong>
+            {item.unitName}
+          </span>
+        </Fragment>
+      ),
+      `${
+        nameCommon
+          ? formatCurrency(
+              isBoughtCard && cardInfo?.price !== undefined
+                ? cardInfo.price
+                : item.discount && item.discountUnit == 1
+                ? (item.priceDiscount ? item.priceDiscount : item.price) -
+                    (item.priceDiscount ? item.priceDiscount : item.price) * (item.discount / 100)
+                : (item.priceDiscount ? item.priceDiscount : item.price) - (item.discount || 0)
+            )
+          : item.cardNumber
+      }`,
+      `${nameCommon ? (item.qty ? item.qty : 1) : formatCurrency(item.cash)}`,
+      `${nameCommon ? formatCurrency(item.fee ? item.fee : "0") : formatCurrency(item.account)}`,
+    ];
+  };
 
   // đoạn này là table của vật tư tiêu hao
   const titlesPom = ["STT", "Sản phẩm", "Đơn vị", "Số lượng", "Dịch vụ"];

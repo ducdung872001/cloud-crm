@@ -112,4 +112,5 @@ export interface IProductInvoiceServiceResponse {
   productAvatar: string;
   batchNo: string;
   unitName: string;
+  avatarCard?: string;
 }

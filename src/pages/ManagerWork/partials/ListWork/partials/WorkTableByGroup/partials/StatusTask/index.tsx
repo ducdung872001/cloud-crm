@@ -4,8 +4,13 @@ import "./index.scss";
 export default function StatusTask(data) {
   //! đoạn này xử lý vấn đề hiển thị thông tin xem bao giờ thực hiện
   const handleUnfulfilled = (time) => {
+
+    if (!time) return <span className="status-work-unfulfilled">Chưa giao việc</span>;
+
     const currentTime = new Date().getTime();
     const startTime = new Date(time).getTime();
+
+    if (isNaN(startTime)) return <span className="status-work-unfulfilled">Chưa giao việc</span>;
 
     if (currentTime < startTime) {
       if ((startTime - currentTime) / (24 * 60 * 60 * 1000) >= 1) {

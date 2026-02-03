@@ -869,7 +869,7 @@ export default function ModalConditionalStartEvent({ onShow, onHide, dataNode, p
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt biểu mẫu"}</h4>
+              <h4>{"Cài đặt Conditional Start Event"}</h4>
             </div>
 
             <ListButtonHeader

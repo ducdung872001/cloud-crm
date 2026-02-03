@@ -115,6 +115,7 @@ i18n.use(initReactI18next).init({
           bpm: "Process Management",
           manageProcesses: "Manage processes",
           manageDefaultProcesses: "Setting default processes",
+          business_rule: "Business rule",
           processSimulation: "Process simulation",
           objectManage: "Object Management",
           manage_data_sharing: "Manage data sharing",
@@ -179,7 +180,7 @@ i18n.use(initReactI18next).init({
           renewalList: "Renewal list",
           userAdministration: "User administration",
           fieldManagement: "Field management",
-          settingConfiguration: "Configuration settings"
+          settingConfiguration: "Configuration settings",
         },
         pageDashboard: {
           title: "Dashboard",
@@ -360,6 +361,7 @@ i18n.use(initReactI18next).init({
           bpm: "Quản lý quy trình",
           manageProcesses: "Quản lý quy trình",
           manageDefaultProcesses: "Cài đặt quy trình mặc định",
+          business_rule: "Luật nghiệp vụ",
           processSimulation: "Mô phỏng quy trình",
           objectManage: "Quản lý hồ sơ",
           manage_data_sharing: "Chia sẻ dữ liệu",
@@ -422,7 +424,7 @@ i18n.use(initReactI18next).init({
           renewalList: "Danh sách gia hạn",
           userAdministration: "Quản trị người dùng",
           fieldManagement: "Quản lý lĩnh vực",
-          settingConfiguration: "Cài đặt cấu hình chung"
+          settingConfiguration: "Cài đặt cấu hình chung",
         },
         pageDashboard: {
           title: "Trang chủ",

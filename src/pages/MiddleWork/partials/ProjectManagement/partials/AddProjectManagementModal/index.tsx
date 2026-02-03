@@ -29,9 +29,10 @@ import { uploadDocumentFormData } from "utils/document";
 import "./index.scss";
 import CategoryProjectService from "services/CategoryProjectService";
 import { name } from "jssip";
+import moment from "moment";
 
 export default function AddProjectManagementModal(props: IAddWorkProjectModalProps) {
-  const { onShow, onHide, idData } = props;
+  const { startDate, endDate, onShow, onHide, idData } = props;
 
   const focusedElement = useActiveElement();
   const { dataBranch } = useContext(UserContext) as ContextType;
@@ -74,8 +75,8 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
         id: result.id,
         name: result?.name ?? "",
         code: result?.code ?? "",
-        startTime: result?.startTime ?? new Date(),
-        endTime: result?.endTime ?? "",
+        startTime: moment(result.startTime).toDate(),
+        endTime: moment(result.endTime).toDate(),
         description: result?.description ?? "",
         participants: result?.participants ?? "[]",
         employeeId: result?.employeeId ?? null,
@@ -98,8 +99,8 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
       ({
         name: data?.name ?? "",
         code: data?.code ?? "",
-        startTime: data?.startTime ?? new Date(),
-        endTime: data?.endTime ?? "",
+        startTime: idData ? data?.startTime : startDate,
+        endTime: idData ? data?.endTime : endDate,
         description: data?.description ?? "",
         participants: data?.participants ?? "[]",
         employeeId: data?.employeeId ?? null,
@@ -108,7 +109,7 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
         parentId: 0,
         projectTypes: data?.projectTypes ?? "[]",
       } as IWorkProjectRequestModel),
-    [data, onShow]
+    [data, onShow, startDate, endDate]
   );
 
   const validations: IValidation[] = [
@@ -507,6 +508,7 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
           isWarning: startDay > endDay,
           placeholder: "Nhập thời gian bắt đầu",
           messageWarning: "Ngày bắt đầu nhỏ hơn ngày kết thúc",
+          maxDate: new Date(formData?.values?.endTime),
         },
         {
           label: "Kết thúc",
@@ -519,6 +521,7 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
           isWarning: endDay < startDay,
           placeholder: "Nhập thời gian kết thúc",
           messageWarning: "Ngày kết thúc lớn hơn ngày bắt đầu",
+          minDate: new Date(formData?.values?.startTime),
         },
         {
           label: "Nội dung dự án",

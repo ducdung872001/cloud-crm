@@ -1,6 +1,8 @@
 import { IWorkProjectResponseModel } from "./WorkProjectResponseModel";
 
 export interface IAddWorkProjectModalProps {
+  startDate: any;
+  endDate?: any;
   onShow: boolean;
   idData?: number;
   onHide: (reload: boolean) => void;

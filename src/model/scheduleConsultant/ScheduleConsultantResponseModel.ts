@@ -13,8 +13,8 @@ export interface IScheduleConsultantResponseModelProps {
   content: string;
   customerId: number;
   note: string;
-  startTime: string;
-  endTime: string;
+  startTime: Date | null;
+  endTime: Date | null;
   type: number;
   bsnId?: number;
   consultantName?: string;

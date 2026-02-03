@@ -13,6 +13,7 @@ interface PopoverProps {
   children?: any;
   isTriangle?: boolean;
   distance?: number;
+  forNote?: any;
 }
 export default function Popover(props: PopoverProps) {
   const { className, alignment, direction, refContainer, children, isTriangle, refPopover, distance } = props;

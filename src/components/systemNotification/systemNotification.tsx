@@ -12,12 +12,14 @@ interface SystemNotificationProps {
   action?: () => void;
   titleButton01?: string;
   action01?: () => void;
+  titleButton02?: string;
+  action02?: () => void;
   disabled?: boolean;
   type: "no-permission" | "no-item" | "no-result" | "not-found" | "no-service";
 }
 
 export function SystemNotification(props: SystemNotificationProps) {
-  const { description, titleButton, action, titleButton01, action01, type, disabled = false } = props;
+  const { description, titleButton, action, titleButton01, action01, titleButton02, action02, type, disabled = false } = props;
 
   return (
     <div className={`system-notification d-flex align-items-center justify-content-center ${type}`}>
@@ -60,6 +62,11 @@ export function SystemNotification(props: SystemNotificationProps) {
             {titleButton01 && action01 && (
               <Button type="button" color="primary" onClick={action01} disabled={disabled}>
                 {titleButton01}
+              </Button>
+            )}
+            {titleButton02 && action02 && (
+              <Button type="button" color="primary" onClick={action02} disabled={disabled}>
+                {titleButton02}
               </Button>
             )}
           </div>

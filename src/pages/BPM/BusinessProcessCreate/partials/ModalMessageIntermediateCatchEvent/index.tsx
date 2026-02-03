@@ -740,7 +740,7 @@ export default function ModalMessageIntermediateCatchEvent({ onShow, onHide, dat
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt biểu mẫu"}</h4>
+              <h4>{"Cài đặt Message Intermediate Catch Event"}</h4>
             </div>
 
             <ListButtonHeader

@@ -338,7 +338,7 @@ export default function ModalLinkThrowEvent({ onShow, onHide, dataNode, processI
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt biểu mẫu"}</h4>
+              <h4>{"Cài đặt Link Throw Event"}</h4>
             </div>
 
             <ListButtonHeader

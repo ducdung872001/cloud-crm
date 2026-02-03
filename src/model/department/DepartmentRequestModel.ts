@@ -12,4 +12,5 @@ export interface IDepartmentRequest {
   leadership?: number;
   status?: string;
   jobTitles?: string;
+  defaultRedirect?: string;
 }

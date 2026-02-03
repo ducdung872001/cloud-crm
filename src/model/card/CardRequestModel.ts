@@ -2,6 +2,7 @@ export interface ICardFilterRequest {
   name?: string;
   page?: number;
   limit?: number;
+  type?: number;
 }
 
 export interface ICardRequest {
@@ -13,4 +14,7 @@ export interface ICardRequest {
   payoutMax: number | string;
   payoutMin: number | string;
   bsnId: number;
+  type: number | string;
+  price: number | string;
+  ranking: number;
 }

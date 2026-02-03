@@ -10,8 +10,8 @@ export interface IWorkProjectResponseModel {
   id: number;
   name: string;
   code: string;
-  startTime: string;
-  endTime: string;
+  startTime: Date | string;
+  endTime: Date | string;
   description: string;
   participants: string;
   employeeId: number;

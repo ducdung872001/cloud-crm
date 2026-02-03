@@ -171,8 +171,8 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
         content: result.content,
         customerId: result.customerId,
         note: result.note,
-        startTime: result.startTime,
-        endTime: result.endTime,
+        startTime: moment(result.startTime).toDate(),
+        endTime: moment(result.endTime).toDate(),
         type: result.type,
         notification: result.notification,
       });
@@ -216,6 +216,11 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
       rules: "required",
     },
   ];
+
+  const isValidDateTimeRange = (start: any, end: any) => {
+    if (!start || !end) return true;
+      return moment(start).isBefore(moment(end));
+  };
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
@@ -789,6 +794,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
           iconPosition: "left",
           placeholder: "Nhập thời gian bắt đầu",
           hasSelectTime: true,
+          maxDate: new Date(formData?.values?.endTime),
         },
         {
           label: "Kết thúc",
@@ -800,6 +806,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
           required: true,
           placeholder: "Nhập thời gian kết thúc",
           hasSelectTime: true,
+          minDate: new Date(formData?.values?.startTime),
         },
         {
           label: "Kiểu lịch",
@@ -1077,6 +1084,14 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
 
     if (detailCustomer === null) {
       setCheckFieldCustomer(true);
+      return;
+    }
+
+    if (!isValidDateTimeRange(
+      formData.values.startTime,
+      formData.values.endTime
+    )) {
+      showToast("Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc", "error");
       return;
     }
 

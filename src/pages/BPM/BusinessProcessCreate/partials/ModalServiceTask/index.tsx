@@ -743,7 +743,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt nhiệm vụ"}</h4>
+              <h4>{"Cài đặt Service"}</h4>
             </div>
             <ListButtonHeader
               data={data}

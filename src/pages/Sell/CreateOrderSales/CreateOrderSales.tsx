@@ -28,6 +28,7 @@ import { ContextType, UserContext } from "contexts/userContext";
 import ImageError from "assets/images/error.png";
 
 import "./CreateOrderSales.scss";
+import { ICardResponse } from "model/card/CardResponseModel";
 
 SwiperCore.use([Navigation]);
 
@@ -61,6 +62,8 @@ export default function CreateOrderSales() {
   const [dataService, setDataService] = useState<IBoughtServiceResponse>(null);
   const [showModalAddService, setShowModalAddService] = useState<boolean>(false);
 
+  const [dataCustomerCard, setDataCustomerCard] = useState<ICardResponse>(null);
+  const [showModalAddCustomerCard, setShowModalAddCustomerCard] = useState<boolean>(false);
   const [listIdProduct, setListIdProduct] = useState<number[]>([]);
   const [productIdGetCode, setProductIdGetCode] = useState<number>(null);
   const [listIdService, setListIdService] = useState<number[]>([]);
@@ -433,6 +436,17 @@ export default function CreateOrderSales() {
                     disabled={detailCustomer === null}
                     onClick={(e) => {
                       e.preventDefault();
+                      setDataCustomerCard(null);
+                      setShowModalAddCustomerCard(true);
+                    }}
+                  >
+                    Thêm thẻ hạng thành viên
+                  </Button>
+                  <Button
+                    color="primary"
+                    disabled={detailCustomer === null}
+                    onClick={(e) => {
+                      e.preventDefault();
                       setDataService(null);
                       setShowModalAddService(true);
                     }}
@@ -471,6 +485,11 @@ export default function CreateOrderSales() {
             <ServiceProductList
               tab={tab}
               idCustomer={detailCustomer?.value}
+              // action customer card
+              showModalAddCustomerCard={showModalAddCustomerCard}
+              setShowModalAddCustomerCard={setShowModalAddCustomerCard}
+              dataCustomerCard={dataCustomerCard}
+              setDataCustomerCard={setDataCustomerCard}
               // action product
               showModalAddProduct={showModalAddProduct}
               setShowModalAddProduct={setShowModalAddProduct}

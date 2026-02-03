@@ -76,10 +76,12 @@ const FormViewerComponent = (props: any) => {
    => thành dạng {key: value}
    */
   const getParamsPropertiesEform = (apiParams, formData, keyGroup?) => {
+    // console.log('formData[keyGroup]', formData[keyGroup][0]['departmentId']);
+    
     let paramsTotal = {};
     if (apiParams) {
       const params = apiParams.replace(/curr\.(\w+)/g, (match, key) => {
-        const value = formData[key];
+        const value = keyGroup ? (formData[keyGroup][0]['departmentId']) : formData[key];
         return value !== undefined && value !== null ? value : "null";
       });
       paramsTotal = convertDataParamsProperties(params);
@@ -99,7 +101,7 @@ const FormViewerComponent = (props: any) => {
   };
 
   //Xủ lý dữ liệu khởi tạo ban đầu
-  const walkInitData = (components, potId, processId, filterItems) => {
+  const walkInitData = (components, potId, processId, filterItems, dataInit) => {
     if (components && components.length > 0) {
       components.forEach((comp) => {
         let apiUrl = comp?.properties?.apiUrl || "";
@@ -118,8 +120,23 @@ const FormViewerComponent = (props: any) => {
           // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
           let key = comp?.properties?.keyApi || comp.valuesKey || comp.key;
           let paramsUrl = comp?.properties?.paramsUrl || "";
-          const paramsTotal = convertDataParamsProperties(paramsUrl);
-          filterItems.push({ key, paramsTotal, compKey: comp.key, type: "select", apiUrl: apiUrl });
+          let apiParams = comp?.properties?.apiParams || "";
+
+          let paramsTotal = {};
+          if(dataInit){            
+            paramsTotal = getParamsPropertiesEform(apiParams, dataInit);
+          }
+          
+          const params = convertDataParamsProperties(paramsUrl);
+          filterItems.push({ 
+            key, 
+            paramsTotal: {
+              ...(paramsUrl ? { ...params } : {}),
+              ...(apiParams ? { ...paramsTotal } : {}),
+            },
+            compKey: comp.key, 
+            type: "select", apiUrl: apiUrl 
+          });
         }
 
         //Lịch sử phê duyệt
@@ -132,7 +149,7 @@ const FormViewerComponent = (props: any) => {
         }
 
         if (Array.isArray(comp.components) && comp.components.length > 0) {
-          walkInitData(comp.components, potId, processId, filterItems);
+          walkInitData(comp.components, potId, processId, filterItems, dataInit);
         }
       });
     }
@@ -156,9 +173,90 @@ const FormViewerComponent = (props: any) => {
         }
       });
     }
-
     // return filterItems;
   };
+
+  const walkGetIframeLinks = (components, nodeId, potId, processId, workId, procurementType) => {
+    // let filterItems = [];
+    if (components && components.length > 0) {
+      components.forEach((comp) => {
+        if (comp.type === "iframe" && comp.url) {
+          //Đoạn xử lý dùng theo link tương đối không cần phải nhập trước https://
+          let componentUrl = "";
+          if (comp.url?.includes("https://") || comp.url?.includes("http://")) {
+            componentUrl = comp.url;
+          } else {
+            componentUrl = `${process.env.APP_CRM_LINK}${comp.url}`;
+          }
+  
+          // Lấy fieldName từ properties.name, nếu không có thì gán giá trị mặc định là 'undefined'
+          const fieldName = comp?.properties?.name || "undefined";
+          const enableAddRow = comp?.properties?.enableAddRow || "true";
+          const enableAddColumns = comp?.properties?.enableAddColumns || "true";
+          const enableExport = comp?.properties?.enableExport || "true";
+          const enableImport = comp?.properties?.enableImport || "true";
+          const enableAddCmtCell = comp?.properties?.enableAddCmtCell || "true";
+          const enableAddCmtCol = comp?.properties?.enableAddCmtCol || "true";
+          const enableSave = comp?.properties?.enableSave || "true";
+          const enableEditCell = comp?.properties?.enableEditCell || "true";
+          const documentType = comp?.properties?.documentType || "undefined";
+          const link = comp?.properties?.link || "undefined";
+          const apiParams = comp?.properties?.apiParams || "undefined";
+  
+          // Tạo URL mới bằng cách thêm các tham số nodeId, potId, processId
+          const url = new URL(componentUrl);
+          url.searchParams.append("nodeId", nodeId);
+          url.searchParams.append("potId", potId);
+          url.searchParams.append("processId", processId);
+          url.searchParams.append("fieldName", fieldName);
+          url.searchParams.append("documentType", documentType);
+          url.searchParams.append("link", link);
+          url.searchParams.append("workId", workId);
+          if (procurementType) {
+            url.searchParams.append("procurementType", procurementType);
+          }
+          if (apiParams) {
+            url.searchParams.append("apiParams", apiParams);
+          }
+  
+          url.searchParams.append("enableAddRow", enableAddRow);
+          url.searchParams.append("enableAddColumns", enableAddColumns);
+          url.searchParams.append("enableExport", enableExport);
+          url.searchParams.append("enableImport", enableImport);
+          url.searchParams.append("enableAddCmtCell", enableAddCmtCell);
+          url.searchParams.append("enableAddCmtCol", enableAddCmtCol);
+          url.searchParams.append("enableSave", enableSave);
+          url.searchParams.append("enableEditCell", enableEditCell);
+  
+          // Cập nhật URL mới vào component
+          comp.url = url.toString();
+          comp.sandbox = "allow-forms allow-scripts allow-same-origin";
+        }
+
+        if (Array.isArray(comp.components) && comp.components.length > 0) {
+          walkGetIframeLinks(comp.components, nodeId, potId, processId, workId, procurementType);
+        }
+      });
+    }
+    // return filterItems;
+  };
+
+  //lấy dữ liệu và gắn lại option vào select khi thay đổi trường select khác lấy value làm params truyền vào
+  const walkGetOptionChangeSelect = (components, dataOption, loadApi) => {
+    if (components && components.length > 0) {
+      components.forEach((comp) => {
+        if (comp.type === "select" && comp.key == loadApi) {
+          comp.values = dataOption || [];
+          delete comp.valuesKey;
+        }
+
+        if (Array.isArray(comp.components) && comp.components.length > 0) {
+          walkGetOptionChangeSelect(comp.components, dataOption, loadApi);
+        }
+      });
+    }
+  };
+         
 
   useEffect(() => {
     // Khởi tạo Viewer
@@ -217,7 +315,7 @@ const FormViewerComponent = (props: any) => {
     });
 
     const updateExpressionField = (components, schema, data) => {
-      components.forEach((component) => {
+      components.forEach(async (component) => {
         if (component.type === "expression") {
           let dataExpression = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
@@ -237,6 +335,8 @@ const FormViewerComponent = (props: any) => {
         if (component.type == "select") {
           let dataSelect = data[component.key]; //Lấy ra key
           let target = component?.properties?.bindingTarget;
+          let loadApi = component?.properties?.loadApi;
+          let loadApi_params = component?.properties?.loadApi_params;
 
           if (target) {
             const listTarget = target.split(",").map((item) => item.trim()) || [];
@@ -258,6 +358,14 @@ const FormViewerComponent = (props: any) => {
               }
               // rerenderForm(schema, data);
             }
+          }
+
+          if(loadApi){            
+            const params = {
+              [loadApi_params]: dataSelect
+            }            
+            let dataOption = await SelectOptionData(loadApi, params);
+            walkGetOptionChangeSelect(schema.components, dataOption, loadApi);
           }
         }
 
@@ -382,15 +490,14 @@ const FormViewerComponent = (props: any) => {
     formViewerRef.current.on("formField.focus", async (event) => {
       console.log("Event focus =>", event);
 
-      let formData = formViewerRef.current._getState().data;
-
+      let formData = formViewerRef.current._getState().data;      
       const nodeId = contextData?.nodeId;
       const potId = contextData?.potId;
       const processId = contextData?.processId;
 
       //Nếu là select, thì cần được load lại danh sách dựa trên thông tin ràng buộc
       const formField = event.formField;
-
+    
       //1. Loại là select
       if (formField.type == "select") {
         //valuesKey là Input values key đối với loại select là Input Data
@@ -428,7 +535,6 @@ const FormViewerComponent = (props: any) => {
           } else {
             dataOption = await SelectOptionData(key, params);
           }
-
           formField.values = dataOption || [];
           delete formField.valuesKey; //Phải xóa đi mới hiển thị lên được
           // rerenderForm(currFormSchema, formData);
@@ -742,61 +848,7 @@ const FormViewerComponent = (props: any) => {
     const procurementType = contextData?.procurementTypeId === "02" ? "tvtk" : null;
 
     // Lặp qua các components trong đầu vào
-    updatedFormSchema.components.forEach((component) => {
-      // Kiểm tra nếu component có type là 'iframe'
-      if (component.type === "iframe" && component.url) {
-        //Đoạn xử lý dùng theo link tương đối không cần phải nhập trước https://
-        let componentUrl = "";
-        if (component.url?.includes("https://") || component.url?.includes("http://")) {
-          componentUrl = component.url;
-        } else {
-          componentUrl = `${process.env.APP_CRM_LINK}${component.url}`;
-        }
-
-        // Lấy fieldName từ properties.name, nếu không có thì gán giá trị mặc định là 'undefined'
-        const fieldName = component?.properties?.name || "undefined";
-        const enableAddRow = component?.properties?.enableAddRow || "true";
-        const enableAddColumns = component?.properties?.enableAddColumns || "true";
-        const enableExport = component?.properties?.enableExport || "true";
-        const enableImport = component?.properties?.enableImport || "true";
-        const enableAddCmtCell = component?.properties?.enableAddCmtCell || "true";
-        const enableAddCmtCol = component?.properties?.enableAddCmtCol || "true";
-        const enableSave = component?.properties?.enableSave || "true";
-        const enableEditCell = component?.properties?.enableEditCell || "true";
-        const documentType = component?.properties?.documentType || "undefined";
-        const link = component?.properties?.link || "undefined";
-        const apiParams = component?.properties?.apiParams || "undefined";
-
-        // Tạo URL mới bằng cách thêm các tham số nodeId, potId, processId
-        const url = new URL(componentUrl);
-        url.searchParams.append("nodeId", nodeId);
-        url.searchParams.append("potId", potId);
-        url.searchParams.append("processId", processId);
-        url.searchParams.append("fieldName", fieldName);
-        url.searchParams.append("documentType", documentType);
-        url.searchParams.append("link", link);
-        url.searchParams.append("workId", workId);
-        if (procurementType) {
-          url.searchParams.append("procurementType", procurementType);
-        }
-        if (apiParams) {
-          url.searchParams.append("apiParams", apiParams);
-        }
-
-        url.searchParams.append("enableAddRow", enableAddRow);
-        url.searchParams.append("enableAddColumns", enableAddColumns);
-        url.searchParams.append("enableExport", enableExport);
-        url.searchParams.append("enableImport", enableImport);
-        url.searchParams.append("enableAddCmtCell", enableAddCmtCell);
-        url.searchParams.append("enableAddCmtCol", enableAddCmtCol);
-        url.searchParams.append("enableSave", enableSave);
-        url.searchParams.append("enableEditCell", enableEditCell);
-
-        // Cập nhật URL mới vào component
-        component.url = url.toString();
-        component.sandbox = "allow-forms allow-scripts allow-same-origin";
-      }
-    });
+    walkGetIframeLinks(updatedFormSchema.components, nodeId, potId, processId, workId, procurementType);
 
     // Trả về dữ liệu đã được cập nhật
     return updatedFormSchema;
@@ -850,12 +902,12 @@ const FormViewerComponent = (props: any) => {
   /**
    * Khởi tạo các dữ liệu động trên form (Master Data trong trường select)
    */
-  const initBindingData = async (updatedFormSchema) => {
+  const initBindingData = async (updatedFormSchema, dataInit) => {
     const nodeId = contextData?.nodeId;
     const potId = contextData?.potId;
     const processId = contextData?.processId;
     let filterItems = [];
-    walkInitData(updatedFormSchema.components, potId, processId, filterItems);
+    walkInitData(updatedFormSchema.components, potId, processId, filterItems, dataInit);
 
     //Lặp tiến hành binding
     for (let index = 0; index < filterItems.length; index++) {
@@ -899,7 +951,7 @@ const FormViewerComponent = (props: any) => {
       updatedFormSchema = updateButtons(updatedFormSchema);
 
       // Xử lý khởi tạo các trường select trong form
-      updatedFormSchema = await initBindingData(updatedFormSchema);
+      updatedFormSchema = await initBindingData(updatedFormSchema, dataInit);
 
       // Import schema vào Viewer
 
@@ -991,7 +1043,6 @@ const FormViewerComponent = (props: any) => {
 
   return (
     <div>
-      {/* <h2>Form Viewer</h2> */}
       {isLoading ? (
         <Loading />
       ) : (

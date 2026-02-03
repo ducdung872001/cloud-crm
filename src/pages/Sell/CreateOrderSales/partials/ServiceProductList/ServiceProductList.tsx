@@ -17,6 +17,8 @@ import AddBoughtServiceModal from "./partials/AddBoughtServiceModal/AddBoughtSer
 import AddBoughtProductModal from "./partials/AddBoughtProductModal/AddProductInvoiceModal";
 import Image from "components/image";
 import ImageThirdGender from "assets/images/third-gender.png";
+import AddBoughtCustomerCardModal from "./partials/AddBoughtCustomerCard/AddBoughtCustomerCard";
+import CardService from "services/CardService";
 
 export default function ServiceProductList(props: IServiceProductListProps) {
   const {
@@ -39,6 +41,10 @@ export default function ServiceProductList(props: IServiceProductListProps) {
     setProductIdGetCode,
     dataSuggestedProduct,
     setDataSuggestedProduct,
+    showModalAddCustomerCard,
+    setShowModalAddCustomerCard,
+    dataCustomerCard,
+    setDataCustomerCard,
   } = props;
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -47,6 +53,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [listProductInvoiceService, setListProductInvoiceService] = useState<IProductInvoiceServiceResponse[]>([]);
+  const [cardInfoMap, setCardInfoMap] = useState<Record<number, { name: string; avatar: string; price: number }>>({});
 
   const getListProductInvoiceService = async () => {
     setIsLoading(true);
@@ -57,13 +64,14 @@ export default function ServiceProductList(props: IServiceProductListProps) {
       const result = response.result;
       setInvoiceId(result.invoiceId);
 
-      if (result.products || result.services) {
+      if (result.products || result.services || result.boughtCards) {
         const takeIdProducts = (result.products || []).map((item) => item.bptId);
         const takeIdServices = (result.services || []).map((item) => item.bseId);
+        const takeIdCards = (result.boughtCards || []).map((item) => item.cardId);
 
         setListIdProduct(takeIdProducts);
         setListIdService(takeIdServices);
-        setListProductInvoiceService([...result.products, ...result.services]);
+        setListProductInvoiceService([...result.products, ...result.services, ...result.boughtCards]);
         setProductIdGetCode(result.products && result.products.length > 0 ? result.products[0].productId : null);
       }
     } else {
@@ -77,6 +85,45 @@ export default function ServiceProductList(props: IServiceProductListProps) {
       getListProductInvoiceService();
     }
   }, [idCustomer, tab]);
+
+  // Lấy thông tin card name, avatar từ cardId
+  useEffect(() => {
+    const fetchCardInfo = async () => {
+      // Lấy tất cả cardId unique từ boughtCards
+      const cardIds = listProductInvoiceService
+        .map((item: any) => item.cardId)
+        .filter((cardId): cardId is number => cardId !== undefined && cardId !== null);
+
+      if (cardIds.length === 0) {
+        setCardInfoMap({});
+        return;
+      }
+
+      // Gọi API để lấy thông tin tất cả cards
+      const response = await CardService.list({});
+
+      if (response.code === 0) {
+        const cards = response.result.items || [];
+        const map: Record<number, { name: string; avatar: string; price: number }> = {};
+
+        // Tạo map cardId -> {name, avatar, price}
+        cardIds.forEach((cardId) => {
+          const card = cards.find((card: any) => card.id === cardId);
+          if (card) {
+            map[cardId] = {
+              name: card.name || "",
+              avatar: card.avatar || "",
+              price: card.price || 0,
+            };
+          }
+        });
+
+        setCardInfoMap(map);
+      }
+    };
+
+    fetchCardInfo();
+  }, [listProductInvoiceService]);
 
   useEffect(() => {
     let totalAmount = 0;
@@ -97,38 +144,59 @@ export default function ServiceProductList(props: IServiceProductListProps) {
 
   const dataFormat = ["text-center", "text-center", "", "text-right", "text-right", "text-right"];
 
-  const dataMappingArray = (item: IProductInvoiceServiceResponse, index: number) => [
-    index + 1,
-    <Image key={index} src={item.productAvatar || item.serviceAvatar || ImageThirdGender} alt={item.name} />,
-    !item.batchNo ? (
-      <>
-        <span>{item.name}</span>
-        <br />
-        <span>{item.serviceName}</span>
-      </>
-    ) : (
-      <Fragment>
-        <span>{item.name}</span>
-        <br />
-        <span>
-          <strong>Số lô: </strong>
-          {item.batchNo}
-        </span>
-        <br />
-        <span>
-          <strong>Đơn vị tính: </strong>
-          {item.unitName}
-        </span>
-      </Fragment>
-    ),
+  const dataMappingArray = (item: IProductInvoiceServiceResponse, index: number) => {
+    // Kiểm tra xem item có phải là boughtCard không
+    const cardId = (item as any).cardId;
+    const isBoughtCard = cardId !== undefined && cardId !== null;
+    const cardInfo = isBoughtCard ? cardInfoMap[cardId] : null;
+
+    return [
+      index + 1,
+      <Image 
+        key={index} 
+        src={
+          isBoughtCard && cardInfo?.avatar 
+            ? cardInfo.avatar 
+            : item.productAvatar || item.serviceAvatar || item.avatarCard || ImageThirdGender
+        } 
+        alt={isBoughtCard && cardInfo?.name ? cardInfo.name : item.name} 
+      />,
+      isBoughtCard ? (
+        <Fragment>
+          <span>{cardInfo?.name || item.name}</span>
+        </Fragment>
+      ) : !item.batchNo ? (
+        <>
+          <span>{item.name}</span>
+          <br />
+          <span>{item.serviceName}</span>
+        </>
+      ) : (
+        <Fragment>
+          <span>{item.name}</span>
+          <br />
+          <span>
+            <strong>Số lô: </strong>
+            {item.batchNo}
+          </span>
+          <br />
+          <span>
+            <strong>Đơn vị tính: </strong>
+            {item.unitName}
+          </span>
+        </Fragment>
+      ),
     item.qty ? item.qty : 1,
     formatCurrency(
-      item.discount && item.discountUnit == 1
+      isBoughtCard && cardInfo?.price !== undefined
+        ? cardInfo.price
+        : item.discount && item.discountUnit == 1
         ? (item.priceDiscount ? item.priceDiscount : item.price) - (item.priceDiscount ? item.priceDiscount : item.price) * (item.discount / 100)
         : (item.priceDiscount ? item.priceDiscount : item.price) - item.discount
     ),
     formatCurrency(item.fee ? item.fee : "0"),
-  ];
+    ];
+  };
 
   const actionsTable = (item: IProductInvoiceServiceResponse): IAction[] => {
         const isCheckedItem = listIdChecked?.length > 0;
@@ -261,7 +329,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
         }
         if (item?.bseId) {
           onDeleteService(item.bseId);
-          return;
+          return;   
         }
         
         if (listIdChecked.length > 0) {
@@ -276,7 +344,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
 
   const bulkActionList: BulkActionItemModel[] = [
     {
-      title: "Xóa dịch vụ/sản phẩm cần bán",
+      title: "Xóa dịch vụ/sản phẩm/thẻ hạng thành viên cần bán",
       callback: () => showDialogConfirmDelete(),
     },
   ];
@@ -304,13 +372,14 @@ export default function ServiceProductList(props: IServiceProductListProps) {
         <SystemNotification
           description={
             <span>
-              Hiện tại chưa có dịch vụ/sản phẩm nào. <br />
-              Hãy thêm mới dịch vụ/sản phẩm đầu tiên nhé!
+              Hiện tại chưa có dịch vụ/sản phẩm/thẻ thành viên nào. <br />
+              Hãy thêm mới dịch vụ/sản phẩm/thẻ thành viên đầu tiên nhé!
             </span>
           }
           type="no-item"
           titleButton="Thêm dịch vụ"
           titleButton01="Thêm sản phẩm"
+          titleButton02="Thêm thẻ hạng thành viên"
           disabled={idCustomer === undefined || idCustomer === null}
           action={() => {
             setDataService(null);
@@ -319,6 +388,14 @@ export default function ServiceProductList(props: IServiceProductListProps) {
           action01={() => {
             setDataProduct(null);
             setShowModalAddProduct(true);
+          }}
+          action02={() => {
+            if (setDataCustomerCard) {
+              setDataCustomerCard(null);
+            }
+            if (setShowModalAddCustomerCard) {
+              setShowModalAddCustomerCard(true);
+            }
           }}
         />
       )}
@@ -346,6 +423,18 @@ export default function ServiceProductList(props: IServiceProductListProps) {
             getListProductInvoiceService();
           }
           setShowModalAddService(false);
+        }}
+      />
+      <AddBoughtCustomerCardModal
+        onShow={showModalAddCustomerCard}
+        data={dataCustomerCard}
+        idCustomer={idCustomer}
+        invoiceId={invoiceId}
+        onHide={(reload) => {
+          if (reload) {
+            getListProductInvoiceService();
+          }
+          setShowModalAddCustomerCard(false);
         }}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />

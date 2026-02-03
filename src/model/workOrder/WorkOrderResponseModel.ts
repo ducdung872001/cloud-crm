@@ -56,3 +56,10 @@ export interface IWorkExchangeResponseModal {
   viewers: any;
   worId: number;
 }
+
+export interface IWorkOrderDocFile {
+  url: string;
+  type?: string;
+  name?: string;
+  size?: number;
+}

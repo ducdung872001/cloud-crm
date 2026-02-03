@@ -164,16 +164,17 @@ export default function AddDepartmentDirectoryModal(props: AddDepartmentModalPro
 
   const values = useMemo(
     () =>
-      ({
-        parentId: detailDepartment?.parentId ?? "",
-        branchId: checkUserRoot == "1" ? detailDepartment?.branchId ?? dataBranch.value ?? null : 0,
-        name: detailDepartment?.name ?? "",
-        managerId: detailDepartment?.managerId ?? "",
-        note: detailDepartment?.note ?? "",
-        status: detailDepartment?.status?.toString() ?? "1",
-        jobTitles: detailDepartment?.jobTitles ?? [],
-        isSale: detailDepartment?.isSale ? detailDepartment?.isSale.toString() : "",
-      } as IDepartmentRequest),
+    ({
+      parentId: detailDepartment?.parentId ?? "",
+      branchId: checkUserRoot == "1" ? detailDepartment?.branchId ?? dataBranch.value ?? null : 0,
+      name: detailDepartment?.name ?? "",
+      managerId: detailDepartment?.managerId ?? "",
+      note: detailDepartment?.note ?? "",
+      status: detailDepartment?.status?.toString() ?? "1",
+      jobTitles: detailDepartment?.jobTitles ?? [],
+      isSale: detailDepartment?.isSale ? detailDepartment?.isSale.toString() : "",
+      defaultRedirect: detailDepartment?.defaultRedirect ?? "",
+    } as IDepartmentRequest),
     [detailDepartment, onShow, branchId, checkUserRoot, dataBranch]
   );
 
@@ -270,6 +271,15 @@ export default function AddDepartmentDirectoryModal(props: AddDepartmentModalPro
       label: "Ghi chú",
       name: "note",
       type: "textarea",
+      fill: true,
+    },
+  ];
+
+  const defaultRedirect: IFieldCustomize[] = [
+    {
+      label: "Đường dẫn mặc định",
+      name: "defaultRedirect",
+      type: "text",
       fill: true,
     },
   ];
@@ -600,6 +610,16 @@ export default function AddDepartmentDirectoryModal(props: AddDepartmentModalPro
                     </div>
                   );
                 })}
+              </div>
+              <div className="list-default-link">
+                {defaultRedirect.map((field, index) => (
+                  <FieldCustomize
+                    key={index}
+                    field={field}
+                    handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, defaultRedirect, setFormData)}
+                    formData={formData}
+                  />
+                ))}
               </div>
               <div className="list-form-note">
                 {listFieldNote.map((field, index) => (

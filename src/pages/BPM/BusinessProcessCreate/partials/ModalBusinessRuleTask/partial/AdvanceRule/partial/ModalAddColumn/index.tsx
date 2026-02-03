@@ -13,7 +13,8 @@ import BusinessProcessService from "services/BusinessProcessService";
 import { set } from "lodash";
 import { showToast } from "utils/common";
 
-export default function ModalAddColumn({ onShow, onHide, dataNode, processId, setListColumn, listKeyColumn }) {
+export default function ModalAddColumn({ onShow, onHide, indexColumn, dataNode, processId, setListColumn, listKeyColumn, listColumn }) {
+
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
@@ -30,6 +31,68 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
     options: [],
   });
 
+  const isEditMode = indexColumn !== null && indexColumn !== undefined;
+
+  const isDuplicateKey = useMemo(() => {
+    if (!formData.key || !listKeyColumn || listKeyColumn.length === 0) return false;
+    // Khi sửa: cho phép giữ nguyên key của chính cột đó, chỉ coi là trùng nếu trùng với cột khác
+    if (isEditMode) {
+      return listKeyColumn.some((key, idx) => idx !== indexColumn && key === formData.key);
+    }
+    // Khi thêm mới: trùng với bất kỳ cột nào đều là lỗi
+    return listKeyColumn.includes(formData.key);
+  }, [formData.key, listKeyColumn, isEditMode, indexColumn]);
+
+  useEffect(() => {
+    // Thêm mới: luôn clear form để không bị fill dữ liệu cũ
+    if (onShow && !isEditMode) {
+      setFormData({
+        name: "",
+        key: "",
+        keyType: 0,
+        compareType: "equal",
+        type: "text",
+        columnType: "condition",
+        children: [],
+        options: [],
+      });
+      setValueKey(null);
+      setAddFieldAttributes([{ value: "", label: "" }]);
+      return;
+    }
+
+    // Sửa: fill theo column đang chọn
+    if (onShow && isEditMode) {
+      const column = listColumn[indexColumn];
+      if (column) {
+        setFormData({
+          name: column.name || "",
+          key: column.key || "",
+          keyType: column.keyType || 0,
+          compareType: column.compareType || "equal",
+          type: column.type || "text",
+          columnType: column.columnType || "condition",
+          children: column.children || [],
+          options: column.options || [],
+        });
+        setValueKey(
+          column.key
+            ? {
+                value: column.key,
+                label: column.key,
+              }
+            : null
+        );
+        // Khi sửa cột select/radio/multiselect thì fill sẵn danh sách options để user chỉnh sửa
+        setAddFieldAttributes(
+          column.options && column.options.length > 0
+            ? column.options
+            : [{ value: "", label: "" }]
+        );
+      }
+    }
+  }, [onShow, isEditMode, indexColumn, listColumn]);
+
   const actions = useMemo<IActionModal>(
     () => ({
       actions_right: {
@@ -44,52 +107,92 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
             },
           },
           {
-            title: "Thêm cột",
+            title: isEditMode ? "Cập nhật" : "Thêm cột",
             type: "submit",
             color: "primary",
             disabled: isSubmit,
             is_loading: isSubmit,
             callback: async () => {
-              if (listKeyColumn.includes(formData.key)) {
+              if (!formData.name) {
+                showToast("Vui lòng nhập tên cột", "error");
+                return;
+              }
+              if (!formData.key && !isEditMode) {
+                showToast("Vui lòng chọn biến", "error");
+                return;
+              }
+              if (isDuplicateKey) {
                 showToast("Biến đã được khai báo ở cột khác", "error");
                 return;
               }
-              // Thêm 1 cột mới vào danh sách cột tại vị trí liền sau của của cột cuối cùng có columnType là condition
-              const newColumn = {
-                key: formData.key,
-                name: formData.name,
-                type: formData.type,
-                columnType: formData.columnType,
-                compareType: formData.compareType,
-                options: formData.type === "select" || formData.type === "radio" || formData.type === "multiselect" ? addFieldAttributes : [], // Chỉ thêm options nếu type là select, radio hoặc multiselect
-                children:
-                  formData.compareType === "range"
-                    ? [
-                        { key: "min", name: "min", type: formData.type, value: 0 },
-                        { key: "max", name: "max", type: formData.type, value: 0 },
-                      ]
-                    : [],
-              };
-              setListColumn((prev) => {
-                const newList = [...prev];
-                let numberColumnCondition = prev.filter((column) => column.columnType === "condition").length;
-                if (numberColumnCondition === 0) {
-                  const lastConditionIndex = newList.findLastIndex((column) => column.columnType === "stt");
-                  newList.splice(lastConditionIndex + 1, 0, newColumn);
-                  return newList;
-                } else {
-                  const lastConditionIndex = newList.findLastIndex((column) => column.columnType === "condition");
-                  newList.splice(lastConditionIndex + 1, 0, newColumn);
-                  return newList;
-                }
-              });
+              if (isEditMode) {
+                // Cập nhật cột hiện tại
+                const updatedColumn = {
+                  ...listColumn[indexColumn],
+                  name: formData.name,
+                  key: formData.key,
+                  keyType: formData.keyType,
+                  compareType: formData.compareType,
+                  type: formData.type,
+                  columnType: formData.columnType,
+                  options:
+                    formData.type === "select" ||
+                    formData.type === "radio" ||
+                    formData.type === "multiselect"
+                      ? addFieldAttributes
+                      : [],
+                  children:
+                    formData.compareType === "range"
+                      ? [
+                          { key: "min", name: "min", type: formData.type === "date" ? "date" : "number", value: 0 },
+                          { key: "max", name: "max", type: formData.type === "date" ? "date" : "number", value: 0 },
+                        ]
+                      : [],
+                };
+
+                setListColumn(
+                  listColumn.map((item, idx) =>
+                    idx === indexColumn ? updatedColumn : item
+                  )
+                );
+              } else {
+                // Thêm 1 cột mới vào danh sách cột tại vị trí liền sau của của cột cuối cùng có columnType là condition
+                const newColumn = {
+                  key: formData.key,
+                  name: formData.name,
+                  type: formData.type,
+                  columnType: formData.columnType,
+                  compareType: formData.compareType,
+                  options: formData.type === "select" || formData.type === "radio" || formData.type === "multiselect" ? addFieldAttributes : [], // Chỉ thêm options nếu type là select, radio hoặc multiselect
+                  children:
+                    formData.compareType === "range"
+                      ? [
+                          { key: "min", name: "min", type: formData.type, value: 0 },
+                          { key: "max", name: "max", type: formData.type, value: 0 },
+                        ]
+                      : [],
+                };
+                setListColumn((prev) => {
+                  const newList = [...prev];
+                  let numberColumnCondition = prev.filter((column) => column.columnType === "condition").length;
+                  if (numberColumnCondition === 0) {
+                    const lastConditionIndex = newList.findLastIndex((column) => column.columnType === "stt");
+                    newList.splice(lastConditionIndex + 1, 0, newColumn);
+                    return newList;
+                  } else {
+                    const lastConditionIndex = newList.findLastIndex((column) => column.columnType === "condition");
+                    newList.splice(lastConditionIndex + 1, 0, newColumn);
+                    return newList;
+                  }
+                });
+              }
               clearForm(true);
             },
           },
         ],
       },
     }),
-    [formData, isSubmit, setListColumn, addFieldAttributes]
+    [formData, isSubmit, setListColumn, addFieldAttributes, isEditMode, indexColumn, listKeyColumn, listColumn]
   );
 
   const clearForm = (acc) => {
@@ -306,7 +409,7 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
         <div className="form-mapping">
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Thêm cột điều kiện"}</h4>
+              <h4>{indexColumn ? "Sửa " : "Thêm "}cột điều kiện</h4>
             </div>
           </div>
           <ModalBody>
@@ -335,8 +438,9 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
                         <Input
                           name={"key"}
                           fill={false}
+                          required={true}
                           value={formData.key}
-                          error={listKeyColumn.includes(formData.key)}
+                          error={isDuplicateKey}
                           message="Biến đã được khai báo trong cột khác"
                           disabled={false}
                           onChange={(e) => {
@@ -348,14 +452,14 @@ export default function ModalAddColumn({ onShow, onHide, dataNode, processId, se
                     ) : (
                       <div className="select-mapping">
                         <SelectCustom
-                          key={"key"}
+                          key={formData.keyType}
                           id="key"
                           className="select"
                           fill={false}
-                          required={false}
+                          required={true}
                           options={[]}
                           value={valueKey}
-                          error={listKeyColumn.includes(formData.key)}
+                          error={isDuplicateKey}
                           message="Biến đã được khai báo trong cột khác"
                           isAsyncPaginate={true}
                           isFormatOptionLabel={false}

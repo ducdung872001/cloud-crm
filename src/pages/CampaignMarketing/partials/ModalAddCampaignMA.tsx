@@ -51,6 +51,10 @@ export default function ModalAddCampaignMA(props: any) {
       setFormData({ ...formData, values: { ...formData?.values, employeeId: result.id } });
     }
   };
+  const formatDate = (date) => {
+      if (!date) return "";
+      return moment(date).isValid() ? moment(date).format("DD/MM/yyyy") : "";
+    };
 
   useEffect(() => {
     if (onShow && !idData) {
@@ -108,8 +112,8 @@ export default function ModalAddCampaignMA(props: any) {
         code: result?.code ?? "",
         name: result?.name ?? "",
         cover: result?.cover ?? "",
-        startDate: result?.startDate ?? "",
-        endDate: result?.endDate ?? "",
+        endDate: formatDate(result.endDate),
+        startDate: formatDate(result.startDate),
         employeeId: result?.employeeId ?? null,
         coordinators: result?.coordinators ?? "[]",
         totalBudget: result?.totalBudget ?? "",

@@ -192,17 +192,17 @@ export default function ShowInvoiceOrder(props: IShowInvoiceOrderProps) {
                             Mã hóa đơn: <strong className="ml-1">{infoInvoice?.orderCode}</strong>
                           </div>
                           <div className="item-top">
-                            Ngày đặt hàng: <strong className="ml-1">{moment(infoInvoice?.expectedDate).format("DD/MM/YYYY")}</strong>
+                            Ngày đặt hàng: <strong className="ml-1">{moment(infoInvoice?.orderDate).format("DD/MM/YYYY")}</strong>
                           </div>
                           <div className="item-top">
-                            Ngày nhận hàng mong muốn: <strong className="ml-1">{moment(infoInvoice?.orderDate).format("DD/MM/YYYY")}</strong>
+                            Ngày nhận hàng mong muốn: <strong className="ml-1">{moment(infoInvoice?.expectedDate).format("DD/MM/YYYY")}</strong>
                           </div>
                           <div className="item-top">
                             Hình thức thanh toán:
                             <strong className="ml-1">
-                              {infoInvoice?.payment_method === "cash"
+                              {infoInvoice?.paymentMethod === "cash"
                                 ? "Tiền mặt"
-                                : infoInvoice?.payment_method === "banking"
+                                : infoInvoice?.paymentMethod === "banking"
                                 ? "Chuyển khoản"
                                 : "Hình thức khác"}
                             </strong>

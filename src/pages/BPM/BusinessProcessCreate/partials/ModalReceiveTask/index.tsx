@@ -742,7 +742,7 @@ export default function ModalReceiveTask({ onShow, onHide, dataNode, processId, 
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt biểu mẫu"}</h4>
+              <h4>{"Cài đặt Receive"}</h4>
             </div>
 
             <ListButtonHeader

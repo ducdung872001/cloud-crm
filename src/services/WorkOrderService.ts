@@ -29,6 +29,12 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  groupsV2: (params: IGroupsFilterRequest, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.workOrder.groupsV2}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
   listBpmWorkOrder: (body: IWorkOrderRequestModel) => {
     return fetch(urlsApi.workOrder.listBpmWorkOrder, {
       method: "POST",
@@ -44,6 +50,12 @@ export default {
 
   update: (body: IWorkOrderRequestModel) => {
     return fetch(urlsApi.workOrder.update, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  updateAndInit: (body: IWorkOrderRequestModel) => {
+    return fetch(urlsApi.workOrder.updateAndInit, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());

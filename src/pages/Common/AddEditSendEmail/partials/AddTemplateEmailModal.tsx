@@ -12,6 +12,7 @@ import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { SelectOptionData } from "utils/selectCommon";
 import { isDifferenceObj } from 'reborn-util';
+import SelectCustom from "components/selectCustom/selectCustom";
 import "./AddTemplateEmailModal.scss";
 
 export default function AddTemplateEmailModal(props: IAddTemplateEmailModelProps) {
@@ -23,7 +24,7 @@ export default function AddTemplateEmailModal(props: IAddTemplateEmailModelProps
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  const [listConfigCode, setListConfigCode] = useState<IOption[]>(null);
+  const [listConfigCode, setListConfigCode] = useState<IOption[]>([]);
   const [isLoadingConfigCode, setIsLoadingConfigCode] = useState<boolean>(false);
 
   const onSelectOpenConfigCode = async () => {
@@ -65,7 +66,7 @@ export default function AddTemplateEmailModal(props: IAddTemplateEmailModelProps
           name: "tcyId",
           type: "select",
           options: listConfigCode,
-          onMenuOpen: onSelectOpenConfigCode,          
+          onMenuOpen: onSelectOpenConfigCode,
           fill: true,
           required: true,
           isLoading: isLoadingConfigCode,
@@ -76,37 +77,56 @@ export default function AddTemplateEmailModal(props: IAddTemplateEmailModelProps
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
-  useEffect(() => {
-    setFormData({ ...formData, values: values, errors: {} });
-    setIsSubmit(false);
+  const [selectedTcyId, setSelectedTcyId] = useState<any>(null); // State riêng cho dropdown chọn chủ đề
 
-    return () => {
+  // Khởi tạo dữ liệu form khi mở modal
+  useEffect(() => {
+    if (onShow) {
+      setFormData({ values: values, errors: {} });
       setIsSubmit(false);
-    };
-  }, [values]);
+
+      // Khởi tạo giá trị cho dropdown nếu đang sửa
+      let initialSelection = null;
+      if (data?.tcyId) {
+        initialSelection = { value: data.tcyId, label: "" };
+      }
+      setSelectedTcyId(initialSelection);
+    }
+  }, [onShow]); // Chỉ chạy 1 lần khi mở modal
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = Validate(validations, formData, [...listFieldSecond]);
+    const errors: any = {};
+    if (!selectedTcyId || !selectedTcyId.value) {
+      errors.tcyId = "Vui lòng chọn Chủ đề email";
+    }
+
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
       return;
     }
-    setIsSubmit(true);    
+    setIsSubmit(true);
 
     const body: ITemplateEmailRequestModel = {
       ...(formData.values as ITemplateEmailRequestModel),
       ...(data ? { id: data.id } : {}),
+      tcyId: selectedTcyId?.value ? Number(selectedTcyId.value) : 0, // Lấy tcyId từ state riêng
     };
 
-    const response = await TemplateEmailService.update(body);
+    try {
+      const response = await TemplateEmailService.update(body);
 
-    if (response.code === 0) {
-      showToast(`Lưu mẫu Email thành công`, "success");
-      onHide(true);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      if (response.code === 0) {
+        showToast(`Lưu mẫu Email thành công`, "success");
+        onHide(true);
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+        setIsSubmit(false);
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+      showToast("Lỗi kết nối hoặc xử lý dữ liệu", "error");
       setIsSubmit(false);
     }
   };
@@ -128,7 +148,7 @@ export default function AddTemplateEmailModal(props: IAddTemplateEmailModelProps
             title: data ? "Cập nhật" : "Tạo mới",
             type: "submit",
             color: "primary",
-            disabled: isSubmit || !isDifferenceObj(formData.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
+            disabled: isSubmit,
             is_loading: isSubmit,
           },
         ],
@@ -175,7 +195,7 @@ export default function AddTemplateEmailModal(props: IAddTemplateEmailModelProps
         }
       }
     },
-    [formData]
+    [formData, values, showDialog, focusedElement, onHide] // Thêm các dependencies còn thiếu
   );
 
   useEffect(() => {
@@ -200,14 +220,27 @@ export default function AddTemplateEmailModal(props: IAddTemplateEmailModelProps
           <ModalHeader title={"Lưu mẫu Email"} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
-              {listFieldSecond.map((field, index) => (
-                <FieldCustomize
-                  key={index}
-                  field={field}
-                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSecond, setFormData)}
-                  formData={formData}
+              <div className="form-group">
+                <SelectCustom
+                  label="Chủ đề email"
+                  required
+                  fill
+                  options={listConfigCode ?? []}
+                  onMenuOpen={onSelectOpenConfigCode}
+                  isLoading={isLoadingConfigCode}
+                  value={selectedTcyId}
+                  onChange={(e) => {
+                    setSelectedTcyId(e);
+                    // Xóa lỗi hiển thị (nếu có) khi chọn
+                    if (formData.errors.tcyId) {
+                      setFormData(p => ({ ...p, errors: { ...p.errors, tcyId: "" } }));
+                    }
+                  }}
+                  error={formData.errors && !!formData.errors.tcyId}
+                  message={formData.errors ? formData.errors.tcyId : ""}
+                  placeholder="Chọn chủ đề email"
                 />
-              ))}
+              </div>
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

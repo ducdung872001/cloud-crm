@@ -22,6 +22,34 @@ export const urlsApi = {
     approve: prefixRebornVn + "/beautySalon/approve",
     delete: prefixRebornVn + "/beautySalon/delete",
   },
+  businessRule: {
+    list: prefixBpm + "/businessRule/list",
+    update: prefixBpm + "/businessRule/update",
+    updateActive: prefixBpm + "/businessRule/updateActive",
+    detail: prefixBpm + "/businessRule/detail",
+    delete: prefixBpm + "/businessRule/delete",
+  },
+  businessRuleItem: {
+    list: prefixBpm + "/businessRuleItem/list",
+    update: prefixBpm + "/businessRuleItem/update",
+    updateActive: prefixBpm + "/businessRuleItem/updateActive",
+    detail: prefixBpm + "/businessRuleItem/detail",
+    delete: prefixBpm + "/businessRuleItem/delete",
+  },
+  decisionTableInput: {
+    list: prefixBpm + "/decisionTableInput/list",
+    update: prefixBpm + "/decisionTableInput/update",
+    updateActive: prefixBpm + "/decisionTableInput/updateActive",
+    detail: prefixBpm + "/decisionTableInput/detail",
+    delete: prefixBpm + "/decisionTableInput/delete",
+  },
+  decisionTableOutput: {
+    list: prefixBpm + "/decisionTableOutput/list",
+    update: prefixBpm + "/decisionTableOutput/update",
+    updateActive: prefixBpm + "/decisionTableOutput/updateActive",
+    detail: prefixBpm + "/decisionTableOutput/detail",
+    delete: prefixBpm + "/decisionTableOutput/delete",
+  },
   user: {
     create: prefixAuthenticator + "/user/create",
     update: prefixAuthenticator + "/user/admin_update",
@@ -399,9 +427,11 @@ export const urlsApi = {
   },
   boughtCard: {
     list: prefixAdmin + "/boughtCardService/list",
+    listLoyaltyPoint: prefixAdmin + "/loyaltyPointLedger/list",
     add: prefixAdmin + "/boughtCardService/update",
     delete: prefixAdmin + "/boughtCardService/delete",
     update: prefixAdmin + "/boughtCardService/update/cardNumber",
+    updateCustomerCard: prefixAdmin + "/boughtCard/update",
     listBoughtCardByCustomerId: prefixAdmin + "/boughtCardService/getBoughtCardServiceByCustomerId",
   },
   product: {
@@ -1717,7 +1747,9 @@ export const urlsApi = {
     listBpmWorkOrder: prefixBpm + "/workOrder/list",
     list: prefixAdmin + "/workOrder/list",
     groups: prefixAdmin + "/workOrder/groups",
+    groupsV2: prefixAdmin + "/workOrder/groupsV2",
     update: prefixAdmin + "/workOrder/update",
+    updateAndInit: prefixAdmin + "/workOrder/save-and-init-process",
     updateInitProcess: prefixAdmin + "/workOrder/update-init-process",
     updateEmployee: prefixAdmin + "/workOrder/update/employee",
     updatePause: prefixAdmin + "/workOrder/update/pause",
@@ -2844,7 +2876,7 @@ export const urlsApi = {
    * Lịch sử phê duyệt trên form
    */
   approvedObjectLog: {
-    lst: prefixAdmin + "/approvedObjectLog/list",
+    lst: prefixBpm + "/approvedObjectLog/list",
   },
 
   // cài đặt quy trình
@@ -3291,6 +3323,9 @@ export const urls = {
   extension_list: "/extension_list",
   //quản lý lĩnh vực
   field_management: "/field_management",
+  //Loại luật nghiệp vụ
+  business_rule: "/bpm/business_rule",
+  business_rule_config: "/bpm/business_rule_config/:id",
 };
 
 export default urls;
