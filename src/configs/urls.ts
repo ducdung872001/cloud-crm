@@ -2957,11 +2957,11 @@ export const urlsApi = {
 
   ///BPM
 
-  artifact: {
-    list: prefixAdmin + "/artifact/list",
-    update: prefixAdmin + "/artifact/update",
-    detail: prefixBpm + "/artifact/get",
-    delete: prefixAdmin + "/artifact/delete",
+  common: {
+    list: prefixAdmin + "/common/list",
+    update: prefixAdmin + "/common/update",
+    detail: prefixBpm + "/common/get",
+    delete: prefixAdmin + "/common/delete",
   },
 
   processedObject: {
