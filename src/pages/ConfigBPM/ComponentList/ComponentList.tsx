@@ -129,15 +129,16 @@ export default function ComponentList(props: any) {
     ],
   };
 
-  const titles = ["STT", "Tên thàn phần", "Mã thành phần", "Loại thành phần"];
+  const titles = ["STT", "Tên thành phần", "Mã thành phần", "Loại thành phần", "Thứ tự"];
 
-  const dataFormat = ["text-center", "", "", ""];
+  const dataFormat = ["text-center", "", "", "", "text-center"];
 
   const dataMappingArray = (item: any, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     item.code,
     item.type === 1 ? "Hành động" : "Lịch sử phê duyệt",
+    item.position ? item.position : "0",
   ];
 
   const actionsTable = (item: any): IAction[] => {

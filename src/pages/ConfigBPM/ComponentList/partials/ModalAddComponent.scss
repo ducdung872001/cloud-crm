@@ -1,49 +1,49 @@
 .modal-add-component {
-    .form-add-component {
-      .modal-body {
-        padding: 0;
-      }
-  
-      .list-form-group {
-        display: flex;
-        flex-direction: column;
-        padding: 1.6rem;
-        max-height: 40rem;
-        overflow: auto;
-      }
-  
-      .list-field-item {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1.2rem 3.2rem;
-  
-        .form-group {
+  .form-add-component {
+    .modal-body {
+      padding: 0;
+    }
+
+    .list-form-group {
+      display: flex;
+      flex-direction: column;
+      padding: 1.6rem;
+      max-height: 40rem;
+      overflow: auto;
+    }
+
+    .list-field-item {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 3.2rem;
+
+      .form-group {
         //   &:first-child {
         //     width: 100%;
         //   }
-          width: calc(50% - 1.6rem);
+        width: calc(50% - 1.6rem);
 
-          .base-radio {
-            margin-top: 0;
-          }
-  
-          .radio-list {
-            .form-group {
-              display: flex;
-              width: 100%;
-              gap: 0 3rem;
-  
-              // justify-content: space-between;
-              .base-radio {
-                margin-top: 0;
-              }
+        .base-radio {
+          margin-top: 0;
+        }
+
+        .radio-list {
+          .form-group {
+            display: flex;
+            width: 100%;
+            gap: 0 3rem;
+
+            // justify-content: space-between;
+            .base-radio {
+              margin-top: 0;
             }
           }
         }
-  
-
       }
 
+      .form-group:has(textarea) {
+        width: 100%;
+      }
     }
   }
-  
+}

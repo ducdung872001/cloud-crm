@@ -26,13 +26,14 @@ export default function ModalAddComponent(props: any) {
 
   const values = useMemo(
     () =>
-      ({
-        id: data?.id ?? 0,
-        name: data?.name ?? "",
-        code: data?.code ?? "",
-        description: data?.description ?? "",
-        type: data?.type.toString() ?? "1",
-      } as any),
+    ({
+      id: data?.id ?? 0,
+      name: data?.name ?? "",
+      code: data?.code ?? "",
+      description: data?.description ?? "",
+      type: data?.type.toString() ?? "1",
+      position: Number.isFinite(Number(data?.position)) ? Number(data?.position) : 0,
+    } as any),
     [data, onShow]
   );
 
@@ -46,6 +47,10 @@ export default function ModalAddComponent(props: any) {
     {
       name: "code",
       rules: "required",
+    },
+    {
+      name: "type",
+      rules: "required|numeric|min:0|max:1000000",
     },
   ];
 
@@ -93,6 +98,15 @@ export default function ModalAddComponent(props: any) {
           ],
         },
         {
+          label: "Vị trí (position)",
+          name: "position",
+          type: "text",
+          fill: true,
+          required: true,
+          inputMode: "numeric",
+          placeholder: "Độ ưu tiên hiển thị",
+        },
+        {
           label: "Loại thành phần",
           name: "type",
           type: "radio",
@@ -128,7 +142,16 @@ export default function ModalAddComponent(props: any) {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    const posRaw = (formData.values as any)?.position;
+    const pos = Number(posRaw);
 
+    if (!Number.isFinite(pos) || !Number.isInteger(pos) || pos < 0 || pos > 1000000) {
+      setFormData((prev) => ({
+        ...prev,
+        errors: { ...(prev.errors ?? {}), position: "Chỉ được nhập số tự nhiên < 1,000,000" },
+      }));
+      return;
+    }
     const errors = Validate(validations, formData, [...listFieldBasic]);
     if (Object.keys(errors).length > 0) {
       setFormData((prevState) => ({ ...prevState, errors: errors }));
@@ -139,6 +162,7 @@ export default function ModalAddComponent(props: any) {
 
     const body: any = {
       ...(formData.values as any),
+      position: pos,
       ...(data ? { id: data.id } : {}),
     };
 
