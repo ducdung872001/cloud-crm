@@ -98,13 +98,13 @@ export default function ModalAddComponent(props: any) {
           ],
         },
         {
-          label: "Vị trí (position)",
+          label: "Thứ tự ưu tiên",
           name: "position",
           type: "text",
           fill: true,
           required: true,
           inputMode: "numeric",
-          placeholder: "Độ ưu tiên hiển thị",
+          placeholder: "Thứ tự ưu tiên",
         },
         {
           label: "Loại thành phần",
