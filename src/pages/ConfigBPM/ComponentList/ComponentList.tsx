@@ -133,11 +133,21 @@ export default function ComponentList(props: any) {
 
   const dataFormat = ["text-center", "", "", "", "text-center"];
 
+  const mapComponentType = (type: any) => {
+    const t = typeof type === "string" ? type.trim() : type;
+
+    if (t === 1 || t === "1") return "Hành động";
+    if (t === 2 || t === "2") return "Lịch sử phê duyệt";
+
+    if (type === null || type === undefined || String(type).trim() === "") return "-";
+    return String(type);
+  };
+
   const dataMappingArray = (item: any, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     item.code,
-    item.type === 1 ? "Hành động" : "Lịch sử phê duyệt",
+    mapComponentType(item.type),
     item.position ? item.position : "0",
   ];
 
