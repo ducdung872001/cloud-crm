@@ -1747,7 +1747,7 @@ export const urlsApi = {
     listBpmWorkOrder: prefixBpm + "/workOrder/list",
     list: prefixAdmin + "/workOrder/list",
     groups: prefixAdmin + "/workOrder/groups",
-    groupsV2: prefixAdmin+ "/workOrder/groupsV2",
+    groupsV2: prefixAdmin + "/workOrder/groupsV2",
     update: prefixAdmin + "/workOrder/update",
     updateAndInit: prefixAdmin + "/workOrder/save-and-init-process",
     updateInitProcess: prefixAdmin + "/workOrder/update-init-process",
@@ -2876,7 +2876,7 @@ export const urlsApi = {
    * Lịch sử phê duyệt trên form
    */
   approvedObjectLog: {
-    lst: prefixAdmin + "/approvedObjectLog/list",
+    lst: prefixBpm + "/approvedObjectLog/list",
   },
 
   // cài đặt quy trình
