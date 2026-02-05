@@ -16,6 +16,7 @@ export interface IWorkOrderFilterRequest {
   potId?: number;
   processId?: number;
   employeeId?: number;
+  participantId?: number;
   isPriority?: number;
   biddingName?: any;
   filters?: any;
