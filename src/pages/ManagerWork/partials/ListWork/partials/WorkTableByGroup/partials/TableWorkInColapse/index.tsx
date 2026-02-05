@@ -47,12 +47,26 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
       const next: any = {
         ...prevParams,
         ...paramsTemp,
-        [paramsFilter.groupBy]: paramsFilter.groupValue,
         projectId: paramsFilter.projectId,
         total: paramsFilter.total,
       };
+
+      if (paramsFilter.groupBy === "employee") {
+        delete next.employee;
+        next.assignedId = paramsFilter.groupValue ?? null;
+      } else {
+        next[paramsFilter.groupBy] = paramsFilter.groupValue;
+        delete next.assignedId;
+      }
+
       if (paramsFilter.assignedId != null) next.assignedId = paramsFilter.assignedId;
-      else delete next.assignedId;
+      else if (paramsFilter.groupBy !== "employee") delete next.assignedId;
+
+      if (paramsFilter.employeeId != null) next.employeeId = paramsFilter.employeeId;
+      else delete next.employeeId;
+
+      if (paramsFilter.participantId != null) next.participantId = paramsFilter.participantId;
+      else delete next.participantId;
 
       return next;
     });
@@ -126,7 +140,10 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
       return;
     }
     setIsLoading(true);
-    const response = await WorkOrderService.list(paramsSearch);
+    const useListV2 = paramsSearch.employeeId != null || paramsSearch.participantId != null;
+    const response = useListV2
+      ? await WorkOrderService.listV2(paramsSearch)
+      : await WorkOrderService.list(paramsSearch);
 
     if (response.code === 0) {
       const result = response.result;
