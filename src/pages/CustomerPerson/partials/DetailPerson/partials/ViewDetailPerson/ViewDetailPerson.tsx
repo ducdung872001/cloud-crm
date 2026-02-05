@@ -290,11 +290,11 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
       [
         {
           product: "Cashloan",
-          status: "Đã Onboard thành công",
+          status: "",
         },
         {
           product: "Creditline",
-          status: "Đã Onboard thành công",
+          status: "",
         },
       ] as any,
     [dataCustomerAttribute]

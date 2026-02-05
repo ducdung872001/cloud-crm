@@ -421,6 +421,13 @@ export async function SelectOptionData(key: string, params?: any) {
             ...item,
           };
         }
+        if (key === "employeeId") {
+          return {
+            value: item.id,
+            label: `${item.name}`,
+            departmentName: item.departmentName
+          };
+        }
         return {
           value: item.id || item.uploadId,
           label: item.name || item.title || item.parentName || item.productName || item.partnerName || item.fileName || item.licensePlate,
