@@ -733,7 +733,7 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
           {/* <ModalHeader title={`Cài đặt biểu mẫu`} toggle={() => !isSubmit && handleClear(false)} /> */}
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Cài đặt Send"}</h4>
+              <h4>{"Cài đặt Send Task"}</h4>
             </div>
             <ListButtonHeader
               data={data}
