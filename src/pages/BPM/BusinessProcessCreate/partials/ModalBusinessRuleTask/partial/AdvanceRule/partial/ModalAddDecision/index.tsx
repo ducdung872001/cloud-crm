@@ -14,7 +14,7 @@ import { set } from "lodash";
 import { convertToId } from "reborn-util";
 import { showToast } from "utils/common";
 
-export default function ModalAddDecision({ onShow, onHide, setListColumn, listKeyColumn }) {
+export default function ModalAddDecision({ onShow, onHide, setListColumn, listKeyColumn, processId, indexColumn, listColumn }) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
@@ -39,6 +39,29 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
     options: [],
   });
 
+  useEffect(() => {
+    if (onShow && indexColumn) {
+      const column = listColumn[indexColumn];
+      if (column) {
+        setFormData({
+          name: column.name,
+          key: column.key,
+          keyType: 0,
+          decisionType: column.decisionType || "text",
+          type: column.type || "text",
+          columnType: column.columnType || "decision",
+          children: column.children || [],
+          options: column.options || [],
+        });
+        setValueKey({
+          value: column.key,
+          label: column.key,
+          type: { value: column.type, label: column.type },
+        });
+      }
+    }
+  }, [onShow, indexColumn]);
+
   function hasDuplicateKeys(listAttribute: { key: string }[]): boolean {
     const keySet = new Set<string>();
 
@@ -53,8 +76,6 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
   }
 
   function hasEmptyFields(listAttribute: { key?: string; name?: string; type?: any }[]): boolean {
-    console.log("listAttribute", listAttribute);
-
     return listAttribute.some((item) => !item.key?.trim() || !item.name?.trim() || !item.type?.value.trim());
   }
 
@@ -72,13 +93,13 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
             },
           },
           {
-            title: "Thêm cột",
+            title: indexColumn ? "Cập nhật" : "Thêm cột",
             type: "submit",
             color: "primary",
             disabled: isSubmit,
             is_loading: isSubmit,
             callback: async () => {
-              if (listKeyColumn.includes(formData.key)) {
+              if (listKeyColumn.includes(formData.key) && !indexColumn) {
                 showToast("Cột đã tồn tại", "error");
                 return;
               }
@@ -86,30 +107,43 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
                 showToast("Trường, Tên trường, Kiểu dữ liệu trường không được để trống", "error");
                 return;
               }
-              if (hasDuplicateKeys(listAttribute) && formData.decisionType === "object") {
+              if (hasDuplicateKeys(listAttribute) && formData.decisionType === "object" && !indexColumn) {
                 showToast("Trường không được trùng nhau", "error");
                 return;
               }
-              setListColumn((prev) => {
-                const newColumn = {
-                  key: formData.key,
-                  name: formData.name,
-                  type: formData.type,
-                  columnType: formData.columnType,
-                  decisionType: formData.decisionType,
-                  options: formData.type === "select" || formData.type === "radio" || formData.type === "multiselect" ? addFieldAttributes : [], // Chỉ thêm options nếu type là select, radio hoặc multiselect
-                  children:
-                    formData.decisionType === "object" && listAttribute.length > 0
-                      ? listAttribute.map((item) => ({
-                          key: item.key,
-                          name: item.name,
-                          type: item.type.value || "text",
-                          value: item.value,
-                        }))
-                      : [],
-                };
-                return [...prev, newColumn];
-              });
+              if (indexColumn) {
+                setListColumn(
+                  listColumn.map((item, idx) =>
+                    idx === indexColumn
+                      ? {
+                          ...item,
+                          name: formData.name,
+                        }
+                      : item
+                  )
+                );
+              } else {
+                setListColumn((prev) => {
+                  const newColumn = {
+                    key: formData.key,
+                    name: formData.name,
+                    type: formData.type,
+                    columnType: formData.columnType,
+                    decisionType: formData.decisionType,
+                    options: formData.type === "select" || formData.type === "radio" || formData.type === "multiselect" ? addFieldAttributes : [], // Chỉ thêm options nếu type là select, radio hoặc multiselect
+                    children:
+                      formData.decisionType === "object" && listAttribute.length > 0
+                        ? listAttribute.map((item) => ({
+                            key: item.key,
+                            name: item.name,
+                            type: item.type.value || "text",
+                            value: item.value,
+                          }))
+                        : [],
+                  };
+                  return [...prev, newColumn];
+                });
+              }
               clearForm(true);
             },
           },
@@ -171,6 +205,85 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
 
   const [valueKey, setValueKey] = useState<any>(null);
 
+  const loadedOptionAttribute = async (search, loadedOptions, { page }) => {
+    const params = {
+      name: search,
+      page: page,
+      limit: 10,
+      processId: processId,
+    };
+    const response = await BusinessProcessService.listVariableDeclare(params);
+
+    if (response.code === 0) {
+      const dataOption = response.result?.items;
+      let listVar = [];
+      dataOption &&
+        dataOption.length > 0 &&
+        dataOption.map((item) => {
+          const body = (item.body && JSON.parse(item.body)) || [];
+          body.map((el) => {
+            listVar.push({
+              value: `var_${item.name}.${el.name}`,
+              label: `var_${item.name}.${el.name}`,
+              nodeId: item.nodeId,
+              type: el.type,
+            });
+          });
+        });
+
+      return {
+        options: [
+          ...(listVar.length > 0
+            ? listVar.map((item) => {
+                return {
+                  value: item.value,
+                  label: item.label,
+                  nodeId: item.nodeId,
+                  type: item.type,
+                };
+              })
+            : []),
+        ],
+        hasMore: response.result.loadMoreAble,
+        additional: {
+          page: page + 1,
+        },
+      };
+    }
+
+    return { options: [], hasMore: false };
+  };
+
+  const handleChangeVariable = (e) => {
+    let _decisionType = "";
+    if (e?.type && e?.type?.value) {
+      switch (e.type.value) {
+        case "int":
+        case "float":
+          _decisionType = "number";
+          break;
+        case "text":
+          _decisionType = "text";
+          break;
+        case "date":
+          _decisionType = "date";
+          break;
+        case "list":
+        case "select":
+        case "boolean":
+        case "radio":
+          // _decisionType = "select";
+          _decisionType = "text";
+          break;
+        default:
+          break;
+      }
+    }
+
+    setFormData({ ...formData, key: e.value, type: _decisionType, decisionType: _decisionType });
+    setValueKey(e);
+  };
+
   return (
     <Fragment>
       <Modal
@@ -178,14 +291,14 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
         isOpen={onShow}
         isCentered={true}
         staticBackdrop={true}
-        size="xl"
+        size="lg"
         toggle={() => !isSubmit && clearForm(false)}
-        className="modal-add-decision-rule"
+        className="modal-add-decision"
       >
         <div className="form-mapping">
           <div className="container-header">
             <div className="box-title">
-              <h4>{"Thêm cột kết quả"}</h4>
+              <h4>{indexColumn ? "Sửa cột" : "Thêm cột"} kết quả</h4>
             </div>
           </div>
           <ModalBody>
@@ -196,19 +309,52 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
                   label={`Tên cột`}
                   fill={true}
                   value={formData.name}
-                  error={listKeyColumn.includes(formData.key)}
-                  message={"Cột đã tồn tại"}
                   required={true}
                   onChange={(e) => {
-                    let key = convertToId(e.target.value) || "";
-                    key = key.replace(new RegExp(`[^A-Za-z0-9]`, "g"), "");
-                    const value = key.charAt(0).toLowerCase() + key.slice(1);
-                    setFormData({ ...formData, name: e.target.value, key: value });
+                    setFormData({ ...formData, name: e.target.value });
                   }}
                   placeholder={`Nhập tên cột`}
                 />
               </div>
-              <div className="form-group">
+              {indexColumn ? (
+                <div className="form-group">
+                  <Input
+                    key={"columnType"}
+                    id="columnType"
+                    label={`Mã cột`}
+                    className="columnType"
+                    fill={true}
+                    readOnly={true}
+                    value={formData.key}
+                  />
+                </div>
+              ) : (
+                <div className="form-group">
+                  <SelectCustom
+                    key={"key"}
+                    id="key"
+                    label={"Chọn biến"}
+                    className="select"
+                    fill={true}
+                    required={false}
+                    options={[]}
+                    value={valueKey}
+                    error={formData?.key && listKeyColumn.includes(formData.key)}
+                    message="Biến đã được khai báo trong cột khác"
+                    isAsyncPaginate={true}
+                    isFormatOptionLabel={false}
+                    placeholder={"Chọn biến"}
+                    additional={{
+                      page: 1,
+                    }}
+                    loadOptionsPaginate={loadedOptionAttribute}
+                    onChange={(e) => {
+                      handleChangeVariable(e);
+                    }}
+                  />
+                </div>
+              )}
+              {/* <div className="form-group">
                 <SelectCustom
                   key={"type"}
                   id="type"
@@ -239,7 +385,7 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
                   isFormatOptionLabel={false}
                   placeholder={`Chọn kiểu dữ liệu so sánh`}
                 />
-              </div>
+              </div> */}
               {formData.decisionType === "object" ? (
                 <div className="form-group-full">
                   <div className="list-attribute">

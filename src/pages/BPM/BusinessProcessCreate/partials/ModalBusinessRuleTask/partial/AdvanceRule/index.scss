@@ -46,6 +46,10 @@
         .form-field__header {
           display: flex;
           align-items: center;
+          .popover--alignment-left {
+            left: -30px;
+            top: -10px;
+          }
           .edit-position {
             width: 100%;
             display: flex;
@@ -64,7 +68,7 @@
             align-items: center;
             justify-content: center;
           }
-          .edit-column {
+          .edit-position-column {
             display: none;
             bottom: 0;
             width: 100%;
@@ -95,9 +99,27 @@
               fill: red;
             }
           }
+          .edit-column {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            display: none;
+            width: 2rem;
+            align-items: center;
+            z-index: 2;
+            cursor: pointer;
+            background-color: var(--primary-color-10);
+            padding-left: 0.4rem;
+
+            svg {
+              width: 1.5rem;
+              height: 1.5rem;
+              fill: blue;
+            }
+          }
         }
         &:hover {
-          .edit-column {
+          .edit-position-column {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -105,6 +127,9 @@
             color: blue;
           }
           .delete-column {
+            display: flex;
+          }
+          .edit-column {
             display: flex;
           }
           .column-name {
@@ -123,6 +148,10 @@
         background-color: #d6dfe9;
       }
       .column-body-stt {
+        .popover--alignment-left {
+          left: -7px;
+          top: -10px;
+        }
         .index--number {
           cursor: pointer;
         }
@@ -177,6 +206,16 @@
         }
       }
       td {
+        .popover--alignment-left {
+          left: 193px;
+          top: -27px;
+        }
+        .select-field {
+          .select-custom {
+            width: 100%;
+            min-width: 22rem;
+          }
+        }
       }
       // Áp dụng màu đan xen cho các hàng
       // tr:nth-child(odd) {

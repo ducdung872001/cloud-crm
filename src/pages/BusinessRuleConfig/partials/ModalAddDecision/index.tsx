@@ -290,6 +290,7 @@ export default function ModalAddDecision(props: any) {
                             { label: "IN", value: "IN" },
                             { label: "BETWEEN", value: "BETWEEN" },
                             { label: "CONTAINS", value: "CONTAINS" },
+                            { label: "OTHERWISE", value: "OTHERWISE" },
                           ]}
                           placeholder="Chọn điều kiện"
                           onChange={(e) => {
@@ -303,75 +304,138 @@ export default function ModalAddDecision(props: any) {
                           }}
                         />
                       </div>
-                      <div className="item-input">
-                        {item.operator === "BETWEEN" ? (
-                          <div className="item-input-between">
-                            <NummericInput
-                              name={item.name}
-                              value={item?.value && typeof item.value == "number" ? item.value : ""}
-                              disabled={false}
-                              fill={true}
-                              thousandSeparator={true}
-                              onValueChange={(e) => {
-                                const updatedInputs = inputs.map((input) => {
-                                  if (input.id === item.id) {
-                                    return { ...input, value: e.floatValue };
-                                  }
-                                  return input;
-                                });
-                                setInputs(updatedInputs);
-                              }}
-                              placeholder={`Min`}
-                              isDecimalScale={false}
-                            />
+                      {item?.operator !== "OTHERWISE" && (
+                        <div className="item-input">
+                          {item.operator === "BETWEEN" ? (
+                            <div className="item-input-between">
+                              {item.dataType === "Date" ? (
+                                <>
+                                  <DatePickerCustom
+                                    name={item.name}
+                                    fill={true}
+                                    // value={field.value}
+                                    value={item.value ? moment(item.value).format("DD/MM/YYYY") : ""}
+                                    iconPosition="left"
+                                    disabled={false}
+                                    // icon={<Icon name="Calendar" />}
+                                    onChange={(e) => {
+                                      const updatedInputs = inputs.map((input) => {
+                                        if (input.id === item.id) {
+                                          return { ...input, value: e };
+                                        }
+                                        return input;
+                                      });
+                                      setInputs(updatedInputs);
+                                    }}
+                                    placeholder={`Chọn ngày Min`}
+                                  />
+                                  <DatePickerCustom
+                                    name={item.name}
+                                    fill={true}
+                                    // value={field.value}
+                                    value={item.value2 ? moment(item.value2).format("DD/MM/YYYY") : ""}
+                                    iconPosition="left"
+                                    disabled={false}
+                                    // icon={<Icon name="Calendar" />}
+                                    onChange={(e) => {
+                                      const updatedInputs = inputs.map((input) => {
+                                        if (input.id === item.id) {
+                                          return { ...input, value2: e };
+                                        }
+                                        return input;
+                                      });
+                                      setInputs(updatedInputs);
+                                    }}
+                                    placeholder={`Chọn ngày Max`}
+                                  />
+                                </>
+                              ) : (
+                                <>
+                                  <NummericInput
+                                    name={item.name}
+                                    value={item?.value && typeof item.value == "number" ? item.value : ""}
+                                    disabled={false}
+                                    fill={true}
+                                    thousandSeparator={true}
+                                    onValueChange={(e) => {
+                                      const updatedInputs = inputs.map((input) => {
+                                        if (input.id === item.id) {
+                                          return { ...input, value: e.floatValue };
+                                        }
+                                        return input;
+                                      });
+                                      setInputs(updatedInputs);
+                                    }}
+                                    placeholder={`Min`}
+                                    isDecimalScale={false}
+                                  />
 
-                            <NummericInput
-                              name={item.name}
-                              value={item?.value2 ? item.value2 : ""}
-                              disabled={false}
-                              fill={true}
-                              thousandSeparator={true}
-                              onValueChange={(e) => {
-                                const updatedInputs = inputs.map((input) => {
-                                  if (input.id === item.id) {
-                                    return { ...input, value2: e.floatValue };
-                                  }
-                                  return input;
-                                });
-                                setInputs(updatedInputs);
-                              }}
-                              placeholder={`Max`}
-                              isDecimalScale={false}
-                            />
-                          </div>
-                        ) : (
-                          <>
-                            {item.dataType === "Long" ? (
-                              <NummericInput
-                                name={item.name}
-                                value={item?.value ? item.value : ""}
-                                disabled={false}
-                                fill={true}
-                                thousandSeparator={true}
-                                onValueChange={(e) => {
-                                  const updatedInputs = inputs.map((input) => {
-                                    if (input.id === item.id) {
-                                      return { ...input, value: e.floatValue };
-                                    }
-                                    return input;
-                                  });
-                                  setInputs(updatedInputs);
-                                }}
-                                placeholder={`Nhập giá trị`}
-                                isDecimalScale={false}
-                              />
-                            ) : item.dataType === "Array" ? (
-                              <div className="component-compare-in">
-                                {item?.value && Array.isArray(item.value) && item.value.length > 0 ? (
-                                  item.value.map((el, elIndex) => {
-                                    return (
+                                  <NummericInput
+                                    name={item.name}
+                                    value={item?.value2 ? item.value2 : ""}
+                                    disabled={false}
+                                    fill={true}
+                                    thousandSeparator={true}
+                                    onValueChange={(e) => {
+                                      const updatedInputs = inputs.map((input) => {
+                                        if (input.id === item.id) {
+                                          return { ...input, value2: e.floatValue };
+                                        }
+                                        return input;
+                                      });
+                                      setInputs(updatedInputs);
+                                    }}
+                                    placeholder={`Max`}
+                                    isDecimalScale={false}
+                                  />
+                                </>
+                              )}
+                            </div>
+                          ) : (
+                            <>
+                              {item.dataType === "Long" ? (
+                                <NummericInput
+                                  name={item.name}
+                                  value={item?.value ? item.value : ""}
+                                  disabled={false}
+                                  fill={true}
+                                  thousandSeparator={true}
+                                  onValueChange={(e) => {
+                                    const updatedInputs = inputs.map((input) => {
+                                      if (input.id === item.id) {
+                                        return { ...input, value: e.floatValue };
+                                      }
+                                      return input;
+                                    });
+                                    setInputs(updatedInputs);
+                                  }}
+                                  placeholder={`Nhập giá trị`}
+                                  isDecimalScale={false}
+                                />
+                              ) : item.dataType === "Array" ? (
+                                <div className="component-compare-in">
+                                  {item?.value && Array.isArray(item.value) && item.value.length > 0 ? (
+                                    item.value.map((el, elIndex) => {
+                                      return (
+                                        <div
+                                          key={elIndex}
+                                          className="value-compare-in add-value-compare-in"
+                                          onClick={() => {
+                                            setShowEditListValueIn(true);
+                                            setDataFieldEdit({
+                                              type: "input",
+                                              index: index,
+                                              value: item.value,
+                                            });
+                                          }}
+                                        >
+                                          {el}
+                                        </div>
+                                      );
+                                    })
+                                  ) : (
+                                    <Tippy content="Thêm giá trị">
                                       <div
-                                        key={elIndex}
                                         className="value-compare-in add-value-compare-in"
                                         onClick={() => {
                                           setShowEditListValueIn(true);
@@ -382,69 +446,53 @@ export default function ModalAddDecision(props: any) {
                                           });
                                         }}
                                       >
-                                        {el}
+                                        +
                                       </div>
-                                    );
-                                  })
-                                ) : (
-                                  <Tippy content="Thêm giá trị">
-                                    <div
-                                      className="value-compare-in add-value-compare-in"
-                                      onClick={() => {
-                                        setShowEditListValueIn(true);
-                                        setDataFieldEdit({
-                                          type: "input",
-                                          index: index,
-                                          value: item.value,
-                                        });
-                                      }}
-                                    >
-                                      +
-                                    </div>
-                                  </Tippy>
-                                )}
-                              </div>
-                            ) : item.dataType === "Date" ? (
-                              <DatePickerCustom
-                                name={item.name}
-                                fill={true}
-                                // value={field.value}
-                                value={item.value ? moment(item.value).format("DD/MM/YYYY") : ""}
-                                iconPosition="left"
-                                disabled={false}
-                                // icon={<Icon name="Calendar" />}
-                                onChange={(e) => {
-                                  const updatedInputs = inputs.map((input) => {
-                                    if (input.id === item.id) {
-                                      return { ...input, value: e };
-                                    }
-                                    return input;
-                                  });
-                                  setInputs(updatedInputs);
-                                }}
-                                placeholder={`Chọn ngày`}
-                              />
-                            ) : (
-                              <Input
-                                fill={true}
-                                name={item.name}
-                                label=""
-                                value={item.value}
-                                onChange={(e) => {
-                                  const updatedInputs = inputs.map((input) => {
-                                    if (input.id === item.id) {
-                                      return { ...input, value: e.target.value };
-                                    }
-                                    return input;
-                                  });
-                                  setInputs(updatedInputs);
-                                }}
-                                placeholder="Nhập giá trị"
-                              />
-                            )}
-                          </>
-                        )}
-                      </div>
+                                    </Tippy>
+                                  )}
+                                </div>
+                              ) : item.dataType === "Date" ? (
+                                <DatePickerCustom
+                                  name={item.name}
+                                  fill={true}
+                                  // value={field.value}
+                                  value={item.value ? moment(item.value).format("DD/MM/YYYY") : ""}
+                                  iconPosition="left"
+                                  disabled={false}
+                                  // icon={<Icon name="Calendar" />}
+                                  onChange={(e) => {
+                                    const updatedInputs = inputs.map((input) => {
+                                      if (input.id === item.id) {
+                                        return { ...input, value: e };
+                                      }
+                                      return input;
+                                    });
+                                    setInputs(updatedInputs);
+                                  }}
+                                  placeholder={`Chọn ngày`}
+                                />
+                              ) : (
+                                <Input
+                                  fill={true}
+                                  name={item.name}
+                                  label=""
+                                  value={item.value}
+                                  onChange={(e) => {
+                                    const updatedInputs = inputs.map((input) => {
+                                      if (input.id === item.id) {
+                                        return { ...input, value: e.target.value };
+                                      }
+                                      return input;
+                                    });
+                                    setInputs(updatedInputs);
+                                  }}
+                                  placeholder="Nhập giá trị"
+                                />
+                              )}
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
