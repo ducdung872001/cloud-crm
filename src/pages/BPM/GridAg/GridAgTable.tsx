@@ -319,25 +319,26 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
         }
       }
     });
+    // Lấy dữ liệu mới nhất trong bảng
+    const latestData = getLatestRowData();
+    // Cập nhật newRow với dữ liệu mới nhất nếu có
     if (rowKey && position) {
-      setRowData((prev) => {
-        const rowIndex = prev.findIndex((row: any) => row.rowKey === rowKey);
-        if (rowIndex === -1) {
-          // Nếu không tìm thấy rowKey, thêm vào cuối
-          showToast("Không tìm thấy dòng để thêm vào", "error");
-          return [...prev, newRow];
+      const rowIndex = latestData.findIndex((row: any) => row.rowKey === rowKey);
+      if (rowIndex === -1) {
+        // Nếu không tìm thấy rowKey, thêm vào cuối
+        showToast("Không tìm thấy dòng để thêm vào", "error");
+        setRowData([...latestData, newRow]);
+      } else {
+        const newData = [...latestData];
+        if (position === "top") {
+          newData.splice(rowIndex, 0, newRow); // Chèn lên trên
         } else {
-          const newData = [...prev];
-          if (position === "top") {
-            newData.splice(rowIndex, 0, newRow); // Chèn lên trên
-          } else {
-            newData.splice(rowIndex + 1, 0, newRow); // Chèn xuống dưới
-          }
-          return newData;
+          newData.splice(rowIndex + 1, 0, newRow); // Chèn xuống dưới
         }
-      });
+        setRowData(newData);
+      }
     } else {
-      setRowData((prev) => [...prev, newRow]);
+      setRowData([...latestData, newRow]);
     }
   };
   // THÊM: Hàm thêm dòng mới
@@ -350,24 +351,23 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
       content: "",
       isFullWidthRow: true,
     };
-
+    // Lấy dữ liệu mới nhất trong bảng
+    const latestData = getLatestRowData();
     if (rowKey && position) {
-      setRowData((prev) => {
-        const rowIndex = prev.findIndex((row: any) => row.rowKey === rowKey);
-        if (rowIndex === -1) {
-          // Nếu không tìm thấy rowKey, thêm vào cuối
-          showToast("Không tìm thấy dòng để thêm vào", "error");
-          return [...prev, newRow];
+      const rowIndex = latestData.findIndex((row: any) => row.rowKey === rowKey);
+      if (rowIndex === -1) {
+        // Nếu không tìm thấy rowKey, thêm vào cuối
+        showToast("Không tìm thấy dòng để thêm vào", "error");
+        setRowData((prev) => [...latestData, newRow]);
+      } else {
+        const newData = [...latestData];
+        if (position === "top") {
+          newData.splice(rowIndex, 0, newRow); // Chèn lên trên
         } else {
-          const newData = [...prev];
-          if (position === "top") {
-            newData.splice(rowIndex, 0, newRow); // Chèn lên trên
-          } else {
-            newData.splice(rowIndex + 1, 0, newRow); // Chèn xuống dưới
-          }
-          return newData;
+          newData.splice(rowIndex + 1, 0, newRow); // Chèn xuống dưới
         }
-      });
+        setRowData(newData);
+      }
     } else {
       setRowData((prev) => [...prev, newRow]);
     }

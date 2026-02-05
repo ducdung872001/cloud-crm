@@ -10,8 +10,8 @@ const CustomCellLookup = (props) => {
 
   useEffect(() => {
     setLabelLookup(
-      lookupValues[key]?.listValue && lookupValues[key].listValue.find((item) => item.value === props.value)
-        ? lookupValues[key].listValue.find((item) => item.value === props.value).label || props.value
+      lookupValues[key]?.listValue && lookupValues[key].listValue.find((item) => item.value == props.value)
+        ? lookupValues[key].listValue.find((item) => item.value == props.value).label || props.value
         : props.value || ""
     );
   }, [props.value, key, lookupValues]);

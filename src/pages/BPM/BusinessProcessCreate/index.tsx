@@ -37,7 +37,6 @@ const BusinessProcessCreate = () => {
   const [isExportProcess, setIsExportProcess] = useState(false);
   const [isImportProcess, setIsImportProcess] = useState(false);
   const [listNodeSelected, setListNodeSelected] = useState([]);
-  console.log("listNodeSelected", listNodeSelected);
 
   const getDetailBusinessProcess = async (id) => {
     const response = await BusinessProcessService.getDetailDiagram(id);
@@ -61,7 +60,6 @@ const BusinessProcessCreate = () => {
 
   // Quản lý modal đang mở
   const [activeModal, setActiveModal] = useState(null);
-  console.log("activeModal", activeModal);
 
   const getTypeNode = (element) => {
     let elementType = element.type;
@@ -362,7 +360,6 @@ const BusinessProcessCreate = () => {
       const { newShape } = event.context;
 
       if (newShape && newShape.businessObject) {
-        console.log("newShape.businessObject", newShape.businessObject);
         if (newShape.businessObject.$type !== "bpmn:IntermediateCatchEvent" && newShape.businessObject.$type !== "bpmn:BoundaryEvent") {
           newShape.businessObject.$attrs.lockedChangeElement = "true";
         }
@@ -446,7 +443,6 @@ const BusinessProcessCreate = () => {
           if (element?.businessObject?.$parent?.id && element.businessObject?.$parent?.$type === "bpmn:SubProcess") {
             getDetailNode(element?.businessObject?.$parent?.id, element);
           } else if (element.type === "bpmn:SubProcess") {
-            console.log("bpmn:SubProcess");
             // khi chuyên sang loại subprocess gọi api để tạo ra process con, lấy id process con cập nhật vào childProcessId của node
             addChildProcess(element, id);
           } else {
@@ -500,7 +496,6 @@ const BusinessProcessCreate = () => {
         isUpdatingTask = false;
         return;
       }
-      console.log("elementChange", element);
 
       if (checkType(element.type)) {
         if (element.type === "bpmn:SequenceFlow") {
@@ -541,7 +536,6 @@ const BusinessProcessCreate = () => {
     const eventBus = bpmnModeler.current.get("eventBus");
     // Bắt sự kiện thay đổi selection (đúng thời điểm nhất)
     eventBus.on("selection.changed", (e) => {
-      console.log("Node được chọn:", e.newSelection);
       setListNodeSelected(
         e.newSelection.map((e) => {
           return {
