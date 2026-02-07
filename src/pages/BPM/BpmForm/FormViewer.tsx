@@ -283,10 +283,10 @@ const FormViewerComponent = (props: any) => {
 
       let components = schema.components;
       const newValues = data;
-
-      for (const key in newValues) {
-        if (!_.isEqual(newValues[key], prevValues[key])) {
-          const keyFind = components.find((el) => el.key === key || el.path === key || el.id);
+      
+      for (const key in newValues){
+        if (!_.isEqual(newValues[key], prevValues[key])){
+          const keyFind = components.find((el) => el.path === key || el.key === key || (el.type !== 'text' && el.id));
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
           if (keyFind?.properties?.bindingTarget) {
             /**
@@ -309,12 +309,9 @@ const FormViewerComponent = (props: any) => {
         hideRemoveButtonIfSingle();
       });
 
-      // //Trường nào thay đổi
-      // let components = schema.components;
-      // updateExpressionField(components, schema, data);
     });
 
-    const updateExpressionField = (components, schema, data) => {
+    const updateExpressionField = (components, schema, data, pathGroup?) => {
       components.forEach(async (component) => {
         if (component.type === "expression") {
           let dataExpression = data[component.key]; //Lấy ra key
@@ -327,13 +324,36 @@ const FormViewerComponent = (props: any) => {
           }
         }
 
-        if (component.type == "group") {
+        if (component.type == "group") {  
           let subComponents = component.components;
-          updateExpressionField(subComponents, schema, data);
+          // updateExpressionField(subComponents, schema, data, component?.path);
+          component.components.forEach((componentChild, index) => {
+            if (componentChild.type == "select") {
+              let target = componentChild?.properties?.bindingTarget;
+              let dataSelect = data[component.path][componentChild.key]; //Lấy ra key
+              
+              if (target) {
+                if (componentChild.type == "select") {
+                  const listTarget = target.split(",").map((item) => item.trim()) || [];
+                  if (dataSelect) {
+                    const optionValue = componentChild.values || [];
+                    const valueSelected = optionValue.find((el) => el.value === dataSelect);
+                    if (listTarget && listTarget.length > 0) {
+                      listTarget.map((item) => {
+                        data[component.path][item] = valueSelected && valueSelected[item] ? valueSelected[item] : "";
+                      });
+                    } else {
+                      data[component.path][target] = valueSelected && valueSelected[target] ? valueSelected[target] : "";
+                    }
+                  }
+                }
+              }
+            }
+          });
         }
 
-        if (component.type == "select") {
-          let dataSelect = data[component.key]; //Lấy ra key
+        if (component.type == "select") {          
+          let dataSelect = data[component.key]; //Lấy ra key              
           let target = component?.properties?.bindingTarget;
           let loadApi = component?.properties?.loadApi;
           let loadApi_params = component?.properties?.loadApi_params;

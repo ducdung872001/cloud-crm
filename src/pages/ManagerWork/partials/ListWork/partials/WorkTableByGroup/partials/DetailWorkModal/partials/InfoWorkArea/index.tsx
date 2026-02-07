@@ -115,12 +115,12 @@ export default function InfoWorkArea(props: any) {
     {
       className: "time-start",
       title: "Thời gian bắt đầu",
-      name: data?.startTime ? data?.startTime : "Chưa xác định",
+      name: data?.startTime ? data?.startTime : "Chưa có ngày bắt đầu",
     },
     {
       className: "time-end",
       title: "Thời gian kết thúc",
-      name: data?.endTime ? data?.endTime : "Chưa xác định",
+      name: data?.endTime ? data?.endTime : "Chưa có ngày kết thúc",
     },
     {
       className: "amount-work",
@@ -367,7 +367,9 @@ export default function InfoWorkArea(props: any) {
                     <h4 className="title">{item.title}</h4>
 
                     <h4 className="name">
-                      {isDocItem && docFiles.length > 0 ? "Có " + docFiles.length + " ảnh" : ""}
+                      {isDocItem
+                        ? (docFiles.length > 0 ? `Có ${docFiles.length} ảnh` : "")
+                        : (item.name ?? "")}
                     </h4>
 
                     {isDocItem && docFiles.length > 0 && (

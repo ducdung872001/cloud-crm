@@ -36,8 +36,6 @@ export default function ModalConfigLinkingGrid({ onShow, onHide, callBack, dataC
     }
   }, [listGridField]);
 
-  console.log("optionsListGridField>>", optionsListGridField);
-
   const values = useMemo(
     () => ({
       eformId: null,

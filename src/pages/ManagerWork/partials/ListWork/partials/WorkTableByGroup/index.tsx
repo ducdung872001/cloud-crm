@@ -65,17 +65,20 @@ export default function WorkTableByGroup(props: any) {
     if (!idManagement) return;
 
     if (isMyWork) {
-      const participantId = user?.dataInfoEmployee?.id;
-      if (!participantId) return;
+      const employeeId = user?.dataInfoEmployee?.id;
+      if (!employeeId) return;
 
-      const payloadV2: IGroupsFilterRequest = { groupBy, projectId: idManagement, participantId };
+      const payloadV2: IGroupsFilterRequest = { groupBy, projectId: idManagement, employeeId };
       getGroupWorkV2(payloadV2);
       setParamsGetGroupWork(payloadV2);
       return;
     }
 
     if (isJoinedWork) {
-      const payloadV2: IGroupsFilterRequest = { groupBy, projectId: idManagement };
+      const participantId = user?.dataInfoEmployee?.id;
+      if (!participantId) return;
+
+      const payloadV2: IGroupsFilterRequest = { groupBy, projectId: idManagement, participantId };
       getGroupWorkV2(payloadV2);
       setParamsGetGroupWork(payloadV2);
       return;
@@ -98,22 +101,10 @@ export default function WorkTableByGroup(props: any) {
     const raw = response.result;
 
     if (Array.isArray(raw)) {
-      const keyFieldMap: Record<string, { key: string; name: string }> = {
-        status: { key: "status", name: "statusName" },
-        priority: { key: "priority", name: "priorityName" },
-        employee: { key: "employeeId", name: "employeeName" },
-        wte: { key: "wte", name: "wteName" },
-      };
-
-      const mapCfg = keyFieldMap[paramsSearch.groupBy || "status"] || {
-        key: paramsSearch.groupBy || "status",
-        name: (paramsSearch.groupBy || "status") + "Name",
-      };
-
       setListGroupWork(
         raw.map((x: any) => ({
-          key: x?.[mapCfg.key],
-          name: x?.[mapCfg.name],
+          key: x?.groupValue ?? x?.key ?? x?.status ?? x?.priority ?? x?.employeeId ?? x?.wte ?? -2,
+          name: x?.groupName ?? x?.name ?? x?.statusName ?? x?.priorityName ?? x?.employeeName ?? x?.wteName ?? "Chưa phân nhóm",
           total: x?.total ?? 0,
           isOpen: false,
         }))
@@ -296,10 +287,9 @@ export default function WorkTableByGroup(props: any) {
             <div className="list-table">
               {listGroupWork.map((groupItem, groupIndex) => {
                 const groupValue = normalizeKey(groupItem?.key);
-                const employeeIdFilter =
-                  groupBy === "employee"
-                    ? (groupValue !== -2 ? groupValue : null)
-                    : (activeTitleHeader === HEADER_VIEW_MODES.mywork ? user?.dataInfoEmployee?.id ?? null : null);
+                const employeeIdFilter = groupBy === "employee" ? (groupValue !== -2 ? groupValue : null) : null;
+                const myEmployeeId = isMyWork ? user?.dataInfoEmployee?.id ?? null : null;
+                const joinedParticipantId = isJoinedWork ? user?.dataInfoEmployee?.id ?? null : null;
 
                 return (
                   <Collapsible
@@ -335,6 +325,8 @@ export default function WorkTableByGroup(props: any) {
                         projectId: idManagement,
                         total: groupItem.total,
                         assignedId: employeeIdFilter,
+                        employeeId: myEmployeeId,
+                        participantId: joinedParticipantId,
                       }}
                       onReload={(reload) => {
                         if (reload) reloadGroups(paramsGetGroupWork);

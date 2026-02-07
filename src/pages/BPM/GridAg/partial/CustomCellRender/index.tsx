@@ -106,7 +106,7 @@ const CustomCellRender = (props) => {
         case "number":
           return (
             <div className="text-truncate" title={props?.value ? formatNumber(props?.value) : ""}>
-              {props?.value ? formatNumber(props?.value) : ""}
+              {props?.value ? formatNumber(parseFloat(props?.value)) : ""}
             </div>
           );
         case "time_range":

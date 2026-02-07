@@ -121,6 +121,7 @@ SelectUrlRenderer.config = {
   ...Textfield.config,
   type: selectUrlType,
   label: "Select URL",
+  name: "Select URL",
   iconUrl: iconSelectUrlDataUrl,
   group: "selection",
   propertiesPanelEntries: ["key", "label", "description", "disabled", "required", "readonly"],

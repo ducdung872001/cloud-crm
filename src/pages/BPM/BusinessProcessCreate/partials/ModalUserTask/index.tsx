@@ -301,7 +301,7 @@ export default function ModalUserTask({ onShow, onHide, dataNode, processId, dis
         className="modal-user-task"
       >
         <form className="form-user-task" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`Cấu hình User: ${dataNode?.businessObject?.name || ""}`} toggle={() => !isSubmit && handleClear(false)} />
+          <ModalHeader title={`Cấu hình User Task: ${dataNode?.businessObject?.name || ""}`} toggle={() => !isSubmit && handleClear(false)} />
           <ModalBody>
             <div>
               {!isLoading ? (

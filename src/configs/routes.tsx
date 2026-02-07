@@ -955,12 +955,12 @@ export const menu: IMenuItem[] = [
               code: "BPM",
               icon: <Icon name="CashBook" />,
             },
-            {
-              title: "manageDefaultProcesses",
-              path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
-              code: "BPM",
-              icon: <Icon name="CashBook" />,
-            },
+            // {
+            //   title: "manageDefaultProcesses",
+            //   path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
+            //   code: "BPM",
+            //   icon: <Icon name="CashBook" />,
+            // },
             {
               title: "business_rule", // Loại luật nghiệp vụ
               path: urls.business_rule,

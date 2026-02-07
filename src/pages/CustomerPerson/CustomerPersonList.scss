@@ -608,3 +608,61 @@
     }
   }
 }
+
+.modal-export-payroll {
+  .modal-content {
+    border-radius: 1.2rem;
+    box-shadow: 0 12px 30px rgba(16, 24, 40, 0.12);
+    border: 1px solid var(--extra-color-10);
+  }
+
+  .modal-header {
+    padding: 1.6rem 2rem;
+    border-bottom: 1px solid var(--extra-color-10);
+
+    .modal-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text-primary-color);
+    }
+  }
+
+  .modal-body {
+    padding: 2rem;
+  }
+
+  .form-export {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+
+  .form-export > .form-group:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .modal-footer {
+    padding: 1.2rem 2rem 2rem;
+    border-top: 1px solid var(--extra-color-10);
+
+    .btn {
+      min-width: 9.6rem;
+      border-radius: 0.8rem;
+      font-weight: 600;
+    }
+  }
+
+  .payroll-date-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .payroll-date-field {
+    flex: 1 1 0;
+  }
+}

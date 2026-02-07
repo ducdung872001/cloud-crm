@@ -128,7 +128,7 @@ const CustomCellEdit = (props) => {
     const markMultiUpdate = { value: false };
 
     // hàm để đảm bảo giữ nguyên các kiểu dữ liệu gốc (tránh ||)
-    const safeGet = (obj, key, fallback = "") => (obj && key in obj ? obj[key] : fallback);
+    const safeGet = (obj: any, key: string, fallback: any = null) => (obj && key in obj ? obj[key] : fallback);
 
     if (type === "number") {
       // giữ nguyên kiểu số (ví dụ 0)
@@ -277,7 +277,7 @@ const CustomCellEdit = (props) => {
           props.node.setDataValue(key, newData[key]);
         } else {
           // thêm field mới vào data mà không dùng setDataValue
-          props.node.data = { ...(props.node.data || {}), [key]: newData[key] };
+          props.node.data = { ...(props.node.data || {}), [key]: newData[key].toString() };
           // nếu muốn thông báo, gọi props.api.dispatchEvent(...) hoặc props.onChange(...)
         }
       });
