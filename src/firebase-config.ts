@@ -90,15 +90,11 @@ export const requestPermission = async (jwtToken) => {
           vapidKey: "BEwUxtPTJ8etCqMlF-hgkr5LpWlkSeR_4YBILQLeXDeN6N-eCkflDnSmR2hHoL6lwsgSBxjxg7rHzdegX3NMpZA", // Chạy thật
           // vapidKey: "BBsV3m5BrNLxFgR544iD9ziyzna2pmBqqnR53pqsPRkPfHYF-Y9QFwHimgrVQU-TS9lXgLzNvWezDtl3W-K8tHw", // Test Local
         });
-        console.log("FCM Token:", token);
         //Lưu token này xuống dưới cơ sở dữ liệu
         try {
           const deviceId = await getDeviceId();
 
-          console.log("jwtToken =>", jwtToken);
           const payload = parseJwt(jwtToken);
-          console.log("Payload:", payload);
-          console.log("DeviceId:", deviceId);
 
           let employeeId = 0;
           let userId = 0;
@@ -111,7 +107,6 @@ export const requestPermission = async (jwtToken) => {
           }
 
           //Gọi hàm lưu token xuống
-          console.log("EmployeeID:", employeeId);
           try {
             saveFCM(token, deviceId, employeeId, userId);
           } catch (error) {

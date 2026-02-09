@@ -216,6 +216,11 @@ export const urlsApi = {
     customerAssign: prefixAdmin + "/customer/assign",
   },
 
+  // GHD api chống chế =))))))))))))
+  payroll: {
+    export: prefixAdmin + "/payroll/export",
+  },
+
   partner: {
     list: prefixAdmin + "/businessPartner/list_paid",
     update: prefixAdmin + "/businessPartner/update",
@@ -1746,6 +1751,7 @@ export const urlsApi = {
   workOrder: {
     listBpmWorkOrder: prefixBpm + "/workOrder/list",
     list: prefixAdmin + "/workOrder/list",
+    listV2: prefixAdmin + "/workOrder/listV2",
     groups: prefixAdmin + "/workOrder/groups",
     groupsV2: prefixAdmin + "/workOrder/groupsV2",
     update: prefixAdmin + "/workOrder/update",
