@@ -77,7 +77,6 @@ export default function WebRtcCallIncomeModal(props: any) {
 
     return { options: [], hasMore: false };
   };
-  console.log("dataEmployee>>", dataEmployee);
 
   //! đoạn này xử lý vấn đề hiển thị hình ảnh nhân viên
   const formatOptionLabelEmployee = ({ label, avatar }) => {
@@ -107,7 +106,6 @@ export default function WebRtcCallIncomeModal(props: any) {
   useEffect(() => {
     if (onShow) {
       // getPhoneCallCustomer(dataCustomer?.id);
-      //   console.log("makeCal>>", dataCustomer);
       //   makeCall("0862999272");
     }
   }, [onShow]);

@@ -15,14 +15,12 @@ import Icon from "components/icon";
 import SelectCustom from "components/selectCustom/selectCustom";
 import TextArea from "components/textarea/textarea";
 import GirdService from "services/GridService";
-import { BindingFieldMap } from "./BindingFieldMap";
 import Checkbox from "components/checkbox/checkbox";
 import { useGridAg } from "../../GridAgContext";
 
 export default function ModalAddColumnAg(props: any) {
-  const { onShow, onHide, data, listColumn, setListColumn, setIsChangeColumns, typeNo, isEdit, location } = props;
-  const { setIsFetchData, setIsLoading, setColCodeEdit, setColumnsConfig } = useGridAg();
-  const gridRef = useRef<any>(null);
+  const { onShow, onHide, data, listColumn, setIsChangeColumns, typeNo, isEdit, location } = props;
+  const { setColCodeEdit, setColumnsConfig } = useGridAg();
   const params: any = getSearchParameters();
 
   const refShowField = useRef();
@@ -46,14 +44,11 @@ export default function ModalAddColumnAg(props: any) {
   });
   const [numberFormat, setNumberFormat] = useState<any>("");
 
-  const [listBindingField, setListBindingField] = useState<any[]>([]);
   const [detailBindingField, setDetailBindingField] = useState<any>([]);
 
   //Cần đổi lại thành khách hàng
-  const [customerAttributeFields, setCustomerAttributeFields] = useState<any>(null); //Khởi tạo null là quan trọng
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
-  const [dependFormula, setDependFormula] = useState([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [checkFieldName, setCheckFieldName] = useState(false);
 
@@ -220,7 +215,6 @@ export default function ModalAddColumnAg(props: any) {
 
     content = textBeforeCursorPosition + data + textAfterCursorPosition;
     setSelectedFormula(content);
-    setDependFormula([]);
   };
 
   useEffect(() => {
@@ -586,6 +580,14 @@ export default function ModalAddColumnAg(props: any) {
       setIsSubmit(false);
       return;
     }
+    if (
+      formData.values["type"] == "binding" &&
+      (listColumnBinding.length == 0 || listColumnBinding.findIndex((item) => !item.value || !item.label) != -1)
+    ) {
+      showToast("Các cột tham chiếu không được bỏ trống", "error");
+      setIsSubmit(false);
+      return;
+    }
 
     const _detailBindingField = listColumnBinding.map((item) => {
       let key = convertToId(item.label) || "";
@@ -654,8 +656,9 @@ export default function ModalAddColumnAg(props: any) {
             : {}),
         },
         ...(formData.values["type"] == "binding" && _detailBindingField?.length
-          ? _detailBindingField.map((item, index) => {
-              if (item?.value) {
+          ? _detailBindingField
+              .filter((item) => item.value && item.label)
+              .map((item, index) => {
                 return {
                   name: item?.label,
                   key: item?.key,
@@ -669,10 +672,7 @@ export default function ModalAddColumnAg(props: any) {
                   isBinding: true,
                   bindingField: item?.value, //Binding trong binding
                 };
-              } else {
-                return {};
-              }
-            })
+              })
           : []),
       ];
     } else {
@@ -847,7 +847,6 @@ export default function ModalAddColumnAg(props: any) {
     setNumberFormat("");
     setShowFields(false);
     setCheckFieldName(false);
-    setCustomerAttributeFields(null);
     setDetailParent(null);
     setFormData({
       ...formData,
