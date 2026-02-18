@@ -93,6 +93,7 @@ const FormEditorComponent = ({
     schemaRef.current = initialSchema;
     // Lắng nghe sự kiện thay đổi và gọi callback
     formEditorRef.current.on("changed", (event) => {
+       
       const schema = formEditorRef.current.getSchema();
 
       // So sánh schema mới với schema cũ để biết component nào thay đổi
@@ -390,7 +391,7 @@ const FormEditorComponent = ({
             </Tippy>
             <ButtonExportNode nodeId={dataNode?.id} />
 
-            {/* <Tippy content="Lưu Node">
+            <Tippy content="Lưu Node">
             <div
               className='button-setting'
               onClick={() => {
@@ -399,7 +400,7 @@ const FormEditorComponent = ({
             >
               <Icon name="CheckedCircle" style={{ width: 22 }} />
             </div>
-          </Tippy> */}
+          </Tippy>
           </div>
         </div>
       )}
