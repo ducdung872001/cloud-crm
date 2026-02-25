@@ -138,6 +138,7 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
   const [internalValue, setInternalValue] = useState<any>(isMulti ? [] : null);
 
   const listOptions = useRef([]);
+  console.log("value", value);
 
   const hasValueParams = () => {
     if (isMulti && Array.isArray(value)) {
@@ -153,23 +154,16 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
 
     if (isMulti) {
       if (Array.isArray(value)) {
-        listId = value.map(item => typeof item === "object" && item !== null && "value" in item ? item.value : item
-        );
+        listId = value.map((item) => (typeof item === "object" && item !== null && "value" in item ? item.value : item));
       }
     } else {
       if (value !== null && value !== undefined) {
-        listId = [
-          typeof value === "object" && value !== null && "value" in value
-            ? value.value
-            : value,
-        ];
+        listId = [typeof value === "object" && value !== null && "value" in value ? value.value : value];
       }
     }
 
     // id CHƯA có trong cache-> cần fetch
-    const fetchIds = listId.filter(
-      item => !listOptions.current.some(opt => String(opt.value) === String(item))
-    );
+    const fetchIds = listId.filter((item) => !listOptions.current.some((opt) => String(opt.value) === String(item)));
 
     const fetchInitialValue = async () => {
       try {
@@ -187,18 +181,18 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
 
           const mappedData = mapResultData
             ? mapResultData(dataList)
-            : dataList.map(item => ({
-              label: item[labelKey],
-              value: item[valueKey],
-              ...listBindingField.reduce((acc, field) => {
-                if (field in item) acc[field] = item[field];
-                return acc;
-              }, {} as any),
-            }));
+            : dataList.map((item) => ({
+                label: item[labelKey],
+                value: item[valueKey],
+                ...listBindingField.reduce((acc, field) => {
+                  if (field in item) acc[field] = item[field];
+                  return acc;
+                }, {} as any),
+              }));
 
           // cache option
-          mappedData.forEach(newItem => {
-            if (!listOptions.current.some(opt => String(opt.value) === String(newItem.value))) {
+          mappedData.forEach((newItem) => {
+            if (!listOptions.current.some((opt) => String(opt.value) === String(newItem.value))) {
               listOptions.current.push(newItem);
             }
           });
@@ -206,17 +200,9 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
 
         // SET VALUE SAU KHI CACHE ĐỦ
         if (isMulti) {
-          setInternalValue(
-            listId
-              .map(id =>
-                listOptions.current.find(opt => String(opt.value) === String(id))
-              )
-              .filter(Boolean)
-          );
+          setInternalValue(listId.map((id) => listOptions.current.find((opt) => String(opt.value) === String(id))).filter(Boolean));
         } else {
-          setInternalValue(
-            listOptions.current.find(opt => String(opt.value) === String(listId[0])) ?? null
-          );
+          setInternalValue(listOptions.current.find((opt) => String(opt.value) === String(listId[0])) ?? null);
         }
       } catch (e) {
         console.error(e);
