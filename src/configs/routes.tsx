@@ -213,16 +213,13 @@ export const menu: IMenuItem[] = [
           icon: <Icon name="Home" />,
           code: "DASHBOARD",
         },
-        ...(checkSubdomainReborn
-          ? [
-              {
-                title: "managerWork", // Quản lý công việc
-                path: urls.manager_work,
-                icon: <Icon name="Job" />,
-                code: "WORK_PROJECT",
-              },
-            ]
-          : []),
+
+        {
+          title: "managerWork", // Quản lý công việc
+          path: urls.manager_work,
+          icon: <Icon name="Job" />,
+          code: "WORK_PROJECT",
+        },
         {
           title: "personal", // Cá nhân
           path: urls.personal,
@@ -285,32 +282,32 @@ export const menu: IMenuItem[] = [
             },
           ],
         },
-        {
-          title: "project", // dự án
-          path: urls.project,
-          icon: <Icon name="Job" />,
-          code: "WORK_PROJECT",
-          children: [
-            {
-              title: "project", // dự án
-              path: urls.project,
-              icon: <Icon name="Job" />,
-              code: "WORK_PROJECT",
-            },
-            {
-              title: "job", // Công việc
-              path: urls.middle_work,
-              icon: <Icon name="Job" />,
-              code: "WORK_ORDER",
-            },
-            {
-              title: "settingProject", // Cài đặt dự án
-              path: urls.setting_project,
-              icon: <Icon name="SettingJob" />,
-              code: "",
-            },
-          ],
-        },
+        // {
+        //   title: "project", // dự án
+        //   path: urls.project,
+        //   icon: <Icon name="Job" />,
+        //   code: "WORK_PROJECT",
+        //   children: [
+        //     {
+        //       title: "project", // dự án
+        //       path: urls.project,
+        //       icon: <Icon name="Job" />,
+        //       code: "WORK_PROJECT",
+        //     },
+        //     {
+        //       title: "job", // Công việc
+        //       path: urls.middle_work,
+        //       icon: <Icon name="Job" />,
+        //       code: "WORK_ORDER",
+        //     },
+        //     {
+        //       title: "settingProject", // Cài đặt dự án
+        //       path: urls.setting_project,
+        //       icon: <Icon name="SettingJob" />,
+        //       code: "",
+        //     },
+        //   ],
+        // },
       ]
     : []),
   {
