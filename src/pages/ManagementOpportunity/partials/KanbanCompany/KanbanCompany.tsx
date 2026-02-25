@@ -30,7 +30,6 @@ import { useNavigate } from "react-router-dom";
 import ExchangeFast from "../Kanban/partials/ExchangeFast";
 import AdvancedDateFilter from "components/advancedDateFilter/advancedDateFilter";
 import { useOnClickOutside } from "utils/hookCustom";
-import AddWorkModal from "pages/MiddleWork/partials/ListWork/partials/AddWorkModal/AddWorkModal";
 import AddCustomerInColumn from "../Kanban/partials/AddCustomerInColumn/AddCustomerInColumn";
 import { removeVietnameseTones } from "configs/convertVietnamese";
 import CampaignService from "services/CampaignService";
@@ -1404,21 +1403,6 @@ export default function KanbanCompany(props: any) {
           setShowModalPlaceholderSms(false);
         }}
       />
-
-      <AddWorkModal
-        type="opportunity"
-        isShowProject={true}
-        disableOpportunity={true}
-        onShow={showModalAddWork}
-        customerId={dataCustomer?.id}
-        customerName={dataCustomer?.name}
-        idManagement={idManagementOpportunity}
-        onHide={(reload) => {
-          setShowModalAddWork(false);
-          setDataCustomer(null);
-        }}
-      />
-
       <SendEmailModal
         onShow={showModalSendEmailCampaign}
         idCampaign={params?.campaignId}

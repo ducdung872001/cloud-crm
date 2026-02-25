@@ -12,7 +12,6 @@ import "./index.scss";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import Button from "components/button/button";
 import { convertToId } from "reborn-util";
-import ModalSendEmail from "pages/Contract/ModalHistorySignature/partials/ModalSendEmail";
 import SheetFieldQuoteFormService from "services/SheetFieldQuoteFormService";
 
 interface IViewHistorySignatureProps {
@@ -28,8 +27,7 @@ interface IViewHistorySignatureProps {
 
 export default function ViewHistorySignature(props: IViewHistorySignatureProps) {
   const { onShow, onHide, data, type, contractTemplate, callback, buttonDownload, fsAttachment } = props;
-  console.log('fsAttachment', fsAttachment);
-  
+  console.log("fsAttachment", fsAttachment);
 
   const [lstFsForm, setLstFsForm] = useState([]);
   const [lstQuotaForm, setLstQuotaForm] = useState([]);
@@ -100,7 +98,7 @@ export default function ViewHistorySignature(props: IViewHistorySignatureProps) 
   ];
 
   const [dataTab, setDataTab] = useState(() => {
-    return (contractTemplate || fsAttachment) ? "tab_four" : type === "contract" ? "tab_two" : "tab_one";
+    return contractTemplate || fsAttachment ? "tab_four" : type === "contract" ? "tab_two" : "tab_one";
   });
 
   useEffect(() => {
@@ -112,7 +110,7 @@ export default function ViewHistorySignature(props: IViewHistorySignatureProps) 
   useEffect(() => {
     if (onShow) {
       setDataTab(() => {
-        return (contractTemplate || fsAttachment) ? "tab_four" : type === "contract" ? "tab_two" : "tab_one";
+        return contractTemplate || fsAttachment ? "tab_four" : type === "contract" ? "tab_two" : "tab_one";
       });
     }
   }, [onShow, fsAttachment, contractTemplate]);
@@ -326,19 +324,16 @@ export default function ViewHistorySignature(props: IViewHistorySignatureProps) 
       <div className="page__view--history-signature">
         <div className="content__left">
           {lstTab.map((item, idx) => {
-            return (
-              type === 'fs' && !data.status ?
-                (
-                  item.name === "Thông tin trình ký" ?
-                  <div key={idx} className={`item--tab ${item.tab === dataTab ? "active__item--tab" : ""}`} onClick={() => setDataTab(item.tab)}>
-                    {item.name}
-                  </div>
-                  : null
-                )
-              :
+            return type === "fs" && !data.status ? (
+              item.name === "Thông tin trình ký" ? (
                 <div key={idx} className={`item--tab ${item.tab === dataTab ? "active__item--tab" : ""}`} onClick={() => setDataTab(item.tab)}>
                   {item.name}
                 </div>
+              ) : null
+            ) : (
+              <div key={idx} className={`item--tab ${item.tab === dataTab ? "active__item--tab" : ""}`} onClick={() => setDataTab(item.tab)}>
+                {item.name}
+              </div>
             );
           })}
         </div>
@@ -420,7 +415,7 @@ export default function ViewHistorySignature(props: IViewHistorySignatureProps) 
               Tải xuống
             </Button>
 
-            {fsAttachment ? null :
+            {fsAttachment ? null : (
               <Button
                 color="primary"
                 onClick={() => {
@@ -429,19 +424,10 @@ export default function ViewHistorySignature(props: IViewHistorySignatureProps) 
               >
                 Gửi Email
               </Button>
-            }
+            )}
           </div>
         </div>
       ) : null}
-
-      <ModalSendEmail
-        onShow={showModalSendEmail}
-        dataContract={data}
-        customerIdlist={data?.customerId ? [data?.customerId] : []}
-        onHide={(reload) => {
-          setShowModalSendEmail(false);
-        }}
-      />
     </div>
   );
 }

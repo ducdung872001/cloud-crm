@@ -32,7 +32,6 @@ import SendEmailModal from "../SendEmailModal/SendEmailModal";
 import ContactCampaignModal from "../ContactCampaignModal/ContactCampaignModal";
 import CollectInfoModal from "../CollectInfoModal/CollectInfoModal";
 import CollectVOC from "../CollectVOC/CollectVOC";
-import AddWorkModal from "pages/MiddleWork/partials/ListWork/partials/AddWorkModal/AddWorkModal";
 
 export default function Kanban(props: any) {
   const {
@@ -1343,20 +1342,6 @@ export default function Kanban(props: any) {
           // setListCustomerHasEmail([]);
         }}
       />
-      <AddWorkModal
-        type="opportunity"
-        isShowProject={true}
-        disableOpportunity={true}
-        onShow={showModalAddWork}
-        customerId={dataCustomer?.id}
-        customerName={dataCustomer?.name}
-        idManagement={idManagementOpportunity}
-        onHide={(reload) => {
-          setShowModalAddWork(false);
-          setDataCustomer(null);
-        }}
-      />
-
       <ContactCampaignModal
         onShow={showModalContactCampaign}
         dataCustomer={dataCustomer}

@@ -3,7 +3,6 @@ import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Button from "components/button/button";
 import WorkOrderService from "services/WorkOrderService";
-import AddWorkModal from "pages/MiddleWork/partials/ListWork/partials/AddWorkModal/AddWorkModal";
 import { IAction } from "model/OtherModel";
 import { PaginationProps, DataPaginationDefault } from "components/pagination/pagination";
 import { showToast } from "utils/common";
@@ -308,19 +307,6 @@ export default function CustomerJob({ dataCustomer }) {
           </Fragment>
         )}
       </div>
-      <AddWorkModal
-        type="project"
-        onShow={showModalAdd}
-        idWork={idWork}
-        onHide={(reload) => {
-          if (reload) {
-            getListWork(params);
-          }
-          setShowModalAdd(false);
-        }}
-        customerId={dataCustomer.id}
-        customerName={dataCustomer.name}
-      />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );

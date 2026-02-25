@@ -15,7 +15,6 @@ import BoxTable from "components/boxTable/boxTable";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { showToast } from "utils/common";
 import InvoiceService from "services/InvoiceService";
-import ShowModalDetailSaleInvoice from "pages/Sell/SaleInvoiceList/partials/ShowModalDetailSaleInvoice";
 import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
 
 export default function ListBill(props: IListBillProps) {
@@ -174,7 +173,6 @@ export default function ListBill(props: IListBillProps) {
           setShowModalDebt(false);
         }}
       />
-      <ShowModalDetailSaleInvoice onShow={showModalBill} idInvoice={idBill} onHide={() => setShowModalViewBill(false)} />
     </Fragment>
   );
 }

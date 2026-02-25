@@ -25,7 +25,6 @@ import "./CreateOpportunityB2B.scss";
 import WorkProjectService from "services/WorkProjectService";
 import ImgPushCustomer from "assets/images/img-push.png";
 import AddContactModal from "pages/Contact/partials/AddContactModal";
-import AddProjectManagementModal from "pages/MiddleWork/partials/ProjectManagement/partials/AddProjectManagementModal";
 
 export default function CreateOpportunityB2B(props: any) {
   const { onShow, onHide, idCustomer, takeInfoOpportunity } = props;
@@ -671,16 +670,6 @@ export default function CreateOpportunityB2B(props: any) {
               //   getListContact(params);
               // }
               setShowModalContact(false);
-            }}
-          />
-          <AddProjectManagementModal
-            onShow={showModalAddProject}
-            idData={null}
-            onHide={(reload) => {
-              // if (reload) {
-              //   getListProject(params);
-              // }
-              setShowModalAddProject(false);
             }}
           />
         </form>

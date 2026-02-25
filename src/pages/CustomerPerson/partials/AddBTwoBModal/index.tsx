@@ -26,7 +26,6 @@ import ImgPushCustomer from "assets/images/img-push.png";
 import WorkProjectService from "services/WorkProjectService";
 import CampaignPipelineService from "services/CampaignPipelineService";
 import AddContactModal from "pages/Contact/partials/AddContactModal";
-import AddProjectManagementModal from "pages/MiddleWork/partials/ProjectManagement/partials/AddProjectManagementModal";
 
 interface IAddBTwoBModalProps {
   onShow: boolean;
@@ -1376,16 +1375,6 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
               //   getListContact(params);
               // }
               setShowModalContact(false);
-            }}
-          />
-          <AddProjectManagementModal
-            onShow={showModalAddProject}
-            idData={null}
-            onHide={(reload) => {
-              // if (reload) {
-              //   getListProject(params);
-              // }
-              setShowModalAddProject(false);
             }}
           />
         </form>

@@ -35,7 +35,6 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import AddOpportunityAllocation from "./partials/AddOpportunityAllocation";
 import { ContextType, UserContext } from "contexts/userContext";
 import ImageThirdGender from "assets/images/third-gender.png";
-import ReportOpportunity from "pages/OpportunityList/partials/ReportOpportunity";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import EmployeeService from "services/EmployeeService";
 import CustomerService from "services/CustomerService";
@@ -1004,9 +1003,7 @@ export default function ManagementOpportunityNew() {
                 )}
               </>
             ) : (
-              <>
-                <ReportOpportunity />
-              </>
+              <></>
             )}
           </div>
 

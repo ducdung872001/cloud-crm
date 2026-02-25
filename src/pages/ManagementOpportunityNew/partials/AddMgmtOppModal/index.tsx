@@ -19,15 +19,10 @@ import CampaignService from "services/CampaignService";
 import CustomerService from "services/CustomerService";
 import CustomerSourceService from "services/CustomerSourceService";
 import CampaignOpportunityService from "services/CampaignOpportunityService";
-import { ContextType, UserContext } from "contexts/userContext";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import EmployeeService from "services/EmployeeService";
 import ImgPushCustomer from "assets/images/img-push.png";
-
 import "./index.scss";
-import CreateOpportunityB2B from "../QuickCreateOpp";
-import QuickCreateOpp from "../QuickCreateOpp";
-import ModalAddOpp from "pages/OpportunityList/partials/ModalAddOpp";
 
 export default function AddMgmtOppModal(props: IAddCampaignOpportunityModel) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
@@ -919,18 +914,6 @@ export default function AddMgmtOppModal(props: IAddCampaignOpportunityModel) {
           <ModalFooter actions={actions} />
         </form>
       </Modal>
-      <ModalAddOpp
-        onShow={showCreateOpp}
-        idCustomer={dataCustomer?.value}
-        takeInfoOpportunity={takeInfoOpportunity}
-        onHide={(reload) => {
-          if (reload) {
-            // getListCustomer(params, activeTitleHeader);
-          }
-          loadedOptionOpp("", undefined, { page: 1 });
-          setShowCreateOpp(false);
-        }}
-      />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </Fragment>
   );

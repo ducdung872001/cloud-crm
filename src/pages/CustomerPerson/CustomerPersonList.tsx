@@ -3,13 +3,10 @@ import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, u
 import _ from "lodash";
 import moment from "moment";
 import Tippy from "@tippyjs/react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
 import { getSearchParameters, getPageOffset, getDomain } from "reborn-util";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
 import Loading from "components/loading";
-import BoxTable from "components/boxTable/boxTable";
 import SearchBox from "components/searchBox/searchBox";
 import { ExportExcel } from "exports";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -34,8 +31,6 @@ import AddEditSendSMS from "pages/Common/AddEditSendSMS/AddEditSendSMS";
 import RelationShipService from "services/RelationShipService";
 import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
 import ImportModal from "components/importModalBackup";
-import ExportListModal from "pages/Common/ExportListModal/ExportListModal";
-import AddTreamentHistoryModal from "pages/TreatmentHistory/partials/AddTreamentHistoryModal/AddTreamentHistoryModal";
 import AddBTwoBModal from "./partials/AddBTwoBModal";
 import ViewOpportunityBTwoB from "./partials/ViewOpportunityBTwoB";
 import AddModalOther from "./partials/AddModalOther";
@@ -2156,36 +2151,39 @@ export default function CustomerPersonList() {
     });
   }, []);
 
-  const handleTestExportApi = useCallback(async (unitCode: string, month: number, year: number) => {
-    if (isTestExporting) return;
+  const handleTestExportApi = useCallback(
+    async (unitCode: string, month: number, year: number) => {
+      if (isTestExporting) return;
 
-    try {
-      setIsTestExporting(true);
+      try {
+        setIsTestExporting(true);
 
-      const response = await CustomerService.export({ unitCode, month, year });
+        const response = await CustomerService.export({ unitCode, month, year });
 
-      if (response && response.ok) {
-        const blob = await response.blob();
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = downloadUrl;
-        link.download = `payroll-${unitCode}-${year}-${month}.xlsx`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(downloadUrl);
+        if (response && response.ok) {
+          const blob = await response.blob();
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.download = `payroll-${unitCode}-${year}-${month}.xlsx`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(downloadUrl);
 
-        showToast("Export payroll thành công", "success");
-        setShowTestExportModal(false);
-      } else {
-        showToast("Gọi API export thất bại. Vui lòng thử lại sau!", "error");
+          showToast("Export payroll thành công", "success");
+          setShowTestExportModal(false);
+        } else {
+          showToast("Gọi API export thất bại. Vui lòng thử lại sau!", "error");
+        }
+      } catch (error) {
+        showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
+      } finally {
+        setIsTestExporting(false);
       }
-    } catch (error) {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
-    } finally {
-      setIsTestExporting(false);
-    }
-  }, [isTestExporting]);
+    },
+    [isTestExporting]
+  );
 
   const openTestExportModal = useCallback(() => {
     const now = new Date();
@@ -3581,17 +3579,6 @@ export default function CustomerPersonList() {
             }
             setDataCustomer(null);
             setShowModalAddXml(false);
-          }}
-        />
-
-        <AddTreamentHistoryModal
-          onShow={showModalAddScheduler}
-          idCustomer={idCustomer}
-          onHide={(reload) => {
-            if (reload) {
-              getListCustomer(params, activeTitleHeader);
-            }
-            setShowModalAddScheduler(false);
           }}
         />
         <UpdateCommon

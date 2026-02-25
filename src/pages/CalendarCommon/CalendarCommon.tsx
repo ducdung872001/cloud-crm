@@ -12,7 +12,6 @@ import { showToast } from "utils/common";
 import EmployeeService from "services/EmployeeService";
 import ScheduleCommonService from "services/ScheduleCommonService";
 import FilterCalendarModal from "./partials/FilterCalendarModal/FilterCalendarModal";
-import AddWorkModal from "pages/MiddleWork/partials/ListWork/partials/AddWorkModal/AddWorkModal";
 import AddTreatmentScheduleModal from "./partials/AddTreatmentScheduleModal/AddTreatmentScheduleModal";
 import AddConsultationScheduleModal from "./partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
 import "tippy.js/animations/scale.css";
@@ -45,8 +44,7 @@ export default function CalendarCommon() {
 
   const listOptionNewAdd =
     isBeauty && isBeauty == "1"
-      ? 
-      [
+      ? [
           {
             value: "2",
             label: "Thêm lịch tư vấn",
@@ -288,16 +286,16 @@ export default function CalendarCommon() {
   });
 
   useEffect(() => {
-      setParams({
-        ...params,
-        lstId: [idEmployee, ...filterCalendar.lstEmployeeId].join(),
-        branchId: filterCalendar.branchId || 0,
-        lstCustomerId: filterCalendar.lstCustomerId.join(),
-        types: filterCalendar.chooseTypeCalendar.join(),
-        sources: filterCalendar.sourcesCalendar.join(),
-        startTime: filterCalendar.startTime ? moment(filterCalendar.startTime).format("DD/MM/YYYY") : "",
-        endTime: filterCalendar.endTime ? moment(filterCalendar.endTime).format("DD/MM/YYYY") : "",
-      });
+    setParams({
+      ...params,
+      lstId: [idEmployee, ...filterCalendar.lstEmployeeId].join(),
+      branchId: filterCalendar.branchId || 0,
+      lstCustomerId: filterCalendar.lstCustomerId.join(),
+      types: filterCalendar.chooseTypeCalendar.join(),
+      sources: filterCalendar.sourcesCalendar.join(),
+      startTime: filterCalendar.startTime ? moment(filterCalendar.startTime).format("DD/MM/YYYY") : "",
+      endTime: filterCalendar.endTime ? moment(filterCalendar.endTime).format("DD/MM/YYYY") : "",
+    });
   }, [filterCalendar, idEmployee]);
 
   useEffect(() => {
@@ -353,16 +351,15 @@ export default function CalendarCommon() {
   // }, [params]);
 
   useEffect(() => {
-  getListSchedule(params);
+    getListSchedule(params);
 
-  const paramsTemp = _.cloneDeep(params);
-  Object.keys(paramsTemp).forEach((key) => {
-    if (paramsTemp[key] === "") delete paramsTemp[key];
-  });
+    const paramsTemp = _.cloneDeep(params);
+    Object.keys(paramsTemp).forEach((key) => {
+      if (paramsTemp[key] === "") delete paramsTemp[key];
+    });
 
-  return () => abortController.abort();
+    return () => abortController.abort();
   }, [params]);
-
 
   // Đoạn này lấy thông tin kéo thả lịch để thêm mới
   const handleSelectSlot = useCallback(
@@ -445,19 +442,6 @@ export default function CalendarCommon() {
         idEmployee={idEmployee}
         setFilterCalendar={setFilterCalendar}
         onHide={() => setShowModalSearch(false)}
-      />
-      <AddWorkModal
-        type="project"
-        onShow={showModalAddWork}
-        idWork={idItemCalendar}
-        startDate={startDate}
-        endDate={endDate}
-        onHide={(reload) => {
-          if (reload) {
-            getListSchedule(params);
-          }
-          setShowModalAddWork(false);
-        }}
       />
       <AddTreatmentScheduleModal
         onShow={showModalAddTreatmentSchedule}

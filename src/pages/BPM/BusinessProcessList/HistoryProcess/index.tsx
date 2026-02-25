@@ -2,13 +2,9 @@ import React, { useEffect, useState } from "react";
 import { handDownloadFileOrigin, showToast } from "utils/common";
 import ApprovalService from "services/ApprovalService";
 import "./index.scss";
-import Button from "components/button/button";
-import { convertToId } from "reborn-util";
-// import ModalSendEmail from "pages/Contract/ModalHistorySignature/partials/ModalSendEmail";
 import InfoProcess from "./InfoProcess";
 import DetailHistoryProcess from "./HistoryProcess";
 import ViewProcess from "./ViewProcess";
-import BusinessProcessService from "services/BusinessProcessService";
 
 export default function HistoryProcess(props: any) {
   const { onShow, onHide, dataObject, type } = props;

@@ -16,13 +16,8 @@ import BeautyBranchService from "services/BeautyBranchService";
 import { showToast } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
 import "./DashboardReportRevenue.scss";
-import ReportOpportunity from "pages/OpportunityList/partials/ReportOpportunity";
 import ReportCustomer from "pages/CustomerPerson/partials/ReportCustomer";
 import ReportPartner from "pages/PartnerList/partials/ReportPartner";
-import ReportGuarantee from "pages/Contract/GuaranteeContract/ReportGuarantee";
-import ReportWaranty from "pages/Contract/WarrantyContract/ReportWaranty";
-import { stringify } from "uuid";
-
 interface ReportRevenueProps {
   classNames?: string;
   preview?: boolean;
@@ -563,10 +558,6 @@ export default function DashboardReportRevenue(props: ReportRevenueProps) {
             <HighchartsReact highcharts={Highcharts} allowChartUpdate={true} options={chartRevenue} />
           </div>
         </div>
-      ) : activeTitleHeader === 2 ? (
-        <>
-          <ReportOpportunity />
-        </>
       ) : activeTitleHeader === 3 ? (
         <>
           <ReportCustomer />
@@ -574,14 +565,6 @@ export default function DashboardReportRevenue(props: ReportRevenueProps) {
       ) : activeTitleHeader === 4 ? (
         <>
           <ReportPartner />
-        </>
-      ) : activeTitleHeader === 5 ? (
-        <>
-          <ReportGuarantee />
-        </>
-      ) : activeTitleHeader === 6 ? (
-        <>
-          <ReportWaranty />
         </>
       ) : null}
     </>

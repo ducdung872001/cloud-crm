@@ -1,24 +1,14 @@
 import React, { useEffect, useState } from "react";
-import FSQuoteService from "services/FSQuoteService";
-import QuoteService from "services/QuoteService";
 import { handDownloadFileOrigin, showToast } from "utils/common";
 import ApprovalService from "services/ApprovalService";
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 
 import "./index.scss";
-import { SystemNotification } from "components/systemNotification/systemNotification";
-import Button from "components/button/button";
-import { convertToId } from "reborn-util";
-import ModalSendEmail from "pages/Contract/ModalHistorySignature/partials/ModalSendEmail";
-import SheetFieldQuoteFormService from "services/SheetFieldQuoteFormService";
 import InfoProcess from "./InfoProcess";
 import DetailHistoryProcess from "./HistoryProcess";
 import ViewProcess from "./ViewProcess";
 
-
 export default function HistoryProcess(props: any) {
   const { onShow, onHide, dataObject, type, callback } = props;
-
 
   const [lstField, setLstField] = useState(null);
   const [infoApproved, setInfoApproved] = useState(null);
@@ -31,7 +21,6 @@ export default function HistoryProcess(props: any) {
       fileType: "xlsx",
     },
   ];
-
 
   const lstTab = [
     {
@@ -73,8 +62,6 @@ export default function HistoryProcess(props: any) {
       return dataTbodyArray;
     });
   };
-
-
 
   // dùng để lấy ra approvalId
   const handleGetObjectApproved = async (id: number) => {
@@ -149,10 +136,10 @@ export default function HistoryProcess(props: any) {
           })}
         </div>
         <div className="content__right">
-          {dataTab === "tab_one"  ? (
-            <InfoProcess 
-              // name={dataObject?.name} 
-              // type={type} lstData={lstField} 
+          {dataTab === "tab_one" ? (
+            <InfoProcess
+              // name={dataObject?.name}
+              // type={type} lstData={lstField}
               data={dataObject}
             />
           ) : dataTab === "tab_two" ? (
@@ -165,24 +152,12 @@ export default function HistoryProcess(props: any) {
                 }
               }}
             />
-          ) 
-          // : null
-          : (
-            <ViewProcess processId = {dataObject?.processId} />
-          )
-          }
+          ) : (
+            // : null
+            <ViewProcess processId={dataObject?.processId} />
+          )}
         </div>
       </div>
-
-
-      <ModalSendEmail
-        onShow={showModalSendEmail}
-        dataContract={dataObject}
-        customerIdlist={dataObject?.customerId ? [dataObject?.customerId] : []}
-        onHide={(reload) => {
-          setShowModalSendEmail(false);
-        }}
-      />
     </div>
   );
 }

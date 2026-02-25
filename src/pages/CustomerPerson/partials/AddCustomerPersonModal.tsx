@@ -36,7 +36,6 @@ import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import moment from "moment";
 import CareerService from "services/CareerService";
 import EmployeeService from "services/EmployeeService";
-import AddFile from "pages/Contract/CreateContracts/partials/AddFile";
 import { uploadDocumentFormData } from "utils/document";
 import CodeService from "services/CodeService";
 import ImgPushCustomer from "assets/images/img-push.png";
@@ -143,7 +142,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
         }));
       }
     } else {
-      showToast(response.error ?? response.message ??"Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
   };
 
@@ -1619,15 +1618,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
               <span className="title_template">{customerAttribute.name}</span>
             </div>
             <div className="box_template">
-              <div className="box__update--attachment">
-                <AddFile
-                  takeFileAdd={takeFileAdd}
-                  infoFile={null}
-                  setInfoFile={() => {}}
-                  // setIsLoadingFile={setIsLoadingFile}
-                  // dataAttachment={data}
-                />
-              </div>
+              <div className="box__update--attachment"></div>
             </div>
           </div>
         );

@@ -15,8 +15,8 @@ import { getPageOffset } from "reborn-util";
 import { getPermissions } from "utils/common";
 import "./ListWork.scss";
 import WorkOrderService from "services/WorkOrderService";
-import Button from "components/button/button";
-import HandleTask from "pages/MiddleWork/partials/ListWork/partials/HandleTask/HandleTask";
+// import Button from "components/button/button";
+// import HandleTask from "pages/MiddleWork/partials/ListWork/partials/HandleTask/HandleTask";
 
 export default function ListWork(props: any) {
   document.title = "Danh sách công việc";
@@ -310,9 +310,7 @@ export default function ListWork(props: any) {
             <span style={{ fontSize: 14, fontWeight: "500", color: "white" }}>Quay lại danh sách</span>
           </div>
         </div>
-        <div className="container-form">
-          <HandleTask onShow={isHandleTask} dataWork={dataWork} />
-        </div>
+        <div className="container-form">{/* <HandleTask onShow={isHandleTask} dataWork={dataWork} /> */}</div>
       </div>
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>

@@ -34,8 +34,6 @@ import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import { msalConfig } from "./configs/authConfig";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
-import EmailConfirm from "pages/Contract/EmailComfirm/EmailConfirm";
-import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import CollectWarranty from "pages/Warranty/partials/CollectWarranty";
 import GridFormNew from "pages/BPM/GridForm";
@@ -337,7 +335,7 @@ export default function App() {
       try {
         audioRef.current?.pause();
         audioRef.current = null;
-      } catch (e) { }
+      } catch (e) {}
       document.removeEventListener("click", tryUnlock, true);
       document.removeEventListener("touchstart", tryUnlock, true);
     };
@@ -426,8 +424,6 @@ export default function App() {
           {location.pathname == "/upload_document" && <Route path="/upload_document" element={<UploadDocument />} />}
           {location.pathname == "/collect_ticket" && <Route path="/collect_ticket" element={<CollectTicket />} />}
           {location.pathname == "/collect_warranty" && <Route path="/collect_warranty" element={<CollectWarranty />} />}
-          {location.pathname == "/send_email_confirm" && <Route path="/send_email_confirm" element={<EmailConfirm />} />}
-          {location.pathname == "/voucher_confirm" && <Route path="/voucher_confirm" element={<VoucherForm />} />}
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />
