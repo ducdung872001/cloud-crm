@@ -17,8 +17,6 @@ import FormViewerComponent from "pages/BPM/BpmForm/FormViewer";
 import ObjectGroupService from "services/ObjectGroupService";
 import { mapConfigData } from "utils/mapConfigData";
 import moment from "moment";
-import { name } from "jssip";
-import { ca } from "date-fns/locale";
 
 const defaultSchema = {
   type: "default",
