@@ -258,7 +258,7 @@ export default function SettingQuoteForm() {
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên tên mẫu báo giá"
+          name="Tên mẫu báo giá"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
