@@ -332,7 +332,7 @@ export default function AddContactModal(props: AddContactModalProps) {
     const response = await ContactPipelineService.list(param);
 
     if (response.code === 0) {
-      const dataOption = response.result;
+      const dataOption = response.result.items;
 
       return {
         options: [

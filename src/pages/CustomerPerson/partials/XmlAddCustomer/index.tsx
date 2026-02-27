@@ -17,6 +17,8 @@ import FormViewerComponent from "pages/BPM/BpmForm/FormViewer";
 import ObjectGroupService from "services/ObjectGroupService";
 import { mapConfigData } from "utils/mapConfigData";
 import moment from "moment";
+import { name } from "jssip";
+import { ca } from "date-fns/locale";
 
 const defaultSchema = {
   type: "default",
@@ -88,6 +90,64 @@ export default function XmlAddCustomer(props: any) {
     return value ? moment(value, ["MM-DD-YYYY", moment.ISO_8601]).format("YYYY-MM-DDTHH:mm:ss") : "";
   };
 
+  const normalizeMultiSelectToString = (input: any) => {
+  try {
+    if (!input) return "[]";
+
+    let arr = input;
+
+    if (typeof input === "string") {
+      arr = JSON.parse(input);
+    }
+
+    if (Array.isArray(arr) && typeof arr[0] === "object") {
+      arr = arr.map(x => x.value);
+    }
+
+    return JSON.stringify(arr);
+  } catch {
+    return "[]";
+  }
+};
+
+const mapRelationToMultiSelect = (mapped) => {
+  try {
+    const ids = mapped.relationIds || [];
+    const relations = mapped.relations || data?.relations || [];
+
+    const mappedData = ids.map(id => {
+      const rel = relations.find(relation => relation.id === id);
+      return rel
+        ? { label: rel.name, value: rel.id }
+        : { label: String(id), value: id };
+    });
+
+    return JSON.stringify(mappedData);
+  } catch {
+    return "[]";
+  }
+};
+
+const mapCareerToMultiSelect = (data) => {
+  try {
+    let ids = data?.careers || "[]";
+    if (typeof ids === "string") ids = JSON.parse(ids);
+
+    const lstCareer = data?.lstCareer || [];
+
+    return JSON.stringify(
+      ids.map(id => {
+        const career = lstCareer.find(x => String(x.id) === String(id));
+        return career ? { label: career.name, value: career.id } : { label: String(id), value: id };
+      })
+    );
+  } catch {
+    return "[]";
+  }
+};
+
+
+
   useEffect(() => {
     if (!onShow) return;
     //exceptionField để map những field đặc biệt không theo quy tắc chung (ví dụ phone => phoneMasked)
@@ -109,35 +169,22 @@ export default function XmlAddCustomer(props: any) {
 
         mapped.birthday = toFormDate(mapped.birthday);
 
-        if (mapped.address) {
-          if (mapped.custType == "0") {
-            mapped.address = mapped.address;
-          } else {
-            mapped.addressBusinesses = mapped.address;
-          }
-        }
-        if (mapped.careers) {
-          if (mapped.custType == "0") {
-            mapped.careerId = mapped.careers;
-          } else {
-            mapped.professionId = mapped.careers;
-          }
-        }
-        if (mapped.name) {
-          if (mapped.custType == "0") {
-            mapped.namePerson = mapped.name;
-          } else {
-            mapped.nameCompany = mapped.name;
-          }
-        }
-        if (mapped.sourceId) {
-          if (mapped.custType == "0") {
-            mapped.sourceId = mapped.sourceId;
-          } else {
-            mapped.targetId = mapped.sourceId;
-          }
+        mapped.customerRelationIds = mapRelationToMultiSelect(data);
+        mapped.careers = mapCareerToMultiSelect(data);
+        console.log("mapped before" ,mapped);
+        if(mapped.custType==="0"){
+          mapped.namePerson = mapped.name;
+          mapped.sourceIdPerson = mapped.sourceId;
+          mapped.careerIdPerson = mapped.careers;
+          mapped.addressPerson = mapped.address;
+        }else if (mapped.custType==="1"){
+          mapped.nameCompany = mapped.name;
+          mapped.sourceIdCompany = mapped.sourceId;
+          mapped.careerIdCompany = mapped.careers;
+          mapped.addressCompany = mapped.address;
         }
 
+        console.log("mapped", mapped);
         setDataInit(mapped);
       }
       setInitFormSchema(configInit);
@@ -177,40 +224,51 @@ export default function XmlAddCustomer(props: any) {
 
     let phone = config?.phoneMasked ?? null; // Lấy theo phoneMasked vì maskedInput trong form lấy theo key này
     let email = config?.emailMasked ?? null; // Lấy theo emailMasked vì maskedInput trong form lấy theo key này
-
+    let custType = config?.custType ?? "0";
     let body: any = {
       ...(data ? data : {}),
-      address: (config.custType == 0 ? config.address : config.addressBusinesses) ?? "",
-      avatar: config.avartar ? JSON.parse(config.avartar)[0]?.url : "",
+      avatar: config.avatar ? JSON.parse(config.avatar)[0]?.url : "",
       birthday: toApiDate(config.birthday),
       branchId: checkUserRoot == "1" ? data?.branchId ?? dataBranch.value ?? null : 0,
-      careers: [(config.custType == 0 ? config.careerId : config.professionId) ?? 0],
       cgpId: config.cgpId ?? "",
       code: config.code ?? "",
-      contactId: config.contactId ?? 0,
-      custType: config.custType ?? 0,
+      taxCode: config.taxCode ?? "",
+      contactId: config.contactId ?? "",
       customerExtraInfos: infoExtra,
-      customerRelationIds: config.customers ?? [],
-      email: config.email ?? "",
+      customerRelationIds: normalizeMultiSelectToString(config.customerRelationIds),
       employeeId: config.employeeId ?? 0,
       employeeTitle: config.employeeTitle ?? "",
       firstCall: config.firstCall ?? "",
       gender: config.gender ?? 0,
       height: config.height ?? 0,
       isExternal: config.isExternal ?? "",
-      maritalStatus: config.maritalStatus ?? 0,
-      name: (config.custType == 0 ? config.namePerson : config.nameCompany) ?? "",
-      phone: config.phone ?? "",
+      maritalStatus: config.maritalStatus ?? 1,
       profileLink: config.profileLink ?? "",
-      profileStatus: config.profileStatus ?? "",
+      profileStatus: config.profileStatus ?? "1",
       recommenderPhone: config.recommenderPhone ?? "",
-      relationIds: [config.customers ?? 0],
       secondProfileLink: config.secondProfileLink ?? "",
-      secondProfileStatus: config.secondProfileStatus ?? "",
-      sourceId: (config.custType == 0 ? config.sourceId : config.targetId) ?? 0,
-      taxCode: (config.custType == 1 ? config.taxCode : "") ?? "",
-      trademark: (config.custType == 1 ? config.trademark : "") ?? "",
+      secondProfileStatus: config.secondProfileStatus ?? "1",
+      trademark: config.trademark ?? "",
       weight: config.weight ?? 0,
+      custType: custType,
+    ...(custType === "0"
+      ? {
+          name: config.namePerson ?? "",
+          phone,
+          email,
+          sourceId: config.sourceIdPerson ?? "",
+          careers: normalizeMultiSelectToString(config.careerIdPerson),
+          address: config.addressPerson??""
+        }
+      : {
+          name: config.nameCompany ?? "",
+          phone,
+          email,
+          sourceId: config.sourceIdCompany ?? "",
+          careers: normalizeMultiSelectToString(config.careerIdCompany),
+          address: config.addressCompany??""
+        }
+    ),
     };
 
     const response = await CustomerService.update(body);
