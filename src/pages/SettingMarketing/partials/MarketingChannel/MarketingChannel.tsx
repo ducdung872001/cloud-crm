@@ -16,6 +16,7 @@ import { getPermissions } from "utils/common";
 import "./MarketingChannel.scss";
 import ModalAddMarketingChannel from "./partials/ModalAddMarketingChannel";
 import CampaignMarketingService from "services/CampaignMarketingService";
+import { DeleteHandler } from "components/DeleteHandler/deleteHandler";
 
 export default function MarketingChannel(props: any) {
   document.title = "Danh sách loại hợp đồng";
@@ -161,93 +162,28 @@ export default function MarketingChannel(props: any) {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item);
+          showConfirmDelete([item.id], item.name);
           }
         },
       },
     ].filter((action) => action);
   };
 
-  const onDelete = async (id: number) => {
-    const response = await CampaignMarketingService.deleteMAChannel(id);
-
-    if (response.code === 0) {
-      showToast("Xóa loại kênh truyền thông thành công", "success");
-      getListMarketingChannel(params);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-    setShowDialog(false);
-    setContentDialog(null);
-  };
-
-  const onDeleteAll = () => {
-    const selectedIds = listIdChecked || [];
-    if (!selectedIds.length) return;
-
-    const arrPromises = selectedIds.map((selectedId) => {
-      const found = listMarketingChannel.find((item) => item.id === selectedId);
-      if (found?.id) {
-        return CampaignMarketingService.deleteMAChannel(found.id);
-      } else {
-        return Promise.resolve(null);
-      }
-    });
-    Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} kênh truyền thông`, "success");
-        getListMarketingChannel(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có kênh truyền thông nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
-
-  const showDialogConfirmDelete = (item?: any) => {
-    const contentDialog: IContentDialog = {
-      color: "error",
-      className: "dialog-delete",
-      isCentered: true,
-      isLoading: true,
-      title: <Fragment>Xóa...</Fragment>,
-      message: (
-        <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "kênh " : `${listIdChecked.length} kênh đã chọn`}
-          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Xóa",
-      defaultAction: () => {
-        if (item?.id) {
-          onDelete(item.id);
-          return;
-        }
-        if (listIdChecked.length>0) {
-          onDeleteAll();
-          return;
-        }
-      }
-    };
-    setContentDialog(contentDialog);
-    setShowDialog(true);
-  };
+  const { showConfirmDelete, DialogComponent } = DeleteHandler({
+  deleteService: CampaignMarketingService.deleteMAChannel,
+  entityName: "kênh truyền thông",
+  reload: () => {
+    setListIdChecked([]);
+    getListMarketingChannel(params);
+    },
+  });
 
   const bulkActionList: BulkActionItemModel[] = [
     permissions["CONTRACT_DELETE"] == 1 && {
-      title: "Xóa loại hợp đồng",
-      callback: () => showDialogConfirmDelete(),
+      title: "Xóa kênh truyền thông",
+      callback: () => {
+         showConfirmDelete(listIdChecked);
+      }
     },
   ];
 
@@ -347,7 +283,7 @@ export default function MarketingChannel(props: any) {
         }}
       />
 
-      <Dialog content={contentDialog} isOpen={showDialog} />
+      {DialogComponent}
     </div>
   );
 }
