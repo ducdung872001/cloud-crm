@@ -92,7 +92,7 @@ export function SelectUrlRenderer(props) {
       JSON.stringify(prev.value) === JSON.stringify(nextRenderProps.value);
 
     if (!isSame) {
-      ReactDOM.render(<SelectUrlCustom {...nextRenderProps} />, container);
+      // ReactDOM.render(<SelectUrlCustom {...nextRenderProps} />, container);
 
       // lưu last props để lần sau so sánh
       container.__selectUrlLastProps = nextRenderProps;

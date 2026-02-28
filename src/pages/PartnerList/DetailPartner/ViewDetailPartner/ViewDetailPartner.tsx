@@ -167,7 +167,7 @@ export default function ViewDetailPartner(props: any) {
   useEffect(() => {
     //TODO: Khi mà chuyền function như này rất dễ bị dính cảnh bảo rò rỉ bộ nhớ, cách fix là clear nó đi
     return () => {
-      !deleteSignal ?? callback();
+      !deleteSignal || callback();
       setShowModalEdit(false);
     };
   }, [deleteSignal]);

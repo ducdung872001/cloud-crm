@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "esnext", "WebWorker"],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
@@ -14,7 +14,25 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "*": ["src/*"]
+      "@/*": ["src/*"],
+      "components/*": ["src/components/*"],
+      "pages/*": ["src/pages/*"],
+      "hooks/*": ["src/hooks/*"],
+      "utils/*": ["src/utils/*"],
+      "types/*": ["src/types/*"],
+      "services/*": ["src/services/*"],
+      "store/*": ["src/store/*"],
+      "constants/*": ["src/constants/*"],
+      "helpers/*": ["src/helpers/*"],
+      "assets/*": ["src/assets/*"],
+      "configs/*": ["src/configs/*"],
+      "contexts/*": ["src/contexts/*"],
+      "enums/*": ["src/enums/*"],
+      "mocks/*": ["src/mocks/*"],
+      "model/*": ["src/model/*"],
+      "exports/*": ["src/exports/*"],
+      "styles/*": ["src/styles/*"],
+      "template/*": ["src/template/*"]
     }
   },
   "include": ["src"],

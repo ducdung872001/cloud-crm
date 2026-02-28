@@ -198,21 +198,21 @@ export function GridRenderer(props) {
     if (container && props.onChange && field) {
       // Điều kiện container và props.onChange và field quan trọng
       configField[ids] = field;
-      ReactDOM.render(
-        <GridAg
-          domId={domId}
-          location={"viewAndHandle"}
-          onChange={(e) => {
-            handleGridChange(e);
-          }}
-          onAction={(action) => {
-            handleOnAction(action);
-          }}
-          dataGrid={dataGrid[ids]}
-          configField={configField[ids]}
-        />,
-        container
-      );
+      // ReactDOM.render(
+      //   <GridAg
+      //     domId={domId}
+      //     location={"viewAndHandle"}
+      //     onChange={(e) => {
+      //       handleGridChange(e);
+      //     }}
+      //     onAction={(action) => {
+      //       handleOnAction(action);
+      //     }}
+      //     dataGrid={dataGrid[ids]}
+      //     configField={configField[ids]}
+      //   />,
+      //   container
+      // );
 
       // cleanup khi unmount
       container.__cleanup = () => {

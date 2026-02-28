@@ -154,7 +154,6 @@ export async function SelectOptionData(key: string, params?: any) {
       response = await EmployeeService.list(params);
       break;
     case "saleId":
-    case "saleId":
       response = await EmployeeService.list(params);
       break;
     //Chỉ lấy nhân viên chưa cấu hình hoa hồng
@@ -178,7 +177,6 @@ export async function SelectOptionData(key: string, params?: any) {
     case "career":
       response = await CareerService.list(params);
       break;
-    case "marketingSendLeadSource":
     case "marketingSendLeadSource":
       response = await CustomerMarketingLeadService.list(params);
       break;
