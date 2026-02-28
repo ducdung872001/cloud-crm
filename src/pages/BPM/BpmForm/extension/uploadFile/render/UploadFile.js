@@ -87,16 +87,16 @@ export function UploadFileRenderer(props) {
           },
         ];
       }
-      ReactDOM.render(
-        <AttachmentUploader
-          value={_value}
-          placeholderLabel=""
-          onChange={handleUploadFileChange}
-          multiple={field.multiple ? field.multiple : false}
-          maxFiles={field.maxFiles ? parseInt(field.maxFiles) : 0}
-        />,
-        container
-      );
+      // ReactDOM.render(
+      //   <AttachmentUploader
+      //     value={_value}
+      //     placeholderLabel=""
+      //     onChange={handleUploadFileChange}
+      //     multiple={field.multiple ? field.multiple : false}
+      //     maxFiles={field.maxFiles ? parseInt(field.maxFiles) : 0}
+      //   />,
+      //   container
+      // );
 
       // cleanup khi unmount
       container.__cleanup = () => {

@@ -52,7 +52,7 @@ const FormEditorComponent = ({
         // NumberRenderExtension
         // TreeSelectorEditorExtension,
         // Đóng tạm vì gây lỗi khi build lên môi trường production
-        GridExtension,
+        // GridExtension,
         PropertiesPanelGridPropertiesPanel,
         UploadFileExtension,
         PropertiesPanelUploadFilePropertiesPanel,
