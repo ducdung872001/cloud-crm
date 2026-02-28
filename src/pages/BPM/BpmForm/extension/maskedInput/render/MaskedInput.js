@@ -70,28 +70,28 @@ export function MaskedInputRenderer(props) {
     const container = document.getElementById(containerId);
     if (container && props.onChange && field) {
       // Điều kiện container và props.onChange và field quan trọng
-      ReactDOM.render(
-        <MaskedInput
-          field={{
-            label: "",
-            name: "phone",
-            type: "text",
-            fill: true,
-            // regex: new RegExp(PHONE_REGEX),
-            // messageErrorRegex: "Số điện thoại không đúng định dạng",
-            iconPosition: "right",
-            required: required,
-          }}
-          handleUpdate={(e) => {
-            handleMaskedInputChange(e);
-          }}
-          originalValue={originalValue[id]}
-          value={value}
-          valueOfKey={valueOfKey}
-          url={url}
-        />,
-        container
-      );
+      // ReactDOM.render(
+      //   <MaskedInput
+      //     field={{
+      //       label: "",
+      //       name: "phone",
+      //       type: "text",
+      //       fill: true,
+      //       // regex: new RegExp(PHONE_REGEX),
+      //       // messageErrorRegex: "Số điện thoại không đúng định dạng",
+      //       iconPosition: "right",
+      //       required: required,
+      //     }}
+      //     handleUpdate={(e) => {
+      //       handleMaskedInputChange(e);
+      //     }}
+      //     originalValue={originalValue[id]}
+      //     value={value}
+      //     valueOfKey={valueOfKey}
+      //     url={url}
+      //   />,
+      //   container
+      // );
 
       // cleanup khi unmount
       container.__cleanup = () => {

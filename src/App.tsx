@@ -40,11 +40,11 @@ import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import CollectWarranty from "pages/Warranty/partials/CollectWarranty";
 import GridFormNew from "pages/BPM/GridForm";
 import { onMessage } from "firebase/messaging";
-import { messaging, requestPermission } from "firebase-config";
 import NotificationService from "services/NotificationService";
-import { useSTWebRTC } from "webrtc/useSTWebRTC";
 import WebRtcCallIncomeModal from "pages/CallCenter/partials/WebRtcCallIncomeModal";
 import ringtone from "assets/sounds/call_in_sound.wav";
+import { useSTWebRTC } from "./webrtc/useSTWebRTC";
+import {messaging, requestPermission } from "./firebase-config";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
