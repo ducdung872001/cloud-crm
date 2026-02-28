@@ -191,6 +191,7 @@ import CreateContractsXML from "pages/Contract/CreateContractsXML";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
 import DashboardRetail from "pages/DashboardRetail";
+import DashboardLoyalty from "@/pages/DashboardLoyalty";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -912,6 +913,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="ReportFill" />,
               code: "",
             },
+            {
+              title: "dashboardLoyalty", // Dashboard khách hàng thân thiết
+              path: urls.dashboard_loyalty,
+              icon: <Icon name="ReportFill" />,
+              code: "",
+            },
           ],
         },
         {
@@ -1577,6 +1584,10 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_dashboard,
     component: <SettingDashboard />,
+  },
+  {
+    path: urls.dashboard_loyalty,
+    component: <DashboardLoyalty />,
   },
   {
     path: urls.project,

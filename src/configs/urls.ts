@@ -3193,6 +3193,7 @@ export const urls = {
   setting_project: "/setting_project",
   config_bpm: "/config_bpm",
   setting_dashboard: "/setting_dashboard",
+  dashboard_loyalty: "/dashboard_loyalty",
   setting_report: "/setting_report",
   //Giám sát tích hợp
   integrated_monitoring: "/integrated_monitoring",
