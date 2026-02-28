@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Icon from "components/icon";
 import Dashboard from "pages/Dashboard/index";
 import { IMenuItem, IRouter } from "model/OtherModel";
@@ -190,6 +190,7 @@ import ManagerWork from "pages/ManagerWork";
 import CreateContractsXML from "pages/Contract/CreateContractsXML";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
+import DashboardRetail from "pages/DashboardRetail";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -1214,11 +1215,18 @@ export const routes: IRouter[] = [
   // Dashboard
   {
     path: "",
-    component: <Dashboard />,
+    // component: <Dashboard />,
+    component: <DashboardRetail />,
   },
   {
     path: urls.dashboard,
-    component: <Dashboard />,
+    // component: <Dashboard />,
+    component: (
+      <Fragment>
+        <DashboardRetail />
+        {/* <Dashboard /> */}
+      </Fragment>
+    ),
   },
   {
     path: urls.manager_work,
