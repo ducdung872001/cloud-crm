@@ -329,7 +329,7 @@ export default function InfoProcess(props: any) {
             onChange={(e) => {
               updateCustomerMultiselectAttribute(customerAttribute.id, e);
             }}
-            disabled={true}
+            // disabled={true}
           />
         );
         break;

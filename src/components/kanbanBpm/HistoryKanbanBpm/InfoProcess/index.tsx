@@ -278,7 +278,7 @@ export default function InfoProcess(props: any) {
             readOnly={!!customerAttribute.readonly}
             onChange={(e) => updateCustomerAttribute(customerAttribute.id, e.target.value)}
             maxLength={459}
-            disabled={true}
+            // disabled={true}
           />
         );
         break;
@@ -298,7 +298,7 @@ export default function InfoProcess(props: any) {
               let valueNum = value?.replace(/,/g, "");
               updateCustomerAttribute(customerAttribute.id, valueNum);
             }}
-            disabled={true}
+            // disabled={true}
           />
         );
         break;
@@ -318,7 +318,7 @@ export default function InfoProcess(props: any) {
               updateCustomerAttribute(customerAttribute.id, e.value);
             }}
             placeholder={`Nhập ${customerAttribute.name.toLowerCase()}`}
-            disabled={true}
+            // disabled={true}
           />
         );
         break;
@@ -334,7 +334,7 @@ export default function InfoProcess(props: any) {
             onChange={(e) => {
               updateCustomerMultiselectAttribute(customerAttribute.id, e);
             }}
-            disabled={true}
+            // disabled={true}
           />
         );
         break;
