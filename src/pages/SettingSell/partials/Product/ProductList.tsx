@@ -26,6 +26,9 @@ import PermissionService from "services/PermissionService";
 import Tippy from "@tippyjs/react";
 import ConfigIntegrateModal from "./ConfigIntegrateModal/ConfigIntegrateModal";
 import DetailProductModal from "./DetailProduct/DetailProductModal";
+import ModalImportProduct from "./partials/ModalImport";
+import Badge from "@/components/badge/badge";
+import { ProductLabel } from "@/assets/mock/Product";
 
 export default function ProductList(props: IProductListProps) {
   document.title = "Danh sách sản phẩm";
@@ -51,6 +54,7 @@ export default function ProductList(props: IProductListProps) {
   const [tab, setTab] = useState("tab_one");
   const [listPartner, setListPartner] = useState([]);
   const [showModalDetail, setShowModalDetail] = useState<boolean>(false);
+  const [showModalImport, setShowModalImport] = useState<boolean>(false);
 
   // console.log('listPartner', listPartner);
   const [targetBsnId, setTargetBsnId] = useState(targetBsnId_product ? +targetBsnId_product : null);
@@ -158,6 +162,7 @@ export default function ProductList(props: IProductListProps) {
 
     if (response.code === 0) {
       const result = response.result;
+      console.log("RESULT", result.items);
       setListProduct(result.items);
 
       if (tab === "tab_one") {
@@ -271,6 +276,16 @@ export default function ProductList(props: IProductListProps) {
                 setShowModalAdd(true);
               },
             },
+            {
+              title: "Thêm hàng loạt",
+              callback: () => {
+                setShowModalImport(true);
+              },
+            },
+            {
+              title: "Thêm sản phẩm bằng Qr",
+              callback: () => {},
+            },
           ]
         : []),
     ],
@@ -280,17 +295,30 @@ export default function ProductList(props: IProductListProps) {
 
   const dataFormat = ["text-center", "", "", "text-center", "text-center", "text-center", "text-right"];
 
-  const dataMappingArray = (item: IProductResponse, index: number) => [
-    getPageOffset(params) + index + 1,
-    item.name,
-    item.type == 1 ? "Thành phẩm" : "Vật tư tiêu hao",
-    <a key={item.id} data-fancybox="gallery" href={item.avatar}>
-      <Image src={item.avatar} alt={item.name} width={"64rem"} />
-    </a>,
-    item.position,
-    item.unitName,
-    formatCurrency(item.price),
-  ];
+  const getRandomLabel = () => {
+    const keys = Object.keys(ProductLabel);
+    const randomKey = keys[Math.floor(Math.random() * keys.length)];
+    return ProductLabel[randomKey];
+  };
+
+  const dataMappingArray = (item: IProductResponse, index: number) => {
+    // Hàm này chỉ têst trên UI, cần bổ sung trường label prod trên db và get từ result api ra để hiển thị chính xác nhãn sp
+    const randomLabel = getRandomLabel();
+    return [
+      getPageOffset(params) + index + 1,
+      <div className="d-flex" style={{ gap: 8, alignItems: "baseline" }} key={item.id}>
+        <p>{item.name}</p>
+        <Badge text={randomLabel.label} variant={randomLabel.color} />
+      </div>,
+      item.type == 1 ? "Thành phẩm" : "Vật tư tiêu hao",
+      <a key={item.id} data-fancybox="gallery" href={item.avatar}>
+        <Image src={item.avatar} alt={item.name} width={"64rem"} />
+      </a>,
+      item.position,
+      item.unitName,
+      formatCurrency(item.price),
+    ];
+  };
 
   const actionsTable = (item: IProductResponse): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
@@ -303,8 +331,8 @@ export default function ProductList(props: IProductListProps) {
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                setIdProduct(item.id);
-                setShowModalConfig(true);
+                  setIdProduct(item.id);
+                  setShowModalConfig(true);
                 }
               },
             },
@@ -314,20 +342,27 @@ export default function ProductList(props: IProductListProps) {
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                setDataProduct(item);
-                setShowModalDetail(true);
+                  setDataProduct(item);
+                  setShowModalDetail(true);
                 }
+              },
+            },
+            {
+              title: "Nhân bản sản phẩm",
+              icon: <Icon name="Copy" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 17 }} />,
+              callback: () => {
+                handleDuplicateProd(item);
               },
             },
             permissions["PRODUCT_UPDATE"] == 1 && {
               title: "Sửa",
-              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                setIdProduct(item.id);
-                setShowModalAdd(true);
-                setDataProduct(item);
+                  setIdProduct(item.id);
+                  setShowModalAdd(true);
+                  setDataProduct(item);
                 }
               },
             },
@@ -337,7 +372,7 @@ export default function ProductList(props: IProductListProps) {
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                showDialogConfirmDelete(item);
+                  showDialogConfirmDelete(item);
                 }
               },
             },
@@ -372,21 +407,26 @@ export default function ProductList(props: IProductListProps) {
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} danh mục sản phẩm`, "success");
-        getListProduct(params,tab);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có danh mục sản phẩm nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} danh mục sản phẩm`, "success");
+          getListProduct(params, tab);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có danh mục sản phẩm nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+  };
+
+  const handleDuplicateProd = (item) => {
+    showToast("Đã nhân bản sản phẩm thành công", "success");
+    setListProduct((prev) => [...prev, item]);
+  };
 
   const showDialogConfirmDelete = (item?: IProductResponse) => {
     const contentDialog: IContentDialog = {
@@ -412,11 +452,11 @@ export default function ProductList(props: IProductListProps) {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
@@ -630,6 +670,15 @@ export default function ProductList(props: IProductListProps) {
           }
           setShowModalAdd(false);
           setDataProduct(null);
+        }}
+      />
+      <ModalImportProduct
+        onShow={showModalImport}
+        onHide={() => setShowModalImport(false)}
+        onImportSuccess={(products) => {
+          console.log("Danh sách sản phẩm:", products);
+          setListProduct((prev) => [...prev, ...products]);
+          // Gọi API tạo mới hàng loạt ở đây
         }}
       />
 

@@ -10,13 +10,22 @@ import RebornEditor from "components/editor/reborn";
 import { serialize } from "utils/editor";
 import _ from "lodash";
 import ProductService from "services/ProductService";
+import { PRODUCT_DETAIL_CONFIG } from "@/assets/mock/Product";
+import Toggle from "@/components/toggle";
+import ProductPreview from "./PreviewProduct";
+interface ProductPreviewProps {
+  product: any;
+  config: Record<string, boolean>;
+}
 
 export default function DetailProductModal(props: any) {
   const { onShow, onHide, data } = props;
-
+  console.log("DATA", data);
+  
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+  const [productDetail, setProductDetail] = useState<any>({});
 
   const values = useMemo(
     () =>
@@ -124,6 +133,17 @@ export default function DetailProductModal(props: any) {
     [isSubmit, formData, validateContent]
   );
 
+  const handleProductDetailToggle = (key: string) => {
+    setProductDetail((prev) => {
+      const newState = {
+        ...prev,
+        [key]: !prev[key],
+      };
+      localStorage.setItem("productDetail", JSON.stringify(newState));
+      return newState;
+    });
+  };
+
   const showDialogConfirmCancel = () => {
     const contentDialog: IContentDialog = {
       color: "warning",
@@ -169,6 +189,17 @@ export default function DetailProductModal(props: any) {
         <form className="form-detail-product" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader title="Chi tiết sản phẩm" toggle={() => !isSubmit && clearForm()} />
           <ModalBody>
+            {/* Phần handle ẩn hiện các tt sản phẩm */}
+            <div className="config__section">
+              <h3 style={{paddingTop: "1.6rem"}}>Hiển thị các thông tin sản phẩm</h3>
+              {PRODUCT_DETAIL_CONFIG.map((cfg) => (
+                <div key={cfg.key} className="config__item">
+                  <span>{cfg.label}</span>
+                  <Toggle checked={productDetail[cfg.key]} onChange={() => handleProductDetailToggle(cfg.key)} />
+                </div>
+              ))}
+            </div>
+
             <div className="wrapper-detail-product">
               {/* Nội dung chi tiết */}
               <div className="form-group">
@@ -182,6 +213,19 @@ export default function DetailProductModal(props: any) {
                   error={validateContent}
                   // message="Nội dung của bạn chưa có link thu thập VOC"
                 />
+              </div>
+            </div>
+            {/* Phần show preview sản phẩm */}
+            <div className="preview__section">
+              <h3>Xem trước thông tin sản phẩm</h3>
+              <div className="preview__container">
+                <div className="preview__content">
+                  <p>Chi tiết sản phẩm</p>
+                  <ProductPreview 
+                    config={productDetail}
+                    product={data}
+                  />
+                </div>
               </div>
             </div>
           </ModalBody>

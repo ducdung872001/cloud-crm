@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Icon from "components/icon";
 import Dashboard from "pages/Dashboard/index";
 import { IMenuItem, IRouter } from "model/OtherModel";
@@ -58,6 +58,15 @@ import ProductSoldList from "pages/ProductImport/ProductSoldList/ProductSoldList
 import ProductInventoryList from "pages/ProductImport/ProductInventoryList/ProductInventoryList";
 import InventoryList from "pages/ProductImport/Inventory/InventoryList";
 import CreateReceipt from "pages/ProductImport/CreateReceipt/CreateReceipt";
+// Quản lý tài chính
+import FinanceManagement from "pages/Finance";
+import FinanceDashboard from "pages/Finance/Dashboard";
+import FinanceCashBook from "pages/Finance/CashBook";
+import FinanceCashBookTemplate from "pages/Finance/CashBookTemplate";
+import FinanceFundManagement from "pages/Finance/FundManagement";
+import FinanceDebtManagement from "pages/Finance/DebtManagement";
+import FinanceDebtTransaction from "pages/Finance/DebtTransaction";
+import FinanceShiftInventory from "pages/Finance/ShiftInventory";
 // Bán hàng
 import CreateOrderSales from "pages/Sell/CreateOrderSales/CreateOrderSales";
 import SaleInvoiceList from "pages/Sell/SaleInvoiceList/SaleInvoiceList";
@@ -172,7 +181,7 @@ import CampaignListParent from "pages/Campaign/CampaignListParent";
 import UserTaskList from "pages/UserTaskList";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import OrderRequestList from "pages/OrderRequestList";
-
+import MaterialList from "@/pages/ManagementMaterial/MaterialList";
 import EmailConfirm from "pages/Contract/EmailComfirm/EmailConfirm";
 import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import MarketingAutomationListV2 from "pages/MarketingAutomation/MarketingAutomationListV2";
@@ -187,10 +196,15 @@ import FieldMannagement from "pages/FieldManagement/FieldManagement";
 import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
 import ManagementOpportunityNew from "pages/ManagementOpportunityNew";
 import ManagerWork from "pages/ManagerWork";
+import Fanpage from "pages/Fanpage";
+import TotalChat from "pages/Fanpage/TotalChat";
 import CreateContractsXML from "pages/Contract/CreateContractsXML";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
 import MultiChannelSales from "@/pages/MultiChannelSales/MultiChannelSales";
+import DashboardRetail from "pages/DashboardRetail";
+import DashboardLoyalty from "@/pages/DashboardLoyalty";
+import InvoiceVATOverview from "pages/Kpi/InvoiceVAT/index";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -264,6 +278,12 @@ export const menu: IMenuItem[] = [
               title: "kpiManagement", // Quản lý KPI
               path: urls.kpiObject,
               icon: <Icon name="KpiCustomer" />,
+              code: "", //KPI_APPLY
+            },
+            {
+              title: "invoiceVAT", // Xuất hóa đơn VAT
+              path: urls.invoiceVAT,
+              icon: <Icon name="File" />,
               code: "", //KPI_APPLY
             },
             // {
@@ -529,6 +549,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="Opportunity" />,
         code: "",
       },
+      {
+              title: "fanpage", // Quản lý Fanpage
+              path: urls.fanpage,
+              icon: <Icon name="FacebookFill" />,
+              code: "FANPAGE",
+            },
       ...(!checkSubdomainTNEX
         ? [
             {
@@ -771,6 +797,56 @@ export const menu: IMenuItem[] = [
           ],
         },
         {
+          title: "financeManagement", // Quản lý tài chính
+          path: urls.finance_management,
+          icon: <Icon name="CashBook" />,
+          code: "",
+          children: [
+            {
+              title: "financeDashboard", // Dashboard tài chính
+              path: urls.finance_management_dashboard,
+              icon: <Icon name="ReportFill" />,
+              code: "",
+            },
+            {
+              title: "financeCashbook", // Sổ thu chi
+              path: urls.finance_management_cashbook,
+              icon: <Icon name="CashBook" />,
+              code: "",
+            },
+            {
+              title: "createFinanceTransaction", // Tạo phiếu thu/chi
+              path: urls.finance_management_cashbook_template,
+              icon: <Icon name="PlusCircleFill" />,
+              code: "",
+            },
+            {
+              title: "fundManagement", // Quản lý quỹ
+              path: urls.finance_management_fund_management,
+              icon: <Icon name="MoneyFill" />,
+              code: "",
+            },
+            {
+              title: "debtManagement", // Quản lý công nợ
+              path: urls.finance_management_debt_management,
+              icon: <Icon name="Invoice" />,
+              code: "",
+            },
+            {
+              title: "createDebtTransaction", // Tạo giao dịch nợ
+              path: urls.finance_management_debt_transaction,
+              icon: <Icon name="PlusCircleFill" />,
+              code: "",
+            },
+            {
+              title: "endOfShiftInventory", // Kiểm kê cuối ca
+              path: urls.finance_management_shift_inventory,
+              icon: <Icon name="File" />,
+              code: "",
+            },
+          ],
+        },
+        {
           title: "order", // Đặt hàng
           path: urls.product_import,
           icon: <Icon name="Cart" />,
@@ -862,6 +938,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="File" />,
               code: "",
             },
+            {
+              title: "managementMaterial", // Quản lý vật tư
+              path: urls.material,
+              icon: <Icon name="WarehouseManagement" />,
+              code: "",
+            },
           ],
         },
         {
@@ -915,6 +997,12 @@ export const menu: IMenuItem[] = [
             {
               title: "settingDashboard", // cài đặt Dashboard
               path: urls.setting_dashboard,
+              icon: <Icon name="ReportFill" />,
+              code: "",
+            },
+            {
+              title: "dashboardLoyalty", // Dashboard khách hàng thân thiết
+              path: urls.dashboard_loyalty,
               icon: <Icon name="ReportFill" />,
               code: "",
             },
@@ -1221,11 +1309,18 @@ export const routes: IRouter[] = [
   // Dashboard
   {
     path: "",
-    component: <Dashboard />,
+    // component: <Dashboard />,
+    component: <DashboardRetail />,
   },
   {
     path: urls.dashboard,
-    component: <Dashboard />,
+    // component: <Dashboard />,
+    component: (
+      <Fragment>
+        <DashboardRetail />
+        {/* <Dashboard /> */}
+      </Fragment>
+    ),
   },
   {
     path: urls.manager_work,
@@ -1315,8 +1410,48 @@ export const routes: IRouter[] = [
     component: <CashBookList />,
   },
   {
+    path: urls.finance_management,
+    component: <FinanceManagement />,
+  },
+  {
+    path: urls.finance_management_dashboard,
+    component: <FinanceDashboard />,
+  },
+  {
+    path: urls.finance_management_cashbook,
+    component: <FinanceCashBook />,
+  },
+  {
+    path: urls.finance_management_cashbook_template,
+    component: <FinanceCashBookTemplate />,
+  },
+  {
+    path: urls.finance_management_fund_management,
+    component: <FinanceFundManagement />,
+  },
+  {
+    path: urls.finance_management_debt_management,
+    component: <FinanceDebtManagement />,
+  },
+  {
+    path: urls.finance_management_debt_transaction,
+    component: <FinanceDebtTransaction />,
+  },
+  {
+    path: urls.finance_management_shift_inventory,
+    component: <FinanceShiftInventory />,
+  },
+  {
     path: urls.cxmSurvey, // Thông tin khảo sát
     component: <CxmSurveyList />,
+  },
+  {
+    path: urls.fanpage,
+    component: <Fanpage />,
+  },
+  {
+    path: urls.total_chat,
+    component: <TotalChat />,
   },
   {
     path: urls.manage_data_sharing,
@@ -1416,6 +1551,10 @@ export const routes: IRouter[] = [
   {
     path: urls.kpiObject,
     component: <KpiObjectList />,
+  },
+  {
+    path: urls.invoiceVAT,
+    component: <InvoiceVATOverview />,
   },
   {
     path: urls.warranty,
@@ -1578,6 +1717,10 @@ export const routes: IRouter[] = [
     component: <SettingDashboard />,
   },
   {
+    path: urls.dashboard_loyalty,
+    component: <DashboardLoyalty />,
+  },
+  {
     path: urls.project,
     component: <ProjectList />,
   },
@@ -1710,6 +1853,11 @@ export const routes: IRouter[] = [
   {
     path: urls.adjustment_slip,
     component: <AdjustmentSlip />,
+  },
+  // quản lý vật tư
+  {
+    path: urls.material,
+    component: <MaterialList />,
   },
   // thông tin cá nhân
   {
