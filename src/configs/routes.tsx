@@ -172,7 +172,7 @@ import CampaignListParent from "pages/Campaign/CampaignListParent";
 import UserTaskList from "pages/UserTaskList";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import OrderRequestList from "pages/OrderRequestList";
-
+import MaterialList from "@/pages/ManagementMaterial/MaterialList";
 import EmailConfirm from "pages/Contract/EmailComfirm/EmailConfirm";
 import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import MarketingAutomationListV2 from "pages/MarketingAutomation/MarketingAutomationListV2";
@@ -190,24 +190,6 @@ import ManagerWork from "pages/ManagerWork";
 import CreateContractsXML from "pages/Contract/CreateContractsXML";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import MaterialList from "@/pages/ManagementMaterial/MaterialList";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
