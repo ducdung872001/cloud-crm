@@ -191,6 +191,22 @@ import CreateContractsXML from "pages/Contract/CreateContractsXML";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import MaterialList from "@/pages/ManagementMaterial/MaterialList";
 const isBeauty = localStorage.getItem("isBeauty");
 
