@@ -258,6 +258,7 @@ i18n.use(initReactI18next).init({
           createKPIFramework: "Tạo bộ KPI",
           createKPITask: "Tạo phiếu giao KPI",
           kpiManagement: "Quản lý KPI",
+          invoiceVAT: "Xuất hóa đơn VAT",
           project: "Dự án",
           //Quản lý công việc BPM
           userTaskList: "Xử lý hồ sơ",
