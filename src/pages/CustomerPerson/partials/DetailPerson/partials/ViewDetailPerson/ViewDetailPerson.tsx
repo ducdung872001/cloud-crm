@@ -24,6 +24,8 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import Button from "components/button/button";
 import TextArea from "components/textarea/textarea";
 import _ from "lodash";
+import ScoreHistoryModal from "../ScoreHistoryModal";
+import EditScoreModal from "../EditScoreModal";
 
 SwiperCore.use([Navigation]);
 
@@ -45,6 +47,8 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
   const [isShowInfoContact, setIsShowInfoContact] = useState<boolean>(false);
   const [isShowInfoOther, setIsShowInfoOther] = useState<boolean>(false);
   const [mapCustomerAttribute, setMapCustomerAttribute] = useState<any>(null);
+  const [showModalHistory, setShowModalHistory] = useState<boolean>(false);
+  const [showModalEditScore, setShowModalEditScore] = useState<boolean>(false);
   // console.log('mapCustomerAttribute', mapCustomerAttribute);
   const [dataCustomerAttribute, setDataCustomerAttribute] = useState<any>(null);
 
@@ -699,67 +703,49 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
             <span className="info__item--right">{data.address || notData}</span>
           </div>
         </div>
-      </div>
-
-      {/* <div className="info__service--suggestions">
-        <div
-          className="title-click"
-          onClick={() => {
-            setIsShowInfoRevenue(false);
-            setIsShowInfoContact(false);
-            setIsShowInfoDetail(false);
-            setHasServiceSuggestion(!hasServiceSuggestion);
-          }}
-        >
-          <span className="name">Gợi ý sản phẩm/dịch vụ</span>
-          <span className="icon-up-down">{hasServiceSuggestion ? <Icon name="ChevronDown" /> : <Icon name="ChevronRight" />}</span>
+        <div className="title-info" style={{ marginTop: "2rem" }}>
+          <span className="title">Thông tin Loyalty</span>
+          <div className="action-update">
+            <div className="add-person" onClick={() => setShowModalHistory(true)}>
+              <Tippy content="Lịch sử" delay={[100, 0]} animation="scale-extreme">
+                <span>
+                  <Icon name="History" />
+                </span>
+              </Tippy>
+            </div>
+            <div className="update-person" onClick={() => setShowModalEditScore(true)}>
+              <Tippy content="Sửa điểm thành viên" delay={[100, 0]} animation="scale-extreme">
+                <span>
+                  <Icon name="Pencil" />
+                </span>
+              </Tippy>
+            </div>
+          </div>
         </div>
 
-        {hasServiceSuggestion &&
-          (lstServiceSuggestion && lstServiceSuggestion.length > 0 ? (
-            <div className="lst__suggested--product">
-              <Swiper
-                slidesPerView={2}
-                spaceBetween={20}
-                className="mySwiper"
-                navigation={{
-                  nextEl: ".swiper-button-next",
-                  prevEl: ".swiper-button-prev",
-                }}
-              >
-                <div className="swiper-button-next"></div>
-                <div className="swiper-button-prev"></div>
-
-                {lstServiceSuggestion.map((item, idx) => {
-                  return (
-                    <SwiperSlide key={idx}>
-                      <div
-                        className="info__product--service"
-                        onClick={() => {
-                          handOpenTabCreateSale(`/crm/create_sale_add?customerId=${data.id}&serviceSuggestionId=${item.idOrg}`);
-                        }}
-                      >
-                        <div className="__image">
-                          <img src={item.avatar || ImageError} alt={item.name} />
-                        </div>
-                        <div className="__desc">
-                          <span className="name">{item.name}</span>
-                          <span className="price">
-                            {formatCurrency(item.price, ",", "")} <sup>đ</sup>
-                          </span>
-                        </div>
-                      </div>
-                    </SwiperSlide>
-                  );
-                })}
-              </Swiper>
+        <div className="detail-basic-info">
+          <div className="info__item">
+            <div className="info__item--left">
+              <Tippy content="Điểm tích luỹ" delay={[100, 0]} animation="scale-extreme">
+                <div className="icon-score">
+                  <Icon name="Score" />
+                </div>
+              </Tippy>
             </div>
-          ) : (
-            <div className="no__item--service-suggestion">
-              <span className="name-item">Bạn chưa có gợi ý sản phẩm/dịch vụ nào!</span>
+            <span className="info__item--right">{"10.000"} điểm</span>
+          </div>
+          <div className="info__item">
+            <div className="info__item--left">
+              <Tippy content="Hạng thành viên" delay={[100, 0]} animation="scale-extreme">
+                <div className="icon-gold-member">
+                  <Icon name="GoldMember" />
+                </div>
+              </Tippy>
             </div>
-          ))}
-      </div> */}
+            <span className="info__item--right">{"Vàng"}</span>
+          </div>
+        </div>
+      </div>
 
       {checkSubdomainTNEX ? null : (
         <div>
@@ -1139,20 +1125,21 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
               <span className="icon-up-down">{isShowStatusLoan ? <Icon name="ChevronDown" /> : <Icon name="ChevronRight" />}</span>
             </div>
 
-            {isShowStatusLoan &&
-              cashStatusTNEX.map((item, index) => (
-                <div key={index} style={{ paddingLeft: "1.2rem", marginBottom: "1rem", display: "flex", justifyContent: "space-between" }}>
-                  <div style={{ width: "30%" }}>
-                    <span style={{ fontSize: 14, fontWeight: "600" }}>{item.product}</span>
+            {
+              isShowStatusLoan &&
+                cashStatusTNEX.map((item, index) => (
+                  <div key={index} style={{ paddingLeft: "1.2rem", marginBottom: "1rem", display: "flex", justifyContent: "space-between" }}>
+                    <div style={{ width: "30%" }}>
+                      <span style={{ fontSize: 14, fontWeight: "600" }}>{item.product}</span>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: 14, fontWeight: "600", marginRight: 5 }}>:</span>
+                    </div>
+                    <div style={{ width: "65%" }}>
+                      <span style={{ fontSize: 14, fontWeight: "400" }}>{item.status}</span>
+                    </div>
                   </div>
-                  <div>
-                    <span style={{ fontSize: 14, fontWeight: "600", marginRight: 5 }}>:</span>
-                  </div>
-                  <div style={{ width: "65%" }}>
-                    <span style={{ fontSize: 14, fontWeight: "400" }}>{item.status}</span>
-                  </div>
-                </div>
-              ))
+                ))
 
               // <div style={{marginBottom: '1rem'}}>
               //   <SelectCustom
@@ -1218,20 +1205,21 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
               <span className="icon-up-down">{isShowStatusOnboard ? <Icon name="ChevronDown" /> : <Icon name="ChevronRight" />}</span>
             </div>
 
-            {isShowStatusOnboard &&
-              onBoardStatusTNEX.map((item, index) => (
-                <div key={index} style={{ paddingLeft: "1.2rem", marginBottom: "1rem", display: "flex", justifyContent: "space-between" }}>
-                  <div style={{ width: "30%" }}>
-                    <span style={{ fontSize: 14, fontWeight: "600" }}>{item.product}</span>
+            {
+              isShowStatusOnboard &&
+                onBoardStatusTNEX.map((item, index) => (
+                  <div key={index} style={{ paddingLeft: "1.2rem", marginBottom: "1rem", display: "flex", justifyContent: "space-between" }}>
+                    <div style={{ width: "30%" }}>
+                      <span style={{ fontSize: 14, fontWeight: "600" }}>{item.product}</span>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: 14, fontWeight: "600", marginRight: 5 }}>:</span>
+                    </div>
+                    <div style={{ width: "65%" }}>
+                      <span style={{ fontSize: 14, fontWeight: "400" }}>{item.status}</span>
+                    </div>
                   </div>
-                  <div>
-                    <span style={{ fontSize: 14, fontWeight: "600", marginRight: 5 }}>:</span>
-                  </div>
-                  <div style={{ width: "65%" }}>
-                    <span style={{ fontSize: 14, fontWeight: "400" }}>{item.status}</span>
-                  </div>
-                </div>
-              ))
+                ))
               // <div style={{marginBottom: '1rem'}}>
               //   <SelectCustom
               //     id="code"
@@ -1464,6 +1452,8 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
         }}
       />
       <AddCustomerViewerModal onShow={showModalAddViewer} dataCustomer={data} onHide={() => setShowModalAddViewer(false)} />
+      <ScoreHistoryModal onShow={showModalHistory} dataCustomer={data} onHide={() => setShowModalHistory(false)} />
+      <EditScoreModal onShow={showModalEditScore} dataCustomer={data} onHide={() => setShowModalEditScore(false)} />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );

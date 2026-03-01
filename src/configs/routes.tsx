@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Icon from "components/icon";
 import Dashboard from "pages/Dashboard/index";
 import { IMenuItem, IRouter } from "model/OtherModel";
@@ -193,6 +193,8 @@ import CreateContractsXML from "pages/Contract/CreateContractsXML";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
 import { path } from "lodash/fp";
+import DashboardRetail from "pages/DashboardRetail";
+import DashboardLoyalty from "@/pages/DashboardLoyalty";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -920,6 +922,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="ReportFill" />,
               code: "",
             },
+            {
+              title: "dashboardLoyalty", // Dashboard khách hàng thân thiết
+              path: urls.dashboard_loyalty,
+              icon: <Icon name="ReportFill" />,
+              code: "",
+            },
           ],
         },
         {
@@ -1223,11 +1231,18 @@ export const routes: IRouter[] = [
   // Dashboard
   {
     path: "",
-    component: <Dashboard />,
+    // component: <Dashboard />,
+    component: <DashboardRetail />,
   },
   {
     path: urls.dashboard,
-    component: <Dashboard />,
+    // component: <Dashboard />,
+    component: (
+      <Fragment>
+        <DashboardRetail />
+        {/* <Dashboard /> */}
+      </Fragment>
+    ),
   },
   {
     path: urls.manager_work,
@@ -1586,6 +1601,10 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_dashboard,
     component: <SettingDashboard />,
+  },
+  {
+    path: urls.dashboard_loyalty,
+    component: <DashboardLoyalty />,
   },
   {
     path: urls.project,

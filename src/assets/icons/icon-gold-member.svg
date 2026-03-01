@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 24 24"
+     width="24" height="24"
+     role="img"
+     aria-labelledby="title desc">
+  <title id="title">Hạng thành viên Vàng</title>
+  <desc id="desc">Huy chương vàng với ngôi sao ở giữa và ruy băng phía dưới, biểu tượng của hạng thành viên vàng</desc>
+
+  <defs>
+    <!-- gold gradient for medal -->
+    <linearGradient id="goldGrad" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#FFEE93"/>
+      <stop offset="0.45" stop-color="#FFD54A"/>
+      <stop offset="1" stop-color="#FFC107"/>
+    </linearGradient>
+
+    <!-- subtle highlight -->
+    <radialGradient id="highlight" cx="0.35" cy="0.25" r="0.7">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- medal circle -->
+  <circle cx="12" cy="8" r="5.2" fill="url(#goldGrad)" stroke="#B07A00" stroke-width="0.5"/>
+
+  <!-- inner rim -->
+  <circle cx="12" cy="8" r="4.0" fill="none" stroke="#FFD54A" stroke-width="0.6"/>
+
+  <!-- highlight -->
+  <ellipse cx="11.2" cy="6.6" rx="2.8" ry="1.6" fill="url(#highlight)" opacity="0.9"/>
+
+  <!-- star in center (gold edge, light interior) -->
+  <polygon
+    points="12,5 13.1,8.26 16.6,8.9 13.8,11.14 14.5,14.63 12,12.8 9.5,14.63 10.2,11.14 7.4,8.9 10.9,8.26"
+    fill="#FFF8E1" stroke="#B07A00" stroke-width="0.35" />
+
+  <!-- ribbon left -->
+  <path d="M9.2 11.6 L7.1 19.2 L9.8 17.6 L11.3 19.2 L9.2 11.6 Z"
+        fill="#C47C00" stroke="#A05C00" stroke-width="0.25" />
+
+  <!-- ribbon right -->
+  <path d="M14.8 11.6 L16.9 19.2 L14.2 17.6 L12.7 19.2 L14.8 11.6 Z"
+        fill="#C47C00" stroke="#A05C00" stroke-width="0.25" />
+
+  <!-- small decorative rim at ribbon join -->
+  <rect x="9.2" y="10.6" width="5.6" height="1.0" rx="0.4" fill="#D99400" stroke="#B07A00" stroke-width="0.2" />
+
+</svg>
