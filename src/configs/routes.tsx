@@ -187,9 +187,12 @@ import FieldMannagement from "pages/FieldManagement/FieldManagement";
 import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
 import ManagementOpportunityNew from "pages/ManagementOpportunityNew";
 import ManagerWork from "pages/ManagerWork";
+import Fanpage from "pages/Fanpage";
+import TotalChat from "pages/Fanpage/TotalChat";
 import CreateContractsXML from "pages/Contract/CreateContractsXML";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
+import { path } from "lodash/fp";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -736,6 +739,12 @@ export const menu: IMenuItem[] = [
               path: urls.customer_survey,
               icon: <Icon name="SpeakerNotes" />,
               code: "",
+            },
+            {
+              title: "fanpage", // Quản lý Fanpage
+              path: urls.fanpage,
+              icon: <Icon name="FacebookFill" />,
+              code: "FANPAGE",
             },
             {
               title: "cxmSurvey", // Chiến dịch khảo sát
@@ -1310,6 +1319,14 @@ export const routes: IRouter[] = [
   {
     path: urls.cxmSurvey, // Thông tin khảo sát
     component: <CxmSurveyList />,
+  },
+  {
+    path: urls.fanpage,
+    component: <Fanpage />,
+  },
+  {
+    path: urls.total_chat,
+    component: <TotalChat />,
   },
   {
     path: urls.manage_data_sharing,

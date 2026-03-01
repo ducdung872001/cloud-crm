@@ -99,6 +99,9 @@ i18n.use(initReactI18next).init({
           feedbackEnhancement: "Feedback enhancement",
           customerSurvey: "Customer survey",
 
+          fanpage: "Fanpage",
+          totalChat: "Total chat",
+
           warehouse: "Warehouse",
           // đoạn này là children của warehouse
           createPurchaseOrder: "Create purchase order",
@@ -333,6 +336,9 @@ i18n.use(initReactI18next).init({
           medicalRecord: "Nhật ký điều trị",
           feedbackEnhancement: "Góp ý cải tiến",
           customerSurvey: "Khảo sát khách hàng",
+
+          fanpage: "Fanpage",
+          totalChat: "Tổng hội thoại",
 
           // đoạn này là children của đặt hàng
           order: "Mua hàng",
