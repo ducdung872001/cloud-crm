@@ -190,6 +190,7 @@ import ManagerWork from "pages/ManagerWork";
 import CreateContractsXML from "pages/Contract/CreateContractsXML";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
+import MultiChannelSales from "@/pages/MultiChannelSales/MultiChannelSales";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -624,6 +625,12 @@ export const menu: IMenuItem[] = [
               path: urls.customer_pay,
               icon: <Icon name="ReturnInvoice" />,
               code: "RETURN_INVOICE",
+            },
+            {
+              title: "multiChannelSales", // bán hàng đa kênh
+              path: urls.multi_channel_sales,
+              icon: <Icon name="ReturnInvoice" />,
+              code: "",
             },
             // {
             //   title: "salesFlow", // Quy trình bán hàng
@@ -1667,6 +1674,11 @@ export const routes: IRouter[] = [
   {
     path: urls.customer_pay,
     component: <CustomerPayList />,
+  },
+  // bán hàng đa kênh
+  {
+    path: urls.multi_channel_sales,
+    component: <MultiChannelSales />,
   },
   // lịch
   {

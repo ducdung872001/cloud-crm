@@ -1,0 +1,29 @@
+.multi-channel-orders-page {
+    .conatiner-header{
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        .conatiner-button {
+            display: flex;
+            gap: 0 1rem;
+            .button-export{
+                border: 1px solid;
+                padding: 0.5rem 1.6rem;
+                border-radius: 10px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: var(--extra-color-20);
+                }
+            }
+        }
+    }
+
+    .table-order {
+        margin-top: 2rem;
+        .box-table {
+            margin-top: 0;
+        }
+    }
+}

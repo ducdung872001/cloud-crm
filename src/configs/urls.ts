@@ -3134,6 +3134,8 @@ export const urls = {
   sale_invoice: "/sale_invoice",
   // đường dẫn danh sách khách trả hàng
   customer_pay: "/customer_pay",
+  // bán hàng đa kênh
+  multi_channel_sales: "/multi_channel_sales",
   //tạo báo giá
   create_offer_add: "/create_offer_add",
   report: "/report",
