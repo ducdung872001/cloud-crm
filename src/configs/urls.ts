@@ -3087,6 +3087,11 @@ export const urls = {
   timekeeping: "/timekeeping",
   cashbook: "/cashbook",
   cxmSurvey: "/cxm_survey",
+
+  // Fanpage 
+  fanpage: "/fanpage",
+  total_chat: "/total_chat",
+
   // Đường dẫn đặt hàng
   order: "/order",
   // Đường dẫn quản lý đặt hàng
