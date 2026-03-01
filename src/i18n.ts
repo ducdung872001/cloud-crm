@@ -99,7 +99,7 @@ i18n.use(initReactI18next).init({
           feedbackEnhancement: "Feedback enhancement",
           customerSurvey: "Customer survey",
 
-          fanpage: "Fanpage",
+          fanpage: "Omnichannel",
           totalChat: "Total chat",
 
           warehouse: "Warehouse",
@@ -113,6 +113,16 @@ i18n.use(initReactI18next).init({
           warehouseManagement: "Warehouse management",
           inventoryTransferDocument: "Inventory transfer document",
           stockAdjustmentVoucher: "Stock adjustment voucher",
+
+          financeManagement: "Finance management",
+          financeDashboard: "Dashboard",
+          financeCashbook: "Cash flow ledger",
+          createFinanceTransaction: "Create receipt/payment voucher",
+          createCashbookTemplate: "Create receipt/payment voucher",
+          fundManagement: "Fund management",
+          debtManagement: "Debt management",
+          createDebtTransaction: "Create debt transaction",
+          endOfShiftInventory: "End of shift inventory",
 
           cashbook: "Cash book",
           bpm: "Process Management",
@@ -338,7 +348,7 @@ i18n.use(initReactI18next).init({
           feedbackEnhancement: "Góp ý cải tiến",
           customerSurvey: "Khảo sát khách hàng",
 
-          fanpage: "Fanpage",
+          fanpage: "Omnichannel",
           totalChat: "Tổng hội thoại",
 
           // đoạn này là children của đặt hàng
@@ -363,6 +373,16 @@ i18n.use(initReactI18next).init({
           warehouseManagement: "Quản lý kho hàng",
           inventoryTransferDocument: "Phiếu điều chuyển kho",
           stockAdjustmentVoucher: "Phiếu điều chỉnh kho",
+
+          financeManagement: "Quản lý tài chính",
+          financeDashboard: "Dashboard",
+          financeCashbook: "Sổ thu chi",
+          createFinanceTransaction: "Tạo Phiếu Thu/Chi",
+          createCashbookTemplate: "Tạo Phiếu Thu/Chi",
+          fundManagement: "Quản lý quỹ",
+          debtManagement: "Quản lý công nợ",
+          createDebtTransaction: "Tạo giao dịch nợ",
+          endOfShiftInventory: "Kiểm kê cuối ca",
 
           cashbook: "Tài chính",
           bpm: "Quản lý quy trình",
