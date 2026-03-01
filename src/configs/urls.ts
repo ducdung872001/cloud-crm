@@ -3164,6 +3164,7 @@ export const urls = {
   kpi: "/kpi",
   kpiApply: "/kpi_apply",
   kpiObject: "/kpi_object",
+  invoiceVAT: "/invoiceVAT",
   appointment_schedule: "/appointment_schedule",
   warranty: "/warranty",
   warranty_process: "/warranty_process",

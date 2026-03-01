@@ -204,6 +204,7 @@ import BusinessRuleConfig from "pages/BusinessRuleConfig";
 import { path } from "lodash/fp";
 import DashboardRetail from "pages/DashboardRetail";
 import DashboardLoyalty from "@/pages/DashboardLoyalty";
+import InvoiceVATOverview from "pages/Kpi/InvoiceVAT/index";
 import { C } from "jssip";
 const isBeauty = localStorage.getItem("isBeauty");
 
@@ -278,6 +279,12 @@ export const menu: IMenuItem[] = [
               title: "kpiManagement", // Quản lý KPI
               path: urls.kpiObject,
               icon: <Icon name="KpiCustomer" />,
+              code: "", //KPI_APPLY
+            },
+            {
+              title: "invoiceVAT", // Xuất hóa đơn VAT
+              path: urls.invoiceVAT,
+              icon: <Icon name="File" />,
               code: "", //KPI_APPLY
             },
             // {
@@ -1533,6 +1540,10 @@ export const routes: IRouter[] = [
   {
     path: urls.kpiObject,
     component: <KpiObjectList />,
+  },
+  {
+    path: urls.invoiceVAT,
+    component: <InvoiceVATOverview />,
   },
   {
     path: urls.warranty,
