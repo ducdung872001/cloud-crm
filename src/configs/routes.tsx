@@ -181,7 +181,7 @@ import CampaignListParent from "pages/Campaign/CampaignListParent";
 import UserTaskList from "pages/UserTaskList";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import OrderRequestList from "pages/OrderRequestList";
-
+import MaterialList from "@/pages/ManagementMaterial/MaterialList";
 import EmailConfirm from "pages/Contract/EmailComfirm/EmailConfirm";
 import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import MarketingAutomationListV2 from "pages/MarketingAutomation/MarketingAutomationListV2";
@@ -931,6 +931,12 @@ export const menu: IMenuItem[] = [
               title: "stockAdjustmentVoucher", // Phiếu điều chỉnh kho
               path: urls.adjustment_slip,
               icon: <Icon name="File" />,
+              code: "",
+            },
+            {
+              title: "managementMaterial", // Quản lý vật tư
+              path: urls.material,
+              icon: <Icon name="WarehouseManagement" />,
               code: "",
             },
           ],
@@ -1837,6 +1843,11 @@ export const routes: IRouter[] = [
   {
     path: urls.adjustment_slip,
     component: <AdjustmentSlip />,
+  },
+  // quản lý vật tư
+  {
+    path: urls.material,
+    component: <MaterialList />,
   },
   // thông tin cá nhân
   {

@@ -3329,6 +3329,8 @@ export const urls = {
   vehicle: "/vehicle",
   building: "/building",
   buildingFloor: "/building_floor",
+  //quản lý nguyên vật liệu
+  material: "/material",
 
   //upload tài liệu bpm
   // Link cho phép tải tài liệu lên
