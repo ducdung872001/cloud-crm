@@ -190,6 +190,8 @@ import ManagerWork from "pages/ManagerWork";
 import CreateContractsXML from "pages/Contract/CreateContractsXML";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
+
+import MaterialList from "@/pages/ManagementMaterial/MaterialList";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -853,6 +855,12 @@ export const menu: IMenuItem[] = [
               title: "stockAdjustmentVoucher", // Phiếu điều chỉnh kho
               path: urls.adjustment_slip,
               icon: <Icon name="File" />,
+              code: "",
+            },
+            {
+              title: "managementMaterial", // Quản lý vật tư
+              path: urls.material,
+              icon: <Icon name="WarehouseManagement" />,
               code: "",
             },
           ],
@@ -1698,6 +1706,11 @@ export const routes: IRouter[] = [
   {
     path: urls.adjustment_slip,
     component: <AdjustmentSlip />,
+  },
+  // quản lý vật tư
+  {
+    path: urls.material,
+    component: <MaterialList />,
   },
   // thông tin cá nhân
   {

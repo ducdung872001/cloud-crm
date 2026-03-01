@@ -1,0 +1,258 @@
+.material-detail-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--white-color);
+  border-left: 1px solid var(--border-color);
+
+  &__header {
+    flex-shrink: 0;
+    padding: 1.8rem 1.8rem 0;
+  }
+
+  &__grad {
+    border-radius: 1.2rem;
+    padding: 1.6rem;
+    color: #fff;
+    position: relative;
+  }
+
+  &__close {
+    position: absolute;
+    right: 1.2rem;
+    top: 1.2rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #fff;
+    width: 2.7rem;
+    height: 2.7rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+
+    svg {
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+  }
+
+  &__icon-big {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  &__name {
+    font-size: 1.7rem;
+    font-weight: 800;
+  }
+
+  &__code {
+    font-family: var(--font-mono, monospace);
+    font-size: 1.2rem;
+    opacity: 0.65;
+    margin-top: 0.2rem;
+  }
+
+  &__qs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: var(--white-color);
+    flex-shrink: 0;
+  }
+
+  &__qs-i {
+    padding: 1.1rem 1.2rem;
+    text-align: center;
+    border-right: 1px solid var(--border-color);
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  &__qs-v {
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  &__qs-l {
+    font-size: 1rem;
+    color: var(--extra-color-50);
+    margin-top: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__tabs {
+    display: flex;
+    padding: 0 1.6rem;
+    background: var(--white-color);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+  }
+
+  &__tab {
+    padding: 1rem 1.2rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: none;
+    border-bottom: 2.5px solid transparent;
+    color: var(--extra-color-50);
+    transition: all 0.15s;
+    white-space: nowrap;
+    font-family: inherit;
+
+    &:focus,
+    &:active,
+    &:focus-visible {
+      outline: none;
+      border: none;
+      box-shadow: none;
+    }
+
+    &.active {
+      color: var(--primary-color);
+      border-bottom-color: var(--primary-color);
+    }
+
+    &.active:focus,
+    &.active:active,
+    &.active:focus-visible {
+      outline: none;
+      box-shadow: none;
+      border: none;
+      border-bottom: 2.5px solid var(--primary-color);
+    }
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.6rem;
+  }
+
+  &__sec-h {
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--extra-color-50);
+    margin: 1.4rem 0 0.8rem;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 1.3rem;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .k {
+      color: var(--extra-color-50);
+      font-weight: 500;
+    }
+
+    .v {
+      font-weight: 700;
+      text-align: right;
+    }
+  }
+
+  &__desc {
+    background: var(--bg-color);
+    border-radius: 0.8rem;
+    padding: 1rem 1.2rem;
+    font-size: 1.3rem;
+    color: var(--extra-color-50);
+  }
+
+  &__actions {
+    margin-top: 1.4rem;
+    display: flex;
+    gap: 0.7rem;
+  }
+
+  &__btn-full {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  &__log {
+    background: var(--bg-color);
+    border-radius: 0.9rem;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    border: 1px solid var(--border-color);
+  }
+
+  &__log-icon {
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+
+    svg {
+      fill: var(--extra-color-50);
+    }
+  }
+
+  &__log-info {
+    flex: 1;
+  }
+
+  &__log-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  &__log-date {
+    font-size: 1.1rem;
+    color: var(--extra-color-50);
+    margin-top: 0.1rem;
+  }
+
+  &__log-qty-wrap {
+    text-align: right;
+  }
+
+  &__log-qty {
+    font-size: 1.4rem;
+    font-weight: 800;
+  }
+
+  &__log-amount {
+    font-size: 1.1rem;
+    color: var(--extra-color-50);
+    margin-top: 0.2rem;
+  }
+}

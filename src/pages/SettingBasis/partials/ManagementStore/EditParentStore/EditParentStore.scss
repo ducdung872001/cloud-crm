@@ -1,0 +1,33 @@
+.modal-edit-parent-branch {
+    .form-branch-group {
+      .modal-body {
+        padding: 0;
+      }
+  
+      .list-form-group {
+        padding: 1.6rem;
+        display: flex;
+        flex-direction: column;
+        max-height: 48rem;
+        // overflow: auto;
+  
+        .form-basic,
+       
+  
+        .form-basic {
+          .form-group {
+            width: calc(50% - 1.6rem);
+            &:first-child {
+              width: 100%;
+            }
+  
+            &:last-child {
+              width: 100%;
+            }
+
+          }
+        }
+      }
+    }
+  }
+  

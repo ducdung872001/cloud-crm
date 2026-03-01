@@ -110,6 +110,7 @@ i18n.use(initReactI18next).init({
           warehouseManagement: "Warehouse management",
           inventoryTransferDocument: "Inventory transfer document",
           stockAdjustmentVoucher: "Stock adjustment voucher",
+          managementMaterial: "Management material",
 
           cashbook: "Cash book",
           bpm: "Process Management",
@@ -205,6 +206,7 @@ i18n.use(initReactI18next).init({
           listTeam: "List team",
           listEmployee: "List employee",
           listTreatmentRooms: "List treatment rooms",
+          managementStore: "Management store",
         },
         // đoạn là page setting operate
         pageSettingOperate: {
@@ -356,6 +358,7 @@ i18n.use(initReactI18next).init({
           warehouseManagement: "Quản lý kho hàng",
           inventoryTransferDocument: "Phiếu điều chuyển kho",
           stockAdjustmentVoucher: "Phiếu điều chỉnh kho",
+          managementMaterial: "Quản lý nguyên vật liệu",
 
           cashbook: "Tài chính",
           bpm: "Quản lý quy trình",
@@ -449,6 +452,7 @@ i18n.use(initReactI18next).init({
           listEmployee: "Danh sách nhân viên",
           listTeam: "Danh sách nhóm nhân viên",
           listTreatmentRooms: "Danh sách phòng điều trị",
+          managementStore: "Quản lý cửa hàng",
         },
         // đoạn này là page cài đặt vận hành
         pageSettingOperate: {
