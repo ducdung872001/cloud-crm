@@ -3087,6 +3087,11 @@ export const urls = {
   timekeeping: "/timekeeping",
   cashbook: "/cashbook",
   cxmSurvey: "/cxm_survey",
+
+  // Fanpage 
+  fanpage: "/fanpage",
+  total_chat: "/total_chat",
+
   // Đường dẫn đặt hàng
   order: "/order",
   // Đường dẫn quản lý đặt hàng
@@ -3141,6 +3146,14 @@ export const urls = {
   payment_history: "/payment_history",
   customer_care: "/customer_care",
   crm_campaign: "/crm_campaign",
+  finance_management: "/finance_management",
+  finance_management_dashboard: "/finance_management/dashboard",
+  finance_management_cashbook: "/finance_management/cashbook",
+  finance_management_cashbook_template: "/finance_management/cashbook_template",
+  finance_management_fund_management: "/finance_management/fund_management",
+  finance_management_debt_management: "/finance_management/debt_management",
+  finance_management_debt_transaction: "/finance_management/debt_transaction",
+  finance_management_shift_inventory: "/finance_management/shift_inventory",
   setting: "/setting",
   tip: "/tip",
   tip_group: "/tip_group",
@@ -3151,6 +3164,7 @@ export const urls = {
   kpi: "/kpi",
   kpiApply: "/kpi_apply",
   kpiObject: "/kpi_object",
+  invoiceVAT: "/invoiceVAT",
   appointment_schedule: "/appointment_schedule",
   warranty: "/warranty",
   warranty_process: "/warranty_process",
@@ -3193,6 +3207,7 @@ export const urls = {
   setting_project: "/setting_project",
   config_bpm: "/config_bpm",
   setting_dashboard: "/setting_dashboard",
+  dashboard_loyalty: "/dashboard_loyalty",
   setting_report: "/setting_report",
   //Giám sát tích hợp
   integrated_monitoring: "/integrated_monitoring",

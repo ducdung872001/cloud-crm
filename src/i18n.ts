@@ -99,6 +99,9 @@ i18n.use(initReactI18next).init({
           feedbackEnhancement: "Feedback enhancement",
           customerSurvey: "Customer survey",
 
+          fanpage: "Omnichannel",
+          totalChat: "Total chat",
+
           warehouse: "Warehouse",
           // đoạn này là children của warehouse
           createPurchaseOrder: "Create purchase order",
@@ -111,6 +114,16 @@ i18n.use(initReactI18next).init({
           inventoryTransferDocument: "Inventory transfer document",
           stockAdjustmentVoucher: "Stock adjustment voucher",
           managementMaterial: "Management material",
+
+          financeManagement: "Finance management",
+          financeDashboard: "Dashboard",
+          financeCashbook: "Cash flow ledger",
+          createFinanceTransaction: "Create receipt/payment voucher",
+          createCashbookTemplate: "Create receipt/payment voucher",
+          fundManagement: "Fund management",
+          debtManagement: "Debt management",
+          createDebtTransaction: "Create debt transaction",
+          endOfShiftInventory: "End of shift inventory",
 
           cashbook: "Cash book",
           bpm: "Process Management",
@@ -173,6 +186,7 @@ i18n.use(initReactI18next).init({
           settingCode: "Setting code",
           configBpm: "Config BPM",
           settingDashboard: "Setting report",
+          dashboardLoyalty: "Dashboard loyalty",
           settingApplication: "Setting integrate",
           resourceManagement: "Resource management",
           organizationalManagement: "Organizational management",
@@ -256,6 +270,7 @@ i18n.use(initReactI18next).init({
           createKPIFramework: "Tạo bộ KPI",
           createKPITask: "Tạo phiếu giao KPI",
           kpiManagement: "Quản lý KPI",
+          invoiceVAT: "Xuất hóa đơn VAT",
           project: "Dự án",
           //Quản lý công việc BPM
           userTaskList: "Xử lý hồ sơ",
@@ -336,6 +351,9 @@ i18n.use(initReactI18next).init({
           feedbackEnhancement: "Góp ý cải tiến",
           customerSurvey: "Khảo sát khách hàng",
 
+          fanpage: "Omnichannel",
+          totalChat: "Tổng hội thoại",
+
           // đoạn này là children của đặt hàng
           order: "Mua hàng",
           createOrder: "Tạo đơn đặt hàng",
@@ -359,6 +377,16 @@ i18n.use(initReactI18next).init({
           inventoryTransferDocument: "Phiếu điều chuyển kho",
           stockAdjustmentVoucher: "Phiếu điều chỉnh kho",
           managementMaterial: "Quản lý nguyên vật liệu",
+
+          financeManagement: "Quản lý tài chính",
+          financeDashboard: "Dashboard",
+          financeCashbook: "Sổ thu chi",
+          createFinanceTransaction: "Tạo Phiếu Thu/Chi",
+          createCashbookTemplate: "Tạo Phiếu Thu/Chi",
+          fundManagement: "Quản lý quỹ",
+          debtManagement: "Quản lý công nợ",
+          createDebtTransaction: "Tạo giao dịch nợ",
+          endOfShiftInventory: "Kiểm kê cuối ca",
 
           cashbook: "Tài chính",
           bpm: "Quản lý quy trình",
@@ -419,6 +447,7 @@ i18n.use(initReactI18next).init({
           settingCode: "Cài đặt mã",
           configBpm: "Cấu hình quy trình",
           settingDashboard: "Cài đặt báo cáo",
+          dashboardLoyalty: "Báo cáo loyalty",
           settingApplication: "Cài đặt tích hợp",
           resourceManagement: "Quản trị tài nguyên",
           organizationalManagement: "Quản lý đại lý",
