@@ -39,8 +39,6 @@ import AddBTwoBModal from "./partials/AddBTwoBModal";
 import ViewOpportunityBTwoB from "./partials/ViewOpportunityBTwoB";
 import AddModalOther from "./partials/AddModalOther";
 
-//Thêm riêng lẻ 1 cơ hội vào chiến dịch bán hàng (quy trình bán hàng)
-import AddManagementOpportunityModal from "pages/ManagementOpportunity/partials/AddManagementOpportunityModal";
 import "swiper/css/grid";
 import "swiper/css/navigation";
 import "./CustomerPersonList.scss";
@@ -1743,8 +1741,7 @@ export default function CustomerPersonList() {
     if (response.code === 0) {
       const result = response.result.items;
       return result;
-    } else {
-      // showToast("Danh sách cơ hội đang bị lỗi", "error");
+    } else {      
       return [];
     }
   };
@@ -3597,22 +3594,7 @@ export default function CustomerPersonList() {
           isActiveCustomerSource={isActiveCustomerSource}
           isActiveCustomerEmployee={isActiveCustomerEmployee}
           isActiveCustomeRelationship={isActiveCustomeRelationship}
-        />
-        <AddManagementOpportunityModal
-          onShow={showModalAddManagementOpportunity}
-          idCustomer={idCustomer}
-          onHide={(reload) => {
-            if (reload) {
-              getListCustomer(params, activeTitleHeader);
-            }
-
-            setShowModalAddManagementOpportunity(false);
-          }}
-          isBatch={isBatch}
-          listId={listIdChecked}
-          conditionCampain={typeCampain}
-        />
-
+        />      
         {/* <ModalAddMA onShow={showModalAddMA} idCustomer={idCustomer} onHide={() => setShowModalAddMA(false)} /> */}
 
         <ViewOpportunityBTwoB

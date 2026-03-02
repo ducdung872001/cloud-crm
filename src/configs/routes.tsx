@@ -76,8 +76,6 @@ import DiarySurgeryList from "pages/DiarySurgery/DiarySurgeryList";
 import CalendarCommon from "pages/CalendarCommon/CalendarCommon";
 // Quản lý chiến dịch
 import CampaignList from "pages/Campaign/CampaignList";
-// Quản lý cơ hội
-import ManagementOpportunity from "pages/ManagementOpportunity/ManagementOpportunity";
 // Chăm sóc khách hàng
 import CallCenterList from "pages/CallCenter/CallCenterList";
 // Kênh bán facebook
@@ -112,13 +110,6 @@ import CustomerSurvey from "pages/CustomerSurvey";
 
 // tạo đường link khảo sát
 import LinkSurvey from "pages/LinkSurvey";
-
-// Báo giá
-import CreateOffers from "pages/Offer/CreateOffers/CreateOffers";
-import OfferList from "pages/Offer/OfferList/OfferList";
-import FsQuote from "pages/FsQuote";
-import Quotations from "pages/Quotations";
-import QuotationsNew from "pages/Quotations/index_New";
 import SettingProcess from "pages/SettingProcess/SettingProcess";
 import SaleFlowList from "pages/SaleFlow/SaleFlowList";
 import CreateSaleflow from "pages/SaleFlow/CreateSaleFlow/CreateSaleFlow";
@@ -146,7 +137,6 @@ import ManageOrder from "pages/ManagerOrder";
 import SettingProjectList from "pages/SettingProject/SettingProjectList";
 import ProjectList from "pages/ProjectList/ProjectList";
 import IntegratedMonitoring from "pages/IntegratedMonitoring/IntegratedMonitoring";
-import OpportunityList from "pages/OpportunityList/OpportunityList";
 import SettingCode from "pages/SettingCode/SettingCode";
 import SettingIntegration from "pages/SettingIntegration/SettingIntegration";
 import SettingDashboard from "pages/SettingDashboard/SettingDashboard";
@@ -154,18 +144,9 @@ import DetailProject from "pages/ProjectList/DetailProject/DetailProject";
 import SettingPromotionList from "pages/SettingPromotion/SettingPromotionList";
 import DetailPartner from "pages/PartnerList/DetailPartner/DetailPartner";
 import SettingOperate from "pages/SettingOperate/SettingOperate";
-import ManagementFeeList from "pages/OperateManagement/ManagementFee/ManagementFeeList";
-import UtilityReadingList from "pages/OperateManagement/UtilityReading/UtilityReadingList";
-import SpaceList from "pages/SettingOperate/partials/Space/SpaceList";
-import VehicleRegistrationList from "pages/OperateManagement/VehicleRegistration/VehicleRegistrationList";
-import VehicleList from "pages/OperateManagement/Vehicle/VehicleList";
-import OrtherFeeList from "pages/OperateManagement/OrtherFee/OrtherFeeList";
 import BuildingList from "pages/SettingOperate/partials/BuildingList/BuildingList";
 import BuildingFloorList from "pages/SettingOperate/partials/BuildingFloorList/BuildingFloorList";
-import SpaceCustomerList from "pages/OperateManagement/SpaceCustomer/SpaceCustomerList";
 import CxmSurveyList from "pages/CxmSurvey/CxmSurveyList/CxmSurveyList";
-import ElectricityIndexList from "pages/OperateManagement/ElectricityIndex/ElectricityIndexList";
-import WaterIndexList from "pages/OperateManagement/WaterIndex/WaterIndexList";
 import ProcessSimulation from "pages/ProcessSimulation/ProcessSimulation";
 import BusinessProcessCreate from "pages/BPM/BusinessProcessCreate";
 import CampaignListParent from "pages/Campaign/CampaignListParent";
@@ -183,7 +164,6 @@ import ExtensionList from "pages/Extension/ExtensionList";
 import UserList from "pages/User/UserList";
 import FieldMannagement from "pages/FieldManagement/FieldManagement";
 import ManageDefaultProcesses from "pages/ManageDefaultProcesses";
-import ManagementOpportunityNew from "pages/ManagementOpportunityNew";
 import ManagerWork from "pages/ManagerWork";
 import Fanpage from "pages/Fanpage";
 import TotalChat from "pages/Fanpage/TotalChat";
@@ -1033,62 +1013,7 @@ export const menu: IMenuItem[] = [
         code: "RESOURCE",
       },
     ],
-  },
-
-  ...(checkSubdomainReborn
-    ? [
-        {
-          title: "operate", // Quản lý vận hành
-          path: "",
-          icon: <Icon name="SettingCashbook" />,
-          code: "OPERATION_MANAGEMENT",
-          children: [
-            {
-              title: "spaceCustomer", // Khu vực/căn hộ
-              path: urls.spaceCustomer,
-              icon: <Icon name="Headquarters" />,
-              code: "",
-            },
-            {
-              title: "electricityIndex", // Chốt chỉ số điện từ bộ phận kĩ thuật
-              path: urls.electricityIndex,
-              icon: <Icon name="KpiCustomer" />,
-              code: "",
-            },
-            {
-              title: "waterIndex", // Chốt chỉ số nước từ bộ phận kĩ thuật
-              path: urls.waterIndex,
-              icon: <Icon name="KpiCustomer" />,
-              code: "",
-            },
-            {
-              title: "managementFee", // Phí quản lý
-              path: urls.managementFee,
-              icon: <Icon name="MoneyFill" />,
-              code: "",
-            },
-            {
-              title: "ortherFee", // Chi phí khác
-              path: urls.ortherFee,
-              icon: <Icon name="MoneyFill" />,
-              code: "",
-            },
-            {
-              title: "vehicleRegistration", // Phí đậu xe
-              path: urls.vehicleRegistration,
-              icon: <Icon name="Profile" />,
-              code: "",
-            },
-            {
-              title: "vehicle", // Đăng kí phương tiện
-              path: urls.vehicle,
-              icon: <Icon name="ImportGoods" />,
-              code: "",
-            },
-          ],
-        },
-      ]
-    : []),
+  },  
   {
     title: "settings", // Cài đặt
     path: urls.setting_common,
@@ -1168,20 +1093,13 @@ export const menu: IMenuItem[] = [
             //   code: "",
             // },
           ]
-        : []),
-      // (checkSubdomainTNPM || checkSubdomainGREENSPA) && {
-      //   title: "settingOperate", // Cài đặt vận hành
-      //   path: urls.setting_operate,
-      //   icon: <Icon name="Settings" />,
-      //   code: "",
-      // },
+        : []),      
       {
         title: "settingSwitchboard", // Cài đặt tổng đài
         path: urls.setting_call,
         icon: <Icon name="SettingSMS" />,
         code: "MENU_SETUP_CALL",
       },
-
       {
         title: "settingApplication", // Cài đặt ứng dụng
         path: urls.install_app,
@@ -1426,19 +1344,6 @@ export const routes: IRouter[] = [
     path: urls.edit_sale_campaign,
     component: <CreateCampaign />,
   },
-  {
-    path: urls.opportunity_list,
-    component: <OpportunityList />,
-  },
-  {
-    path: urls.management_opportunity,
-    component: <ManagementOpportunity />,
-  },
-  {
-    path: urls.management_opportunity_new,
-    component: <ManagementOpportunityNew />,
-  },
-
   //Quy trình bán hàng
   {
     path: urls.sale_flow,
@@ -1874,19 +1779,7 @@ export const routes: IRouter[] = [
   {
     path: urls.link_survey,
     component: <LinkSurvey />,
-  },
-  {
-    path: urls.fs,
-    component: <FsQuote />,
-  },
-  {
-    path: urls.quote,
-    component: <Quotations />,
-  },
-  {
-    path: urls.quoteNew,
-    component: <QuotationsNew />,
-  },
+  },  
   {
     path: urls.setting_process,
     component: <SettingProcess />,
@@ -1902,37 +1795,7 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_quote_form,
     component: <SettingQuoteForm />,
-  },
-
-  //Cài đặt vận hành
-  {
-    path: urls.ortherFee,
-    component: <OrtherFeeList />,
-  },
-  {
-    path: urls.electricityIndex,
-    component: <ElectricityIndexList />,
-  },
-  {
-    path: urls.waterIndex,
-    component: <WaterIndexList />,
-  },
-  {
-    path: urls.spaceCustomer,
-    component: <SpaceCustomerList />,
-  },
-  {
-    path: urls.managementFee,
-    component: <ManagementFeeList />,
-  },
-  {
-    path: urls.vehicleRegistration,
-    component: <VehicleRegistrationList />,
-  },
-  {
-    path: urls.vehicle,
-    component: <VehicleList />,
-  },
+  },  
   {
     path: urls.building,
     component: <BuildingList />,

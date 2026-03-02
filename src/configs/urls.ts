@@ -3118,8 +3118,7 @@ export const urls = {
   // đường dẫn quản lý kho hàng
   inventory: "/inventory",
   // đường dẫn bán hàng
-  sell: "/sell",
-  contract: "/contract",
+  sell: "/sell",  
   offer: "/offer",
   create_contract: "/create_contract",
   create_contract_xml: "/create_contract_xml",
