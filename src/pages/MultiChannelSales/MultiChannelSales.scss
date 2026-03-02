@@ -1,0 +1,122 @@
+.page-multi-channel-sale {
+    padding: 1.6rem;
+    .container-tab-list {
+        padding: 5px;
+        display: flex;
+        gap: 0 0.5rem;
+        background-color: #EEEEEF;
+        border-radius: 10px;
+        margin-bottom: 1.6rem;
+
+        .item-tab {
+            padding: 0.3rem 1.6rem;
+            border-radius: 10px;
+            cursor: pointer;
+
+            &--active {
+                background-color: white;
+            }
+
+            &--inactive {
+                color: #939394;
+                &:hover {
+                    color: black;
+                }
+            }
+        }
+    }
+
+    .conatiner-header{
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        .conatiner-button {
+            display: flex;
+            gap: 0 1rem;
+            .button-export,
+            .button-connect {
+                border: 1px solid;
+                padding: 0.5rem 1.6rem;
+                border-radius: 10px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: var(--extra-color-20);
+                }
+            }
+
+            .button-connect {
+                background-color: var(--primary-bg-color);
+                color: white;
+                border: 1px solid var(--primary-bg-color);
+            }
+        }
+    }
+
+    .list-overview-report {
+        // border: 1px solid;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 2rem;
+        .item-overview {
+            width: 24%;
+            padding: 1.2rem 2rem;
+            border: 1px solid var(--extra-color-20);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem 0;
+            background-color: white;
+        }
+    }
+
+    .table-result-app{
+        border: 1px solid var(--extra-color-20);
+        margin-top: 2rem;
+        border-radius: 20px;
+        background-color: white;
+
+        .table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.6rem;
+
+            .button-export {
+                border: 1px solid;
+                padding: 0.5rem 1.6rem;
+                border-radius: 10px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: var(--extra-color-20);
+                }
+            }
+        }
+
+        .table-body {
+            border-top: 1px solid var(--extra-color-20);
+            padding: 0 1.6rem;
+            .line-body {
+                border-bottom: 1px solid var(--extra-color-20);
+                padding: 1rem 0;
+                display: flex;
+                justify-content: space-between;
+                .box-rate {
+                    width: 15%;
+                    display: flex;
+                    align-items: center;
+                    gap: 0 1rem;
+                    .line-load {
+                        height: 0.5rem;
+                        width: 80%;
+                        border-radius: 2rem;
+                        background-color: var(--extra-color-20);
+                    }
+                }
+            }
+        }
+    }
+}

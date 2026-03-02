@@ -90,6 +90,8 @@
 
           .icon-phone,
           .icon-mail,
+          .icon-score,
+          .icon-gold-member,
           .icon-cake,
           .icon-gender,
           .icon-location {
@@ -98,6 +100,19 @@
             display: flex;
             align-items: center;
             justify-content: flex-start;
+          }
+          .icon-score {
+            width: 2.8rem;
+            height: 2.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+
+            svg {
+              width: 2.1rem;
+              height: 2.1rem;
+              fill: var(--primary-color);
+            }
           }
 
           .icon-phone {
@@ -413,8 +428,6 @@
         }
       }
     }
-
-   
 
     .list-status-phone {
       padding-bottom: 2rem;

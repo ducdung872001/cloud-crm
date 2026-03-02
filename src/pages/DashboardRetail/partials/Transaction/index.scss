@@ -1,0 +1,61 @@
+.history-transaction {
+  box-shadow: none !important;
+
+  .title {
+    margin-bottom: 0;
+  }
+  .total-invoice {
+    margin-bottom: 1.2rem;
+    display: block;
+    font-size: 1.4rem;
+    line-height: 2.4rem;
+  }
+  ul {
+    li {
+      margin-bottom: 0.8rem;
+      &:last-child {
+        margin-bottom: 0;
+      }
+      .type {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-right: 1rem;
+        margin-top: 2px;
+        &-in {
+          background: var(--success-color);
+        }
+        &-out {
+          background: var(--warning-color);
+        }
+      }
+      .info {
+        width: calc(100% - 3rem);
+        h3 {
+          font-size: 1.6rem;
+          line-height: 2.4rem;
+          font-weight: bold;
+          margin: 0;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+        span,
+        time {
+          font-size: 1.4rem;
+          line-height: 2.4rem;
+          display: block;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+        time {
+          font-style: italic;
+        }
+      }
+    }
+  }
+  .track-vertical {
+    box-shadow: inset 0px 0px 2px rgb(0 0 0 / 50%);
+    border-radius: 6px;
+  }
+}

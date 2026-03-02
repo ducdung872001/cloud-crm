@@ -195,11 +195,19 @@ export default function AddCustomerViewerModal(props: IAddCustomerViewerModalPro
     setIdEmployee(null);
     onHide();
     setLstEmployee([]);
-  }
+  };
 
   return (
     <Fragment>
-      <Modal isFade={true} isOpen={onShow} isCentered={true} staticBackdrop={true} size="lg" toggle={() => handleClear()} className="modal-add-viewer">
+      <Modal
+        isFade={true}
+        isOpen={onShow}
+        isCentered={true}
+        staticBackdrop={true}
+        size="lg"
+        toggle={() => handleClear()}
+        className="modal-add-viewer"
+      >
         <div className="form__add--viewer">
           <ModalHeader title="Thêm người xem" toggle={() => handleClear()} />
           <ModalBody>

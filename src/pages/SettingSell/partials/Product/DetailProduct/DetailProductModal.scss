@@ -1,29 +1,45 @@
 .modal-detail-product {
-    .form-detail-product {
-      .modal-body{
-        padding: 0;
-        .wrapper-detail-product {
-            max-height: 42rem;
-            overflow: auto;
-            padding: 1.6rem;
-  
-            .form-group {
-                padding: 0.8rem 0 1.6rem;
-            }
+  .form-detail-product {
+    .modal-body {
+      padding: 0;
+      .wrapper-detail-product {
+        max-height: 42rem;
+        overflow: auto;
+        padding: 1.6rem;
 
-            .memo {
-                .base-checkbox {
-                    label {
-                        font-size: 1.3rem;
-                    }
-                }
-            }
+        .form-group {
+          padding: 0.8rem 0 1.6rem;
+        }
 
-  
-    
+        .memo {
+          .base-checkbox {
+            label {
+              font-size: 1.3rem;
+            }
           }
-      }  
-     
+        }
+      }
+    }
+    .config__section {
+        padding: 0 1.6rem;
+      .config__item {
+        padding: 0.25rem 1.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .preview__section{
+        padding: 1.6rem;
+        .preview__container {
+            border: 1px solid black;
+            border-radius: 15px;
+
+            .preview__content {
+                padding: 0 1.6rem;
+            }
+        }
     }
   }
-  
+}

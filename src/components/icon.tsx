@@ -153,6 +153,7 @@ import IconGmail from "assets/icons/icon-gmail.svg";
 import IconGearSix from "assets/icons/icon-GearSix.svg";
 import IconGmailMini from "assets/icons/icon-gmail-mini.svg";
 import IconGuideTime from "assets/icons/icon-guide-time.svg";
+import IconGoldMember from "assets/icons/icon-gold-member.svg";
 
 // H
 import IconHome from "assets/icons/icon-home.svg";
@@ -320,6 +321,7 @@ import IconNotifyExpire from "assets/icons/icon-notify-expire.svg";
 import IconNoChatHistory from "assets/icons/icon-NoChatHistory.svg";
 import IconSettingInfoBidding from "assets/icons/icon-setting-info-bidding.svg";
 import IconSendRox from "assets/icons/icon-send-rox.svg";
+import IconScore from "assets/icons/icon-score.svg";
 
 // T
 import IconTrash from "assets/icons/icon-trash.svg";
@@ -531,6 +533,7 @@ const iconTypes = {
   GearSix: IconGearSix,
   GmailMini: IconGmailMini,
   GuideTime: IconGuideTime,
+  GoldMember: IconGoldMember,
   // H
   Home: IconHome,
   Happy: IconHappy,
@@ -688,6 +691,7 @@ const iconTypes = {
   NoChatHistory: IconNoChatHistory,
   SettingInfoBidding: IconSettingInfoBidding,
   SendRox: IconSendRox,
+  Score: IconScore,
   // T
   Trash: IconTrash,
   TrashOutline: IconTrashOutline,
