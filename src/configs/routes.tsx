@@ -201,6 +201,14 @@ import TotalChat from "pages/Fanpage/TotalChat";
 import CreateContractsXML from "pages/Contract/CreateContractsXML";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
+import PaymentMethodList from "pages/PaymentMethod/PaymentMethod";
+import CheckoutList from "pages/Checkout/Checkout";
+import Overview from "pages/ManagementStaff/Overview";
+import StaffManagement from "pages/ManagementStaff/ManagementStaff";
+import ShiftReport from "pages/ManagementStaff/ShiftReport";
+import ShiftConfig from "pages/ManagementStaff/ShiftConfig";
+import OpenShift from "pages/ManagementStaff/OpenShift";
+import CloseShift from "pages/ManagementStaff/CloseShift";
 import MultiChannelSales from "@/pages/MultiChannelSales/MultiChannelSales";
 import DashboardRetail from "pages/DashboardRetail";
 import DashboardLoyalty from "@/pages/DashboardLoyalty";
@@ -550,11 +558,11 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-              title: "fanpage", // Quản lý Fanpage
-              path: urls.fanpage,
-              icon: <Icon name="FacebookFill" />,
-              code: "FANPAGE",
-            },
+        title: "fanpage", // Quản lý Fanpage
+        path: urls.fanpage,
+        icon: <Icon name="FacebookFill" />,
+        code: "FANPAGE",
+      },
       ...(!checkSubdomainTNEX
         ? [
             {
@@ -1287,6 +1295,71 @@ export const menu: IMenuItem[] = [
             // },
           ]
         : []),
+    ],
+  },
+
+  {
+    title: "payment", //Quản lý thanh toán
+    path: "",
+    icon: <Icon name="CashPayment" />,
+    code: "",
+    children: [
+      {
+        title: "paymentMethod", // Phương thức thanh toán
+        path: urls.payment_method,
+        icon: <Icon name="CashPayment" />,
+        code: "",
+      },
+      {
+        title: "salesChannel", // Bán hàng
+        path: urls.sales_channel,
+        icon: <Icon name="CashPayment" />,
+        code: "",
+      },
+    ],
+  },
+  {
+    title: "staff", //Quản lý nhân viên
+    path: "",
+    icon: <Icon name="Staff" />,
+    code: "",
+    children: [
+      {
+        title: "overview",
+        path: urls.overview_staff,
+        icon: <Icon name="CashPayment" />,
+        code: "",
+      },
+      {
+        title: "staff", // Bán hàng
+        path: urls.staff,
+        icon: <Icon name="CashPayment" />,
+        code: "",
+      },
+      {
+        title: "reportShift",
+        path: urls.report_shift,
+        icon: <Icon name="CashPayment" />,
+        code: "",
+      },
+      {
+        title: "shiftConfig",
+        path: urls.shift_config,
+        icon: <Icon name="CashPayment" />,
+        code: "",
+      },
+      {
+        title: "openShift",
+        path: urls.open_shift,
+        icon: <Icon name="CashPayment" />,
+        code: "",
+      },
+      {
+        title: "closeShift",
+        path: urls.close_shift,
+        icon: <Icon name="CashPayment" />,
+        code: "",
+      },
     ],
   },
 
@@ -2068,5 +2141,37 @@ export const routes: IRouter[] = [
   {
     path: urls.field_management,
     component: <FieldMannagement />,
+  },
+  {
+    path: urls.payment_method,
+    component: <PaymentMethodList />,
+  },
+  {
+    path: urls.sales_channel,
+    component: <CheckoutList />,
+  },
+  {
+    path: urls.overview_staff,
+    component: <Overview />,
+  },
+  {
+    path: urls.staff,
+    component: <StaffManagement />,
+  },
+  {
+    path: urls.report_shift,
+    component: <ShiftReport />,
+  },
+  {
+    path: urls.shift_config,
+    component: <ShiftConfig />,
+  },
+  {
+    path: urls.open_shift,
+    component: <OpenShift />,
+  },
+  {
+    path: urls.close_shift,
+    component: <CloseShift />,
   },
 ];
