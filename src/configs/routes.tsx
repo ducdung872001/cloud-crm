@@ -474,12 +474,6 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "opportunityList", // danh sách cơ hội
-        path: urls.opportunity_list,
-        icon: <Icon name="Opportunity" />,
-        code: "",
-      },
-      {
         title: "salesManagement", // Quản lý cơ hội
         path: urls.management_opportunity,
         icon: <Icon name="OpportunityManagement" />,
