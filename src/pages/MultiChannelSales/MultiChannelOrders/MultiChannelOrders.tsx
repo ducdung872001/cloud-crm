@@ -7,6 +7,7 @@ import Badge from "@/components/badge/badge";
 import { BulkActionItemModel } from "@/components/bulkAction/bulkAction";
 import { IAction } from "@/model/OtherModel";
 import Icon from "@/components/icon";
+import ModalDetailOrder from "./ModaDetailOrder/ModalDetailOrder";
 
 export default function MultiChannelOrders() {
   document.title = "Đơn hàng đa kênh";
@@ -18,6 +19,9 @@ export default function MultiChannelOrders() {
    * 3 - Hoàn thành, 
    * 4 - Đã huỷ
    */
+
+  const [modalDetail, setModalDetail] = useState(false);
+  const [dataOrder, setDataOrder] = useState(null);
 
   const [listOrder, setListOrder] = useState([
     {
@@ -102,7 +106,12 @@ export default function MultiChannelOrders() {
 
   const dataMappingArray = (item: any, index: number) => [
     // index + 1,
-    <div style={{width: '15rem'}}>
+    <div style={{width: '15rem'}} 
+        onClick={() => {
+            setModalDetail(true);
+            setDataOrder(item);
+        }}
+    >
         {item.code}
     </div>,
     item.app,
@@ -117,7 +126,7 @@ export default function MultiChannelOrders() {
     item.productValue,
     <Badge
       key={item.id}
-      text={item?.status === 1 ? "Chờ xử lý" : item.status === 2 ? "Đang giao" : item.status === 3 ? "Đang giao" : "Đã hủy"}
+      text={item?.status === 1 ? "Chờ xử lý" : item.status === 2 ? "Đang giao" : item.status === 3 ? "Hoàn thành" : "Đã hủy"}
       variant={item.status === 1 ? "warning" : item.status === 2 ? "primary" : item.status === 3 ? "success" : "error"}
     />,
     <div style={{width: '10rem'}}>
@@ -131,13 +140,23 @@ export default function MultiChannelOrders() {
         : null}
 
         {item.status === 2 ? 
-            <div style={{backgroundColor: 'green', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', borderRadius: '10px'}}>
+            <div style={{backgroundColor: 'green', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', borderRadius: '10px'}}
+                onClick={() => {
+                    setModalDetail(true);
+                    setDataOrder(item);
+                }}
+            >
                 <span style={{fontSize: 12, fontWeight: '500', color: 'white'}}>Theo dõi</span>
             </div>
         : null}
 
         {item.status === 3 ? 
-            <div style={{backgroundColor: 'green', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', borderRadius: '10px'}}>
+            <div style={{backgroundColor: 'green', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', borderRadius: '10px'}}
+                onClick={() => {
+                    setModalDetail(true);
+                    setDataOrder(item);
+                }}
+            >
                 <span style={{fontSize: 12, fontWeight: '500', color: 'white'}}>Xem chi tiết</span>
             </div>
         : null}
@@ -175,6 +194,40 @@ export default function MultiChannelOrders() {
     ];
   };
 
+  const listTabStatus = [
+    {
+        id: 1,
+        lable: 'Tất cả',
+        value: 184,
+        color: 'orange'
+    },
+    {
+        id: 2,
+        lable: 'Chờ xử lý',
+        value: 23,
+        color: 'blue'
+    },
+    {
+        id: 3,
+        lable: 'Đang giao',
+        value: 47,
+        color: 'orange'
+    },
+    {
+        id: 4,
+        lable: 'Hoàn thành',
+        value: 98,
+        color: 'green'
+    },
+    {
+        id: 5,
+        lable: 'Huỷ',
+        value: 16,
+        color: 'red'
+    },
+
+  ]
+
   return (
     <div className="multi-channel-orders-page">
         <div className="conatiner-header">
@@ -190,6 +243,17 @@ export default function MultiChannelOrders() {
                     <span style={{fontSize: 14, fontWeight: '500'}}>Xuất Excel</span>
                 </div>
             </div>
+        </div>
+
+        <div className="list-tab-status">
+            {listTabStatus.map((item, index) => (
+                <div key={index} className="item-tab-status" style={item.id === 1 ? {backgroundColor: 'var(--primary-bg-color)'} : {}}>
+                    <span style={{fontSize: 14, fontWeight: '600', color: item.id === 1 ? 'white' : ''}}>{item.lable}</span>
+                    <div className="item-number" style={{backgroundColor: item.color}}>
+                        <span style={{fontSize: 12, fontWeight: '500', color: 'white'}}>{item.value}</span>
+                    </div>
+                </div>
+            ))}
         </div>
 
         <div className="table-order card-box">
@@ -210,6 +274,12 @@ export default function MultiChannelOrders() {
               actionType="inline"
             />
         </div>
+
+        <ModalDetailOrder
+            onShow={modalDetail}
+            onHide={() => setModalDetail(false)}
+            dataOrder={dataOrder}
+        />
 
 
     </div>
