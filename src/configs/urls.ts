@@ -3332,6 +3332,17 @@ export const urls = {
   //Loại luật nghiệp vụ
   business_rule: "/bpm/business_rule",
   business_rule_config: "/bpm/business_rule_config/:id",
+
+  //Quản lý thanh toán
+  payment_method: "/payment_method",
+  sales_channel: "/sales_channel",
+  //Quản lý nhân viên
+  overview_staff: "/overview_staff",
+  staff: "/staff",
+  report_shift: "/report_shift",
+  shift_config: "/shift_config",
+  open_shift: "/open_shift",
+  close_shift: "/close_shift",
 };
 
 export default urls;
