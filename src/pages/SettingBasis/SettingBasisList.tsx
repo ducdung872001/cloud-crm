@@ -7,6 +7,7 @@ import DepartmentDirectoryList from "./partials/DepartmentDirectory/DepartmentDi
 import "./SettingBasisList.scss";
 import TeamEmployeeList from "./partials/TeamEmployeeList/TeamEmployeeList";
 import RoleDirectory from "./partials/RoleDirectory";
+import ManagementStore from "./partials/ManagementStore/ManagementStore";
 
 export default function SettingBasisList() {
   const { t } = useTranslation();
@@ -39,6 +40,10 @@ export default function SettingBasisList() {
     {
       title: t(`pageSettingBasis.listTeam`),
       is_tab: "tab_five",
+    },
+    {
+      title: t(`pageSettingBasis.managementStore`),
+      is_tab: "tab_seven",
     },
     ...(isBeauty && isBeauty == "1"
       ? [
@@ -122,7 +127,16 @@ export default function SettingBasisList() {
             }
           }}
         />
-      ) : (
+      ) : isDetailCategory && tab === "tab_seven" ? (
+        <ManagementStore
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetailCategory(false);
+            }
+          }}
+        />
+      ) :
+      (
         isDetailCategory && (
           <TreatmentRoomList
             onBackProps={(isBack) => {

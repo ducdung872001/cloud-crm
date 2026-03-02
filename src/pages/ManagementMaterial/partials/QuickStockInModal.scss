@@ -1,0 +1,53 @@
+.quick-stockin-modal {
+  .list-form-group--quick-stockin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+
+    .form-group {
+      flex: 1;
+      min-width: 0;
+    }
+
+    &.list-form-group--grid-2 .form-group {
+      width: calc(50% - 0.6rem);
+    }
+  }
+
+  &__card {
+    background: var(--bg-color);
+    border-radius: 1rem;
+    padding: 1.1rem 1.4rem;
+    margin-bottom: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__icon {
+    font-size: 2.2rem;
+  }
+
+  &__name {
+    font-weight: 700;
+    font-size: 1.4rem;
+  }
+
+  &__code {
+    font-family: var(--font-mono, monospace);
+    font-size: 1.1rem;
+    color: var(--extra-color-50);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+
+  &__field {
+    margin-bottom: 1.2rem;
+  }
+}

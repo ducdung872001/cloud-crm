@@ -1,0 +1,318 @@
+.tab-danh-sach {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  // ---- Header ----
+  .tab-ds__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 4px;
+    }
+    p { font-size: 13px; color: #6b7280; margin: 0; }
+  }
+
+  .tab-ds__header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .btn-outline-ds {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    &:hover { background: #f9fafb; }
+
+    // Nút Xuất Excel: icon lớn hơn, text 2 dòng nhỏ
+    &.btn-export-excel {
+      gap: 10px;
+      padding: 8px 18px;
+
+      svg {
+        width: 20px;
+        height: 20px;
+        color: #374151;
+        flex-shrink: 0;
+      }
+
+      span {
+        font-size: 12px;
+        line-height: 1.3;
+        text-align: left;
+        font-weight: 500;
+        color: #374151;
+      }
+    }
+  }
+
+  .btn-primary-ds {
+    padding: 8px 18px;
+    background: #d97706;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    &:hover { background: #b45309; }
+  }
+
+  // ---- Filters ----
+  .tab-ds__filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .search-box-ds {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    padding: 7px 12px;
+    min-width: 220px;
+
+    svg { color: #9ca3af; width: 15px; height: 15px; flex-shrink: 0; }
+
+    input {
+      border: none;
+      outline: none;
+      font-size: 13px;
+      color: #374151;
+      background: transparent;
+      width: 100%;
+      &::placeholder { color: #9ca3af; }
+    }
+  }
+
+  .month-select {
+    select {
+      padding: 7px 32px 7px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      color: #374151;
+      cursor: pointer;
+      appearance: auto;
+    }
+  }
+
+  .status-filters {
+    display: flex;
+    gap: 6px;
+  }
+
+  .status-filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    svg { width: 13px; height: 13px; }
+
+    &:hover { background: #f3f4f6; }
+
+    &.active {
+      background: #f3f4f6;
+      border-color: #9ca3af;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    &.active-error {
+      background: #1e3a5f;
+      border-color: #1e3a5f;
+      color: #fff;
+    }
+  }
+
+  .btn-filter-adv {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    color: #374151;
+    cursor: pointer;
+    margin-left: auto;
+    svg { width: 14px; height: 14px; }
+    &:hover { background: #f9fafb; }
+  }
+
+  // ---- Table ----
+  .invoice-table-wrap {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .invoice-table-ds {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background: #f9fafb;
+      th {
+        padding: 11px 14px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #6b7280;
+        text-align: left;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid #f3f4f6;
+        transition: background 0.1s;
+        &:hover { background: #f9fafb; }
+        &:last-child { border-bottom: none; }
+        &.row-checked { background: #fefce8; }
+      }
+
+      td {
+        padding: 13px 14px;
+        font-size: 13px;
+        color: #374151;
+        vertical-align: middle;
+      }
+    }
+
+    .col-check { width: 40px; padding-left: 16px; }
+    .col-invoice-no { font-weight: 700; color: #111827; }
+    .col-date { color: #6b7280; white-space: nowrap; }
+    .col-taxcode { color: #6b7280; font-size: 12px; }
+    .col-amount { color: #374151; }
+    .col-vat .vat-highlight { color: #d97706; font-weight: 500; }
+    .col-total strong { color: #111827; font-size: 14px; }
+    .customer-name-ds { font-weight: 600; color: #111827; }
+
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+
+    .col-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+  }
+
+  .btn-sign {
+    padding: 5px 16px;
+    background: #d97706;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    &:hover { background: #b45309; }
+  }
+
+  .btn-replace {
+    padding: 5px 14px;
+    background: transparent;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    font-size: 12px;
+    color: #374151;
+    cursor: pointer;
+    &:hover { background: #f3f4f6; }
+  }
+
+  .btn-action-sm {
+    padding: 4px 12px;
+    background: transparent;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    font-size: 12px;
+    color: #374151;
+    cursor: pointer;
+    &:hover { background: #f3f4f6; }
+  }
+
+  // ---- Pagination ----
+  .pagination-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-top: 1px solid #f3f4f6;
+    background: #fff;
+  }
+
+  .pagination-info {
+    font-size: 13px;
+    color: #6b7280;
+  }
+
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .page-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.1s;
+
+    &:hover:not(:disabled) { background: #f3f4f6; }
+    &:disabled { color: #d1d5db; cursor: default; }
+    &.active {
+      background: #1e3a5f;
+      color: #fff;
+      border-color: #1e3a5f;
+      font-weight: 600;
+    }
+  }
+
+  .page-dots {
+    padding: 0 4px;
+    font-size: 13px;
+    color: #9ca3af;
+  }
+}

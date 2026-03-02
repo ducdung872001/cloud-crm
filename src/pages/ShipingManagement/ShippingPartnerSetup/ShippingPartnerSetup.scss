@@ -1,0 +1,339 @@
+.page-partner-setup {
+  padding-bottom: 48px;
+}
+
+// ===== Stats bar =====
+.ps-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.ps-stat-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 18px 22px;
+  text-align: center;
+
+  &__label {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+
+  &__value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1d4ed8;
+    line-height: 1;
+  }
+}
+
+// ===== Partner cards horizontal row =====
+.ps-partner-cards {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+
+  @media (max-width: 1200px) { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 700px)  { grid-template-columns: repeat(2, 1fr); }
+}
+
+.ps-partner-card {
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 18px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  transition: box-shadow 0.18s, border-color 0.18s;
+
+  &:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  }
+
+  &.is-connected {
+    border-color: #10b981;
+  }
+
+  &.is-maintenance {
+    border-color: #f59e0b;
+    background: #fffbeb;
+  }
+
+  // Logo area
+  &__logo {
+    width: 60px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__logo-fallback {
+    font-size: 11px;
+    font-weight: 700;
+    color: #374151;
+    letter-spacing: 0.03em;
+  }
+
+  &__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.35;
+  }
+
+  &__status {
+    min-height: 22px;
+    display: flex;
+    align-items: center;
+  }
+
+  // Action buttons
+  &__btn {
+    width: 100%;
+    padding: 7px 0;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s, filter 0.15s;
+
+    &:hover:not(:disabled) { filter: brightness(0.92); }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    &--config {
+      background: #16a34a;
+      color: #fff;
+    }
+
+    &--connect {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    &--activate {
+      background: #374151;
+      color: #fff;
+    }
+  }
+}
+
+// Connection status badges
+.ps-conn-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 0;
+
+  &--connected {
+    color: #16a34a;
+  }
+
+  &--maintenance {
+    display: inline-block;
+    background: #fce7f3;
+    color: #9d174d;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+  }
+
+  &--none {
+    color: #f59e0b;
+  }
+}
+
+// Expand config form inside card
+.ps-config-form {
+  width: 100%;
+  text-align: left;
+  border-top: 1px dashed #e5e7eb;
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #374151;
+
+      .required { color: #ef4444; margin-left: 2px; }
+      .optional  { font-size: 11px; color: #9ca3af; font-weight: 400; }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+    padding-top: 2px;
+  }
+}
+
+.ps-pw-wrap {
+  position: relative;
+
+  .ps-pw-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 0;
+    display: flex;
+    svg { width: 15px; height: 15px; }
+    &:hover { color: #374151; }
+  }
+}
+
+.ps-btn-cancel {
+  padding: 6px 12px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  &:hover { background: #e5e7eb; }
+}
+
+.ps-btn-save {
+  padding: 6px 12px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  &:hover:not(:disabled) { background: #1d4ed8; }
+}
+
+.ps-btn-disconnect {
+  padding: 6px 12px;
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  &:hover:not(:disabled) { background: #fecaca; }
+}
+
+// ===== Table =====
+.ps-table-wrap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ps-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    background: #f9fafb;
+    border-bottom: 1.5px solid #e5e7eb;
+  }
+
+  th {
+    padding: 12px 16px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #6b7280;
+    letter-spacing: 0.05em;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 14px 16px;
+    font-size: 14px;
+    color: #111827;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:hover td {
+    background: #fafafa;
+  }
+
+  &__code {
+    font-weight: 600;
+    color: #374151;
+  }
+}
+
+// Table status badges
+.ps-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+
+  &--active {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  &--maintenance {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &--inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+  }
+}
+
+// Detail button in table
+.ps-btn-detail {
+  padding: 6px 18px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { background: #1d4ed8; }
+}
