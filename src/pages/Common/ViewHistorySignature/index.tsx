@@ -12,7 +12,6 @@ import "./index.scss";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import Button from "components/button/button";
 import { convertToId } from "reborn-util";
-import ModalSendEmail from "pages/Contract/ModalHistorySignature/partials/ModalSendEmail";
 import SheetFieldQuoteFormService from "services/SheetFieldQuoteFormService";
 
 interface IViewHistorySignatureProps {
@@ -432,16 +431,7 @@ export default function ViewHistorySignature(props: IViewHistorySignatureProps) 
             }
           </div>
         </div>
-      ) : null}
-
-      <ModalSendEmail
-        onShow={showModalSendEmail}
-        dataContract={data}
-        customerIdlist={data?.customerId ? [data?.customerId] : []}
-        onHide={(reload) => {
-          setShowModalSendEmail(false);
-        }}
-      />
+      ) : null}      
     </div>
   );
 }

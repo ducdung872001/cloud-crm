@@ -3126,15 +3126,7 @@ export const urls = {
   edit_contract: "/edit_contract/:id?",
   edit_contract_xml: "/edit_contract_xml/:id?",
   detail_contract: "/detail_contract/contractId/:id?",
-  detail_project: "/detail_project/projectId/:id?",
-
-  //Hợp đồng bảo lãnh
-  guarantee: "/guarantee",
-  detail_guarantee: "/detail_guarantee/guaranteeId/:id?",
-
-  //Bảo hành theo hợp đồng
-  warrantyContract: "/warrantyContract",
-  detail_warranty_contract: "/detail_warranty_contract/warrantyId/:id?",
+  detail_project: "/detail_project/projectId/:id?",    
 
   // đường dẫn tạo đơn bán
   create_sale_add: "/create_sale_add",
