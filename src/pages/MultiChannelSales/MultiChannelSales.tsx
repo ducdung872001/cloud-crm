@@ -4,6 +4,9 @@ import TitleAction from "components/titleAction/titleAction";
 import "./MultiChannelSales.scss";
 import Overview from "./Overview/Overview";
 import MultiChannelOrders from "./MultiChannelOrders/MultiChannelOrders";
+import ConnectionChannel from "./ConnectionChannel/ConnectionChannel";
+import MultiChannelConfiguration from "./MultiChannelConfiguration/MultiChannelConfiguration";
+import SalesWebsite from "./SalesWebsite/SalesWebsite";
 
 export default function MultiChannelSales() {
   document.title = "Bán hàng đa kênh";
@@ -126,6 +129,9 @@ export default function MultiChannelSales() {
         
         {tab === 1 && <Overview/>}
         {tab === 2 && <MultiChannelOrders/>}
+        {tab === 3 && <ConnectionChannel/>}
+        {tab === 4 && <SalesWebsite/>}
+        {tab === 5 && <MultiChannelConfiguration/>}
     
     </div>
   );
