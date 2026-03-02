@@ -1,0 +1,230 @@
+.page-fee-config {
+  padding-bottom: 60px;
+}
+
+.fee-config-wrapper {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+// ---- Header ----
+.fee-config-header {
+  padding: 24px 28px 0;
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 4px;
+  }
+
+  &__desc {
+    font-size: 13.5px;
+    color: #6b7280;
+    margin-bottom: 20px;
+  }
+}
+
+// ---- Tabs ----
+.fee-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 0;
+}
+
+.fee-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  // border-bottom: none;
+  background: #f9fafb;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  transition: all 0.18s;
+  // min-width: 180px;
+  width: 50%;
+  margin-bottom: 6px;
+
+
+  &__desc {
+    font-size: 12px;
+    font-weight: 400;
+    color: #9ca3af;
+  }
+
+  &.active {
+    background: #fff;
+    border-color: #a78bfa;
+    color: #7c3aed;
+    border-radius: 10px 10px 0 0;
+    border-bottom: 2px solid #fff;
+    margin-bottom: -2px;
+    z-index: 1;
+
+    .fee-tab__desc {
+      color: #a78bfa;
+    }
+  }
+
+  &:hover:not(.active) {
+    background: #f3f4f6;
+    color: #374151;
+  }
+}
+
+// ---- Table section ----
+.fee-table-section {
+  padding: 0 0 24px;
+  border-top: 1.5px solid #e5e7eb;
+}
+
+.fee-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    background: #f9fafb;
+    border-bottom: 1.5px solid #e5e7eb;
+  }
+
+  th {
+    padding: 12px 16px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #6b7280;
+    letter-spacing: 0.06em;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:hover td {
+    background: #fafafa;
+  }
+}
+
+// Cell inputs
+.fee-cell-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #111827;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+  min-width: 80px;
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  &:focus {
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.12);
+  }
+
+  // Hide number spin buttons
+  &[type="number"]::-webkit-inner-spin-button,
+  &[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+}
+
+// Delete button
+.fee-delete-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #fee2e2;
+  }
+}
+
+// Add row button
+.fee-add-btn {
+  margin: 16px 16px 0;
+  padding: 9px 18px;
+  background: #fff;
+  border: 1.5px dashed #d1d5db;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+
+  &:hover {
+    border-color: #7c3aed;
+    color: #7c3aed;
+    background: #faf5ff;
+  }
+}
+
+// ---- Footer ----
+.fee-config-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.btn-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-size: 13.5px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+
+  &:hover { color: #374151; }
+}
+
+.btn-save-config {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 28px;
+  background: var(--primary-color, #1d4ed8);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+
+  &:hover:not(:disabled) { background: #1e40af; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}

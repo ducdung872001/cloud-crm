@@ -15,7 +15,6 @@ import { ICallCenterResponseModel } from "model/callCenter/CallCenterResponseMod
 import { ICallHistoryListFilterRequest } from "model/callCenter/CallCenterRequestModel";
 import { showToast } from "utils/common";
 import CallCenterService from "services/CallCenterService";
-import AddManagementOpportunityModal from "pages/ManagementOpportunity/partials/AddManagementOpportunityModal";
 import { ContextType, UserContext } from "contexts/userContext";
 
 export default function CallHistory(props: ICallHistoryProps) {
@@ -249,12 +248,7 @@ export default function CallHistory(props: ICallHistoryProps) {
             />
           )}
         </Fragment>
-      )}
-      <AddManagementOpportunityModal
-        onShow={showModalAddManagementOpportunity}
-        idCustomer={idCustomer}
-        onHide={() => setShowModalAddManagementOpportunity(false)}
-      />
+      )}      
     </Fragment>
   );
 }
