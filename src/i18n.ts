@@ -79,6 +79,7 @@ i18n.use(initReactI18next).init({
           salesInvoice: "Sales Invoice",
           shipping: "Shipping",
           returnInvoice: "Return Invoice",
+          multiChannelSales: "Multi Channel Sales",
           salesCampaign: "Sales Campaign",
           createOppotunity: "Create opportunity",
           opportunityList: "Opportunity List",
@@ -100,6 +101,9 @@ i18n.use(initReactI18next).init({
           feedbackEnhancement: "Feedback enhancement",
           customerSurvey: "Customer survey",
 
+          fanpage: "Omnichannel",
+          totalChat: "Total chat",
+
           warehouse: "Warehouse",
           // đoạn này là children của warehouse
           createPurchaseOrder: "Create purchase order",
@@ -111,6 +115,17 @@ i18n.use(initReactI18next).init({
           warehouseManagement: "Warehouse management",
           inventoryTransferDocument: "Inventory transfer document",
           stockAdjustmentVoucher: "Stock adjustment voucher",
+          managementMaterial: "Management material",
+
+          financeManagement: "Finance management",
+          financeDashboard: "Dashboard",
+          financeCashbook: "Cash flow ledger",
+          createFinanceTransaction: "Create receipt/payment voucher",
+          createCashbookTemplate: "Create receipt/payment voucher",
+          fundManagement: "Fund management",
+          debtManagement: "Debt management",
+          createDebtTransaction: "Create debt transaction",
+          endOfShiftInventory: "End of shift inventory",
 
           cashbook: "Cash book",
           bpm: "Process Management",
@@ -207,6 +222,7 @@ i18n.use(initReactI18next).init({
           listTeam: "List team",
           listEmployee: "List employee",
           listTreatmentRooms: "List treatment rooms",
+          managementStore: "Management store",
         },
         // đoạn là page setting operate
         pageSettingOperate: {
@@ -256,6 +272,7 @@ i18n.use(initReactI18next).init({
           createKPIFramework: "Tạo bộ KPI",
           createKPITask: "Tạo phiếu giao KPI",
           kpiManagement: "Quản lý KPI",
+          invoiceVAT: "Xuất hóa đơn VAT",
           project: "Dự án",
           //Quản lý công việc BPM
           userTaskList: "Xử lý hồ sơ",
@@ -319,6 +336,7 @@ i18n.use(initReactI18next).init({
           shippingPartner: "Quản lý đơn vị vận chuyển",
           addShipping: "Tạo đơn vận chuyển",
           returnInvoice: "Khách trả hàng",
+          multiChannelSales: "Bán hàng đa kênh",
           salesCampaign: "Quản lý chiến dịch",
           createOppotunity: "Tạo cơ hội",
           opportunityList: "Danh sách cơ hội",
@@ -339,6 +357,9 @@ i18n.use(initReactI18next).init({
           medicalRecord: "Nhật ký điều trị",
           feedbackEnhancement: "Góp ý cải tiến",
           customerSurvey: "Khảo sát khách hàng",
+
+          fanpage: "Omnichannel",
+          totalChat: "Tổng hội thoại",
 
           // đoạn này là children của đặt hàng
           order: "Mua hàng",
@@ -362,6 +383,17 @@ i18n.use(initReactI18next).init({
           warehouseManagement: "Quản lý kho hàng",
           inventoryTransferDocument: "Phiếu điều chuyển kho",
           stockAdjustmentVoucher: "Phiếu điều chỉnh kho",
+          managementMaterial: "Quản lý nguyên vật liệu",
+
+          financeManagement: "Quản lý tài chính",
+          financeDashboard: "Dashboard",
+          financeCashbook: "Sổ thu chi",
+          createFinanceTransaction: "Tạo Phiếu Thu/Chi",
+          createCashbookTemplate: "Tạo Phiếu Thu/Chi",
+          fundManagement: "Quản lý quỹ",
+          debtManagement: "Quản lý công nợ",
+          createDebtTransaction: "Tạo giao dịch nợ",
+          endOfShiftInventory: "Kiểm kê cuối ca",
 
           cashbook: "Tài chính",
           bpm: "Quản lý quy trình",
@@ -457,6 +489,7 @@ i18n.use(initReactI18next).init({
           listEmployee: "Danh sách nhân viên",
           listTeam: "Danh sách nhóm nhân viên",
           listTreatmentRooms: "Danh sách phòng điều trị",
+          managementStore: "Quản lý cửa hàng",
         },
         // đoạn này là page cài đặt vận hành
         pageSettingOperate: {

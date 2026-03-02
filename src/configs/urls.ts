@@ -3090,6 +3090,11 @@ export const urls = {
   timekeeping: "/timekeeping",
   cashbook: "/cashbook",
   cxmSurvey: "/cxm_survey",
+
+  // Fanpage 
+  fanpage: "/fanpage",
+  total_chat: "/total_chat",
+
   // Đường dẫn đặt hàng
   order: "/order",
   // Đường dẫn quản lý đặt hàng
@@ -3145,6 +3150,8 @@ export const urls = {
   shipping_parther: "/shipping_parther",
   // đường dẫn danh sách khách trả hàng
   customer_pay: "/customer_pay",
+  // bán hàng đa kênh
+  multi_channel_sales: "/multi_channel_sales",
   //tạo báo giá
   create_offer_add: "/create_offer_add",
   report: "/report",
@@ -3152,6 +3159,14 @@ export const urls = {
   payment_history: "/payment_history",
   customer_care: "/customer_care",
   crm_campaign: "/crm_campaign",
+  finance_management: "/finance_management",
+  finance_management_dashboard: "/finance_management/dashboard",
+  finance_management_cashbook: "/finance_management/cashbook",
+  finance_management_cashbook_template: "/finance_management/cashbook_template",
+  finance_management_fund_management: "/finance_management/fund_management",
+  finance_management_debt_management: "/finance_management/debt_management",
+  finance_management_debt_transaction: "/finance_management/debt_transaction",
+  finance_management_shift_inventory: "/finance_management/shift_inventory",
   setting: "/setting",
   tip: "/tip",
   tip_group: "/tip_group",
@@ -3162,6 +3177,7 @@ export const urls = {
   kpi: "/kpi",
   kpiApply: "/kpi_apply",
   kpiObject: "/kpi_object",
+  invoiceVAT: "/invoiceVAT",
   appointment_schedule: "/appointment_schedule",
   warranty: "/warranty",
   warranty_process: "/warranty_process",
@@ -3327,6 +3343,8 @@ export const urls = {
   vehicle: "/vehicle",
   building: "/building",
   buildingFloor: "/building_floor",
+  //quản lý nguyên vật liệu
+  material: "/material",
 
   //upload tài liệu bpm
   // Link cho phép tải tài liệu lên
@@ -3345,6 +3363,17 @@ export const urls = {
   //Loại luật nghiệp vụ
   business_rule: "/bpm/business_rule",
   business_rule_config: "/bpm/business_rule_config/:id",
+
+  //Quản lý thanh toán
+  payment_method: "/payment_method",
+  sales_channel: "/sales_channel",
+  //Quản lý nhân viên
+  overview_staff: "/overview_staff",
+  staff: "/staff",
+  report_shift: "/report_shift",
+  shift_config: "/shift_config",
+  open_shift: "/open_shift",
+  close_shift: "/close_shift",
 };
 
 export default urls;

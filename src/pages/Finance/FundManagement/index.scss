@@ -1,0 +1,38 @@
+@import "../shared.scss";
+
+.finance-fund-list {
+  max-height: calc(100vh - 18rem);
+  overflow-y: auto;
+  padding-right: 0.4rem;
+}
+
+.finance-fund-list__item {
+  width: 100%;
+  cursor: pointer;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: rgba(46, 125, 50, 0.18);
+    background: rgba(46, 125, 50, 0.03);
+    transform: translateY(-1px);
+  }
+
+  &.is-selected {
+    border-color: rgba(46, 125, 50, 0.24);
+    background: rgba(46, 125, 50, 0.06);
+  }
+}
+
+.finance-fund-list__primary {
+  text-align: left;
+}
+
+.finance-fund-list__secondary {
+  text-align: right;
+}
+
+.finance-fund-list__amount {
+  font-weight: 700;
+}

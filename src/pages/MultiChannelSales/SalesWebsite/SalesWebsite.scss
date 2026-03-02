@@ -1,0 +1,95 @@
+.sales-website-page {
+    .conatiner-header{
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        .conatiner-button {
+            display: flex;
+            gap: 0 1rem;
+            .button-export,
+            .button-connect {
+                border: 1px solid;
+                padding: 0.5rem 1.6rem;
+                border-radius: 10px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: var(--extra-color-20);
+                }
+            }
+
+            .button-connect {
+                background-color: var(--primary-bg-color);
+                color: white;
+                border: 1px solid var(--primary-bg-color);
+            }
+        }
+    }
+
+    .info-web {
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background-color: white;
+        padding: 1.6rem;
+        width: 66%;
+
+        .input-group {
+            margin-top: 1.2rem;
+        }
+    }
+
+    .status-web {
+        width: 33%;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background-color: white;
+        padding: 1.6rem;
+
+        .box-status {
+            padding: 1.2rem;
+            display: flex;
+            border: 0.5px solid green;
+            border-radius: 10px;
+            gap: 0 1.2rem;
+            margin-top: 2rem;
+            .dot-active {
+                width: 1rem;
+                height: 1rem;
+                border-radius: 50px;
+                background-color: green;
+                margin-top: 0.8rem;
+            }
+        }
+    }
+
+    .info-display{
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background-color: white;
+        padding: 1.6rem;
+        width: 66%;
+        
+        .item-display {
+            padding: 1rem 0;
+            border-bottom: 0.5px dashed;
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+
+    .card-store {
+        width: 33%;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background-color: white;
+        padding: 1.6rem;
+
+        .card {
+            margin-top: 2rem;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #F37021 0%, #F5A623 100%);
+            padding: 1.5rem;
+        }
+    }
+}
