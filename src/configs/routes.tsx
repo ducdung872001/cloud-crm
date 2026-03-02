@@ -213,6 +213,11 @@ import MultiChannelSales from "@/pages/MultiChannelSales/MultiChannelSales";
 import DashboardRetail from "pages/DashboardRetail";
 import DashboardLoyalty from "@/pages/DashboardLoyalty";
 import InvoiceVATOverview from "pages/Kpi/InvoiceVAT/index";
+import ShippingList from "@/pages/ShipingManagement/ShippingList";
+import ShippingFeeConfig from "@/pages/ShipingManagement/ShippingFeeConfig/ShippingFeeConfig";
+import AddShippingOrder from "@/pages/ShipingManagement/AddShippingOrder/AddShippingOrder";
+import ShippingPartnerSetup from "@/pages/ShipingManagement/ShippingPartnerSetup/ShippingPartnerSetup";
+import ShippingReport from "@/pages/ShipingManagement/ShippingReport/ShippingReport";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -655,6 +660,30 @@ export const menu: IMenuItem[] = [
               code: "SALE_INVOICE",
             },
             {
+              title: "addShipping", // Tạo đơn vận chuyển
+              path: urls.add_shipping,
+              icon: <Icon name="Invoice" />,
+              code: "SALE_INVOICE",
+            },
+            {
+              title: "shipping", // Quản lý vận chuyển
+              path: urls.shipping,
+              icon: <Icon name="Invoice" />,
+              code: "SALE_INVOICE",
+            },
+            {
+              title: "shippingPartner", // Quản lý đơn vị vận chuyển
+              path: urls.shipping_parther,
+              icon: <Icon name="Invoice" />,
+              code: "SALE_INVOICE",
+            },
+            {
+              title: "shippingFeeConfig", // Quản lý phí vận chuyển
+              path: urls.shipping_fee_config,
+              icon: <Icon name="Invoice" />,
+              code: "SALE_INVOICE",
+            },
+            {
               title: "returnInvoice", // Khách trả hàng
               path: urls.customer_pay,
               icon: <Icon name="ReturnInvoice" />,
@@ -1011,6 +1040,12 @@ export const menu: IMenuItem[] = [
             {
               title: "dashboardLoyalty", // Dashboard khách hàng thân thiết
               path: urls.dashboard_loyalty,
+              icon: <Icon name="ReportFill" />,
+              code: "",
+            },
+            {
+              title: "dashboardShipping", // Dashboard vận chuyển
+              path: urls.dashboard_shipping,
               icon: <Icon name="ReportFill" />,
               code: "",
             },
@@ -1794,6 +1829,10 @@ export const routes: IRouter[] = [
     component: <DashboardLoyalty />,
   },
   {
+    path: urls.dashboard_shipping,
+    component: <ShippingReport />,
+  },
+  {
     path: urls.project,
     component: <ProjectList />,
   },
@@ -1885,6 +1924,27 @@ export const routes: IRouter[] = [
   {
     path: urls.sale_invoice,
     component: <SaleInvoiceList />,
+  },
+
+  // danh sách quản lý vận chuyển
+  {
+    path: urls.shipping,
+    component: <ShippingList />,
+  },
+  // danh sách quản lý đơn vị vận chuyển
+  {
+    path: urls.shipping_parther,
+    component: <ShippingPartnerSetup />,
+  },
+  // thêm mới vận chuyển
+  {
+    path: urls.add_shipping,
+    component: <AddShippingOrder />,
+  },
+  // quản lý phí vận chuyển
+  {
+    path: urls.shipping_fee_config,
+    component: <ShippingFeeConfig />,
   },
   // danh sách khách trả hàng
   {

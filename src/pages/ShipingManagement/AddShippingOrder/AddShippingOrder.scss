@@ -1,0 +1,207 @@
+.page-add-shipping {
+  padding-bottom: 40px;
+
+  // Breadcrumb back
+  .page-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #6b7280;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: color 0.15s;
+
+    svg { width: 15px; height: 15px; }
+
+    &:hover { color: var(--primary-color, #1d4ed8); }
+  }
+
+  // Layout 2 cột
+  .add-shipping-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+    align-items: flex-start;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // Cột trái
+  .add-shipping-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  // Cột phải
+  .add-shipping-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 80px;
+  }
+
+  // ---- Form card ----
+  .form-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+
+    &__title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+      padding: 14px 18px;
+      border-bottom: 1px solid #f3f4f6;
+      background: #fafafa;
+
+      svg { width: 16px; height: 16px; color: var(--primary-color, #1d4ed8); }
+    }
+
+    &__body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+  }
+
+  // 2 cột trong form
+  .form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+
+    @media (max-width: 600px) { grid-template-columns: 1fr; }
+  }
+
+  // Input với check icon
+  .input-verified-wrap {
+    position: relative;
+
+    .verified-icon {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      color: #10b981;
+      display: flex;
+      svg { width: 16px; height: 16px; }
+    }
+  }
+
+  // Auto-fill banner
+  .autofill-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #ecfdf5;
+    border: 1px solid #6ee7b7;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #065f46;
+
+    svg { width: 16px; height: 16px; color: #10b981; flex-shrink: 0; }
+    strong { font-weight: 600; }
+  }
+
+  // ---- COD preview ----
+  .cod-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: #fff7ed;
+    border-radius: 8px;
+    border: 1px dashed #fdba74;
+
+    &__label { font-size: 12px; color: #9a3412; }
+    &__value { font-size: 20px; font-weight: 700; color: #ea580c; }
+  }
+
+  // ---- Action card ----
+  .action-card {
+    .form-card__body { gap: 12px; }
+  }
+
+  // Readiness indicator
+  .readiness-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+
+    .readiness-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    &.ready {
+      background: #ecfdf5;
+      color: #065f46;
+      .readiness-dot { background: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,.2); }
+    }
+
+    &.not-ready {
+      background: #f9fafb;
+      color: #9ca3af;
+      .readiness-dot { background: #d1d5db; }
+    }
+  }
+
+  // Nút đẩy đơn (CTA chính)
+  .btn-push-order {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--primary-color, #1d4ed8);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+
+    svg { width: 18px; height: 18px; }
+
+    &:hover:not(:disabled) { background: #1e40af; }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    &__loading { color: rgba(255,255,255,0.8); font-size: 14px; }
+  }
+
+  // Link quay lại
+  .btn-back-link {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    font-size: 13px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 6px 0;
+    transition: color 0.15s;
+
+    svg { width: 14px; height: 14px; }
+    &:hover { color: #374151; }
+  }
+}

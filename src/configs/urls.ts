@@ -415,6 +415,9 @@ export const urlsApi = {
     // lấy mã hoá đơn
     invoiceCode: prefixAdmin + "/invoice/code",
   },
+  shipping: {
+
+  },
   boughtService: {
     addToInvoice: prefixAdmin + "/boughtService/update",
     delete: prefixAdmin + "/boughtService/delete",
@@ -3137,6 +3140,14 @@ export const urls = {
   create_sale_add: "/create_sale_add",
   // đường dẫn danh sách hóa đơn bán hàng
   sale_invoice: "/sale_invoice",
+  // đường dẫn quản lý vận chuyển
+  shipping: "/shipping",
+  // đường dẫn quản lý phí vận chuyển
+  shipping_fee_config: "/shipping_fee_config",
+  // đường dẫn Thêm đơn vận chuyển
+  add_shipping: "/add_shipping",
+  // đường dẫn quản lý đơn vị vận chuyển
+  shipping_parther: "/shipping_parther",
   // đường dẫn danh sách khách trả hàng
   customer_pay: "/customer_pay",
   // bán hàng đa kênh
@@ -3209,6 +3220,7 @@ export const urls = {
   setting_project: "/setting_project",
   config_bpm: "/config_bpm",
   setting_dashboard: "/setting_dashboard",
+  dashboard_shipping: "/dashboard_shipping",
   dashboard_loyalty: "/dashboard_loyalty",
   setting_report: "/setting_report",
   //Giám sát tích hợp
