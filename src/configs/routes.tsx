@@ -6,7 +6,6 @@ import urls from "./urls";
 
 import CustomerPersonList from "pages/CustomerPerson/CustomerPersonList";
 import ContactList from "pages/Contact/ContactList";
-import ContractList from "pages/Contract/ContractList";
 import ScheduleNextList from "pages/Schedule/ScheduleNextList";
 import TreatmentScheduleList from "pages/TreatmentSchedule/TreatmentScheduleList";
 import TimeKeepingList from "pages/Timekeeping/TimekeepingList";
@@ -71,8 +70,6 @@ import FinanceShiftInventory from "pages/Finance/ShiftInventory";
 import CreateOrderSales from "pages/Sell/CreateOrderSales/CreateOrderSales";
 import SaleInvoiceList from "pages/Sell/SaleInvoiceList/SaleInvoiceList";
 import CustomerPayList from "pages/Sell/CustomerPayList/CustomerPayList";
-// Lịch sử điều trị
-import TreatmentHistoryList from "pages/TreatmentHistory/TreatmentHistoryList";
 // Nhật ký điều trị
 import DiarySurgeryList from "pages/DiarySurgery/DiarySurgeryList";
 // Lịch
@@ -97,7 +94,6 @@ import ReportCustomer from "pages/ReportCustomer/ReportCustomer";
 import InstallApplication from "pages/InstallApplication/InstallApplication";
 import MarketingAutomation from "pages/MarketingAutomation/MarketingAutomation";
 import SettingZalo from "pages/SettingZalo/SettingZalo";
-import CreateContracts from "pages/Contract/CreateContracts/CreateContracts";
 import CreateCampaign from "pages/Campaign/partials/CreateCampaign/CreateCampaign";
 import CustomerSegment from "pages/customerSegment";
 import MarketingAutomationList from "pages/MarketingAutomation/MarketingAutomationList";
@@ -124,7 +120,6 @@ import FsQuote from "pages/FsQuote";
 import Quotations from "pages/Quotations";
 import QuotationsNew from "pages/Quotations/index_New";
 import SettingProcess from "pages/SettingProcess/SettingProcess";
-import DetailContract from "pages/Contract/DetailContract/DetailContract";
 import SaleFlowList from "pages/SaleFlow/SaleFlowList";
 import CreateSaleflow from "pages/SaleFlow/CreateSaleFlow/CreateSaleFlow";
 import ManagementSale from "pages/ManagementSale/ManagementSale";
@@ -135,12 +130,10 @@ import TransferOrderForm from "pages/TransferOrderForm";
 import DetailMarketingAutomation from "pages/MarketingAutomation/DetailMarketingAutomation";
 import ManageDataSharing from "pages/ManageDataSharing/ManageDataSharing";
 import SettingPartnerList from "pages/SettingPartner/SettingPartnerList";
-import GuaranteeContractList from "pages/Contract/GuaranteeContract/GuaranteeContract";
 import PartnerList from "pages/PartnerList/PartnerList";
 import ReportLogin from "pages/ReportLogin/ReportLogin";
 // cài đặt mẫu báo giá
 import SettingQuoteForm from "pages/SettingQuoteForm/SettingQuoteForm";
-import DetailGuaranteeContract from "pages/Contract/GuaranteeContract/DetailGuaranteeContract/DetailGuaranteeContract";
 import CampaignMarketingList from "pages/CampaignMarketing/CampaignMarketingList";
 import BusinessProcessList from "pages/BPM/BusinessProcessList/BusinessProcessList";
 import SettingBusinessProcess from "pages/BPM/SettingBusinessProcess/SettingBusinessProcess";
@@ -159,8 +152,6 @@ import SettingIntegration from "pages/SettingIntegration/SettingIntegration";
 import SettingDashboard from "pages/SettingDashboard/SettingDashboard";
 import DetailProject from "pages/ProjectList/DetailProject/DetailProject";
 import SettingPromotionList from "pages/SettingPromotion/SettingPromotionList";
-import WarrantyContract from "pages/Contract/WarrantyContract/WarrantyContract";
-import DetailWarrantyContract from "pages/Contract/WarrantyContract/DetailWarrantyContract/DetailWarrantyContract";
 import DetailPartner from "pages/PartnerList/DetailPartner/DetailPartner";
 import SettingOperate from "pages/SettingOperate/SettingOperate";
 import ManagementFeeList from "pages/OperateManagement/ManagementFee/ManagementFeeList";
@@ -182,8 +173,6 @@ import UserTaskList from "pages/UserTaskList";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import OrderRequestList from "pages/OrderRequestList";
 import MaterialList from "@/pages/ManagementMaterial/MaterialList";
-import EmailConfirm from "pages/Contract/EmailComfirm/EmailConfirm";
-import VoucherForm from "pages/Contract/EmailComfirm/VoucherForm";
 import MarketingAutomationListV2 from "pages/MarketingAutomation/MarketingAutomationListV2";
 import CreateMarketingAutomationV2 from "pages/MarketingAutomation/CreateMarketingAutomation/CreateMarketingAutomationV2";
 import { useCookies } from "react-cookie";
@@ -198,7 +187,6 @@ import ManagementOpportunityNew from "pages/ManagementOpportunityNew";
 import ManagerWork from "pages/ManagerWork";
 import Fanpage from "pages/Fanpage";
 import TotalChat from "pages/Fanpage/TotalChat";
-import CreateContractsXML from "pages/Contract/CreateContractsXML";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
 import PaymentMethodList from "pages/PaymentMethod/PaymentMethod";
@@ -722,31 +710,7 @@ export const menu: IMenuItem[] = [
       //   code: "",
       // }
     ],
-  },
-  ...(isBeauty && isBeauty == "1"
-    ? [
-        {
-          title: "provideService", // Thực hiện dịch vụ (Thực hiện HĐ -> Dạng đặc biệt)
-          path: urls.sell,
-          icon: <Icon name="Sell" />,
-          code: "MENU_SELL",
-          children: [
-            {
-              title: "treatmentHistory", // Thực hiện dịch vụ
-              path: urls.treatment_history,
-              icon: <Icon name="TraetmentHistory" />,
-              code: "TREATMENT_HISTORY",
-            },
-            {
-              title: "medicalRecord", // Nhật ký điều trị
-              path: urls.diary_surgery,
-              icon: <Icon name="Postoperative" />,
-              code: "DIARY_SURGERY_VIEW",
-            },
-          ],
-        },
-      ]
-    : []),
+  },  
   ...(!checkSubdomainTNEX
     ? [
         {
@@ -1455,48 +1419,6 @@ export const routes: IRouter[] = [
     path: urls.contact,
     component: <ContactList />,
   },
-  // tạo hợp đồng
-  {
-    path: urls.create_contract,
-    component: <CreateContracts />,
-  },
-  {
-    path: urls.create_contract_xml,
-    component: <CreateContractsXML />,
-  },
-  {
-    path: urls.edit_contract,
-    component: <CreateContracts />,
-  },
-  {
-    path: urls.edit_contract_xml,
-    component: <CreateContractsXML />,
-  },
-  {
-    path: urls.contract,
-    component: <ContractList />,
-  },
-  {
-    path: urls.warrantyContract,
-    component: <WarrantyContract />,
-  },
-  {
-    path: urls.guarantee,
-    component: <GuaranteeContractList />,
-  },
-
-  {
-    path: urls.detail_guarantee,
-    component: <DetailGuaranteeContract />,
-  },
-  {
-    path: urls.detail_warranty_contract,
-    component: <DetailWarrantyContract />,
-  },
-  {
-    path: urls.detail_contract,
-    component: <DetailContract />,
-  },
   {
     path: urls.detail_project,
     component: <DetailProject />,
@@ -1627,11 +1549,7 @@ export const routes: IRouter[] = [
   {
     path: urls.payment_history,
     component: <PaymentHistoryList />,
-  },
-  {
-    path: urls.treatment_history,
-    component: <TreatmentHistoryList />,
-  },
+  },  
   {
     path: urls.crm_campaign,
     component: <CrmCampaignList />,
@@ -1709,14 +1627,6 @@ export const routes: IRouter[] = [
     component: <SettingTicketList />,
   },
   {
-    path: urls.send_email_confirm,
-    component: <EmailConfirm />,
-  },
-  {
-    path: urls.voucher_confirm,
-    component: <VoucherForm />,
-  },
-  {
     path: urls.setting_call,
     component: <SettingCallList />,
   },
@@ -1744,18 +1654,6 @@ export const routes: IRouter[] = [
     path: urls.zalo_marketting,
     component: <ZaloMarketting />,
   },
-
-  // tạo báo giá
-  // {
-  //   path: urls.create_offer_add,
-  //   component: <CreateOffers />,
-  // },
-  // danh sách báo giá
-  // {
-  //   path: urls.offer,
-  //   component: <OfferList />,
-  // },
-  // Setting
   {
     path: urls.setting_rose,
     component: <SettingRoseList />,
@@ -1812,10 +1710,6 @@ export const routes: IRouter[] = [
     path: urls.setting_project,
     component: <SettingProjectList />,
   },
-  // {
-  //   path: urls.setting_work,
-  //   component: <SettingWorkTypeList />,
-  // },
   {
     path: urls.config_bpm,
     component: <ConfigBPM />,

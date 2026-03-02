@@ -19,8 +19,6 @@ import "./DashboardReportRevenue.scss";
 import ReportOpportunity from "pages/OpportunityList/partials/ReportOpportunity";
 import ReportCustomer from "pages/CustomerPerson/partials/ReportCustomer";
 import ReportPartner from "pages/PartnerList/partials/ReportPartner";
-import ReportGuarantee from "pages/Contract/GuaranteeContract/ReportGuarantee";
-import ReportWaranty from "pages/Contract/WarrantyContract/ReportWaranty";
 import { stringify } from "uuid";
 
 interface ReportRevenueProps {
@@ -574,14 +572,6 @@ export default function DashboardReportRevenue(props: ReportRevenueProps) {
       ) : activeTitleHeader === 4 ? (
         <>
           <ReportPartner />
-        </>
-      ) : activeTitleHeader === 5 ? (
-        <>
-          <ReportGuarantee />
-        </>
-      ) : activeTitleHeader === 6 ? (
-        <>
-          <ReportWaranty />
         </>
       ) : null}
     </>

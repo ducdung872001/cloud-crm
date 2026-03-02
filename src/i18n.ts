@@ -291,8 +291,7 @@ i18n.use(initReactI18next).init({
           partnerProfile: "Hồ sơ đối tác",
           teacherProfile: "Hồ sơ giáo viên",
           contactProfile: "Hồ sơ người liên hệ",
-          parentProfile: "Hồ sơ phụ huynh",
-          treatmentHistory: "Thực hiện dịch vụ",
+          parentProfile: "Hồ sơ phụ huynh",          
           customerSegments: "Phân khúc khách hàng",
 
           quote: "Báo giá",
@@ -326,8 +325,7 @@ i18n.use(initReactI18next).init({
           zalo: "Tin nhắn Zalo",
 
           selling: "Bán hàng",
-          opportunity: "Cơ hội bán hàng",
-          provideService: "Thực hiện dịch vụ",
+          opportunity: "Cơ hội bán hàng",          
           // đoạn này là children của bán hàng
           createSalesOrder: "Tạo đơn bán hàng",
           salesInvoice: "Hóa đơn bán hàng",

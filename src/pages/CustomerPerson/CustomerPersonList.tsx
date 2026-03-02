@@ -35,7 +35,6 @@ import RelationShipService from "services/RelationShipService";
 import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
 import ImportModal from "components/importModalBackup";
 import ExportListModal from "pages/Common/ExportListModal/ExportListModal";
-import AddTreamentHistoryModal from "pages/TreatmentHistory/partials/AddTreamentHistoryModal/AddTreamentHistoryModal";
 import AddBTwoBModal from "./partials/AddBTwoBModal";
 import ViewOpportunityBTwoB from "./partials/ViewOpportunityBTwoB";
 import AddModalOther from "./partials/AddModalOther";
@@ -3582,18 +3581,7 @@ export default function CustomerPersonList() {
             setDataCustomer(null);
             setShowModalAddXml(false);
           }}
-        />
-
-        <AddTreamentHistoryModal
-          onShow={showModalAddScheduler}
-          idCustomer={idCustomer}
-          onHide={(reload) => {
-            if (reload) {
-              getListCustomer(params, activeTitleHeader);
-            }
-            setShowModalAddScheduler(false);
-          }}
-        />
+        />        
         <UpdateCommon
           onShow={showModalUpdateCommon}
           listId={listIdChecked}
