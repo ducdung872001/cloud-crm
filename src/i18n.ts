@@ -77,6 +77,7 @@ i18n.use(initReactI18next).init({
           // đoạn này là children của selling
           createSalesOrder: "Create sales order",
           salesInvoice: "Sales Invoice",
+          shipping: "Shipping",
           returnInvoice: "Return Invoice",
           salesCampaign: "Sales Campaign",
           createOppotunity: "Create opportunity",
@@ -313,6 +314,10 @@ i18n.use(initReactI18next).init({
           // đoạn này là children của bán hàng
           createSalesOrder: "Tạo đơn bán hàng",
           salesInvoice: "Hóa đơn bán hàng",
+          shipping: "Quản lý vận chuyển",
+          shippingFeeConfig: "Quản lý phí vận chuyển",
+          shippingPartner: "Quản lý đơn vị vận chuyển",
+          addShipping: "Tạo đơn vận chuyển",
           returnInvoice: "Khách trả hàng",
           salesCampaign: "Quản lý chiến dịch",
           createOppotunity: "Tạo cơ hội",
@@ -417,6 +422,7 @@ i18n.use(initReactI18next).init({
           settingCode: "Cài đặt mã",
           configBpm: "Cấu hình quy trình",
           settingDashboard: "Cài đặt báo cáo",
+          dashboardShipping: "Báo cáo vận chuyển",
           dashboardLoyalty: "Báo cáo loyalty",
           settingApplication: "Cài đặt tích hợp",
           resourceManagement: "Quản trị tài nguyên",

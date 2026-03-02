@@ -1,0 +1,670 @@
+.page-shipping {
+  // ---- Tab trạng thái ----
+  .shipping-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border-bottom: 1.5px solid #e5e7eb;
+    padding: 0 16px;
+    background: #fff;
+
+    .shipping-tab-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 400;
+      color: #6b7280;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1.5px;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+
+      &:hover {
+        color: var(--primary-color, #1d4ed8);
+      }
+
+      &.active {
+        color: var(--primary-color, #1d4ed8);
+        font-weight: 600;
+        border-bottom: 2px solid var(--primary-color, #1d4ed8);
+      }
+
+      // Count badge trên tab
+      .tab-count-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 10px;
+        background: var(--primary-color, #1d4ed8);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1;
+      }
+    }
+  }
+
+  // ---- Thanh tìm kiếm ----
+  .search__box--shipping {
+    padding: 12px 16px 8px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  // ---- Mã vận đơn clickable ----
+  .tracking-code-link {
+    color: var(--primary-color, #1d4ed8);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s;
+
+    &:hover {
+      text-decoration-color: var(--primary-color, #1d4ed8);
+    }
+  }
+
+  // ---- Status badges ----
+  .shipping-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 500;
+
+    &.badge-pending {
+      background: #fef9c3;
+      color: #92400e;
+    }
+
+    &.badge-transit {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    &.badge-delivered {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    &.badge-returned {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    &.badge-cancelled {
+      background: #fce7f3;
+      color: #9d174d;
+    }
+  }
+
+  // ---- Action cell ----
+  .lst__action--cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+
+    .item__action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #6b7280;
+      transition: background 0.15s, color 0.15s;
+
+      &:hover {
+        background: #f3f4f6;
+        color: var(--primary-color, #1d4ed8);
+      }
+
+      &.icon__delete:hover {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
+// =============================================
+// Modal: Tạo đơn vận chuyển
+// =============================================
+.modal-add-shipping-order {
+  .shipping-form-section {
+    margin-bottom: 20px;
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #f3f4f6;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+  }
+
+  // Auto-fill indicator
+  .autofill-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #059669;
+    background: #d1fae5;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  // COD amount highlight
+  .cod-amount-field {
+    .cod-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #d97706;
+    }
+  }
+
+  // Push button
+  .btn-push-order {
+    width: 100%;
+    height: 44px;
+    font-size: 15px;
+    font-weight: 600;
+    background: #f97316;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #ea6c0a;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .ready-label {
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.85;
+      display: block;
+    }
+  }
+}
+
+// =============================================
+// Modal: Thiết lập đối tác vận chuyển
+// =============================================
+.modal-partner-setup {
+  .partner-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 4px 0;
+  }
+
+  .partner-card {
+    position: relative;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      border-color: var(--primary-color, #1d4ed8);
+      box-shadow: 0 2px 8px rgba(29, 78, 216, 0.1);
+    }
+
+    &.connected {
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+
+    .partner-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .partner-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .connected-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #10b981;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 99px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .btn-connect {
+      width: 100%;
+      height: 36px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+  }
+
+  // API key config popover
+  .api-key-config {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    min-width: 260px;
+
+    .config-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+
+      label {
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 4px;
+        display: block;
+      }
+    }
+  }
+}
+
+// =============================================
+// Modal: Chi tiết & tracking timeline
+// =============================================
+.modal-shipping-detail {
+  .tracking-timeline {
+    position: relative;
+    padding: 8px 0;
+
+    .timeline-item {
+      display: flex;
+      gap: 16px;
+      position: relative;
+      padding-bottom: 20px;
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+
+      // Vertical line
+      &:not(:last-child)::before {
+        content: "";
+        position: absolute;
+        left: 9px;
+        top: 20px;
+        bottom: 0;
+        width: 2px;
+        background: #e5e7eb;
+      }
+
+      // Dotted for future steps
+      &.future::before {
+        border-left: 2px dashed #d1d5db;
+        background: transparent;
+      }
+
+      .timeline-dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #e5e7eb;
+        background: #fff;
+        z-index: 1;
+
+        &.active {
+          background: var(--primary-color, #1d4ed8);
+          border-color: var(--primary-color, #1d4ed8);
+        }
+
+        &.future {
+          background: #f9fafb;
+          border-color: #d1d5db;
+        }
+      }
+
+      .timeline-content {
+        flex: 1;
+
+        .status-label {
+          font-size: 14px;
+          font-weight: 600;
+          color: #111827;
+
+          &.active {
+            color: var(--primary-color, #1d4ed8);
+          }
+        }
+
+        .timestamp {
+          font-size: 12px;
+          color: #6b7280;
+          margin-top: 2px;
+        }
+
+        .location {
+          font-size: 12px;
+          color: #6b7280;
+        }
+      }
+    }
+  }
+
+  // Shipper info
+  .shipper-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 8px;
+
+    .shipper-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9ca3af;
+
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .shipper-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #111827;
+    }
+
+    .btn-call {
+      margin-left: auto;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #10b981;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #059669;
+      }
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
+// =============================================
+// Modal: Chi tiết - Tab switcher & Info grid
+// =============================================
+.modal-shipping-detail {
+  .detail-tracking-code {
+    font-size: 14px;
+    font-weight: 400;
+    color: #6b7280;
+    margin-left: 6px;
+  }
+
+  .detail-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 1.5px solid #e5e7eb;
+
+    .detail-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 14px;
+      color: #6b7280;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1.5px;
+      transition: color 0.15s, border-color 0.15s;
+
+      svg { width: 15px; height: 15px; }
+
+      &.active {
+        color: var(--primary-color, #1d4ed8);
+        border-bottom-color: var(--primary-color, #1d4ed8);
+        font-weight: 600;
+      }
+
+      &:hover:not(.active) { color: #374151; }
+    }
+  }
+
+  .tracking-loading {
+    text-align: center;
+    color: #9ca3af;
+    padding: 32px 0;
+    font-size: 14px;
+  }
+
+  // Info grid
+  .order-info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    .info-row {
+      display: flex;
+      padding: 10px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 14px;
+
+      &:last-child { border-bottom: none; }
+
+      .info-label {
+        min-width: 160px;
+        color: #6b7280;
+        flex-shrink: 0;
+      }
+
+      .info-value {
+        color: #111827;
+        font-weight: 400;
+        flex: 1;
+
+        &.tracking-bold { font-weight: 700; font-size: 15px; }
+        &.cod-highlight  { font-weight: 600; color: #d97706; }
+      }
+    }
+  }
+}
+
+// =============================================
+// Modal: Partner Setup - bổ sung styles
+// =============================================
+.modal-partner-setup {
+  .partner-setup-desc {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 20px;
+  }
+
+  .partner-icon {
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  .input-password-wrap {
+    position: relative;
+
+    .toggle-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #9ca3af;
+      &:hover { color: #374151; }
+      svg { width: 16px; height: 16px; }
+    }
+  }
+
+  .config-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .webhook-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 10px 14px;
+    background: #eff6ff;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #1d4ed8;
+
+    svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+  }
+}
+
+// =============================================
+// Toggle Switch (dùng trong FeeConfigModal)
+// =============================================
+.fee-toggle-switch {
+  width: 42px;
+  height: 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s;
+
+  &.on  { background: #10b981; }
+  &.off { background: #d1d5db; }
+
+  .toggle-thumb {
+    position: absolute;
+    top: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: left 0.2s;
+  }
+
+  &.on  .toggle-thumb { left: 21px; }
+  &.off .toggle-thumb { left: 3px; }
+}
+
+.fee-config-desc {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.fee-input--flat {
+  margin-left: auto;
+}
+
+// =============================================
+// Modal: Cấu hình phí vận chuyển
+// =============================================
+.modal-fee-config {
+  .fee-config-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .fee-label {
+      min-width: 140px;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .fee-toggle {
+      // Toggle switch styling handled by component
+    }
+
+    .fee-select {
+      flex: 1;
+    }
+
+    .fee-input {
+      width: 120px;
+    }
+  }
+}
