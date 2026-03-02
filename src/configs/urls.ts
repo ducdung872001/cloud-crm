@@ -3111,6 +3111,9 @@ export const urls = {
   inventory: "/inventory",
   // đường dẫn bán hàng
   sell: "/sell",
+  promotional_program: "/promotional_program",
+  promotional_report: "/promotional_report",
+
   contract: "/contract",
   offer: "/offer",
   create_contract: "/create_contract",
@@ -3175,11 +3178,13 @@ export const urls = {
   setting_common: "/setting_common",
   setting_rose: "/setting_rose",
   setting_basis: "/setting_basis",
+  setting_payment_method: "/setting_payment_method",
   setting_operate: "/setting_operate",
   setting_timekeeping: "/setting_timekeeping",
   setting_customer: "/setting_customer",
   setting_partner: "/setting_partner",
   setting_contact: "/setting_contact",
+  setting_loyalty: "/setting_loyalty",
   setting_sell: "/setting_sell",
   //Cài đặt hợp đồng
   setting_contract: "/setting_contract",

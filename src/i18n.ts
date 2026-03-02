@@ -72,6 +72,8 @@ i18n.use(initReactI18next).init({
           zalo: "Zalo",
 
           selling: "Sales",
+          promotionMarketing: "Promotion",
+          promotionalReport: "Promotional Report",
           opportunity: "Opportunities",
           provideService: "Provide service",
           // đoạn này là children của selling
@@ -151,6 +153,7 @@ i18n.use(initReactI18next).init({
           settingCustomer: "Setting customer",
           settingPartner: "Setting partner",
           settingContact: "Setting contact",
+          settingLoyalty: "Setting loyalty",
           settingSales: "Setting sales",
           settingMarketing: "Setting Marketing",
           settingContract: "Setting contract",
@@ -172,6 +175,7 @@ i18n.use(initReactI18next).init({
           settingCode: "Setting code",
           configBpm: "Config BPM",
           settingDashboard: "Setting report",
+          settingPaymentMethod: "Setting payment method",
           dashboardLoyalty: "Dashboard loyalty",
           settingApplication: "Setting integrate",
           resourceManagement: "Resource management",
@@ -308,6 +312,9 @@ i18n.use(initReactI18next).init({
           zalo: "Tin nhắn Zalo",
 
           selling: "Bán hàng",
+          promotionMarketing: "Khuyến mãi",
+          promotionalReport: "Báo cáo khuyến mãi",
+          promotionalProgram: "Chương trình khuyến mãi",
           opportunity: "Cơ hội bán hàng",
           provideService: "Thực hiện dịch vụ",
           // đoạn này là children của bán hàng
@@ -395,6 +402,7 @@ i18n.use(initReactI18next).init({
           settingCustomer: "Cài đặt khách hàng",
           settingPartner: "Cài đặt đối tác",
           settingContact: "Cài đặt người liên hệ",
+          settingLoyalty: "Cài đặt chương trình khách hàng thân thiết",
           settingSales: "Cài đặt bán hàng",
           settingMarketing: "Cài đặt truyền thông",
           settingContract: "Cài đặt hợp đồng",
@@ -417,6 +425,7 @@ i18n.use(initReactI18next).init({
           settingCode: "Cài đặt mã",
           configBpm: "Cấu hình quy trình",
           settingDashboard: "Cài đặt báo cáo",
+          settingPaymentMethod: "Cài đặt phương thức thanh toán",
           dashboardLoyalty: "Báo cáo loyalty",
           settingApplication: "Cài đặt tích hợp",
           resourceManagement: "Quản trị tài nguyên",

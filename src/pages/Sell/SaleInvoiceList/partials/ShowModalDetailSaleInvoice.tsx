@@ -35,7 +35,6 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInv
   const [lstService, setLstService] = useState([]);
   const [dataPomService, setDataPomService] = useState(null);
   const [cardInfoMap, setCardInfoMap] = useState<Record<number, { name: string; avatar: string; price: number }>>({});
-  
 
   const getPomService = async (lstId) => {
     const params = {
@@ -110,9 +109,7 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInv
       }
 
       // Fetch card information
-      const cardIds = mergedList
-        .map((item: any) => item.cardId)
-        .filter((id): id is number => id !== undefined && id !== null);
+      const cardIds = mergedList.map((item: any) => item.cardId).filter((id): id is number => id !== undefined && id !== null);
 
       let cardMap: Record<number, { name: string; avatar: string; price: number }> = {};
 
@@ -161,59 +158,55 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInv
   const dataFormat = ["text-center", "image", "", `${checkView ? "text-right" : ""}`, "text-right", "text-right"];
 
   const dataMappingArray = (item, index: number) => {
-     // Kiểm tra xem item có phải là boughtCard không
-     const cardId = item.cardId;
-     const isBoughtCard = cardId !== undefined && cardId !== null;
-     const cardInfo = isBoughtCard ? cardInfoMap[cardId] : null;
- 
-     return [
-       index + 1,
-       <Image 
-         key={index} 
-         src={
-           isBoughtCard && cardInfo?.avatar 
-             ? cardInfo.avatar 
-             : item.avatar || item.productAvatar || item.serviceAvatar || ImageThirdGender
-         } 
-         alt={isBoughtCard && cardInfo?.name ? cardInfo.name : item.name} 
-       />,
-       isBoughtCard ? (
-         <Fragment>
-           <span>{cardInfo?.name || item.name}</span>
-         </Fragment>
-       ) : !item.batchNo ? (
-         item.name || item.serviceName
-       ) : (
-         <Fragment>
-           <span>{item.name}</span>
-           <br />
-           <span>
-             <strong>Số lô: </strong>
-             {item.batchNo}
-           </span>
-           <br />
-           <span>
-             <strong>Đơn vị tính: </strong>
-             {item.unitName}
-           </span>
-         </Fragment>
-       ),
-       `${
-         checkView
-           ? formatCurrency(
-               isBoughtCard && cardInfo?.price !== undefined
-                 ? cardInfo.price
-                 : item.discount && item.discountUnit == 1
-                 ? (item.priceDiscount ? item.priceDiscount : item.price) -
-                     (item.priceDiscount ? item.priceDiscount : item.price) * (item.discount / 100)
-                 : (item.priceDiscount ? item.priceDiscount : item.price) - (item.discount || 0)
-             )
-           : item.cardNumber
-       }`,
-       `${checkView ? (item.qty ? item.qty : 1) : formatCurrency(item.cash)}`,
-       `${checkView ? formatCurrency(item.fee ? item.fee : "0") : formatCurrency(item.account)}`,
-     ];
-   };
+    // Kiểm tra xem item có phải là boughtCard không
+    const cardId = item.cardId;
+    const isBoughtCard = cardId !== undefined && cardId !== null;
+    const cardInfo = isBoughtCard ? cardInfoMap[cardId] : null;
+
+    return [
+      index + 1,
+      <Image
+        key={index}
+        src={isBoughtCard && cardInfo?.avatar ? cardInfo.avatar : item.avatar || item.productAvatar || item.serviceAvatar || ImageThirdGender}
+        alt={isBoughtCard && cardInfo?.name ? cardInfo.name : item.name}
+      />,
+      isBoughtCard ? (
+        <Fragment>
+          <span>{cardInfo?.name || item.name}</span>
+        </Fragment>
+      ) : !item.batchNo ? (
+        item.name || item.serviceName
+      ) : (
+        <Fragment>
+          <span>{item.name}</span>
+          <br />
+          <span>
+            <strong>Số lô: </strong>
+            {item.batchNo}
+          </span>
+          <br />
+          <span>
+            <strong>Đơn vị tính: </strong>
+            {item.unitName}
+          </span>
+        </Fragment>
+      ),
+      `${
+        checkView
+          ? formatCurrency(
+              isBoughtCard && cardInfo?.price !== undefined
+                ? cardInfo.price
+                : item.discount && item.discountUnit == 1
+                ? (item.priceDiscount ? item.priceDiscount : item.price) -
+                  (item.priceDiscount ? item.priceDiscount : item.price) * (item.discount / 100)
+                : (item.priceDiscount ? item.priceDiscount : item.price) - (item.discount || 0)
+            )
+          : item.cardNumber
+      }`,
+      `${checkView ? (item.qty ? item.qty : 1) : formatCurrency(item.cash)}`,
+      `${checkView ? formatCurrency(item.fee ? item.fee : "0") : formatCurrency(item.account)}`,
+    ];
+  };
 
   // đoạn này là table của vật tư tiêu hao
   const titlesPom = ["STT", "Sản phẩm", "Đơn vị", "Số lượng", "Dịch vụ"];
