@@ -2156,72 +2156,6 @@ export default function CustomerPersonList() {
     });
   }, []);
 
-  const handleTestExportApi = useCallback(async (unitCode: string, month: number, year: number) => {
-    if (isTestExporting) return;
-
-    try {
-      setIsTestExporting(true);
-
-      const response = await CustomerService.export({ unitCode, month, year });
-
-      if (response && response.ok) {
-        const blob = await response.blob();
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = downloadUrl;
-        link.download = `payroll-${unitCode}-${year}-${month}.xlsx`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(downloadUrl);
-
-        showToast("Export payroll thành công", "success");
-        setShowTestExportModal(false);
-      } else {
-        showToast("Gọi API export thất bại. Vui lòng thử lại sau!", "error");
-      }
-    } catch (error) {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
-    } finally {
-      setIsTestExporting(false);
-    }
-  }, [isTestExporting]);
-
-  const openTestExportModal = useCallback(() => {
-    const now = new Date();
-    setTestMonth(now.getMonth() + 1);
-    setTestYear(now.getFullYear());
-    setTestUnitCode("");
-    setShowTestExportModal(true);
-  }, []);
-
-  const handleSubmitTestExport = useCallback(
-    (e) => {
-      e.preventDefault();
-
-      const unitCode = (testUnitCode || "").trim();
-      const monthInt = Number(testMonth);
-      const yearInt = Number(testYear);
-
-      if (!unitCode) {
-        showToast("Vui lòng nhập Unit Code", "warning");
-        return;
-      }
-
-      if (!Number.isInteger(monthInt) || monthInt < 1 || monthInt > 12) {
-        showToast("Tháng không hợp lệ", "warning");
-        return;
-      }
-
-      if (!Number.isInteger(yearInt) || yearInt < 2000) {
-        showToast("Năm không hợp lệ", "warning");
-        return;
-      }
-
-      handleTestExportApi(unitCode, monthInt, yearInt);
-    },
-    [handleTestExportApi, testMonth, testUnitCode, testYear]
-  );
 
   const testExportActions: IActionModal = {
     actions_right: {
@@ -2285,13 +2219,6 @@ export default function CustomerPersonList() {
         icon: <Icon name="Download" />,
         callback: () => {
           setOnShowModalExport(true);
-        },
-      },
-      {
-        title: "Test",
-        icon: <Icon name="Download" />,
-        callback: () => {
-          openTestExportModal();
         },
       },
     ],
@@ -3686,56 +3613,6 @@ export default function CustomerPersonList() {
           total={pagination.totalItem}
           callback={(type, extension) => exportCallback(type, extension)}
         />
-        <Modal
-          isOpen={showTestExportModal}
-          className="modal-export modal-export-payroll"
-          isFade={true}
-          staticBackdrop={true}
-          toggle={() => !isTestExporting && setShowTestExportModal(false)}
-          isCentered={true}
-        >
-          <form className="form-export" onSubmit={handleSubmitTestExport}>
-            <ModalHeader title="Test export payroll" toggle={() => !isTestExporting && setShowTestExportModal(false)} />
-            <ModalBody>
-              <Input
-                label="Unit Code"
-                name="unitCode"
-                fill={true}
-                required={true}
-                value={testUnitCode}
-                placeholder="Nhập Unit Code"
-                onChange={(e) => setTestUnitCode(e.target.value)}
-              />
-              <div className="payroll-date-row">
-                <div className="payroll-date-field">
-                  <SelectCustom
-                    id="payrollMonth"
-                    name="month"
-                    label="Tháng"
-                    options={monthOptions}
-                    fill={true}
-                    value={testMonth}
-                    onChange={(e) => setTestMonth(Number(e.value))}
-                    placeholder="Chọn tháng"
-                  />
-                </div>
-                <div className="payroll-date-field">
-                  <SelectCustom
-                    id="payrollYear"
-                    name="year"
-                    label="Năm"
-                    options={yearOptions}
-                    fill={true}
-                    value={testYear}
-                    onChange={(e) => setTestYear(Number(e.value))}
-                    placeholder="Chọn năm"
-                  />
-                </div>
-              </div>
-            </ModalBody>
-            <ModalFooter actions={testExportActions} />
-          </form>
-        </Modal>
         <ImportModal
           name="Nhập danh sách khách hàng"
           onShow={showModalImport}
