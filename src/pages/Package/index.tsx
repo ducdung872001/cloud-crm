@@ -12,6 +12,7 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
 import PackageService from "services/PackageService";
+import FieldService from "services/FieldService";
 import { showToast } from "utils/common";
 import { formatCurrency, getPageOffset, isDifferenceObj } from "reborn-util";
 import AddPackageModal from "./partials/AddPackageModal";
@@ -38,9 +39,11 @@ export default function Package() {
   const [idRole, setIdRole] = useState<number>(null);
   const [params, setParams] = useState<any>({
     name: "",
+    fieldId: "",
     page: 1,
     limit: 10,
   });
+  const [fieldFilterOptions, setFieldFilterOptions] = useState<{ value: string; label: string }[]>([]);
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
@@ -81,6 +84,15 @@ export default function Package() {
         value: searchParams.get("code") ?? "",
       },
       {
+        key: "fieldId",
+        name: "Lĩnh vực",
+        type: "select",
+        list: fieldFilterOptions,
+        is_featured: true,
+        is_render: true,
+        value: searchParams.get("fieldId") ?? "",
+      },
+      {
         key: "status",
         name: "Trạng thái",
         type: "select",
@@ -92,7 +104,7 @@ export default function Package() {
         value: searchParams.get("status") ?? "",
       },
     ],
-    [searchParams]
+    [searchParams, fieldFilterOptions]
   );
 
   const abortController = new AbortController();
@@ -105,7 +117,6 @@ export default function Package() {
     if (response.code === 0) {
       const result = response.result;
       setListPackage(result.items);
-
       setPagination({
         ...pagination,
         page: +result.page,
@@ -124,12 +135,28 @@ export default function Package() {
     setIsLoading(false);
   };
 
+  const getFieldFilterOptions = async () => {
+    const response = await FieldService.list({ page: 1, limit: 200 });
+    if (response.code === 0) {
+      const items = response?.result?.items ?? [];
+      setFieldFilterOptions(
+        items.map((item: any) => ({
+          value: item.id?.toString(),
+          label: item.name,
+        }))
+      );
+      return;
+    }
+    showToast(response.message ?? "Không lấy được danh sách lĩnh vực", "error");
+  };
+
   useEffect(() => {
     const paramsTemp = _.cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
+    getFieldFilterOptions();
   }, []);
 
   useEffect(() => {
@@ -268,8 +295,7 @@ export default function Package() {
               disabled: isCheckedItem,
               callback: () => {
                 if (!isCheckedItem) {
-                  setDataPackage(item);
-                  setShowModalAdd(true);
+                  openEditPackageModal(item.id);
                 }
               },
             },
@@ -428,11 +454,47 @@ export default function Package() {
     setShowDialog(true);
   };
 
+  const openEditPackageModal = async (id: number) => {
+    if (!id) return;
+
+    const response = await PackageService.detail(id);
+    if (response.code === 0) {
+      setDataPackage(response.result ?? null);
+      setShowModalAdd(true);
+      return;
+    }
+
+    showToast(response.message ?? "Không lấy được thông tin gói dịch vụ", "error");
+  };
+
   const bulkActionList: BulkActionItemModel[] = [
     {
       title: "Xóa gói dịch vụ",
       callback: () => showDialogConfirmDelete(),
     },
+    ...(listIdChecked.length <= 1
+      ? [
+          {
+            title: "Sửa gói dịch vụ",
+            callback: () => {
+              if (!listIdChecked?.length) {
+                showToast("Vui lòng chọn 1 gói dịch vụ để sửa", "error");
+                return;
+              }
+
+              const selectedId = listIdChecked[0];
+              const selectedPackage = listPackage?.find((item) => item.id === selectedId);
+
+              if (!selectedPackage) {
+                showToast("Không tìm thấy gói dịch vụ đã chọn", "error");
+                return;
+              }
+
+              openEditPackageModal(selectedPackage.id);
+            },
+          },
+        ]
+      : []),
   ];
 
   return (

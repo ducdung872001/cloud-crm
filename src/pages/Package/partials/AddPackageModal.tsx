@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect, useCallback, useMemo } from "reac
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import PackageService from "services/PackageService";
+import FieldService from "services/FieldService";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -19,6 +20,8 @@ export default function AddPackageModal(props: any) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+  const [fieldOptions, setFieldOptions] = useState<{ value: number; label: string }[]>([]);
+  const [isLoadingFieldOptions, setIsLoadingFieldOptions] = useState<boolean>(false);
 
   const dataPricePackage = [
     {
@@ -78,6 +81,7 @@ export default function AddPackageModal(props: any) {
     () =>
       ({
         code: data?.code ?? "",
+        fieldId: data?.fieldId ??"",
         name: data?.name ?? "",
         packageType: data?.packageType ?? 1,
         price: data?.price ?? "",
@@ -136,6 +140,10 @@ export default function AddPackageModal(props: any) {
       rules: "required",
     },
     {
+      name: "fieldId",
+      rules: "required",
+    },
+    {
       name: "packageType",
       rules: "required",
     },
@@ -161,6 +169,25 @@ export default function AddPackageModal(props: any) {
     const packageType = e.value;
     setFormData({ ...formData, values: { ...formData.values, packageType } });
   };
+
+  const getFieldOptions = useCallback(async () => {
+    setIsLoadingFieldOptions(true);
+    const response = await FieldService.list({ page: 1, limit: 200 });
+
+    if (response?.code === 0) {
+      const items = response?.result?.items ?? [];
+      setFieldOptions(
+        items.map((item: any) => ({
+          value: item.id,
+          label: item.name,
+        }))
+      );
+    } else {
+      showToast(response?.message ?? "Không lấy được danh sách lĩnh vực quản lý", "error");
+    }
+
+    setIsLoadingFieldOptions(false);
+  }, []);
 
   const listField = useMemo(
     () =>
@@ -193,6 +220,15 @@ export default function AddPackageModal(props: any) {
               label: "APP",
             },
           ],
+        },
+        {
+          label: "Lĩnh vực quản lý",
+          name: "fieldId",
+          type: "select",
+          fill: true,
+          required: true,
+          options: fieldOptions,
+          isLoading: isLoadingFieldOptions,
         },
         {
           label: "Loại gói dịch vụ",
@@ -382,7 +418,7 @@ export default function AddPackageModal(props: any) {
           fill: true,
         },
       ] as IFieldCustomize[],
-    [lstPricePackage, formData.values]
+    [lstPricePackage, formData.values, fieldOptions, isLoadingFieldOptions]
   );
 
   useEffect(() => {
@@ -393,6 +429,12 @@ export default function AddPackageModal(props: any) {
       setIsSubmit(false);
     };
   }, [values]);
+
+  useEffect(() => {
+    if (onShow) {
+      getFieldOptions();
+    }
+  }, [onShow, getFieldOptions]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -412,6 +454,10 @@ export default function AddPackageModal(props: any) {
       ...(formData.values as any),
       ...(data ? { id: data.id } : {}),
     };
+
+    if (body.fieldId) {
+      body.fieldId = Number(body.fieldId);
+    }
 
     if (body.features) {
       body.features = JSON.stringify(body.features.split("\n"));
