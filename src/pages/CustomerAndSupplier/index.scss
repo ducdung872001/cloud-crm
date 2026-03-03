@@ -1,0 +1,844 @@
+//Khai báo các biến màu sắc, font chữ, kích thước, khoảng cách, border,... để sử dụng trong toàn bộ file scss này
+// Khai báo biến SCSS
+$bg: #f5f6fa;
+$white: #ffffff;
+$surface: #ffffff;
+$border: #e8eaf0;
+$border2: #d1d5e0;
+$accent: #5b6af0;
+$accent-light: #eef0fd;
+$accent2: #10b981;
+$accent2-light: #d1fae5;
+$danger: #ef4444;
+$danger-light: #fee2e2;
+$warning: #f59e0b;
+$warning-light: #fef3c7;
+$purple: #8b5cf6;
+$purple-light: #ede9fe;
+$text: #1a1d2e;
+$muted: #6b7280;
+$muted2: #9ca3af;
+$sidebar: #1e2139;
+$sidebar-text: #9da5c4;
+$sidebar-active: #5b6af0;
+
+/* ===== 36 Avatar Color Variables ===== */
+
+/* 1 */
+$av-red: #ef4444;
+$av-red-light: #fef2f2;
+
+/* 2 */
+$av-orange: #f97316;
+$av-orange-light: #fff7ed;
+
+/* 3 */
+$av-amber: #f59e0b;
+$av-amber-light: #fffbeb;
+
+/* 4 */
+$av-yellow: #eab308;
+$av-yellow-light: #fefce8;
+
+/* 5 */
+$av-lime: #84cc16;
+$av-lime-light: #f7fee7;
+
+/* 6 */
+$av-green: #22c55e;
+$av-green-light: #dcfce7;
+
+/* 7 */
+$av-emerald: #10b981;
+$av-emerald-light: #d1fae5;
+
+/* 8 */
+$av-teal: #14b8a6;
+$av-teal-light: #ccfbf1;
+
+/* 9 */
+$av-cyan: #06b6d4;
+$av-cyan-light: #cffafe;
+
+/* 10 */
+$av-sky: #0ea5e9;
+$av-sky-light: #e0f2fe;
+
+/* 11 */
+$av-blue: #3b82f6;
+$av-blue-light: #dbeafe;
+
+/* 12 */
+$av-indigo: #6366f1;
+$av-indigo-light: #e0e7ff;
+
+/* 13 */
+$av-violet: #8b5cf6;
+$av-violet-light: #ede9fe;
+
+/* 14 */
+$av-purple: #a855f7;
+$av-purple-light: #f3e8ff;
+
+/* 15 */
+$av-fuchsia: #d946ef;
+$av-fuchsia-light: #fae8ff;
+
+/* 16 */
+$av-pink: #ec4899;
+$av-pink-light: #fce7f3;
+
+/* 17 */
+$av-rose: #f43f5e;
+$av-rose-light: #ffe4e6;
+
+/* 18 */
+$av-crimson: #dc2626;
+$av-crimson-light: #fef2f2;
+
+/* 19 */
+$av-maroon: #be123c;
+$av-maroon-light: #fff1f2;
+
+/* 20 */
+$av-forest: #15803d;
+$av-forest-light: #dcfce7;
+
+/* 21 */
+$av-sea: #0f766e;
+$av-sea-light: #ccfbf1;
+
+/* 22 */
+$av-ocean: #0369a1;
+$av-ocean-light: #e0f2fe;
+
+/* 23 */
+$av-navy: #1e40af;
+$av-navy-light: #e0e7ff;
+
+/* 24 */
+$av-deep-purple: #7e22ce;
+$av-deep-purple-light: #f3e8ff;
+
+/* 25 */
+$av-magenta: #be185d;
+$av-magenta-light: #fce7f3;
+
+/* 26 */
+$av-brick: #b91c1c;
+$av-brick-light: #fee2e2;
+
+/* 27 */
+$av-slate: #334155;
+$av-slate-light: #f1f5f9;
+
+/* 28 */
+$av-gray: #4b5563;
+$av-gray-light: #f3f4f6;
+
+/* 29 */
+$av-zinc: #52525b;
+$av-zinc-light: #f4f4f5;
+
+/* 30 */
+$av-neutral: #525252;
+$av-neutral-light: #f5f5f5;
+
+/* 31 */
+$av-stone: #57534e;
+$av-stone-light: #f5f5f4;
+
+/* 32 */
+$av-gold: #ca8a04;
+$av-gold-light: #fef9c3;
+
+/* 33 */
+$av-copper: #ea580c;
+$av-copper-light: #fff7ed;
+
+/* 34 */
+$av-mint: #059669;
+$av-mint-light: #ecfdf5;
+
+/* 35 */
+$av-azure: #0284c7;
+$av-azure-light: #f0f9ff;
+
+/* 36 */
+$av-lavender: #9333ea;
+$av-lavender-light: #faf5ff;
+
+/* ===== Avatar Color List ===== */
+
+$avatar-colors: (
+  ($av-red-light, $av-red),
+  ($av-orange-light, $av-orange),
+  ($av-amber-light, $av-amber),
+  ($av-yellow-light, $av-yellow),
+  ($av-lime-light, $av-lime),
+  ($av-green-light, $av-green),
+  ($av-emerald-light, $av-emerald),
+  ($av-teal-light, $av-teal),
+  ($av-cyan-light, $av-cyan),
+  ($av-sky-light, $av-sky),
+  ($av-blue-light, $av-blue),
+  ($av-indigo-light, $av-indigo),
+  ($av-violet-light, $av-violet),
+  ($av-purple-light, $av-purple),
+  ($av-fuchsia-light, $av-fuchsia),
+  ($av-pink-light, $av-pink),
+  ($av-rose-light, $av-rose),
+  ($av-crimson-light, $av-crimson),
+  ($av-maroon-light, $av-maroon),
+  ($av-forest-light, $av-forest),
+  ($av-sea-light, $av-sea),
+  ($av-ocean-light, $av-ocean),
+  ($av-navy-light, $av-navy),
+  ($av-deep-purple-light, $av-deep-purple),
+  ($av-magenta-light, $av-magenta),
+  ($av-brick-light, $av-brick),
+  ($av-slate-light, $av-slate),
+  ($av-gray-light, $av-gray),
+  ($av-zinc-light, $av-zinc),
+  ($av-neutral-light, $av-neutral),
+  ($av-stone-light, $av-stone),
+  ($av-gold-light, $av-gold),
+  ($av-copper-light, $av-copper),
+  ($av-mint-light, $av-mint),
+  ($av-azure-light, $av-azure),
+  ($av-lavender-light, $av-lavender)
+);
+
+$letters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+
+@for $i from 1 through length($letters) {
+  $letter: nth($letters, $i);
+  $color-set: nth($avatar-colors, (($i - 1) % length($avatar-colors)) + 1);
+
+  .av-#{$letter} {
+    background: nth($color-set, 1);
+    color: nth($color-set, 2);
+  }
+}
+
+.page-customer-supplier {
+  .card-box {
+    .quick__search {
+      width: 100%;
+      padding: 2rem 2rem 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3rem;
+      .quick__search--start {
+        width: 30%;
+        .input-search {
+          width: 100%;
+        }
+      }
+      .quick__search--left {
+        width: 30%;
+        display: flex;
+        align-items: center;
+        flex: 1;
+
+        li {
+          padding: 0.6rem 0.8rem;
+          font-size: 1.4rem;
+          cursor: pointer;
+          font-weight: 500;
+          border: 1px solid var(--extra-color-50);
+          white-space: nowrap;
+
+          &:first-child {
+            border-top-left-radius: 0.5rem;
+            border-bottom-left-radius: 0.5rem;
+          }
+
+          &:last-child {
+            border-top-right-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+          }
+
+          &:hover {
+            background-color: var(--extra-color-50);
+            color: var(--white-color);
+          }
+
+          &.active {
+            background-color: var(--extra-color-50);
+            color: var(--white-color);
+          }
+        }
+      }
+
+      .quick__search--right {
+        width: 30%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .filter-chip {
+          padding: 6px 12px;
+          border-radius: 20px;
+          border: 1.5px solid $border;
+          background: $white;
+          font-family: "Nunito", sans-serif;
+          font-size: 12px;
+          font-weight: 700;
+          color: $muted;
+          cursor: pointer;
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          min-width: 9rem;
+        }
+      }
+      @media (max-width: 1200px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.2rem 0;
+        .quick__search--left,
+        .quick__search--start,
+        .quick__search--right {
+          width: 100%;
+        }
+        .quick__search--right {
+          justify-content: flex-start;
+        }
+      }
+    }
+    .stats-row {
+      padding: 14px 24px;
+      display: flex;
+      gap: 14px;
+      flex-shrink: 0;
+      background: $white;
+      margin-top: 1.2rem;
+      border-top: 1px solid $border;
+      border-bottom: 1px solid $border;
+      .stat-pill {
+        min-width: 14rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: $bg;
+        border-radius: 10px;
+        padding: 8px 14px;
+        .dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+        }
+        .num {
+          font-size: 15px;
+          font-weight: 800;
+        }
+        .lbl {
+          font-size: 11px;
+          color: $muted;
+          font-weight: 600;
+        }
+      }
+      @media (max-width: 1000px) {
+        display: block;
+        .stat-pill {
+          width: 100%;
+          margin-bottom: 1.2rem;
+        }
+      }
+    }
+
+    .ag-cell {
+      padding: 13px 16px;
+      font-size: 13px;
+      vertical-align: middle;
+      display: flex;
+      align-items: center;
+      .name-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 3rem;
+        .avatar {
+          width: 36px;
+          height: 36px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          font-weight: 800;
+          flex-shrink: 0;
+        }
+        .av-purple {
+          background: $purple-light;
+          color: $purple;
+        }
+        .av-blue {
+          background: $accent-light;
+          color: $accent;
+        }
+        .info {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 2px;
+          line-height: 1.2;
+          height: 100%;
+          .name {
+            font-weight: 700;
+            font-size: 13.5px;
+          }
+          .phone {
+            font-size: 11.5px;
+            color: $muted;
+            margin-top: 1px;
+          }
+        }
+      }
+      .type-cell {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        .badge {
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 11px;
+          font-weight: 600;
+          height: 25px;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .badge-blue {
+          background-color: $accent-light;
+          color: $accent;
+        }
+        .badge-green {
+          background-color: $accent2-light;
+          color: $accent2;
+        }
+      }
+      .debt-cell {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        .badge {
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-weight: 800;
+          font-size: 13px;
+          height: 25px;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .badge-blue {
+          // background-color: $accent-light;
+          color: $accent;
+        }
+        .badge-green {
+          // background-color: $accent2-light;
+          color: $accent2;
+        }
+        .badge-red {
+          // background-color: $danger-light;
+          color: $danger;
+        }
+        .badge-black {
+          // background-color: $danger-light;
+          color: black;
+        }
+      }
+    }
+
+    .search__box--customer {
+      // padding: 2.4rem 0 0 2rem;
+      .line__height--customer {
+        border-radius: 0.8rem 0.8rem 0 0;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0 2rem;
+        height: 5rem;
+        letter-spacing: 0.25px;
+        font-size: 1.4rem;
+        line-height: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 2.4rem;
+        color: var(--text-primary-color);
+
+        li {
+          display: block;
+          border-bottom: 3px solid transparent;
+          padding: 1.5rem 0 1.2rem;
+          transition: color 0.2s ease-in-out;
+          cursor: pointer;
+
+          &.active__item--title {
+            border-color: var(--primary-color);
+            cursor: default;
+          }
+        }
+      }
+
+      .list-partner {
+        // border: 1px solid;
+        margin-top: 2rem;
+        padding: 0 2rem 0 2rem;
+
+        .list__relationship {
+          display: flex;
+          align-items: center;
+          gap: 0 0.6rem;
+          transition: all 0.3s ease-in-out;
+          overflow-y: auto;
+          padding-bottom: 0.5rem;
+
+          .relationship-item,
+          .active__relationship--item {
+            white-space: nowrap;
+            // overflow: hidden;
+            // text-overflow: ellipsis;
+            padding: 0.7rem 1.8rem;
+            text-align: center;
+            font-size: 1.4rem;
+            cursor: pointer;
+            font-weight: 500;
+            border-radius: 0.5rem;
+          }
+
+          .relationship-item {
+            opacity: 0.9;
+          }
+
+          .active__relationship--item {
+            border: 1px dashed var(--black-color);
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+            opacity: 1;
+          }
+        }
+      }
+
+      .desc__search {
+        display: flex;
+        padding-right: 2rem;
+
+        .search-container {
+          padding: 2.4rem 0 0 2rem;
+        }
+
+        .form-group-filter {
+          display: flex;
+          // align-items: flex-end;
+          justify-content: center;
+
+          .button-filter-advance {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 4rem;
+            height: 4rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin-top: 2.4rem;
+            cursor: pointer;
+            svg {
+              width: 2rem !important;
+              height: 2rem !important;
+            }
+            &:hover {
+              background-color: var(--primary-color-30);
+            }
+          }
+        }
+      }
+    }
+
+    .filter_advance {
+      // border: 1px solid;
+      margin: 1.2rem 2rem 0rem 2rem;
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      .item_advance {
+        // border: 1px solid;
+        padding: 0.3rem 1rem 0.3rem 1rem;
+        border-radius: 3px;
+        background-color: var(--extra-color-20);
+        display: flex;
+
+        .advance_text {
+          display: flex;
+          gap: 0.5rem;
+        }
+        .advance_close {
+          margin-left: 3px;
+          cursor: pointer;
+          svg {
+            width: 2rem;
+            height: 2rem;
+            fill: var(--text-primary-color);
+          }
+          &:hover {
+            svg {
+              fill: var(--primary-color);
+            }
+          }
+        }
+      }
+    }
+
+    .custom-header {
+      position: relative;
+
+      button {
+        outline: none;
+        border: none;
+        box-shadow: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        padding: 0.8rem;
+        border-radius: 0.3rem;
+        width: 3rem;
+        height: 3rem;
+
+        span {
+          display: block;
+          width: 3rem;
+          height: 3rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        svg {
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+
+        &:hover:not(:disabled):not([disabled]),
+        &:focus:not(:disabled):not([disabled]) {
+          outline: none;
+        }
+
+        &:active:not(:disabled):not([disabled]) {
+          outline: none;
+        }
+
+        &:hover:not(:disabled):not([disabled]),
+        &:focus:not(:disabled):not([disabled]),
+        &:active:not(:disabled):not([disabled]) {
+          background-color: var(--extra-color-10);
+        }
+
+        &:hover {
+          background-color: var(--extra-color-10);
+
+          svg {
+            fill: var(--success-darker-color);
+          }
+        }
+      }
+    }
+
+    .lst__action--cell {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+
+      .item__action {
+        cursor: pointer;
+
+        svg {
+          width: 2rem;
+          height: 2rem;
+        }
+
+        &.add__view {
+          svg {
+            fill: var(--success-darker-color);
+          }
+        }
+        &.create__sales,
+        &.view__contract,
+        &.update {
+          svg {
+            fill: var(--primary-color);
+          }
+        }
+
+        &.view__invoice {
+          .icon-invoice {
+            svg {
+              width: 1.6rem;
+              height: 1.6rem;
+              fill: var(--primary-text-color);
+            }
+          }
+        }
+
+        &.delete {
+          svg {
+            fill: var(--error-darker-color);
+          }
+        }
+      }
+    }
+
+    .has__phone {
+      display: flex;
+      align-items: center;
+      gap: 0 1rem;
+      justify-content: center;
+
+      .isEye {
+        cursor: pointer;
+
+        svg {
+          width: 2rem;
+          height: 2rem;
+          fill: var(--extra-color-50);
+        }
+
+        &:hover {
+          svg {
+            fill: var(--primary-color-90);
+          }
+        }
+      }
+    }
+
+    .detail-person {
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-primary-color);
+
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
+
+    .btn__create--oppor {
+      border: 1px solid #d3d5d7;
+      border-radius: 5px;
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      padding: 0.3rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+
+      svg {
+        width: 1.8rem;
+        height: 1.8rem;
+      }
+
+      &:hover {
+        background: #e9eaeb;
+
+        svg {
+          fill: var(--success-darker-color);
+        }
+      }
+    }
+
+    .wrapper__b--two--b {
+      margin: 1rem 0;
+
+      .lst__b--two--b {
+        position: relative;
+
+        .item__b--two--b {
+          border: 1px dashed var(--extra-color-20);
+          border-radius: 0.3rem;
+          line-height: 2;
+          margin-bottom: 0.5rem;
+          transition: opacity 0.3s ease-in-out;
+
+          &.fade-out {
+            opacity: 0.7;
+          }
+
+          .__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            font-size: 1.4rem;
+            font-weight: 500;
+            text-align: center;
+
+            .name__pro {
+              max-width: 12rem;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              cursor: pointer;
+
+              &:hover {
+                color: var(--primary-color);
+              }
+            }
+
+            .action__pro {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              margin-top: 0.1rem;
+
+              svg {
+                width: 1.8rem;
+                height: 1.8rem;
+                fill: var(--extra-color-50);
+              }
+
+              &:hover {
+                svg {
+                  fill: var(--error-darker-color);
+                }
+              }
+            }
+          }
+        }
+
+        .item__more {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          background: var(--extra-color-5);
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          text-align: center;
+          font-size: 1.3rem;
+          line-height: 2.4rem;
+          font-weight: 500;
+          color: var(--primary-color);
+          border-radius: 0.3rem;
+          height: 3rem;
+        }
+      }
+
+      .item__create {
+        border-radius: 0.3rem;
+        cursor: pointer;
+        text-align: center;
+        line-height: 2;
+        font-weight: 500;
+        color: var(--primary-color-90);
+      }
+    }
+  }
+}

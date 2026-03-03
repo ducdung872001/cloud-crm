@@ -7,7 +7,6 @@ import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import "./ChangeStatusCampaign.scss";
-import CampaignMarketingService from "services/CampaignMarketingService";
 
 interface IChangeStatusCampaignProps {
   data: any;
@@ -104,7 +103,7 @@ export default function ChangeStatusCampaign(props: IChangeStatusCampaignProps) 
       statusOther: formData.values.status,
     };
 
-    const response = await CampaignMarketingService.updateStatus(body);
+    const response = null;
 
     if (response.code === 0) {
       showToast(`Thay đổi trạng thái thành công`, "success");

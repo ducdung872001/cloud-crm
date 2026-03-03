@@ -1,0 +1,30 @@
+.modal-select-type-zalo {
+    .form-select-type-zalo {
+      .list-form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem 3.2rem;
+  
+        .form-group {
+          width: calc(50% - 1.6rem);
+  
+          &:last-child {
+            width: 100%;
+          }
+
+          .radio-list {
+            .form-group {
+              display: flex;
+              align-items: center;
+              gap: 0 2rem;
+  
+              .base-radio {
+                margin-top: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  

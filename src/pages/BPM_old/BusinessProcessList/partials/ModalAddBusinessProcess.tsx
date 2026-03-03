@@ -13,7 +13,6 @@ import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import "./ModalAddBusinessProcess.scss";
 import ContractCategoryService from "services/ContractCategoryService";
-import CampaignMarketingService from "services/CampaignMarketingService";
 import SelectCustom from "components/selectCustom/selectCustom";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import { ContextType, UserContext } from "contexts/userContext";

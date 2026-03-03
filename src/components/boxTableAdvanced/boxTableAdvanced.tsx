@@ -20,6 +20,7 @@ interface IBoxTableAdvancedProps {
   dataPagination?: PaginationProps;
   autoFill?: boolean;
   saveColumnName?: string;
+  rowHeight?: number;
 }
 
 export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
@@ -39,6 +40,7 @@ export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
     setWidthColumns,
     dragColumnDefs = true,
     saveColumnName,
+    rowHeight,
   } = props;
 
   const gridApiRef = useRef(null);
@@ -69,30 +71,25 @@ export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
   };
 
   const onColumnMoved = (params) => {
-    if(!saveColumnName) return;
-    const columnOrder = params.columnApi
-      .getColumnState()
-      .map(col => col.colId);
-    
-    console.log('columnOrder', columnOrder);
-    localStorage.setItem(
-      saveColumnName,
-      JSON.stringify(columnOrder)
-    );
+    if (!saveColumnName) return;
+    const columnOrder = params.columnApi.getColumnState().map((col) => col.colId);
+
+    console.log("columnOrder", columnOrder);
+    localStorage.setItem(saveColumnName, JSON.stringify(columnOrder));
   };
 
   const onGridReady = (params) => {
     gridApiRef.current = params.api;
     params.api.addEventListener("selectionChanged", onSelectionChanged);
-    if(!saveColumnName) return;
+    if (!saveColumnName) return;
     const savedOrder = localStorage.getItem(saveColumnName);
     if (savedOrder) {
       params.columnApi.applyColumnState({
         state: JSON.parse(savedOrder).map((colId, index) => ({
           colId,
-          order: index
+          order: index,
         })),
-        applyOrder: true
+        applyOrder: true,
       });
     }
   };
@@ -121,6 +118,7 @@ export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
           onGridSizeChanged={(params) => (autoFill ? params.api.sizeColumnsToFit() : false)}
           onColumnMoved={onColumnMoved}
           onGridReady={onGridReady}
+          rowHeight={rowHeight ? rowHeight : null}
         />
       </div>
       {isPagination && (

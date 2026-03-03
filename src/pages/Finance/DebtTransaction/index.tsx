@@ -1,8 +1,8 @@
-import React, { FormEvent, useMemo, useState } from "react";
+import React, { FormEvent, useEffect, useMemo, useState } from "react";
 import Button from "components/button/button";
 import urls from "configs/urls";
 import { Link } from "react-router-dom";
-import { FinanceDebt, getFinanceDebtsMock } from "../data";
+import { financeDebtTransactionTypeOptions, FinanceDebt, FinanceDebtTransactionType, getFinanceDebtsMock } from "../data";
 import { FinancePageShell, FinanceStatCard, formatCurrency } from "../shared";
 import "./index.scss";
 
@@ -10,14 +10,44 @@ export default function FinanceDebtTransaction() {
   document.title = "Tạo giao dịch nợ";
 
   const [debts] = useState<FinanceDebt[]>(() => getFinanceDebtsMock().filter((item) => item.status !== "paid"));
-  const [selectedDebtId, setSelectedDebtId] = useState<string>(debts[0]?.id || "");
+  const [debtTransactionType, setDebtTransactionType] = useState<FinanceDebtTransactionType>("collect_debt");
+  const [selectedDebtId, setSelectedDebtId] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
+  const [dueDate, setDueDate] = useState<string>("");
+  const [reminderDate, setReminderDate] = useState<string>("");
   const [note, setNote] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  const selectedDebt = useMemo(() => debts.find((item) => item.id === selectedDebtId), [debts, selectedDebtId]);
+  const filteredDebts = useMemo(() => {
+    const targetKind = debtTransactionType === "collect_debt" ? "receivable" : "payable";
+
+    return debts.filter((item) => item.kind === targetKind);
+  }, [debtTransactionType, debts]);
+
+  const selectedDebt = useMemo(() => filteredDebts.find((item) => item.id === selectedDebtId) || null, [filteredDebts, selectedDebtId]);
   const amountNumber = Number(amount || 0);
+
+  useEffect(() => {
+    if (!filteredDebts.length) {
+      setSelectedDebtId("");
+      return;
+    }
+
+    if (!filteredDebts.find((item) => item.id === selectedDebtId)) {
+      setSelectedDebtId(filteredDebts[0].id);
+    }
+  }, [filteredDebts, selectedDebtId]);
+
+  useEffect(() => {
+    if (selectedDebt) {
+      setDueDate(selectedDebt.dueDate);
+      setReminderDate(selectedDebt.dueDate);
+    } else {
+      setDueDate("");
+      setReminderDate("");
+    }
+  }, [selectedDebt]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -30,6 +60,18 @@ export default function FinanceDebtTransaction() {
 
     if (amountNumber <= 0) {
       setError("Số tiền phải lớn hơn 0.");
+      setSubmitted(false);
+      return;
+    }
+
+    if (!dueDate) {
+      setError("Vui lòng chọn hạn thanh toán.");
+      setSubmitted(false);
+      return;
+    }
+
+    if (!reminderDate) {
+      setError("Vui lòng chọn ngày nhắc nhở.");
       setSubmitted(false);
       return;
     }
@@ -47,26 +89,41 @@ export default function FinanceDebtTransaction() {
   return (
     <FinancePageShell
       title="Tạo giao dịch nợ"
-      subtitle="Xử lý thu nợ khách hàng hoặc thanh toán nhà cung cấp, sau đó sinh phiếu và cập nhật quỹ."
+      // subtitle="Xử lý thu nợ khách hàng hoặc thanh toán nhà cung cấp, sau đó sinh phiếu và cập nhật quỹ."
     >
       <div className="finance-grid">
         <div className="finance-grid__span-7">
           <section className="finance-panel">
             <form className="finance-form" onSubmit={handleSubmit}>
-              <div className="finance-field">
-                <label>Khoản công nợ</label>
-                <select value={selectedDebtId} onChange={(event) => setSelectedDebtId(event.target.value)}>
-                  {debts.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name} - {item.kind === "receivable" ? "Phải thu" : "Phải trả"}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <div className="finance-form__grid">
+                <div className="finance-field">
+                  <label>Loại nợ</label>
+                  <select
+                    value={debtTransactionType}
+                    onChange={(event) => {
+                      setDebtTransactionType(event.target.value as FinanceDebtTransactionType);
+                      setSubmitted(false);
+                      setError("");
+                    }}
+                  >
+                    {financeDebtTransactionTypeOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="finance-field">
-                <label>Hành động</label>
-                <input value={selectedDebt?.kind === "receivable" ? "Thu nợ khách hàng" : "Thanh toán nhà cung cấp"} readOnly={true} />
+                <div className="finance-field">
+                  <label>Khoản công nợ</label>
+                  <select value={selectedDebtId} onChange={(event) => setSelectedDebtId(event.target.value)}>
+                    {filteredDebts.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="finance-field">
@@ -78,6 +135,18 @@ export default function FinanceDebtTransaction() {
                   onChange={(event) => setAmount(event.target.value.replace(/\D/g, ""))}
                   placeholder="Nhập số tiền"
                 />
+              </div>
+
+              <div className="finance-form__grid">
+                <div className="finance-field">
+                  <label>Hạn thanh toán</label>
+                  <input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} />
+                </div>
+
+                <div className="finance-field">
+                  <label>Ngày nhắc nhở</label>
+                  <input type="date" value={reminderDate} onChange={(event) => setReminderDate(event.target.value)} />
+                </div>
               </div>
 
               <div className="finance-field">
@@ -102,8 +171,8 @@ export default function FinanceDebtTransaction() {
         <div className="finance-grid__span-5">
           <section className="finance-panel">
             <div className="finance-panel__title">
-              <h2>Tóm tắt luồng</h2>
-              <span>Công nợ - Thanh toán - Sinh phiếu</span>
+              <h2>Thông tin</h2>
+              {/* <span>Công nợ - Thanh toán - Sinh phiếu</span> */}
             </div>
 
             {selectedDebt ? (
@@ -113,8 +182,20 @@ export default function FinanceDebtTransaction() {
                   <strong>{selectedDebt.name}</strong>
                 </div>
                 <div className="finance-summary-list__item">
+                  <span>Loại nợ</span>
+                  <strong>{debtTransactionType === "collect_debt" ? "Thu nợ" : "Trả nợ"}</strong>
+                </div>
+                <div className="finance-summary-list__item">
                   <span>Dư nợ hiện tại</span>
                   <strong>{formatCurrency(selectedDebt.amount)}</strong>
+                </div>
+                <div className="finance-summary-list__item">
+                  <span>Hạn thanh toán</span>
+                  <strong>{dueDate || "Chưa chọn"}</strong>
+                </div>
+                <div className="finance-summary-list__item">
+                  <span>Ngày nhắc nhở</span>
+                  <strong>{reminderDate || "Chưa chọn"}</strong>
                 </div>
                 <div className="finance-summary-list__item">
                   <span>Còn lại sau giao dịch</span>
@@ -126,15 +207,15 @@ export default function FinanceDebtTransaction() {
             {submitted ? (
               <div className="finance-helper-box" style={{ marginTop: "1.2rem" }}>
                 <strong>Đã tạo giao dịch nợ thành công</strong>
-                <ul>
+                {/* <ul>
                   <li>Đã ghi nhận giao dịch thanh toán / thu nợ.</li>
                   <li>Đã sẵn sàng sinh phiếu tương ứng trong sổ thu chi.</li>
                   <li>Đã sẵn sàng cập nhật quỹ và giảm dư nợ.</li>
-                </ul>
+                </ul> */}
               </div>
             ) : (
               <div style={{ marginTop: "1.2rem" }}>
-                <FinanceStatCard label="Số tiền chuẩn bị ghi nhận" value={formatCurrency(amountNumber)} helper="Điền số tiền để mô phỏng tác động" />
+                <FinanceStatCard label="Số tiền ghi nhận" value={formatCurrency(amountNumber)}/>
               </div>
             )}
           </section>

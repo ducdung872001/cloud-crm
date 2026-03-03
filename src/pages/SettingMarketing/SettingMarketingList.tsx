@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import TitleAction from "components/titleAction/titleAction";
 import "./SettingMarketingList.scss";
 import MarketingChannel from "./partials/MarketingChannel/MarketingChannel";
-import ModalAddMarketingMeasurement from "./partials/MarketingMeasurement/partials/ModalAddMAMeasurement";
-import MarketingMeasurement from "./partials/MarketingMeasurement/MarketingMeasurement";
 
 export default function SettingMarketingList() {
   document.title = "Cài đặt truyền thông";
@@ -55,13 +53,7 @@ export default function SettingMarketingList() {
           }}
         />
       ) : isDetailCategory && tab === "tab_two" ? (
-        <MarketingMeasurement
-          onBackProps={(isBack) => {
-            if (isBack) {
-              setIsDetailCategory(false);
-            }
-          }}
-        />
+        null
       ) : (
         []
       )}

@@ -13,7 +13,6 @@ import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import "./ModalAddMarketingChannel.scss";
 import ContractCategoryService from "services/ContractCategoryService";
-import CampaignMarketingService from "services/CampaignMarketingService";
 
 export default function ModalAddMarketingChannel(props: any) {
   const { onShow, onHide, data, listMarketingChannel } = props;
@@ -100,7 +99,7 @@ export default function ModalAddMarketingChannel(props: any) {
       ...(data ? { id: data.id } : {}),
     };
 
-    const response = await CampaignMarketingService.updateMAChannel(body);
+    const response = null;
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} kênh truyền thông thành công`, "success");

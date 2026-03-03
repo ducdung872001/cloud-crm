@@ -32,7 +32,7 @@ export default function ModalDetailSaleInvoice(props: ShowModalDetailSaleInvoice
   const [isPrintPomService, setIsPrintPomService] = useState<boolean>(false);
   const [lstIdService, setLstIdService] = useState([]);
   const [lstService, setLstService] = useState([]);
-  const [dataPomService, setDataPomService] = useState(null);  
+  const [dataPomService, setDataPomService] = useState(null);
 
   const getPomService = async (lstId) => {
     const params = {
@@ -120,7 +120,7 @@ export default function ModalDetailSaleInvoice(props: ShowModalDetailSaleInvoice
     `${checkView ? "Giá bán" : "Mã thẻ"}`,
     `${checkView ? "Số lượng" : "Giá trị thẻ"}`,
     // `${checkView ? "Thành tiền" : "Giá bán"}`,
-    'Kho hàng'
+    "Kho hàng",
   ];
 
   const dataFormat = ["text-center", "image", "", `${checkView ? "text-right" : ""}`, "text-right", "text-right"];
@@ -156,7 +156,7 @@ export default function ModalDetailSaleInvoice(props: ShowModalDetailSaleInvoice
         : item.cardNumber
     }`,
     `${checkView ? (item.qty ? item.qty : 1) : formatCurrency(item.cash)}`,
-    item.inventoryName
+    item.inventoryName,
     // `${checkView ? formatCurrency(item.fee) : formatCurrency(item.account)}`,
   ];
 
@@ -178,50 +178,48 @@ export default function ModalDetailSaleInvoice(props: ShowModalDetailSaleInvoice
     () => ({
       actions_right: {
         buttons: [
-        //   ...(dataPomService
-        //     ? ([
-        //         {
-        //           title: "Xem vật tư tiêu hao",
-        //           type: "button",
-        //           color: "primary",
-        //           variant: "outline",
-        //           callback: () => {
-        //             setIsPrintPomService(true);
-        //           },
-        //         },
-        //       ] as any)
-        //     : []),
-        //   {
-        //     title: "In hóa đơn A4",
-        //     type: "button",
-        //     color: "primary",
-        //     callback: () => {
-        //       setIsPrintPomService(false);
-        //       setTypePrint("a4");
-        //       setTimeout(() => {
-        //         handlePrint();
-        //       }, 100);
-        //     },
-        //   },
-        //   {
-        //     title: "In hóa đơn A5",
-        //     type: "button",
-        //     color: "primary",
-        //     callback: () => {
-        //       setIsPrintPomService(false);
-        //       setTypePrint("a5");
-        //       setTimeout(() => {
-        //         handlePrint();
-        //       }, 100);
-        //     },
-        //   },
-        {
+          //   ...(dataPomService
+          //     ? ([
+          //         {
+          //           title: "Xem vật tư tiêu hao",
+          //           type: "button",
+          //           color: "primary",
+          //           variant: "outline",
+          //           callback: () => {
+          //             setIsPrintPomService(true);
+          //           },
+          //         },
+          //       ] as any)
+          //     : []),
+          //   {
+          //     title: "In hóa đơn A4",
+          //     type: "button",
+          //     color: "primary",
+          //     callback: () => {
+          //       setIsPrintPomService(false);
+          //       setTypePrint("a4");
+          //       setTimeout(() => {
+          //         handlePrint();
+          //       }, 100);
+          //     },
+          //   },
+          //   {
+          //     title: "In hóa đơn A5",
+          //     type: "button",
+          //     color: "primary",
+          //     callback: () => {
+          //       setIsPrintPomService(false);
+          //       setTypePrint("a5");
+          //       setTimeout(() => {
+          //         handlePrint();
+          //       }, 100);
+          //     },
+          //   },
+          {
             title: "Xuất kho",
             type: "button",
             color: "primary",
-            callback: () => {
-              
-            },
+            callback: () => {},
           },
         ],
       },

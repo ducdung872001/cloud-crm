@@ -15,7 +15,6 @@ import { getPageOffset } from "reborn-util";
 import { getPermissions } from "utils/common";
 import "./MarketingChannel.scss";
 import ModalAddMarketingChannel from "./partials/ModalAddMarketingChannel";
-import CampaignMarketingService from "services/CampaignMarketingService";
 
 export default function MarketingChannel(props: any) {
   document.title = "Danh sách loại hợp đồng";
@@ -69,7 +68,7 @@ export default function MarketingChannel(props: any) {
   const getListMarketingChannel = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await CampaignMarketingService.listMAChannel(paramsSearch, abortController.signal);
+    const response = null;
 
     if (response.code === 0) {
       const result = response.result;
@@ -169,7 +168,7 @@ export default function MarketingChannel(props: any) {
   };
 
   const onDelete = async (id: number) => {
-    const response = await CampaignMarketingService.deleteMAChannel(id);
+    const response = null;
 
     if (response.code === 0) {
       showToast("Xóa loại kênh truyền thông thành công", "success");
@@ -188,7 +187,7 @@ export default function MarketingChannel(props: any) {
     const arrPromises = selectedIds.map((selectedId) => {
       const found = listMarketingChannel.find((item) => item.id === selectedId);
       if (found?.id) {
-        return CampaignMarketingService.deleteMAChannel(found.id);
+        return null;
       } else {
         return Promise.resolve(null);
       }

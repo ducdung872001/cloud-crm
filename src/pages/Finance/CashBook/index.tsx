@@ -1,4 +1,4 @@
-import React, { UIEvent, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   financeApprovalStatusMap,
   financeCashBookKindOptions,
@@ -7,7 +7,16 @@ import {
   FinanceCashBookPeriodFilter,
   getFinanceCashBookMock,
 } from "../data";
-import { FinanceBadge, FinanceEmptyState, FinancePageShell, FinanceStatCard, formatCurrency, formatDate } from "../shared";
+import {
+  FinanceBadge,
+  FinanceEmptyState,
+  FinanceLoadMoreIndicator,
+  FinancePageShell,
+  FinanceStatCard,
+  formatCurrency,
+  formatDate,
+  useFinanceProgressiveList,
+} from "../shared";
 import "./index.scss";
 
 export default function FinanceCashBook() {
@@ -20,7 +29,6 @@ export default function FinanceCashBook() {
   const [kindFilter, setKindFilter] = useState<FinanceCashBookKindFilter>("all");
   const [fundFilter, setFundFilter] = useState<string>("all");
   const [monthFilter, setMonthFilter] = useState<FinanceCashBookPeriodFilter>("this_month");
-  const [visibleCount, setVisibleCount] = useState<number>(5);
 
   const filteredTransactions = useMemo(() => {
     const today = new Date("2026-03-01T12:00:00");
@@ -38,7 +46,13 @@ export default function FinanceCashBook() {
     });
   }, [fundFilter, kindFilter, monthFilter, transactions]);
 
-  const visibleTransactions = fundFilter === "all" ? filteredTransactions : filteredTransactions.slice(0, visibleCount);
+  const {
+    visibleItems: visibleTransactions,
+    visibleCount,
+    isLoading,
+    hasMore,
+    handleScroll,
+  } = useFinanceProgressiveList(filteredTransactions, 10);
 
   const groupedTransactions = useMemo(() => {
     return visibleTransactions.reduce((groups, item) => {
@@ -65,17 +79,18 @@ export default function FinanceCashBook() {
     );
   }, [filteredTransactions]);
 
-  const handleScroll = (event: UIEvent<HTMLDivElement>) => {
-    const target = event.currentTarget;
-    const nearBottom = target.scrollHeight - target.scrollTop - target.clientHeight < 40;
+  const hasCustomFilter = kindFilter !== "all" || monthFilter !== "this_month" || fundFilter !== "all";
 
-    if (fundFilter !== "all" && nearBottom && visibleCount < filteredTransactions.length) {
-      setVisibleCount((current) => Math.min(current + 3, filteredTransactions.length));
-    }
+  const resetFilters = () => {
+    setKindFilter("all");
+    setMonthFilter("this_month");
+    setFundFilter("all");
   };
 
   return (
-    <FinancePageShell title="Sổ thu chi" subtitle="Hiển thị toàn bộ giao dịch đã tạo, group theo ngày và lọc nhanh theo nhu cầu.">
+    <FinancePageShell title="Sổ thu chi"
+    // subtitle="Hiển thị toàn bộ giao dịch đã tạo, group theo ngày và lọc nhanh theo nhu cầu."
+    >
       <div className="finance-grid">
         <div className="finance-grid__span-4">
           <FinanceStatCard label="Tổng thu" value={formatCurrency(totals.income)} tone="success" />
@@ -96,81 +111,104 @@ export default function FinanceCashBook() {
               </span>
             </div>
 
-            <div className="finance-filter-row" style={{ marginBottom: "0.8rem" }}>
-              {financeCashBookKindOptions.map((option) => (
-                <button
-                  key={option.value}
-                  className={`finance-filter-chip${kindFilter === option.value ? " is-active" : ""}`}
-                  onClick={() => setKindFilter(option.value)}
+            <div className="finance-filter-toolbar">
+              <div className="finance-filter-toolbar__group">
+                <select
+                  value={kindFilter}
+                  onChange={(event) => setKindFilter(event.target.value as FinanceCashBookKindFilter)}
+                  className="finance-filter-select finance-filter-select--compact"
+                  aria-label="Lọc theo loại giao dịch"
                 >
-                  {option.label}
-                </button>
-              ))}
-              {financeCashBookPeriodOptions.map((option) => (
-                <button
-                  key={option.value}
-                  className={`finance-filter-chip${monthFilter === option.value ? " is-active" : ""}`}
-                  onClick={() => setMonthFilter(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
+                  {financeCashBookKindOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="finance-filter-row" style={{ marginBottom: "1.2rem" }}>
-              <button className={`finance-filter-chip${fundFilter === "all" ? " is-active" : ""}`} onClick={() => setFundFilter("all")}>
-                Tất cả quỹ
-              </button>
-              {funds.map((fund) => (
-                <button
-                  key={fund.id}
-                  className={`finance-filter-chip${fundFilter === fund.id ? " is-active" : ""}`}
-                  onClick={() => setFundFilter(fund.id)}
+              <div className="finance-filter-toolbar__group">
+                <select
+                  value={monthFilter}
+                  onChange={(event) => setMonthFilter(event.target.value as FinanceCashBookPeriodFilter)}
+                  className="finance-filter-select finance-filter-select--compact"
+                  aria-label="Lọc theo thời gian"
                 >
-                  {fund.name}
-                </button>
-              ))}
+                  {financeCashBookPeriodOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="finance-filter-toolbar__group">
+                <select
+                  value={fundFilter}
+                  onChange={(event) => setFundFilter(event.target.value)}
+                  className="finance-filter-select finance-filter-select--wide"
+                  aria-label="Lọc theo quỹ"
+                >
+                  <option value="all">Tất cả quỹ</option>
+                  {funds.map((fund) => (
+                    <option key={fund.id} value={fund.id}>
+                      {fund.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {hasCustomFilter ? (
+                <div className="finance-filter-toolbar__group finance-filter-toolbar__group--end">
+                  <button className="finance-filter-reset" onClick={resetFilters}>
+                    Đặt lại
+                  </button>
+                </div>
+              ) : null}
             </div>
 
             <div className="finance-scroll-panel" onScroll={handleScroll}>
               {visibleTransactions.length === 0 ? (
                 <FinanceEmptyState title="Chưa có giao dịch phù hợp" description="Hãy thay đổi bộ lọc hoặc tạo thêm phiếu thu/chi." />
               ) : (
-                Object.keys(groupedTransactions).map((dateKey) => (
-                  <div key={dateKey} className="finance-date-group">
-                    <span className="finance-date-group__label">{formatDate(dateKey)}</span>
-                    <div className="finance-list">
-                      {groupedTransactions[dateKey].map((item) => {
-                        const fund = funds.find((fundItem) => fundItem.id === item.fundId);
+                <>
+                  {Object.keys(groupedTransactions).map((dateKey) => (
+                    <div key={dateKey} className="finance-date-group">
+                      <span className="finance-date-group__label">{formatDate(dateKey)}</span>
+                      <div className="finance-list">
+                        {groupedTransactions[dateKey].map((item) => {
+                          const fund = funds.find((fundItem) => fundItem.id === item.fundId);
 
-                        return (
-                          <div key={item.id} className="finance-list__item">
-                            <div>
-                              <strong>{item.title}</strong>
-                              <div className="finance-list__meta">
-                                {item.code} | {fund?.name || "Không xác định quỹ"}
+                          return (
+                            <div key={item.id} className="finance-list__item">
+                              <div>
+                                <strong>{item.title}</strong>
+                                <div className="finance-list__meta">
+                                  {item.code} | {fund?.name || "Không xác định quỹ"}
+                                </div>
+                                <div className="finance-list__meta">
+                                  {item.branchName} | {item.createdBy}
+                                </div>
                               </div>
-                              <div className="finance-list__meta">
-                                {item.branchName} | {item.createdBy}
+                              <div style={{ textAlign: "right" }}>
+                                <div className="finance-inline-actions" style={{ justifyContent: "flex-end", gap: "0.5rem" }}>
+                                  <FinanceBadge tone={item.kind === "income" ? "success" : "danger"}>{item.kind === "income" ? "Thu" : "Chi"}</FinanceBadge>
+                                  <FinanceBadge tone={financeApprovalStatusMap[item.approvalStatus].tone}>
+                                    {financeApprovalStatusMap[item.approvalStatus].label}
+                                  </FinanceBadge>
+                                </div>
+                                <div className={item.kind === "income" ? "finance-amount--income" : "finance-amount--expense"} style={{ marginTop: "0.5rem" }}>
+                                  {item.kind === "income" ? "+" : "-"} {formatCurrency(item.amount)}
+                                </div>
                               </div>
                             </div>
-                            <div style={{ textAlign: "right" }}>
-                              <div className="finance-inline-actions" style={{ justifyContent: "flex-end", gap: "0.5rem" }}>
-                                <FinanceBadge tone={item.kind === "income" ? "success" : "danger"}>{item.kind === "income" ? "Thu" : "Chi"}</FinanceBadge>
-                                <FinanceBadge tone={financeApprovalStatusMap[item.approvalStatus].tone}>
-                                  {financeApprovalStatusMap[item.approvalStatus].label}
-                                </FinanceBadge>
-                              </div>
-                              <div className={item.kind === "income" ? "finance-amount--income" : "finance-amount--expense"} style={{ marginTop: "0.5rem" }}>
-                                {item.kind === "income" ? "+" : "-"} {formatCurrency(item.amount)}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+                  <FinanceLoadMoreIndicator loading={isLoading} hasMore={hasMore} />
+                </>
               )}
             </div>
           </section>

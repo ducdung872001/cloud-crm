@@ -9,7 +9,6 @@ import "./index.scss";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import Button from "components/button/button";
 import { convertToId } from "reborn-util";
-import ModalSendEmail from "pages/Contract/ModalHistorySignature/partials/ModalSendEmail";
 import SheetFieldQuoteFormService from "services/SheetFieldQuoteFormService";
 import InfoProcess from "./InfoProcess";
 import DetailHistoryProcess from "./HistoryProcess";
@@ -172,17 +171,7 @@ export default function HistoryProcess(props: any) {
           )
           }
         </div>
-      </div>
-
-
-      <ModalSendEmail
-        onShow={showModalSendEmail}
-        dataContract={dataObject}
-        customerIdlist={dataObject?.customerId ? [dataObject?.customerId] : []}
-        onHide={(reload) => {
-          setShowModalSendEmail(false);
-        }}
-      />
+      </div>      
     </div>
   );
 }
