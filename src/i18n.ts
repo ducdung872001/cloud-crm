@@ -75,8 +75,7 @@ i18n.use(initReactI18next).init({
           selling: "Sales",
           promotionMarketing: "Promotion",
           promotionalReport: "Promotional Report",
-          opportunity: "Opportunities",
-          provideService: "Provide service",
+          opportunity: "Opportunities",          
           // đoạn này là children của selling
           createSalesOrder: "Create sales order",
           salesInvoice: "Sales Invoice",
@@ -321,8 +320,7 @@ i18n.use(initReactI18next).init({
           smsMarketing: "Truyền thông bằng SMS",
           zaloMarketing: "Truyền thông bằng Zalo",
           marketingAutomation: "Truyền thông theo kịch bản",
-          marketingAutomationV2: "Truyền thông theo kịch bản V2",
-          campaignMarketing: "Ngân sách truyền thông",
+          marketingAutomationV2: "Truyền thông theo kịch bản V2",          
 
           salesChannel: "Kênh bán",
           // đoạn này là children của kênh bán
@@ -333,8 +331,7 @@ i18n.use(initReactI18next).init({
           promotionMarketing: "Khuyến mãi",
           promotionalReport: "Báo cáo khuyến mãi",
           promotionalProgram: "Chương trình khuyến mãi",
-          opportunity: "Cơ hội bán hàng",
-          provideService: "Thực hiện dịch vụ",
+          opportunity: "Cơ hội bán hàng",          
           // đoạn này là children của bán hàng
           createSalesOrder: "Tạo đơn bán hàng",
           salesInvoice: "Hóa đơn bán hàng",

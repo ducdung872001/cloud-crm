@@ -11,14 +11,10 @@ import TreatmentScheduleList from "pages/TreatmentSchedule/TreatmentScheduleList
 import TimeKeepingList from "pages/Timekeeping/TimekeepingList";
 import CashBookList from "pages/CashBook/CashBookList";
 import PaymentHistoryList from "pages/PaymentHistory/PaymentHistoryList";
-import EarningList from "pages/Earning/EarningList";
 import CrmCampaignList from "pages/CrmCampaign/CrmCampaignList";
 import SettingList from "pages/Setting/SettingList";
 import ReportCommon from "pages/ReportCommon/ReportCommon";
 import InternalMailList from "pages/InternalMail/InternalMailList";
-import KpiList from "pages/Kpi/KpiList/KpiList";
-import KpiApplyList from "pages/Kpi/KpiApplyList/KpiApplyList";
-import KpiObjectList from "pages/Kpi/KpiObjectList/KpiObjectList";
 import DetailPersonList from "pages/CustomerPerson/partials/DetailPerson/DetailPersonList";
 import WarrantyList from "pages/Warranty/WarrantyList";
 import WarrantyListProcess from "pages/Warranty/WarrantyListProcess";
@@ -70,8 +66,6 @@ import FinanceShiftInventory from "pages/Finance/ShiftInventory";
 import CreateOrderSales from "pages/Sell/CreateOrderSales/CreateOrderSales";
 import SaleInvoiceList from "pages/Sell/SaleInvoiceList/SaleInvoiceList";
 import CustomerPayList from "pages/Sell/CustomerPayList/CustomerPayList";
-// Nhật ký điều trị
-import DiarySurgeryList from "pages/DiarySurgery/DiarySurgeryList";
 // Lịch
 import CalendarCommon from "pages/CalendarCommon/CalendarCommon";
 // Quản lý chiến dịch
@@ -86,7 +80,6 @@ import SocialCrmZalo from "pages/SocialCrmZalo/SocialCrmZalo";
 import AdjustmentSlip from "pages/AdjustmentSlip/AdjustmentSlip";
 // Thông tin tài khoản cá nhân
 import SettingAccount from "pages/SettingAccount/SettingAccount";
-import SettingKpiList from "pages/SettingKPI/SettingKPIList";
 import ReportCustomer from "pages/ReportCustomer/ReportCustomer";
 // Cài đặt ứng dụng
 import InstallApplication from "pages/InstallApplication/InstallApplication";
@@ -143,9 +136,6 @@ import SettingDashboard from "pages/SettingDashboard/SettingDashboard";
 import DetailProject from "pages/ProjectList/DetailProject/DetailProject";
 import SettingPromotionList from "pages/SettingPromotion/SettingPromotionList";
 import DetailPartner from "pages/PartnerList/DetailPartner/DetailPartner";
-import SettingOperate from "pages/SettingOperate/SettingOperate";
-import BuildingList from "pages/SettingOperate/partials/BuildingList/BuildingList";
-import BuildingFloorList from "pages/SettingOperate/partials/BuildingFloorList/BuildingFloorList";
 import CxmSurveyList from "pages/CxmSurvey/CxmSurveyList/CxmSurveyList";
 import ProcessSimulation from "pages/ProcessSimulation/ProcessSimulation";
 import BusinessProcessCreate from "pages/BPM/BusinessProcessCreate";
@@ -184,7 +174,7 @@ import SettingPaymentMethod from "@/pages/SettingPaymentMethod";
 import PromotionalProgram from "@/pages/PromotionalProgram";
 import PromotionalReport from "@/pages/PromotionalReport";
 import SettingLoyaltyList from "@/pages/SettingLoyaltyList";
-import InvoiceVATOverview from "pages/Kpi/InvoiceVAT/index";
+import InvoiceVATOverview from "@/pages/Sell/InvoiceVAT/index";
 import ShippingList from "@/pages/ShipingManagement/ShippingList";
 import ShippingFeeConfig from "@/pages/ShipingManagement/ShippingFeeConfig/ShippingFeeConfig";
 import AddShippingOrder from "@/pages/ShipingManagement/AddShippingOrder/AddShippingOrder";
@@ -243,54 +233,12 @@ export const menu: IMenuItem[] = [
               icon: <Icon name="EmailFill" />,
               code: "MAILBOX",
             },
-            // {
-            //   title: "document", // document
-            //   path: urls.internal_mail,
-            //   icon: <Icon name="DocumentFill" />,
-            //   code: "DOCUMENT",
-            // },
-            {
-              title: "createKPIFramework", // Tạo bộ KPI
-              path: urls.kpi,
-              icon: <Icon name="KpiCustomer" />,
-              code: "", //KPI_APPLY
-            },
-            {
-              title: "createKPITask", // Tạo phiếu giao KPI
-              path: urls.kpiApply,
-              icon: <Icon name="KpiCustomer" />,
-              code: "", //KPI_APPLY
-            },
-            {
-              title: "kpiManagement", // Quản lý KPI
-              path: urls.kpiObject,
-              icon: <Icon name="KpiCustomer" />,
-              code: "", //KPI_APPLY
-            },
             {
               title: "invoiceVAT", // Xuất hóa đơn VAT
               path: urls.invoiceVAT,
               icon: <Icon name="File" />,
               code: "", //KPI_APPLY
-            },
-            // {
-            //   title: "Chấm công",
-            //   path: urls.internal_mail,
-            //   icon: <Icon name="TimeKeeping" />,
-            //   code: "TIMEKEEPING",
-            // },
-            // {
-            //   title: "Hoa hồng",
-            //   path: urls.internal_mail,
-            //   icon: <Icon name="MoneyFill" />,
-            //   code: "EARNINGS",
-            // },
-            {
-              title: "settingKPI", // Cài đặt KPI
-              path: urls.setting_kpi,
-              icon: <Icon name="KpiCustomer" />,
-              code: "",
-            },
+            }
           ],
         },
         {
@@ -631,30 +579,6 @@ export const menu: IMenuItem[] = [
       },
     ],
   },
-  ...(isBeauty && isBeauty == "1"
-    ? [
-        {
-          title: "provideService", // Thực hiện dịch vụ (Thực hiện HĐ -> Dạng đặc biệt)
-          path: urls.sell,
-          icon: <Icon name="Sell" />,
-          code: "MENU_SELL",
-          children: [
-            {
-              title: "treatmentHistory", // Thực hiện dịch vụ
-              path: urls.treatment_history,
-              icon: <Icon name="TraetmentHistory" />,
-              code: "TREATMENT_HISTORY",
-            },
-            {
-              title: "medicalRecord", // Nhật ký điều trị
-              path: urls.diary_surgery,
-              icon: <Icon name="Postoperative" />,
-              code: "DIARY_SURGERY_VIEW",
-            },
-          ],
-        },
-      ]
-    : []),
   ...(!checkSubdomainTNEX
     ? [
         {
@@ -1443,12 +1367,6 @@ export const routes: IRouter[] = [
     path: urls.management_sale,
     component: <ManagementSale />,
   },
-
-  //
-  {
-    path: urls.earnings,
-    component: <EarningList />,
-  },
   {
     path: urls.payment_history,
     component: <PaymentHistoryList />,
@@ -1468,19 +1386,7 @@ export const routes: IRouter[] = [
   {
     path: urls.internal_mail,
     component: <InternalMailList />,
-  },
-  {
-    path: urls.kpi,
-    component: <KpiList />,
-  },
-  {
-    path: urls.kpiApply,
-    component: <KpiApplyList />,
-  },
-  {
-    path: urls.kpiObject,
-    component: <KpiObjectList />,
-  },
+  },  
   {
     path: urls.invoiceVAT,
     component: <InvoiceVATOverview />,
@@ -1520,10 +1426,6 @@ export const routes: IRouter[] = [
   {
     path: urls.detail_ticket,
     component: <DetailTicket />,
-  },
-  {
-    path: urls.diary_surgery,
-    component: <DiarySurgeryList />,
   },
   {
     path: urls.setting_ticket,
@@ -1568,10 +1470,6 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_payment_method,
     component: <SettingPaymentMethod />,
-  },
-  {
-    path: urls.setting_operate,
-    component: <SettingOperate />,
   },
   {
     path: urls.setting_timekeeping,
@@ -1814,15 +1712,9 @@ export const routes: IRouter[] = [
     path: urls.setting_account,
     component: <SettingAccount />,
   },
-  //Cài đặt KPI
-  {
-    path: urls.setting_kpi,
-    component: <SettingKpiList />,
-  },
   // Cài đặt ứng dụng
   {
     path: urls.install_app,
-    // component: <InstallApplication />,
     component: <SettingIntegration />,
   },
   {
@@ -1898,20 +1790,6 @@ export const routes: IRouter[] = [
     path: urls.setting_quote_form,
     component: <SettingQuoteForm />,
   },
-  {
-    path: urls.building,
-    component: <BuildingList />,
-  },
-  {
-    path: urls.buildingFloor,
-    component: <BuildingFloorList />,
-  },
-
-  // đoạn này dùng để test chức năng mới
-  // {
-  //   path: urls.bpm,
-  //   component: <BusinessProcessList />,
-  // },
   {
     path: urls.manage_processes,
     component: <BusinessProcessList />,
