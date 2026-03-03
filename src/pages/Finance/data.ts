@@ -2,6 +2,7 @@ export type FinanceTransactionKind = "income" | "expense";
 export type FinanceDebtKind = "receivable" | "payable";
 export type FinanceDebtStatus = "active" | "upcoming" | "overdue" | "paid";
 export type FinanceApprovalStatus = "approved" | "pending" | "rejected";
+export type FinanceDebtTransactionType = "collect_debt" | "pay_debt";
 export type FinanceCashBookKindFilter = "all" | FinanceTransactionKind;
 export type FinanceCashBookPeriodFilter = "this_month" | "all";
 export type FinanceDebtFilter = "all" | FinanceDebtKind | "overdue";
@@ -544,6 +545,11 @@ export const financeDebtFilterOptions: FinanceOption<FinanceDebtFilter>[] = [
   { value: "receivable", label: "Phải thu (KH)" },
   { value: "payable", label: "Phải trả (NCC)" },
   { value: "overdue", label: "Quá hạn" },
+];
+
+export const financeDebtTransactionTypeOptions: FinanceOption<FinanceDebtTransactionType>[] = [
+  { value: "collect_debt", label: "Thu nợ" },
+  { value: "pay_debt", label: "Trả nợ" },
 ];
 
 export const financeFundTypeLabels: Record<FinanceFund["type"], string> = {
