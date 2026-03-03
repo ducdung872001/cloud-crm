@@ -9,7 +9,6 @@ import Icon from "components/icon";
 import { ICustomPlaceholderResponse } from "model/customPlaceholder/CustomPlaceholderResponseModel";
 import SaleflowInvoiceService from "services/SaleflowInvoiceService";
 import { AnyKindOfDictionary } from "lodash";
-import CampaignMarketingService from "services/CampaignMarketingService";
 
 export default function Kanban(props: any) {
   const {
@@ -248,7 +247,7 @@ export default function Kanban(props: any) {
       return;
     }
 
-    const response = await CampaignMarketingService.updateMABudgetStatus(body);
+    const response = null;
 
     if (response.code === 0) {
       showToast("Chuyển trạng thái thành công", "success");
@@ -300,11 +299,6 @@ export default function Kanban(props: any) {
       };
 
       let response = null;
-      if (status === 1) {
-        response = await CampaignMarketingService.list(param);
-      } else {
-        response = await CampaignMarketingService.listMABudget(param);
-      }
 
       if (response?.code === 0) {
         const result = response.result;

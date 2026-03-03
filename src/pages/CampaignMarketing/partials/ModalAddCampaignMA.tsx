@@ -22,7 +22,6 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import ServiceService from "services/ServiceService";
 import ProductService from "services/ProductService";
 import NummericInput from "components/input/numericInput";
-import CampaignMarketingService from "services/CampaignMarketingService";
 
 export default function ModalAddCampaignMA(props: any) {
   const { onShow, onHide, idData } = props;
@@ -63,7 +62,7 @@ export default function ModalAddCampaignMA(props: any) {
   }, [onShow, data, idData]);
 
   const getDetailCampaignMA = async () => {
-    const response = await CampaignMarketingService.detail(idData);
+    const response = null;
 
     if (response.code === 0) {
       const result: any = response.result;
@@ -397,7 +396,7 @@ export default function ModalAddCampaignMA(props: any) {
       ...(data ? { id: data.id } : {}),
     };
 
-    const response = await CampaignMarketingService.update(body);
+    const response = null;
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} ngân sách truyền thông thành công`, "success");

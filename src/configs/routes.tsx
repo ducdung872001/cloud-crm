@@ -110,7 +110,6 @@ import ManageDataSharing from "pages/ManageDataSharing/ManageDataSharing";
 import SettingPartnerList from "pages/SettingPartner/SettingPartnerList";
 import PartnerList from "pages/PartnerList/PartnerList";
 import ReportLogin from "pages/ReportLogin/ReportLogin";
-import CampaignMarketingList from "pages/CampaignMarketing/CampaignMarketingList";
 import BusinessProcessList from "pages/BPM/BusinessProcessList/BusinessProcessList";
 import SettingBusinessProcess from "pages/BPM/SettingBusinessProcess/SettingBusinessProcess";
 import ConfigBPM from "pages/ConfigBPM";
@@ -195,26 +194,6 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="Home" />,
         code: "DASHBOARD",
       },
-      {
-        title: "personal", // Cá nhân
-        path: urls.personal,
-        icon: <Icon name="Person" />,
-        code: "PERSONAL",
-        children: [
-          {
-            title: "calendar", // Lịch
-            path: urls.calendar_common,
-            icon: <Icon name="CalendarFill" />,
-            code: "CALENDAR",
-          },
-          {
-            title: "invoiceVAT", // Xuất hóa đơn VAT
-            path: urls.invoiceVAT,
-            icon: <Icon name="File" />,
-            code: "", //KPI_APPLY
-          }
-        ],
-      },
     ]
     : []),
   {
@@ -287,19 +266,6 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="Marketing" />,
         code: "MARKETING",
         children: [
-          // {
-          //   title: "Tìm khách hàng",
-          //   path: `https://${getDomain(location.href)}/market/article`,
-          //   icon: <Icon name="Research" />,
-          //   code: "",
-          //   target: "_blank",
-          // },
-          {
-            title: "campaignMarketing",
-            path: urls.campaign_marketing,
-            icon: <Icon name="Marketing" />,
-            code: "",
-          },
           {
             title: "emailMarketing",
             path: urls.email_marketting,
@@ -352,21 +318,17 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="FacebookFill" />,
         code: "FANPAGE",
       },
-      ...(!checkSubdomainTNEX
-        ? [
-          {
-            title: "facebook",
-            path: urls.social_facebook_crm,
-            icon: <Icon name="FacebookFill" />,
-            code: "",
-          },
-          {
-            title: "zalo",
-            path: urls.social_zalo_crm,
-            icon: <Icon name="Zalo" />,
-          },
-        ]
-        : []),
+      {
+        title: "facebook",
+        path: urls.social_facebook_crm,
+        icon: <Icon name="FacebookFill" />,
+        code: "",
+      },
+      {
+        title: "zalo",
+        path: urls.social_zalo_crm,
+        icon: <Icon name="Zalo" />,
+      },
       {
         title: "createOppotunity", // Tạo cơ hội
         path: urls.opportunity_list + "?isCreate=true",
@@ -440,6 +402,12 @@ export const menu: IMenuItem[] = [
         path: urls.multi_channel_sales,
         icon: <Icon name="ReturnInvoice" />,
         code: "",
+      },
+      {
+        title: "invoiceVAT", // Xuất hóa đơn VAT
+        path: urls.invoiceVAT,
+        icon: <Icon name="File" />,
+        code: "", //KPI_APPLY
       },
       {
         title: "settingSales", // Cài đặt bán hàng
@@ -535,12 +503,6 @@ export const menu: IMenuItem[] = [
             icon: <Icon name="Customer" />,
             code: "CXM_SURVEY",
           },
-          // {
-          //   title: "cxmResponse", // Danh sách câu hỏi khảo sát
-          //   path: urls.utilityReading,
-          //   icon: <Icon name="KpiCustomer" />,
-          //   code: "",
-          // },
           {
             title: "settingWarranty", // Cài đặt bảo hành
             path: urls.setting_warranty,
@@ -606,32 +568,6 @@ export const menu: IMenuItem[] = [
         ],
       },
       {
-        title: "order", // Đặt hàng
-        path: urls.product_import,
-        icon: <Icon name="Cart" />,
-        code: "ORDER", //Tài nguyên cho show đặt hàng hay không
-        children: [
-          {
-            title: "createOrder", // Tạo đơn đặt hàng
-            path: urls.order,
-            icon: <Icon name="ImportCoupon" />,
-            code: "",
-          },
-          {
-            title: "orderInvoiceList", // Hóa đơn đặt hàng
-            path: urls.order_invoice_list,
-            icon: <Icon name="ImportBill" />,
-            code: "",
-          },
-          {
-            title: "temporaryOrderList", // Đơn đặt lưu tạm
-            path: urls.temporary_order_list,
-            icon: <Icon name="File" />,
-            code: "",
-          },
-        ],
-      },
-      {
         title: "warehouse", // Kho hàng
         path: urls.product_import,
         icon: <Icon name="ImportGoods" />,
@@ -659,12 +595,6 @@ export const menu: IMenuItem[] = [
           //   title: "outboundInvoice", // Hóa đơn xuất kho
           //   path: urls.outbound_invoice,
           //   icon: <Icon name="ImportBill" />,
-          //   code: "",
-          // },
-          // {
-          //   title: "Trả hàng nhà cung cấp",
-          //   path: "",
-          //   icon: <Icon name="SupplierPayment" />,
           //   code: "",
           // },
           {
@@ -741,18 +671,6 @@ export const menu: IMenuItem[] = [
             icon: <Icon name="Headquarters" />,
             code: "",
           },
-          // {
-          //   title: "Hoa hồng",
-          //   path: "",
-          //   icon: <Icon name="Rose" />,
-          //   code: "",
-          // },
-          // {
-          //   title: "Lịch sử tác động",
-          //   path: "",
-          //   icon: <Icon name="ImpactHistory" />,
-          //   code: "",
-          // },
           {
             title: "settingCashbook", // Cài đặt tài chính
             path: urls.setting_cash_book,
@@ -821,12 +739,6 @@ export const menu: IMenuItem[] = [
             code: "BPM",
             icon: <Icon name="CashBook" />,
           },
-          // {
-          //   title: "manageDefaultProcesses",
-          //   path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
-          //   code: "BPM",
-          //   icon: <Icon name="CashBook" />,
-          // },
           {
             title: "business_rule", // Loại luật nghiệp vụ
             path: urls.business_rule,
@@ -929,7 +841,7 @@ export const menu: IMenuItem[] = [
         path: urls.setting_zalo,
         icon: <Icon name="Zalo" />,
         code: "",
-      },      
+      },
       {
         title: "settingSwitchboard", // Cài đặt tổng đài
         path: urls.setting_call,
@@ -1516,18 +1428,6 @@ export const routes: IRouter[] = [
     path: urls.marketing_automation,
     component: <MarketingAutomationList />,
   },
-  // {
-  //   path: urls.marketing_automation_v2,
-  //   component: <MarketingAutomationListV2 />,
-  // },
-  // {
-  //   path: urls.create_marketing_automation_v2,
-  //   component: <CreateMarketingAutomationV2 />,
-  // },
-  // {
-  //   path: urls.edit_marketing_automation_v2,
-  //   component: <CreateMarketingAutomationV2 />,
-  // },
   {
     path: urls.detail_marketing_automation,
     component: <DetailMarketingAutomation />,
@@ -1544,13 +1444,6 @@ export const routes: IRouter[] = [
     path: urls.marketing_automation_setting,
     component: <MarketingAutomation />,
   },
-
-  ///chiến dịch MA
-  {
-    path: urls.campaign_marketing,
-    component: <CampaignMarketingList />,
-  },
-
   {
     path: urls.customer_segment,
     component: <CustomerSegment />,

@@ -1738,15 +1738,6 @@ export const urlsApi = {
     deleteCustomer: prefixAdmin + "/maCustomer/delete",
   },
 
-  // chiến dịch bán hàng
-  campaignMarketing: {
-    list: prefixAdmin + "/marketing/list",
-    update: prefixAdmin + "/marketing/update",
-    updateStatus: prefixAdmin + "/marketing/update/status",
-    detail: prefixAdmin + "/marketing/get",
-    delete: prefixAdmin + "/marketing/delete",
-  },
-
   //TODO: Start quy trình bpm
   businessProcess: {
     list: prefixAdmin + "/businessProcess/list",

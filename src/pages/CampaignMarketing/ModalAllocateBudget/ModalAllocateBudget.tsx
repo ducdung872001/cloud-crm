@@ -15,7 +15,6 @@ import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import Icon from "components/icon";
 import SelectCustom from "components/selectCustom/selectCustom";
 import NummericInput from "components/input/numericInput";
-import CampaignMarketingService from "services/CampaignMarketingService";
 
 export default function ModalAllocateBudget(props: any) {
   const { onShow, onHide, idData, idCampaign } = props;
@@ -30,7 +29,7 @@ export default function ModalAllocateBudget(props: any) {
   const [detaiCampaign, setDetailCampaign] = useState(null);
 
   const getDetailMABudget = async () => {
-    const response = await CampaignMarketingService.detailMABudget(idData);
+    const response = null;
 
     if (response.code === 0) {
       const result: any = response.result;
@@ -55,7 +54,7 @@ export default function ModalAllocateBudget(props: any) {
   };
 
   const getDetailCampaignMA = async () => {
-    const response = await CampaignMarketingService.detail(idCampaign);
+    const response = null;
 
     if (response.code === 0) {
       const result: any = response.result;
@@ -131,7 +130,7 @@ export default function ModalAllocateBudget(props: any) {
       page: page,
     };
 
-    const response = await CampaignMarketingService.listMAChannel(param);
+    const response = null;
 
     if (response?.code === 0) {
       const dataOption = response.result;
@@ -185,7 +184,7 @@ export default function ModalAllocateBudget(props: any) {
       ...(data ? { id: data.id } : {}),
     };
 
-    const response = await CampaignMarketingService.updateMABudget(body);
+    const response = null;
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} phân bổ kênh truyền thông thành công`, "success");
