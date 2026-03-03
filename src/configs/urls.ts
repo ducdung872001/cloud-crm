@@ -415,6 +415,7 @@ export const urlsApi = {
     // lấy mã hoá đơn
     invoiceCode: prefixAdmin + "/invoice/code",
   },
+  shipping: {},
   boughtService: {
     addToInvoice: prefixAdmin + "/boughtService/update",
     delete: prefixAdmin + "/boughtService/delete",
@@ -3088,7 +3089,7 @@ export const urls = {
   cashbook: "/cashbook",
   cxmSurvey: "/cxm_survey",
 
-  // Fanpage 
+  // Fanpage
   fanpage: "/fanpage",
   total_chat: "/total_chat",
 
@@ -3114,8 +3115,12 @@ export const urls = {
   product_inventory: "/product_inventory",
   // đường dẫn quản lý kho hàng
   inventory: "/inventory",
+  inventory_checking: "/inventory_checking",
   // đường dẫn bán hàng
   sell: "/sell",
+  promotional_program: "/promotional_program",
+  promotional_report: "/promotional_report",
+
   contract: "/contract",
   offer: "/offer",
   create_contract: "/create_contract",
@@ -3125,18 +3130,18 @@ export const urls = {
   detail_contract: "/detail_contract/contractId/:id?",
   detail_project: "/detail_project/projectId/:id?",
 
-  //Hợp đồng bảo lãnh
-  guarantee: "/guarantee",
-  detail_guarantee: "/detail_guarantee/guaranteeId/:id?",
-
-  //Bảo hành theo hợp đồng
-  warrantyContract: "/warrantyContract",
-  detail_warranty_contract: "/detail_warranty_contract/warrantyId/:id?",
-
   // đường dẫn tạo đơn bán
   create_sale_add: "/create_sale_add",
   // đường dẫn danh sách hóa đơn bán hàng
   sale_invoice: "/sale_invoice",
+  // đường dẫn quản lý vận chuyển
+  shipping: "/shipping",
+  // đường dẫn quản lý phí vận chuyển
+  shipping_fee_config: "/shipping_fee_config",
+  // đường dẫn Thêm đơn vận chuyển
+  add_shipping: "/add_shipping",
+  // đường dẫn quản lý đơn vị vận chuyển
+  shipping_parther: "/shipping_parther",
   // đường dẫn danh sách khách trả hàng
   customer_pay: "/customer_pay",
   // bán hàng đa kênh
@@ -3191,11 +3196,13 @@ export const urls = {
   setting_common: "/setting_common",
   setting_rose: "/setting_rose",
   setting_basis: "/setting_basis",
+  setting_payment_method: "/setting_payment_method",
   setting_operate: "/setting_operate",
   setting_timekeeping: "/setting_timekeeping",
   setting_customer: "/setting_customer",
   setting_partner: "/setting_partner",
   setting_contact: "/setting_contact",
+  setting_loyalty: "/setting_loyalty",
   setting_sell: "/setting_sell",
   //Cài đặt hợp đồng
   setting_contract: "/setting_contract",
@@ -3209,6 +3216,7 @@ export const urls = {
   setting_project: "/setting_project",
   config_bpm: "/config_bpm",
   setting_dashboard: "/setting_dashboard",
+  dashboard_shipping: "/dashboard_shipping",
   dashboard_loyalty: "/dashboard_loyalty",
   setting_report: "/setting_report",
   //Giám sát tích hợp

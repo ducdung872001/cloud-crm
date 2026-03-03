@@ -16,7 +16,6 @@ import "./ListDetailTab.scss";
 import CustomerZaloList from "./partials/CustomerZaloList/CustomerZaloList";
 import InteractList from "./partials/InteractList";
 import CustomerJob from "./partials/CustomerJob/CustomerJob";
-import CustomerOpportunity from "./partials/CustomerOpportunity/CustomerOpportunity";
 import CustomerContact from "./partials/CustomerContact/CustomerContact";
 import CustomerSchedule from "./partials/CustomerSchedule/CustomerSchedule";
 import BriefFinancialStatements from "./partials/BriefFinancialStatements";
@@ -311,8 +310,6 @@ export default function ListDetailTab(props: IListTabDetailProps) {
           ) : (
             <ProductNeeds data={data} />
           )
-        ) : tab === "tab_four" ? (
-          <CustomerOpportunity dataCustomer={data} />
         ) : tab === "tab_five" ? (
           <CustomerJob dataCustomer={data} />
         ) : tab === "tab_six" ? (
