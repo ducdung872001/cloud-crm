@@ -385,6 +385,7 @@ i18n.use(initReactI18next).init({
           soldProducts: "Sản phẩm đã bán",
           stockedProducts: "Sản phẩm tồn kho",
           warehouseManagement: "Quản lý kho hàng",
+          warehouseChecking: "Kiểm kho",
           inventoryTransferDocument: "Phiếu điều chuyển kho",
           stockAdjustmentVoucher: "Phiếu điều chỉnh kho",
           managementMaterial: "Quản lý nguyên vật liệu",

@@ -1,44 +1,57 @@
-.page-inventory {
-  .action-navigation {
+// WarehouseBookList.scss
+.page-warehouse-book {
+  .warehouse__tabs {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    gap: 4px;
+    padding: 1.6rem 1.6rem 0;
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
 
-    .action-backup {
-      display: flex;
-      align-items: center;
+    .warehouse__tab-item {
+      padding: 8px 16px;
+      font-size: 1.4rem;
+      cursor: pointer;
+      white-space: nowrap;
+      color: var(--extra-color-50);
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
 
-      h1 {
-        color: var(--text-primary-color);
-        font-size: 2.4rem;
-        line-height: 2.8rem;
-        padding-right: 1rem;
-        margin: 0;
-        font-weight: 700;
-        text-transform: uppercase;
-      }
+      &:hover { color: var(--primary-color); }
 
-      .title-first {
-        cursor: pointer;
-
-        &:hover {
-          opacity: 0.8;
-        }
-      }
-
-      .title-last {
-        color: var(--extra-color-50);
-      }
-
-      svg {
-        width: 4rem;
-        height: 4rem;
-        padding-right: 1rem;
+      &.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+        font-weight: 600;
       }
     }
   }
-  .card-box{
 
+  .warehouse__code {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 1.3rem;
+  }
+
+  .warehouse__product-name {
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+
+  .warehouse__product-code {
+    font-size: 1.2rem;
+    color: var(--extra-color-50);
+    margin-top: 2px;
+  }
+
+  .warehouse__transfer {
+    font-size: 1.3rem;
+    color: var(--primary-color);
+  }
+
+  .warehouse__qty--positive { color: var(--success-color); font-weight: 600; }
+  .warehouse__qty--negative { color: var(--error-color);   font-weight: 600; }
+
+  .card-box {
     .status__item--signature {
       height: 2.4rem;
       border-radius: 1.2rem;
@@ -52,24 +65,89 @@
       line-height: 2.4rem;
       font-weight: 500;
       min-width: 9rem;
-      cursor: pointer;
-  
-      &-success {
-        background: var(--success-color);
-      }
-      &-error {
-        background: var(--error-color);
-      }
-      &-warning {
-        background: var(--warning-color);
-      }
-      &-secondary {
-        background: var(--extra-color-50);
-      }
-  
-      &:hover{
-        color: var(--extra-color-100);
+
+      &-success  { background: var(--success-color); }
+      &-error    { background: var(--error-color); }
+      &-warning  { background: var(--warning-color); }
+      &-secondary{ background: var(--extra-color-50); }
+      &-primary  { background: var(--primary-color); }
+    }
+  }
+}
+
+// AddWarehouseBookModal.scss
+.modal-add-warehouse-book {
+  .form-warehouse-book {
+    .list-form-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.2rem 3.2rem;
+
+      .form-group { width: 100%; }
+
+      .input-note {
+        grid-column: span 2;
       }
     }
   }
+
+  // View mode
+  .warehouse__detail {
+    display: flex;
+    flex-direction: column;
+
+    .warehouse__detail-row {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+
+      &:last-child { border-bottom: none; }
+
+      .label {
+        width: 160px;
+        font-size: 1.3rem;
+        color: var(--extra-color-50);
+        flex-shrink: 0;
+      }
+
+      .value {
+        font-size: 1.4rem;
+        color: var(--text-primary-color);
+
+        &.highlight {
+          font-weight: 700;
+          color: var(--primary-color);
+        }
+      }
+    }
+  }
+}
+
+.input-partner,
+.input-ref,
+.input-reason {
+  grid-column: span 1;
+}
+
+.warehouse__partner-name {
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.warehouse__partner-type {
+  font-size: 1.2rem;
+  margin-top: 2px;
+
+  &--supplier { color: var(--primary-color); }
+  &--customer { color: var(--warning-color); }
+}
+
+.warehouse__ref-code {
+  font-size: 1.3rem;
+  color: var(--extra-color-50);
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover { color: var(--primary-color); }
 }
