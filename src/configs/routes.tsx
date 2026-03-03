@@ -190,6 +190,7 @@ import ShippingFeeConfig from "@/pages/ShipingManagement/ShippingFeeConfig/Shipp
 import AddShippingOrder from "@/pages/ShipingManagement/AddShippingOrder/AddShippingOrder";
 import ShippingPartnerSetup from "@/pages/ShipingManagement/ShippingPartnerSetup/ShippingPartnerSetup";
 import ShippingReport from "@/pages/ShipingManagement/ShippingReport/ShippingReport";
+import InventoryManagement from "@/pages/ProductImport/InventoryChecking";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -860,6 +861,12 @@ export const menu: IMenuItem[] = [
             {
               title: "warehouseManagement", // Quản lý kho hàng
               path: urls.inventory,
+              icon: <Icon name="WarehouseManagement" />,
+              code: "INVENTORY",
+            },
+            {
+              title: "warehouseChecking",
+              path: urls.inventory_checking,
               icon: <Icon name="WarehouseManagement" />,
               code: "INVENTORY",
             },
@@ -1691,6 +1698,10 @@ export const routes: IRouter[] = [
   {
     path: urls.inventory,
     component: <InventoryList />,
+  },
+  {
+    path: urls.inventory_checking,
+    component: <InventoryManagement />
   },
   // tạo đơn bán hàng
   {

@@ -3115,6 +3115,7 @@ export const urls = {
   product_inventory: "/product_inventory",
   // đường dẫn quản lý kho hàng
   inventory: "/inventory",
+  inventory_checking: "/inventory_checking",
   // đường dẫn bán hàng
   sell: "/sell",
   promotional_program: "/promotional_program",
