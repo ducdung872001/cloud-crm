@@ -11,8 +11,6 @@ import _ from "lodash";
 import { IContractPipelineFilterRequest } from "model/contractPipeline/ContractPipelineRequestModel";
 import { IContractPipelineResponse } from "model/contractPipeline/ContractPipelineResponseModel";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
-import PreviewEformModal from "pages/SettingContract/partials/ContractEform/PreviewEform/PreviewEformModal";
-import SettingEform from "pages/SettingContract/partials/ContractEform/SettingEform/SetttingEform";
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getPageOffset } from "reborn-util";
@@ -458,23 +456,12 @@ export default function SettingPromotionList(props: any) {
               )}
             </div>
           ) : (
-            <div>
-              <SettingEform dataContractEform={dataSetting} setIsPreviewEform={setIsPreviewEform} />
+            <div>              
             </div>
           )}
         </div>
       )}
-      <Dialog content={contentDialog} isOpen={showDialog} />
-      {isPreviewEform && (
-        <PreviewEformModal
-          onShow={isPreviewEform}
-          onHide={() => {
-            setIsPreviewEform(false);
-            setDataPreview(null);
-          }}
-          data={dataPreview}
-        />
-      )}
+      <Dialog content={contentDialog} isOpen={showDialog} />      
     </div>
   );
 }

@@ -20,9 +20,7 @@ i18n.use(initReactI18next).init({
           kpiManagement: "Manage KPI",
           project: "Project",
           workManagement: "Work Management",
-          userTaskManagement: "User task management",
-          // Quản lý công việc
-          userTaskList: "User Task list",
+          userTaskManagement: "User task management",          
           job: "Task",
           jobReport: "Task report",
           calendar: "Calendar",
