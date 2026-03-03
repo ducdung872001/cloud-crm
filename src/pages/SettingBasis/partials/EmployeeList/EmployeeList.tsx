@@ -191,11 +191,11 @@ export default function EmployeeList(props: IEmployeeListProps) {
     };
   }, [params]);
 
-  const titles = ["STT", "Tên nhân viên", "Điện thoại", "Phòng ban", "Chức danh", "Chi nhánh", "QL trực tiếp", "Tình trạng nhân viên"];
+  const titles = ["STT", "Tên nhân viên", "Điện thoại", "Phòng ban", "Chức danh", "Chi nhánh", "QL trực tiếp", "Tình trạng nhân viên", "Quản lý ca"];
 
-  const dataFormat = ["text-center", "", "text-center", "", "", "", "", "text-center"];
+  const dataFormat = ["text-center", "", "text-center", "", "", "", "", "text-center", "text-center"];
 
-  const dataSize = ["auto", "auto", "auto", 10, 10, 12, 12, "auto"];
+  const dataSize = ["auto", "auto", "auto", 10, 10, 12, 12, "auto", "auto"];
 
   const dataMappingArray = (item: IEmployeeResponse, index: number) => [
     getPageOffset(params) + index + 1,
@@ -206,45 +206,46 @@ export default function EmployeeList(props: IEmployeeListProps) {
     item.branchName,
     item.managerName,
     <Badge key={item.id} text={item.status === 1 ? "Đang làm việc" : "Đã nghỉ"} variant={item.status === 1 ? "success" : "error"} />,
+    <Badge key={`shift-manager-${item.id}`} text={Math.random() > 0.5 ? "Bật" : "Tắt"} variant={Math.random() > 0.5 ? "success" : "error"} />,
   ];
 
   const actionsTable = (item: IEmployeeResponse): IAction[] => {
-        const isCheckedItem = listIdChecked?.length > 0;
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       item.status !== 2 &&
         (permissions["EMPLOYEE_ADD"] == 1 || permissions["EMPLOYEE_UPDATE"] == 1) &&
         item.userId && {
           title: "Reset mật khẩu",
-          icon: <Icon name="ResetPassword" className={isCheckedItem ? "icon-disabled" :"icon-warning" }/>,
-                      disabled: isCheckedItem,
+          icon: <Icon name="ResetPassword" className={isCheckedItem ? "icon-disabled" : "icon-warning"} />,
+          disabled: isCheckedItem,
           callback: () => {
-                      if (!isCheckedItem) {
-            setShowPasswordSuccess(true);
-            setDataEmployee(item);
-                      }
+            if (!isCheckedItem) {
+              setShowPasswordSuccess(true);
+              setDataEmployee(item);
+            }
           },
         },
       permissions["EMPLOYEE_ADD"] == 1 &&
         item.status !== 2 && {
           title: "Tạo tài khoản cho nhân viên",
-          icon: <Icon name="UserAdd" className={isCheckedItem ? "icon-disabled" : ""}/>,
-                      disabled: isCheckedItem,
+          icon: <Icon name="UserAdd" className={isCheckedItem ? "icon-disabled" : ""} />,
+          disabled: isCheckedItem,
           callback: () => {
-                      if (!isCheckedItem) {
-            setDataEmployee(item);
-            setShowModalCreateAccountEmployee(true);
-                      }
+            if (!isCheckedItem) {
+              setDataEmployee(item);
+              setShowModalCreateAccountEmployee(true);
+            }
           },
         },
       permissions["EMPLOYEE_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
-                    disabled: isCheckedItem,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
+        disabled: isCheckedItem,
         callback: () => {
-                    if (!isCheckedItem) {
-          setDataEmployee(item);
-          setShowModalAdd(true);
-                    }
+          if (!isCheckedItem) {
+            setDataEmployee(item);
+            setShowModalAdd(true);
+          }
         },
       },
       item.isOwner === 1
@@ -252,11 +253,11 @@ export default function EmployeeList(props: IEmployeeListProps) {
         : permissions["EMPLOYEE_DELETE"] == 1 && {
             title: "Xóa",
             icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
-                        disabled: isCheckedItem,
+            disabled: isCheckedItem,
             callback: () => {
-                        if (!isCheckedItem) {
-              showDialogConfirmDelete(item);
-                        }
+              if (!isCheckedItem) {
+                showDialogConfirmDelete(item);
+              }
             },
           },
     ].filter((action) => action);
@@ -308,22 +309,21 @@ export default function EmployeeList(props: IEmployeeListProps) {
   ];
 
   const titleActions = [
-   {
+    {
       title: "Nhập danh sách",
       icon: <Icon name="Upload" />,
       callback: () => {
         // setShowModalImport(true);
       },
     },
-   {
+    {
       title: "Xuất danh sách",
       icon: <Icon name="Download" />,
       callback: () => {
         // setOnShowModalExport(true);
       },
     },
-  ]
-  
+  ];
 
   return (
     <div className={`page-content page-employee${isNoItem ? " bg-white" : ""}`}>
@@ -370,7 +370,6 @@ export default function EmployeeList(props: IEmployeeListProps) {
           </Button>
         )}
       </div>
-
 
       <div className="card-box d-flex flex-column">
         <SearchBox
