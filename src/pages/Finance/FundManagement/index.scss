@@ -23,6 +23,16 @@
     border-color: rgba(46, 125, 50, 0.24);
     background: rgba(46, 125, 50, 0.06);
   }
+
+  &.is-static {
+    cursor: default;
+
+    &:hover {
+      border-color: rgba(15, 23, 42, 0.08);
+      background: transparent;
+      transform: translateY(0);
+    }
+  }
 }
 
 .finance-fund-list__primary {
@@ -35,4 +45,12 @@
 
 .finance-fund-list__amount {
   font-weight: 700;
+}
+
+.finance-fund-summary {
+  margin-top: 1rem;
+}
+
+.finance-fund-panel-spacing {
+  margin-top: 1rem;
 }

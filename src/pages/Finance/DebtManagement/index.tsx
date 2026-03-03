@@ -54,6 +54,12 @@ export default function FinanceDebtManagement() {
     );
   }, [debts]);
 
+  const hasCustomFilter = debtFilter !== "all";
+
+  const resetFilter = () => {
+    setDebtFilter("all");
+  };
+
   const markAsPaid = () => {
     if (!selectedDebt) return;
 
@@ -99,16 +105,27 @@ export default function FinanceDebtManagement() {
               <span>{filteredDebts.length} bản ghi</span>
             </div>
 
-            <div className="finance-filter-row" style={{ marginBottom: "1.2rem" }}>
-              {financeDebtFilterOptions.map((option) => (
-                <button
-                  key={option.value}
-                  className={`finance-filter-chip${debtFilter === option.value ? " is-active" : ""}`}
-                  onClick={() => setDebtFilter(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
+            <div className="finance-filter-toolbar">
+              <select
+                value={debtFilter}
+                onChange={(event) => setDebtFilter(event.target.value as FinanceDebtFilter)}
+                className="finance-filter-select finance-filter-select--wide"
+                aria-label="Lọc công nợ"
+              >
+                {financeDebtFilterOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+
+              {hasCustomFilter ? (
+                <div className="finance-filter-toolbar__group finance-filter-toolbar__group--end">
+                  <button className="finance-filter-reset" onClick={resetFilter}>
+                    Đặt lại
+                  </button>
+                </div>
+              ) : null}
             </div>
 
             <table className="finance-table">
