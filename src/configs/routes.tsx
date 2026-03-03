@@ -906,41 +906,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="ContactCustomer" />,
         code: "",
       },
-
       {
         title: "settingEform", // Cài đặt biểu mẫu
         path: urls.setting_eform,
         icon: <Icon name="SettingSell" />,
         code: "",
       },
-      ...(!checkSubdomainTNEX
-        ? [
-          {
-            title: "settingEform", // Cài đặt biểu mẫu
-            path: urls.setting_eform,
-            icon: <Icon name="SettingSell" />,
-            code: "",
-          },
-          {
-            title: "settingSMS", // Cài đặt SMS
-            path: urls.setting_sms,
-            icon: <Icon name="SettingSMS" />,
-            code: "MENU_SETUP_SMS",
-          },
-          {
-            title: "settingEmail", // Cài đặt Email
-            path: urls.setting_email,
-            icon: <Icon name="SettingEmail" />,
-            code: "MENU_SETUP_EMAIL",
-          },
-          {
-            title: "settingZalo", //Cài đặt Zalo
-            path: urls.setting_zalo,
-            icon: <Icon name="Zalo" />,
-            code: "",
-          },          
-        ]
-        : []),
       {
         title: "settingSMS", // Cài đặt SMS
         path: urls.setting_sms,
