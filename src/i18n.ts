@@ -33,6 +33,7 @@ i18n.use(initReactI18next).init({
           teacher: "Teacher",
           // đoạn này là children của customer
           customerProfile: "Customer profile",
+          customerList: "Customer list",
           studentProfile: "Student profile",
           partnerProfile: "Partner profile",
           teacherProfile: "Teacher profile",
@@ -290,6 +291,7 @@ i18n.use(initReactI18next).init({
           teacher: "Giáo viên",
           // đoạn này là children của khách hàng
           customerProfile: "Hồ sơ khách hàng",
+          customerList: "Danh sách khách hàng",
           studentProfile: "Hồ sơ học sinh",
           partnerProfile: "Hồ sơ đối tác",
           teacherProfile: "Hồ sơ giáo viên",

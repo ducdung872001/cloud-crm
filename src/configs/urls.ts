@@ -3075,6 +3075,7 @@ export const urls = {
   //Lĩnh vực BĐS - Đầu mối liên hệ
   contact: "/contact",
   customer: "/customer",
+  customer_list: "/customer_list",
   customer_sms: "/customer_sms",
   customer_segment: "/customer_segment",
   detail_person: "/detail_person/customerId/:id?/:type",

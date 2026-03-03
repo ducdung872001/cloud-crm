@@ -190,6 +190,7 @@ import ShippingFeeConfig from "@/pages/ShipingManagement/ShippingFeeConfig/Shipp
 import AddShippingOrder from "@/pages/ShipingManagement/AddShippingOrder/AddShippingOrder";
 import ShippingPartnerSetup from "@/pages/ShipingManagement/ShippingPartnerSetup/ShippingPartnerSetup";
 import ShippingReport from "@/pages/ShipingManagement/ShippingReport/ShippingReport";
+import CustomerAndSupplier from "@/pages/CustomerAndSupplier";
 const isBeauty = localStorage.getItem("isBeauty");
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -333,6 +334,12 @@ export const menu: IMenuItem[] = [
       {
         title: "customerProfile", // Hồ sơ khách hàng
         path: urls.customer,
+        icon: <Icon name="Profile" />,
+        code: "CUSTOMER",
+      },
+      {
+        title: "customerList", // Danh sách khách hàng
+        path: urls.customer_list,
         icon: <Icon name="Profile" />,
         code: "CUSTOMER",
       },
@@ -1299,6 +1306,10 @@ export const routes: IRouter[] = [
   {
     path: urls.customer,
     component: <CustomerPersonList />,
+  },
+  {
+    path: urls.customer_list,
+    component: <CustomerAndSupplier />,
   },
   {
     path: urls.partner,

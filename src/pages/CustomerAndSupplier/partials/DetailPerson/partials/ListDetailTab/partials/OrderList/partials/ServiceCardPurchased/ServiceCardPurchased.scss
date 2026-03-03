@@ -1,0 +1,48 @@
+.table__card {
+  tbody {
+    tr {
+      td {
+        .info__card {
+          display: flex;
+          align-items: center;
+          gap: 0 0.8rem;
+
+          .content__card {
+            .extra-information {
+              font-size: 1.4rem;
+              display: flex;
+              align-items: flex-start;
+              justify-content: flex-start;
+              flex-direction: column;
+
+              .info-service {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 0 0.8rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                & span:first-child {
+                  position: relative;
+                  margin-right: 0.6rem;
+
+                  &::after {
+                    content: "";
+                    position: absolute;
+                    right: -0.8rem;
+                    bottom: 0.3rem;
+                    width: 0.2rem;
+                    height: 1.5rem;
+                    background-color: var(--extra-color-50);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

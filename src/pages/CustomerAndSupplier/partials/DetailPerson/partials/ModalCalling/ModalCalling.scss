@@ -1,0 +1,20 @@
+.modal-calling {
+    .form-calling {
+      .modal-body {
+        padding: 0;
+      }
+      .list-form-calling {
+        // display: flex;
+        // flex-wrap: wrap;
+        // gap: 0.8rem 3.2rem;
+        max-height: 20rem;
+        overflow: auto;
+        padding: 1.6rem;
+  
+        .loading__wrapper{
+          height: 20rem !important;
+        }
+      }
+    }
+  }
+  
