@@ -913,12 +913,6 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="SettingSell" />,
         code: "",
       },
-      // {
-      //   title: "Cài đặt hoa hồng",
-      //   path: urls.setting_rose,
-      //   icon: <Icon name="SettingRose" />,
-      //   code: "",
-      // },
       ...(!checkSubdomainTNEX
         ? [
           {
@@ -927,18 +921,6 @@ export const menu: IMenuItem[] = [
             icon: <Icon name="SettingSell" />,
             code: "",
           },
-          // {
-          //   title: "Cài đặt hoa hồng",
-          //   path: urls.setting_rose,
-          //   icon: <Icon name="SettingRose" />,
-          //   code: "",
-          // },
-          // {
-          //   title: "Cài đặt tìm khách hàng",
-          //   path: urls.setting_market_research,
-          //   icon: <Icon name="SettingAnalytics" />,
-          //   code: "",
-          // },
           {
             title: "settingSMS", // Cài đặt SMS
             path: urls.setting_sms,
@@ -956,19 +938,7 @@ export const menu: IMenuItem[] = [
             path: urls.setting_zalo,
             icon: <Icon name="Zalo" />,
             code: "",
-          },
-          // {
-          //   title: "settingReport",
-          //   path: urls.setting_report,
-          //   icon: <Icon name="ReportFill" />,
-          //   code: "MENU_SETUP_REPORT",
-          // },
-          // {
-          //   title: "integratedMonitoring", // Giám sát tích hợp
-          //   path: urls.integrated_monitoring,
-          //   icon: <Icon name="ReportFill" />,
-          //   code: "",
-          // },
+          },          
         ]
         : []),
       {
@@ -988,20 +958,7 @@ export const menu: IMenuItem[] = [
         path: urls.setting_zalo,
         icon: <Icon name="Zalo" />,
         code: "",
-      },
-      // {
-      //   title: "settingReport",
-      //   path: urls.setting_report,
-      //   icon: <Icon name="ReportFill" />,
-      //   code: "MENU_SETUP_REPORT",
-      // },
-      // {
-      //   title: "integratedMonitoring", // Giám sát tích hợp
-      //   path: urls.integrated_monitoring,
-      //   icon: <Icon name="ReportFill" />,
-      //   code: "",
-      // },
-
+      },      
       {
         title: "settingSwitchboard", // Cài đặt tổng đài
         path: urls.setting_call,
@@ -1022,7 +979,6 @@ export const menu: IMenuItem[] = [
       },
     ],
   },
-
   {
     title: "payment", //Quản lý thanh toán
     path: "",
@@ -1087,20 +1043,6 @@ export const menu: IMenuItem[] = [
       },
     ],
   },
-
-  // đoạn này dùng để test chức năng mới
-  // {
-  //   title: "BPM",
-  //   path: urls.bpm,
-  //   icon: <Icon name="CashBook" />,
-  //   code: "",
-  // },
-  // {
-  //   title: "Test",
-  //   path: urls.test,
-  //   icon: <Icon name="CashBook" />,
-  //   code: "",
-  // },
 ];
 
 export const routes: IRouter[] = [
