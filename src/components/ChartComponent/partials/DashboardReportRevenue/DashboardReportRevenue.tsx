@@ -449,11 +449,7 @@ export default function DashboardReportRevenue(props: ReportRevenueProps) {
     }
   };
 
-  const lstTitleHeader = [
-    // {
-    //   name: "Trang chủ",
-    //   type: 1,
-    // },
+  const lstTitleHeader = [    
     {
       name: "Báo cáo cơ hội",
       type: 2,

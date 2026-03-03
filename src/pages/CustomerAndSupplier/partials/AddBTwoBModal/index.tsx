@@ -1377,17 +1377,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
               // }
               setShowModalContact(false);
             }}
-          />
-          <AddProjectManagementModal
-            onShow={showModalAddProject}
-            idData={null}
-            onHide={(reload) => {
-              // if (reload) {
-              //   getListProject(params);
-              // }
-              setShowModalAddProject(false);
-            }}
-          />
+          />          
         </form>
       </Modal>
     </Fragment>

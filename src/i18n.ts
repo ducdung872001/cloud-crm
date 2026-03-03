@@ -25,7 +25,7 @@ i18n.use(initReactI18next).init({
           jobReport: "Task report",
           calendar: "Calendar",
 
-          customer: "Customers",
+          customer: "Customers & Partners",
           student: "Students",
           partner: "Partner",
           teacher: "Teacher",
@@ -34,8 +34,7 @@ i18n.use(initReactI18next).init({
           customerList: "Customer list",
           studentProfile: "Student profile",
           partnerProfile: "Partner profile",
-          teacherProfile: "Teacher profile",
-          contactProfile: "Contact Profile",
+          teacherProfile: "Teacher profile",          
           parentProfile: "Parent profile",
           treatmentHistory: "Treatment history",
           customerSegments: "Customer Segmentation",
@@ -56,7 +55,7 @@ i18n.use(initReactI18next).init({
           guaranteeContract: "List of guarantee",
           listWarrantyContract: "List of Warranty Contract",
 
-          marketing: "Marketing",
+          marketing: "Marketing & Caring",
           // đoạn này là children của marketing
           emailMarketing: "Email Marketing",
           smsMarketing: "SMS Marketing",
@@ -69,7 +68,7 @@ i18n.use(initReactI18next).init({
           facebook: "Facebook",
           zalo: "Zalo",
 
-          selling: "Sales",
+          selling: "Sales & Orders",
           promotionMarketing: "Promotion",
           promotionalReport: "Promotional Report",
           opportunity: "Opportunities",          
@@ -78,9 +77,7 @@ i18n.use(initReactI18next).init({
           salesInvoice: "Sales Invoice",
           shipping: "Shipping",
           returnInvoice: "Return Invoice",
-          multiChannelSales: "Multi Channel Sales",
-          salesCampaign: "Sales Campaign",
-          createOppotunity: "Create opportunity",
+          multiChannelSales: "Multi Channel Sales",                
           orderRequestList: "Order request list",
           // salesManagement: "Opportunity Management",
           salesManagement: "Take care of the opportunity",
@@ -102,7 +99,7 @@ i18n.use(initReactI18next).init({
           fanpage: "Omnichannel",
           totalChat: "Total chat",
 
-          warehouse: "Warehouse",
+          warehouse: "Product & Warehouse",
           // đoạn này là children của warehouse
           createPurchaseOrder: "Create purchase order",
           purchaseInvoice: "Purchase invoice",
@@ -115,7 +112,7 @@ i18n.use(initReactI18next).init({
           stockAdjustmentVoucher: "Stock adjustment voucher",
           managementMaterial: "Management material",
 
-          financeManagement: "Finance management",
+          financeManagement: "Finance & Payment",
           financeDashboard: "Dashboard",
           financeCashbook: "Cash flow ledger",
           createFinanceTransaction: "Create receipt/payment voucher",
@@ -136,26 +133,15 @@ i18n.use(initReactI18next).init({
 
           // Thông tin khảo sát
           survey: "Customer survey",
-          cxmSurvey: "CXM survey",
+          cxmSurvey: "CXM survey",          
 
-          // Quản lý vận hành
-          operate: "Operation Management",
-          // utilityReading: "Utility Reading",
-          electricityIndex: "Electricity Index",
-          waterIndex: "Water Index",
-          spaceCustomer: "Space",
-          managementFee: "Management Fee",
-          vehicleRegistration: "Vehicle Registration",
-          vehicle: "Vehicle",
-          ortherFee: "Orther Fee",
-
-          report: "Report",
+          report: "Report Management",
           // đoạn này là children của report
           reportRevenue: "Revenue",
           reportCustomer: "Customer",
           reportLogin: "Login",
 
-          settings: "Settings",
+          settings: "Settings & Accounts",
           // đoạn này là children của settings
           // pricePackageManagement: "Price package management",
           settingBasis: "Setting basis",
@@ -263,7 +249,7 @@ i18n.use(initReactI18next).init({
           seeMore: "Xem thêm",
         },
         sidebar: {
-          dashboard: "Trang chủ",
+          dashboard: "Bảng điều khiển",
 
           personal: "Cá nhân",
           // đoạn này là children của cá nhân
@@ -281,18 +267,13 @@ i18n.use(initReactI18next).init({
           jobReport: "Báo cáo công việc",
           calendar: "Lịch",
 
-          customer: "Khách hàng",
-          student: "Quản lý hồ sơ học sinh",
+          customer: "Khách hàng & Đối tác",          
           partner: "Đối tác",
           teacher: "Giáo viên",
           // đoạn này là children của khách hàng
           customerProfile: "Hồ sơ khách hàng",
-          customerList: "Danh sách khách hàng",
-          studentProfile: "Hồ sơ học sinh",
-          partnerProfile: "Hồ sơ đối tác",
-          teacherProfile: "Hồ sơ giáo viên",
-          contactProfile: "Hồ sơ người liên hệ",
-          parentProfile: "Hồ sơ phụ huynh",
+          customerList: "Danh sách khách hàng",          
+          partnerProfile: "Hồ sơ đối tác",                    
           customerSegments: "Phân khúc khách hàng",
 
           quote: "Báo giá",
@@ -311,7 +292,7 @@ i18n.use(initReactI18next).init({
           guaranteeContract: "Danh sách bảo lãnh",
           listWarrantyContract: "Danh sách bảo hành",
 
-          marketing: "Truyền thông",
+          marketing: "Tiếp thị & Chăm sóc",
           // đoạn này là children của marketing
           emailMarketing: "Truyền thông bằng Email",
           smsMarketing: "Truyền thông bằng SMS",
@@ -324,7 +305,7 @@ i18n.use(initReactI18next).init({
           facebook: "Tin nhắn Facebook",
           zalo: "Tin nhắn Zalo",
 
-          selling: "Bán hàng",
+          selling: "Bán hàng & Đơn hàng",
           promotionMarketing: "Khuyến mãi",
           promotionalReport: "Báo cáo khuyến mãi",
           promotionalProgram: "Chương trình khuyến mãi",
@@ -337,9 +318,7 @@ i18n.use(initReactI18next).init({
           shippingPartner: "Quản lý đơn vị vận chuyển",
           addShipping: "Tạo đơn vận chuyển",
           returnInvoice: "Khách trả hàng",
-          multiChannelSales: "Bán hàng đa kênh",
-          salesCampaign: "Quản lý chiến dịch",
-          createOppotunity: "Tạo cơ hội",
+          multiChannelSales: "Bán hàng đa kênh",               
           orderRequestList: "Yêu cầu mua hàng",
           salesManagement: "Chăm sóc cơ hội",
           salesManagementNew: "Chăm sóc cơ hội mới",
@@ -372,7 +351,7 @@ i18n.use(initReactI18next).init({
           manageOrder: "Yêu cầu mua hàng",
           productList: "Thống kê sản phẩm",
 
-          warehouse: "Kho hàng",
+          warehouse: "Hàng hóa & Kho",
           // đoạn này là children của kho hàng
           createPurchaseOrder: "Tạo phiếu nhập hàng",
           purchaseInvoice: "Hóa đơn nhập hàng",
@@ -386,7 +365,7 @@ i18n.use(initReactI18next).init({
           stockAdjustmentVoucher: "Phiếu điều chỉnh kho",
           managementMaterial: "Quản lý nguyên vật liệu",
 
-          financeManagement: "Quản lý tài chính",
+          financeManagement: "Tài chính & Thanh toán",
           financeDashboard: "Dashboard",
           financeCashbook: "Sổ thu chi",
           createFinanceTransaction: "Tạo Phiếu Thu/Chi",
@@ -404,26 +383,15 @@ i18n.use(initReactI18next).init({
           processSimulation: "Mô phỏng quy trình",
           objectManage: "Quản lý hồ sơ",
           manage_data_sharing: "Chia sẻ dữ liệu",
-          cxmSurvey: "Chiến dịch khảo sát",
+          cxmSurvey: "Chiến dịch khảo sát",          
 
-          // Quản lý vận hành
-          operate: "Quản lý vận hành",
-          // utilityReading: "Chỉ số điện/nước",
-          electricityIndex: "Chỉ số điện",
-          waterIndex: "Chỉ số nước",
-          spaceCustomer: "Căn hộ/văn phòng",
-          managementFee: "Phí quản lý",
-          vehicleRegistration: "Phí đậu xe",
-          vehicle: "Đăng kí phương tiện",
-          ortherFee: "Chi phí khác",
-
-          report: "Báo cáo",
+          report: "Hệ thống báo cáo",
           // đoạn này là children của báo cáo
           reportRevenue: "Doanh thu",
           reportCustomer: "Khách hàng",
           reportLogin: "Đăng nhập",
 
-          settings: "Cài đặt",
+          settings: "Cài đặt & Nhân sự",
           // đoạn này là children của cài đặt
           // pricePackageManagement: "Quản lý gói giá",
           settingBasis: "Cài đặt cơ sở",
@@ -470,7 +438,7 @@ i18n.use(initReactI18next).init({
           settingConfiguration: "Cài đặt cấu hình chung",
         },
         pageDashboard: {
-          title: "Trang chủ",
+          title: "Bảng điều khiển",
           invoice: "Hóa đơn",
           customer: "Khách hàng",
           actualRevenueReport: "Báo cáo doanh thu thực",
