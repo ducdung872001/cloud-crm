@@ -27,9 +27,6 @@ export const dataPackage = [
     name: "Quản lý cơ hội",
   },
   {
-    name: "Ngân sách truyền thông",
-  },
-  {
     name: "Quản lý chi nhánh/ Phòng ban/ Nhân viên",
   },
 ];

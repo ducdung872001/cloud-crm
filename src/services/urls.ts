@@ -1738,15 +1738,6 @@ export const urlsApi = {
     deleteCustomer: prefixAdmin + "/maCustomer/delete",
   },
 
-  // chiến dịch bán hàng
-  campaignMarketing: {
-    list: prefixAdmin + "/marketing/list",
-    update: prefixAdmin + "/marketing/update",
-    updateStatus: prefixAdmin + "/marketing/update/status",
-    detail: prefixAdmin + "/marketing/get",
-    delete: prefixAdmin + "/marketing/delete",
-  },
-
   //TODO: Start quy trình bpm
   businessProcess: {
     list: prefixAdmin + "/businessProcess/list",
@@ -2140,6 +2131,7 @@ export const urls = {
   product_inventory: "/product_inventory",
   // đường dẫn quản lý kho hàng
   inventory: "/inventory",
+  inventory_checking: "inventory_checking",
   // đường dẫn bán hàng
   sell: "/sell",
   contract: "/contract",

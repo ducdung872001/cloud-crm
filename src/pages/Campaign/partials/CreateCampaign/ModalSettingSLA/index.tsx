@@ -25,11 +25,7 @@ export default function ModalSettingSLA(props: any) {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  const notifyData = [
-    {
-      value: "1",
-      label: "Quản lý chiến dịch",
-    },
+  const notifyData = [    
     {
       value: "2",
       label: "Điều phối chiến dịch",

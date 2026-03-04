@@ -53,7 +53,8 @@ export default function Sidebar() {
       >
         <div className="sidebar-logo d-flex align-items-center justify-content-between">
           <Link to="/" className="logo">
-            {logoOrganization ? <img src={logoOrganization} style={{ height: "100%", width: "auto" }} /> : <LogoMenu />}
+            {/* {logoOrganization ? <img src={logoOrganization} style={{ height: "100%", width: "auto" }} /> : <LogoMenu />} */}
+            <LogoMenu />
           </Link>
           {isMouseOver || !isCollapsedSidebar ? (
             <Button

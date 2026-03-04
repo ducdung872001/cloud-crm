@@ -37,6 +37,7 @@ export interface IProductCatalogItem {
   sku: string;
   price: number;
   stock: number;
+  link?: string;
 }
 
 export interface IQuickReplyTemplate {
@@ -54,6 +55,7 @@ export interface IOrderActionData {
   orderNote: string;
   shippingFee: number;
   cartItems: ICartItem[];
+  pendingCartItems: ICartItem[];
   orderStatus: OrderStatus;
   hasSentOrderToCustomer: boolean;
   isOrderCreated: boolean;
@@ -217,6 +219,7 @@ export const conversationThreads: IConversationThread[] = [
         { id: 2, name: "Serum phục hồi da 30ml", sku: "SR-030", price: 420000, quantity: 1 },
         { id: 3, name: "Mặt nạ cấp ẩm 5 miếng", sku: "MN-005", price: 180000, quantity: 2 },
       ],
+      pendingCartItems: [],
       orderStatus: "draft",
       hasSentOrderToCustomer: false,
       isOrderCreated: false,
@@ -249,6 +252,7 @@ export const conversationThreads: IConversationThread[] = [
         { id: 1, name: "Sữa rửa mặt dịu nhẹ", sku: "SRM-010", price: 250000, quantity: 1 },
         { id: 2, name: "Kem chống nắng SPF50", sku: "KCN-050", price: 390000, quantity: 1 },
       ],
+      pendingCartItems: [],
       orderStatus: "sent_to_customer",
       hasSentOrderToCustomer: true,
       isOrderCreated: false,
@@ -281,6 +285,7 @@ export const conversationThreads: IConversationThread[] = [
         { id: 1, name: "Son lì đỏ đô Velvet", sku: "SON-RED", price: 320000, quantity: 1 },
         { id: 2, name: "Son dưỡng bóng", sku: "SON-GLS", price: 190000, quantity: 1 },
       ],
+      pendingCartItems: [],
       orderStatus: "processing",
       hasSentOrderToCustomer: true,
       isOrderCreated: true,
@@ -312,6 +317,7 @@ export const conversationThreads: IConversationThread[] = [
       cartItems: [
         { id: 1, name: "Combo dưỡng trắng chuyên sâu", sku: "CB-WHT", price: 1250000, quantity: 1 },
       ],
+      pendingCartItems: [],
       orderStatus: "completed",
       hasSentOrderToCustomer: true,
       isOrderCreated: true,
@@ -344,6 +350,7 @@ export const conversationThreads: IConversationThread[] = [
         { id: 1, name: "Bảng phấn mắt 9 ô", sku: "MP-009", price: 410000, quantity: 1 },
         { id: 2, name: "Mascara chống trôi", sku: "MS-022", price: 230000, quantity: 1 },
       ],
+      pendingCartItems: [],
       orderStatus: "shipping",
       hasSentOrderToCustomer: true,
       isOrderCreated: true,
@@ -373,6 +380,7 @@ export const conversationThreads: IConversationThread[] = [
       orderNote: "Khách đổi nhu cầu, giữ lại hội thoại để chăm sóc sau.",
       shippingFee: 0,
       cartItems: [{ id: 1, name: "Má hồng kem tự nhiên", sku: "MH-013", price: 280000, quantity: 1 }],
+      pendingCartItems: [],
       orderStatus: "cancelled",
       hasSentOrderToCustomer: true,
       isOrderCreated: true,
@@ -381,9 +389,46 @@ export const conversationThreads: IConversationThread[] = [
 ];
 
 export const productCatalog: IProductCatalogItem[] = [
-  { name: "Nước tẩy trang làm sạch sâu", sku: "TT-120", price: 210000, stock: 32 },
-  { name: "Kem dưỡng phục hồi ban đêm", sku: "KD-220", price: 560000, stock: 14 },
-  { name: "Tinh chất vitamin C sáng da", sku: "VC-030", price: 480000, stock: 21 },
-  { name: "Sữa rửa mặt dịu nhẹ", sku: "SRM-010", price: 250000, stock: 44 },
-  { name: "Xịt khoáng cấp ẩm", sku: "XK-150", price: 175000, stock: 18 },
+  {
+    name: "Samsung Galaxy S26 Ultra",
+    sku: "SS-S26U",
+    price: 33990000,
+    stock: 12,
+    link: "https://www.samsung.com/vn/smartphones/galaxy-s26-ultra/",
+  },
+  {
+    name: "Nước hoa DIOR Sauvage Elixir",
+    sku: "TT-120",
+    price: 21000000,
+    stock: 32,
+    link: "https://www.dior.com/en_vn/beauty/products/sauvage-elixir-Y0996460.html",
+  },
+  {
+    name: "SỮA DƯỠNG CLARIFIQUE",
+    sku: "KD-220",
+    price: 2400000,
+    stock: 14,
+    link: "https://www.lancome.vn/vi_VN/skincare-category-toners-essences-clarifique-watery-emulsion-face-essence/00003-TH-LAC.html",
+  },
+  {
+    name: "Mặt Nạ Banobagi Dưỡng Sáng Và Cấp Ẩm Cho Da 30g (Xanh)",
+    sku: "VC-030",
+    price: 17000,
+    stock: 21,
+    link: "https://hasaki.vn/san-pham/mat-na-banobagi-duong-sang-va-cap-am-cho-da-30g-100437.html",
+  },
+  {
+    name: "Cushion YSL Encre De Peau Luminous Matte - Limited 2025",
+    sku: "SRM-010",
+    price: 1599000,
+    stock: 44,
+    link: "https://thegioisonmoi.com/products/phan-nuoc-ysl-le-cushion-encre-de-peau-luminous-matte",
+  },
+  {
+    name: "Xịt khoáng d'Alba White Truffle First Spray Serum 100ml - Thuần chay",
+    sku: "XK-150",
+    price: 575000,
+    stock: 18,
+    link: "https://dalba.com/vi/products/dalba-white-truffle-first-spray-serum?srsltid=AfmBOooRRRnEDEDWRjiZ958VyY6UBQrnjuxILcZ5QZk5Ja9sizMmQkSI",
+  },
 ];

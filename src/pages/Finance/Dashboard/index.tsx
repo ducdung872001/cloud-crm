@@ -2,7 +2,15 @@ import React, { useMemo } from "react";
 import urls from "configs/urls";
 import { Link } from "react-router-dom";
 import { getFinanceDebtsMock, getFinanceFundsMock, getFinanceTransactionsMock } from "../data";
-import { FinanceBadge, FinancePageShell, FinanceStatCard, formatCurrency, formatDateTime } from "../shared";
+import {
+  FinanceBadge,
+  FinanceLoadMoreIndicator,
+  FinancePageShell,
+  FinanceStatCard,
+  formatCurrency,
+  formatDateTime,
+  useFinanceProgressiveList,
+} from "../shared";
 import "./index.scss";
 
 export default function FinanceDashboard() {
@@ -32,8 +40,20 @@ export default function FinanceDashboard() {
     };
   }, [debts, funds, transactions]);
 
-  const latestTransactions = transactions.slice(0, 5);
-  const debtAlerts = debts.filter((item) => item.status === "overdue" || item.status === "upcoming").slice(0, 4);
+  const recentTransactions = transactions;
+  const debtAlerts = useMemo(() => debts.filter((item) => item.status === "overdue" || item.status === "upcoming"), [debts]);
+  const {
+    visibleItems: visibleTransactions,
+    isLoading: isTransactionsLoading,
+    hasMore: hasMoreTransactions,
+    handleScroll: handleTransactionsScroll,
+  } = useFinanceProgressiveList(recentTransactions, 10);
+  const {
+    visibleItems: visibleDebtAlerts,
+    isLoading: isDebtAlertsLoading,
+    hasMore: hasMoreDebtAlerts,
+    handleScroll: handleDebtAlertsScroll,
+  } = useFinanceProgressiveList(debtAlerts, 10);
 
   return (
     <FinancePageShell
@@ -77,21 +97,24 @@ export default function FinanceDashboard() {
                 Xem toàn bộ sổ thu chi
               </Link>
             </div>
-            <div className="finance-list">
-              {latestTransactions.map((item) => (
-                <div key={item.id} className="finance-list__item">
-                  <div>
-                    <strong>{item.title}</strong>
-                    <div className="finance-list__meta">{formatDateTime(item.createdAt)}</div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <FinanceBadge tone={item.kind === "income" ? "success" : "danger"}>{item.kind === "income" ? "Thu tiền" : "Chi tiền"}</FinanceBadge>
-                    <div className={item.kind === "income" ? "finance-amount--income" : "finance-amount--expense"} style={{ marginTop: "0.6rem", fontWeight: 700 }}>
-                      {item.kind === "income" ? "+" : "-"} {formatCurrency(item.amount)}
+            <div className="finance-scroll-panel" onScroll={handleTransactionsScroll}>
+              <div className="finance-list">
+                {visibleTransactions.map((item) => (
+                  <div key={item.id} className="finance-list__item">
+                    <div>
+                      <strong>{item.title}</strong>
+                      <div className="finance-list__meta">{formatDateTime(item.createdAt)}</div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <FinanceBadge tone={item.kind === "income" ? "success" : "danger"}>{item.kind === "income" ? "Thu tiền" : "Chi tiền"}</FinanceBadge>
+                      <div className={item.kind === "income" ? "finance-amount--income" : "finance-amount--expense"} style={{ marginTop: "0.6rem", fontWeight: 700 }}>
+                        {item.kind === "income" ? "+" : "-"} {formatCurrency(item.amount)}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <FinanceLoadMoreIndicator loading={isTransactionsLoading} hasMore={hasMoreTransactions} />
             </div>
           </section>
         </div>
@@ -104,21 +127,24 @@ export default function FinanceDashboard() {
                 Quản lý công nợ
               </Link>
             </div>
-            <div className="finance-summary-list">
-              {debtAlerts.map((item) => (
-                <div key={item.id} className="finance-summary-list__item">
-                  <div>
-                    <strong>{item.name}</strong>
-                    <div className="finance-muted">{item.kind === "receivable" ? "Phải thu" : "Phải trả"}</div>
+            <div className="finance-scroll-panel" onScroll={handleDebtAlertsScroll}>
+              <div className="finance-summary-list">
+                {visibleDebtAlerts.map((item) => (
+                  <div key={item.id} className="finance-summary-list__item">
+                    <div>
+                      <strong>{item.name}</strong>
+                      <div className="finance-muted">{item.kind === "receivable" ? "Phải thu" : "Phải trả"}</div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <FinanceBadge tone={item.status === "overdue" ? "danger" : "warning"}>
+                        {item.status === "overdue" ? "Quá hạn" : "Sắp đến hạn"}
+                      </FinanceBadge>
+                      <div style={{ marginTop: "0.6rem", fontWeight: 700 }}>{formatCurrency(item.amount)}</div>
+                    </div>
                   </div>
-                  <div style={{ textAlign: "right" }}>
-                    <FinanceBadge tone={item.status === "overdue" ? "danger" : "warning"}>
-                      {item.status === "overdue" ? "Quá hạn" : "Sắp đến hạn"}
-                    </FinanceBadge>
-                    <div style={{ marginTop: "0.6rem", fontWeight: 700 }}>{formatCurrency(item.amount)}</div>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <FinanceLoadMoreIndicator loading={isDebtAlertsLoading} hasMore={hasMoreDebtAlerts} />
             </div>
           </section>
         </div>

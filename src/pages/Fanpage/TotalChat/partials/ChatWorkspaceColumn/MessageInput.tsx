@@ -1,17 +1,20 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { IProductCatalogItem } from "../../data";
 
 interface MessageInputProps {
   draft: string;
   quickReplies: string[];
+  productCatalog: IProductCatalogItem[];
   placeholder: string;
   sendLabel: string;
   onDraftChange: (value: string) => void;
   onQuickReplySelect: (value: string) => void;
+  onProductSelect: (product: IProductCatalogItem, searchToken: string) => void;
   onSend: () => void;
 }
 
 export default function MessageInput(props: MessageInputProps) {
-  const { draft, quickReplies, placeholder, sendLabel, onDraftChange, onQuickReplySelect, onSend } = props;
+  const { draft, quickReplies, productCatalog, placeholder, sendLabel, onDraftChange, onQuickReplySelect, onProductSelect, onSend } = props;
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [activeCommandIndex, setActiveCommandIndex] = useState(0);
 
@@ -35,17 +38,53 @@ export default function MessageInput(props: MessageInputProps) {
   const firstToken = normalizedDraft.split(/\s+/)[0] || "";
   const hasSelectedCommand = quickReplies.includes(firstToken);
   const trailingDraft = hasSelectedCommand ? normalizedDraft.slice(firstToken.length).replace(/^\s+/, "") : draft;
+  const editableDraft = hasSelectedCommand ? trailingDraft : draft;
+  const canSend = Boolean(draft.trim());
   const showQuickReplyPicker = firstToken.startsWith("/") && !hasSelectedCommand;
+  const productSearchToken = editableDraft.split(/\s+/).pop() || "";
+  const showProductPicker = productSearchToken.startsWith("\\");
+  const productKeyword = productSearchToken.slice(1).trim().toLowerCase();
   const filteredQuickReplies = useMemo(
     () => quickReplies.filter((item) => item.toLowerCase().startsWith(firstToken.toLowerCase())),
     [firstToken, quickReplies]
   );
+  const filteredProducts = useMemo(() => {
+    if (!showProductPicker) {
+      return [];
+    }
+
+    if (!productKeyword) {
+      return productCatalog;
+    }
+
+    return productCatalog.filter((item) => item.name.toLowerCase().includes(productKeyword) || item.sku.toLowerCase().includes(productKeyword));
+  }, [productCatalog, productKeyword, showProductPicker]);
 
   useEffect(() => {
     setActiveCommandIndex(0);
   }, [draft]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (showProductPicker && filteredProducts.length > 0) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveCommandIndex((prev) => (prev + 1) % filteredProducts.length);
+        return;
+      }
+
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveCommandIndex((prev) => (prev - 1 + filteredProducts.length) % filteredProducts.length);
+        return;
+      }
+
+      if ((e.key === "Enter" && !e.shiftKey) || e.key === "Tab") {
+        e.preventDefault();
+        onProductSelect(filteredProducts[activeCommandIndex], productSearchToken);
+        return;
+      }
+    }
+
     if (showQuickReplyPicker && filteredQuickReplies.length > 0) {
       if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -102,6 +141,21 @@ export default function MessageInput(props: MessageInputProps) {
           ))}
         </div>
       )}
+      {showProductPicker && filteredProducts.length > 0 && (
+        <div className="message-command-picker message-command-picker--product">
+          {filteredProducts.map((item, index) => (
+            <button
+              key={item.sku}
+              type="button"
+              className={`message-command-picker__item${index === activeCommandIndex ? " is-active" : ""}`}
+              onClick={() => onProductSelect(item, productSearchToken)}
+            >
+              <strong>{item.name}</strong>
+              <span>{item.sku}</span>
+            </button>
+          ))}
+        </div>
+      )}
       <div className="message-input__composer">
         <div className="message-input__tools">
           <button type="button" className="message-tool" title="Thêm">
@@ -127,18 +181,13 @@ export default function MessageInput(props: MessageInputProps) {
 
         <div className="message-input__field">
           {hasSelectedCommand && (
-            <button
-              type="button"
-              className="message-command-chip"
-              onClick={() => onDraftChange(trailingDraft)}
-              title="Bỏ lệnh nhanh"
-            >
+            <button type="button" className="message-command-chip" onClick={() => onDraftChange(trailingDraft)} title="Bỏ lệnh nhanh">
               {firstToken}
             </button>
           )}
           <textarea
             ref={textareaRef}
-            value={hasSelectedCommand ? trailingDraft : draft}
+            value={editableDraft}
             onChange={(e) => {
               const nextValue = e.target.value;
               onDraftChange(hasSelectedCommand ? `${firstToken}${nextValue ? ` ${nextValue}` : " "}` : nextValue);
@@ -150,7 +199,7 @@ export default function MessageInput(props: MessageInputProps) {
         </div>
 
         <div className="message-input__actions">
-          <button type="button" className="message-send" onClick={onSend} disabled={!draft.trim()} aria-label={sendLabel} title={sendLabel}>
+          <button type="button" className="message-send" onClick={onSend} disabled={!canSend} aria-label={sendLabel} title={sendLabel}>
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M21.4 11.1 4.8 3.3A1 1 0 0 0 3.4 4.5l2.4 6.4a1 1 0 0 0 .8.6l7.1.7-7.1.7a1 1 0 0 0-.8.6l-2.4 6.4a1 1 0 0 0 1.4 1.2l16.6-7.8a1 1 0 0 0 0-1.8Z"

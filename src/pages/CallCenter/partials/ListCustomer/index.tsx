@@ -16,8 +16,6 @@ import { ICustomerSchedulerFilterRequest } from "model/customer/CustomerRequestM
 import { showToast } from "utils/common";
 import CustomerService from "services/CustomerService";
 import AddPhoneModal from "../AddPhoneModal";
-import AddManagementOpportunityModal from "pages/ManagementOpportunity/partials/AddManagementOpportunityModal";
-import AddTreatmentScheduleModal from "pages/CalendarCommon/partials/AddTreatmentScheduleModal/AddTreatmentScheduleModal";
 import AddConsultationScheduleModal from "pages/CalendarCommon/partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
 import { ContextType, UserContext } from "contexts/userContext";
 import EmployeeAgentService from "services/EmployeeAgentService";
@@ -545,12 +543,7 @@ export default function CustomerList(props: ICustomerListProps) {
         incomingNumber={incomingNumber}
         onHide={() => setShowModalCallIncome(false)}
       /> */}
-      {/* <AddPhoneModal onShow={showModalPhone} dataCustomer={dataCustomer} onHide={() => setShowModalPhone(false)} /> */}
-      <AddManagementOpportunityModal
-        onShow={showModalAddManagementOpportunity}
-        idCustomer={idCustomer}
-        onHide={() => setShowModalAddManagementOpportunity(false)}
-      />
+      {/* <AddPhoneModal onShow={showModalPhone} dataCustomer={dataCustomer} onHide={() => setShowModalPhone(false)} /> */}      
 
       <AddConsultationScheduleModal
         onShow={showModalAddConsultationScheduleModal}

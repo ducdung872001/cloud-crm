@@ -92,7 +92,7 @@ export default function FinanceCashBookTemplate() {
   return (
     <FinancePageShell
       title="Phiếu giao dịch mới"
-      subtitle="Ghi lại dòng tiền vào hoặc ra khỏi quỹ của bạn theo đúng mô tả trong FinRetail."
+      // subtitle="Ghi lại dòng tiền vào hoặc ra khỏi quỹ của bạn theo đúng mô tả trong FinRetail."
       actions={
         <div className="finance-inline-actions">
           <Link className="finance-link-button" to={urls.finance_management_dashboard}>
@@ -228,7 +228,7 @@ export default function FinanceCashBookTemplate() {
               <FinanceBadge tone={form.kind === "income" ? "success" : "danger"}>{form.kind === "income" ? "Thu tiền" : "Chi tiền"}</FinanceBadge>
             </div>
 
-            <div className="finance-helper-box">
+            {/* <div className="finance-helper-box">
               <strong>Tác động dự kiến</strong>
               <ul>
                 <li>Validate toàn bộ form trước khi lưu.</li>
@@ -236,7 +236,7 @@ export default function FinanceCashBookTemplate() {
                 <li>Cập nhật công nợ nếu có đối tượng liên quan.</li>
                 <li>Thông báo thành công và điều hướng về Dashboard hoặc Sổ thu chi.</li>
               </ul>
-            </div>
+            </div> */}
 
             <div style={{ marginTop: "1.2rem" }}>
               <FinanceStatCard

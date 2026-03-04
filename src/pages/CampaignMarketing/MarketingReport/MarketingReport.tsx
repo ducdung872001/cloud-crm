@@ -16,7 +16,6 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import Button from "components/button/button";
 import BoxTable from "components/boxTable/boxTable";
 import moment from "moment";
-import CampaignMarketingService from "services/CampaignMarketingService";
 
 export default function MarketingReport(props: any) {
   const { onShow, onHide, data} = props;
@@ -59,7 +58,7 @@ export default function MarketingReport(props: any) {
     const getListReport = async (paramsSearch: any) => {
         setIsLoading(true);
 
-        const response = await CampaignMarketingService.listMAReport(paramsSearch, abortController.signal);
+        const response = null;
 
         if (response.code == 0) {
             const result = response.result;
@@ -142,7 +141,7 @@ export default function MarketingReport(props: any) {
           },
           defaultText: "Xóa",
           defaultAction: async () => {
-            const response = await CampaignMarketingService.detailMAReport(item.id);
+            const response = null;
             if (response.code === 0) {
                 showToast("Xóa báo cáo thành công", "success");
                 getListReport(params)
@@ -277,7 +276,7 @@ export default function MarketingReport(props: any) {
         // ...(data ? { id: data.id } : {}),
     };
 
-    const response = await CampaignMarketingService.updateMAReport(body);
+    const response = null;
 
     if (response.code === 0) {
         showToast(`${data ? 'Cập nhật' : 'Thêm'} báo cáo thành công`, "success");

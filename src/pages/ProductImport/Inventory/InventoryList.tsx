@@ -1,5 +1,5 @@
-import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+// WarehouseBookList.tsx
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import _ from "lodash";
 import moment from "moment";
 import Icon from "components/icon";
@@ -11,116 +11,80 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
-import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
-import { IInventoryResponse } from "model/inventory/InventoryResponseModel";
-import { IInventoryFilterRequest } from "model/inventory/InventoryRequestModel";
-import InventoryService from "services/InventoryService";
-import { showToast } from "utils/common";
-import { getPermissions } from "utils/common";
-import AddInventoryModal from "./partials/AddInventoryModal";
-import { getPageOffset } from "reborn-util";
-import { ContextType, UserContext } from "contexts/userContext";
-
+import { IAction } from "model/OtherModel";
+import { showToast, getPermissions } from "utils/common";
+import { getPageOffset, formatCurrency } from "reborn-util";
+import { MOCK_WAREHOUSE_BOOK, IWarehouseBook } from "assets/mock/Product";
+import AddWarehouseBookModal from "./partials/AddInventoryModal";
 import "./InventoryList.scss";
 
-export default function InventoryList() {
-  document.title = "Quản lý kho hàng";
-
-  const navigation = useNavigate();
+export default function WarehouseBookList() {
+  document.title = "Sổ kho";
 
   const isMounted = useRef(false);
-  const checkUserRoot = localStorage.getItem("user.root");
-  const { dataBranch } = useContext(UserContext) as ContextType;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [listInventory, setListInventory] = useState<IInventoryResponse[]>([]);
-  const [dataInventory, setDataInventory] = useState<IInventoryResponse>(null);
+
+  const [listWarehouseBook, setListWarehouseBook] = useState<IWarehouseBook[]>([]);
+  const [dataWarehouseBook, setDataWarehouseBook] = useState<IWarehouseBook>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
-  const [permissions, setPermissions] = useState(getPermissions());
+  const [permissions] = useState(getPermissions());
 
-  const [params, setParams] = useState<IInventoryFilterRequest>({
+  const [params, setParams] = useState({
     name: "",
+    type: "",
+    limit: 10,
+    page: 1,
   });
-
-  const customerFilterList = useMemo(
-    () =>
-      [
-        ...(+checkUserRoot == 1
-          ? [
-              {
-                key: "inventoryId",
-                name: "Kho hàng",
-                type: "select",
-                is_featured: true,
-                value: searchParams.get("inventoryId") ?? "",
-              },
-            ]
-          : []),
-      ] as IFilterItem[],
-    [searchParams]
-  );
-
-  const [listSaveSearch] = useState<ISaveSearch[]>([
-    {
-      key: "all",
-      name: "Danh sách kho hàng",
-      is_active: true,
-    },
-  ]);
-
-  useEffect(() => {
-    if (dataBranch) {
-      setParams((prevParams) => ({ ...prevParams, branchId: dataBranch.value }));
-    }
-  }, [dataBranch]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Kho hàng",
+    name: "Phiếu kho",
     isChooseSizeLimit: true,
-    setPage: (page) => {
-      setParams((prevParams) => ({ ...prevParams, page: page }));
-    },
-    chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, limit: limit }));
-    },
+    setPage: (page) => setParams((prev) => ({ ...prev, page })),
+    chooseSizeLimit: (limit) => setParams((prev) => ({ ...prev, limit })),
   });
 
-  const abortController = new AbortController();
-
-  const getListInventory = async (paramsSearch: IInventoryFilterRequest) => {
+  // =====================
+  // Lấy danh sách (mock)
+  // =====================
+  const getListWarehouseBook = (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await InventoryService.list(paramsSearch, abortController.signal);
-
-    if (response.code === 0) {
-      const result = response.result;
-      setListInventory(result.items ?? result);
-
-      setPagination({
-        ...pagination,
-        page: +result.page,
-        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
-        totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
+    setTimeout(() => {
+      let filtered = MOCK_WAREHOUSE_BOOK.filter((item) => {
+        const matchName = item.productName.toLowerCase().includes((paramsSearch.name ?? "").toLowerCase());
+        const matchType = paramsSearch.type ? item.type === paramsSearch.type : true;
+        return matchName && matchType;
       });
 
-      if (+result.total === 0 && +result.page === 1) {
-        setIsNoItem(true);
-      }
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-    setIsLoading(false);
+      const total = filtered.length;
+      const page = paramsSearch.page ?? 1;
+      const limit = paramsSearch.limit ?? 10;
+      const items = filtered.slice((page - 1) * limit, page * limit);
+
+      setListWarehouseBook(items);
+      setPagination((prev) => ({
+        ...prev,
+        page,
+        sizeLimit: limit,
+        totalItem: total,
+        totalPage: Math.ceil(total / limit),
+      }));
+
+      if (total === 0 && page === 1) setIsNoItem(true);
+      else setIsNoItem(false);
+
+      setIsLoading(false);
+    }, 300);
   };
 
   useEffect(() => {
     const paramsTemp = _.cloneDeep(params);
-    setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
+    setParams((prev) => ({ ...prev, ...paramsTemp }));
   }, []);
 
   useEffect(() => {
@@ -128,215 +92,282 @@ export default function InventoryList() {
       isMounted.current = true;
       return;
     }
-
-    if (isMounted.current === true) {
-      getListInventory(params);
-      const paramsTemp = _.cloneDeep(params);
-      if (paramsTemp.limit === 10) {
-        delete paramsTemp["limit"];
-      }
-      Object.keys(paramsTemp).map(function (key) {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-    }
-
-    return () => {
-      abortController.abort();
-    };
+    getListWarehouseBook(params);
   }, [params]);
 
+  // =====================
+  // Render helpers
+  // =====================
+  const renderType = (type: IWarehouseBook["type"]) => {
+    const map = {
+      import: { label: "Nhập kho", color: "success" },
+      export: { label: "Xuất kho", color: "error" },
+      transfer: { label: "Chuyển kho", color: "primary" },
+      adjust: { label: "Điều chỉnh", color: "warning" },
+      return_from_supplier: { label: "Hoàn nhập - NCC", color: "success" },
+      return_to_customer: { label: "Hoàn xuất - KH", color: "warning" },
+    };
+    const { label, color } = map[type];
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <span className={`status__item--signature status__item--signature-${color}`}>{label}</span>
+      </div>
+    );
+  };
+
+  const renderStatus = (status: number) => (
+    <div style={{ display: "flex", justifyContent: "center", marginTop: "0.9rem" }}>
+      <span className={`status__item--signature status__item--signature-${status === 1 ? "success" : "secondary"}`}>
+        {status === 1 ? "Hoàn thành" : "Đã hủy"}
+      </span>
+    </div>
+  );
+
+  // =====================
+  // Title actions
+  // =====================
   const titleActions: ITitleActions = {
     actions: [
-      permissions["INVENTORY_ADD"] == 1 && {
-        title: "Thêm mới",
+      permissions["WAREHOUSE_ADD"] == 1 && {
+        title: "Thêm phiếu",
         callback: () => {
-          setDataInventory(null);
+          setDataWarehouseBook(null);
           setShowModalAdd(true);
         },
       },
     ],
   };
 
-  const titles = ["STT", "Tên kho", "Mã kho", "Địa chỉ kho", "Thủ kho", "Ngày tạo", "Trạng thái", "Thứ tự hiển thị", "Chi nhánh"];
-
-  const dataFormat = ["text-center", "", "text-center", "", "text-center", "text-center", "text-center", "text-center", ""];
-
-  const dataMappingArray = (item: IInventoryResponse, index: number) => [
-    getPageOffset(params) + index + 1,
-    <a key={item.id} onClick={() => navigation(`/product_inventory?inventoryId=${item.id}`)}>
-      {item.name}
-    </a>,
-    item.code,
-    item.address,
-    item.employeeName,
-    moment(item.createdTime).format("DD/MM/YYYY"),
-    BoxViewInventoryStatus(item.status),
-    item.position,
-    item.branchName,
+  // =====================
+  // Table config
+  // =====================
+  const titles = [
+    "STT",
+    "Mã phiếu",
+    "Loại phiếu",
+    "Sản phẩm",
+    "Đối tác",
+    "Phiếu gốc",
+    "Kho",
+    "Số lượng",
+    "Đơn giá",
+    "Thành tiền",
+    "Tồn trước",
+    "Tồn sau",
+    "Người thực hiện",
+    "Ngày thực hiện",
+    "Trạng thái",
   ];
-  const BoxViewInventoryStatus = (contractStatus) => {
-    const getStatus = (code: number) => {
-      switch (code) {
-        case 0:
-          return "Ngưng sử dụng";
-        case 1:
-          return "Đang sử dụng";
-      }
-    };
+  const dataFormat = [
+    "text-center",
+    "",
+    "text-center",
+    "",
+    "",
+    "text-center",
+    "",
+    "text-center",
+    "text-right",
+    "text-right",
+    "text-center",
+    "text-center",
+    "",
+    "text-center",
+    "text-center",
+  ];
 
-    const getStatusColor = (code: number) => {
-      switch (code) {
-        case 0:
-          return "secondary";
-        case 1:
-          return "primary";
-      }
-    };
-
-    return (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "0.9rem" }}>
-        <span className={`status__item--signature status__item--signature-${getStatusColor(contractStatus)}`}>{getStatus(contractStatus)}</span>
+  const dataMappingArray = (item: IWarehouseBook, index: number) => [
+    getPageOffset(params) + index + 1,
+    <span key={`code-${item.id}`} className="warehouse__code">
+      {item.code}
+    </span>,
+    renderType(item.type),
+    <div key={`product-${item.id}`}>
+      <div className="warehouse__product-name">{item.productName}</div>
+      <div className="warehouse__product-code">{item.productCode}</div>
+    </div>,
+    // Cột đối tác - chỉ hiện với phiếu hoàn trả
+    item.partnerName ? (
+      <div key={`partner-${item.id}`} style={{ minWidth: "120px" }}>
+        <div className="warehouse__partner-name">{item.partnerName}</div>
+        <div className={`warehouse__partner-type warehouse__partner-type--${item.partnerType}`}>
+          {item.partnerType === "supplier" ? "Nhà cung cấp" : "Khách hàng"}
+        </div>
       </div>
-    );
-  };
+    ) : (
+      "—"
+    ),
 
-  const actionsTable = (item: IInventoryResponse): IAction[] => {
+    // Cột phiếu gốc
+    item.refCode ? (
+      <span key={`ref-${item.id}`} className="warehouse__ref-code">
+        {item.refCode}
+      </span>
+    ) : (
+      "—"
+    ),
+    item.type === "transfer" ? (
+      <span key={`tf-${item.id}`} className="warehouse__transfer" style={{ minWidth: "120px" }}>
+        {item.warehouseFrom} → {item.warehouseTo}
+      </span>
+    ) : (
+      <span key={`tf-${item.id}`} style={{ minWidth: "120px" }}>{item.warehouseName}</span>
+    ),
+    <span key={`qty-${item.id}`} className={item.quantity > 0 ? "warehouse__qty--positive" : "warehouse__qty--negative"}>
+      {item.quantity > 0 ? `+${item.quantity}` : item.quantity} {item.unitName}
+    </span>,
+    formatCurrency(item.priceUnit) + "đ",
+    formatCurrency(item.totalAmount) + "đ",
+    item.stockBefore,
+    item.stockAfter,
+    item.createdBy,
+    moment(item.createdAt).format("DD/MM/YYYY HH:mm"),
+    renderStatus(item.status),
+  ];
+
+  // =====================
+  // Actions table
+  // =====================
+  const actionsTable = (item: IWarehouseBook): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
-      permissions["INVENTORY_UPDATE"] == 1 && {
-        title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+      {
+        title: "Chi tiết",
+        icon: <Icon name="CollectInfo" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 17 }} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setDataInventory(item);
-          setShowModalAdd(true);
+            setDataWarehouseBook(item);
+            setShowModalAdd(true);
           }
         },
       },
-      permissions["INVENTORY_DELETE"] == 1 && {
-        title: "Xóa",
+      item.status === 1 && {
+        title: "Hủy phiếu",
         icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
         disabled: isCheckedItem,
         callback: () => {
-          if (!isCheckedItem) {
-          showDialogConfirmDelete(item);
-          }
+          if (!isCheckedItem) showDialogConfirmCancel(item);
         },
       },
-    ].filter((action) => action);
+    ].filter(Boolean) as IAction[];
   };
 
-  const onDelete = async (id: number) => {
-    const response = await InventoryService.delete(id);
-
-    if (response.code === 0) {
-      showToast("Xóa kho hàng thành công", "success");
-      getListInventory(params);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
+  // =====================
+  // Hủy phiếu
+  // =====================
+  const onCancel = (id: number) => {
+    // TODO: gọi API thực tế
+    showToast("Hủy phiếu kho thành công", "success");
+    getListWarehouseBook(params);
     setShowDialog(false);
     setContentDialog(null);
   };
 
-  const onDeleteAll = () => {
-    const selectedIds = listIdChecked || [];
-    if (!selectedIds.length) return;
+  const onCancelAll = () => {
+    if (!listIdChecked.length) return;
+    // TODO: gọi API hủy hàng loạt
+    showToast(`Hủy thành công ${listIdChecked.length} phiếu kho`, "success");
+    getListWarehouseBook(params);
+    setListIdChecked([]);
+    setShowDialog(false);
+    setContentDialog(null);
+  };
 
-    const arrPromises = selectedIds.map((selectedId) => {
-      const found = listInventory.find((item) => item.id === selectedId);
-      if (found?.id) {
-        return InventoryService.delete(found.id);
-      } else {
-        return Promise.resolve(null);
-      }
-    });
-    Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} kho hàng`, "success");
-        getListInventory(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có kho hàng nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
-
-  const showDialogConfirmDelete = (item?: IInventoryResponse) => {
-    const contentDialog: IContentDialog = {
+  const showDialogConfirmCancel = (item?: IWarehouseBook) => {
+    const content: IContentDialog = {
       color: "error",
       className: "dialog-delete",
       isCentered: true,
       isLoading: true,
-      title: <Fragment>Xóa...</Fragment>,
+      title: <Fragment>Hủy phiếu kho</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "kho hàng " : `${listIdChecked.length} kho hàng đã chọn`}
-          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
+          Bạn có chắc chắn muốn hủy{" "}
+          {item ? (
+            <>
+              <strong>{item.code}</strong>
+            </>
+          ) : (
+            <>{listIdChecked.length} phiếu kho đã chọn</>
+          )}
+          ? Thao tác này không thể khôi phục.
         </Fragment>
       ),
-      cancelText: "Hủy",
+      cancelText: "Quay lại",
       cancelAction: () => {
         setShowDialog(false);
         setContentDialog(null);
       },
-      defaultText: "Xóa",
+      defaultText: "Xác nhận hủy",
       defaultAction: () => {
         if (item?.id) {
-          onDelete(item.id);
+          onCancel(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
-          onDeleteAll();
+        if (listIdChecked.length > 0) {
+          onCancelAll();
           return;
         }
-      }
+      },
     };
-    setContentDialog(contentDialog);
+    setContentDialog(content);
     setShowDialog(true);
   };
 
   const bulkActionList: BulkActionItemModel[] = [
-    permissions["INVENTORY_DELETE"] == 1 && {
-      title: "Xóa kho hàng",
-      callback: () => showDialogConfirmDelete(),
+    {
+      title: "Hủy phiếu đã chọn",
+      callback: () => showDialogConfirmCancel(),
     },
   ];
 
+  // =====================
+  // Filter tabs
+  // =====================
+  const listTypeTabs = [
+    { label: "Tất cả", value: "" },
+    { label: "Nhập kho", value: "import" },
+    { label: "Xuất kho", value: "export" },
+    { label: "Chuyển kho", value: "transfer" },
+    { label: "Điều chỉnh", value: "adjust" },
+    { label: "Hoàn nhập - NCC", value: "return_from_supplier" },
+    { label: "Hoàn xuất - KH", value: "return_to_customer" },
+  ];
+
   return (
-    <div className={`page-content page-inventory${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Quản lý kho hàng" titleActions={titleActions} />
+    <div className={`page-content page-warehouse-book${isNoItem ? " bg-white" : ""}`}>
+      <TitleAction title="Sổ kho" titleActions={titleActions} />
 
       <div className="card-box d-flex flex-column">
-        <SearchBox
-          name="Tên kho hàng"
-          params={params}
-          isSaveSearch={true}
-          listSaveSearch={listSaveSearch}
-          isFilter={true}
-          listFilterItem={customerFilterList}
-          updateParams={(paramsNew) => setParams(paramsNew)}
-        />
-        {!isLoading && listInventory && listInventory.length > 0 ? (
+        {/* Filter tabs */}
+        <div className="warehouse__tabs">
+          {listTypeTabs.map((tab) => (
+            <div
+              key={tab.value}
+              className={`warehouse__tab-item ${params.type === tab.value ? "active" : ""}`}
+              onClick={() => setParams((prev) => ({ ...prev, type: tab.value, page: 1 }))}
+            >
+              {tab.label}
+            </div>
+          ))}
+        </div>
+
+        <SearchBox name="Tên sản phẩm" params={params} updateParams={(paramsNew) => setParams(paramsNew)} />
+
+        {!isLoading && listWarehouseBook.length > 0 ? (
           <BoxTable
-            name="Kho hàng"
+            name="Phiếu kho"
             titles={titles}
-            items={listInventory}
+            items={listWarehouseBook}
             isPagination={true}
             dataPagination={pagination}
             dataMappingArray={(item, index) => dataMappingArray(item, index)}
             dataFormat={dataFormat}
-            striped={true}
             isBulkAction={true}
             listIdChecked={listIdChecked}
             bulkActionItems={bulkActionList}
+            striped={true}
             setListIdChecked={(listId) => setListIdChecked(listId)}
             actions={actionsTable}
             actionType="inline"
@@ -349,14 +380,14 @@ export default function InventoryList() {
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa có kho hàng nào. <br />
-                    Hãy thêm mới kho hàng đầu tiên nhé!
+                    Hiện tại chưa có phiếu kho nào. <br />
+                    Hãy thêm phiếu kho đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới kho hàng"
+                titleButton="Thêm phiếu"
                 action={() => {
-                  setListInventory(null);
+                  setDataWarehouseBook(null);
                   setShowModalAdd(true);
                 }}
               />
@@ -364,8 +395,7 @@ export default function InventoryList() {
               <SystemNotification
                 description={
                   <span>
-                    Không có dữ liệu trùng khớp.
-                    <br />
+                    Không có dữ liệu trùng khớp. <br />
                     Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
                   </span>
                 }
@@ -375,13 +405,12 @@ export default function InventoryList() {
           </Fragment>
         )}
       </div>
-      <AddInventoryModal
+
+      <AddWarehouseBookModal
         onShow={showModalAdd}
-        data={dataInventory}
+        data={dataWarehouseBook}
         onHide={(reload) => {
-          if (reload) {
-            getListInventory(params);
-          }
+          if (reload) getListWarehouseBook(params);
           setShowModalAdd(false);
         }}
       />

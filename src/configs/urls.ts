@@ -415,9 +415,7 @@ export const urlsApi = {
     // lấy mã hoá đơn
     invoiceCode: prefixAdmin + "/invoice/code",
   },
-  shipping: {
-
-  },
+  shipping: {},
   boughtService: {
     addToInvoice: prefixAdmin + "/boughtService/update",
     delete: prefixAdmin + "/boughtService/delete",
@@ -2216,16 +2214,7 @@ export const urlsApi = {
     deleteCustomer: prefixAdmin + "/maCustomer/delete",
     updateMapping: prefixAdmin + "/maMapping/update",
     detailMapping: prefixAdmin + "/maMapping/get",
-  },
-
-  // chiến dịch bán hàng
-  campaignMarketing: {
-    list: prefixAdmin + "/marketing/list",
-    update: prefixAdmin + "/marketing/update",
-    updateStatus: prefixAdmin + "/marketing/update/status",
-    detail: prefixAdmin + "/marketing/get",
-    delete: prefixAdmin + "/marketing/delete",
-  },
+  },  
 
   //TODO: Start quy trình bpm
   businessProcess: {
@@ -3077,6 +3066,7 @@ export const urls = {
   //Lĩnh vực BĐS - Đầu mối liên hệ
   contact: "/contact",
   customer: "/customer",
+  customer_list: "/customer_list",
   customer_sms: "/customer_sms",
   customer_segment: "/customer_segment",
   detail_person: "/detail_person/customerId/:id?/:type",
@@ -3091,7 +3081,7 @@ export const urls = {
   cashbook: "/cashbook",
   cxmSurvey: "/cxm_survey",
 
-  // Fanpage 
+  // Fanpage
   fanpage: "/fanpage",
   total_chat: "/total_chat",
 
@@ -3117,8 +3107,12 @@ export const urls = {
   product_inventory: "/product_inventory",
   // đường dẫn quản lý kho hàng
   inventory: "/inventory",
+  inventory_checking: "/inventory_checking",
   // đường dẫn bán hàng
   sell: "/sell",
+  promotional_program: "/promotional_program",
+  promotional_report: "/promotional_report",
+
   contract: "/contract",
   offer: "/offer",
   create_contract: "/create_contract",
@@ -3127,14 +3121,6 @@ export const urls = {
   edit_contract_xml: "/edit_contract_xml/:id?",
   detail_contract: "/detail_contract/contractId/:id?",
   detail_project: "/detail_project/projectId/:id?",
-
-  //Hợp đồng bảo lãnh
-  guarantee: "/guarantee",
-  detail_guarantee: "/detail_guarantee/guaranteeId/:id?",
-
-  //Bảo hành theo hợp đồng
-  warrantyContract: "/warrantyContract",
-  detail_warranty_contract: "/detail_warranty_contract/warrantyId/:id?",
 
   // đường dẫn tạo đơn bán
   create_sale_add: "/create_sale_add",
@@ -3168,6 +3154,7 @@ export const urls = {
   finance_management_debt_transaction: "/finance_management/debt_transaction",
   finance_management_shift_inventory: "/finance_management/shift_inventory",
   setting: "/setting",
+  viettel_integration: "/viettel_integration",
   tip: "/tip",
   tip_group: "/tip_group",
   tip_user_config: "/tip_user_config",
@@ -3202,11 +3189,13 @@ export const urls = {
   setting_common: "/setting_common",
   setting_rose: "/setting_rose",
   setting_basis: "/setting_basis",
+  setting_payment_method: "/setting_payment_method",
   setting_operate: "/setting_operate",
   setting_timekeeping: "/setting_timekeeping",
   setting_customer: "/setting_customer",
   setting_partner: "/setting_partner",
   setting_contact: "/setting_contact",
+  setting_loyalty: "/setting_loyalty",
   setting_sell: "/setting_sell",
   //Cài đặt hợp đồng
   setting_contract: "/setting_contract",
