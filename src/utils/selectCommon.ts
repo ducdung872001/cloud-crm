@@ -44,7 +44,6 @@ import SpaceCustomerService from "services/SpaceCustomerService";
 import BuildingService from "services/BuildingService";
 import CustomerMarketingLeadService from "services/CustomerMarketingLeadService";
 import RoleService from "services/RoleService";
-import CampaignMarketingService from "services/CampaignMarketingService";
 import PromotionService from "services/PromotionService";
 import BoughtCardService from "services/BoughtCardService";
 import ProductIdApiService from "services/ProductIdApiService";
@@ -179,12 +178,6 @@ export async function SelectOptionData(key: string, params?: any) {
       break;
     case "marketingSendLeadSource":
       response = await CustomerMarketingLeadService.list(params);
-      break;
-    case "marketingId":
-      response = await CampaignMarketingService.list(params);
-      break;
-    case "marketingChanelId":
-      response = await CampaignMarketingService.listMAChannel(params);
       break;
     case "sourceId":
     case "source":

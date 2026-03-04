@@ -16,7 +16,6 @@ import BeautyBranchService from "services/BeautyBranchService";
 import { showToast } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
 import "./DashboardReportRevenue.scss";
-import ReportOpportunity from "pages/OpportunityList/partials/ReportOpportunity";
 import ReportCustomer from "pages/CustomerPerson/partials/ReportCustomer";
 import ReportPartner from "pages/PartnerList/partials/ReportPartner";
 import { stringify } from "uuid";
@@ -450,11 +449,7 @@ export default function DashboardReportRevenue(props: ReportRevenueProps) {
     }
   };
 
-  const lstTitleHeader = [
-    // {
-    //   name: "Trang chủ",
-    //   type: 1,
-    // },
+  const lstTitleHeader = [    
     {
       name: "Báo cáo cơ hội",
       type: 2,
@@ -561,10 +556,6 @@ export default function DashboardReportRevenue(props: ReportRevenueProps) {
             <HighchartsReact highcharts={Highcharts} allowChartUpdate={true} options={chartRevenue} />
           </div>
         </div>
-      ) : activeTitleHeader === 2 ? (
-        <>
-          <ReportOpportunity />
-        </>
       ) : activeTitleHeader === 3 ? (
         <>
           <ReportCustomer />

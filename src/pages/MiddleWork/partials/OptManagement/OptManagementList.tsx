@@ -17,7 +17,6 @@ import "./OptManagementList.scss";
 import CampaignOpportunityService from "services/CampaignOpportunityService";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import OptManagementItem from "./partials/OptManagementItem/OptManagementItem";
-import AddManagementOpportunityModal from "pages/ManagementOpportunity/partials/AddManagementOpportunityModal";
 import { ICampaignOpportunityFilterRequest } from "model/campaignOpportunity/CampaignOpportunityRequestModel";
 import { ICampaignOpportunityResponseModel } from "model/campaignOpportunity/CampaignOpportunityResponseModel";
 
@@ -300,18 +299,7 @@ export default function OptManagementList(props: IOptManagementListProps) {
           </div>
           <h2>Bạn chưa có cơ hội nào!</h2>
         </div>
-      )}
-      <AddManagementOpportunityModal
-        onShow={showModalAdd}
-        idData={idOptManagement}
-        onHide={(reload) => {
-          if (reload) {
-            getListManagementOpportunity(params, kanbanTab);
-            getListOpt(params);
-          }
-          setShowModalAdd(false);
-        }}
-      />
+      )}      
       <SearchProjectManagementModal
         onShow={isSearchProject}
         onHide={() => setIsSearchProject(false)}

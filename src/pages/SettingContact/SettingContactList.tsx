@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import TitleAction from "components/titleAction/titleAction";
-// import PositionList from "pages/SettingCustomer/partials/Position/PositionList";
-import PositionList from "pages/SettingContract/partials/Position/PositionList";
 import ContactPipelineList from "./ContactPipeline/ContactPipelineList";
 import "./SettingContactList.scss";
 import ContactAttributeList from "./ContactAttribute/ContactAttributeList";
@@ -52,13 +50,7 @@ export default function SettingContactList() {
         )}
       </div>
       {isDetailCategory && tab === "tab_one" ? (
-        <PositionList
-          onBackProps={(isBack) => {
-            if (isBack) {
-              setIsDetailCategory(false);
-            }
-          }}
-        />
+        null
       ) : isDetailCategory && tab === "tab_two" ? (
         <ContactAttributeList
           onBackProps={(isBack) => {

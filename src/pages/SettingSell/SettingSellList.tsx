@@ -11,6 +11,7 @@ import ProductAttributeList from "./partials/ProductAttributeList/ProductAttribu
 import ServiceAttributeList from "./partials/ServiceAttributeList/ServiceAttributeList";
 import CategoryProductList from "./partials/CategoryProduct/CategoryProductList";
 import SettingPromotionList from "pages/SettingPromotion/SettingPromotionList";
+import ProductCategoryList from "./partials/ProductCategory";
 
 export default function SettingSellList() {
   document.title = "Cài đặt bán hàng";
@@ -27,6 +28,10 @@ export default function SettingSellList() {
     {
       title: "Danh sách sản phẩm",
       is_tab: "product_tab_one",
+    },
+    {
+      title: "Danh sách nhóm sản phẩm",
+      is_tab: "product_list_tab_one",
     },
     {
       title: "Danh mục đơn vị sản phẩm",
@@ -182,6 +187,14 @@ export default function SettingSellList() {
         />
       ) : isDetailCategory && tab === "product_tab_one" ? (
         <ProductList
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetailCategory(false);
+            }
+          }}
+        />
+      ) : isDetailCategory && tab === "product_list_tab_one" ? (
+        <ProductCategoryList
           onBackProps={(isBack) => {
             if (isBack) {
               setIsDetailCategory(false);

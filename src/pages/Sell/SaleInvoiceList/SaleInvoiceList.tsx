@@ -27,7 +27,7 @@ import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
 import "./SaleInvoiceList.scss";
 
 export default function SaleInvoiceList() {
-  document.title = "Hóa đơn bán hàng";
+  document.title = "Danh sách đơn hàng";
 
   const checkUserRoot = localStorage.getItem("user.root");
 
@@ -146,7 +146,7 @@ export default function SaleInvoiceList() {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Hóa đơn bán hàng",
+    name: "Danh sách đơn hàng",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -359,7 +359,7 @@ export default function SaleInvoiceList() {
         if (extension === "excel") {
           ExportExcel({
             fileName: "HoaDonBanHang",
-            title: "Hóa đơn bán hàng",
+            title: "Đanh sách đơn hàng",
             header: titles,
             formatExcel: formatExcel,
             data: result.map((item, idx) => dataMappingArray(item, idx, "export")),
@@ -504,7 +504,7 @@ export default function SaleInvoiceList() {
 
   return (
     <div className={`page-content page__import--invoice${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Hóa đơn bán hàng" titleActions={titleActions} />
+      <TitleAction title="Danh sách đơn hàng" titleActions={titleActions} />
       <div className="card-box d-flex flex-column">
         <div className="total__summary">
           <div className="total__summary--sales">
@@ -586,7 +586,7 @@ export default function SaleInvoiceList() {
         }}
       />
       <ExportModal
-        name="Hóa đơn bán hàng"
+        name="Danh sách đơn hàng"
         onShow={onShowModalExport}
         onHide={() => setOnShowModalExport(false)}
         options={optionsExport}

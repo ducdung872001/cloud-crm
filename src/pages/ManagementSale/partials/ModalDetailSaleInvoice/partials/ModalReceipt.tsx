@@ -195,7 +195,7 @@ export function ModalBodyReceipt(props: ModalReceiptBodyProps) {
             : type === HISTORY_USE_CARD_SERVICE
             ? ""
             : "Bán hàng"} */}
-            Phiếu xuất kho
+          Phiếu xuất kho
         </h2>
         <span>
           ({type === HISTORY_USE_CARD_SERVICE ? "Mã thẻ" : type == INVOICE_ADJUST_INVENTORY ? "Mã phiếu" : "Mã hóa đơn"}: {code})

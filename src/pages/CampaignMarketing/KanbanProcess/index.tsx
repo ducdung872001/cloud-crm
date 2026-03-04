@@ -6,7 +6,7 @@ import Badge from "components/badge/badge";
 import Tippy from "@tippyjs/react";
 import { Draggable } from "react-beautiful-dnd";
 import KanbanCommon from "components/kanbanCommon";
-import CampaignMarketingService from "services/OrderRequestService";
+import OrderRequestService from "services/OrderRequestService";
 import { formatCurrency } from "reborn-util";
 
 export default function KanbanOrderTracking(props: any) {
@@ -284,7 +284,7 @@ export default function KanbanOrderTracking(props: any) {
         ...params,
         ...(processCode ? { bsnId: processCode } : {}),
       };
-      let response = await CampaignMarketingService.list(mergedParams, signal);
+      let response = await OrderRequestService.list(mergedParams, signal);
       return response;
     },
     [processCode]

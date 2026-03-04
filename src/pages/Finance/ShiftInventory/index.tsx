@@ -60,7 +60,7 @@ export default function FinanceShiftInventory() {
   return (
     <FinancePageShell
       title="Kiểm kê cuối ca"
-      subtitle="Đối chiếu số tiền thực tế với số dư trên hệ thống, cảnh báo chênh lệch và hỗ trợ kết ca."
+      // subtitle="Đối chiếu số tiền thực tế với số dư trên hệ thống, cảnh báo chênh lệch và hỗ trợ kết ca."
     >
       <div className="finance-grid">
         <div className="finance-grid__span-7">
@@ -155,11 +155,11 @@ export default function FinanceShiftInventory() {
             {submitted ? (
               <div className="finance-helper-box" style={{ marginTop: "1.2rem" }}>
                 <strong>Đã hoàn tất kiểm kê</strong>
-                <ul>
+                {/* <ul>
                   <li>Đã khóa số liệu ca hiện tại để đối chiếu.</li>
                   <li>{difference !== 0 ? "Có thể sinh phiếu điều chỉnh ở bước tiếp theo." : "Số liệu khớp, không cần điều chỉnh."}</li>
                   <li>Đã sẵn sàng xuất báo cáo ca làm việc.</li>
-                </ul>
+                </ul> */}
               </div>
             ) : null}
           </section>
