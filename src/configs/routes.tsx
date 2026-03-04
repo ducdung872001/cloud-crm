@@ -106,7 +106,7 @@ import FeedbackCustomer from "pages/FeedbackCustomer/FeedbackCustomer";
 import Test from "pages/Test";
 import { getDomain } from "reborn-util";
 import { getRootDomain } from "utils/common";
-
+import ViettelIntegration from "@/pages/ViettelIntegration/ViettelIntegration";
 // Khảo sát khách hàng
 import CustomerSurvey from "pages/CustomerSurvey";
 
@@ -133,7 +133,6 @@ import SettingPartnerList from "pages/SettingPartner/SettingPartnerList";
 import PartnerList from "pages/PartnerList/PartnerList";
 import ReportLogin from "pages/ReportLogin/ReportLogin";
 // cài đặt mẫu báo giá
-import ViettelIntegration from "@/pages/ViettelIntegration/ViettelIntegration";
 import SettingQuoteForm from "pages/SettingQuoteForm/SettingQuoteForm";
 import CampaignMarketingList from "pages/CampaignMarketing/CampaignMarketingList";
 import BusinessProcessList from "pages/BPM/BusinessProcessList/BusinessProcessList";
