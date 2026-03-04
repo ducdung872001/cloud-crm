@@ -8,10 +8,10 @@ import {
   ConversationFilter,
   IConversationThread,
   IProductCatalogItem,
+  IQuickReplyTemplate,
   orderStatusLabels,
   platformText,
   productCatalog,
-  quickReplies,
   quickReplyTemplates,
   totalChatLabels,
   totalChatMockConfig,
@@ -26,6 +26,9 @@ export default function TotalChat() {
   const [threads, setThreads] = useState<IConversationThread[]>(conversationThreads);
   const [selectedConversationId, setSelectedConversationId] = useState<number>(conversationThreads[0]?.conversation.id || 0);
   const [draft, setDraft] = useState("");
+  const [isOrderPanelVisible, setIsOrderPanelVisible] = useState(true);
+  const [quickReplyItems, setQuickReplyItems] = useState<IQuickReplyTemplate[]>(quickReplyTemplates);
+  const quickReplies = useMemo(() => quickReplyItems.map((item) => item.command), [quickReplyItems]);
 
   const filteredThreads = useMemo(() => {
     return threads.filter((thread) => {
@@ -60,6 +63,7 @@ export default function TotalChat() {
   const messages = selectedThread?.messages || [];
   const selectedOrderAction = selectedThread?.orderAction || null;
   const cartItems = selectedOrderAction?.cartItems || [];
+  const pendingCartItems = selectedOrderAction?.pendingCartItems || [];
   const voucherCode = selectedOrderAction?.voucherCode || "";
   const orderNote = selectedOrderAction?.orderNote || "";
   const shippingFee = selectedOrderAction?.shippingFee || 0;
@@ -69,11 +73,18 @@ export default function TotalChat() {
   const discount = voucherCode.trim() ? Math.min(120000, Math.round(subtotal * 0.08)) : 0;
   const total = subtotal + shippingFee - discount;
 
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      maximumFractionDigits: 0,
+    }).format(value);
+
   const resolveMessageContent = (value: string) => {
     const trimmedValue = value.trim();
     const firstToken = trimmedValue.split(/\s+/)[0] || "";
     const remainingContent = trimmedValue.slice(firstToken.length).trim();
-    const selectedTemplate = quickReplyTemplates.find((item) => item.command === firstToken);
+    const selectedTemplate = quickReplyItems.find((item) => item.command === firstToken);
 
     if (!selectedTemplate) {
       return value;
@@ -122,12 +133,45 @@ export default function TotalChat() {
     setDraft(`${value} `);
   };
 
+  const handleSaveQuickReplyTemplate = (template: IQuickReplyTemplate, previousCommand?: string) => {
+    setQuickReplyItems((prev) => {
+      const targetCommand = previousCommand || template.command;
+      const withoutTarget = prev.filter((item) => item.command !== targetCommand);
+      const duplicateIndex = withoutTarget.findIndex((item) => item.command === template.command);
+
+      if (duplicateIndex >= 0) {
+        return withoutTarget.map((item, index) => (index === duplicateIndex ? template : item));
+      }
+
+      return [...withoutTarget, template];
+    });
+  };
+
+  const handleDeleteQuickReplyTemplate = (command: string) => {
+    setQuickReplyItems((prev) => prev.filter((item) => item.command !== command));
+    setDraft((prev) => (prev.trimStart().startsWith(command) ? "" : prev));
+  };
+
   const handleSend = () => {
     if (!selectedConversation || !draft.trim()) {
       return;
     }
     appendMessageToThread(resolveMessageContent(draft.trim()));
     setDraft("");
+  };
+
+  const handleProductSelect = (product: IProductCatalogItem, searchToken: string) => {
+    const currentDraft = draft;
+    const tokenIndex = currentDraft.lastIndexOf(searchToken);
+    const productLinkText = `[${product.name}](${product.link || "#"})`;
+
+    if (tokenIndex < 0) {
+      setDraft(currentDraft);
+      return;
+    }
+
+    const replacedDraft = `${currentDraft.slice(0, tokenIndex)}${productLinkText}${currentDraft.slice(tokenIndex + searchToken.length)}`;
+    setDraft(replacedDraft);
   };
 
   const handleQuantityChange = (id: number, delta: number) => {
@@ -167,14 +211,14 @@ export default function TotalChat() {
           return thread;
         }
 
-        const existingItem = thread.orderAction.cartItems.find((item) => item.sku === product.sku);
+        const existingPendingItem = thread.orderAction.pendingCartItems.find((item) => item.sku === product.sku);
 
-        if (existingItem) {
+        if (existingPendingItem) {
           return {
             ...thread,
             orderAction: {
               ...thread.orderAction,
-              cartItems: thread.orderAction.cartItems.map((item) =>
+              pendingCartItems: thread.orderAction.pendingCartItems.map((item) =>
                 item.sku === product.sku ? { ...item, quantity: item.quantity + 1 } : item
               ),
               orderStatus: "draft",
@@ -184,14 +228,14 @@ export default function TotalChat() {
           };
         }
 
-        const nextId = thread.orderAction.cartItems.reduce((max, item) => Math.max(max, item.id), 0) + 1;
+        const nextId = [...thread.orderAction.cartItems, ...thread.orderAction.pendingCartItems].reduce((max, item) => Math.max(max, item.id), 0) + 1;
 
         return {
           ...thread,
           orderAction: {
             ...thread.orderAction,
-            cartItems: [
-              ...thread.orderAction.cartItems,
+            pendingCartItems: [
+              ...thread.orderAction.pendingCartItems,
               {
                 id: nextId,
                 name: product.name,
@@ -206,6 +250,73 @@ export default function TotalChat() {
           },
         };
       })
+    );
+  };
+
+  const handleRemovePendingProduct = (id: number) => {
+    setThreads((prev) =>
+      prev.map((thread) => {
+        if (thread.conversation.id !== selectedConversationId) {
+          return thread;
+        }
+
+        return {
+          ...thread,
+          orderAction: {
+            ...thread.orderAction,
+            pendingCartItems: thread.orderAction.pendingCartItems.filter((item) => item.id !== id),
+            orderStatus: "draft",
+            hasSentOrderToCustomer: false,
+            isOrderCreated: false,
+          },
+        };
+      })
+    );
+  };
+
+  const handleConfirmPendingProduct = (id: number) => {
+    setThreads((prev) =>
+      prev.map((thread) => {
+        if (thread.conversation.id !== selectedConversationId) {
+          return thread;
+        }
+
+        const pendingItem = thread.orderAction.pendingCartItems.find((item) => item.id === id);
+
+        if (!pendingItem) {
+          return thread;
+        }
+
+        const existingCartItem = thread.orderAction.cartItems.find((item) => item.sku === pendingItem.sku);
+
+        return {
+          ...thread,
+          orderAction: {
+            ...thread.orderAction,
+            cartItems: existingCartItem
+              ? thread.orderAction.cartItems.map((item) =>
+                  item.sku === pendingItem.sku ? { ...item, quantity: item.quantity + pendingItem.quantity } : item
+                )
+              : [...thread.orderAction.cartItems, pendingItem],
+            pendingCartItems: thread.orderAction.pendingCartItems.filter((item) => item.id !== id),
+            orderStatus: "draft",
+            hasSentOrderToCustomer: false,
+            isOrderCreated: false,
+          },
+        };
+      })
+    );
+  };
+
+  const handleSendPendingProduct = (id: number) => {
+    const pendingItem = pendingCartItems.find((item) => item.id === id);
+
+    if (!pendingItem) {
+      return;
+    }
+
+    appendMessageToThread(
+      ["Shop gợi ý thêm sản phẩm:", `${pendingItem.name} (${pendingItem.sku})`, `Giá: ${formatCurrency(pendingItem.price)}`].join("\n")
     );
   };
 
@@ -303,13 +414,8 @@ export default function TotalChat() {
     const customerName = selectedConversation?.customerName || totalChatMockConfig.fallbackText.newCustomer;
     const phone = selectedConversation?.phone || totalChatMockConfig.fallbackText.emptyPhone;
     const address = selectedOrderAction?.address || "Chưa có địa chỉ";
-    const cartSummary =
-      cartItems.map((item) => `${item.name} x${item.quantity}`).join(", ") || "Chưa có sản phẩm";
-    const totalText = new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-      maximumFractionDigits: 0,
-    }).format(total);
+    const cartSummary = cartItems.map((item) => `${item.name} x${item.quantity}`).join(", ") || "Chưa có sản phẩm";
+    const totalText = formatCurrency(total);
 
     return [
       "Thông tin đơn hàng xác nhận:",
@@ -399,7 +505,7 @@ export default function TotalChat() {
 
   return (
     <div className="page-content page-total-chat">
-      <div className="omni-shell">
+      <div className={`omni-shell${isOrderPanelVisible ? "" : " is-order-collapsed"}`}>
         <ChannelInboxColumn
           threads={filteredThreads}
           selectedId={selectedConversation?.id || 0}
@@ -415,20 +521,27 @@ export default function TotalChat() {
           platformLabel={selectedConversation ? platformText[selectedConversation.platform] : ""}
           messages={messages}
           quickReplies={quickReplies}
+          productCatalog={productCatalog}
           labels={totalChatLabels.chatWorkspace}
+          isOrderPanelVisible={isOrderPanelVisible}
           draft={draft}
           onDraftChange={setDraft}
           onQuickReplySend={handleQuickReplySend}
           onQuickReplySelect={handleQuickReplySelect}
+          onProductSelect={handleProductSelect}
+          onToggleOrderPanel={() => setIsOrderPanelVisible((prev) => !prev)}
           onSend={handleSend}
         />
 
         <OrderActionColumn
+          isVisible={isOrderPanelVisible}
           customerName={selectedConversation?.customerName || totalChatMockConfig.fallbackText.newCustomer}
           phone={selectedConversation?.phone || totalChatMockConfig.fallbackText.emptyPhone}
           address={selectedOrderAction?.address || ""}
           customerTier={selectedOrderAction?.customerTier || ""}
           cartItems={cartItems}
+          pendingCartItems={pendingCartItems}
+          quickReplyTemplates={quickReplyItems}
           productCatalog={productCatalog}
           voucherCode={voucherCode}
           orderNote={orderNote}
@@ -445,8 +558,13 @@ export default function TotalChat() {
           onCustomerInfoSave={handleCustomerInfoSave}
           onSendOrderToCustomer={handleSendOrderToCustomer}
           onAddProduct={handleAddProduct}
+          onRemovePendingProduct={handleRemovePendingProduct}
+          onConfirmPendingProduct={handleConfirmPendingProduct}
+          onSendPendingProduct={handleSendPendingProduct}
           onRemoveProduct={handleRemoveProduct}
           onQuantityChange={handleQuantityChange}
+          onSaveQuickReplyTemplate={handleSaveQuickReplyTemplate}
+          onDeleteQuickReplyTemplate={handleDeleteQuickReplyTemplate}
           onVoucherChange={handleVoucherChange}
           onNoteChange={handleOrderNoteChange}
           onCreateOrder={handleCreateOrder}

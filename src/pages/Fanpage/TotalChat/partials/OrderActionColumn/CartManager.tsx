@@ -3,6 +3,7 @@ import { ICartItem } from "../../data";
 
 interface CartManagerProps {
   cartItems: ICartItem[];
+  pendingCartItems: ICartItem[];
   labels: {
     cartTitle: string;
     cartSubtitle: string;
@@ -13,6 +14,9 @@ interface CartManagerProps {
     cartStockLabel: string;
   };
   onOpenProductPicker: () => void;
+  onRemovePendingProduct: (id: number) => void;
+  onConfirmPendingProduct: (id: number) => void;
+  onSendPendingProduct: (id: number) => void;
   onRemoveProduct: (id: number) => void;
   onQuantityChange: (id: number, delta: number) => void;
 }
@@ -25,7 +29,17 @@ const formatCurrency = (value: number) =>
   }).format(value);
 
 export default function CartManager(props: CartManagerProps) {
-  const { cartItems, labels, onOpenProductPicker, onRemoveProduct, onQuantityChange } = props;
+  const {
+    cartItems,
+    pendingCartItems,
+    labels,
+    onOpenProductPicker,
+    onRemovePendingProduct,
+    onConfirmPendingProduct,
+    onSendPendingProduct,
+    onRemoveProduct,
+    onQuantityChange,
+  } = props;
 
   return (
     <div className="order-card">
@@ -40,6 +54,26 @@ export default function CartManager(props: CartManagerProps) {
         </button>
       </div>
       <div className="cart-list">
+        {pendingCartItems.map((item) => (
+          <div key={item.id} className="cart-item cart-item--pending">
+            <div className="cart-item__meta">
+              <strong>{item.name}</strong>
+              <span>{item.sku}</span>
+            </div>
+            <div className="cart-item__pending-actions">
+              <button type="button" className="cart-item__pending-button cart-item__pending-button--send" onClick={() => onSendPendingProduct(item.id)}>
+                Gửi
+              </button>
+              <button type="button" className="cart-item__pending-button cart-item__pending-button--discard" onClick={() => onRemovePendingProduct(item.id)}>
+                X
+              </button>
+              <button type="button" className="cart-item__pending-button cart-item__pending-button--confirm" onClick={() => onConfirmPendingProduct(item.id)}>
+                V
+              </button>
+            </div>
+            <div className="cart-item__price">{formatCurrency(item.price * item.quantity)}</div>
+          </div>
+        ))}
         {cartItems.map((item) => (
           <div key={item.id} className="cart-item">
             <div className="cart-item__meta">

@@ -1,17 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ICartItem, IProductCatalogItem, OrderStatus } from "../../data";
+import { ICartItem, IProductCatalogItem, IQuickReplyTemplate, OrderStatus } from "../../data";
 import CartManager from "./CartManager";
 import CreateOrderButton from "./CreateOrderButton";
 import CustomerInfoCard from "./CustomerInfoCard";
 import OrderSummary from "./OrderSummary";
+import QuickReplySettingsPage from "../QuickReplySettingsPage";
 import VoucherSection from "./VoucherSection";
 
 interface OrderActionColumnProps {
+  isVisible: boolean;
   customerName: string;
   phone: string;
   address: string;
   customerTier: string;
   cartItems: ICartItem[];
+  pendingCartItems: ICartItem[];
+  quickReplyTemplates: IQuickReplyTemplate[];
   productCatalog: IProductCatalogItem[];
   voucherCode: string;
   orderNote: string;
@@ -59,8 +63,13 @@ interface OrderActionColumnProps {
   onCustomerInfoSave: (data: { customerName: string; phone: string; address: string; customerTier: string }) => void;
   onSendOrderToCustomer: () => void;
   onAddProduct: (product: IProductCatalogItem) => void;
+  onRemovePendingProduct: (id: number) => void;
+  onConfirmPendingProduct: (id: number) => void;
+  onSendPendingProduct: (id: number) => void;
   onRemoveProduct: (id: number) => void;
   onQuantityChange: (id: number, delta: number) => void;
+  onSaveQuickReplyTemplate: (template: IQuickReplyTemplate, previousCommand?: string) => void;
+  onDeleteQuickReplyTemplate: (command: string) => void;
   onVoucherChange: (value: string) => void;
   onNoteChange: (value: string) => void;
   onCreateOrder: () => void;
@@ -68,13 +77,17 @@ interface OrderActionColumnProps {
 
 export default function OrderActionColumn(props: OrderActionColumnProps) {
   const [isProductPickerOpen, setIsProductPickerOpen] = useState(false);
+  const [isQuickReplySettingsOpen, setIsQuickReplySettingsOpen] = useState(false);
   const [productSearch, setProductSearch] = useState("");
   const {
+    isVisible,
     customerName,
     phone,
     address,
     customerTier,
     cartItems,
+    pendingCartItems,
+    quickReplyTemplates,
     productCatalog,
     voucherCode,
     orderNote,
@@ -91,15 +104,20 @@ export default function OrderActionColumn(props: OrderActionColumnProps) {
     onCustomerInfoSave,
     onSendOrderToCustomer,
     onAddProduct,
+    onRemovePendingProduct,
+    onConfirmPendingProduct,
+    onSendPendingProduct,
     onRemoveProduct,
     onQuantityChange,
+    onSaveQuickReplyTemplate,
+    onDeleteQuickReplyTemplate,
     onVoucherChange,
     onNoteChange,
     onCreateOrder,
   } = props;
 
   const availableProducts = useMemo(() => {
-    const existingSkus = new Set(cartItems.map((item) => item.sku));
+    const existingSkus = new Set([...cartItems, ...pendingCartItems].map((item) => item.sku));
     const normalizedSearch = productSearch.trim().toLowerCase();
 
     return productCatalog.filter((item) => {
@@ -113,7 +131,7 @@ export default function OrderActionColumn(props: OrderActionColumnProps) {
 
       return item.name.toLowerCase().includes(normalizedSearch) || item.sku.toLowerCase().includes(normalizedSearch);
     });
-  }, [cartItems, productCatalog, productSearch]);
+  }, [cartItems, pendingCartItems, productCatalog, productSearch]);
 
   useEffect(() => {
     if (!isProductPickerOpen) {
@@ -135,8 +153,8 @@ export default function OrderActionColumn(props: OrderActionColumnProps) {
   }, [isProductPickerOpen]);
 
   return (
-    <section className="omni-panel omni-panel--order">
-      {isProductPickerOpen && (
+    <section className={`omni-panel omni-panel--order${isVisible ? "" : " is-collapsed"}`}>
+      {isProductPickerOpen && !isQuickReplySettingsOpen && (
         <div
           className="order-overlay"
           onClick={() => {
@@ -161,11 +179,7 @@ export default function OrderActionColumn(props: OrderActionColumnProps) {
               </button>
             </div>
             <div className="order-overlay__search">
-              <input
-                value={productSearch}
-                onChange={(e) => setProductSearch(e.target.value)}
-                placeholder={labels.cartPickerSearchPlaceholder}
-              />
+              <input value={productSearch} onChange={(e) => setProductSearch(e.target.value)} placeholder={labels.cartPickerSearchPlaceholder} />
             </div>
             <div className="order-overlay__list">
               {availableProducts.length > 0 ? (
@@ -188,7 +202,9 @@ export default function OrderActionColumn(props: OrderActionColumnProps) {
                         <span>{item.sku}</span>
                       </div>
                       <div className="order-overlay__values">
-                        <strong>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(item.price)}</strong>
+                        <strong>
+                          {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(item.price)}
+                        </strong>
                         <span className={isLowStock ? "is-low-stock" : ""}>
                           {labels.cartStockLabel}: {item.stock}
                           {isLowStock ? ` • ${labels.cartLowStockLabel}` : ""}
@@ -206,53 +222,83 @@ export default function OrderActionColumn(props: OrderActionColumnProps) {
       )}
       <div className="omni-panel__header">
         <div>
-          <h2>{labels.title}</h2>
+          <h2>{isQuickReplySettingsOpen ? "Cài đặt chat nhanh" : labels.title}</h2>
+        </div>
+        <div className="omni-panel__header-actions">
+          <button
+            type="button"
+            className={`order-panel-mode-toggle${isQuickReplySettingsOpen ? " is-back" : ""}`}
+            onClick={() => {
+              setIsQuickReplySettingsOpen((prev) => !prev);
+              setIsProductPickerOpen(false);
+              setProductSearch("");
+            }}
+            title={isQuickReplySettingsOpen ? "Quay về giỏ hàng" : "Cài đặt chat nhanh"}
+          >
+            {isQuickReplySettingsOpen ? "Quay về giỏ hàng" : "Cài đặt chat nhanh"}
+          </button>
         </div>
       </div>
 
-      <CustomerInfoCard
-        customerName={customerName}
-        phone={phone}
-        address={address}
-        customerTier={customerTier}
-        labels={labels}
-        onSave={onCustomerInfoSave}
-      />
+      <div className={`order-panel-content${isQuickReplySettingsOpen ? " is-settings" : " is-cart"}`}>
+        {isQuickReplySettingsOpen ? (
+          <QuickReplySettingsPage
+            quickReplyTemplates={quickReplyTemplates}
+            onSaveTemplate={onSaveQuickReplyTemplate}
+            onDeleteTemplate={onDeleteQuickReplyTemplate}
+          />
+        ) : (
+          <>
+            <CustomerInfoCard
+              customerName={customerName}
+              phone={phone}
+              address={address}
+              customerTier={customerTier}
+              labels={labels}
+              onSave={onCustomerInfoSave}
+            />
 
-      <CartManager
-        cartItems={cartItems}
-        labels={labels}
-        onOpenProductPicker={() => setIsProductPickerOpen(true)}
-        onRemoveProduct={onRemoveProduct}
-        onQuantityChange={onQuantityChange}
-      />
+            <CartManager
+              cartItems={cartItems}
+              pendingCartItems={pendingCartItems}
+              labels={labels}
+              onOpenProductPicker={() => setIsProductPickerOpen(true)}
+              onRemovePendingProduct={onRemovePendingProduct}
+              onConfirmPendingProduct={onConfirmPendingProduct}
+              onSendPendingProduct={onSendPendingProduct}
+              onRemoveProduct={onRemoveProduct}
+              onQuantityChange={onQuantityChange}
+            />
 
-      <VoucherSection voucherCode={voucherCode} loyaltyPoints={loyaltyPoints} labels={labels} onVoucherChange={onVoucherChange} />
+            <VoucherSection voucherCode={voucherCode} loyaltyPoints={loyaltyPoints} labels={labels} onVoucherChange={onVoucherChange} />
 
-      <OrderSummary
-        subtotal={subtotal}
-        shippingFee={shippingFee}
-        discount={discount}
-        total={total}
-        orderNote={orderNote}
-        orderStatus={orderStatus}
-        orderStatusLabels={orderStatusLabels}
-        hasSentOrderToCustomer={hasSentOrderToCustomer}
-        labels={labels}
-        onNoteChange={onNoteChange}
-      />
+            <OrderSummary
+              subtotal={subtotal}
+              shippingFee={shippingFee}
+              discount={discount}
+              total={total}
+              orderNote={orderNote}
+              orderStatus={orderStatus}
+              orderStatusLabels={orderStatusLabels}
+              hasSentOrderToCustomer={hasSentOrderToCustomer}
+              labels={labels}
+              onNoteChange={onNoteChange}
+            />
 
-      {!isOrderCreated && (
-        <button type="button" className="send-order-button" onClick={onSendOrderToCustomer}>
-          {labels.sendToCustomerButton}
-        </button>
-      )}
+            {!isOrderCreated && (
+              <button type="button" className="send-order-button" onClick={onSendOrderToCustomer}>
+                {labels.sendToCustomerButton}
+              </button>
+            )}
 
-      <CreateOrderButton
-        label={isOrderCreated ? labels.createdButton : labels.createOrderButton}
-        disabled={isOrderCreated}
-        onCreateOrder={onCreateOrder}
-      />
+            <CreateOrderButton
+              label={isOrderCreated ? labels.createdButton : labels.createOrderButton}
+              disabled={isOrderCreated}
+              onCreateOrder={onCreateOrder}
+            />
+          </>
+        )}
+      </div>
     </section>
   );
 }
