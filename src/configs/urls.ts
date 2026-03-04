@@ -3160,6 +3160,7 @@ export const urls = {
   finance_management_debt_transaction: "/finance_management/debt_transaction",
   finance_management_shift_inventory: "/finance_management/shift_inventory",
   setting: "/setting",
+  viettel_integration: "/viettel_integration",
   tip: "/tip",
   tip_group: "/tip_group",
   tip_user_config: "/tip_user_config",

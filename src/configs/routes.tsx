@@ -133,6 +133,7 @@ import SettingPartnerList from "pages/SettingPartner/SettingPartnerList";
 import PartnerList from "pages/PartnerList/PartnerList";
 import ReportLogin from "pages/ReportLogin/ReportLogin";
 // cài đặt mẫu báo giá
+import ViettelIntegration from "@/pages/ViettelIntegration/ViettelIntegration";
 import SettingQuoteForm from "pages/SettingQuoteForm/SettingQuoteForm";
 import CampaignMarketingList from "pages/CampaignMarketing/CampaignMarketingList";
 import BusinessProcessList from "pages/BPM/BusinessProcessList/BusinessProcessList";
@@ -1194,6 +1195,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="Settings" />,
         code: "",
       },
+      {
+        title: "viettelIntegration", // Tích hợp Viettel
+        path: urls.viettel_integration,
+        icon: <Icon name="Download" />,
+        code: "",
+      },
       ...(!checkSubdomainTNEX
         ? [
             {
@@ -1617,6 +1624,10 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_market_research,
     component: <SettingMarketResearchList />,
+  },
+  {
+    path: urls.viettel_integration,
+    component: <ViettelIntegration />,
   },
   {
     path: urls.setting_marketing,
