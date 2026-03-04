@@ -5,10 +5,10 @@ import { IMenuTab } from "model/OtherModel";
 import "./ViettelIntegration.scss";
 
 // Partials
-import ViettelOverview from "./partials/ViettelOverview";
-import ViettelWizard from "./partials/ViettelWizard";
-import ViettelSettings from "./partials/ViettelSettings";
-import ViettelAnalytics from "./partials/ViettelAnalytics";
+import ViettelOverview from "./partials/ViettelOverview/ViettelOverview";
+import ViettelWizard from "./partials/ViettelWizard/ViettelWizard";
+import ViettelSettings from "./partials/ViettelSettings/ViettelSettings";
+import ViettelAnalytics from "./partials/ViettelAnalytics/ViettelAnalytics";
 
 export default function ViettelIntegration(props: any) {
   document.title = "Tích hợp Viettel";
