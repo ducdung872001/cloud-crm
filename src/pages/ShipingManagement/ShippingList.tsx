@@ -28,6 +28,7 @@ import ShippingOrderDetailModal from "./partials/ShippingOrderDetailModal";
 import "./ShippingList.scss";
 
 const STATUS_TABS = [
+  { label: "Tất cả",       status: "all" },
   { label: "Chờ lấy hàng", status: "pending" },
   { label: "Đang giao",    status: "in_transit" },
   { label: "Đã giao",      status: "delivered" },
@@ -48,9 +49,9 @@ export default function ShippingOrderList() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [permissions]  = useState(getPermissions());
-  const [activeTab, setActiveTab]   = useState<string>("in_transit");
+  const [activeTab, setActiveTab]   = useState<string>("all");
   const [tabCounts, setTabCounts]   = useState<Record<string, number>>({
-    pending: 0, in_transit: 0, delivered: 0, returned: 0,
+    all: 0, pending: 0, in_transit: 0, delivered: 0, returned: 0,
   });
 
   const [listOrder, setListOrder]         = useState<IShippingOrderResponse[]>([]);
@@ -66,7 +67,7 @@ export default function ShippingOrderList() {
   const isMounted = useRef(false);
 
   const [params, setParams] = useState<IShippingOrderFilterRequest>({
-    keyword: "", status: "in_transit", page: 1, limit: 10,
+    keyword: "", status: "all", page: 1, limit: 10,
   });
 
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -84,14 +85,20 @@ export default function ShippingOrderList() {
     // TODO: const response = await ShippingService.filter(paramsSearch, signal);
     const response = mockFilterOrders({
       keyword: paramsSearch.keyword,
-      status:  paramsSearch.status,
+      status:  paramsSearch.status === "all" ? "" : paramsSearch.status,
       page:    paramsSearch.page,
       limit:   paramsSearch.limit,
     });
     if (response.code === 0) {
       const result = response.result;
       setListOrder(result.items as IShippingOrderResponse[]);
-      setTabCounts(result.tabCounts);
+      setTabCounts({
+        ...result.tabCounts,
+        all: (result.tabCounts.pending ?? 0)
+           + (result.tabCounts.in_transit ?? 0)
+           + (result.tabCounts.delivered ?? 0)
+           + (result.tabCounts.returned ?? 0),
+      });
       setPagination((prev) => ({
         ...prev,
         page:      result.page,
@@ -186,11 +193,11 @@ export default function ShippingOrderList() {
   // ---- Title actions ----
   const titleActions: ITitleActions = {
     actions: [
-      { title: "Tạo đơn vận chuyển", callback: () => navigate(ROUTES.shippingCreate) },
+      { title: "Tạo đơn vận chuyển", callback: () => navigate("/add_shipping") },
     ],
     actions_extra: [
-      { title: "Thiết lập đối tác", icon: <Icon name="Setting" />,         callback: () => navigate(ROUTES.shippingPartnerSetup) },
-      { title: "Cấu hình phí VC",   icon: <Icon name="SettingCashbook" />, callback: () => navigate(ROUTES.shippingFeeConfig) },
+      { title: "Thiết lập đối tác", icon: <Icon name="Setting" />,         callback: () => navigate("/shipping_parther") },
+      { title: "Cấu hình phí VC",   icon: <Icon name="SettingCashbook" />, callback: () => navigate("/shipping_fee_config") },
     ],
   };
 
@@ -285,7 +292,7 @@ export default function ShippingOrderList() {
       </Tippy>
 
       <Tippy content="Chỉnh sửa">
-        <span className="item__action" onClick={() => navigate(ROUTES.shippingEdit(item.id))}>
+        <span className="item__action" onClick={() => navigate(`/add_shipping/${item.id}`)}>
           <Icon name="Pencil" />
         </span>
       </Tippy>
