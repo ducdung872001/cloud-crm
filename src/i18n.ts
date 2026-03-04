@@ -184,6 +184,7 @@ i18n.use(initReactI18next).init({
           userAdministration: "User administration",
           fieldManagement: "Field management",
           settingConfiguration: "Configuration settings",
+          viettelIntegration: "Viettel integration",
         },
         pageDashboard: {
           title: "Dashboard",
@@ -427,6 +428,7 @@ i18n.use(initReactI18next).init({
           userAdministration: "Quản trị người dùng",
           fieldManagement: "Quản lý lĩnh vực",
           settingConfiguration: "Cài đặt cấu hình chung",
+          viettelIntegration: "Tích hợp Viettel",
         },
         pageDashboard: {
           title: "Bảng điều khiển",

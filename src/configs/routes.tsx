@@ -92,7 +92,7 @@ import SettingContactList from "pages/SettingContact/SettingContactList";
 import FeedbackCustomer from "pages/FeedbackCustomer/FeedbackCustomer";
 import { getDomain } from "reborn-util";
 import { getRootDomain } from "utils/common";
-
+import ViettelIntegration from "@/pages/ViettelIntegration/ViettelIntegration";
 // Khảo sát khách hàng
 import CustomerSurvey from "pages/CustomerSurvey";
 
@@ -728,6 +728,12 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
+        title: "viettelIntegration", // Tích hợp Viettel
+        path: urls.viettel_integration,
+        icon: <Icon name="Download" />,
+        code: "",
+      },
+      {
         title: "paymentMethod", // Phương thức thanh toán
         path: urls.payment_method,
         icon: <Icon name="CashPayment" />,
@@ -1124,6 +1130,10 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_market_research,
     component: <SettingMarketResearchList />,
+  },
+  {
+    path: urls.viettel_integration,
+    component: <ViettelIntegration />,
   },
   {
     path: urls.setting_marketing,
