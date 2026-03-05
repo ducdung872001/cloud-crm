@@ -8,7 +8,7 @@ import { ContextType, UserContext } from "contexts/userContext";
 import _ from "lodash";
 import "./navigation.scss";
 
-import "i18n";
+import "../../i18n";
 
 interface NavigationProps {
   menuItemList: IMenuItem[];

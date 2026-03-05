@@ -1,6 +1,6 @@
 // Import SCSS của form-js-editor từ node_modules
-@import '~@bpmn-io/form-js-editor/dist/assets/form-js-editor.css';
-@import '~@bpmn-io/form-js/dist/assets/form-js.css';
+@import "@bpmn-io/form-js-editor/dist/assets/form-js-editor.css";
+@import "@bpmn-io/form-js/dist/assets/form-js.css";
 
 .fjs-powered-by {
   display: none !important;
@@ -17,7 +17,7 @@
   height: calc(100vh - 185px);
   // overflow: auto;
 
-  .container-header{
+  .container-header {
     display: flex;
     justify-content: space-between;
 
@@ -25,24 +25,24 @@
       display: flex;
       align-items: center;
 
-      .button-save{
+      .button-save {
         border: 1px solid var(--border-color);
         border-radius: 5px;
         padding: 0.2rem 1rem 0.2rem 1rem;
-        margin-left: 1.5rem; 
+        margin-left: 1.5rem;
         margin-bottom: 1rem;
         cursor: pointer;
 
-        &:hover{
+        &:hover {
           background-color: var(--primary-color-90);
           color: white;
         }
       }
     }
-    .container-button{
+    .container-button {
       display: flex;
       gap: 0 1rem;
-      .button-OLA{
+      .button-OLA {
         border: 1px solid var(--border-color);
         border-radius: 5px;
         padding: 0rem 1rem;
@@ -55,7 +55,7 @@
           color: white;
         }
       }
-      .button-setting{
+      .button-setting {
         cursor: pointer;
         &:hover {
           svg {
@@ -64,7 +64,7 @@
         }
       }
 
-      .button-timer{
+      .button-timer {
         cursor: pointer;
         svg {
           // fill: var(--primary-color);
@@ -82,18 +82,18 @@
     }
   }
 
-  .fjs-container{
-    .fjs-form-editor{
-      .fjs-palette-container{
+  .fjs-container {
+    .fjs-form-editor {
+      .fjs-palette-container {
         max-height: calc(100vh - 260px);
         overflow: auto;
       }
-      .fjs-form-container{
+      .fjs-form-container {
         max-height: calc(100vh - 260px);
         overflow: auto;
         padding-bottom: 5rem;
       }
-      .fjs-editor-properties-container{
+      .fjs-editor-properties-container {
         max-height: calc(100vh - 260px);
         overflow: auto;
       }
