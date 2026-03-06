@@ -5,7 +5,9 @@
   border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   overflow: hidden;
+  max-height: calc(100vh - 10rem);
 
   &__header {
     padding: 14px 16px;
@@ -29,6 +31,7 @@
     flex: 1;
     overflow-y: auto;
     padding: 10px;
+    min-height: 23rem;
   }
 
   &__empty {

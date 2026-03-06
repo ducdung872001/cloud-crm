@@ -1,16 +1,10 @@
 import React, { useState } from "react";
 import { Product, CartItem } from "../../types";
+import Loading from "@/components/loading";
 import "./index.scss";
-
-const CATEGORIES = [
-  { id: "hot", label: "⭐ Bán chạy" },
-  { id: "drink", label: "🥛 Đồ uống" },
-  { id: "food", label: "🍜 Thực phẩm" },
-  { id: "consumer", label: "🧴 Tiêu dùng" },
-  { id: "fruit", label: "🍎 Trái cây" },
-  { id: "frozen", label: "🧊 Đông lạnh" },
-  { id: "candy", label: "🍬 Bánh kẹo" },
-];
+import { useProductCategory } from "./useProductCategory";
+import { IProductListParams, useProductList } from "./useProductList";
+import { IProductFilterRequest } from "@/model/product/ProductRequestModel";
 
 const PRODUCTS: Product[] = [
   { id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, stock: 142, unit: "hộp" },
@@ -29,10 +23,45 @@ interface ProductGridProps {
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
-  const [activeCategory, setActiveCategory] = useState("hot");
+  const [activeCategory, setActiveCategory] = useState("");
   const [search, setSearch] = useState("");
+  const [params, setParams] = useState<IProductListParams>({
+    name: "",
+    limit: 10,
+    page: 1,
+  });
+
+  // ── Hook tách riêng ──
+  const { categoryFiltered, isLoadingCategory, isPermissions } = useProductCategory();
+  const { listProduct, isLoading, isNoItem, pagination } = useProductList({
+    categoryId: activeCategory,
+    params: params,
+  });
+
+  console.log("listProduct", listProduct);
 
   const filtered = PRODUCTS.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+
+  const handleAddToCart = (prod: Product) => {
+    onAddToCart({
+      id: prod.id,
+      icon: prod.icon,
+      name: prod.name,
+      priceLabel: prod.priceLabel,
+      price: prod.price,
+      unit: prod.unit,
+    });
+  };
+
+  // ── Permission guard ──
+  if (isPermissions) {
+    return (
+      <div className="product-grid-wrap product-grid-wrap--empty">
+        <span>🔒</span>
+        <p>Bạn không có quyền xem danh mục sản phẩm</p>
+      </div>
+    );
+  }
 
   return (
     <div className="product-grid-wrap">
@@ -50,7 +79,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
 
       {/* Category tabs */}
       <div className="pg-cattabs">
-        {CATEGORIES.map((cat) => (
+        {categoryFiltered.map((cat) => (
           <button key={cat.id} className={`ct${activeCategory === cat.id ? " active" : ""}`} onClick={() => setActiveCategory(cat.id)}>
             {cat.label}
           </button>
@@ -59,39 +88,21 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
 
       {/* Products */}
       <div className="pg-grid">
-        {filtered.map((prod) => (
-          <div
-            key={prod.id}
-            className={`pg-card${prod.lowStock ? " pg-card--low" : ""}`}
-            onClick={() =>
-              onAddToCart({
-                id: prod.id,
-                icon: prod.icon,
-                name: prod.name,
-                priceLabel: prod.priceLabel,
-                price: prod.price,
-                unit: prod.unit,
-              })
-            }
-          >
-            <div className="pg-card__icon">{prod.icon}</div>
+        {listProduct.map((prod) => (
+          <div key={prod.id} className={`pg-card${prod.lowStock ? " pg-card--low" : ""}`} onClick={() => handleAddToCart(prod)}>
+            <div className="pg-card__icon">
+              {prod.avatar ? <img src={prod.avatar} alt={prod.name} /> : <span style={{ fontSize: "40px" }}>{prod.icon}</span>}
+            </div>
             <div className="pg-card__name">{prod.name}</div>
             <div className="pg-card__price">{prod.priceLabel}</div>
             <div className={`pg-card__stock${prod.lowStock ? " pg-card__stock--warn" : ""}`}>
-              Tồn: {prod.stock} {prod.unit} {prod.lowStock ? "⚠️" : ""}
+              Tồn: {prod.minQuantity} {prod.unit} {prod.lowStock ? "⚠️" : ""}
             </div>
             <button
               className="pg-card__add"
               onClick={(e) => {
                 e.stopPropagation();
-                onAddToCart({
-                  id: prod.id,
-                  icon: prod.icon,
-                  name: prod.name,
-                  priceLabel: prod.priceLabel,
-                  price: prod.price,
-                  unit: prod.unit,
-                });
+                handleAddToCart(prod);
               }}
             >
               +
@@ -99,6 +110,17 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
           </div>
         ))}
       </div>
+      <button className="btn btn--outline btn--sm pg-loadmore">
+        {listProduct.length}/{pagination.totalItem} sản phẩm
+      </button>
+      <button
+        className="btn btn--outline btn--sm pg-loadmore"
+        onClick={() => {
+          setParams((prev) => ({ ...prev, page: prev.page + 1 }));
+        }}
+      >
+        {isLoading ? <div>Đang tải...</div> : <>Hiển thị thêm</>}
+      </button>
     </div>
   );
 };
