@@ -7,13 +7,9 @@ import WarrantyPersonList from "./partials/WarrantyPersonList/WarrantyPersonList
 import TicketPersonList from "./partials/TicketPersonList/TicketPersonList";
 import ExchangePersonList from "./partials/ExchangePersonList/ExchangePersonList";
 import FeedbackPersonList from "./partials/FeedbackPersonList/FeedbackPersonList";
-import CustomerSMSList from "./partials/CustomerSMSList/CustomerSMSList";
-import CustomerEmailList from "./partials/CustomerEmailList/CustomerEmailList";
 import OrderList from "./partials/OrderList/OrderList";
 import AttachmentsList from "./partials/AttachmentsList/AttachmentsList";
-import CustomerInteraction from "./partials/CustomerInteraction/CustomerInteraction";
 import "./ListDetailTab.scss";
-import CustomerZaloList from "./partials/CustomerZaloList/CustomerZaloList";
 import InteractList from "./partials/InteractList";
 import CustomerJob from "./partials/CustomerJob/CustomerJob";
 import CustomerContact from "./partials/CustomerContact/CustomerContact";
@@ -24,13 +20,6 @@ import InfoCIC from "./partials/InfoCIC";
 import TransactionInformation from "./partials/TransactionInformation";
 import CustomerRevenue from "./partials/CustomerRevenue";
 import ProductNeeds from "./partials/ProductNeeds";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
-
-type TabChild = {
-  title: string;
-  tab_children: string;
-};
 
 export default function ListDetailTab(props: IListTabDetailProps) {
   const { data } = props;

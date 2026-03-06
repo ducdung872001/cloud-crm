@@ -1,0 +1,164 @@
+.receipt-modal {
+  //   width: 380px;
+}
+
+.receipt {
+  //   max-width: 320px;
+  margin: 0 auto;
+  font-family: "Outfit", sans-serif;
+
+  // ── Header ──
+  &__header {
+    text-align: center;
+    padding-bottom: 14px;
+    border-bottom: 2px dashed var(--border);
+    margin-bottom: 14px;
+  }
+
+  &__store {
+    font-size: 17px;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+
+  &__address,
+  &__contact {
+    font-size: 11px;
+    color: var(--muted2);
+    line-height: 1.6;
+  }
+
+  &__meta {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+
+  // ── Table ──
+  &__table {
+    margin-bottom: 10px;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    padding: 5px 0;
+
+    &--header {
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 7px;
+      margin-bottom: 2px;
+    }
+  }
+
+  &__col-name {
+    flex: 1;
+  }
+  &__col-qty {
+    width: 28px;
+    text-align: center;
+  }
+  &__col-total {
+    width: 80px;
+    text-align: right;
+    font-weight: 600;
+  }
+
+  // ── Totals ──
+  &__totals {
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-bottom: 14px;
+  }
+
+  &__totals-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 4px 0;
+
+    span:first-child {
+      color: var(--muted);
+    }
+    span:last-child {
+      font-weight: 700;
+    }
+
+    &--grand {
+      font-size: 15px;
+      font-weight: 900;
+      border-top: 2px solid var(--ink);
+      border-bottom: 2px solid var(--ink);
+      padding: 8px 0;
+      margin: 4px 0;
+
+      span {
+        font-weight: 900 !important;
+        color: var(--ink) !important;
+      }
+    }
+  }
+
+  &__discount {
+    color: var(--red) !important;
+  }
+  &__grand-val {
+    color: var(--lime-d) !important;
+  }
+  &__change {
+    color: var(--blue) !important;
+    font-weight: 800 !important;
+  }
+
+  &__pay-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--lime-l);
+    color: var(--lime-d);
+  }
+
+  // ── QR ──
+  &__qr {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+
+  &__qr-box {
+    width: 90px;
+    height: 90px;
+    background: #fff;
+    margin: 0 auto 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+  }
+
+  &__qr-note {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  // ── Footer ──
+  &__footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    padding-top: 14px;
+    border-top: 2px dashed var(--border);
+  }
+}

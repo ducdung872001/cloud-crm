@@ -209,18 +209,19 @@ $avatar-colors: (
   ($av-lavender-light, $av-lavender)
 );
 
+@use "sass:list";
+
 $letters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
 
-@for $i from 1 through length($letters) {
-  $letter: nth($letters, $i);
-  $color-set: nth($avatar-colors, (($i - 1) % length($avatar-colors)) + 1);
+@for $i from 1 through list.length($letters) {
+  $letter: list.nth($letters, $i);
+  $color-set: list.nth($avatar-colors, (($i - 1) % list.length($avatar-colors)) + 1);
 
   .av-#{$letter} {
-    background: nth($color-set, 1);
-    color: nth($color-set, 2);
+    background: list.nth($color-set, 1);
+    color: list.nth($color-set, 2);
   }
 }
-
 .page-customer-supplier {
   .card-box {
     .quick__search {

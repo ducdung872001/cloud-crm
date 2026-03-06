@@ -1,7 +1,7 @@
 /* AttachmentUploader styles (SCSS)
    V9 logic preserved + V3-like file icons styling
 */
-
+@use "sass:color";
 $border: #e1e1e1;
 $bg: #fafafa;
 $primary: #1a73e8;
@@ -282,7 +282,7 @@ $item-border: #eee;
     background: #f0f6ff;
     color: $primary;
     cursor: pointer;
-    border: 1px dashed lighten($primary, 35%);
+    border: 1px dashed color.adjust($primary, $lightness: 35%);
     font-size: 20px;
   }
 
