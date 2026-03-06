@@ -31,7 +31,7 @@ import KanbanContact from "./KanbanContact/KanbanContact";
 import ContactStatusService from "services/ContactStatusService";
 import BoxTableAdvanced from "components/boxTableAdvanced/boxTableAdvanced";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
+import { Navigation } from "swiper/modules";
 import { useOnClickOutside, useWindowDimensions } from "utils/hookCustom";
 import Tippy from "@tippyjs/react";
 import Button from "components/button/button";

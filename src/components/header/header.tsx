@@ -4,7 +4,7 @@ import moment from "moment";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Autoplay } from "swiper";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import Button from "components/button/button";
 import Icon from "components/icon";
 import Popover from "components/popover/popover";
@@ -20,7 +20,9 @@ import ShowModalChangeRole from "pages/Common/ShowModalChangeRole";
 import "./header.scss";
 import Tippy from "@tippyjs/react";
 
-SwiperCore.use([Autoplay]);
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 export default function Header(props: any) {
   const [cookies, setCookie, removeCookie] = useCookies();
@@ -80,8 +82,8 @@ export default function Header(props: any) {
 
     //TNEX
     const checkSubdomainTNEX = sourceDomain.includes("tnex");
-    const accessTokenAthena = (localStorage.getItem("access_token_athena") || "");
-    if(checkSubdomainTNEX){
+    const accessTokenAthena = localStorage.getItem("access_token_athena") || "";
+    if (checkSubdomainTNEX) {
       logoutAccountAthena(accessTokenAthena);
       setTimeout(() => {
         removeCookie("user", { path: "/", domain: rootDomain });
@@ -91,22 +93,22 @@ export default function Header(props: any) {
         localStorage.removeItem("SelectedRole");
         navigate("/login");
         setIsLogoutLoading(false);
-    
+
         localStorage.removeItem("checkIsKanban");
         localStorage.removeItem("isKanbanCampaign");
         localStorage.removeItem("kanbanTabOpportunity");
         localStorage.removeItem("campaignId");
         localStorage.removeItem("campaignName");
         localStorage.removeItem("campaignType");
-    
+
         localStorage.removeItem("valueBranch");
-    
+
         localStorage.removeItem("isKanbanContract");
         localStorage.removeItem("pipelineContractId");
-    
+
         localStorage.removeItem("targetBsnId_product");
         localStorage.removeItem("access_token_athena");
-      }, 1500)
+      }, 1500);
     } else {
       removeCookie("user", { path: "/", domain: rootDomain });
       removeCookie("token", { path: "/", domain: rootDomain });
@@ -131,7 +133,6 @@ export default function Header(props: any) {
       localStorage.removeItem("targetBsnId_product");
       localStorage.removeItem("access_token_athena");
     }
-
   };
 
   const logoutAccountAthena = async (accessTokenAthena) => {
@@ -141,19 +142,17 @@ export default function Header(props: any) {
       "x-access-token": accessTokenAthena,
     };
     const response: any = await fetch(url, {
-      method: "GET", 
+      method: "GET",
       headers: headers,
       // body: JSON.stringify(body),
     }).then((res) => res.json());
 
-    console.log('response', response);
+    console.log("response", response);
 
     if (response?.error_code === 0) {
-
     } else {
-     
     }
-  }
+  };
 
   const refNotification = useRef();
   const refNotificationContainer = useRef();
@@ -305,16 +304,7 @@ export default function Header(props: any) {
         <Icon name="Bars" />
       </Button>
       <div className="notification-hot">
-        <Swiper
-          slidesPerView={1}
-          // autoplay={{
-          //   delay: 3000,
-          //   disableOnInteraction: false,
-          // }}
-          // loop={true}
-          direction="vertical"
-          simulateTouch={false}
-        >
+        <Swiper modules={[Navigation, Pagination, Autoplay]} navigation pagination={{ clickable: true }} autoplay={{ delay: 3000 }}>
           <SwiperSlide className="swiper__item">
             <div className="info__common">
               <span className="name">{dataCompany && dataCompany.name}</span>

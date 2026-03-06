@@ -2,9 +2,6 @@
 import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import _ from "lodash";
 import moment from "moment";
-import Tippy from "@tippyjs/react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
 import { getSearchParameters, getPageOffset } from "reborn-util";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
