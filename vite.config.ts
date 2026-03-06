@@ -132,12 +132,7 @@ export default defineConfig(({ mode }) => {
           // Use modern Sass compiler to avoid deprecation warnings
           api: "modern-compiler",
           // Suppress deprecation warnings for legacy features
-          silenceDeprecations: [
-            // "legacy-js-api",
-            "import",
-            // "global-builtin",
-            "color-functions",
-          ],
+          silenceDeprecations: ["legacy-js-api", "import", "global-builtin", "color-functions"],
         },
       },
     },

@@ -171,6 +171,7 @@ import ShippingPartnerSetup from "@/pages/ShipingManagement/ShippingPartnerSetup
 import ShippingReport from "@/pages/ShipingManagement/ShippingReport/ShippingReport";
 import CustomerAndSupplier from "@/pages/CustomerAndSupplier";
 import InventoryManagement from "@/pages/ProductImport/InventoryChecking";
+import CounterSales from "@/pages/CounterSales";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -234,7 +235,7 @@ export const menu: IMenuItem[] = [
       //   path: urls.shipping_fee_config,
       //   icon: <Icon name="Invoice" />,
       //   code: "SALE_INVOICE",
-      // },      
+      // },
       {
         title: "fanpage", // Tương tác & Chốt đơn (Gộp Fanpage & Zalo)
         path: urls.fanpage,
@@ -257,7 +258,7 @@ export const menu: IMenuItem[] = [
       //   path: urls.setting_social_crm,
       //   icon: <Icon name="SettingSocial" />,
       //   code: "MENU_SETUP_SOCIAL_CRM",
-      // },      
+      // },
     ],
   },
   {
@@ -1239,7 +1240,8 @@ export const routes: IRouter[] = [
   // tạo đơn bán hàng
   {
     path: urls.create_sale_add,
-    component: <CreateOrderSales />,
+    // component: <CreateOrderSales />,
+    component: <CounterSales />,
   },
   // Danh sách yêu cầu mua hàng
   {

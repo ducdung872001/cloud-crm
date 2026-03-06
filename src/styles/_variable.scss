@@ -1,7 +1,5 @@
-@use "sass:color";
-
 @function rgba-to-rgb($rgb, $alpha: 1, $background: #fff) {
-  @return color.mix($rgb, $background, $alpha * 100%);
+  @return mix(rgb(red($rgb), green($rgb), blue($rgb)), $background, $alpha * 100%);
 }
 
 $white-color: #ffffff;
@@ -11,7 +9,7 @@ $sea-green-color: #2e8b57;
 $background-color: #f3f3f3;
 $background-color-hover: #f9fafb;
 $primary-color: #015aa4;
-$primary-bg-color: #004353;
+$primary-bg-color: #004353; //rgb(0, 67, 83);
 $primary-text-menu-color: #eb480b;
 $extra-color: #212b35;
 $error-color: #ed0f0f;
@@ -26,7 +24,6 @@ $menu-background-children-color: #000c37;
 $box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.2);
 $box-shadow-input: inset 0 1px 0 0 rgb(63 63 68 / 5%);
 $box-shadow-button: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
-
 //Chart colors
 $chart-color-violet: rgb(110, 105, 211);
 $chart-color-violet-darker: rgb(84, 79, 197);
@@ -50,7 +47,6 @@ $chart-color-blue: #015aa4;
   --primary-bg-color: #{$primary-bg-color};
   --primary-text-color: #{$primary-text-menu-color};
   --primary-color: #{$primary-color};
-
   --primary-color-90: #{rgba-to-rgb($primary-color, 0.9)};
   --primary-color-80: #{rgba-to-rgb($primary-color, 0.8)};
   --primary-color-70: #{rgba-to-rgb($primary-color, 0.7)};
@@ -58,45 +54,34 @@ $chart-color-blue: #015aa4;
   --primary-color-30: #{rgba-to-rgb($primary-color, 0.3)};
   --primary-color-10: #{rgba-to-rgb($primary-color, 0.1)};
   --primary-color-5: #{rgba-to-rgb($primary-color, 0.05)};
-
   --extra-color: #{$extra-color};
   --extra-color-50: #{rgba-to-rgb($extra-color, 0.5)};
   --extra-color-30: #{rgba-to-rgb($extra-color, 0.3)};
   --extra-color-20: #{rgba-to-rgb($extra-color, 0.2)};
   --extra-color-10: #{rgba-to-rgb($extra-color, 0.1)};
   --extra-color-5: #{rgba-to-rgb($extra-color, 0.05)};
-
   --text-primary-color: #{$extra-color};
   --text-extra-color: #{rgba-to-rgb($extra-color, 0.5)};
   --border-color: #{rgba-to-rgb($extra-color, 0.2)};
-
   --error-color: #{$error-color};
-  --error-color-rgb: #{color.red($error-color), color.green($error-color), color.blue($error-color)};
-
+  --error-color-rgb: #{red($error-color), green($error-color), blue($error-color)};
   --error-darker-color: #{$error-darker-color};
-  --error-darker-color-rgb: #{color.red($error-darker-color), color.green($error-darker-color), color.blue($error-darker-color)};
-
+  --error-darker-color-rgb: #{red($error-darker-color), green($error-darker-color), blue($error-darker-color)};
   --warning-color: #{$warning-color};
-  --warning-color-rgb: #{color.red($warning-color), color.green($warning-color), color.blue($warning-color)};
-
+  --warning-color-rgb: #{red($warning-color), green($warning-color), blue($warning-color)};
   --warning-darker-color: #{$warning-darker-color};
-  --warning-darker-color-rgb: #{color.red($warning-darker-color), color.green($warning-darker-color), color.blue($warning-darker-color)};
-
+  --warning-darker-color-rgb: #{red($warning-darker-color), green($warning-darker-color), blue($warning-darker-color)};
   --success-color: #{$success-color};
-  --success-color-rgb: #{color.red($success-color), color.green($success-color), color.blue($success-color)};
-
+  --success-color-rgb: #{red($success-color), green($success-color), blue($success-color)};
   --success-darker-color: #{$success-darker-color};
-  --success-darker-color-rgb: #{color.red($success-darker-color), color.green($success-darker-color), color.blue($success-darker-color)};
-
+  --success-darker-color-rgb: #{red($success-darker-color), green($success-darker-color), blue($success-darker-color)};
   --menu-active-color: #{$menu-active-color};
   --menu-active-children-color: #{$menu-active-children-color};
   --menu-background-children-color: #{$menu-background-children-color};
   --menu-background-color: #{rgba-to-rgb($menu-background-children-color, 0.9)};
-
   --box-shadow: #{$box-shadow};
   --box-shadow-input: #{$box-shadow-input};
   --box-shadow-button: #{$box-shadow-button};
-
   //Chart colors
   --chart-color-total: #{$chart-color-blue};
   --chart-color-success: #{$chart-color-green};
@@ -106,4 +91,34 @@ $chart-color-blue: #015aa4;
   --chart-color-true: #{$chart-color-violet};
   --chart-color-out-date: #{$chart-color-orange-dark};
   --chart-color-today: #{$chart-color-orange};
+
+  // Counter Sales specific
+  --ink: #0a0f1e;
+  --ink2: #1a2035;
+  --ink3: #252d42;
+  --paper: #f5f6fa;
+  --white: #ffffff;
+  --border: #e0e4f0;
+  --border2: #c8cede;
+  --muted: #6b7899;
+  --muted2: #9aa3bf;
+  --lime: #84cc16;
+  --lime-d: #65a30d;
+  --lime-l: #f0fdf4;
+  --lime-20: rgba(132, 204, 22, 0.15);
+  --teal: #0d9488;
+  --teal-l: #f0fdfa;
+  --blue: #3b82f6;
+  --blue-l: #eff6ff;
+  --orange: #f97316;
+  --orange-l: #fff7ed;
+  --red: #ef4444;
+  --red-l: #fef2f2;
+  --gold: #eab308;
+  --gold-l: #fefce8;
+  --purple: #a855f7;
+  --purple-l: #faf5ff;
+  --sh: 0 1px 3px rgba(10, 15, 30, 0.07), 0 1px 2px rgba(10, 15, 30, 0.04);
+  --sh2: 0 4px 16px rgba(10, 15, 30, 0.09);
+  --sh3: 0 20px 60px rgba(10, 15, 30, 0.18);
 }
