@@ -3163,7 +3163,7 @@ export default function CustomerPersonList() {
                     updateParams={(paramsNew) => {
                       if (activeTitleHeader === 1) {
                         // setParams(paramsNew);
-                        if (checkSubdomainTNEX) {
+                        if (checkSubdomainTNEX) {                          
                           // Hàm tiện ích kiểm tra field tồn tại
                           const hasField = (key) => Object.prototype.hasOwnProperty.call(paramsNew, key);
                           if (
@@ -3184,8 +3184,8 @@ export default function CustomerPersonList() {
 
                             // 🔹 Các field kiểu text (Có datatype/operator)
                             const listStringFields = ["Trangthaikhoanvaycashloan", "Trangthaikhoanvaycreditline", "TrangThaiKhoanVayTBoss"];
-
-                            listStringFields.forEach((field) => {
+                            
+                            listStringFields.forEach((field) => {                              
                               if (hasField(field)) {
                                 customerExtraInfoParamsNew = customerExtraInfoParamsNew.filter((el) => el.fieldName !== field);
                                 customerExtraInfo.push({
@@ -3194,7 +3194,8 @@ export default function CustomerPersonList() {
                                   datatype: paramsNew[field] === "empty" ? "string" : "list_string",
                                   operator: paramsNew[field] === "empty" ? "eq" : "in",
                                 });
-                                delete paramsNew[field];
+                                //nếu bật lên thì khi xoá lọc đi sẽ không reload lại trang
+                                // delete paramsNew[field];
                               }
                             });
 
@@ -3415,7 +3416,7 @@ export default function CustomerPersonList() {
 
                         <div
                           className="advance_close"
-                          onClick={() => {
+                          onClick={() => {                            
                             // const newFilter = params.customerExtraInfo.filter((el) => el.fieldName !== key);
                             // setFilterAdvance({
                             //   ...filterAdvance,
