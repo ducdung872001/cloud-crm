@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "dev": "vite --mode devlocal",
+    "locallaptop": "vite --mode locallaptop",
     "build:dev": "vite build --mode dev",
     "build:uat": "vite build --mode uat",
     "build:prod": "vite build --mode prod",

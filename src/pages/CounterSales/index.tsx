@@ -14,7 +14,7 @@ import ProductGrid from "./components/ProductGrid";
 import Cart from "./components/Cart";
 import OrderList from "./components/OrderList";
 import Report from "./components/Report";
-import { CartItem, TabType } from "./types";
+import { CartItem, Customer, TabType } from "./types";
 import OrderDetailModal from "./components/modals/OrderDetailModal";
 import PayModal from "./components/modals/PayModal";
 import ReceiptModal from "./components/modals/ReceiptModal";
@@ -23,9 +23,9 @@ import SyncModal from "./components/modals/SyncModal";
 import CustomerModal from "./components/modals/CustomerModal";
 
 const INITIAL_CART: CartItem[] = [
-  { id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, unit: "hộp", qty: 2 },
-  { id: "3", icon: "🍜", name: "Mì Hảo Hảo Tôm Chua Cay", priceLabel: "4,500 ₫", price: 4500, unit: "gói", qty: 5 },
-  { id: "2", icon: "🥤", name: "Pepsi 330ml", priceLabel: "12,000 ₫", price: 12000, unit: "lon", qty: 3 },
+  // { id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, unit: "hộp", qty: 2 },
+  // { id: "3", icon: "🍜", name: "Mì Hảo Hảo Tôm Chua Cay", priceLabel: "4,500 ₫", price: 4500, unit: "gói", qty: 5 },
+  // { id: "2", icon: "🥤", name: "Pepsi 330ml", priceLabel: "12,000 ₫", price: 12000, unit: "lon", qty: 3 },
 ];
 
 const CounterSales: React.FC = () => {
@@ -39,6 +39,7 @@ const CounterSales: React.FC = () => {
   const [qrScanModalOpen, setQrScanModalOpen] = useState(false);
   const [syncModalOpen, setSyncModalOpen] = useState(false);
   const [customerModalOpen, setCustomerModalOpen] = useState(false);
+  const [customer, setCustomer] = useState<Customer | null>(null);
 
   // Cart actions
   const handleAddToCart = useCallback((item: Omit<CartItem, "qty">) => {
@@ -99,6 +100,7 @@ const CounterSales: React.FC = () => {
                 onRemove={handleRemove}
                 onPay={() => setPayModalOpen(true)}
                 onSelectCustomer={() => setCustomerModalOpen(true)}
+                customer={customer || undefined}
               />
             </div>
           )}
@@ -138,7 +140,7 @@ const CounterSales: React.FC = () => {
 
       <SyncModal open={syncModalOpen} onClose={() => setSyncModalOpen(false)} />
 
-      <CustomerModal open={customerModalOpen} onClose={() => setCustomerModalOpen(false)} />
+      <CustomerModal open={customerModalOpen} onClose={() => setCustomerModalOpen(false)} onSelect={(customer) => setCustomer(customer)} />
     </div>
   );
 };
