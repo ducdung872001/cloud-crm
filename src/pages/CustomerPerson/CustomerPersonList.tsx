@@ -74,9 +74,8 @@ export default function CustomerPersonList() {
   const checkSubdomainTNEX = sourceDomain.includes("tnex");
   const takeUrlFilterAdvance = (localStorage.getItem("filterAdvance") && JSON.parse(localStorage.getItem("filterAdvance"))) || null;
 
-  document.title = `${
-    showPageSendEmail ? "Gửi email" : showPageSendSMS ? "Gửi SMS" : activeTitleHeader === 1 ? "Danh sách khách hàng" : "Phân tích nguồn khách hàng"
-  }`;
+  document.title = `${showPageSendEmail ? "Gửi email" : showPageSendSMS ? "Gửi SMS" : activeTitleHeader === 1 ? "Danh sách khách hàng" : "Phân tích nguồn khách hàng"
+    }`;
 
   const navigate = useNavigate();
 
@@ -772,11 +771,11 @@ export default function CustomerPersonList() {
       takeUrlFilterAdvance
       ? takeUrlFilterAdvance
       : {
-          employeeIds: [],
-          sourceIds: [],
-          callStatuses: [],
-          customerExtraInfo: [],
-        };
+        employeeIds: [],
+        sourceIds: [],
+        callStatuses: [],
+        customerExtraInfo: [],
+      };
   });
 
   useEffect(() => {
@@ -977,9 +976,8 @@ export default function CustomerPersonList() {
                   <div className="lst__columns--show">
                     <div className="summary__qty--column">
                       <span className="title__show--column">Các trường hiển thị trong bảng</span>
-                      <span className="qty-total">{`${lstFieldActive.length + defaultFieldTableDis.length}/${
-                        lstFieldActive.length + lstFieldUnActive.length + defaultFieldTableDis.length
-                      }`}</span>
+                      <span className="qty-total">{`${lstFieldActive.length + defaultFieldTableDis.length}/${lstFieldActive.length + lstFieldUnActive.length + defaultFieldTableDis.length
+                        }`}</span>
                     </div>
                     <div className="lst__items lst__items--show">
                       {(lstFieldActive || defaultFieldTableDis) &&
@@ -1458,51 +1456,51 @@ export default function CustomerPersonList() {
 
     ...(checkSubdomainTNEX
       ? [
-          { headerName: "Nguồn khách hàng", width: 140, field: "sourceName" },
-          {
-            headerName: "Follow 1",
-            headerComponent: StyleHeaderTable,
-            field: "teleSaleCall",
-            cellRenderer: TelesaleCall,
-            cellRendererParams: { index: 0 },
-            autoHeight: true,
-          },
-          {
-            headerName: "Follow 2",
-            headerComponent: StyleHeaderTable,
-            field: "teleSaleCall",
-            cellRenderer: TelesaleCall,
-            cellRendererParams: { index: 1 },
-          },
-          {
-            headerName: "Follow 3",
-            headerComponent: StyleHeaderTable,
-            field: "teleSaleCall",
-            cellRenderer: TelesaleCall,
-            cellRendererParams: { index: 2 },
-          },
-          {
-            headerName: "Ngày CRM nhận dữ liệu",
-            headerComponent: StyleHeaderTable,
-            width: 140,
-            field: "syncTime",
-            cellStyle: { display: "flex", justifyContent: "center" },
-          },
-          {
-            headerName: "Ngày nhận phụ trách",
-            headerComponent: StyleHeaderTable,
-            width: 140,
-            field: "employeeAssignDate",
-            cellStyle: { display: "flex", justifyContent: "center" },
-          },
-          {
-            headerName: "Ngày phân bổ cho Telesale",
-            headerComponent: StyleHeaderTable,
-            width: 140,
-            field: "saleAssignDate",
-            cellStyle: { display: "flex", justifyContent: "center" },
-          },
-        ]
+        { headerName: "Nguồn khách hàng", width: 140, field: "sourceName" },
+        {
+          headerName: "Follow 1",
+          headerComponent: StyleHeaderTable,
+          field: "teleSaleCall",
+          cellRenderer: TelesaleCall,
+          cellRendererParams: { index: 0 },
+          autoHeight: true,
+        },
+        {
+          headerName: "Follow 2",
+          headerComponent: StyleHeaderTable,
+          field: "teleSaleCall",
+          cellRenderer: TelesaleCall,
+          cellRendererParams: { index: 1 },
+        },
+        {
+          headerName: "Follow 3",
+          headerComponent: StyleHeaderTable,
+          field: "teleSaleCall",
+          cellRenderer: TelesaleCall,
+          cellRendererParams: { index: 2 },
+        },
+        {
+          headerName: "Ngày CRM nhận dữ liệu",
+          headerComponent: StyleHeaderTable,
+          width: 140,
+          field: "syncTime",
+          cellStyle: { display: "flex", justifyContent: "center" },
+        },
+        {
+          headerName: "Ngày nhận phụ trách",
+          headerComponent: StyleHeaderTable,
+          width: 140,
+          field: "employeeAssignDate",
+          cellStyle: { display: "flex", justifyContent: "center" },
+        },
+        {
+          headerName: "Ngày phân bổ cho Telesale",
+          headerComponent: StyleHeaderTable,
+          width: 140,
+          field: "saleAssignDate",
+          cellStyle: { display: "flex", justifyContent: "center" },
+        },
+      ]
       : []),
 
     // { headerName: "Facebook", width: 130, field: "profileLink", cellRenderer: SocialToAction },
@@ -1922,8 +1920,8 @@ export default function CustomerPersonList() {
 
       const checkDataLocalStorage = takeFieldActiveContact
         ? result.filter((item) => {
-            return !takeFieldActiveContact.some((el) => el.fieldName === item.fieldName);
-          })
+          return !takeFieldActiveContact.some((el) => el.fieldName === item.fieldName);
+        })
         : result;
 
       setLstFieldUnActive(checkDataLocalStorage);
@@ -2038,7 +2036,9 @@ export default function CustomerPersonList() {
         setIsNoItem(true);
       }
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      // Tắt tạm để demo Viettel
+
+      // showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
     setIsLoading(false);
   };
@@ -2133,12 +2133,6 @@ export default function CustomerPersonList() {
 
   let isUserRoot = localStorage.getItem("user.root") == "1" ? true : false;
 
-  const [isTestExporting, setIsTestExporting] = useState<boolean>(false);
-  const [showTestExportModal, setShowTestExportModal] = useState<boolean>(false);
-  const [testUnitCode, setTestUnitCode] = useState<string>("");
-  const [testMonth, setTestMonth] = useState<number>(new Date().getMonth() + 1);
-  const [testYear, setTestYear] = useState<number>(new Date().getFullYear());
-
   const monthOptions: IOption[] = useMemo(
     () =>
       Array.from({ length: 12 }, (_, idx) => ({
@@ -2156,120 +2150,32 @@ export default function CustomerPersonList() {
     });
   }, []);
 
-  const handleTestExportApi = useCallback(async (unitCode: string, month: number, year: number) => {
-    if (isTestExporting) return;
-
-    try {
-      setIsTestExporting(true);
-
-      const response = await CustomerService.export({ unitCode, month, year });
-
-      if (response && response.ok) {
-        const blob = await response.blob();
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = downloadUrl;
-        link.download = `payroll-${unitCode}-${year}-${month}.xlsx`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(downloadUrl);
-
-        showToast("Export payroll thành công", "success");
-        setShowTestExportModal(false);
-      } else {
-        showToast("Gọi API export thất bại. Vui lòng thử lại sau!", "error");
-      }
-    } catch (error) {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
-    } finally {
-      setIsTestExporting(false);
-    }
-  }, [isTestExporting]);
-
-  const openTestExportModal = useCallback(() => {
-    const now = new Date();
-    setTestMonth(now.getMonth() + 1);
-    setTestYear(now.getFullYear());
-    setTestUnitCode("");
-    setShowTestExportModal(true);
-  }, []);
-
-  const handleSubmitTestExport = useCallback(
-    (e) => {
-      e.preventDefault();
-
-      const unitCode = (testUnitCode || "").trim();
-      const monthInt = Number(testMonth);
-      const yearInt = Number(testYear);
-
-      if (!unitCode) {
-        showToast("Vui lòng nhập Unit Code", "warning");
-        return;
-      }
-
-      if (!Number.isInteger(monthInt) || monthInt < 1 || monthInt > 12) {
-        showToast("Tháng không hợp lệ", "warning");
-        return;
-      }
-
-      if (!Number.isInteger(yearInt) || yearInt < 2000) {
-        showToast("Năm không hợp lệ", "warning");
-        return;
-      }
-
-      handleTestExportApi(unitCode, monthInt, yearInt);
-    },
-    [handleTestExportApi, testMonth, testUnitCode, testYear]
-  );
-
-  const testExportActions: IActionModal = {
-    actions_right: {
-      buttons: [
-        {
-          title: "Hủy",
-          color: "primary",
-          variant: "outline",
-          disabled: isTestExporting,
-          callback: () => setShowTestExportModal(false),
-        },
-        {
-          title: "Xuất",
-          type: "submit",
-          color: "primary",
-          disabled: isTestExporting,
-          is_loading: isTestExporting,
-        },
-      ],
-    },
-  };
-
   const titleActions: ITitleActions = {
     actions: [
       ...(activeTitleHeader !== 3
         ? [
-            isUserRoot && {
-              title: "Thêm mới bằng XML",
-              callback: () => {
-                setDataCustomer(null);
-                setShowModalAddXml(true);
-              },
+          isUserRoot && {
+            title: "Thêm mới bằng XML",
+            callback: () => {
+              setDataCustomer(null);
+              setShowModalAddXml(true);
             },
-            permissions["CUSTOMER_ADD"] == 1 && {
-              title: "Thêm mới",
-              callback: () => {
-                setDataCustomer(null);
-                //Lưu cũ là gì để bật popup tương ứng (null, undefined hoặc 0)
-                if (checkCustType == "0" || !checkCustType) {
-                  //Test trước
-                  setShowModalAdd(true);
-                } else {
-                  //Khách hàng doanh nghiệp
-                  setShowModalCompanyAdd(true);
-                }
-              },
+          },
+          permissions["CUSTOMER_ADD"] == 1 && {
+            title: "Thêm mới",
+            callback: () => {
+              setDataCustomer(null);
+              //Lưu cũ là gì để bật popup tương ứng (null, undefined hoặc 0)
+              if (checkCustType == "0" || !checkCustType) {
+                //Test trước
+                setShowModalAdd(true);
+              } else {
+                //Khách hàng doanh nghiệp
+                setShowModalCompanyAdd(true);
+              }
             },
-          ]
+          },
+        ]
         : []),
     ],
     actions_extra: [
@@ -2285,13 +2191,6 @@ export default function CustomerPersonList() {
         icon: <Icon name="Download" />,
         callback: () => {
           setOnShowModalExport(true);
-        },
-      },
-      {
-        title: "Test",
-        icon: <Icon name="Download" />,
-        callback: () => {
-          openTestExportModal();
         },
       },
     ],
@@ -2318,68 +2217,68 @@ export default function CustomerPersonList() {
     getPageOffset(params) + index + 1,
     ...(type !== "export"
       ? [
-          <Link
-            key={item.id}
-            to={`/detail_person/customerId/${item.id}/not_purchase_invoice`}
-            onClick={() => {
-              localStorage.setItem("backUpUrlCustomer", JSON.stringify(params));
-            }}
-            className="detail-person"
-          >
-            {item.name}
-          </Link>,
-          <div key={index} className="has__phone">
-            <span className="view-phone">{isShowPhone && item.id == idCustomer && valueShowPhone ? valueShowPhone : item.phoneMasked}</span>
-            {/* {item.phoneMasked ? (
+        <Link
+          key={item.id}
+          to={`/detail_person/customerId/${item.id}/not_purchase_invoice`}
+          onClick={() => {
+            localStorage.setItem("backUpUrlCustomer", JSON.stringify(params));
+          }}
+          className="detail-person"
+        >
+          {item.name}
+        </Link>,
+        <div key={index} className="has__phone">
+          <span className="view-phone">{isShowPhone && item.id == idCustomer && valueShowPhone ? valueShowPhone : item.phoneMasked}</span>
+          {/* {item.phoneMasked ? (
               <span className="isEye" onClick={(e) => handClickEye(e, item, index)}>
                 <Icon name={isShowPhone && item.id == idCustomer && valueShowPhone ? "EyeSlash" : "Eye"} />
               </span>
             ) : null} */}
-          </div>,
-          item.profileLink ? (
-            <Link to={item.profileLink} key={index} target="_blank">
-              Đi tới
-            </Link>
-          ) : (
-            ""
-          ),
-          item.lastBoughtDate ? moment(item.lastBoughtDate).format("DD/MM/YYYY") : "",
-          formatCurrency(+item.fee || "0"),
-          formatCurrency(+item.paid || "0"),
-          item.debt ? (
-            <Tippy key={item.id} content="Click vào để thu hồi công nợ">
-              <span
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  setIdCustomer(item.id);
-                  setShowModalDebt(true);
-                }}
-              >
-                {formatCurrency(+item.debt)}
-              </span>
-            </Tippy>
-          ) : (
-            formatCurrency("0")
-          ),
-          <span
-            key={item.id}
-            style={{ color: "var(--primary-color-90)", fontWeight: "500", cursor: "pointer" }}
-            onClick={() => {
-              setIdCustomer(item.id);
-              setShowModalAddManagementOpportunity(true);
-            }}
-          >
-            Tạo
-          </span>,
-        ]
+        </div>,
+        item.profileLink ? (
+          <Link to={item.profileLink} key={index} target="_blank">
+            Đi tới
+          </Link>
+        ) : (
+          ""
+        ),
+        item.lastBoughtDate ? moment(item.lastBoughtDate).format("DD/MM/YYYY") : "",
+        formatCurrency(+item.fee || "0"),
+        formatCurrency(+item.paid || "0"),
+        item.debt ? (
+          <Tippy key={item.id} content="Click vào để thu hồi công nợ">
+            <span
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                setIdCustomer(item.id);
+                setShowModalDebt(true);
+              }}
+            >
+              {formatCurrency(+item.debt)}
+            </span>
+          </Tippy>
+        ) : (
+          formatCurrency("0")
+        ),
+        <span
+          key={item.id}
+          style={{ color: "var(--primary-color-90)", fontWeight: "500", cursor: "pointer" }}
+          onClick={() => {
+            setIdCustomer(item.id);
+            setShowModalAddManagementOpportunity(true);
+          }}
+        >
+          Tạo
+        </span>,
+      ]
       : [
-          item.name,
-          item.phoneMasked,
-          item.lastBoughtDate ? moment(item.lastBoughtDate).format("DD/MM/YYYY") : "",
-          +item.fee,
-          +item.paid,
-          +item.debt,
-        ]),
+        item.name,
+        item.phoneMasked,
+        item.lastBoughtDate ? moment(item.lastBoughtDate).format("DD/MM/YYYY") : "",
+        +item.fee,
+        +item.paid,
+        +item.debt,
+      ]),
   ];
 
   const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", "text-right", "text-right", "text-right", "text-center"];
@@ -3291,9 +3190,9 @@ export default function CustomerPersonList() {
           {checkSubdomainTNEX ? (
             <div>
               {filterAdvance?.sourceIds?.length > 0 ||
-              filterAdvance?.employeeIds?.length > 0 ||
-              filterAdvance?.callStatuses?.length > 0 ||
-              params?.customerExtraInfo?.length > 0 ? (
+                filterAdvance?.employeeIds?.length > 0 ||
+                filterAdvance?.callStatuses?.length > 0 ||
+                params?.customerExtraInfo?.length > 0 ? (
                 <div className="filter_advance">
                   {filterAdvance.sourceIds.length > 0 ? (
                     <div className="item_advance">
@@ -3448,8 +3347,8 @@ export default function CustomerPersonList() {
                 )
                   ? 1
                   : pagination?.page * pagination?.sizeLimit < pagination?.totalItem
-                  ? pagination?.page * pagination?.sizeLimit
-                  : pagination?.totalItem}{" "}
+                    ? pagination?.page * pagination?.sizeLimit
+                    : pagination?.totalItem}{" "}
                 trên tổng
                 {` ${isNaN(pagination?.totalItem) ? 1 : pagination?.totalItem}`}
               </div>
@@ -3687,56 +3586,6 @@ export default function CustomerPersonList() {
           total={pagination.totalItem}
           callback={(type, extension) => exportCallback(type, extension)}
         />
-        <Modal
-          isOpen={showTestExportModal}
-          className="modal-export modal-export-payroll"
-          isFade={true}
-          staticBackdrop={true}
-          toggle={() => !isTestExporting && setShowTestExportModal(false)}
-          isCentered={true}
-        >
-          <form className="form-export" onSubmit={handleSubmitTestExport}>
-            <ModalHeader title="Test export payroll" toggle={() => !isTestExporting && setShowTestExportModal(false)} />
-            <ModalBody>
-              <Input
-                label="Unit Code"
-                name="unitCode"
-                fill={true}
-                required={true}
-                value={testUnitCode}
-                placeholder="Nhập Unit Code"
-                onChange={(e) => setTestUnitCode(e.target.value)}
-              />
-              <div className="payroll-date-row">
-                <div className="payroll-date-field">
-                  <SelectCustom
-                    id="payrollMonth"
-                    name="month"
-                    label="Tháng"
-                    options={monthOptions}
-                    fill={true}
-                    value={testMonth}
-                    onChange={(e) => setTestMonth(Number(e.value))}
-                    placeholder="Chọn tháng"
-                  />
-                </div>
-                <div className="payroll-date-field">
-                  <SelectCustom
-                    id="payrollYear"
-                    name="year"
-                    label="Năm"
-                    options={yearOptions}
-                    fill={true}
-                    value={testYear}
-                    onChange={(e) => setTestYear(Number(e.value))}
-                    placeholder="Chọn năm"
-                  />
-                </div>
-              </div>
-            </ModalBody>
-            <ModalFooter actions={testExportActions} />
-          </form>
-        </Modal>
         <ImportModal
           name="Nhập danh sách khách hàng"
           onShow={showModalImport}
