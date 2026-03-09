@@ -111,7 +111,7 @@ export default function ConnectionChannel() {
                     <div>
                         <span style={{fontSize: 12, fontWeight: '400'}}>{item.des}</span>
                     </div>
-                    <div className="report">
+                    <div className="report-app">
                         <div className="order">
                             <span style={{fontSize: 20, fontWeight: '700'}}>{item.order || '-'}</span>
                             <div>
