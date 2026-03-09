@@ -57,7 +57,9 @@ import FSQuoteService from "services/FSQuoteService";
 import { add } from "lodash";
 import PackageService from "services/PackageService";
 import ContactStatusService from "services/ContactStatusService";
-
+import ProcessedObjectService from "services/ProcessedObjectService";
+import BusinessProcessService from "@/services/BusinessProcessService";
+import LoyaltyService from "@/services/LoyaltyService";
 // Function lấy dữ liệu danh sách từ service
 export async function SelectOptionData(key: string, params?: any) {
   let response = null;
@@ -300,6 +302,21 @@ export async function SelectOptionData(key: string, params?: any) {
     case "rolePermission":
       response = await RoleService.list(params);
       break;
+    case "processId":
+      response = await BusinessProcessService.list(params);
+      break;
+    case "startNodeId":
+      response = await BusinessProcessService.bpmListNode(params);
+      break;
+    case "walletId":
+      response = await LoyaltyService.listLoyaltyWallet(params);
+      break;
+    case "loyaltyProgramId":
+      response = await LoyaltyService.list(params);
+      break;
+    case "loyaltyRewardId":
+      response = await LoyaltyService.listLoyaltyReward(params);
+      break;
     case "apiProductId":
       response = await ProductIdApiService.list({
         ...params,
@@ -412,11 +429,24 @@ export async function SelectOptionData(key: string, params?: any) {
             ...item,
           };
         }
+        if (key === "startNodeId") {
+          return {
+            value: item.nodeId,
+            label: item.name || item.nodeId,
+          };
+        }
         if (key === "employeeId") {
           return {
             value: item.id,
             label: `${item.name}`,
             departmentName: item.departmentName
+          };
+        }
+        if (key === "processId") {
+          return {
+            value: item.id,
+            label: item.name || item.title,
+            code: item.code || item.processCode
           };
         }
         return {

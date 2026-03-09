@@ -14,19 +14,18 @@ import { showToast } from "utils/common";
 import { getPermissions } from "utils/common";
 import { getPageOffset } from "reborn-util";
 import "./index.scss";
-import AddProgramLoyaltyModal from "./partials/AddProgramLoyaltyModal";
+import AddLoyaltySegmentModal from "./partials/AddLoyaltySegmentModal";
 import { IRoyaltyFilterRequest } from "@/model/loyalty/RoyaltyRequest";
-import { IProgramRoyaltyResposne } from "@/model/loyalty/RoyaltyResposne";
+import { ILoyaltySegmentResposne } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
-import moment from "moment";
 
-export default function SettingLoyaltyList() {
-  document.title = "Quản lý chương trình loyalty";
+export default function LoyaltySegment() {
+  document.title = "Hạng hội viên";
 
   const isMounted = useRef(false);
 
-  const [listData, setListData] = useState<IProgramRoyaltyResposne[]>([]);
-  const [selectedItem, setSelectedItem] = useState<IProgramRoyaltyResposne>(null);
+  const [listData, setListData] = useState<ILoyaltySegmentResposne[]>([]);
+  const [selectedItem, setSelectedItem] = useState<ILoyaltySegmentResposne>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -37,12 +36,12 @@ export default function SettingLoyaltyList() {
   const [params, setParams] = useState<IRoyaltyFilterRequest>({ name: "", limit: 10 });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
-    { key: "all", name: "Chương trình loyalty", is_active: true },
+    { key: "all", name: "Hạng hội viên", is_active: true },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Chương trình loyalty",
+    name: "Hạng hội viên",
     isChooseSizeLimit: true,
     setPage: (page) => setParams((prev) => ({ ...prev, page })),
     chooseSizeLimit: (limit) => setParams((prev) => ({ ...prev, limit })),
@@ -52,7 +51,7 @@ export default function SettingLoyaltyList() {
 
   const fetchList = async (paramsSearch: IRoyaltyFilterRequest) => {
     setIsLoading(true);
-    const response = await LoyaltyService.list(paramsSearch, abortController.signal);
+    const response = await LoyaltyService.listLoyaltySegment(paramsSearch, abortController.signal);
     if (response.code === 0) {
       const result = response.result;
       setListData(result.items ?? []);
@@ -72,9 +71,7 @@ export default function SettingLoyaltyList() {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    setParams((prev) => ({ ...prev }));
-  }, []);
+  useEffect(() => { setParams((prev) => ({ ...prev })); }, []);
 
   useEffect(() => {
     if (!isMounted.current) { isMounted.current = true; return; }
@@ -84,26 +81,20 @@ export default function SettingLoyaltyList() {
 
   const titleActions: ITitleActions = {
     actions: [
-      {
-        title: "Thêm mới",
-        callback: () => { setSelectedItem(null); setShowModalAdd(true); },
-      },
+      { title: "Thêm mới", callback: () => { setSelectedItem(null); setShowModalAdd(true); } },
     ],
   };
 
-  // Cột: STT | Tên chương trình | Người phụ trách | Ngày bắt đầu | Ngày kết thúc | Trạng thái
-  const titles = ["STT", "Tên chương trình loyalty", "Người phụ trách", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"];
-  const dataFormat = ["text-center", "", "", "text-center", "text-center", "text-center"];
-  const dataMappingArray = (item: IProgramRoyaltyResposne, index: number) => [
+  // Cột: STT | Tên hạng hội viên | Điểm tối thiểu
+  const titles = ["STT", "Tên hạng hội viên", "Điểm tối thiểu"];
+  const dataFormat = ["text-center", "", "text-center"];
+  const dataMappingArray = (item: ILoyaltySegmentResposne, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
-    item.employeeName ?? "—",
-    item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "—",
-    item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "—",
-    item.active ? "Kích hoạt" : "Không kích hoạt",
+    item.point ?? 0,
   ];
 
-  const actionsTable = (item: IProgramRoyaltyResposne): IAction[] => {
+  const actionsTable = (item: ILoyaltySegmentResposne): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
@@ -122,9 +113,9 @@ export default function SettingLoyaltyList() {
   };
 
   const onDelete = async (id: number) => {
-    const response = await LoyaltyService.delete(id);
+    const response = await LoyaltyService.deleteLoyaltySegment(id);
     if (response.code === 0) {
-      showToast("Xóa chương trình loyalty thành công", "success");
+      showToast("Xóa hạng hội viên thành công", "success");
       fetchList(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -138,32 +129,32 @@ export default function SettingLoyaltyList() {
     if (!selectedIds.length) return;
     const arrPromises = selectedIds.map((id) => {
       const found = listData.find((item) => item.id === id);
-      return found?.id ? LoyaltyService.delete(found.id) : Promise.resolve(null);
+      return found?.id ? LoyaltyService.deleteLoyaltySegment(found.id) : Promise.resolve(null);
     });
     Promise.all(arrPromises)
       .then((results) => {
         const count = results.filter(Boolean)?.length || 0;
         if (count > 0) {
-          showToast(`Xóa thành công ${count} chương trình loyalty`, "success");
+          showToast(`Xóa thành công ${count} hạng hội viên`, "success");
           fetchList(params);
           setListIdChecked([]);
         } else {
-          showToast("Không có chương trình loyalty nào được xóa", "error");
+          showToast("Không có hạng hội viên nào được xóa", "error");
         }
       })
       .finally(() => { setShowDialog(false); setContentDialog(null); });
   };
 
-  const showDialogConfirmDelete = (item?: IProgramRoyaltyResposne) => {
+  const showDialogConfirmDelete = (item?: ILoyaltySegmentResposne) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
       isCentered: true,
       isLoading: true,
-      title: <Fragment>Xóa chương trình loyalty</Fragment>,
+      title: <Fragment>Xóa hạng hội viên</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? <><strong>{item.name}</strong></> : `${listIdChecked.length} chương trình loyalty đã chọn`}?
+          Bạn có chắc chắn muốn xóa {item ? <><strong>{item.name}</strong></> : `${listIdChecked.length} hạng hội viên đã chọn`}?
           Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -180,21 +171,21 @@ export default function SettingLoyaltyList() {
   };
 
   const bulkActionList: BulkActionItemModel[] = [
-    { title: "Xóa chương trình loyalty", callback: () => showDialogConfirmDelete() },
+    { title: "Xóa hạng hội viên", callback: () => showDialogConfirmDelete() },
   ];
 
   return (
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
       <div className="action-navigation">
         <div className="action-backup">
-          <h1 className="title-first">Quản lý chương trình loyalty</h1>
+          <h1 className="title-first">Hạng hội viên</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên chương trình loyalty"
+          name="Tên hạng hội viên"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -202,7 +193,7 @@ export default function SettingLoyaltyList() {
         />
         {!isLoading && listData && listData.length > 0 ? (
           <BoxTable
-            name="chương trình loyalty"
+            name="hạng hội viên"
             titles={titles}
             items={listData}
             isPagination={true}
@@ -225,9 +216,9 @@ export default function SettingLoyaltyList() {
               <SystemNotification type="no-permission" />
             ) : isNoItem ? (
               <SystemNotification
-                description={<span>Hiện tại chưa có chương trình loyalty nào.<br />Hãy thêm mới chương trình loyalty đầu tiên nhé!</span>}
+                description={<span>Hiện tại chưa có hạng hội viên nào.<br />Hãy thêm mới hạng hội viên đầu tiên nhé!</span>}
                 type="no-item"
-                titleButton="Thêm mới chương trình loyalty"
+                titleButton="Thêm mới hạng hội viên"
                 action={() => { setSelectedItem(null); setShowModalAdd(true); }}
               />
             ) : (
@@ -239,7 +230,7 @@ export default function SettingLoyaltyList() {
           </Fragment>
         )}
       </div>
-      <AddProgramLoyaltyModal
+      <AddLoyaltySegmentModal
         onShow={showModalAdd}
         data={selectedItem}
         onHide={(reload) => { if (reload) fetchList(params); setShowModalAdd(false); }}

@@ -3,6 +3,7 @@ import { showToast } from "utils/common";
 import BoxTable from "components/boxTable/boxTable";
 import Badge from "components/badge/badge";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
+import "./ViettelAnalytics.scss";
 
 export default function ViettelAnalytics() {
     const [analyticsRange, setAnalyticsRange] = useState<"today" | "7d" | "30d">("today");
