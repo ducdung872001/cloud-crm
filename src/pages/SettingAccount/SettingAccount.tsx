@@ -29,7 +29,7 @@ import "./SettingAccount.scss";
 export default function SettingAccount() {
   const { t } = useTranslation();
 
-  const takeUrlParams = getSearchParameters(); 
+  const takeUrlParams = getSearchParameters();
 
   const checkUserRoot = localStorage.getItem("user.root");
 
@@ -467,7 +467,7 @@ export default function SettingAccount() {
 
             <div className="lst__connect">
               <ConnectGmail />
-              <ConnectOutlook /> 
+              <ConnectOutlook />
             </div>
           </div>
         </div>
