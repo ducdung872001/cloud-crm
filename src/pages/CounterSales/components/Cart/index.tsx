@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { CartItem, Customer, OrderType } from "../../types";
 import "./index.scss";
 
-const MOCK_CUSTOMER: Customer = {
-  id: "1",
-  name: "Nguyễn Thị Hoa",
-  initial: "N",
-  phone: "0901 234 567",
-  points: 2450,
-  tier: "Bạc",
-  color: "#3b82f6",
-};
+// const MOCK_CUSTOMER: Customer = {
+//   id: "1",
+//   name: "Nguyễn Thị Hoa",
+//   initial: "N",
+//   phone: "0901 234 567",
+//   points: 2450,
+//   tier: "Bạc",
+//   color: "#3b82f6",
+// };
 
 interface CartProps {
   items: CartItem[];
@@ -18,14 +18,17 @@ interface CartProps {
   onRemove: (id: string) => void;
   onPay: () => void;
   onSelectCustomer: () => void;
+  customer?: Customer;
 }
 
-const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSelectCustomer }) => {
+const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSelectCustomer, customer }) => {
   const [orderType, setOrderType] = useState<OrderType>("retail");
   const [voucher, setVoucher] = useState("");
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
   const itemCount = items.length;
+
+  console.log("itemsCart", items);
 
   const formatVND = (n: number) => n.toLocaleString("vi") + " ₫";
 
@@ -52,16 +55,23 @@ const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSele
 
         {/* Customer */}
         <div className="cust-box cust-box--filled" onClick={onSelectCustomer}>
-          <div className="cust-av" style={{ background: MOCK_CUSTOMER.color }}>
-            {MOCK_CUSTOMER.initial}
-          </div>
-          <div className="cust-info">
-            <div className="cust-name">{MOCK_CUSTOMER.name}</div>
-            <div className="cust-pts">
-              ⭐ {MOCK_CUSTOMER.points.toLocaleString("vi")} điểm · Hạng {MOCK_CUSTOMER.tier}
+          {customer ? (
+            <>
+              <div className="cust-av" style={{ background: customer.color }}>
+                {customer.initial}
+              </div>
+              <div className="cust-info">
+                <div className="cust-name">{customer.name}</div>
+                <div className="cust-pts">
+                  ⭐ {customer.points.toLocaleString("vi")} điểm · Hạng {customer.tier}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="cust-placeholder">
+              <p>Chọn khách hàng</p>
             </div>
-          </div>
-          <span className="cust-edit">✏️</span>
+          )}
         </div>
       </div>
 
@@ -75,11 +85,14 @@ const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSele
         )}
         {items.map((item) => (
           <div key={item.id} className="ci">
-            <div className="ci__icon">{item.icon}</div>
+            <div className="ci__icon">
+              {item.avatar ? <img src={item.avatar} alt={item.name} /> : <span style={{ fontSize: "30px" }}>{item.icon}</span>}
+              {/* {item.icon} */}
+            </div>
             <div className="ci__info">
               <div className="ci__name">{item.name}</div>
               <div className="ci__price">
-                {item.priceLabel}/{item.unit}
+                {formatVND(item.price)}/{item.unitName || item.unit}
               </div>
             </div>
             <div className="ci__qty">

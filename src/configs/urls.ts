@@ -2214,7 +2214,7 @@ export const urlsApi = {
     deleteCustomer: prefixAdmin + "/maCustomer/delete",
     updateMapping: prefixAdmin + "/maMapping/update",
     detailMapping: prefixAdmin + "/maMapping/get",
-  },  
+  },
 
   //TODO: Start quy trình bpm
   businessProcess: {

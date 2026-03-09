@@ -1,17 +1,22 @@
 export interface CartItem {
   id: string;
   icon: string;
+  avatar?: string;
+  unitName?: string;
   name: string;
-  priceLabel: string;
+  priceLabel?: string;
   price: number;
-  unit: string;
+  unit?: string;
   qty: number;
 }
 
 export interface Product {
   id: string;
   icon: string;
+  avatar?: string;
+  unitName?: string;
   name: string;
+  s;
   priceLabel: string;
   price: number;
   stock: number;

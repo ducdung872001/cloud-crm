@@ -5,16 +5,17 @@ import "./index.scss";
 import { useProductCategory } from "./useProductCategory";
 import { IProductListParams, useProductList } from "./useProductList";
 import { IProductFilterRequest } from "@/model/product/ProductRequestModel";
+import { formatCurrency } from "reborn-util";
 
 const PRODUCTS: Product[] = [
-  { id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, stock: 142, unit: "hộp" },
-  { id: "2", icon: "🥤", name: "Pepsi 330ml", priceLabel: "12,000 ₫", price: 12000, stock: 320, unit: "lon" },
-  { id: "3", icon: "🍜", name: "Mì Hảo Hảo Tôm Chua Cay", priceLabel: "4,500 ₫", price: 4500, stock: 8, unit: "gói", lowStock: true },
-  { id: "4", icon: "🍵", name: "Trà xanh 0 độ 500ml", priceLabel: "10,000 ₫", price: 10000, stock: 96, unit: "chai" },
-  { id: "5", icon: "🧻", name: "Giấy VS Bless You 10 cuộn", priceLabel: "42,000 ₫", price: 42000, stock: 85, unit: "gói" },
-  { id: "6", icon: "🍫", name: "KitKat 4 thanh", priceLabel: "25,000 ₫", price: 25000, stock: 44, unit: "cái" },
-  { id: "7", icon: "🧃", name: "Nước ép cam VinaFruta", priceLabel: "22,000 ₫", price: 22000, stock: 55, unit: "hộp" },
-  { id: "8", icon: "🧴", name: "Dầu gội Clear Men 380ml", priceLabel: "89,000 ₫", price: 89000, stock: 28, unit: "chai" },
+  // { id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, stock: 142, unit: "hộp" },
+  // { id: "2", icon: "🥤", name: "Pepsi 330ml", priceLabel: "12,000 ₫", price: 12000, stock: 320, unit: "lon" },
+  // { id: "3", icon: "🍜", name: "Mì Hảo Hảo Tôm Chua Cay", priceLabel: "4,500 ₫", price: 4500, stock: 8, unit: "gói", lowStock: true },
+  // { id: "4", icon: "🍵", name: "Trà xanh 0 độ 500ml", priceLabel: "10,000 ₫", price: 10000, stock: 96, unit: "chai" },
+  // { id: "5", icon: "🧻", name: "Giấy VS Bless You 10 cuộn", priceLabel: "42,000 ₫", price: 42000, stock: 85, unit: "gói" },
+  // { id: "6", icon: "🍫", name: "KitKat 4 thanh", priceLabel: "25,000 ₫", price: 25000, stock: 44, unit: "cái" },
+  // { id: "7", icon: "🧃", name: "Nước ép cam VinaFruta", priceLabel: "22,000 ₫", price: 22000, stock: 55, unit: "hộp" },
+  // { id: "8", icon: "🧴", name: "Dầu gội Clear Men 380ml", priceLabel: "89,000 ₫", price: 89000, stock: 28, unit: "chai" },
 ];
 
 interface ProductGridProps {
@@ -46,10 +47,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
     onAddToCart({
       id: prod.id,
       icon: prod.icon,
+      avatar: prod.avatar,
       name: prod.name,
-      priceLabel: prod.priceLabel,
+      priceLabel: String(formatCurrency(prod.price, ".", "₫")),
       price: prod.price,
-      unit: prod.unit,
+      unitName: prod.unitName || prod.unit,
     });
   };
 
@@ -96,7 +98,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
             <div className="pg-card__name">{prod.name}</div>
             <div className="pg-card__price">{prod.priceLabel}</div>
             <div className={`pg-card__stock${prod.lowStock ? " pg-card__stock--warn" : ""}`}>
-              Tồn: {prod.minQuantity} {prod.unit} {prod.lowStock ? "⚠️" : ""}
+              Tồn: {prod.minQuantity} {prod.unitName || prod.unit} {prod.lowStock ? "⚠️" : ""}
             </div>
             <button
               className="pg-card__add"
