@@ -68,7 +68,6 @@ export default function CustomerAndSupplier() {
   const [showModalAddManagementOpportunity, setShowModalAddManagementOpportunity] = useState<boolean>(false);
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
   const takeParamsUrl = getSearchParameters();
-  console.log("takeParamsUrl", takeParamsUrl);
 
   //! đoạn này call API mối quan hệ khách hàng
   const [listRelationship, setListRelationship] = useState<IRelationShipResposne[]>([]);

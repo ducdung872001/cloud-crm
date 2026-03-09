@@ -4,7 +4,6 @@ import _ from "lodash";
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
 import { getSearchParameters, getPageOffset, getDomain } from "reborn-util";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
@@ -1741,7 +1740,7 @@ export default function CustomerPersonList() {
     if (response.code === 0) {
       const result = response.result.items;
       return result;
-    } else {      
+    } else {
       return [];
     }
   };
@@ -1973,70 +1972,77 @@ export default function CustomerPersonList() {
     }
   }, [columnDefs]);
 
-  const abortController = new AbortController();
-  const getListCustomer = async (paramsSearch: ICustomerSchedulerFilterRequest, activeTitleHeader?) => {
+  const getListCustomer = async (paramsSearch: ICustomerSchedulerFilterRequest, activeTitleHeader?, signal?: AbortSignal) => {
     setIsLoading(true);
-    // const response = await CustomerService.filter(paramsSearch, abortController.signal);
-
-    let response = null;
-
-    if (activeTitleHeader === 1) {
-      response = await CustomerService.filter(paramsSearch, abortController.signal);
-    } else {
-      if (!paramsSearch.targetBsnId) {
-        setListCustomer([]);
-        setIsLoading(false);
-        setIsNoItem(true);
-        return;
-      } else {
-        response = await CustomerService.listshared(paramsSearch, abortController.signal);
-      }
-    }
-
-    if (response.code === 0) {
-      localStorage.setItem("backUpUrlCustomer", JSON.stringify(params));
-      const result = response.result;
-
-      const changeResult = result.items
-        .filter((item) => (item.lstCustomerExtraInfo || []).length > 0)
-        .map((el) => el.lstCustomerExtraInfo)
-        .flat()
-        .map((ol) => {
-          if (ol.datatype === "date") {
-            return { ...ol, attributeValue: moment(ol.attributeValue).format("DD/MM/YYYY") };
-          }
-
-          return ol;
-        });
-
-      setLstCustomerExtraInfo(changeResult);
-      setListCustomer(result.items);
+    try {
+      let response = null;
 
       if (activeTitleHeader === 1) {
-        setPagination({
-          ...pagination,
-          page: +result.page,
-          sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
-          totalItem: +result.total,
-          totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
-        });
+        response = await CustomerService.filter(paramsSearch, signal);
       } else {
-        setPaginationPartner({
-          ...paginationPartner,
-          page: +result.page,
-          sizeLimit: paramsCustomerPartner.limit ?? DataPaginationDefault.sizeLimit,
-          totalItem: +result.total,
-          totalPage: Math.ceil(+result.total / +(paramsCustomerPartner.limit ?? DataPaginationDefault.sizeLimit)),
-        });
+        if (!paramsSearch.targetBsnId) {
+          setListCustomer([]);
+          setIsLoading(false);
+          setIsNoItem(true);
+          return;
+        } else {
+          response = await CustomerService.listshared(paramsSearch, signal);
+        }
       }
 
-      if (+result.total === 0 && !params.keyword && +result.page === 1) {
-        setIsNoItem(true);
+      if (response.code === 0) {
+        localStorage.setItem("backUpUrlCustomer", JSON.stringify(params));
+        const result = response.result;
+
+        const changeResult = result.items
+          .filter((item) => (item.lstCustomerExtraInfo || []).length > 0)
+          .map((el) => el.lstCustomerExtraInfo || [])
+          .flat()
+          .map((ol) => {
+            if (ol.datatype === "date") {
+              return { ...ol, attributeValue: moment(ol.attributeValue).format("DD/MM/YYYY") };
+            }
+
+            return ol;
+          });
+
+        setLstCustomerExtraInfo(changeResult);
+        setListCustomer(result.items);
+
+        if (activeTitleHeader === 1) {
+          setPagination((prev) => ({
+            ...prev,
+            page: +result.page,
+            sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
+            totalItem: +result.total,
+            totalPage: Math.ceil(+result.total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)),
+          }));
+        } else {
+          setPaginationPartner((prev) => ({
+            ...prev,
+            page: +result.page,
+            sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
+            totalItem: +result.total,
+            totalPage: Math.ceil(+result.total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)),
+          }));
+        }
+
+        if (+result.total === 0 && !params.keyword && +result.page === 1) {
+          setIsNoItem(true);
+        }
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      setIsLoading(false);
+    } catch (error: any) {
+      // 👇 QUAN TRỌNG
+      if (error.name === "AbortError") {
+        return; // bỏ qua
+      }
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -2048,13 +2054,14 @@ export default function CustomerPersonList() {
   }, []);
 
   useEffect(() => {
+    const abortController = new AbortController();
     if (!isMounted.current) {
       isMounted.current = true;
       return;
     }
     if (isMounted.current === true) {
       if (activeTitleHeader === 1) {
-        getListCustomer(params, activeTitleHeader);
+        getListCustomer(params, activeTitleHeader, abortController.signal);
       }
 
       const paramsTemp = _.cloneDeep(params);
@@ -2152,36 +2159,39 @@ export default function CustomerPersonList() {
     });
   }, []);
 
-  const handleTestExportApi = useCallback(async (unitCode: string, month: number, year: number) => {
-    if (isTestExporting) return;
+  const handleTestExportApi = useCallback(
+    async (unitCode: string, month: number, year: number) => {
+      if (isTestExporting) return;
 
-    try {
-      setIsTestExporting(true);
+      try {
+        setIsTestExporting(true);
 
-      const response = await CustomerService.export({ unitCode, month, year });
+        const response = await CustomerService.export({ unitCode, month, year });
 
-      if (response && response.ok) {
-        const blob = await response.blob();
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = downloadUrl;
-        link.download = `payroll-${unitCode}-${year}-${month}.xlsx`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(downloadUrl);
+        if (response && response.ok) {
+          const blob = await response.blob();
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.download = `payroll-${unitCode}-${year}-${month}.xlsx`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(downloadUrl);
 
-        showToast("Export payroll thành công", "success");
-        setShowTestExportModal(false);
-      } else {
-        showToast("Gọi API export thất bại. Vui lòng thử lại sau!", "error");
+          showToast("Export payroll thành công", "success");
+          setShowTestExportModal(false);
+        } else {
+          showToast("Gọi API export thất bại. Vui lòng thử lại sau!", "error");
+        }
+      } catch (error) {
+        showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
+      } finally {
+        setIsTestExporting(false);
       }
-    } catch (error) {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
-    } finally {
-      setIsTestExporting(false);
-    }
-  }, [isTestExporting]);
+    },
+    [isTestExporting]
+  );
 
   const openTestExportModal = useCallback(() => {
     const now = new Date();
@@ -3578,7 +3588,7 @@ export default function CustomerPersonList() {
             setDataCustomer(null);
             setShowModalAddXml(false);
           }}
-        />        
+        />
         <UpdateCommon
           onShow={showModalUpdateCommon}
           listId={listIdChecked}
@@ -3594,7 +3604,7 @@ export default function CustomerPersonList() {
           isActiveCustomerSource={isActiveCustomerSource}
           isActiveCustomerEmployee={isActiveCustomerEmployee}
           isActiveCustomeRelationship={isActiveCustomeRelationship}
-        />      
+        />
         {/* <ModalAddMA onShow={showModalAddMA} idCustomer={idCustomer} onHide={() => setShowModalAddMA(false)} /> */}
 
         <ViewOpportunityBTwoB

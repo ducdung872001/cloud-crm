@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { IActionModal } from "model/OtherModel";
 import { showToast } from "utils/common";
+import "./ViettelModals.scss";
 
 interface ViettelTendooModalProps {
     isOpen: boolean;

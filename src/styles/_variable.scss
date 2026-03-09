@@ -26,15 +26,15 @@ $box-shadow-input: inset 0 1px 0 0 rgb(63 63 68 / 5%);
 $box-shadow-button: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
 //Chart colors
 $chart-color-violet: rgb(110, 105, 211);
-$chart-color-violet-darker: rgb(84,79,197);
-$chart-color-green: rgb(0,226,114);
-$chart-color-orange: rgb(254,181,106);
-$chart-color-orange-dark: rgb(254,106,53);
+$chart-color-violet-darker: rgb(84, 79, 197);
+$chart-color-green: rgb(0, 226, 114);
+$chart-color-orange: rgb(254, 181, 106);
+$chart-color-orange-dark: rgb(254, 106, 53);
 $chart-color-pink: rgb(225, 155, 250);
-$chart-color-pink-dark:rgb(213,104,251);
-$chart-color-coban: rgb(46,224,202);
-$chart-color-red: rgb(250,75,66);
-$chart-color-black: rgb(0,0,0);
+$chart-color-pink-dark: rgb(213, 104, 251);
+$chart-color-coban: rgb(46, 224, 202);
+$chart-color-red: rgb(250, 75, 66);
+$chart-color-black: rgb(0, 0, 0);
 $chart-color-blue: #015aa4;
 
 :root {
@@ -91,4 +91,34 @@ $chart-color-blue: #015aa4;
   --chart-color-true: #{$chart-color-violet};
   --chart-color-out-date: #{$chart-color-orange-dark};
   --chart-color-today: #{$chart-color-orange};
+
+  // Counter Sales specific
+  --ink: #0a0f1e;
+  --ink2: #1a2035;
+  --ink3: #252d42;
+  --paper: #f5f6fa;
+  --white: #ffffff;
+  --border: #e0e4f0;
+  --border2: #c8cede;
+  --muted: #6b7899;
+  --muted2: #9aa3bf;
+  --lime: #84cc16;
+  --lime-d: #65a30d;
+  --lime-l: #f0fdf4;
+  --lime-20: rgba(132, 204, 22, 0.15);
+  --teal: #0d9488;
+  --teal-l: #f0fdfa;
+  --blue: #3b82f6;
+  --blue-l: #eff6ff;
+  --orange: #f97316;
+  --orange-l: #fff7ed;
+  --red: #ef4444;
+  --red-l: #fef2f2;
+  --gold: #eab308;
+  --gold-l: #fefce8;
+  --purple: #a855f7;
+  --purple-l: #faf5ff;
+  --sh: 0 1px 3px rgba(10, 15, 30, 0.07), 0 1px 2px rgba(10, 15, 30, 0.04);
+  --sh2: 0 4px 16px rgba(10, 15, 30, 0.09);
+  --sh3: 0 20px 60px rgba(10, 15, 30, 0.18);
 }

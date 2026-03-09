@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { handleChangeValidate } from "utils/validate";
+import "./ViettelSettings.scss";
 
 interface Props {
   onNavigate?: (tab: "overview" | "wizard" | "settings" | "analytics") => void;

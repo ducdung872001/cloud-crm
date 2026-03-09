@@ -4,15 +4,13 @@ import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { IListTabDetailProps } from "model/customer/PropsModel";
 import "./ListDetailTabPartner.scss";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
 import ExchangePartnerList from "./ExchangePartnerList/ExchangePartnerList";
 import OrderPartnerList from "./OrderPartnerList/OrderPartnerList";
 
 export default function ListDetailTabPartner(props: IListTabDetailProps) {
   const { data } = props;
 
-//   const { type } = useParams();
+  //   const { type } = useParams();
   const swiperRelationshipRef = useRef(null);
 
   const [tab, setTab] = useState<string>(() => {
@@ -20,7 +18,7 @@ export default function ListDetailTabPartner(props: IListTabDetailProps) {
   });
 
   const [tabChildren, setTabChildren] = useState<string>(() => {
-    return "tab_children_one" ;
+    return "tab_children_one";
   });
 
   const listTabItems = [
@@ -54,7 +52,7 @@ export default function ListDetailTabPartner(props: IListTabDetailProps) {
         // },
       ],
     },
-    
+
     // {
     //   title: "Tài liệu",
     //   is_active: "tab_ten",
@@ -67,8 +65,7 @@ export default function ListDetailTabPartner(props: IListTabDetailProps) {
   const [listTabs, setListTabs] = useState(() => {
     return lstTabLocalStorage && lstTabLocalStorage.length > 0 ? lstTabLocalStorage : listTabItems;
   });
-  console.log('listTabs', listTabs);
-  
+  console.log("listTabs", listTabs);
 
   const handleOnDragEnd = (result) => {
     // Nếu không có đích đến, thoát ra
@@ -135,12 +132,11 @@ export default function ListDetailTabPartner(props: IListTabDetailProps) {
                     )}
                   </Draggable>
                 ))}
-                
+
                 {provided.placeholder}
               </ul>
             )}
           </Droppable>
-          
         </DragDropContext>
       </div>
       <div className="details-tab">
@@ -149,17 +145,16 @@ export default function ListDetailTabPartner(props: IListTabDetailProps) {
             <ExchangePartnerList idPartner={data.id} />
           ) : null
         ) : tab === "tab_two" ? (
-            tabChildren === "tab_children_one" ? (
-              <OrderPartnerList />
-            ) : (
-                <div></div>
+          tabChildren === "tab_children_one" ? (
+            <OrderPartnerList />
+          ) : (
+            <div></div>
             //   <InteractList data={data} />
-            )
+          )
         ) : tab === "tab_seven" ? (
-            <div></div>
-          
+          <div></div>
         ) : (
-            <div></div>
+          <div></div>
         )}
       </div>
       {/* <CustomerContact idCustomer={data.id} />

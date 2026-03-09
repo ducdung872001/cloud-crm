@@ -3,7 +3,7 @@ import moment from "moment";
 import Tippy from "@tippyjs/react";
 import parser from "html-react-parser";
 import { useNavigate } from "react-router-dom";
-import SwiperCore, { Navigation } from "swiper";
+// import SwiperCore, { Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Icon from "components/icon";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -20,14 +20,11 @@ import "./ViewDetailPartner.scss";
 import _ from "lodash";
 import PartnerService from "services/PartnerService";
 
-SwiperCore.use([Navigation]);
-
 export default function ViewDetailPartner(props: any) {
-
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
-  const { data, callback, setDeleteSignal, deleteSignal } = props;  
-  
+  const { data, callback, setDeleteSignal, deleteSignal } = props;
+
   const takeUrlCustomerLocalStorage = JSON.parse(localStorage.getItem("backUpUrlCustomer") || "");
 
   const navigate = useNavigate();
@@ -43,29 +40,29 @@ export default function ViewDetailPartner(props: any) {
   // console.log('mapCustomerAttribute', mapCustomerAttribute);
   const [dataCustomerAttribute, setDataCustomerAttribute] = useState<any>(null);
 
-//   useEffect(() => {
-//     if(data){
-//       const listNewItem = [];
-//       const customerExtraInfos = data.lstCustomerExtraInfo;
-//       const customerAttribute = data.mapCustomerAttribute;
-//       Object.entries(customerAttribute).map((lstCustomerAttribute: any, key: number) => {
-//         (lstCustomerAttribute[1] || []).map((customerAttribute, index: number) => {
-//           if(customerAttribute.parentId ){
-//             const newItem = {
-//               // attributeId: customerAttribute.id,
-//               attributeName: customerAttribute.name,
-//               fieldName: customerAttribute.fieldName,
-//               // dataType: customerAttribute.datatype,
-//               attributeValue: getContractAttributeValue(customerAttribute.id, customerAttribute.datatype, customerExtraInfos)
-//             }
-            
-//             listNewItem.push(newItem);
-//           }
-//         })
-//       })
-//       setDataCustomerAttribute(listNewItem);
-//     }
-//   }, [data])
+  //   useEffect(() => {
+  //     if(data){
+  //       const listNewItem = [];
+  //       const customerExtraInfos = data.lstCustomerExtraInfo;
+  //       const customerAttribute = data.mapCustomerAttribute;
+  //       Object.entries(customerAttribute).map((lstCustomerAttribute: any, key: number) => {
+  //         (lstCustomerAttribute[1] || []).map((customerAttribute, index: number) => {
+  //           if(customerAttribute.parentId ){
+  //             const newItem = {
+  //               // attributeId: customerAttribute.id,
+  //               attributeName: customerAttribute.name,
+  //               fieldName: customerAttribute.fieldName,
+  //               // dataType: customerAttribute.datatype,
+  //               attributeValue: getContractAttributeValue(customerAttribute.id, customerAttribute.datatype, customerExtraInfos)
+  //             }
+
+  //             listNewItem.push(newItem);
+  //           }
+  //         })
+  //       })
+  //       setDataCustomerAttribute(listNewItem);
+  //     }
+  //   }, [data])
 
   const getContractAttributeValue = (attributeId, datatype, customerExtraInfos) => {
     let attributeValue = "";
@@ -113,11 +110,7 @@ export default function ViewDetailPartner(props: any) {
       isCentered: true,
       isLoading: true,
       title: <Fragment>Xóa đối tác</Fragment>,
-      message: (
-        <Fragment>
-          Bạn có chắc chắn muốn xóa đối tác {item ? <strong> {item.name}</strong> : ""}? Thao tác này không thể khôi phục.
-        </Fragment>
-      ),
+      message: <Fragment>Bạn có chắc chắn muốn xóa đối tác {item ? <strong> {item.name}</strong> : ""}? Thao tác này không thể khôi phục.</Fragment>,
       cancelText: "Hủy",
       cancelAction: () => {
         setShowDialog(false);
@@ -162,7 +155,6 @@ export default function ViewDetailPartner(props: any) {
       name: data.sourceName || notData,
     },
   ];
-
 
   useEffect(() => {
     //TODO: Khi mà chuyền function như này rất dễ bị dính cảnh bảo rò rỉ bộ nhớ, cách fix là clear nó đi
@@ -230,7 +222,6 @@ export default function ViewDetailPartner(props: any) {
     }
   }, [isShowEmail]);
 
-
   return (
     <div className="view-detail-partner">
       <div className="basic-infor">
@@ -281,14 +272,12 @@ export default function ViewDetailPartner(props: any) {
               </Tippy>
             </div>
             <span className="info__item--right">
-              {valueShowPhone ? valueShowPhone : (data.phoneUnmasked || data.phoneMasked)}
-              {data.phoneMasked && !data.phoneUnmasked?
+              {valueShowPhone ? valueShowPhone : data.phoneUnmasked || data.phoneMasked}
+              {data.phoneMasked && !data.phoneUnmasked ? (
                 <span className="icon" onClick={() => setIsShowPhone(!isShowPhone)}>
                   <Icon name={isShowPhone ? "EyeSlash" : "Eye"} />
                 </span>
-                : null
-              }
-               
+              ) : null}
             </span>
           </div>
           <div className="info__item">
@@ -304,12 +293,12 @@ export default function ViewDetailPartner(props: any) {
 
               {(data.email || data.emailMasked) && (
                 <span className="icon" onClick={() => setIsShowEmail(!isShowEmail)}>
-                  <Icon name={isShowEmail ? "EyeSlash" : "Eye" } />
+                  <Icon name={isShowEmail ? "EyeSlash" : "Eye"} />
                 </span>
               )}
             </span>
           </div>
-         
+
           <div className="info__item">
             <div className="info__item--left">
               <Tippy content="Địa chỉ" delay={[100, 0]} animation="scale-extreme">

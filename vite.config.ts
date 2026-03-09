@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
     ];
 
     // Add all required environment variables
-    requiredEnvVars.forEach(varName => {
+    requiredEnvVars.forEach((varName) => {
       definitions[`process.env.${varName}`] = JSON.stringify(envVars[varName] || "");
     });
 
