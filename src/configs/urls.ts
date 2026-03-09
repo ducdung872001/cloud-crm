@@ -12,6 +12,7 @@ const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
 const prefixFinance = "https://reborn.vn/finance";
 const prefixWarehouse = "https://reborn.vn/warehouse";
+const prefixBiz = "https://biz.reborn.vn";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -2214,6 +2215,24 @@ export const urlsApi = {
     deleteCustomer: prefixAdmin + "/maCustomer/delete",
     updateMapping: prefixAdmin + "/maMapping/update",
     detailMapping: prefixAdmin + "/maMapping/get",
+    //Chương trình khách hàng thân thiết
+    listLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/list",
+    updateLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/update",
+    deleteLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/delete",
+    //Sổ quỹ điểm
+    listLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/list",
+    updateLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/update",
+    deleteLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/delete",
+    //Danh sách đổi thưởng
+    listLoyaltyReward: prefixBiz + "/market/loyaltyReward/list",
+    updateLoyaltyReward: prefixBiz + "/market/loyaltyReward/update",
+    deleteLoyaltyReward: prefixBiz + "/market/loyaltyReward/delete",
+    //phân hạng hội viên 
+    listLoyaltySegment: prefixBiz + "/market/loyaltySegment/list",
+    updateLoyaltySegment: prefixBiz + "/market/loyaltySegment/update",
+    deleteLoyaltySegment: prefixBiz + "/market/loyaltySegment/delete",
+    //ví hội viên
+    listLoyaltyWallet: prefixBiz + "/market/loyaltyWallet/list",
   },
 
   //TODO: Start quy trình bpm
@@ -3196,6 +3215,10 @@ export const urls = {
   setting_partner: "/setting_partner",
   setting_contact: "/setting_contact",
   setting_loyalty: "/setting_loyalty",
+  loyalty_point_ledger: "/loyalty_point_ledger",
+  loyalty_reward: "/loyalty_reward",
+  loyalty_segment: "/loyalty_segment",
+  loyalty_wallet: "/loyalty_wallet",
   setting_sell: "/setting_sell",
   //Cài đặt hợp đồng
   setting_contract: "/setting_contract",

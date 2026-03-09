@@ -95,7 +95,10 @@ import { getRootDomain } from "utils/common";
 import ViettelIntegration from "@/pages/ViettelIntegration/ViettelIntegration";
 // Khảo sát khách hàng
 import CustomerSurvey from "pages/CustomerSurvey";
-
+import LoyaltyPointLedger from "pages/LoyaltyPointLedger";
+import LoyaltyReward from "pages/LoyaltyReward";
+import LoyaltySegment from "pages/LoyaltySegment";
+import LoyaltyWallet from "pages/LoyaltyWallet";
 // tạo đường link khảo sát
 import LinkSurvey from "pages/LinkSurvey";
 import SettingProcess from "pages/SettingProcess/SettingProcess";
@@ -385,6 +388,30 @@ export const menu: IMenuItem[] = [
       {
         title: "settingLoyalty", // Cài đặt chương trình khách hàng thân thiết
         path: urls.setting_loyalty,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
+        title: "loyaltyPointLedger", // Sổ nhật ký điểm thưởng
+        path: urls.loyalty_point_ledger,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
+        title: "loyaltyReward", // Danh sách phần thưởng
+        path: urls.loyalty_reward,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
+        title: "loyaltySegment", // Danh sách hạng hội viên
+        path: urls.loyalty_segment,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
+        title: "loyaltyWallet", // Sổ quỹ điểm loyalty
+        path: urls.loyalty_wallet,
         icon: <Icon name="SettingCustomer" />,
         code: "",
       },
@@ -1119,6 +1146,22 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_loyalty,
     component: <SettingLoyaltyList />,
+  },
+  {
+    path: urls.loyalty_point_ledger,
+    component: <LoyaltyPointLedger />,
+  },
+  {
+    path: urls.loyalty_reward,
+    component: <LoyaltyReward />,
+  },
+  {
+    path: urls.loyalty_segment,
+    component: <LoyaltySegment />,
+  },
+  {
+    path: urls.loyalty_wallet,
+    component: <LoyaltyWallet />,
   },
   {
     path: urls.setting_sell,

@@ -1,0 +1,105 @@
+.reward-items-section {
+    margin-top: 12px;
+
+    .reward-items-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: #212B35;
+        margin-bottom: 8px;
+    }
+
+    .reward-items-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .reward-item-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .reward-item-select,
+        .reward-item-qty {
+            flex: 1;
+            min-width: 0;
+            font-size: 14px;
+
+            .rs__control {
+                border-color: #d9d9d9;
+                border-radius: 4px;
+                min-height: 38px;
+                box-shadow: none;
+
+            }
+
+            .rs__control--is-focused {
+                border-color: #015aa4;
+                box-shadow: none;
+            }
+
+            input.form-control {
+                height: 38px;
+                border: 1px solid #ced4da;
+                border-radius: 4px;
+                text-align: left;
+                padding: 4px 11px;
+                font-size: 14px;
+                width: 100%;
+
+                &:focus {
+                    border-color: #015aa4;
+                    outline: none;
+                }
+            }
+        }
+
+        .btn-icon {
+            flex-shrink: 0;
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+
+            svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            &.btn-add-row {
+                color: #28a745;
+
+                svg,
+                svg path,
+                i {
+                    fill: #28a745;
+                    color: #28a745;
+                }
+
+                &:hover {
+                    opacity: 0.8;
+                }
+            }
+
+            &.btn-remove-row {
+                color: #dc3545;
+
+                svg,
+                svg path,
+                i {
+                    fill: #dc3545;
+                    color: #dc3545;
+                }
+
+                &:hover {
+                    opacity: 0.8;
+                }
+            }
+        }
+    }
+}

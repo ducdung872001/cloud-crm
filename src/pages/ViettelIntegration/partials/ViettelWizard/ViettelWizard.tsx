@@ -4,6 +4,7 @@ import FileUpload from "components/fileUpload/fileUpload";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { PHONE_REGEX, EMAIL_REGEX } from "utils/constant";
 import Validate, { handleChangeValidate } from "utils/validate";
+import "./ViettelWizard.scss";
 
 interface ViettelWizardProps {
     setActiveTab: (tab: "overview" | "wizard" | "settings" | "analytics") => void;
