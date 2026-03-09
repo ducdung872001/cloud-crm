@@ -29,13 +29,11 @@ import App from "./App";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <React.StrictMode>
-    <CookiesProvider>
-      <I18nextProvider i18n={i18n}>
-        <BrowserRouter basename="/crm/">
-          <App />
-        </BrowserRouter>
-      </I18nextProvider>
-    </CookiesProvider>
-  </React.StrictMode>
+  <CookiesProvider>
+    <I18nextProvider i18n={i18n}>
+      <BrowserRouter basename="/crm/">
+        <App />
+      </BrowserRouter>
+    </I18nextProvider>
+  </CookiesProvider>
 );
