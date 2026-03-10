@@ -607,16 +607,16 @@ export interface IStockCheckItem {
 // MOCK DATA
 // =====================
 export const MOCK_STOCK: IStockItem[] = [
-  { id: 1,  productId: 1,  productName: "Thuốc trị sẹo",      productCode: "PRODUCT01", unitName: "Hộp",   currentStock: 130, avgCost: 145000, warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 2,  productId: 2,  productName: "Găng tay y tế",       productCode: "PRODUCT02", unitName: "Hộp",   currentStock: 160, avgCost: 75000,  warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 3,  productId: 3,  productName: "Khẩu trang N95",      productCode: "PRODUCT03", unitName: "Cái",   currentStock: 150, avgCost: 23000,  warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 4,  productId: 4,  productName: "Nước muối sinh lý",   productCode: "PRODUCT04", unitName: "Chai",  currentStock: 275, avgCost: 14000,  warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 5,  productId: 5,  productName: "Vitamin C 1000mg",    productCode: "PRODUCT05", unitName: "Hộp",   currentStock: 150, avgCost: 118000, warehouseId: 2, warehouseName: "Kho chi nhánh 1" },
-  { id: 6,  productId: 6,  productName: "Băng dính y tế",      productCode: "PRODUCT06", unitName: "Cuộn",  currentStock: 130, avgCost: 19000,  warehouseId: 2, warehouseName: "Kho chi nhánh 2" },
-  { id: 7,  productId: 7,  productName: "Oxy già 3%",          productCode: "PRODUCT07", unitName: "Chai",  currentStock: 70,  avgCost: 17000,  warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 8,  productId: 8,  productName: "Cồn y tế 70%",        productCode: "PRODUCT08", unitName: "Chai",  currentStock: 250, avgCost: 21000,  warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 9,  productId: 9,  productName: "Paracetamol 500mg",   productCode: "PRODUCT09", unitName: "Vỉ",    currentStock: 600, avgCost: 7500,   warehouseId: 2, warehouseName: "Kho chi nhánh 2" },
-  { id: 10, productId: 10, productName: "Dầu gió xanh",        productCode: "PRODUCT10", unitName: "Lọ",    currentStock: 165, avgCost: 33000,  warehouseId: 2, warehouseName: "Kho chi nhánh 1" },
+  { id: 1, productId: 1, productName: "Thuốc trị sẹo", productCode: "PRODUCT01", unitName: "Hộp", currentStock: 130, avgCost: 145000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 2, productId: 2, productName: "Găng tay y tế", productCode: "PRODUCT02", unitName: "Hộp", currentStock: 160, avgCost: 75000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 3, productId: 3, productName: "Khẩu trang N95", productCode: "PRODUCT03", unitName: "Cái", currentStock: 150, avgCost: 23000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 4, productId: 4, productName: "Nước muối sinh lý", productCode: "PRODUCT04", unitName: "Chai", currentStock: 275, avgCost: 14000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 5, productId: 5, productName: "Vitamin C 1000mg", productCode: "PRODUCT05", unitName: "Hộp", currentStock: 150, avgCost: 118000, warehouseId: 2, warehouseName: "Kho chi nhánh 1" },
+  { id: 6, productId: 6, productName: "Băng dính y tế", productCode: "PRODUCT06", unitName: "Cuộn", currentStock: 130, avgCost: 19000, warehouseId: 2, warehouseName: "Kho chi nhánh 2" },
+  { id: 7, productId: 7, productName: "Oxy già 3%", productCode: "PRODUCT07", unitName: "Chai", currentStock: 70, avgCost: 17000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 8, productId: 8, productName: "Cồn y tế 70%", productCode: "PRODUCT08", unitName: "Chai", currentStock: 250, avgCost: 21000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 9, productId: 9, productName: "Paracetamol 500mg", productCode: "PRODUCT09", unitName: "Vỉ", currentStock: 600, avgCost: 7500, warehouseId: 2, warehouseName: "Kho chi nhánh 2" },
+  { id: 10, productId: 10, productName: "Dầu gió xanh", productCode: "PRODUCT10", unitName: "Lọ", currentStock: 165, avgCost: 33000, warehouseId: 2, warehouseName: "Kho chi nhánh 1" },
 ];
 
 export const MOCK_IMPORT_ORDERS: IImportOrder[] = [
@@ -731,14 +731,14 @@ export const MOCK_EXPORT_ORDERS: IExportOrder[] = [
 ];
 
 export const MOCK_STOCK_CHECK: IStockCheckItem[] = [
-  { productId: 1,  productName: "Thuốc trị sẹo",     productCode: "PRODUCT01", unitName: "Hộp",  systemStock: 130, actualStock: 128, difference: -2,  avgCost: 145000, diffAmount: -290000 },
-  { productId: 2,  productName: "Găng tay y tế",      productCode: "PRODUCT02", unitName: "Hộp",  systemStock: 160, actualStock: 160, difference: 0,   avgCost: 75000,  diffAmount: 0 },
-  { productId: 3,  productName: "Khẩu trang N95",     productCode: "PRODUCT03", unitName: "Cái",  systemStock: 150, actualStock: 155, difference: 5,   avgCost: 23000,  diffAmount: 115000 },
-  { productId: 4,  productName: "Nước muối sinh lý",  productCode: "PRODUCT04", unitName: "Chai", systemStock: 275, actualStock: 270, difference: -5,  avgCost: 14000,  diffAmount: -70000 },
-  { productId: 5,  productName: "Vitamin C 1000mg",   productCode: "PRODUCT05", unitName: "Hộp",  systemStock: 150, actualStock: 150, difference: 0,   avgCost: 118000, diffAmount: 0 },
-  { productId: 6,  productName: "Băng dính y tế",     productCode: "PRODUCT06", unitName: "Cuộn", systemStock: 130, actualStock: 132, difference: 2,   avgCost: 19000,  diffAmount: 38000 },
-  { productId: 7,  productName: "Oxy già 3%",         productCode: "PRODUCT07", unitName: "Chai", systemStock: 70,  actualStock: 68,  difference: -2,  avgCost: 17000,  diffAmount: -34000 },
-  { productId: 8,  productName: "Cồn y tế 70%",       productCode: "PRODUCT08", unitName: "Chai", systemStock: 250, actualStock: 250, difference: 0,   avgCost: 21000,  diffAmount: 0 },
-  { productId: 9,  productName: "Paracetamol 500mg",  productCode: "PRODUCT09", unitName: "Vỉ",   systemStock: 600, actualStock: 595, difference: -5,  avgCost: 7500,   diffAmount: -37500 },
-  { productId: 10, productName: "Dầu gió xanh",       productCode: "PRODUCT10", unitName: "Lọ",   systemStock: 165, actualStock: 167, difference: 2,   avgCost: 33000,  diffAmount: 66000 },
+  { productId: 1, productName: "Thuốc trị sẹo", productCode: "PRODUCT01", unitName: "Hộp", systemStock: 130, actualStock: 128, difference: -2, avgCost: 145000, diffAmount: -290000 },
+  { productId: 2, productName: "Găng tay y tế", productCode: "PRODUCT02", unitName: "Hộp", systemStock: 160, actualStock: 160, difference: 0, avgCost: 75000, diffAmount: 0 },
+  { productId: 3, productName: "Khẩu trang N95", productCode: "PRODUCT03", unitName: "Cái", systemStock: 150, actualStock: 155, difference: 5, avgCost: 23000, diffAmount: 115000 },
+  { productId: 4, productName: "Nước muối sinh lý", productCode: "PRODUCT04", unitName: "Chai", systemStock: 275, actualStock: 270, difference: -5, avgCost: 14000, diffAmount: -70000 },
+  { productId: 5, productName: "Vitamin C 1000mg", productCode: "PRODUCT05", unitName: "Hộp", systemStock: 150, actualStock: 150, difference: 0, avgCost: 118000, diffAmount: 0 },
+  { productId: 6, productName: "Băng dính y tế", productCode: "PRODUCT06", unitName: "Cuộn", systemStock: 130, actualStock: 132, difference: 2, avgCost: 19000, diffAmount: 38000 },
+  { productId: 7, productName: "Oxy già 3%", productCode: "PRODUCT07", unitName: "Chai", systemStock: 70, actualStock: 68, difference: -2, avgCost: 17000, diffAmount: -34000 },
+  { productId: 8, productName: "Cồn y tế 70%", productCode: "PRODUCT08", unitName: "Chai", systemStock: 250, actualStock: 250, difference: 0, avgCost: 21000, diffAmount: 0 },
+  { productId: 9, productName: "Paracetamol 500mg", productCode: "PRODUCT09", unitName: "Vỉ", systemStock: 600, actualStock: 595, difference: -5, avgCost: 7500, diffAmount: -37500 },
+  { productId: 10, productName: "Dầu gió xanh", productCode: "PRODUCT10", unitName: "Lọ", systemStock: 165, actualStock: 167, difference: 2, avgCost: 33000, diffAmount: 66000 },
 ];
