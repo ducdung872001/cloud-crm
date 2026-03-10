@@ -1,0 +1,206 @@
+.order-detail-modal {
+  &__code {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  &__header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+// ── Timeline ─────────────────────────────────────
+.od-timeline {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: var(--paper);
+  border-radius: 10px;
+  margin-bottom: 18px;
+
+  &__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  &__dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--muted2);
+    transition: all 0.2s;
+
+    &--done {
+      background: var(--lime);
+      color: #fff;
+    }
+    &--active {
+      background: var(--orange);
+      color: #fff;
+    }
+  }
+
+  &__label {
+    font-size: 10px;
+    color: var(--muted2);
+    font-weight: 600;
+    white-space: nowrap;
+
+    &--done {
+      color: var(--lime-d);
+      font-weight: 700;
+    }
+    &--active {
+      color: var(--orange);
+      font-weight: 700;
+    }
+  }
+
+  &__line {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    margin-bottom: 14px;
+
+    &--done {
+      background: var(--lime);
+    }
+  }
+}
+
+// ── Info panels ───────────────────────────────────
+.od-panels {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.od-panel {
+  flex: 1;
+  background: var(--paper);
+  border-radius: 10px;
+  padding: 12px;
+
+  &__title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+
+  &__name {
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+
+  &__sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+}
+
+// ── Items table ───────────────────────────────────
+.od-items {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+
+  &__header {
+    padding: 9px 12px;
+    background: var(--paper);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__row {
+    padding: 10px 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__name {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  &__detail {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  &__total {
+    font-weight: 800;
+    font-size: 13px;
+  }
+
+  &__grand {
+    padding: 12px 14px;
+    border-top: 1.5px dashed var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    font-weight: 900;
+  }
+
+  &__grand-val {
+    color: var(--lime-d);
+  }
+}
+
+// Badge (shared, can be global)
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.bd-orange {
+  background: var(--orange-l);
+  color: var(--orange);
+}
+.bd-lime {
+  background: var(--lime-l);
+  color: var(--lime-d);
+}
+.bd-blue {
+  background: var(--blue-l);
+  color: var(--blue);
+}
+.bd-red {
+  background: var(--red-l);
+  color: var(--red);
+}

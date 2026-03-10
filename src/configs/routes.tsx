@@ -95,7 +95,10 @@ import { getRootDomain } from "utils/common";
 import ViettelIntegration from "@/pages/ViettelIntegration/ViettelIntegration";
 // Khảo sát khách hàng
 import CustomerSurvey from "pages/CustomerSurvey";
-
+import LoyaltyPointLedger from "pages/LoyaltyPointLedger";
+import LoyaltyReward from "pages/LoyaltyReward";
+import LoyaltySegment from "pages/LoyaltySegment";
+import LoyaltyWallet from "pages/LoyaltyWallet";
 // tạo đường link khảo sát
 import LinkSurvey from "pages/LinkSurvey";
 import SettingProcess from "pages/SettingProcess/SettingProcess";
@@ -171,6 +174,7 @@ import ShippingPartnerSetup from "@/pages/ShipingManagement/ShippingPartnerSetup
 import ShippingReport from "@/pages/ShipingManagement/ShippingReport/ShippingReport";
 import CustomerAndSupplier from "@/pages/CustomerAndSupplier";
 import InventoryManagement from "@/pages/ProductImport/InventoryChecking";
+import CounterSales from "@/pages/CounterSales";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -234,7 +238,7 @@ export const menu: IMenuItem[] = [
       //   path: urls.shipping_fee_config,
       //   icon: <Icon name="Invoice" />,
       //   code: "SALE_INVOICE",
-      // },      
+      // },
       {
         title: "fanpage", // Tương tác & Chốt đơn (Gộp Fanpage & Zalo)
         path: urls.fanpage,
@@ -257,7 +261,7 @@ export const menu: IMenuItem[] = [
       //   path: urls.setting_social_crm,
       //   icon: <Icon name="SettingSocial" />,
       //   code: "MENU_SETUP_SOCIAL_CRM",
-      // },      
+      // },
     ],
   },
   {
@@ -384,6 +388,30 @@ export const menu: IMenuItem[] = [
       {
         title: "settingLoyalty", // Cài đặt chương trình khách hàng thân thiết
         path: urls.setting_loyalty,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
+        title: "loyaltyPointLedger", // Sổ nhật ký điểm thưởng
+        path: urls.loyalty_point_ledger,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
+        title: "loyaltyReward", // Danh sách phần thưởng
+        path: urls.loyalty_reward,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
+        title: "loyaltySegment", // Danh sách hạng hội viên
+        path: urls.loyalty_segment,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
+        title: "loyaltyWallet", // Sổ quỹ điểm loyalty
+        path: urls.loyalty_wallet,
         icon: <Icon name="SettingCustomer" />,
         code: "",
       },
@@ -1120,6 +1148,22 @@ export const routes: IRouter[] = [
     component: <SettingLoyaltyList />,
   },
   {
+    path: urls.loyalty_point_ledger,
+    component: <LoyaltyPointLedger />,
+  },
+  {
+    path: urls.loyalty_reward,
+    component: <LoyaltyReward />,
+  },
+  {
+    path: urls.loyalty_segment,
+    component: <LoyaltySegment />,
+  },
+  {
+    path: urls.loyalty_wallet,
+    component: <LoyaltyWallet />,
+  },
+  {
     path: urls.setting_sell,
     component: <SettingSellList />,
   },
@@ -1239,7 +1283,8 @@ export const routes: IRouter[] = [
   // tạo đơn bán hàng
   {
     path: urls.create_sale_add,
-    component: <CreateOrderSales />,
+    // component: <CreateOrderSales />,
+    component: <CounterSales />,
   },
   // Danh sách yêu cầu mua hàng
   {

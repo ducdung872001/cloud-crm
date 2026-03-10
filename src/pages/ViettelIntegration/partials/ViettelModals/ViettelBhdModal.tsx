@@ -5,6 +5,7 @@ import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IActionModal } from "model/OtherModel";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
+import "./ViettelModals.scss";
 
 interface ViettelBhdModalProps {
     isOpen: boolean;

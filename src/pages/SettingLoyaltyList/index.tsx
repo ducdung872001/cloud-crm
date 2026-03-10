@@ -10,25 +10,23 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, ISaveSearch } from "model/OtherModel";
-import { ICategoryServiceFilterRequest } from "model/categoryService/CategoryServiceRequestModel";
-import { ICategoryServiceResponseModel } from "model/categoryService/CategoryServiceResponseModel";
 import { showToast } from "utils/common";
 import { getPermissions } from "utils/common";
-import CategoryServiceService from "services/CategoryServiceService";
 import { getPageOffset } from "reborn-util";
-
 import "./index.scss";
 import AddProgramLoyaltyModal from "./partials/AddProgramLoyaltyModal";
+import { IRoyaltyFilterRequest } from "@/model/loyalty/RoyaltyRequest";
+import { IProgramRoyaltyResposne } from "@/model/loyalty/RoyaltyResposne";
+import LoyaltyService from "@/services/LoyaltyService";
+import moment from "moment";
 
 export default function SettingLoyaltyList() {
-  document.title = "Danh mục chương trình loyalty";
-
-  //   const { onBackProps } = props;
+  document.title = "Quản lý chương trình loyalty";
 
   const isMounted = useRef(false);
 
-  const [listCategoryService, setListCategoryService] = useState<ICategoryServiceResponseModel[]>([]);
-  const [dataCategoryService, setDataCategoryService] = useState<ICategoryServiceResponseModel>(null);
+  const [listData, setListData] = useState<IProgramRoyaltyResposne[]>([]);
+  const [selectedItem, setSelectedItem] = useState<IProgramRoyaltyResposne>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -36,91 +34,37 @@ export default function SettingLoyaltyList() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
-  const [permissions, setPermissions] = useState(getPermissions());
-  const [params, setParams] = useState<ICategoryServiceFilterRequest>({
-    keyword: "",
-    limit: 10,
-    type: 1,
-  });
+  const [params, setParams] = useState<IRoyaltyFilterRequest>({ name: "", limit: 10 });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
-    {
-      key: "all",
-      name: "Danh mục chương trình loyalty",
-      is_active: true,
-    },
+    { key: "all", name: "Chương trình loyalty", is_active: true },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Danh mục chương trình loyalty",
+    name: "Chương trình loyalty",
     isChooseSizeLimit: true,
-    setPage: (page) => {
-      setParams((prevParams) => ({ ...prevParams, page: page }));
-    },
-    chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, limit: limit }));
-    },
+    setPage: (page) => setParams((prev) => ({ ...prev, page })),
+    chooseSizeLimit: (limit) => setParams((prev) => ({ ...prev, limit })),
   });
 
   const abortController = new AbortController();
 
-  const getListCategoryService = async (paramsSearch: ICategoryServiceFilterRequest) => {
+  const fetchList = async (paramsSearch: IRoyaltyFilterRequest) => {
     setIsLoading(true);
-
-    const response = await CategoryServiceService.list(paramsSearch, abortController.signal);
-
+    const response = await LoyaltyService.list(paramsSearch, abortController.signal);
     if (response.code === 0) {
-      const result = [
-        {
-          id: 67,
-          avatar: "",
-          name: "Chương trình loyalty Tết Bính Ngọ 2026",
-          position: 0,
-          date: "01/01/2026 - 10/01/2026",
-        },
-        {
-          id: 260,
-          avatar: "https://cloud-cdn.reborn.vn/reborn/2025/11/06/6f4dfaeb-afc9-4f65-beec-0d4fd7772b8a-1762447058.jpg",
-          name: "Chương trình loyalty Mùa Hè 2026",
-          position: 1,
-          date: "01/06/2026 - 30/06/2026",
-        },
-        {
-          id: 265,
-          avatar: "",
-          name: "Chương trình loyalty Mùa Thu 2026",
-          position: 2,
-          date: "01/09/2026 - 30/09/2026",
-        },
-        {
-          id: 269,
-          avatar: "https://cloud-cdn.reborn.vn/reborn/2025/12/04/59ec89d1-dc69-4603-b69d-8bfb254b344c-1764837048.jpg",
-          name: "Chương trình loyalty Valentine 2026",
-          position: 3,
-          date: "01/02/2026 - 14/02/2026",
-        },
-        {
-          id: 270,
-          avatar: "https://cloud-cdn.reborn.vn/reborn/2025/12/04/711edd22-114b-4264-9ff9-951806c25ac3-1764840922.jpg",
-          name: "Chương trình loyalty Ngày Phụ Nữ Việt Nam 2026",
-          position: 4,
-          date: "15/10/2026 - 20/10/2026",
-        },
-      ];
-      setListCategoryService(result);
-
-      setPagination({
-        ...pagination,
+      const result = response.result;
+      setListData(result.items ?? []);
+      setPagination((prev) => ({
+        ...prev,
         page: +result.page,
-        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
+        sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
         totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
-      });
-      if (+result.total === 0 && !params?.keyword && +result.page === 1) {
-        setIsNoItem(true);
-      }
-    } else if (response.code == 400) {
+        totalPage: Math.ceil(+result.total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)),
+      }));
+      if (+result.total === 0 && +result.page === 1) setIsNoItem(true);
+    } else if (response.code === 400) {
       setIsPermissions(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -129,83 +73,59 @@ export default function SettingLoyaltyList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
-    setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
+    setParams((prev) => ({ ...prev }));
   }, []);
 
   useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
-
-    if (isMounted.current === true) {
-      getListCategoryService(params);
-      const paramsTemp = _.cloneDeep(params);
-      if (paramsTemp.limit === 10) {
-        delete paramsTemp["limit"];
-      }
-      Object.keys(paramsTemp).map(function (key) {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-    }
-
-    return () => {
-      abortController.abort();
-    };
+    if (!isMounted.current) { isMounted.current = true; return; }
+    fetchList(params);
+    return () => { abortController.abort(); };
   }, [params]);
 
   const titleActions: ITitleActions = {
     actions: [
-      permissions["CATEGORY_SERVICE_ADD"] == 1 && {
+      {
         title: "Thêm mới",
-        callback: () => {
-          setDataCategoryService(null);
-          setShowModalAdd(true);
-        },
+        callback: () => { setSelectedItem(null); setShowModalAdd(true); },
       },
     ],
   };
 
-  const titles = ["STT", "Tên chương trình loyalty", "Thời gian", "Thứ tự hiển thị"];
+  // Cột: STT | Tên chương trình | Người phụ trách | Ngày bắt đầu | Ngày kết thúc | Trạng thái
+  const titles = ["STT", "Tên chương trình loyalty", "Người phụ trách", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"];
+  const dataFormat = ["text-center", "", "", "text-center", "text-center", "text-center"];
+  const dataMappingArray = (item: IProgramRoyaltyResposne, index: number) => [
+    getPageOffset(params) + index + 1,
+    item.name,
+    item.employeeName ?? "—",
+    item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "—",
+    item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "—",
+    item.active ? "Kích hoạt" : "Không kích hoạt",
+  ];
 
-  const dataFormat = ["text-center", "", "text-center", "text-center"];
-
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.date, item.position];
-
-  const actionsTable = (item: ICategoryServiceResponseModel): IAction[] => {
+  const actionsTable = (item: IProgramRoyaltyResposne): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
-      permissions["CATEGORY_SERVICE_UPDATE"] == 1 && {
+      {
         title: "Sửa",
         icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
-        callback: () => {
-          if (!isCheckedItem) {
-            setDataCategoryService(item);
-            setShowModalAdd(true);
-          }
-        },
+        callback: () => { if (!isCheckedItem) { setSelectedItem(item); setShowModalAdd(true); } },
       },
-      permissions["CATEGORY_SERVICE_DELETE"] == 1 && {
+      {
         title: "Xóa",
         icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
         disabled: isCheckedItem,
-        callback: () => {
-          if (!isCheckedItem) {
-            showDialogConfirmDelete(item);
-          }
-        },
+        callback: () => { if (!isCheckedItem) showDialogConfirmDelete(item); },
       },
     ];
   };
 
   const onDelete = async (id: number) => {
-    const response = await CategoryServiceService.delete(id);
-
+    const response = await LoyaltyService.delete(id);
     if (response.code === 0) {
-      showToast("Xóa danh mục chương trình loyalty thành công", "success");
-      getListCategoryService(params);
+      showToast("Xóa chương trình loyalty thành công", "success");
+      fetchList(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -216,60 +136,43 @@ export default function SettingLoyaltyList() {
   const onDeleteAll = () => {
     const selectedIds = listIdChecked || [];
     if (!selectedIds.length) return;
-
-    const arrPromises = selectedIds.map((selectedId) => {
-      const found = listCategoryService.find((item) => item.id === selectedId);
-      if (found?.id) {
-        return CategoryServiceService.delete(found.id);
-      } else {
-        return Promise.resolve(null);
-      }
+    const arrPromises = selectedIds.map((id) => {
+      const found = listData.find((item) => item.id === id);
+      return found?.id ? LoyaltyService.delete(found.id) : Promise.resolve(null);
     });
     Promise.all(arrPromises)
       .then((results) => {
-        const checkbox = results.filter(Boolean)?.length || 0;
-        if (checkbox > 0) {
-          showToast(`Xóa thành công ${checkbox} danh mục chương trình loyalty`, "success");
-          getListCategoryService(params);
+        const count = results.filter(Boolean)?.length || 0;
+        if (count > 0) {
+          showToast(`Xóa thành công ${count} chương trình loyalty`, "success");
+          fetchList(params);
           setListIdChecked([]);
         } else {
-          showToast("Không có danh mục chương trình loyalty nào được xóa", "error");
+          showToast("Không có chương trình loyalty nào được xóa", "error");
         }
       })
-      .finally(() => {
-        setShowDialog(false);
-        setContentDialog(null);
-      });
+      .finally(() => { setShowDialog(false); setContentDialog(null); });
   };
 
-  const showDialogConfirmDelete = (item?: ICategoryServiceResponseModel) => {
+  const showDialogConfirmDelete = (item?: IProgramRoyaltyResposne) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
       isCentered: true,
       isLoading: true,
-      title: <Fragment>Xóa...</Fragment>,
+      title: <Fragment>Xóa chương trình loyalty</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "danh mục chương trình loyalty " : `${listIdChecked.length} danh mục chương trình loyalty đã chọn`}
-          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
+          Bạn có chắc chắn muốn xóa {item ? <><strong>{item.name}</strong></> : `${listIdChecked.length} chương trình loyalty đã chọn`}?
+          Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
+      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
       defaultText: "Xóa",
       defaultAction: () => {
-        if (item?.id) {
-          onDelete(item.id);
-          return;
-        }
-        if (listIdChecked.length > 0) {
-          onDeleteAll();
-          return;
-        }
+        if (item?.id) { onDelete(item.id); return; }
+        if (listIdChecked.length > 0) { onDeleteAll(); return; }
       },
     };
     setContentDialog(contentDialog);
@@ -277,25 +180,14 @@ export default function SettingLoyaltyList() {
   };
 
   const bulkActionList: BulkActionItemModel[] = [
-    permissions["CATEGORY_SERVICE_DELETE"] == 1 && {
-      title: "Xóa danh mục chương trình loyalty",
-      callback: () => showDialogConfirmDelete(),
-    },
+    { title: "Xóa chương trình loyalty", callback: () => showDialogConfirmDelete() },
   ];
 
   return (
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
       <div className="action-navigation">
         <div className="action-backup">
-          <h1
-            onClick={() => {
-              //   onBackProps(true);
-            }}
-            className="title-first"
-            title="Quay lại"
-          >
-            Quản lý chương trình loyalty
-          </h1>
+          <h1 className="title-first">Quản lý chương trình loyalty</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
@@ -308,11 +200,11 @@ export default function SettingLoyaltyList() {
           listSaveSearch={listSaveSearch}
           updateParams={(paramsNew) => setParams(paramsNew)}
         />
-        {!isLoading && listCategoryService && listCategoryService.length > 0 ? (
+        {!isLoading && listData && listData.length > 0 ? (
           <BoxTable
             name="chương trình loyalty"
             titles={titles}
-            items={listCategoryService}
+            items={listData}
             isPagination={true}
             dataPagination={pagination}
             dataMappingArray={(item, index) => dataMappingArray(item, index)}
@@ -333,28 +225,14 @@ export default function SettingLoyaltyList() {
               <SystemNotification type="no-permission" />
             ) : isNoItem ? (
               <SystemNotification
-                description={
-                  <span>
-                    Hiện tại chưa có danh mục chương trình loyalty nào. <br />
-                    Hãy thêm mới danh mục chương trình loyalty đầu tiên nhé!
-                  </span>
-                }
+                description={<span>Hiện tại chưa có chương trình loyalty nào.<br />Hãy thêm mới chương trình loyalty đầu tiên nhé!</span>}
                 type="no-item"
-                titleButton="Thêm mới danh mục chương trình loyalty"
-                action={() => {
-                  setDataCategoryService(null);
-                  setShowModalAdd(true);
-                }}
+                titleButton="Thêm mới chương trình loyalty"
+                action={() => { setSelectedItem(null); setShowModalAdd(true); }}
               />
             ) : (
               <SystemNotification
-                description={
-                  <span>
-                    Không có dữ liệu trùng khớp.
-                    <br />
-                    Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
-                  </span>
-                }
+                description={<span>Không có dữ liệu trùng khớp.<br />Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!</span>}
                 type="no-result"
               />
             )}
@@ -363,13 +241,8 @@ export default function SettingLoyaltyList() {
       </div>
       <AddProgramLoyaltyModal
         onShow={showModalAdd}
-        data={dataCategoryService}
-        onHide={(reload) => {
-          if (reload) {
-            getListCategoryService(params);
-          }
-          setShowModalAdd(false);
-        }}
+        data={selectedItem}
+        onHide={(reload) => { if (reload) fetchList(params); setShowModalAdd(false); }}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>

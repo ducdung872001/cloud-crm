@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { showToast } from "utils/common";
-import ViettelTendooModal from "./ViettelTendooModal";
-import ViettelHostModal from "./ViettelHostModal";
-import ViettelBhdModal from "./ViettelBhdModal";
+import ViettelTendooModal from "../ViettelModals/ViettelTendooModal";
+import ViettelHostModal from "../ViettelModals/ViettelHostModal";
+import ViettelBhdModal from "../ViettelModals/ViettelBhdModal";
+import "./ViettelOverview.scss";
 
 interface ViettelOverviewProps {
     setActiveTab: (tab: "overview" | "wizard" | "settings" | "analytics") => void;
