@@ -3,13 +3,10 @@ import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, u
 import _ from "lodash";
 import moment from "moment";
 import Tippy from "@tippyjs/react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
 import { getSearchParameters, getPageOffset } from "reborn-util";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
 import Loading from "components/loading";
-import BoxTable from "components/boxTable/boxTable";
 import SearchBox from "components/searchBox/searchBox";
 import { ExportExcel } from "exports";
 import ExportModal from "components/exportModal/exportModal";
@@ -23,17 +20,12 @@ import { showToast, getPermissions } from "utils/common";
 import { formatCurrency, isDifferenceObj } from "reborn-util";
 import CustomerService from "services/CustomerService";
 import { ICustomerResponse } from "model/customer/CustomerResponseModel";
-import { IAction, IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
+import { IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
 import { ICustomerSchedulerFilterRequest } from "model/customer/CustomerRequestModel";
 import { IRelationShipResposne } from "model/relationShip/RelationShipResposne";
 import { UserContext, ContextType } from "contexts/userContext";
-// import AddCustomerPersonModal from "./partials/AddCustomerPersonModal";
-// import AddCustomerViewerModal from "./partials/AddCustomerViewerModal/AddCustomerViewerModal";
-import AddEditSendSMS from "pages/Common/AddEditSendSMS/AddEditSendSMS";
 import RelationShipService from "services/RelationShipService";
-import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
 import ImportModal from "components/importModalBackup";
-import ExportListModal from "pages/Common/ExportListModal/ExportListModal";
 
 //Thêm riêng lẻ 1 cơ hội vào chiến dịch bán hàng (quy trình bán hàng)
 import "swiper/css/grid";
@@ -59,8 +51,6 @@ export default function PartnerList() {
 
   document.title = `${"Danh sách đối tác"}`;
 
-  const navigate = useNavigate();
-
   const { name, avatar, dataBranch } = useContext(UserContext) as ContextType;
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -70,9 +60,7 @@ export default function PartnerList() {
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
-  const [isBatch, setIsBatch] = useState<boolean>(false);
 
-  const { width } = useWindowDimensions();
   const takeParamsUrl = getSearchParameters();
 
   //! đoạn này call API mối quan hệ khách hàng

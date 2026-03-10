@@ -1,10 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
 import _ from "lodash";
-import Tippy from "@tippyjs/react";
 import moment from "moment";
 import { isDifferenceObj, formatCurrency, getPageOffset, getSearchParameters, trimContent } from "reborn-util";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { CircularProgressbar } from "react-circular-progressbar";
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -17,20 +15,12 @@ import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
 import { showToast } from "utils/common";
 import "./CampaignMarketingList.scss";
-import { SelectOptionData } from "utils/selectCommon";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
 import { useWindowDimensions } from "utils/hookCustom";
-import SelectCustom from "components/selectCustom/selectCustom";
-// import AddOpportunityAllocation from "./partials/AddOpportunityAllocation";
 import { ContextType, UserContext } from "contexts/userContext";
-// import Kanban from "./partials/Kanban/Kanban";
-// import AddInvoiceModal from "./partials/AddInvoiceModal";
 import Badge from "components/badge/badge";
 import CampaignMarketingService from "services/CampaignMarketingService";
 import ModalAddCampaignMA from "./partials/ModalAddCampaignMA";
 import Kanban from "./Kanban/Kanban";
-import KanbanProcess from "./KanbanProcess";
 import Image from "components/image";
 import ModalAllocateBudget from "./ModalAllocateBudget/ModalAllocateBudget";
 import ChangeStatusCampaign from "./ChangeStatusCampaign/ChangeStatusCampaign";
@@ -305,7 +295,7 @@ export default function CampaignMarketingList() {
   ];
 
   const actionsTable = (item: any): IAction[] => {
-        const isCheckedItem = listIdChecked?.length > 0;
+    const isCheckedItem = listIdChecked?.length > 0;
     return [
       // {
       //   title: "Xem chi tiết",
@@ -317,23 +307,23 @@ export default function CampaignMarketingList() {
       // },
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" style={{ width: 18 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Pencil" style={{ width: 18 }} className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setIdCampaignMA(item.id);
-          setDataCampaignMA(item);
-          setShowModalAdd(true);
+            setIdCampaignMA(item.id);
+            setDataCampaignMA(item);
+            setShowModalAdd(true);
           }
         },
       },
       {
         title: "Xóa",
-        icon: <Icon name="Trash" className={isCheckedItem? "icon-disabled":"icon-error"} style={{ width: 19 }} />,
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} style={{ width: 19 }} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item);
+            showDialogConfirmDelete(item);
           }
         },
       },
@@ -646,8 +636,8 @@ export default function CampaignMarketingList() {
 
       <div className="card-box d-flex flex-column">
         {/* <div className={`${isRegimeKanban ? "d-none" : "quick__search"}`}> */}
-          {/* <div className={`${isRegimeKanban ? "d-none" : "quick__search--right"}`}> */}
-            {/* {width < 1920 && width > 768 && listApproach.length > 4 ? (
+        {/* <div className={`${isRegimeKanban ? "d-none" : "quick__search--right"}`}> */}
+        {/* {width < 1920 && width > 768 && listApproach.length > 4 ? (
                 <Swiper
                   onInit={(core: SwiperCore) => {
                     swiperRelationshipRef.current = core.el;
@@ -679,7 +669,7 @@ export default function CampaignMarketingList() {
                   })}
                 </Swiper>
               ) : ( */}
-            {/* <div className="list__relationship">
+        {/* <div className="list__relationship">
               {listApproach.map((item, idx) => {
                 return item.label ? (
                   <div
@@ -696,8 +686,8 @@ export default function CampaignMarketingList() {
                 ) : null;
               })}
             </div> */}
-            {/* )} */}
-          {/* </div> */}
+        {/* )} */}
+        {/* </div> */}
         {/* </div> */}
         <div className={`${isRegimeKanban ? "d-none" : ""}`}>
           <SearchBox

@@ -1,10 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
 import _ from "lodash";
-import Tippy from "@tippyjs/react";
 import moment from "moment";
-import { isDifferenceObj, formatCurrency, getPageOffset, getSearchParameters, trimContent } from "reborn-util";
+import { isDifferenceObj, formatCurrency, getPageOffset, getSearchParameters } from "reborn-util";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { CircularProgressbar } from "react-circular-progressbar";
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -17,9 +15,7 @@ import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
 import { showToast } from "utils/common";
 import "./ManagementSale.scss";
-import { SelectOptionData } from "utils/selectCommon";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
 import { useWindowDimensions } from "utils/hookCustom";
 import SelectCustom from "components/selectCustom/selectCustom";
 // import AddOpportunityAllocation from "./partials/AddOpportunityAllocation";
@@ -30,19 +26,17 @@ import SaleflowInvoiceService from "services/SaleflowInvoiceService";
 import Kanban from "./partials/Kanban/Kanban";
 import AddInvoiceModal from "./partials/AddInvoiceModal";
 import Badge from "components/badge/badge";
-import ModalDetailSaleInvoice from "./partials/ModalDetailSaleInvoice/ModalDetailSaleInvoice";
+import { Grid, Navigation } from "swiper/modules";
 
 export default function ManagementSale() {
   document.title = "Quản lý bán hàng";
 
-  const navigate = useNavigate();
   const checkIsKanban = localStorage.getItem("isKanbanSaleflow");
   //   const checkKanbanTab = localStorage.getItem("kanbanTabOpportunity");
   const checkSaleflowId = localStorage.getItem("saleflowId");
   const checkSaleflowName = localStorage.getItem("saleflowName");
 
   const isMounted = useRef(false);
-  const swiperPipelineRef = useRef(null);
   const swiperRelationshipRef = useRef(null);
   const { width } = useWindowDimensions();
 
@@ -843,9 +837,6 @@ export default function ManagementSale() {
           <div className={`${isRegimeKanban ? "d-none" : "quick__search--right"}`} style={saleflowId == -1 ? { width: "0%" } : {}}>
             {width < 1920 && width > 768 && listApproach.length > 4 ? (
               <Swiper
-                onInit={(core: SwiperCore) => {
-                  swiperRelationshipRef.current = core.el;
-                }}
                 className="relationship-slider"
                 grid={{
                   rows: 1,

@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import Tippy from "@tippyjs/react";
-import SwiperCore, { Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { formatCurrency } from "reborn-util";
 import Icon from "components/icon";
@@ -14,8 +13,6 @@ import { IActionModal } from "model/OtherModel";
 import "swiper/css";
 import "swiper/css/navigation";
 import "./ShowModalPackage.scss";
-
-SwiperCore.use([Navigation]);
 
 interface IShowModalPackageProps {
   onShow: boolean;

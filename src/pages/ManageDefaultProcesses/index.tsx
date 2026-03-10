@@ -169,7 +169,7 @@ export default function ManageDefaultProcesses(props: any) {
     getPageOffset(params) + index + 1,
     item?.name ?? "",
     options.find((option) => option.value === item?.uri)?.label || item?.uri || "",
-    item?.processCode + " - (" + item?.processName + ")" ?? "",
+    item?.processCode || item?.processName ? `${item?.processCode ?? ""} - (${item?.processName ?? ""})` : "",
     // item.position,
   ];
 
@@ -178,12 +178,12 @@ export default function ManageDefaultProcesses(props: any) {
     return [
       {
         title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setDataConfig(item);
-          setShowModalAddEform(true);
+            setDataConfig(item);
+            setShowModalAddEform(true);
           }
         },
       },
@@ -193,7 +193,7 @@ export default function ManageDefaultProcesses(props: any) {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item);
+            showDialogConfirmDelete(item);
           }
         },
       },
@@ -226,21 +226,21 @@ export default function ManageDefaultProcesses(props: any) {
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} cấu hình`, "success");
-        getListContractEform(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có cấu hình nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} cấu hình`, "success");
+          getListContractEform(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có cấu hình nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+  };
 
   const showDialogConfirmDelete = (item?: IContractPipelineResponse) => {
     const contentDialog: IContentDialog = {
@@ -266,11 +266,11 @@ export default function ManageDefaultProcesses(props: any) {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

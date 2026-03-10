@@ -1,6 +1,5 @@
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
-import SwiperCore, { Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { formatCurrency } from "reborn-util";
 import NummericInput from "components/input/numericInput";
@@ -10,8 +9,6 @@ import { showToast } from "utils/common";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import PackageService from "services/PackageService";
 import ShowModalPayment from "./ShowModalPayment";
-
-SwiperCore.use([Navigation]);
 
 export default function InformationServicePackage({ isShowDialog }) {
   const [dataService, setDataService] = useState(null);

@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
-import _, { last, set } from "lodash";
+import _ from "lodash";
 import Tippy from "@tippyjs/react";
 import moment from "moment";
 import { isDifferenceObj, formatCurrency, getPageOffset, getSearchParameters, trimContent } from "reborn-util";
@@ -20,13 +20,10 @@ import { ICampaignOpportunityResponseModel } from "model/campaignOpportunity/Cam
 import { showToast } from "utils/common";
 import CampaignOpportunityService from "services/CampaignOpportunityService";
 import AddManagementOpportunityModal from "./partials/AddManagementOpportunityModal";
-import AddChangeProbabilityModal from "./partials/AddChanceProbabilityModal";
 import DetailManagementOpportunity from "./partials/DetailManagementOpportunity";
 import "./ManagementOpportunity.scss";
-import { SelectOptionData } from "utils/selectCommon";
 import CampaignApproachService from "services/CampaignApproachService";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
 import { useWindowDimensions } from "utils/hookCustom";
 import Kanban from "./partials/Kanban/Kanban";
 import { ICampaignApproachFilterRequest } from "model/campaignApproach/CampaignApproachRequestModel";
@@ -51,7 +48,7 @@ import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import EmployeeService from "services/EmployeeService";
 import CustomerService from "services/CustomerService";
 import { ICustomerFilterRequest } from "model/customer/CustomerRequestModel";
-import SelectTree from "components/selectTree/selectTree";
+import { Grid, Navigation } from "swiper/modules";
 
 export default function ManagementOpportunity() {
   document.title = "Chăm sóc cơ hội";
@@ -1354,9 +1351,6 @@ export default function ManagementOpportunity() {
               {listCampaignViewSale.length > 0 && kanbanTab === 2 ? (
                 <ul className="quick__search--left-swiper" style={{ width: "100%" }}>
                   <Swiper
-                    onInit={(core: SwiperCore) => {
-                      swiperPipelineRef.current = core.el;
-                    }}
                     className="relationship-slider"
                     grid={{
                       rows: 1,
@@ -1589,9 +1583,6 @@ export default function ManagementOpportunity() {
               <div className={`${isRegimeKanban ? "d-none" : "quick__search--right"}`} style={contractType == -1 ? { width: "0%" } : {}}>
                 {width < 1920 && width > 768 && listApproach.length > 4 ? (
                   <Swiper
-                    onInit={(core: SwiperCore) => {
-                      swiperRelationshipRef.current = core.el;
-                    }}
                     className="relationship-slider"
                     grid={{
                       rows: 1,
@@ -1644,9 +1635,6 @@ export default function ManagementOpportunity() {
               <div className={`${isRegimeKanban ? "quick__search--right" : "d-none"}`} style={contractType == -1 ? { width: "0%" } : {}}>
                 {width < 1920 && width > 768 && listPipeline.length > 4 ? (
                   <Swiper
-                    onInit={(core: SwiperCore) => {
-                      swiperRelationshipRef.current = core.el;
-                    }}
                     className="relationship-slider"
                     grid={{
                       rows: 1,

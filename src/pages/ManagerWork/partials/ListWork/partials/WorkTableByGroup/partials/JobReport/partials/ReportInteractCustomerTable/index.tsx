@@ -2,11 +2,8 @@
 import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import _ from "lodash";
 import moment from "moment";
-import Tippy from "@tippyjs/react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
-import { getSearchParameters, getPageOffset } from "reborn-util";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { getPageOffset } from "reborn-util";
+import { useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
 import Loading from "components/loading";
 import BoxTable from "components/boxTable/boxTable";
@@ -20,11 +17,11 @@ import { isDifferenceObj } from "reborn-util";
 import CustomerService from "services/CustomerService";
 import { IFilterItem, IOption } from "model/OtherModel";
 import { UserContext, ContextType } from "contexts/userContext";
-import SupportInstructionsRecord from "../SupportInstructionsRecord";
 import ViewInteractModal from "./partials/ViewInteractModal";
 import "swiper/css/grid";
 import "swiper/css/navigation";
 import "./index.scss";
+import SupportInstructionsRecord from "pages/ReportCustomer/partials/SupportInstructionsRecord";
 
 export default function ReportInteractCustomerTable() {
   const { name, dataBranch } = useContext(UserContext) as ContextType;

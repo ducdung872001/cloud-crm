@@ -3,8 +3,6 @@ import moment from "moment";
 import Tippy from "@tippyjs/react";
 import parser from "html-react-parser";
 import { useNavigate } from "react-router-dom";
-import SwiperCore, { Navigation } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/react";
 import Icon from "components/icon";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { IViewDetailPersonProps } from "model/customer/PropsModel";
@@ -16,16 +14,12 @@ import { convertToPrettyNumber, showToast } from "utils/common";
 import CustomerService from "services/CustomerService";
 import AddCustomerViewerModal from "pages/CustomerPerson/partials/AddCustomerViewerModal/AddCustomerViewerModal";
 import { formatCurrency, getDomain } from "reborn-util";
-import ImageError from "assets/images/error.png";
 
 import "tippy.js/animations/scale-extreme.css";
 import "./ViewDetailPerson.scss";
 import SelectCustom from "components/selectCustom/selectCustom";
-import Button from "components/button/button";
-import TextArea from "components/textarea/textarea";
 import _ from "lodash";
 
-SwiperCore.use([Navigation]);
 
 export default function ViewDetailPerson(props: IViewDetailPersonProps) {
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -408,7 +402,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
   useEffect(() => {
     //TODO: Khi mà chuyền function như này rất dễ bị dính cảnh bảo rò rỉ bộ nhớ, cách fix là clear nó đi
     return () => {
-      !deleteSignal ?? callback();
+      if (!deleteSignal) callback();
       setShowModalEdit(false);
     };
   }, [deleteSignal]);

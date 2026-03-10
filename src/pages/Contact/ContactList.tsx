@@ -5,22 +5,20 @@ import Icon from "components/icon";
 import Image from "components/image";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
-import BoxTable from "components/boxTable/boxTable";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, ISaveSearch, IFilterItem, IOption } from "model/OtherModel";
-import { IContactListProps } from "model/contact/PropsModel";
 import { IContactFilterRequest } from "model/contact/ContactRequestModel";
 import { IContactResponse } from "model/contact/ContactResponseModel";
 import { showToast } from "utils/common";
-import { formatCurrency, getDomain, getPageOffset, getSearchParameters, isDifferenceObj } from "reborn-util";
+import { getDomain, getPageOffset, getSearchParameters, isDifferenceObj } from "reborn-util";
 import { getPermissions } from "utils/common";
 import ContactService from "services/ContactService";
 import AddContactModal from "./partials/AddContactModal";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import "./ContactList.scss";
 import { SelectOptionData } from "utils/selectCommon";
 import CustomerService from "services/CustomerService";
@@ -31,7 +29,7 @@ import KanbanContact from "./KanbanContact/KanbanContact";
 import ContactStatusService from "services/ContactStatusService";
 import BoxTableAdvanced from "components/boxTableAdvanced/boxTableAdvanced";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
+import { Grid, Navigation } from "swiper/modules";
 import { useOnClickOutside, useWindowDimensions } from "utils/hookCustom";
 import Tippy from "@tippyjs/react";
 import Button from "components/button/button";
@@ -1384,9 +1382,6 @@ export default function ContactList() {
                 style={contractType == -1 || listStatus.length === 0 ? { width: "100%" } : { maxWidth: "38%" }}
               >
                 <Swiper
-                  onInit={(core: SwiperCore) => {
-                    swiperPipelineRef.current = core.el;
-                  }}
                   className="relationship-slider"
                   grid={{
                     rows: 1,
@@ -1461,9 +1456,6 @@ export default function ContactList() {
             <div className={`${isRegimeKanban ? "d-none" : "quick__search--right"}`} style={contractType == -1 ? { width: "0%" } : {}}>
               {width < 1920 && width > 768 && listStatus.length > 4 ? (
                 <Swiper
-                  onInit={(core: SwiperCore) => {
-                    swiperRelationshipRef.current = core.el;
-                  }}
                   className="relationship-slider"
                   grid={{
                     rows: 1,

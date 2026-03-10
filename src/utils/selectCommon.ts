@@ -99,10 +99,10 @@ export async function SelectOptionData(key: string, params?: any) {
     case "bankId":
       response = await ContractGuaranteeService.bankList(params);
       break;
-    case "fsId" :
+    case "fsId":
       response = await FSQuoteService.list(params);
       break;
-    case "contractCategoryId" :
+    case "contractCategoryId":
       response = await ContractCategoryService.list(params);
       break;
     case "partnerId":
@@ -154,7 +154,6 @@ export async function SelectOptionData(key: string, params?: any) {
       response = await EmployeeService.list(params);
       break;
     case "saleId":
-    case "saleId":
       response = await EmployeeService.list(params);
       break;
     //Chỉ lấy nhân viên chưa cấu hình hoa hồng
@@ -178,7 +177,6 @@ export async function SelectOptionData(key: string, params?: any) {
     case "career":
       response = await CareerService.list(params);
       break;
-    case "marketingSendLeadSource":
     case "marketingSendLeadSource":
       response = await CustomerMarketingLeadService.list(params);
       break;
@@ -344,13 +342,16 @@ export async function SelectOptionData(key: string, params?: any) {
     if (response.code === 0) {
       return [...(response.result.items ? response.result.items : response.result)].map((item) => {
         if (key === "customer" || key === "customerId") {
-          return { value: item.id, label: `${item.name} - ${item.phoneMasked}`, 
-          taxCodeCustomer: String(item.taxCode ?? ""),
-          addressCustomer: String(item.address ?? ""),
-          phoneMaskedCustomer: String(item.phoneMasked ?? ""),
-          sourceName: String(item.sourceName ?? ""),
-          groupName: String(item.groupName ?? ""),
-          taxcode_customer: String(item.taxCode ?? ""),};
+          return {
+            value: item.id,
+            label: `${item.name} - ${item.phoneMasked}`,
+            taxCodeCustomer: String(item.taxCode ?? ""),
+            addressCustomer: String(item.address ?? ""),
+            phoneMaskedCustomer: String(item.phoneMasked ?? ""),
+            sourceName: String(item.sourceName ?? ""),
+            groupName: String(item.groupName ?? ""),
+            taxcode_customer: String(item.taxCode ?? ""),
+          };
         }
         if (key === "categoryItemId") {
           return { value: item.id, label: `${item.name}` };
@@ -389,7 +390,7 @@ export async function SelectOptionData(key: string, params?: any) {
             product_discount: item.discount || 0,
           };
         }
-        if(key === "partnerId"){
+        if (key === "partnerId") {
           return {
             value: item.id,
             label: `${item.name}`,
@@ -399,7 +400,7 @@ export async function SelectOptionData(key: string, params?: any) {
             taxcode_partner: String(item.taxCode ?? ""),
           };
         }
-        if( key === "projectId"){
+        if (key === "projectId") {
           return {
             value: item.id,
             label: `${item.name}`,
@@ -425,7 +426,7 @@ export async function SelectOptionData(key: string, params?: any) {
           return {
             value: item.id,
             label: `${item.name}`,
-            departmentName: item.departmentName
+            departmentName: item.departmentName,
           };
         }
         return {
