@@ -401,7 +401,7 @@ i18n.use(initReactI18next).init({
           settingContact: "Cài đặt người liên hệ",
           loyaltyPointLedger: "Nhật ký điểm hội viên",
           loyaltyWallet: "Danh sách hội viên",
-          settingLoyalty:"Cài đặt hạng hội viên",
+          settingLoyalty:"Cài đặt hệ thống tích điểm",
           settingSales: "Danh mục sản phẩm",
           settingMarketing: "Truyền thông đa kênh", //SMS/Zalo/Email/...
           settingContract: "Cài đặt hợp đồng",

@@ -7,7 +7,7 @@ import LoyaltySegment from "@/pages/LoyaltySegment";
 import LoyaltyReward from "@/pages/LoyaltyReward";
 
 export default function SettingLoyalty() {
-  document.title = "Cài đặt hạng hội viên";
+  document.title = "Cài đặt hệ thống tích điểm";
 
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));
   const checkSubdomainTNEX = sourceDomain.includes("tnex");
@@ -25,14 +25,14 @@ export default function SettingLoyalty() {
       is_tab: "tab_two",
     },
     {
-      title: "Danh sách hạng hội viên",
+      title: "Cài đặt hạng hội viên",
       is_tab: "tab_three",
     },
   ];
 
   return (
     <div className="page-setting-customer">
-      {!isDetailCategory && <TitleAction title="Cài đặt hạng hội viên" />}
+      {!isDetailCategory && <TitleAction title="Cài đặt hệ thống tích điểm" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (
           <ul className="menu">
@@ -63,7 +63,7 @@ export default function SettingLoyalty() {
           }}
         />
       ) : isDetailCategory && tab === "tab_two" ? (
-        <LoyaltySegment
+        <LoyaltyReward
           onBackProps={(isBack) => {
             if (isBack) {
               setIsDetailCategory(false);
@@ -71,7 +71,7 @@ export default function SettingLoyalty() {
           }}
         />
       ) : isDetailCategory && tab === "tab_three" ? (
-        <LoyaltyReward
+        <LoyaltySegment
           onBackProps={(isBack) => {
             if (isBack) {
               setIsDetailCategory(false);
