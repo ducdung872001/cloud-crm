@@ -3,14 +3,12 @@ import _ from "lodash";
 import Icon from "components/icon";
 import Image from "components/image";
 import Loading from "components/loading";
-import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
-import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
-import { IAction, ISaveSearch } from "model/OtherModel";
+import { IAction } from "model/OtherModel";
 import { IProductListProps } from "model/product/PropsModel";
 import { IProductFilterRequest } from "model/product/ProductRequestModel";
 import { IProductResponse } from "model/product/ProductResponseModel";
@@ -20,15 +18,19 @@ import ProductService from "services/ProductService";
 import AddProductModal from "./partials/AddProductModal";
 import { getPermissions } from "utils/common";
 import "./ProductList.scss";
-import ConfigProductModal from "./ConfigProductModal/ConfigProductModal";
 import CustomerCharacteristics from "pages/Common/CustomerCharacteristics";
 import PermissionService from "services/PermissionService";
-import Tippy from "@tippyjs/react";
 import ConfigIntegrateModal from "./ConfigIntegrateModal/ConfigIntegrateModal";
 import DetailProductModal from "./DetailProduct/DetailProductModal";
 import ModalImportProduct from "./partials/ModalImport";
 import Badge from "@/components/badge/badge";
 import { ProductLabel } from "@/assets/mock/Product";
+import ConfigDisplayModal from "./DetailProduct/ConfigDisplayModal";
+import CategoryModal from "./partials/CategoryModal";
+import AddProductPage from "./partials/AddProductPage";
+
+// ---- Tab filter type ----
+type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
 
 export default function ProductList(props: IProductListProps) {
   document.title = "Danh sách sản phẩm";
@@ -37,7 +39,6 @@ export default function ProductList(props: IProductListProps) {
 
   const isMounted = useRef(false);
   const targetBsnId_product = localStorage.getItem("targetBsnId_product");
-  // console.log('targetBsnId_product', targetBsnId_product);
 
   const [listProduct, setListProduct] = useState<IProductResponse[]>([]);
   const [idProduct, setIdProduct] = useState<number>(null);
@@ -51,12 +52,15 @@ export default function ProductList(props: IProductListProps) {
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
-  const [tab, setTab] = useState("tab_one");
   const [listPartner, setListPartner] = useState([]);
   const [showModalDetail, setShowModalDetail] = useState<boolean>(false);
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
+  const [isConfigIntegrateModal, setIsConfigIntegrateModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<StatusTab>("all");
+  const [searchValue, setSearchValue] = useState("");
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showProductPage, setShowProductPage] = useState(false);
 
-  // console.log('listPartner', listPartner);
   const [targetBsnId, setTargetBsnId] = useState(targetBsnId_product ? +targetBsnId_product : null);
   useEffect(() => {
     localStorage.setItem("targetBsnId_product", JSON.stringify(targetBsnId));
@@ -68,31 +72,56 @@ export default function ProductList(props: IProductListProps) {
     page: 1,
   });
 
-  const [paramsProductPartner, setParamsProductPartner] = useState({
-    name: "",
-    limit: 10,
-    page: 1,
-    targetBsnId: null,
+  const [pagination, setPagination] = useState<PaginationProps>({
+    ...DataPaginationDefault,
+    name: "Sản phẩm",
+    isChooseSizeLimit: true,
+    setPage: (page) => {
+      setParams((prevParams) => ({ ...prevParams, page: page }));
+    },
+    chooseSizeLimit: (limit) => {
+      setParams((prevParams) => ({ ...prevParams, limit: limit }));
+    },
   });
 
-  const [listSaveSearch] = useState<ISaveSearch[]>([
-    {
-      key: "all",
-      name: "Danh sách sản phẩm",
-      is_active: true,
-    },
-  ]);
+  const abortController = new AbortController();
 
-  const listTabs = [
-    {
-      title: "Danh sách sản phẩm",
-      is_active: "tab_one",
-    },
-    {
-      title: "Danh sách sản phẩm của đối tác",
-      is_active: "tab_two",
-    },
-  ];
+  const getListProduct = async (paramsSearch: any) => {
+    setIsLoading(true);
+    const response = await ProductService.list(paramsSearch, abortController.signal);
+    console.log("RUN HERE ==>");
+    
+    if (response.code === 0) {
+      const result = response.result;
+      setListProduct(result.items);
+      setPagination((prev) => ({
+        ...prev,
+        page: +result.page,
+        sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
+        totalItem: +result.total,
+        totalPage: Math.ceil(+result.total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)),
+      }));
+      if (+result.total === 0 && +result.page === 1) setIsNoItem(true);
+    } else if (response.code == 400) {
+      setIsPermissions(true);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+    if (isMounted.current === true) {
+      getListProduct(params);
+    }
+    return () => {
+      abortController.abort();
+    };
+  }, [params]);
 
   const colorData = [
     "#E98E4C",
@@ -116,148 +145,18 @@ export default function ProductList(props: IProductListProps) {
     "#704214",
   ];
 
-  const [pagination, setPagination] = useState<PaginationProps>({
-    ...DataPaginationDefault,
-    name: "Sản phẩm",
-    isChooseSizeLimit: true,
-    setPage: (page) => {
-      setParams((prevParams) => ({ ...prevParams, page: page }));
-    },
-    chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, limit: limit }));
-    },
-  });
-
-  const [paginationPartner, setPaginationPartner] = useState<PaginationProps>({
-    ...DataPaginationDefault,
-    name: "Sản phẩm",
-    isChooseSizeLimit: true,
-    setPage: (page) => {
-      setParamsProductPartner((prevParams) => ({ ...prevParams, page: page }));
-    },
-    chooseSizeLimit: (limit) => {
-      setParamsProductPartner((prevParams) => ({ ...prevParams, limit: limit }));
-    },
-  });
-
-  const abortController = new AbortController();
-
-  const getListProduct = async (paramsSearch: any, tab) => {
-    setIsLoading(true);
-
-    let response = null;
-
-    if (tab === "tab_one") {
-      response = await ProductService.list(paramsSearch, abortController.signal);
-    } else {
-      if (!paramsSearch.targetBsnId) {
-        setListProduct([]);
-        setIsLoading(false);
-        setIsNoItem(true);
-        return;
-      } else {
-        response = await ProductService.listShared(paramsSearch, abortController.signal);
-      }
-    }
-
-    if (response.code === 0) {
-      const result = response.result;
-      console.log("RESULT", result.items);
-      setListProduct(result.items);
-
-      if (tab === "tab_one") {
-        setPagination({
-          ...pagination,
-          page: +result.page,
-          sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
-          totalItem: +result.total,
-          totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
-        });
-      } else {
-        setPaginationPartner({
-          ...paginationPartner,
-          page: +result.page,
-          sizeLimit: paramsProductPartner.limit ?? DataPaginationDefault.sizeLimit,
-          totalItem: +result.total,
-          totalPage: Math.ceil(+result.total / +(paramsProductPartner.limit ?? DataPaginationDefault.sizeLimit)),
-        });
-      }
-
-      if (+result.total === 0 && +result.page === 1) {
-        setIsNoItem(true);
-      }
-    } else if (response.code == 400) {
-      setIsPermissions(true);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
-    setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
-
-    if (isMounted.current === true) {
-      if (tab === "tab_one") {
-        getListProduct(params, tab);
-      }
-
-      const paramsTemp = _.cloneDeep(params);
-      if (paramsTemp.limit === 10) {
-        delete paramsTemp["limit"];
-      }
-      Object.keys(paramsTemp).map(function (key) {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-    }
-
-    return () => {
-      abortController.abort();
-    };
-  }, [params, tab]);
-
   const getListPartner = async () => {
-    const params = {
-      limit: 100,
-      status: 1,
-      requestCode: "product",
-    };
-
-    const response = await PermissionService.requestPermissionSource(params);
-
+    const p = { limit: 100, status: 1, requestCode: "product" };
+    const response = await PermissionService.requestPermissionSource(p);
     if (response.code === 0) {
       const result = response.result.items || [];
       const newList = [];
       result.map((item, index) => {
         if (newList.filter((el) => el.targetBsnId === item.targetBsnId).length === 0) {
-          newList.push({
-            name: item.targetBranchName,
-            targetBsnId: item.targetBsnId,
-            color: colorData[index],
-          });
+          newList.push({ name: item.targetBranchName, targetBsnId: item.targetBsnId, color: colorData[index] });
         }
       });
-
       setListPartner(newList);
-
-      // const newList = result.items?.map((el, index) => {
-      //   return {
-      //     name: el.targetBranchName,
-      //     targetBsnId: el.targetBsnId,
-      //     color: colorData[index],
-      //   }
-      // })
-      // setListPartner(newList);
-    } else {
-      // showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -265,128 +164,36 @@ export default function ProductList(props: IProductListProps) {
     getListPartner();
   }, []);
 
-  const titleActions: ITitleActions = {
-    actions: [
-      ...(tab === "tab_one"
-        ? [
-            permissions["PRODUCT_ADD"] == 1 && {
-              title: "Thêm mới",
-              callback: () => {
-                setIdProduct(null);
-                setShowModalAdd(true);
-              },
-            },
-            {
-              title: "Thêm hàng loạt",
-              callback: () => {
-                setShowModalImport(true);
-              },
-            },
-            {
-              title: "Thêm sản phẩm bằng Qr",
-              callback: () => {},
-            },
-          ]
-        : []),
-    ],
+  // TODO: Implement QR scan handler
+  const handleScanQR = () => {};
+
+  // TODO: Implement category management handler
+  const handleOpenCategory = () => {
+    setShowCategoryModal(true);
   };
 
-  const titles = ["STT", "Tên sản phẩm", "Phân loại", "Ảnh sản phẩm", "Thứ tự hiển thị", "Đơn vị tính", "Giá bán"];
-
-  const dataFormat = ["text-center", "", "", "text-center", "text-center", "text-center", "text-right"];
-
-  const getRandomLabel = () => {
-    const keys = Object.keys(ProductLabel);
-    const randomKey = keys[Math.floor(Math.random() * keys.length)];
-    return ProductLabel[randomKey];
+  // TODO: Implement display settings handler
+  const handleDisplaySettings = () => {
+    setShowModalDetail(true);
   };
 
-  const dataMappingArray = (item: IProductResponse, index: number) => {
-    // Hàm này chỉ têst trên UI, cần bổ sung trường label prod trên db và get từ result api ra để hiển thị chính xác nhãn sp
-    const randomLabel = getRandomLabel();
-    return [
-      getPageOffset(params) + index + 1,
-      <div className="d-flex" style={{ gap: 8, alignItems: "baseline" }} key={item.id}>
-        <p>{item.name}</p>
-        <Badge text={randomLabel.label} variant={randomLabel.color} />
-      </div>,
-      item.type == 1 ? "Thành phẩm" : "Vật tư tiêu hao",
-      <a key={item.id} data-fancybox="gallery" href={item.avatar}>
-        <Image src={item.avatar} alt={item.name} width={"64rem"} />
-      </a>,
-      item.position,
-      item.unitName,
-      formatCurrency(item.price),
-    ];
+  // TODO: Implement tab filter (API integration needed)
+  const handleTabChange = (tab: StatusTab) => {
+    setActiveTab(tab);
+    // TODO: call getListProduct with corresponding status filter
   };
 
-  const actionsTable = (item: IProductResponse): IAction[] => {
-    const isCheckedItem = listIdChecked?.length > 0;
-    return [
-      ...(tab === "tab_one"
-        ? [
-            {
-              title: "Đặc trưng khách hàng",
-              icon: <Icon name="Tag" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 18 }} />,
-              disabled: isCheckedItem,
-              callback: () => {
-                if (!isCheckedItem) {
-                  setIdProduct(item.id);
-                  setShowModalConfig(true);
-                }
-              },
-            },
-            {
-              title: "Chi tiết sản phẩm",
-              icon: <Icon name="CollectInfo" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 17 }} />,
-              disabled: isCheckedItem,
-              callback: () => {
-                if (!isCheckedItem) {
-                  setDataProduct(item);
-                  setShowModalDetail(true);
-                }
-              },
-            },
-            {
-              title: "Nhân bản sản phẩm",
-              icon: <Icon name="Copy" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 17 }} />,
-              callback: () => {
-                handleDuplicateProd(item);
-              },
-            },
-            permissions["PRODUCT_UPDATE"] == 1 && {
-              title: "Sửa",
-              icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
-              disabled: isCheckedItem,
-              callback: () => {
-                if (!isCheckedItem) {
-                  setIdProduct(item.id);
-                  setShowModalAdd(true);
-                  setDataProduct(item);
-                }
-              },
-            },
-            permissions["PRODUCT_DELETE"] == 1 && {
-              title: "Xóa",
-              icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
-              disabled: isCheckedItem,
-              callback: () => {
-                if (!isCheckedItem) {
-                  showDialogConfirmDelete(item);
-                }
-              },
-            },
-          ]
-        : []),
-    ];
+  // TODO: Implement toggle web display per product
+  const handleToggleWebDisplay = (item: IProductResponse, newValue: boolean) => {
+    // TODO: call API to update product web display status
+    console.log("Toggle web display", item.id, newValue);
   };
 
   const onDelete = async (id: number) => {
     const response = await ProductService.delete(id);
-
     if (response.code === 0) {
       showToast("Xóa sản phẩm thành công", "success");
-      getListProduct(params, tab);
+      getListProduct(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -397,24 +204,19 @@ export default function ProductList(props: IProductListProps) {
   const onDeleteAll = () => {
     const selectedIds = listIdChecked || [];
     if (!selectedIds.length) return;
-
     const arrPromises = selectedIds.map((selectedId) => {
       const found = listProduct.find((item) => item.id === selectedId);
-      if (found?.id) {
-        return ProductService.delete(found.id);
-      } else {
-        return Promise.resolve(null);
-      }
+      return found?.id ? ProductService.delete(found.id) : Promise.resolve(null);
     });
     Promise.all(arrPromises)
       .then((results) => {
-        const checkbox = results.filter(Boolean)?.length || 0;
-        if (checkbox > 0) {
-          showToast(`Xóa thành công ${checkbox} danh mục sản phẩm`, "success");
-          getListProduct(params, tab);
+        const count = results.filter(Boolean)?.length || 0;
+        if (count > 0) {
+          showToast(`Xóa thành công ${count} sản phẩm`, "success");
+          getListProduct(params);
           setListIdChecked([]);
         } else {
-          showToast("Không có danh mục sản phẩm nào được xóa", "error");
+          showToast("Không có sản phẩm nào được xóa", "error");
         }
       })
       .finally(() => {
@@ -469,154 +271,299 @@ export default function ProductList(props: IProductListProps) {
     },
   ];
 
-  const handlClickPartner = (e, value) => {
-    setTargetBsnId(value);
+  const getRandomLabel = () => {
+    const keys = Object.keys(ProductLabel);
+    const randomKey = keys[Math.floor(Math.random() * keys.length)];
+    return ProductLabel[randomKey];
   };
 
-  useEffect(() => {
-    if (listPartner && listPartner.length > 0) {
-      setParamsProductPartner({ ...paramsProductPartner, targetBsnId: targetBsnId ? targetBsnId : listPartner[0].targetBsnId });
+  // Stats (TODO: replace with real API data)
+  const stats = [
+    { label: "Tổng sản phẩm", value: pagination.totalItem ?? 0, color: "#3b82f6" },
+    { label: "Đang bán", value: 0, color: "#22c55e" }, // TODO: get from API
+    { label: "Sắp hết hàng", value: 0, color: "#ef4444" }, // TODO: get from API
+    { label: "Hiển thị trên Web", value: 0, color: "#8b5cf6" }, // TODO: get from API
+    { label: "Hết hàng", value: 0, color: "#f97316" }, // TODO: get from API
+  ];
 
-      if (!targetBsnId) {
-        setTargetBsnId(listPartner[0].targetBsnId);
-      }
-    }
-  }, [targetBsnId, listPartner]);
+  const filterTabs: { key: StatusTab; label: string; count?: number }[] = [
+    { key: "all", label: "Tất cả", count: pagination.totalItem },
+    { key: "active", label: "Đang bán", count: 0 }, // TODO: real counts
+    { key: "paused", label: "Tạm dừng", count: 0 }, // TODO: real counts
+  ];
 
-  useEffect(() => {
-    if (tab === "tab_two") {
-      getListProduct(paramsProductPartner, tab);
-    }
-  }, [paramsProductPartner, tab]);
+  const filterChips: { key: StatusTab; label: string; icon?: string }[] = [
+    { key: "category", label: "Danh mục" },
+    { key: "label", label: "Nhãn" },
+    { key: "low_stock", label: "Sắp hết hàng" },
+    { key: "on_web", label: "Trên Web" },
+  ];
 
-  const [isConfigIntegrateModal, setIsConfigIntegrateModal] = useState(false);
+  // --- Table columns ---
+  const titles = ["Sản phẩm", "Danh mục", "Giá bán / giá sỉ", "Tồn kho", "Hiển thị web", "Trạng thái"];
+
+  const dataFormat = ["", "", "text-right", "text-center", "text-center", "text-center"];
+
+  const getStatusBadge = (item: IProductResponse) => {
+    // TODO: use real status field from API when available
+    // Mocked: derive from price/stock for demo
+    return <span className="product-status-badge product-status-badge--active">Đang bán</span>;
+  };
+
+  const dataMappingArray = (item: IProductResponse, index: number) => {
+    const randomLabel = getRandomLabel();
+    return [
+      // SẢN PHẨM
+      <div className="product-cell" key={item.id}>
+        <div className="product-cell__img">
+          <a data-fancybox="gallery" href={item.avatar}>
+            <Image src={item.avatar} alt={item.name} width={"48px"} />
+          </a>
+        </div>
+        <div className="product-cell__info">
+          <p className="product-cell__name">{item.name}</p>
+          <p className="product-cell__meta">
+            {/* TODO: add SKU and barcode fields to IProductResponse if not present */}
+            <span className="product-cell__sku">SKU: —</span>
+            <span className="product-cell__dot">·</span>
+            <span className="product-cell__barcode">—</span>
+          </p>
+          {/* <div className="product-cell__tags">
+            <Badge text={randomLabel.label} variant={randomLabel.color} />
+          </div> */}
+        </div>
+      </div>,
+
+      // DANH MỤC
+      <span className="product-category-badge" key={`cat-${item.id}`}>
+        {item.categoryName ? item.categoryName : "Chưa xác định"}
+      </span>,
+
+      // GIÁ BÁN / GIÁ SỈ
+      <div className="product-price-cell" key={`price-${item.id}`}>
+        <p className="product-price-cell__main">{formatCurrency(item.price)}</p>
+        {/* TODO: add wholesale price field (giá sỉ) to IProductResponse */}
+        <p className="product-price-cell__wholesale">Si: —</p>
+      </div>,
+
+      // TỒN KHO
+      <div className="product-stock-cell" key={`stock-${item.id}`}>
+        {/* TODO: add stock/quantity field to IProductResponse */}
+        <span className="product-stock-cell__value">—</span>
+      </div>,
+
+      // HIỂN THỊ WEB
+      <div className="product-toggle-cell" key={`toggle-${item.id}`}>
+        {/* TODO: add isWebDisplay field to IProductResponse */}
+        <label className="product-toggle">
+          <input type="checkbox" defaultChecked={false} onChange={(e) => handleToggleWebDisplay(item, e.target.checked)} />
+          <span className="product-toggle__slider" />
+        </label>
+      </div>,
+
+      // TRẠNG THÁI
+      getStatusBadge(item),
+    ];
+  };
+
+  // Keep actionsTable for BoxTable inline actions (hidden/redundant with new layout but kept for compatibility)
+  const actionsTable = (item: IProductResponse): IAction[] => {
+    const isCheckedItem = listIdChecked?.length > 0;
+    return [
+      // {
+      //   title: "Đặc trưng khách hàng",
+      //   icon: <Icon name="Tag" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 18 }} />,
+      //   disabled: isCheckedItem,
+      //   callback: () => {
+      //     if (!isCheckedItem) {
+      //       setIdProduct(item.id);
+      //       setShowModalConfig(true);
+      //     }
+      //   },
+      // },
+      // {
+      //   title: "Chi tiết sản phẩm",
+      //   icon: <Icon name="CollectInfo" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 17 }} />,
+      //   disabled: isCheckedItem,
+      //   callback: () => {
+      //     if (!isCheckedItem) {
+      //       setDataProduct(item);
+      //       setShowModalDetail(true);
+      //     }
+      //   },
+      // },
+      {
+        title: "Nhân bản sản phẩm",
+        icon: <Icon name="Copy" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 17 }} />,
+        callback: () => {
+          handleDuplicateProd(item);
+        },
+      },
+      permissions["PRODUCT_UPDATE"] == 1 && {
+        title: "Sửa",
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
+        disabled: isCheckedItem,
+        callback: () => {
+          if (!isCheckedItem) {
+            setIdProduct(item.id);
+            setShowProductPage(true)
+            // setShowModalAdd(true);
+            setDataProduct(item);
+          }
+        },
+      },
+      permissions["PRODUCT_DELETE"] == 1 && {
+        title: "Xóa",
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
+        disabled: isCheckedItem,
+        callback: () => {
+          if (!isCheckedItem) showDialogConfirmDelete(item);
+        },
+      },
+    ].filter(Boolean) as IAction[];
+  };
+
+  if (showProductPage) {
+  return (
+    <AddProductPage
+      idProduct={idProduct}
+      data={dataProduct}
+      onBack={(reload) => {
+        if (reload) getListProduct(params);
+        setShowProductPage(false);
+        setIdProduct(null);
+        setDataProduct(null);
+      }}
+    />
+  );
+}
 
   return (
-    <div className={`page-content page-product${isNoItem ? " bg-white" : ""}`}>
-      <div className="action-navigation">
-        <div className="action-backup">
-          <h1
-            onClick={() => {
-              onBackProps(true);
-            }}
-            className="title-first"
-            title="Quay lại"
-          >
-            Cài đặt bán hàng
-          </h1>
-          <Icon
-            name="ChevronRight"
-            onClick={() => {
-              onBackProps(true);
-            }}
-          />
-          <h1 className="title-last">Danh sách sản phẩm</h1>
+    <div className="page-content page-product page-product--v2">
+      {/* ── HEADER ── */}
+      <div className="prod-list-header">
+        <div className="prod-list-header__left">
+          <h1 className="prod-list-header__title">Quản lý Sản phẩm</h1>
+          <p className="prod-list-header__breadcrumb">
+            <span className="prod-list-header__breadcrumb-link" onClick={() => onBackProps(true)}>
+              Trang chủ
+            </span>
+            {" / "}
+            <span className="prod-list-header__breadcrumb-link" onClick={() => onBackProps(true)}>
+              Danh mục
+            </span>
+            {" / "}
+            <span>Sản phẩm</span>
+          </p>
         </div>
-        <TitleAction title="" titleActions={titleActions} />
+
+        <div className="prod-list-header__actions">
+          <button className="prod-list-btn prod-list-btn--ghost" onClick={() => setShowModalImport(true)}>
+            <Icon name="UploadExcel" />
+            Nhập Excel
+          </button>
+
+          {/* TODO: wire up real category modal when ready */}
+          <button className="prod-list-btn prod-list-btn--ghost" onClick={handleOpenCategory}>
+            📦 Danh mục
+          </button>
+
+          {/* TODO: wire up display settings modal when ready */}
+          <button className="prod-list-btn prod-list-btn--ghost" onClick={handleDisplaySettings}>
+            <Icon name="Settings" />
+            Cài đặt hiển thị
+          </button>
+
+          <button
+            className="prod-list-btn prod-list-btn--primary"
+            onClick={() => {
+              setIdProduct(null);
+              // setShowModalAdd(true);
+              setShowProductPage(true)
+            }}
+          >
+            <Icon name="Plus" />
+            Thêm sản phẩm
+          </button>
+        </div>
       </div>
 
-      <div className="card-box d-flex flex-column" style={tab === "tab_one" ? {} : { marginTop: "2rem" }}>
-        {/* <SearchBox
-          name="Tên sản phẩm"
-          params={params}
-          isSaveSearch={true}
-          listSaveSearch={listSaveSearch}
-          updateParams={(paramsNew) => setParams(paramsNew)}
-        /> */}
-
-        <div className="action-header">
-          <div className="title__actions">
-            <ul className="menu-list">
-              {listTabs.map((item, idx) =>
-                listPartner && listPartner.length > 0 ? (
-                  <li
-                    key={idx}
-                    className={item.is_active == tab ? "active" : ""}
-                    onClick={(e) => {
-                      e && e.preventDefault();
-                      setTab(item.is_active);
-                    }}
-                  >
-                    {item.title}
-                  </li>
-                ) : item.is_active === "tab_one" ? (
-                  <li
-                    key={idx}
-                    className={item.is_active == tab ? "active" : ""}
-                    onClick={(e) => {
-                      e && e.preventDefault();
-                      setTab(item.is_active);
-                    }}
-                  >
-                    {item.title}
-                  </li>
-                ) : null
-              )}
-            </ul>
-
-            <Tippy content="Cấu hình tích hợp">
-              <div
-                className="setting_action"
-                onClick={() => {
-                  setIsConfigIntegrateModal(true);
-                }}
-              >
-                <Icon name="Settings" style={{ width: 23 }} />
-              </div>
-            </Tippy>
-          </div>
-
-          {tab === "tab_two" && listPartner && listPartner.length > 0 ? (
-            <div className="list-partner">
-              <div className="list__relationship">
-                {listPartner.map((item, idx) => {
-                  return item.name ? (
-                    <div
-                      key={idx}
-                      className={`relationship-item ${item.targetBsnId == targetBsnId ? "active__relationship--item" : ""}`}
-                      style={{ backgroundColor: item.color, color: item.colorText }}
-                      onClick={(e) => {
-                        e && e.preventDefault();
-                        handlClickPartner(e, item.targetBsnId);
-                      }}
-                    >
-                      {item.name}
-                    </div>
-                  ) : null;
-                })}
-              </div>
-            </div>
-          ) : null}
-
-          {/* <div className={tab == 'tab_one' ? "" : "d-none"}> */}
-          <SearchBox
-            name="Tên sản phẩm"
-            params={tab == "tab_one" ? params : paramsProductPartner}
-            // isSaveSearch={true}
-            // listSaveSearch={listSaveSearch}
-            updateParams={(paramsNew) => {
-              if (tab == "tab_one") {
-                setParams(paramsNew);
-              } else {
-                setParamsProductPartner(paramsNew);
-              }
+      {/* ── TOOLBAR ── */}
+      <div className="prod-list-toolbar">
+        {/* Search */}
+        <div className="prod-list-search">
+          <Icon name="Search" />
+          <input
+            type="text"
+            placeholder="Tìm tên sản phẩm, mã vạch, SKU..."
+            value={searchValue}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+              setParams((prev) => ({ ...prev, name: e.target.value, page: 1 }));
             }}
           />
-          {/* </div> */}
         </div>
 
+        {/* QR button */}
+        <button className="prod-list-btn prod-list-btn--qr" onClick={handleScanQR}>
+          Quét mã QR
+        </button>
+
+        {/* Status tabs */}
+        <div className="prod-list-tabs">
+          {filterTabs.map((tab) => (
+            <button
+              key={tab.key}
+              className={`prod-list-tab${activeTab === tab.key ? " prod-list-tab--active" : ""}`}
+              onClick={() => handleTabChange(tab.key)}
+            >
+              {tab.label}
+              {tab.count !== undefined && <span className="prod-list-tab__count">({tab.count})</span>}
+            </button>
+          ))}
+        </div>
+
+        {/* Filter chips */}
+        <div className="prod-list-chips">
+          {filterChips.map((chip) => (
+            <button
+              key={chip.key}
+              className={`prod-list-chip${activeTab === chip.key ? " prod-list-chip--active" : ""}`}
+              onClick={() => handleTabChange(chip.key)}
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── STATS ── */}
+      <div className="prod-list-stats">
+        {stats.map((stat, idx) => (
+          <div className="prod-list-stat" key={idx}>
+            <span className="prod-list-stat__dot" style={{ background: stat.color }} />
+            <div>
+              <p className="prod-list-stat__value">{stat.value}</p>
+              <p className="prod-list-stat__label">{stat.label}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── TABLE ── */}
+      <div className="prod-list-table-wrap">
         {!isLoading && listProduct && listProduct.length > 0 ? (
           <BoxTable
             name="Sản phẩm"
             titles={titles}
             items={listProduct}
             isPagination={true}
-            dataPagination={tab === "tab_one" ? pagination : paginationPartner}
+            dataPagination={pagination}
             dataMappingArray={(item, index) => dataMappingArray(item, index)}
             dataFormat={dataFormat}
             isBulkAction={true}
             bulkActionItems={bulkActionList}
-            listIdChecked={tab === "tab_one" ? listIdChecked : null}
+            listIdChecked={listIdChecked}
             striped={true}
             setListIdChecked={(listId) => setListIdChecked(listId)}
             actions={actionsTable}
@@ -633,16 +580,15 @@ export default function ProductList(props: IProductListProps) {
                 description={
                   <span>
                     Hiện tại chưa có sản phẩm nào. <br />
-                    {tab == "tab_one" ? `Hãy thêm mới sản phẩm đầu tiên nhé!` : ""}
+                    Hãy thêm mới sản phẩm đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton={tab == "tab_one" ? "Thêm mới sản phẩm" : ""}
+                titleButton="Thêm mới sản phẩm"
                 action={() => {
-                  if (tab == "tab_one") {
-                    setIdProduct(null);
-                    setShowModalAdd(true);
-                  }
+                  setIdProduct(null);
+                  // setShowModalAdd(true);
+                  setShowProductPage(true)
                 }}
               />
             ) : (
@@ -660,47 +606,32 @@ export default function ProductList(props: IProductListProps) {
           </Fragment>
         )}
       </div>
+
+      {/* ── MODALS ── */}
       <AddProductModal
         onShow={showModalAdd}
         idProduct={idProduct}
         data={dataProduct}
         onHide={(reload) => {
-          if (reload) {
-            getListProduct(params, tab);
-          }
+          if (reload) getListProduct(params);
           setShowModalAdd(false);
           setDataProduct(null);
         }}
       />
+
       <ModalImportProduct
         onShow={showModalImport}
         onHide={() => setShowModalImport(false)}
         onImportSuccess={(products) => {
-          console.log("Danh sách sản phẩm:", products);
           setListProduct((prev) => [...prev, ...products]);
-          // Gọi API tạo mới hàng loạt ở đây
         }}
       />
 
-      {/* <ConfigProductModal
-        onShow={showModalConfig}
-        idProduct={idProduct}
-        onHide={(reload) => {
-          // if (reload) {
-          //   getListProduct(params);
-          // }
-          setShowModalConfig(false);
-        }}
-      /> */}
       <CustomerCharacteristics
         onShow={showModalConfig}
         data={idProduct}
         typeProps="product"
         onHide={(reload) => {
-          if (reload) {
-            // nếu có thì làm gì đó ở đây
-          }
-
           setShowModalConfig(false);
         }}
       />
@@ -709,24 +640,31 @@ export default function ProductList(props: IProductListProps) {
         onShow={isConfigIntegrateModal}
         type="product"
         onHide={(reload) => {
-          if (reload) {
-            // setShowModalSetingFS(true);
-          }
-
           setIsConfigIntegrateModal(false);
         }}
       />
-      <DetailProductModal
+
+      {/* <DetailProductModal
         onShow={showModalDetail}
         data={dataProduct}
         onHide={(reload) => {
-          if (reload) {
-            getListProduct(params, tab);
-          }
+          if (reload) getListProduct(params);
+          setShowModalDetail(false);
+          setDataProduct(null);
+        }}
+      /> */}
+
+      <ConfigDisplayModal
+        onShow={showModalDetail}
+        // data={dataProduct}
+        onHide={(reload) => {
+          if (reload) getListProduct(params);
           setShowModalDetail(false);
           setDataProduct(null);
         }}
       />
+
+      <CategoryModal onShow={showCategoryModal} onHide={() => setShowCategoryModal(false)} listProduct={listProduct} />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );

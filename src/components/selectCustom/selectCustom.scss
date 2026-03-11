@@ -49,13 +49,24 @@
     span[class*="-indicatorSeparator"] {
       display: none;
     }
-    div[class*="-indicatorContainer"] {
+    div[class*="-dropdownIndicator"] {
       padding: 0;
       position: absolute;
       right: 0.6rem;
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-primary-color);
+      svg {
+        fill: var(--text-extra-color);
+      }
+    }
+
+    div[class*="-clearIndicator"] {
+      padding: 0;
+      position: absolute;
+      right: 2.2rem; // đẩy X ra trái, nhường chỗ cho dropdown arrow
+      top: 50%;
+      transform: translateY(-50%);
       svg {
         fill: var(--text-extra-color);
       }
