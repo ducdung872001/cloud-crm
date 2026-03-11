@@ -18,11 +18,13 @@ import AddLoyaltyRewardModal from "./partials/AddLoyaltyRewardModal";
 import { IRoyaltyFilterRequest } from "@/model/loyalty/RoyaltyRequest";
 import { ILoyaltyRewardResposne } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
+import { ICustomerRoyaltyListProps } from "@/model/loyalty/PropsModal";
 
-export default function LoyaltyReward() {
+export default function LoyaltyReward(props: ICustomerRoyaltyListProps) {
   document.title = "Danh sách phần thưởng";
 
   const isMounted = useRef(false);
+  const { onBackProps } = props;
 
   const [listData, setListData] = useState<ILoyaltyRewardResposne[]>([]);
   const [selectedItem, setSelectedItem] = useState<ILoyaltyRewardResposne>(null);
@@ -180,7 +182,22 @@ export default function LoyaltyReward() {
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
       <div className="action-navigation">
         <div className="action-backup">
-          <h1 className="title-first">Danh sách phần thưởng</h1>
+          <h1
+            onClick={() => {
+              onBackProps(true);
+            }}
+            className="title-first"
+            title="Quay lại"
+          > 
+           Cài đặt hạng hội viên
+            </h1>
+          <Icon
+            name="ChevronRight"
+            onClick={() => {
+              onBackProps(true);
+            }}
+          />
+          <h1 className="title-last">Danh sách phần thưởng</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>

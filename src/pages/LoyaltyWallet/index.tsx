@@ -15,7 +15,7 @@ import { ILoyaltyWalletResponse } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
 
 export default function LoyaltyWallet() {
-  document.title = "Sổ quỹ điểm";
+  document.title = "Danh sách hội viên";
 
   const isMounted = useRef(false);
 
@@ -26,12 +26,12 @@ export default function LoyaltyWallet() {
   const [params, setParams] = useState<IRoyaltyFilterRequest>({ name: "", limit: 10 });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
-    { key: "all", name: "Sổ quỹ điểm", is_active: true },
+    { key: "all", name: "Danh sách hội viên", is_active: true },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Sổ quỹ điểm",
+    name: "Danh sách hội viên",
     isChooseSizeLimit: true,
     setPage: (page) => setParams((prev) => ({ ...prev, page })),
     chooseSizeLimit: (limit) => setParams((prev) => ({ ...prev, limit })),
@@ -86,7 +86,7 @@ export default function LoyaltyWallet() {
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
       <div className="action-navigation">
         <div className="action-backup">
-          <h1 className="title-first">Sổ quỹ điểm</h1>
+          <h1 className="title-first">Danh sách hội viên</h1>
         </div>
       </div>
 
@@ -100,7 +100,7 @@ export default function LoyaltyWallet() {
         />
         {!isLoading && listData && listData.length > 0 ? (
           <BoxTable
-            name="sổ quỹ điểm"
+            name="danh sách hội viên"
             titles={titles}
             items={listData}
             isPagination={true}

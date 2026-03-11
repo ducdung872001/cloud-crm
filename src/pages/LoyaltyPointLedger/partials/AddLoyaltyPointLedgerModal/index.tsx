@@ -14,6 +14,9 @@ import { ILoyaltyPointLedgerRequest } from "@/model/loyalty/RoyaltyRequest";
 import LoyaltyService from "@/services/LoyaltyService";
 import { SelectOptionData } from "utils/selectCommon";
 import EmployeeService from "@/services/EmployeeService";
+import CustomerService from "@/services/CustomerService";
+import SelectCustom from "@/components/selectCustom/selectCustom";
+import ImageThirdGender from "assets/images/third-gender.png";
 
 export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerModalProps) {
   const { onShow, onHide, data } = props;
@@ -25,23 +28,19 @@ export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerM
 
   // Khách hàng
   const [listCustomer, setListCustomer] = useState<IOption[]>([]);
-  const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
+  const [customerData, setCustomerData] = useState<any>(null);
 
-  // Ví điểm (phụ thuộc customerId)
-  const [listWallet, setListWallet] = useState<IOption[]>([]);
-  const [isLoadingWallet, setIsLoadingWallet] = useState<boolean>(false);
+  // Ví điểm
+  const [walletData, setWalletData] = useState<any>(null);
 
   // Chương trình loyalty
-  const [listLoyaltyProgram, setListLoyaltyProgram] = useState<IOption[]>([]);
-  const [isLoadingLoyaltyProgram, setIsLoadingLoyaltyProgram] = useState<boolean>(false);
+  const [loyaltyProgramData, setLoyaltyProgramData] = useState<any>(null);
 
   // Đổi thưởng
-  const [listLoyaltyReward, setListLoyaltyReward] = useState<IOption[]>([]);
-  const [isLoadingLoyaltyReward, setIsLoadingLoyaltyReward] = useState<boolean>(false);
+  const [loyaltyRewardData, setLoyaltyRewardData] = useState<any>(null);
 
   // Nhân viên
-  const [listEmployee, setListEmployee] = useState<IOption[]>([]);
-  const [isLoadingEmployee, setIsLoadingEmployee] = useState<boolean>(false);
+  const [employeeData, setEmployeeData] = useState<any>(null);
 
   const values = useMemo(
     () =>
@@ -65,111 +64,187 @@ export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerM
     const response = await EmployeeService.info();
     if (response.code === 0) {
       const emp = response.result;
-      onOpenEmployee({ value: emp.id, label: emp.name });
+      setEmployeeData({ value: emp.id, label: emp.name });
       setFormData((prev) => ({ ...prev, values: { ...prev.values, employeeId: emp.id } }));
     }
   };
 
   useEffect(() => {
     if (onShow && !data) {
+      // Reset tất cả state select khi mở modal thêm mới
+      setCustomerData(null);
+      setWalletData(null);
+      setLoyaltyProgramData(null);
+      setLoyaltyRewardData(null);
+      setCountCheckAddCustomer((prev) => prev + 1);
+      setCountCheckAddWallet((prev) => prev + 1);
+      setCountCheckAddLoyaltyProgram((prev) => prev + 1);
+      setCountCheckAddLoyaltyReward((prev) => prev + 1);
+      setCountCheckAddEmployee((prev) => prev + 1);
       initDefaultEmployee();
     }
     if (onShow && data) {
       if (data.customerId) {
-        onOpenCustomer({ value: data.customerId, label: data.customerName || "" });
+        setCustomerData({ value: data.customerId, label: data.customerName || "" });
         onOpenWallet(data.customerId);
       }
+      if (data.walletId) {
+        setWalletData({ value: data.walletId, label: `Ví ${data.walletId}` });
+      }
       if (data.loyaltyProgramId) {
-        onOpenLoyaltyProgram({ value: data.loyaltyProgramId, label: data.loyaltyProgramName || "" });
+        setLoyaltyProgramData({ value: data.loyaltyProgramId, label: data.loyaltyProgramName || "" });
       }
       if (data.loyaltyRewardId) {
-        onOpenLoyaltyReward({ value: data.loyaltyRewardId, label: data.loyaltyRewardName || "" });
+        setLoyaltyRewardData({ value: data.loyaltyRewardId, label: data.loyaltyRewardName || "" });
       }
       if (data.employeeId) {
-        onOpenEmployee({ value: data.employeeId, label: data.employeeName || "" });
+        setEmployeeData({ value: data.employeeId, label: data.employeeName || "" });
       }
     }
   }, [onShow, data]);
 
   // Load khách hàng
-  const onOpenCustomer = async (defaultOption?: IOption) => {
-    if (listCustomer.length > 0) return;
-    setIsLoadingCustomer(true);
-    const options = await SelectOptionData("customerId");
-    if (options) {
-      const newOptions = defaultOption
-        ? [defaultOption, ...options.filter(o => o.value !== defaultOption.value)]
-        : options;
+  const [countCheckAddCustomer, setCountCheckAddCustomer] = useState(0);
 
-      setListCustomer(newOptions);
+  const loadedOptionCustomer = async (search, loadedOptions, { page }) => {
+    const param = { keyword: search, page: page, limit: 10 };
+    const response = await CustomerService.filter(param);
+    if (response.code === 0) {
+      const dataOption = response.result.items;
+      return {
+        options: [
+          ...(dataOption.length > 0
+            ? dataOption.map((item) => {
+              return {
+                value: item.id,
+                label: item.name,
+                avatar: item.avatar,
+              };
+            })
+            : []),
+        ],
+        hasMore: response.result?.loadMoreAble ?? false,
+        additional: { page: page + 1 },
+      };
     }
-    setIsLoadingCustomer(false);
+    return { options: [], hasMore: false };
   };
 
-  // Load ví điểm theo customerId
-  const onOpenWallet = async (selectedCustomerId?: number) => {
-    const cid = selectedCustomerId ?? formData?.values?.customerId;
-    if (!cid) return;
+  const formatOptionLabelCustomer = ({ label, avatar }) => {
+    return (
+      <div className="selected--item">
+        <div className="avatar">
+          <img src={avatar || ImageThirdGender} alt={label} />
+        </div>
+        {label}
+      </div>
+    );
+  };
 
-    setIsLoadingWallet(true);
-    setListWallet([]);
-
-    try {
-      const options = await SelectOptionData("walletId", { customerId: cid });
-
-      if (options) {
-        const uniqueOptions = options.filter(
-          (item, index, self) =>
-            index === self.findIndex(o => o.value === item.value)
-        );
-
-        setListWallet(uniqueOptions);
-      }
-    } finally {
-      setIsLoadingWallet(false);
+  const handleChangeValueCustomer = (e) => {
+    setCustomerData(e);
+    setWalletData(null);
+    setFormData((prev) => ({
+      ...prev,
+      values: { ...prev.values, walletId: null, customerId: e?.value },
+    }));
+    if (e?.value) {
+      setCountCheckAddWallet((prev) => prev + 1);
     }
   };
 
-  // Load chương trình loyalty
-  const onOpenLoyaltyProgram = async (defaultOption?: IOption) => {
-    if (listLoyaltyProgram.length > 0) return;
-    setIsLoadingLoyaltyProgram(true);
-    const options = await SelectOptionData("loyaltyProgramId");
-    if (options) {
-      const newOptions = defaultOption
-        ? [defaultOption, ...options.filter(o => o.value !== defaultOption.value)]
-        : options;
-      setListLoyaltyProgram(newOptions);
+  const [countCheckAddWallet, setCountCheckAddWallet] = useState(0);
+  const loadedOptionWallet = async (search, loadedOptions, { page }) => {
+    const cid = formData?.values?.customerId;
+    if (!cid) return { options: [], hasMore: false };
+    const param = { keyword: search, page: page, limit: 10, customerId: cid };
+    const response = await LoyaltyService.listLoyaltyWallet(param);
+    if (response.code === 0) {
+      const dataOption = response.result.items || [];
+      return {
+        options: dataOption.map((item) => ({
+          value: item.id,
+          label: item.name || `Ví ${item.id}`,
+        })),
+        hasMore: response.result?.loadMoreAble ?? false,
+        additional: { page: page + 1 },
+      };
     }
-    setIsLoadingLoyaltyProgram(false);
+    return { options: [], hasMore: false };
+  };
+  const handleChangeValueWallet = (e) => {
+    setWalletData(e);
+    setFormData({ ...formData, values: { ...formData.values, walletId: e?.value } });
+  };
+  const onOpenWallet = (cid?: number) => {
+    setCountCheckAddWallet((prev) => prev + 1);
   };
 
-  // Load danh sách đổi thưởng
-  const onOpenLoyaltyReward = async (defaultOption?: IOption) => {
-    if (listLoyaltyReward.length > 0) return;
-    setIsLoadingLoyaltyReward(true);
-    const options = await SelectOptionData("loyaltyRewardId");
-    if (options) {
-      const newOptions = defaultOption
-        ? [defaultOption, ...options.filter(o => o.value !== defaultOption.value)]
-        : options;
-      setListLoyaltyReward(newOptions);
+  const [countCheckAddLoyaltyProgram, setCountCheckAddLoyaltyProgram] = useState(0);
+  const loadedOptionLoyaltyProgram = async (search, loadedOptions, { page }) => {
+    const param: any = { keyword: search, page: page, limit: 10 };
+    const response = await LoyaltyService.list(param);
+    if (response.code === 0) {
+      const dataOption = response.result.items || [];
+      return {
+        options: dataOption.map((item) => ({
+          value: item.id,
+          label: item.name || item.title || `Chương trình ${item.id}`,
+        })),
+        hasMore: response.result?.loadMoreAble ?? false,
+        additional: { page: page + 1 },
+      };
     }
-    setIsLoadingLoyaltyReward(false);
+    return { options: [], hasMore: false };
+  };
+  const handleChangeValueLoyaltyProgram = (e) => {
+    setLoyaltyProgramData(e);
+    setFormData({ ...formData, values: { ...formData.values, loyaltyProgramId: e?.value } });
   };
 
-  // Load nhân viên
-  const onOpenEmployee = async (defaultOption?: IOption) => {
-    if (listEmployee.length > 0) return;
-    setIsLoadingEmployee(true);
-    const options = await SelectOptionData("employeeId");
-    if (options) {
-      const newOptions = defaultOption
-        ? [defaultOption, ...options.filter(o => o.value !== defaultOption.value)]
-        : options;
-      setListEmployee(newOptions);
+  const [countCheckAddLoyaltyReward, setCountCheckAddLoyaltyReward] = useState(0);
+  const loadedOptionLoyaltyReward = async (search, loadedOptions, { page }) => {
+    const param: any = { keyword: search, page: page, limit: 10 };
+    const response = await LoyaltyService.listLoyaltyReward(param);
+    if (response.code === 0) {
+      const dataOption = response.result.items || [];
+      return {
+        options: dataOption.map((item) => ({
+          value: item.id,
+          label: item.name || item.title || `Giao dịch ${item.id}`,
+        })),
+        hasMore: response.result?.loadMoreAble ?? false,
+        additional: { page: page + 1 },
+      };
     }
-    setIsLoadingEmployee(false);
+    return { options: [], hasMore: false };
+  };
+  const handleChangeValueLoyaltyReward = (e) => {
+    setLoyaltyRewardData(e);
+    setFormData({ ...formData, values: { ...formData.values, loyaltyRewardId: e?.value } });
+  };
+
+  const [countCheckAddEmployee, setCountCheckAddEmployee] = useState(0);
+  const loadedOptionEmployee = async (search, loadedOptions, { page }) => {
+    const param = { name: search, page: page, limit: 10 };
+    const response = await EmployeeService.list(param);
+    if (response.code === 0) {
+      const dataOption = response.result.items || [];
+      return {
+        options: dataOption.map((item) => ({
+          value: item.id,
+          label: item.name,
+          departmentName: item.departmentName,
+        })),
+        hasMore: response.result?.loadMoreAble ?? false,
+        additional: { page: page + 1 },
+      };
+    }
+    return { options: [], hasMore: false };
+  };
+  const handleChangeValueEmployee = (e) => {
+    setEmployeeData(e);
+    setFormData({ ...formData, values: { ...formData.values, employeeId: e?.value } });
   };
 
   const validations: IValidation[] = [
@@ -182,63 +257,109 @@ export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerM
     () =>
       [
         {
-          label: "Khách hàng",
           name: "customerId",
-          type: "select",
-          fill: true,
-          required: true,
-          options: listCustomer,
-          onMenuOpen: onOpenCustomer,
-          isLoading: isLoadingCustomer,
-          onChange: (selectedOption) => {
-            // Reset ví khi đổi khách hàng
-            setListWallet([]);
-            setFormData((prev) => ({
-              ...prev,
-              values: { ...prev.values, walletId: null },
-            }));
-            if (selectedOption?.value) {
-              onOpenWallet(selectedOption.value);
-            }
-          },
+          type: "custom",
+          snippet: (
+            <SelectCustom
+              key={countCheckAddCustomer}
+              id="customerId"
+              name="customerId"
+              label="Khách hàng"
+              fill={true}
+              required={true}
+              options={[]}
+              value={customerData}
+              onChange={(e) => handleChangeValueCustomer(e)}
+              isAsyncPaginate={true}
+              isFormatOptionLabel={true}
+              loadOptionsPaginate={loadedOptionCustomer}
+              placeholder="Chọn khách hàng"
+              additional={{ page: 1 }}
+              formatOptionLabel={formatOptionLabelCustomer}
+            />
+          ),
         },
         {
-          label: "Ví điểm",
           name: "walletId",
-          type: "select",
-          fill: true,
-          options: listWallet,
-          onMenuOpen: onOpenWallet,
-          isLoading: isLoadingWallet,
-          disabled: !formData?.values?.customerId,
+          type: "custom",
+          snippet: (
+            <SelectCustom
+              key={countCheckAddWallet}
+              id="walletId"
+              name="walletId"
+              label="Ví điểm"
+              fill={true}
+              options={[]}
+              value={walletData}
+              onChange={(e) => handleChangeValueWallet(e)}
+              isAsyncPaginate={true}
+              loadOptionsPaginate={loadedOptionWallet}
+              placeholder="Chọn ví điểm"
+              additional={{ page: 1 }}
+              disabled={!formData?.values?.customerId}
+            />
+          ),
         },
         {
-          label: "Chương trình loyalty",
           name: "loyaltyProgramId",
-          type: "select",
-          fill: true,
-          options: listLoyaltyProgram,
-          onMenuOpen: onOpenLoyaltyProgram,
-          isLoading: isLoadingLoyaltyProgram,
+          type: "custom",
+          snippet: (
+            <SelectCustom
+              key={countCheckAddLoyaltyProgram}
+              id="loyaltyProgramId"
+              name="loyaltyProgramId"
+              label="Chương trình khách hàng thân thiết"
+              fill={true}
+              options={[]}
+              value={loyaltyProgramData}
+              onChange={(e) => handleChangeValueLoyaltyProgram(e)}
+              isAsyncPaginate={true}
+              loadOptionsPaginate={loadedOptionLoyaltyProgram}
+              placeholder="Chọn chương trình"
+              additional={{ page: 1 }}
+            />
+          ),
         },
         {
-          label: "Giao dịch đổi thưởng",
           name: "loyaltyRewardId",
-          type: "select",
-          fill: true,
-          options: listLoyaltyReward,
-          onMenuOpen: onOpenLoyaltyReward,
-          isLoading: isLoadingLoyaltyReward,
+          type: "custom",
+          snippet: (
+            <SelectCustom
+              key={countCheckAddLoyaltyReward}
+              id="loyaltyRewardId"
+              name="loyaltyRewardId"
+              label="Giao dịch đổi thưởng"
+              fill={true}
+              options={[]}
+              value={loyaltyRewardData}
+              onChange={(e) => handleChangeValueLoyaltyReward(e)}
+              isAsyncPaginate={true}
+              loadOptionsPaginate={loadedOptionLoyaltyReward}
+              placeholder="Chọn giao dịch đổi thưởng"
+              additional={{ page: 1 }}
+            />
+          ),
         },
         {
-          label: "Người phụ trách",
           name: "employeeId",
-          type: "select",
-          fill: true,
-          required: true,
-          options: listEmployee,
-          onMenuOpen: onOpenEmployee,
-          isLoading: isLoadingEmployee,
+          type: "custom",
+          snippet: (
+            <SelectCustom
+              key={countCheckAddEmployee}
+              id="employeeId"
+              name="employeeId"
+              label="Nhân viên"
+              fill={true}
+              required={true}
+              options={[]}
+              value={employeeData}
+              onChange={(e) => handleChangeValueEmployee(e)}
+              isAsyncPaginate={true}
+              loadOptionsPaginate={loadedOptionEmployee}
+              placeholder="Chọn nhân viên"
+              additional={{ page: 1 }}
+            />
+          ),
         },
         {
           label: "Số điểm",
@@ -255,12 +376,12 @@ export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerM
         },
       ] as IFieldCustomize[],
     [
-      listCustomer, isLoadingCustomer,
-      listWallet, isLoadingWallet,
-      listLoyaltyProgram, isLoadingLoyaltyProgram,
-      listLoyaltyReward, isLoadingLoyaltyReward,
-      listEmployee, isLoadingEmployee,
-      formData,
+      listCustomer,
+      walletData, countCheckAddWallet,
+      loyaltyProgramData, countCheckAddLoyaltyProgram,
+      loyaltyRewardData, countCheckAddLoyaltyReward,
+      employeeData, countCheckAddEmployee,
+      formData, customerData, countCheckAddCustomer
     ]
   );
 
@@ -284,7 +405,7 @@ export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerM
     };
     const response = await LoyaltyService.updateLoyaltyPointLedger(body);
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} nhật ký điểm thưởng thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} nhật ký điểm hội viên thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -359,7 +480,7 @@ export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerM
     <Fragment>
       <Modal isFade isOpen={onShow} isCentered staticBackdrop toggle={() => !isSubmit && onHide(false)} className="modal-add-payment-method">
         <form className="form-payment-method" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} nhật ký điểm thưởng`} toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} nhật ký điểm hội viên`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (
