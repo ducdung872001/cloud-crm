@@ -82,6 +82,25 @@ interface VariantCombination {
 
 const genId = () => Math.random().toString(36).slice(2, 9);
 
+const toSkuPart = (str: string): string =>
+  str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // bỏ dấu tiếng Việt
+    .replace(/đ/gi, "d")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "") // chỉ giữ chữ và số
+    .slice(0, 4); // tối đa 4 ký tự mỗi phần
+
+const generateSku = (productName: string, comboLabel: string): string => {
+  const namePart = toSkuPart(productName) || "SP";
+  const valueParts = comboLabel
+    .split("/")
+    .map((v) => toSkuPart(v.trim()))
+    .filter(Boolean)
+    .join("-");
+  return valueParts ? `${namePart}-${valueParts}` : namePart;
+};
+
 const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
   const active = attrs.filter((a) => a.name.trim() && a.values.length > 0);
   if (!active.length) return [];
@@ -177,6 +196,24 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       showToast("Vui lòng nhập giá bán", "error");
       return;
     }
+
+    const activeAttrs = variantAttrs.filter((a) => a.name.trim() && a.values.length > 0);
+    const variants = combinations.map((c) => ({
+      id: 0,
+      label: c.label,
+      sku: c.sku,
+      price: +c.price || 0,
+      quantity: c.quantity || 0,
+      attributes: activeAttrs.map((a) => ({
+        name: a.name,
+        value:
+          c.key
+            .split("|")
+            .find((k) => k.startsWith(a.name + ":"))
+            ?.split(":")[1] ?? "",
+      })),
+    }));
+
     setIsSubmitting(true);
     const body: IProductRequest = {
       id: idProduct || 0,
@@ -195,7 +232,17 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       exchange: 1,
       otherUnits: detailProduct?.otherUnits ?? "",
       type: detailProduct?.type ? String(detailProduct.type) : "0",
+      description: formData.description,
+      costPrice: +formData.costPrice || 0,
+      priceWholesale: +formData.priceWholesale || 0,
+      pricePromo: +formData.pricePromo || 0,
+      variants: variants.length > 0 ? variants : undefined,
     };
+    console.log("BODY", body);
+    console.log("FORM DATA", formData);
+
+    return;
+
     const res = await ProductService.update(body);
     if (res.code === 0) {
       showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
@@ -209,7 +256,18 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   // ── VARIANT HANDLERS ──
   const syncCombinations = (attrs: VariantAttribute[]) => {
     const next = buildCombinations(attrs);
-    setCombinations((prev) => next.map((c) => ({ ...c, ...(prev.find((p) => p.key === c.key) || {}) })));
+    setCombinations((prev) =>
+      next.map((c) => {
+        const existing = prev.find((p) => p.key === c.key);
+        return {
+          ...c,
+          // giữ data user đã nhập, chỉ auto-gen SKU nếu chưa có
+          sku: existing?.sku || generateSku(formData.name, c.label),
+          quantity: existing?.quantity ?? 0,
+          price: existing?.price !== "" && existing?.price !== undefined ? existing.price : formData.price ?? "",
+        };
+      })
+    );
   };
 
   const addAttr = () => setVariantAttrs((prev) => [...prev, { tempId: genId(), name: "", values: [], inputVal: "" }]);
@@ -321,10 +379,12 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                 <div className="add-prod-form-grid" style={{ marginTop: 12 }}>
                   <div className="add-prod-field">
                     <label>Danh mục sản phẩm</label>
-                    {/* <SelectCustom
-                      id="categoryId" name="categoryId"
+                    <SelectCustom
+                      id="categoryId"
+                      name="categoryId"
                       value={selectedCategory}
                       isAsyncPaginate={true}
+                      options={[]}
                       loadOptionsPaginate={loadOptionCategory}
                       additional={{ page: 1 }}
                       onChange={(e) => {
@@ -332,8 +392,9 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                         setField("categoryId", e?.value ?? null);
                         setField("categoryName", e?.label ?? "");
                       }}
-                      placeholder="Chọn danh mục..." isClearable
-                    /> */}
+                      placeholder="Chọn danh mục..."
+                      isClearable
+                    />
                   </div>
                   <div className="add-prod-field">
                     <label>
@@ -342,7 +403,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                     <SelectCustom
                       id="unitId"
                       name="unitId"
-                      value={selectedUnit}
+                      value={selectedUnit?.value ?? null}
                       options={listUnit}
                       onChange={(e) => {
                         setSelectedUnit(e);
@@ -386,7 +447,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                       <span className="add-prod-field__price-icon">₫</span>
                       <NummericInput
                         value={formData.costPrice}
-                        onValueChange={(vals: any) => setField("costPrice", vals.formattedValue ?? 0)}
+                        onValueChange={(vals: any) => setField("costPrice", vals.floatValue ?? 0)}
                         placeholder="0"
                       />
                     </div>
@@ -591,7 +652,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                               <span className="add-prod-field__price-icon">₫</span>
                               <NummericInput
                                 value={c.price}
-                                onValueChange={(vals: any) => updateCombo(c.key, "price", vals.formattedValue ?? 0)}
+                                onValueChange={(vals: any) => updateCombo(c.key, "price", vals.floatValue ?? 0)}
                                 placeholder="0"
                                 className="add-prod-vt-table__input"
                               />

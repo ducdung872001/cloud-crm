@@ -14,17 +14,16 @@ export const ProductLabel = {
 }
 
 export const PRODUCT_DETAIL_CONFIG = [
-  { key: "showImage", label: "Hiển thị hình ảnh sản phẩm" },
-  { key: "showUnit", label: "Hiển thị đơn vị sản phẩm" },
-  { key: "showDesc", label: "Hiển thị mô tả sản phẩm" },
-  { key: "showPrice", label: "Hiển thị giá sản phẩm" },
-  { key: "showCost", label: "Hiển thị giá sỉ" },
-  { key: "showInventory", label: "Hiển thị số lượng tồn kho" },
-  { key: "showSalePrice", label: "Hiển thị giá khuyến mãi" },
-  { key: "showBarcode", label: "Hiển thị mã vạch" },
-  { key: "showCategory", label: "Hiển thị phân loại" },
-  { key: "showLabel", label: "Hiển thị nhãn sản phẩm" },
-  { key: "showProduct", label: "Hiển thị sản phẩm" }
+  { key: "showImage", label: "Hiển thị hình ảnh sản phẩm", defaultValue: true },
+  { key: "showUnit", label: "Hiển thị đơn vị tính", defaultValue: true },
+  { key: "showDesc", label: "Hiển thị mô tả chi tiết", defaultValue: true },
+  { key: "showSalePrice", label: "Hiển thị giá khuyến mãi", defaultValue: false },
+  { key: "showCost", label: "Hiển thị giá sỉ", defaultValue: false },
+  { key: "showInventory", label: "Hiển thị số lượng tồn kho", defaultValue: true },
+  { key: "showBarcode", label: "Hiển thị mã vạch / barcode", defaultValue: false },
+  { key: "showCategory", label: "Hiển thị danh mục / nhóm", defaultValue: true },
+  { key: "showSoldCount", label: "Hiển thị số lượng đã bán", defaultValue: true },
+  { key: "autoHideOutOfStock", label: "Tự động ẩn sản phẩm hết hàng", defaultValue: true },
 ];
 
 export const MOCK_PRODUCT_CATEGORIES = [
