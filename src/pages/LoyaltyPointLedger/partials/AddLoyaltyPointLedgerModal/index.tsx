@@ -54,7 +54,7 @@ export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerM
       loyaltyProgramId: data?.loyaltyProgramId ?? null,
       loyaltyRewardId: data?.loyaltyRewardId ?? null,
     } as ILoyaltyPointLedgerRequest),
-    [data]
+    [data, onShow]
   );
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
