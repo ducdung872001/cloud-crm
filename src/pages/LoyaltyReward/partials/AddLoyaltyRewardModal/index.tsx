@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo } from "react";
 import Select from "react-select";
+import { AsyncPaginate } from "react-select-async-paginate";
 import { IActionModal, IOption } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
@@ -15,6 +16,7 @@ import "./index.scss";
 import { AddLoyaltyRewardProps } from "@/model/loyalty/PropsModal";
 import { ILoyaltyRewardRequest } from "@/model/loyalty/RoyaltyRequest";
 import LoyaltyService from "@/services/LoyaltyService";
+import ProductService from "@/services/ProductService";
 
 interface IRewardItem {
   productId: number | null;
@@ -31,10 +33,6 @@ export default function AddLoyaltyRewardModal(props: AddLoyaltyRewardProps) {
   const focusedElement = useActiveElement();
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-
-  // product options for select (loaded once)
-  const [productOptions, setProductOptions] = useState<IOption[]>([]);
-  const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(false);
 
   // dynamic reward items rows
   const [rewardItems, setRewardItems] = useState<IRewardItem[]>([emptyItem()]);
@@ -105,15 +103,37 @@ export default function AddLoyaltyRewardModal(props: AddLoyaltyRewardProps) {
     [formData]
   );
 
-  // load product options when modal opens
+  // Fetch label sản phẩm cho mục đích edit
   useEffect(() => {
-    if (!onShow) return;
-    setIsLoadingProducts(true);
-    SelectOptionData("productId", {}).then((opts) => {
-      setProductOptions(opts ?? []);
-      setIsLoadingProducts(false);
-    });
-  }, [onShow]);
+    if (!onShow || !data || !data.rewardItems) return;
+
+    const fetchLabels = async () => {
+      try {
+        const items = parseInitialItems(data.rewardItems);
+        const itemIds = items.map((item) => item.productId).filter((id) => id !== null);
+        if (itemIds.length === 0) return;
+
+        const resById = await ProductService.listById({ lstId: itemIds.join(",") });
+        if (resById && resById.code === 0) {
+          const products = resById.result?.items || resById.result || [];
+
+          setRewardItems((prev) =>
+            prev.map(item => {
+              if (item.productId && !item.productLabel) {
+                const found = products.find((p: any) => p.id === item.productId);
+                return { ...item, productLabel: found ? String(found.name) : "" };
+              }
+              return item;
+            })
+          );
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải label sản phẩm theo ID:", error);
+      }
+    };
+
+    fetchLabels();
+  }, [onShow, data]);
 
   // reset form when data changes
   useEffect(() => {
@@ -123,19 +143,26 @@ export default function AddLoyaltyRewardModal(props: AddLoyaltyRewardProps) {
     return () => { setIsSubmit(false); };
   }, [values]);
 
-  // resolve labels once product options are loaded (edit mode)
-  useEffect(() => {
-    if (!productOptions.length) return;
-    setRewardItems((prev) =>
-      prev.map((item) => {
-        if (item.productId && !item.productLabel) {
-          const found = productOptions.find((o) => o.value === item.productId);
-          return { ...item, productLabel: found ? String(found.label) : "" };
-        }
-        return item;
-      })
-    );
-  }, [productOptions]);
+  const loadProductOptions = async (search: string, loadedOptions: any, { page }: any) => {
+    try {
+      const res = await ProductService.list({ name: search, page, limit: 10 });
+      if (res && res.code === 0) {
+        const dataList = res.result?.items || res.result || [];
+
+        const mapped = dataList.map((product: any) => ({
+          value: product.id,
+          label: product.name,
+        }));
+
+        return {
+          options: mapped,
+          hasMore: res.result?.loadMoreAble ?? false,
+          additional: { page: page + 1 },
+        };
+      }
+    } catch { }
+    return { options: [], hasMore: false };
+  };
 
   const addRow = () => setRewardItems((prev) => [...prev, emptyItem()]);
 
@@ -276,10 +303,11 @@ export default function AddLoyaltyRewardModal(props: AddLoyaltyRewardProps) {
                     <div key={idx} className="reward-item-row">
                       {/* Product Select */}
                       <div className="reward-item-select">
-                        <Select
+                        <AsyncPaginate
                           placeholder="Chọn sản phẩm"
-                          isLoading={isLoadingProducts}
-                          options={productOptions as any}
+                          loadOptions={loadProductOptions}
+                          additional={{ page: 1 }}
+                          debounceTimeout={300}
                           value={
                             item.productId
                               ? { value: item.productId, label: item.productLabel || String(item.productId) }
@@ -289,7 +317,7 @@ export default function AddLoyaltyRewardModal(props: AddLoyaltyRewardProps) {
                           classNamePrefix="rs"
                           menuPortalTarget={document.body}
                           styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-                          noOptionsMessage={() => "Không có dữ liệu"}
+                          noOptionsMessage={() => "Không tìm thấy dữ liệu"}
                         />
                       </div>
 

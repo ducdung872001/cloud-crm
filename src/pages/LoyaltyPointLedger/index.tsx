@@ -21,7 +21,7 @@ import LoyaltyService from "@/services/LoyaltyService";
 import moment from "moment";
 
 export default function LoyaltyPointLedger() {
-  document.title = "Nhật ký điểm thưởng";
+  document.title = "Nhật ký điểm hội viên";
 
   const isMounted = useRef(false);
 
@@ -37,12 +37,12 @@ export default function LoyaltyPointLedger() {
   const [params, setParams] = useState<IRoyaltyFilterRequest>({ name: "", limit: 10 });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
-    { key: "all", name: "Nhật ký điểm thưởng", is_active: true },
+    { key: "all", name: "Nhật ký điểm hội viên", is_active: true },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Nhật ký điểm thưởng",
+    name: "Nhật ký điểm hội viên",
     isChooseSizeLimit: true,
     setPage: (page) => setParams((prev) => ({ ...prev, page })),
     chooseSizeLimit: (limit) => setParams((prev) => ({ ...prev, limit })),
@@ -86,112 +86,33 @@ export default function LoyaltyPointLedger() {
     ],
   };
 
-  // Cột: STT | Khách hàng | Ví điểm | Số điểm | Chương trình loyalty | Đổi thưởng | Nhân viên | Ngày tạo
-  const titles = ["STT", "Khách hàng", "Ví điểm", "Số điểm", "Chương trình loyalty", "Đổi thưởng", "Người phụ trách", "Ngày tạo"];
-  const dataFormat = ["text-center", "", "text-center", "text-center", "", "", "", "text-center"];
+  // Cột: STT | Khách hàng | Ví điểm | Số điểm | Chương trình thân thiết khách hàng | Đổi thưởng | Nhân viên | Ngày tạo
+  const titles = ["STT", "Khách hàng", "Số điểm", "Chương trình thân thiết khách hàng", "Đổi thưởng", "Người phụ trách", "Ngày tạo"];
+  const dataFormat = ["text-center", "", "text-center", "", "", "", "text-center"];
   const dataMappingArray = (item: ILoyaltyPointLedgerResposne, index: number) => [
     getPageOffset(params) + index + 1,
     item.customerName ?? "—",
-    item.walletId ?? "—",
-    item.point ?? 0,
+    <span style={{ color: (item.point ?? 0) > 0 ? "green" : (item.point ?? 0) < 0 ? "red" : "inherit" }}>
+      {item.point ?? 0}
+    </span>,
     item.loyaltyProgramName ?? "—",
     item.loyaltyRewardName ?? "—",
     item.employeeName ?? "—",
     item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY") : "—",
   ];
 
-  const actionsTable = (item: ILoyaltyPointLedgerResposne): IAction[] => {
-    const isCheckedItem = listIdChecked?.length > 0;
-    return [
-      {
-        title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
-        disabled: isCheckedItem,
-        callback: () => { if (!isCheckedItem) { setSelectedItem(item); setShowModalAdd(true); } },
-      },
-      {
-        title: "Xóa",
-        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
-        disabled: isCheckedItem,
-        callback: () => { if (!isCheckedItem) showDialogConfirmDelete(item); },
-      },
-    ];
-  };
-
-  const onDelete = async (id: number) => {
-    const response = await LoyaltyService.deleteLoyaltyPointLedger(id);
-    if (response.code === 0) {
-      showToast("Xóa nhật ký điểm thưởng thành công", "success");
-      fetchList(params);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-    setShowDialog(false);
-    setContentDialog(null);
-  };
-
-  const onDeleteAll = () => {
-    const selectedIds = listIdChecked || [];
-    if (!selectedIds.length) return;
-    const arrPromises = selectedIds.map((id) => {
-      const found = listData.find((item) => item.id === id);
-      return found?.id ? LoyaltyService.deleteLoyaltyPointLedger(found.id) : Promise.resolve(null);
-    });
-    Promise.all(arrPromises)
-      .then((results) => {
-        const count = results.filter(Boolean)?.length || 0;
-        if (count > 0) {
-          showToast(`Xóa thành công ${count} nhật ký điểm thưởng`, "success");
-          fetchList(params);
-          setListIdChecked([]);
-        } else {
-          showToast("Không có nhật ký điểm thưởng nào được xóa", "error");
-        }
-      })
-      .finally(() => { setShowDialog(false); setContentDialog(null); });
-  };
-
-  const showDialogConfirmDelete = (item?: ILoyaltyPointLedgerResposne) => {
-    const contentDialog: IContentDialog = {
-      color: "error",
-      className: "dialog-delete",
-      isCentered: true,
-      isLoading: true,
-      title: <Fragment>Xóa nhật ký điểm thưởng</Fragment>,
-      message: (
-        <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? <>nhật ký điểm của <strong>{item.customerName}</strong></> : `${listIdChecked.length} bản ghi đã chọn`}?
-          Thao tác này không thể khôi phục.
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
-      defaultText: "Xóa",
-      defaultAction: () => {
-        if (item?.id) { onDelete(item.id); return; }
-        if (listIdChecked.length > 0) { onDeleteAll(); return; }
-      },
-    };
-    setContentDialog(contentDialog);
-    setShowDialog(true);
-  };
-
-  const bulkActionList: BulkActionItemModel[] = [
-    { title: "Xóa nhật ký điểm thưởng", callback: () => showDialogConfirmDelete() },
-  ];
-
   return (
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
       <div className="action-navigation">
         <div className="action-backup">
-          <h1 className="title-first">Nhật ký điểm thưởng</h1>
+          <h1 className="title-first">Nhật ký điểm hội viên</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Nhật ký điểm thưởng"
+          name="Nhật ký điểm hội viên"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -199,19 +120,14 @@ export default function LoyaltyPointLedger() {
         />
         {!isLoading && listData && listData.length > 0 ? (
           <BoxTable
-            name="nhật ký điểm thưởng"
+            name="nhật ký điểm hội viên"
             titles={titles}
             items={listData}
             isPagination={true}
             dataPagination={pagination}
             dataMappingArray={(item, index) => dataMappingArray(item, index)}
             dataFormat={dataFormat}
-            isBulkAction={true}
-            listIdChecked={listIdChecked}
-            bulkActionItems={bulkActionList}
             striped={true}
-            setListIdChecked={(listId) => setListIdChecked(listId)}
-            actions={actionsTable}
             actionType="inline"
           />
         ) : isLoading ? (
@@ -222,9 +138,9 @@ export default function LoyaltyPointLedger() {
               <SystemNotification type="no-permission" />
             ) : isNoItem ? (
               <SystemNotification
-                description={<span>Hiện tại chưa có nhật ký điểm thưởng nào.<br />Hãy thêm mới bản ghi đầu tiên nhé!</span>}
+                description={<span>Hiện tại chưa có nhật ký điểm hội viên nào.<br />Hãy thêm mới bản ghi đầu tiên nhé!</span>}
                 type="no-item"
-                titleButton="Thêm mới nhật ký điểm thưởng"
+                titleButton="Thêm mới nhật ký điểm hội viên"
                 action={() => { setSelectedItem(null); setShowModalAdd(true); }}
               />
             ) : (

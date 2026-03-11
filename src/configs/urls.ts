@@ -451,6 +451,7 @@ export const urlsApi = {
 
     //danh sách sản phẩm của đối tác
     listShared: prefixAdmin + "/product/list/shared",
+    listById: prefixAdmin + "/product/list_by_id",
   },
 
   integration: {
@@ -2219,7 +2220,7 @@ export const urlsApi = {
     listLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/list",
     updateLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/update",
     deleteLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/delete",
-    //Sổ quỹ điểm
+    //Danh sách hội viên
     listLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/list",
     updateLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/update",
     deleteLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/delete",
@@ -3216,8 +3217,6 @@ export const urls = {
   setting_contact: "/setting_contact",
   setting_loyalty: "/setting_loyalty",
   loyalty_point_ledger: "/loyalty_point_ledger",
-  loyalty_reward: "/loyalty_reward",
-  loyalty_segment: "/loyalty_segment",
   loyalty_wallet: "/loyalty_wallet",
   setting_sell: "/setting_sell",
   //Cài đặt hợp đồng

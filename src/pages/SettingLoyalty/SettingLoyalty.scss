@@ -1,0 +1,37 @@
+.page-setting-customer {
+  .menu {
+    padding: 1.5rem;
+    li {
+      display: inline-block;
+      width: 50%;
+    }
+
+    &__category {
+      padding: 0 1rem;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      padding: 0.8rem 1rem;
+
+      &:hover {
+        background-color: var(--background-color-hover);
+        font-weight: 500;
+      }
+
+      &--link {
+        color: var(--extra-color);
+        text-decoration: none;
+        width: 100%;
+        display: flex;
+        padding: 1rem 0;
+      }
+    }
+  }
+
+  @media (max-width: 760px) {
+    .menu {
+      li {
+        width: 100%;
+      }
+    }
+  }
+}

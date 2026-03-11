@@ -25,7 +25,7 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  // sổ quỹ điểm
+  // Danh sách hội viên
   listLoyaltyPointLedger: (params: ILoyaltyPointLedgerRequest, signal?: AbortSignal) => {
     return fetch(`${urlsApi.ma.listLoyaltyPointLedger}${convertParamsToString(params)}`, {
       signal,
