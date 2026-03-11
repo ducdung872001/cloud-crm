@@ -25,4 +25,17 @@ export interface IProductRequest {
   categoryId?: number;
   categoryName?: string;
   documents?: any;
+  description?: string;
+  costPrice?: number;
+  priceWholesale?: number;
+  pricePromo?: number;
+  variants?: {
+    id?: number;
+    label: string;
+    sku: string;
+    price: number;
+    costPrice?: number;
+    quantity: number;
+    attributes: { name: string; value: string }[];
+  }[];
 }

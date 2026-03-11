@@ -18,9 +18,11 @@ import AddLoyaltySegmentModal from "./partials/AddLoyaltySegmentModal";
 import { IRoyaltyFilterRequest } from "@/model/loyalty/RoyaltyRequest";
 import { ILoyaltySegmentResposne } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
+import { ICustomerRoyaltyListProps } from "@/model/loyalty/PropsModal";
 
-export default function LoyaltySegment() {
+export default function LoyaltySegment(props: ICustomerRoyaltyListProps) {
   document.title = "Hạng hội viên";
+  const { onBackProps } = props;
 
   const isMounted = useRef(false);
 
@@ -178,7 +180,22 @@ export default function LoyaltySegment() {
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
       <div className="action-navigation">
         <div className="action-backup">
-          <h1 className="title-first">Hạng hội viên</h1>
+          <h1
+            onClick={() => {
+              onBackProps(true);
+            }}
+            className="title-first"
+            title="Quay lại"
+          >
+            Cài đặt hạng hội viên
+          </h1>
+          <Icon
+            name="ChevronRight"
+            onClick={() => {
+              onBackProps(true);
+            }}
+          />
+          <h1 className="title-last">Hạng hội viên</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>

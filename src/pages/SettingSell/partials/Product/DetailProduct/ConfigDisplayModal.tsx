@@ -1,13 +1,11 @@
 import React, { Fragment, useState, useEffect, useMemo } from "react";
-import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
-import { IFormData } from "model/FormModel";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { showToast } from "utils/common";
 import Toggle from "@/components/toggle";
 import { PRODUCT_DETAIL_CONFIG } from "@/assets/mock/Product";
-import "./ConfigDisplayModal.scss"
+import "./ConfigDisplayModal.scss";
 
 interface ConfigDisplayModalProps {
   onShow: boolean;
@@ -15,38 +13,42 @@ interface ConfigDisplayModalProps {
 }
 
 export default function ConfigDisplayModal({ onShow, onHide }: ConfigDisplayModalProps) {
-  const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [isSubmit, setIsSubmit] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [productDetail, setProductDetail] = useState<Record<string, boolean>>({});
+  const [settings, setSettings] = useState<Record<string, boolean>>({});
 
-  // Load saved config from localStorage on open
   useEffect(() => {
     if (onShow) {
       try {
-        const saved = localStorage.getItem("productDetail");
-        setProductDetail(saved ? JSON.parse(saved) : {});
+        const saved = localStorage.getItem("productDisplayConfig");
+        if (saved) {
+          setSettings(JSON.parse(saved));
+        } else {
+          // Khởi tạo từ defaultValue
+          const defaults: Record<string, boolean> = {};
+          PRODUCT_DETAIL_CONFIG.forEach((cfg) => {
+            defaults[cfg.key] = cfg.defaultValue ?? false;
+          });
+          setSettings(defaults);
+        }
       } catch {
-        setProductDetail({});
+        setSettings({});
       }
     }
   }, [onShow]);
 
-  const initialValues = useMemo(() => ({ ...productDetail }), [onShow]);
+  const initialValues = useMemo(() => ({ ...settings }), [onShow]);
 
-  const handleProductDetailToggle = (key: string) => {
-    setProductDetail((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  const handleToggle = (key: string) => {
+    setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmit(true);
-
     try {
-      localStorage.setItem("productDetail", JSON.stringify(productDetail));
+      localStorage.setItem("productDisplayConfig", JSON.stringify(settings));
       showToast("Lưu cài đặt hiển thị thành công", "success");
       onHide(true);
     } catch {
@@ -56,14 +58,16 @@ export default function ConfigDisplayModal({ onShow, onHide }: ConfigDisplayModa
     }
   };
 
+  const hasChanges = JSON.stringify(settings) !== JSON.stringify(initialValues);
+
+  const clearForm = () => onHide(false);
+
   const showDialogConfirmCancel = () => {
-    const content: IContentDialog = {
+    setContentDialog({
       color: "warning",
-      className: "dialog-cancel",
       isCentered: true,
-      isLoading: false,
       title: <Fragment>Hủy bỏ thao tác</Fragment>,
-      message: <Fragment>Bạn có chắc chắn muốn hủy bỏ? Các thay đổi chưa lưu sẽ bị mất.</Fragment>,
+      message: <Fragment>Bạn có chắc chắn muốn hủy? Các thay đổi chưa lưu sẽ bị mất.</Fragment>,
       cancelText: "Quay lại",
       cancelAction: () => {
         setShowDialog(false);
@@ -75,16 +79,9 @@ export default function ConfigDisplayModal({ onShow, onHide }: ConfigDisplayModa
         setShowDialog(false);
         setContentDialog(null);
       },
-    };
-    setContentDialog(content);
+    });
     setShowDialog(true);
   };
-
-  const clearForm = () => {
-    onHide(false);
-  };
-
-  const hasChanges = JSON.stringify(productDetail) !== JSON.stringify(initialValues);
 
   const actions = useMemo<IActionModal>(
     () => ({
@@ -95,12 +92,10 @@ export default function ConfigDisplayModal({ onShow, onHide }: ConfigDisplayModa
             color: "primary",
             variant: "outline",
             disabled: isSubmit,
-            callback: () => {
-              hasChanges ? showDialogConfirmCancel() : clearForm();
-            },
+            callback: () => (hasChanges ? showDialogConfirmCancel() : clearForm()),
           },
           {
-            title: "Lưu",
+            title: "Lưu cài đặt",
             type: "submit",
             color: "primary",
             disabled: isSubmit,
@@ -124,20 +119,17 @@ export default function ConfigDisplayModal({ onShow, onHide }: ConfigDisplayModa
         size="md"
       >
         <form onSubmit={onSubmit}>
-          <ModalHeader
-            title="Cài đặt hiển thị sản phẩm"
-            toggle={() => !isSubmit && clearForm()}
-          />
+          <ModalHeader title="Cài đặt hiển thị Website (Toàn hệ thống)" toggle={() => !isSubmit && clearForm()} />
           <ModalBody>
-            <div className="config__section">
-              <h3 style={{ paddingTop: "1.6rem" }}>Hiển thị các thông tin sản phẩm</h3>
+            {/* Warning banner */}
+            <div className="cfg-display__warning">⚠️ Cài đặt này áp dụng cho toàn bộ sản phẩm. Bạn có thể ghi đè cho từng sản phẩm riêng lẻ.</div>
+
+            {/* Toggle list */}
+            <div className="cfg-display__list">
               {PRODUCT_DETAIL_CONFIG.map((cfg) => (
-                <div key={cfg.key} className="config__item">
-                  <span>{cfg.label}</span>
-                  <Toggle
-                    checked={!!productDetail[cfg.key]}
-                    onChange={() => handleProductDetailToggle(cfg.key)}
-                  />
+                <div key={cfg.key} className="cfg-display__item">
+                  <span className="cfg-display__label">{cfg.label}</span>
+                  <Toggle checked={!!settings[cfg.key]} onChange={() => handleToggle(cfg.key)} />
                 </div>
               ))}
             </div>

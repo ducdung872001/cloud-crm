@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
-import CategoryService from "services/CategoryService";
-import { ICategoryResponse } from "model/category/CategoryResponse";
+import CategoryServiceService from "services/CategoryServiceService";
+import { ICategoryServiceResponseModel } from "model/categoryService/CategoryServiceResponseModel";
 import { IProductResponse } from "model/product/ProductResponseModel";
 import { showToast } from "utils/common";
 import "./CategoryModal.scss";
+import Loading from "@/components/loading";
 
 interface CategoryModalProps {
   onShow: boolean;
@@ -14,11 +15,9 @@ interface CategoryModalProps {
 
 type TabType = "category" | "group";
 
-const CATEGORY_ICONS = ["🍹", "🍜", "🧻", "🍎", "🥛", "🧴", "🍫", "🥩", "🛒", "📦"];
-
 export default function CategoryModal({ onShow, onHide, listProduct }: CategoryModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>("category");
-  const [listCategory, setListCategory] = useState<ICategoryResponse[]>([]);
+  const [listCategory, setListCategory] = useState<ICategoryServiceResponseModel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -26,9 +25,9 @@ export default function CategoryModal({ onShow, onHide, listProduct }: CategoryM
 
   const fetchCategories = async () => {
     setIsLoading(true);
-    const response = await CategoryService.list({ name: "", type: 1 });
+    const response = await CategoryServiceService.list({ keyword: "", type: 2 });
     if (response.code === 0) {
-      const categoryList = response.result?.items
+      const categoryList = response.result?.items;
       console.log("CATEGORIES", categoryList);
       setListCategory(categoryList || []);
     }
@@ -47,12 +46,10 @@ export default function CategoryModal({ onShow, onHide, listProduct }: CategoryM
 
   const handleAdd = async () => {
     if (!newName.trim()) return;
-    const response = await CategoryService.update({
-      id: 0,
+    const response = await CategoryServiceService.update({
       name: newName.trim(),
       position: listCategory.length + 1,
-      type: 1,
-      bsnId: 0,
+      type: 2,
     });
     if (response.code === 0) {
       showToast("Thêm danh mục thành công", "success");
@@ -63,9 +60,9 @@ export default function CategoryModal({ onShow, onHide, listProduct }: CategoryM
     }
   };
 
-  const handleSave = async (item: ICategoryResponse) => {
+  const handleSave = async (item: ICategoryServiceResponseModel) => {
     if (!editingName.trim()) return;
-    const response = await CategoryService.update({ ...item, name: editingName.trim() });
+    const response = await CategoryServiceService.update({ ...item, name: editingName.trim() });
     if (response.code === 0) {
       showToast("Cập nhật danh mục thành công", "success");
       setEditingId(null);
@@ -76,7 +73,7 @@ export default function CategoryModal({ onShow, onHide, listProduct }: CategoryM
   };
 
   const handleDelete = async (id: number) => {
-    const response = await CategoryService.delete(id);
+    const response = await CategoryServiceService.delete(id);
     if (response.code === 0) {
       showToast("Xóa danh mục thành công", "success");
       fetchCategories();
@@ -87,16 +84,16 @@ export default function CategoryModal({ onShow, onHide, listProduct }: CategoryM
 
   return (
     <Modal isOpen={onShow} toggle={onHide} isCentered size="md">
-      <ModalHeader toggle={onHide}>📦 Quản lý Danh mục & Nhóm</ModalHeader>
+      <ModalHeader toggle={onHide}>Quản lý Danh mục & Nhóm</ModalHeader>
 
       <ModalBody>
         {/* Tabs */}
         <div className="cat-modal__tabs">
           <button className={`cat-modal__tab${activeTab === "category" ? " cat-modal__tab--active" : ""}`} onClick={() => setActiveTab("category")}>
-            📋 Danh mục ({listCategory.length})
+            Danh mục ({listCategory.length})
           </button>
           <button className={`cat-modal__tab${activeTab === "group" ? " cat-modal__tab--active" : ""}`} onClick={() => setActiveTab("group")}>
-            📌 Nhóm (0)
+            Nhóm (0)
           </button>
         </div>
 
@@ -119,7 +116,7 @@ export default function CategoryModal({ onShow, onHide, listProduct }: CategoryM
             {/* List */}
             <div className="cat-modal__list">
               {isLoading ? (
-                <p className="cat-modal__empty">Đang tải...</p>
+                <Loading />
               ) : listCategory.length === 0 ? (
                 <p className="cat-modal__empty">Chưa có danh mục nào.</p>
               ) : (
@@ -144,7 +141,6 @@ export default function CategoryModal({ onShow, onHide, listProduct }: CategoryM
                     ) : (
                       <>
                         <div className="cat-modal__item-info">
-                          <span className="cat-modal__item-icon">{CATEGORY_ICONS[idx % CATEGORY_ICONS.length]}</span>
                           <div>
                             <p className="cat-modal__item-name">{item.name}</p>
                             <p className="cat-modal__item-count">{getProductCount(item.id)} sản phẩm</p>
