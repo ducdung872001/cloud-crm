@@ -89,7 +89,8 @@ export default function ProductList(props: IProductListProps) {
   const getListProduct = async (paramsSearch: any) => {
     setIsLoading(true);
     const response = await ProductService.list(paramsSearch, abortController.signal);
-
+    console.log("RUN HERE ==>");
+    
     if (response.code === 0) {
       const result = response.result;
       setListProduct(result.items);
