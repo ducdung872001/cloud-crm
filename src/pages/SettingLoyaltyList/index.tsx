@@ -94,11 +94,12 @@ export default function SettingLoyaltyList(props: ICustomerRoyaltyListProps) {
   };
 
   // Cột: STT | Tên chương trình | Người phụ trách | Ngày bắt đầu | Ngày kết thúc | Trạng thái
-  const titles = ["STT", "Tên chương trình khách hàng thân thiết", "Người phụ trách", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"];
-  const dataFormat = ["text-center", "", "", "text-center", "text-center", "text-center"];
+  const titles = ["STT", "Tên chương trình khách hàng thân thiết", "Mã quy trình", "Người phụ trách", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"];
+  const dataFormat = ["text-center", "","", "", "text-center", "text-center", "text-center"];
   const dataMappingArray = (item: IProgramRoyaltyResposne, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
+    item.processCode,
     item.employeeName ?? "—",
     item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "—",
     item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "—",
@@ -196,7 +197,7 @@ export default function SettingLoyaltyList(props: ICustomerRoyaltyListProps) {
             className="title-first"
             title="Quay lại"
           > 
-           Cài đặt hạng hội viên
+           Cài đặt hệ thống tích điểm
             </h1>
           <Icon
             name="ChevronRight"
@@ -204,7 +205,7 @@ export default function SettingLoyaltyList(props: ICustomerRoyaltyListProps) {
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Quản lý chương trình khách hàng thân thiết</h1>
+          <h1 className="title-last">Cài đặt chương trình khách hàng thân thiết</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>

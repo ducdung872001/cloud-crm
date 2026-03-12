@@ -189,7 +189,7 @@ export default function LoyaltyReward(props: ICustomerRoyaltyListProps) {
             className="title-first"
             title="Quay lại"
           > 
-           Cài đặt hạng hội viên
+           Cài đặt hệ thống tích điểm
             </h1>
           <Icon
             name="ChevronRight"
