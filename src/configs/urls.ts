@@ -1,4 +1,5 @@
 const prefixAdmin = "/adminapi";
+const prefixBiz = "/bizapi";
 const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";
@@ -10,10 +11,9 @@ const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
-const prefixFinance = "/bizapi/finance";
-const prefixWarehouse = "/bizapi/inventory";
-const prefixBiz = "/bizapi";
-const prefixCare = "/bizapi/care"
+const prefixFinance = prefixBiz + "/finance";
+const prefixWarehouse = prefixBiz + "/inventory";
+const prefixCare = prefixBiz + "/care"
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
