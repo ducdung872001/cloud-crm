@@ -165,7 +165,7 @@ import DashboardLoyalty from "@/pages/DashboardLoyalty";
 import SettingPaymentMethod from "@/pages/SettingPaymentMethod";
 import PromotionalProgram from "@/pages/PromotionalProgram";
 import PromotionalReport from "@/pages/PromotionalReport";
-import SettingLoyaltyList from "@/pages/SettingLoyaltyList";
+import SettingLoyalty from "pages/SettingLoyalty/SettingLoyalty";
 import InvoiceVATOverview from "@/pages/Sell/InvoiceVAT/index";
 import ShippingList from "@/pages/ShipingManagement/ShippingList";
 import ShippingFeeConfig from "@/pages/ShipingManagement/ShippingFeeConfig/ShippingFeeConfig";
@@ -386,36 +386,6 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "settingLoyalty", // Cài đặt chương trình khách hàng thân thiết
-        path: urls.setting_loyalty,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
-        title: "loyaltyPointLedger", // Sổ nhật ký điểm thưởng
-        path: urls.loyalty_point_ledger,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
-        title: "loyaltyReward", // Danh sách phần thưởng
-        path: urls.loyalty_reward,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
-        title: "loyaltySegment", // Danh sách hạng hội viên
-        path: urls.loyalty_segment,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
-        title: "loyaltyWallet", // Sổ quỹ điểm loyalty
-        path: urls.loyalty_wallet,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
         title: "reportCustomer", // Báo cáo khách hàng
         path: urls.report_customer,
         icon: <Icon name="Customer" />,
@@ -524,6 +494,18 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
+        title: "loyaltyPointLedger", // Nhật ký điểm hội viên
+        path: urls.loyalty_point_ledger,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
+        title: "loyaltyWallet", // Danh sách hội viên
+        path: urls.loyalty_wallet,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
         title: "receiveTicket", // Tiếp nhận hỗ trợ
         path: urls.ticket,
         icon: <Icon name="ReceiveTicket" />,
@@ -593,6 +575,12 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="SettingWarranty" />,
       //   code: "",
       // },
+      {
+        title: "settingLoyalty", // Cài đặt hạng hội viên
+        path: urls.setting_loyalty,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
       {
         title: "settingTicket", // Cài đặt hỗ trợ
         path: urls.setting_ticket,
@@ -1144,20 +1132,12 @@ export const routes: IRouter[] = [
     component: <SettingContactList />,
   },
   {
-    path: urls.setting_loyalty,
-    component: <SettingLoyaltyList />,
-  },
-  {
     path: urls.loyalty_point_ledger,
     component: <LoyaltyPointLedger />,
   },
   {
-    path: urls.loyalty_reward,
-    component: <LoyaltyReward />,
-  },
-  {
-    path: urls.loyalty_segment,
-    component: <LoyaltySegment />,
+    path: urls.setting_loyalty,
+    component: <SettingLoyalty/>,
   },
   {
     path: urls.loyalty_wallet,

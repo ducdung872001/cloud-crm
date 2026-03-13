@@ -16,6 +16,12 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  listById: (params?: any, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.product.listById}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
   update: (body: IProductRequest) => {
     return fetch(urlsApi.product.update, {
       method: "POST",

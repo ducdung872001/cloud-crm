@@ -10,10 +10,10 @@ const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
-const prefixFinance = "https://reborn.vn/finance";
-const prefixWarehouse = "/bizapi/warehouse";
-const prefixInventory = "/bizapi/inventory";
+const prefixFinance = "/bizapi/finance";
+const prefixWarehouse = "/bizapi/inventory";
 const prefixBiz = "/bizapi";
+const prefixCare = "/bizapi/care"
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -82,8 +82,8 @@ export const urlsApi = {
     filter: prefixAdmin + "/customer/list_paid",
     listshared: prefixAdmin + "/customer/list_paid/shared",
     update: prefixAdmin + "/customer/update",
-    telesaleCallList: prefixAdmin + "/telesaleCall/list",
-    telesaleCallUpdate: prefixAdmin + "/telesaleCall/update",
+    telesaleCallList: prefixCare + "/telesaleCall/list",
+    telesaleCallUpdate: prefixCare + "/telesaleCall/update",
     updateByField: prefixAdmin + "/customer/update/byField",
     delete: prefixAdmin + "/customer/delete",
     deleteAll: prefixAdmin + "/customer/delete",
@@ -454,18 +454,19 @@ export const urlsApi = {
     listShared: prefixAdmin + "/product/list/shared",
 
     // ── Warehouse API (tài liệu mới) ──
-    wList: prefixInventory + "/product/list",
-    wDetail: prefixInventory + "/product/get",
-    wUpdate: prefixInventory + "/product/update",
-    wDelete: prefixInventory + "/product/delete",
-    wDashboard: prefixInventory + "/product/dashboard/summary",
-    wUpdateStatus: prefixInventory + "/product/update/status",
-    wUpdatePrice: prefixInventory + "/product/update/price",
-    wUpdateInventory: prefixInventory + "/product/update/inventory-setting",
-    wWebsiteSettingGet: prefixInventory + "/product/website-setting/get",
-    wWebsiteSettingUpdate: prefixInventory + "/product/website-setting/update",
-    wInventoryCurrent: prefixInventory + "/product/inventory/current",
-    wScan: prefixInventory + "/product/scan",
+    wList: prefixWarehouse + "/product/list",
+    wDetail: prefixWarehouse + "/product/get",
+    wUpdate: prefixWarehouse + "/product/update",
+    wDelete: prefixWarehouse + "/product/delete",
+    wDashboard: prefixWarehouse + "/product/dashboard/summary",
+    wUpdateStatus: prefixWarehouse + "/product/update/status",
+    wUpdatePrice: prefixWarehouse + "/product/update/price",
+    wUpdateInventory: prefixWarehouse + "/product/update/inventory-setting",
+    wWebsiteSettingGet: prefixWarehouse + "/product/website-setting/get",
+    wWebsiteSettingUpdate: prefixWarehouse + "/product/website-setting/update",
+    wInventoryCurrent: prefixWarehouse + "/product/inventory/current",
+    wScan: prefixWarehouse + "/product/scan",
+    listById: prefixAdmin + "/product/list_by_id",
   },
 
   integration: {
@@ -2234,7 +2235,7 @@ export const urlsApi = {
     listLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/list",
     updateLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/update",
     deleteLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/delete",
-    //Sổ quỹ điểm
+    //Danh sách hội viên
     listLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/list",
     updateLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/update",
     deleteLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/delete",
@@ -3231,8 +3232,6 @@ export const urls = {
   setting_contact: "/setting_contact",
   setting_loyalty: "/setting_loyalty",
   loyalty_point_ledger: "/loyalty_point_ledger",
-  loyalty_reward: "/loyalty_reward",
-  loyalty_segment: "/loyalty_segment",
   loyalty_wallet: "/loyalty_wallet",
   setting_sell: "/setting_sell",
   //Cài đặt hợp đồng
