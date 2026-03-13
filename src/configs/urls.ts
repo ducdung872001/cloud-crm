@@ -1,4 +1,5 @@
 const prefixAdmin = "/adminapi";
+const prefixBiz = "/bizapi";
 const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";
@@ -10,9 +11,9 @@ const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
-const prefixFinance = "https://reborn.vn/finance";
-const prefixWarehouse = "https://reborn.vn/warehouse";
-const prefixBiz = "https://biz.reborn.vn";
+const prefixFinance = prefixBiz + "/finance";
+const prefixWarehouse = prefixBiz + "/inventory";
+const prefixCare = prefixBiz + "/care"
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -81,8 +82,8 @@ export const urlsApi = {
     filter: prefixAdmin + "/customer/list_paid",
     listshared: prefixAdmin + "/customer/list_paid/shared",
     update: prefixAdmin + "/customer/update",
-    telesaleCallList: prefixAdmin + "/telesaleCall/list",
-    telesaleCallUpdate: prefixAdmin + "/telesaleCall/update",
+    telesaleCallList: prefixCare + "/telesaleCall/list",
+    telesaleCallUpdate: prefixCare + "/telesaleCall/update",
     updateByField: prefixAdmin + "/customer/update/byField",
     delete: prefixAdmin + "/customer/delete",
     deleteAll: prefixAdmin + "/customer/delete",
@@ -451,6 +452,20 @@ export const urlsApi = {
 
     //danh sách sản phẩm của đối tác
     listShared: prefixAdmin + "/product/list/shared",
+
+    // ── Warehouse API (tài liệu mới) ──
+    wList: prefixWarehouse + "/product/list",
+    wDetail: prefixWarehouse + "/product/get",
+    wUpdate: prefixWarehouse + "/product/update",
+    wDelete: prefixWarehouse + "/product/delete",
+    wDashboard: prefixWarehouse + "/product/dashboard/summary",
+    wUpdateStatus: prefixWarehouse + "/product/update/status",
+    wUpdatePrice: prefixWarehouse + "/product/update/price",
+    wUpdateInventory: prefixWarehouse + "/product/update/inventory-setting",
+    wWebsiteSettingGet: prefixWarehouse + "/product/website-setting/get",
+    wWebsiteSettingUpdate: prefixWarehouse + "/product/website-setting/update",
+    wInventoryCurrent: prefixWarehouse + "/product/inventory/current",
+    wScan: prefixWarehouse + "/product/scan",
     listById: prefixAdmin + "/product/list_by_id",
   },
 

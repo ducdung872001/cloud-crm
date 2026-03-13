@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => {
       "APP_SSO_LINK",
       "APP_CRM_LINK",
       "APP_DOMAIN",
+      "APP_BIZ_URL", 
     ];
 
     // Add all required environment variables
