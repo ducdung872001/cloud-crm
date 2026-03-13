@@ -88,9 +88,9 @@ export default function ProductList(props: IProductListProps) {
 
   const getListProduct = async (paramsSearch: any) => {
     setIsLoading(true);
-    const response = await ProductService.list(paramsSearch, abortController.signal);
-    console.log("RUN HERE ==>");
-    
+
+    const response = await ProductService.wList(paramsSearch, abortController.signal);
+
     if (response.code === 0) {
       const result = response.result;
       setListProduct(result.items);
@@ -111,13 +111,7 @@ export default function ProductList(props: IProductListProps) {
   };
 
   useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
-    if (isMounted.current === true) {
-      getListProduct(params);
-    }
+    getListProduct(params);
     return () => {
       abortController.abort();
     };
@@ -190,7 +184,7 @@ export default function ProductList(props: IProductListProps) {
   };
 
   const onDelete = async (id: number) => {
-    const response = await ProductService.delete(id);
+    const response = await ProductService.wDelete(id);
     if (response.code === 0) {
       showToast("Xóa sản phẩm thành công", "success");
       getListProduct(params);
@@ -225,9 +219,33 @@ export default function ProductList(props: IProductListProps) {
       });
   };
 
-  const handleDuplicateProd = (item) => {
-    showToast("Đã nhân bản sản phẩm thành công", "success");
-    setListProduct((prev) => [...prev, item]);
+  const handleDuplicateProd = async (item: IProductResponse) => {
+    const body: any = {
+      id: 0,
+      name: `${item.name} (Copy)`,
+      code: "",
+      productLine: item.productLine ?? "",
+      price: item.price ?? 0,
+      position: 0,
+      bsnId: item.bsnId ?? 0,
+      unitId: item.unitId ?? null,
+      unitName: item.unitName ?? "",
+      status: item.status,
+      avatar: "",
+      categoryId: null,
+      categoryName: "",
+      exchange: 1,
+      otherUnits: item.otherUnits ?? "",
+      type: item.type ? String(item.type) : "0",
+    };
+
+    const res = await ProductService.wUpdate(body);
+    if (res.code === 0) {
+      showToast("Nhân bản sản phẩm thành công", "success");
+      getListProduct(params); // reload lại list
+    } else {
+      showToast(res.message ?? "Có lỗi xảy ra", "error");
+    }
   };
 
   const showDialogConfirmDelete = (item?: IProductResponse) => {
@@ -406,7 +424,7 @@ export default function ProductList(props: IProductListProps) {
         callback: () => {
           if (!isCheckedItem) {
             setIdProduct(item.id);
-            setShowProductPage(true)
+            setShowProductPage(true);
             // setShowModalAdd(true);
             setDataProduct(item);
           }
@@ -424,19 +442,19 @@ export default function ProductList(props: IProductListProps) {
   };
 
   if (showProductPage) {
-  return (
-    <AddProductPage
-      idProduct={idProduct}
-      data={dataProduct}
-      onBack={(reload) => {
-        if (reload) getListProduct(params);
-        setShowProductPage(false);
-        setIdProduct(null);
-        setDataProduct(null);
-      }}
-    />
-  );
-}
+    return (
+      <AddProductPage
+        idProduct={idProduct}
+        data={dataProduct}
+        onBack={(reload) => {
+          if (reload) getListProduct(params);
+          setShowProductPage(false);
+          setIdProduct(null);
+          setDataProduct(null);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="page-content page-product page-product--v2">
@@ -479,7 +497,7 @@ export default function ProductList(props: IProductListProps) {
             onClick={() => {
               setIdProduct(null);
               // setShowModalAdd(true);
-              setShowProductPage(true)
+              setShowProductPage(true);
             }}
           >
             <Icon name="Plus" />
@@ -588,7 +606,7 @@ export default function ProductList(props: IProductListProps) {
                 action={() => {
                   setIdProduct(null);
                   // setShowModalAdd(true);
-                  setShowProductPage(true)
+                  setShowProductPage(true);
                 }}
               />
             ) : (

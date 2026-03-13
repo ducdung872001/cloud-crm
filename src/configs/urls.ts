@@ -11,8 +11,9 @@ const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
 const prefixFinance = "https://reborn.vn/finance";
-const prefixWarehouse = "https://reborn.vn/warehouse";
-const prefixBiz = "https://biz.reborn.vn";
+const prefixWarehouse = "/bizapi/warehouse";
+const prefixInventory = "/bizapi/inventory";
+const prefixBiz = "/bizapi";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -451,6 +452,20 @@ export const urlsApi = {
 
     //danh sách sản phẩm của đối tác
     listShared: prefixAdmin + "/product/list/shared",
+
+    // ── Warehouse API (tài liệu mới) ──
+    wList: prefixInventory + "/product/list",
+    wDetail: prefixInventory + "/product/get",
+    wUpdate: prefixInventory + "/product/update",
+    wDelete: prefixInventory + "/product/delete",
+    wDashboard: prefixInventory + "/product/dashboard/summary",
+    wUpdateStatus: prefixInventory + "/product/update/status",
+    wUpdatePrice: prefixInventory + "/product/update/price",
+    wUpdateInventory: prefixInventory + "/product/update/inventory-setting",
+    wWebsiteSettingGet: prefixInventory + "/product/website-setting/get",
+    wWebsiteSettingUpdate: prefixInventory + "/product/website-setting/update",
+    wInventoryCurrent: prefixInventory + "/product/inventory/current",
+    wScan: prefixInventory + "/product/scan",
   },
 
   integration: {
