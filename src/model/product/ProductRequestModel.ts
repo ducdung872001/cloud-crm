@@ -11,7 +11,7 @@ export interface IProductRequest {
   code: string;
   productLine: string;
   position: number | string;
-  bsnId: number;
+  bsnId?: never;
   unitId: number;
   unitName: string;
   price: number | string;

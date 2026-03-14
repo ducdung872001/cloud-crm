@@ -269,19 +269,66 @@
   }
 
   &__price {
-    position: relative;
-    &-icon {
-      position: absolute;
-      left: 11px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #94a3b8;
-      font-size: 13px;
-      z-index: 1;
-      pointer-events: none;
+    display: flex;
+    align-items: center;
+    height: 38px;
+    border: 1.5px solid #e5e7ef;
+    border-radius: 9px;
+    background: #f7f8fc;
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus-within {
+      border-color: #2563eb;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
-    input {
-      padding-left: 28px;
+
+    &-icon {
+      flex-shrink: 0;
+      padding: 0 9px;
+      font-size: 13px;
+      color: #64748b;
+      border-right: 1px solid #e5e7ef;
+      user-select: none;
+      line-height: 36px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    // Override NummericInput (base-input) bên trong
+    .base-input {
+      flex: 1;
+      min-width: 0;
+
+      label {
+        margin: 0;
+      }
+
+      input {
+        height: 36px;
+        padding: 0 8px !important;
+        font-size: 13.5px !important;
+        border: none !important;
+        border-bottom: none !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        line-height: 36px;
+        width: 100%;
+
+        &:focus {
+          outline: none;
+          box-shadow: none !important;
+          border: none !important;
+          border-bottom: none !important;
+        }
+
+        &::placeholder {
+          color: #c4c9d8;
+        }
+      }
     }
   }
 
@@ -624,67 +671,212 @@
   }
 }
 
-// Combinations table
-.add-prod-vt-table-wrap {
-  overflow-x: auto;
-}
 
-.add-prod-vt-table {
-  width: 100%;
-  border-collapse: collapse;
+// ═══════════════════════════════════════
+// VARIANT COMBINATION CARDS
+// Motif giống .add-prod-vt-attr
+// ═══════════════════════════════════════
 
-  thead th {
-    text-align: left;
-    font-size: 11px;
-    font-weight: 700;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    padding: 8px 12px;
-    border-bottom: 1.5px solid #e5e7ef;
-    background: #f7f8fc;
+.add-prod-vt-combo-card {
+  border: 1.5px solid #e5e7ef;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  background: #fafbff;
+
+  &:last-child {
+    margin-bottom: 0;
   }
 
-  tbody tr {
-    border-bottom: 1px solid #f1f5f9;
-    &:last-child {
-      border-bottom: none;
-    }
-    &:hover {
-      background: #fafbff;
-    }
+  // Hàng trên: label biến thể + SKU input
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
   }
 
-  tbody td {
-    padding: 8px 12px;
-    vertical-align: middle;
-  }
-
-  &__input {
-    padding: 7px 10px;
+  &__sku {
+    flex: 1;
+    max-width: 220px;
+    padding: 6px 10px;
     border: 1.5px solid #e5e7ef;
     border-radius: 8px;
-    font-family: "Inter", sans-serif;
     font-size: 13px;
-    background: #f7f8fc;
-    width: 100%;
-    min-width: 100px;
+    font-family: "Inter", sans-serif;
+    background: #fff;
+    color: #0f172a;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
     &:focus {
       outline: none;
       border-color: #2563eb;
-      background: #fff;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
-    &--sm {
-      width: 80px;
-      min-width: 80px;
-      text-align: center;
-    }
+
+    &::placeholder { color: #c4c9d8; }
+  }
+
+  // Vùng chứa danh sách dòng đơn vị-giá
+  &__prices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 }
 
+// Tên biến thể (label)
 .add-prod-vt-combo {
   font-size: 13px;
   font-weight: 600;
   color: #0f172a;
   white-space: nowrap;
+  min-width: 70px;
+}
+
+// Mỗi dòng: [dropdown đơn vị] [giá] [nút xóa]
+.add-prod-vt-unit-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-prod-vt-unit-select {
+  flex: 1;
+  min-width: 0;
+  max-width: 200px;
+
+  .select__control {
+    min-height: 34px !important;
+    font-size: 13px !important;
+    border-radius: 8px !important;
+  }
+}
+
+.add-prod-vt-price {
+  flex: 0 0 140px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: 34px;
+  border: 1.5px solid #e5e7ef;
+  border-radius: 8px;
+  background: #f7f8fc;
+  overflow: hidden;
+  transition: border-color 0.15s;
+
+  &:focus-within {
+    border-color: #2563eb;
+    background: #fff;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    padding: 0 7px;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 34px;
+    border-right: 1px solid #e5e7ef;
+    user-select: none;
+  }
+
+  // Override NummericInput (base-input) bên trong
+  .base-input {
+    flex: 1;
+    min-width: 0;
+    margin-top: 0 !important;
+
+    & + .base-input {
+      margin-top: 0 !important;
+    }
+
+    label {
+      margin: 0;
+    }
+
+    &__input {
+      width: 100%;
+      position: relative;
+    }
+
+    input {
+      height: 32px;
+      padding: 0 8px !important;
+      font-size: 13px !important;
+      border: none !important;
+      border-bottom: none !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      line-height: 32px;
+      width: 100%;
+
+      &:focus {
+        outline: none;
+        box-shadow: none !important;
+        border: none !important;
+        border-bottom: none !important;
+      }
+
+      &::placeholder {
+        color: #c4c9d8;
+      }
+    }
+  }
+}
+
+// Nút "Thêm đơn vị bán" — dải dashed toàn chiều rộng, giống .add-prod-vt__add-btn
+.add-prod-vt-unit-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 8px;
+  background: transparent;
+  border: 1.5px dashed #cdd0e0;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2563eb;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: #eff3ff;
+    border-color: #2563eb;
+  }
+
+  svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+}
+
+// Nút xóa — giống __del của attribute (đỏ nhạt)
+.add-prod-vt-unit-del {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  border-radius: 8px;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: #fee2e2;
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 }
