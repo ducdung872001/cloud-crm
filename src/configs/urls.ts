@@ -4,6 +4,7 @@ const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";
 const prefixSale = "/sale";
+const prefixSales = prefixBiz + "/sales";
 const prefixSystem = "/system";
 const prefixCs = "/cs";
 const prefixApplication = "/application";
@@ -13,7 +14,7 @@ const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
 const prefixFinance = prefixBiz + "/finance";
 const prefixWarehouse = prefixBiz + "/inventory";
-const prefixCare = prefixBiz + "/care"
+const prefixCare = prefixBiz + "/care";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -443,12 +444,13 @@ export const urlsApi = {
     listBoughtCardByCustomerId: prefixAdmin + "/boughtCardService/getBoughtCardServiceByCustomerId",
   },
   product: {
-    filterWarehouse: prefixAdmin + "/product/in_warehouse",
-    list: prefixAdmin + "/product/list",
-    detail: prefixAdmin + "/product/get",
-    update: prefixAdmin + "/product/update",
-    updateContent: prefixAdmin + "/product/update/content",
-    delete: prefixAdmin + "/product/delete",
+    filterWarehouse: prefixWarehouse + "/product/in_warehouse",
+    // list: prefixAdmin + "/product/list",
+    list: prefixWarehouse + "/public/product/list",
+    detail: prefixWarehouse + "/product/get",
+    update: prefixWarehouse + "/product/update",
+    updateContent: prefixWarehouse + "/product/update/content",
+    delete: prefixWarehouse + "/product/delete",
 
     //danh sách sản phẩm của đối tác
     listShared: prefixAdmin + "/product/list/shared",
@@ -640,13 +642,13 @@ export const urlsApi = {
     detail: prefixAdmin + "/cashbook/get",
   },
   orderRequest: {
-    list: prefixAdmin + "/order-request/list",
-    listOne: prefixAdmin + "/order-request/list-one",
-    update: prefixAdmin + "/order-request/update",
-    updateAndInit: prefixAdmin + "/order-request/update-and-init",
-    delete: prefixAdmin + "/order-request/delete-soft",
-    export: prefixAdmin + "/order-request/export",
-    detail: prefixAdmin + "/order-request/get",
+    list: prefixSales + "/order-request/list",
+    listOne: prefixSales + "/order-request/list-one",
+    update: prefixSales + "/order-request/update",
+    updateAndInit: prefixSales + "/order-request/update-and-init",
+    delete: prefixSales + "/order-request/delete-soft",
+    export: prefixSales + "/order-request/export",
+    detail: prefixSales + "/order-request/get",
   },
   //khu vực trải nghiệm khách hàng
   cxmSurvey: {
@@ -850,10 +852,12 @@ export const urlsApi = {
 
   categoryService: {
     // Đoạn này là category của ông dịch vụ
-    list: prefixAdmin + "/categoryItem/list",
-    update: prefixAdmin + "/categoryItem/update",
-    detail: prefixAdmin + "/categoryItem/get",
-    delete: prefixAdmin + "/categoryItem/delete",
+    // list: prefixWarehouse + "/categoryItem/list",
+    // list: prefixWarehouse + "/public/categoryItem/list",
+    list: prefixWarehouse + "/public/product/category/list",
+    update: prefixWarehouse + "/categoryItem/update",
+    detail: prefixWarehouse + "/categoryItem/get",
+    delete: prefixWarehouse + "/categoryItem/delete",
   },
 
   categoryProject: {
@@ -2243,7 +2247,7 @@ export const urlsApi = {
     listLoyaltyReward: prefixBiz + "/market/loyaltyReward/list",
     updateLoyaltyReward: prefixBiz + "/market/loyaltyReward/update",
     deleteLoyaltyReward: prefixBiz + "/market/loyaltyReward/delete",
-    //phân hạng hội viên 
+    //phân hạng hội viên
     listLoyaltySegment: prefixBiz + "/market/loyaltySegment/list",
     updateLoyaltySegment: prefixBiz + "/market/loyaltySegment/update",
     deleteLoyaltySegment: prefixBiz + "/market/loyaltySegment/delete",
