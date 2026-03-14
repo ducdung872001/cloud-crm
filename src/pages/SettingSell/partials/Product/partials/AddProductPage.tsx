@@ -201,7 +201,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     const variants = combinations.map((c) => ({
       id: 0,
       label: c.label,
-      sku: c.sku,
+      sku: c.sku?.trim() || generateSku(formData.name, c.label),
       price: +c.price || 0,
       quantity: c.quantity || 0,
       attributes: activeAttrs.map((a) => ({
@@ -214,6 +214,15 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       })),
     }));
 
+    const defaultVariant = {
+      id: 0,
+      label: "Mac dinh",
+      sku: toSkuPart(formData.name) || `SP-${Date.now()}`,
+      price: +formData.price,
+      quantity: 0,
+      attributes: [],
+    };
+
     const body: IProductRequest = {
       id: idProduct || 0,
       name: formData.name,
@@ -221,7 +230,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       productLine: formData.productLine,
       price: +formData.price,
       position: detailProduct?.position ?? 0,
-      bsnId: detailProduct?.bsnId ?? 0,
       unitId: selectedUnit?.value ?? null,
       unitName: selectedUnit?.label ?? "",
       status: formData.status,
@@ -235,7 +243,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       costPrice: +formData.costPrice || 0,
       priceWholesale: +formData.priceWholesale || 0,
       pricePromo: +formData.pricePromo || 0,
-      variants: variants.length > 0 ? variants : undefined,
+      variants: variants.length > 0 ? variants : [defaultVariant],
     };
 
     setIsSubmitting(true);
@@ -312,7 +320,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         productLine: formData.productLine,
         price: +formData.price,
         position: 0,
-        bsnId: detailProduct?.bsnId ?? 0,
         unitId: selectedUnit?.value ?? null,
         unitName: selectedUnit?.label ?? "",
         status: formData.status,
@@ -326,7 +333,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         costPrice: +formData.costPrice || 0,
         priceWholesale: +formData.priceWholesale || 0,
         pricePromo: +formData.pricePromo || 0,
-        variants: undefined, // không copy biến thể
+        // variants: undefined, // không copy biến thể
       };
       const res = await ProductService.wUpdate(body);
       if (res.code === 0) {

@@ -20,11 +20,12 @@ export default function RegisterFetch() {
       if (!config.headers) {
         config.headers = {};
       }
+      const isPublic = url.includes("/public/");
       const token = getCookie("token");
-      if (token) {
+      if (token && !isPublic) {
         config.headers["Authorization"] = `Bearer ${token}`;
       }
-      if (token && takeSelectedRole) {
+      if (token && takeSelectedRole && !isPublic) {
         config.headers["Selectedrole"] = takeSelectedRole;
       }
       if (!config.headers.Accept) {

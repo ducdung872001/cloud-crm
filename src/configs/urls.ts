@@ -456,7 +456,7 @@ export const urlsApi = {
     // ── Warehouse API (tài liệu mới) ──
     wList: prefixWarehouse + "/product/list",
     wDetail: prefixWarehouse + "/product/get",
-    wUpdate: prefixWarehouse + "/product/update",
+    wUpdate: prefixWarehouse + "/product-media/update",
     wDelete: prefixWarehouse + "/product/delete",
     wDashboard: prefixWarehouse + "/product/dashboard/summary",
     wUpdateStatus: prefixWarehouse + "/product/update/status",
@@ -467,6 +467,26 @@ export const urlsApi = {
     wInventoryCurrent: prefixWarehouse + "/product/inventory/current",
     wScan: prefixWarehouse + "/product/scan",
     listById: prefixAdmin + "/product/list_by_id",
+    publicList: prefixWarehouse + "/public/product/list",
+
+    // ── Public APIs (không cần auth) ──
+    publicDetail:       prefixWarehouse + "/public/product/get",
+    publicCategoryList: prefixWarehouse + "/public/product/category/list",
+    publicMediaList:    prefixWarehouse + "/public/product/media/list",
+
+    // ── Media APIs (cần auth) ──
+    mediaList:   prefixWarehouse + "/product-media/list",
+    mediaUpdate: prefixWarehouse + "/product-media/update",
+    mediaDelete: prefixWarehouse + "/product-media/delete",
+    mediaUpload: prefixWarehouse + "/product-media/upload",
+
+    // ── Variant Groups ──
+    variantGroupsUpdate: prefixWarehouse + "/product/variant-groups/update",
+    variantGroupsDelete: prefixWarehouse + "/product/variant-groups/delete",
+
+    // ── Specifications ──
+    specificationsUpdate: prefixWarehouse + "/product/specifications/update",
+    specificationsDelete: prefixWarehouse + "/product/specifications/delete",
   },
 
   integration: {
