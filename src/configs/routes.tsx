@@ -51,6 +51,7 @@ import ImportInvoiceList from "pages/ProductImport/ImportInvoiceList/ImportInvoi
 import ProductSoldList from "pages/ProductImport/ProductSoldList/ProductSoldList";
 import ProductInventoryList from "pages/ProductImport/ProductInventoryList/ProductInventoryList";
 import InventoryList from "pages/ProductImport/Inventory/InventoryList";
+import WarehouseListPage from "pages/ProductImport/WarehouseList/WarehouseListPage";
 import CreateReceipt from "pages/ProductImport/CreateReceipt/CreateReceipt";
 // Quản lý tài chính
 import FinanceManagement from "pages/Finance";
@@ -1251,9 +1252,14 @@ export const routes: IRouter[] = [
     path: urls.product_inventory,
     component: <ProductInventoryList />,
   },
-  // quản lý kho hàng
+  // danh sách kho hàng — gọi API /inventory/warehouse/list
   {
     path: urls.inventory,
+    component: <WarehouseListPage />,
+  },
+  // sổ kho chi tiết (mock) — /inventory-detail/:id
+  {
+    path: urls.inventory_detail,
     component: <InventoryList />,
   },
   {
