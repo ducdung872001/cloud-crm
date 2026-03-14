@@ -497,6 +497,22 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
           fill: true,
         },
         {
+          label: "Quản lý ca",
+          name: "shift",
+          type: "radio",
+          options: [
+            {
+              value: "1",
+              label: "Bật",
+            },
+            {
+              value: "2",
+              label: "Tắt",
+            },
+          ],
+          fill: true,
+        },
+        {
           label: "Quyền xem khách hàng",
           name: "viewCustomerMode",
           type: "radio",
