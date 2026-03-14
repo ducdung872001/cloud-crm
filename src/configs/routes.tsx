@@ -701,12 +701,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="ContactCustomer" />,
         code: "",
       },
-      {
-        title: "settingEform", // Cài đặt biểu mẫu
-        path: urls.setting_eform,
-        icon: <Icon name="SettingSell" />,
-        code: "",
-      },
+      // {
+      //   title: "settingEform", // Cài đặt biểu mẫu
+      //   path: urls.setting_eform,
+      //   icon: <Icon name="SettingSell" />,
+      //   code: "",
+      // },
       {
         title: "settingSMS", // Cài đặt SMS
         path: urls.setting_sms,

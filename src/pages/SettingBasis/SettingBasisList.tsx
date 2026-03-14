@@ -56,7 +56,7 @@ export default function SettingBasisList() {
   ];
 
   return (
-    <div className="page-content page-setting-basis">
+    <div className="page-setting-basis">
       {!isDetailCategory && <h1>{t(`pageSettingBasis.title`)}</h1>}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (

@@ -27,7 +27,7 @@ export default function SettingIntegration() {
   ];
 
   return (
-    <div className="page-content page-setting-integration">
+    <div className="page-setting-integration">
       {!isDetailCategory && <TitleAction title="Cài đặt tích hợp" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (

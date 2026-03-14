@@ -27,7 +27,7 @@ export default function SettingTicketList() {
   ];
 
   return (
-    <div className="page-content page-setting-ticket">
+    <div className="page-setting-ticket">
       {!isDetailCategory && <TitleAction title="Cài đặt hỗ trợ" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (
