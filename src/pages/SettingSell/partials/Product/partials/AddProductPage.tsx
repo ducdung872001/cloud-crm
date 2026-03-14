@@ -127,7 +127,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const [selectedUnit, setSelectedUnit] = useState<IOption | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<{ value: number; label: string } | null>(null);
   const [formData, setFormData] = useState({ ...DEFAULT_FORM });
-
+  const [isDuplicating, setIsDuplicating] = useState(false);
   // Variants
   const [variantAttrs, setVariantAttrs] = useState<VariantAttribute[]>([]);
   const [combinations, setCombinations] = useState<VariantCombination[]>([]);
@@ -158,7 +158,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   };
 
   const loadDetail = async () => {
-    const res = await ProductService.detail(idProduct);
+    const res = await ProductService.wDetail(idProduct);
     if (res.code === 0) {
       setDetailProduct(res.result);
       preFill(res.result);
@@ -214,7 +214,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       })),
     }));
 
-    setIsSubmitting(true);
     const body: IProductRequest = {
       id: idProduct || 0,
       name: formData.name,
@@ -238,19 +237,19 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       pricePromo: +formData.pricePromo || 0,
       variants: variants.length > 0 ? variants : undefined,
     };
-    console.log("BODY", body);
-    console.log("FORM DATA", formData);
 
-    return;
-
-    const res = await ProductService.update(body);
-    if (res.code === 0) {
-      showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
-      onBack(true);
-    } else {
-      showToast(res.message ?? "Có lỗi xảy ra", "error");
+    setIsSubmitting(true);
+    try {
+      const res = await ProductService.wUpdate(body);
+      if (res.code === 0) {
+        showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
+        onBack(true);
+      } else {
+        showToast(res.message ?? "Có lỗi xảy ra", "error");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   // ── VARIANT HANDLERS ──
@@ -301,6 +300,45 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
   const updateCombo = (key: string, field: keyof VariantCombination, value: any) =>
     setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, [field]: value } : c)));
+
+  const handleDuplicate = async () => {
+    if (!idProduct) return;
+    setIsDuplicating(true);
+    try {
+      const body: IProductRequest = {
+        id: 0, // id=0 → tạo mới
+        name: `${formData.name} (Copy)`,
+        code: "", // xóa barcode tránh trùng
+        productLine: formData.productLine,
+        price: +formData.price,
+        position: 0,
+        bsnId: detailProduct?.bsnId ?? 0,
+        unitId: selectedUnit?.value ?? null,
+        unitName: selectedUnit?.label ?? "",
+        status: formData.status,
+        avatar: formData.avatar,
+        categoryId: selectedCategory?.value ?? null,
+        categoryName: selectedCategory?.label ?? "",
+        exchange: 1,
+        otherUnits: detailProduct?.otherUnits ?? "",
+        type: detailProduct?.type ? String(detailProduct.type) : "0",
+        description: formData.description,
+        costPrice: +formData.costPrice || 0,
+        priceWholesale: +formData.priceWholesale || 0,
+        pricePromo: +formData.pricePromo || 0,
+        variants: undefined, // không copy biến thể
+      };
+      const res = await ProductService.wUpdate(body);
+      if (res.code === 0) {
+        showToast("Nhân bản sản phẩm thành công", "success");
+        onBack(true); // quay lại list, reload
+      } else {
+        showToast(res.message ?? "Có lỗi xảy ra", "error");
+      }
+    } finally {
+      setIsDuplicating(false);
+    }
+  };
 
   // ── RENDER ──
   return (
@@ -536,7 +574,9 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
               {isEdit && (
                 <div className="add-prod-right-box">
                   <div className="add-prod-right-box__title">Thao tác nhanh</div>
-                  <button className="add-prod-quick-btn">Nhân bản sản phẩm</button>
+                  <button className="add-prod-quick-btn" onClick={handleDuplicate} disabled={isDuplicating}>
+                    {isDuplicating ? "Đang xử lý..." : "Nhân bản sản phẩm"}
+                  </button>
                   <button className="add-prod-quick-btn add-prod-quick-btn--danger">Xóa sản phẩm</button>
                 </div>
               )}
