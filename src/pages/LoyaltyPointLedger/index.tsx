@@ -80,11 +80,11 @@ export default function LoyaltyPointLedger() {
     return () => { abortController.abort(); };
   }, [params]);
 
-  const titleActions: ITitleActions = {
-    actions: [
-      { title: "Thêm mới", callback: () => { setSelectedItem(null); setShowModalAdd(true); } },
-    ],
-  };
+  // const titleActions: ITitleActions = {
+  //   actions: [
+  //     { title: "Thêm mới", callback: () => { setSelectedItem(null); setShowModalAdd(true); } },
+  //   ],
+  // };
 
   // Cột: STT | Khách hàng | Ví điểm | Số điểm | Chương trình thân thiết khách hàng | Đổi thưởng | Nhân viên | Ngày tạo
   const titles = ["STT", "Khách hàng", "Số điểm", "Chương trình thân thiết khách hàng", "Đổi thưởng", "Người phụ trách", "Ngày tạo"];
@@ -107,7 +107,7 @@ export default function LoyaltyPointLedger() {
         <div className="action-backup">
           <h1 className="title-first">Nhật ký điểm hội viên</h1>
         </div>
-        <TitleAction title="" titleActions={titleActions} />
+        {/* <TitleAction title="" titleActions={titleActions} /> */}
       </div>
 
       <div className="card-box d-flex flex-column">

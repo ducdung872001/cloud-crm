@@ -18,7 +18,7 @@ export default function SettingPartnerList() {
   ];
 
   return (
-    <div className="page-content page-setting-partner">
+    <div className="page-setting-partner">
       {!isDetailCategory && <TitleAction title="Cài đặt đối tác" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (

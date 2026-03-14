@@ -701,12 +701,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="ContactCustomer" />,
         code: "",
       },
-      {
-        title: "settingEform", // Cài đặt biểu mẫu
-        path: urls.setting_eform,
-        icon: <Icon name="SettingSell" />,
-        code: "",
-      },
+      // {
+      //   title: "settingEform", // Cài đặt biểu mẫu
+      //   path: urls.setting_eform,
+      //   icon: <Icon name="SettingSell" />,
+      //   code: "",
+      // },
       {
         title: "settingSMS", // Cài đặt SMS
         path: urls.setting_sms,
@@ -750,51 +750,51 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "paymentMethod", // Phương thức thanh toán
+        title: "settingPaymentMethod", // Phương thức thanh toán
         path: urls.payment_method,
-        icon: <Icon name="CashPayment" />,
+        icon: <Icon name="Settings" />,
         code: "",
       },
       {
         title: "salesChannel", // Kênh thanh toán
         path: urls.sales_channel,
-        icon: <Icon name="CashPayment" />,
+        icon: <Icon name="Settings" />,
         code: "",
       },
       {
         title: "overview",
         path: urls.overview_staff,
-        icon: <Icon name="CashPayment" />,
+        icon: <Icon name="Settings" />,
         code: "",
       },
-      {
-        title: "staff", // Bán hàng
-        path: urls.staff,
-        icon: <Icon name="CashPayment" />,
-        code: "",
-      },
+      // {
+      //   title: "staff", // Bán hàng
+      //   path: urls.staff,
+      //   icon: <Icon name="CashPayment" />,
+      //   code: "",
+      // },
       {
         title: "reportShift",
         path: urls.report_shift,
-        icon: <Icon name="CashPayment" />,
+        icon: <Icon name="Settings" />,
         code: "",
       },
       {
         title: "shiftConfig",
         path: urls.shift_config,
-        icon: <Icon name="CashPayment" />,
+        icon: <Icon name="Settings" />,
         code: "",
       },
       {
         title: "openShift",
         path: urls.open_shift,
-        icon: <Icon name="CashPayment" />,
+        icon: <Icon name="Settings" />,
         code: "",
       },
       {
         title: "closeShift",
         path: urls.close_shift,
-        icon: <Icon name="CashPayment" />,
+        icon: <Icon name="Settings" />,
         code: "",
       },
       {
