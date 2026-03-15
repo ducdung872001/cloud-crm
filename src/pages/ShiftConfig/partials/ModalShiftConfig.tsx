@@ -213,6 +213,7 @@ export default function ShiftConfigModal(props: Props) {
                   isFmtText
                   icon={<Icon name="Clock" />}
                   onChange={(date) => setFormData({ ...formData, values: { ...formData.values, endTime: date } })}
+                  className="mt-0"
                 />
               </div>
 
