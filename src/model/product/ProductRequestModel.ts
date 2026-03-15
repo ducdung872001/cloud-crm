@@ -11,7 +11,7 @@ export interface IProductRequest {
   code: string;
   productLine: string;
   position: number | string;
-  bsnId: number;
+  bsnId?: never;
   unitId: number;
   unitName: string;
   price: number | string;
@@ -25,4 +25,17 @@ export interface IProductRequest {
   categoryId?: number;
   categoryName?: string;
   documents?: any;
+  description?: string;
+  costPrice?: number;
+  priceWholesale?: number;
+  pricePromo?: number;
+  variants?: {
+    id?: number;
+    label: string;
+    sku: string;
+    price: number;
+    costPrice?: number;
+    quantity: number;
+    attributes: { name: string; value: string }[];
+  }[];
 }

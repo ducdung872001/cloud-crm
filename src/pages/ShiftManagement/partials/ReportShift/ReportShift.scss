@@ -13,16 +13,17 @@
   .bg-light-error {
     background-color: #fff1f2;
     border: 1px solid #fecdd3;
+    padding-left: 12px;
   }
 
   .z-report-paper {
     background: #fff;
-    padding: 3.2rem;
+    padding: 2.5rem;
     border-radius: 0.8rem;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--border-color);
     position: sticky;
-    top: 2.4rem;
+    top: 7.7rem;
 
     .paper-header {
       text-align: center;
@@ -145,6 +146,21 @@
       color: var(--text-extra-color);
       font-size: 1.4rem;
       line-height: 1.6;
+    }
+
+    .warning-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .warning-icon {
+      flex-shrink: 0;
+      width: 10%;
+    }
+
+    .shift-diff-label {
+      white-space: nowrap;
     }
   }
 

@@ -52,7 +52,7 @@ export default function SettingEmailList() {
   ].filter((e) => e);
 
   return (
-    <div className="page-content page-setting-email">
+    <div className="page-setting-email">
       {!isDetailCategory && <TitleAction title="Cài đặt Email" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (

@@ -14,17 +14,16 @@ export const ProductLabel = {
 }
 
 export const PRODUCT_DETAIL_CONFIG = [
-  { key: "showImage", label: "Hiển thị hình ảnh sản phẩm" },
-  { key: "showUnit", label: "Hiển thị đơn vị sản phẩm" },
-  { key: "showDesc", label: "Hiển thị mô tả sản phẩm" },
-  { key: "showPrice", label: "Hiển thị giá sản phẩm" },
-  { key: "showCost", label: "Hiển thị giá sỉ" },
-  { key: "showInventory", label: "Hiển thị số lượng tồn kho" },
-  { key: "showSalePrice", label: "Hiển thị giá khuyến mãi" },
-  { key: "showBarcode", label: "Hiển thị mã vạch" },
-  { key: "showCategory", label: "Hiển thị phân loại" },
-  { key: "showLabel", label: "Hiển thị nhãn sản phẩm" },
-  { key: "showProduct", label: "Hiển thị sản phẩm" }
+  { key: "showImage", label: "Hiển thị hình ảnh sản phẩm", defaultValue: true },
+  { key: "showUnit", label: "Hiển thị đơn vị tính", defaultValue: true },
+  { key: "showDesc", label: "Hiển thị mô tả chi tiết", defaultValue: true },
+  { key: "showSalePrice", label: "Hiển thị giá khuyến mãi", defaultValue: false },
+  { key: "showCost", label: "Hiển thị giá sỉ", defaultValue: false },
+  { key: "showInventory", label: "Hiển thị số lượng tồn kho", defaultValue: true },
+  { key: "showBarcode", label: "Hiển thị mã vạch / barcode", defaultValue: false },
+  { key: "showCategory", label: "Hiển thị danh mục / nhóm", defaultValue: true },
+  { key: "showSoldCount", label: "Hiển thị số lượng đã bán", defaultValue: true },
+  { key: "autoHideOutOfStock", label: "Tự động ẩn sản phẩm hết hàng", defaultValue: true },
 ];
 
 export const MOCK_PRODUCT_CATEGORIES = [
@@ -44,487 +43,211 @@ export const MOCK_PRODUCT_CATEGORIES = [
 
 export interface IWarehouseBook {
   id: number;
-  code: string;           // mã phiếu
-  type: "import" | "export" | "transfer" | "adjust" | "return_from_supplier" | "return_to_customer"; // nhập/xuất/chuyển kho/điều chỉnh
+  code: string;                   // mã phiếu
+  type: "import" | "export" | "transfer" | "adjust" | "return_from_supplier" | "return_to_customer";
   productId: number;
   productName: string;
-  productCode: string;
-  quantity: number;       // số lượng
-  unitName: string;       // đơn vị tính
-  priceUnit: number;      // đơn giá
-  totalAmount: number;    // thành tiền
-  warehouseFrom?: string; // kho nguồn (dùng cho chuyển kho)
-  warehouseTo?: string;   // kho đích
-  warehouseName: string;  // kho thực hiện
-  stockBefore: number;    // tồn trước
-  stockAfter: number;     // tồn sau
-  note?: string;
-  createdBy: string;      // người thực hiện
-  createdAt: string;      // ngày thực hiện
-  status: 0 | 1;          // 0: hủy, 1: hoàn thành
-  refCode?: string;
+  productCode: string;            // SKU
+  quantity: number;               // biến động SL (+/-)
+  unitName: string;
+  warehouseFrom?: string;         // kho nguồn (chuyển kho)
+  warehouseTo?: string;           // kho đích (chuyển kho)
+  warehouseName: string;          // kho thực hiện
+  stockBefore: number;            // tồn trước
+  stockAfter: number;             // tồn sau
+  createdBy: string;              // người thực hiện
+  createdAt: string;
+  status: 0 | 1;                  // 0: hủy, 1: hoàn thành
+  // Đối tác
   partnerName?: string;
   partnerType?: "supplier" | "customer";
+  // Ref tài chính — link thay thế cho text cũ
+  refFinancial?: { code: string; url?: string };
+  // Nhập kho
+  batchNo?: string;               // số lô
+  expiryDate?: string;            // hạn dùng
+  // Chuyển kho
+  transferStatus?: "in_transit" | "received";
+  approver?: string;              // người phê duyệt
+  // Điều chỉnh
+  stockSystem?: number;           // tồn hệ thống trước điều chỉnh
+  stockActual?: number;           // tồn thực tế sau kiểm đếm
+  adjustReason?: string;          // lý do điều chỉnh
+  // Hoàn trả (NCC + KH)
   returnReason?: string;
+  // Hoàn xuất KH
+  warehouseReturn?: string;       // kho nhập lại
+  condition?: "usable" | "damaged"; // tình trạng hàng
 }
 
 export const MOCK_WAREHOUSE_BOOK: IWarehouseBook[] = [
+  // ── NHẬP KHO ──────────────────────────────────────────────
   {
-    id: 1,
-    code: "NK001",
-    type: "return_to_customer",
-    productId: 1,
-    productName: "Thuốc trị sẹo",
-    productCode: "PRODUCT01",
-    quantity: 100,
-    unitName: "Hộp",
-    priceUnit: 150000,
-    totalAmount: 15000000,
+    id: 1, code: "NK001", type: "import",
+    productId: 1, productName: "Thuốc trị sẹo", productCode: "SP-SCAR-01",
+    quantity: 100, unitName: "Hộp",
     warehouseName: "Kho trung tâm",
-    stockBefore: 50,
-    stockAfter: 150,
-    note: "Nhập hàng từ nhà cung cấp A",
-    createdBy: "Nguyễn Văn An",
-    createdAt: "2026-01-05 08:30",
-    status: 1,
-    refCode: `NK010`,           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",
+    stockBefore: 50, stockAfter: 150,
+    batchNo: "LOT-2026-01", expiryDate: "2028-01-01",
+    createdBy: "Nguyễn Văn An", createdAt: "2026-01-05 08:30", status: 1,
+    partnerName: "NCC Minh Anh", partnerType: "supplier",
+    refFinancial: { code: "HD-NK-001", url: "/product-import/HD-NK-001" },
   },
   {
-    id: 2,
-    code: "XK001",
-    type: "export",
-    productId: 2,
-    productName: "Găng tay y tế",
-    productCode: "PRODUCT02",
-    quantity: 30,
-    unitName: "Hộp",
-    priceUnit: 80000,
-    totalAmount: 2400000,
-    warehouseName: "Kho trung tâm",
-    stockBefore: 200,
-    stockAfter: 170,
-    note: "Xuất bán cho khách hàng B",
-    createdBy: "Trần Thị Bình",
-    createdAt: "2026-01-06 09:15",
-    status: 1,
-    refCode: `NK002`,           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",
-  },
-  {
-    id: 3,
-    code: "CK001",
-    type: "transfer",
-    productId: 3,
-    productName: "Khẩu trang N95",
-    productCode: "PRODUCT03",
-    quantity: 50,
-    unitName: "Cái",
-    priceUnit: 25000,
-    totalAmount: 1250000,
-    warehouseFrom: "Kho trung tâm",
-    warehouseTo: "Kho chi nhánh 1",
-    warehouseName: "Kho trung tâm",
-    stockBefore: 300,
-    stockAfter: 250,
-    note: "Chuyển kho chi nhánh",
-    createdBy: "Lê Văn Cường",
-    createdAt: "2026-01-07 10:00",
-    status: 1,
-    refCode: `NK003`,           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",
-  },
-  {
-    id: 4,
-    code: "DC001",
-    type: "return_from_supplier",
-    productId: 4,
-    productName: "Nước muối sinh lý",
-    productCode: "PRODUCT04",
-    quantity: -5,
-    unitName: "Chai",
-    priceUnit: 15000,
-    totalAmount: -75000,
-    warehouseName: "Kho trung tâm",
-    stockBefore: 80,
-    stockAfter: 75,
-    note: "Điều chỉnh sau kiểm kê",
-    createdBy: "Phạm Thị Dung",
-    createdAt: "2026-01-08 14:00",
-    status: 1,
-    refCode: `NK004`,           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",
-  },
-  {
-    id: 5,
-    code: "NK002",
-    type: "import",
-    productId: 5,
-    productName: "Vitamin C 1000mg",
-    productCode: "PRODUCT05",
-    quantity: 200,
-    unitName: "Hộp",
-    priceUnit: 120000,
-    totalAmount: 24000000,
+    id: 2, code: "NK002", type: "import",
+    productId: 5, productName: "Vitamin C 1000mg", productCode: "SP-VTC-05",
+    quantity: 200, unitName: "Hộp",
     warehouseName: "Kho chi nhánh 1",
-    stockBefore: 30,
-    stockAfter: 230,
-    note: "Nhập hàng tháng 1",
-    createdBy: "Nguyễn Văn An",
-    createdAt: "2026-01-10 08:00",
-    status: 1,
-    refCode: `NK005`,           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
+    stockBefore: 30, stockAfter: 230,
+    batchNo: "LOT-2026-02", expiryDate: "2027-06-30",
+    createdBy: "Nguyễn Văn An", createdAt: "2026-01-10 08:00", status: 1,
+    partnerName: "NCC Pharma Plus", partnerType: "supplier",
+    refFinancial: { code: "HD-NK-002", url: "/product-import/HD-NK-002" },
   },
   {
-    id: 6,
-    code: "XK002",
-    type: "export",
-    productId: 1,
-    productName: "Thuốc trị sẹo",
-    productCode: "PRODUCT01",
-    quantity: 20,
-    unitName: "Hộp",
-    priceUnit: 150000,
-    totalAmount: 3000000,
+    id: 3, code: "NK003", type: "import",
+    productId: 8, productName: "Cồn y tế 70%", productCode: "SP-CON-08",
+    quantity: 300, unitName: "Chai",
     warehouseName: "Kho trung tâm",
-    stockBefore: 150,
-    stockAfter: 130,
-    note: "Xuất cho đại lý C",
-    createdBy: "Trần Thị Bình",
-    createdAt: "2026-01-12 11:30",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
+    stockBefore: 100, stockAfter: 400,
+    batchNo: "LOT-2026-03", expiryDate: "2029-12-31",
+    createdBy: "Lê Văn Cường", createdAt: "2026-01-20 08:00", status: 1,
+    partnerName: "NCC Hóa chất Bắc Việt", partnerType: "supplier",
+    refFinancial: { code: "HD-NK-003", url: "/product-import/HD-NK-003" },
+  },
 
+  // ── XUẤT KHO ──────────────────────────────────────────────
+  {
+    id: 4, code: "XK001", type: "export",
+    productId: 2, productName: "Găng tay y tế", productCode: "SP-GT-02",
+    quantity: -30, unitName: "Hộp",
+    warehouseName: "Kho trung tâm",
+    stockBefore: 200, stockAfter: 170,
+    createdBy: "Trần Thị Bình", createdAt: "2026-01-06 09:15", status: 1,
+    partnerName: "Phòng khám Đa khoa Bình Minh", partnerType: "customer",
+    refFinancial: { code: "HD-XK-001", url: "/sell/HD-XK-001" },
   },
   {
-    id: 7,
-    code: "NK003",
-    type: "return_from_supplier",
-    productId: 6,
-    productName: "Băng dính y tế",
-    productCode: "PRODUCT06",
-    quantity: 150,
-    unitName: "Cuộn",
-    priceUnit: 20000,
-    totalAmount: 3000000,
+    id: 5, code: "XK002", type: "export",
+    productId: 1, productName: "Thuốc trị sẹo", productCode: "SP-SCAR-01",
+    quantity: -20, unitName: "Hộp",
+    warehouseName: "Kho trung tâm",
+    stockBefore: 150, stockAfter: 130,
+    createdBy: "Trần Thị Bình", createdAt: "2026-01-12 11:30", status: 1,
+    partnerName: "Đại lý Minh Phương", partnerType: "customer",
+    refFinancial: { code: "HD-XK-002", url: "/sell/HD-XK-002" },
+  },
+  {
+    id: 6, code: "XK003", type: "export",
+    productId: 3, productName: "Khẩu trang N95", productCode: "SP-KT-03",
+    quantity: -100, unitName: "Cái",
+    warehouseName: "Kho chi nhánh 1",
+    stockBefore: 250, stockAfter: 150,
+    createdBy: "Phạm Thị Dung", createdAt: "2026-01-15 13:00", status: 0,
+    partnerName: "Trường THPT Lê Lợi", partnerType: "customer",
+    refFinancial: { code: "HD-XK-003", url: "/sell/HD-XK-003" },
+  },
+
+  // ── CHUYỂN KHO ────────────────────────────────────────────
+  {
+    id: 7, code: "CK001", type: "transfer",
+    productId: 3, productName: "Khẩu trang N95", productCode: "SP-KT-03",
+    quantity: -50, unitName: "Cái",
+    warehouseFrom: "Kho trung tâm", warehouseTo: "Kho chi nhánh 1",
+    warehouseName: "Kho trung tâm",
+    stockBefore: 300, stockAfter: 250,
+    createdBy: "Lê Văn Cường", createdAt: "2026-01-07 10:00", status: 1,
+    transferStatus: "received",
+    approver: "Giám đốc Hoàng Minh",
+  },
+  {
+    id: 8, code: "CK002", type: "transfer",
+    productId: 5, productName: "Vitamin C 1000mg", productCode: "SP-VTC-05",
+    quantity: -80, unitName: "Hộp",
+    warehouseFrom: "Kho chi nhánh 1", warehouseTo: "Kho chi nhánh 2",
+    warehouseName: "Kho chi nhánh 1",
+    stockBefore: 230, stockAfter: 150,
+    createdBy: "Trần Thị Bình", createdAt: "2026-01-18 10:30", status: 1,
+    transferStatus: "in_transit",
+    approver: "Trưởng kho Nguyễn Hà",
+  },
+
+  // ── ĐIỀU CHỈNH ────────────────────────────────────────────
+  {
+    id: 9, code: "DC001", type: "adjust",
+    productId: 7, productName: "Oxy già 3%", productCode: "SP-OXY-07",
+    quantity: 10, unitName: "Chai",
+    warehouseName: "Kho trung tâm",
+    stockBefore: 60, stockAfter: 70,
+    stockSystem: 60, stockActual: 70,
+    adjustReason: "Tìm thấy hàng thừa sau kiểm kê tháng 1",
+    createdBy: "Nguyễn Văn An", createdAt: "2026-01-16 15:00", status: 1,
+    approver: "Trưởng kho Nguyễn Hà",
+    refFinancial: { code: "KK-2026-01", url: "/stock-audit/KK-2026-01" },
+  },
+  {
+    id: 10, code: "DC002", type: "adjust",
+    productId: 2, productName: "Găng tay y tế", productCode: "SP-GT-02",
+    quantity: -10, unitName: "Hộp",
+    warehouseName: "Kho trung tâm",
+    stockBefore: 170, stockAfter: 160,
+    stockSystem: 170, stockActual: 160,
+    adjustReason: "Hàng bị hư hỏng, ẩm mốc sau kiểm kê",
+    createdBy: "Lê Văn Cường", createdAt: "2026-01-26 14:30", status: 1,
+    approver: "Giám đốc Hoàng Minh",
+    refFinancial: { code: "KK-2026-02", url: "/stock-audit/KK-2026-02" },
+  },
+
+  // ── HOÀN NHẬP — NCC ───────────────────────────────────────
+  {
+    id: 11, code: "HN001", type: "return_from_supplier",
+    productId: 4, productName: "Nước muối sinh lý", productCode: "SP-NM-04",
+    quantity: -5, unitName: "Chai",
+    warehouseName: "Kho trung tâm",
+    stockBefore: 80, stockAfter: 75,
+    returnReason: "Hàng sai quy cách, lô bị lỗi in nhãn",
+    createdBy: "Phạm Thị Dung", createdAt: "2026-01-08 14:00", status: 1,
+    partnerName: "NCC Minh Anh", partnerType: "supplier",
+    refFinancial: { code: "HD-NK-001", url: "/product-import/HD-NK-001" },
+  },
+  {
+    id: 12, code: "HN002", type: "return_from_supplier",
+    productId: 6, productName: "Băng dính y tế", productCode: "SP-BD-06",
+    quantity: -15, unitName: "Cuộn",
     warehouseName: "Kho chi nhánh 2",
-    stockBefore: 20,
-    stockAfter: 170,
-    note: "Nhập hàng bổ sung",
-    createdBy: "Lê Văn Cường",
-    createdAt: "2026-01-14 09:00",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
+    stockBefore: 170, stockAfter: 155,
+    returnReason: "Hàng bị ẩm, không đảm bảo chất lượng",
+    createdBy: "Lê Văn Cường", createdAt: "2026-01-14 09:00", status: 1,
+    partnerName: "NCC Y tế Bắc Nam", partnerType: "supplier",
+    refFinancial: { code: "HD-NK-004", url: "/product-import/HD-NK-004" },
   },
-  {
-    id: 8,
-    code: "XK003",
-    type: "export",
-    productId: 3,
-    productName: "Khẩu trang N95",
-    productCode: "PRODUCT03",
-    quantity: 100,
-    unitName: "Cái",
-    priceUnit: 25000,
-    totalAmount: 2500000,
-    warehouseName: "Kho chi nhánh 1",
-    stockBefore: 250,
-    stockAfter: 150,
-    note: "Xuất bán lẻ",
-    createdBy: "Phạm Thị Dung",
-    createdAt: "2026-01-15 13:00",
-    status: 0, // hủy
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
 
-  },
+  // ── HOÀN XUẤT — KH ────────────────────────────────────────
   {
-    id: 9,
-    code: "DC002",
-    type: "adjust",
-    productId: 7,
-    productName: "Oxy già 3%",
-    productCode: "PRODUCT07",
-    quantity: 10,
-    unitName: "Chai",
-    priceUnit: 18000,
-    totalAmount: 180000,
+    id: 13, code: "HX001", type: "return_to_customer",
+    productId: 1, productName: "Thuốc trị sẹo", productCode: "SP-SCAR-01",
+    quantity: 5, unitName: "Hộp",
     warehouseName: "Kho trung tâm",
-    stockBefore: 60,
-    stockAfter: 70,
-    note: "Điều chỉnh tăng sau kiểm kê",
-    createdBy: "Nguyễn Văn An",
-    createdAt: "2026-01-16 15:00",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
+    stockBefore: 130, stockAfter: 135,
+    returnReason: "Khách nhận sai sản phẩm so với đơn hàng",
+    warehouseReturn: "Kho trung tâm",
+    condition: "usable",
+    createdBy: "Trần Thị Bình", createdAt: "2026-01-22 10:00", status: 1,
+    partnerName: "Phòng khám Đa khoa Bình Minh", partnerType: "customer",
+    refFinancial: { code: "HD-XK-001", url: "/sell/HD-XK-001" },
   },
   {
-    id: 10,
-    code: "CK002",
-    type: "transfer",
-    productId: 5,
-    productName: "Vitamin C 1000mg",
-    productCode: "PRODUCT05",
-    quantity: 80,
-    unitName: "Hộp",
-    priceUnit: 120000,
-    totalAmount: 9600000,
-    warehouseFrom: "Kho chi nhánh 1",
-    warehouseTo: "Kho chi nhánh 2",
-    warehouseName: "Kho chi nhánh 1",
-    stockBefore: 230,
-    stockAfter: 150,
-    createdBy: "Trần Thị Bình",
-    createdAt: "2026-01-18 10:30",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
-  },
-  {
-    id: 11,
-    code: "NK004",
-    type: "import",
-    productId: 8,
-    productName: "Cồn y tế 70%",
-    productCode: "PRODUCT08",
-    quantity: 300,
-    unitName: "Chai",
-    priceUnit: 22000,
-    totalAmount: 6600000,
-    warehouseName: "Kho trung tâm",
-    stockBefore: 100,
-    stockAfter: 400,
-    note: "Nhập số lượng lớn",
-    createdBy: "Lê Văn Cường",
-    createdAt: "2026-01-20 08:00",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
-  },
-  {
-    id: 12,
-    code: "XK004",
-    type: "export",
-    productId: 8,
-    productName: "Cồn y tế 70%",
-    productCode: "PRODUCT08",
-    quantity: 50,
-    unitName: "Chai",
-    priceUnit: 22000,
-    totalAmount: 1100000,
-    warehouseName: "Kho trung tâm",
-    stockBefore: 400,
-    stockAfter: 350,
-    createdBy: "Phạm Thị Dung",
-    createdAt: "2026-01-22 09:30",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
-  },
-  {
-    id: 13,
-    code: "NK005",
-    type: "import",
-    productId: 9,
-    productName: "Paracetamol 500mg",
-    productCode: "PRODUCT09",
-    quantity: 500,
-    unitName: "Vỉ",
-    priceUnit: 8000,
-    totalAmount: 4000000,
+    id: 14, code: "HX002", type: "return_to_customer",
+    productId: 9, productName: "Paracetamol 500mg", productCode: "SP-PAR-09",
+    quantity: 10, unitName: "Vỉ",
     warehouseName: "Kho chi nhánh 2",
-    stockBefore: 200,
-    stockAfter: 700,
-    note: "Nhập hàng tháng 1",
-    createdBy: "Nguyễn Văn An",
-    createdAt: "2026-01-23 08:30",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
-  },
-  {
-    id: 14,
-    code: "XK005",
-    type: "export",
-    productId: 9,
-    productName: "Paracetamol 500mg",
-    productCode: "PRODUCT09",
-    quantity: 100,
-    unitName: "Vỉ",
-    priceUnit: 8000,
-    totalAmount: 800000,
-    warehouseName: "Kho chi nhánh 2",
-    stockBefore: 700,
-    stockAfter: 600,
-    createdBy: "Trần Thị Bình",
-    createdAt: "2026-01-25 10:00",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
-  },
-  {
-    id: 15,
-    code: "DC003",
-    type: "adjust",
-    productId: 2,
-    productName: "Găng tay y tế",
-    productCode: "PRODUCT02",
-    quantity: -10,
-    unitName: "Hộp",
-    priceUnit: 80000,
-    totalAmount: -800000,
-    warehouseName: "Kho trung tâm",
-    stockBefore: 170,
-    stockAfter: 160,
-    note: "Hàng hư hỏng sau kiểm kê",
-    createdBy: "Lê Văn Cường",
-    createdAt: "2026-01-26 14:30",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
-  },
-  {
-    id: 16,
-    code: "CK003",
-    type: "transfer",
-    productId: 8,
-    productName: "Cồn y tế 70%",
-    productCode: "PRODUCT08",
-    quantity: 100,
-    unitName: "Chai",
-    priceUnit: 22000,
-    totalAmount: 2200000,
-    warehouseFrom: "Kho trung tâm",
-    warehouseTo: "Kho chi nhánh 2",
-    warehouseName: "Kho trung tâm",
-    stockBefore: 350,
-    stockAfter: 250,
-    createdBy: "Phạm Thị Dung",
-    createdAt: "2026-01-28 09:00",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
-  },
-  {
-    id: 17,
-    code: "NK006",
-    type: "import",
-    productId: 10,
-    productName: "Dầu gió xanh",
-    productCode: "PRODUCT10",
-    quantity: 120,
-    unitName: "Lọ",
-    priceUnit: 35000,
-    totalAmount: 4200000,
-    warehouseName: "Kho chi nhánh 1",
-    stockBefore: 40,
-    stockAfter: 160,
-    note: "Nhập hàng bổ sung tháng 1",
-    createdBy: "Nguyễn Văn An",
-    createdAt: "2026-01-29 08:00",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
-  },
-  {
-    id: 18,
-    code: "XK006",
-    type: "export",
-    productId: 6,
-    productName: "Băng dính y tế",
-    productCode: "PRODUCT06",
-    quantity: 40,
-    unitName: "Cuộn",
-    priceUnit: 20000,
-    totalAmount: 800000,
-    warehouseName: "Kho chi nhánh 2",
-    stockBefore: 170,
-    stockAfter: 130,
-    createdBy: "Trần Thị Bình",
-    createdAt: "2026-01-30 11:00",
-    status: 0, // hủy
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
-  },
-  {
-    id: 19,
-    code: "DC004",
-    type: "adjust",
-    productId: 10,
-    productName: "Dầu gió xanh",
-    productCode: "PRODUCT10",
-    quantity: 5,
-    unitName: "Lọ",
-    priceUnit: 35000,
-    totalAmount: 175000,
-    warehouseName: "Kho chi nhánh 1",
-    stockBefore: 160,
-    stockAfter: 165,
-    note: "Tìm thấy hàng thừa sau kiểm kê",
-    createdBy: "Lê Văn Cường",
-    createdAt: "2026-02-01 15:00",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
-  },
-  {
-    id: 20,
-    code: "NK007",
-    type: "import",
-    productId: 4,
-    productName: "Nước muối sinh lý",
-    productCode: "PRODUCT04",
-    quantity: 200,
-    unitName: "Chai",
-    priceUnit: 15000,
-    totalAmount: 3000000,
-    warehouseName: "Kho trung tâm",
-    stockBefore: 75,
-    stockAfter: 275,
-    note: "Nhập hàng tháng 2",
-    createdBy: "Phạm Thị Dung",
-    createdAt: "2026-02-03 08:30",
-    status: 1,
-    refCode: "NK001",           // mã phiếu gốc liên quan
-    partnerName: "NCC Minh Anh",// tên NCC/KH
-    partnerType: "supplier",    // supplier | customer
-
+    stockBefore: 600, stockAfter: 610,
+    returnReason: "Sản phẩm bị lỗi, khách hàng phản ánh",
+    warehouseReturn: "Kho chi nhánh 2",
+    condition: "damaged",
+    createdBy: "Phạm Thị Dung", createdAt: "2026-01-28 11:00", status: 1,
+    partnerName: "Nhà thuốc Sức Khỏe Vàng", partnerType: "customer",
+    refFinancial: { code: "HD-XK-005", url: "/sell/HD-XK-005" },
   },
 ];
 
@@ -607,16 +330,16 @@ export interface IStockCheckItem {
 // MOCK DATA
 // =====================
 export const MOCK_STOCK: IStockItem[] = [
-  { id: 1,  productId: 1,  productName: "Thuốc trị sẹo",      productCode: "PRODUCT01", unitName: "Hộp",   currentStock: 130, avgCost: 145000, warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 2,  productId: 2,  productName: "Găng tay y tế",       productCode: "PRODUCT02", unitName: "Hộp",   currentStock: 160, avgCost: 75000,  warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 3,  productId: 3,  productName: "Khẩu trang N95",      productCode: "PRODUCT03", unitName: "Cái",   currentStock: 150, avgCost: 23000,  warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 4,  productId: 4,  productName: "Nước muối sinh lý",   productCode: "PRODUCT04", unitName: "Chai",  currentStock: 275, avgCost: 14000,  warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 5,  productId: 5,  productName: "Vitamin C 1000mg",    productCode: "PRODUCT05", unitName: "Hộp",   currentStock: 150, avgCost: 118000, warehouseId: 2, warehouseName: "Kho chi nhánh 1" },
-  { id: 6,  productId: 6,  productName: "Băng dính y tế",      productCode: "PRODUCT06", unitName: "Cuộn",  currentStock: 130, avgCost: 19000,  warehouseId: 2, warehouseName: "Kho chi nhánh 2" },
-  { id: 7,  productId: 7,  productName: "Oxy già 3%",          productCode: "PRODUCT07", unitName: "Chai",  currentStock: 70,  avgCost: 17000,  warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 8,  productId: 8,  productName: "Cồn y tế 70%",        productCode: "PRODUCT08", unitName: "Chai",  currentStock: 250, avgCost: 21000,  warehouseId: 1, warehouseName: "Kho trung tâm" },
-  { id: 9,  productId: 9,  productName: "Paracetamol 500mg",   productCode: "PRODUCT09", unitName: "Vỉ",    currentStock: 600, avgCost: 7500,   warehouseId: 2, warehouseName: "Kho chi nhánh 2" },
-  { id: 10, productId: 10, productName: "Dầu gió xanh",        productCode: "PRODUCT10", unitName: "Lọ",    currentStock: 165, avgCost: 33000,  warehouseId: 2, warehouseName: "Kho chi nhánh 1" },
+  { id: 1, productId: 1, productName: "Thuốc trị sẹo", productCode: "PRODUCT01", unitName: "Hộp", currentStock: 130, avgCost: 145000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 2, productId: 2, productName: "Găng tay y tế", productCode: "PRODUCT02", unitName: "Hộp", currentStock: 160, avgCost: 75000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 3, productId: 3, productName: "Khẩu trang N95", productCode: "PRODUCT03", unitName: "Cái", currentStock: 150, avgCost: 23000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 4, productId: 4, productName: "Nước muối sinh lý", productCode: "PRODUCT04", unitName: "Chai", currentStock: 275, avgCost: 14000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 5, productId: 5, productName: "Vitamin C 1000mg", productCode: "PRODUCT05", unitName: "Hộp", currentStock: 150, avgCost: 118000, warehouseId: 2, warehouseName: "Kho chi nhánh 1" },
+  { id: 6, productId: 6, productName: "Băng dính y tế", productCode: "PRODUCT06", unitName: "Cuộn", currentStock: 130, avgCost: 19000, warehouseId: 2, warehouseName: "Kho chi nhánh 2" },
+  { id: 7, productId: 7, productName: "Oxy già 3%", productCode: "PRODUCT07", unitName: "Chai", currentStock: 70, avgCost: 17000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 8, productId: 8, productName: "Cồn y tế 70%", productCode: "PRODUCT08", unitName: "Chai", currentStock: 250, avgCost: 21000, warehouseId: 1, warehouseName: "Kho trung tâm" },
+  { id: 9, productId: 9, productName: "Paracetamol 500mg", productCode: "PRODUCT09", unitName: "Vỉ", currentStock: 600, avgCost: 7500, warehouseId: 2, warehouseName: "Kho chi nhánh 2" },
+  { id: 10, productId: 10, productName: "Dầu gió xanh", productCode: "PRODUCT10", unitName: "Lọ", currentStock: 165, avgCost: 33000, warehouseId: 2, warehouseName: "Kho chi nhánh 1" },
 ];
 
 export const MOCK_IMPORT_ORDERS: IImportOrder[] = [
@@ -731,14 +454,14 @@ export const MOCK_EXPORT_ORDERS: IExportOrder[] = [
 ];
 
 export const MOCK_STOCK_CHECK: IStockCheckItem[] = [
-  { productId: 1,  productName: "Thuốc trị sẹo",     productCode: "PRODUCT01", unitName: "Hộp",  systemStock: 130, actualStock: 128, difference: -2,  avgCost: 145000, diffAmount: -290000 },
-  { productId: 2,  productName: "Găng tay y tế",      productCode: "PRODUCT02", unitName: "Hộp",  systemStock: 160, actualStock: 160, difference: 0,   avgCost: 75000,  diffAmount: 0 },
-  { productId: 3,  productName: "Khẩu trang N95",     productCode: "PRODUCT03", unitName: "Cái",  systemStock: 150, actualStock: 155, difference: 5,   avgCost: 23000,  diffAmount: 115000 },
-  { productId: 4,  productName: "Nước muối sinh lý",  productCode: "PRODUCT04", unitName: "Chai", systemStock: 275, actualStock: 270, difference: -5,  avgCost: 14000,  diffAmount: -70000 },
-  { productId: 5,  productName: "Vitamin C 1000mg",   productCode: "PRODUCT05", unitName: "Hộp",  systemStock: 150, actualStock: 150, difference: 0,   avgCost: 118000, diffAmount: 0 },
-  { productId: 6,  productName: "Băng dính y tế",     productCode: "PRODUCT06", unitName: "Cuộn", systemStock: 130, actualStock: 132, difference: 2,   avgCost: 19000,  diffAmount: 38000 },
-  { productId: 7,  productName: "Oxy già 3%",         productCode: "PRODUCT07", unitName: "Chai", systemStock: 70,  actualStock: 68,  difference: -2,  avgCost: 17000,  diffAmount: -34000 },
-  { productId: 8,  productName: "Cồn y tế 70%",       productCode: "PRODUCT08", unitName: "Chai", systemStock: 250, actualStock: 250, difference: 0,   avgCost: 21000,  diffAmount: 0 },
-  { productId: 9,  productName: "Paracetamol 500mg",  productCode: "PRODUCT09", unitName: "Vỉ",   systemStock: 600, actualStock: 595, difference: -5,  avgCost: 7500,   diffAmount: -37500 },
-  { productId: 10, productName: "Dầu gió xanh",       productCode: "PRODUCT10", unitName: "Lọ",   systemStock: 165, actualStock: 167, difference: 2,   avgCost: 33000,  diffAmount: 66000 },
+  { productId: 1, productName: "Thuốc trị sẹo", productCode: "PRODUCT01", unitName: "Hộp", systemStock: 130, actualStock: 128, difference: -2, avgCost: 145000, diffAmount: -290000 },
+  { productId: 2, productName: "Găng tay y tế", productCode: "PRODUCT02", unitName: "Hộp", systemStock: 160, actualStock: 160, difference: 0, avgCost: 75000, diffAmount: 0 },
+  { productId: 3, productName: "Khẩu trang N95", productCode: "PRODUCT03", unitName: "Cái", systemStock: 150, actualStock: 155, difference: 5, avgCost: 23000, diffAmount: 115000 },
+  { productId: 4, productName: "Nước muối sinh lý", productCode: "PRODUCT04", unitName: "Chai", systemStock: 275, actualStock: 270, difference: -5, avgCost: 14000, diffAmount: -70000 },
+  { productId: 5, productName: "Vitamin C 1000mg", productCode: "PRODUCT05", unitName: "Hộp", systemStock: 150, actualStock: 150, difference: 0, avgCost: 118000, diffAmount: 0 },
+  { productId: 6, productName: "Băng dính y tế", productCode: "PRODUCT06", unitName: "Cuộn", systemStock: 130, actualStock: 132, difference: 2, avgCost: 19000, diffAmount: 38000 },
+  { productId: 7, productName: "Oxy già 3%", productCode: "PRODUCT07", unitName: "Chai", systemStock: 70, actualStock: 68, difference: -2, avgCost: 17000, diffAmount: -34000 },
+  { productId: 8, productName: "Cồn y tế 70%", productCode: "PRODUCT08", unitName: "Chai", systemStock: 250, actualStock: 250, difference: 0, avgCost: 21000, diffAmount: 0 },
+  { productId: 9, productName: "Paracetamol 500mg", productCode: "PRODUCT09", unitName: "Vỉ", systemStock: 600, actualStock: 595, difference: -5, avgCost: 7500, diffAmount: -37500 },
+  { productId: 10, productName: "Dầu gió xanh", productCode: "PRODUCT10", unitName: "Lọ", systemStock: 165, actualStock: 167, difference: 2, avgCost: 33000, diffAmount: 66000 },
 ];

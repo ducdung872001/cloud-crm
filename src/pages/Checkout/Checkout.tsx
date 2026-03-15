@@ -6,7 +6,7 @@ import "./Checkout.scss";
 import ModalCheckout from "./partials/ModalCheckout";
 
 export default function Checkout() {
-  document.title = "Bán hàng";
+  document.title = "Phương thức thanh toán";
 
   const [showQRModal, setShowQRModal] = useState<boolean>(false);
   const [paymentInfo] = useState({
@@ -35,7 +35,7 @@ export default function Checkout() {
   return (
     <div className="page-content page-checkout">
       {" "}
-      <TitleAction title="Bán hàng" />
+      <TitleAction title="Phương thức thanh toán" />
       <div className="card-box d-flex flex-column">
         {" "}
         <div className="action-header">

@@ -115,19 +115,19 @@
     }
   }
 
-  .device-select {
-    label {
-      font-size: 1.2rem;
-      color: var(--text-extra-color);
-      margin-bottom: 0.6rem;
-      display: block;
-    }
-    .base-select {
-      width: 100%;
-      padding: 1rem;
-      border: 1px solid var(--border-color);
-      border-radius: 0.6rem;
-    }
+  // .device-select {
+  //   label {
+  //     font-size: 1.2rem;
+  //     color: var(--text-extra-color);
+  //     margin-bottom: 0.6rem;
+  //     display: block;
+  //   }
+  // }
+  .base-select {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.6rem;
   }
 
   .staff-info-cell {

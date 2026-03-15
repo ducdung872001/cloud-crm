@@ -51,6 +51,7 @@ import ImportInvoiceList from "pages/ProductImport/ImportInvoiceList/ImportInvoi
 import ProductSoldList from "pages/ProductImport/ProductSoldList/ProductSoldList";
 import ProductInventoryList from "pages/ProductImport/ProductInventoryList/ProductInventoryList";
 import InventoryList from "pages/ProductImport/Inventory/InventoryList";
+import WarehouseListPage from "pages/ProductImport/WarehouseList/WarehouseListPage";
 import CreateReceipt from "pages/ProductImport/CreateReceipt/CreateReceipt";
 // Quản lý tài chính
 import FinanceManagement from "pages/Finance";
@@ -151,21 +152,13 @@ import Fanpage from "pages/Fanpage";
 import TotalChat from "pages/Fanpage/TotalChat";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
-import PaymentMethodList from "pages/PaymentMethod/PaymentMethod";
-import CheckoutList from "pages/Checkout/Checkout";
-import Overview from "pages/ManagementStaff/Overview";
-import StaffManagement from "pages/ManagementStaff/ManagementStaff";
-import ShiftReport from "pages/ManagementStaff/ShiftReport";
-import ShiftConfig from "pages/ManagementStaff/ShiftConfig";
-import OpenShift from "pages/ManagementStaff/OpenShift";
-import CloseShift from "pages/ManagementStaff/CloseShift";
 import MultiChannelSales from "@/pages/MultiChannelSales/MultiChannelSales";
 import DashboardRetail from "pages/DashboardRetail";
 import DashboardLoyalty from "@/pages/DashboardLoyalty";
 import SettingPaymentMethod from "@/pages/SettingPaymentMethod";
 import PromotionalProgram from "@/pages/PromotionalProgram";
 import PromotionalReport from "@/pages/PromotionalReport";
-import SettingLoyaltyList from "@/pages/SettingLoyaltyList";
+import SettingLoyalty from "pages/SettingLoyalty/SettingLoyalty";
 import InvoiceVATOverview from "@/pages/Sell/InvoiceVAT/index";
 import ShippingList from "@/pages/ShipingManagement/ShippingList";
 import ShippingFeeConfig from "@/pages/ShipingManagement/ShippingFeeConfig/ShippingFeeConfig";
@@ -175,6 +168,8 @@ import ShippingReport from "@/pages/ShipingManagement/ShippingReport/ShippingRep
 import CustomerAndSupplier from "@/pages/CustomerAndSupplier";
 import InventoryManagement from "@/pages/ProductImport/InventoryChecking";
 import CounterSales from "@/pages/CounterSales";
+import ShiftTabsPage from "@/pages/ShiftManagement/ShiftTabsPage";
+import ShiftConfigTabs from "@/pages/ShiftConfig/ShiftConfig";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -244,6 +239,12 @@ export const menu: IMenuItem[] = [
         path: urls.fanpage,
         icon: <Icon name="FacebookFill" />,
         code: "FANPAGE",
+      },
+      {
+        title: "shiftManagement", //Quản lý ca làm việc
+        path: urls.shift_management,
+        icon: <Icon name="ManageWork" />,
+        code: "",
       },
       // {
       //   title: "facebook",
@@ -386,36 +387,6 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "settingLoyalty", // Cài đặt chương trình khách hàng thân thiết
-        path: urls.setting_loyalty,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
-        title: "loyaltyPointLedger", // Sổ nhật ký điểm thưởng
-        path: urls.loyalty_point_ledger,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
-        title: "loyaltyReward", // Danh sách phần thưởng
-        path: urls.loyalty_reward,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
-        title: "loyaltySegment", // Danh sách hạng hội viên
-        path: urls.loyalty_segment,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
-        title: "loyaltyWallet", // Sổ quỹ điểm loyalty
-        path: urls.loyalty_wallet,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
         title: "reportCustomer", // Báo cáo khách hàng
         path: urls.report_customer,
         icon: <Icon name="Customer" />,
@@ -524,6 +495,18 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
+        title: "loyaltyPointLedger", // Nhật ký điểm hội viên
+        path: urls.loyalty_point_ledger,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
+        title: "loyaltyWallet", // Danh sách hội viên
+        path: urls.loyalty_wallet,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
+      {
         title: "receiveTicket", // Tiếp nhận hỗ trợ
         path: urls.ticket,
         icon: <Icon name="ReceiveTicket" />,
@@ -593,6 +576,12 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="SettingWarranty" />,
       //   code: "",
       // },
+      {
+        title: "settingLoyalty", // Cài đặt hạng hội viên
+        path: urls.setting_loyalty,
+        icon: <Icon name="SettingCustomer" />,
+        code: "",
+      },
       {
         title: "settingTicket", // Cài đặt hỗ trợ
         path: urls.setting_ticket,
@@ -713,12 +702,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="ContactCustomer" />,
         code: "",
       },
-      {
-        title: "settingEform", // Cài đặt biểu mẫu
-        path: urls.setting_eform,
-        icon: <Icon name="SettingSell" />,
-        code: "",
-      },
+      // {
+      //   title: "settingEform", // Cài đặt biểu mẫu
+      //   path: urls.setting_eform,
+      //   icon: <Icon name="SettingSell" />,
+      //   code: "",
+      // },
       {
         title: "settingSMS", // Cài đặt SMS
         path: urls.setting_sms,
@@ -762,50 +751,8 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "settingPaymentMethod", // Phương thức thanh toán
-        path: urls.payment_method,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "salesChannel", // Kênh thanh toán
-        path: urls.sales_channel,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "overview",
-        path: urls.overview_staff,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      // {
-      //   title: "staff", // Bán hàng
-      //   path: urls.staff,
-      //   icon: <Icon name="CashPayment" />,
-      //   code: "",
-      // },
-      {
-        title: "reportShift",
-        path: urls.report_shift,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "shiftConfig",
+        title: "shiftConfig", // Cài đặt ca làm việc
         path: urls.shift_config,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "openShift",
-        path: urls.open_shift,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "closeShift",
-        path: urls.close_shift,
         icon: <Icon name="Settings" />,
         code: "",
       },
@@ -1144,20 +1091,12 @@ export const routes: IRouter[] = [
     component: <SettingContactList />,
   },
   {
-    path: urls.setting_loyalty,
-    component: <SettingLoyaltyList />,
-  },
-  {
     path: urls.loyalty_point_ledger,
     component: <LoyaltyPointLedger />,
   },
   {
-    path: urls.loyalty_reward,
-    component: <LoyaltyReward />,
-  },
-  {
-    path: urls.loyalty_segment,
-    component: <LoyaltySegment />,
+    path: urls.setting_loyalty,
+    component: <SettingLoyalty />,
   },
   {
     path: urls.loyalty_wallet,
@@ -1271,9 +1210,14 @@ export const routes: IRouter[] = [
     path: urls.product_inventory,
     component: <ProductInventoryList />,
   },
-  // quản lý kho hàng
+  // danh sách kho hàng — gọi API /inventory/warehouse/list
   {
     path: urls.inventory,
+    component: <WarehouseListPage />,
+  },
+  // sổ kho chi tiết (mock) — /inventory-detail/:id
+  {
+    path: urls.inventory_detail,
     component: <InventoryList />,
   },
   {
@@ -1498,35 +1442,11 @@ export const routes: IRouter[] = [
     component: <FieldMannagement />,
   },
   {
-    path: urls.payment_method,
-    component: <PaymentMethodList />,
-  },
-  {
-    path: urls.sales_channel,
-    component: <CheckoutList />,
-  },
-  {
-    path: urls.overview_staff,
-    component: <Overview />,
-  },
-  {
-    path: urls.staff,
-    component: <StaffManagement />,
-  },
-  {
-    path: urls.report_shift,
-    component: <ShiftReport />,
-  },
-  {
     path: urls.shift_config,
-    component: <ShiftConfig />,
+    component: <ShiftConfigTabs />,
   },
   {
-    path: urls.open_shift,
-    component: <OpenShift />,
-  },
-  {
-    path: urls.close_shift,
-    component: <CloseShift />,
+    path: urls.shift_management,
+    component: <ShiftTabsPage />,
   },
 ];

@@ -18,6 +18,7 @@ interface TitleActionProps {
   titleActions?: ITitleActions;
   callback?: () => void;
   disableIcon?: boolean;
+  icon?: any;
 }
 
 export interface ITitleActions {
