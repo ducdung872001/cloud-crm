@@ -315,15 +315,14 @@ export const menu: IMenuItem[] = [
         code: "INVENTORY",
       },
 
-
       // {
-      //   title: "createPurchaseOrder", // Tạo phiếu nhập hàng
+      //   title: "createPurchaseOrder", // Tạo phiếu nhập kho
       //   path: urls.create_invoice_add,
       //   icon: <Icon name="ImportCoupon" />,
       //   code: "",
       // },
       // {
-      //   title: "purchaseInvoice", // Hóa đơn nhập hàng
+      //   title: "purchaseInvoice", // Hóa đơn nhập kho
       //   path: urls.invoice_order,
       //   icon: <Icon name="ImportBill" />,
       //   code: "",
