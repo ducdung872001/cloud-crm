@@ -3166,10 +3166,15 @@ export const urls = {
   // đường dẫn sản phẩm tồn kho
   product_inventory: "/product_inventory",
   // đường dẫn danh sách kho hàng
+  warehouse: "/warehouse",
+  // sổ kho
   inventory: "/inventory",
+  create_inventory: "/create_inventory",
   // đường dẫn sổ kho chi tiết theo kho
   inventory_detail: "/inventory-detail/:id",
   inventory_checking: "/inventory_checking",
+  // báo cáo kho
+  report_warehouse: "/report_warehouse",
   // đường dẫn bán hàng
   sell: "/sell",
   promotional_program: "/promotional_program",

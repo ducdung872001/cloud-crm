@@ -379,6 +379,32 @@ import IconViolation from "assets/icons/icon-violation.svg";
 import IconVOC from "assets/icons/icon-voc.svg";
 import IconVar from "assets/icons/icon-script-var.svg";
 
+///Icon Menu
+import IcDashboardMenu from "assets/icons-menu/ic-dashboard.svg";
+import IcSaleOrderMenu from "assets/icons-menu/ic-sales-orders.svg";
+import IcPosMenu from "assets/icons-menu/ic-pos.svg";
+import IcOrderListMenu from "assets/icons-menu/ic-order-list.svg";
+import IcReturnMenu from "assets/icons-menu/ic-return.svg";
+import IcMultichannelMenu from "assets/icons-menu/ic-multichannel.svg";
+import IcDeliveryMenu from "assets/icons-menu/ic-delivery.svg";
+import IcInteractionMenu from "assets/icons-menu/ic-interaction.svg";
+import IcSoldMenu from "assets/icons-menu/ic-sold.svg";
+import IcInventoryMenu from "assets/icons-menu/ic-inventory.svg";
+import IcProductCategoryMenu from "assets/icons-menu/ic-product-category.svg";
+import IcMaterialsMenu from "assets/icons-menu/ic-materials.svg";
+import IcWarehouseListMenu from "assets/icons-menu/ic-warehouse-list.svg";
+import IcStockMenu from "assets/icons-menu/ic-stock.svg";
+import IcLedgerMenu from "assets/icons-menu/ic-ledger.svg";
+import IcAuditMenu from "assets/icons-menu/ic-audit.svg";
+import IcCustomersMenu from "assets/icons-menu/ic-customers.svg";
+import IcSegmentMenu from "assets/icons-menu/ic-segment.svg";
+import IcPartnerMenu from "assets/icons-menu/ic-partner.svg";
+import IcDebtMenu from "assets/icons-menu/ic-debt.svg";
+import IcCustomerSettingMenu from "assets/icons-menu/ic-customer-settings.svg";
+import IcPartnerSettingMenu from "assets/icons-menu/ic-partner-settings.svg";
+import IcCustomerMenu from "assets/icons-menu/ic-customer.svg";
+
+
 const iconTypes = {
   // A
   Account: IconAccount,
@@ -744,6 +770,34 @@ const iconTypes = {
   Violation: IconViolation,
   VOC: IconVOC,
   VarSetting: IconVar,
+
+
+  //Icon Menu
+  DashboardMenu: IcDashboardMenu,
+  SaleOrderMenu: IcSaleOrderMenu,
+  PosMenu: IcPosMenu,
+  OrderListMenu: IcOrderListMenu,
+  ReturnMenu: IcReturnMenu,
+  MultichannelMenu: IcMultichannelMenu,
+  DeliveryMenu: IcDeliveryMenu,
+  InteractionMenu: IcInteractionMenu,
+  SoldMenu: IcSoldMenu,
+  InventoryMenu: IcInventoryMenu,
+  ProductCategoryMenu: IcProductCategoryMenu,
+  MaterialsMenu: IcMaterialsMenu,
+  WarehouseListMenu: IcWarehouseListMenu,
+  StockMenu: IcStockMenu,
+  LedgerMenu: IcLedgerMenu,
+  AuditMenu: IcAuditMenu,
+  CustomersMenu: IcCustomersMenu,
+  SegmentMenu: IcSegmentMenu,
+  PartnerMenu: IcPartnerMenu,
+  DebtMenu: IcDebtMenu,
+  CustomerSettingMenu: IcCustomerSettingMenu,
+  PartnerSettingMenu: IcPartnerSettingMenu,
+  CustomerMenu: IcCustomerMenu
+  
+
 };
 
 export default function Icon(props) {

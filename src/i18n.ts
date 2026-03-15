@@ -111,6 +111,7 @@ i18n.use(initReactI18next).init({
           inventoryTransferDocument: "Inventory transfer document",
           stockAdjustmentVoucher: "Stock adjustment voucher",
           managementMaterial: "Management material",
+          warehouseList: "Warehouse List",
 
           financeManagement: "Finance & Payment",
           financeDashboard: "Dashboard",
@@ -278,7 +279,7 @@ i18n.use(initReactI18next).init({
           // đoạn này là children của khách hàng
           customerProfile: "Hồ sơ khách hàng",
           customerList: "Khách hàng & NCC",
-          partnerProfile: "Danh sách Nhà cung cấp",
+          partnerProfile: "Nhà cung cấp",
           customerSegments: "Phân khúc & Nhãn",
 
           quote: "Báo giá",
@@ -362,12 +363,14 @@ i18n.use(initReactI18next).init({
           createOutboundDelivery: "Tạo phiếu xuất kho",
           outboundInvoice: "Hóa đơn xuất kho",
           soldProducts: "Sản phẩm đã bán",
-          stockedProducts: "Báo cáo Hàng bán",
+          stockedProducts: "Tồn kho",
           warehouseManagement: "Sổ kho", //Lưu giao dịch liên quan kho
           warehouseChecking: "Kiểm kho", //Thực hiện kiểm thực tế (Đếm thực tế) => Nếu lệch thì Tạo phiếu điều chỉnh
+          reportWarhouse: "Báo cáo kho",
           inventoryTransferDocument: "Phiếu điều chuyển kho",
           stockAdjustmentVoucher: "Phiếu điều chỉnh kho",
-          managementMaterial: "Quản lý nguyên vật liệu",
+          managementMaterial: "Nguyên vật liệu",
+          warehouseList: "Danh sách kho",
 
           financeManagement: "Tài chính & Thanh toán",
           financeDashboard: "Thông tin tài chính",
