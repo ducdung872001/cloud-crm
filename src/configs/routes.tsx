@@ -317,7 +317,7 @@ export const menu: IMenuItem[] = [
 
       {
         title: "reportWarhouse", // Báo cáo kho
-        path: urls.report_customer,
+        path: urls.report_warehouse,
         icon: <Icon name="Report" />,
         code: "",
       },

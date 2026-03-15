@@ -3172,6 +3172,8 @@ export const urls = {
   // đường dẫn sổ kho chi tiết theo kho
   inventory_detail: "/inventory-detail/:id",
   inventory_checking: "/inventory_checking",
+  // báo cáo kho
+  report_warehouse: "/report_warehouse",
   // đường dẫn bán hàng
   sell: "/sell",
   promotional_program: "/promotional_program",
