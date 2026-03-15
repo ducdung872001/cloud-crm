@@ -246,6 +246,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="FacebookFill" />,
         code: "FANPAGE",
       },
+      {
+        title: "soldProducts", // Sản phẩm đã bán
+        path: urls.products_sold,
+        icon: <Icon name="ProductsSold" />,
+        code: "",
+      },
       // {
       //   title: "facebook",
       //   path: urls.social_facebook_crm,
@@ -278,23 +284,50 @@ export const menu: IMenuItem[] = [
         code: "MENU_SETUP_SELL",
       },
       {
-        title: "managementMaterial", // Quản lý nguyên vật liệu
+        title: "managementMaterial", // Nguyên vật liệu
         path: urls.material,
         icon: <Icon name="WarehouseManagement" />,
         code: "",
       },
       {
-        title: "createPurchaseOrder", // Tạo phiếu nhập hàng
-        path: urls.create_invoice_add,
-        icon: <Icon name="ImportCoupon" />,
+        title: "Danh sách kho", // Danh sách kho
+        path: urls.material,
+        icon: <Icon name="WarehouseManagement" />,
         code: "",
       },
       {
-        title: "purchaseInvoice", // Hóa đơn nhập hàng
-        path: urls.invoice_order,
-        icon: <Icon name="ImportBill" />,
+        title: "stockedProducts", // Báo cáo Kho & Hàng bán (Hàng tồn, Kho, Đơn vị, Số lượng, Giá vốn, PP Giá vốn; Cảnh báo tồn dưới ngưỡng)
+        path: urls.product_inventory,
+        icon: <Icon name="ProductsStock" />,
         code: "",
       },
+      {
+        title: "warehouseManagement", // Quản lý kho hàng
+        path: urls.inventory,
+        icon: <Icon name="WarehouseManagement" />,
+        code: "INVENTORY",
+      },
+
+      {
+        title: "warehouseChecking", // Kiểm kho
+        path: urls.inventory_checking,
+        icon: <Icon name="WarehouseManagement" />,
+        code: "INVENTORY",
+      },
+
+
+      // {
+      //   title: "createPurchaseOrder", // Tạo phiếu nhập hàng
+      //   path: urls.create_invoice_add,
+      //   icon: <Icon name="ImportCoupon" />,
+      //   code: "",
+      // },
+      // {
+      //   title: "purchaseInvoice", // Hóa đơn nhập hàng
+      //   path: urls.invoice_order,
+      //   icon: <Icon name="ImportBill" />,
+      //   code: "",
+      // },
       // {
       //   title: "createOutboundDelivery", // Tạo phiếu xuất kho
       //   path: urls.create_outbound_delivery,
@@ -306,37 +339,19 @@ export const menu: IMenuItem[] = [
       //   path: urls.outbound_invoice,
       //   icon: <Icon name="ImportBill" />,
       //   code: "",
+      // },      
+      // {
+      //   title: "inventoryTransferDocument", // Phiếu điều chuyển kho
+      //   path: urls.inventory_transfer_document,
+      //   icon: <Icon name="WarehouseManagement" />,
+      //   code: "INVENTORY",
       // },
-      {
-        title: "soldProducts", // Sản phẩm đã bán
-        path: urls.products_sold,
-        icon: <Icon name="ProductsSold" />,
-        code: "",
-      },
-      {
-        title: "warehouseManagement", // Quản lý kho hàng
-        path: urls.inventory,
-        icon: <Icon name="WarehouseManagement" />,
-        code: "INVENTORY",
-      },
-      {
-        title: "warehouseChecking",
-        path: urls.inventory_checking,
-        icon: <Icon name="WarehouseManagement" />,
-        code: "INVENTORY",
-      },
-      {
-        title: "inventoryTransferDocument", // Phiếu điều chuyển kho
-        path: urls.inventory_transfer_document,
-        icon: <Icon name="WarehouseManagement" />,
-        code: "INVENTORY",
-      },
-      {
-        title: "stockAdjustmentVoucher", // Phiếu điều chỉnh kho
-        path: urls.adjustment_slip,
-        icon: <Icon name="File" />,
-        code: "",
-      },
+      // {
+      //   title: "stockAdjustmentVoucher", // Phiếu điều chỉnh kho
+      //   path: urls.adjustment_slip,
+      //   icon: <Icon name="File" />,
+      //   code: "",
+      // },
     ],
   },
   {
@@ -601,13 +616,7 @@ export const menu: IMenuItem[] = [
         path: urls.report_common,
         icon: <Icon name="Statistical" />,
         code: "",
-      },
-      {
-        title: "stockedProducts", // Báo cáo Kho & Hàng bán (Hàng tồn, Kho, Đơn vị, Số lượng, Giá vốn, PP Giá vốn; Cảnh báo tồn dưới ngưỡng)
-        path: urls.product_inventory,
-        icon: <Icon name="ProductsStock" />,
-        code: "",
-      },
+      },      
       {
         title: "cashbook", // Báo cáo Tài chính
         path: urls.cashbook,
@@ -1138,7 +1147,7 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.setting_loyalty,
-    component: <SettingLoyalty/>,
+    component: <SettingLoyalty />,
   },
   {
     path: urls.loyalty_wallet,
