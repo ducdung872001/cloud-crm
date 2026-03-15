@@ -45,7 +45,7 @@ export default function ShiftReportTab() {
               </div>
             </div>
 
-            <div className="card-box warning-box">
+            <div className="card-box warning-box mt-2">
               <div className="p-24 d-flex justify-content-between align-items-center">
                 <div className="d-flex align-items-center gap-8 warning-left">
                   <Icon name="WarningCircle" className="icon-error warning-icon" />
