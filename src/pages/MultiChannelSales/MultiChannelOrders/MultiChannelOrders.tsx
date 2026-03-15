@@ -106,7 +106,7 @@ export default function MultiChannelOrders() {
 
   const dataMappingArray = (item: any, index: number) => [
     // index + 1,
-    <div style={{width: '15rem'}} 
+    <div style={{width: '15rem', cursor: 'pointer'}} 
         onClick={() => {
             setModalDetail(true);
             setDataOrder(item);

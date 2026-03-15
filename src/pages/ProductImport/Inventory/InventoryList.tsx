@@ -1,6 +1,5 @@
 // WarehouseBookList.tsx
-import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import React, { Fragment, useState, useEffect } from "react";
 import moment from "moment";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -13,15 +12,16 @@ import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { IAction } from "model/OtherModel";
 import { showToast, getPermissions } from "utils/common";
-import { getPageOffset, formatCurrency } from "reborn-util";
+import { getPageOffset } from "reborn-util";
 import { MOCK_WAREHOUSE_BOOK, IWarehouseBook } from "assets/mock/Product";
 import AddWarehouseBookModal from "./partials/AddInventoryModal";
 import "./InventoryList.scss";
+import { useNavigate } from "react-router-dom";
+import urls from "@/configs/urls";
 
 export default function WarehouseBookList() {
   document.title = "Sổ kho";
-
-  const isMounted = useRef(false);
+  const navigate = useNavigate();
 
   const [listWarehouseBook, setListWarehouseBook] = useState<IWarehouseBook[]>([]);
   const [dataWarehouseBook, setDataWarehouseBook] = useState<IWarehouseBook>(null);
@@ -53,20 +53,16 @@ export default function WarehouseBookList() {
   // =====================
   const getListWarehouseBook = (paramsSearch: any) => {
     setIsLoading(true);
-
     setTimeout(() => {
       let filtered = MOCK_WAREHOUSE_BOOK.filter((item) => {
         const matchName = item.productName.toLowerCase().includes((paramsSearch.name ?? "").toLowerCase());
         const matchType = paramsSearch.type ? item.type === paramsSearch.type : true;
         return matchName && matchType;
       });
-
       const total = filtered.length;
       const page = paramsSearch.page ?? 1;
       const limit = paramsSearch.limit ?? 10;
-      const items = filtered.slice((page - 1) * limit, page * limit);
-
-      setListWarehouseBook(items);
+      setListWarehouseBook(filtered.slice((page - 1) * limit, page * limit));
       setPagination((prev) => ({
         ...prev,
         page,
@@ -74,24 +70,12 @@ export default function WarehouseBookList() {
         totalItem: total,
         totalPage: Math.ceil(total / limit),
       }));
-
-      if (total === 0 && page === 1) setIsNoItem(true);
-      else setIsNoItem(false);
-
+      setIsNoItem(total === 0 && page === 1);
       setIsLoading(false);
     }, 300);
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
-    setParams((prev) => ({ ...prev, ...paramsTemp }));
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
     getListWarehouseBook(params);
   }, [params]);
 
@@ -132,7 +116,10 @@ export default function WarehouseBookList() {
         title: "Thêm phiếu",
         callback: () => {
           setDataWarehouseBook(null);
-          setShowModalAdd(true);
+          // setShowModalAdd(true);
+          if(params.type === "import"){
+            navigate(urls.create_inventory);
+          }
         },
       },
     ],
@@ -145,30 +132,26 @@ export default function WarehouseBookList() {
     "STT",
     "Mã phiếu",
     "Loại phiếu",
+    "Ngày tạo",
     "Sản phẩm",
     "Đối tác",
-    "Phiếu gốc",
     "Kho",
-    "Số lượng",
-    "Đơn giá",
-    "Thành tiền",
+    "Biến động SL",
     "Tồn trước",
     "Tồn sau",
     "Người thực hiện",
-    "Ngày thực hiện",
+    "Ref tài chính",
     "Trạng thái",
   ];
   const dataFormat = [
     "text-center",
     "",
     "text-center",
+    "text-center",
+    "",
     "",
     "",
     "text-center",
-    "",
-    "text-center",
-    "text-right",
-    "text-right",
     "text-center",
     "text-center",
     "",
@@ -178,15 +161,18 @@ export default function WarehouseBookList() {
 
   const dataMappingArray = (item: IWarehouseBook, index: number) => [
     getPageOffset(params) + index + 1,
-    <span key={`code-${item.id}`} className="warehouse__code">
-      {item.code}
-    </span>,
+    // Mã phiếu
+    <span key={`code-${item.id}`} className="warehouse__code">{item.code}</span>,
+    // Loại phiếu
     renderType(item.type),
+    // Ngày tạo
+    moment(item.createdAt).format("DD/MM/YYYY HH:mm"),
+    // Sản phẩm (tên + SKU)
     <div key={`product-${item.id}`}>
       <div className="warehouse__product-name">{item.productName}</div>
       <div className="warehouse__product-code">{item.productCode}</div>
     </div>,
-    // Cột đối tác - chỉ hiện với phiếu hoàn trả
+    // Đối tác (NCC / KH)
     item.partnerName ? (
       <div key={`partner-${item.id}`} style={{ minWidth: "120px" }}>
         <div className="warehouse__partner-name">{item.partnerName}</div>
@@ -194,34 +180,31 @@ export default function WarehouseBookList() {
           {item.partnerType === "supplier" ? "Nhà cung cấp" : "Khách hàng"}
         </div>
       </div>
-    ) : (
-      "—"
-    ),
-
-    // Cột phiếu gốc
-    item.refCode ? (
-      <span key={`ref-${item.id}`} className="warehouse__ref-code">
-        {item.refCode}
-      </span>
-    ) : (
-      "—"
-    ),
+    ) : "—",
+    // Kho (nguồn → đích với chuyển kho)
     item.type === "transfer" ? (
-      <span key={`tf-${item.id}`} className="warehouse__transfer" style={{ minWidth: "120px" }}>
+      <span key={`wh-${item.id}`} className="warehouse__transfer" style={{ minWidth: "120px" }}>
         {item.warehouseFrom} → {item.warehouseTo}
       </span>
     ) : (
-      <span key={`tf-${item.id}`} style={{ minWidth: "120px" }}>{item.warehouseName}</span>
+      <span key={`wh-${item.id}`} style={{ minWidth: "120px" }}>{item.warehouseName}</span>
     ),
+    // Biến động SL (+/-)
     <span key={`qty-${item.id}`} className={item.quantity > 0 ? "warehouse__qty--positive" : "warehouse__qty--negative"}>
       {item.quantity > 0 ? `+${item.quantity}` : item.quantity} {item.unitName}
     </span>,
-    formatCurrency(item.priceUnit) + "đ",
-    formatCurrency(item.totalAmount) + "đ",
+    // Tồn trước / sau
     item.stockBefore,
     item.stockAfter,
+    // Người thực hiện
     item.createdBy,
-    moment(item.createdAt).format("DD/MM/YYYY HH:mm"),
+    // Ref tài chính (link)
+    item.refFinancial ? (
+      <a key={`ref-${item.id}`} href={item.refFinancial.url ?? "#"} className="warehouse__ref-link" target="_blank" rel="noreferrer">
+        {item.refFinancial.code}
+      </a>
+    ) : "—",
+    // Trạng thái
     renderStatus(item.status),
   ];
 

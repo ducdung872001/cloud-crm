@@ -12,7 +12,8 @@ const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
 const prefixFinance = prefixBiz + "/finance";
-const prefixWarehouse = prefixBiz + "/inventory";
+const prefixInventory = prefixBiz + "/inventory";
+const prefixWarehouse = prefixBiz + "/warehouse"
 const prefixCare = prefixBiz + "/care"
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
@@ -454,20 +455,43 @@ export const urlsApi = {
     listShared: prefixAdmin + "/product/list/shared",
 
     // ── Warehouse API (tài liệu mới) ──
-    wList: prefixWarehouse + "/product/list",
-    wDetail: prefixWarehouse + "/product/get",
-    wUpdate: prefixWarehouse + "/product/update",
-    wDelete: prefixWarehouse + "/product/delete",
-    wDashboard: prefixWarehouse + "/product/dashboard/summary",
-    wUpdateStatus: prefixWarehouse + "/product/update/status",
-    wUpdatePrice: prefixWarehouse + "/product/update/price",
-    wUpdateInventory: prefixWarehouse + "/product/update/inventory-setting",
-    wWebsiteSettingGet: prefixWarehouse + "/product/website-setting/get",
-    wWebsiteSettingUpdate: prefixWarehouse + "/product/website-setting/update",
-    wInventoryCurrent: prefixWarehouse + "/product/inventory/current",
-    wScan: prefixWarehouse + "/product/scan",
+    wList: prefixInventory + "/product/list",
+    wDetail: prefixInventory + "/product/get",
+    wUpdate: prefixInventory + "/product/update",
+    wDelete: prefixInventory + "/product/delete",
+    wDashboard: prefixInventory + "/product/dashboard/summary",
+    wUpdateStatus: prefixInventory + "/product/update/status",
+    wUpdatePrice: prefixInventory + "/product/update/price",
+    wUpdateInventory: prefixInventory + "/product/update/inventory-setting",
+    wWebsiteSettingGet: prefixInventory + "/product/website-setting/get",
+    wWebsiteSettingUpdate: prefixInventory + "/product/website-setting/update",
+    wInventoryCurrent: prefixInventory + "/product/inventory/current",
+    wScan: prefixInventory + "/product/scan",
     listById: prefixAdmin + "/product/list_by_id",
+    publicList: prefixInventory + "/public/product/list",
+
+    // ── Public APIs (không cần auth) ──
+    publicDetail:       prefixInventory + "/public/product/get",
+    publicCategoryList: prefixInventory + "/public/product/category/list",
+    publicMediaList:    prefixInventory + "/public/product/media/list",
+
+    // ── Media APIs (cần auth) ──
+    mediaList:   prefixInventory + "/product-media/list",
+    mediaUpdate: prefixInventory + "/product-media/update",
+    mediaDelete: prefixInventory + "/product-media/delete",
+    mediaUpload: prefixInventory + "/product-media/upload",
+
+    // ── Variant Groups ──
+    variantGroupsUpdate: prefixInventory + "/product/variant-groups/update",
+    variantGroupsDelete: prefixInventory + "/product/variant-groups/delete",
+
+    // ── Specifications ──
+    specificationsUpdate: prefixInventory + "/product/specifications/update",
+    specificationsDelete: prefixInventory + "/product/specifications/delete",
+
   },
+
+  //warehouse
 
   integration: {
     list: prefixAdmin + "/integrationPartner/list",
@@ -490,16 +514,16 @@ export const urlsApi = {
   },
 
   productImport: {
-    update: prefixWarehouse + "/product_import/update",
-    detail: prefixWarehouse + "/product_import/detail",
-    delete: prefixWarehouse + "/product_import/delete",
+    update: prefixInventory + "/product_import/update",
+    detail: prefixInventory + "/product_import/detail",
+    delete: prefixInventory + "/product_import/delete",
   },
 
   inventory: {
-    list: prefixWarehouse + "/inventory/list",
-    update: prefixWarehouse + "/inventory/update",
-    delete: prefixWarehouse + "/inventory/delete",
-    import: prefixWarehouse + "/inventory/import",
+    list: prefixInventory + "/inventory/list",
+    update: prefixInventory + "/inventory/update",
+    delete: prefixInventory + "/inventory/delete",
+    import: prefixInventory + "/inventory/import",
   },
   pom: {
     //định nghĩa pom cho sản phẩm, dịch vụ
@@ -687,11 +711,11 @@ export const urlsApi = {
   },
   //khu vực trải nghiệm khách hàng
   warehouse: {
-    list: prefixWarehouse + "/warehouse/list",
+    list: prefixInventory + "/warehouse/list",
     //API lấy ra danh sách sản phẩm trong kho
-    productList: prefixWarehouse + "/warehouse/product/list",
+    productList: prefixInventory + "/warehouse/product/list",
     //API lấy ra thông tin ngày hết hạn / sản xuất dựa trên số lô của sản phẩm
-    infoExpiryDateProductionDate: prefixWarehouse + "/warehouse/get_mfg_expired_date",
+    infoExpiryDateProductionDate: prefixInventory + "/warehouse/get_mfg_expired_date",
   },
   earnings: {
     filter: prefixAdmin + "/earnings/admin/list",
@@ -2090,19 +2114,19 @@ export const urlsApi = {
   },
   // phiếu điều chỉnh kho
   adjustmentSlip: {
-    temp: prefixWarehouse + "/stockAdjust/temp",
-    createAdjSlip: prefixWarehouse + "/stockAdjust/create",
-    addUpdatePro: prefixWarehouse + "/stockAdjustDetail/update",
+    temp: prefixInventory + "/stockAdjust/temp",
+    createAdjSlip: prefixInventory + "/stockAdjust/create",
+    addUpdatePro: prefixInventory + "/stockAdjustDetail/update",
     // duyệt phiếu điều chỉnh kho
-    approved: prefixWarehouse + "/stockAdjust/approved",
+    approved: prefixInventory + "/stockAdjust/approved",
     // từ chối điều chỉnh kho
-    cancel: prefixWarehouse + "/stockAdjust/cancel",
-    view: prefixWarehouse + "/stockAdjust/view",
-    list: prefixWarehouse + "/stockAdjust/list",
+    cancel: prefixInventory + "/stockAdjust/cancel",
+    view: prefixInventory + "/stockAdjust/view",
+    list: prefixInventory + "/stockAdjust/list",
     // lấy danh sách sản phẩm có trong kho
-    warehouse: prefixWarehouse + "/warehouse/list",
+    warehouse: prefixInventory + "/warehouse/list",
     // xóa đi 1 sản phẩm
-    deletePro: prefixWarehouse + "/stockAdjustDetail/delete",
+    deletePro: prefixInventory + "/stockAdjustDetail/delete",
   },
   kpiDatasource: {
     list: prefixAdmin + "/kpiDatasource/list",
@@ -3140,8 +3164,13 @@ export const urls = {
   products_sold: "/products_sold",
   // đường dẫn sản phẩm tồn kho
   product_inventory: "/product_inventory",
-  // đường dẫn quản lý kho hàng
+  // đường dẫn danh sách kho hàng
+  warehouse: "/warehouse",
+  // sổ kho
   inventory: "/inventory",
+  create_inventory: "/create_inventory",
+  // đường dẫn sổ kho chi tiết theo kho
+  inventory_detail: "/inventory-detail/:id",
   inventory_checking: "/inventory_checking",
   // đường dẫn bán hàng
   sell: "/sell",

@@ -49,7 +49,7 @@ export default function SettingSMSList() {
   ].filter((e) => e);
 
   return (
-    <div className="page-content page-setting-sms">
+    <div className="page-setting-sms">
       {!isDetailCategory && <TitleAction title="Cài đặt SMS" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (

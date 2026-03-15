@@ -333,7 +333,6 @@ export default function ShippingOrderList() {
           </div>
 
           {/* Tìm kiếm */}
-          <div className="search__box--shipping">
             <SearchBox
               name="Đơn vận chuyển"
               placeholderSearch="Theo mã vận đơn, tên khách hàng, số điện thoại..."
@@ -344,7 +343,6 @@ export default function ShippingOrderList() {
               listFilterItem={[]}
               updateParams={(paramsNew) => setParams((prev) => ({ ...prev, ...paramsNew, page: 1 }))}
             />
-          </div>
 
           {/* Bảng */}
           {!isLoading && listOrder.length > 0 ? (

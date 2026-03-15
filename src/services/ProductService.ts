@@ -58,6 +58,88 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+
+  // ── Public APIs (không cần auth) ──
+  publicList: (params?: IProductFilterRequest, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.product.publicList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  publicDetail: (id: number, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.product.publicDetail}?id=${id}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  publicCategoryList: (params?: { keyword?: string; status?: number; limit?: number; offset?: number }, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.product.publicCategoryList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  publicMediaList: (params?: { productId: number; limit?: number; offset?: number }, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.product.publicMediaList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
+  // ── Media APIs (cần auth) ──
+  mediaList: (params?: { productId: number; limit?: number; offset?: number }, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.product.mediaList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  mediaUpdate: (body: { id?: number; productId: number; position?: number; status?: number; url: string }) => {
+    return fetch(urlsApi.product.mediaUpdate, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  mediaDelete: (params: { productId: number; id: number }) => {
+    return fetch(`${urlsApi.product.mediaDelete}${convertParamsToString(params)}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
+  mediaUpload: (productId: number, file: File) => {
+    const formData = new FormData();
+    formData.append("productId", String(productId));
+    formData.append("file", file);
+    return fetch(urlsApi.product.mediaUpload, {
+      method: "POST",
+      body: formData,
+      headers: { "Content-Type": undefined }, // bỏ Content-Type để browser tự set boundary
+    }).then((res) => res.json());
+  },
+
+  // ── Variant Groups ──
+  variantGroupsUpdate: (body: { productId: number; variantGroups: { key: string; value: string[] }[] }) => {
+    return fetch(urlsApi.product.variantGroupsUpdate, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  variantGroupsDelete: (params: { productId: number; key: string }) => {
+    return fetch(`${urlsApi.product.variantGroupsDelete}${convertParamsToString(params)}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
+
+  // ── Specifications ──
+  specificationsUpdate: (body: { productId: number; specifications: { key: string; value: string }[] }) => {
+    return fetch(urlsApi.product.specificationsUpdate, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  specificationsDelete: (params: { productId: number; key: string }) => {
+    return fetch(`${urlsApi.product.specificationsDelete}${convertParamsToString(params)}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
+
   wDetail: (id: number) => {
     return fetch(`${urlsApi.product.wDetail}?id=${id}`, {
       method: "GET",

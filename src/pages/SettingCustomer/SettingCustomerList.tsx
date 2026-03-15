@@ -65,7 +65,7 @@ export default function SettingCustomerList() {
   ];
 
   return (
-    <div className="page-content page-setting-customer">
+    <div className="page-setting-customer">
       {!isDetailCategory && <TitleAction title="Cài đặt khách hàng" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (

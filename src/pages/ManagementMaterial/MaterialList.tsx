@@ -43,7 +43,7 @@ const GROUP_BADGE_VARIANT: Record<number, "primary" | "success" | "warning" | "s
 };
 
 export default function MaterialList() {
-  document.title = "Quản lý nguyên vật liệu";
+  document.title = "Nguyên vật liệu";
 
   const isMounted = useRef(false);
   const [listMaterial, setListMaterial] = useState<IMaterialResponse[]>([]);

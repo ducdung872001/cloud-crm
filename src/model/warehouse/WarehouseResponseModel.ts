@@ -1,13 +1,14 @@
 export interface IWarehouseResponse {
   id: number;
-  productId: number;
-  productName: string;
-  batchNo: string;
-  expiryDate: string;
-  quantity: number;
-  discount: number | null;
-  discountUnit: number | null;
-  unitId: number;
-  unitName: string;
-  inventoryName: string;
+  name: string;
+  code: string;
+  address: string;
+  branchId: number;
+  branchName: string | null;
+  bsnId: number;
+  status: number;
+  position: number;
+  employeeId: number;
+  employeeName: string | null;
+  createdTime: string;
 }
