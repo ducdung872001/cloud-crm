@@ -1,5 +1,7 @@
 const prefixAdmin = "/adminapi";
-const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
+// const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
+const prefixBpm = process.env.APP_BPM_URL + "/bpm";
+const prefixBPM = "https://bpm.reborn.vn/bpmapi";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";
 const prefixSale = "/sale";
@@ -2227,7 +2229,7 @@ export const urlsApi = {
     listLoyaltyReward: prefixBiz + "/market/loyaltyReward/list",
     updateLoyaltyReward: prefixBiz + "/market/loyaltyReward/update",
     deleteLoyaltyReward: prefixBiz + "/market/loyaltyReward/delete",
-    //phân hạng hội viên 
+    //phân hạng hội viên
     listLoyaltySegment: prefixBiz + "/market/loyaltySegment/list",
     updateLoyaltySegment: prefixBiz + "/market/loyaltySegment/update",
     deleteLoyaltySegment: prefixBiz + "/market/loyaltySegment/delete",
@@ -2237,7 +2239,8 @@ export const urlsApi = {
 
   //TODO: Start quy trình bpm
   businessProcess: {
-    list: prefixBpm + "/businessProcess/list",
+    // list: prefixBpm + "/businessProcess/list",
+    list: prefixBPM + "/businessProcess/list",
     clone: prefixBpm + "/businessProcess/clone",
     update: prefixBpm + "/businessProcess/update",
     get: prefixBpm + "/businessProcess/get",
