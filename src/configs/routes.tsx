@@ -139,6 +139,7 @@ import UserTaskList from "pages/UserTaskList";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import OrderRequestList from "pages/OrderRequestList";
 import MaterialList from "@/pages/ManagementMaterial/MaterialList";
+import MaterialMenuPage from "@/pages/ManagementMaterial/MaterialMenuPage";
 import { useCookies } from "react-cookie";
 import OrderTracking from "pages/OrderTracking";
 import OrganizationList from "pages/Organization/OrganizationList";
@@ -425,19 +426,19 @@ export const menu: IMenuItem[] = [
   {
     title: "financeManagement", // Tài chính & Thanh toán
     path: urls.finance_management,
-    icon: <Icon name="CashBook" />,
+    icon: <Icon name="FinanceMenu" />,
     code: "",
     children: [
       {
         title: "financeDashboard", // Dashboard tài chính
         path: urls.finance_management_dashboard,
-        icon: <Icon name="ReportFill" />,
+        icon: <Icon name="FinanceInfoMenu" />,
         code: "",
       },
       {
         title: "financeCashbook", // Sổ thu chi (Trong Sổ thu chi có tạo Phiếu thu/chi - Gộp làm 1)
         path: urls.finance_management_cashbook,
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="CashbookMenu" />,
         code: "",
       },
       // Thu tiền nhanh QR Pro - Bổ sung thêm Menu này
@@ -451,25 +452,25 @@ export const menu: IMenuItem[] = [
       {
         title: "invoiceVAT", // Xuất hóa đơn VAT
         path: urls.invoiceVAT,
-        icon: <Icon name="File" />,
+        icon: <Icon name="VatInvoiceMenu" />,
         code: "", //KPI_APPLY
       },
       {
         title: "fundManagement", // Quản lý quỹ
         path: urls.finance_management_fund_management,
-        icon: <Icon name="MoneyFill" />,
+        icon: <Icon name="FundMenu" />,
         code: "",
       },
       {
         title: "createDebtTransaction", // Tạo giao dịch nợ
         path: urls.finance_management_debt_transaction,
-        icon: <Icon name="PlusCircleFill" />,
+        icon: <Icon name="DebtTransactionMenu" />,
         code: "",
       },
       {
         title: "endOfShiftInventory", // Kiểm kê cuối ca
         path: urls.finance_management_shift_inventory,
-        icon: <Icon name="File" />,
+        icon: <Icon name="EndShiftMenu" />,
         code: "",
       },
     ],
@@ -481,15 +482,15 @@ export const menu: IMenuItem[] = [
     code: "MARKETING",
     children: [
       {
-        title: "promotionalProgram", // Chiến dịch khuyến mãi
+        title: "promotionalProgram", // chương trình khuyến mãi
         path: urls.promotional_program,
-        icon: <Icon name="ManageOrder" />,
+        icon: <Icon name="PromotionMenu" />,
         code: "", //Tài nguyên cho show quản lý đặt hàng hay không
       },
       {
-        title: "settingMarketing", // Cài đặt marketing
+        title: "multiChannelCommunication", // truyền thông đa kênh
         path: urls.setting_marketing,
-        icon: <Icon name="SettingSell" />,
+        icon: <Icon name="BroadcastMenu" />,
         code: "",
       },
       // {
@@ -517,39 +518,39 @@ export const menu: IMenuItem[] = [
       //   code: "MA",
       // },
       {
-        title: "dashboardLoyalty", // Dashboard khách hàng thân thiết
+        title: "loyaltyPoints", // tích điểm Loyalty
         path: urls.dashboard_loyalty,
-        icon: <Icon name="ReportFill" />,
+        icon: <Icon name="LoyaltyMenu" />,
         code: "",
       },
       {
         title: "loyaltyPointLedger", // Nhật ký điểm hội viên
         path: urls.loyalty_point_ledger,
-        icon: <Icon name="SettingCustomer" />,
+        icon: <Icon name="PointsLogMenu" />,
         code: "",
       },
       {
-        title: "loyaltyWallet", // Danh sách hội viên
+        title: "memberList", // Danh sách hội viên
         path: urls.loyalty_wallet,
-        icon: <Icon name="SettingCustomer" />,
+        icon: <Icon name="MemberListMenu" />,
         code: "",
       },
       {
         title: "receiveTicket", // Tiếp nhận hỗ trợ
         path: urls.ticket,
-        icon: <Icon name="ReceiveTicket" />,
+        icon: <Icon name="SupportMenu" />,
         code: "TICKET",
       },
       {
         title: "customerServiceHotline", // Tổng đài CSKH
         path: urls.call_center,
-        icon: <Icon name="CustomerSupport" />,
+        icon: <Icon name="CallcenterMenu" />,
         code: "",
       },
       {
         title: "promotionalReport", // Báo cáo khuyến mãi
         path: urls.promotional_report,
-        icon: <Icon name="Report" />,
+        icon: <Icon name="PromoReportMenu" />,
         code: "",
       },
       // {
@@ -605,15 +606,15 @@ export const menu: IMenuItem[] = [
       //   code: "",
       // },
       {
-        title: "settingLoyalty", // Cài đặt hạng hội viên
+        title: "settingLoyalty", // Cài đặt hệ thống tích điểm
         path: urls.setting_loyalty,
-        icon: <Icon name="SettingCustomer" />,
+        icon: <Icon name="PointsSettingMenu" />,
         code: "",
       },
       {
         title: "settingTicket", // Cài đặt hỗ trợ
         path: urls.setting_ticket,
-        icon: <Icon name="SettingTicket" />,
+        icon: <Icon name="SupportSettingMenu" />,
         code: "",
       },
     ],
@@ -627,19 +628,19 @@ export const menu: IMenuItem[] = [
       {
         title: "reportRevenue", // Báo cáo Bán hàng
         path: urls.report_common,
-        icon: <Icon name="Statistical" />,
+        icon: <Icon name="SalesReportMenu" />,
         code: "",
       },
       {
         title: "cashbook", // Báo cáo Tài chính
         path: urls.cashbook,
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="FinanceReportMenu" />,
         code: "CASHBOOK",
       },
       {
         title: "dashboardShipping", // Báo cáo vận chuyển
         path: urls.dashboard_shipping,
-        icon: <Icon name="ReportFill" />,
+        icon: <Icon name="ShippingReportMenu" />,
         code: "",
       },
       {
@@ -653,49 +654,49 @@ export const menu: IMenuItem[] = [
   {
     title: "bpm", // Quản lý quy trình
     path: urls.sell,
-    icon: <Icon name="CashBook" />,
+    icon: <Icon name="WorkflowMenu" />,
     code: "BPM",
     children: [
       {
         title: "manageProcesses",
         path: urls.manage_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
         code: "BPM",
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="ProcessMenu" />,
       },
       {
         title: "processSimulation",
         path: urls.process_simulation, //Mô phỏng quy trình
         code: "PROCESS_SIMULATION",
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="SimulateMenu" />,
       },
       {
         title: "objectManage", // Quản lý hồ sơ
         path: urls.object_manage,
         code: "OBJECT_MANAGE",
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="FileMgmtMenu" />,
       },
       {
         title: "userTaskList", // Xử lý hồ sơ
         path: urls.user_task_list,
         code: "WORK_MANAGEMENT",
-        icon: <Icon name="ManageWork" />,
+        icon: <Icon name="FileProcessMenu" />,
       },
       {
         title: "configBpm", // Cấu hình quy trình
         path: urls.config_bpm,
-        icon: <Icon name="SettingJob" />,
+        icon: <Icon name="ProcessConfigMenu" />,
         code: "",
       },
       {
         title: "manageDefaultProcesses",
         path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
         code: "BPM",
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="DefaultProcessMenu" />,
       },
       {
         title: "business_rule", // Loại luật nghiệp vụ
         path: urls.business_rule,
-        icon: <Icon name="SettingJob" />,
+        icon: <Icon name="RulesMenu" />,
         code: "",
       },
     ],
@@ -703,25 +704,25 @@ export const menu: IMenuItem[] = [
   {
     title: "settings", // Cài đặt & Nhân sự
     path: urls.setting_common,
-    icon: <Icon name="Settings" />,
+    icon: <Icon name="SettingsMenu" />,
     code: "",
     children: [
       {
         title: "settingBasis", // Cài đặt cơ sở
         path: urls.setting_basis,
-        icon: <Icon name="Headquarters" />,
+        icon: <Icon name="BaseSettingsMenu" />,
         code: "MENU_SETUP_BASIC",
       },
       {
         title: "settingPaymentMethod", // Cài đặt phương thức thanh toán
         path: urls.setting_payment_method,
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="PaymentMethodMenu" />,
         code: "",
       },
       {
         title: "settingPersonal", // Cài đặt cá nhân
         path: urls.setting_account,
-        icon: <Icon name="ContactCustomer" />,
+        icon: <Icon name="PersonalMenu" />,
         code: "",
       },
       // {
@@ -733,55 +734,55 @@ export const menu: IMenuItem[] = [
       {
         title: "settingSMS", // Cài đặt SMS
         path: urls.setting_sms,
-        icon: <Icon name="SettingSMS" />,
+        icon: <Icon name="SmsMenu" />,
         code: "MENU_SETUP_SMS",
       },
       {
         title: "settingEmail", // Cài đặt Email
         path: urls.setting_email,
-        icon: <Icon name="SettingEmail" />,
+        icon: <Icon name="EmailMenu" />,
         code: "MENU_SETUP_EMAIL",
       },
       {
         title: "settingZalo", //Cài đặt Zalo
         path: urls.setting_zalo,
-        icon: <Icon name="Zalo" />,
+        icon: <Icon name="ZaloMenu" />,
         code: "",
       },
       {
         title: "settingSwitchboard", // Cài đặt tổng đài
         path: urls.setting_call,
-        icon: <Icon name="SettingSMS" />,
+        icon: <Icon name="PbxMenu" />,
         code: "MENU_SETUP_CALL",
       },
       {
         title: "settingApplication", // Cài đặt ứng dụng
         path: urls.install_app,
-        icon: <Icon name="Download" />,
+        icon: <Icon name="IntegrationMenu" />,
         code: "",
       },
       {
         title: "settingConfiguration", // Cài đặt danh mục
         path: urls.setting,
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="GeneralConfigMenu" />,
         code: "",
       },
       {
         title: "viettelIntegration", // Tích hợp Viettel
         path: urls.viettel_integration,
-        icon: <Icon name="Download" />,
+        icon: <Icon name="IntegrationViettelMenu" />,
         code: "",
       },
       {
         title: "shiftConfig", // Cài đặt ca làm việc
         path: urls.shift_config,
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="OpenShiftMenu" />,
         code: "",
       },
       {
         title: "reportLogin", // Báo cáo đăng nhập
         path: urls.report_login,
-        icon: <Icon name="Headquarters" />,
+        icon: <Icon name="LoginMenu" />,
         code: "",
       },
       {
@@ -1350,7 +1351,7 @@ export const routes: IRouter[] = [
   // quản lý vật tư
   {
     path: urls.material,
-    component: <MaterialList />,
+    component: <MaterialMenuPage />,
   },
   // thông tin cá nhân
   {

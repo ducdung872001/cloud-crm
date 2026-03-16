@@ -111,7 +111,10 @@ export default function ShippingFeeConfig() {
   };
 
   const titleActions: ITitleActions = {
-    actions: [{ title: "Lưu cấu hình", callback: handleSave }],
+    actions: [
+      { title: "Lưu cấu hình", callback: handleSave },
+      { title: "Quay lại", callback: () => navigate("/shipping") },
+    ],
     actions_extra: [],
   };
 

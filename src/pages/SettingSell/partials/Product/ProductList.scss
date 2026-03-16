@@ -9,50 +9,75 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-// ── HEADER ──────────────────────────────────────────
-.prod-list-header {
+// ── HEADER — standard action-navigation pattern ─────
+.page-product--v2 {
+  .action-navigation {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .action-backup {
+      display: flex;
+      align-items: center;
+
+      h1 {
+        color: var(--text-primary-color);
+        font-size: 2.4rem;
+        line-height: 2.8rem;
+        padding-right: 1rem;
+        margin: 0;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .title-first {
+        cursor: pointer;
+        &:hover { opacity: 0.8; }
+      }
+
+      .title-last {
+        color: var(--extra-color-50);
+      }
+
+      svg {
+        width: 4rem;
+        height: 4rem;
+        padding-right: 1rem;
+      }
+    }
+
+    @media (max-width: 991px) {
+      justify-content: flex-start;
+      flex-direction: column;
+
+      .action-backup {
+        position: relative;
+
+        .title-first { display: none; }
+
+        svg {
+          position: absolute;
+          left: -1.4rem;
+          padding-right: 0.5rem;
+          transform: rotate(180deg);
+        }
+
+        .title-last {
+          color: var(--text-primary-color);
+          margin-left: 3rem;
+        }
+      }
+    }
+  }
+}
+
+// ── SECONDARY ACTIONS ROW ────────────────────────────
+.prod-list-secondary-actions {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 20px 24px 16px;
-  background: #fff;
-  border-bottom: 1px solid #eee;
-
-  &__left {}
-
-  &__title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1a1a2e;
-    margin: 0 0 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    line-height: 1.3;
-  }
-
-  &__icon {
-    font-size: 20px;
-  }
-
-  &__breadcrumb {
-    font-size: 13px;
-    color: #888;
-    margin: 0;
-  }
-
-  &__breadcrumb-link {
-    color: #4a90d9;
-    cursor: pointer;
-    &:hover { text-decoration: underline; }
-  }
-
-  &__actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 0 4px;
 }
 
 // ── BUTTONS ─────────────────────────────────────────
