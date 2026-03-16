@@ -1,3 +1,4 @@
+import { IShippingOrderCreateRequest } from "@/model/shipping/ShippingRequestModel";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
@@ -16,14 +17,10 @@ export default {
     }).then((res) => res.json());
   },
 
-  // ─── Tạo đơn vận chuyển ────────────────────────────────────
-  create: (data: any) => {
-    return fetch(`${urlsApi.shipping}/orders`, {
+  create: (body: IShippingOrderCreateRequest) => {
+    return fetch(urlsApi.shipping.create, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 

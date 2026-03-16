@@ -3,15 +3,22 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import Input from "components/input/input";
 import SelectCustom from "components/selectCustom/selectCustom";
+import { AsyncPaginate } from "react-select-async-paginate";
 import Loading from "components/loading";
 import Icon from "components/icon";
 import { showToast } from "utils/common";
 import { formatCurrency } from "reborn-util";
-import { IShippingOrderCreateRequest } from "model/shipping/ShippingRequestModel";
 import { IShippingOrderResponse } from "model/shipping/ShippingResponseModel";
+import { IInvoiceFilterRequest , IShipmentCreatePayload } from "model/invoice/InvoiceRequestModel";
+import { IInvoiceResponse, IProductInvoiceServiceResponse, ICardInvoiceServiceResponse } from "model/invoice/InvoiceResponse";
 import { MOCK_SHIPPING_ORDERS } from "../ShippingMockData";
-// import ShippingService from "services/ShippingService"; // TODO: bật khi có API
+import InvoiceService from "services/InvoiceService";
+import ShippingService from "services/ShippingService";
 import "./AddShippingOrder.scss";
+interface ISelectedInvoice extends IInvoiceResponse {
+  productSummary: string;
+  _products?: IProductInvoiceServiceResponse[]; // lưu để build items khi submit
+}
 
 const PARTNER_OPTIONS = [
   { value: 1, label: "GHTK" },
@@ -19,8 +26,32 @@ const PARTNER_OPTIONS = [
   { value: 3, label: "GHN" },
 ];
 
-const DEFAULT_FORM: IShippingOrderCreateRequest = {
+// Map partnerId → carrierCode gửi lên API
+const CARRIER_CODE_MAP: Record<number, string> = {
+  1: "GHTK",
+  2: "VTP",
+  3: "GHN",
+};
+
+// Form state nội bộ — tách riêng khỏi API payload
+interface IFormState {
+  id?: number;
+  partnerId: number | null;
+  invoiceId: number | null;
+  receiverName: string;
+  receiverPhone: string;
+  receiverAddress: string;
+  weight: number | null;
+  width: number | null;
+  height: number | null;
+  length: number | null;
+  codAmount: number | null;
+  note: string;
+}
+
+const DEFAULT_FORM: IFormState = {
   partnerId: null,
+  invoiceId: null,
   receiverName: "",
   receiverPhone: "",
   receiverAddress: "",
@@ -36,23 +67,127 @@ export default function AddShippingOrder() {
   const navigate = useNavigate();
   const { id }   = useParams<{ id?: string }>();
   const [searchParams] = useSearchParams();
-  const salesOrderId = searchParams.get("salesOrderId");
+
+  // invoiceId truyền từ màn khác qua query param ?invoiceId=xxx
+  const invoiceIdFromParam = searchParams.get("invoiceId");
 
   const isEdit = !!id;
   document.title = isEdit ? "Chỉnh sửa đơn vận chuyển" : "Tạo đơn vận chuyển mới";
 
-  const [form, setForm]             = useState<IShippingOrderCreateRequest>(DEFAULT_FORM);
+  const [form, setForm]             = useState<IFormState>(DEFAULT_FORM);
   const [originData, setOriginData] = useState<IShippingOrderResponse | null>(null);
   const [isLoading, setIsLoading]   = useState(false);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
   const [errors, setErrors]         = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    if (isEdit && id) loadOrderDetail(+id);
-    else if (salesOrderId) autoFillFromSalesOrder(+salesOrderId);
-  }, [id, salesOrderId]); // eslint-disable-line
+  // Invoice picker state
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<ISelectedInvoice | null>(null);
 
-  const loadOrderDetail = async (orderId: number) => {
+  // ---- loadOptions cho AsyncPaginate ----
+  // Khi inputValue rỗng → load trang đầu để hiện sẵn dữ liệu (dùng với defaultOptions={true})
+  // Khi user gõ → lọc theo invoiceCode / keyword
+  const loadInvoiceOptions = async (inputValue: string) => {
+    const filterParams: IInvoiceFilterRequest = {
+      invoiceTypes: JSON.stringify(["IV1", "IV2", "IV3", "IV4", "IV5D"]),
+      page:  1,
+      limit: 20,
+      ...(inputValue?.trim() ? { invoiceCode: inputValue.trim() } : {}),
+    };
+
+    const response = await InvoiceService.list(filterParams);
+
+    if (response.code === 0) {
+      const items: IInvoiceResponse[] = response.result?.pagedLst?.items ?? [];
+      return {
+        options: items.map((item) => ({
+          value:  item.id,
+          label:  `${item.invoiceCode} — ${item.customerName} — ${item.customerPhone}`,
+          origin: item,
+        })),
+        hasMore: false,
+      };
+    }
+
+    return { options: [], hasMore: false };
+  };
+
+  // ---- Khởi tạo ----
+  useEffect(() => {
+    if (isEdit && id) {
+      loadShippingDetail(+id);
+    } else if (invoiceIdFromParam) {
+      loadInvoiceDetailAndApply(+invoiceIdFromParam);
+    }
+  }, [id, invoiceIdFromParam]); // eslint-disable-line
+
+  // ---- Gọi invoiceDetail để lấy productSummary, fill form ngay từ invoiceBasic ----
+  const loadInvoiceDetailAndApply = async (
+    invoiceId: number,
+    invoiceBasic?: IInvoiceResponse
+  ) => {
+    // Fill form ngay lập tức từ data đã có trong option — không chờ API detail
+    if (invoiceBasic) {
+      applyInvoiceToForm({ ...invoiceBasic, id: invoiceId, productSummary: "" });
+    }
+
+    // Gọi detail để lấy thêm productSummary (danh sách sản phẩm)
+    setIsLoadingDetail(true);
+    const response = await InvoiceService.listInvoiceDetail(invoiceId);
+
+    if (response.code === 0) {
+      const detail = response.result ?? {};
+
+      const products: IProductInvoiceServiceResponse[] = detail.products ?? [];
+      const services: ICardInvoiceServiceResponse[]    = detail.services ?? [];
+
+      const productNames: string[] = [
+        ...products.map((p) => `${p.name} × ${p.qty}`),
+        ...services.map((s) => `${s.serviceName} × ${s.qty}`),
+      ];
+      const productSummary =
+        productNames.slice(0, 4).join(", ") +
+        (productNames.length > 4 ? ` +${productNames.length - 4} khác` : "");
+
+      const inv: IInvoiceResponse = detail.invoice ?? invoiceBasic;
+      if (inv) {
+        // Cập nhật lại với productSummary đầy đủ + lưu _products để dùng khi submit
+        applyInvoiceToForm({ ...inv, id: invoiceId, productSummary, _products: products } as any);
+      }
+    } else {
+      showToast(response.message ?? "Không thể tải thông tin hóa đơn", "error");
+    }
+
+    setIsLoadingDetail(false);
+  };
+
+  const applyInvoiceToForm = (inv: ISelectedInvoice) => {
+    setSelectedInvoice(inv);
+    setForm((prev) => ({
+      ...prev,
+      invoiceId:       inv.id,
+      receiverName:    inv.customerName,
+      receiverPhone:   inv.customerPhone,
+      receiverAddress: inv.customerAddress,
+      codAmount: (inv.amountCard ?? 0) > 0 ? inv.amountCard : inv.amount,
+    }));
+    setErrors({});
+  };
+
+  const clearSelectedInvoice = () => {
+    setSelectedInvoice(null);
+    setForm((prev) => ({
+      ...prev,
+      invoiceId:       undefined,
+      receiverName:    "",
+      receiverPhone:   "",
+      receiverAddress: "",
+      codAmount:       null,
+    }));
+  };
+
+  // ---- Load shipping detail (edit mode) ----
+  const loadShippingDetail = async (orderId: number) => {
     setIsLoadingPage(true);
     await new Promise((r) => setTimeout(r, 300));
     // TODO: const res = await ShippingService.detail(orderId);
@@ -62,31 +197,19 @@ export default function AddShippingOrder() {
       setForm({
         id:              found.id,
         partnerId:       found.partnerId,
-        salesOrderId:    found.salesOrderId,
+        invoiceId:       found.salesOrderId,
         receiverName:    found.receiverName,
         receiverPhone:   found.receiverPhone?.replace(/\*/g, "0"),
         receiverAddress: found.receiverAddress,
-        weight:  found.weight,
-        width:   found.width  ?? null,
-        height:  found.height ?? null,
-        length:  found.length ?? null,
-        codAmount: found.codAmount ?? null,
-        note:      found.note ?? "",
+        weight:          found.weight,
+        width:           found.width  ?? null,
+        height:          found.height ?? null,
+        length:          found.length ?? null,
+        codAmount:       found.codAmount ?? null,
+        note:            found.note ?? "",
       });
     }
     setIsLoadingPage(false);
-  };
-
-  const autoFillFromSalesOrder = async (soId: number) => {
-    // TODO: gọi SalesOrderService.detail(soId) để lấy thông tin khách hàng
-    setForm((prev) => ({
-      ...prev,
-      salesOrderId:    soId,
-      receiverName:    "Nguyễn Văn A",
-      receiverPhone:   "0901234567",
-      receiverAddress: "123 Lý Thường Kiệt, Hoàn Kiếm, Hà Nội",
-      codAmount:       450000,
-    }));
   };
 
   const setField = (field: string) => (e: any) => {
@@ -97,11 +220,11 @@ export default function AddShippingOrder() {
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
-    if (!form.partnerId)              errs.partnerId       = "Vui lòng chọn hãng vận chuyển";
-    if (!form.receiverName?.trim())   errs.receiverName    = "Vui lòng nhập tên người nhận";
-    if (!form.receiverPhone?.trim())  errs.receiverPhone   = "Vui lòng nhập số điện thoại";
+    if (!form.partnerId)               errs.partnerId       = "Vui lòng chọn hãng vận chuyển";
+    if (!form.receiverName?.trim())    errs.receiverName    = "Vui lòng nhập tên người nhận";
+    if (!form.receiverPhone?.trim())   errs.receiverPhone   = "Vui lòng nhập số điện thoại";
     if (!form.receiverAddress?.trim()) errs.receiverAddress = "Vui lòng nhập địa chỉ giao hàng";
-    if (!form.weight || +form.weight <= 0) errs.weight     = "Vui lòng nhập trọng lượng";
+    if (!form.weight || +form.weight <= 0) errs.weight      = "Vui lòng nhập trọng lượng";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -109,14 +232,76 @@ export default function AddShippingOrder() {
   const handleSubmit = async () => {
     if (!validate()) return;
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 500));
-    // TODO: isEdit ? await ShippingService.update(form) : await ShippingService.create(form)
-    showToast(
-      isEdit ? "Cập nhật đơn vận chuyển thành công (demo)" : "Tạo đơn vận chuyển thành công (demo)",
-      "success"
-    );
-    setIsLoading(false);
-    navigate("/shipping");
+
+    try {
+      if (isEdit) {
+        // TODO: await ShippingService.update(form)
+        showToast("Cập nhật đơn vận chuyển thành công", "success");
+        navigate("/shipping");
+        return;
+      }
+
+      // ---- Build payload theo API /logistics/shipment/create ----
+      const rawProducts = selectedInvoice?._products ?? [];
+      const items = rawProducts.length > 0
+        ? rawProducts.map((p) => ({
+            name:        p.name,
+            quantity:    p.qty,
+            weightGram:  0,
+            price:       p.price ?? 0,
+          }))
+        : selectedInvoice
+          ? [{ name: selectedInvoice.invoiceCode, quantity: 1, weightGram: form.weight ? +form.weight : 0, price: selectedInvoice.amount ?? 0 }]
+          : [];
+
+      const payload: IShipmentCreatePayload = {
+        internalOrderId:  selectedInvoice?.invoiceCode ?? String(form.invoiceId ?? ""),
+        carrierCode:      CARRIER_CODE_MAP[form.partnerId] ?? "",
+        sender: {
+          // Thông tin người gửi — lấy từ branch config (để trống, BE tự điền theo branchId)
+          name:     "",
+          phone:    "",
+          email:    "",
+          address:  "",
+          ward:     "",
+          district: "",
+          province: "",
+        },
+        receiver: {
+          name:     form.receiverName     ?? "",
+          phone:    form.receiverPhone    ?? "",
+          email:    "",
+          address:  form.receiverAddress  ?? "",
+          ward:     "",
+          district: "",
+          province: "",
+        },
+        parcel: {
+          weightGram: form.weight  ? +form.weight  : 0,
+          lengthCm:   form.length  ? +form.length  : 1,
+          widthCm:    form.width   ? +form.width   : 1,
+          heightCm:   form.height  ? +form.height  : 1,
+        },
+        codAmount:        form.codAmount       ? +form.codAmount       : 0,
+        declaredValue:    selectedInvoice?.amount ?? 0,
+        shippingFeeBearer: "RECEIVER",
+        items,
+        note: form.note ?? "",
+      };
+
+      const response = await ShippingService.create(payload as any);
+
+      if (response.code === 0) {
+        showToast("Tạo đơn vận chuyển thành công", "success");
+        navigate("/shipping");
+      } else {
+        showToast(response.message ?? "Tạo đơn thất bại", "error");
+      }
+    } catch (err) {
+      showToast("Có lỗi xảy ra, vui lòng thử lại", "error");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const titleActions: ITitleActions = {
@@ -142,16 +327,157 @@ export default function AddShippingOrder() {
 
         <div className="add-shipping-layout">
 
-          {/* ========== CỘT TRÁI (form chính) ========== */}
+          {/* ========== CỘT TRÁI ========== */}
           <div className="add-shipping-main">
 
-            {/* Auto-fill banner */}
-            {(salesOrderId || originData?.salesOrderCode) && (
+            {/* ---- Card: Liên kết hóa đơn (chỉ hiện khi tạo mới) ---- */}
+            {!isEdit && (
+              <div className="form-card">
+                <div className="form-card__title">
+                  <Icon name="FileText" />
+                  Liên kết hóa đơn
+                </div>
+                <div className="form-card__body">
+
+                  {/* AsyncPaginate trực tiếp — search theo mã HD / tên / SĐT */}
+                  <div className={`base-select base-select-fill has-label${selectedInvoice ? " has-value" : ""}`}>
+                    <div style={{ display: "flex" }}>
+                      <label htmlFor="invoiceId">Chọn hóa đơn</label>
+                    </div>
+                    <AsyncPaginate
+                      inputId="invoiceId"
+                      placeholder="Tìm mã hóa đơn, tên hoặc SĐT khách..."
+                      className="select-custom select__custom-label"
+                      isSearchable
+                      isClearable
+                      debounceTimeout={400}
+                      defaultOptions
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                      loadOptions={loadInvoiceOptions}
+                      value={
+                        selectedInvoice
+                          ? {
+                              value:  selectedInvoice.id,
+                              label:  `${selectedInvoice.invoiceCode}`,
+                            }
+                          : null
+                      }
+                      onChange={(option: any) => {
+                        if (!option) {
+                          clearSelectedInvoice();
+                          return;
+                        }
+                        loadInvoiceDetailAndApply(option.value, option.origin);
+                      }}
+                      noOptionsMessage={({ inputValue }) =>
+                        inputValue ? "Không tìm thấy hóa đơn phù hợp" : "Nhập để tìm kiếm"
+                      }
+                      loadingMessage={() => "Đang tải..."}
+                      formatOptionLabel={(option: any) =>
+                        option?.origin ? (
+                          <div className="invoice-option">
+                            <div className="invoice-option__top">
+                              <span className="invoice-option__code">{option.origin.invoiceCode}</span>
+                              <span className="invoice-option__amount">{formatCurrency(option.origin.amount)} đ</span>
+                            </div>
+                            <div className="invoice-option__mid">
+                              <span className="invoice-option__name">{option.origin.customerName}</span>
+                              <span className="invoice-option__dot">·</span>
+                              <span className="invoice-option__phone">{option.origin.customerPhone}</span>
+                              {(option.origin.amountCard ?? 0) > 0 && (
+                                <>
+                                  <span className="invoice-option__dot">·</span>
+                                  <span className="invoice-option__cod">
+                                    COD: {formatCurrency(option.origin.amountCard)} đ
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                            {option.origin.customerAddress && (
+                              <div className="invoice-option__addr">{option.origin.customerAddress}</div>
+                            )}
+                          </div>
+                        ) : (
+                          <span>{option?.label}</span>
+                        )
+                      }
+                      theme={(theme) => ({
+                        ...theme,
+                        colors: {
+                          ...theme.colors,
+                          primary:   "#015aa4",
+                          primary25: "#e9eaeb",
+                          primary50: "#e9eaeb",
+                          neutral0:  "#ffffff",
+                          neutral70: "#015aa4",
+                        },
+                      })}
+                    />
+                  </div>
+
+                  {/* Loading detail */}
+                  {isLoadingDetail && (
+                    <div className="invoice-loading">
+                      <Loading />
+                      <span>Đang tải thông tin hóa đơn...</span>
+                    </div>
+                  )}
+
+                  {/* Info card sau khi chọn */}
+                  {selectedInvoice && (
+                    <div className="invoice-info-card">
+                      <div className="invoice-info-card__code-row">
+                        <Icon name="FileText" />
+                        <strong>{selectedInvoice.invoiceCode}</strong>
+                        {isLoadingDetail && <span className="invoice-info-card__loading-badge">Đang tải...</span>}
+                      </div>
+                      <div className="invoice-info-card__row">
+                        <Icon name="User" />
+                        <span>{selectedInvoice.customerName || "—"}</span>
+                        <span className="invoice-divider">·</span>
+                        <Icon name="Phone" />
+                        <span>{selectedInvoice.customerPhone || "—"}</span>
+                      </div>
+                      {selectedInvoice.customerAddress && (
+                        <div className="invoice-info-card__row">
+                          <Icon name="MapPin" />
+                          <span>{selectedInvoice.customerAddress}</span>
+                        </div>
+                      )}
+                      {selectedInvoice.productSummary && (
+                        <div className="invoice-info-card__row">
+                          <Icon name="ShoppingBag" />
+                          <span>{selectedInvoice.productSummary}</span>
+                        </div>
+                      )}
+                      <div className="invoice-info-card__footer">
+                        <div className="invoice-info-card__amount">
+                          <span>Tổng tiền</span>
+                          <strong>{formatCurrency(selectedInvoice.amount ?? 0)} đ</strong>
+                        </div>
+                        {(selectedInvoice.amountCard ?? 0) > 0 && (
+                          <div className="invoice-info-card__cod">
+                            <Icon name="Banknote" />
+                            <span>COD:&nbsp;</span>
+                            <strong>{formatCurrency(selectedInvoice.amountCard ?? 0)} đ</strong>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Banner edit mode */}
+            {isEdit && originData?.salesOrderCode && (
               <div className="autofill-banner">
                 <Icon name="CheckCircle" />
                 <span>
-                  Đã tự động điền thông tin từ đơn hàng&nbsp;
-                  <strong>{originData?.salesOrderCode || `#${salesOrderId}`}</strong>
+                  Đã liên kết với hóa đơn&nbsp;
+                  <strong>{originData.salesOrderCode}</strong>
                 </span>
               </div>
             )}
@@ -175,8 +501,8 @@ export default function AddShippingOrder() {
                     setErrors((prev) => ({ ...prev, partnerId: "" }));
                   }}
                   placeholder="Chọn hãng..."
-                  errorText={errors.partnerId}
                 />
+                {errors.partnerId && <span className="field-error">{errors.partnerId}</span>}
               </div>
             </div>
 
@@ -185,42 +511,53 @@ export default function AddShippingOrder() {
               <div className="form-card__title">
                 <Icon name="User" />
                 Thông tin người nhận
+                {selectedInvoice && (
+                  <span className="autofill-badge">
+                    <Icon name="Zap" /> Tự động điền
+                  </span>
+                )}
               </div>
               <div className="form-card__body">
                 <div className="form-row-2">
-                  <Input
-                    name="receiverName"
-                    label="Tên người nhận *"
-                    fill
-                    value={form.receiverName}
-                    onChange={setField("receiverName")}
-                    placeholder="Nguyễn Văn A"
-                    errorText={errors.receiverName}
-                  />
-                  <div className="input-verified-wrap">
+                  <div>
                     <Input
-                      name="receiverPhone"
-                      label="Số điện thoại *"
+                      name="receiverName"
+                      label="Tên người nhận *"
                       fill
-                      value={form.receiverPhone}
-                      onChange={setField("receiverPhone")}
-                      placeholder="09xxxxxxxx"
-                      errorText={errors.receiverPhone}
+                      value={form.receiverName}
+                      onChange={setField("receiverName")}
+                      placeholder="Nguyễn Văn A"
                     />
-                    {(form.receiverPhone?.length >= 10 && !errors.receiverPhone) && (
-                      <span className="verified-icon"><Icon name="CheckCircle" /></span>
-                    )}
+                    {errors.receiverName && <span className="field-error">{errors.receiverName}</span>}
+                  </div>
+                  <div>
+                    <div className="input-verified-wrap">
+                      <Input
+                        name="receiverPhone"
+                        label="Số điện thoại *"
+                        fill
+                        value={form.receiverPhone}
+                        onChange={setField("receiverPhone")}
+                        placeholder="09xxxxxxxx"
+                      />
+                      {(form.receiverPhone?.length >= 10 && !errors.receiverPhone) && (
+                        <span className="verified-icon"><Icon name="CheckCircle" /></span>
+                      )}
+                    </div>
+                    {errors.receiverPhone && <span className="field-error">{errors.receiverPhone}</span>}
                   </div>
                 </div>
-                <Input
-                  name="receiverAddress"
-                  label="Địa chỉ giao hàng *"
-                  fill
-                  value={form.receiverAddress}
-                  onChange={setField("receiverAddress")}
-                  placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"
-                  errorText={errors.receiverAddress}
-                />
+                <div>
+                  <Input
+                    name="receiverAddress"
+                    label="Địa chỉ giao hàng *"
+                    fill
+                    value={form.receiverAddress}
+                    onChange={setField("receiverAddress")}
+                    placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"
+                  />
+                  {errors.receiverAddress && <span className="field-error">{errors.receiverAddress}</span>}
+                </div>
               </div>
             </div>
 
@@ -232,16 +569,18 @@ export default function AddShippingOrder() {
               </div>
               <div className="form-card__body">
                 <div className="form-row-2">
-                  <Input
-                    name="weight"
-                    label="Trọng lượng (gram) *"
-                    fill
-                    type="number"
-                    value={form.weight ?? ""}
-                    onChange={setField("weight")}
-                    placeholder="500"
-                    errorText={errors.weight}
-                  />
+                  <div>
+                    <Input
+                      name="weight"
+                      label="Trọng lượng (gram) *"
+                      fill
+                      type="number"
+                      value={form.weight ?? ""}
+                      onChange={setField("weight")}
+                      placeholder="500"
+                    />
+                    {errors.weight && <span className="field-error">{errors.weight}</span>}
+                  </div>
                   <Input
                     name="dimensions"
                     label="Kích thước - D × R × C (cm)"
@@ -275,14 +614,19 @@ export default function AddShippingOrder() {
             </div>
           </div>
 
-          {/* ========== CỘT PHẢI (COD + submit) ========== */}
+          {/* ========== CỘT PHẢI ========== */}
           <div className="add-shipping-side">
 
             {/* Card: COD */}
             <div className="form-card">
               <div className="form-card__title">
-                <Icon name="Money" />
+                <Icon name="Banknote" />
                 Tiền thu hộ (COD)
+                {/* {selectedInvoice && (
+                  <span className="autofill-badge">
+                    <Icon name="Zap" /> Tự động điền
+                  </span>
+                )} */}
               </div>
               <div className="form-card__body">
                 <Input
@@ -293,7 +637,6 @@ export default function AddShippingOrder() {
                   value={form.codAmount ?? ""}
                   onChange={setField("codAmount")}
                   placeholder="0"
-                  suffix="đ"
                 />
                 {form.codAmount > 0 && (
                   <div className="cod-preview">
@@ -304,9 +647,8 @@ export default function AddShippingOrder() {
               </div>
             </div>
 
-            {/* Card: Nút hành động */}
+            {/* Card: Action */}
             <div className="form-card action-card">
-              {/* Indicator sẵn sàng */}
               <div className={`readiness-indicator ${
                 form.partnerId && form.receiverName && form.receiverPhone && form.weight
                   ? "ready" : "not-ready"
@@ -321,7 +663,7 @@ export default function AddShippingOrder() {
 
               <button
                 className="btn-push-order"
-                disabled={isLoading}
+                disabled={isLoading || isLoadingDetail}
                 onClick={handleSubmit}
               >
                 {isLoading ? (

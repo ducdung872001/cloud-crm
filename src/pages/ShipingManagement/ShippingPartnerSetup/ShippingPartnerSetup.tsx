@@ -149,7 +149,12 @@ export default function ShippingPartnerSetup() {
     setSavingId(null);
   };
 
-  const titleActions: ITitleActions = { actions: [], actions_extra: [] };
+  const titleActions: ITitleActions = {
+    actions: [
+      { title: "Quay lại", callback: () => navigate("/shipping") },
+    ],
+    actions_extra: [],
+  };
 
   // ---- Stats ----
   const connectedCount    = partners.filter((p) => p.status === 1).length;
