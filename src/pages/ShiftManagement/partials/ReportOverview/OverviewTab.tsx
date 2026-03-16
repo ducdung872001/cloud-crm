@@ -1,17 +1,12 @@
 import React from "react";
-import TitleAction from "components/titleAction/titleAction";
 import SummaryCards from "./partials/SummaryCards";
 import ShiftStatus from "./partials/ShiftStatus";
 import StaffActive from "./partials/StaffActive";
 import "./Overview.scss";
 
-export default function Overview() {
-  document.title = "Tổng quan hôm nay";
-
+export default function OverviewTab() {
   return (
-    <div className="page-content page-overview">
-      <TitleAction title="Tổng quan hôm nay" />
-
+    <div className="page-overview">
       <div className="dashboard-body">
         <SummaryCards />
 

@@ -153,14 +153,6 @@ import Fanpage from "pages/Fanpage";
 import TotalChat from "pages/Fanpage/TotalChat";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
-import PaymentMethodList from "pages/PaymentMethod/PaymentMethod";
-import CheckoutList from "pages/Checkout/Checkout";
-import Overview from "pages/ManagementStaff/Overview";
-import StaffManagement from "pages/ManagementStaff/ManagementStaff";
-import ShiftReport from "pages/ManagementStaff/ShiftReport";
-import ShiftConfig from "pages/ManagementStaff/ShiftConfig";
-import OpenShift from "pages/ManagementStaff/OpenShift";
-import CloseShift from "pages/ManagementStaff/CloseShift";
 import MultiChannelSales from "@/pages/MultiChannelSales/MultiChannelSales";
 import DashboardRetail from "pages/DashboardRetail";
 import DashboardLoyalty from "@/pages/DashboardLoyalty";
@@ -177,6 +169,8 @@ import ShippingReport from "@/pages/ShipingManagement/ShippingReport/ShippingRep
 import CustomerAndSupplier from "@/pages/CustomerAndSupplier";
 import InventoryManagement from "@/pages/ProductImport/InventoryChecking";
 import CounterSales from "@/pages/CounterSales";
+import ShiftTabsPage from "@/pages/ShiftManagement/ShiftTabsPage";
+import ShiftConfigTabs from "@/pages/ShiftConfig/ShiftConfig";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -253,6 +247,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="SoldMenu" />,
         code: "",
       },
+      {
+        title: "shiftManagement", //Quản lý ca làm việc
+        path: urls.shift_management,
+        icon: <Icon name="ManageWork" />,
+        code: "",
+      },
       // {
       //   title: "facebook",
       //   path: urls.social_facebook_crm,
@@ -323,7 +323,6 @@ export const menu: IMenuItem[] = [
         code: "",
       },
 
-
       // {
       //   title: "createPurchaseOrder", // Tạo phiếu nhập kho
       //   path: urls.create_invoice_add,
@@ -347,7 +346,7 @@ export const menu: IMenuItem[] = [
       //   path: urls.outbound_invoice,
       //   icon: <Icon name="ImportBill" />,
       //   code: "",
-      // },      
+      // },
       // {
       //   title: "inventoryTransferDocument", // Phiếu điều chuyển kho
       //   path: urls.inventory_transfer_document,
@@ -624,7 +623,7 @@ export const menu: IMenuItem[] = [
         path: urls.report_common,
         icon: <Icon name="Statistical" />,
         code: "",
-      },      
+      },
       {
         title: "cashbook", // Báo cáo Tài chính
         path: urls.cashbook,
@@ -768,50 +767,8 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "settingPaymentMethod", // Phương thức thanh toán
-        path: urls.payment_method,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      // {
-      //   title: "salesChannel", // Kênh thanh toán
-      //   path: urls.sales_channel,
-      //   icon: <Icon name="Settings" />,
-      //   code: "",
-      // },
-      {
-        title: "overview",
-        path: urls.overview_staff,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      // {
-      //   title: "staff", // Bán hàng
-      //   path: urls.staff,
-      //   icon: <Icon name="CashPayment" />,
-      //   code: "",
-      // },
-      {
-        title: "reportShift",
-        path: urls.report_shift,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "shiftConfig",
+        title: "shiftConfig", // Cài đặt ca làm việc
         path: urls.shift_config,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "openShift",
-        path: urls.open_shift,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "closeShift",
-        path: urls.close_shift,
         icon: <Icon name="Settings" />,
         code: "",
       },
@@ -1274,7 +1231,7 @@ export const routes: IRouter[] = [
     path: urls.warehouse,
     component: <WarehouseListPage />,
   },
-  
+
   // sổ kho chi tiết (mock) — /inventory-detail/:id
   {
     path: urls.inventory,
@@ -1511,35 +1468,11 @@ export const routes: IRouter[] = [
     component: <FieldMannagement />,
   },
   {
-    path: urls.payment_method,
-    component: <PaymentMethodList />,
-  },
-  {
-    path: urls.sales_channel,
-    component: <CheckoutList />,
-  },
-  {
-    path: urls.overview_staff,
-    component: <Overview />,
-  },
-  {
-    path: urls.staff,
-    component: <StaffManagement />,
-  },
-  {
-    path: urls.report_shift,
-    component: <ShiftReport />,
-  },
-  {
     path: urls.shift_config,
-    component: <ShiftConfig />,
+    component: <ShiftConfigTabs />,
   },
   {
-    path: urls.open_shift,
-    component: <OpenShift />,
-  },
-  {
-    path: urls.close_shift,
-    component: <CloseShift />,
+    path: urls.shift_management,
+    component: <ShiftTabsPage />,
   },
 ];
