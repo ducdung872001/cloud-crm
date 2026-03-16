@@ -45,8 +45,8 @@ function BomDetailPanel({
   return (
     <div className="bom-detail-panel">
       <div className="bom-detail-panel__header">
-        <button className="bom-detail-panel__close" onClick={onClose} title="Đóng">
-          <Icon name="X" />
+        <button type="button" className="bom-detail-panel__close" onClick={onClose} aria-label="Đóng">
+          ✕
         </button>
         <div className="bom-detail-panel__code">{bom.code}</div>
         <div className="bom-detail-panel__name">{bom.productName}</div>
