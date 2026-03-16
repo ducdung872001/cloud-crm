@@ -102,7 +102,7 @@ export default function SettingSellList() {
   ];
 
   return (
-    <div className="page-setting-sell">
+    <div className="page-content page-setting-sell">
       {!isDetailCategory && <TitleAction title="Cài đặt bán hàng" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (
