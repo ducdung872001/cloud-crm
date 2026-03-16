@@ -42,7 +42,7 @@ import NotificationService from "services/NotificationService";
 import WebRtcCallIncomeModal from "pages/CallCenter/partials/WebRtcCallIncomeModal";
 import ringtone from "assets/sounds/call_in_sound.wav";
 import { useSTWebRTC } from "./webrtc/useSTWebRTC";
-import {messaging, requestPermission } from "./firebase-config";
+import { messaging, requestPermission } from "./firebase-config";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -67,7 +67,7 @@ export default function App() {
   const [lstRole, setLstRole] = useState([]);
 
   const takeSelectedRole = localStorage.getItem("SelectedRole");
-  const defaultRedirectRef = useRef<string>("/customer");
+  const defaultRedirectRef = useRef<string>("/create_sale_add");
 
   const handleGetRoles = async (token: string) => {
     if (!token) return;
@@ -102,7 +102,7 @@ export default function App() {
           setIsLogin(true);
           if (location.pathname === "/" || location.pathname === "/login") {
             if (cookies.user) {
-              const target = returnUrl || defaultRedirectRef.current || "/customer";
+              const target = returnUrl || defaultRedirectRef.current || "/create_sale_add";
               navigate(target);
             }
           }
@@ -119,7 +119,7 @@ export default function App() {
 
             if (location.pathname === "/" || location.pathname === "/login") {
               if (cookies.user) {
-                const target = returnUrl || defaultRedirectRef.current || "/customer";
+                const target = returnUrl || defaultRedirectRef.current || "/create_sale_add";
                 navigate(target);
               }
             }
@@ -197,7 +197,7 @@ export default function App() {
           const changeResult = result.lstOrgApp[0];
 
           const defaultRedirect = result?.defaultRedirect;
-          defaultRedirectRef.current = defaultRedirect || "/customer";
+          defaultRedirectRef.current = defaultRedirect || "/create_sale_add";
 
           // Chuyển đổi startDate và endDate thành đối tượng Date
           const endDate: any = new Date(changeResult?.endDate);
@@ -335,7 +335,7 @@ export default function App() {
       try {
         audioRef.current?.pause();
         audioRef.current = null;
-      } catch (e) { }
+      } catch (e) {}
       document.removeEventListener("click", tryUnlock, true);
       document.removeEventListener("touchstart", tryUnlock, true);
     };
@@ -423,7 +423,7 @@ export default function App() {
           {location.pathname == "/link_survey" && <Route path="/link_survey" element={<LinkSurvey />} />}
           {location.pathname == "/upload_document" && <Route path="/upload_document" element={<UploadDocument />} />}
           {location.pathname == "/collect_ticket" && <Route path="/collect_ticket" element={<CollectTicket />} />}
-          {location.pathname == "/collect_warranty" && <Route path="/collect_warranty" element={<CollectWarranty />} />}          
+          {location.pathname == "/collect_warranty" && <Route path="/collect_warranty" element={<CollectWarranty />} />}
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />

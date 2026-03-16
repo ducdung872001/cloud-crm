@@ -445,8 +445,8 @@ export const urlsApi = {
   },
   product: {
     filterWarehouse: prefixWarehouse + "/product/in_warehouse",
-    // list: prefixAdmin + "/product/list",
-    list: prefixWarehouse + "/public/product/list",
+    list: prefixWarehouse + "/product/list",
+    // list: prefixWarehouse + "/public/product/list",
     detail: prefixWarehouse + "/product/get",
     update: prefixWarehouse + "/product/update",
     updateContent: prefixWarehouse + "/product/update/content",
