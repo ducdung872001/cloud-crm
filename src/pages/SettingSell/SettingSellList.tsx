@@ -106,8 +106,8 @@ export default function SettingSellList() {
       {!isDetailCategory && <TitleAction title="Cài đặt bán hàng" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (
-          <div style={{ display: "flex" }}>
-            <ul className="product-menu">
+          // <div style={{ display: "flex" }}>
+            <ul className="menu">
               {productMenu.map((item, idx) => {
                 return (
                   <li
@@ -124,24 +124,23 @@ export default function SettingSellList() {
                 );
               })}
             </ul>
-            <ul className="service-menu">
-              {serviceMenu.map((item, idx) => {
-                return (
-                  <li
-                    key={idx}
-                    className="menu__category"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setTab(item.is_tab);
-                      setIsDetailCategory(true);
-                    }}
-                  >
-                    {item.title}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+            // {/* <ul className="service-menu">
+            //   {serviceMenu.map((item, idx) => {
+            //     return (
+            //       <li
+            //         key={idx}
+            //         className="menu__category"
+            //         onClick={(e) => {
+            //           e.preventDefault();
+            //           setTab(item.is_tab);
+            //           setIsDetailCategory(true);
+            //         }}
+            //       >
+            //         {item.title}
+            //       </li>
+            //     );
+            //   })}
+            // </ul> */}
         )}
       </div>
 

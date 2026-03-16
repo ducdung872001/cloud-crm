@@ -28,6 +28,7 @@ import { ProductLabel } from "@/assets/mock/Product";
 import ConfigDisplayModal from "./DetailProduct/ConfigDisplayModal";
 import CategoryModal from "./partials/CategoryModal";
 import AddProductPage from "./partials/AddProductPage";
+import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 
 // ---- Tab filter type ----
 type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
@@ -88,9 +89,10 @@ export default function ProductList(props: IProductListProps) {
 
   const getListProduct = async (paramsSearch: any) => {
     setIsLoading(true);
-    const response = await ProductService.list(paramsSearch, abortController.signal);
-    console.log("RUN HERE ==>");
-    
+
+    // const response = await ProductService.wList(paramsSearch, abortController.signal);
+    const response = await ProductService.publicList(paramsSearch, abortController.signal);
+
     if (response.code === 0) {
       const result = response.result;
       setListProduct(result.items);
@@ -111,13 +113,7 @@ export default function ProductList(props: IProductListProps) {
   };
 
   useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
-    if (isMounted.current === true) {
-      getListProduct(params);
-    }
+    getListProduct(params);
     return () => {
       abortController.abort();
     };
@@ -190,7 +186,7 @@ export default function ProductList(props: IProductListProps) {
   };
 
   const onDelete = async (id: number) => {
-    const response = await ProductService.delete(id);
+    const response = await ProductService.wDelete(id);
     if (response.code === 0) {
       showToast("Xóa sản phẩm thành công", "success");
       getListProduct(params);
@@ -225,9 +221,33 @@ export default function ProductList(props: IProductListProps) {
       });
   };
 
-  const handleDuplicateProd = (item) => {
-    showToast("Đã nhân bản sản phẩm thành công", "success");
-    setListProduct((prev) => [...prev, item]);
+  const handleDuplicateProd = async (item: IProductResponse) => {
+    const body: any = {
+      id: 0,
+      name: `${item.name} (Copy)`,
+      code: "",
+      productLine: item.productLine ?? "",
+      price: item.price ?? 0,
+      position: 0,
+      bsnId: item.bsnId ?? 0,
+      unitId: item.unitId ?? null,
+      unitName: item.unitName ?? "",
+      status: item.status,
+      avatar: "",
+      categoryId: null,
+      categoryName: "",
+      exchange: 1,
+      otherUnits: item.otherUnits ?? "",
+      type: item.type ? String(item.type) : "0",
+    };
+
+    const res = await ProductService.wUpdate(body);
+    if (res.code === 0) {
+      showToast("Nhân bản sản phẩm thành công", "success");
+      getListProduct(params); // reload lại list
+    } else {
+      showToast(res.message ?? "Có lỗi xảy ra", "error");
+    }
   };
 
   const showDialogConfirmDelete = (item?: IProductResponse) => {
@@ -406,7 +426,7 @@ export default function ProductList(props: IProductListProps) {
         callback: () => {
           if (!isCheckedItem) {
             setIdProduct(item.id);
-            setShowProductPage(true)
+            setShowProductPage(true);
             // setShowModalAdd(true);
             setDataProduct(item);
           }
@@ -424,68 +444,61 @@ export default function ProductList(props: IProductListProps) {
   };
 
   if (showProductPage) {
-  return (
-    <AddProductPage
-      idProduct={idProduct}
-      data={dataProduct}
-      onBack={(reload) => {
-        if (reload) getListProduct(params);
-        setShowProductPage(false);
-        setIdProduct(null);
-        setDataProduct(null);
-      }}
-    />
-  );
-}
+    return (
+      <AddProductPage
+        idProduct={idProduct}
+        data={dataProduct}
+        onBack={(reload) => {
+          if (reload) getListProduct(params);
+          setShowProductPage(false);
+          setIdProduct(null);
+          setDataProduct(null);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="page-content page-product page-product--v2">
       {/* ── HEADER ── */}
-      <div className="prod-list-header">
-        <div className="prod-list-header__left">
-          <h1 className="prod-list-header__title">Quản lý Sản phẩm</h1>
-          <p className="prod-list-header__breadcrumb">
-            <span className="prod-list-header__breadcrumb-link" onClick={() => onBackProps(true)}>
-              Trang chủ
-            </span>
-            {" / "}
-            <span className="prod-list-header__breadcrumb-link" onClick={() => onBackProps(true)}>
-              Danh mục
-            </span>
-            {" / "}
-            <span>Sản phẩm</span>
-          </p>
+      <div className="action-navigation">
+        <div className="action-backup">
+          <h1 className="title-first" onClick={() => onBackProps(true)} title="Quay lại">
+            Cài đặt bán hàng
+          </h1>
+          <Icon name="ChevronRight" onClick={() => onBackProps(true)} />
+          <h1 className="title-last">Danh sách sản phẩm</h1>
         </div>
+        <TitleAction
+          title=""
+          titleActions={{
+            actions: [
+              {
+                title: "Thêm sản phẩm",
+                color: "primary",
+                callback: () => {
+                  setIdProduct(null);
+                  setShowProductPage(true);
+                },
+              },
+            ],
+          } as ITitleActions}
+        />
+      </div>
 
-        <div className="prod-list-header__actions">
-          <button className="prod-list-btn prod-list-btn--ghost" onClick={() => setShowModalImport(true)}>
-            <Icon name="UploadExcel" />
-            Nhập Excel
-          </button>
-
-          {/* TODO: wire up real category modal when ready */}
-          <button className="prod-list-btn prod-list-btn--ghost" onClick={handleOpenCategory}>
-            📦 Danh mục
-          </button>
-
-          {/* TODO: wire up display settings modal when ready */}
-          <button className="prod-list-btn prod-list-btn--ghost" onClick={handleDisplaySettings}>
-            <Icon name="Settings" />
-            Cài đặt hiển thị
-          </button>
-
-          <button
-            className="prod-list-btn prod-list-btn--primary"
-            onClick={() => {
-              setIdProduct(null);
-              // setShowModalAdd(true);
-              setShowProductPage(true)
-            }}
-          >
-            <Icon name="Plus" />
-            Thêm sản phẩm
-          </button>
-        </div>
+      {/* ── SECONDARY ACTIONS ── */}
+      <div className="prod-list-secondary-actions">
+        <button className="prod-list-btn prod-list-btn--ghost" onClick={() => setShowModalImport(true)}>
+          <Icon name="UploadExcel" />
+          Nhập Excel
+        </button>
+        <button className="prod-list-btn prod-list-btn--ghost" onClick={handleOpenCategory}>
+          📦 Danh mục
+        </button>
+        <button className="prod-list-btn prod-list-btn--ghost" onClick={handleDisplaySettings}>
+          <Icon name="Settings" />
+          Cài đặt hiển thị
+        </button>
       </div>
 
       {/* ── TOOLBAR ── */}
@@ -588,7 +601,7 @@ export default function ProductList(props: IProductListProps) {
                 action={() => {
                   setIdProduct(null);
                   // setShowModalAdd(true);
-                  setShowProductPage(true)
+                  setShowProductPage(true);
                 }}
               />
             ) : (

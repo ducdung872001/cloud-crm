@@ -1,5 +1,8 @@
 const prefixAdmin = "/adminapi";
-const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
+const prefixBiz = "/bizapi";
+// const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
+const prefixBpm = process.env.APP_BPM_URL + "/bpm";
+// const prefixBPM = "https://bpm.reborn.vn/bpmapi";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";
 const prefixSale = "/sale";
@@ -10,9 +13,10 @@ const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
-const prefixFinance = "https://reborn.vn/finance";
-const prefixWarehouse = "https://reborn.vn/warehouse";
-const prefixBiz = "https://biz.reborn.vn";
+const prefixFinance = prefixBiz + "/finance";
+const prefixInventory = prefixBiz + "/inventory";
+const prefixWarehouse = prefixBiz + "/warehouse";
+const prefixCare = prefixBiz + "/care";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -81,8 +85,8 @@ export const urlsApi = {
     filter: prefixAdmin + "/customer/list_paid",
     listshared: prefixAdmin + "/customer/list_paid/shared",
     update: prefixAdmin + "/customer/update",
-    telesaleCallList: prefixAdmin + "/telesaleCall/list",
-    telesaleCallUpdate: prefixAdmin + "/telesaleCall/update",
+    telesaleCallList: prefixCare + "/telesaleCall/list",
+    telesaleCallUpdate: prefixCare + "/telesaleCall/update",
     updateByField: prefixAdmin + "/customer/update/byField",
     delete: prefixAdmin + "/customer/delete",
     deleteAll: prefixAdmin + "/customer/delete",
@@ -453,8 +457,44 @@ export const urlsApi = {
 
     //danh sách sản phẩm của đối tác
     listShared: prefixAdmin + "/product/list/shared",
+
+    // ── Warehouse API (tài liệu mới) ──
+    wList: prefixInventory + "/product/list",
+    wDetail: prefixInventory + "/product/get",
+    wUpdate: prefixInventory + "/product/update",
+    wDelete: prefixInventory + "/product/delete",
+    wDashboard: prefixInventory + "/product/dashboard/summary",
+    wUpdateStatus: prefixInventory + "/product/update/status",
+    wUpdatePrice: prefixInventory + "/product/update/price",
+    wUpdateInventory: prefixInventory + "/product/update/inventory-setting",
+    wWebsiteSettingGet: prefixInventory + "/product/website-setting/get",
+    wWebsiteSettingUpdate: prefixInventory + "/product/website-setting/update",
+    wInventoryCurrent: prefixInventory + "/product/inventory/current",
+    wScan: prefixInventory + "/product/scan",
     listById: prefixAdmin + "/product/list_by_id",
+    publicList: prefixInventory + "/public/product/list",
+
+    // ── Public APIs (không cần auth) ──
+    publicDetail: prefixInventory + "/public/product/get",
+    publicCategoryList: prefixInventory + "/public/product/category/list",
+    publicMediaList: prefixInventory + "/public/product/media/list",
+
+    // ── Media APIs (cần auth) ──
+    mediaList: prefixInventory + "/product-media/list",
+    mediaUpdate: prefixInventory + "/product-media/update",
+    mediaDelete: prefixInventory + "/product-media/delete",
+    mediaUpload: prefixInventory + "/product-media/upload",
+
+    // ── Variant Groups ──
+    variantGroupsUpdate: prefixInventory + "/product/variant-groups/update",
+    variantGroupsDelete: prefixInventory + "/product/variant-groups/delete",
+
+    // ── Specifications ──
+    specificationsUpdate: prefixInventory + "/product/specifications/update",
+    specificationsDelete: prefixInventory + "/product/specifications/delete",
   },
+
+  //warehouse
 
   integration: {
     list: prefixAdmin + "/integrationPartner/list",
@@ -477,16 +517,16 @@ export const urlsApi = {
   },
 
   productImport: {
-    update: prefixWarehouse + "/product_import/update",
-    detail: prefixWarehouse + "/product_import/detail",
-    delete: prefixWarehouse + "/product_import/delete",
+    update: prefixInventory + "/product_import/update",
+    detail: prefixInventory + "/product_import/detail",
+    delete: prefixInventory + "/product_import/delete",
   },
 
   inventory: {
-    list: prefixWarehouse + "/inventory/list",
-    update: prefixWarehouse + "/inventory/update",
-    delete: prefixWarehouse + "/inventory/delete",
-    import: prefixWarehouse + "/inventory/import",
+    list: prefixInventory + "/inventory/list",
+    update: prefixInventory + "/inventory/update",
+    delete: prefixInventory + "/inventory/delete",
+    import: prefixInventory + "/inventory/import",
   },
   pom: {
     //định nghĩa pom cho sản phẩm, dịch vụ
@@ -674,11 +714,11 @@ export const urlsApi = {
   },
   //khu vực trải nghiệm khách hàng
   warehouse: {
-    list: prefixWarehouse + "/warehouse/list",
+    list: prefixInventory + "/warehouse/list",
     //API lấy ra danh sách sản phẩm trong kho
-    productList: prefixWarehouse + "/warehouse/product/list",
+    productList: prefixInventory + "/warehouse/product/list",
     //API lấy ra thông tin ngày hết hạn / sản xuất dựa trên số lô của sản phẩm
-    infoExpiryDateProductionDate: prefixWarehouse + "/warehouse/get_mfg_expired_date",
+    infoExpiryDateProductionDate: prefixInventory + "/warehouse/get_mfg_expired_date",
   },
   earnings: {
     filter: prefixAdmin + "/earnings/admin/list",
@@ -2077,19 +2117,19 @@ export const urlsApi = {
   },
   // phiếu điều chỉnh kho
   adjustmentSlip: {
-    temp: prefixWarehouse + "/stockAdjust/temp",
-    createAdjSlip: prefixWarehouse + "/stockAdjust/create",
-    addUpdatePro: prefixWarehouse + "/stockAdjustDetail/update",
+    temp: prefixInventory + "/stockAdjust/temp",
+    createAdjSlip: prefixInventory + "/stockAdjust/create",
+    addUpdatePro: prefixInventory + "/stockAdjustDetail/update",
     // duyệt phiếu điều chỉnh kho
-    approved: prefixWarehouse + "/stockAdjust/approved",
+    approved: prefixInventory + "/stockAdjust/approved",
     // từ chối điều chỉnh kho
-    cancel: prefixWarehouse + "/stockAdjust/cancel",
-    view: prefixWarehouse + "/stockAdjust/view",
-    list: prefixWarehouse + "/stockAdjust/list",
+    cancel: prefixInventory + "/stockAdjust/cancel",
+    view: prefixInventory + "/stockAdjust/view",
+    list: prefixInventory + "/stockAdjust/list",
     // lấy danh sách sản phẩm có trong kho
-    warehouse: prefixWarehouse + "/warehouse/list",
+    warehouse: prefixInventory + "/warehouse/list",
     // xóa đi 1 sản phẩm
-    deletePro: prefixWarehouse + "/stockAdjustDetail/delete",
+    deletePro: prefixInventory + "/stockAdjustDetail/delete",
   },
   kpiDatasource: {
     list: prefixAdmin + "/kpiDatasource/list",
@@ -2230,7 +2270,7 @@ export const urlsApi = {
     listLoyaltyReward: prefixBiz + "/market/loyaltyReward/list",
     updateLoyaltyReward: prefixBiz + "/market/loyaltyReward/update",
     deleteLoyaltyReward: prefixBiz + "/market/loyaltyReward/delete",
-    //phân hạng hội viên 
+    //phân hạng hội viên
     listLoyaltySegment: prefixBiz + "/market/loyaltySegment/list",
     updateLoyaltySegment: prefixBiz + "/market/loyaltySegment/update",
     deleteLoyaltySegment: prefixBiz + "/market/loyaltySegment/delete",
@@ -3127,9 +3167,16 @@ export const urls = {
   products_sold: "/products_sold",
   // đường dẫn sản phẩm tồn kho
   product_inventory: "/product_inventory",
-  // đường dẫn quản lý kho hàng
+  // đường dẫn danh sách kho hàng
+  warehouse: "/warehouse",
+  // sổ kho
   inventory: "/inventory",
+  create_inventory: "/create_inventory",
+  // đường dẫn sổ kho chi tiết theo kho
+  inventory_detail: "/inventory-detail/:id",
   inventory_checking: "/inventory_checking",
+  // báo cáo kho
+  report_warehouse: "/report_warehouse",
   // đường dẫn bán hàng
   sell: "/sell",
   promotional_program: "/promotional_program",
@@ -3378,15 +3425,11 @@ export const urls = {
   business_rule_config: "/bpm/business_rule_config/:id",
 
   //Quản lý thanh toán
-  payment_method: "/payment_method",
   sales_channel: "/sales_channel",
+
   //Quản lý nhân viên
-  overview_staff: "/overview_staff",
-  staff: "/staff",
-  report_shift: "/report_shift",
   shift_config: "/shift_config",
-  open_shift: "/open_shift",
-  close_shift: "/close_shift",
+  shift_management: "/shift_management",
 };
 
 export default urls;

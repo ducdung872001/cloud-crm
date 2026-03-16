@@ -111,6 +111,7 @@ i18n.use(initReactI18next).init({
           inventoryTransferDocument: "Inventory transfer document",
           stockAdjustmentVoucher: "Stock adjustment voucher",
           managementMaterial: "Management material",
+          warehouseList: "Warehouse List",
 
           financeManagement: "Finance & Payment",
           financeDashboard: "Dashboard",
@@ -152,10 +153,10 @@ i18n.use(initReactI18next).init({
           settingPartner: "Setting partner",
           settingContact: "Setting contact",
           loyaltyPointLedger: "Loyalty point ledger",
-          loyaltyWallet: "Loyalty wallet",
+          memberList: "Member list",
           settingLoyalty: "Setting loyalty",
           settingSales: "Setting sales",
-          settingMarketing: "Setting Marketing",
+          multiChannelCommunication: "Multi Channel Communication",
           settingContract: "Setting contract",
           settingProcess: "Setting process",
           settingQuoteForm: "Setting quote form",
@@ -187,6 +188,8 @@ i18n.use(initReactI18next).init({
           fieldManagement: "Field management",
           settingConfiguration: "Configuration settings",
           viettelIntegration: "Viettel integration",
+          shiftManagement: "Shift management",
+          shiftConfig: "Shift configuration",
         },
         pageDashboard: {
           title: "Dashboard",
@@ -276,7 +279,7 @@ i18n.use(initReactI18next).init({
           // đoạn này là children của khách hàng
           customerProfile: "Hồ sơ khách hàng",
           customerList: "Khách hàng & NCC",
-          partnerProfile: "Danh sách Nhà cung cấp",
+          partnerProfile: "Nhà cung cấp",
           customerSegments: "Phân khúc & Nhãn",
 
           quote: "Báo giá",
@@ -360,12 +363,14 @@ i18n.use(initReactI18next).init({
           createOutboundDelivery: "Tạo phiếu xuất kho",
           outboundInvoice: "Hóa đơn xuất kho",
           soldProducts: "Sản phẩm đã bán",
-          stockedProducts: "Báo cáo Hàng bán",
+          stockedProducts: "Tồn kho",
           warehouseManagement: "Sổ kho", //Lưu giao dịch liên quan kho
           warehouseChecking: "Kiểm kho", //Thực hiện kiểm thực tế (Đếm thực tế) => Nếu lệch thì Tạo phiếu điều chỉnh
+          reportWarhouse: "Báo cáo kho",
           inventoryTransferDocument: "Phiếu điều chuyển kho",
           stockAdjustmentVoucher: "Phiếu điều chỉnh kho",
-          managementMaterial: "Quản lý nguyên vật liệu",
+          managementMaterial: "Nguyên vật liệu",
+          warehouseList: "Danh sách kho",
 
           financeManagement: "Tài chính & Thanh toán",
           financeDashboard: "Thông tin tài chính",
@@ -400,10 +405,10 @@ i18n.use(initReactI18next).init({
           settingPartner: "Cài đặt đối tác",
           settingContact: "Cài đặt người liên hệ",
           loyaltyPointLedger: "Nhật ký điểm hội viên",
-          loyaltyWallet: "Danh sách hội viên",
-          settingLoyalty:"Cài đặt hạng hội viên",
+          memberList: "Danh sách hội viên",
+          settingLoyalty:"Cài đặt hệ thống tích điểm",
           settingSales: "Danh mục sản phẩm",
-          settingMarketing: "Truyền thông đa kênh", //SMS/Zalo/Email/...
+          multiChannelCommunication: "Truyền thông đa kênh", //SMS/Zalo/Email/...
           settingContract: "Cài đặt hợp đồng",
           settingEform: "Cài đặt biểu mẫu",
           settingProcess: "Cài đặt quy trình",
@@ -422,7 +427,7 @@ i18n.use(initReactI18next).init({
           settingDashboard: "Cài đặt báo cáo",
           settingPaymentMethod: "Cài đặt phương thức thanh toán",
           dashboardShipping: "Báo cáo vận chuyển",
-          dashboardLoyalty: "Tích điểm Loyalty",
+          loyaltyPoints: "Tích điểm Loyalty",
           settingApplication: "Cài đặt tích hợp",
           resourceManagement: "Quản trị tài nguyên",
           organizationalManagement: "Quản lý đại lý",
@@ -433,6 +438,8 @@ i18n.use(initReactI18next).init({
           fieldManagement: "Quản lý lĩnh vực",
           settingConfiguration: "Cài đặt cấu hình chung",
           viettelIntegration: "Tích hợp Viettel",
+          shiftManagement: "Quản lý ca làm việc",
+          shiftConfig: "Cài đặt ca làm việc",
         },
         pageDashboard: {
           title: "Bảng điều khiển",

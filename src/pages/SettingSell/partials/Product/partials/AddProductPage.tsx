@@ -12,6 +12,7 @@ import { IProductRequest } from "model/product/ProductRequestModel";
 import { IProductResponse } from "model/product/ProductResponseModel";
 import { IOption } from "model/OtherModel";
 import "./AddProductPage.scss";
+import Tippy from "@tippyjs/react";
 
 type PageTab = "info" | "variants";
 
@@ -72,12 +73,18 @@ interface VariantAttribute {
   inputVal: string;
 }
 
+interface UnitPrice {
+  tempId: string;
+  unitId: number | null;
+  unitName: string;
+  price: string | number;
+}
+
 interface VariantCombination {
   key: string;
   label: string;
   sku: string;
-  quantity: number;
-  price: string | number;
+  unitPrices: UnitPrice[];
 }
 
 const genId = () => Math.random().toString(36).slice(2, 9);
@@ -101,6 +108,13 @@ const generateSku = (productName: string, comboLabel: string): string => {
   return valueParts ? `${namePart}-${valueParts}` : namePart;
 };
 
+const makeEmptyUnitPrice = (): UnitPrice => ({
+  tempId: genId(),
+  unitId: null,
+  unitName: "",
+  price: "",
+});
+
 const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
   const active = attrs.filter((a) => a.name.trim() && a.values.length > 0);
   if (!active.length) return [];
@@ -113,8 +127,7 @@ const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
     key: active.map((a, i) => `${a.name}:${combo[i]}`).join("|"),
     label: combo.join(" / "),
     sku: "",
-    quantity: 0,
-    price: "",
+    unitPrices: [makeEmptyUnitPrice()],
   }));
 };
 
@@ -127,7 +140,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const [selectedUnit, setSelectedUnit] = useState<IOption | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<{ value: number; label: string } | null>(null);
   const [formData, setFormData] = useState({ ...DEFAULT_FORM });
-
+  const [isDuplicating, setIsDuplicating] = useState(false);
   // Variants
   const [variantAttrs, setVariantAttrs] = useState<VariantAttribute[]>([]);
   const [combinations, setCombinations] = useState<VariantCombination[]>([]);
@@ -158,7 +171,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   };
 
   const loadDetail = async () => {
-    const res = await ProductService.detail(idProduct);
+    const res = await ProductService.wDetail(idProduct);
     if (res.code === 0) {
       setDetailProduct(res.result);
       preFill(res.result);
@@ -198,23 +211,43 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     }
 
     const activeAttrs = variantAttrs.filter((a) => a.name.trim() && a.values.length > 0);
-    const variants = combinations.map((c) => ({
-      id: 0,
-      label: c.label,
-      sku: c.sku,
-      price: +c.price || 0,
-      quantity: c.quantity || 0,
-      attributes: activeAttrs.map((a) => ({
-        name: a.name,
-        value:
-          c.key
-            .split("|")
-            .find((k) => k.startsWith(a.name + ":"))
-            ?.split(":")[1] ?? "",
-      })),
-    }));
+    const variants = combinations.map((c) => {
+      const firstUp = c.unitPrices[0];
+      return {
+        id: 0,
+        label: c.label,
+        sku: c.sku?.trim() || generateSku(formData.name, c.label),
+        // giá & đơn vị lấy từ dòng đầu tiên
+        price: +(firstUp?.price ?? 0) || 0,
+        unitId: firstUp?.unitId ?? null,
+        unitName: firstUp?.unitName ?? "",
+        quantity: 0,
+        // toàn bộ danh sách đơn vị-giá
+        unitPrices: c.unitPrices.map((u) => ({
+          unitId: u.unitId,
+          unitName: u.unitName,
+          price: +(u.price ?? 0) || 0,
+        })),
+        attributes: activeAttrs.map((a) => ({
+          name: a.name,
+          value:
+            c.key
+              .split("|")
+              .find((k) => k.startsWith(a.name + ":"))
+              ?.split(":")[1] ?? "",
+        })),
+      };
+    });
 
-    setIsSubmitting(true);
+    const defaultVariant = {
+      id: 0,
+      label: "Mac dinh",
+      sku: toSkuPart(formData.name) || `SP-${Date.now()}`,
+      price: +formData.price,
+      quantity: 0,
+      attributes: [],
+    };
+
     const body: IProductRequest = {
       id: idProduct || 0,
       name: formData.name,
@@ -222,7 +255,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       productLine: formData.productLine,
       price: +formData.price,
       position: detailProduct?.position ?? 0,
-      bsnId: detailProduct?.bsnId ?? 0,
       unitId: selectedUnit?.value ?? null,
       unitName: selectedUnit?.label ?? "",
       status: formData.status,
@@ -236,21 +268,21 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       costPrice: +formData.costPrice || 0,
       priceWholesale: +formData.priceWholesale || 0,
       pricePromo: +formData.pricePromo || 0,
-      variants: variants.length > 0 ? variants : undefined,
+      variants: variants.length > 0 ? variants : [defaultVariant],
     };
-    console.log("BODY", body);
-    console.log("FORM DATA", formData);
 
-    return;
-
-    const res = await ProductService.update(body);
-    if (res.code === 0) {
-      showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
-      onBack(true);
-    } else {
-      showToast(res.message ?? "Có lỗi xảy ra", "error");
+    setIsSubmitting(true);
+    try {
+      const res = await ProductService.wUpdate(body);
+      if (res.code === 0) {
+        showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
+        onBack(true);
+      } else {
+        showToast(res.message ?? "Có lỗi xảy ra", "error");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   // ── VARIANT HANDLERS ──
@@ -263,8 +295,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           ...c,
           // giữ data user đã nhập, chỉ auto-gen SKU nếu chưa có
           sku: existing?.sku || generateSku(formData.name, c.label),
-          quantity: existing?.quantity ?? 0,
-          price: existing?.price !== "" && existing?.price !== undefined ? existing.price : formData.price ?? "",
+          unitPrices: existing?.unitPrices?.length ? existing.unitPrices : [makeEmptyUnitPrice()],
         };
       })
     );
@@ -299,8 +330,73 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     syncCombinations(updated);
   };
 
-  const updateCombo = (key: string, field: keyof VariantCombination, value: any) =>
-    setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, [field]: value } : c)));
+  const updateComboSku = (key: string, sku: string) =>
+    setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, sku } : c)));
+
+  // ── UNIT PRICE HANDLERS ──
+  const addUnitPrice = (comboKey: string) =>
+    setCombinations((prev) =>
+      prev.map((c) =>
+        c.key === comboKey
+          ? { ...c, unitPrices: [...c.unitPrices, makeEmptyUnitPrice()] }
+          : c
+      )
+    );
+
+  const removeUnitPrice = (comboKey: string, tempId: string) =>
+    setCombinations((prev) =>
+      prev.map((c) => {
+        if (c.key !== comboKey) return c;
+        return { ...c, unitPrices: c.unitPrices.filter((u) => u.tempId !== tempId) };
+      })
+    );
+
+  const updateUnitPrice = (comboKey: string, tempId: string, field: keyof UnitPrice, value: any) =>
+    setCombinations((prev) =>
+      prev.map((c) =>
+        c.key === comboKey
+          ? { ...c, unitPrices: c.unitPrices.map((u) => (u.tempId === tempId ? { ...u, [field]: value } : u)) }
+          : c
+      )
+    );
+
+  const handleDuplicate = async () => {
+    if (!idProduct) return;
+    setIsDuplicating(true);
+    try {
+      const body: IProductRequest = {
+        id: 0, // id=0 → tạo mới
+        name: `${formData.name} (Copy)`,
+        code: "", // xóa barcode tránh trùng
+        productLine: formData.productLine,
+        price: +formData.price,
+        position: 0,
+        unitId: selectedUnit?.value ?? null,
+        unitName: selectedUnit?.label ?? "",
+        status: formData.status,
+        avatar: formData.avatar,
+        categoryId: selectedCategory?.value ?? null,
+        categoryName: selectedCategory?.label ?? "",
+        exchange: 1,
+        otherUnits: detailProduct?.otherUnits ?? "",
+        type: detailProduct?.type ? String(detailProduct.type) : "0",
+        description: formData.description,
+        costPrice: +formData.costPrice || 0,
+        priceWholesale: +formData.priceWholesale || 0,
+        pricePromo: +formData.pricePromo || 0,
+        // variants: undefined, // không copy biến thể
+      };
+      const res = await ProductService.wUpdate(body);
+      if (res.code === 0) {
+        showToast("Nhân bản sản phẩm thành công", "success");
+        onBack(true); // quay lại list, reload
+      } else {
+        showToast(res.message ?? "Có lỗi xảy ra", "error");
+      }
+    } finally {
+      setIsDuplicating(false);
+    }
+  };
 
   // ── RENDER ──
   return (
@@ -435,7 +531,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                       </label>
                       <div className="add-prod-field__price">
                         <span className="add-prod-field__price-icon">₫</span>
-                        <NummericInput value={formData[key]} onValueChange={(vals: any) => setField(key, vals.floatValue ?? 0)} placeholder="0" />
+                        <NummericInput value={formData[key]} onValueChange={(vals: any) => setField(key, vals.floatValue ?? 0)} placeholder="0" thousandSeparator={true} />
                       </div>
                     </div>
                   ))}
@@ -449,6 +545,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                         value={formData.costPrice}
                         onValueChange={(vals: any) => setField("costPrice", vals.floatValue ?? 0)}
                         placeholder="0"
+                        thousandSeparator={true}
                       />
                     </div>
                   </div>
@@ -536,7 +633,9 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
               {isEdit && (
                 <div className="add-prod-right-box">
                   <div className="add-prod-right-box__title">Thao tác nhanh</div>
-                  <button className="add-prod-quick-btn">Nhân bản sản phẩm</button>
+                  <button className="add-prod-quick-btn" onClick={handleDuplicate} disabled={isDuplicating}>
+                    {isDuplicating ? "Đang xử lý..." : "Nhân bản sản phẩm"}
+                  </button>
                   <button className="add-prod-quick-btn add-prod-quick-btn--danger">Xóa sản phẩm</button>
                 </div>
               )}
@@ -606,63 +705,88 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
               </button>
             </div>
 
-            {/* Bảng biến thể */}
+            {/* Danh sách biến thể — card layout */}
             {combinations.length > 0 && (
               <div className="add-prod-card">
                 <div className="add-prod-card__title">
                   Chi tiết biến thể
                   <span className="add-prod-card__count">{combinations.length} biến thể</span>
                 </div>
-                <div className="add-prod-vt-table-wrap">
-                  <table className="add-prod-vt-table">
-                    <thead>
-                      <tr>
-                        <th>Biến thể</th>
-                        <th>SKU</th>
-                        <th>Số lượng</th>
-                        <th>Giá bán</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {combinations.map((c) => (
-                        <tr key={c.key}>
-                          <td>
-                            <span className="add-prod-vt-combo">{c.label}</span>
-                          </td>
-                          <td>
-                            <input
-                              className="add-prod-vt-table__input"
-                              type="text"
-                              value={c.sku}
-                              onChange={(e) => updateCombo(c.key, "sku", e.target.value)}
-                              placeholder="VD: SP001-L"
+
+                {combinations.map((c) => (
+                  <div className="add-prod-vt-combo-card" key={c.key}>
+                    {/* Hàng trên: tên biến thể + SKU */}
+                    <div className="add-prod-vt-combo-card__header">
+                      <span className="add-prod-vt-combo">{c.label}</span>
+                      <input
+                        className="add-prod-vt-combo-card__sku"
+                        type="text"
+                        value={c.sku}
+                        onChange={(e) => updateComboSku(c.key, e.target.value)}
+                        placeholder="Mã SKU..."
+                      />
+                    </div>
+
+                    {/* Hàng dưới: danh sách đơn vị-giá */}
+                    <div className="add-prod-vt-combo-card__prices">
+                      {c.unitPrices.map((up) => (
+                        <div className="add-prod-vt-unit-row" key={up.tempId}>
+                          {/* Chọn đơn vị */}
+                          <div className="add-prod-vt-unit-select">
+                            <SelectCustom
+                              id={`unit-${up.tempId}`}
+                              name={`unit-${up.tempId}`}
+                              value={up.unitId}
+                              options={listUnit}
+                              onChange={(e: IOption | null) => {
+                                updateUnitPrice(c.key, up.tempId, "unitId", e?.value ?? null);
+                                updateUnitPrice(c.key, up.tempId, "unitName", e?.label ?? "");
+                              }}
+                              onMenuOpen={async () => {
+                                if (!listUnit.length) setListUnit((await SelectOptionData("unit")) || []);
+                              }}
+                              placeholder="Chọn đơn vị..."
+                              isClearable
                             />
-                          </td>
-                          <td>
-                            <input
-                              className="add-prod-vt-table__input add-prod-vt-table__input--sm"
-                              type="number"
-                              value={c.quantity}
-                              onChange={(e) => updateCombo(c.key, "quantity", +e.target.value)}
-                              min={0}
+                          </div>
+
+                          {/* Nhập giá */}
+                          <div className="add-prod-vt-price">
+                            <span className="add-prod-vt-price__icon">₫</span>
+                            <NummericInput
+                              value={up.price}
+                              onValueChange={(vals: any) => updateUnitPrice(c.key, up.tempId, "price", vals.floatValue ?? 0)}
+                              placeholder="0"
+                              thousandSeparator={true}
                             />
-                          </td>
-                          <td>
-                            <div className="add-prod-field__price">
-                              <span className="add-prod-field__price-icon">₫</span>
-                              <NummericInput
-                                value={c.price}
-                                onValueChange={(vals: any) => updateCombo(c.key, "price", vals.floatValue ?? 0)}
-                                placeholder="0"
-                                className="add-prod-vt-table__input"
-                              />
-                            </div>
-                          </td>
-                        </tr>
+                          </div>
+
+                          {/* Nút xóa */}
+                          <Tippy content="Xóa đơn vị này" placement="top">
+                            <button
+                              type="button"
+                              className="add-prod-vt-unit-del"
+                              disabled={c.unitPrices.length === 1}
+                              onClick={() => removeUnitPrice(c.key, up.tempId)}
+                            >
+                              <Icon name="Trash" style={{ width: 14 }} />
+                            </button>
+                          </Tippy>
+                        </div>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
+
+                      {/* Nút thêm đơn vị */}
+                      <button
+                        type="button"
+                        className="add-prod-vt-unit-add-btn"
+                        onClick={() => addUnitPrice(c.key)}
+                      >
+                        <Icon name="Plus" style={{ width: 13 }} />
+                        Thêm đơn vị bán
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 

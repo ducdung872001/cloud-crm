@@ -62,7 +62,7 @@ export default function CategoryModal({ onShow, onHide, listProduct }: CategoryM
 
   const handleSave = async (item: ICategoryServiceResponseModel) => {
     if (!editingName.trim()) return;
-    const response = await CategoryServiceService.update({ ...item, name: editingName.trim() });
+    const response = await CategoryServiceService.update({ ...item, name: editingName.trim(), type: 2 });
     if (response.code === 0) {
       showToast("Cập nhật danh mục thành công", "success");
       setEditingId(null);

@@ -21,6 +21,8 @@ export interface IMaterialRequest {
   type?: string;
   expiredPeriod?: number;
   minQuantity?: number;
+  maxQuantity?: number;
+  supplier?: string;
   productExtraInfos?: any;
   categoryId?: number;
   categoryName?: string;

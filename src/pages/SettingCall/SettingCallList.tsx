@@ -50,7 +50,7 @@ export default function SettingCallList() {
   ].filter((e) => e);
 
   return (
-    <div className="page-content page-setting-call">
+    <div className="page-setting-call">
       {!isDetailCategory && <TitleAction title="Cài đặt Tổng đài" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (

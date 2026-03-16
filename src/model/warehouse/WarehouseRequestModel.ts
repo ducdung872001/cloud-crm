@@ -1,5 +1,7 @@
 export interface IWarehouseFilterRequest {
   keyword?: string;
+  name?: string;
+  branchId?: number;
   page?: number;
   limit?: number;
 }

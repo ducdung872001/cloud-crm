@@ -12,7 +12,7 @@
       svg {
         width: 2.4rem;
         height: 2.4rem;
-        fill: var(--white-color);
+        // fill: var(--white-color);
         color: var(--white-color);
         transition: all 0.5s ease-in-out;
         flex-shrink: 0;
@@ -30,6 +30,7 @@
         transform: translateY(-50%);
         width: 1.6rem;
         height: 1.6rem;
+        fill: var(--white-color);
       }
     }
     &.show-children {
@@ -43,7 +44,7 @@
         background: #015aa4; // var(--menu-active-color)
         color: var(--white-color);
         svg {
-          fill: var(--white-color);
+          // fill: var(--white-color);
           color: var(--white-color);
         }
       }

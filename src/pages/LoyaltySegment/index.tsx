@@ -187,7 +187,7 @@ export default function LoyaltySegment(props: ICustomerRoyaltyListProps) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt hạng hội viên
+            Cài đặt hệ thống tích điểm
           </h1>
           <Icon
             name="ChevronRight"
@@ -195,7 +195,7 @@ export default function LoyaltySegment(props: ICustomerRoyaltyListProps) {
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Hạng hội viên</h1>
+          <h1 className="title-last">Cài đặt hạng hội viên</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
