@@ -9,8 +9,9 @@ import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction } from "model/OtherModel";
 import "./ShiftConfig.scss";
 import ShiftConfigModal from "./partials/ModalShiftConfig";
+import ShiftRulesNotifyTab from "./partials/ShiftRulesNotify/ShiftRulesNotifyTab";
 
-type TabKey = "shift_config" | "staff_assign";
+type TabKey = "shift_config" | "staff_assign" | "rules_notify";
 
 type ShiftConfigModel = {
   id: number;
@@ -289,6 +290,12 @@ export default function ShiftConfigTabs() {
     };
   }, [tab]);
 
+  const getPosLabel = (posDevice: string) => {
+    if (posDevice === "pos1") return "POS Main Counter";
+    if (posDevice === "pos2") return "POS Quầy 2";
+    return posDevice || "";
+  };
+
   return (
     <div className="page-content page-shift-config">
       <TitleAction title="Thiết lập Ca Vận hành" titleActions={titleActions} />
@@ -303,12 +310,15 @@ export default function ShiftConfigTabs() {
               <li className={tab === "staff_assign" ? "active" : ""} onClick={() => setTab("staff_assign")}>
                 Phân công nhân viên
               </li>
+              <li className={tab === "rules_notify" ? "active" : ""} onClick={() => setTab("rules_notify")}>
+                Quy tắc & Thông báo
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="p-24">
-          {tab === "shift_config" ? (
+          {/* {tab === "shift_config" ? (
             <BoxTable
               name="ca"
               titles={shiftTitles}
@@ -324,7 +334,79 @@ export default function ShiftConfigTabs() {
               dataPagination={dataPaginationShift}
               striped={true}
             />
-          ) : (
+          ) : ( */}
+          {tab === "shift_config" ? (
+            <div className="shift-card-grid">
+              {shiftConfigs.map((item) => (
+                <div
+                  key={item.id}
+                  className={`shift-card accent-${item.id % 6}`}
+                  onClick={() => {
+                    setSelectedShift(item);
+                    setShowModalShift(true);
+                  }}
+                >
+                  <div className="shift-card__header">
+                    <div className="title">
+                      <span className="dot" />
+                      <span>{item.shiftName}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="btn-delete"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        showDialogConfirmDeleteShift(item);
+                      }}
+                    >
+                      Xóa
+                    </button>
+                  </div>
+
+                  <div className="shift-card__row">
+                    <div className="label">Bắt đầu</div>
+                    <div className="value">{item.startTime}</div>
+                    <div className="arrow">→</div>
+                    <div className="label">Kết thúc</div>
+                    <div className="value">{item.endTime}</div>
+                  </div>
+
+                  <div className="shift-card__block">
+                    <div className="block-label">Thiết bị POS</div>
+                    <div className="block-value">{getPosLabel(item.posDevice)}</div>
+                  </div>
+
+                  <div className="shift-card__grid2">
+                    <div className="shift-card__block">
+                      <div className="block-label">Tiền lẻ đầu ca</div>
+                      <div className="block-value">{Number(item.defaultCash || 0).toLocaleString()} đ</div>
+                      <div className="block-sub">Mặc định khi mở ca</div>
+                    </div>
+
+                    <div className="shift-card__block">
+                      <div className="block-label">NV tối thiểu</div>
+                      <div className="block-value">{item.minStaff}</div>
+                      <div className="block-sub">Cảnh báo nếu thiếu</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <div
+                className="shift-card shift-card--add"
+                onClick={() => {
+                  setSelectedShift(null);
+                  setShowModalShift(true);
+                }}
+              >
+                <div className="add-inner">
+                  <div className="plus">+</div>
+                  <div className="add-text">Thêm ca mới</div>
+                </div>
+              </div>
+            </div>
+          ) : tab === "staff_assign" ? (
             <BoxTable
               name="nhân viên"
               titles={staffTitles}
@@ -338,7 +420,10 @@ export default function ShiftConfigTabs() {
               dataPagination={dataPaginationStaff}
               striped={true}
             />
+          ) : (
+            <ShiftRulesNotifyTab />
           )}
+          {/* )} */}
         </div>
       </div>
 

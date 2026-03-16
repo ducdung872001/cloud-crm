@@ -190,6 +190,7 @@ i18n.use(initReactI18next).init({
           viettelIntegration: "Viettel integration",
           shiftManagement: "Shift management",
           shiftConfig: "Shift configuration",
+          checkout: "Checkout",
         },
         pageDashboard: {
           title: "Dashboard",
@@ -440,6 +441,7 @@ i18n.use(initReactI18next).init({
           viettelIntegration: "Tích hợp Viettel",
           shiftManagement: "Quản lý ca làm việc",
           shiftConfig: "Cài đặt ca làm việc",
+          checkout: "Thanh toán",
         },
         pageDashboard: {
           title: "Bảng điều khiển",
