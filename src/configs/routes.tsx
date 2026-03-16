@@ -139,6 +139,7 @@ import UserTaskList from "pages/UserTaskList";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import OrderRequestList from "pages/OrderRequestList";
 import MaterialList from "@/pages/ManagementMaterial/MaterialList";
+import MaterialMenuPage from "@/pages/ManagementMaterial/MaterialMenuPage";
 import { useCookies } from "react-cookie";
 import OrderTracking from "pages/OrderTracking";
 import OrganizationList from "pages/Organization/OrganizationList";
@@ -1386,7 +1387,7 @@ export const routes: IRouter[] = [
   // quản lý vật tư
   {
     path: urls.material,
-    component: <MaterialList />,
+    component: <MaterialMenuPage />,
   },
   // thông tin cá nhân
   {
