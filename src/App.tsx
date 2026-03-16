@@ -67,11 +67,7 @@ export default function App() {
   const [lstRole, setLstRole] = useState([]);
 
   const takeSelectedRole = localStorage.getItem("SelectedRole");
-<<<<<<< HEAD
   const defaultRedirectRef = useRef<string>("/create_sale_add");
-=======
-  const defaultRedirectRef = useRef<string>("/dashboard");
->>>>>>> 20ffc32ede60591c39fb178de6b40cd743a0fcbb
 
   const handleGetRoles = async (token: string) => {
     if (!token) return;
@@ -106,11 +102,7 @@ export default function App() {
           setIsLogin(true);
           if (location.pathname === "/" || location.pathname === "/login") {
             if (cookies.user) {
-<<<<<<< HEAD
               const target = returnUrl || defaultRedirectRef.current || "/create_sale_add";
-=======
-              const target = returnUrl || defaultRedirectRef.current || "/dashboard";
->>>>>>> 20ffc32ede60591c39fb178de6b40cd743a0fcbb
               navigate(target);
             }
           }
@@ -127,11 +119,7 @@ export default function App() {
 
             if (location.pathname === "/" || location.pathname === "/login") {
               if (cookies.user) {
-<<<<<<< HEAD
                 const target = returnUrl || defaultRedirectRef.current || "/create_sale_add";
-=======
-                const target = returnUrl || defaultRedirectRef.current || "/dashboard";
->>>>>>> 20ffc32ede60591c39fb178de6b40cd743a0fcbb
                 navigate(target);
               }
             }
@@ -209,11 +197,7 @@ export default function App() {
           const changeResult = result.lstOrgApp[0];
 
           const defaultRedirect = result?.defaultRedirect;
-<<<<<<< HEAD
           defaultRedirectRef.current = defaultRedirect || "/create_sale_add";
-=======
-          defaultRedirectRef.current = defaultRedirect || "/dashboard";
->>>>>>> 20ffc32ede60591c39fb178de6b40cd743a0fcbb
 
           // Chuyển đổi startDate và endDate thành đối tượng Date
           const endDate: any = new Date(changeResult?.endDate);
