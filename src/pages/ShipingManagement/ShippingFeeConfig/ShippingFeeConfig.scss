@@ -53,7 +53,6 @@
   width: 50%;
   margin-bottom: 6px;
 
-
   &__desc {
     font-size: 12px;
     font-weight: 400;
@@ -64,9 +63,6 @@
     background: #fff;
     border-color: #a78bfa;
     color: #7c3aed;
-    border-radius: 10px 10px 0 0;
-    border-bottom: 2px solid #fff;
-    margin-bottom: -2px;
     z-index: 1;
 
     .fee-tab__desc {
@@ -143,10 +139,10 @@
   }
 
   // Hide number spin buttons
-  &[type="number"]::-webkit-inner-spin-button,
-  &[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-  }
+  // &[type="number"]::-webkit-inner-spin-button,
+  // &[type="number"]::-webkit-outer-spin-button {
+  //   -webkit-appearance: none;
+  // }
 }
 
 // Delete button
@@ -208,7 +204,9 @@
   padding: 0;
   transition: color 0.15s;
 
-  &:hover { color: #374151; }
+  &:hover {
+    color: #374151;
+  }
 }
 
 .btn-save-config {
@@ -225,6 +223,11 @@
   cursor: pointer;
   transition: background 0.15s, opacity 0.15s;
 
-  &:hover:not(:disabled) { background: #1e40af; }
-  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  &:hover:not(:disabled) {
+    background: #1e40af;
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }

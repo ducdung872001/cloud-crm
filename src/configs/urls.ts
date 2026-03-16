@@ -1,6 +1,8 @@
 const prefixAdmin = "/adminapi";
 const prefixBiz = "/bizapi";
-const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
+// const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
+const prefixBpm = process.env.APP_BPM_URL + "/bpm";
+// const prefixBPM = "https://bpm.reborn.vn/bpmapi";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";
 const prefixSale = "/sale";
@@ -13,8 +15,8 @@ const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
 const prefixFinance = prefixBiz + "/finance";
 const prefixInventory = prefixBiz + "/inventory";
-const prefixWarehouse = prefixBiz + "/warehouse"
-const prefixCare = prefixBiz + "/care"
+const prefixWarehouse = prefixBiz + "/warehouse";
+const prefixCare = prefixBiz + "/care";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -471,12 +473,12 @@ export const urlsApi = {
     publicList: prefixInventory + "/public/product/list",
 
     // ── Public APIs (không cần auth) ──
-    publicDetail:       prefixInventory + "/public/product/get",
+    publicDetail: prefixInventory + "/public/product/get",
     publicCategoryList: prefixInventory + "/public/product/category/list",
-    publicMediaList:    prefixInventory + "/public/product/media/list",
+    publicMediaList: prefixInventory + "/public/product/media/list",
 
     // ── Media APIs (cần auth) ──
-    mediaList:   prefixInventory + "/product-media/list",
+    mediaList: prefixInventory + "/product-media/list",
     mediaUpdate: prefixInventory + "/product-media/update",
     mediaDelete: prefixInventory + "/product-media/delete",
     mediaUpload: prefixInventory + "/product-media/upload",
@@ -488,7 +490,6 @@ export const urlsApi = {
     // ── Specifications ──
     specificationsUpdate: prefixInventory + "/product/specifications/update",
     specificationsDelete: prefixInventory + "/product/specifications/delete",
-
   },
 
   //warehouse
@@ -2267,7 +2268,7 @@ export const urlsApi = {
     listLoyaltyReward: prefixBiz + "/market/loyaltyReward/list",
     updateLoyaltyReward: prefixBiz + "/market/loyaltyReward/update",
     deleteLoyaltyReward: prefixBiz + "/market/loyaltyReward/delete",
-    //phân hạng hội viên 
+    //phân hạng hội viên
     listLoyaltySegment: prefixBiz + "/market/loyaltySegment/list",
     updateLoyaltySegment: prefixBiz + "/market/loyaltySegment/update",
     deleteLoyaltySegment: prefixBiz + "/market/loyaltySegment/delete",
@@ -3422,15 +3423,11 @@ export const urls = {
   business_rule_config: "/bpm/business_rule_config/:id",
 
   //Quản lý thanh toán
-  payment_method: "/payment_method",
   sales_channel: "/sales_channel",
+
   //Quản lý nhân viên
-  overview_staff: "/overview_staff",
-  staff: "/staff",
-  report_shift: "/report_shift",
   shift_config: "/shift_config",
-  open_shift: "/open_shift",
-  close_shift: "/close_shift",
+  shift_management: "/shift_management",
 };
 
 export default urls;
