@@ -416,7 +416,9 @@ export const urlsApi = {
     // lấy mã hoá đơn
     invoiceCode: prefixAdmin + "/invoice/code",
   },
-  shipping: {},
+  shipping: {
+    create: prefixAdmin + "/shipping/create",
+  },
   boughtService: {
     addToInvoice: prefixAdmin + "/boughtService/update",
     delete: prefixAdmin + "/boughtService/delete",

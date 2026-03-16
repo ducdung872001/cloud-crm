@@ -31,7 +31,8 @@ export interface IShippingFeeConfigRequest {
 export interface IShippingOrderCreateRequest {
   id?: number;
   salesOrderId?: number;       // ID đơn hàng bán (liên kết auto-fill)
-  partnerId: number;           // Hãng vận chuyển
+  partnerId: number;
+  invoiceId: number;           // ID hóa đơn
   receiverName: string;
   receiverPhone: string;
   receiverAddress: string;

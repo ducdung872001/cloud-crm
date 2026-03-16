@@ -215,24 +215,24 @@ export default function ShippingOrderList() {
 
   const dataFormat = [
     "text-center", 
-    "",            
+    "text-center",            
     "text-center", 
     "",           
     "text-center", 
     "text-center", 
-    "text-right",  
+    "text-center",  
     "text-center", 
     "text-center", 
   ];
 
   const dataSize = [
     "auto", 
-    "auto", 
+    "auto",
     "auto", 
     "auto",
     "auto", 
-    18,     
-    16,     
+    "auto",     
+    "auto",     
     "auto", 
     "auto", 
   ];
@@ -292,7 +292,7 @@ export default function ShippingOrderList() {
       </Tippy>
 
       <Tippy content="Chỉnh sửa">
-        <span className="item__action" onClick={() => navigate(`/add_shipping/${item.id}`)}>
+        <span className="item__action" onClick={() => navigate(`/add_shipping/id=${item.id}`)}>
           <Icon name="Pencil" />
         </span>
       </Tippy>
