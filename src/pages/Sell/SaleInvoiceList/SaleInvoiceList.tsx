@@ -390,6 +390,13 @@ export default function SaleInvoiceList() {
       ...(item.status !== 3
         ? [
             {
+              title: "Tạo đơn vận chuyển",
+              icon: <Icon name="Send" />,
+              callback: () => {
+                navigate(`/add_shipping?invoiceId=${item.id}`);
+              },
+            },
+            {
               title: "Khách trả hàng",
               icon: <Icon name="Returns" />,
               callback: () => {
