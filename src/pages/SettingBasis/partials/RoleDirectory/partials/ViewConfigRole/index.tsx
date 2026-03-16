@@ -106,10 +106,12 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
     let lstRolePermissionResource = permissionRes.result;
     let mapPermission = {};
     (lstRolePermissionResource || []).forEach((permissionResource: any) => {
-      let actions = JSON.parse(permissionResource.actions);
-      actions.forEach((action: any) => {
-        mapPermission[`${permissionResource.code}_${action}`] = 1;
-      });
+      if (permissionResource?.actions) {
+        let actions = JSON.parse(permissionResource.actions);
+        actions.forEach((action: any) => {
+          mapPermission[`${permissionResource.code}_${action}`] = 1;
+        });
+      }
     });
 
     // console.log("permissions =>", JSON.stringify(mapPermission));
@@ -453,9 +455,8 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
                           return (
                             <div key={idx} className={`decentralization__item resource--item`}>
                               <div
-                                className={`department__permission--0  ${
-                                  item.parentId === null || item.parentId === 0 ? "lv__children" : "lv__sub--children"
-                                }`}
+                                className={`department__permission--0  ${item.parentId === null || item.parentId === 0 ? "lv__children" : "lv__sub--children"
+                                  }`}
                               >
                                 <Checkbox
                                   label={element.name}

@@ -13,20 +13,22 @@ import { IAction, ISaveSearch } from "model/OtherModel";
 import { showToast } from "utils/common";
 import { getPageOffset } from "reborn-util";
 import { getPermissions } from "utils/common";
-import "./MarketingChannel.scss";
-import ModalAddMarketingChannel from "./partials/ModalAddMarketingChannel";
+import "./MarketingMeasurement.scss";
+import CampaignMarketingService from "services/CampaignMarketingService";
+import ModalAddMarketingMeasurement from "./partials/ModalAddMAMeasurement";
+import { DeleteHandler } from "components/DeleteHandler/deleteHandler";
 
-export default function MarketingChannel(props: any) {
-  document.title = "Danh sách loại hợp đồng";
+export default function MarketingMeasurement(props: any) {
+  document.title = "Danh mục đo lường";
 
   const { onBackProps } = props;
 
   const isMounted = useRef(false);
 
-  const [listMarketingChannel, setListMarketingChannel] = useState([]);
-  const [dataMarketingChannel, setDataMarketingChannel] = useState(null);
+  const [listMarketingMeasurement, setListMarketingMeasurement] = useState([]);
+  const [dataMarketingMeasurement, setDataMarketingMeasurement] = useState(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
-  const [showModalAddChannel, setShowModalAddChannel] = useState<boolean>(false);
+  const [showModalAddMeasurement, setShowModalAddMeasurement] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -46,14 +48,14 @@ export default function MarketingChannel(props: any) {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách kênh truyền thông",
+      name: "Danh mục đo lường",
       is_active: true,
     },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "kênh",
+    name: "danh mục",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -65,14 +67,14 @@ export default function MarketingChannel(props: any) {
 
   const abortController = new AbortController();
 
-  const getListMarketingChannel = async (paramsSearch: any) => {
+  const getListMarketingMeasurement = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = null;
+    const response = await CampaignMarketingService.listMAMeasurement(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
       const result = response.result;
-      setListMarketingChannel(result);
+      setListMarketingMeasurement(result);
 
       //   setPagination({
       //     ...pagination,
@@ -107,7 +109,7 @@ export default function MarketingChannel(props: any) {
     }
 
     if (isMounted.current === true) {
-      getListMarketingChannel(params);
+      getListMarketingMeasurement(params);
       const paramsTemp = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
@@ -127,18 +129,24 @@ export default function MarketingChannel(props: any) {
       {
         title: "Thêm mới",
         callback: () => {
-          setDataMarketingChannel(null);
-          setShowModalAddChannel(true);
+          setDataMarketingMeasurement(null);
+          setShowModalAddMeasurement(true);
         },
       },
     ],
   };
 
-  const titles = ["STT", "Tên kênh", "Mã kênh", "Thứ tự"];
+  const titles = ["STT", "Tên danh mục", "Mã danh mục", "Đơn vị tính", "Thứ tự"];
 
-  const dataFormat = ["text-center", "", "", "text-center"];
+  const dataFormat = ["text-center", "", "", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.code, item.position];
+  const dataMappingArray = (item: any, index: number) => [
+    getPageOffset(params) + index + 1,
+    item.name,
+    item.code,
+    item.unit === "percent" ? "Theo %" : "Số tuyệt đối",
+    item.position,
+  ];
 
   const actionsTable = (item: any): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
@@ -149,8 +157,8 @@ export default function MarketingChannel(props: any) {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setDataMarketingChannel(item);
-          setShowModalAddChannel(true);
+          setDataMarketingMeasurement(item);
+          setShowModalAddMeasurement(true);
           }
         },
       },
@@ -167,93 +175,26 @@ export default function MarketingChannel(props: any) {
     ].filter((action) => action);
   };
 
-  const onDelete = async (id: number) => {
-    const response = null;
-
-    if (response.code === 0) {
-      showToast("Xóa loại kênh truyền thông thành công", "success");
-      getListMarketingChannel(params);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-    setShowDialog(false);
-    setContentDialog(null);
-  };
-
-  const onDeleteAll = () => {
-    const selectedIds = listIdChecked || [];
-    if (!selectedIds.length) return;
-
-    const arrPromises = selectedIds.map((selectedId) => {
-      const found = listMarketingChannel.find((item) => item.id === selectedId);
-      if (found?.id) {
-        return null;
-      } else {
-        return Promise.resolve(null);
-      }
-    });
-    Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} kênh truyền thông`, "success");
-        getListMarketingChannel(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có kênh truyền thông nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
-
-  const showDialogConfirmDelete = (item?: any) => {
-    const contentDialog: IContentDialog = {
-      color: "error",
-      className: "dialog-delete",
-      isCentered: true,
-      isLoading: true,
-      title: <Fragment>Xóa...</Fragment>,
-      message: (
-        <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "kênh " : `${listIdChecked.length} kênh đã chọn`}
-          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
+  const { showConfirmDelete, DialogComponent } = DeleteHandler({
+    deleteService: CampaignMarketingService.deleteMAMeasurement,
+    entityName: "danh mục đo lường",
+    reload: () => {
+      setListIdChecked([]);
+      getListMarketingMeasurement(params);
       },
-      defaultText: "Xóa",
-      defaultAction: () => {
-        if (item?.id) {
-          onDelete(item.id);
-          return;
-        }
-        if (listIdChecked.length>0) {
-          onDeleteAll();
-          return;
-        }
-      }
-    };
-    setContentDialog(contentDialog);
-    setShowDialog(true);
-  };
+    });
 
   const bulkActionList: BulkActionItemModel[] = [
     permissions["CONTRACT_DELETE"] == 1 && {
-      title: "Xóa kênh truyền thông",
+      title: "Xóa danh mục đo lường",
       callback: () => {
-         showConfirmDelete(listIdChecked);
-      }
+        showConfirmDelete(listIdChecked);
+      },
     },
   ];
 
   return (
-    <div className={`page-content page-marketing-channel${isNoItem ? " bg-white" : ""}`}>
+    <div className={`page-content page-marketing-measurement${isNoItem ? " bg-white" : ""}`}>
       <div className="action-navigation">
         <div className="action-backup">
           <h1
@@ -271,23 +212,23 @@ export default function MarketingChannel(props: any) {
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Danh sách kênh truyền thông</h1>
+          <h1 className="title-last">Danh mục đo lường</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên kênh truyền thông"
+          name="Tên danh mục"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
           updateParams={(paramsNew) => setParams(paramsNew)}
         />
-        {!isLoading && listMarketingChannel && listMarketingChannel.length > 0 ? (
+        {!isLoading && listMarketingMeasurement && listMarketingMeasurement.length > 0 ? (
           <BoxTable
-            name="Kênh Marketing"
+            name="Danh mục đo lường"
             titles={titles}
-            items={listMarketingChannel}
+            items={listMarketingMeasurement}
             isPagination={false}
             dataPagination={pagination}
             dataMappingArray={(item, index) => dataMappingArray(item, index)}
@@ -310,15 +251,15 @@ export default function MarketingChannel(props: any) {
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa có kênh truyền thông nào. <br />
-                    Hãy thêm mới kênh truyền thông đầu tiên nhé!
+                    Hiện tại chưa có danh mục đo lường nào. <br />
+                    Hãy thêm mới anh mục đo lường đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới kênh truyền thông"
+                titleButton="Thêm mới anh mục đo lường"
                 action={() => {
-                  setDataMarketingChannel(null);
-                  setShowModalAddChannel(true);
+                  setDataMarketingMeasurement(null);
+                  setShowModalAddMeasurement(true);
                 }}
               />
             ) : (
@@ -336,15 +277,15 @@ export default function MarketingChannel(props: any) {
           </Fragment>
         )}
       </div>
-      <ModalAddMarketingChannel
-        onShow={showModalAddChannel}
-        data={dataMarketingChannel}
-        listMarketingChannel={listMarketingChannel}
+      <ModalAddMarketingMeasurement
+        onShow={showModalAddMeasurement}
+        data={dataMarketingMeasurement}
+        listMarketingMeasurement={listMarketingMeasurement}
         onHide={(reload) => {
           if (reload) {
-            getListMarketingChannel(params);
+            getListMarketingMeasurement(params);
           }
-          setShowModalAddChannel(false);
+          setShowModalAddMeasurement(false);
         }}
       />
 

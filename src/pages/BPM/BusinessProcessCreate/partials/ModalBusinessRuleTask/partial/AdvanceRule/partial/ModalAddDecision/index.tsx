@@ -321,7 +321,7 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
                   <Input
                     key={"columnType"}
                     id="columnType"
-                    label={`Mã cột`}
+                    label={`Chọn biến`}
                     className="columnType"
                     fill={true}
                     readOnly={true}

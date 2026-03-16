@@ -291,7 +291,11 @@ export default function PromotionalProgram() {
 
       <div className="card-box d-flex flex-column">
         <SearchBox
+<<<<<<< HEAD:src/pages/PromotionalProgram/index.tsx
           name="Tên chương trình khuyến mãi"
+=======
+          name="Tên mẫu báo giá"
+>>>>>>> master:src/pages/SettingQuoteForm/SettingQuoteForm.tsx
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
