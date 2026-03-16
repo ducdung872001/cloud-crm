@@ -28,6 +28,7 @@ import { ProductLabel } from "@/assets/mock/Product";
 import ConfigDisplayModal from "./DetailProduct/ConfigDisplayModal";
 import CategoryModal from "./partials/CategoryModal";
 import AddProductPage from "./partials/AddProductPage";
+import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 
 // ---- Tab filter type ----
 type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
@@ -89,7 +90,8 @@ export default function ProductList(props: IProductListProps) {
   const getListProduct = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await ProductService.wList(paramsSearch, abortController.signal);
+    // const response = await ProductService.wList(paramsSearch, abortController.signal);
+    const response = await ProductService.publicList(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
       const result = response.result;
@@ -459,51 +461,44 @@ export default function ProductList(props: IProductListProps) {
   return (
     <div className="page-content page-product page-product--v2">
       {/* ── HEADER ── */}
-      <div className="prod-list-header">
-        <div className="prod-list-header__left">
-          <h1 className="prod-list-header__title">Quản lý Sản phẩm</h1>
-          <p className="prod-list-header__breadcrumb">
-            <span className="prod-list-header__breadcrumb-link" onClick={() => onBackProps(true)}>
-              Trang chủ
-            </span>
-            {" / "}
-            <span className="prod-list-header__breadcrumb-link" onClick={() => onBackProps(true)}>
-              Danh mục
-            </span>
-            {" / "}
-            <span>Sản phẩm</span>
-          </p>
+      <div className="action-navigation">
+        <div className="action-backup">
+          <h1 className="title-first" onClick={() => onBackProps(true)} title="Quay lại">
+            Cài đặt bán hàng
+          </h1>
+          <Icon name="ChevronRight" onClick={() => onBackProps(true)} />
+          <h1 className="title-last">Danh sách sản phẩm</h1>
         </div>
+        <TitleAction
+          title=""
+          titleActions={{
+            actions: [
+              {
+                title: "Thêm sản phẩm",
+                color: "primary",
+                callback: () => {
+                  setIdProduct(null);
+                  setShowProductPage(true);
+                },
+              },
+            ],
+          } as ITitleActions}
+        />
+      </div>
 
-        <div className="prod-list-header__actions">
-          <button className="prod-list-btn prod-list-btn--ghost" onClick={() => setShowModalImport(true)}>
-            <Icon name="UploadExcel" />
-            Nhập Excel
-          </button>
-
-          {/* TODO: wire up real category modal when ready */}
-          <button className="prod-list-btn prod-list-btn--ghost" onClick={handleOpenCategory}>
-            📦 Danh mục
-          </button>
-
-          {/* TODO: wire up display settings modal when ready */}
-          <button className="prod-list-btn prod-list-btn--ghost" onClick={handleDisplaySettings}>
-            <Icon name="Settings" />
-            Cài đặt hiển thị
-          </button>
-
-          <button
-            className="prod-list-btn prod-list-btn--primary"
-            onClick={() => {
-              setIdProduct(null);
-              // setShowModalAdd(true);
-              setShowProductPage(true);
-            }}
-          >
-            <Icon name="Plus" />
-            Thêm sản phẩm
-          </button>
-        </div>
+      {/* ── SECONDARY ACTIONS ── */}
+      <div className="prod-list-secondary-actions">
+        <button className="prod-list-btn prod-list-btn--ghost" onClick={() => setShowModalImport(true)}>
+          <Icon name="UploadExcel" />
+          Nhập Excel
+        </button>
+        <button className="prod-list-btn prod-list-btn--ghost" onClick={handleOpenCategory}>
+          📦 Danh mục
+        </button>
+        <button className="prod-list-btn prod-list-btn--ghost" onClick={handleDisplaySettings}>
+          <Icon name="Settings" />
+          Cài đặt hiển thị
+        </button>
       </div>
 
       {/* ── TOOLBAR ── */}

@@ -1,12 +1,9 @@
-import React, { Fragment } from "react";
-import TitleAction from "components/titleAction/titleAction";
+import React from "react";
 import Icon from "components/icon";
 import Button from "components/button/button";
-import "./ShiftReport.scss";
+import "./ReportShift.scss";
 
-export default function ShiftReport() {
-  document.title = "Báo cáo Kết ca";
-
+export default function ShiftReportTab() {
   const reportData = {
     cash: "3,200,000",
     card: "2,100,000",
@@ -18,9 +15,7 @@ export default function ShiftReport() {
   };
 
   return (
-    <div className="page-content page-shift-report">
-      <TitleAction title="Báo cáo Kết ca" />
-
+    <div className="page-shift-report">
       <div className="dashboard-body">
         <div className="report-grid-layout mt-24">
           <div className="report-main-info">
@@ -50,11 +45,11 @@ export default function ShiftReport() {
               </div>
             </div>
 
-            <div className="card-box warning-box">
+            <div className="card-box warning-box mt-2">
               <div className="p-24 d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center gap-8">
-                  <Icon name="WarningCircle" className="icon-error" />
-                  <span className="fw-700 text-danger">Chênh lệch Ca Sáng</span>
+                <div className="d-flex align-items-center gap-8 warning-left">
+                  <Icon name="WarningCircle" className="icon-error warning-icon" />
+                  <span className="fw-700 text-danger shift-diff-label">Chênh lệch Ca Sáng</span>
                 </div>
                 <strong className="text-danger">{reportData.difference} VNĐ</strong>
               </div>
@@ -96,6 +91,7 @@ export default function ShiftReport() {
                   <span>Chênh lệch:</span> <span>-50,000 VNĐ</span>
                 </div>
               </div>
+
               <div className="paper-footer mt-24">
                 <div className="content-footer">
                   <Button variant="outline" color="primary" className="w-100">

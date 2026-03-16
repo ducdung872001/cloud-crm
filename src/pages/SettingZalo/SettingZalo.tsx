@@ -29,7 +29,7 @@ export default function SettingZalo() {
   ].filter((e) => e);
 
   return (
-    <div className="page-content page-setting-zalo">
+    <div className="page-setting-zalo">
       {!isDetailCategory && <TitleAction title="Cài đặt Zalo" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (

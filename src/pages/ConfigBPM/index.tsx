@@ -33,7 +33,7 @@ export default function ConfigBPM() {
   ];
 
   return (
-    <div className="page-content page-config-bpm">
+    <div className="page-config-bpm">
       {!isDetailCategory && <TitleAction title="Cấu hình quy trình" />}
       <div className="card-box d-flex flex-column">
         {!isDetailCategory && (

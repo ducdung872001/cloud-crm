@@ -51,6 +51,7 @@ import ImportInvoiceList from "pages/ProductImport/ImportInvoiceList/ImportInvoi
 import ProductSoldList from "pages/ProductImport/ProductSoldList/ProductSoldList";
 import ProductInventoryList from "pages/ProductImport/ProductInventoryList/ProductInventoryList";
 import InventoryList from "pages/ProductImport/Inventory/InventoryList";
+import WarehouseListPage from "pages/ProductImport/WarehouseList/WarehouseListPage";
 import CreateReceipt from "pages/ProductImport/CreateReceipt/CreateReceipt";
 // Quản lý tài chính
 import FinanceManagement from "pages/Finance";
@@ -138,6 +139,7 @@ import UserTaskList from "pages/UserTaskList";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import OrderRequestList from "pages/OrderRequestList";
 import MaterialList from "@/pages/ManagementMaterial/MaterialList";
+import MaterialMenuPage from "@/pages/ManagementMaterial/MaterialMenuPage";
 import { useCookies } from "react-cookie";
 import OrderTracking from "pages/OrderTracking";
 import OrganizationList from "pages/Organization/OrganizationList";
@@ -151,14 +153,6 @@ import Fanpage from "pages/Fanpage";
 import TotalChat from "pages/Fanpage/TotalChat";
 import BusinessRule from "pages/BusinessRule";
 import BusinessRuleConfig from "pages/BusinessRuleConfig";
-import PaymentMethodList from "pages/PaymentMethod/PaymentMethod";
-import CheckoutList from "pages/Checkout/Checkout";
-import Overview from "pages/ManagementStaff/Overview";
-import StaffManagement from "pages/ManagementStaff/ManagementStaff";
-import ShiftReport from "pages/ManagementStaff/ShiftReport";
-import ShiftConfig from "pages/ManagementStaff/ShiftConfig";
-import OpenShift from "pages/ManagementStaff/OpenShift";
-import CloseShift from "pages/ManagementStaff/CloseShift";
 import MultiChannelSales from "@/pages/MultiChannelSales/MultiChannelSales";
 import DashboardRetail from "pages/DashboardRetail";
 import DashboardLoyalty from "@/pages/DashboardLoyalty";
@@ -175,6 +169,8 @@ import ShippingReport from "@/pages/ShipingManagement/ShippingReport/ShippingRep
 import CustomerAndSupplier from "@/pages/CustomerAndSupplier";
 import InventoryManagement from "@/pages/ProductImport/InventoryChecking";
 import CounterSales from "@/pages/CounterSales";
+import ShiftTabsPage from "@/pages/ShiftManagement/ShiftTabsPage";
+import ShiftConfigTabs from "@/pages/ShiftConfig/ShiftConfig";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -182,43 +178,43 @@ export const menu: IMenuItem[] = [
   {
     title: "dashboard", // bảng điều khiển
     path: urls.dashboard,
-    icon: <Icon name="Home" />,
+    icon: <Icon name="DashboardMenu" />,
     code: "DASHBOARD",
   },
   {
     title: "selling", // Bán hàng & Đơn hàng
     path: urls.sell,
-    icon: <Icon name="Sell" />,
+    icon: <Icon name="SaleOrderMenu" />,
     code: "MENU_SELL",
     children: [
       {
         title: "createSalesOrder", // Tạo đơn bán hàng
         path: urls.create_sale_add,
-        icon: <Icon name="PlusCircleFill" />,
+        icon: <Icon name="PosMenu" />,
         code: "CREATE_SALE_ORDER",
       },
       {
         title: "salesInvoice", // Danh sách đơn hàng
         path: urls.sale_invoice,
-        icon: <Icon name="Invoice" />,
+        icon: <Icon name="OrderListMenu" />,
         code: "SALE_INVOICE",
       },
       {
         title: "returnInvoice", // Khách trả hàng
         path: urls.customer_pay,
-        icon: <Icon name="ReturnInvoice" />,
+        icon: <Icon name="ReturnMenu" />,
         code: "RETURN_INVOICE",
       },
       {
         title: "multiChannelSales", // Bán hàng đa kênh
         path: urls.multi_channel_sales,
-        icon: <Icon name="ReturnInvoice" />,
+        icon: <Icon name="MultichannelMenu" />,
         code: "",
       },
       {
         title: "shipping", // Giao hàng & Vận chuyển
         path: urls.shipping,
-        icon: <Icon name="Invoice" />,
+        icon: <Icon name="DeliveryMenu" />,
         code: "SALE_INVOICE",
       },
       // {
@@ -242,8 +238,20 @@ export const menu: IMenuItem[] = [
       {
         title: "fanpage", // Tương tác & Chốt đơn (Gộp Fanpage & Zalo)
         path: urls.fanpage,
-        icon: <Icon name="FacebookFill" />,
+        icon: <Icon name="InteractionMenu" />,
         code: "FANPAGE",
+      },
+      {
+        title: "soldProducts", // Sản phẩm đã bán
+        path: urls.products_sold,
+        icon: <Icon name="SoldMenu" />,
+        code: "",
+      },
+      {
+        title: "shiftManagement", //Quản lý ca làm việc
+        path: urls.shift_management,
+        icon: <Icon name="ManageWork" />,
+        code: "",
       },
       // {
       //   title: "facebook",
@@ -267,33 +275,66 @@ export const menu: IMenuItem[] = [
   {
     title: "warehouse", // Hàng hóa & Kho
     path: urls.product_import,
-    icon: <Icon name="ImportGoods" />,
+    icon: <Icon name="InventoryMenu" />,
     code: "MENU_INVENTORY", //Tài nguyên cho show kho hàng hay không
     children: [
       {
         title: "settingSales", // Cài đặt bán hàng
         path: urls.setting_sell,
-        icon: <Icon name="SettingSell" />,
+        icon: <Icon name="ProductCategoryMenu" />,
         code: "MENU_SETUP_SELL",
       },
       {
-        title: "managementMaterial", // Quản lý nguyên vật liệu
+        title: "managementMaterial", // Nguyên vật liệu
         path: urls.material,
-        icon: <Icon name="WarehouseManagement" />,
+        icon: <Icon name="MaterialsMenu" />,
         code: "",
       },
       {
-        title: "createPurchaseOrder", // Tạo phiếu nhập hàng
-        path: urls.create_invoice_add,
-        icon: <Icon name="ImportCoupon" />,
+        title: "warehouseList", // Danh sách kho
+        path: urls.warehouse,
+        icon: <Icon name="WarehouseListMenu" />,
         code: "",
       },
       {
-        title: "purchaseInvoice", // Hóa đơn nhập hàng
-        path: urls.invoice_order,
-        icon: <Icon name="ImportBill" />,
+        title: "stockedProducts", // Báo cáo Kho & Hàng bán (Hàng tồn, Kho, Đơn vị, Số lượng, Giá vốn, PP Giá vốn; Cảnh báo tồn dưới ngưỡng)
+        path: urls.product_inventory,
+        icon: <Icon name="StockMenu" />,
         code: "",
       },
+      {
+        title: "warehouseManagement", // Sổ kho
+        path: urls.inventory,
+        icon: <Icon name="LedgerMenu" />,
+        code: "INVENTORY",
+      },
+
+      {
+        title: "warehouseChecking", // Kiểm kho
+        path: urls.inventory_checking,
+        icon: <Icon name="AuditMenu" />,
+        code: "INVENTORY",
+      },
+
+      {
+        title: "reportWarhouse", // Báo cáo kho
+        path: urls.report_warehouse,
+        icon: <Icon name="Report" />,
+        code: "",
+      },
+
+      // {
+      //   title: "createPurchaseOrder", // Tạo phiếu nhập kho
+      //   path: urls.create_invoice_add,
+      //   icon: <Icon name="ImportCoupon" />,
+      //   code: "",
+      // },
+      // {
+      //   title: "purchaseInvoice", // Hóa đơn nhập kho
+      //   path: urls.invoice_order,
+      //   icon: <Icon name="ImportBill" />,
+      //   code: "",
+      // },
       // {
       //   title: "createOutboundDelivery", // Tạo phiếu xuất kho
       //   path: urls.create_outbound_delivery,
@@ -306,48 +347,30 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="ImportBill" />,
       //   code: "",
       // },
-      {
-        title: "soldProducts", // Sản phẩm đã bán
-        path: urls.products_sold,
-        icon: <Icon name="ProductsSold" />,
-        code: "",
-      },
-      {
-        title: "warehouseManagement", // Quản lý kho hàng
-        path: urls.inventory,
-        icon: <Icon name="WarehouseManagement" />,
-        code: "INVENTORY",
-      },
-      {
-        title: "warehouseChecking",
-        path: urls.inventory_checking,
-        icon: <Icon name="WarehouseManagement" />,
-        code: "INVENTORY",
-      },
-      {
-        title: "inventoryTransferDocument", // Phiếu điều chuyển kho
-        path: urls.inventory_transfer_document,
-        icon: <Icon name="WarehouseManagement" />,
-        code: "INVENTORY",
-      },
-      {
-        title: "stockAdjustmentVoucher", // Phiếu điều chỉnh kho
-        path: urls.adjustment_slip,
-        icon: <Icon name="File" />,
-        code: "",
-      },
+      // {
+      //   title: "inventoryTransferDocument", // Phiếu điều chuyển kho
+      //   path: urls.inventory_transfer_document,
+      //   icon: <Icon name="WarehouseManagement" />,
+      //   code: "INVENTORY",
+      // },
+      // {
+      //   title: "stockAdjustmentVoucher", // Phiếu điều chỉnh kho
+      //   path: urls.adjustment_slip,
+      //   icon: <Icon name="File" />,
+      //   code: "",
+      // },
     ],
   },
   {
     title: "customer", // Khách hàng & Đối tác
     path: urls.customer,
-    icon: <Icon name="Customer" />,
+    icon: <Icon name="CustomersMenu" />,
     code: "CUSTOMER",
     children: [
       {
         title: "customerSegments", // Phân khúc khách hàng
         path: urls.customer_segment,
-        icon: <Icon name="Profile" />,
+        icon: <Icon name="SegmentMenu" />,
       },
       // {
       //   title: "customerProfile", // Hồ sơ khách hàng
@@ -358,7 +381,7 @@ export const menu: IMenuItem[] = [
       {
         title: "customerList", // Danh sách khách hàng và NCC
         path: urls.customer_list,
-        icon: <Icon name="Profile" />,
+        icon: <Icon name="PartnerMenu" />,
         code: "CUSTOMER",
       },
       // {
@@ -370,25 +393,25 @@ export const menu: IMenuItem[] = [
       {
         title: "debtManagement", // Quản lý công nợ
         path: urls.finance_management_debt_management,
-        icon: <Icon name="Invoice" />,
+        icon: <Icon name="DebtMenu" />,
         code: "",
       },
       {
         title: "settingCustomer", // Cài đặt khách hàng
         path: urls.setting_customer,
-        icon: <Icon name="SettingCustomer" />,
+        icon: <Icon name="CustomerSettingMenu" />,
         code: "MENU_SETUP_CUSTOMER",
       },
       {
         title: "settingPartner", // Cài đặt đối tác
         path: urls.setting_partner,
-        icon: <Icon name="SettingCustomer" />,
+        icon: <Icon name="PartnerSettingMenu" />,
         code: "",
       },
       {
         title: "reportCustomer", // Báo cáo khách hàng
         path: urls.report_customer,
-        icon: <Icon name="Customer" />,
+        icon: <Icon name="CustomerMenu" />,
         code: "",
       },
     ],
@@ -602,12 +625,6 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "stockedProducts", // Báo cáo Kho & Hàng bán (Hàng tồn, Kho, Đơn vị, Số lượng, Giá vốn, PP Giá vốn; Cảnh báo tồn dưới ngưỡng)
-        path: urls.product_inventory,
-        icon: <Icon name="ProductsStock" />,
-        code: "",
-      },
-      {
         title: "cashbook", // Báo cáo Tài chính
         path: urls.cashbook,
         icon: <Icon name="CashBook" />,
@@ -701,12 +718,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="ContactCustomer" />,
         code: "",
       },
-      {
-        title: "settingEform", // Cài đặt biểu mẫu
-        path: urls.setting_eform,
-        icon: <Icon name="SettingSell" />,
-        code: "",
-      },
+      // {
+      //   title: "settingEform", // Cài đặt biểu mẫu
+      //   path: urls.setting_eform,
+      //   icon: <Icon name="SettingSell" />,
+      //   code: "",
+      // },
       {
         title: "settingSMS", // Cài đặt SMS
         path: urls.setting_sms,
@@ -750,50 +767,8 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "settingPaymentMethod", // Phương thức thanh toán
-        path: urls.payment_method,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "salesChannel", // Kênh thanh toán
-        path: urls.sales_channel,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "overview",
-        path: urls.overview_staff,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      // {
-      //   title: "staff", // Bán hàng
-      //   path: urls.staff,
-      //   icon: <Icon name="CashPayment" />,
-      //   code: "",
-      // },
-      {
-        title: "reportShift",
-        path: urls.report_shift,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "shiftConfig",
+        title: "shiftConfig", // Cài đặt ca làm việc
         path: urls.shift_config,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "openShift",
-        path: urls.open_shift,
-        icon: <Icon name="Settings" />,
-        code: "",
-      },
-      {
-        title: "closeShift",
-        path: urls.close_shift,
         icon: <Icon name="Settings" />,
         code: "",
       },
@@ -1137,7 +1112,7 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.setting_loyalty,
-    component: <SettingLoyalty/>,
+    component: <SettingLoyalty />,
   },
   {
     path: urls.loyalty_wallet,
@@ -1231,11 +1206,11 @@ export const routes: IRouter[] = [
     path: urls.temporary_order_list,
     component: <TemporaryOrderList />,
   },
-  // tạo phiếu nhập hàng
-  {
-    path: urls.create_invoice_add,
-    component: <CreateReceipt />,
-  },
+  // // tạo phiếu nhập hàng
+  // {
+  //   path: urls.create_invoice_add,
+  //   component: <CreateReceipt />,
+  // },
   // danh sách hóa đơn nhập hàng
   {
     path: urls.invoice_order,
@@ -1251,11 +1226,26 @@ export const routes: IRouter[] = [
     path: urls.product_inventory,
     component: <ProductInventoryList />,
   },
-  // quản lý kho hàng
+  // danh sách kho hàng — gọi API /inventory/warehouse/list
+  {
+    path: urls.warehouse,
+    component: <WarehouseListPage />,
+  },
+
+  // sổ kho chi tiết (mock) — /inventory-detail/:id
   {
     path: urls.inventory,
     component: <InventoryList />,
   },
+  // tạo phiếu nhập kho
+  {
+    path: urls.create_inventory,
+    component: <CreateReceipt />,
+  },
+  // {
+  //   path: urls.inventory_detail,
+  //   component: <InventoryList />,
+  // },
   {
     path: urls.inventory_checking,
     component: <InventoryManagement />,
@@ -1354,7 +1344,7 @@ export const routes: IRouter[] = [
   // quản lý vật tư
   {
     path: urls.material,
-    component: <MaterialList />,
+    component: <MaterialMenuPage />,
   },
   // thông tin cá nhân
   {
@@ -1478,35 +1468,11 @@ export const routes: IRouter[] = [
     component: <FieldMannagement />,
   },
   {
-    path: urls.payment_method,
-    component: <PaymentMethodList />,
-  },
-  {
-    path: urls.sales_channel,
-    component: <CheckoutList />,
-  },
-  {
-    path: urls.overview_staff,
-    component: <Overview />,
-  },
-  {
-    path: urls.staff,
-    component: <StaffManagement />,
-  },
-  {
-    path: urls.report_shift,
-    component: <ShiftReport />,
-  },
-  {
     path: urls.shift_config,
-    component: <ShiftConfig />,
+    component: <ShiftConfigTabs />,
   },
   {
-    path: urls.open_shift,
-    component: <OpenShift />,
-  },
-  {
-    path: urls.close_shift,
-    component: <CloseShift />,
+    path: urls.shift_management,
+    component: <ShiftTabsPage />,
   },
 ];

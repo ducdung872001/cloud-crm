@@ -102,31 +102,9 @@ export default function PaymentMethodList() {
                 <div className="switch-wrapper">
                   <input type="checkbox" className="base-switch" checked={method.active} onChange={() => toggleStatus(method.id)} />
                 </div>
-                {/* <div className="btn-group">
-                  <button
-                    className="btn-action btn-edit"
-                    title="Sửa"
-                    onClick={() => {
-                      setSelectedData(method);
-                      setShowModal(true);
-                    }}
-                  >
-                    <Icon name="Pencil" />
-                  </button>
-                  <button className="btn-action btn-delete" title="Xóa">
-                    <Icon name="Trash" />
-                  </button>
-                </div> */}
                 <div className="btn-group">
                   {actionsTable(method).map((action, index) => (
-                    <Button
-                      key={index}
-                      type="button"
-                      color="transparent" // Sử dụng màu transparent giống BoxTable
-                      onlyIcon={true}
-                      onClick={action.callback}
-                      dataTip={action.title} // Tooltip khi hover
-                    >
+                    <Button key={index} type="button" color="transparent" onlyIcon={true} onClick={action.callback} dataTip={action.title}>
                       {action.icon}
                     </Button>
                   ))}

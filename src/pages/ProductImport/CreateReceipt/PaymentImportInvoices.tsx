@@ -283,7 +283,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
   return (
     <div className="payment__import--invoice">
       <div className="card-box">
-        <label className="label-title">Thông tin hóa đơn nhập hàng</label>
+        <label className="label-title">Thông tin phiếu nhập kho</label>
         <form className="form__payment__import--invoice" onSubmit={(e) => onSubmit(e)}>
           <div className="list-form-group">
             <div className="form-group">

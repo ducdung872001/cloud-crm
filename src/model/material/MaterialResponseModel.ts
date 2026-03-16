@@ -18,5 +18,12 @@ export interface IMaterialResponse {
   pageKeyword?: string;
   expiredPeriod?: number;
   minQuantity?: number;
+  maxQuantity?: number;
   documents?: any;
+  // Extended fields
+  categoryName?: string;
+  supplier?: string;
+  stockCurrent?: number;
+  stockStatus?: "ok" | "low" | "out";
+  note?: string;
 }
