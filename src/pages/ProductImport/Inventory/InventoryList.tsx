@@ -16,9 +16,12 @@ import { getPageOffset } from "reborn-util";
 import { MOCK_WAREHOUSE_BOOK, IWarehouseBook } from "assets/mock/Product";
 import AddWarehouseBookModal from "./partials/AddInventoryModal";
 import "./InventoryList.scss";
+import { useNavigate } from "react-router-dom";
+import urls from "@/configs/urls";
 
 export default function WarehouseBookList() {
   document.title = "Sổ kho";
+  const navigate = useNavigate();
 
   const [listWarehouseBook, setListWarehouseBook] = useState<IWarehouseBook[]>([]);
   const [dataWarehouseBook, setDataWarehouseBook] = useState<IWarehouseBook>(null);
@@ -113,7 +116,10 @@ export default function WarehouseBookList() {
         title: "Thêm phiếu",
         callback: () => {
           setDataWarehouseBook(null);
-          setShowModalAdd(true);
+          // setShowModalAdd(true);
+          if(params.type === "import"){
+            navigate(urls.create_inventory);
+          }
         },
       },
     ],

@@ -11,7 +11,7 @@
     div[class*="-control"] {
       box-shadow: none;
       font-size: 1.4rem;
-      padding: 0.8rem 3.2rem 0.7rem 0;
+      padding: 0.3rem 0 0.3rem 1.2rem;
       border: none;
       border-bottom: 1px solid var(--border-color);
       border-radius: 0;
@@ -259,7 +259,7 @@
     .select__custom-label,
     .select__custom-multi {
       div[class*="-control"] {
-        padding: 0.7rem 3.2rem 0.7rem 1.2rem;
+        padding: 0.3rem 0 0.3rem 1.2rem;
         border: 1px solid var(--border-color);
         border-radius: 0.5rem;
         color: var(--text-primary-color);
@@ -271,7 +271,7 @@
 
     .select__custom-label {
       div[class*="-control"] {
-        padding: 0.5rem 3.2rem 0.5rem 1.2rem;
+        padding: 0.3rem 0 0.3rem 1.2rem;
       }
     }
 

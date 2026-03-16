@@ -284,20 +284,9 @@ export default function PromotionalProgram() {
   ];
 
   return (
-    <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
+    <div className={`page-content page-promotional-program${isNoItem ? " bg-white" : ""}`}>
       <div className="action-navigation">
-        <div className="action-backup">
-          <h1
-            onClick={() => {
-              //   onBackProps(true);
-            }}
-            className="title-first"
-            title="Quay lại"
-          >
-            Quản lý chương trình khuyến mãi
-          </h1>
-        </div>
-        <TitleAction title="" titleActions={titleActions} />
+        <TitleAction title="Quản lý chương trình khuyến mãi" titleActions={titleActions} />
       </div>
 
       <div className="card-box d-flex flex-column">

@@ -16,6 +16,7 @@ import WarehouseService from "services/WarehouseService";
 import { ContextType, UserContext } from "contexts/userContext";
 import { IWarehouseResponse } from "model/warehouse/WarehouseResponseModel";
 import { urls } from "configs/urls";
+import ModalAddWarehouse from "./ModalAddWarehouse/ModalAddWarehouse";
 
 export default function WarehouseListPage() {
   document.title = "Danh sách kho";
@@ -29,6 +30,8 @@ export default function WarehouseListPage() {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
+  const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
+  const [dataWarehouse, setdataWarehouse] = useState(null);
 
   const [params, setParams] = useState<{
     name: string;
@@ -191,7 +194,15 @@ export default function WarehouseListPage() {
   );
 
   const titleActions: ITitleActions = {
-    actions: [],
+    actions: [
+      {
+        title: "Thêm kho",
+        callback: () => {
+          setShowModalAdd(true);
+          setdataWarehouse(null);
+        },
+      },
+    ],
   };
 
   const titles = ["STT", "Tên kho", "Mã kho", "Địa chỉ", "Trạng thái"];
@@ -212,18 +223,29 @@ export default function WarehouseListPage() {
   const actionsTable = (item: IWarehouseResponse): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
+      // {
+      //   title: "Xem sổ kho",
+      //   icon: (
+      //     <Icon
+      //       name="Eye"
+      //       className={isCheckedItem ? "icon-disabled" : ""}
+      //     />
+      //   ),
+      //   disabled: isCheckedItem,
+      //   callback: () => {
+      //     if (!isCheckedItem) {
+      //       navigate(urls.inventory_detail.replace(":id", String(item.id)));
+      //     }
+      //   },
+      // },
       {
-        title: "Xem sổ kho",
-        icon: (
-          <Icon
-            name="Eye"
-            className={isCheckedItem ? "icon-disabled" : ""}
-          />
-        ),
+        title: "Sửa",
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-            navigate(urls.inventory_detail.replace(":id", String(item.id)));
+            setShowModalAdd(true);
+            setdataWarehouse(item);
           }
         },
       },
@@ -298,6 +320,17 @@ export default function WarehouseListPage() {
           </Fragment>
         )}
       </div>
+
+      <ModalAddWarehouse
+        onShow={showModalAdd}
+        data={dataWarehouse}
+        onHide={(reload) => {
+          if (reload) {
+            getListWarehouse(params);
+          }
+          setShowModalAdd(false);
+        }}
+      />
 
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>

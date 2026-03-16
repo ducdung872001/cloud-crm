@@ -22,7 +22,7 @@ import { getPageOffset } from "reborn-util";
 import "./CreateReceipt.scss";
 
 export default function CreateReceipt() {
-  document.title = "Tạo phiếu nhập hàng";
+  document.title = "Tạo phiếu nhập kho";
 
   const [invoiceId, setInvoiceId] = useState<number>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -214,7 +214,7 @@ export default function CreateReceipt() {
 
   return (
     <div className="page-content page__create--invoice">
-      <TitleAction title="Tạo phiếu nhập hàng" />
+      <TitleAction title="Tạo phiếu nhập kho" />
       <div className="wrapper__product--import">
         <div className="card-box d-flex flex-column">
           <div className="action__header">

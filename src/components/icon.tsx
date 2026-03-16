@@ -379,6 +379,76 @@ import IconViolation from "assets/icons/icon-violation.svg";
 import IconVOC from "assets/icons/icon-voc.svg";
 import IconVar from "assets/icons/icon-script-var.svg";
 
+///Icon Menu
+import IcDashboardMenu from "assets/icons-menu/ic-dashboard.svg";
+import IcSaleOrderMenu from "assets/icons-menu/ic-sales-orders.svg";
+import IcPosMenu from "assets/icons-menu/ic-pos.svg";
+import IcOrderListMenu from "assets/icons-menu/ic-order-list.svg";
+import IcReturnMenu from "assets/icons-menu/ic-return.svg";
+import IcMultichannelMenu from "assets/icons-menu/ic-multichannel.svg";
+import IcDeliveryMenu from "assets/icons-menu/ic-delivery.svg";
+import IcInteractionMenu from "assets/icons-menu/ic-interaction.svg";
+import IcSoldMenu from "assets/icons-menu/ic-sold.svg";
+import IcInventoryMenu from "assets/icons-menu/ic-inventory.svg";
+import IcProductCategoryMenu from "assets/icons-menu/ic-product-category.svg";
+import IcMaterialsMenu from "assets/icons-menu/ic-materials.svg";
+import IcWarehouseListMenu from "assets/icons-menu/ic-warehouse-list.svg";
+import IcStockMenu from "assets/icons-menu/ic-stock.svg";
+import IcLedgerMenu from "assets/icons-menu/ic-ledger.svg";
+import IcAuditMenu from "assets/icons-menu/ic-audit.svg";
+import IcCustomersMenu from "assets/icons-menu/ic-customers.svg";
+import IcSegmentMenu from "assets/icons-menu/ic-segment.svg";
+import IcPartnerMenu from "assets/icons-menu/ic-partner.svg";
+import IcDebtMenu from "assets/icons-menu/ic-debt.svg";
+import IcCustomerSettingMenu from "assets/icons-menu/ic-customer-settings.svg";
+import IcPartnerSettingMenu from "assets/icons-menu/ic-partner-settings.svg";
+import IcCustomerMenu from "assets/icons-menu/ic-customer.svg";
+import IcFinanceMenu from "assets/icons-menu/ic-finance.svg";
+import IcFinanceInfoMenu from "assets/icons-menu/ic-finance-info.svg";
+import IcCashbookMenu from "assets/icons-menu/ic-cashbook.svg";
+import IcVatInvoiceMenu from "assets/icons-menu/ic-vat-invoice.svg";
+import IcFundMenu from "assets/icons-menu/ic-fund.svg";
+import IcEndShiftMenu from "assets/icons-menu/ic-end-shift.svg";
+import IcDebtTransactionMenu from "assets/icons-menu/ic-debt-transaction.svg";
+import IcPromotionMenu from "assets/icons-menu/ic-promotion.svg";
+import IcBroadcastMenu from "assets/icons-menu/ic-broadcast.svg";
+import IcLoyaltyMenu from "assets/icons-menu/ic-loyalty.svg";
+import IcPointsLogMenu from "assets/icons-menu/ic-points-log.svg";
+import IcMemberListMenu from "assets/icons-menu/ic-member-list.svg";
+import IcSupportMenu from "assets/icons-menu/ic-support.svg";
+import IcCallcenterMenu from "assets/icons-menu/ic-callcenter.svg";
+import IcPromoReportMenu from "assets/icons-menu/ic-promo-report.svg";
+import IcPointsSettingMenu from "assets/icons-menu/ic-points-settings.svg";
+import IcSupportSettingMenu from "assets/icons-menu/ic-support-settings.svg";
+import IcSalesReportMenu from "assets/icons-menu/ic-sales-report.svg";
+import IcFinanceReportMenu from "assets/icons-menu/ic-finance-report.svg";
+import IcShippingReportMenu from "assets/icons-menu/ic-shipping-report.svg";
+import IcWorkflowMenu from "assets/icons-menu/ic-workflow.svg";
+import IcProcessMenu from "assets/icons-menu/ic-process.svg";
+import IcSimulateMenu from "assets/icons-menu/ic-simulate.svg";
+import IcFileMgmtMenu from "assets/icons-menu/ic-file-mgmt.svg";
+import IcFileProcessMenu from "assets/icons-menu/ic-file-process.svg";
+import IcProcessConfigMenu from "assets/icons-menu/ic-process-config.svg";
+import IcDefaultProcessMenu from "assets/icons-menu/ic-default-process.svg";
+import IcRulesMenu from "assets/icons-menu/ic-rules.svg";
+import IcSettingsMenu from "assets/icons-menu/ic-settings.svg";
+import IcBaseSettingsMenu from "assets/icons-menu/ic-base-settings.svg";
+import IcPaymentMethodMenu from "assets/icons-menu/ic-payment-method.svg";
+import IcPersonalMenu from "assets/icons-menu/ic-personal.svg";
+import IcSmsMenu from "assets/icons-menu/ic-sms.svg";
+import IcEmailMenu from "assets/icons-menu/ic-email.svg";
+import IcZaloMenu from "assets/icons-menu/ic-zalo.svg";
+import IcPbxMenu from "assets/icons-menu/ic-pbx.svg";
+import IcIntegrationMenu from "assets/icons-menu/ic-integration.svg";
+import IcGeneralConfigMenu from "assets/icons-menu/ic-general-config.svg";
+import IcIntegrationViettelMenu from "assets/icons-menu/ic-viettel.svg";
+import IcSaleChannelMenu from "assets/icons-menu/ic-sales-channel.svg";
+import IcOverviewMenu from "assets/icons-menu/ic-overview.svg";
+import IcOpenShiftMenu from "assets/icons-menu/ic-open-shift.svg";
+import IcShiftReportMenu from "assets/icons-menu/ic-shift-report.svg";
+import IcLoginMenu from "assets/icons-menu/ic-login.svg";
+
+
 const iconTypes = {
   // A
   Account: IconAccount,
@@ -744,6 +814,78 @@ const iconTypes = {
   Violation: IconViolation,
   VOC: IconVOC,
   VarSetting: IconVar,
+
+
+  //Icon Menu
+  DashboardMenu: IcDashboardMenu,
+  SaleOrderMenu: IcSaleOrderMenu,
+  PosMenu: IcPosMenu,
+  OrderListMenu: IcOrderListMenu,
+  ReturnMenu: IcReturnMenu,
+  MultichannelMenu: IcMultichannelMenu,
+  DeliveryMenu: IcDeliveryMenu,
+  InteractionMenu: IcInteractionMenu,
+  SoldMenu: IcSoldMenu,
+  InventoryMenu: IcInventoryMenu,
+  ProductCategoryMenu: IcProductCategoryMenu,
+  MaterialsMenu: IcMaterialsMenu,
+  WarehouseListMenu: IcWarehouseListMenu,
+  StockMenu: IcStockMenu,
+  LedgerMenu: IcLedgerMenu,
+  AuditMenu: IcAuditMenu,
+  CustomersMenu: IcCustomersMenu,
+  SegmentMenu: IcSegmentMenu,
+  PartnerMenu: IcPartnerMenu,
+  DebtMenu: IcDebtMenu,
+  CustomerSettingMenu: IcCustomerSettingMenu,
+  PartnerSettingMenu: IcPartnerSettingMenu,
+  CustomerMenu: IcCustomerMenu,
+  FinanceMenu: IcFinanceMenu,
+  FinanceInfoMenu: IcFinanceInfoMenu,
+  CashbookMenu: IcCashbookMenu,
+  VatInvoiceMenu: IcVatInvoiceMenu,
+  FundMenu: IcFundMenu,
+  EndShiftMenu: IcEndShiftMenu,
+  DebtTransactionMenu: IcDebtTransactionMenu,
+  PromotionMenu: IcPromotionMenu,
+  BroadcastMenu: IcBroadcastMenu,
+  LoyaltyMenu: IcLoyaltyMenu,
+  PointsLogMenu: IcPointsLogMenu,
+  MemberListMenu: IcMemberListMenu,
+  SupportMenu: IcSupportMenu,
+  CallcenterMenu: IcCallcenterMenu,
+  PromoReportMenu: IcPromoReportMenu,
+  PointsSettingMenu: IcPointsSettingMenu,
+  SupportSettingMenu: IcSupportSettingMenu,
+  SalesReportMenu: IcSalesReportMenu,
+  FinanceReportMenu: IcFinanceReportMenu,
+  ShippingReportMenu: IcShippingReportMenu,
+  WorkflowMenu: IcWorkflowMenu,
+  ProcessMenu: IcProcessMenu,
+  SimulateMenu: IcSimulateMenu,
+  FileMgmtMenu: IcFileMgmtMenu,
+  FileProcessMenu: IcFileProcessMenu,
+  ProcessConfigMenu: IcProcessConfigMenu,
+  DefaultProcessMenu: IcDefaultProcessMenu,
+  RulesMenu: IcRulesMenu,
+  SettingsMenu: IcSettingsMenu,
+  BaseSettingsMenu: IcBaseSettingsMenu,
+  PaymentMethodMenu: IcPaymentMethodMenu,
+  PersonalMenu: IcPersonalMenu,
+  SmsMenu: IcSmsMenu,
+  EmailMenu: IcEmailMenu,
+  ZaloMenu: IcZaloMenu,
+  PbxMenu: IcPbxMenu,
+  IntegrationMenu: IcIntegrationMenu,
+  GeneralConfigMenu: IcGeneralConfigMenu,
+  IntegrationViettelMenu: IcIntegrationViettelMenu,
+  SaleChannelMenu: IcSaleChannelMenu,
+  OverviewMenu: IcOverviewMenu,
+  OpenShiftMenu: IcOpenShiftMenu,
+  ShiftReportMenu: IcShiftReportMenu,
+  LoginMenu: IcLoginMenu
+  
+
 };
 
 export default function Icon(props) {
