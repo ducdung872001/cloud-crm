@@ -400,6 +400,7 @@ export const urlsApi = {
     takeEstimate: prefixAdmin + "/customer/estimate",
   },
   invoice: {
+    createInvoice: prefixSales + "/invoiceDetail/get",
     list: prefixAdmin + "/invoice/list/v2",
     create: prefixAdmin + "/invoice/create",
     invoiceDetail: prefixAdmin + "/invoiceDetail/import",
@@ -430,6 +431,7 @@ export const urlsApi = {
     getByCustomer: prefixAdmin + "/boughtService/getBoughtServiceByCustomerId",
   },
   boughtProduct: {
+    insert: prefixSales + "/boughtProduct/insertBatch",
     list: prefixAdmin + "/boughtProduct/list",
     addToInvoice: prefixAdmin + "/boughtProduct/update",
     delete: prefixAdmin + "/boughtProduct/delete",
@@ -448,12 +450,12 @@ export const urlsApi = {
   },
   product: {
     filterWarehouse: prefixWarehouse + "/product/in_warehouse",
-    list: prefixWarehouse + "/product/list",
+    list: prefixInventory + "/product/list",
     // list: prefixWarehouse + "/public/product/list",
-    detail: prefixWarehouse + "/product/get",
-    update: prefixWarehouse + "/product/update",
-    updateContent: prefixWarehouse + "/product/update/content",
-    delete: prefixWarehouse + "/product/delete",
+    detail: prefixInventory + "/product/get",
+    update: prefixInventory + "/product/update",
+    updateContent: prefixInventory + "/product/update/content",
+    delete: prefixInventory + "/product/delete",
 
     //danh sách sản phẩm của đối tác
     listShared: prefixAdmin + "/product/list/shared",
@@ -879,10 +881,10 @@ export const urlsApi = {
     // Đoạn này là category của ông dịch vụ
     // list: prefixWarehouse + "/categoryItem/list",
     // list: prefixWarehouse + "/public/categoryItem/list",
-    list: prefixWarehouse + "/public/product/category/list",
-    update: prefixWarehouse + "/categoryItem/update",
-    detail: prefixWarehouse + "/categoryItem/get",
-    delete: prefixWarehouse + "/categoryItem/delete",
+    list: prefixInventory + "/category/list",
+    update: prefixInventory + "/category/update",
+    detail: prefixInventory + "/category/get",
+    delete: prefixInventory + "/category/delete",
   },
 
   categoryProject: {

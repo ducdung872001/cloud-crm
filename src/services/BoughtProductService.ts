@@ -1,6 +1,11 @@
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
-import { IBoughtProductFilterRequest, IBoughtProductRequest, IBoughtProductToInvoiceRequest } from "model/boughtProduct/BoughtProductRequestModel";
+import {
+  IBoughtProductFilterRequest,
+  IBoughtProductRequest,
+  IBoughtProductToInvoiceRequest,
+  IInsertedItem,
+} from "model/boughtProduct/BoughtProductRequestModel";
 
 export default {
   list: (params: IBoughtProductFilterRequest, signal?: AbortSignal) => {
@@ -22,6 +27,12 @@ export default {
   },
   update: (body: IBoughtProductRequest) => {
     return fetch(urlsApi.boughtProduct.update, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  insert: (body: IInsertedItem[], params?: Record<string, any>) => {
+    return fetch(`${urlsApi.boughtProduct.insert}${convertParamsToString(params)}`, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());

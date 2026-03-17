@@ -21,6 +21,9 @@ import ReceiptModal from "./components/modals/ReceiptModal";
 import QrScanModal from "./components/modals/QrScanModal";
 import SyncModal from "./components/modals/SyncModal";
 import CustomerModal from "./components/modals/CustomerModal";
+import BoughtProductService from "@/services/BoughtProductService";
+import { showToast } from "@/utils/common";
+import AddCustomerPersonModal from "../CustomerPerson/partials/AddCustomerPersonModal";
 
 const INITIAL_CART: CartItem[] = [
   // { id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, unit: "hộp", qty: 2 },
@@ -31,6 +34,7 @@ const INITIAL_CART: CartItem[] = [
 const CounterSales: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>("pos");
   const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
+  const [invoiceId, setInvoiceId] = useState<number | null>(null);
 
   // Modal states
   const [payModalOpen, setPayModalOpen] = useState(false);
@@ -40,15 +44,19 @@ const CounterSales: React.FC = () => {
   const [syncModalOpen, setSyncModalOpen] = useState(false);
   const [customerModalOpen, setCustomerModalOpen] = useState(false);
   const [customer, setCustomer] = useState<Customer | null>(null);
+  const [customerQuickAdd, setCustomerQuickAdd] = useState(false);
+  const [customerPhoneAdd, setCustomerPhoneAdd] = useState("");
 
   // Cart actions
-  const handleAddToCart = useCallback((item: Omit<CartItem, "qty">) => {
+  const handleAddToCart = useCallback((item: Omit<CartItem, "qty"> & { qty: number }) => {
+    console.log("item to add", item);
+
     setCartItems((prev) => {
-      const existing = prev.find((c) => c.id === item.id);
+      const existing = prev.find((c) => c.variantId === item.variantId);
       if (existing) {
-        return prev.map((c) => (c.id === item.id ? { ...c, qty: c.qty + 1 } : c));
+        return prev.map((c) => (c.variantId === item.variantId ? { ...c, qty: c.qty + item.qty } : c));
       }
-      return [...prev, { ...item, qty: 1 }];
+      return [...prev, { ...item, qty: item.qty }];
     });
   }, []);
 
@@ -64,10 +72,34 @@ const CounterSales: React.FC = () => {
   }, []);
 
   // Payment flow
-  const handlePayConfirm = useCallback(() => {
-    setPayModalOpen(false);
-    setReceiptModalOpen(true);
-  }, []);
+  const handlePayConfirm = async (invoiceId: number | null) => {
+    if (invoiceId) {
+      try {
+        let body = cartItems.map((item: CartItem) => ({
+          productId: Number(item.id),
+          variantId: Number(item.variantId),
+          price: item.price,
+          customerId: customer?.id ?? -1,
+          qty: item.qty,
+          name: item.name,
+          avatar: item.avatar,
+          unitName: item.unitName,
+        }));
+        const paidInvoice = await BoughtProductService.insert(body, {
+          invoiceId: invoiceId,
+        });
+        if (paidInvoice.code == 0) {
+          setPayModalOpen(false);
+          setReceiptModalOpen(true);
+          showToast("Thanh toán thành công.", "success");
+        } else {
+          showToast(paidInvoice.message || "Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại sau.", "error");
+        }
+      } catch (error) {
+        showToast("Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại sau.", "error");
+      }
+    }
+  };
 
   // Order list callbacks
   const handleViewReceipt = useCallback(() => setReceiptModalOpen(true), []);
@@ -78,7 +110,7 @@ const CounterSales: React.FC = () => {
 
   // QR scan add to cart
   const handleQrAddToCart = useCallback(() => {
-    handleAddToCart({ id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, unit: "hộp" });
+    handleAddToCart({ id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, unit: "hộp", qty: 1, variantId: "1" });
     setQrScanModalOpen(false);
   }, [handleAddToCart]);
 
@@ -98,7 +130,10 @@ const CounterSales: React.FC = () => {
                 items={cartItems}
                 onChangeQty={handleChangeQty}
                 onRemove={handleRemove}
-                onPay={() => setPayModalOpen(true)}
+                onPay={(invoiceId) => {
+                  setInvoiceId(invoiceId);
+                  setPayModalOpen(true);
+                }}
                 onSelectCustomer={() => setCustomerModalOpen(true)}
                 customer={customer || undefined}
               />
@@ -122,9 +157,27 @@ const CounterSales: React.FC = () => {
       </div>
 
       {/* ── Modals ── */}
-      <PayModal open={payModalOpen} cartItems={cartItems} onClose={() => setPayModalOpen(false)} onConfirm={handlePayConfirm} />
+      <PayModal
+        open={payModalOpen}
+        cartItems={cartItems}
+        invoiceId={invoiceId}
+        onClose={() => {
+          setInvoiceId(null);
+          setPayModalOpen(false);
+        }}
+        onConfirm={(id) => handlePayConfirm(id)}
+      />
 
-      <ReceiptModal open={receiptModalOpen} cartItems={cartItems} onClose={() => setReceiptModalOpen(false)} />
+      <ReceiptModal
+        open={receiptModalOpen}
+        cartItems={cartItems}
+        onClose={() => {
+          setCartItems([]);
+          setCustomer(null);
+          setInvoiceId(null);
+          setReceiptModalOpen(false);
+        }}
+      />
 
       <OrderDetailModal
         open={orderDetailModalOpen}
@@ -140,7 +193,27 @@ const CounterSales: React.FC = () => {
 
       <SyncModal open={syncModalOpen} onClose={() => setSyncModalOpen(false)} />
 
-      <CustomerModal open={customerModalOpen} onClose={() => setCustomerModalOpen(false)} onSelect={(customer) => setCustomer(customer)} />
+      <CustomerModal
+        open={customerModalOpen}
+        onClose={() => setCustomerModalOpen(false)}
+        onSelect={(customer) => setCustomer(customer)}
+        onQuickAdd={(search) => {
+          setCustomerQuickAdd(true);
+          setCustomerPhoneAdd(search);
+        }}
+      />
+      <AddCustomerPersonModal
+        onShow={customerQuickAdd}
+        phoneQuickAdd={customerPhoneAdd}
+        onHide={(reload) => {
+          if (reload) {
+            setCustomerModalOpen(false);
+            setTimeout(() => setCustomerModalOpen(true), 300); // Đóng rồi mở lại modal chọn khách để refresh danh sách khách hàng
+          }
+          setCustomerQuickAdd(false);
+          setCustomerPhoneAdd("");
+        }}
+      />
     </div>
   );
 };

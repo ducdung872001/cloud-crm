@@ -10,9 +10,10 @@ interface CustomerModalProps {
   open: boolean;
   onClose: () => void;
   onSelect?: (customer: Customer) => void;
+  onQuickAdd?: (search: string) => void;
 }
 
-export default function CustomerModal({ open, onClose, onSelect }: CustomerModalProps) {
+export default function CustomerModal({ open, onClose, onSelect, onQuickAdd }: CustomerModalProps) {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
@@ -114,12 +115,14 @@ export default function CustomerModal({ open, onClose, onSelect }: CustomerModal
             title: "+ Thêm khách hàng mới",
             color: "primary",
             variant: "outline",
-            callback: () => {},
+            callback: () => {
+              onQuickAdd(search);
+            },
           },
         ],
       },
     }),
-    [onClose]
+    [onClose, onQuickAdd, search]
   );
 
   return (

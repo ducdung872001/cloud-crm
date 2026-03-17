@@ -6,6 +6,7 @@ import { useProductCategory } from "./useProductCategory";
 import { IProductListParams, useProductList } from "./useProductList";
 import { IProductFilterRequest } from "@/model/product/ProductRequestModel";
 import { formatCurrency } from "reborn-util";
+import VariantModal, { MOCK_IPHONE } from "../modals/VariantModal";
 
 const PRODUCTS: Product[] = [
   // { id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, stock: 142, unit: "hộp" },
@@ -24,6 +25,8 @@ interface ProductGridProps {
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
+  const [variantModalOpen, setVariantModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [activeCategory, setActiveCategory] = useState("");
   const [search, setSearch] = useState("");
   const [params, setParams] = useState<IProductListParams>({
@@ -39,21 +42,21 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
     params: params,
   });
 
-  console.log("listProduct", listProduct);
+  console.log("categoryFiltered", categoryFiltered);
 
-  const filtered = PRODUCTS.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+  // const filtered = PRODUCTS.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 
-  const handleAddToCart = (prod: Product) => {
-    onAddToCart({
-      id: prod.id,
-      icon: prod.icon,
-      avatar: prod.avatar,
-      name: prod.name,
-      priceLabel: String(formatCurrency(prod.price, ".", "₫")),
-      price: prod.price,
-      unitName: prod.unitName || prod.unit,
-    });
-  };
+  // const handleAddToCart = (prod: Product) => {
+  //   onAddToCart({
+  //     id: prod.id,
+  //     icon: prod.icon,
+  //     avatar: prod.avatar,
+  //     name: prod.name,
+  //     priceLabel: String(formatCurrency(prod.price, ".", "₫")),
+  //     price: prod.price,
+  //     unitName: prod.unitName || prod.unit,
+  //   });
+  // };
 
   // ── Permission guard ──
   if (isPermissions) {
@@ -64,6 +67,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
       </div>
     );
   }
+
+  // Khi bấm vào sản phẩm có biến thể
+  const handleOpenVariant = (prod) => {
+    setSelectedProduct(prod); // thay bằng data thực từ API
+    setVariantModalOpen(true);
+  };
 
   return (
     <div className="product-grid-wrap">
@@ -91,7 +100,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
       {/* Products */}
       <div className="pg-grid">
         {listProduct.map((prod) => (
-          <div key={prod.id} className={`pg-card${prod.lowStock ? " pg-card--low" : ""}`} onClick={() => handleAddToCart(prod)}>
+          <div
+            key={prod.id}
+            className={`pg-card${prod.lowStock ? " pg-card--low" : ""}`}
+            onClick={() => {
+              // handleAddToCart(prod)
+              handleOpenVariant;
+            }}
+          >
             <div className="pg-card__icon">
               {prod.avatar ? <img src={prod.avatar} alt={prod.name} /> : <span style={{ fontSize: "40px" }}>{prod.icon}</span>}
             </div>
@@ -104,7 +120,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
               className="pg-card__add"
               onClick={(e) => {
                 e.stopPropagation();
-                handleAddToCart(prod);
+                // handleAddToCart(prod);
+                handleOpenVariant(prod);
               }}
             >
               +
@@ -123,6 +140,15 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
       >
         {isLoading ? <div>Đang tải...</div> : <>Hiển thị thêm</>}
       </button>
+      <VariantModal
+        open={variantModalOpen}
+        productData={selectedProduct}
+        onClose={() => setVariantModalOpen(false)}
+        onAddToCart={(item) => {
+          onAddToCart(item);
+          setVariantModalOpen(false);
+        }}
+      />
     </div>
   );
 };

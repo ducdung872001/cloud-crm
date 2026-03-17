@@ -78,7 +78,7 @@ interface OrderListProps {
 const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onConfirm }) => {
   const [activeFilter, setActiveFilter] = useState("all");
 
-  const formatVND = (n: number) => n.toLocaleString("vi") + " ₫";
+  const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
 
   return (
     <div className="order-list">

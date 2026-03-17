@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { CartItem, Customer, OrderType } from "../../types";
 import "./index.scss";
+import InvoiceService from "@/services/InvoiceService";
 
 // const MOCK_CUSTOMER: Customer = {
 //   id: "1",
@@ -16,7 +17,7 @@ interface CartProps {
   items: CartItem[];
   onChangeQty: (id: string, delta: number) => void;
   onRemove: (id: string) => void;
-  onPay: () => void;
+  onPay: (invoiceId: number) => void;
   onSelectCustomer: () => void;
   customer?: Customer;
 }
@@ -30,13 +31,30 @@ const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSele
 
   console.log("itemsCart", items);
 
-  const formatVND = (n: number) => n.toLocaleString("vi") + " ₫";
+  const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
 
   const ORDER_TYPES: { id: OrderType; label: string }[] = [
     { id: "retail", label: "Lẻ" },
     { id: "wholesale", label: "Buôn" },
     { id: "ship", label: "Ship" },
   ];
+
+  const onCreateInvoice = async () => {
+    try {
+      const invoice = await InvoiceService.createInvoice({
+        customerId: customer?.id ?? -1,
+      });
+      console.log("invoice", invoice);
+      if (invoice.code === 0 && invoice?.result?.invoiceId) {
+        let invoiceId = invoice.result.invoiceId;
+        onPay(invoiceId);
+      } else {
+        console.error("Tạo hóa đơn thất bại", invoice);
+      }
+    } catch (error) {
+      console.error("Có lỗi khi tạo hóa đơn", error);
+    }
+  };
 
   return (
     <div className="cart">
@@ -138,8 +156,9 @@ const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSele
           </div>
         </div>
 
-        <button className="pay-btn" onClick={onPay}>
-          💳 Thanh toán · <span>{formatVND(subtotal)}</span>
+        <button className="pay-btn" onClick={onCreateInvoice}>
+          {/* 💳 Thanh toán · <span>{formatVND(subtotal)}</span> */}
+          💳 Tạo đơn hàng
         </button>
       </div>
     </div>
