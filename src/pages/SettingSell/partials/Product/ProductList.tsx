@@ -343,40 +343,41 @@ export default function ProductList(props: IProductListProps) {
         <div className="product-cell__info">
           <p className="product-cell__name">{item.name}</p>
           <p className="product-cell__meta">
-            {/* TODO: add SKU and barcode fields to IProductResponse if not present */}
-            <span className="product-cell__sku">SKU: —</span>
-            <span className="product-cell__dot">·</span>
-            <span className="product-cell__barcode">—</span>
+            <span className="product-cell__sku">SKU: {item.productLine || "—"}</span>
+            {item.code && (
+              <>
+                <span className="product-cell__dot">·</span>
+                <span className="product-cell__barcode">{item.code}</span>
+              </>
+            )}
           </p>
-          {/* <div className="product-cell__tags">
-            <Badge text={randomLabel.label} variant={randomLabel.color} />
-          </div> */}
         </div>
       </div>,
 
       // DANH MỤC
       <span className="product-category-badge" key={`cat-${item.id}`}>
-        {item.categoryName ? item.categoryName : "Chưa xác định"}
+        {item.categoryName || "Chưa xác định"}
       </span>,
 
       // GIÁ BÁN / GIÁ SỈ
       <div className="product-price-cell" key={`price-${item.id}`}>
         <p className="product-price-cell__main">{formatCurrency(item.price)}</p>
-        {/* TODO: add wholesale price field (giá sỉ) to IProductResponse */}
-        <p className="product-price-cell__wholesale">Si: —</p>
+        {item.priceWholesale > 0 && (
+          <p className="product-price-cell__wholesale">Sỉ: {formatCurrency(item.priceWholesale)}</p>
+        )}
       </div>,
 
       // TỒN KHO
       <div className="product-stock-cell" key={`stock-${item.id}`}>
-        {/* TODO: add stock/quantity field to IProductResponse */}
-        <span className="product-stock-cell__value">—</span>
+        <span className="product-stock-cell__value">
+          {item.stock != null ? item.stock : "—"}
+        </span>
       </div>,
 
       // HIỂN THỊ WEB
       <div className="product-toggle-cell" key={`toggle-${item.id}`}>
-        {/* TODO: add isWebDisplay field to IProductResponse */}
         <label className="product-toggle">
-          <input type="checkbox" defaultChecked={false} onChange={(e) => handleToggleWebDisplay(item, e.target.checked)} />
+          <input type="checkbox" defaultChecked={!!item.showOnWeb} onChange={(e) => handleToggleWebDisplay(item, e.target.checked)} />
           <span className="product-toggle__slider" />
         </label>
       </div>,
