@@ -255,7 +255,7 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "checkout",
+        title: "payment_mgt", // Quản lý phương thức thanh toán
         path: urls.payment_mgt,
         icon: <Icon name="ManageWork" />,
         code: "",
