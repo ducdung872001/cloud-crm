@@ -688,7 +688,7 @@
     margin-bottom: 0;
   }
 
-  // Hàng trên: label biến thể + SKU input
+  // Hàng trên: ảnh | label biến thể | SKU input
   &__header {
     display: flex;
     align-items: center;
@@ -696,9 +696,28 @@
     margin-bottom: 10px;
   }
 
-  &__sku {
+  &__label-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     flex: 1;
-    max-width: 220px;
+    min-width: 0;
+  }
+
+  &__first-badge {
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 0.15rem 0.55rem;
+    border-radius: 10rem;
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+    white-space: nowrap;
+    cursor: default;
+  }
+
+  &__sku {
+    flex: 0 0 180px;
     padding: 6px 10px;
     border: 1.5px solid #e5e7ef;
     border-radius: 8px;
@@ -853,6 +872,18 @@
     height: 13px;
     flex-shrink: 0;
   }
+
+  // Variant 1: nút sync — màu xanh đậm hơn
+  &--sync {
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #1d4ed8;
+
+    &:hover {
+      background: #dbeafe;
+      border-color: #1d4ed8;
+    }
+  }
 }
 
 // Nút xóa — giống __del của attribute (đỏ nhạt)
@@ -878,5 +909,77 @@
     opacity: 0.3;
     cursor: not-allowed;
     pointer-events: none;
+  }
+}
+
+// ── Variant image picker ────────────────────────────────────
+.vt-img-picker {
+  position: relative;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 0.8rem;
+  border: 1.5px dashed #cdd0e0;
+  background: #f8fafc;
+  cursor: pointer;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+
+    .vt-img-picker__placeholder {
+      color: #2563eb;
+    }
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    color: #94a3b8;
+    font-size: 1.05rem;
+    font-weight: 500;
+    transition: color 0.15s;
+
+    svg {
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+  }
+
+  &__clear {
+    position: absolute;
+    top: 0.3rem;
+    right: 0.3rem;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.75);
+    }
   }
 }

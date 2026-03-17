@@ -65,7 +65,7 @@ export default function WarehouseListPage() {
         const items: IWarehouseResponse[] = result?.items ?? [];
         setListWarehouse(items);
 
-        const total = +result?.total ?? 0;
+        const total = +result?.total || 0;
         const page = paramsSearch.page ?? 1;
         const limit = paramsSearch.limit ?? 10;
         setPagination((prev) => ({
@@ -95,7 +95,7 @@ export default function WarehouseListPage() {
     // } else {
     //   showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     // }
-    showToast("Tính năng xóa kho đang được phát triển", "info");
+    showToast("Tính năng xóa kho đang được phát triển", "warning");
     setShowDialog(false);
     setContentDialog(null);
   };
@@ -118,7 +118,7 @@ export default function WarehouseListPage() {
     //   setContentDialog(null);
     // });
 
-    showToast("Tính năng xóa kho đang được phát triển", "info");
+    showToast("Tính năng xóa kho đang được phát triển", "warning");
     setShowDialog(false);
     setContentDialog(null);
   };

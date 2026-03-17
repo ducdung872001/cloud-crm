@@ -264,34 +264,25 @@
   }
 
   &__close {
-    position: absolute !important;
-    top: 1rem !important;
-    right: 1rem !important;
-    background: rgba(255, 255, 255, 0.22) !important;
-    border: 1px solid rgba(255, 255, 255, 0.45) !important;
-    border-radius: 0.6rem !important;
-    width: 3rem !important;
-    height: 3rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    color: #fff !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transition: background 0.15s, border-color 0.15s;
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #fff;
+    width: 2.7rem;
+    height: 2.7rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 1.4rem;
+    line-height: 1;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.4) !important;
-      border-color: rgba(255, 255, 255, 0.65) !important;
-    }
-
-    svg {
-      width: 1.6rem !important;
-      height: 1.6rem !important;
-      color: #fff !important;
-      opacity: 1 !important;
-      visibility: visible !important;
+      background: rgba(255, 255, 255, 0.35);
     }
   }
 
