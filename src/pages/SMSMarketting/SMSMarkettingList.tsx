@@ -20,15 +20,15 @@ import { ISendSMSResponseModel } from "model/sendSMS/SendSMSResponse";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
 import AddEditSendSMS from "pages/Common/AddEditSendSMS/AddEditSendSMS";
 import { getPermissions } from "utils/common";
-
 import "tippy.js/animations/scale.css";
 import "./SMSMarkettingList.scss";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function SMSMarkettingList() {
+export default function SMSMarkettingList(props) {
   document.title = "SMS Marketing";
 
   const isMounted = useRef(false);
-
+  const { onBackProps } = props;
   const takeParamsUrl = getSearchParameters();
   const customerIdlistUrl = (takeParamsUrl && takeParamsUrl?.customerIdlist?.replace(/\%2C/g, ",").split(",")) || [];
   const customerIdlist = customerIdlistUrl.map((item) => {
@@ -36,7 +36,6 @@ export default function SMSMarkettingList() {
   });
 
   const mbtId = takeParamsUrl && takeParamsUrl?.mbtId;
-
   const [searchParams, setSearchParams] = useSearchParams();
   const [listSMSMarketing, setListSMSMarketing] = useState<ISendSMSResponseModel[]>([]);
   const [idSendSMS, setIdSendSMS] = useState<number>(null);
@@ -489,7 +488,13 @@ export default function SMSMarkettingList() {
   return (
     <Fragment>
       <div className={`page-content page--sms-marketing${isNoItem ? " bg-white" : ""}${showPageSendSMS ? " d-none" : ""}`}>
-        <TitleAction title="SMS Marketing" titleActions={titleActions} />
+        <HeaderTabMenu
+          title="SMS Marketing"
+          titleBack="Chiến dịch Marketing"
+          onBackProps={onBackProps}
+          titleActions={titleActions}
+        />
+        {/* <TitleAction title="SMS Marketing" titleActions={titleActions} /> */}
         <div className="card-box d-flex flex-column">
           <SearchBox
             name="Nội dung"

@@ -19,12 +19,13 @@ import { IRoyaltyFilterRequest } from "@/model/loyalty/RoyaltyRequest";
 import { ILoyaltyPointLedgerResposne } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
 import moment from "moment";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function LoyaltyPointLedger() {
+export default function LoyaltyPointLedger(props) {
   document.title = "Nhật ký điểm hội viên";
 
   const isMounted = useRef(false);
-
+  const { onBackProps } = props;
   const [listData, setListData] = useState<ILoyaltyPointLedgerResposne[]>([]);
   const [selectedItem, setSelectedItem] = useState<ILoyaltyPointLedgerResposne>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
@@ -103,12 +104,11 @@ export default function LoyaltyPointLedger() {
 
   return (
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
-      <div className="action-navigation">
-        <div className="action-backup">
-          <h1 className="title-first">Nhật ký điểm hội viên</h1>
-        </div>
-        {/* <TitleAction title="" titleActions={titleActions} /> */}
-      </div>
+      <HeaderTabMenu
+        title="Lịch sử điểm"
+        titleBack="Khách hàng thành viên"
+        onBackProps={onBackProps}
+      />
 
       <div className="card-box d-flex flex-column">
         <SearchBox

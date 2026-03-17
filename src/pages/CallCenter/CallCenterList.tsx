@@ -6,10 +6,11 @@ import Button from "components/button/button";
 import "./CallCenterList.scss";
 import AddCustomerPersonModal from "pages/CustomerPerson/partials/AddCustomerPersonModal";
 import ReportStatistic from "./partials/ReportStatistic/ReportStatistic";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function CallCenterList() {
+export default function CallCenterList(props) {
   document.title = "Tổng đài";
-
+  const { onBackProps } = props;
   const [tab, setTab] = useState({ name: "tab_one", namePagination: "Khách hàng", status: null });
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
@@ -54,7 +55,11 @@ export default function CallCenterList() {
 
   return (
     <div className={`page-content page__call--center`}>
-      <TitleAction title="Tổng đài" />
+      <HeaderTabMenu
+        title="Cuộc gọi CSKH"
+        titleBack="Chăm sóc khách hàng"
+        onBackProps={onBackProps}
+      />
       <div className="card-box d-flex flex-column">
         <div className="action-header">
           <div className="title__actions">

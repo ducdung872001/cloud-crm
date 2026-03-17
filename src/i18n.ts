@@ -281,6 +281,7 @@ i18n.use(initReactI18next).init({
           customerList: "Khách hàng & NCC",
           partnerProfile: "Nhà cung cấp",
           customerSegments: "Phân khúc & Nhãn",
+          customerAnalysis: "Phân tích khách hàng",
 
           quote: "Báo giá",
           // đoạn này là children của báo giá
@@ -314,7 +315,7 @@ i18n.use(initReactI18next).init({
           selling: "Bán hàng & Đơn hàng",
           promotionMarketing: "Khuyến mãi",
           promotionalReport: "Báo cáo khuyến mãi",
-          promotionalProgram: "Chương trình khuyến mãi",
+          promotionalProgram: "Khuyến mãi",
           opportunity: "Cơ hội bán hàng",
           // đoạn này là children của bán hàng
           createSalesOrder: "Bán hàng tại quầy", //Tạo đơn bán hàng
@@ -334,6 +335,7 @@ i18n.use(initReactI18next).init({
           customerCare: "Chăm sóc khách hàng",
           // đoạn này là children của chăm sóc khách hàng
           customerServiceHotline: "Tổng đài CSKH",
+          marketingCampaign: "Chiến dịch marketing",
           receiveWarranty: "Tiếp nhận bảo hành",
           receiveWarrantyProcess: "Tiếp nhận bảo hành theo quy trình",
           receiveTicket: "Tiếp nhận hỗ trợ",
@@ -405,7 +407,7 @@ i18n.use(initReactI18next).init({
           settingPartner: "Cài đặt đối tác",
           settingContact: "Cài đặt người liên hệ",
           loyaltyPointLedger: "Nhật ký điểm hội viên",
-          memberList: "Danh sách hội viên",
+          memberList: "Khách hàng thành viên",
           settingLoyalty:"Cài đặt hệ thống tích điểm",
           settingSales: "Danh mục sản phẩm",
           multiChannelCommunication: "Truyền thông đa kênh", //SMS/Zalo/Email/...

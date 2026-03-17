@@ -21,14 +21,15 @@ import AddEditSendEmail from "pages/Common/AddEditSendEmail/AddEditSendEmail";
 import { getPermissions } from "utils/common";
 
 import "./EmailMarkettingList.scss";
-import { IDeclareEmailFilterRequest } from "model/declareEmail/DeclareEmailRequestModel";
 import EmailConfigService from "services/EmailConfigService";
 import Badge from "components/badge/badge";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function EmailMarkettingList() {
+export default function EmailMarkettingList(props) {
   document.title = "Email Marketing";
 
   const isMounted = useRef(false);
+  const { onBackProps } = props;
   const navigate = useNavigate();
   const takeParamsUrl = getSearchParameters();
   const customerIdlistUrl = (takeParamsUrl && takeParamsUrl?.customerIdlist?.replace(/\%2C/g, ",").split(",")) || [];
@@ -535,7 +536,13 @@ export default function EmailMarkettingList() {
   return (
     <Fragment>
       <div className={`page-content page--email-marketing${isNoItem ? " bg-white" : ""}${showPageSendEmail ? " d-none" : ""}`}>
-        <TitleAction title="Email Marketing" titleActions={titleActions} />
+        <HeaderTabMenu
+          title="Email Marketing"
+          titleBack="Chiến dịch Marketing"
+          onBackProps={onBackProps}
+          titleActions={titleActions}
+        />
+        {/* <TitleAction title="Email Marketing" titleActions={titleActions} /> */}
         <div className="card-box d-flex flex-column">
           <SearchBox
             name="Nội dung"

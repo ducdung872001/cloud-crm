@@ -3267,6 +3267,7 @@ export const urls = {
   setting_loyalty: "/setting_loyalty",
   loyalty_point_ledger: "/loyalty_point_ledger",
   loyalty_wallet: "/loyalty_wallet",
+  member_list: "/member_list",
   setting_sell: "/setting_sell",
   //Cài đặt hợp đồng
   setting_contract: "/setting_contract",
@@ -3325,6 +3326,9 @@ export const urls = {
   management_opportunity_new: "/management_opportunity_new",
   // tổng đài
   call_center: "/call_center",
+  //chăm sóc khách hàng
+  customer_care_page: "/customer_care_page",
+  customer_analysis: "/customer_analysis",
   //email
   email: "/email",
   // Kênh bán
@@ -3344,6 +3348,7 @@ export const urls = {
   // thử nghiệm với marketing automation (cài đặt)
   marketing_automation_v2: "/marketing_automation_v2",
   marketing_automation: "/marketing_automation",
+  marketing_campaign: "/marketing_campaign",
   create_marketing_automation: "/create_marketing_automation",
   create_marketing_automation_v2: "/create_marketing_automation_v2",
   edit_marketing_automation: "/edit_marketing_automation/:id?",

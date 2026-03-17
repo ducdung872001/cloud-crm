@@ -447,6 +447,7 @@ import IcOverviewMenu from "assets/icons-menu/ic-overview.svg";
 import IcOpenShiftMenu from "assets/icons-menu/ic-open-shift.svg";
 import IcShiftReportMenu from "assets/icons-menu/ic-shift-report.svg";
 import IcLoginMenu from "assets/icons-menu/ic-login.svg";
+import IcBellMenu from "assets/icons-menu/ic-bell.svg";
 
 
 const iconTypes = {
@@ -883,8 +884,8 @@ const iconTypes = {
   OverviewMenu: IcOverviewMenu,
   OpenShiftMenu: IcOpenShiftMenu,
   ShiftReportMenu: IcShiftReportMenu,
-  LoginMenu: IcLoginMenu
-  
+  LoginMenu: IcLoginMenu,
+  BellMenu: IcBellMenu
 
 };
 

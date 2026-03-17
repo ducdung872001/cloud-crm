@@ -13,12 +13,13 @@ import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, ISaveSearch } from "model/OtherModel";
 import { showToast, getPermissions } from "utils/common";
 import AddZaloMarketting from "./partials/AddZaloMarketting/AddZaloMarketting";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function ZaloMarketting() {
+export default function ZaloMarketting(props) {
   document.title = "Zalo Marketting";
 
   const isMounted = useRef(false);
-
+  const { onBackProps } = props;
   const takeParamsUrl = getSearchParameters();
   const customerIdlistUrl = (takeParamsUrl && takeParamsUrl?.customerIdlist?.replace(/\%2C/g, ",").split(",")) || [];
   const customerIdlist = customerIdlistUrl.map((item) => {
@@ -231,7 +232,13 @@ export default function ZaloMarketting() {
   return (
     <Fragment>
       <div className={`page-content page__zalo--marketting${isNoItem ? " bg-white" : ""}${showPageSendZalo ? " d-none" : ""}`}>
-        <TitleAction title="Zalo Marketing" titleActions={titleActions} />
+        <HeaderTabMenu
+          title="Zalo Marketing"
+          titleBack="Chiến dịch Marketing"
+          onBackProps={onBackProps}
+          titleActions={titleActions}
+        />
+        {/* <TitleAction title="Zalo Marketing" titleActions={titleActions} /> */}
         <div className="card-box d-flex flex-column">
           <SearchBox params={params} isSaveSearch={true} listSaveSearch={listSaveSearch} updateParams={(paramsNew) => setParams(paramsNew)} />
           {!isLoading && listZaloMarketting && listZaloMarketting.length > 0 ? (

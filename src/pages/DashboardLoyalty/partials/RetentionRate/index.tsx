@@ -194,10 +194,12 @@ const RetentionRateChart: React.FC = () => {
   return (
     <div
       style={{
-        padding: "24px",
+        padding: "10px",
         background: "#f9f9f9",
         borderRadius: "16px",
         boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+        marginBottom: '26px',
+        marginTop: '20px'
       }}
     >
       <HighchartsReact highcharts={Highcharts} options={chartOptions} />
