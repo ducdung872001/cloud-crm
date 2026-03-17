@@ -1,22 +1,34 @@
-import React, { useState } from "react";
+import React from "react";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Checkbox from "components/checkbox/checkbox";
 import Icon from "components/icon";
 import "./ShiftRulesNotifyTab.scss";
 
-export default function ShiftRulesNotifyTab() {
-  const [warningDiff, setWarningDiff] = useState<number>(50);
-  const [requireReason, setRequireReason] = useState<boolean>(true);
-  const [allowDenomination, setAllowDenomination] = useState<boolean>(true);
+export type RulesSettings = {
+  warningDiff: number;
+  requireReason: boolean;
+  allowDenomination: boolean;
 
-  const [maxOpenHours, setMaxOpenHours] = useState<number>(9);
-  const [blockIfMissingStaff, setBlockIfMissingStaff] = useState<boolean>(false);
-  const [managerConfirmClose, setManagerConfirmClose] = useState<boolean>(false);
+  maxOpenHours: number;
+  blockIfMissingStaff: boolean;
+  managerConfirmClose: boolean;
 
-  const [sendCloseReport, setSendCloseReport] = useState<boolean>(true);
-  const [sendDiffWarning, setSendDiffWarning] = useState<boolean>(true);
-  const [remindOpenShift, setRemindOpenShift] = useState<boolean>(false);
-  const [shiftOverRule, setShiftOverRule] = useState<boolean>(true);
+  sendCloseReport: boolean;
+  sendDiffWarning: boolean;
+  remindOpenShift: boolean;
+  shiftOverRule: boolean;
+
+  receiver: string;
+  channel: string;
+};
+
+type Props = {
+  value: RulesSettings;
+  onChange: (next: RulesSettings) => void;
+};
+
+export default function ShiftRulesNotifyTab(props: Props) {
+  const { value, onChange } = props;
 
   const receiverOptions = [
     { label: "Quản lý cửa hàng (tất cả)", value: "all_manager" },
@@ -29,19 +41,21 @@ export default function ShiftRulesNotifyTab() {
     { label: "Zalo OA", value: "zalo" },
   ];
 
-  const [receiver, setReceiver] = useState("all_manager");
-  const [channel, setChannel] = useState("zalo_email");
+  const set = <K extends keyof RulesSettings>(key: K, v: RulesSettings[K]) => {
+    onChange({ ...value, [key]: v });
+  };
 
   return (
     <div className="shift-rules-tab">
       <div className="rules-grid-top">
+        {/* Card 1 */}
         <div className="rule-card">
           <div className="card-head">
             <div className="icon-box icon-box--money">
               <Icon name="Dollar" />
             </div>
             <div>
-              <div className="title">Tiền mặt & Kết</div>
+              <div className="title">Tiền mặt &amp; Kết</div>
               <div className="sub">Quy tắc kiểm tra tiền đầu/cuối ca</div>
             </div>
           </div>
@@ -53,7 +67,12 @@ export default function ShiftRulesNotifyTab() {
                 <div className="desc">Cảnh báo QM khi vượt mức này</div>
               </div>
               <div className="right inline-input">
-                <input className="mini-input" type="number" value={warningDiff} onChange={(e) => setWarningDiff(Number(e.target.value || 0))} />
+                <input
+                  className="mini-input"
+                  type="number"
+                  value={value.warningDiff}
+                  onChange={(e) => set("warningDiff", Number(e.target.value || 0))}
+                />
                 <span className="unit">nghìn VNĐ</span>
               </div>
             </div>
@@ -66,7 +85,7 @@ export default function ShiftRulesNotifyTab() {
                 <div className="desc">Khi tiền thực đếm ≠ kỳ vọng</div>
               </div>
               <div className="right">
-                <Checkbox checked={requireReason} onChange={() => setRequireReason((p) => !p)} />
+                <Checkbox checked={value.requireReason} onChange={() => set("requireReason", !value.requireReason)} />
               </div>
             </div>
 
@@ -76,7 +95,7 @@ export default function ShiftRulesNotifyTab() {
                 <div className="desc">Luôn mệnh giá khi đóng/mở ca</div>
               </div>
               <div className="right">
-                <Checkbox checked={allowDenomination} onChange={() => setAllowDenomination((p) => !p)} />
+                <Checkbox checked={value.allowDenomination} onChange={() => set("allowDenomination", !value.allowDenomination)} />
               </div>
             </div>
           </div>
@@ -100,7 +119,12 @@ export default function ShiftRulesNotifyTab() {
                 <div className="desc">Cảnh báo khi ca vượt giới hạn</div>
               </div>
               <div className="right inline-input">
-                <input className="mini-input" type="number" value={maxOpenHours} onChange={(e) => setMaxOpenHours(Number(e.target.value || 0))} />
+                <input
+                  className="mini-input"
+                  type="number"
+                  value={value.maxOpenHours}
+                  onChange={(e) => set("maxOpenHours", Number(e.target.value || 0))}
+                />
                 <span className="unit">tiếng</span>
               </div>
             </div>
@@ -113,7 +137,7 @@ export default function ShiftRulesNotifyTab() {
                 <div className="desc">Dựa trên số tối thiểu đã cài</div>
               </div>
               <div className="right">
-                <Checkbox checked={blockIfMissingStaff} onChange={() => setBlockIfMissingStaff((p) => !p)} />
+                <Checkbox checked={value.blockIfMissingStaff} onChange={() => set("blockIfMissingStaff", !value.blockIfMissingStaff)} />
               </div>
             </div>
 
@@ -123,7 +147,7 @@ export default function ShiftRulesNotifyTab() {
                 <div className="desc">Quản lý phê duyệt trước khi đóng</div>
               </div>
               <div className="right">
-                <Checkbox checked={managerConfirmClose} onChange={() => setManagerConfirmClose((p) => !p)} />
+                <Checkbox checked={value.managerConfirmClose} onChange={() => set("managerConfirmClose", !value.managerConfirmClose)} />
               </div>
             </div>
           </div>
@@ -154,7 +178,7 @@ export default function ShiftRulesNotifyTab() {
                 <div className="desc">Gửi PDF sau khi đóng ca</div>
               </div>
               <div className="right">
-                <Checkbox checked={sendCloseReport} onChange={() => setSendCloseReport((p) => !p)} />
+                <Checkbox checked={value.sendCloseReport} onChange={() => set("sendCloseReport", !value.sendCloseReport)} />
               </div>
             </div>
 
@@ -169,7 +193,7 @@ export default function ShiftRulesNotifyTab() {
                 <div className="desc">15 phút trước giờ ca</div>
               </div>
               <div className="right">
-                <Checkbox checked={remindOpenShift} onChange={() => setRemindOpenShift((p) => !p)} />
+                <Checkbox checked={value.remindOpenShift} onChange={() => set("remindOpenShift", !value.remindOpenShift)} />
               </div>
             </div>
 
@@ -184,7 +208,7 @@ export default function ShiftRulesNotifyTab() {
                 <div className="desc">Khi vượt ngưỡng đã cài</div>
               </div>
               <div className="right">
-                <Checkbox checked={sendDiffWarning} onChange={() => setSendDiffWarning((p) => !p)} />
+                <Checkbox checked={value.sendDiffWarning} onChange={() => set("sendDiffWarning", !value.sendDiffWarning)} />
               </div>
             </div>
 
@@ -199,7 +223,7 @@ export default function ShiftRulesNotifyTab() {
                 <div className="desc">Cảnh báo khi bất thường</div>
               </div>
               <div className="right">
-                <Checkbox checked={shiftOverRule} onChange={() => setShiftOverRule((p) => !p)} />
+                <Checkbox checked={value.shiftOverRule} onChange={() => set("shiftOverRule", !value.shiftOverRule)} />
               </div>
             </div>
           </div>
@@ -209,11 +233,11 @@ export default function ShiftRulesNotifyTab() {
           <div className="send-row">
             <div className="send-label">Gửi đến</div>
             <div className="send-select">
-              <SelectCustom options={receiverOptions} value={receiver} onChange={(e: any) => setReceiver(e?.value)} />
+              <SelectCustom options={receiverOptions} value={value.receiver} onChange={(e: any) => set("receiver", e?.value)} />
             </div>
             <div className="send-label small">qua</div>
             <div className="send-select small">
-              <SelectCustom options={channelOptions} value={channel} onChange={(e: any) => setChannel(e?.value)} />
+              <SelectCustom options={channelOptions} value={value.channel} onChange={(e: any) => set("channel", e?.value)} />
             </div>
           </div>
         </div>
