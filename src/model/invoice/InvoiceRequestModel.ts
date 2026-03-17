@@ -71,6 +71,40 @@ export interface IInvoiceCreateRequest {
   moneyUsed?: number;
 }
 
+export interface IShipmentCreatePayload {
+  internalOrderId: string;
+  carrierCode: string;
+  sender: {
+    name: string;
+    phone: string;
+    email: string;
+    address: string;
+    ward: string;
+    district: string;
+    province: string;
+  };
+  receiver: {
+    name: string;
+    phone: string;
+    email: string;
+    address: string;
+    ward: string;
+    district: string;
+    province: string;
+  };
+  parcel: {
+    weightGram: number;
+    lengthCm: number;
+    widthCm: number;
+    heightCm: number;
+  };
+  codAmount: number;
+  declaredValue: number;
+  shippingFeeBearer: "RECEIVER" | "SENDER";
+  items: { name: string; quantity: number; weightGram: number; price: number }[];
+  note: string;
+}
+
 export interface ITemporarilyInvoiceRequest {
   id: number;
 }

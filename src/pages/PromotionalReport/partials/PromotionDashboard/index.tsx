@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import Highcharts, { Options, TooltipFormatterContextObject } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
 // ================================================================
 // 🔷 TYPE DEFINITIONS
@@ -393,7 +394,8 @@ const SectionHeader: React.FC<{ title: string; desc: string }> = ({ title, desc 
 // 🔷 MAIN DASHBOARD
 // ================================================================
 
-const PromotionDashboard: React.FC = () => {
+const PromotionDashboard = (props: any) => {
+  const { onBackProps } = props;
   const [activeTab, setActiveTab] = useState<"overview" | "detail">("overview");
 
   const kpis: KpiCardProps[] = useMemo(
@@ -463,149 +465,157 @@ const PromotionDashboard: React.FC = () => {
   );
 
   return (
-    <div style={{ background: "#f1f5f9", minHeight: "100vh", padding: "24px", fontFamily: "'Segoe UI', Arial, sans-serif" }}>
-      {/* ── HEADER ── */}
-      <div
-        style={{
-          background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%)",
-          borderRadius: "16px",
-          padding: "24px 28px",
-          marginBottom: "24px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "12px",
-        }}
-      >
-        <div>
-          <h1 style={{ margin: 0, fontSize: "22px", fontWeight: "900", color: "#fff" }}>🎯 Báo cáo chiến dịch khuyến mãi</h1>
-          <p style={{ margin: "6px 0 0", fontSize: "13px", color: "#94a3b8" }}>
-            Chiến dịch: <b style={{ color: "#fbbf24" }}>Chương trình khuyến mãi Tết Bính Ngọ 2026</b> &nbsp;|&nbsp; 📅 01/03/2026 – 30/03/2026
-            &nbsp;|&nbsp; 30 ngày
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: "8px" }}>
-          {(["overview", "detail"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{
-                padding: "8px 18px",
-                borderRadius: "8px",
-                border: "none",
-                cursor: "pointer",
-                fontSize: "13px",
-                fontWeight: "600",
-                background: activeTab === tab ? "#6366f1" : "rgba(255,255,255,0.1)",
-                color: activeTab === tab ? "#fff" : "#94a3b8",
-                transition: "all 0.2s",
-              }}
-            >
-              {tab === "overview" ? "📊 Tổng quan" : "📋 Chi tiết"}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── KPI CARDS ── */}
-      <div style={{ display: "flex", gap: "14px", flexWrap: "wrap", marginBottom: "24px" }}>
-        {kpis.map((kpi) => (
-          <KpiCard key={kpi.label} {...kpi} />
-        ))}
-      </div>
-
-      {activeTab === "overview" && (
-        <>
-          {/* ── CHART 1: Revenue ── */}
-          <div style={{ background: "#fff", borderRadius: "14px", padding: "20px", marginBottom: "20px", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
-            <HighchartsReact highcharts={Highcharts} options={revenueChartOptions()} />
+    <div>
+      <HeaderTabMenu
+        title="Báo cáo khuyến mãi"
+        titleBack="Khuyến mãi"
+        // titleActions={titleActions}
+        onBackProps={onBackProps}
+      />
+      <div style={{ background: "#f1f5f9", minHeight: "100vh", padding: "24px", fontFamily: "'Segoe UI', Arial, sans-serif" }}>
+        {/* ── HEADER ── */}
+        <div
+          style={{
+            background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%)",
+            borderRadius: "16px",
+            padding: "24px 28px",
+            marginBottom: "24px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "12px",
+          }}
+        >
+          <div>
+            <h1 style={{ margin: 0, fontSize: "22px", fontWeight: "900", color: "#fff" }}>🎯 Báo cáo chiến dịch khuyến mãi</h1>
+            <p style={{ margin: "6px 0 0", fontSize: "13px", color: "#94a3b8" }}>
+              Chiến dịch: <b style={{ color: "#fbbf24" }}>Chương trình khuyến mãi Tết Bính Ngọ 2026</b> &nbsp;|&nbsp; 📅 01/03/2026 – 30/03/2026
+              &nbsp;|&nbsp; 30 ngày
+            </p>
           </div>
-
-          {/* ── CHART 2 + 3: 2 cột ── */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "20px" }}>
-            <div style={{ background: "#fff", borderRadius: "14px", padding: "20px", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
-              <HighchartsReact highcharts={Highcharts} options={transactionChartOptions()} />
-            </div>
-            <div style={{ background: "#fff", borderRadius: "14px", padding: "20px", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
-              <HighchartsReact highcharts={Highcharts} options={conversionChartOptions()} />
-            </div>
-          </div>
-
-          {/* ── SUMMARY INSIGHT ── */}
-          <div
-            style={{
-              background: "linear-gradient(135deg, #1a1a2e, #0f3460)",
-              borderRadius: "14px",
-              padding: "20px 24px",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "16px",
-            }}
-          >
-            {[
-              { label: "🔥 Ngày doanh thu cao nhất", value: `${peakDay.date} — $${peakDay.revenue.toLocaleString()}` },
-              { label: "📈 Tăng trưởng doanh thu", value: `+${revenueGrowth}% so với baseline` },
-              { label: "💸 Tổng chi phí quảng cáo", value: `$${totalAdSpend.toLocaleString()}` },
-              { label: "🏆 ROI chiến dịch", value: `${roi}%` },
-            ].map((item) => (
-              <div key={item.label}>
-                <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 600, marginBottom: "4px" }}>{item.label}</div>
-                <div style={{ fontSize: "16px", fontWeight: "800", color: "#fbbf24" }}>{item.value}</div>
-              </div>
+          <div style={{ display: "flex", gap: "8px" }}>
+            {(["overview", "detail"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                style={{
+                  padding: "8px 18px",
+                  borderRadius: "8px",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  background: activeTab === tab ? "#6366f1" : "rgba(255,255,255,0.1)",
+                  color: activeTab === tab ? "#fff" : "#94a3b8",
+                  transition: "all 0.2s",
+                }}
+              >
+                {tab === "overview" ? "📊 Tổng quan" : "📋 Chi tiết"}
+              </button>
             ))}
           </div>
-        </>
-      )}
-
-      {activeTab === "detail" && (
-        <div style={{ background: "#fff", borderRadius: "14px", padding: "20px", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
-          <SectionHeader title="📋 Chi Tiết Theo Ngày" desc="Toàn bộ dữ liệu 30 ngày chiến dịch Spring Sale 2025" />
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
-              <thead>
-                <tr style={{ background: "#1a1a2e", color: "#fff" }}>
-                  {["Ngày", "💰 Doanh Thu", "📢 Chi Phí QC", "📊 ROI", "🛒 Giao Dịch", "🔼 Tăng TX", "👤 KH Mới", "🎯 Conv. Rate"].map((h) => (
-                    <th key={h} style={{ padding: "10px 12px", textAlign: "center", fontSize: "12px", whiteSpace: "nowrap" }}>
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {RAW_DATA.map((row, i) => {
-                  const dailyROI = (((row.revenue - row.adSpend) / row.adSpend) * 100).toFixed(0);
-                  const txGrowth = (((row.transactions - BASELINE_TRANSACTIONS) / BASELINE_TRANSACTIONS) * 100).toFixed(0);
-                  const isPeak = row.revenue === peakDay.revenue;
-                  const roiNum = parseFloat(dailyROI);
-                  const roiColor = roiNum > 800 ? "#10b981" : roiNum > 500 ? "#6366f1" : "#f59e0b";
-                  return (
-                    <tr
-                      key={row.date}
-                      style={{
-                        background: isPeak ? "#fffbeb" : i % 2 === 0 ? "#fff" : "#f8fafc",
-                        fontWeight: isPeak ? "700" : "400",
-                      }}
-                    >
-                      <td style={td}>
-                        {isPeak ? "🔥 " : ""}
-                        {row.date}
-                      </td>
-                      <td style={{ ...td, color: "#6366f1", fontWeight: 600 }}>${row.revenue.toLocaleString()}</td>
-                      <td style={{ ...td, color: "#f97316" }}>${row.adSpend.toLocaleString()}</td>
-                      <td style={{ ...td, color: roiColor, fontWeight: 700 }}>{dailyROI}%</td>
-                      <td style={{ ...td, color: "#60a5fa" }}>{row.transactions.toLocaleString()}</td>
-                      <td style={{ ...td, color: "#10b981" }}>+{txGrowth}%</td>
-                      <td style={{ ...td, color: "#34d399" }}>{row.newCustomers}</td>
-                      <td style={{ ...td, color: "#f97316", fontWeight: 600 }}>{row.conversionRate}%</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
         </div>
-      )}
+
+        {/* ── KPI CARDS ── */}
+        <div style={{ display: "flex", gap: "14px", flexWrap: "wrap", marginBottom: "24px" }}>
+          {kpis.map((kpi) => (
+            <KpiCard key={kpi.label} {...kpi} />
+          ))}
+        </div>
+
+        {activeTab === "overview" && (
+          <>
+            {/* ── CHART 1: Revenue ── */}
+            <div style={{ background: "#fff", borderRadius: "14px", padding: "20px", marginBottom: "20px", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+              <HighchartsReact highcharts={Highcharts} options={revenueChartOptions()} />
+            </div>
+
+            {/* ── CHART 2 + 3: 2 cột ── */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "20px" }}>
+              <div style={{ background: "#fff", borderRadius: "14px", padding: "20px", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+                <HighchartsReact highcharts={Highcharts} options={transactionChartOptions()} />
+              </div>
+              <div style={{ background: "#fff", borderRadius: "14px", padding: "20px", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+                <HighchartsReact highcharts={Highcharts} options={conversionChartOptions()} />
+              </div>
+            </div>
+
+            {/* ── SUMMARY INSIGHT ── */}
+            <div
+              style={{
+                background: "linear-gradient(135deg, #1a1a2e, #0f3460)",
+                borderRadius: "14px",
+                padding: "20px 24px",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "16px",
+              }}
+            >
+              {[
+                { label: "🔥 Ngày doanh thu cao nhất", value: `${peakDay.date} — $${peakDay.revenue.toLocaleString()}` },
+                { label: "📈 Tăng trưởng doanh thu", value: `+${revenueGrowth}% so với baseline` },
+                { label: "💸 Tổng chi phí quảng cáo", value: `$${totalAdSpend.toLocaleString()}` },
+                { label: "🏆 ROI chiến dịch", value: `${roi}%` },
+              ].map((item) => (
+                <div key={item.label}>
+                  <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 600, marginBottom: "4px" }}>{item.label}</div>
+                  <div style={{ fontSize: "16px", fontWeight: "800", color: "#fbbf24" }}>{item.value}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {activeTab === "detail" && (
+          <div style={{ background: "#fff", borderRadius: "14px", padding: "20px", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+            <SectionHeader title="📋 Chi Tiết Theo Ngày" desc="Toàn bộ dữ liệu 30 ngày chiến dịch Spring Sale 2025" />
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+                <thead>
+                  <tr style={{ background: "#1a1a2e", color: "#fff" }}>
+                    {["Ngày", "💰 Doanh Thu", "📢 Chi Phí QC", "📊 ROI", "🛒 Giao Dịch", "🔼 Tăng TX", "👤 KH Mới", "🎯 Conv. Rate"].map((h) => (
+                      <th key={h} style={{ padding: "10px 12px", textAlign: "center", fontSize: "12px", whiteSpace: "nowrap" }}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {RAW_DATA.map((row, i) => {
+                    const dailyROI = (((row.revenue - row.adSpend) / row.adSpend) * 100).toFixed(0);
+                    const txGrowth = (((row.transactions - BASELINE_TRANSACTIONS) / BASELINE_TRANSACTIONS) * 100).toFixed(0);
+                    const isPeak = row.revenue === peakDay.revenue;
+                    const roiNum = parseFloat(dailyROI);
+                    const roiColor = roiNum > 800 ? "#10b981" : roiNum > 500 ? "#6366f1" : "#f59e0b";
+                    return (
+                      <tr
+                        key={row.date}
+                        style={{
+                          background: isPeak ? "#fffbeb" : i % 2 === 0 ? "#fff" : "#f8fafc",
+                          fontWeight: isPeak ? "700" : "400",
+                        }}
+                      >
+                        <td style={td}>
+                          {isPeak ? "🔥 " : ""}
+                          {row.date}
+                        </td>
+                        <td style={{ ...td, color: "#6366f1", fontWeight: 600 }}>${row.revenue.toLocaleString()}</td>
+                        <td style={{ ...td, color: "#f97316" }}>${row.adSpend.toLocaleString()}</td>
+                        <td style={{ ...td, color: roiColor, fontWeight: 700 }}>{dailyROI}%</td>
+                        <td style={{ ...td, color: "#60a5fa" }}>{row.transactions.toLocaleString()}</td>
+                        <td style={{ ...td, color: "#10b981" }}>+{txGrowth}%</td>
+                        <td style={{ ...td, color: "#34d399" }}>{row.newCustomers}</td>
+                        <td style={{ ...td, color: "#f97316", fontWeight: 600 }}>{row.conversionRate}%</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

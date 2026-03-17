@@ -19,19 +19,17 @@ import TicketService from "services/TicketService";
 import AddTicketModal from "./partials/AddEditTicketModal/AddTicketModal";
 import TableTicket from "./partials/TableTicket/TableTicket";
 import AddTransferVotes from "pages/Common/AddTransferVotes";
-
 import "tippy.js/animations/scale.css";
 import "./TicketList.scss";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function TicketList() {
+export default function TicketList(props) {
   document.title = "Tiếp nhận hỗ trợ";
 
   const isMounted = useRef(false);
-
+  const { onBackProps } = props;
   const navigate = useNavigate();
-
   const { isCollapsedSidebar, setIsCollapsedSidebar } = useContext(UserContext) as ContextType;
-
   const [searchParams, setSearchParams] = useSearchParams();
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [listTicket, setListTicket] = useState<ITicketResponseModel[]>([]);
@@ -565,7 +563,13 @@ export default function TicketList() {
 
   return (
     <div className={`page-content page-ticket${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Tiếp nhận hỗ trợ" titleActions={titleActions} />
+      <HeaderTabMenu
+        title="Tiếp nhận hỗ trợ"
+        titleBack="Chăm sóc khách hàng"
+        onBackProps={onBackProps}
+        titleActions={titleActions}
+      />
+      {/* <TitleAction title="Tiếp nhận hỗ trợ" titleActions={titleActions} /> */}
       <div className="card-box d-flex flex-column">
         <div className={`${isRegimeKanban ? "d-none" : ""}`}>
           <div className="option-improve">

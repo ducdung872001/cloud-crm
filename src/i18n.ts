@@ -153,10 +153,10 @@ i18n.use(initReactI18next).init({
           settingPartner: "Setting partner",
           settingContact: "Setting contact",
           loyaltyPointLedger: "Loyalty point ledger",
-          loyaltyWallet: "Loyalty wallet",
+          memberList: "Member list",
           settingLoyalty: "Setting loyalty",
           settingSales: "Setting sales",
-          settingMarketing: "Setting Marketing",
+          multiChannelCommunication: "Multi Channel Communication",
           settingContract: "Setting contract",
           settingProcess: "Setting process",
           settingQuoteForm: "Setting quote form",
@@ -190,6 +190,7 @@ i18n.use(initReactI18next).init({
           viettelIntegration: "Viettel integration",
           shiftManagement: "Shift management",
           shiftConfig: "Shift configuration",
+          payment_mgt: "Payment management",
         },
         pageDashboard: {
           title: "Dashboard",
@@ -281,6 +282,7 @@ i18n.use(initReactI18next).init({
           customerList: "Khách hàng & NCC",
           partnerProfile: "Nhà cung cấp",
           customerSegments: "Phân khúc & Nhãn",
+          customerAnalysis: "Phân tích khách hàng",
 
           quote: "Báo giá",
           // đoạn này là children của báo giá
@@ -314,7 +316,7 @@ i18n.use(initReactI18next).init({
           selling: "Bán hàng & Đơn hàng",
           promotionMarketing: "Khuyến mãi",
           promotionalReport: "Báo cáo khuyến mãi",
-          promotionalProgram: "Chương trình khuyến mãi",
+          promotionalProgram: "Khuyến mãi",
           opportunity: "Cơ hội bán hàng",
           // đoạn này là children của bán hàng
           createSalesOrder: "Bán hàng tại quầy", //Tạo đơn bán hàng
@@ -334,6 +336,7 @@ i18n.use(initReactI18next).init({
           customerCare: "Chăm sóc khách hàng",
           // đoạn này là children của chăm sóc khách hàng
           customerServiceHotline: "Tổng đài CSKH",
+          marketingCampaign: "Chiến dịch marketing",
           receiveWarranty: "Tiếp nhận bảo hành",
           receiveWarrantyProcess: "Tiếp nhận bảo hành theo quy trình",
           receiveTicket: "Tiếp nhận hỗ trợ",
@@ -405,10 +408,10 @@ i18n.use(initReactI18next).init({
           settingPartner: "Cài đặt đối tác",
           settingContact: "Cài đặt người liên hệ",
           loyaltyPointLedger: "Nhật ký điểm hội viên",
-          loyaltyWallet: "Danh sách hội viên",
-          settingLoyalty: "Cài đặt hệ thống tích điểm",
+          memberList: "Khách hàng thành viên",
+          settingLoyalty:"Cài đặt hệ thống tích điểm",
           settingSales: "Danh mục sản phẩm",
-          settingMarketing: "Truyền thông đa kênh", //SMS/Zalo/Email/...
+          multiChannelCommunication: "Truyền thông đa kênh", //SMS/Zalo/Email/...
           settingContract: "Cài đặt hợp đồng",
           settingEform: "Cài đặt biểu mẫu",
           settingProcess: "Cài đặt quy trình",
@@ -427,7 +430,7 @@ i18n.use(initReactI18next).init({
           settingDashboard: "Cài đặt báo cáo",
           settingPaymentMethod: "Cài đặt phương thức thanh toán",
           dashboardShipping: "Báo cáo vận chuyển",
-          dashboardLoyalty: "Tích điểm Loyalty",
+          loyaltyPoints: "Tích điểm Loyalty",
           settingApplication: "Cài đặt tích hợp",
           resourceManagement: "Quản trị tài nguyên",
           organizationalManagement: "Quản lý đại lý",
@@ -440,6 +443,7 @@ i18n.use(initReactI18next).init({
           viettelIntegration: "Tích hợp Viettel",
           shiftManagement: "Quản lý ca làm việc",
           shiftConfig: "Cài đặt ca làm việc",
+          payment_mgt: "Phương thức thanh toán",
         },
         pageDashboard: {
           title: "Bảng điều khiển",

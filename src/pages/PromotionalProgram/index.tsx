@@ -19,12 +19,12 @@ import { getPageOffset } from "reborn-util";
 
 import "./index.scss";
 import AddPromotionalModal from "./partials/AddPromotionalModal";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function PromotionalProgram() {
+export default function PromotionalProgram(props: any) {
   document.title = "Danh mục chương trình khuyến mãi";
 
-  //   const { onBackProps } = props;
-
+  const { onBackProps } = props;
   const isMounted = useRef(false);
 
   const [listCategoryService, setListCategoryService] = useState<ICategoryServiceResponseModel[]>([]);
@@ -285,9 +285,15 @@ export default function PromotionalProgram() {
 
   return (
     <div className={`page-content page-promotional-program${isNoItem ? " bg-white" : ""}`}>
-      <div className="action-navigation">
+      <HeaderTabMenu
+        title="Chương trình khuyến mãi"
+        titleBack="Khuyến mãi"
+        titleActions={titleActions}
+        onBackProps={onBackProps}
+      />
+      {/* <div className="action-navigation">
         <TitleAction title="Quản lý chương trình khuyến mãi" titleActions={titleActions} />
-      </div>
+      </div> */}
 
       <div className="card-box d-flex flex-column">
         <SearchBox
