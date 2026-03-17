@@ -1,0 +1,125 @@
+.orders-in-shift-tab {
+  padding: 2.4rem;
+
+  .orders-card {
+    padding: 0;
+  }
+
+  .summary-grid {
+    padding: 1.6rem 2rem 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.6rem;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+      padding: 1.6rem 1.6rem 0;
+    }
+
+    .sum-card {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 1.2rem;
+      padding: 1.6rem;
+
+      .label {
+        font-size: 1.2rem;
+        color: var(--text-extra-color);
+        font-weight: 800;
+        letter-spacing: 0.6px;
+      }
+
+      .value {
+        margin-top: 0.8rem;
+        font-size: 2.4rem;
+        font-weight: 900;
+        color: var(--text-primary-color);
+        line-height: 1.1;
+      }
+    }
+  }
+
+  .table-card {
+    margin-top: 1.6rem;
+    background: #fff;
+    border-top: 1px solid var(--border-color);
+    padding: 0 0 0.8rem;
+
+    // BoxTable default margin-top 3.2rem, trong card thì bỏ
+    .box-table {
+      margin-top: 0;
+    }
+  }
+
+  .order-code {
+    font-weight: 800;
+    color: var(--primary-color);
+  }
+
+  .link-view {
+    cursor: pointer;
+    color: var(--primary-color);
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .pill-payment {
+    &.pill-cash {
+      background: rgba(34, 197, 94, 0.12);
+      color: rgba(34, 197, 94, 1);
+    }
+    &.pill-momo {
+      background: rgba(59, 130, 246, 0.12);
+      color: rgba(59, 130, 246, 1);
+    }
+    &.pill-card {
+      background: rgba(168, 85, 247, 0.12);
+      color: rgba(168, 85, 247, 1);
+    }
+    &.pill-transfer {
+      background: rgba(245, 158, 11, 0.12);
+      color: rgba(245, 158, 11, 1);
+    }
+  }
+
+  .pill-status {
+    &.pill-done {
+      background: rgba(34, 197, 94, 0.12);
+      color: rgba(34, 197, 94, 1);
+    }
+    &.pill-processing {
+      background: rgba(245, 158, 11, 0.12);
+      color: rgba(245, 158, 11, 1);
+    }
+    &.pill-cancelled {
+      background: rgba(239, 68, 68, 0.12);
+      color: rgba(239, 68, 68, 1);
+    }
+  }
+
+  .text-success {
+    color: var(--success-color) !important;
+  }
+
+  .text-danger {
+    color: var(--error-color) !important;
+  }
+}

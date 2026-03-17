@@ -3431,6 +3431,7 @@ export const urls = {
 
   //Quản lý thanh toán
   sales_channel: "/sales_channel",
+  payment_mgt: "/payment_mgt",
 
   //Quản lý nhân viên
   shift_config: "/shift_config",

@@ -4,14 +4,15 @@ import TicketCategoryList from "./partials/TicketCategory/TicketCategoryList";
 import TicketProcList from "./partials/TicketProc/TicketProcList";
 import QRManagement from "./partials/QRManagement/QRManagement";
 import "./SettingTicketList.scss";
+import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
 export default function SettingTicketList() {
   document.title = "Cài đặt hỗ trợ";
 
   const [tab, setTab] = useState<string>("");
-  const [isDetailCategory, setIsDetailCategory] = useState<boolean>(false);
+  const [isDetail, setIsDetail] = useState<boolean>(false);
 
-  const menuCategorySMS = [
+  const listTab = [
     // {
     //   title: "Quy trình xử lý hỗ trợ",
     //   is_tab: "tab_one",
@@ -28,28 +29,18 @@ export default function SettingTicketList() {
 
   return (
     <div className="page-setting-ticket">
-      {!isDetailCategory && <TitleAction title="Cài đặt hỗ trợ" />}
-      <div className="card-box d-flex flex-column">
-        {!isDetailCategory && (
-          <ul className="menu">
-            {menuCategorySMS.map((item, idx) => {
-              return (
-                <li
-                  key={idx}
-                  className="menu__category"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setTab(item.is_tab);
-                    setIsDetailCategory(true);
-                  }}
-                >
-                  {item.title}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
+      {!isDetail && <TitleAction title="Cài đặt hỗ trợ" />}
+        <div className="d-flex flex-column">
+          {!isDetail && (
+            <TabMenuList
+              listTab={listTab}
+              onClick={(item) => {
+                  setTab(item.tab);
+                  setIsDetail(true);
+              }}
+            />
+          )}
+        </div>
       {
       // isDetailCategory && tab === "tab_one" ? (
       //   <TicketProcList
@@ -60,20 +51,20 @@ export default function SettingTicketList() {
       //     }}
       //   />
       // ) : 
-      isDetailCategory && tab === "tab_two" ? (
+      isDetail && tab === "tab_two" ? (
         <TicketCategoryList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
       ) : (
-        isDetailCategory && (
+        isDetail && (
           <QRManagement
             onBackProps={(isBack) => {
               if (isBack) {
-                setIsDetailCategory(false);
+                setIsDetail(false);
               }
             }}
           />

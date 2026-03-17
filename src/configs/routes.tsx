@@ -177,6 +177,7 @@ import MemberCustomersPage from "@/pages/MemberCustomersPage/MemberCustomersPage
 import CustomerCarePage from "@/pages/CustomerCarePage/CustomerCarePage";
 import MarketingCampaignPage from "@/pages/MarketingCampaignPage/MarketingCampaignPage";
 import CustomerAnalysisPage from "@/pages/CustomerAnalysisPage/CustomerAnalysisPage";
+import Checkout from "@/pages/Checkout/Checkout";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -263,6 +264,12 @@ export const menu: IMenuItem[] = [
         title: "endOfShiftInventory", // Kiểm kê cuối ca
         path: urls.finance_management_shift_inventory,
         icon: <Icon name="EndShiftMenu" />,
+        code: "",
+      },
+      {
+        title: "payment_mgt", // Quản lý phương thức thanh toán
+        path: urls.payment_mgt,
+        icon: <Icon name="ManageWork" />,
         code: "",
       },
       // {
@@ -1519,5 +1526,9 @@ export const routes: IRouter[] = [
   {
     path: urls.shift_management,
     component: <ShiftTabsPage />,
+  },
+  {
+    path: urls.payment_mgt,
+    component: <Checkout />,
   },
 ];
