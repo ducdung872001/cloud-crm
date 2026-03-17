@@ -171,6 +171,7 @@ import InventoryManagement from "@/pages/ProductImport/InventoryChecking";
 import CounterSales from "@/pages/CounterSales";
 import ShiftTabsPage from "@/pages/ShiftManagement/ShiftTabsPage";
 import ShiftConfigTabs from "@/pages/ShiftConfig/ShiftConfig";
+import Checkout from "@/pages/Checkout/Checkout";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -250,6 +251,12 @@ export const menu: IMenuItem[] = [
       {
         title: "shiftManagement", //Quản lý ca làm việc
         path: urls.shift_management,
+        icon: <Icon name="ManageWork" />,
+        code: "",
+      },
+      {
+        title: "payment_mgt", // Quản lý phương thức thanh toán
+        path: urls.payment_mgt,
         icon: <Icon name="ManageWork" />,
         code: "",
       },
@@ -1474,5 +1481,9 @@ export const routes: IRouter[] = [
   {
     path: urls.shift_management,
     component: <ShiftTabsPage />,
+  },
+  {
+    path: urls.payment_mgt,
+    component: <Checkout />,
   },
 ];

@@ -190,6 +190,7 @@ i18n.use(initReactI18next).init({
           viettelIntegration: "Viettel integration",
           shiftManagement: "Shift management",
           shiftConfig: "Shift configuration",
+          payment_mgt: "Payment management",
         },
         pageDashboard: {
           title: "Dashboard",
@@ -406,7 +407,7 @@ i18n.use(initReactI18next).init({
           settingContact: "Cài đặt người liên hệ",
           loyaltyPointLedger: "Nhật ký điểm hội viên",
           memberList: "Danh sách hội viên",
-          settingLoyalty:"Cài đặt hệ thống tích điểm",
+          settingLoyalty: "Cài đặt hệ thống tích điểm",
           settingSales: "Danh mục sản phẩm",
           multiChannelCommunication: "Truyền thông đa kênh", //SMS/Zalo/Email/...
           settingContract: "Cài đặt hợp đồng",
@@ -440,6 +441,7 @@ i18n.use(initReactI18next).init({
           viettelIntegration: "Tích hợp Viettel",
           shiftManagement: "Quản lý ca làm việc",
           shiftConfig: "Cài đặt ca làm việc",
+          payment_mgt: "Phương thức thanh toán",
         },
         pageDashboard: {
           title: "Bảng điều khiển",
