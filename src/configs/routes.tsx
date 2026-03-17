@@ -256,7 +256,7 @@ export const menu: IMenuItem[] = [
       },
       {
         title: "checkout",
-        path: urls.checkout,
+        path: urls.payment_mgt,
         icon: <Icon name="ManageWork" />,
         code: "",
       },
@@ -1483,7 +1483,7 @@ export const routes: IRouter[] = [
     component: <ShiftTabsPage />,
   },
   {
-    path: urls.checkout,
+    path: urls.payment_mgt,
     component: <Checkout />,
   },
 ];
