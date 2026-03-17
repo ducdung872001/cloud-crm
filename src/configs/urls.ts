@@ -401,26 +401,27 @@ export const urlsApi = {
   },
   invoice: {
     createInvoice: prefixSales + "/invoiceDetail/get",
-    list: prefixAdmin + "/invoice/list/v2",
-    create: prefixAdmin + "/invoice/create",
-    invoiceDetail: prefixAdmin + "/invoiceDetail/import",
-    cardService: prefixAdmin + "/invoiceDetail/cardService",
+    list: prefixSales + "/invoice/list/v2",
+    create: prefixSales + "/invoice/create",
+    invoiceDetail: prefixSales + "/invoiceDetail/import",
+    cardService: prefixSales + "/invoiceDetail/cardService",
     // Tạo hóa đơn bán hàng
-    invoiceDetailCustomer: prefixAdmin + "/invoiceDetail/customer",
+    invoiceDetailCustomer: prefixSales + "/invoiceDetail/customer",
     // Xem chi tiết hóa đơn
-    invoiceDetailList: prefixAdmin + "/invoiceDetail/list",
+    invoiceDetailList: prefixSales + "/invoiceDetail/list",
     // Hủy hóa đơn
-    cancelInvoice: prefixAdmin + "/invoice/delete",
+    cancelInvoice: prefixSales + "/invoice/delete",
     // vinh danh bán hàng
-    sales: prefixAdmin + "/invoice/get/sales",
+    sales: prefixSales + "/invoice/get/sales",
     // lấy danh sách thu tiền, chi tiền của khách
-    debtInvoice: prefixAdmin + "/invoice/debt",
+    debtInvoice: prefixSales + "/invoice/debt",
     // lưu tạm hóa đơn
-    temporarilyInvoice: prefixAdmin + "/invoice/update/temp",
+    temporarilyInvoice: prefixSales + "/invoice/update/temp",
     // lịch sử tiêu dùng thẻ
-    historyUseCard: prefixAdmin + "/invoice/using/card",
+    historyUseCard: prefixSales + "/invoice/using/card",
     // lấy mã hoá đơn
-    invoiceCode: prefixAdmin + "/invoice/code",
+    invoiceCode: prefixSales + "/invoice/code",
+    prefixSales,
   },
   shipping: {
     create: prefixAdmin + "/shipping/create",

@@ -70,7 +70,7 @@ export default function PayModal({ open, cartItems, onClose, onConfirm, invoiceI
             callback: onClose,
           },
           {
-            title: "✅ Xác nhận thanh toán & In biên lai",
+            title: "✅ Tạo hoá đơn",
             color: "primary",
             callback: () => onConfirm(invoiceId),
           },

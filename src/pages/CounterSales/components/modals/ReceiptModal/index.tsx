@@ -1,16 +1,22 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { CartItem } from "../../../types";
 import { IActionModal } from "model/OtherModel";
 import "./index.scss";
+import InvoiceService from "@/services/InvoiceService";
+import { showToast } from "@/utils/common";
 
 interface ReceiptModalProps {
   open: boolean;
   cartItems: CartItem[];
   onClose: () => void;
+  customerId: number | string;
+  invoiceId: number | string;
+  invoiceDraft: any;
 }
 
-export default function ReceiptModal({ open, cartItems, onClose }: ReceiptModalProps) {
+export default function ReceiptModal({ open, cartItems, onClose, customerId, invoiceId, invoiceDraft }: ReceiptModalProps) {
+  const [isPaymentProcessing, setIsPaymentProcessing] = React.useState(false);
   const total = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
   const paid = 150000;
   const change = Math.max(0, paid - total);
@@ -19,33 +25,91 @@ export default function ReceiptModal({ open, cartItems, onClose }: ReceiptModalP
   const dateStr = `${now.getDate().toString().padStart(2, "0")}/${(now.getMonth() + 1).toString().padStart(2, "0")}/${now.getFullYear()}`;
   const timeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
 
-  const actions: IActionModal = {
-    actions_right: {
-      buttons: [
-        {
-          title: "Đóng",
-          color: "primary",
-          variant: "outline",
-          callback: onClose,
-        },
-        {
-          title: "📩 Gửi SMS/Zalo",
-          color: "primary",
-          variant: "outline",
-          callback: () => {},
-        },
-        {
-          title: "🖨️ In biên lai",
-          color: "primary",
-          callback: () => window.print(),
-        },
-      ],
-    },
+  const handleConfirmPay = async () => {
+    try {
+      let body: any = {
+        id: invoiceId,
+        amount: total,
+        discount: 0,
+        fee: total,
+        paid: 0,
+        debt: 0,
+        paymentType: 1,
+        vatAmount: 0,
+        receiptDate: new Date().toISOString(),
+        account: "[]",
+        amountCard: 0,
+        branchId: invoiceDraft?.branchId || -1,
+        bsnId: invoiceDraft?.bsnId || -1,
+        invoiceType: "IV1",
+        customerId: customerId,
+        campaignId: 0,
+      };
+      const res = await InvoiceService.create(body);
+      if (res.code === 0) {
+        showToast("Thanh toán thành công.", "success");
+        setIsPaymentProcessing(true);
+      } else {
+        showToast(res.message || "Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại sau.", "error");
+      }
+    } catch (error) {}
+  };
+  const handleClose = async () => {
+    onClose();
+    setIsPaymentProcessing(false);
   };
 
+  const actions: any = useMemo(() => {
+    return {
+      actions_right: {
+        buttons: [
+          {
+            title: "Đóng",
+            color: "primary",
+            variant: "outline",
+            callback: () => {
+              handleClose();
+            },
+          },
+          ...(isPaymentProcessing
+            ? [
+                {
+                  title: "✅ Đã thanh toán",
+                  color: "primary",
+                  variant: "outline",
+                  disabled: true,
+                  callback: () => {
+                    // handleConfirmPay();
+                  },
+                },
+              ]
+            : [
+                {
+                  title: "💳 Xác nhận thanh toán",
+                  color: "primary",
+                  variant: "outline",
+                  callback: () => {
+                    handleConfirmPay();
+                  },
+                },
+              ]),
+          ...(isPaymentProcessing
+            ? [
+                {
+                  title: "🖨️ In biên lai",
+                  color: "primary",
+                  callback: () => window.print(),
+                },
+              ]
+            : []),
+        ],
+      },
+    };
+  }, [isPaymentProcessing, onClose, setIsPaymentProcessing]);
+
   return (
-    <Modal isFade={true} isOpen={open} isCentered={true} staticBackdrop={true} toggle={onClose} className="receipt-modal">
-      <ModalHeader title="🧾 Biên lai thanh toán" toggle={onClose} />
+    <Modal isFade={true} isOpen={open} isCentered={true} staticBackdrop={true} toggle={handleClose} className="receipt-modal">
+      <ModalHeader title="🧾 Biên lai thanh toán" toggle={handleClose} />
 
       <ModalBody>
         <div className="receipt">

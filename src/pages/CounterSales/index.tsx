@@ -35,6 +35,7 @@ const CounterSales: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>("pos");
   const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
   const [invoiceId, setInvoiceId] = useState<number | null>(null);
+  const [invoiceDraftToPaid, setInvoiceDraftToPaid] = useState<any>(null);
 
   // Modal states
   const [payModalOpen, setPayModalOpen] = useState(false);
@@ -91,7 +92,7 @@ const CounterSales: React.FC = () => {
         if (paidInvoice.code == 0) {
           setPayModalOpen(false);
           setReceiptModalOpen(true);
-          showToast("Thanh toán thành công.", "success");
+          showToast("Tạo hoá đơn thành công.", "success");
         } else {
           showToast(paidInvoice.message || "Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại sau.", "error");
         }
@@ -130,6 +131,7 @@ const CounterSales: React.FC = () => {
                 items={cartItems}
                 onChangeQty={handleChangeQty}
                 onRemove={handleRemove}
+                setInvoiceDraftToPaid={setInvoiceDraftToPaid}
                 onPay={(invoiceId) => {
                   setInvoiceId(invoiceId);
                   setPayModalOpen(true);
@@ -171,11 +173,15 @@ const CounterSales: React.FC = () => {
       <ReceiptModal
         open={receiptModalOpen}
         cartItems={cartItems}
+        customerId={customer?.id ?? -1}
+        invoiceId={invoiceId ?? -1}
+        invoiceDraft={invoiceDraftToPaid}
         onClose={() => {
           setCartItems([]);
           setCustomer(null);
           setInvoiceId(null);
           setReceiptModalOpen(false);
+          setInvoiceDraftToPaid(null);
         }}
       />
 

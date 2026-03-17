@@ -105,7 +105,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
             className={`pg-card${prod.lowStock ? " pg-card--low" : ""}`}
             onClick={() => {
               // handleAddToCart(prod)
-              handleOpenVariant;
+              handleOpenVariant(prod);
             }}
           >
             <div className="pg-card__icon">

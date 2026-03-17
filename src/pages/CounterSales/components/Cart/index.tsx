@@ -20,9 +20,10 @@ interface CartProps {
   onPay: (invoiceId: number) => void;
   onSelectCustomer: () => void;
   customer?: Customer;
+  setInvoiceDraftToPaid: (invoice) => void;
 }
 
-const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSelectCustomer, customer }) => {
+const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSelectCustomer, customer, setInvoiceDraftToPaid }) => {
   const [orderType, setOrderType] = useState<OrderType>("retail");
   const [voucher, setVoucher] = useState("");
 
@@ -44,9 +45,9 @@ const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSele
       const invoice = await InvoiceService.createInvoice({
         customerId: customer?.id ?? -1,
       });
-      console.log("invoice", invoice);
       if (invoice.code === 0 && invoice?.result?.invoiceId) {
         let invoiceId = invoice.result.invoiceId;
+        setInvoiceDraftToPaid(invoice.result.invoice);
         onPay(invoiceId);
       } else {
         console.error("Tạo hóa đơn thất bại", invoice);
