@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import TitleAction from "components/titleAction/titleAction";
 import "./CustomerAnalysisPage.scss";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
+import CustomerChurn from "@/pages/CustomerChurn/index";
 
 export default function CustomerAnalysisPage() {
   document.title = "Phân tích khách hàng";
@@ -43,16 +44,16 @@ export default function CustomerAnalysisPage() {
         )}
       </div>
 
-      {/* {isDetail && tab === 1 ? (
-        <SMSMarkettingList
+      {isDetail && tab === 3 ? (
+        <CustomerChurn
           onBackProps={(isBack) => {
             if (isBack) {
               setIsDetail(false);
             }
           }}
         />
-      ) : null} */}
-
+      ) : null}
+      
     </div>
   );
 }
