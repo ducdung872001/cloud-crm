@@ -10,6 +10,7 @@ interface TopbarProps {
 
 const tabs: { id: TabType; label: string; badge?: number }[] = [
   { id: "pos", label: "🛒 Bán hàng (POS)" },
+  { id: "draft", label: "📋 Đơn tạm", badge: 5 },
   { id: "orders", label: "📋 Đơn hàng", badge: 8 },
   { id: "report", label: "📊 Báo cáo" },
 ];

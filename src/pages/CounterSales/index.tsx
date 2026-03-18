@@ -1,13 +1,6 @@
 import React, { useState, useCallback } from "react";
 import "./index.scss";
 
-// import PayModal from "../../components/modals/PayModal";
-// import ReceiptModal from "../../components/modals/ReceiptModal";
-// import OrderDetailModal from "../../components/modals/OrderDetailModal";
-// import QrScanModal from "../../components/modals/QrScanModal";
-// import SyncModal from "../../components/modals/SyncModal";
-// import CustomerModal from "../../components/modals/CustomerModal";
-
 import Sidebar from "@/components/sidebar/sidebar";
 import Topbar from "./components/Topbar";
 import ProductGrid from "./components/ProductGrid";
@@ -25,12 +18,9 @@ import BoughtProductService from "@/services/BoughtProductService";
 import { showToast } from "@/utils/common";
 import AddCustomerPersonModal from "../CustomerPerson/partials/AddCustomerPersonModal";
 import QrCodeProService from "@/services/QrCodeProService";
+import DraftOrders from "./components/DraftOrders";
 
-const INITIAL_CART: CartItem[] = [
-  // { id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, unit: "hộp", qty: 2 },
-  // { id: "3", icon: "🍜", name: "Mì Hảo Hảo Tôm Chua Cay", priceLabel: "4,500 ₫", price: 4500, unit: "gói", qty: 5 },
-  // { id: "2", icon: "🥤", name: "Pepsi 330ml", priceLabel: "12,000 ₫", price: 12000, unit: "lon", qty: 3 },
-];
+const INITIAL_CART: CartItem[] = [];
 
 const CounterSales: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>("pos");
@@ -53,27 +43,18 @@ const CounterSales: React.FC = () => {
 
   // Cart actions
   const handleAddToCart = useCallback((item: Omit<CartItem, "qty"> & { qty: number }) => {
-    console.log("item to add", item);
-
     setCartItems((prev) => {
       const existing = prev.find((c) => c.variantId === item.variantId);
-      if (existing) {
-        return prev.map((c) => (c.variantId === item.variantId ? { ...c, qty: c.qty + item.qty } : c));
-      }
+      if (existing) return prev.map((c) => (c.variantId === item.variantId ? { ...c, qty: c.qty + item.qty } : c));
       return [...prev, { ...item, qty: item.qty }];
     });
   }, []);
 
   const handleChangeQty = useCallback((id: string, delta: number) => {
-    setCartItems((prev) => {
-      const updated = prev.map((c) => (c.id === id ? { ...c, qty: c.qty + delta } : c));
-      return updated.filter((c) => c.qty > 0);
-    });
+    setCartItems((prev) => prev.map((c) => (c.id === id ? { ...c, qty: c.qty + delta } : c)).filter((c) => c.qty > 0));
   }, []);
 
-  const handleRemove = useCallback((id: string) => {
-    setCartItems((prev) => prev.filter((c) => c.id !== id));
-  }, []);
+  const handleRemove = useCallback((id: string) => setCartItems((prev) => prev.filter((c) => c.id !== id)), []);
 
   // Payment flow
   const handlePayConfirm = async (invoiceId: number | null) => {
@@ -89,9 +70,7 @@ const CounterSales: React.FC = () => {
           avatar: item.avatar,
           unitName: item.unitName,
         }));
-        const paidInvoice = await BoughtProductService.insert(body, {
-          invoiceId: invoiceId,
-        });
+        const paidInvoice = await BoughtProductService.insert(body, { invoiceId: invoiceId });
         if (paidInvoice.code == 0) {
           if (method === "qr") {
             try {
@@ -101,7 +80,6 @@ const CounterSales: React.FC = () => {
                 amount: cartItems.reduce((s, c) => s + c.price * c.qty, 0),
               });
               if (qrCodeRes.code === 0 && qrCodeRes?.result && qrCodeRes?.result?.qrCode) {
-                console.log("qrCode", qrCodeRes.result);
                 setPayModalOpen(false);
                 setReceiptModalOpen(true);
                 showToast("Tạo hoá đơn thành công.", "success");
@@ -128,16 +106,21 @@ const CounterSales: React.FC = () => {
     }
   };
 
-  // Order list callbacks
   const handleViewReceipt = useCallback(() => setReceiptModalOpen(true), []);
   const handleViewDetail = useCallback(() => setOrderDetailModalOpen(true), []);
-  const handleConfirmOrder = useCallback(() => {
-    setOrderDetailModalOpen(false);
-  }, []);
+  const handleConfirmOrder = useCallback(() => setOrderDetailModalOpen(false), []);
 
-  // QR scan add to cart
   const handleQrAddToCart = useCallback(() => {
-    handleAddToCart({ id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, unit: "hộp", qty: 1, variantId: "1" });
+    handleAddToCart({
+      id: "1",
+      icon: "🥛",
+      name: "Sữa TH True Milk 1L",
+      priceLabel: "32,000 ₫",
+      price: 32000,
+      unit: "hộp",
+      qty: 1,
+      variantId: "1",
+    });
     setQrScanModalOpen(false);
   }, [handleAddToCart]);
 
@@ -164,6 +147,18 @@ const CounterSales: React.FC = () => {
                 }}
                 onSelectCustomer={() => setCustomerModalOpen(true)}
                 customer={customer || undefined}
+              />
+            </div>
+          )}
+
+          {/* Draft Orders Tab */}
+          {activeTab === "draft" && (
+            <div className="counter-sales__screen">
+              <DraftOrders
+                onContinue={(draftId) => {
+                  console.log("Continue draft", draftId);
+                  setActiveTab("pos");
+                }}
               />
             </div>
           )}
@@ -240,13 +235,14 @@ const CounterSales: React.FC = () => {
           setCustomerPhoneAdd(search);
         }}
       />
+
       <AddCustomerPersonModal
         onShow={customerQuickAdd}
         phoneQuickAdd={customerPhoneAdd}
         onHide={(reload) => {
           if (reload) {
             setCustomerModalOpen(false);
-            setTimeout(() => setCustomerModalOpen(true), 300); // Đóng rồi mở lại modal chọn khách để refresh danh sách khách hàng
+            setTimeout(() => setCustomerModalOpen(true), 300);
           }
           setCustomerQuickAdd(false);
           setCustomerPhoneAdd("");
