@@ -23,6 +23,7 @@ export interface IProductResponse {
   stock?: number;
   stockWarning?: number;
   showOnWeb?: boolean;
+  showOnWebsite?: boolean | number;
   showImage?: boolean;
   showUnit?: boolean;
   showDesc?: boolean;
