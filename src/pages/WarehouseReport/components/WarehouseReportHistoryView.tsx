@@ -13,13 +13,11 @@ export default function WarehouseReportHistoryView() {
 
   return (
     <div className="warehouse-report-view">
-      <div className="page-header page-header--split">
+      {/* <div className="page-header page-header--split">
         <div>
-          <div className="page-eyebrow">Báo cáo kho</div>
-          <div className="page-title">Lịch sử theo sản phẩm</div>
         </div>
         <WarehouseReportActions secondary="⬇ Xuất Excel" />
-      </div>
+      </div> */}
       <WarehouseReportFilterBar leftLabel="Sản phẩm:" leftButtons={["Áo thun nam basic (SP001)"]} middleLabel="Kỳ:" middleButtons={["Tháng 3", "Quý 1", "6 tháng", "Cả năm"]} selects={["Tất cả kho"]} actionLabel="Xem lịch sử" />
       <div className="product-info-card">
         <div className="product-info-card__icon">👕</div>

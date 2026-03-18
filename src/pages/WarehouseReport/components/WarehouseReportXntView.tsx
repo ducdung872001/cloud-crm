@@ -13,12 +13,11 @@ export default function WarehouseReportXntView() {
 
   return (
     <div className="warehouse-report-view">
-      <div className="page-header page-header--split">
+      {/* <div className="page-header page-header--split">
         <div>
-
         </div>
         <WarehouseReportActions secondary="⬇ Xuất Excel" primary="🖨 In báo cáo" />
-      </div>
+      </div> */}
       <WarehouseReportFilterBar leftLabel="Kỳ:" leftButtons={["Tháng 3/2026", "Quý 1/2026", "Tùy chỉnh"]} selects={["Tất cả kho", "Tất cả nhóm"]} actionLabel="Xem báo cáo" />
       <WarehouseReportKpis items={XNT_KPIS} />
       <div className="chart-row">
