@@ -117,6 +117,26 @@ export default function MultiChannelOrders() {
     },
   });
 
+  //   CONFIRMED, // Xác nhận
+  // SHIPPING,   // Đang giao
+  // COMPLETED,      // Đã hoàn thành
+  // CANCELED; // Hủy
+  const handleConfirm = async (item: any) => {
+    console.log("item>>>>", item);
+
+    await OrderRequestService.updateStatus({
+      status: "CONFIRMED",
+      id: item.id,
+    }).then((res) => {
+      if (res.code === 0) {
+        showToast("Xác nhận đơn hàng thành công", "success");
+        fetchData(params);
+      } else {
+        showToast(res.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      }
+    });
+  };
+
   const titles = ["Mã đơn", "Kênh", "Khách hàng", "Sản phẩm", "Giá trị", "Trạng thái", "Thời gian", ""];
   const dataFormat = ["", "", "t", "", "", "text-center", ""];
 
@@ -212,7 +232,14 @@ export default function MultiChannelOrders() {
             borderRadius: "10px",
           }}
         >
-          <span style={{ fontSize: 12, fontWeight: "500", color: "white" }}>Xác nhận</span>
+          <span
+            style={{ fontSize: 12, fontWeight: "500", color: "white" }}
+            onClick={() => {
+              handleConfirm(item);
+            }}
+          >
+            Xác nhận
+          </span>
         </div>
       ) : null}
 

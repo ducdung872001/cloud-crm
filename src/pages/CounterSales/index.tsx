@@ -14,7 +14,7 @@ import ProductGrid from "./components/ProductGrid";
 import Cart from "./components/Cart";
 import OrderList from "./components/OrderList";
 import Report from "./components/Report";
-import { CartItem, Customer, TabType } from "./types";
+import { CartItem, Customer, PayMethod, TabType } from "./types";
 import OrderDetailModal from "./components/modals/OrderDetailModal";
 import PayModal from "./components/modals/PayModal";
 import ReceiptModal from "./components/modals/ReceiptModal";
@@ -24,6 +24,7 @@ import CustomerModal from "./components/modals/CustomerModal";
 import BoughtProductService from "@/services/BoughtProductService";
 import { showToast } from "@/utils/common";
 import AddCustomerPersonModal from "../CustomerPerson/partials/AddCustomerPersonModal";
+import QrCodeProService from "@/services/QrCodeProService";
 
 const INITIAL_CART: CartItem[] = [
   // { id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, unit: "hộp", qty: 2 },
@@ -36,6 +37,8 @@ const CounterSales: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
   const [invoiceId, setInvoiceId] = useState<number | null>(null);
   const [invoiceDraftToPaid, setInvoiceDraftToPaid] = useState<any>(null);
+  const [method, setMethod] = useState<PayMethod>("cash");
+  const [qrCodePro, setQrCodePro] = useState<string | null>(null);
 
   // Modal states
   const [payModalOpen, setPayModalOpen] = useState(false);
@@ -90,9 +93,32 @@ const CounterSales: React.FC = () => {
           invoiceId: invoiceId,
         });
         if (paidInvoice.code == 0) {
-          setPayModalOpen(false);
-          setReceiptModalOpen(true);
-          showToast("Tạo hoá đơn thành công.", "success");
+          if (method === "qr") {
+            try {
+              const qrCodeRes = await QrCodeProService.generate({
+                content: "DON HANG " + invoiceId,
+                orderId: invoiceId,
+                amount: cartItems.reduce((s, c) => s + c.price * c.qty, 0),
+              });
+              if (qrCodeRes.code === 0 && qrCodeRes?.result && qrCodeRes?.result?.qrCode) {
+                console.log("qrCode", qrCodeRes.result);
+                setPayModalOpen(false);
+                setReceiptModalOpen(true);
+                showToast("Tạo hoá đơn thành công.", "success");
+                setQrCodePro(qrCodeRes.result.qrCode);
+              } else {
+                showToast(qrCodeRes.message || "Có lỗi xảy ra khi tạo QR Code Pro. Vui lòng thử lại sau.", "error");
+              }
+            } catch (error) {
+              showToast("Có lỗi xảy ra khi tạo QR Code Pro. Vui lòng thử lại sau.", "error");
+            }
+          } else {
+            setPayModalOpen(false);
+            setReceiptModalOpen(true);
+            showToast("Tạo hoá đơn thành công.", "success");
+            setQrCodePro(null);
+            setMethod("cash");
+          }
         } else {
           showToast(paidInvoice.message || "Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại sau.", "error");
         }
@@ -163,6 +189,8 @@ const CounterSales: React.FC = () => {
         open={payModalOpen}
         cartItems={cartItems}
         invoiceId={invoiceId}
+        method={method}
+        setMethod={setMethod}
         onClose={() => {
           setInvoiceId(null);
           setPayModalOpen(false);
@@ -176,12 +204,16 @@ const CounterSales: React.FC = () => {
         customerId={customer?.id ?? -1}
         invoiceId={invoiceId ?? -1}
         invoiceDraft={invoiceDraftToPaid}
+        method={method}
+        qrCodePro={qrCodePro}
         onClose={() => {
           setCartItems([]);
           setCustomer(null);
           setInvoiceId(null);
           setReceiptModalOpen(false);
           setInvoiceDraftToPaid(null);
+          setQrCodePro(null);
+          setMethod("cash");
         }}
       />
 

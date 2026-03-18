@@ -20,14 +20,17 @@ export default function SettingLoyalty() {
     {
       title: "Cài đặt chương trình khách hàng thân thiết",
       is_tab: "tab_one",
+      des: "Thiết lập quy tắc tích điểm và ưu đãi cho chương trình loyalty"
     },
     {
       title: "Danh sách phần thưởng",
       is_tab: "tab_two",
+      des: "Quản lý các phần thưởng, quà tặng và voucher dùng để đổi điểm cho hội viên"
     },
     {
       title: "Cài đặt hạng hội viên",
       is_tab: "tab_three",
+      des: "Định nghĩa các hạng thành viên, ngưỡng điểm thăng hạng và quyền lợi tương ứng"
     },
   ];
 

@@ -17,26 +17,31 @@ export default function MarketingCampaignPage() {
       title: "SMS Marketing",
       icon: "SmsMenu",
       tab: 1,
+      des: "Gửi tin nhắn SMS hàng loạt đến khách hàng theo danh sách hoặc phân khúc"
     },
 
     {
       title: "Zalo / OTT",
       icon: "ZaloMenu",
       tab: 2,
+      des: "Gửi tin nhắn Zalo OA, chăm sóc khách hàng qua các nền tảng OTT phổ biến"
     },
     {
       title: "Email Marketing",
       icon: "EmailMenu",
       tab: 3,
+      des: "Tạo và gửi chiến dịch email chuyên nghiệp, theo dõi tỷ lệ mở và click"
     },
     {
       title: "Thông báo qua App",
       icon: "BellMenu",
       tab: 4,
+      des: "Gửi push notification đến ứng dụng di động, tiếp cận khách hàng trực tiếp"
     },
     {
       title: "Lịch sử chiến dịch",
       tab: 5,
+      des: "Xem lại toàn bộ chiến dịch đã chạy, thống kê hiệu quả và kết quả từng đợt"
     },
   ];
 

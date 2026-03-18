@@ -16,22 +16,26 @@ export default function PromotionPage() {
       title: "Chương trình khuyến mãi",
       icon: "PromotionMenu",
       tab: 1,
+      des: "Quản lý các chương trình giảm giá theo thời gian, sản phẩm, nhóm khách hàng"
     },
 
     {
       title: "Mã giảm giá",
       icon: "ProcessConfigMenu",
       tab: 2,
+      des: "Tạo mã coupon áp dụng trực tiếp khi thanh toán tại quầy hoặc đơn hàng online"
     },
     {
       title: "Combo khuyến mãi",
       icon: "LoyaltyMenu",
       tab: 3,
+      des: "Thiết lập các gói sản phẩm bán kèm với giá ưu đãi để tăng giá trị đơn hàng"
     },
     {
       title: "Báo cáo khuyến mãi",
       icon: "PromoReportMenu",
       tab: 4,
+      des: "Thống kê hiệu quả từng chương trình, mã giảm giá và doanh thu phát sinh"
     },
   ];
 

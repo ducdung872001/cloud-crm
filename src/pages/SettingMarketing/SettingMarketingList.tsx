@@ -14,10 +14,12 @@ export default function SettingMarketingList() {
     {
       title: "Kênh truyền thông",
       is_tab: "tab_one",
+      des: "Cấu hình và kết nối các kênh truyền thông như SMS, Email, Zalo, App"
     },
     {
       title: "Đo lường truyền thông",
       is_tab: "tab_two",
+      des: "Theo dõi và phân tích hiệu quả các chiến dịch truyền thông, tỷ lệ tiếp cận và chuyển đổi"
     },
   ];
 

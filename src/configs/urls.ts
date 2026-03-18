@@ -18,6 +18,7 @@ const prefixFinance = prefixBiz + "/finance";
 const prefixInventory = prefixBiz + "/inventory";
 const prefixWarehouse = prefixBiz + "/warehouse";
 const prefixCare = prefixBiz + "/care";
+const prefixBilling = prefixBiz + "/billing";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -676,10 +677,14 @@ export const urlsApi = {
     export: prefixAdmin + "/cashbook/export",
     detail: prefixAdmin + "/cashbook/get",
   },
+  qrCodePro: {
+    generate: prefixBilling + "/vietqr/api/generate_qr",
+  },
   orderRequest: {
     list: prefixSales + "/order-request/list",
     listOne: prefixSales + "/order-request/list-one",
     update: prefixSales + "/order-request/update",
+    updateStatus: prefixSales + "/order-request/updateDynamic",
     updateAndInit: prefixSales + "/order-request/update-and-init",
     delete: prefixSales + "/order-request/delete-soft",
     export: prefixSales + "/order-request/export",
@@ -3234,6 +3239,7 @@ export const urls = {
   finance_management_debt_management: "/finance_management/debt_management",
   finance_management_debt_transaction: "/finance_management/debt_transaction",
   finance_management_shift_inventory: "/finance_management/shift_inventory",
+  payment_control: "/payment_control",
   setting: "/setting",
   viettel_integration: "/viettel_integration",
   tip: "/tip",
@@ -3294,6 +3300,9 @@ export const urls = {
   config_bpm: "/config_bpm",
   setting_dashboard: "/setting_dashboard",
   dashboard_shipping: "/dashboard_shipping",
+  customer_report: "/customer_report",
+  inventory_report: "/inventory_report",
+  marketing_report: "/marketing_report",
   dashboard_loyalty: "/dashboard_loyalty",
   setting_report: "/setting_report",
   //Giám sát tích hợp

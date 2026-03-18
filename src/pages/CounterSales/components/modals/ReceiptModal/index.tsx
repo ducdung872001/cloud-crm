@@ -1,10 +1,11 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { CartItem } from "../../../types";
-import { IActionModal } from "model/OtherModel";
 import "./index.scss";
 import InvoiceService from "@/services/InvoiceService";
 import { showToast } from "@/utils/common";
+import { PAY_METHODS } from "../PayModal";
+import { QRCodeCanvas } from "qrcode.react";
 
 interface ReceiptModalProps {
   open: boolean;
@@ -13,9 +14,12 @@ interface ReceiptModalProps {
   customerId: number | string;
   invoiceId: number | string;
   invoiceDraft: any;
+  method: string;
+  qrCodePro: string | null;
 }
 
-export default function ReceiptModal({ open, cartItems, onClose, customerId, invoiceId, invoiceDraft }: ReceiptModalProps) {
+export default function ReceiptModal({ open, cartItems, onClose, customerId, invoiceId, invoiceDraft, method, qrCodePro }: ReceiptModalProps) {
+  const qrRef = useRef<HTMLDivElement>(null);
   const [isPaymentProcessing, setIsPaymentProcessing] = React.useState(false);
   const total = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
   const paid = 150000;
@@ -155,25 +159,44 @@ export default function ReceiptModal({ open, cartItems, onClose, customerId, inv
               <span>TỔNG CỘNG</span>
               <span className="receipt__grand-val">{fmt(total)}</span>
             </div>
-            <div className="receipt__totals-row">
-              <span>Tiền khách đưa</span>
-              <span>{fmt(paid)}</span>
-            </div>
-            <div className="receipt__totals-row">
-              <span>Tiền thối</span>
-              <span className="receipt__change">{fmt(change)}</span>
-            </div>
+            {method === "cash" && (
+              <>
+                <div className="receipt__totals-row">
+                  <span>Tiền khách đưa</span>
+                  <span>{fmt(paid)}</span>
+                </div>
+                <div className="receipt__totals-row">
+                  <span>Tiền thối</span>
+                  <span className="receipt__change">{fmt(change)}</span>
+                </div>
+              </>
+            )}
             <div className="receipt__totals-row">
               <span>Thanh toán</span>
-              <span className="receipt__pay-badge">💵 Tiền mặt</span>
+              <span className="receipt__pay-badge">
+                {PAY_METHODS.find((m) => m.id === method)?.icon} {PAY_METHODS.find((m) => m.id === method)?.label}
+              </span>
             </div>
           </div>
 
           {/* QR */}
-          <div className="receipt__qr">
-            <div className="receipt__qr-box">📷</div>
-            <div className="receipt__qr-note">Quét để thanh toán QR Pro</div>
-          </div>
+          {method === "qr" && qrCodePro && (
+            <div className="receipt__qr">
+              {/* <div className="receipt__qr-box">📷</div>
+              <div className="receipt__qr-note">Quét để thanh toán QR Pro</div> */}
+              {/* ✅ QR Code */}
+              <div ref={qrRef} style={{ display: "inline-block", padding: "16px", border: "1px solid #eee", borderRadius: "12px" }}>
+                <QRCodeCanvas
+                  value={qrCodePro} // 👈 Chuỗi QR của bạn
+                  size={256} // Kích thước (px)
+                  level="M" // Mức độ sửa lỗi: L | M | Q | H
+                  includeMargin={true} // Thêm margin trắng xung quanh
+                  bgColor="#ffffff"
+                  fgColor="#000000"
+                />
+              </div>
+            </div>
+          )}
 
           <div className="receipt__footer">
             Cảm ơn quý khách! 🙏
