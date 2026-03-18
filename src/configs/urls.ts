@@ -538,6 +538,8 @@ export const urlsApi = {
     update: prefixInventory + "/inventory/update",
     delete: prefixInventory + "/inventory/delete",
     import: prefixInventory + "/inventory/import",
+    ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
+    ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
   },
   pom: {
     //định nghĩa pom cho sản phẩm, dịch vụ

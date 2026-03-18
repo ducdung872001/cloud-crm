@@ -26,13 +26,13 @@ export default {
     }).then((res) => res.json());
   },
   ledgerList: (params?: IInventoryLedgerFilterRequest, signal?: AbortSignal) => {
-    return fetch(`/bizapi/inventory/inventoryTransaction/ledger/list${convertParamsToString(params)}`, {
+    return fetch(`${urlsApi.inventory.ledgerList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
   ledgerDetail: (id: number, signal?: AbortSignal) => {
-    return fetch(`/bizapi/inventory/inventoryTransaction/ledger/get?id=${id}`, {
+    return fetch(`${urlsApi.inventory.ledgerDetail}?id=${id}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
