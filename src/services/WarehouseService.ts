@@ -9,6 +9,12 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  listInternal: (params?: IWarehouseFilterRequest, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.adjustmentSlip.productList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
   productList: (params?: IListWarehouseProductFilterRequest, signal?: AbortSignal) => {
     return fetch(`${urlsApi.warehouse.productList}${convertParamsToString(params)}`, {
       signal,

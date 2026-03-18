@@ -79,6 +79,7 @@ import AdjustmentSlip from "pages/AdjustmentSlip/AdjustmentSlip";
 // Thông tin tài khoản cá nhân
 import SettingAccount from "pages/SettingAccount/SettingAccount";
 import ReportCustomer from "pages/ReportCustomer/ReportCustomer";
+import ReportCustomerModern from "pages/ReportCustomerModern/ReportCustomerModern";
 // Cài đặt ứng dụng
 import InstallApplication from "pages/InstallApplication/InstallApplication";
 import MarketingAutomation from "pages/MarketingAutomation/MarketingAutomation";
@@ -172,6 +173,8 @@ import CounterSales from "@/pages/CounterSales";
 import ShiftTabsPage from "@/pages/ShiftManagement/ShiftTabsPage";
 import ShiftConfigTabs from "@/pages/ShiftConfig/ShiftConfig";
 import WarehouseReport from "@/pages/WarehouseReport/WarehouseReport";
+import MarketingReportPage from "@/pages/MarketingReportPage/MarketingReportPage";
+import InventoryReportModern from "pages/InventoryReportModern/InventoryReportModern";
 import PromotionPage from "@/pages/PromotionPage/PromotionPage";
 import MemberCustomersPage from "@/pages/MemberCustomersPage/MemberCustomersPage";
 import CustomerCarePage from "@/pages/CustomerCarePage/CustomerCarePage";
@@ -665,7 +668,7 @@ export const menu: IMenuItem[] = [
       },
       {
         title: "inventoryReport", // Báo cáo tồn kho
-        path: urls.inventory_report,
+        path: urls.inventory_report_modern,
         icon: <Icon name="SalesReportMenu" />,
         code: "",
       },
@@ -1005,8 +1008,24 @@ export const routes: IRouter[] = [
   },
   // Báo cáo khách hàng
   {
+    path: urls.customer_report,
+    component: <ReportCustomerModern />,
+  },
+  {
     path: urls.report_customer,
     component: <ReportCustomer />,
+  },
+  {
+    path: urls.inventory_report,
+    component: <WarehouseReport />,
+  },
+  {
+    path: urls.inventory_report_modern,
+    component: <InventoryReportModern />,
+  },
+  {
+    path: urls.marketing_report,
+    component: <MarketingReportPage />,
   },
   {
     path: urls.sales_campaign,
