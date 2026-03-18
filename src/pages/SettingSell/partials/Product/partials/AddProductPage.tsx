@@ -5,7 +5,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import NummericInput from "components/input/numericInput";
 import TextArea from "components/textarea/textarea";
 import ProductService from "services/ProductService";
-import CategoryService from "services/CategoryService";
+import CategoryServiceService from "services/CategoryServiceService";
 import { SelectOptionData } from "utils/selectCommon";
 import { showToast } from "utils/common";
 import { IProductRequest } from "model/product/ProductRequestModel";
@@ -319,10 +319,15 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const loadUnits = async () => setListUnit((await SelectOptionData("unit")) || []);
 
   const loadCategories = async () => {
-    const res = await CategoryService.list({ page: 1, limit: 100 });
+    const res = await CategoryServiceService.list({ page: 1, limit: 100 });
     if (res.code === 0) {
       const items = Array.isArray(res.result) ? res.result : res.result?.items || [];
-      setListCategory(items.map((i: any) => ({ value: i.id, label: i.name })));
+      setListCategory(
+        items.map((i: any) => ({
+          value: i.id ?? i.groupId,
+          label: i.name ?? i.groupName,
+        }))
+      );
     }
   };
 
