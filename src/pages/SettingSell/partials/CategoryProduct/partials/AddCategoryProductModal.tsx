@@ -14,11 +14,27 @@ import { isDifferenceObj } from "reborn-util";
 import CategoryServiceService from "services/CategoryServiceService";
 import "./AddCategoryProductModal.scss";
 
+const isSuccessResponse = (response: any) => response?.code === 0 || response?.status === 1;
+
+const getCategoryIdFromResponse = (response: any, fallbackId?: number) => {
+  if (fallbackId) {
+    return fallbackId;
+  }
+
+  const result = response?.result ?? response?.data;
+
+  if (typeof result === "number") {
+    return result;
+  }
+
+  return result?.id ?? result?.categoryId ?? response?.id ?? response?.categoryId ?? null;
+};
 
 export default function AddCategoryProductModal(props: IAddCategoryServiceModelProps) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
 
   const focusedElement = useActiveElement();
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -27,7 +43,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
   const values = useMemo(
     () =>
       ({
-        name: data?.name ?? "",
+        name: data?.groupName ?? data?.name ?? "",
         position: data?.position?.toString() ?? "0",
         avatar: data?.avatar ?? "",
         parentId: 0,
@@ -71,13 +87,26 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
 const [formData, setFormData] = useState<IFormData>({ values: values });
 
   useEffect(() => {
-    setFormData({ ...formData, values: values, errors: {} });
+    setFormData({ values: values, errors: {} });
     setIsSubmit(false);
+    setSelectedAvatarFile(null);
 
     return () => {
       setIsSubmit(false);
     };
   }, [values]);
+
+  const syncCategoryAvatar = async (categoryId: number) => {
+    if (selectedAvatarFile) {
+      return CategoryServiceService.mediaUpload(categoryId, selectedAvatarFile);
+    }
+
+    if (data?.avatar && !formData?.values?.avatar) {
+      return CategoryServiceService.mediaDelete(categoryId);
+    }
+
+    return null;
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -91,19 +120,45 @@ const [formData, setFormData] = useState<IFormData>({ values: values });
     setIsSubmit(true);
     const body: ICategoryServiceRequestModel = {
       ...(formData.values as ICategoryServiceRequestModel),
+      avatar: data?.avatar ?? "",
       ...(data ? { id: data.id } : {}),
     };
 
     const response = await CategoryServiceService.update(body);
 
-    if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} danh mục sản phẩm thành công`, "success");
-      onHide(true);
-    } else {
+    if (!isSuccessResponse(response)) {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
+      return;
+    }
+
+    const categoryId = getCategoryIdFromResponse(response, data?.id);
+
+    try {
+      if (selectedAvatarFile && !categoryId) {
+        showToast("Lưu danh mục thành công nhưng không lấy được ID để cập nhật ảnh", "warning");
+        onHide(true);
+        return;
+      }
+
+      if (categoryId) {
+        const mediaResponse = await syncCategoryAvatar(categoryId);
+        if (mediaResponse && !isSuccessResponse(mediaResponse)) {
+          showToast(mediaResponse.message ?? "Lưu danh mục thành công nhưng cập nhật ảnh thất bại", "warning");
+          onHide(true);
+          return;
+        }
+      }
+
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} danh mục sản phẩm thành công`, "success");
+      onHide(true);
+    } catch (error) {
+      showToast("Lưu danh mục thành công nhưng cập nhật ảnh thất bại", "warning");
+      onHide(true);
     }
   };
+
+  const hasChanged = isDifferenceObj(formData.values, values) || Boolean(selectedAvatarFile);
 
   const actions = useMemo<IActionModal>(
     () => ({
@@ -122,13 +177,13 @@ const [formData, setFormData] = useState<IFormData>({ values: values });
             title: data ? "Cập nhật" : "Tạo mới",
             type: "submit",
             color: "primary",
-            disabled: isSubmit || !isDifferenceObj(formData.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
+            disabled: isSubmit || !hasChanged || (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },
         ],
       },
     }),
-    [formData, values, isSubmit]
+    [formData, values, isSubmit, hasChanged]
   );
 
   const showDialogConfirmCancel = () => {
@@ -203,7 +258,13 @@ const [formData, setFormData] = useState<IFormData>({ values: values });
                 />
               ))}
             </div>
-            <FileUpload type="avatar" label="Ảnh danh mục sản phẩm" formData={formData} setFormData={setFormData} />
+            <FileUpload
+              type="avatar"
+              label="Ảnh danh mục sản phẩm"
+              formData={formData}
+              setFormData={setFormData}
+              onFileChange={setSelectedAvatarFile}
+            />
           </ModalBody>
           <ModalFooter actions={actions} />
         </form>

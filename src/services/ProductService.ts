@@ -191,6 +191,12 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  wWebsiteToggle: (body: { productId: number; showOnWebsite: number }) => {
+    return fetch(urlsApi.product.wWebsiteToggle, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   wInventoryCurrent: (productId: number) => {
     return fetch(`${urlsApi.product.wInventoryCurrent}?productId=${productId}`, {
       method: "GET",

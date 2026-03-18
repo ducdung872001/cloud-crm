@@ -25,4 +25,23 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
+  mediaGet: (categoryId: number) => {
+    return fetch(`${urlsApi.product.categoryMediaGet}?categoryId=${categoryId}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  mediaDelete: (categoryId: number) => {
+    return fetch(`${urlsApi.product.categoryMediaDelete}?categoryId=${categoryId}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
+  mediaUpload: (categoryId: number, file: File) => {
+    const formData = new FormData();
+    formData.append("categoryId", String(categoryId));
+    formData.append("file", file);
+    return fetch(`${urlsApi.product.categoryMediaUpload}?categoryId=${categoryId}`, {
+      method: "POST",
+      body: formData,
+    }).then((res) => res.json());
+  },
 };

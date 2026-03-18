@@ -33,6 +33,16 @@ import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 // ---- Tab filter type ----
 type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
 
+const isSuccessResponse = (response: any) => response?.code === 0 || response?.status === 1;
+
+const getProductWebState = (item: IProductResponse) => {
+  if (typeof item?.showOnWebsite !== "undefined") {
+    return item.showOnWebsite === 1 || item.showOnWebsite === true;
+  }
+
+  return Boolean(item?.showOnWeb);
+};
+
 export default function ProductList(props: IProductListProps) {
   document.title = "Danh sách sản phẩm";
 
@@ -90,8 +100,7 @@ export default function ProductList(props: IProductListProps) {
   const getListProduct = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    // const response = await ProductService.wList(paramsSearch, abortController.signal);
-    const response = await ProductService.publicList(paramsSearch, abortController.signal);
+    const response = await ProductService.wList(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
       const result = response.result;
@@ -161,7 +170,9 @@ export default function ProductList(props: IProductListProps) {
   }, []);
 
   // TODO: Implement QR scan handler
-  const handleScanQR = () => {};
+  const handleScanQR = () => {
+    showToast("Chức năng quét mã QR đang được phát triển", "info");
+  };
 
   // TODO: Implement category management handler
   const handleOpenCategory = () => {
@@ -180,9 +191,44 @@ export default function ProductList(props: IProductListProps) {
   };
 
   // TODO: Implement toggle web display per product
-  const handleToggleWebDisplay = (item: IProductResponse, newValue: boolean) => {
-    // TODO: call API to update product web display status
-    console.log("Toggle web display", item.id, newValue);
+  const handleToggleWebDisplay = async (item: IProductResponse, newValue: boolean) => {
+    const previousValue = getProductWebState(item);
+
+    setListProduct((prev) =>
+      prev.map((product) =>
+        product.id === item.id
+          ? {
+              ...product,
+              showOnWeb: newValue,
+              showOnWebsite: newValue ? 1 : 0,
+            }
+          : product
+      )
+    );
+
+    const response = await ProductService.wWebsiteToggle({
+      productId: item.id,
+      showOnWebsite: newValue ? 1 : 0,
+    });
+
+    if (isSuccessResponse(response)) {
+      showToast(newValue ? "Đã đẩy sản phẩm lên website" : "Đã ẩn sản phẩm khỏi website", "success");
+      return;
+    }
+
+    setListProduct((prev) =>
+      prev.map((product) =>
+        product.id === item.id
+          ? {
+              ...product,
+              showOnWeb: previousValue,
+              showOnWebsite: previousValue ? 1 : 0,
+            }
+          : product
+      )
+    );
+
+    showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
   };
 
   const onDelete = async (id: number) => {
@@ -377,7 +423,7 @@ export default function ProductList(props: IProductListProps) {
       // HIỂN THỊ WEB
       <div className="product-toggle-cell" key={`toggle-${item.id}`}>
         <label className="product-toggle">
-          <input type="checkbox" defaultChecked={!!item.showOnWeb} onChange={(e) => handleToggleWebDisplay(item, e.target.checked)} />
+          <input type="checkbox" checked={getProductWebState(item)} onChange={(e) => handleToggleWebDisplay(item, e.target.checked)} />
           <span className="product-toggle__slider" />
         </label>
       </div>,

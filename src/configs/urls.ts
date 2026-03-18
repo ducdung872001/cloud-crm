@@ -475,6 +475,7 @@ export const urlsApi = {
     wUpdateInventory: prefixInventory + "/product/update/inventory-setting",
     wWebsiteSettingGet: prefixInventory + "/product/website-setting/get",
     wWebsiteSettingUpdate: prefixInventory + "/product/website-setting/update",
+    wWebsiteToggle: prefixInventory + "/product/update/website-toggle",
     wInventoryCurrent: prefixInventory + "/product/inventory/current",
     wScan: prefixInventory + "/product/scan",
     listById: prefixAdmin + "/product/list_by_id",
@@ -490,6 +491,10 @@ export const urlsApi = {
     mediaUpdate: prefixInventory + "/product-media/update",
     mediaDelete: prefixInventory + "/product-media/delete",
     mediaUpload: prefixInventory + "/product-media/upload",
+    categoryMediaGet: prefixInventory + "/category-media/get",
+    categoryMediaUpdate: prefixInventory + "/category-media/update",
+    categoryMediaDelete: prefixInventory + "/category-media/delete",
+    categoryMediaUpload: prefixInventory + "/category-media/upload",
 
     // ── Variant Groups ──
     variantGroupsUpdate: prefixInventory + "/product/variant-groups/update",
@@ -3234,6 +3239,7 @@ export const urls = {
   finance_management_debt_management: "/finance_management/debt_management",
   finance_management_debt_transaction: "/finance_management/debt_transaction",
   finance_management_shift_inventory: "/finance_management/shift_inventory",
+  payment_control: "/payment_control",
   setting: "/setting",
   viettel_integration: "/viettel_integration",
   tip: "/tip",
@@ -3294,6 +3300,9 @@ export const urls = {
   config_bpm: "/config_bpm",
   setting_dashboard: "/setting_dashboard",
   dashboard_shipping: "/dashboard_shipping",
+  customer_report: "/customer_report",
+  inventory_report: "/inventory_report",
+  marketing_report: "/marketing_report",
   dashboard_loyalty: "/dashboard_loyalty",
   setting_report: "/setting_report",
   //Giám sát tích hợp
