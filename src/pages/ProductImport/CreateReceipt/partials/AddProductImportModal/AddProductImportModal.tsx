@@ -5,9 +5,11 @@ import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IProductFilterRequest } from "model/product/ProductRequestModel";
 import { AddProductImportModalProps } from "model/invoice/PropsModel";
 import { IInvoiceDetailRequest } from "model/invoice/InvoiceRequestModel";
+import { IUnitFilterRequest } from "model/unit/UnitRequestModel";
 import { IInfoExpiryDateProductionDate } from "model/warehouse/WarehouseRequestModel";
 import ProductImportService from "services/ProductImportService";
 import ProductService from "services/ProductService";
+import UnitService from "services/UnitService";
 import WarehouseService from "services/WarehouseService";
 import Icon from "components/icon";
 import SelectCustom from "components/selectCustom/selectCustom";
@@ -29,6 +31,23 @@ interface IOptionData {
   unitId?: number;
   exchange?: number;
 }
+
+const mergeUnitOptions = (...sources: Array<IOptionData[] | undefined>) => {
+  const map = new Map<string, IOptionData>();
+
+  sources.flat().filter(Boolean).forEach((item) => {
+    const key = String(item.value);
+    if (!map.has(key)) {
+      map.set(key, {
+        ...item,
+        value: key,
+        exchange: item.exchange ?? 1,
+      });
+    }
+  });
+
+  return Array.from(map.values());
+};
 
 export default function AddProductImportModal(props: AddProductImportModalProps) {
   const { onShow, onHide, data, invoiceId } = props;
@@ -100,8 +119,31 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
   const handleChangeValueProduct = (e) => {
     setDataProduct(e);
     setIdProduct(e.value);
+    setListUnitProduct([]);
     setCheckFieldProduct(false);
-    setFormData({ ...formData, values: { ...formData?.values, productId: e.value } });
+    setCheckFieldUnit(false);
+    setFormData({ ...formData, values: { ...formData?.values, productId: e.value, unitId: null } });
+  };
+
+  const getUnitOptions = async () => {
+    const params: IUnitFilterRequest = {
+      limit: 100,
+      page: 1,
+    };
+
+    const response = await UnitService.list(params);
+
+    if (response.code === 0) {
+      const result = response.result?.items ?? response.result ?? [];
+
+      return result.map((item) => ({
+        value: String(item.id),
+        label: item.name,
+        exchange: 1,
+      })) as IOptionData[];
+    }
+
+    return [];
   };
 
   //! đoạn này xử lý vấn đề update sản phẩm
@@ -114,10 +156,8 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
       setDataProduct({ value: result.id, label: result.name, avatar: result.avatar });
 
       const dataOtherUnits = JSON.parse(result.otherUnits ? result.otherUnits : "[]");
-
-      if (dataOtherUnits.length > 0) {
-        onSelectOpenUnit(dataOtherUnits);
-      }
+      const unitOptions = await getUnitOptions();
+      onSelectOpenUnit(result, dataOtherUnits, unitOptions);
     }
   };
 
@@ -128,12 +168,22 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
   }, [data?.productId]);
 
   //! Từ idProduct xử lý lấy ra đơn vị sản phẩm tương ứng
-  const onSelectOpenUnit = (dataOtherUnits: any) => {
-    const dataOption = dataOtherUnits.map((item) => {
-      return { value: item.unitId, label: item.unitName, exchange: item.exchange };
+  const onSelectOpenUnit = (productDetail: any, dataOtherUnits: any[] = [], unitOptions: IOptionData[] = []) => {
+    const primaryUnit = productDetail?.unitId
+      ? [
+          {
+            value: String(productDetail.unitId),
+            label: productDetail.unitName,
+            exchange: productDetail.exchange ?? 1,
+          },
+        ]
+      : [];
+
+    const productUnits = dataOtherUnits.map((item) => {
+      return { value: String(item.unitId), label: item.unitName, exchange: item.exchange };
     });
 
-    setListUnitProduct([...(dataOption.length > 0 ? dataOption : [])]);
+    setListUnitProduct(mergeUnitOptions(primaryUnit, productUnits, unitOptions));
   };
 
   const detailProduct = async () => {
@@ -142,10 +192,8 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
     if (response.code === 0) {
       const result = response.result;
       const dataOtherUnits = JSON.parse(result.otherUnits ? result.otherUnits : "[]");
-
-      if (dataOtherUnits.length > 0) {
-        onSelectOpenUnit(dataOtherUnits);
-      }
+      const unitOptions = await getUnitOptions();
+      onSelectOpenUnit(result, dataOtherUnits, unitOptions);
     }
   };
 
