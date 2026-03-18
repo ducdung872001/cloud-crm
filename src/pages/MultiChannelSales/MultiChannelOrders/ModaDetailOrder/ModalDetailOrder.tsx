@@ -5,10 +5,11 @@ import "./ModalDetailOrder.scss";
 import Button from "@/components/button/button";
 import Icon from "@/components/icon";
 import Badge from "@/components/badge/badge";
+import { showToast } from "@/utils/common";
+import OrderRequestService from "@/services/OrderRequestService";
 
 export default function ModalDetailOrder(props: any) {
   const { onShow, onHide, dataOrder } = props;
-  console.log("dataOrder", dataOrder);
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [listProduct, setListProduct] = useState([]);
@@ -132,9 +133,28 @@ export default function ModalDetailOrder(props: any) {
       checked: false,
     },
   ];
+  //   CONFIRMED, // Xác nhận
+  // SHIPPING,   // Đang giao
+  // COMPLETED,      // Đã hoàn thành
+  // CANCELED; // Hủy
+  const handleConfirm = async (item: any) => {
+    await OrderRequestService.confirm({
+      status: "CONFIRMED",
+      id: item.id,
+    }).then((res) => {
+      if (res.code === 0) {
+        showToast("Xác nhận đơn hàng thành công", "success");
+        // fetchData(params);
+      } else {
+        showToast(res.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      }
+    });
+  };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (e?) => {
+    e?.preventDefault();
+    handleConfirm(dataOrder);
+    handleClear(true);
   };
 
   const actions: IActionModal = {
@@ -161,6 +181,7 @@ export default function ModalDetailOrder(props: any) {
           disabled: isSubmit,
           is_loading: isSubmit,
           callback: () => {
+            onSubmit();
             setIsSubmit(true);
           },
         },
