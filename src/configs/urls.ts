@@ -3302,6 +3302,7 @@ export const urls = {
   dashboard_shipping: "/dashboard_shipping",
   customer_report: "/customer_report",
   inventory_report: "/inventory_report",
+  inventory_report_modern: "/inventory_report_modern",
   marketing_report: "/marketing_report",
   dashboard_loyalty: "/dashboard_loyalty",
   setting_report: "/setting_report",
