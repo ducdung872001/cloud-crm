@@ -1,52 +1,52 @@
-import React, { useState } from "react";
-import TitleAction from "components/titleAction/titleAction";
+import React, { Fragment, useMemo, useState } from "react";
+import Icon from "components/icon";
 import "./WarehouseReport.scss";
-import TabMenuList from "@/components/TabMenuList/TabMenuList";
+import { LANDING_REPORTS, type WarehouseReportViewKey } from "./mockData";
+import WarehouseReportLanding from "./components/WarehouseReportLanding";
+import WarehouseReportXntView from "./components/WarehouseReportXntView";
+import WarehouseReportCostView from "./components/WarehouseReportCostView";
+import WarehouseReportSlowView from "./components/WarehouseReportSlowView";
+import WarehouseReportHistoryView from "./components/WarehouseReportHistoryView";
 
 export default function WarehouseReport() {
   document.title = "Báo cáo kho";
 
-  const [tab, setTab] = useState<number>(null);
-  const [isDetail, setIsDetail] = useState<boolean>(false);
+  const [currentView, setCurrentView] = useState<WarehouseReportViewKey>("landing");
+  const currentTitle = useMemo(() => {
+    if (currentView === "landing") {
+      return "";
+    }
 
-  const listTabReport = [
-    {
-      title: "Báo cáo nhập xuất tồn",
-      des: "Tổng hợp biến động theo kỳ, theo kho, theo sản phẩm",
-      tab: 1,
-    },
-
-    {
-      title: "Giá vốn hàng tồn",
-      des: "Tính giá vốn theo phương pháp bình quân/FIFO",
-      tab: 2,
-    },
-    {
-      title: "Hàng chậm luân chuyển",
-      des: "Sản phẩm tồn lâu ngày không xuất",
-      tab: 3,
-    },
-    {
-      title: "Lịch sử theo sản phẩm",
-      des: "Toàn bộ biến động của một sản phẩm cụ thể",
-      tab: 4,
-    },
-  ];
+    return LANDING_REPORTS.find((item) => item.key === currentView)?.title ?? "";
+  }, [currentView]);
 
   return (
-    <div className="page-content page-warehouse-report">
-      {!isDetail && <TitleAction title="Báo cáo kho" />}
-      <div className="d-flex flex-column">
-        {!isDetail && (
-            <TabMenuList
-                listTab={listTabReport}
-                onClick={(item) => {
-                    setTab(item.tab);
-                    setIsDetail(true);
-                }}
-            />
-        )}
+    <Fragment>
+      <div className="page-content page-warehouse-report">
+        <div className="action-navigation">
+          <div className="action-backup">
+            <h1
+              className={`title-first${currentView === "landing" ? " title-first--static" : ""}`}
+              onClick={() => setCurrentView("landing")}
+              title={currentView === "landing" ? "Báo cáo kho" : "Quay lại báo cáo kho"}
+            >
+              Báo cáo kho
+            </h1>
+            {currentView !== "landing" ? (
+              <Fragment>
+                <Icon name="ChevronRight" onClick={() => setCurrentView("landing")} />
+                <h1 className="title-last">{currentTitle}</h1>
+              </Fragment>
+            ) : null}
+          </div>
+        </div>
+
+        {currentView === "landing" ? <WarehouseReportLanding onSelect={setCurrentView} /> : null}
+        {currentView === "xnt" ? <WarehouseReportXntView /> : null}
+        {currentView === "cost" ? <WarehouseReportCostView /> : null}
+        {currentView === "slow" ? <WarehouseReportSlowView /> : null}
+        {currentView === "history" ? <WarehouseReportHistoryView /> : null}
       </div>
-    </div>
+    </Fragment>
   );
 }
