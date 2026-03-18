@@ -200,9 +200,12 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [detailProduct, setDetailProduct] = useState<IProductResponse>(null);
   const [listUnit, setListUnit] = useState<IOption[]>([]);
+  const [listCategory, setListCategory] = useState<IOption[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<{ value: number; label: string } | null>(null);
   const [formData, setFormData] = useState({ ...DEFAULT_FORM });
   const [isDuplicating, setIsDuplicating] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [selectedImagePreview, setSelectedImagePreview] = useState("");
   // Variants
   const [variantAttrs, setVariantAttrs] = useState<VariantAttribute[]>([]);
   const [combinations, setCombinations] = useState<VariantCombination[]>([]);
@@ -210,7 +213,10 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const setField = (key: string, value: any) => setFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
+    setSelectedImageFile(null);
+    setSelectedImagePreview("");
     loadUnits();
+    loadCategories();
     if (isEdit) loadDetail();
     else if (data) preFill(data);
   }, [idProduct]);
@@ -227,6 +233,8 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       costPrice: p.costPrice ?? "",
       categoryId: p.categoryId || null,
       categoryName: p.categoryName || "",
+      unitId: p.unitId ?? null,
+      unitName: p.unitName || "",
       status: p.status ?? 1,
       avatar: p.avatar || "",
       description: p.description || "",
@@ -264,6 +272,23 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
       if (realVariants.length) {
         const combos: VariantCombination[] = realVariants.map((v: any) => {
+          const mappedUnitPrices =
+            v.unitPrices?.length > 0
+              ? v.unitPrices.map((u: any) => ({
+                  tempId: genId(),
+                  unitId: u.unitId ?? null,
+                  unitName: u.unitName ?? "",
+                  price: u.price ?? "",
+                }))
+              : [
+                  {
+                    tempId: genId(),
+                    unitId: v.unitId ?? null,
+                    unitName: v.unitName ?? "",
+                    price: v.price ?? "",
+                  },
+                ];
+
           // Tạo key theo format "GroupName:value|GroupName:value|..."
           const key = v.selectedOptions
             .filter((o: any) => o.groupName)
@@ -275,14 +300,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
             label: v.label,
             sku: v.sku || "",
             image: v.avatar || "",
-            unitPrices: [
-              {
-                tempId: genId(),
-                unitId: v.unitId ?? null,
-                unitName: v.unitName ?? "",
-                price: v.price ?? "",
-              },
-            ],
+            unitPrices: mappedUnitPrices,
           };
         });
         setCombinations(combos);
@@ -300,22 +318,32 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
   const loadUnits = async () => setListUnit((await SelectOptionData("unit")) || []);
 
-  const loadOptionCategory = async (search: string, _: any, { page }: any) => {
-    const res = await CategoryServiceService.list({ name: search, page, limit: 10, type: 2 });
+  const loadCategories = async () => {
+    const res = await CategoryServiceService.list({ page: 1, limit: 100 });
     if (res.code === 0) {
-      const items = res.result.items || [];
-      return {
-        options: items.map((i: any) => ({ value: i.id, label: i.name })),
-        hasMore: res.result.loadMoreAble,
-        additional: { page: page + 1 },
-      };
+      const items = Array.isArray(res.result) ? res.result : res.result?.items || [];
+      setListCategory(
+        items.map((i: any) => ({
+          value: i.id ?? i.groupId,
+          label: i.name ?? i.groupName,
+        }))
+      );
     }
-    return { options: [], hasMore: false };
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedImageFile(null);
+    setSelectedImagePreview("");
+    setField("avatar", "");
   };
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
       showToast("Vui lòng nhập tên sản phẩm", "error");
+      return;
+    }
+    if (!formData.description.trim()) {
+      showToast("Vui lòng nhập mô tả sản phẩm", "error");
       return;
     }
     if (!formData.price) {
@@ -373,9 +401,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       label: "Mac dinh",
       sku: toSkuPart(formData.name) || `SP-${Date.now()}`,
       price: +formData.price,
-      promotionPrice: 0,
-      selectedOptions: [],
-      unitPrices: [],
     };
 
     const body = {
@@ -390,7 +415,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       categoryId: selectedCategory?.value ?? null,
       exchange: 1,
       otherUnits: detailProduct?.otherUnits ?? "",
-      type: detailProduct?.type ? String(detailProduct.type) : "0",
+      type: detailProduct?.type ? String(detailProduct.type) : "1",
       description: formData.description,
       supplierId: null, // TODO: thêm field chọn NCC vào form
       costPrice: +formData.costPrice || 0,
@@ -404,7 +429,27 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
     setIsSubmitting(true);
     try {
-      const res = await ProductService.wUpdate(body as any);
+      const hasAvatarChange = !!selectedImageFile || (isEdit && !formData.avatar);
+      let res;
+      if (hasAvatarChange) {
+        const form = new FormData();
+        Object.entries(body).forEach(([key, value]) => {
+          if (value === undefined || value === null) return;
+          if (key === "variantGroups" || key === "variants") {
+            form.append(key, JSON.stringify(value));
+            return;
+          }
+          form.append(key, String(value));
+        });
+        if (selectedImageFile) {
+          form.append("avatar", selectedImageFile);
+        } else if (isEdit && !formData.avatar) {
+          form.append("avatar", "");
+        }
+        res = await ProductService.wUpdateFormData(form);
+      } else {
+        res = await ProductService.wUpdate(body as any);
+      }
       if (res.code === 0) {
         showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
         onBack(true);
@@ -544,7 +589,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         categoryName: selectedCategory?.label ?? "",
         exchange: 1,
         otherUnits: detailProduct?.otherUnits ?? "",
-        type: detailProduct?.type ? String(detailProduct.type) : "0",
+        type: detailProduct?.type ? String(detailProduct.type) : "1",
         description: formData.description,
         costPrice: +formData.costPrice || 0,
         priceWholesale: +formData.priceWholesale || 0,
@@ -657,17 +702,16 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                   <SelectCustom
                     id="categoryId"
                     name="categoryId"
-                    value={selectedCategory}
-                    isAsyncPaginate={true}
-                    options={[]}
-                    loadOptionsPaginate={loadOptionCategory}
-                    additional={{ page: 1 }}
+                    value={selectedCategory?.value ?? null}
+                    options={listCategory}
                     onChange={(e) => {
                       setSelectedCategory(e);
                       setField("categoryId", e?.value ?? null);
                       setField("categoryName", e?.label ?? "");
                     }}
+                    onMenuOpen={loadCategories}
                     placeholder="Chọn danh mục..."
+                    isSearchable
                     isClearable
                   />
                 </div>
@@ -720,8 +764,23 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                 <FileUpload
                   type="avatar"
                   label="Ảnh sản phẩm"
-                  formData={{ values: { avatar: formData.avatar } }}
-                  setFormData={(fd: any) => setField("avatar", fd?.values?.avatar || "")}
+                  formData={{ values: { avatar: selectedImagePreview || formData.avatar } }}
+                  setFormData={(fd: any) => {
+                    const nextAvatar = fd?.values?.avatar || "";
+                    if (!nextAvatar) {
+                      handleRemoveImage();
+                    }
+                  }}
+                  onFileChange={(file: File | null) => {
+                    if (!file) {
+                      handleRemoveImage();
+                      setField("avatar", "");
+                      return;
+                    }
+                    const previewUrl = URL.createObjectURL(file);
+                    setSelectedImageFile(file);
+                    setSelectedImagePreview(previewUrl);
+                  }}
                 />
               </div>
 

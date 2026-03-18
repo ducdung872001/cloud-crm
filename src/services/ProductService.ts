@@ -103,10 +103,13 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  mediaUpload: (productId: number, file: File) => {
+  mediaUpload: (params: { productId: number; file: File; id?: number; position?: number; status?: number }) => {
     const formData = new FormData();
-    formData.append("productId", String(productId));
-    formData.append("file", file);
+    formData.append("productId", String(params.productId));
+    if (params.id !== undefined) formData.append("id", String(params.id));
+    if (params.position !== undefined) formData.append("position", String(params.position));
+    if (params.status !== undefined) formData.append("status", String(params.status));
+    formData.append("file", params.file);
     return fetch(urlsApi.product.mediaUpload, {
       method: "POST",
       body: formData,
@@ -149,6 +152,13 @@ export default {
     return fetch(urlsApi.product.wUpdate, {
       method: "POST",
       body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  wUpdateFormData: (formData: FormData) => {
+    return fetch(urlsApi.product.wUpdate, {
+      method: "POST",
+      body: formData,
+      headers: { "Content-Type": undefined },
     }).then((res) => res.json());
   },
   wDelete: (id: number) => {
