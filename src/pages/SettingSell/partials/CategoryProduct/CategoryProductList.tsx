@@ -140,9 +140,9 @@ export default function CategoryProductList(props: ICategoryServiceListProps) {
   const dataMappingArray = (item: ICategoryServiceResponseModel, index: number) => [
     getPageOffset(params) + index + 1,
     <a key={item.id} data-fancybox="gallery" href={item.avatar}>
-      <Image src={item.avatar} alt={item.name} width={"64rem"} />
+      <Image src={item.avatar} alt={item.groupName} width={"64rem"} />
     </a>,
-    item.name,
+    item.groupName,
     item.position,
   ];
 
@@ -225,7 +225,7 @@ export default function CategoryProductList(props: ICategoryServiceListProps) {
       message: (
         <Fragment>
           Bạn có chắc chắn muốn xóa {item ? "danh mục sản phẩm " : `${listIdChecked.length} danh mục sản phẩm đã chọn`}
-          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
+          {item ? <strong>{item.groupName}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",

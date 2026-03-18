@@ -7,10 +7,12 @@ export interface ICategoryServiceFilterRequest {
 }
 
 export interface ICategoryServiceRequestModel {
+  id?: number;
   avatar: string;
   name: string;
   parentId: number;
   position: number | string;
   active: number | string;
   featured: number | string;
+  type?: number | string;
 }

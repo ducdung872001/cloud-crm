@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { CartItem, PayMethod } from "../../../types";
 import { IActionModal } from "model/OtherModel";
@@ -8,16 +8,20 @@ interface PayModalProps {
   open: boolean;
   cartItems: CartItem[];
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (id) => void;
+  invoiceId: number | null;
 }
 
-const PAY_METHODS: { id: PayMethod; icon: string; label: string }[] = [
+const PAY_METHODS: { id: PayMethod; icon: string; label: string; image?: string }[] = [
   { id: "cash", icon: "💵", label: "Tiền mặt" },
   { id: "transfer", icon: "📱", label: "Chuyển khoản" },
   { id: "qr", icon: "📷", label: "QR Pro" },
+  { id: "momo", icon: "💵", label: "Momo" },
+  { id: "zalo_pay", icon: "📱", label: "ZaloPay" },
+  { id: "credit_card", icon: "📷", label: "Thẻ tín dụng" },
 ];
 
-export default function PayModal({ open, cartItems, onClose, onConfirm }: PayModalProps) {
+export default function PayModal({ open, cartItems, onClose, onConfirm, invoiceId }: PayModalProps) {
   const [method, setMethod] = useState<PayMethod>("cash");
   const [customerPaid, setCustomerPaid] = useState(150000);
 
@@ -25,7 +29,9 @@ export default function PayModal({ open, cartItems, onClose, onConfirm }: PayMod
   const discount = 0;
   const total = subtotal - discount;
   const change = Math.max(0, customerPaid - total);
-  const fmt = (n: number) => n.toLocaleString("vi") + " ₫";
+  const fmt = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
+
+  console.log("cartItems", invoiceId, cartItems);
 
   useEffect(() => {
     if (open) {
@@ -34,23 +40,44 @@ export default function PayModal({ open, cartItems, onClose, onConfirm }: PayMod
     }
   }, [open, total]);
 
-  const actions: IActionModal = {
-    actions_right: {
-      buttons: [
-        {
-          title: "Hủy",
-          color: "primary",
-          variant: "outline",
-          callback: onClose,
-        },
-        {
-          title: "✅ Xác nhận thanh toán & In biên lai",
-          color: "primary",
-          callback: onConfirm,
-        },
-      ],
-    },
-  };
+  // const actions: IActionModal = {
+  //   actions_right: {
+  //     buttons: [
+  //       {
+  //         title: "Hủy",
+  //         color: "primary",
+  //         variant: "outline",
+  //         callback: onClose,
+  //       },
+  //       {
+  //         title: "✅ Xác nhận thanh toán & In biên lai",
+  //         color: "primary",
+  //         callback: onConfirm,
+  //       },
+  //     ],
+  //   },
+  // };
+
+  // actions là callback phụ thuộc vào invoiceId
+  const actions: IActionModal = useMemo(() => {
+    return {
+      actions_right: {
+        buttons: [
+          {
+            title: "Hủy",
+            color: "primary",
+            variant: "outline",
+            callback: onClose,
+          },
+          {
+            title: "✅ Tạo hoá đơn",
+            color: "primary",
+            callback: () => onConfirm(invoiceId),
+          },
+        ],
+      },
+    };
+  }, [invoiceId, onClose, onConfirm]);
 
   return (
     <Modal isFade={true} isOpen={open} isCentered={true} staticBackdrop={true} toggle={onClose} className="pay-modal">

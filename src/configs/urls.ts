@@ -6,6 +6,7 @@ const prefixBpm = process.env.APP_BPM_URL + "/bpm";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";
 const prefixSale = "/sale";
+const prefixSales = prefixBiz + "/sales";
 const prefixSystem = "/system";
 const prefixCs = "/cs";
 const prefixApplication = "/application";
@@ -399,26 +400,28 @@ export const urlsApi = {
     takeEstimate: prefixAdmin + "/customer/estimate",
   },
   invoice: {
-    list: prefixAdmin + "/invoice/list/v2",
-    create: prefixAdmin + "/invoice/create",
-    invoiceDetail: prefixAdmin + "/invoiceDetail/import",
-    cardService: prefixAdmin + "/invoiceDetail/cardService",
+    createInvoice: prefixSales + "/invoiceDetail/get",
+    list: prefixSales + "/invoice/list/v2",
+    create: prefixSales + "/invoice/create",
+    invoiceDetail: prefixSales + "/invoiceDetail/import",
+    cardService: prefixSales + "/invoiceDetail/cardService",
     // Tạo hóa đơn bán hàng
-    invoiceDetailCustomer: prefixAdmin + "/invoiceDetail/customer",
+    invoiceDetailCustomer: prefixSales + "/invoiceDetail/customer",
     // Xem chi tiết hóa đơn
-    invoiceDetailList: prefixAdmin + "/invoiceDetail/list",
+    invoiceDetailList: prefixSales + "/invoiceDetail/list",
     // Hủy hóa đơn
-    cancelInvoice: prefixAdmin + "/invoice/delete",
+    cancelInvoice: prefixSales + "/invoice/delete",
     // vinh danh bán hàng
-    sales: prefixAdmin + "/invoice/get/sales",
+    sales: prefixSales + "/invoice/get/sales",
     // lấy danh sách thu tiền, chi tiền của khách
-    debtInvoice: prefixAdmin + "/invoice/debt",
+    debtInvoice: prefixSales + "/invoice/debt",
     // lưu tạm hóa đơn
-    temporarilyInvoice: prefixAdmin + "/invoice/update/temp",
+    temporarilyInvoice: prefixSales + "/invoice/update/temp",
     // lịch sử tiêu dùng thẻ
-    historyUseCard: prefixAdmin + "/invoice/using/card",
+    historyUseCard: prefixSales + "/invoice/using/card",
     // lấy mã hoá đơn
-    invoiceCode: prefixAdmin + "/invoice/code",
+    invoiceCode: prefixSales + "/invoice/code",
+    prefixSales,
   },
   shipping: {
     create: prefixAdmin + "/shipping/create",
@@ -431,6 +434,7 @@ export const urlsApi = {
     getByCustomer: prefixAdmin + "/boughtService/getBoughtServiceByCustomerId",
   },
   boughtProduct: {
+    insert: prefixSales + "/boughtProduct/insertBatch",
     list: prefixAdmin + "/boughtProduct/list",
     addToInvoice: prefixAdmin + "/boughtProduct/update",
     delete: prefixAdmin + "/boughtProduct/delete",
@@ -448,12 +452,13 @@ export const urlsApi = {
     listBoughtCardByCustomerId: prefixAdmin + "/boughtCardService/getBoughtCardServiceByCustomerId",
   },
   product: {
-    filterWarehouse: prefixAdmin + "/product/in_warehouse",
-    list: prefixAdmin + "/product/list",
-    detail: prefixAdmin + "/product/get",
-    update: prefixAdmin + "/product/update",
-    updateContent: prefixAdmin + "/product/update/content",
-    delete: prefixAdmin + "/product/delete",
+    filterWarehouse: prefixWarehouse + "/product/in_warehouse",
+    list: prefixInventory + "/product/list",
+    // list: prefixWarehouse + "/public/product/list",
+    detail: prefixInventory + "/product/get",
+    update: prefixInventory + "/product/update",
+    updateContent: prefixInventory + "/product/update/content",
+    delete: prefixInventory + "/product/delete",
 
     //danh sách sản phẩm của đối tác
     listShared: prefixAdmin + "/product/list/shared",
@@ -469,6 +474,7 @@ export const urlsApi = {
     wUpdateInventory: prefixInventory + "/product/update/inventory-setting",
     wWebsiteSettingGet: prefixInventory + "/product/website-setting/get",
     wWebsiteSettingUpdate: prefixInventory + "/product/website-setting/update",
+    wWebsiteToggle: prefixInventory + "/product/update/website-toggle",
     wInventoryCurrent: prefixInventory + "/product/inventory/current",
     wScan: prefixInventory + "/product/scan",
     listById: prefixAdmin + "/product/list_by_id",
@@ -484,6 +490,10 @@ export const urlsApi = {
     mediaUpdate: prefixInventory + "/product-media/update",
     mediaDelete: prefixInventory + "/product-media/delete",
     mediaUpload: prefixInventory + "/product-media/upload",
+    categoryMediaGet: prefixInventory + "/category-media/get",
+    categoryMediaUpdate: prefixInventory + "/category-media/update",
+    categoryMediaDelete: prefixInventory + "/category-media/delete",
+    categoryMediaUpload: prefixInventory + "/category-media/upload",
 
     // ── Variant Groups ──
     variantGroupsUpdate: prefixInventory + "/product/variant-groups/update",
@@ -667,13 +677,13 @@ export const urlsApi = {
     detail: prefixAdmin + "/cashbook/get",
   },
   orderRequest: {
-    list: prefixAdmin + "/order-request/list",
-    listOne: prefixAdmin + "/order-request/list-one",
-    update: prefixAdmin + "/order-request/update",
-    updateAndInit: prefixAdmin + "/order-request/update-and-init",
-    delete: prefixAdmin + "/order-request/delete-soft",
-    export: prefixAdmin + "/order-request/export",
-    detail: prefixAdmin + "/order-request/get",
+    list: prefixSales + "/order-request/list",
+    listOne: prefixSales + "/order-request/list-one",
+    update: prefixSales + "/order-request/update",
+    updateAndInit: prefixSales + "/order-request/update-and-init",
+    delete: prefixSales + "/order-request/delete-soft",
+    export: prefixSales + "/order-request/export",
+    detail: prefixSales + "/order-request/get",
   },
   //khu vực trải nghiệm khách hàng
   cxmSurvey: {
@@ -877,10 +887,12 @@ export const urlsApi = {
 
   categoryService: {
     // Đoạn này là category của ông dịch vụ
-    list: prefixAdmin + "/categoryItem/list",
-    update: prefixAdmin + "/categoryItem/update",
-    detail: prefixAdmin + "/categoryItem/get",
-    delete: prefixAdmin + "/categoryItem/delete",
+    // list: prefixWarehouse + "/categoryItem/list",
+    // list: prefixWarehouse + "/public/categoryItem/list",
+    list: prefixInventory + "/category/list",
+    update: prefixInventory + "/category/update",
+    detail: prefixInventory + "/category/get",
+    delete: prefixInventory + "/category/delete",
   },
 
   categoryProject: {

@@ -19,6 +19,7 @@ export interface AddCustomerModalProps {
   nameCustomer?: string;
   avatarCustomer?: string;
   zaloUserId?: number | string;
+  phoneQuickAdd?: string;
 }
 
 export interface AddSchedulerModalProps {

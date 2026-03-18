@@ -14,6 +14,12 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  createInvoice: (params: any, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.invoice.createInvoice}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
   invoiceDetail: (params: IInvoiceDetailFilterRequest, signal?: AbortSignal) => {
     return fetch(`${urlsApi.invoice.invoiceDetail}${convertParamsToString(params)}`, {
       signal,
@@ -39,7 +45,7 @@ export default {
   },
   // Lấy ra danh sách dịch vụ, sản phẩm trong lúc tạo hóa đơn
   invoiceDetailCustomer: (id: number, invoiceId?: number) => {
-    return fetch(`${urlsApi.invoice.invoiceDetailCustomer}?customerId=${id}${invoiceId ? `&id=${invoiceId}` : ''}`, {
+    return fetch(`${urlsApi.invoice.invoiceDetailCustomer}?customerId=${id}${invoiceId ? `&id=${invoiceId}` : ""}`, {
       method: "GET",
     }).then((res) => res.json());
   },
