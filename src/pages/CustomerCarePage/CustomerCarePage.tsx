@@ -15,19 +15,23 @@ export default function CustomerCarePage() {
     {
       title: "Tiếp nhận hỗ trợ",
       tab: 1,
+      des: "Tiếp nhận và xử lý yêu cầu hỗ trợ từ khách hàng qua nhiều kênh liên lạc"
     },
 
     {
       title: "Lịch sử chăm sóc",
       tab: 2,
+      des: "Xem lại toàn bộ tương tác, cuộc gọi và lịch sử chăm sóc của từng khách hàng"
     },
     {
       title: "Cuộc gọi CSKH",
       tab: 3,
+      des: "Quản lý các cuộc gọi chăm sóc khách hàng, ghi chú và phân loại kết quả"
     },
     {
       title: "Đánh giá khách hàng",
       tab: 4,
+      des: "Thu thập và phân tích phản hồi, đánh giá mức độ hài lòng của khách hàng"
     },
   ];
 

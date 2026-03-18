@@ -16,23 +16,28 @@ export default function MemberCustomersPage() {
     {
       title: "Danh sách thành viên",
       tab: 1,
+      des: "Quản lý toàn bộ hội viên, tìm kiếm và xem thông tin chi tiết từng thành viên"
     },
 
     {
       title: "Hạng thành viên",
       tab: 2,
+      des: "Phân loại hội viên theo hạng (Bạc, Vàng, Kim cương) với quyền lợi riêng mỗi hạng"
     },
     {
       title: "Tích điểm",
       tab: 3,
+      des: "Cấu hình quy tắc tích điểm theo đơn hàng, sản phẩm hoặc hành vi mua sắm"
     },
     {
       title: "Lịch sử điểm",
       tab: 4,
+      des: "Tra cứu toàn bộ lịch sử tích điểm, đổi điểm và biến động điểm của hội viên"
     },
     {
       title: "Đổi điểm",
       tab: 5,
+      des: "Thiết lập chương trình đổi điểm lấy quà, voucher hoặc ưu đãi cho hội viên"
     },
   ];
 

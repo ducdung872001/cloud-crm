@@ -479,6 +479,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="DebtTransactionMenu" />,
         code: "",
       },
+      {
+        title: "paymentControl", // Tạo giao dịch nợ
+        path: urls.payment_control,
+        icon: <Icon name="DebtTransactionMenu" />,
+        code: "",
+      },
      
     ],
   },
@@ -631,12 +637,6 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="PointsSettingMenu" />,
         code: "",
       },
-      {
-        title: "settingTicket", // Cài đặt hỗ trợ
-        path: urls.setting_ticket,
-        icon: <Icon name="SupportSettingMenu" />,
-        code: "",
-      },
     ],
   },
   {
@@ -658,11 +658,30 @@ export const menu: IMenuItem[] = [
         code: "CASHBOOK",
       },
       {
-        title: "dashboardShipping", // Báo cáo vận chuyển
+        title: "customerReport", // Báo cáo khách hàng
+        path: urls.customer_report,
+        icon: <Icon name="SalesReportMenu" />,
+        code: "",
+      },
+      {
+        title: "inventoryReport", // Báo cáo tồn kho
+        path: urls.inventory_report,
+        icon: <Icon name="SalesReportMenu" />,
+        code: "",
+      },
+      {
+        title: "marketingReport", // Báo cáo tồn kho
+        path: urls.marketing_report,
+        icon: <Icon name="SalesReportMenu" />,
+        code: "",
+      },
+      {
+        title: "dashboardShipping", // Báo cáo giao vận
         path: urls.dashboard_shipping,
         icon: <Icon name="ShippingReportMenu" />,
         code: "",
       },
+      
       {
         title: "settingCashbook", // Cài đặt tài chính
         path: urls.setting_cash_book,
@@ -695,12 +714,12 @@ export const menu: IMenuItem[] = [
         code: "OBJECT_MANAGE",
         icon: <Icon name="FileMgmtMenu" />,
       },
-      {
-        title: "userTaskList", // Xử lý hồ sơ
-        path: urls.user_task_list,
-        code: "WORK_MANAGEMENT",
-        icon: <Icon name="FileProcessMenu" />,
-      },
+      // {
+      //   title: "userTaskList", // Xử lý hồ sơ
+      //   path: urls.user_task_list,
+      //   code: "WORK_MANAGEMENT",
+      //   icon: <Icon name="FileProcessMenu" />,
+      // },
       {
         title: "configBpm", // Cấu hình quy trình
         path: urls.config_bpm,
@@ -713,12 +732,12 @@ export const menu: IMenuItem[] = [
         code: "BPM",
         icon: <Icon name="DefaultProcessMenu" />,
       },
-      {
-        title: "business_rule", // Loại luật nghiệp vụ
-        path: urls.business_rule,
-        icon: <Icon name="RulesMenu" />,
-        code: "",
-      },
+      // {
+      //   title: "business_rule", // Loại luật nghiệp vụ
+      //   path: urls.business_rule,
+      //   icon: <Icon name="RulesMenu" />,
+      //   code: "",
+      // },
     ],
   },
   {
@@ -809,6 +828,12 @@ export const menu: IMenuItem[] = [
         title: "settingDashboard", // cài đặt Dashboard
         path: urls.setting_dashboard,
         icon: <Icon name="ReportFill" />,
+        code: "",
+      },
+      {
+        title: "settingTicket", // Cài đặt hỗ trợ
+        path: urls.setting_ticket,
+        icon: <Icon name="SupportSettingMenu" />,
         code: "",
       },
     ],

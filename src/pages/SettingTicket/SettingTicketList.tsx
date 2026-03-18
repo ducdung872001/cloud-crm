@@ -20,10 +20,12 @@ export default function SettingTicketList() {
     {
       title: "Danh mục hỗ trợ",
       is_tab: "tab_two",
+      des: "Quản lý các danh mục và phân loại yêu cầu khách hàng theo từng nhóm vấn đề"
     },
     {
       title: "Quản lý QR Code",
       is_tab: "tab_three",
+      des: "Tạo và quản lý mã QR cho sản phẩm, chương trình khuyến mãi hoặc điểm tích lũy"
     },
   ];
 
