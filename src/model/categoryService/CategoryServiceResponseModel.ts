@@ -1,7 +1,8 @@
 export interface ICategoryServiceResponseModel {
   id: number;
   avatar: string;
-  name: string;
+  name?: string;
+  groupName: string;
   parentId: number;
   parentName: string;
   position: number;

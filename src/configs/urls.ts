@@ -474,6 +474,7 @@ export const urlsApi = {
     wUpdateInventory: prefixInventory + "/product/update/inventory-setting",
     wWebsiteSettingGet: prefixInventory + "/product/website-setting/get",
     wWebsiteSettingUpdate: prefixInventory + "/product/website-setting/update",
+    wWebsiteToggle: prefixInventory + "/product/update/website-toggle",
     wInventoryCurrent: prefixInventory + "/product/inventory/current",
     wScan: prefixInventory + "/product/scan",
     listById: prefixAdmin + "/product/list_by_id",
@@ -489,6 +490,10 @@ export const urlsApi = {
     mediaUpdate: prefixInventory + "/product-media/update",
     mediaDelete: prefixInventory + "/product-media/delete",
     mediaUpload: prefixInventory + "/product-media/upload",
+    categoryMediaGet: prefixInventory + "/category-media/get",
+    categoryMediaUpdate: prefixInventory + "/category-media/update",
+    categoryMediaDelete: prefixInventory + "/category-media/delete",
+    categoryMediaUpload: prefixInventory + "/category-media/upload",
 
     // ── Variant Groups ──
     variantGroupsUpdate: prefixInventory + "/product/variant-groups/update",
