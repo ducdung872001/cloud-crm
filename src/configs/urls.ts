@@ -18,6 +18,7 @@ const prefixFinance = prefixBiz + "/finance";
 const prefixInventory = prefixBiz + "/inventory";
 const prefixWarehouse = prefixBiz + "/warehouse";
 const prefixCare = prefixBiz + "/care";
+const prefixBilling = prefixBiz + "/billing";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -671,10 +672,14 @@ export const urlsApi = {
     export: prefixAdmin + "/cashbook/export",
     detail: prefixAdmin + "/cashbook/get",
   },
+  qrCodePro: {
+    generate: prefixBilling + "/vietqr/api/generate_qr",
+  },
   orderRequest: {
     list: prefixSales + "/order-request/list",
     listOne: prefixSales + "/order-request/list-one",
     update: prefixSales + "/order-request/update",
+    updateStatus: prefixSales + "/order-request/updateDynamic",
     updateAndInit: prefixSales + "/order-request/update-and-init",
     delete: prefixSales + "/order-request/delete-soft",
     export: prefixSales + "/order-request/export",

@@ -75,12 +75,11 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
 
   const fmt = (n: number) => n.toLocaleString("vi") + " ₫";
 
-  console.log("productData>>", productData, open);
-
   const { isLoading, dataProduct } = useGetDetailProduct({
     productId: Number(productData?.id) || 0,
     enabled: open,
   });
+  console.log("productData>>", productData, open, isLoading);
   useEffect(() => {
     if (dataProduct) {
       setProduct(dataProduct);
@@ -187,111 +186,115 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
       <ModalHeader title="Chọn phân loại hàng" toggle={onClose} />
 
       <ModalBody>
-        <div>
-          {/* Product info */}
-          <div className="variant-modal__product">
-            <div className="variant-modal__product-icon">{product.icon ?? "📦"}</div>
-            <div className="variant-modal__product-info">
-              <div className="variant-modal__product-name">{product.name}</div>
+        {!isLoading ? (
+          <div>
+            {/* Product info */}
+            <div className="variant-modal__product">
+              <div className="variant-modal__product-icon">{product.icon ?? "📦"}</div>
+              <div className="variant-modal__product-info">
+                <div className="variant-modal__product-name">{product.name}</div>
 
-              {/* Giá & tồn kho — hiện khi đã chọn đủ */}
-              {matchedVariant ? (
-                <>
-                  <div className="variant-modal__price">{fmt(matchedVariant.price)}</div>
-                  <div
-                    className={`variant-modal__stock${
-                      matchedVariant.stock === 0 ? " variant-modal__stock--out" : matchedVariant.stock <= 5 ? " variant-modal__stock--low" : ""
-                    }`}
-                  >
-                    {matchedVariant.stock === 0
-                      ? "❌ Hết hàng"
-                      : matchedVariant.stock <= 5
-                      ? `⚠️ Còn ${matchedVariant.stock} ${product.unit}`
-                      : `✅ Còn ${matchedVariant.stock} ${product.unit}`}
+                {/* Giá & tồn kho — hiện khi đã chọn đủ */}
+                {matchedVariant ? (
+                  <>
+                    <div className="variant-modal__price">{fmt(matchedVariant.price)}</div>
+                    <div
+                      className={`variant-modal__stock${
+                        matchedVariant.stock === 0 ? " variant-modal__stock--out" : matchedVariant.stock <= 5 ? " variant-modal__stock--low" : ""
+                      }`}
+                    >
+                      {matchedVariant.stock === 0
+                        ? "❌ Hết hàng"
+                        : matchedVariant.stock <= 5
+                        ? `⚠️ Còn ${matchedVariant.stock} ${product?.unit ?? ""} (sắp hết)`
+                        : `✅ Còn ${matchedVariant.stock} ${product?.unit ?? ""}`}
+                    </div>
+                    <div className="variant-modal__sku">SKU: {matchedVariant.sku}</div>
+                  </>
+                ) : (
+                  <div className="variant-modal__price variant-modal__price--placeholder">
+                    {selectedCount < totalGroupCount ? `Vui lòng chọn (${selectedCount}/${totalGroupCount})` : "Không có biến thể phù hợp"}
                   </div>
-                  <div className="variant-modal__sku">SKU: {matchedVariant.sku}</div>
-                </>
-              ) : (
-                <div className="variant-modal__price variant-modal__price--placeholder">
-                  {selectedCount < totalGroupCount ? `Vui lòng chọn (${selectedCount}/${totalGroupCount})` : "Không có biến thể phù hợp"}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="variant-modal__divider" />
-
-          {/* Variant groups */}
-          {product.variantGroups.map((group) => (
-            <div key={group.id} className="variant-modal__group">
-              <div className="variant-modal__group-label">
-                {group.label}
-                {selected[group.id] && (
-                  <span className="variant-modal__group-selected">: {group.options.find((o) => o.id === selected[group.id])?.label}</span>
                 )}
               </div>
-              <div className="variant-modal__options">
-                {group.options.map((opt) => {
-                  const isSelected = selected[group.id] === opt.id;
-                  const isAvailable = isOptionAvailable(group.id, opt.id);
-                  return (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      disabled={!isAvailable}
-                      className={["variant-opt", isSelected ? "variant-opt--selected" : "", !isAvailable ? "variant-opt--unavailable" : ""]
-                        .join(" ")
-                        .trim()}
-                      onClick={() => isAvailable && handleSelectOption(group.id, opt.id)}
-                    >
-                      {opt.label}
-                      {!isAvailable && <span className="variant-opt__slash" />}
-                    </button>
-                  );
-                })}
+            </div>
+
+            <div className="variant-modal__divider" />
+
+            {/* Variant groups */}
+            {product.variantGroups.map((group) => (
+              <div key={group.id} className="variant-modal__group">
+                <div className="variant-modal__group-label">
+                  {group.label}
+                  {selected[group.id] && (
+                    <span className="variant-modal__group-selected">: {group.options.find((o) => o.id === selected[group.id])?.label}</span>
+                  )}
+                </div>
+                <div className="variant-modal__options">
+                  {group.options.map((opt) => {
+                    const isSelected = selected[group.id] === opt.id;
+                    const isAvailable = isOptionAvailable(group.id, opt.id);
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        disabled={!isAvailable}
+                        className={["variant-opt", isSelected ? "variant-opt--selected" : "", !isAvailable ? "variant-opt--unavailable" : ""]
+                          .join(" ")
+                          .trim()}
+                        onClick={() => isAvailable && handleSelectOption(group.id, opt.id)}
+                      >
+                        {opt.label}
+                        {!isAvailable && <span className="variant-opt__slash" />}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
-          <div className="variant-modal__divider" />
+            <div className="variant-modal__divider" />
 
-          {/* Quantity */}
-          <div className="variant-modal__qty-row">
-            <span className="variant-modal__qty-label">Số lượng</span>
-            <div className="variant-modal__qty">
-              <button type="button" className="vqb" onClick={() => handleQty(-1)} disabled={qty <= 1}>
-                −
-              </button>
-              <input
-                type="number"
-                className="vqi"
-                value={qty}
-                min={1}
-                max={matchedVariant?.stock ?? 1}
-                onChange={(e) => {
-                  const v = Math.min(Math.max(1, Number(e.target.value)), matchedVariant?.stock ?? 1);
-                  setQty(v);
-                }}
-              />
-              <button type="button" className="vqb" onClick={() => handleQty(1)} disabled={!matchedVariant || qty >= matchedVariant.stock}>
-                +
-              </button>
+            {/* Quantity */}
+            <div className="variant-modal__qty-row">
+              <span className="variant-modal__qty-label">Số lượng</span>
+              <div className="variant-modal__qty">
+                <button type="button" className="vqb" onClick={() => handleQty(-1)} disabled={qty <= 1}>
+                  −
+                </button>
+                <input
+                  type="number"
+                  className="vqi"
+                  value={qty}
+                  min={1}
+                  max={matchedVariant?.stock ?? 1}
+                  onChange={(e) => {
+                    const v = Math.min(Math.max(1, Number(e.target.value)), matchedVariant?.stock ?? 1);
+                    setQty(v);
+                  }}
+                />
+                <button type="button" className="vqb" onClick={() => handleQty(1)} disabled={!matchedVariant || qty >= matchedVariant.stock}>
+                  +
+                </button>
+              </div>
+              {matchedVariant && matchedVariant.stock > 0 && (
+                <span className="variant-modal__qty-max">
+                  / {matchedVariant.stock} {product.unit}
+                </span>
+              )}
             </div>
+
+            {/* Tổng tiền */}
             {matchedVariant && matchedVariant.stock > 0 && (
-              <span className="variant-modal__qty-max">
-                / {matchedVariant.stock} {product.unit}
-              </span>
+              <div className="variant-modal__total">
+                <span>Thành tiền</span>
+                <span className="variant-modal__total-val">{fmt(matchedVariant.price * qty)}</span>
+              </div>
             )}
           </div>
-
-          {/* Tổng tiền */}
-          {matchedVariant && matchedVariant.stock > 0 && (
-            <div className="variant-modal__total">
-              <span>Thành tiền</span>
-              <span className="variant-modal__total-val">{fmt(matchedVariant.price * qty)}</span>
-            </div>
-          )}
-        </div>
+        ) : (
+          <div className="variant-modal__loading">Đang tải thông tin sản phẩm...</div>
+        )}
       </ModalBody>
 
       <ModalFooter actions={actions} />

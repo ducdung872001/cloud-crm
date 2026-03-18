@@ -157,7 +157,7 @@ const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSele
           </div>
         </div>
 
-        <button className="pay-btn" onClick={onCreateInvoice}>
+        <button className="pay-btn" onClick={onCreateInvoice} disabled={items.length === 0}>
           {/* 💳 Thanh toán · <span>{formatVND(subtotal)}</span> */}
           💳 Tạo đơn hàng
         </button>

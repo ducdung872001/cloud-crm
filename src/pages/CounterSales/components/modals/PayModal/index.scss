@@ -4,6 +4,11 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     margin-bottom: 16px;
+    .pms__image {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
   }
 
   &__summary {
