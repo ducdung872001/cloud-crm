@@ -2139,7 +2139,7 @@ export const urlsApi = {
     view: prefixInventory + "/stockAdjust/view",
     list: prefixInventory + "/stockAdjust/list",
     // lấy danh sách sản phẩm có trong kho
-    warehouse: prefixInventory + "/warehouse/list",
+    productList: prefixInventory + "/inventoryBalance/stockProduct/list",
     // xóa đi 1 sản phẩm
     deletePro: prefixInventory + "/stockAdjustDetail/delete",
   },

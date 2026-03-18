@@ -9,7 +9,7 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { IFilterItem, ISaveSearch } from "model/OtherModel";
 import { IWarehouseFilterRequest } from "model/warehouse/WarehouseRequestModel";
-import { IWarehouseResponse } from "model/warehouse/WarehouseResponseModel";
+import { IWarehouseList, IWarehouseResponse } from "model/warehouse/WarehouseResponseModel";
 import { showToast } from "utils/common";
 import WarehouseService from "services/WarehouseService";
 import { getPageOffset, isDifferenceObj } from "reborn-util";
@@ -83,7 +83,7 @@ export default function ProductInventoryList() {
   const getListWarehouse = async (paramsSearch: IWarehouseFilterRequest) => {
     setIsLoading(true);
 
-    const response = await WarehouseService.list(paramsSearch, abortController.signal);
+    const response = await WarehouseService.listInternal(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
       const result = response.result;
@@ -143,14 +143,14 @@ export default function ProductInventoryList() {
 
   const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", "text-center", ""];
 
-  const dataMappingArray = (item: IWarehouseResponse, index: number) => [
+  const dataMappingArray = (item: IWarehouseList, index: number) => [
     getPageOffset(params) + index + 1,
     item.productName,
     item.batchNo,
     moment(item.expiryDate).format("DD/MM/YYYY"),
     item.unitName,
     item.quantity,
-    item.inventoryName,
+    item.warehouseName,
   ];
 
   return (

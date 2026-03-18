@@ -12,3 +12,12 @@ export interface IWarehouseResponse {
   employeeName: string | null;
   createdTime: string;
 }
+
+export interface IWarehouseList{
+  productName: string;
+  batchNo: string;
+  expiryDate: string;
+  unitName: string;
+  quantity: number;
+  warehouseName: string;
+}
