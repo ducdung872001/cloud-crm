@@ -117,26 +117,6 @@ export default function MultiChannelOrders() {
     },
   });
 
-  //   CONFIRMED, // Xác nhận
-  // SHIPPING,   // Đang giao
-  // COMPLETED,      // Đã hoàn thành
-  // CANCELED; // Hủy
-  const handleConfirm = async (item: any) => {
-    console.log("item>>>>", item);
-
-    await OrderRequestService.updateStatus({
-      status: "CONFIRMED",
-      id: item.id,
-    }).then((res) => {
-      if (res.code === 0) {
-        showToast("Xác nhận đơn hàng thành công", "success");
-        fetchData(params);
-      } else {
-        showToast(res.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-      }
-    });
-  };
-
   const titles = ["Mã đơn", "Kênh", "Khách hàng", "Sản phẩm", "Giá trị", "Trạng thái", "Thời gian", ""];
   const dataFormat = ["", "", "t", "", "", "text-center", ""];
 
@@ -212,11 +192,23 @@ export default function MultiChannelOrders() {
           ? "Đang giao"
           : item?.status === "COMPLETED"
           ? "Hoàn thành"
+          : item?.status === "CONFIRMED"
+          ? "Đã xác nhận"
           : item?.status === "REFUNDED"
           ? "Đã huỷ"
           : ""
       }
-      variant={item.status === "PENDING" ? "warning" : item.status === "PROCESSING" ? "primary" : item.status === "COMPLETED" ? "success" : "error"}
+      variant={
+        item.status === "PENDING"
+          ? "warning"
+          : item.status === "PROCESSING"
+          ? "primary"
+          : item.status === "COMPLETED"
+          ? "success"
+          : item.status === "CONFIRMED"
+          ? "success"
+          : "error"
+      }
     />,
     <div style={{ width: "10rem" }}>{moment(item.orderDate).format("DD/MM/YYYY HH:mm")}</div>,
     <div style={{ width: "10rem" }}>
@@ -235,7 +227,9 @@ export default function MultiChannelOrders() {
           <span
             style={{ fontSize: 12, fontWeight: "500", color: "white" }}
             onClick={() => {
-              handleConfirm(item);
+              // handleConfirm(item);
+              setModalDetail(true);
+              setDataOrder(item);
             }}
           >
             Xác nhận
@@ -405,7 +399,15 @@ export default function MultiChannelOrders() {
         />
       </div>
 
-      <ModalDetailOrder onShow={modalDetail} onHide={() => setModalDetail(false)} dataOrder={dataOrder} />
+      <ModalDetailOrder
+        onShow={modalDetail}
+        onHide={() => {
+          setDataOrder(null);
+          fetchData(params);
+          setModalDetail(false);
+        }}
+        dataOrder={dataOrder}
+      />
     </div>
   );
 }

@@ -687,6 +687,7 @@ export const urlsApi = {
     listOne: prefixSales + "/order-request/list-one",
     update: prefixSales + "/order-request/update",
     updateStatus: prefixSales + "/order-request/updateDynamic",
+    confirm: prefixSales + "/order-request/confirm",
     updateAndInit: prefixSales + "/order-request/update-and-init",
     delete: prefixSales + "/order-request/delete-soft",
     export: prefixSales + "/order-request/export",
