@@ -1,7 +1,7 @@
 const prefixAdmin = "/adminapi";
 const prefixBiz = "/bizapi";
 // const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
-const prefixBpm = process.env.APP_BPM_URL + "/bpm";
+const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
 // const prefixBPM = "https://bpm.reborn.vn/bpmapi";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";

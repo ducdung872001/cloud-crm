@@ -11,6 +11,7 @@ import CustomerView from "./partials/CustomerView/CustomerView";
 import CustomerMarketingLead from "./partials/CustomerMarketingLead/CustomerMarketingLead";
 import { getDomain } from "reborn-util";
 import CustomerLoyaltyPointLedger from "./partials/CustomerLoyaltyPointLedger";
+import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
 export default function SettingCustomerList() {
   document.title = "Cài đặt khách hàng";
@@ -19,9 +20,9 @@ export default function SettingCustomerList() {
   const checkSubdomainTNEX = sourceDomain.includes("tnex");
 
   const [tab, setTab] = useState<string>("");
-  const [isDetailCategory, setIsDetailCategory] = useState<boolean>(false);
+  const [isDetail, setIsDetail] = useState<boolean>(false);
 
-  const menuCategoryCustomer = [
+  const listTab = [
     {
       title: "Danh sách thẻ khách hàng",
       is_tab: "tab_one",
@@ -66,97 +67,89 @@ export default function SettingCustomerList() {
 
   return (
     <div className="page-setting-customer">
-      {!isDetailCategory && <TitleAction title="Cài đặt khách hàng" />}
-      <div className="card-box d-flex flex-column">
-        {!isDetailCategory && (
-          <ul className="menu">
-            {menuCategoryCustomer.map((item, idx) => {
-              return (
-                <li
-                  key={idx}
-                  className="menu__category"
-                  onClick={(e) => {
-                    e.preventDefault();
+      {!isDetail && <TitleAction title="Cài đặt khách hàng" />}
+      
+      <div className="d-flex flex-column">
+        {!isDetail && (
+            <TabMenuList
+                listTab={listTab}
+                onClick={(item) => {
                     setTab(item.is_tab);
-                    setIsDetailCategory(true);
-                  }}
-                >
-                  {item.title}
-                </li>
-              );
-            })}
-          </ul>
+                    setIsDetail(true);
+                }}
+            />
         )}
       </div>
-      {isDetailCategory && tab === "tab_one" ? (
+      
+      {isDetail && tab === "tab_one" ? (
         <CustomerCardList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "tab_two" ? (
+      ) : isDetail && tab === "tab_two" ? (
         <CustomerResourcesList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "tab_three" ? (
+      ) : isDetail && tab === "tab_three" ? (
         <CustomerGroupList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "tab_four" ? (
+      ) : isDetail && tab === "tab_four" ? (
         <CustomerCareerList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "tab_five" ? (
+      ) : isDetail && tab === "tab_five" ? (
         <CustomerRelationshipList
             onBackProps={(isBack) => {
               if (isBack) {
-                setIsDetailCategory(false);
+                setIsDetail(false);
               }
             }}
           />
-      ) : isDetailCategory && tab === "tab_six" ? (
+      ) : isDetail && tab === "tab_six" ? (
         <CustomerAttributeList
             onBackProps={(isBack) => {
               if (isBack) {
-                setIsDetailCategory(false);
+                setIsDetail(false);
               }
             }}
           />
-      ) : isDetailCategory && tab === "tab_seven" ? (
+      ) : isDetail && tab === "tab_seven" ? (
         <CustomerView
             onBackProps={(isBack) => {
               if (isBack) {
-                setIsDetailCategory(false);
+                setIsDetail(false);
               }
             }}
           />
-      ) : isDetailCategory && tab === "tab_eight" ? (
+      ) : isDetail && tab === "tab_eight" ? (
         <CustomerMarketingLead
             onBackProps={(isBack) => {
               if (isBack) {
-                setIsDetailCategory(false);
+                setIsDetail(false);
               }
             }}
           />
-      ) : isDetailCategory && tab === "tab_nine" ? (
+      ) : isDetail && tab === "tab_nine" ? (
         <CustomerLoyaltyPointLedger
             onBackProps={(isBack) => {
               if (isBack) {
-                setIsDetailCategory(false);
+                setIsDetail(false);
               }
             }}
           />

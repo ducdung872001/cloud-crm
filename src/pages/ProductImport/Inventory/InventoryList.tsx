@@ -274,7 +274,7 @@ export default function WarehouseBookList() {
         <SearchBox
           name="Tên sản phẩm / mã chứng từ"
           params={params}
-          isSaveSearch={true}
+          isSaveSearch={false}
           listSaveSearch={listSaveSearch}
           isFilter={true}
           listFilterItem={customerFilterList}

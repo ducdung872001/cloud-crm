@@ -4,15 +4,30 @@ import Icon from "components/icon";
 import TitleAction from "components/titleAction/titleAction";
 import "./HeaderTabMenu.scss";
 
-export default function HeaderTabMenu(props: any) {
-  const { onBackProps, titleActions, titleBack, title } = props;
+interface IHeaderTab {
+  onBackProps?: any;
+  callBack?: () => void;
+  titleActions?: any;
+  titleBack?: string
+  title?: string
+}
 
+export default function HeaderTabMenu(props: IHeaderTab) {
+  const { onBackProps, titleActions, titleBack, title, callBack } = props;
+
+  const clickBack = () => {
+    if(callBack) {
+      callBack();
+    } else {
+      onBackProps(true);
+    }
+  }
   return (
     <div className="action-navigation">
         <div className="action-backup">
           <h1
             onClick={() => {
-              onBackProps(true);
+              clickBack();
             }}
             className="title-first"
             title="Quay lại"
@@ -22,7 +37,7 @@ export default function HeaderTabMenu(props: any) {
           <Icon
             name="ChevronRight"
             onClick={() => {
-              onBackProps(true);
+              clickBack();
             }}
           />
           <h1 className="title-last">{title}</h1>
