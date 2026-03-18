@@ -15,8 +15,7 @@ export default function WarehouseReportXntView() {
     <div className="warehouse-report-view">
       <div className="page-header page-header--split">
         <div>
-          <div className="page-eyebrow">Báo cáo kho</div>
-          <div className="page-title">Báo cáo Nhập Xuất Tồn</div>
+
         </div>
         <WarehouseReportActions secondary="⬇ Xuất Excel" primary="🖨 In báo cáo" />
       </div>
