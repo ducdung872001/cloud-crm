@@ -4,7 +4,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import moment from "moment";
 import { formatCurrency } from "reborn-util";
-import { CAMPAIGN_REPORTS, CHANNEL_OPTIONS, CHANNEL_REPORTS } from "./mockData";
+import { CAMPAIGN_REPORTS, CHANNEL_COLORS, CHANNEL_OPTIONS, CHANNEL_REPORTS } from "./mockData";
 import { createChannelMixOptions, createChannelPerformanceOptions, createTrendChartOptions } from "./chartOptions";
 import MarketingFilterBar from "./components/MarketingFilterBar";
 import MarketingKpiGrid from "./components/MarketingKpiGrid";
