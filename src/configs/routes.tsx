@@ -178,6 +178,7 @@ import CustomerCarePage from "@/pages/CustomerCarePage/CustomerCarePage";
 import MarketingCampaignPage from "@/pages/MarketingCampaignPage/MarketingCampaignPage";
 import CustomerAnalysisPage from "@/pages/CustomerAnalysisPage/CustomerAnalysisPage";
 import Checkout from "@/pages/Checkout/Checkout";
+import FinanceContent from "@/pages/PaymentReconciliation";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -485,7 +486,6 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="DebtTransactionMenu" />,
         code: "",
       },
-     
     ],
   },
   {
@@ -566,7 +566,7 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="PointsLogMenu" />,
       //   code: "",
       // },
-      
+
       // {
       //   title: "receiveTicket", // Tiếp nhận hỗ trợ
       //   path: urls.ticket,
@@ -681,7 +681,7 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="ShippingReportMenu" />,
         code: "",
       },
-      
+
       {
         title: "settingCashbook", // Cài đặt tài chính
         path: urls.setting_cash_book,
@@ -1168,11 +1168,11 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.member_list,
-    component: <MemberCustomersPage/>
+    component: <MemberCustomersPage />,
   },
   {
     path: urls.marketing_campaign,
-    component: <MarketingCampaignPage/>
+    component: <MarketingCampaignPage />,
   },
   {
     path: urls.loyalty_wallet,
@@ -1315,7 +1315,7 @@ export const routes: IRouter[] = [
     path: urls.report_warehouse,
     component: <WarehouseReport />,
   },
-  
+
   // tạo đơn bán hàng
   {
     path: urls.create_sale_add,
@@ -1330,7 +1330,7 @@ export const routes: IRouter[] = [
   {
     path: urls.promotional_program,
     // component: <PromotionalProgram />,
-    component: <PromotionPage/>
+    component: <PromotionPage />,
   },
   {
     path: urls.promotional_report,
@@ -1385,17 +1385,17 @@ export const routes: IRouter[] = [
   // Tổng đài
   {
     path: urls.call_center,
-    component: <CallCenterList />
+    component: <CallCenterList />,
   },
   //chăm sóc khách hàng
   {
     path: urls.customer_care_page,
-    component: <CustomerCarePage/>
+    component: <CustomerCarePage />,
   },
   //phân tích khách hàng
   {
     path: urls.customer_analysis,
-    component: <CustomerAnalysisPage/>
+    component: <CustomerAnalysisPage />,
   },
   //email
   {
@@ -1555,5 +1555,9 @@ export const routes: IRouter[] = [
   {
     path: urls.payment_mgt,
     component: <Checkout />,
+  },
+  {
+    path: urls.payment_control,
+    component: <FinanceContent />,
   },
 ];
