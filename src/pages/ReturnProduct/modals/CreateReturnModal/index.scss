@@ -1,0 +1,233 @@
+.create-return-modal {
+  //   width: 600px;
+}
+
+// ── Segment ───────────────────────────────────────
+.crm-seg {
+  display: flex;
+  background: var(--paper);
+  border-radius: 9px;
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 18px;
+
+  &__btn {
+    flex: 1;
+    padding: 9px;
+    border-radius: 7px;
+    border: none;
+    background: none;
+    font-family: "Outfit", sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+
+    &--active {
+      background: var(--white);
+      color: var(--ink);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+// ── Section ───────────────────────────────────────
+.crm-section {
+  margin-bottom: 18px;
+
+  &__title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+// ── Form grid ─────────────────────────────────────
+.crm-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.crm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+
+    span {
+      color: #e24b4a;
+    }
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 9px 11px;
+    border-radius: 8px;
+    font-family: "Outfit", sans-serif;
+    font-size: 13px;
+    border: 1.5px solid var(--border);
+    background: var(--paper);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+
+    &:focus {
+      border-color: var(--lime-d);
+      background: #fff;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 58px;
+    line-height: 1.5;
+  }
+}
+
+// ── Product rows table ────────────────────────────
+.crm-prod-table {
+  &__head {
+    display: grid;
+    grid-template-columns: 1fr 60px 100px 100px 30px;
+    gap: 8px;
+    padding-bottom: 6px;
+    margin-bottom: 2px;
+
+    span {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted2);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 60px 100px 100px 30px;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+
+    input {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Outfit", sans-serif;
+      font-size: 13px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+
+      &:focus {
+        border-color: var(--lime-d);
+        background: #fff;
+      }
+      &[readonly] {
+        background: #f1f5f9;
+        color: var(--muted);
+      }
+    }
+  }
+
+  &__rm {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: #fee2e2;
+    color: #b91c1c;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    flex-shrink: 0;
+
+    &:hover {
+      background: #fecaca;
+    }
+  }
+}
+
+.crm-add-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "Outfit", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a5c52;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  margin-top: 2px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// ── Summary ───────────────────────────────────────
+.crm-summary {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 14px;
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 4px 0;
+
+    span:first-child {
+      color: var(--muted);
+    }
+    span:last-child {
+      font-weight: 700;
+    }
+
+    &--total {
+      font-size: 15px;
+      font-weight: 900;
+
+      span {
+        font-weight: 900;
+        color: #1a5c52;
+      }
+    }
+  }
+
+  &__divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 8px 0;
+  }
+}

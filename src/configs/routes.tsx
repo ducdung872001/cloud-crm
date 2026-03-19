@@ -183,6 +183,7 @@ import CustomerAnalysisPage from "@/pages/CustomerAnalysisPage/CustomerAnalysisP
 import PaymentMethodList from "@/pages/PaymentMethod/PaymentMethod";
 import PaymentMethodPage from "@/pages/PaymentMethodPage/PaymentMethodPage";
 import FinanceContent from "@/pages/PaymentReconciliation";
+import ReturnProductPage from "@/pages/ReturnProduct";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -213,7 +214,7 @@ export const menu: IMenuItem[] = [
       },
       {
         title: "returnInvoice", // Khách trả hàng
-        path: urls.customer_pay,
+        path: urls.return_invoice,
         icon: <Icon name="ReturnMenu" />,
         code: "RETURN_INVOICE",
       },
@@ -1390,8 +1391,8 @@ export const routes: IRouter[] = [
   },
   // danh sách khách trả hàng
   {
-    path: urls.customer_pay,
-    component: <CustomerPayList />,
+    path: urls.return_invoice,
+    component: <ReturnProductPage />,
   },
   // bán hàng đa kênh
   {

@@ -402,10 +402,10 @@ export const urlsApi = {
     takeEstimate: prefixAdmin + "/customer/estimate",
   },
   invoice: {
-    createInvoice: prefixSales + "/invoiceDetail/get",
+    createInvoice: prefixSales + "/invoice/draft/create",
     list: prefixSales + "/invoice/list/v2",
     create: prefixSales + "/invoice/create",
-    invoiceDetail: prefixSales + "/invoiceDetail/import",
+    invoiceDetail: prefixSales + "/invoiceDetail/get",
     cardService: prefixSales + "/invoiceDetail/cardService",
     // Tạo hóa đơn bán hàng
     invoiceDetailCustomer: prefixSales + "/invoiceDetail/customer",
@@ -3234,7 +3234,8 @@ export const urls = {
   // đường dẫn quản lý đơn vị vận chuyển
   shipping_parther: "/shipping_parther",
   // đường dẫn danh sách khách trả hàng
-  customer_pay: "/customer_pay",
+  // customer_pay: "/customer_pay",
+  return_invoice: "/return_invoice",
   // bán hàng đa kênh
   multi_channel_sales: "/multi_channel_sales",
   //tạo báo giá
