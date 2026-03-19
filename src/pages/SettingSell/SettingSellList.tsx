@@ -24,19 +24,35 @@ export default function SettingSellList() {
     {
       title: "Danh mục sản phẩm",
       is_tab: "product_tab_five",
+      backgroundColor: "#E6F1FB",
+      strokeColor: "#185fa5",
+      icon: "ProductCategoryMenu",
+      des: "Tổ chức sản phẩm theo danh mục phân cấp, giúp tìm kiếm và quản lý nhanh hơn."
     },
 
     {
       title: "Danh sách sản phẩm",
       is_tab: "product_tab_one",
+      backgroundColor: "#E1F5EE",
+      strokeColor: "#0f6e56",
+      icon: "ProductList",
+      des: "Xem và quản lý toàn bộ sản phẩm, cập nhật thông tin, giá bán và trạng thái."
     },
     {
       title: "Danh sách nhóm sản phẩm",
       is_tab: "product_list_tab_one",
+      backgroundColor: "#FAEEDA",
+      strokeColor: "#854f0b",
+      icon: "ProductGroupList",
+      des: "Gom nhóm sản phẩm liên quan để áp dụng chính sách giá và khuyến mãi chung."
     },
     {
       title: "Danh mục đơn vị sản phẩm",
       is_tab: "product_tab_two",
+      backgroundColor: "#EEEDFE",
+      strokeColor: "#534ab7",
+      icon: "ProductUnitCategory",
+      des: "Định nghĩa các đơn vị tính như cái, hộp, kg, lít... dùng trong bán hàng và kho."
     },
 
     // {
@@ -47,11 +63,16 @@ export default function SettingSellList() {
     {
       title: "Định nghĩa trường thông tin bổ sung sản phẩm",
       is_tab: "product_tab_three",
+      backgroundColor: "#EAF3DE",
+      strokeColor: "#3b6d11",
+      icon: "AttributeFieldProduct",
+      des: "Tạo thêm các trường dữ liệu tuỳ chỉnh để lưu thông tin đặc thù của sản phẩm."
     },
 
     // {
     //   title: "Cài đặt khuyến mãi",
     //   is_tab: "product_tab_promotion",
+    //   des: "Cấu hình quy tắc giảm giá, chiết khấu theo sản phẩm, nhóm hàng hoặc đơn hàng."
     // },
   ];
 
