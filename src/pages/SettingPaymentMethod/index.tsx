@@ -19,14 +19,13 @@ import { getPageOffset } from "reborn-util";
 
 import "./index.scss";
 import AddQrProModal from "./partials/AddQrProModal";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function SettingPaymentMethod() {
+export default function SettingPaymentMethod(props) {
   document.title = "Danh mục phương thức thanh toán";
 
-  //   const { onBackProps } = props;
-
+  const { onBackProps } = props;
   const isMounted = useRef(false);
-
   const [listCategoryService, setListCategoryService] = useState<ICategoryServiceResponseModel[]>([]);
   const [dataCategoryService, setDataCategoryService] = useState<ICategoryServiceResponseModel>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
@@ -280,20 +279,12 @@ export default function SettingPaymentMethod() {
 
   return (
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
-      <div className="action-navigation">
-        <div className="action-backup">
-          <h1
-            onClick={() => {
-              //   onBackProps(true);
-            }}
-            className="title-first"
-            title="Quay lại"
-          >
-            Quản lý phương thức thanh toán
-          </h1>
-        </div>
-        <TitleAction title="" titleActions={titleActions} />
-      </div>
+      <HeaderTabMenu
+        title="Cài đặt"
+        titleBack="Phương thức thanh toán"
+        onBackProps={onBackProps}
+        titleActions={titleActions}
+      />
 
       <div className="card-box d-flex flex-column">
         <SearchBox

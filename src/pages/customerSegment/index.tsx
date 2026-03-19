@@ -18,14 +18,14 @@ import { getPageOffset } from "reborn-util";
 import AddCustomerSegment from "./partials/AddCustomerSegment";
 import ChangeStatusCustomerSegment from "./partials/ChangeStatusCustomerSegment";
 import "./index.scss";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
+import urls from "@/configs/urls";
 
-export default function CustomerSegment() {
+export default function CustomerSegment(props) {
   document.title = "Phân khúc khách hàng";
-
+  const { onBackProps } = props;
   const isMounted = useRef(false);
-
   const navigate = useNavigate();
-
   const [listCustomerSegment, setListCustomerSegment] = useState([]);
   const [dataCustomerSegment, setDataCustomerSegment] = useState(null);
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
@@ -151,7 +151,7 @@ export default function CustomerSegment() {
       key={item.id}
       className={`action__view--customer`}
       onClick={() => {
-        navigate(`/customer?contactType=-1&filterId=${item.id}`);
+        navigate(`${urls.customer_list}?filterId=${item.id}`);
       }}
     >
       <a>Xem thêm</a>
@@ -330,7 +330,13 @@ export default function CustomerSegment() {
 
   return (
     <div className={`page-content page__customer--segment${isNoItem ? " bg-white" : ""}`}>
-      <div className="action-navigation">
+      <HeaderTabMenu
+        title="Phân khúc khách hàng"
+        titleBack="Phân tích khách hàng"
+        onBackProps={onBackProps}
+        titleActions={titleActions}
+      />
+      {/* <div className="action-navigation">
         <div className="action-backup">
           <h1
             onClick={() => {
@@ -355,7 +361,7 @@ export default function CustomerSegment() {
           )}
         </div>
         <TitleAction title="" titleActions={titleActions} />
-      </div>
+      </div> */}
 
       <div className="card-box d-flex flex-column">
         <div className={`${showModalAdd ? "d-none" : ""}`}>

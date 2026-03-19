@@ -10,14 +10,14 @@ export default function TabMenuList(props) {
         {listTab.map((item, idx) => {
         return (
             <div
-            key={idx}
-            className="item-menu"
-            onClick={(e) => {
-                onClick(item);
-            }}
+                key={idx}
+                className="item-menu"
+                onClick={(e) => {
+                    onClick(item);
+                }}
             >
-            <div className="item-icon">
-                <Icon name={item.icon}/>
+            <div className="item-icon" style={{backgroundColor: item.backgroundColor }}>
+                <Icon name={item.icon} style={{stroke: item.strokeColor }}/>
             </div>
             <div className="item-body">
                 <span style={{fontSize: 14, fontWeight: '500'}}>{item.title}</span>

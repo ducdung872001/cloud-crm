@@ -15,6 +15,8 @@ export default function MarketingCampaignPage() {
   const listTab = [
     {
       title: "SMS Marketing",
+      backgroundColor: "#E6F1FB",
+      strokeColor: "#185fa5",
       icon: "SmsMenu",
       tab: 1,
       des: "Gửi tin nhắn SMS hàng loạt đến khách hàng theo danh sách hoặc phân khúc"
@@ -22,24 +24,32 @@ export default function MarketingCampaignPage() {
 
     {
       title: "Zalo / OTT",
+      strokeColor: "#0f6e56",
       icon: "ZaloMenu",
       tab: 2,
       des: "Gửi tin nhắn Zalo OA, chăm sóc khách hàng qua các nền tảng OTT phổ biến"
     },
     {
       title: "Email Marketing",
+      backgroundColor: "#EEEDFE",
+      strokeColor: "#534ab7",
       icon: "EmailMenu",
       tab: 3,
       des: "Tạo và gửi chiến dịch email chuyên nghiệp, theo dõi tỷ lệ mở và click"
     },
     {
       title: "Thông báo qua App",
+      backgroundColor: "#FAEEDA",
+      strokeColor: "#854f0b",
       icon: "BellMenu",
       tab: 4,
       des: "Gửi push notification đến ứng dụng di động, tiếp cận khách hàng trực tiếp"
     },
     {
       title: "Lịch sử chiến dịch",
+      backgroundColor: "#F1EFE8",
+      strokeColor: "#5f5e5a",
+      icon: "CampaignHistory",
       tab: 5,
       des: "Xem lại toàn bộ chiến dịch đã chạy, thống kê hiệu quả và kết quả từng đợt"
     },

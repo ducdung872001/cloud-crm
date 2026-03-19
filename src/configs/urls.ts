@@ -1,7 +1,7 @@
 const prefixAdmin = "/adminapi";
 const prefixBiz = "/bizapi";
 // const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
-const prefixBpm = process.env.APP_BPM_URL + "/bpm";
+const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
 // const prefixBPM = "https://bpm.reborn.vn/bpmapi";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";
@@ -538,6 +538,8 @@ export const urlsApi = {
     update: prefixInventory + "/inventory/update",
     delete: prefixInventory + "/inventory/delete",
     import: prefixInventory + "/inventory/import",
+    ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
+    ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
   },
   pom: {
     //định nghĩa pom cho sản phẩm, dịch vụ
@@ -685,6 +687,7 @@ export const urlsApi = {
     listOne: prefixSales + "/order-request/list-one",
     update: prefixSales + "/order-request/update",
     updateStatus: prefixSales + "/order-request/updateDynamic",
+    confirm: prefixSales + "/order-request/confirm",
     updateAndInit: prefixSales + "/order-request/update-and-init",
     delete: prefixSales + "/order-request/delete-soft",
     export: prefixSales + "/order-request/export",
@@ -2144,7 +2147,7 @@ export const urlsApi = {
     view: prefixInventory + "/stockAdjust/view",
     list: prefixInventory + "/stockAdjust/list",
     // lấy danh sách sản phẩm có trong kho
-    warehouse: prefixInventory + "/warehouse/list",
+    productList: prefixInventory + "/inventoryBalance/stockProduct/list",
     // xóa đi 1 sản phẩm
     deletePro: prefixInventory + "/stockAdjustDetail/delete",
   },
@@ -3302,6 +3305,7 @@ export const urls = {
   dashboard_shipping: "/dashboard_shipping",
   customer_report: "/customer_report",
   inventory_report: "/inventory_report",
+  inventory_report_modern: "/inventory_report_modern",
   marketing_report: "/marketing_report",
   dashboard_loyalty: "/dashboard_loyalty",
   setting_report: "/setting_report",

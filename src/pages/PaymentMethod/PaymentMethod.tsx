@@ -4,10 +4,11 @@ import Icon from "components/icon";
 import "./PaymentMethod.scss";
 import ModalPaymentMethod from "./partials/ModalPaymentMethod";
 import Button from "components/button/button";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function PaymentMethodList() {
-  document.title = "Quản lý Phương thức Thanh toán";
-
+export default function PaymentMethodList(props) {
+  document.title = "Lựa chọn Phương thức Thanh toán";
+  const { onBackProps } = props;
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedData, setSelectedData] = useState<any>(null);
 
@@ -63,10 +64,15 @@ export default function PaymentMethodList() {
 
   return (
     <div className="page-content page-payment-method">
-      <TitleAction title="Phương thức thanh toán" titleActions={titleActions} />
-
+      {/* <TitleAction title="Phương thức thanh toán" titleActions={titleActions} /> */}
+      <HeaderTabMenu
+        title="Lựa chọn"
+        titleBack="Phương thức thanh toán"
+        onBackProps={onBackProps}
+        titleActions={titleActions}
+      />
       <div className="card-box d-flex flex-column">
-        <div className="action-header">
+        {/* <div className="action-header">
           <div className="title__actions">
             <ul className="menu-list">
               {listTabs.map((item, idx) => (
@@ -83,7 +89,7 @@ export default function PaymentMethodList() {
               ))}
             </ul>
           </div>
-        </div>
+        </div> */}
 
         <div className="payment-grid-container">
           {paymentMethods.map((method) => (
