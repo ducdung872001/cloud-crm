@@ -435,6 +435,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         const form = new FormData();
         Object.entries(body).forEach(([key, value]) => {
           if (value === undefined || value === null) return;
+          if (key === "avatar") return;
           if (key === "variantGroups" || key === "variants") {
             form.append(key, JSON.stringify(value));
             return;
@@ -445,6 +446,8 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           form.append("avatar", selectedImageFile);
         } else if (isEdit && !formData.avatar) {
           form.append("avatar", "");
+        } else if (formData.avatar) {
+          form.append("avatar", formData.avatar);
         }
         res = await ProductService.wUpdateFormData(form);
       } else {
