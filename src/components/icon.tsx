@@ -468,6 +468,13 @@ import IcMembershipClass from "assets/icons-menu/ic-membership-class.svg";
 import IcAccumulatePoints from "assets/icons-menu/ic-accumulate-points.svg";
 import IcExchangePoints from "assets/icons-menu/ic-exchange-points.svg";
 import IcCampaignHistory from "assets/icons-menu/ic-campaign-history.svg";
+import IcMasterialsList from "assets/icons-menu/ic-masterials-list.svg";
+import IcImportMasterials from "assets/icons-menu/ic-import-masterials.svg";
+import IcRecipeMasterials from "assets/icons-menu/ic-recipe-masterials.svg";
+import IcProductList from "assets/icons-menu/ic-product-list.svg";
+import IcProductGroupList from "assets/icons-menu/ic-product-group-list.svg";
+import IcProductUnitCategory from "assets/icons-menu/ic-product-unit-category.svg";
+import IcAttributeFieldProduct from "assets/icons-menu/ic-attribute-field-product.svg";
 
 
 const iconTypes = {
@@ -925,7 +932,14 @@ const iconTypes = {
   MembershipClass: IcMembershipClass,
   AccumulatePoints: IcAccumulatePoints,
   ExchangePoints: IcExchangePoints,
-  CampaignHistory: IcCampaignHistory
+  CampaignHistory: IcCampaignHistory,
+  MasterialsList: IcMasterialsList,
+  ImportMasterials: IcImportMasterials,
+  RecipeMasterials: IcRecipeMasterials,
+  ProductList: IcProductList,
+  ProductGroupList: IcProductGroupList,
+  ProductUnitCategory: IcProductUnitCategory,
+  AttributeFieldProduct: IcAttributeFieldProduct
 
 };
 
