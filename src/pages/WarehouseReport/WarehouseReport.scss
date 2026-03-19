@@ -121,6 +121,11 @@
     margin-bottom: 1.6rem;
   }
 
+  .warehouse-report-view {
+    display: flex;
+    flex-direction: column;
+  }
+
   .page-header--split {
     display: flex;
     align-items: flex-start;
@@ -386,6 +391,10 @@
 
   .tbl-scroll {
     overflow-x: auto;
+  }
+
+  .warehouse-report-view > .tbl-card {
+    margin-top: 1.6rem;
   }
 
   table {

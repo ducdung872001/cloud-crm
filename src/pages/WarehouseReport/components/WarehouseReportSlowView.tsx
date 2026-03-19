@@ -13,13 +13,11 @@ export default function WarehouseReportSlowView() {
 
   return (
     <div className="warehouse-report-view">
-      <div className="page-header page-header--split">
+      {/* <div className="page-header page-header--split">
         <div>
-          <div className="page-eyebrow">Báo cáo kho</div>
-          <div className="page-title">Hàng chậm luân chuyển</div>
         </div>
         <WarehouseReportActions secondary="⬇ Xuất Excel" primary="📌 Đề xuất xử lý" />
-      </div>
+      </div> */}
       <WarehouseReportFilterBar leftLabel="Tồn quá:" leftButtons={["90 ngày", "60 ngày", "30 ngày", "180 ngày"]} selects={["Tất cả nhóm", "Tất cả kho"]} actionLabel="Lọc" />
       <div className="alert-banner">
         <span className="alert-banner__icon">⚠️</span>
