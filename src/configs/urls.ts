@@ -15,7 +15,7 @@ const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
 const prefixFinance = prefixBiz + "/finance";
-const prefixInventory = prefixBiz + "/inventory";
+const prefixInventory = "http://localhost:8091/inventory";
 const prefixWarehouse = prefixBiz + "/warehouse";
 const prefixCare = prefixBiz + "/care";
 const prefixBilling = prefixBiz + "/billing";
@@ -424,6 +424,13 @@ export const urlsApi = {
     invoiceCode: prefixSales + "/invoice/code",
     prefixSales,
   },
+  invoiceImport: {
+    update: prefixInventory + "/invoice/import/update",
+    get: prefixInventory + "/invoice/import/get",
+    list: prefixInventory + "/invoice/import/list",
+    approve: prefixInventory + "/invoice/import/approve",
+    cancel: prefixInventory + "/invoice/import/cancel",
+  },
   shipping: {
     create: prefixAdmin + "/shipping/create",
   },
@@ -528,6 +535,7 @@ export const urlsApi = {
   },
 
   productImport: {
+    list: prefixInventory + "/product_import/list",
     update: prefixInventory + "/product_import/update",
     detail: prefixInventory + "/product_import/detail",
     delete: prefixInventory + "/product_import/delete",
@@ -537,7 +545,7 @@ export const urlsApi = {
     list: prefixInventory + "/inventory/list",
     update: prefixInventory + "/inventory/update",
     delete: prefixInventory + "/inventory/delete",
-    import: prefixInventory + "/inventory/import",
+    import: prefixInventory + "/warehouse/list",
     ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
     ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
   },

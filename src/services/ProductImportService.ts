@@ -3,6 +3,11 @@ import { IProductImportRequest } from "model/productImport/ProductImportRequestM
 import { IInvoiceDetailRequest } from "model/invoice/InvoiceRequestModel";
 
 export default {
+  list: (invoiceId: number) => {
+    return fetch(`${urlsApi.productImport.list}?invoiceId=${invoiceId}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
   detail: (invoiceId: number) => {
     return fetch(`${urlsApi.productImport.detail}?invoiceId=${invoiceId}`, {
       method: "GET",

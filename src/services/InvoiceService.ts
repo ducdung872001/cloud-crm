@@ -81,4 +81,30 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  importUpdate: (body: Record<string, any>) => {
+    return fetch(urlsApi.invoiceImport.update, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  importGet: (id: number) => {
+    return fetch(`${urlsApi.invoiceImport.get}?id=${id}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  importList: (params?: Record<string, any>) => {
+    return fetch(`${urlsApi.invoiceImport.list}${convertParamsToString(params)}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  importApprove: (invoiceId: number) => {
+    return fetch(`${urlsApi.invoiceImport.approve}?invoiceId=${invoiceId}`, {
+      method: "POST",
+    }).then((res) => res.json());
+  },
+  importCancel: (invoiceId: number) => {
+    return fetch(`${urlsApi.invoiceImport.cancel}?invoiceId=${invoiceId}`, {
+      method: "POST",
+    }).then((res) => res.json());
+  },
 };

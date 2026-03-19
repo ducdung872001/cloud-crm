@@ -36,6 +36,7 @@ export interface IInvoiceDetailRequest {
   id: number;
   batchNo: string;
   invoiceId: number;
+  variantId?: number;
   mainCost: string;
   mfgDate: string;
   productId: number;
