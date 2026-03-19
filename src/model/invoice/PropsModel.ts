@@ -10,6 +10,8 @@ export interface AddProductImportModalProps {
 export interface PaymentImportInvoicesProps {
   data: IInvoiceCreateResponse;
   listInvoiceDetail?: IInvoiceDetailResponse[];
+  onInvoiceCreated?: (invoice: IInvoiceCreateResponse) => void;
+  onInvoiceApproved?: (invoice: IInvoiceCreateResponse) => void;
 }
 
 export interface SeeReceiptProps {

@@ -281,6 +281,7 @@ export default function SelectCustom(props: SelectCustomProps) {
           noOptionsMessage={() => "Không tìm thấy lựa chọn"}
           onMenuOpen={onMenuOpen}
           isMulti={isMulti}
+          isClearable={isClearable}
           formatOptionLabel={formatOptionLabel}
         />
       );

@@ -3,6 +3,103 @@
     .card-box {
       overflow: hidden;
 
+      .create-receipt__invoice-picker {
+        padding: 2rem 2rem 0;
+
+        .create-receipt__invoice-filter-row {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 1.2rem;
+          flex-wrap: wrap;
+        }
+
+        .create-receipt__invoice-filter {
+          display: flex;
+          gap: 0.8rem;
+          flex-wrap: wrap;
+        }
+
+        .create-receipt__invoice-select {
+          width: min(42rem, 100%);
+          flex: 1 1 32rem;
+        }
+
+        .create-receipt__invoice-select-control {
+          margin-bottom: 0;
+        }
+
+        .create-receipt__invoice-filter-btn {
+          border: 1px solid var(--border-color);
+          background: #fff;
+          border-radius: 0.6rem;
+          padding: 0 1.2rem;
+          min-height: 4rem;
+          font-size: 1.3rem;
+          color: var(--text-extra-color);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+
+          &.active {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+          }
+        }
+      }
+
+      .create-receipt__invoice-option {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+
+      .create-receipt__invoice-value {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+      }
+
+      .create-receipt__invoice-option-title {
+        font-weight: 600;
+      }
+
+      .create-receipt__invoice-option-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: var(--text-extra-color);
+        font-size: 1.2rem;
+      }
+
+      .create-receipt__invoice-option-status {
+        border-radius: 999px;
+        padding: 0.2rem 0.8rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .status-pending {
+        background: #fff4db;
+        color: #9a6700;
+      }
+
+      .status-approved {
+        background: #e8f6ec;
+        color: #107c41;
+      }
+
+      .status-cancelled {
+        background: #fdecec;
+        color: #d83b01;
+      }
+
+      .create-receipt__invoice-summary {
+        padding: 0 2rem 1.2rem;
+      }
+
       .action__header {
         display: flex;
         align-items: center;
