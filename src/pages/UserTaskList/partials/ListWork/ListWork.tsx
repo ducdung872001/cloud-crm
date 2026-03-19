@@ -1048,7 +1048,7 @@ export default function ListWork(props: any) {
   return (
     <div className={`page-content page-work${isNoItem ? " bg-white" : ""}`}>
       <div className="card-box d-flex flex-column">
-        <div className="action-header">
+        {/* <div className="action-header">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div className="header_tab">
               {dataHeaderTab.map((item, index) => (
@@ -1106,23 +1106,10 @@ export default function ListWork(props: any) {
                   listSaveSearch={listSaveSearch}
                   listFilterItem={customerFilterList}
                   updateParams={(paramsNew) => {
-                    // if(Object.keys(paramsNew).find((el) => el === "filters") && (Object.keys(paramsNew).find((el) => el === "projectId") || Object.keys(paramsNew).find((el) => el === "prName"))){
-                    //   delete paramsNew.filters;
-
-                    //   const filters = {
-                    //     ...(Object.keys(paramsNew).find((el) => el === "projectId") ? {projectId: paramsNew["projectId"]} : {}),
-                    //     ...(Object.keys(paramsNew).find((el) => el === "prName") ? {projectId: paramsNew["prName"]} : {})
-                    //   }
-                    //   setParams({ ...paramsNew, filters: filters });
-
-                    // } else {
-                    //   setParams(paramsNew);
-                    // }
                     setParams(paramsNew);
                   }}
                 />
               </div>
-              {/* {isRegimeKanban ? null : permissions["WORK_MANAGEMENT_EXPORT"] == 1 ? ( */}
               {isRegimeKanban ? null : (
                 <div
                   className="button_export"
@@ -1205,7 +1192,7 @@ export default function ListWork(props: any) {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className={`${isRegimeKanban || isRegimeReport ? "d-none" : ""}`}>
           <TableWork

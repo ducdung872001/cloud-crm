@@ -475,6 +475,30 @@ import IcProductList from "assets/icons-menu/ic-product-list.svg";
 import IcProductGroupList from "assets/icons-menu/ic-product-group-list.svg";
 import IcProductUnitCategory from "assets/icons-menu/ic-product-unit-category.svg";
 import IcAttributeFieldProduct from "assets/icons-menu/ic-attribute-field-product.svg";
+import IcDefaultProcessSetting from "assets/icons-menu/ic-default-process-setting.svg";
+import IcBranchList from "assets/icons-menu/ic-branch-list.svg";
+import IcDepartmentist from "assets/icons-menu/ic-department-list.svg";
+import IcPermissionGroupList from "assets/icons-menu/ic-permission-group-list.svg";
+import IcEmployeeList from "assets/icons-menu/ic-employee-list.svg";
+import IcEmployeeGroup from "assets/icons-menu/ic-employee-group.svg";
+import IcStoreManagement from "assets/icons-menu/ic-store-management.svg";
+import IcMethodPaymentSetting from "assets/icons-menu/ic-method-payment-setting.svg";
+import IcMethodPaymentSelect from "assets/icons-menu/ic-method-payment-select.svg";
+import IcSmsConfig from "assets/icons-menu/ic-sms-config.svg";
+import IcPartnerSms from "assets/icons-menu/ic-partner-sms.svg";
+import IcTopicSms from "assets/icons-menu/ic-topic-sms.svg";
+import IcDeclarationBrandName from "assets/icons-menu/ic-declaration-brandname.svg";
+import IcDeclarationTemplateSms from "assets/icons-menu/ic-declaration-template-sms.svg";
+import IcTopicZalo from "assets/icons-menu/ic-topic-zalo.svg";
+import IcTemplateZalo from "assets/icons-menu/ic-template-zalo.svg";
+import IcCallCenterConfig from "assets/icons-menu/ic-callcenter-config.svg";
+import IcCallCenterIntegration from "assets/icons-menu/ic-callcenter-integration.svg";
+import IcIntegratedMonitoring from "assets/icons-menu/ic-integrated-monitoring.svg";
+import IcAppListIntegrated from "assets/icons-menu/ic-app-list-integrated.svg";
+import IcWebhookList from "assets/icons-menu/ic-webhook-list.svg";
+import IcSupportCategory from "assets/icons-menu/ic-support-category.svg";
+import IcQRManagement from "assets/icons-menu/ic-QR-management.svg";
+
 
 
 const iconTypes = {
@@ -939,7 +963,30 @@ const iconTypes = {
   ProductList: IcProductList,
   ProductGroupList: IcProductGroupList,
   ProductUnitCategory: IcProductUnitCategory,
-  AttributeFieldProduct: IcAttributeFieldProduct
+  AttributeFieldProduct: IcAttributeFieldProduct,
+  DefaultProcessSetting: IcDefaultProcessSetting,
+  BranchList: IcBranchList,
+  Departmentist: IcDepartmentist,
+  PermissionGroupList: IcPermissionGroupList,
+  EmployeeList: IcEmployeeList,
+  EmployeeGroup: IcEmployeeGroup,
+  StoreManagement: IcStoreManagement,
+  MethodPaymentSetting: IcMethodPaymentSetting,
+  MethodPaymentSelect: IcMethodPaymentSelect,
+  SmsConfig: IcSmsConfig,
+  PartnerSms: IcPartnerSms,
+  TopicSms: IcTopicSms,
+  DeclarationBrandName: IcDeclarationBrandName,
+  DeclarationTemplateSms: IcDeclarationTemplateSms,
+  TopicZalo: IcTopicZalo,
+  TemplateZalo: IcTemplateZalo,
+  CallCenterConfig: IcCallCenterConfig,
+  CallCenterIntegration: IcCallCenterIntegration,
+  IntegratedMonitoring: IcIntegratedMonitoring,
+  AppListIntegrated: IcAppListIntegrated,
+  WebhookList: IcWebhookList,
+  SupportCategory: IcSupportCategory,
+  QRManagement: IcQRManagement
 
 };
 
