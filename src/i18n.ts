@@ -190,7 +190,6 @@ i18n.use(initReactI18next).init({
           viettelIntegration: "Viettel integration",
           shiftManagement: "Shift management",
           shiftConfig: "Shift configuration",
-          payment_mgt: "Payment management",
         },
         pageDashboard: {
           title: "Dashboard",
@@ -429,7 +428,7 @@ i18n.use(initReactI18next).init({
           settingCode: "Cài đặt mã",
           configBpm: "Cấu hình quy trình",
           settingDashboard: "Cài đặt báo cáo",
-          settingPaymentMethod: "Cài đặt phương thức thanh toán",
+          settingPaymentMethod: "Phương thức thanh toán",
           dashboardShipping: "Báo cáo Giao vận",
           customerReport: "Báo cáo Khách hàng",
           inventoryReport: "Báo cáo Tồn kho",
@@ -447,7 +446,6 @@ i18n.use(initReactI18next).init({
           viettelIntegration: "Tích hợp Viettel",
           shiftManagement: "Quản lý ca làm việc",
           shiftConfig: "Cài đặt ca làm việc",
-          payment_mgt: "Phương thức thanh toán",
         },
         pageDashboard: {
           title: "Bảng điều khiển",

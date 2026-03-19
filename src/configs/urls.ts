@@ -1,7 +1,7 @@
 const prefixAdmin = "/adminapi";
 const prefixBiz = "/bizapi";
 // const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
-const prefixBpm = process.env.APP_BPM_URL + "/bpm";
+const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
 // const prefixBPM = "https://bpm.reborn.vn/bpmapi";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";
@@ -687,6 +687,7 @@ export const urlsApi = {
     listOne: prefixSales + "/order-request/list-one",
     update: prefixSales + "/order-request/update",
     updateStatus: prefixSales + "/order-request/updateDynamic",
+    confirm: prefixSales + "/order-request/confirm",
     updateAndInit: prefixSales + "/order-request/update-and-init",
     delete: prefixSales + "/order-request/delete-soft",
     export: prefixSales + "/order-request/export",
