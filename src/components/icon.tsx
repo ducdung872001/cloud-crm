@@ -497,7 +497,7 @@ import IcIntegratedMonitoring from "assets/icons-menu/ic-integrated-monitoring.s
 import IcAppListIntegrated from "assets/icons-menu/ic-app-list-integrated.svg";
 import IcWebhookList from "assets/icons-menu/ic-webhook-list.svg";
 import IcSupportCategory from "assets/icons-menu/ic-support-category.svg";
-import IcQRManagement from "assets/icons-menu/ic-qr-management.svg";
+import IcQRManagement from "assets/icons-menu/ic-QR-management.svg";
 
 
 
