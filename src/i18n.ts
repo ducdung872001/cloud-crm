@@ -153,10 +153,10 @@ i18n.use(initReactI18next).init({
           settingPartner: "Setting partner",
           settingContact: "Setting contact",
           loyaltyPointLedger: "Loyalty point ledger",
-          loyaltyWallet: "Loyalty wallet",
+          memberList: "Member list",
           settingLoyalty: "Setting loyalty",
           settingSales: "Setting sales",
-          settingMarketing: "Setting Marketing",
+          multiChannelCommunication: "Multi Channel Communication",
           settingContract: "Setting contract",
           settingProcess: "Setting process",
           settingQuoteForm: "Setting quote form",
@@ -264,7 +264,7 @@ i18n.use(initReactI18next).init({
           createKPIFramework: "Tạo bộ KPI",
           createKPITask: "Tạo phiếu giao KPI",
           kpiManagement: "Quản lý KPI",
-          invoiceVAT: "Xuất hóa đơn VAT",
+          invoiceVAT: "Hóa đơn VAT",
           project: "Dự án",
           //Quản lý công việc BPM
           userTaskList: "Xử lý hồ sơ",
@@ -281,6 +281,7 @@ i18n.use(initReactI18next).init({
           customerList: "Khách hàng & NCC",
           partnerProfile: "Nhà cung cấp",
           customerSegments: "Phân khúc & Nhãn",
+          customerAnalysis: "Phân tích khách hàng",
 
           quote: "Báo giá",
           // đoạn này là children của báo giá
@@ -314,17 +315,17 @@ i18n.use(initReactI18next).init({
           selling: "Bán hàng & Đơn hàng",
           promotionMarketing: "Khuyến mãi",
           promotionalReport: "Báo cáo khuyến mãi",
-          promotionalProgram: "Chương trình khuyến mãi",
+          promotionalProgram: "Khuyến mãi",
           opportunity: "Cơ hội bán hàng",
           // đoạn này là children của bán hàng
           createSalesOrder: "Bán hàng tại quầy", //Tạo đơn bán hàng
-          salesInvoice: "Danh sách đơn hàng",
+          salesInvoice: "Quản lý đơn hàng",
           shipping: "Giao hàng & Vận chuyển",
           shippingFeeConfig: "Quản lý phí vận chuyển",
           shippingPartner: "Quản lý đơn vị vận chuyển",
           addShipping: "Tạo đơn vận chuyển",
-          returnInvoice: "Khách trả hàng",
-          multiChannelSales: "Bán hàng đa kênh",
+          returnInvoice: "Đổi / Trả hàng",
+          multiChannelSales: "Đơn hàng online",
           orderRequestList: "Yêu cầu mua hàng",
           salesManagement: "Chăm sóc cơ hội",
           salesManagementNew: "Chăm sóc cơ hội mới",
@@ -334,6 +335,7 @@ i18n.use(initReactI18next).init({
           customerCare: "Chăm sóc khách hàng",
           // đoạn này là children của chăm sóc khách hàng
           customerServiceHotline: "Tổng đài CSKH",
+          marketingCampaign: "Chiến dịch marketing",
           receiveWarranty: "Tiếp nhận bảo hành",
           receiveWarrantyProcess: "Tiếp nhận bảo hành theo quy trình",
           receiveTicket: "Tiếp nhận hỗ trợ",
@@ -343,7 +345,7 @@ i18n.use(initReactI18next).init({
           feedbackEnhancement: "Góp ý cải tiến",
           customerSurvey: "Khảo sát khách hàng",
 
-          fanpage: "Tương tác & Chốt đơn", //Bao gồm cả Fanpage và Zalo
+          fanpage: "Hội thoại khách hàng", //Bao gồm cả Fanpage và Zalo
           totalChat: "Tổng hội thoại",
 
           // đoạn này là children của đặt hàng
@@ -373,22 +375,23 @@ i18n.use(initReactI18next).init({
           warehouseList: "Danh sách kho",
 
           financeManagement: "Tài chính & Thanh toán",
-          financeDashboard: "Thông tin tài chính",
+          financeDashboard: "Tổng quan tài chính",
           financeCashbook: "Sổ thu chi",
           createFinanceTransaction: "Tạo Phiếu Thu/Chi",
           createCashbookTemplate: "Tạo Phiếu Thu/Chi",
           fundManagement: "Quản lý quỹ",
           debtManagement: "Quản lý công nợ",
-          createDebtTransaction: "Tạo giao dịch nợ",
+          createDebtTransaction: "Công nợ",
+          paymentControl: "Đối soát thanh toán",
           endOfShiftInventory: "Kiểm kê cuối ca",
 
           cashbook: "Báo cáo Tài chính",
           bpm: "Quản lý quy trình",
-          manageProcesses: "Quản lý quy trình",
-          manageDefaultProcesses: "Cài đặt quy trình mặc định",
+          manageProcesses: "Danh sách quy trình",
+          manageDefaultProcesses: "Cài đặt Quy trình mặc định",
           business_rule: "Luật nghiệp vụ",
           processSimulation: "Mô phỏng quy trình",
-          objectManage: "Quản lý hồ sơ",
+          objectManage: "Hồ sơ & Tác vụ",
           manage_data_sharing: "Chia sẻ dữ liệu",
           cxmSurvey: "Chiến dịch khảo sát",
 
@@ -405,10 +408,10 @@ i18n.use(initReactI18next).init({
           settingPartner: "Cài đặt đối tác",
           settingContact: "Cài đặt người liên hệ",
           loyaltyPointLedger: "Nhật ký điểm hội viên",
-          loyaltyWallet: "Danh sách hội viên",
-          settingLoyalty: "Cài đặt hệ thống tích điểm",
+          memberList: "Khách hàng thành viên",
+          settingLoyalty:"Cài đặt hệ thống tích điểm",
           settingSales: "Danh mục sản phẩm",
-          settingMarketing: "Truyền thông đa kênh", //SMS/Zalo/Email/...
+          multiChannelCommunication: "Truyền thông đa kênh", //SMS/Zalo/Email/...
           settingContract: "Cài đặt hợp đồng",
           settingEform: "Cài đặt biểu mẫu",
           settingProcess: "Cài đặt quy trình",
@@ -425,9 +428,12 @@ i18n.use(initReactI18next).init({
           settingCode: "Cài đặt mã",
           configBpm: "Cấu hình quy trình",
           settingDashboard: "Cài đặt báo cáo",
-          settingPaymentMethod: "Cài đặt phương thức thanh toán",
-          dashboardShipping: "Báo cáo vận chuyển",
-          dashboardLoyalty: "Tích điểm Loyalty",
+          settingPaymentMethod: "Phương thức thanh toán",
+          dashboardShipping: "Báo cáo Giao vận",
+          customerReport: "Báo cáo Khách hàng",
+          inventoryReport: "Báo cáo Tồn kho",
+          marketingReport: "Báo cáo Marketing",
+          loyaltyPoints: "Tích điểm Loyalty",
           settingApplication: "Cài đặt tích hợp",
           resourceManagement: "Quản trị tài nguyên",
           organizationalManagement: "Quản lý đại lý",

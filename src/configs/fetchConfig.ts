@@ -20,6 +20,7 @@ export default function RegisterFetch() {
       if (!config.headers) {
         config.headers = {};
       }
+      const isFormDataBody = typeof FormData !== "undefined" && config.body instanceof FormData;
       const isPublic = url.includes("/public/");
       const token = getCookie("token");
       if (token && !isPublic) {
@@ -31,7 +32,9 @@ export default function RegisterFetch() {
       if (!config.headers.Accept) {
         config.headers.Accept = "application/json";
       }
-      if (!config.headers["Content-Type"]) {
+      if (isFormDataBody) {
+        delete config.headers["Content-Type"];
+      } else if (!config.headers["Content-Type"]) {
         config.headers["Content-Type"] = "application/json";
       }
       // config.headers["Hostname"] = location.hostname || "";

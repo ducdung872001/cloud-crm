@@ -1,31 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { CartItem, PayMethod } from "../../../types";
 import { IActionModal } from "model/OtherModel";
+import ImageMomo from "assets/images/MOMO-Logo-App.png";
+import ImageZaloPay from "assets/images/zalopay.png";
 import "./index.scss";
 
 interface PayModalProps {
   open: boolean;
   cartItems: CartItem[];
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (id) => void;
+  invoiceId: number | null;
+  method: PayMethod;
+  setMethod: (method: PayMethod) => void;
 }
 
-const PAY_METHODS: { id: PayMethod; icon: string; label: string }[] = [
+export const PAY_METHODS: { id: PayMethod; icon: string; label: string; image?: string }[] = [
   { id: "cash", icon: "💵", label: "Tiền mặt" },
   { id: "transfer", icon: "📱", label: "Chuyển khoản" },
   { id: "qr", icon: "📷", label: "QR Pro" },
+  { id: "momo", icon: "💵", label: "Momo", image: ImageMomo },
+  { id: "zalo_pay", icon: "📱", label: "ZaloPay", image: ImageZaloPay },
+  { id: "credit_card", icon: "💳", label: "Thẻ tín dụng" },
 ];
 
-export default function PayModal({ open, cartItems, onClose, onConfirm }: PayModalProps) {
-  const [method, setMethod] = useState<PayMethod>("cash");
+export default function PayModal({ open, cartItems, onClose, onConfirm, invoiceId, method, setMethod }: PayModalProps) {
   const [customerPaid, setCustomerPaid] = useState(150000);
 
   const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
   const discount = 0;
   const total = subtotal - discount;
   const change = Math.max(0, customerPaid - total);
-  const fmt = (n: number) => n.toLocaleString("vi") + " ₫";
+  const fmt = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
+
+  console.log("cartItems", invoiceId, cartItems);
 
   useEffect(() => {
     if (open) {
@@ -34,23 +43,26 @@ export default function PayModal({ open, cartItems, onClose, onConfirm }: PayMod
     }
   }, [open, total]);
 
-  const actions: IActionModal = {
-    actions_right: {
-      buttons: [
-        {
-          title: "Hủy",
-          color: "primary",
-          variant: "outline",
-          callback: onClose,
-        },
-        {
-          title: "✅ Xác nhận thanh toán & In biên lai",
-          color: "primary",
-          callback: onConfirm,
-        },
-      ],
-    },
-  };
+  // actions là callback phụ thuộc vào invoiceId
+  const actions: IActionModal = useMemo(() => {
+    return {
+      actions_right: {
+        buttons: [
+          {
+            title: "Hủy",
+            color: "primary",
+            variant: "outline",
+            callback: onClose,
+          },
+          {
+            title: "✅ Tạo hoá đơn",
+            color: "primary",
+            callback: () => onConfirm(invoiceId),
+          },
+        ],
+      },
+    };
+  }, [invoiceId, onClose, onConfirm]);
 
   return (
     <Modal isFade={true} isOpen={open} isCentered={true} staticBackdrop={true} toggle={onClose} className="pay-modal">
@@ -61,7 +73,7 @@ export default function PayModal({ open, cartItems, onClose, onConfirm }: PayMod
         <div className="pay-modal__methods">
           {PAY_METHODS.map((m) => (
             <div key={m.id} className={`pms${method === m.id ? " pms--selected" : ""}`} onClick={() => setMethod(m.id)}>
-              <div className="pms__icon">{m.icon}</div>
+              <div className="pms__icon">{m.image ? <img src={m.image} alt={m.label} className="pms__image" /> : m.icon}</div>
               <div className="pms__label">{m.label}</div>
             </div>
           ))}
@@ -88,7 +100,11 @@ export default function PayModal({ open, cartItems, onClose, onConfirm }: PayMod
           <>
             <div className="pay-modal__field">
               <label>Khách đưa (₫)</label>
-              <input type="number" value={customerPaid} onChange={(e) => setCustomerPaid(Number(e.target.value))} />
+              <input
+                type="text"
+                value={customerPaid.toLocaleString("vi")}
+                onChange={(e) => setCustomerPaid(Number(e.target.value.replace(/,/g, "")))}
+              />
               <div className="pay-modal__quick-btns">
                 {[50000, 100000, 150000, 200000, 500000].map((v) => (
                   <button key={v} type="button" className="pay-modal__quick-btn" onClick={() => setCustomerPaid(v)}>
@@ -127,13 +143,13 @@ export default function PayModal({ open, cartItems, onClose, onConfirm }: PayMod
         )}
 
         {/* QR */}
-        {method === "qr" && (
+        {/* {method === "qr" && (
           <div className="pay-modal__qr-box">
             <div className="pay-modal__qr-inner">📷</div>
             <div className="pay-modal__qr-amount">{fmt(total)}</div>
             <div className="pay-modal__qr-note">Quét mã để thanh toán qua QR Pro</div>
           </div>
-        )}
+        )} */}
       </ModalBody>
 
       <ModalFooter actions={actions} />

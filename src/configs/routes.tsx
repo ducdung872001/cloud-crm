@@ -79,6 +79,7 @@ import AdjustmentSlip from "pages/AdjustmentSlip/AdjustmentSlip";
 // Thông tin tài khoản cá nhân
 import SettingAccount from "pages/SettingAccount/SettingAccount";
 import ReportCustomer from "pages/ReportCustomer/ReportCustomer";
+import ReportCustomerModern from "pages/ReportCustomerModern/ReportCustomerModern";
 // Cài đặt ứng dụng
 import InstallApplication from "pages/InstallApplication/InstallApplication";
 import MarketingAutomation from "pages/MarketingAutomation/MarketingAutomation";
@@ -139,6 +140,7 @@ import UserTaskList from "pages/UserTaskList";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import OrderRequestList from "pages/OrderRequestList";
 import MaterialList from "@/pages/ManagementMaterial/MaterialList";
+import MaterialMenuPage from "@/pages/ManagementMaterial/MaterialMenuPage";
 import { useCookies } from "react-cookie";
 import OrderTracking from "pages/OrderTracking";
 import OrganizationList from "pages/Organization/OrganizationList";
@@ -170,6 +172,17 @@ import InventoryManagement from "@/pages/ProductImport/InventoryChecking";
 import CounterSales from "@/pages/CounterSales";
 import ShiftTabsPage from "@/pages/ShiftManagement/ShiftTabsPage";
 import ShiftConfigTabs from "@/pages/ShiftConfig/ShiftConfig";
+import WarehouseReport from "@/pages/WarehouseReport/WarehouseReport";
+import MarketingReportPage from "@/pages/MarketingReportPage/MarketingReportPage";
+import InventoryReportModern from "pages/InventoryReportModern/InventoryReportModern";
+import PromotionPage from "@/pages/PromotionPage/PromotionPage";
+import MemberCustomersPage from "@/pages/MemberCustomersPage/MemberCustomersPage";
+import CustomerCarePage from "@/pages/CustomerCarePage/CustomerCarePage";
+import MarketingCampaignPage from "@/pages/MarketingCampaignPage/MarketingCampaignPage";
+import CustomerAnalysisPage from "@/pages/CustomerAnalysisPage/CustomerAnalysisPage";
+import PaymentMethodList from "@/pages/PaymentMethod/PaymentMethod";
+import PaymentMethodPage from "@/pages/PaymentMethodPage/PaymentMethodPage";
+import FinanceContent from "@/pages/PaymentReconciliation";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -241,17 +254,29 @@ export const menu: IMenuItem[] = [
         code: "FANPAGE",
       },
       {
-        title: "soldProducts", // Sản phẩm đã bán
-        path: urls.products_sold,
-        icon: <Icon name="SoldMenu" />,
-        code: "",
-      },
-      {
         title: "shiftManagement", //Quản lý ca làm việc
         path: urls.shift_management,
         icon: <Icon name="ManageWork" />,
         code: "",
       },
+      {
+        title: "endOfShiftInventory", // Kiểm kê cuối ca
+        path: urls.finance_management_shift_inventory,
+        icon: <Icon name="EndShiftMenu" />,
+        code: "",
+      },
+      {
+        title: "soldProducts", // Sản phẩm đã bán
+        path: urls.products_sold,
+        icon: <Icon name="SoldMenu" />,
+        code: "",
+      },
+      // {
+      //   title: "paymentMethodSetting", // Quản lý phương thức thanh toán
+      //   path: urls.payment_mgt,
+      //   icon: <Icon name="ManageWork" />,
+      //   code: "",
+      // },
       // {
       //   title: "facebook",
       //   path: urls.social_facebook_crm,
@@ -366,11 +391,11 @@ export const menu: IMenuItem[] = [
     icon: <Icon name="CustomersMenu" />,
     code: "CUSTOMER",
     children: [
-      {
-        title: "customerSegments", // Phân khúc khách hàng
-        path: urls.customer_segment,
-        icon: <Icon name="SegmentMenu" />,
-      },
+      // {
+      //   title: "customerSegments", // Phân khúc khách hàng
+      //   path: urls.customer_segment,
+      //   icon: <Icon name="SegmentMenu" />,
+      // },
       // {
       //   title: "customerProfile", // Hồ sơ khách hàng
       //   path: urls.customer,
@@ -389,12 +414,6 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="Profile" />,
       //   code: "PARTNER",
       // },
-      {
-        title: "debtManagement", // Quản lý công nợ
-        path: urls.finance_management_debt_management,
-        icon: <Icon name="DebtMenu" />,
-        code: "",
-      },
       {
         title: "settingCustomer", // Cài đặt khách hàng
         path: urls.setting_customer,
@@ -418,19 +437,19 @@ export const menu: IMenuItem[] = [
   {
     title: "financeManagement", // Tài chính & Thanh toán
     path: urls.finance_management,
-    icon: <Icon name="CashBook" />,
+    icon: <Icon name="FinanceMenu" />,
     code: "",
     children: [
       {
         title: "financeDashboard", // Dashboard tài chính
         path: urls.finance_management_dashboard,
-        icon: <Icon name="ReportFill" />,
+        icon: <Icon name="FinanceInfoMenu" />,
         code: "",
       },
       {
         title: "financeCashbook", // Sổ thu chi (Trong Sổ thu chi có tạo Phiếu thu/chi - Gộp làm 1)
         path: urls.finance_management_cashbook,
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="CashbookMenu" />,
         code: "",
       },
       // Thu tiền nhanh QR Pro - Bổ sung thêm Menu này
@@ -444,25 +463,31 @@ export const menu: IMenuItem[] = [
       {
         title: "invoiceVAT", // Xuất hóa đơn VAT
         path: urls.invoiceVAT,
-        icon: <Icon name="File" />,
+        icon: <Icon name="VatInvoiceMenu" />,
         code: "", //KPI_APPLY
       },
       {
         title: "fundManagement", // Quản lý quỹ
         path: urls.finance_management_fund_management,
-        icon: <Icon name="MoneyFill" />,
+        icon: <Icon name="FundMenu" />,
         code: "",
       },
       {
-        title: "createDebtTransaction", // Tạo giao dịch nợ
-        path: urls.finance_management_debt_transaction,
-        icon: <Icon name="PlusCircleFill" />,
+        title: "debtManagement", // Quản lý công nợ
+        path: urls.finance_management_debt_management,
+        icon: <Icon name="DebtMenu" />,
         code: "",
       },
+      // {
+      //   title: "createDebtTransaction", // Tạo giao dịch nợ
+      //   path: urls.finance_management_debt_transaction,
+      //   icon: <Icon name="DebtTransactionMenu" />,
+      //   code: "",
+      // },
       {
-        title: "endOfShiftInventory", // Kiểm kê cuối ca
-        path: urls.finance_management_shift_inventory,
-        icon: <Icon name="File" />,
+        title: "paymentControl", // Tạo giao dịch nợ
+        path: urls.payment_control,
+        icon: <Icon name="DebtTransactionMenu" />,
         code: "",
       },
     ],
@@ -474,15 +499,39 @@ export const menu: IMenuItem[] = [
     code: "MARKETING",
     children: [
       {
-        title: "promotionalProgram", // Chiến dịch khuyến mãi
+        title: "promotionalProgram", // chương trình khuyến mãi
         path: urls.promotional_program,
-        icon: <Icon name="ManageOrder" />,
+        icon: <Icon name="PromotionMenu" />,
         code: "", //Tài nguyên cho show quản lý đặt hàng hay không
       },
       {
-        title: "settingMarketing", // Cài đặt marketing
+        title: "multiChannelCommunication", // truyền thông đa kênh
         path: urls.setting_marketing,
-        icon: <Icon name="SettingSell" />,
+        icon: <Icon name="BroadcastMenu" />,
+        code: "",
+      },
+      {
+        title: "marketingCampaign", // chiến dịch marketing
+        path: urls.marketing_campaign,
+        icon: <Icon name="Marketing" />,
+        code: "MA",
+      },
+      {
+        title: "memberList", // Danh sách hội viên
+        path: urls.member_list,
+        icon: <Icon name="MemberListMenu" />,
+        code: "",
+      },
+      {
+        title: "customerCare", // Chăm sóc khách hàng
+        path: urls.customer_care_page,
+        icon: <Icon name="SupportMenu" />,
+        code: "",
+      },
+      {
+        title: "customerAnalysis", // phân tích khách hàng
+        path: urls.customer_analysis,
+        icon: <Icon name="SupportMenu" />,
         code: "",
       },
       // {
@@ -509,42 +558,31 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="Marketing" />,
       //   code: "MA",
       // },
-      {
-        title: "dashboardLoyalty", // Dashboard khách hàng thân thiết
-        path: urls.dashboard_loyalty,
-        icon: <Icon name="ReportFill" />,
-        code: "",
-      },
-      {
-        title: "loyaltyPointLedger", // Nhật ký điểm hội viên
-        path: urls.loyalty_point_ledger,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
-        title: "loyaltyWallet", // Danh sách hội viên
-        path: urls.loyalty_wallet,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
-        title: "receiveTicket", // Tiếp nhận hỗ trợ
-        path: urls.ticket,
-        icon: <Icon name="ReceiveTicket" />,
-        code: "TICKET",
-      },
-      {
-        title: "customerServiceHotline", // Tổng đài CSKH
-        path: urls.call_center,
-        icon: <Icon name="CustomerSupport" />,
-        code: "",
-      },
-      {
-        title: "promotionalReport", // Báo cáo khuyến mãi
-        path: urls.promotional_report,
-        icon: <Icon name="Report" />,
-        code: "",
-      },
+      // {
+      //   title: "loyaltyPoints", // tích điểm Loyalty
+      //   path: urls.dashboard_loyalty,
+      //   icon: <Icon name="LoyaltyMenu" />,
+      //   code: "",
+      // },
+      // {
+      //   title: "loyaltyPointLedger", // Nhật ký điểm hội viên
+      //   path: urls.loyalty_point_ledger,
+      //   icon: <Icon name="PointsLogMenu" />,
+      //   code: "",
+      // },
+
+      // {
+      //   title: "receiveTicket", // Tiếp nhận hỗ trợ
+      //   path: urls.ticket,
+      //   icon: <Icon name="SupportMenu" />,
+      //   code: "TICKET",
+      // },
+      // {
+      //   title: "promotionalReport", // Báo cáo khuyến mãi
+      //   path: urls.promotional_report,
+      //   icon: <Icon name="PromoReportMenu" />,
+      //   code: "",
+      // },
       // {
       //   title: "customerCareEmail", // Email CSKH
       //   path: urls.email,
@@ -598,15 +636,9 @@ export const menu: IMenuItem[] = [
       //   code: "",
       // },
       {
-        title: "settingLoyalty", // Cài đặt hạng hội viên
+        title: "settingLoyalty", // Cài đặt hệ thống tích điểm
         path: urls.setting_loyalty,
-        icon: <Icon name="SettingCustomer" />,
-        code: "",
-      },
-      {
-        title: "settingTicket", // Cài đặt hỗ trợ
-        path: urls.setting_ticket,
-        icon: <Icon name="SettingTicket" />,
+        icon: <Icon name="PointsSettingMenu" />,
         code: "",
       },
     ],
@@ -620,21 +652,40 @@ export const menu: IMenuItem[] = [
       {
         title: "reportRevenue", // Báo cáo Bán hàng
         path: urls.report_common,
-        icon: <Icon name="Statistical" />,
+        icon: <Icon name="SalesReportMenu" />,
         code: "",
       },
       {
         title: "cashbook", // Báo cáo Tài chính
         path: urls.cashbook,
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="FinanceReportMenu" />,
         code: "CASHBOOK",
       },
       {
-        title: "dashboardShipping", // Báo cáo vận chuyển
-        path: urls.dashboard_shipping,
-        icon: <Icon name="ReportFill" />,
+        title: "customerReport", // Báo cáo khách hàng
+        path: urls.customer_report,
+        icon: <Icon name="SalesReportMenu" />,
         code: "",
       },
+      {
+        title: "inventoryReport", // Báo cáo tồn kho
+        path: urls.inventory_report_modern,
+        icon: <Icon name="SalesReportMenu" />,
+        code: "",
+      },
+      {
+        title: "marketingReport", // Báo cáo tồn kho
+        path: urls.marketing_report,
+        icon: <Icon name="SalesReportMenu" />,
+        code: "",
+      },
+      {
+        title: "dashboardShipping", // Báo cáo giao vận
+        path: urls.dashboard_shipping,
+        icon: <Icon name="ShippingReportMenu" />,
+        code: "",
+      },
+
       {
         title: "settingCashbook", // Cài đặt tài chính
         path: urls.setting_cash_book,
@@ -646,75 +697,75 @@ export const menu: IMenuItem[] = [
   {
     title: "bpm", // Quản lý quy trình
     path: urls.sell,
-    icon: <Icon name="CashBook" />,
+    icon: <Icon name="WorkflowMenu" />,
     code: "BPM",
     children: [
       {
         title: "manageProcesses",
         path: urls.manage_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
         code: "BPM",
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="ProcessMenu" />,
       },
       {
         title: "processSimulation",
         path: urls.process_simulation, //Mô phỏng quy trình
         code: "PROCESS_SIMULATION",
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="SimulateMenu" />,
       },
       {
         title: "objectManage", // Quản lý hồ sơ
         path: urls.object_manage,
         code: "OBJECT_MANAGE",
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="FileMgmtMenu" />,
       },
-      {
-        title: "userTaskList", // Xử lý hồ sơ
-        path: urls.user_task_list,
-        code: "WORK_MANAGEMENT",
-        icon: <Icon name="ManageWork" />,
-      },
+      // {
+      //   title: "userTaskList", // Xử lý hồ sơ
+      //   path: urls.user_task_list,
+      //   code: "WORK_MANAGEMENT",
+      //   icon: <Icon name="FileProcessMenu" />,
+      // },
       {
         title: "configBpm", // Cấu hình quy trình
         path: urls.config_bpm,
-        icon: <Icon name="SettingJob" />,
+        icon: <Icon name="ProcessConfigMenu" />,
         code: "",
       },
       {
         title: "manageDefaultProcesses",
         path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
         code: "BPM",
-        icon: <Icon name="CashBook" />,
+        icon: <Icon name="DefaultProcessMenu" />,
       },
-      {
-        title: "business_rule", // Loại luật nghiệp vụ
-        path: urls.business_rule,
-        icon: <Icon name="SettingJob" />,
-        code: "",
-      },
+      // {
+      //   title: "business_rule", // Loại luật nghiệp vụ
+      //   path: urls.business_rule,
+      //   icon: <Icon name="RulesMenu" />,
+      //   code: "",
+      // },
     ],
   },
   {
     title: "settings", // Cài đặt & Nhân sự
     path: urls.setting_common,
-    icon: <Icon name="Settings" />,
+    icon: <Icon name="SettingsMenu" />,
     code: "",
     children: [
       {
         title: "settingBasis", // Cài đặt cơ sở
         path: urls.setting_basis,
-        icon: <Icon name="Headquarters" />,
+        icon: <Icon name="BaseSettingsMenu" />,
         code: "MENU_SETUP_BASIC",
       },
       {
         title: "settingPaymentMethod", // Cài đặt phương thức thanh toán
         path: urls.setting_payment_method,
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="PaymentMethodMenu" />,
         code: "",
       },
       {
         title: "settingPersonal", // Cài đặt cá nhân
         path: urls.setting_account,
-        icon: <Icon name="ContactCustomer" />,
+        icon: <Icon name="PersonalMenu" />,
         code: "",
       },
       // {
@@ -726,61 +777,67 @@ export const menu: IMenuItem[] = [
       {
         title: "settingSMS", // Cài đặt SMS
         path: urls.setting_sms,
-        icon: <Icon name="SettingSMS" />,
+        icon: <Icon name="SmsMenu" />,
         code: "MENU_SETUP_SMS",
       },
       {
         title: "settingEmail", // Cài đặt Email
         path: urls.setting_email,
-        icon: <Icon name="SettingEmail" />,
+        icon: <Icon name="EmailMenu" />,
         code: "MENU_SETUP_EMAIL",
       },
       {
         title: "settingZalo", //Cài đặt Zalo
         path: urls.setting_zalo,
-        icon: <Icon name="Zalo" />,
+        icon: <Icon name="ZaloMenu" />,
         code: "",
       },
       {
         title: "settingSwitchboard", // Cài đặt tổng đài
         path: urls.setting_call,
-        icon: <Icon name="SettingSMS" />,
+        icon: <Icon name="PbxMenu" />,
         code: "MENU_SETUP_CALL",
       },
       {
         title: "settingApplication", // Cài đặt ứng dụng
         path: urls.install_app,
-        icon: <Icon name="Download" />,
+        icon: <Icon name="IntegrationMenu" />,
         code: "",
       },
       {
         title: "settingConfiguration", // Cài đặt danh mục
         path: urls.setting,
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="GeneralConfigMenu" />,
         code: "",
       },
       {
         title: "viettelIntegration", // Tích hợp Viettel
         path: urls.viettel_integration,
-        icon: <Icon name="Download" />,
+        icon: <Icon name="IntegrationViettelMenu" />,
         code: "",
       },
       {
         title: "shiftConfig", // Cài đặt ca làm việc
         path: urls.shift_config,
-        icon: <Icon name="Settings" />,
+        icon: <Icon name="OpenShiftMenu" />,
         code: "",
       },
       {
         title: "reportLogin", // Báo cáo đăng nhập
         path: urls.report_login,
-        icon: <Icon name="Headquarters" />,
+        icon: <Icon name="LoginMenu" />,
         code: "",
       },
       {
         title: "settingDashboard", // cài đặt Dashboard
         path: urls.setting_dashboard,
         icon: <Icon name="ReportFill" />,
+        code: "",
+      },
+      {
+        title: "settingTicket", // Cài đặt hỗ trợ
+        path: urls.setting_ticket,
+        icon: <Icon name="SupportSettingMenu" />,
         code: "",
       },
     ],
@@ -952,8 +1009,24 @@ export const routes: IRouter[] = [
   },
   // Báo cáo khách hàng
   {
+    path: urls.customer_report,
+    component: <ReportCustomerModern />,
+  },
+  {
     path: urls.report_customer,
     component: <ReportCustomer />,
+  },
+  {
+    path: urls.inventory_report,
+    component: <WarehouseReport />,
+  },
+  {
+    path: urls.inventory_report_modern,
+    component: <InventoryReportModern />,
+  },
+  {
+    path: urls.marketing_report,
+    component: <MarketingReportPage />,
   },
   {
     path: urls.sales_campaign,
@@ -1087,7 +1160,8 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.setting_payment_method,
-    component: <SettingPaymentMethod />,
+    // component: <SettingPaymentMethod />,
+    component: <PaymentMethodPage />,
   },
   {
     path: urls.setting_timekeeping,
@@ -1112,6 +1186,14 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_loyalty,
     component: <SettingLoyalty />,
+  },
+  {
+    path: urls.member_list,
+    component: <MemberCustomersPage />,
+  },
+  {
+    path: urls.marketing_campaign,
+    component: <MarketingCampaignPage />,
   },
   {
     path: urls.loyalty_wallet,
@@ -1249,6 +1331,12 @@ export const routes: IRouter[] = [
     path: urls.inventory_checking,
     component: <InventoryManagement />,
   },
+  //báo cáo kho
+  {
+    path: urls.report_warehouse,
+    component: <WarehouseReport />,
+  },
+
   // tạo đơn bán hàng
   {
     path: urls.create_sale_add,
@@ -1262,7 +1350,8 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.promotional_program,
-    component: <PromotionalProgram />,
+    // component: <PromotionalProgram />,
+    component: <PromotionPage />,
   },
   {
     path: urls.promotional_report,
@@ -1319,6 +1408,16 @@ export const routes: IRouter[] = [
     path: urls.call_center,
     component: <CallCenterList />,
   },
+  //chăm sóc khách hàng
+  {
+    path: urls.customer_care_page,
+    component: <CustomerCarePage />,
+  },
+  //phân tích khách hàng
+  {
+    path: urls.customer_analysis,
+    component: <CustomerAnalysisPage />,
+  },
   //email
   {
     path: urls.email,
@@ -1343,7 +1442,7 @@ export const routes: IRouter[] = [
   // quản lý vật tư
   {
     path: urls.material,
-    component: <MaterialList />,
+    component: <MaterialMenuPage />,
   },
   // thông tin cá nhân
   {
@@ -1473,5 +1572,13 @@ export const routes: IRouter[] = [
   {
     path: urls.shift_management,
     component: <ShiftTabsPage />,
+  },
+  {
+    path: urls.payment_mgt,
+    component: <PaymentMethodList />,
+  },
+  {
+    path: urls.payment_control,
+    component: <FinanceContent />,
   },
 ];

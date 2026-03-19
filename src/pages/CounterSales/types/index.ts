@@ -1,5 +1,6 @@
 export interface CartItem {
   id: string;
+  variantId: string;
   icon: string;
   avatar?: string;
   unitName?: string;
@@ -48,6 +49,6 @@ export interface Order {
   cancellationReason?: string;
 }
 
-export type TabType = "pos" | "orders" | "report";
+export type TabType = "pos" | "draft" | "orders" | "report";
 export type OrderType = "retail" | "wholesale" | "ship";
-export type PayMethod = "cash" | "transfer" | "qr";
+export type PayMethod = "cash" | "transfer" | "qr" | "momo" | "zalo_pay" | "credit_card";

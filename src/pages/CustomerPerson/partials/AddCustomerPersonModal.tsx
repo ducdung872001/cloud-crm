@@ -44,7 +44,7 @@ import AddCustomerGroupModal from "pages/SettingCustomer/partials/CustomerGroup/
 import CustomerGroupService from "services/CustomerGroupService";
 
 export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
-  const { onShow, data, onHide, takeInfoCustomer, nameCustomer, avatarCustomer, lstDataOrigin, zaloUserId } = props;
+  const { onShow, data, onHide, takeInfoCustomer, nameCustomer, avatarCustomer, lstDataOrigin, zaloUserId, phoneQuickAdd } = props;
 
   const focusedElement = useActiveElement();
   const parser = new Parser();
@@ -142,7 +142,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
         }));
       }
     } else {
-      showToast(response.error ?? response.message ??"Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
     }
   };
 
@@ -540,7 +540,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
     () =>
       ({
         name: data?.name ?? nameCustomer ?? "",
-        phone: data?.phoneMasked ?? "",
+        phone: data?.phoneMasked ?? phoneQuickAdd ?? "",
         code: data?.code ?? "",
         recommenderPhone: data?.recommenderPhone ?? "",
         email: data?.emailMasked ?? "",
@@ -1618,8 +1618,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
               <span className="title_template">{customerAttribute.name}</span>
             </div>
             <div className="box_template">
-              <div className="box__update--attachment">                
-              </div>
+              <div className="box__update--attachment"></div>
             </div>
           </div>
         );

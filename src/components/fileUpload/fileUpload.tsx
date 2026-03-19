@@ -16,10 +16,11 @@ interface FileUploadProps {
   type?: string;
   name?: string;
   source?: string;
+  onFileChange?: (file: File | null) => void;
 }
 
 export default function FileUpload(props: FileUploadProps) {
-  const { label, isRequired, type, formData, setFormData, name, source = "reborn" } = props;  
+  const { label, isRequired, type, formData, setFormData, name, source = "reborn", onFileChange } = props;  
 
   const refInputUpload = useRef<HTMLInputElement>();
 
@@ -30,13 +31,18 @@ export default function FileUpload(props: FileUploadProps) {
   const handleImageUpload = (e) => {
     e.preventDefault();
     if (e.target.files && e.target.files.length > 0) {
-      if (e.target.files[0].size > FILE_IMAGE_MAX) {
+      const selectedFile = e.target.files[0];
+      if (selectedFile.size > FILE_IMAGE_MAX) {
         showToast(`Ảnh tải lên giới hạn dung lượng không quá ${FILE_IMAGE_MAX / 1024 / 1024}MB`, "warning");
         e.target.value = "";
       } else {
-        setImagePreview(URL.createObjectURL(e.target.files[0]));
-        {
-          source === "reborn" ? setFile(e.target.files[0]) : uploadImageFromFiles(e.target.files, showImage, false);
+        const previewUrl = URL.createObjectURL(selectedFile);
+        setImagePreview(previewUrl);
+        if (typeof onFileChange === "function") {
+          onFileChange(selectedFile);
+          showImage(previewUrl);
+        } else {
+          source === "reborn" ? setFile(selectedFile) : uploadImageFromFiles(e.target.files, showImage, false);
         }
 
         e.target.value = null;
@@ -90,6 +96,10 @@ export default function FileUpload(props: FileUploadProps) {
   };
 
   const handleDeteleImage = (type) => {
+    if (typeof onFileChange === "function") {
+      onFileChange(null);
+    }
+    setImagePreview("");
     switch (type) {
       case "avatar":
         setFormData({ ...formData, values: { ...formData.values, avatar: "" } });

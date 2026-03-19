@@ -13,12 +13,13 @@ import "./index.scss";
 import { IRoyaltyFilterRequest } from "@/model/loyalty/RoyaltyRequest";
 import { ILoyaltyWalletResponse } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function LoyaltyWallet() {
-  document.title = "Danh sách hội viên";
+export default function LoyaltyWallet(props) {
+  document.title = "Danh sách thành viên";
 
   const isMounted = useRef(false);
-
+  const { onBackProps } = props;
   const [listData, setListData] = useState<ILoyaltyWalletResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
@@ -84,11 +85,12 @@ export default function LoyaltyWallet() {
 
   return (
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
-      <div className="action-navigation">
-        <div className="action-backup">
-          <h1 className="title-first">Danh sách hội viên</h1>
-        </div>
-      </div>
+      <HeaderTabMenu
+        title="Danh sách thành viên"
+        titleBack="Khách hàng thành viên"
+        // titleActions={titleActions}
+        onBackProps={onBackProps}
+      />
 
       <div className="card-box d-flex flex-column">
         <SearchBox

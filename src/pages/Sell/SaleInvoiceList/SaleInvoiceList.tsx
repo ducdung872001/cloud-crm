@@ -4,12 +4,7 @@ import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
-import { ExportExcel } from "exports";
-import Loading from "components/loading";
 import Badge from "components/badge/badge";
-import SearchBox from "components/searchBox/searchBox";
-import BoxTable from "components/boxTable/boxTable";
-import ExportModal from "components/exportModal/exportModal";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
@@ -22,9 +17,10 @@ import { showToast } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
 import { formatCurrency, isDifferenceObj, getPageOffset } from "reborn-util";
 import InvoiceService from "services/InvoiceService";
-import ShowModalDetailSaleInvoice from "./partials/ShowModalDetailSaleInvoice";
-import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
 import "./SaleInvoiceList.scss";
+import OrderList from "@/pages/CounterSales/components/OrderList";
+import { Order } from "@/pages/CounterSales/types";
+import Button from "@/components/button/button";
 
 export default function SaleInvoiceList() {
   document.title = "Danh sách đơn hàng";
@@ -38,7 +34,7 @@ export default function SaleInvoiceList() {
   const isMounted = useRef(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [listSaleInvoice, setListSaleInvoice] = useState<IInvoiceResponse[]>([]);
+  const [listSaleInvoice, setListSaleInvoice] = useState<Order[]>([]);
   const [dataInvoice, setDataInvoice] = useState<IInvoiceResponse>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalViewInvoice, setShowModalViewInvoice] = useState<boolean>(false);
@@ -53,6 +49,8 @@ export default function SaleInvoiceList() {
   const [params, setParams] = useState<IInvoiceFilterRequest>({
     invoiceCode: "",
     invoiceTypes: JSON.stringify(["IV1", "IV3"]),
+    limit: 10,
+    page: 1,
   });
 
   const customerFilterList = useMemo(
@@ -162,6 +160,19 @@ export default function SaleInvoiceList() {
   });
 
   const abortController = new AbortController();
+  // export interface Order {
+  //   id: string;
+  //   code: string;
+  //   source: "offline" | "shopee" | "tiktok" | "website";
+  //   sourceLabel: string;
+  //   status: "pending" | "shipping" | "delivered" | "cancelled";
+  //   statusLabel: string;
+  //   time: string;
+  //   customer: Customer;
+  //   items: string;
+  //   total: number;
+  //   cancellationReason?: string;
+  // }
 
   const getListSaleInvoice = async (paramsSearch: IInvoiceFilterRequest) => {
     setIsLoading(true);
@@ -170,7 +181,36 @@ export default function SaleInvoiceList() {
 
     if (response.code === 0) {
       const result = response.result;
-      setListSaleInvoice(result.pagedLst.items);
+      console.log("result", result);
+      let listSaleInvoiceTemp: Order[] = result.pagedLst.items.map(
+        (item) =>
+          ({
+            id: item.id.toString(),
+            code: item.invoiceCode,
+            source: "offline",
+            sourceLabel: "🏪 Tại quầy",
+            status: item.status === 1 ? "delivered" : item.status === 2 ? "pending" : "cancelled",
+            statusLabel: item.status === 1 ? "✅ Đã giao" : item.status === 2 ? "⏳ Chờ xử lý" : "❌ Đã hủy",
+            time: moment(item.receiptDate).format("DD/MM/YYYY · HH:mm"),
+            customer: {
+              id: item.customerId.toString(),
+              name: item.customerName || "Khách lẻ",
+              initial: item.customerName ? item.customerName.charAt(0).toUpperCase() : "K",
+              phone: item.customerPhone || "0978 654 321",
+              points: 0,
+              tier: "",
+              color: "#2563eb",
+            },
+            // items: `${item.invoiceDetails.length} sản phẩm · ${item.paid >= item.amount ? "Đã thanh toán" : "Chưa thanh toán"} ${
+            //   item.invoiceDetails.some((detail) => detail.isCardPayment) ? "· Đã giao" : ""
+            // }`,
+            items: "3 sản phẩm · Đã thanh toán · Đã giao 20/10",
+            total: item.amount,
+          } as Order)
+      );
+      console.log("listSaleInvoiceTemp", listSaleInvoiceTemp);
+
+      setListSaleInvoice(result.pagedLst.page == 1 ? listSaleInvoiceTemp : [...listSaleInvoice, ...listSaleInvoiceTemp]);
       setDataTotal({
         totalSales: result.totalSales || 0,
         totalRevenue: result.totalRevenue || 0,
@@ -332,94 +372,6 @@ export default function SaleInvoiceList() {
 
   const formatExcel = ["center", "top", "center", "right", "right", "right", "right", "right", "right", "center"];
 
-  const exportCallback = useCallback(
-    async (type, extension) => {
-      const response = await InvoiceService.list({
-        ...params,
-        page: type === "current_page" ? 1 : params.page,
-        limit: type === "all" || type === "current_search" ? 10000 : params.limit,
-      });
-
-      if (response.code === 0) {
-        const result = response.result.pagedLst.items;
-
-        const totalSummary = [
-          "Tổng tiền",
-          "",
-          "",
-          result.map((item) => item.amount).reduce((accumulator, currentValue) => accumulator + currentValue, 0),
-          0,
-          result.map((item) => item.discount).reduce((accumulator, currentValue) => accumulator + currentValue, 0),
-          result.map((item) => item.paid).reduce((accumulator, currentValue) => accumulator + currentValue, 0),
-          result.map((item) => item.amountCard).reduce((accumulator, currentValue) => accumulator + currentValue, 0),
-          result.map((item) => item.debt).reduce((accumulator, currentValue) => accumulator + currentValue, 0),
-          "",
-        ];
-
-        if (extension === "excel") {
-          ExportExcel({
-            fileName: "HoaDonBanHang",
-            title: "Đanh sách đơn hàng",
-            header: titles,
-            formatExcel: formatExcel,
-            data: result.map((item, idx) => dataMappingArray(item, idx, "export")),
-            info: { name },
-            footer: totalSummary,
-          });
-        }
-        showToast("Xuất file thành công", "success");
-        setOnShowModalExport(false);
-      } else {
-        showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
-        setOnShowModalExport(false);
-      }
-    },
-    [params]
-  );
-
-  const actionsTable = (item: IInvoiceResponse): IAction[] => {
-    return [
-      {
-        title: "Xem hóa đơn",
-        icon: <Icon name="Eye" />,
-        callback: () => {
-          setIdSaleInvoice(item.id);
-          setShowModalViewInvoice(true);
-        },
-      },
-      ...(item.status !== 3
-        ? [
-            {
-              title: "Khách trả hàng",
-              icon: <Icon name="Returns" />,
-              callback: () => {
-                // setDataImportInvoice(item);
-              },
-            },
-            {
-              title: "Hủy hóa đơn",
-              icon: <Icon name="TimesCircleFill" className="icon-error" />,
-              callback: () => {
-                showDialogConfirmDelete(item, 1);
-              },
-            },
-          ]
-        : [
-            ...(checkUserRoot == "1"
-              ? [
-                  {
-                    title: "Xóa hóa đơn",
-                    icon: <Icon name="TimesCircleFill" className="icon-error" />,
-                    callback: () => {
-                      showDialogConfirmDelete(item, 2);
-                    },
-                  },
-                ]
-              : []),
-          ]),
-    ];
-  };
-
   const onDelete = async (id: number) => {
     const response = await InvoiceService.cancelInvoice(id);
 
@@ -501,99 +453,27 @@ export default function SaleInvoiceList() {
       callback: () => showDialogConfirmDelete(),
     },
   ];
+  const handleViewDetail = () => {};
+  const handleConfirmOrder = () => {};
+  const handleViewReceipt = () => {};
+  console.log("listSaleInvoice", listSaleInvoice);
 
   return (
-    <div className={`page-content page__import--invoice${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Danh sách đơn hàng" titleActions={titleActions} />
-      <div className="card-box d-flex flex-column">
-        <div className="total__summary">
-          <div className="total__summary--sales">
-            <span className="key">Tổng doanh số: </span>
-            <span className="value">{formatCurrency(dataTotal.totalSales)}</span>
-          </div>
-          <div className="total__summary--revenue">
-            <span className="key">Tổng doanh thu: </span>
-            <span className="value">{formatCurrency(dataTotal.totalRevenue)}</span>
-          </div>
-        </div>
-        <SearchBox
-          name="Mã hóa đơn"
-          params={params}
-          isSaveSearch={true}
-          listSaveSearch={listSaveSearch}
-          isFilter={true}
-          listFilterItem={customerFilterList}
-          updateParams={(paramsNew) => setParams(paramsNew)}
-        />
-        {!isLoading && listSaleInvoice && listSaleInvoice.length > 0 ? (
-          <BoxTable
-            name="Danh sách hóa đơn"
-            titles={titles}
-            items={listSaleInvoice}
-            isPagination={true}
-            dataPagination={pagination}
-            dataMappingArray={(item, index) => dataMappingArray(item, index)}
-            dataFormat={dataFormat}
-            striped={true}
-            isBulkAction={true}
-            bulkActionItems={bulkActionList}
-            listIdChecked={listIdChecked}
-            setListIdChecked={(listId) => setListIdChecked(listId)}
-            actions={actionsTable}
-            actionType="inline"
-          />
-        ) : isLoading ? (
-          <Loading />
-        ) : (
-          <Fragment>
-            {isNoItem ? (
-              <SystemNotification
-                description={
-                  <span>
-                    Hiện tại chưa có hoá đơn bán hàng nào. <br />
-                    Hãy thêm mới hoá đơn bán hàng đầu tiên nhé!
-                  </span>
-                }
-                type="no-item"
-                titleButton="Thêm mới hoá đơn bán hàng"
-                action={() => {
-                  navigate("/create_sale_add");
-                }}
-              />
-            ) : (
-              <SystemNotification
-                description={
-                  <span>
-                    Không có dữ liệu trùng khớp. <br />
-                    Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
-                  </span>
-                }
-                type="no-result"
-              />
-            )}
-          </Fragment>
-        )}
-      </div>
-      <RecoverPublicDebts
-        onShow={showModalDebt}
-        idCustomer={idCustomer}
-        dataInvoice={dataInvoice}
-        onHide={(reload) => {
-          if (reload) {
-            getListSaleInvoice(params);
-          }
-          setShowModalDebt(false);
-        }}
-      />
-      <ExportModal
-        name="Danh sách đơn hàng"
-        onShow={onShowModalExport}
-        onHide={() => setOnShowModalExport(false)}
-        options={optionsExport}
-        callback={(type, extension) => exportCallback(type, extension)}
-      />
-      <ShowModalDetailSaleInvoice idInvoice={idSaleInvoice} onShow={showModalViewInvoice} onHide={() => setShowModalViewInvoice(false)} />
-      <Dialog content={contentDialog} isOpen={showDialog} />
+    <div className="counter-sales__screen">
+      <OrderList onViewDetail={handleViewDetail} onViewReceipt={handleViewReceipt} onConfirm={handleConfirmOrder} listOrder={listSaleInvoice} />
+      Hiển thị {listSaleInvoice.length}/{pagination.totalItem} đơn hàng
+      {pagination.page < pagination.totalPage && (
+        <Button
+          onClick={() => {
+            getListSaleInvoice({
+              ...params,
+              page: pagination.page + 1,
+            });
+          }}
+        >
+          Tải thêm
+        </Button>
+      )}
     </div>
   );
 }

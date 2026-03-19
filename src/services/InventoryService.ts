@@ -1,6 +1,6 @@
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
-import { IInventoryFilterRequest, IInventoryRequest } from "model/inventory/InventoryRequestModel";
+import { IInventoryFilterRequest, IInventoryLedgerFilterRequest, IInventoryRequest } from "model/inventory/InventoryRequestModel";
 
 export default {
   list: (params?: IInventoryFilterRequest, signal?: AbortSignal) => {
@@ -22,6 +22,18 @@ export default {
   },
   import: () => {
     return fetch(urlsApi.inventory.import, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  ledgerList: (params?: IInventoryLedgerFilterRequest, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.inventory.ledgerList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  ledgerDetail: (id: number, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.inventory.ledgerDetail}?id=${id}`, {
+      signal,
       method: "GET",
     }).then((res) => res.json());
   },

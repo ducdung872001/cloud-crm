@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, Fragment, useRef } from "react";
 import _ from "lodash";
 import Tippy from "@tippyjs/react";
 import { useReactToPrint } from "react-to-print";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import ModalReceipt, { ModalBodyReceipt, ModalFooterReceipt, ModalReceiptHeader } from "components/modalReceipt/modalReceipt";
 import { IBeautyBranchResponse } from "model/beautyBranch/BeautyBranchResponseModel";
@@ -21,6 +22,8 @@ import CardService from "services/CardService";
 
 export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInvoiceProps) {
   const { onShow, idInvoice, onHide } = props;
+
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [detaiInvoice, setDetaiInvoice] = useState(null);
@@ -240,6 +243,16 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInv
               ] as any)
             : []),
           {
+            title: "Tạo đơn vận chuyển",
+            icon: <Icon name="Send" />,
+            type: "button",
+            color: "primary",
+            variant: "outline",
+            callback: () => {
+              navigate(`/add_shipping?invoiceId=${idInvoice}`);
+            },
+          },
+          {
             title: "In hóa đơn A4",
             type: "button",
             color: "primary",
@@ -266,7 +279,7 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInv
         ],
       },
     }),
-    [dataPomService, isPrintPomService]
+    [dataPomService, isPrintPomService, idInvoice]
   );
 
   return (

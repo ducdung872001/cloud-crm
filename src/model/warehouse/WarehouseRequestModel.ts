@@ -9,6 +9,8 @@ export interface IWarehouseFilterRequest {
 export interface IListWarehouseProductFilterRequest {
   keyword?: string;
   inventoryId?: number;
+  startDate?: string;
+  toDate?: string;
   page?: number;
   limit?: number;
 }

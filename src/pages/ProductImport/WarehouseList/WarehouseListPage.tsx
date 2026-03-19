@@ -65,7 +65,7 @@ export default function WarehouseListPage() {
         const items: IWarehouseResponse[] = result?.items ?? [];
         setListWarehouse(items);
 
-        const total = +result?.total ?? 0;
+        const total = +result?.total || 0;
         const page = paramsSearch.page ?? 1;
         const limit = paramsSearch.limit ?? 10;
         setPagination((prev) => ({
@@ -95,7 +95,7 @@ export default function WarehouseListPage() {
     // } else {
     //   showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     // }
-    showToast("Tính năng xóa kho đang được phát triển", "info");
+    showToast("Tính năng xóa kho đang được phát triển", "warning");
     setShowDialog(false);
     setContentDialog(null);
   };
@@ -118,7 +118,7 @@ export default function WarehouseListPage() {
     //   setContentDialog(null);
     // });
 
-    showToast("Tính năng xóa kho đang được phát triển", "info");
+    showToast("Tính năng xóa kho đang được phát triển", "warning");
     setShowDialog(false);
     setContentDialog(null);
   };
@@ -183,11 +183,7 @@ export default function WarehouseListPage() {
   // =====================
   const renderStatus = (status: number) => (
     <div style={{ display: "flex", justifyContent: "center" }}>
-      <span
-        className={`status__item--signature status__item--signature-${
-          status === 1 ? "success" : "secondary"
-        }`}
-      >
+      <span className={`status__item--signature status__item--signature-${status === 1 ? "success" : "secondary"}`}>
         {status === 1 ? "Hoạt động" : "Ngừng hoạt động"}
       </span>
     </div>
@@ -251,12 +247,7 @@ export default function WarehouseListPage() {
       },
       {
         title: "Xóa",
-        icon: (
-          <Icon
-            name="Trash"
-            className={isCheckedItem ? "icon-disabled" : "icon-error"}
-          />
-        ),
+        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
@@ -279,11 +270,7 @@ export default function WarehouseListPage() {
       <TitleAction title="Danh sách kho" titleActions={titleActions} />
 
       <div className="card-box d-flex flex-column">
-        <SearchBox
-          name="Tên kho"
-          params={params}
-          updateParams={(paramsNew) => setParams(paramsNew)}
-        />
+        <SearchBox name="Tên kho" params={params} updateParams={(paramsNew) => setParams(paramsNew)} />
 
         {!isLoading && listWarehouse.length > 0 ? (
           <BoxTable
@@ -307,15 +294,9 @@ export default function WarehouseListPage() {
         ) : (
           <Fragment>
             {isNoItem ? (
-              <SystemNotification
-                description={<span>Hiện chưa có kho hàng nào.</span>}
-                type="no-item"
-              />
+              <SystemNotification description={<span>Hiện chưa có kho hàng nào.</span>} type="no-item" />
             ) : (
-              <SystemNotification
-                description={<span>Không tìm thấy kho phù hợp.</span>}
-                type="no-result"
-              />
+              <SystemNotification description={<span>Không tìm thấy kho phù hợp.</span>} type="no-result" />
             )}
           </Fragment>
         )}

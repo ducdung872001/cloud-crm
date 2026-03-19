@@ -21,6 +21,18 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  updateStatus: (body: any) => {
+    return fetch(urlsApi.orderRequest.updateStatus, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  confirm: (body: any) => {
+    return fetch(urlsApi.orderRequest.confirm, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   detail: (id: number) => {
     return fetch(`${urlsApi.orderRequest.detail}?id=${id}`, {
       method: "GET",

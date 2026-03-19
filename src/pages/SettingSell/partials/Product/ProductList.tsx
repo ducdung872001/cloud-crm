@@ -28,9 +28,20 @@ import { ProductLabel } from "@/assets/mock/Product";
 import ConfigDisplayModal from "./DetailProduct/ConfigDisplayModal";
 import CategoryModal from "./partials/CategoryModal";
 import AddProductPage from "./partials/AddProductPage";
+import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 
 // ---- Tab filter type ----
 type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
+
+const isSuccessResponse = (response: any) => response?.code === 0 || response?.status === 1;
+
+const getProductWebState = (item: IProductResponse) => {
+  if (typeof item?.showOnWebsite !== "undefined") {
+    return item.showOnWebsite === 1 || item.showOnWebsite === true;
+  }
+
+  return Boolean(item?.showOnWeb);
+};
 
 export default function ProductList(props: IProductListProps) {
   document.title = "Danh sách sản phẩm";
@@ -89,8 +100,7 @@ export default function ProductList(props: IProductListProps) {
   const getListProduct = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    // const response = await ProductService.wList(paramsSearch, abortController.signal);
-    const response = await ProductService.publicList(paramsSearch, abortController.signal);
+    const response = await ProductService.wList(paramsSearch, abortController.signal);
 
     if (response.code === 0) {
       const result = response.result;
@@ -160,7 +170,9 @@ export default function ProductList(props: IProductListProps) {
   }, []);
 
   // TODO: Implement QR scan handler
-  const handleScanQR = () => {};
+  const handleScanQR = () => {
+    showToast("Chức năng quét mã QR đang được phát triển", "info");
+  };
 
   // TODO: Implement category management handler
   const handleOpenCategory = () => {
@@ -179,9 +191,44 @@ export default function ProductList(props: IProductListProps) {
   };
 
   // TODO: Implement toggle web display per product
-  const handleToggleWebDisplay = (item: IProductResponse, newValue: boolean) => {
-    // TODO: call API to update product web display status
-    console.log("Toggle web display", item.id, newValue);
+  const handleToggleWebDisplay = async (item: IProductResponse, newValue: boolean) => {
+    const previousValue = getProductWebState(item);
+
+    setListProduct((prev) =>
+      prev.map((product) =>
+        product.id === item.id
+          ? {
+              ...product,
+              showOnWeb: newValue,
+              showOnWebsite: newValue ? 1 : 0,
+            }
+          : product
+      )
+    );
+
+    const response = await ProductService.wWebsiteToggle({
+      productId: item.id,
+      showOnWebsite: newValue ? 1 : 0,
+    });
+
+    if (isSuccessResponse(response)) {
+      showToast(newValue ? "Đã đẩy sản phẩm lên website" : "Đã ẩn sản phẩm khỏi website", "success");
+      return;
+    }
+
+    setListProduct((prev) =>
+      prev.map((product) =>
+        product.id === item.id
+          ? {
+              ...product,
+              showOnWeb: previousValue,
+              showOnWebsite: previousValue ? 1 : 0,
+            }
+          : product
+      )
+    );
+
+    showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
   };
 
   const onDelete = async (id: number) => {
@@ -342,40 +389,41 @@ export default function ProductList(props: IProductListProps) {
         <div className="product-cell__info">
           <p className="product-cell__name">{item.name}</p>
           <p className="product-cell__meta">
-            {/* TODO: add SKU and barcode fields to IProductResponse if not present */}
-            <span className="product-cell__sku">SKU: —</span>
-            <span className="product-cell__dot">·</span>
-            <span className="product-cell__barcode">—</span>
+            <span className="product-cell__sku">SKU: {item.productLine || "—"}</span>
+            {item.code && (
+              <>
+                <span className="product-cell__dot">·</span>
+                <span className="product-cell__barcode">{item.code}</span>
+              </>
+            )}
           </p>
-          {/* <div className="product-cell__tags">
-            <Badge text={randomLabel.label} variant={randomLabel.color} />
-          </div> */}
         </div>
       </div>,
 
       // DANH MỤC
       <span className="product-category-badge" key={`cat-${item.id}`}>
-        {item.categoryName ? item.categoryName : "Chưa xác định"}
+        {item.categoryName || "Chưa xác định"}
       </span>,
 
       // GIÁ BÁN / GIÁ SỈ
       <div className="product-price-cell" key={`price-${item.id}`}>
         <p className="product-price-cell__main">{formatCurrency(item.price)}</p>
-        {/* TODO: add wholesale price field (giá sỉ) to IProductResponse */}
-        <p className="product-price-cell__wholesale">Si: —</p>
+        {item.priceWholesale > 0 && (
+          <p className="product-price-cell__wholesale">Sỉ: {formatCurrency(item.priceWholesale)}</p>
+        )}
       </div>,
 
       // TỒN KHO
       <div className="product-stock-cell" key={`stock-${item.id}`}>
-        {/* TODO: add stock/quantity field to IProductResponse */}
-        <span className="product-stock-cell__value">—</span>
+        <span className="product-stock-cell__value">
+          {item.stock != null ? item.stock : "—"}
+        </span>
       </div>,
 
       // HIỂN THỊ WEB
       <div className="product-toggle-cell" key={`toggle-${item.id}`}>
-        {/* TODO: add isWebDisplay field to IProductResponse */}
         <label className="product-toggle">
-          <input type="checkbox" defaultChecked={false} onChange={(e) => handleToggleWebDisplay(item, e.target.checked)} />
+          <input type="checkbox" checked={getProductWebState(item)} onChange={(e) => handleToggleWebDisplay(item, e.target.checked)} />
           <span className="product-toggle__slider" />
         </label>
       </div>,
@@ -460,51 +508,44 @@ export default function ProductList(props: IProductListProps) {
   return (
     <div className="page-content page-product page-product--v2">
       {/* ── HEADER ── */}
-      <div className="prod-list-header">
-        <div className="prod-list-header__left">
-          <h1 className="prod-list-header__title">Quản lý Sản phẩm</h1>
-          <p className="prod-list-header__breadcrumb">
-            <span className="prod-list-header__breadcrumb-link" onClick={() => onBackProps(true)}>
-              Trang chủ
-            </span>
-            {" / "}
-            <span className="prod-list-header__breadcrumb-link" onClick={() => onBackProps(true)}>
-              Danh mục
-            </span>
-            {" / "}
-            <span>Sản phẩm</span>
-          </p>
+      <div className="action-navigation">
+        <div className="action-backup">
+          <h1 className="title-first" onClick={() => onBackProps(true)} title="Quay lại">
+            Cài đặt bán hàng
+          </h1>
+          <Icon name="ChevronRight" onClick={() => onBackProps(true)} />
+          <h1 className="title-last">Danh sách sản phẩm</h1>
         </div>
+        <TitleAction
+          title=""
+          titleActions={{
+            actions: [
+              {
+                title: "Thêm sản phẩm",
+                color: "primary",
+                callback: () => {
+                  setIdProduct(null);
+                  setShowProductPage(true);
+                },
+              },
+            ],
+          } as ITitleActions}
+        />
+      </div>
 
-        <div className="prod-list-header__actions">
-          <button className="prod-list-btn prod-list-btn--ghost" onClick={() => setShowModalImport(true)}>
-            <Icon name="UploadExcel" />
-            Nhập Excel
-          </button>
-
-          {/* TODO: wire up real category modal when ready */}
-          <button className="prod-list-btn prod-list-btn--ghost" onClick={handleOpenCategory}>
-            📦 Danh mục
-          </button>
-
-          {/* TODO: wire up display settings modal when ready */}
-          <button className="prod-list-btn prod-list-btn--ghost" onClick={handleDisplaySettings}>
-            <Icon name="Settings" />
-            Cài đặt hiển thị
-          </button>
-
-          <button
-            className="prod-list-btn prod-list-btn--primary"
-            onClick={() => {
-              setIdProduct(null);
-              // setShowModalAdd(true);
-              setShowProductPage(true);
-            }}
-          >
-            <Icon name="Plus" />
-            Thêm sản phẩm
-          </button>
-        </div>
+      {/* ── SECONDARY ACTIONS ── */}
+      <div className="prod-list-secondary-actions">
+        <button className="prod-list-btn prod-list-btn--ghost" onClick={() => setShowModalImport(true)}>
+          <Icon name="UploadExcel" />
+          Nhập Excel
+        </button>
+        <button className="prod-list-btn prod-list-btn--ghost" onClick={handleOpenCategory}>
+          📦 Danh mục
+        </button>
+        <button className="prod-list-btn prod-list-btn--ghost" onClick={handleDisplaySettings}>
+          <Icon name="Settings" />
+          Cài đặt hiển thị
+        </button>
       </div>
 
       {/* ── TOOLBAR ── */}

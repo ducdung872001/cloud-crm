@@ -34,3 +34,10 @@
     }
   }
 }
+.counter-sales__screen {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  justify-self: center;
+}

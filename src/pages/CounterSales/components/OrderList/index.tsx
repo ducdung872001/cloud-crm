@@ -73,12 +73,14 @@ interface OrderListProps {
   onViewDetail: () => void;
   onViewReceipt: () => void;
   onConfirm: () => void;
+  listOrder?: Order[];
 }
 
-const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onConfirm }) => {
+const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onConfirm, listOrder = ORDERS }) => {
   const [activeFilter, setActiveFilter] = useState("all");
+  console.log("listOrder", listOrder);
 
-  const formatVND = (n: number) => n.toLocaleString("vi") + " ₫";
+  const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
 
   return (
     <div className="order-list">
@@ -122,7 +124,7 @@ const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onCo
 
       {/* Order cards */}
       <div className="ol-wrap">
-        {ORDERS.map((order) => (
+        {listOrder.map((order) => (
           <div key={order.id} className={`order-card${order.status === "cancelled" ? " order-card--cancelled" : ""}`} onClick={onViewDetail}>
             <div className="order-card__top">
               <span className="oc-id">{order.code}</span>
