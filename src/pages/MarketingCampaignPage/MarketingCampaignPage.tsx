@@ -5,6 +5,7 @@ import TabMenuList from "@/components/TabMenuList/TabMenuList";
 import SMSMarkettingList from "../SMSMarketting/SMSMarkettingList";
 import ZaloMarketting from "../ZaloMarketting/ZaloMarketting";
 import EmailMarkettingList from "../EmailMarketting/EmailMarkettingList";
+import AppNotification from "../AppNotifications/AppNotification";
 
 export default function MarketingCampaignPage() {
   document.title = "Chiến dịch Marketing";
@@ -92,6 +93,16 @@ export default function MarketingCampaignPage() {
       
       {isDetail && tab === 3 ? (
         <EmailMarkettingList
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetail(false);
+            }
+          }}
+        />
+      ) : null}
+
+      {isDetail && tab === 4 ? (
+        <AppNotification
           onBackProps={(isBack) => {
             if (isBack) {
               setIsDetail(false);

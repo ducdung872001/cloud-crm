@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Order } from "../../types";
+import Icon from "components/icon";
 import "./index.scss";
 
 const ORDERS: Order[] = [
@@ -78,6 +80,7 @@ interface OrderListProps {
 
 const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onConfirm, listOrder = ORDERS }) => {
   const [activeFilter, setActiveFilter] = useState("all");
+  const navigate = useNavigate();
   console.log("listOrder", listOrder);
 
   const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
@@ -156,6 +159,17 @@ const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onCo
                     }}
                   >
                     🧾 Biên lai
+                  </button>
+                )}
+                {order.status !== "cancelled" && (
+                  <button
+                    className="btn btn--xs btn--outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/add_shipping?invoiceId=${order.id}`);
+                    }}
+                  >
+                    <Icon name="Send" /> Tạo đơn vận chuyển
                   </button>
                 )}
                 {order.status === "pending" && (

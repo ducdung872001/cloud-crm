@@ -19,6 +19,7 @@ const prefixInventory = prefixBiz + "/inventory";
 const prefixWarehouse = prefixBiz + "/warehouse";
 const prefixCare = prefixBiz + "/care";
 const prefixBilling = prefixBiz + "/billing";
+const prefixLogistics = prefixBiz + "/logistics";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -409,7 +410,7 @@ export const urlsApi = {
     // Tạo hóa đơn bán hàng
     invoiceDetailCustomer: prefixSales + "/invoiceDetail/customer",
     // Xem chi tiết hóa đơn
-    invoiceDetailList: prefixSales + "/invoiceDetail/list",
+    invoiceDetailList: prefixSales + "/invoiceDetail/get",
     // Hủy hóa đơn
     cancelInvoice: prefixSales + "/invoice/delete",
     // vinh danh bán hàng
@@ -432,7 +433,8 @@ export const urlsApi = {
     cancel: prefixInventory + "/invoice/import/cancel",
   },
   shipping: {
-    create: prefixAdmin + "/shipping/create",
+    create: prefixLogistics + "/shipment/create",
+    list: prefixLogistics + "/shipment/list",
   },
   boughtService: {
     addToInvoice: prefixAdmin + "/boughtService/update",

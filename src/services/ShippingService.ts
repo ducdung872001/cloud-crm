@@ -1,22 +1,35 @@
-import { IShippingOrderCreateRequest } from "@/model/shipping/ShippingRequestModel";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
+import {
+  IShippingOrderFilterRequest,
+  IShippingOrderCreateRequest,
+  IShippingBulkActionRequest,
+} from "model/shipping/ShippingRequestModel";
 
 export default {
-  // ─── Danh sách vận đơn ─────────────────────────────────────
-  list: (params: any) => {
-    return fetch(`${urlsApi.shipping}/orders${convertParamsToString(params)}`, {
+  // Danh sách / lọc đơn vận chuyển
+  filter: (params: IShippingOrderFilterRequest, signal?: AbortSignal) => {
+    const apiParams = {
+      ...params,
+      statusCode: params.status && params.status !== "all"
+        ? STATUS_MAP[params.status] ?? params.status
+        : undefined,
+      status: undefined,
+    };
+    return fetch(`${urlsApi.shipping.list}${convertParamsToString(apiParams)}`, {
+      signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  // ─── Chi tiết vận đơn ──────────────────────────────────────
-  detail: (id: number) => {
-    return fetch(`${urlsApi.shipping}/orders/${id}`, {
-      method: "GET",
-    }).then((res) => res.json());
-  },
+  // Chi tiết đơn vận chuyển
+  // detail: (id: number) => {
+  //   return fetch(`${urlsApi.shipping.detail}?id=${id}`, {
+  //     method: "GET",
+  //   }).then((res) => res.json());
+  // },
 
+  // Tạo đơn vận chuyển
   create: (body: IShippingOrderCreateRequest) => {
     return fetch(urlsApi.shipping.create, {
       method: "POST",
@@ -24,117 +37,124 @@ export default {
     }).then((res) => res.json());
   },
 
-  // ─── Cập nhật đơn vận chuyển ───────────────────────────────
-  update: (id: number, data: any) => {
-    return fetch(`${urlsApi.shipping}/orders/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }).then((res) => res.json());
-  },
+  // Cập nhật đơn vận chuyển
+  // update: (body: IShippingOrderCreateRequest) => {
+  //   return fetch(urlsApi.shipping.update, {
+  //     method: "PUT",
+  //     body: JSON.stringify(body),
+  //   }).then((res) => res.json());
+  // },
 
-  // ─── Hủy đơn vận chuyển ────────────────────────────────────
-  cancel: (id: number) => {
-    return fetch(`${urlsApi.shipping}/orders/${id}/cancel`, {
-      method: "PATCH",
-    }).then((res) => res.json());
-  },
+  // Hủy đơn vận chuyển
+  // cancel: (id: number) => {
+  //   return fetch(`${urlsApi.shipping.cancel}?id=${id}`, {
+  //     method: "DELETE",
+  //   }).then((res) => res.json());
+  // },
 
-  // ─── Đẩy đơn sang hãng vận chuyển ─────────────────────────
-  push: (id: number) => {
-    return fetch(`${urlsApi.shipping}/orders/${id}/push`, {
-      method: "POST",
-    }).then((res) => res.json());
-  },
+  // Đẩy đơn sang hãng vận chuyển
+  // push: (id: number) => {
+  //   return fetch(`${urlsApi.shipping.push}?id=${id}`, {
+  //     method: "POST",
+  //   }).then((res) => res.json());
+  // },
 
-  // ─── Đẩy nhiều đơn hàng loạt ──────────────────────────────
-  pushBulk: (ids: number[]) => {
-    return fetch(`${urlsApi.shipping}/orders/push-bulk`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ids }),
-    }).then((res) => res.json());
-  },
+  // Đẩy nhiều đơn hàng loạt
+  // pushBulk: (body: IShippingBulkActionRequest) => {
+  //   return fetch(urlsApi.shipping.pushBulk, {
+  //     method: "POST",
+  //     body: JSON.stringify(body),
+  //   }).then((res) => res.json());
+  // },
 
-  // ─── Đồng bộ trạng thái từ hãng (Webhook manual) ──────────
-  syncStatus: (id: number) => {
-    return fetch(`${urlsApi.shipping}/orders/${id}/sync`, {
-      method: "POST",
-    }).then((res) => res.json());
-  },
+  // In mã vận đơn
+  // printLabel: (id: number) => {
+  //   return fetch(`${urlsApi.shipping.printLabel}?id=${id}`, {
+  //     method: "GET",
+  //   }).then((res) => res.json());
+  // },
 
-  // ─── In mã vận đơn ─────────────────────────────────────────
-  printLabel: (id: number) => {
-    return fetch(`${urlsApi.shipping}/orders/${id}/print-label`, {
-      method: "GET",
-    }).then((res) => res.json());   // hoặc res.blob() nếu trả về file PDF
-  },
+  // In nhiều mã vận đơn hàng loạt
+  // printLabelBulk: (body: IShippingBulkActionRequest) => {
+  //   return fetch(urlsApi.shipping.printLabelBulk, {
+  //     method: "POST",
+  //     body: JSON.stringify(body),
+  //   }).then((res) => res.json());
+  // },
 
-  // ─── In nhiều mã vận đơn ───────────────────────────────────
-  printLabelBulk: (ids: number[]) => {
-    return fetch(`${urlsApi.shipping}/orders/print-label-bulk`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ids }),
-    }).then((res) => res.json());   // hoặc res.blob() tùy response
-  },
+  // Đồng bộ trạng thái từ hãng vận chuyển
+  // syncStatus: (id: number) => {
+  //   return fetch(`${urlsApi.shipping.syncStatus}?id=${id}`, {
+  //     method: "POST",
+  //   }).then((res) => res.json());
+  // },
 
-  // ─── Danh sách hãng vận chuyển đã kết nối ─────────────────
-  getCarriers: () => {
-    return fetch(`${urlsApi.shipping}/carriers`, {
-      method: "GET",
-    }).then((res) => res.json());
-  },
+  // Danh sách hãng vận chuyển đã kết nối
+  // getCarriers: (signal?: AbortSignal) => {
+  //   return fetch(urlsApi.shipping.carriers, {
+  //     signal,
+  //     method: "GET",
+  //   }).then((res) => res.json());
+  // },
 
-  // ─── Kết nối hãng vận chuyển ───────────────────────────────
-  connectCarrier: (carrierId: string, credentials: { apiKey: string; token?: string }) => {
-    return fetch(`${urlsApi.shipping}/carriers/${carrierId}/connect`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    }).then((res) => res.json());
-  },
+  // Kết nối hãng vận chuyển
+  // connectCarrier: (body: { carrierId: string; apiKey: string; token?: string }) => {
+  //   return fetch(urlsApi.shipping.connectCarrier, {
+  //     method: "POST",
+  //     body: JSON.stringify(body),
+  //   }).then((res) => res.json());
+  // },
 
-  // ─── Ngắt kết nối hãng vận chuyển ─────────────────────────
-  disconnectCarrier: (carrierId: string) => {
-    return fetch(`${urlsApi.shipping}/carriers/${carrierId}/connect`, {
-      method: "DELETE",
-    }).then((res) => res.json());
-  },
+  // Ngắt kết nối hãng vận chuyển
+  // disconnectCarrier: (carrierId: string) => {
+  //   return fetch(`${urlsApi.shipping.disconnectCarrier}?carrierId=${carrierId}`, {
+  //     method: "DELETE",
+  //   }).then((res) => res.json());
+  // },
 
-  // ─── Cấu hình phí vận chuyển ───────────────────────────────
-  getShippingFeeConfig: () => {
-    return fetch(`${urlsApi.shipping}/fee-config`, {
-      method: "GET",
-    }).then((res) => res.json());
-  },
+  // Lấy cấu hình phí vận chuyển
+  // getShippingFeeConfig: (signal?: AbortSignal) => {
+  //   return fetch(urlsApi.shipping.feeConfig, {
+  //     signal,
+  //     method: "GET",
+  //   }).then((res) => res.json());
+  // },
 
-  updateShippingFeeConfig: (data: any) => {
-    return fetch(`${urlsApi.shipping}/fee-config`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }).then((res) => res.json());
-  },
+  // Cập nhật cấu hình phí vận chuyển
+  // updateShippingFeeConfig: (body: any) => {
+  //   return fetch(urlsApi.shipping.feeConfig, {
+  //     method: "PUT",
+  //     body: JSON.stringify(body),
+  //   }).then((res) => res.json());
+  // },
 
-  // ─── Tính phí trước khi tạo đơn ───────────────────────────
-  estimateFee: (data: { carrierId: string; weightGram: number; province: string }) => {
-    return fetch(`${urlsApi.shipping}/estimate-fee`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }).then((res) => res.json());
-  },
+  // Tính phí trước khi tạo đơn
+  // estimateFee: (body: { carrierId: string; weightGram: number; province: string }) => {
+  //   return fetch(urlsApi.shipping.estimateFee, {
+  //     method: "POST",
+  //     body: JSON.stringify(body),
+  //   }).then((res) => res.json());
+  // },
+};
+
+// Map status UI → statusCode API
+// UI: pending | in_transit | delivered | returned | cancelled
+// API: SUBMITTED | PENDING | IN_TRANSIT | DELIVERED | RETURNED | CANCELLED
+export const STATUS_MAP: Record<string, string> = {
+  pending:    "PENDING",
+  in_transit: "IN_TRANSIT",
+  delivered:  "DELIVERED",
+  returned:   "RETURNED",
+  cancelled:  "CANCELLED",
+  submitted:  "SUBMITTED",
+};
+
+// Map ngược: statusCode API → key UI (dùng khi render badge)
+export const STATUS_CODE_TO_UI: Record<string, string> = {
+  SUBMITTED:  "pending",
+  PENDING:    "pending",
+  IN_TRANSIT: "in_transit",
+  DELIVERED:  "delivered",
+  RETURNED:   "returned",
+  CANCELLED:  "cancelled",
 };

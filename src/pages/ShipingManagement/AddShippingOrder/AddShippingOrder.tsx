@@ -149,11 +149,26 @@ export default function AddShippingOrder() {
         productNames.slice(0, 4).join(", ") +
         (productNames.length > 4 ? ` +${productNames.length - 4} khác` : "");
 
-      const inv: IInvoiceResponse = detail.invoice ?? invoiceBasic;
-      if (inv) {
-        // Cập nhật lại với productSummary đầy đủ + lưu _products để dùng khi submit
-        applyInvoiceToForm({ ...inv, id: invoiceId, productSummary, _products: products } as any);
-      }
+      // API mới: invoiceId nằm ở result.invoiceId (ngoài result.invoice)
+      // Ưu tiên: result.invoice → merge với invoiceBasic để giữ lại field không-null
+      const invFromApi: IInvoiceResponse = detail.invoice ?? null;
+      const resolvedId: number = detail.invoiceId ?? invoiceId;
+
+      // Merge: invoiceBasic từ list thường có customerName/Phone đầy đủ hơn
+      // nếu detail trả null thì fallback về invoiceBasic
+      const inv = {
+        ...(invoiceBasic ?? {}),
+        ...(invFromApi ?? {}),
+        id:              resolvedId,
+        customerName:    invFromApi?.customerName    ?? invoiceBasic?.customerName    ?? "",
+        customerPhone:   invFromApi?.customerPhone   ?? invoiceBasic?.customerPhone   ?? "",
+        customerAddress: invFromApi?.customerAddress ?? invoiceBasic?.customerAddress ?? "",
+        amount:          invFromApi?.amount          ?? invoiceBasic?.amount          ?? 0,
+        amountCard:      invFromApi?.amountCard      ?? invoiceBasic?.amountCard      ?? 0,
+        invoiceCode:     invFromApi?.invoiceCode     ?? invoiceBasic?.invoiceCode     ?? "",
+      } as IInvoiceResponse;
+
+      applyInvoiceToForm({ ...inv, productSummary, _products: products } as any);
     } else {
       showToast(response.message ?? "Không thể tải thông tin hóa đơn", "error");
     }
