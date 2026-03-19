@@ -448,6 +448,26 @@ import IcOpenShiftMenu from "assets/icons-menu/ic-open-shift.svg";
 import IcShiftReportMenu from "assets/icons-menu/ic-shift-report.svg";
 import IcLoginMenu from "assets/icons-menu/ic-login.svg";
 import IcBellMenu from "assets/icons-menu/ic-bell.svg";
+import IcCustomerGroup from "assets/icons-menu/ic-customer-group.svg";
+import IcRelationship from "assets/icons-menu/ic-relationship.svg";
+import IcIndustry from "assets/icons-menu/ic-industry.svg";
+import IcPointsHistory from "assets/icons-menu/ic-points-history.svg";
+import IcCardList from "assets/icons-menu/ic-card-list.svg";
+import IcViewStructure from "assets/icons-menu/ic-view-structure.svg";
+import IcCustomField from "assets/icons-menu/ic-custom-field.svg";
+import IcCustomerSource from "assets/icons-menu/ic-customer-source.svg";
+import IcSegmentAnalysis from "assets/icons-menu/ic-segment-analysis.svg";
+import IcCustomerValue from "assets/icons-menu/ic-customer-value.svg";
+import IcCustomerLeave from "assets/icons-menu/ic-customers-leave.svg";
+import IcReceiveTicket from "assets/icons-menu/ic-receive-ticket.svg";
+import IcCareHistory from "assets/icons-menu/ic-care-history.svg";
+import IcCallCenter from "assets/icons-menu/ic-call-center.svg";
+import IcRateCustomer from "assets/icons-menu/ic-rate-customer.svg";
+import IcMemberCustomerList from "assets/icons-menu/ic-member-customer-list.svg";
+import IcMembershipClass from "assets/icons-menu/ic-membership-class.svg";
+import IcAccumulatePoints from "assets/icons-menu/ic-accumulate-points.svg";
+import IcExchangePoints from "assets/icons-menu/ic-exchange-points.svg";
+import IcCampaignHistory from "assets/icons-menu/ic-campaign-history.svg";
 
 
 const iconTypes = {
@@ -885,7 +905,27 @@ const iconTypes = {
   OpenShiftMenu: IcOpenShiftMenu,
   ShiftReportMenu: IcShiftReportMenu,
   LoginMenu: IcLoginMenu,
-  BellMenu: IcBellMenu
+  BellMenu: IcBellMenu,
+  CustomerGroup: IcCustomerGroup,
+  Relationship: IcRelationship,
+  Industry: IcIndustry,
+  PointsHistory: IcPointsHistory,
+  CardList: IcCardList,
+  ViewStructure: IcViewStructure,
+  CustomField: IcCustomField,
+  CustomerSource: IcCustomerSource,
+  SegmentAnalysis: IcSegmentAnalysis,
+  CustomerValue: IcCustomerValue,
+  CustomerLeave: IcCustomerLeave,
+  ReceiveTicketCSKH: IcReceiveTicket,
+  CareHistory: IcCareHistory,
+  CallCenter: IcCallCenter,
+  RateCustomer: IcRateCustomer,
+  MemberCustomerList: IcMemberCustomerList,
+  MembershipClass: IcMembershipClass,
+  AccumulatePoints: IcAccumulatePoints,
+  ExchangePoints: IcExchangePoints,
+  CampaignHistory: IcCampaignHistory
 
 };
 
