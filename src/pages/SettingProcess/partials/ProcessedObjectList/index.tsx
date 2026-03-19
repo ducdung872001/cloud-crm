@@ -29,6 +29,8 @@ import { ExportExcel } from "exports";
 import WorkOrderService from "services/WorkOrderService";
 import ModalSelectProcessOLA from "./ModalSelectProcessOLA/ModalSelectProcessOLA";
 import ModalDebugObject from "./ModalDebugObject";
+import MiddleWorkList from "@/pages/MiddleWork/MiddleWorkList";
+import UserTaskList from "@/pages/UserTaskList";
 
 export default function ProcessedObjectList() {
   document.title = "Danh sách hồ sơ";
@@ -92,7 +94,14 @@ export default function ProcessedObjectList() {
       name: "Danh sách hồ sơ",
       is_active: true,
     },
+    {
+      key: "handle_work",
+      name: "Tác vụ",
+      is_active: false,
+    },
   ]);
+
+  const [tabActive, setTabActive] = useState("all");
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
@@ -168,6 +177,7 @@ export default function ProcessedObjectList() {
 
   const titleActions: ITitleActions = {
     actions: [
+      ...tabActive === "all" ? [
       {
         title: !showModalSettingObject || !hasHistorySignature ? "Thêm mới" : "Quay lại",
         callback: () => {
@@ -178,7 +188,7 @@ export default function ProcessedObjectList() {
             setShowModalAdd(true);
           }
         },
-      },
+      }] : [],
     ],
   };
 
@@ -713,183 +723,152 @@ export default function ProcessedObjectList() {
   }, []);
 
   return (
-    <div className={`page-content page__process_object${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Danh sách hồ sơ" titleActions={titleActions} />
-
-      {/* <div className="action-navigation">
-        <div className="action-backup" style={showModalSettingObject || hasHistorySignature ? { marginBottom: "1.6rem" } : {}}>
-          <h1
-            onClick={() => {
-              setShowModalSettingObject(false);
-              setHasHistorySignature(false);
-            }}
-            className="title-first"
-            title="Quay lại"
-          >
-            Danh sách đối tượng
-          </h1>
-          {showModalSettingObject && (
-            <Fragment>
-              <Icon
-                name="ChevronRight"
-                onClick={() => {
-                  setShowModalSettingObject(false);
-                }}
-              />
-              <h1 className="title-last">Cấu hình đối tượng</h1>
-            </Fragment>
-          )}
-          {hasHistorySignature && (
-            <Fragment>
-              <Icon
-                name="ChevronRight"
-                onClick={() => {
-                  setHasHistorySignature(false);
-                }}
-              />
-              <h1 className="title-last">Xem lịch sử xử lý</h1>
-            </Fragment>
-          )}
-        </div>
-        {!showModalSettingObject && !hasHistorySignature && <TitleAction title="" titleActions={titleActions} />}
-      </div> */}
-
-      <div className="card-box d-flex flex-column">
-        <div className={`${showModalSettingObject || hasHistorySignature ? "d-none" : ""}`}>
-          <SearchBox
-            name="Tên hồ sơ"
-            params={params}
-            isSaveSearch={true}
-            listSaveSearch={listSaveSearch}
-            isFilter={true}
-            listFilterItem={customerFilterList}
-            updateParams={(paramsNew) => setParams(paramsNew)}
-          />
-          {!isLoading && listObject && listObject.length > 0 ? (
-            <BoxTable
-              name="hồ sơ"
-              titles={titles}
-              items={listObject}
-              isPagination={true}
-              dataPagination={pagination}
-              dataMappingArray={(item, index) => dataMappingArray(item, index)}
-              dataFormat={dataFormat}
-              isBulkAction={true}
-              listIdChecked={listIdChecked}
-              bulkActionItems={bulkActionList}
-              striped={true}
-              setListIdChecked={(listId) => setListIdChecked(listId)}
-              actions={actionsTable}
-              actionType="inline"
+    <div>
+      <div className={`page-content page__process_object${isNoItem ? " bg-white" : ""}`}>
+        <TitleAction title="Danh sách hồ sơ" titleActions={titleActions} />
+        <div className="card-box d-flex flex-column">
+          <div className={`${showModalSettingObject || hasHistorySignature ? "d-none" : ""}`}>
+            <SearchBox
+              name="Tên hồ sơ"
+              params={params}
+              isSaveSearch={true}
+              listSaveSearch={listSaveSearch}
+              isFilter={tabActive == "all" ? true : false}
+              listFilterItem={customerFilterList}
+              updateParams={(paramsNew) => setParams(paramsNew)}
+              setTabActive={setTabActive}
+              isHiddenSearch={tabActive == "all" ? false : true}
             />
-          ) : isLoading ? (
-            <Loading />
-          ) : (
-            <Fragment>
-              {isNoItem ? (
-                <SystemNotification
-                  description={
-                    <span>
-                      Hiện tại chưa có hồ sơ nào. <br />
-                      Hãy thêm mới hồ sơ đầu tiên nhé!
-                    </span>
-                  }
-                  type="no-item"
-                  titleButton="Thêm mới hồ sơ"
-                  action={() => {
-                    setDataObject(null);
-                    setShowModalAdd(true);
-                  }}
+
+            {tabActive === "all" ? 
+              (!isLoading && listObject && listObject.length > 0 ? (
+                <BoxTable
+                  name="hồ sơ"
+                  titles={titles}
+                  items={listObject}
+                  isPagination={true}
+                  dataPagination={pagination}
+                  dataMappingArray={(item, index) => dataMappingArray(item, index)}
+                  dataFormat={dataFormat}
+                  isBulkAction={true}
+                  listIdChecked={listIdChecked}
+                  bulkActionItems={bulkActionList}
+                  striped={true}
+                  setListIdChecked={(listId) => setListIdChecked(listId)}
+                  actions={actionsTable}
+                  actionType="inline"
                 />
+              ) : isLoading ? (
+                <Loading />
               ) : (
-                <SystemNotification
-                  description={
-                    <span>
-                      Không có dữ liệu trùng khớp.
-                      <br />
-                      Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
-                    </span>
-                  }
-                  type="no-result"
-                />
-              )}
-            </Fragment>
-          )}
+                <Fragment>
+                  {isNoItem ? (
+                    <SystemNotification
+                      description={
+                        <span>
+                          Hiện tại chưa có hồ sơ nào. <br />
+                          Hãy thêm mới hồ sơ đầu tiên nhé!
+                        </span>
+                      }
+                      type="no-item"
+                      titleButton="Thêm mới hồ sơ"
+                      action={() => {
+                        setDataObject(null);
+                        setShowModalAdd(true);
+                      }}
+                    />
+                  ) : (
+                    <SystemNotification
+                      description={
+                        <span>
+                          Không có dữ liệu trùng khớp.
+                          <br />
+                          Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
+                        </span>
+                      }
+                      type="no-result"
+                    />
+                  )}
+                </Fragment>
+              ))
+            : null }
+            {tabActive === "handle_work" ? <UserTaskList/> : null}
+          </div>
+
+          {/* <div className={`${showModalSettingObject ? "" : "d-none"}`}>
+            <AddFormObject
+              onShow={showModalSettingObject}
+              onHide={(reload) => {
+                if (reload) {
+                  getListProcessedObject(params);
+                }
+
+                setShowModalSettingObject(false);
+              }}
+              disable={dataObject?.status === 2 ? true : false}
+              idQuote={dataObject?.id}
+              dataQuote={dataObject}
+            />
+          </div> */}
+
+          <div className={`${hasHistorySignature ? "" : "d-none"}`}>
+            <HistoryProcess
+              // type="quote"
+              onShow={hasHistorySignature}
+              dataObject={dataObject}
+              onHide={() => setHasHistorySignature(false)}
+            />
+          </div>
         </div>
+        <AddObject
+          onShow={showModalAdd}
+          onHide={(reload) => {
+            if (reload) {
+              getListProcessedObject(params);
+            }
 
-        {/* <div className={`${showModalSettingObject ? "" : "d-none"}`}>
-          <AddFormObject
-            onShow={showModalSettingObject}
-            onHide={(reload) => {
-              if (reload) {
-                getListProcessedObject(params);
-              }
-
-              setShowModalSettingObject(false);
-            }}
-            disable={dataObject?.status === 2 ? true : false}
-            idQuote={dataObject?.id}
-            dataQuote={dataObject}
-          />
-        </div> */}
-
-        <div className={`${hasHistorySignature ? "" : "d-none"}`}>
-          <HistoryProcess
-            // type="quote"
-            onShow={hasHistorySignature}
-            dataObject={dataObject}
-            onHide={() => setHasHistorySignature(false)}
-          />
-        </div>
-      </div>
-      <AddObject
-        onShow={showModalAdd}
-        onHide={(reload) => {
-          if (reload) {
-            getListProcessedObject(params);
-          }
-
-          setShowModalAdd(false);
-          setDataObject(null);
-        }}
-        data={dataObject}
-      />
-      <ModalSelectProcessOLA
-        onShow={modalSelectProcess}
-        data={dataObject}
-        onHide={(reload) => {
-          if (reload) {
-            // getListProcessedObject(params);
-          }
-          setModalSelectProcess(false);
-          setDataObject(null);
-        }}
-      />
-      <ModalSigner
-        onShow={hasSignature}
-        onHide={(reload) => {
-          if (reload) {
-            getListProcessedObject(params);
-          }
-          setDataObject(null);
-          setHasSignature(false);
-        }}
-        data={dataObject}
-      />
-
-      <ModalDebugObject
-        onShow={showDebug}
-        dataObject={dataObject}
-        onHide={(reload) => {
-          if (reload) {
-            // getListBusinessProcess(params);
-          } else {
-            setShowDebug(false);
+            setShowModalAdd(false);
             setDataObject(null);
-          }
-        }}
-      />
-      <Dialog content={contentDialog} isOpen={showDialog} />
+          }}
+          data={dataObject}
+        />
+        <ModalSelectProcessOLA
+          onShow={modalSelectProcess}
+          data={dataObject}
+          onHide={(reload) => {
+            if (reload) {
+              // getListProcessedObject(params);
+            }
+            setModalSelectProcess(false);
+            setDataObject(null);
+          }}
+        />
+        <ModalSigner
+          onShow={hasSignature}
+          onHide={(reload) => {
+            if (reload) {
+              getListProcessedObject(params);
+            }
+            setDataObject(null);
+            setHasSignature(false);
+          }}
+          data={dataObject}
+        />
+
+        <ModalDebugObject
+          onShow={showDebug}
+          dataObject={dataObject}
+          onHide={(reload) => {
+            if (reload) {
+              // getListBusinessProcess(params);
+            } else {
+              setShowDebug(false);
+              setDataObject(null);
+            }
+          }}
+        />
+        <Dialog content={contentDialog} isOpen={showDialog} />
+      </div>
     </div>
   );
 }

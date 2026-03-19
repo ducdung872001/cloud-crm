@@ -734,7 +734,7 @@ export const menu: IMenuItem[] = [
         title: "manageDefaultProcesses",
         path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
         code: "BPM",
-        icon: <Icon name="DefaultProcessMenu" />,
+        icon: <Icon name="DefaultProcessSetting" />,
       },
       // {
       //   title: "business_rule", // Loại luật nghiệp vụ
