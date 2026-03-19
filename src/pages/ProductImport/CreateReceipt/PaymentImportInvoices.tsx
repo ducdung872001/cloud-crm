@@ -19,7 +19,7 @@ interface IOptionInventory {
   value: number;
   label: string;
   address: string;
-  name: string;
+  branchName: string;
 }
 
 const DEFAULT_FORM: IInvoiceCreateRequest = {
@@ -43,7 +43,7 @@ const getInvoiceFromResponse = (response: any): IInvoiceCreateResponse | null =>
 };
 
 export default function PaymentImportInvoices(props: PaymentImportInvoicesProps) {
-  const { data, listInvoiceDetail = [], onInvoiceCreated, onInvoiceApproved } = props;
+  const { data, listInvoiceDetail = [], onInvoiceCreated, onInvoiceApproved, onInventoryChanged } = props;
 
   const navigate = useNavigate();
 
@@ -54,6 +54,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
   const [infoBranch, setInfoBranch] = useState({ branch: "", address: "" });
   const [listInventory, setListInventory] = useState<IOptionInventory[]>([]);
   const [isLoadingInventory, setIsLoadingInventory] = useState<boolean>(false);
+  const [isUpdatingInventory, setIsUpdatingInventory] = useState<boolean>(false);
 
   const invoiceStatus = data?.status ?? 2;
   const isCreated = !!data?.id;
@@ -123,8 +124,43 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
   }, [selectedInventory]);
 
   const handleChangeValueInventory = (e) => {
+    const nextInventoryId = e?.value ?? null;
+    const previousInventoryId = formData?.inventoryId ?? null;
+
     setValidateInventory(false);
-    setFormData({ ...formData, inventoryId: e?.value ?? null });
+    setFormData((prev) => ({ ...prev, inventoryId: nextInventoryId }));
+    onInventoryChanged?.(nextInventoryId);
+
+    if (!data?.id || !isPending || nextInventoryId == null || nextInventoryId === previousInventoryId) {
+      return;
+    }
+
+    const updateInventory = async () => {
+      setIsUpdatingInventory(true);
+      const response = await InvoiceService.importUpdate({
+        id: data.id,
+        inventoryId: nextInventoryId,
+      });
+      const invoice = getInvoiceFromResponse(response);
+
+      if (response.code === 0) {
+        showToast("Cập nhật kho hàng thành công", "success");
+        onInvoiceCreated?.({
+          ...(data as IInvoiceCreateResponse),
+          ...(invoice ?? {}),
+          id: invoice?.id ?? data.id,
+          inventoryId: invoice?.inventoryId ?? nextInventoryId,
+        });
+      } else {
+        setFormData((prev) => ({ ...prev, inventoryId: previousInventoryId }));
+        onInventoryChanged?.(previousInventoryId);
+        showToast(response.message ?? "Cập nhật kho hàng thất bại", "error");
+      }
+
+      setIsUpdatingInventory(false);
+    };
+
+    updateInventory();
   };
 
   const handleChangeValueReceiptDate = (e) => {
@@ -212,7 +248,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
                 isLoading={isLoadingInventory}
                 error={validateInventory}
                 message="Vui lòng chọn kho hàng"
-                isDisabled={isCreated && !isPending}
+                isDisabled={isUpdatingInventory || (isCreated && !isPending)}
               />
             </div>
 
@@ -238,7 +274,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
                 isMaxDate={true}
                 error={validateReceiptDate}
                 message="Vui lòng chọn ngày nhập hàng"
-                disabled={isCreated && !isPending}
+                disabled={isUpdatingInventory || (isCreated && !isPending)}
               />
             </div>
 
@@ -287,7 +323,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
                   type="submit"
                   color="primary"
                   variant="outline"
-                  disabled={isSubmit}
+                  disabled={isSubmit || isUpdatingInventory}
                 >
                   {isCreated ? "Cập nhật phiếu nhập" : "Tạo phiếu nhập"}
                   {isSubmit ? <Icon name="Loading" /> : null}
@@ -295,7 +331,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
                 <Button
                   type="button"
                   color="primary"
-                  disabled={isSubmit || !isCreated || !hasLineItems}
+                  disabled={isSubmit || isUpdatingInventory || !isCreated || !hasLineItems}
                   onClick={handleApproveInvoice}
                 >
                   Duyệt phiếu nhập

@@ -12,6 +12,7 @@ export interface PaymentImportInvoicesProps {
   listInvoiceDetail?: IInvoiceDetailResponse[];
   onInvoiceCreated?: (invoice: IInvoiceCreateResponse) => void;
   onInvoiceApproved?: (invoice: IInvoiceCreateResponse) => void;
+  onInventoryChanged?: (inventoryId: number) => void;
 }
 
 export interface SeeReceiptProps {

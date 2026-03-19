@@ -195,6 +195,13 @@ export default function CreateReceipt() {
     await reloadInvoiceContext(nextId);
   };
 
+  const handleInventoryChanged = (inventoryId: number) => {
+    setInvoiceInfo((prev) => ({
+      ...prev,
+      inventoryId,
+    }));
+  };
+
   const dataCreate = useMemo(() => syncInvoiceTotals(invoiceInfo, listInvoiceDetail), [invoiceInfo, listInvoiceDetail]);
 
   const titles = ["STT", "Tên sản phẩm", "Số lô", "Ngày sản xuất", "Ngày hết hạn", "Đơn vị tính", "Số lượng", "Giá nhập", "Thành tiền"];
@@ -478,6 +485,7 @@ export default function CreateReceipt() {
         listInvoiceDetail={listInvoiceDetail}
         onInvoiceCreated={handleInvoiceCreated}
         onInvoiceApproved={handleInvoiceApproved}
+        onInventoryChanged={handleInventoryChanged}
       />
     </div>
   );
