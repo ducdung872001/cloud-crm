@@ -60,7 +60,6 @@ export function useGetDetailProduct({
   // ── Core fetch ──────────────────────────────────────────────────────────────
 
   const fetchProducts = useCallback(async (id: number) => {
-    setIsLoading(true);
     setIsNoItem(false);
 
     try {
@@ -77,6 +76,7 @@ export function useGetDetailProduct({
       } else {
         showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
+      setIsLoading(false);
     } catch (error) {
       if (error?.name === "AbortError") {
         console.log("Request was aborted");
@@ -99,6 +99,7 @@ export function useGetDetailProduct({
   useEffect(() => {
     console.log("productId in useGetVariant", productId);
     if (!enabled) return; // ✅ guard: nếu không enabled thì không fetch
+    setIsLoading(true);
     fetchProducts(productId);
 
     // return () => {

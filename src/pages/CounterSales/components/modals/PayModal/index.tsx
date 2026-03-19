@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { CartItem, PayMethod } from "../../../types";
 import { IActionModal } from "model/OtherModel";
+import ImageMomo from "assets/images/MOMO-Logo-App.png";
+import ImageZaloPay from "assets/images/zalopay.png";
 import "./index.scss";
 
 interface PayModalProps {
@@ -10,19 +12,20 @@ interface PayModalProps {
   onClose: () => void;
   onConfirm: (id) => void;
   invoiceId: number | null;
+  method: PayMethod;
+  setMethod: (method: PayMethod) => void;
 }
 
-const PAY_METHODS: { id: PayMethod; icon: string; label: string; image?: string }[] = [
+export const PAY_METHODS: { id: PayMethod; icon: string; label: string; image?: string }[] = [
   { id: "cash", icon: "💵", label: "Tiền mặt" },
   { id: "transfer", icon: "📱", label: "Chuyển khoản" },
   { id: "qr", icon: "📷", label: "QR Pro" },
-  { id: "momo", icon: "💵", label: "Momo" },
-  { id: "zalo_pay", icon: "📱", label: "ZaloPay" },
-  { id: "credit_card", icon: "📷", label: "Thẻ tín dụng" },
+  { id: "momo", icon: "💵", label: "Momo", image: ImageMomo },
+  { id: "zalo_pay", icon: "📱", label: "ZaloPay", image: ImageZaloPay },
+  { id: "credit_card", icon: "💳", label: "Thẻ tín dụng" },
 ];
 
-export default function PayModal({ open, cartItems, onClose, onConfirm, invoiceId }: PayModalProps) {
-  const [method, setMethod] = useState<PayMethod>("cash");
+export default function PayModal({ open, cartItems, onClose, onConfirm, invoiceId, method, setMethod }: PayModalProps) {
   const [customerPaid, setCustomerPaid] = useState(150000);
 
   const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
@@ -39,24 +42,6 @@ export default function PayModal({ open, cartItems, onClose, onConfirm, invoiceI
       setCustomerPaid(Math.ceil(total / 1000) * 1000);
     }
   }, [open, total]);
-
-  // const actions: IActionModal = {
-  //   actions_right: {
-  //     buttons: [
-  //       {
-  //         title: "Hủy",
-  //         color: "primary",
-  //         variant: "outline",
-  //         callback: onClose,
-  //       },
-  //       {
-  //         title: "✅ Xác nhận thanh toán & In biên lai",
-  //         color: "primary",
-  //         callback: onConfirm,
-  //       },
-  //     ],
-  //   },
-  // };
 
   // actions là callback phụ thuộc vào invoiceId
   const actions: IActionModal = useMemo(() => {
@@ -88,7 +73,7 @@ export default function PayModal({ open, cartItems, onClose, onConfirm, invoiceI
         <div className="pay-modal__methods">
           {PAY_METHODS.map((m) => (
             <div key={m.id} className={`pms${method === m.id ? " pms--selected" : ""}`} onClick={() => setMethod(m.id)}>
-              <div className="pms__icon">{m.icon}</div>
+              <div className="pms__icon">{m.image ? <img src={m.image} alt={m.label} className="pms__image" /> : m.icon}</div>
               <div className="pms__label">{m.label}</div>
             </div>
           ))}
@@ -115,7 +100,11 @@ export default function PayModal({ open, cartItems, onClose, onConfirm, invoiceI
           <>
             <div className="pay-modal__field">
               <label>Khách đưa (₫)</label>
-              <input type="number" value={customerPaid} onChange={(e) => setCustomerPaid(Number(e.target.value))} />
+              <input
+                type="text"
+                value={customerPaid.toLocaleString("vi")}
+                onChange={(e) => setCustomerPaid(Number(e.target.value.replace(/,/g, "")))}
+              />
               <div className="pay-modal__quick-btns">
                 {[50000, 100000, 150000, 200000, 500000].map((v) => (
                   <button key={v} type="button" className="pay-modal__quick-btn" onClick={() => setCustomerPaid(v)}>
@@ -154,13 +143,13 @@ export default function PayModal({ open, cartItems, onClose, onConfirm, invoiceI
         )}
 
         {/* QR */}
-        {method === "qr" && (
+        {/* {method === "qr" && (
           <div className="pay-modal__qr-box">
             <div className="pay-modal__qr-inner">📷</div>
             <div className="pay-modal__qr-amount">{fmt(total)}</div>
             <div className="pay-modal__qr-note">Quét mã để thanh toán qua QR Pro</div>
           </div>
-        )}
+        )} */}
       </ModalBody>
 
       <ModalFooter actions={actions} />

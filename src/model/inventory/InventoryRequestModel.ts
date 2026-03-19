@@ -4,6 +4,15 @@ export interface IInventoryFilterRequest {
   limit?: number;
 }
 
+export interface IInventoryLedgerFilterRequest {
+  refType?: string;
+  warehouseId?: number;
+  productId?: number;
+  keyword?: string;
+  page?: number;
+  size?: number;
+}
+
 export interface IInventoryRequest {
   id: number;
   name: string;

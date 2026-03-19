@@ -1,0 +1,10 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#854F0B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <!-- medal / tier badge -->
+        <circle cx="12" cy="9" r="5"></circle>
+        <path d="M12 14v7"></path>
+        <path d="M9 18l3 3 3-3"></path>
+        <!-- 3 bars inside = tiers: Bạc, Vàng, Kim cương -->
+        <line x1="10" y1="8" x2="10" y2="11" stroke-width="1.4"></line>
+        <line x1="12" y1="6.5" x2="12" y2="11" stroke-width="1.4"></line>
+        <line x1="14" y1="9" x2="14" y2="11" stroke-width="1.4"></line>
+      </svg>

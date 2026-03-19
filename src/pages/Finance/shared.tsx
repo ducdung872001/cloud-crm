@@ -25,7 +25,7 @@ export function formatDateTime(value: string) {
 }
 
 export function FinancePageShell(props: {
-  title: string;
+  title?: string;
   // subtitle: string;
   actions?: React.ReactNode;
   children: React.ReactNode;
@@ -34,13 +34,13 @@ export function FinancePageShell(props: {
 
   return (
     <div className="page-content page__finance">
-      <div className="finance-page__header">
+      {/* <div className="finance-page__header">
         <div>
           <h1>{title}</h1>
-          {/* <p>{subtitle}</p> */}
+          <p>{subtitle}</p>
         </div>
         {actions ? <div className="finance-page__actions">{actions}</div> : null}
-      </div>
+      </div> */}
       {children}
     </div>
   );

@@ -192,11 +192,23 @@ export default function MultiChannelOrders() {
           ? "Đang giao"
           : item?.status === "COMPLETED"
           ? "Hoàn thành"
+          : item?.status === "CONFIRMED"
+          ? "Đã xác nhận"
           : item?.status === "REFUNDED"
           ? "Đã huỷ"
           : ""
       }
-      variant={item.status === "PENDING" ? "warning" : item.status === "PROCESSING" ? "primary" : item.status === "COMPLETED" ? "success" : "error"}
+      variant={
+        item.status === "PENDING"
+          ? "warning"
+          : item.status === "PROCESSING"
+          ? "primary"
+          : item.status === "COMPLETED"
+          ? "success"
+          : item.status === "CONFIRMED"
+          ? "success"
+          : "error"
+      }
     />,
     <div style={{ width: "10rem" }}>{moment(item.orderDate).format("DD/MM/YYYY HH:mm")}</div>,
     <div style={{ width: "10rem" }}>
@@ -212,7 +224,16 @@ export default function MultiChannelOrders() {
             borderRadius: "10px",
           }}
         >
-          <span style={{ fontSize: 12, fontWeight: "500", color: "white" }}>Xác nhận</span>
+          <span
+            style={{ fontSize: 12, fontWeight: "500", color: "white" }}
+            onClick={() => {
+              // handleConfirm(item);
+              setModalDetail(true);
+              setDataOrder(item);
+            }}
+          >
+            Xác nhận
+          </span>
         </div>
       ) : null}
 
@@ -378,7 +399,15 @@ export default function MultiChannelOrders() {
         />
       </div>
 
-      <ModalDetailOrder onShow={modalDetail} onHide={() => setModalDetail(false)} dataOrder={dataOrder} />
+      <ModalDetailOrder
+        onShow={modalDetail}
+        onHide={() => {
+          setDataOrder(null);
+          fetchData(params);
+          setModalDetail(false);
+        }}
+        dataOrder={dataOrder}
+      />
     </div>
   );
 }
