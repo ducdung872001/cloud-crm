@@ -519,7 +519,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       return {
         label: c.label,
         sku: variantSku,
-        code: c.barcode || "",
+        barcode: c.barcode || "",
         price: +(c.price ?? 0) || 0,
         costPrice: +(c.costPrice ?? 0) || 0,
         priceWholesale: +(c.priceWholesale ?? 0) || 0,
