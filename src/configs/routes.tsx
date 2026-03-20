@@ -184,6 +184,7 @@ import PaymentMethodList from "@/pages/PaymentMethod/PaymentMethod";
 import PaymentMethodPage from "@/pages/PaymentMethodPage/PaymentMethodPage";
 import FinanceContent from "@/pages/PaymentReconciliation";
 import ReturnProductPage from "@/pages/ReturnProduct";
+import Reconcile from "@/pages/Reconcile";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -1580,6 +1581,6 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.payment_control,
-    component: <FinanceContent />,
+    component: <Reconcile />,
   },
 ];
