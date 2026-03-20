@@ -1,6 +1,6 @@
-// ─── UI local types (giữ nguyên, dùng trong các component) ──────────────────
+// ─── UI local types ───────────────────────────────────────────────────────────
 
-export type ReturnType = "return" | "exchange";
+export type ReturnType   = "return" | "exchange";
 export type ReturnStatus = "pending" | "processing" | "done" | "cancel";
 
 export interface ReturnProduct {
@@ -33,15 +33,12 @@ export interface ReturnStatCard {
   variant?: "warn" | "success" | "default";
 }
 
-// ─── API request / response types ────────────────────────────────────────────
+// ─── API list params / response ───────────────────────────────────────────────
 
-/** Params cho GET /sales/invoice/return-exchange/list */
 export interface IReturnInvoiceListParams {
-  /** 1=Trả hàng | 2=Đổi hàng | undefined=Tất cả */
   returnType?: number;
   customerId?: number;
   invoiceCode?: string;
-  /** 1=Hoàn thành | 2=Nháp | 3=Đã hủy */
   status?: number;
   fromDate?: string;
   toDate?: string;
@@ -50,56 +47,121 @@ export interface IReturnInvoiceListParams {
   size?: number;
 }
 
-/** Invoice object trả về từ API (ánh xạ từ bảng invoice) */
 export interface IReturnInvoiceResponse {
   id: number;
   invoiceCode: string;
-  /** IV2=Trả hàng | IV11=Đổi hàng */
   invoiceType: string;
-  /** 1=Trả hàng | 2=Đổi hàng */
   returnType: number;
-  /** Tiền hoàn / chênh lệch */
   fee: number;
   paid: number;
   debt: number;
   amount: number;
   discount: number;
-  /** 1=Hoàn thành | 2=Nháp | 3=Đã hủy */
   status: number;
   reason: string;
-  /** 1=Tiền mặt | 2=Chuyển khoản | 3=Ví | 4=Không hoàn */
   refundMethod: number;
   receiptDate: string;
-  /** ID đơn hàng gốc */
   referId: number;
   customerId: number;
-  /** Tên khách (backend join, có thể null nếu chưa join) */
   customerName?: string;
-  /** Tên nhân viên (backend join, có thể null) */
   employeeName?: string;
   employeeId: number;
   branchId: number;
   bsnId: number;
-  /** Mã đơn hàng gốc (backend join) */
   referInvoiceCode?: string;
-  /** Tổng hợp tên sản phẩm trả (backend join) */
   productSummary?: string;
 }
 
-/** Response wrapper từ DfResponse<Page<Invoice>> */
-export interface IReturnInvoiceListResponse {
-  result: {
-    data: IReturnInvoiceResponse[];
-    total: number;
-    page: number;
-    limit: number;
-  };
-  success: boolean;
-  errorCode?: string;
-  message?: string;
+// ─── Auto-fill: response from GET /invoice/get/return?id=X ───────────────────
+
+/**
+ * Sản phẩm có thể trả lại (BoughtProductResponse từ backend)
+ * Chỉ lấy các field cần thiết cho auto-fill form.
+ */
+export interface IReturnableProduct {
+  id: number;          // bought_product.id
+  productId: number;
+  variantId?: number;
+  /** Tên sản phẩm (join từ product table) */
+  name?: string;
+  /** Số lượng còn được phép trả (đã trừ các lần trả trước) */
+  qty: number;
+  price: number;
+  priceDiscount?: number;
+  fee: number;
+  discount?: number;
+  discountUnit?: number;
+  unitId?: number;
+  unitName?: string;
+  inventoryId?: number;
+  invoiceId?: number;
+  batchNo?: string;
 }
 
-// ─── Create request types ─────────────────────────────────────────────────────
+/**
+ * Dịch vụ có thể trả lại (BoughtServiceResponse)
+ */
+export interface IReturnableService {
+  id: number;          // bought_service.id
+  serviceId: number;
+  /** Tên dịch vụ */
+  name?: string;
+  /** Số buổi còn được trả */
+  serviceNumber?: number;
+  price: number;
+  fee: number;
+  discount?: number;
+  discountUnit?: number;
+  invoiceId?: number;
+}
+
+/**
+ * Response đầy đủ của GET /invoice/get/return?id=X
+ * Ánh xạ từ InvoiceReturnItem Java
+ */
+export interface IInvoiceReturnItemResponse {
+  invoice: {
+    id: number;
+    invoiceCode: string;
+    customerId: number;
+    /** Tên khách hàng (nếu backend join) */
+    customerName?: string;
+    /** SĐT khách hàng (nếu backend join) */
+    customerPhone?: string;
+    branchId: number;
+    employeeId: number;
+    amount: number;
+    fee: number;
+    paid: number;
+    debt: number;
+    discount: number;
+    receiptDate: string;
+    status: number;
+  };
+  lstBoughtProduct: IReturnableProduct[];
+  lstBoughtService: IReturnableService[];
+  lstBoughtCardService: any[];
+}
+
+/**
+ * State auto-fill trong form — kết quả sau khi lookup thành công
+ */
+export interface IAutofillState {
+  /** ID hóa đơn gốc (dùng để truyền vào createReturn/createExchange) */
+  originalInvoiceId: number;
+  /** Tên khách hàng hiển thị */
+  customerName: string;
+  customerId?: number;
+  customerPhone?: string;
+  /** Sản phẩm có thể trả */
+  products: IReturnableProduct[];
+  /** Dịch vụ có thể trả */
+  services: IReturnableService[];
+  /** Tổng tiền hóa đơn gốc */
+  originalFee: number;
+}
+
+// ─── Create requests ──────────────────────────────────────────────────────────
 
 export interface IReturnProductLine {
   productId?: number;
@@ -149,30 +211,21 @@ export interface ICreateExchangeRequest extends ICreateReturnRequest {
   lstExchangeProduct?: IReturnProductLine[];
 }
 
-// ─── Helper: map API response → UI type ──────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const STATUS_MAP: Record<number, ReturnStatus> = {
-  1: "done",
-  2: "pending",
-  3: "cancel",
-};
-
-const REFUND_METHOD_LABEL: Record<number, string> = {
-  1: "Tiền mặt",
-  2: "Chuyển khoản",
-  3: "Hoàn vào ví",
-  4: "Không hoàn tiền",
+const STATUS_MAP: Record<number, ReturnStatus> = { 1: "done", 2: "pending", 3: "cancel" };
+const REFUND_LABEL: Record<number, string> = {
+  1: "Tiền mặt", 2: "Chuyển khoản", 3: "Hoàn vào ví", 4: "Không hoàn tiền",
 };
 
 export function mapApiToUi(item: IReturnInvoiceResponse): ReturnProduct {
   const dateStr = item.receiptDate
     ? (() => {
         const d = new Date(item.receiptDate);
-        const pad = (n: number) => String(n).padStart(2, "0");
-        return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        const p = (n: number) => String(n).padStart(2, "0");
+        return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
       })()
     : "";
-
   return {
     id: String(item.id),
     code: item.invoiceCode ?? `PTH-${item.id}`,
@@ -185,6 +238,6 @@ export function mapApiToUi(item: IReturnInvoiceResponse): ReturnProduct {
     status: STATUS_MAP[item.status] ?? "pending",
     reason: item.reason ?? "",
     staffName: item.employeeName ?? `NV #${item.employeeId}`,
-    paymentMethod: REFUND_METHOD_LABEL[item.refundMethod] ?? "–",
+    paymentMethod: REFUND_LABEL[item.refundMethod] ?? "–",
   };
 }

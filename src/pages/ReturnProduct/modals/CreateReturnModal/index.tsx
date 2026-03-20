@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { IActionModal } from "model/OtherModel";
 import { showToast } from "utils/common";
@@ -7,7 +7,9 @@ import {
   ReturnType,
   ICreateReturnRequest,
   ICreateExchangeRequest,
-  IReturnProductLine,
+  IAutofillState,
+  IReturnableProduct,
+  IInvoiceReturnItemResponse,
 } from "../../../../types/returnProduct";
 import ReturnInvoiceService from "services/ReturnInvoiceService";
 import "./index.scss";
@@ -22,8 +24,6 @@ const REASONS = [
   "Khác",
 ];
 
-// paymentType cho invoice (1=Tiền mặt, 2=CK, 3=Thẻ dịch vụ)
-// refundMethod riêng (1=TM, 2=CK, 3=Ví, 4=Không hoàn)
 const PAY_METHODS: { label: string; refundMethod: number; paymentType: number }[] = [
   { label: "Tiền mặt",                       refundMethod: 1, paymentType: 1 },
   { label: "Chuyển khoản ngân hàng",          refundMethod: 2, paymentType: 2 },
@@ -33,12 +33,21 @@ const PAY_METHODS: { label: string; refundMethod: number; paymentType: number }[
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+/** State mỗi row trong bảng sản phẩm */
 interface ProductRow {
   id: string;
   name: string;
   qty: number;
+  maxQty: number;       // Tối đa được trả (từ autofill)
   price: number;
+  productId?: number;
+  variantId?: number;
+  inventoryId?: number;
+  /** Row được autofill từ API — hiển thị style khác biệt */
+  fromApi?: boolean;
 }
+
+type LookupStatus = "idle" | "loading" | "found" | "notfound" | "error";
 
 interface CreateReturnModalProps {
   open: boolean;
@@ -49,102 +58,267 @@ interface CreateReturnModalProps {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const mkRow = (): ProductRow => ({ id: Math.random().toString(36).slice(2), name: "", qty: 1, price: 0 });
-const fmt = (n: number) => (n > 0 ? n.toLocaleString("vi") + " ₫" : "0 ₫");
+const mkRow = (): ProductRow => ({
+  id: Math.random().toString(36).slice(2),
+  name: "", qty: 1, maxQty: 9999, price: 0,
+});
+
+const fmt  = (n: number) => (n > 0 ? n.toLocaleString("vi") + " ₫" : "0 ₫");
 const pad2 = (n: number) => String(n).padStart(2, "0");
 
-function nowStr(): string {
+function nowStr() {
   const d = new Date();
   return `${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}/${d.getFullYear()} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 }
 
-/**
- * Map UI ProductRow → API IReturnProductLine
- * productId / variantId chưa có (người dùng nhập tên tự do) — để undefined.
- * Khi có product lookup thực, truyền thêm productId/variantId vào đây.
- */
-function rowsToApiLines(rows: ProductRow[]): IReturnProductLine[] {
+/** Chuyển IReturnableProduct → ProductRow (autofill) */
+function apiProductToRow(p: IReturnableProduct): ProductRow {
+  return {
+    id:          Math.random().toString(36).slice(2),
+    name:        p.name ?? `Sản phẩm #${p.productId}`,
+    qty:         p.qty,
+    maxQty:      p.qty,
+    price:       p.price,
+    productId:   p.productId,
+    variantId:   p.variantId,
+    inventoryId: p.inventoryId,
+    fromApi:     true,
+  };
+}
+
+function rowsToApiLines(rows: ProductRow[]) {
   return rows
-    .filter((r) => r.name.trim() && r.qty > 0 && r.price >= 0)
+    .filter((r) => r.name.trim() && r.qty > 0)
     .map((r) => ({
-      qty: r.qty,
-      price: r.price,
-      fee: r.qty * r.price,
-      discount: 0,
+      productId:   r.productId,
+      variantId:   r.variantId,
+      qty:         r.qty,
+      price:       r.price,
+      fee:         r.qty * r.price,
+      discount:    0,
       discountUnit: 2,
+      inventoryId: r.inventoryId,
     }));
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function CreateReturnModal({ open, onClose, onCreate, totalExisting }: CreateReturnModalProps) {
-  // Form fields
-  const [seg, setSeg]               = useState<ReturnType>("return");
-  const [maGoc, setMaGoc]           = useState("");
-  const [customer, setCustomer]     = useState("");
-  const [reason, setReason]         = useState(REASONS[0]);
-  const [note, setNote]             = useState("");
+export default function CreateReturnModal({
+  open, onClose, onCreate, totalExisting,
+}: CreateReturnModalProps) {
+
+  // ── Form fields ─────────────────────────────────────────────────────────────
+  const [seg,          setSeg]          = useState<ReturnType>("return");
+  const [maGoc,        setMaGoc]        = useState("");
+  const [customer,     setCustomer]     = useState("");
+  const [reason,       setReason]       = useState(REASONS[0]);
+  const [note,         setNote]         = useState("");
   const [payMethodIdx, setPayMethodIdx] = useState(0);
+  const [retItems,     setRetItems]     = useState<ProductRow[]>([mkRow()]);
+  const [exchItems,    setExchItems]    = useState<ProductRow[]>([mkRow()]);
 
-  // Product rows
-  const [retItems, setRetItems]     = useState<ProductRow[]>([mkRow()]);
-  const [exchItems, setExchItems]   = useState<ProductRow[]>([mkRow()]);
+  // ── Auto-fill state ─────────────────────────────────────────────────────────
+  const [lookupStatus,  setLookupStatus]  = useState<LookupStatus>("idle");
+  const [lookupMsg,     setLookupMsg]     = useState("");
+  const [autofill,      setAutofill]      = useState<IAutofillState | null>(null);
 
-  // UI state
+  // ── Submit state ────────────────────────────────────────────────────────────
   const [submitting, setSubmitting] = useState(false);
 
+  // Abort controller cho lookup
+  const lookupAbort = useRef<AbortController | null>(null);
+  // Debounce timer
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+
   // Totals
-  const retTotal   = retItems.reduce((s, r) => s + r.qty * r.price, 0);
+  const retTotal   = retItems.reduce((s, r)  => s + r.qty * r.price, 0);
   const exchTotal  = exchItems.reduce((s, r) => s + r.qty * r.price, 0);
   const grandTotal = seg === "exchange" ? Math.abs(retTotal - exchTotal) : retTotal;
 
-  // ── Row helpers ──────────────────────────────────────────────────────────────
+  // ── Auto-fill logic ─────────────────────────────────────────────────────────
 
-  const updateRow = useCallback(
-    (list: ProductRow[], setList: React.Dispatch<React.SetStateAction<ProductRow[]>>, id: string, field: keyof ProductRow, value: string | number) => {
-      setList(list.map((r) => (r.id === id ? { ...r, [field]: value } : r)));
-    },
-    []
-  );
+  /**
+   * Bước 2: Có invoiceId rồi → gọi /invoice/get/return?id=X để lấy items
+   */
+  const fetchReturnItems = useCallback(async (invoiceId: number, signal: AbortSignal) => {
+    const res2 = await ReturnInvoiceService.getReturnItems(invoiceId, signal);
+    if (signal.aborted) return;
 
-  const removeRow = useCallback(
-    (list: ProductRow[], setList: React.Dispatch<React.SetStateAction<ProductRow[]>>, id: string) => {
-      if (list.length <= 1) { setList([mkRow()]); return; }
-      setList(list.filter((r) => r.id !== id));
-    },
-    []
-  );
+    if (res2?.code !== 0 || !res2?.result) {
+      setLookupStatus("error");
+      setLookupMsg("Không thể tải thông tin hóa đơn. Thử lại sau.");
+      return;
+    }
+
+    const data: IInvoiceReturnItemResponse = res2.result;
+    const inv = data.invoice;
+
+    // Kiểm tra còn hàng để trả không
+    const hasProducts = data.lstBoughtProduct?.length > 0;
+    const hasServices = data.lstBoughtService?.length > 0;
+
+    if (!hasProducts && !hasServices) {
+      setLookupStatus("notfound");
+      setLookupMsg("Hóa đơn này không còn mặt hàng nào có thể trả.");
+      return;
+    }
+
+    // Build autofill state
+    const af: IAutofillState = {
+      originalInvoiceId: inv.id,
+      customerName:  inv.customerName ?? (inv.customerId ? `KH #${inv.customerId}` : ""),
+      customerId:    inv.customerId,
+      customerPhone: inv.customerPhone,
+      products:      data.lstBoughtProduct ?? [],
+      services:      data.lstBoughtService ?? [],
+      originalFee:   inv.fee,
+    };
+
+    setAutofill(af);
+
+    // Fill customer field
+    const customerDisplay = [inv.customerName, inv.customerPhone].filter(Boolean).join(" – ");
+    if (customerDisplay) setCustomer(customerDisplay);
+
+    // Fill product rows từ API (thay thế blank rows)
+    const productRows: ProductRow[] = af.products.map(apiProductToRow);
+
+    // Nếu không có sản phẩm nào → giữ row trống để user nhập tay
+    setRetItems(productRows.length > 0 ? productRows : [mkRow()]);
+
+    setLookupStatus("found");
+    setLookupMsg(
+      `✓ Tìm thấy: ${af.customerName || "Khách hàng"}` +
+      ` — ${af.products.length} sản phẩm` +
+      (af.services.length > 0 ? `, ${af.services.length} dịch vụ` : "")
+    );
+  }, []);
+
+  /**
+   * Bước 1: Tìm invoice theo code → lấy ID
+   */
+  const lookupInvoice = useCallback(async (code: string) => {
+    const trimmed = code.trim();
+    if (!trimmed) {
+      setLookupStatus("idle");
+      setLookupMsg("");
+      setAutofill(null);
+      setCustomer("");
+      setRetItems([mkRow()]);
+      return;
+    }
+
+    // Hủy request trước nếu đang chạy
+    lookupAbort.current?.abort();
+    const ctrl = new AbortController();
+    lookupAbort.current = ctrl;
+
+    setLookupStatus("loading");
+    setLookupMsg("");
+
+    try {
+      // Gọi /invoice/list/v2?invoiceCode={code}&invoiceTypes=["IV1"]
+      const res1 = await ReturnInvoiceService.findByCode(trimmed, ctrl.signal);
+      if (ctrl.signal.aborted) return;
+
+      // Thử extract invoiceId từ response (Page<Invoice> hoặc InvoiceSale)
+      let invoiceId: number | null = null;
+
+      // Cấu trúc từ /invoice/list/v2: { result: { invoices: [...] } } hoặc { result: { data: [...] } }
+      const pageData = res1?.result?.invoices ?? res1?.result?.data ?? res1?.result;
+      if (Array.isArray(pageData) && pageData.length > 0) {
+        invoiceId = pageData[0]?.id ?? null;
+      } else if (res1?.result?.id) {
+        invoiceId = res1.result.id;
+      }
+
+      if (!invoiceId) {
+        setLookupStatus("notfound");
+        setLookupMsg(`Không tìm thấy hóa đơn "${trimmed}". Kiểm tra lại mã.`);
+        return;
+      }
+
+      // Bước 2: Gọi get/return với ID vừa tìm được
+      await fetchReturnItems(invoiceId, ctrl.signal);
+
+    } catch (e: any) {
+      if (e?.name === "AbortError") return;
+      console.error("[CreateReturnModal] lookup error:", e);
+      setLookupStatus("error");
+      setLookupMsg("Lỗi kết nối. Kiểm tra lại mạng và thử lại.");
+    }
+  }, [fetchReturnItems]);
+
+  // Debounce 600ms khi user gõ mã đơn hàng
+  const handleMaGocChange = useCallback((val: string) => {
+    setMaGoc(val);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      lookupInvoice(val);
+    }, 600);
+  }, [lookupInvoice]);
+
+  // Lookup ngay khi paste / blur
+  const handleMaGocBlur = useCallback(() => {
+    clearTimeout(debounceRef.current);
+    lookupInvoice(maGoc);
+  }, [maGoc, lookupInvoice]);
+
+  // Reset khi đóng modal
+  const resetForm = useCallback(() => {
+    setSeg("return"); setMaGoc(""); setCustomer(""); setReason(REASONS[0]);
+    setNote(""); setPayMethodIdx(0);
+    setRetItems([mkRow()]); setExchItems([mkRow()]);
+    setLookupStatus("idle"); setLookupMsg(""); setAutofill(null);
+    lookupAbort.current?.abort();
+  }, []);
+
+  const handleClose = useCallback(() => { resetForm(); onClose(); }, [resetForm, onClose]);
+
+  // Cleanup abort khi unmount
+  useEffect(() => () => { lookupAbort.current?.abort(); }, []);
+
+  // ── Row helpers ─────────────────────────────────────────────────────────────
+
+  const updateRow = useCallback((
+    list: ProductRow[],
+    setList: React.Dispatch<React.SetStateAction<ProductRow[]>>,
+    id: string,
+    field: keyof ProductRow,
+    value: string | number
+  ) => {
+    setList(list.map((r) => {
+      if (r.id !== id) return r;
+      // Clamp qty nếu autofill row
+      if (field === "qty" && r.fromApi) {
+        const clamped = Math.min(Number(value) || 1, r.maxQty);
+        return { ...r, qty: clamped };
+      }
+      return { ...r, [field]: value };
+    }));
+  }, []);
+
+  const removeRow = useCallback((
+    list: ProductRow[],
+    setList: React.Dispatch<React.SetStateAction<ProductRow[]>>,
+    id: string
+  ) => {
+    if (list.length <= 1) { setList([mkRow()]); return; }
+    setList(list.filter((r) => r.id !== id));
+  }, []);
 
   // ── Validation ───────────────────────────────────────────────────────────────
 
   const validate = useCallback((): string | null => {
     if (!maGoc.trim()) return "Vui lòng nhập mã đơn hàng gốc.";
+    if (lookupStatus === "loading") return "Đang tải thông tin hóa đơn, vui lòng chờ.";
+    if (lookupStatus === "notfound") return "Hóa đơn gốc không tồn tại hoặc không còn hàng để trả.";
     const validRet = retItems.filter((r) => r.name.trim());
     if (validRet.length === 0) return "Vui lòng nhập ít nhất 1 sản phẩm trả lại.";
-    if (seg === "exchange") {
-      const validExch = exchItems.filter((r) => r.name.trim());
-      if (validExch.length === 0) return "Vui lòng nhập ít nhất 1 sản phẩm đổi mới.";
-    }
+    if (seg === "exchange" && exchItems.filter((r) => r.name.trim()).length === 0)
+      return "Vui lòng nhập ít nhất 1 sản phẩm đổi mới.";
     return null;
-  }, [maGoc, retItems, exchItems, seg]);
-
-  // ── Reset form ───────────────────────────────────────────────────────────────
-
-  const resetForm = useCallback(() => {
-    setSeg("return");
-    setMaGoc("");
-    setCustomer("");
-    setReason(REASONS[0]);
-    setNote("");
-    setPayMethodIdx(0);
-    setRetItems([mkRow()]);
-    setExchItems([mkRow()]);
-  }, []);
-
-  const handleClose = useCallback(() => {
-    resetForm();
-    onClose();
-  }, [resetForm, onClose]);
+  }, [maGoc, lookupStatus, retItems, exchItems, seg]);
 
   // ── Submit ───────────────────────────────────────────────────────────────────
 
@@ -159,16 +333,16 @@ export default function CreateReturnModal({ open, onClose, onCreate, totalExisti
       const retLines  = rowsToApiLines(retItems);
       const exchLines = rowsToApiLines(exchItems);
 
-      // Build optimistic UI item (dùng để cập nhật list ngay lập tức)
-      const firstRetItem = retItems.find((r) => r.name.trim());
-      const optimisticItem: ReturnProduct = {
+      // Optimistic UI item
+      const firstItem = retItems.find((r) => r.name.trim());
+      const optimistic: ReturnProduct = {
         id: Date.now().toString(),
         code: `PTH-${String(totalExisting + 1).padStart(4, "0")}`,
         time: nowStr(),
-        customerName: customer || "Khách vãng lai",
+        customerName: autofill?.customerName || customer || "Khách vãng lai",
         originalOrderCode: maGoc,
         type: seg,
-        productSummary: firstRetItem ? `${firstRetItem.name} (x${firstRetItem.qty})` : "Sản phẩm (x1)",
+        productSummary: firstItem ? `${firstItem.name} (x${firstItem.qty})` : "Sản phẩm (x1)",
         refundAmount: grandTotal,
         status: "pending",
         reason,
@@ -177,70 +351,43 @@ export default function CreateReturnModal({ open, onClose, onCreate, totalExisti
         note,
       };
 
+      const invoiceBase = {
+        referId:      autofill?.originalInvoiceId ?? 0,
+        customerId:   autofill?.customerId,
+        amount:       retTotal,
+        fee:          retTotal,
+        paid:         retTotal,
+        debt:         0,
+        discount:     0,
+        vatAmount:    0,
+        paymentType:  pm.paymentType,
+        reason,
+        refundMethod: pm.refundMethod,
+        note:         note || undefined,
+      };
+
+      let res: any;
+
       if (seg === "return") {
-        // ── POST /sales/invoice/create/return ─────────────────────────────────
         const body: ICreateReturnRequest = {
-          invoice: {
-            referId: 0,            // Backend sẽ lookup qua invoiceCode (maGoc)
-            // Nếu backend nhận invoiceCode thay vì referId, truyền thêm:
-            // referCode: maGoc,
-            amount:       retTotal,
-            fee:          retTotal,
-            paid:         retTotal,
-            debt:         0,
-            discount:     0,
-            vatAmount:    0,
-            paymentType:  pm.paymentType,
-            reason,
-            refundMethod: pm.refundMethod,
-            note:         note || undefined,
-          },
+          invoice:        invoiceBase,
           lstProduct:     retLines,
           lstService:     [],
           lstCardService: [],
         };
-
-        const res = await ReturnInvoiceService.createReturn(body);
-
-        if (res?.code !== 0) {
-          showToast(res?.message ?? "Tạo phiếu trả hàng thất bại. Vui lòng thử lại.", "error");
-          return;
-        }
-
-        // Cập nhật code từ API nếu có
-        if (res?.result?.invoiceCode) {
-          optimisticItem.code = res.result.invoiceCode;
-        }
-        if (res?.result?.id) {
-          optimisticItem.id = String(res.result.id);
-        }
-
-        showToast("Tạo phiếu trả hàng thành công!", "success");
-
+        res = await ReturnInvoiceService.createReturn(body);
       } else {
-        // ── POST /sales/invoice/create/exchange ───────────────────────────────
         const body: ICreateExchangeRequest = {
-          invoice: {
-            referId:      0,
-            amount:       retTotal,
-            fee:          retTotal,
-            paid:         0,
-            debt:         0,
-            discount:     0,
-            vatAmount:    0,
-            paymentType:  pm.paymentType,
-            reason,
-            refundMethod: pm.refundMethod,
-            note:         note || undefined,
-          },
+          invoice:        invoiceBase,
           lstProduct:     retLines,
           lstService:     [],
           lstCardService: [],
           ...(exchLines.length > 0 && {
             exchangeInvoice: {
+              customerId:  autofill?.customerId,
               amount:      exchTotal,
               fee:         exchTotal,
-              paid:        grandTotal,  // Chênh lệch khách bù thêm (hoặc hoàn lại)
+              paid:        grandTotal,
               debt:        0,
               discount:    0,
               vatAmount:   0,
@@ -249,21 +396,22 @@ export default function CreateReturnModal({ open, onClose, onCreate, totalExisti
             lstExchangeProduct: exchLines,
           }),
         };
-
-        const res = await ReturnInvoiceService.createExchange(body);
-
-        if (res?.code !== 0) {
-          showToast(res?.message ?? "Tạo phiếu đổi hàng thất bại. Vui lòng thử lại.", "error");
-          return;
-        }
-
-        if (res?.result?.invoiceCode) optimisticItem.code = res.result.invoiceCode;
-        if (res?.result?.id)          optimisticItem.id   = String(res.result.id);
-
-        showToast("Tạo phiếu đổi hàng thành công!", "success");
+        res = await ReturnInvoiceService.createExchange(body);
       }
 
-      onCreate(optimisticItem);
+      if (res?.code !== 0) {
+        showToast(res?.message ?? "Tạo phiếu thất bại. Vui lòng thử lại.", "error");
+        return;
+      }
+
+      if (res?.result?.invoiceCode) optimistic.code = res.result.invoiceCode;
+      if (res?.result?.id)          optimistic.id   = String(res.result.id);
+
+      showToast(
+        seg === "return" ? "Tạo phiếu trả hàng thành công!" : "Tạo phiếu đổi hàng thành công!",
+        "success"
+      );
+      onCreate(optimistic);
       resetForm();
 
     } catch (e) {
@@ -272,32 +420,22 @@ export default function CreateReturnModal({ open, onClose, onCreate, totalExisti
     } finally {
       setSubmitting(false);
     }
-  }, [validate, seg, maGoc, customer, reason, note, payMethodIdx, retItems, exchItems, retTotal, exchTotal, grandTotal, totalExisting, onCreate, resetForm]);
+  }, [
+    validate, seg, maGoc, customer, reason, note, payMethodIdx,
+    retItems, exchItems, retTotal, exchTotal, grandTotal,
+    autofill, totalExisting, onCreate, resetForm,
+  ]);
 
   // ── Modal actions ────────────────────────────────────────────────────────────
 
-  const actions = useMemo<IActionModal>(
-    () => ({
-      actions_right: {
-        buttons: [
-          {
-            title: "Hủy",
-            color: "primary",
-            variant: "outline",
-            callback: handleClose,
-            disabled: submitting,
-          },
-          {
-            title: submitting ? "Đang tạo..." : "✅ Xác nhận tạo phiếu",
-            color: "primary",
-            callback: handleCreate,
-            disabled: submitting,
-          },
-        ],
-      },
-    }),
-    [handleClose, handleCreate, submitting]
-  );
+  const actions = useMemo<IActionModal>(() => ({
+    actions_right: {
+      buttons: [
+        { title: "Hủy", color: "primary", variant: "outline", callback: handleClose, disabled: submitting },
+        { title: submitting ? "Đang tạo..." : "✅ Xác nhận tạo phiếu", color: "primary", callback: handleCreate, disabled: submitting },
+      ],
+    },
+  }), [handleClose, handleCreate, submitting]);
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
@@ -306,73 +444,81 @@ export default function CreateReturnModal({ open, onClose, onCreate, totalExisti
       <ModalHeader title="Tạo phiếu trả / đổi hàng" toggle={handleClose} />
 
       <ModalBody>
-        {/* ── Segment control ── */}
+        {/* Segment */}
         <div className="crm-seg">
-          <button
-            className={`crm-seg__btn${seg === "return" ? " crm-seg__btn--active" : ""}`}
-            onClick={() => setSeg("return")}
-            disabled={submitting}
-          >
-            🔴 Trả hàng
-          </button>
-          <button
-            className={`crm-seg__btn${seg === "exchange" ? " crm-seg__btn--active" : ""}`}
-            onClick={() => setSeg("exchange")}
-            disabled={submitting}
-          >
-            🔵 Đổi hàng
-          </button>
+          <button className={`crm-seg__btn${seg === "return"   ? " crm-seg__btn--active" : ""}`} onClick={() => setSeg("return")}   disabled={submitting}>🔴 Trả hàng</button>
+          <button className={`crm-seg__btn${seg === "exchange" ? " crm-seg__btn--active" : ""}`} onClick={() => setSeg("exchange")} disabled={submitting}>🔵 Đổi hàng</button>
         </div>
 
-        {/* ── General info ── */}
+        {/* Thông tin chung */}
         <div className="crm-section">
           <div className="crm-section__title">Thông tin chung</div>
           <div className="crm-form-grid">
+
+            {/* Mã đơn gốc — có lookup indicator */}
             <div className="crm-field">
-              <label>
-                Mã đơn hàng gốc <span>*</span>
-              </label>
-              <input
-                value={maGoc}
-                onChange={(e) => setMaGoc(e.target.value)}
-                placeholder="VD: HD-2241"
-                disabled={submitting}
-              />
+              <label>Mã đơn hàng gốc <span>*</span></label>
+              <div className="crm-invoice-lookup">
+                <input
+                  value={maGoc}
+                  onChange={(e) => handleMaGocChange(e.target.value)}
+                  onBlur={handleMaGocBlur}
+                  placeholder="VD: HD-2241"
+                  disabled={submitting}
+                  className={`crm-invoice-lookup__input${
+                    lookupStatus === "found"    ? " crm-invoice-lookup__input--ok"    :
+                    lookupStatus === "notfound" ? " crm-invoice-lookup__input--err"   :
+                    lookupStatus === "error"    ? " crm-invoice-lookup__input--err"   : ""
+                  }`}
+                />
+                {lookupStatus === "loading" && (
+                  <span className="crm-invoice-lookup__spin">⏳</span>
+                )}
+                {lookupStatus === "found" && (
+                  <span className="crm-invoice-lookup__ok">✓</span>
+                )}
+                {(lookupStatus === "notfound" || lookupStatus === "error") && (
+                  <span className="crm-invoice-lookup__err">✕</span>
+                )}
+              </div>
+
+              {/* Feedback message */}
+              {lookupMsg && (
+                <span className={`crm-lookup-msg crm-lookup-msg--${
+                  lookupStatus === "found"    ? "ok"  :
+                  lookupStatus === "loading"  ? "loading" : "err"
+                }`}>
+                  {lookupMsg}
+                </span>
+              )}
             </div>
 
+            {/* Khách hàng — autofill từ lookup */}
             <div className="crm-field">
               <label>Khách hàng</label>
               <input
                 value={customer}
                 onChange={(e) => setCustomer(e.target.value)}
-                placeholder="Tìm tên hoặc SĐT khách..."
+                placeholder={lookupStatus === "loading" ? "Đang tải..." : "Tìm tên hoặc SĐT khách..."}
                 disabled={submitting}
+                className={lookupStatus === "found" && autofill?.customerName ? "crm-field__autofilled" : ""}
+                readOnly={lookupStatus === "found" && !!autofill?.customerName}
               />
             </div>
 
+            {/* Lý do */}
             <div className="crm-field">
-              <label>
-                Lý do <span>*</span>
-              </label>
+              <label>Lý do <span>*</span></label>
               <select value={reason} onChange={(e) => setReason(e.target.value)} disabled={submitting}>
-                {REASONS.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
+                {REASONS.map((r) => <option key={r}>{r}</option>)}
               </select>
             </div>
 
+            {/* Hình thức hoàn */}
             <div className="crm-field">
               <label>Hình thức hoàn tiền</label>
-              <select
-                value={payMethodIdx}
-                onChange={(e) => setPayMethodIdx(+e.target.value)}
-                disabled={submitting}
-              >
-                {PAY_METHODS.map((p, i) => (
-                  <option key={p.label} value={i}>
-                    {p.label}
-                  </option>
-                ))}
+              <select value={payMethodIdx} onChange={(e) => setPayMethodIdx(+e.target.value)} disabled={submitting}>
+                {PAY_METHODS.map((p, i) => <option key={p.label} value={i}>{p.label}</option>)}
               </select>
             </div>
 
@@ -388,9 +534,14 @@ export default function CreateReturnModal({ open, onClose, onCreate, totalExisti
           </div>
         </div>
 
-        {/* ── Return items ── */}
+        {/* Sản phẩm trả lại */}
         <div className="crm-section">
-          <div className="crm-section__title">{seg === "exchange" ? "Sản phẩm cần đổi" : "Sản phẩm trả lại"}</div>
+          <div className="crm-section__title">
+            {seg === "exchange" ? "Sản phẩm cần đổi" : "Sản phẩm trả lại"}
+            {lookupStatus === "found" && autofill && autofill.products.length > 0 && (
+              <span className="crm-autofill-badge">Tự động điền từ HĐ gốc</span>
+            )}
+          </div>
           <ProductRowsTable
             rows={retItems}
             disabled={submitting}
@@ -402,7 +553,7 @@ export default function CreateReturnModal({ open, onClose, onCreate, totalExisti
           </button>
         </div>
 
-        {/* ── Exchange items (đổi hàng only) ── */}
+        {/* Sản phẩm đổi mới (exchange only) */}
         {seg === "exchange" && (
           <div className="crm-section">
             <div className="crm-section__title">Sản phẩm đổi mới</div>
@@ -419,7 +570,7 @@ export default function CreateReturnModal({ open, onClose, onCreate, totalExisti
           </div>
         )}
 
-        {/* ── Summary ── */}
+        {/* Summary */}
         <div className="crm-summary">
           <div className="crm-summary__row">
             <span>Tổng tiền hàng trả</span>
@@ -444,7 +595,7 @@ export default function CreateReturnModal({ open, onClose, onCreate, totalExisti
   );
 }
 
-// ─── Sub-component: ProductRowsTable ──────────────────────────────────────────
+// ─── Sub-component ────────────────────────────────────────────────────────────
 
 interface ProductRowsTableProps {
   rows: ProductRow[];
@@ -465,35 +616,37 @@ function ProductRowsTable({ rows, onChange, onRemove, isExchange, disabled }: Pr
         <span />
       </div>
       {rows.map((row) => (
-        <div key={row.id} className="crm-prod-table__row">
+        <div key={row.id} className={`crm-prod-table__row${row.fromApi ? " crm-prod-table__row--autofill" : ""}`}>
           <input
             placeholder={isExchange ? "Tên sản phẩm mới..." : "Tên hoặc mã sản phẩm..."}
             value={row.name}
             onChange={(e) => onChange(row.id, "name", e.target.value)}
-            disabled={disabled}
+            disabled={disabled || row.fromApi} // Tên sản phẩm từ API = readonly
+            className={row.fromApi ? "crm-prod-table__autofill" : ""}
           />
           <input
             type="number"
             min={1}
+            max={row.fromApi ? row.maxQty : undefined}
             value={row.qty}
             onChange={(e) => onChange(row.id, "qty", +e.target.value || 1)}
             disabled={disabled}
+            title={row.fromApi ? `Tối đa: ${row.maxQty}` : undefined}
           />
           <input
             type="number"
             placeholder="0"
             value={row.price || ""}
             onChange={(e) => onChange(row.id, "price", +e.target.value || 0)}
-            disabled={disabled}
+            disabled={disabled || row.fromApi} // Giá từ API = readonly
+            className={row.fromApi ? "crm-prod-table__autofill" : ""}
           />
           <input
             type="text"
             readOnly
             value={row.qty * row.price > 0 ? (row.qty * row.price).toLocaleString("vi") : ""}
           />
-          <button className="crm-prod-table__rm" onClick={() => onRemove(row.id)} disabled={disabled}>
-            ×
-          </button>
+          <button className="crm-prod-table__rm" onClick={() => onRemove(row.id)} disabled={disabled}>×</button>
         </div>
       ))}
     </div>

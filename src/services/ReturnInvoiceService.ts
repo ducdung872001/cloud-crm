@@ -6,21 +6,8 @@ import {
   ICreateExchangeRequest,
 } from "@/types/returnProduct";
 
-/**
- * Service layer cho màn hình Đổi / Trả hàng
- *
- * API backend (cloud-sales):
- *   GET  /sales/invoice/return-exchange/list  — danh sách phiếu
- *   GET  /sales/invoice/get?id=X              — chi tiết 1 phiếu
- *   GET  /sales/invoice/get/return?id=X       — items có thể trả từ HĐ gốc
- *   POST /sales/invoice/create/return         — tạo phiếu trả hàng (IV2)
- *   POST /sales/invoice/create/exchange       — tạo phiếu đổi hàng (IV11)
- */
 export default {
-  /**
-   * Danh sách phiếu trả / đổi hàng
-   * returnType: 1=Trả hàng | 2=Đổi hàng | undefined=Tất cả
-   */
+  /** Danh sách phiếu trả / đổi hàng */
   list: (params?: IReturnInvoiceListParams, signal?: AbortSignal) => {
     return fetch(`${urlsApi.returnInvoice.list}${convertParamsToString(params)}`, {
       signal,
@@ -28,9 +15,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  /**
-   * Chi tiết 1 phiếu trả / đổi hàng
-   */
+  /** Chi tiết 1 phiếu */
   detail: (id: number, signal?: AbortSignal) => {
     return fetch(`${urlsApi.returnInvoice.detail}?id=${id}`, {
       signal,
@@ -39,8 +24,34 @@ export default {
   },
 
   /**
-   * Lấy danh sách sản phẩm / dịch vụ còn được phép trả từ HĐ gốc
-   * Dùng để pre-populate form khi nhập mã đơn hàng gốc
+   * Bước 1 của auto-fill: Tìm hóa đơn gốc theo mã invoice code
+   * Gọi API list với invoiceCode filter + invoiceTypes IV1 (chỉ HĐ bán hàng)
+   *
+   * GET /sales/invoice/list/v2?invoiceCode={code}&invoiceTypes=["IV1"]&page=0&limit=1
+   */
+  findByCode: (invoiceCode: string, signal?: AbortSignal) => {
+    const params = {
+      invoiceCode: invoiceCode.trim(),
+      invoiceTypes: JSON.stringify(["IV1"]),
+      page: 0,
+      limit: 1,
+    };
+    return fetch(`${urlsApi.invoice.list}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
+  /**
+   * Bước 2 của auto-fill: Lấy items còn được phép trả từ HĐ gốc (theo invoiceId)
+   * Response: InvoiceReturnItem {
+   *   invoice: Invoice,
+   *   lstBoughtProduct: BoughtProductResponse[],
+   *   lstBoughtService: BoughtServiceResponse[],
+   *   lstBoughtCardService: BoughtCardServiceResponse[]
+   * }
+   *
+   * GET /sales/invoice/get/return?id={invoiceId}
    */
   getReturnItems: (originalInvoiceId: number, signal?: AbortSignal) => {
     return fetch(`${urlsApi.returnInvoice.getReturnItems}?id=${originalInvoiceId}`, {
@@ -49,9 +60,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  /**
-   * Tạo phiếu trả hàng (invoice_type = IV2, return_type = 1)
-   */
+  /** Tạo phiếu trả hàng (IV2) */
   createReturn: (body: ICreateReturnRequest) => {
     return fetch(urlsApi.returnInvoice.createReturn, {
       method: "POST",
@@ -60,10 +69,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  /**
-   * Tạo phiếu đổi hàng (invoice_type = IV11, return_type = 2)
-   * Có thể kèm exchangeInvoice (IV1) nếu có sản phẩm đổi mới
-   */
+  /** Tạo phiếu đổi hàng (IV11) */
   createExchange: (body: ICreateExchangeRequest) => {
     return fetch(urlsApi.returnInvoice.createExchange, {
       method: "POST",
