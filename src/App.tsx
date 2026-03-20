@@ -61,6 +61,7 @@ export default function App() {
   const [isShowChatBot, setIsShowChatBot] = useState<boolean>(false);
   const [dataBeauty, setDataBeauty] = useState(null);
   const [countUnread, setCountUnread] = useState(0);
+  const [newNotificationPayload, setNewNotificationPayload] = useState<any>(null);
 
   fetchConfig();
 
@@ -283,8 +284,9 @@ export default function App() {
 
     onMessage(messaging, (payload) => {
       console.log("Thông báo nhận được:", payload);
-      // alert(`🔥 Notification: ${payload.notification?.title}`);
+      showToast(payload.notification?.title || "Bạn có thông báo mới", "success");
       getCountUnread();
+      setNewNotificationPayload(payload);
     });
   }, []);
 
@@ -395,6 +397,9 @@ export default function App() {
         setShowModalPackage: setShowModalPackage,
         lastShowModalPayment: lastShowModalPayment,
         setLastShowModalPayment: setLastShowModalPayment,
+        countUnread: countUnread,
+        setCountUnread: setCountUnread,
+        newNotificationPayload: newNotificationPayload,
         callState: callState,
         incomingNumber: incomingNumber,
         makeCall: makeCall,

@@ -13,7 +13,7 @@ const prefixApplication = "/application";
 const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
-const prefixNotification = "/notification";
+const prefixNotification = prefixBiz + "/notification";
 const prefixFinance = prefixBiz + "/finance";
 const prefixInventory = prefixBiz + "/inventory";
 const prefixWarehouse = prefixBiz + "/warehouse";
@@ -73,14 +73,14 @@ export const urlsApi = {
     fcmDevice: prefixNotification + "/fcmDevice/update",
   },
   notificationHistory: {
-    list: prefixNotification + "/notificationHistory/list",
-    update: prefixNotification + "/notificationHistory/update",
-    detail: prefixNotification + "/notificationHistory/get",
-    delete: prefixNotification + "/notificationHistory/delete",
+    list: prefixNotification + "/firebaseDeliveryHistory/list",
+    update: prefixNotification + "/firebaseDeliveryHistory/update",
+    detail: prefixNotification + "/firebaseDeliveryHistory/get",
+    delete: prefixNotification + "/firebaseDeliveryHistory/delete",
 
-    updateUnread: prefixNotification + "/notificationHistory/update/unread",
-    updateReadAll: prefixNotification + "/notificationHistory/update/readAll",
-    countUnread: prefixNotification + "/notificationHistory/count",
+    updateUnread: prefixNotification + "/firebaseDeliveryHistory/update/unread",
+    updateReadAll: prefixNotification + "/firebaseDeliveryHistory/update/readAll",
+    countUnread: prefixNotification + "/firebaseDeliveryHistory/count",
   },
 
   customer: {
@@ -3144,6 +3144,7 @@ export const urlsApi = {
 
 export const urls = {
   dashboard: "/dashboard",
+  notification: "/notification",
   manager_work: "/manager_work",
   //Lĩnh vực BĐS - Đầu mối liên hệ
   contact: "/contact",

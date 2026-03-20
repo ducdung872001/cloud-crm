@@ -34,13 +34,20 @@ function parseJwt(token) {
 
 const firebaseConfig = {
   // Chạy thật
-  apiKey: "AIzaSyCu0hGqHdkOiHwBra4gKz3j2QPw8vKWkOI",
-  authDomain: "bpm1-9b048.firebaseapp.com",
-  projectId: "bpm1-9b048",
-  storageBucket: "bpm1-9b048.firebasestorage.app",
-  messagingSenderId: "643006751836",
-  appId: "1:643006751836:web:d223a2260eb598f045f299",
-  measurementId: "G-2PQCPHTE25",
+  // apiKey: "AIzaSyCu0hGqHdkOiHwBra4gKz3j2QPw8vKWkOI",
+  // authDomain: "bpm1-9b048.firebaseapp.com",
+  // projectId: "bpm1-9b048",
+  // storageBucket: "bpm1-9b048.firebasestorage.app",
+  // messagingSenderId: "643006751836",
+  // appId: "1:643006751836:web:d223a2260eb598f045f299",
+  // measurementId: "G-2PQCPHTE25",
+  apiKey: "AIzaSyD-7AgYaublHnECoXgCiMpRq9UwHchLvFk",
+  authDomain: "test-noti-bd32d.firebaseapp.com",
+  projectId: "test-noti-bd32d",
+  storageBucket: "test-noti-bd32d.firebasestorage.app",
+  messagingSenderId: "627652230677",
+  appId: "1:627652230677:web:a11c24cf988c415e1dd81c",
+
 };
 
 // const firebaseConfig = {
@@ -87,8 +94,9 @@ export const requestPermission = async (jwtToken) => {
       try {
         console.log("Đang lấy token FCM...");
         const token = await getToken(messaging, {
-          vapidKey: "BEwUxtPTJ8etCqMlF-hgkr5LpWlkSeR_4YBILQLeXDeN6N-eCkflDnSmR2hHoL6lwsgSBxjxg7rHzdegX3NMpZA", // Chạy thật
+          // vapidKey: "BEwUxtPTJ8etCqMlF-hgkr5LpWlkSeR_4YBILQLeXDeN6N-eCkflDnSmR2hHoL6lwsgSBxjxg7rHzdegX3NMpZA", // Chạy thật
           // vapidKey: "BBsV3m5BrNLxFgR544iD9ziyzna2pmBqqnR53pqsPRkPfHYF-Y9QFwHimgrVQU-TS9lXgLzNvWezDtl3W-K8tHw", // Test Local
+          vapidKey: "BPuF1Yi8iFJMIpTdhyeVFHkyHpvudcXD3pJkk-ZVAv_Ay2FTxDg2yaJwd9eTOFDAnxT49IT2krNJAMEIQTrYBHY"
         });
         //Lưu token này xuống dưới cơ sở dữ liệu
         try {
