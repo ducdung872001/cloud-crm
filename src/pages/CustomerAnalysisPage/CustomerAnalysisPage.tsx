@@ -4,6 +4,7 @@ import "./CustomerAnalysisPage.scss";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 import CustomerChurn from "@/pages/CustomerChurn/index";
 import CustomerSegment from "../customerSegment";
+import CustomerValue from "../CustomerValue";
 
 export default function CustomerAnalysisPage() {
   document.title = "Phân tích khách hàng";
@@ -34,18 +35,28 @@ export default function CustomerAnalysisPage() {
       {!isDetail && <TitleAction title="Phân tích khách hàng" />}
       <div className="d-flex flex-column">
         {!isDetail && (
-            <TabMenuList
-                listTab={listTab}
-                onClick={(item) => {
-                    setTab(item.tab);
-                    setIsDetail(true);
-                }}
-            />
+          <TabMenuList
+            listTab={listTab}
+            onClick={(item) => {
+              setTab(item.tab);
+              setIsDetail(true);
+            }}
+          />
         )}
       </div>
 
       {isDetail && tab === 1 ? (
         <CustomerSegment
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetail(false);
+            }
+          }}
+        />
+      ) : null}
+
+      {isDetail && tab === 2 ? (
+        <CustomerValue
           onBackProps={(isBack) => {
             if (isBack) {
               setIsDetail(false);
@@ -63,7 +74,7 @@ export default function CustomerAnalysisPage() {
           }}
         />
       ) : null}
-      
+
     </div>
   );
 }

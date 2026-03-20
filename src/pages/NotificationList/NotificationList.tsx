@@ -394,7 +394,8 @@ export default function NotificationList(props: any) {
 
   /** Navigate based on targetLink or payload type from the new API */
   const handleNotificationClick = (item: any) => {
-    if (item.unread) {
+    // unread: 0/null = chưa đọc, unread: 1 = đã đọc
+    if (item.unread === 0 || item.unread === null) {
       onUnread(item.id);
     }
     if (item.targetLink) {
@@ -442,7 +443,7 @@ export default function NotificationList(props: any) {
 
   /** Render a single notification item */
   const renderNotificationItem = (item: any) => {
-    const isUnread = !!item.unread;
+    const isUnread = item.unread === 0 || item.unread === null; // 0/null = chưa đọc, 1 = đã đọc
     const iconName = getNotificationIconName(item);
     return (
       <div

@@ -397,8 +397,8 @@ export default function Header(props: any) {
 
   /** Navigate based on targetLink or payload type from the new API */
   const handleNotificationClick = (item: any) => {
-    // unread: null = chưa đọc, unread: false = đã đọc
-    if (item.unread) {
+    // unread: 0 = chưa đọc, unread: 1 = đã đọc
+    if (item.unread === 0 || item.unread === null) {
       onUnread(item.id);
     }
     setShowPopoverNotification(false);
@@ -457,7 +457,7 @@ export default function Header(props: any) {
 
   /** Render a single notification item using the new API fields */
   const renderNotificationItem = (item: any) => {
-    const isUnread = item.unread !== false; // null = chưa đọc, false = đã đọc
+    const isUnread = item.unread === 0 || item.unread === null; // 0/null = chưa đọc, 1 = đã đọc
     const iconName = getNotificationIconName(item);
     return (
       <div
