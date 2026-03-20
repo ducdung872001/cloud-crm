@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import FileUpload from "components/fileUpload/fileUpload";
 import SelectCustom from "components/selectCustom/selectCustom";
+import FileService from "services/FileService";
 import NummericInput from "components/input/numericInput";
 import TextArea from "components/textarea/textarea";
 import ProductService from "services/ProductService";
@@ -271,22 +271,41 @@ function BarcodeScannerModal({ onScan, onClose }: { onScan: (barcode: string) =>
   );
 }
 
-// ── Compact image picker cho variant ──
+// ── Compact image picker cho variant (upload lên CDN) ──
 function VariantImagePicker({ image, onChange }: { image: string; onChange: (url: string) => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => onChange(ev.target?.result as string);
-    reader.readAsDataURL(file);
     e.target.value = "";
+    setUploading(true);
+    FileService.uploadFile({
+      data: file,
+      onSuccess: (result: any) => {
+        setUploading(false);
+        const url = result?.fileUrl || result;
+        onChange(url);
+      },
+      onError: () => {
+        setUploading(false);
+        showToast("Upload ảnh thất bại, vui lòng thử lại", "error");
+      },
+    });
   };
 
   return (
-    <div className="vt-img-picker" onClick={() => inputRef.current?.click()} title="Chọn ảnh biến thể">
-      {image ? (
+    <div
+      className={`vt-img-picker${uploading ? " vt-img-picker--loading" : ""}`}
+      onClick={() => !uploading && inputRef.current?.click()}
+      title="Chọn ảnh biến thể"
+    >
+      {uploading ? (
+        <div className="vt-img-picker__placeholder">
+          <div className="vt-img-picker__spinner" />
+        </div>
+      ) : image ? (
         <>
           <img src={image} alt="variant" className="vt-img-picker__img" />
           <button
@@ -302,16 +321,7 @@ function VariantImagePicker({ image, onChange }: { image: string; onChange: (url
         </>
       ) : (
         <div className="vt-img-picker__placeholder">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
             <circle cx="12" cy="13" r="4" />
           </svg>
@@ -333,8 +343,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const [selectedCategory, setSelectedCategory] = useState<{ value: number; label: string } | null>(null);
   const [formData, setFormData] = useState({ ...DEFAULT_FORM });
   const [isDuplicating, setIsDuplicating] = useState(false);
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
-  const [selectedImagePreview, setSelectedImagePreview] = useState("");
   // Variants
   const [variantAttrs, setVariantAttrs] = useState<VariantAttribute[]>([]);
   const [combinations, setCombinations] = useState<VariantCombination[]>([]);
@@ -343,8 +351,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const setField = (key: string, value: any) => setFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
-    setSelectedImageFile(null);
-    setSelectedImagePreview("");
     loadUnits();
     loadCategories();
     if (isEdit) loadDetail();
@@ -388,7 +394,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       setVariantAttrs(attrs);
 
       // Map variants → combinations (bỏ qua biến thể "Mac dinh" / default)
-      console.log("🔍 [preFill] raw variants từ API:", JSON.stringify(p.variants, null, 2));
       const realVariants = (p.variants || []).filter((v: any) => v.label !== "Mac dinh");
 
       if (realVariants.length) {
@@ -467,12 +472,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         }))
       );
     }
-  };
-
-  const handleRemoveImage = () => {
-    setSelectedImageFile(null);
-    setSelectedImagePreview("");
-    setField("avatar", "");
   };
 
   const handleSubmit = async () => {
@@ -564,34 +563,9 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       variants: variants.length > 0 ? variants : [defaultVariant],
     };
 
-    console.log("📦 [AddProductPage] body gửi lên:", JSON.stringify(body, null, 2));
-
     setIsSubmitting(true);
     try {
-      const hasAvatarChange = !!selectedImageFile || (isEdit && !formData.avatar);
-      let res;
-      if (hasAvatarChange) {
-        const form = new FormData();
-        Object.entries(body).forEach(([key, value]) => {
-          if (value === undefined || value === null) return;
-          if (key === "avatar") return;
-          if (key === "variantGroups" || key === "variants") {
-            form.append(key, JSON.stringify(value));
-            return;
-          }
-          form.append(key, String(value));
-        });
-        if (selectedImageFile) {
-          form.append("avatar", selectedImageFile);
-        } else if (isEdit && !formData.avatar) {
-          form.append("avatar", "");
-        } else if (formData.avatar) {
-          form.append("avatar", formData.avatar);
-        }
-        res = await ProductService.wUpdateFormData(form);
-      } else {
-        res = await ProductService.wUpdate(body as any);
-      }
+      const res = await ProductService.wUpdate(body as any);
       if (res.code === 0) {
         showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
         onBack(true);
@@ -655,7 +629,17 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
   const updateComboSku = (key: string, sku: string) => setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, sku } : c)));
 
-  const updateComboImage = (key: string, image: string) => setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, image } : c)));
+  const updateComboImage = (key: string, image: string) => {
+    setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, image } : c)));
+    // Lưu tạm vào localStorage cho đến khi có API post link ảnh
+    try {
+      const storageKey = `prd_vt_imgs_${idProduct ?? "new"}`;
+      const existing = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      if (image) existing[key] = image;
+      else delete existing[key];
+      localStorage.setItem(storageKey, JSON.stringify(existing));
+    } catch (_) {}
+  };
 
   // Cập nhật field trực tiếp trên variant (barcode, price, costPrice, priceWholesale, pricePromo)
   const updateComboField = (key: string, field: keyof VariantCombination, value: any) =>
@@ -872,32 +856,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                     isClearable
                   />
                 </div>
-              </div>
-
-              {/* Hình ảnh */}
-              <div className="add-prod-card">
-                <div className="add-prod-card__title">Hình ảnh sản phẩm</div>
-                <FileUpload
-                  type="avatar"
-                  label="Ảnh sản phẩm"
-                  formData={{ values: { avatar: selectedImagePreview || formData.avatar } }}
-                  setFormData={(fd: any) => {
-                    const nextAvatar = fd?.values?.avatar || "";
-                    if (!nextAvatar) {
-                      handleRemoveImage();
-                    }
-                  }}
-                  onFileChange={(file: File | null) => {
-                    if (!file) {
-                      handleRemoveImage();
-                      setField("avatar", "");
-                      return;
-                    }
-                    const previewUrl = URL.createObjectURL(file);
-                    setSelectedImageFile(file);
-                    setSelectedImagePreview(previewUrl);
-                  }}
-                />
               </div>
 
               {/* Mô tả */}
