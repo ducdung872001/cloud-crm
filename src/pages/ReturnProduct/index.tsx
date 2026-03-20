@@ -155,6 +155,16 @@ const ReturnProductPage: React.FC = () => {
     setCreateOpen(false);
   }, []);
 
+  /**
+   * Khi nhân viên bấm "Xác nhận trả/đổi hàng" trong ReturnDetailModal:
+   * cập nhật status của item đó trong list từ "pending" → "done"
+   */
+  const handleConfirmed = useCallback((updatedItem: ReturnProduct) => {
+    setData((prev) =>
+      prev.map((r) => (r.id === updatedItem.id ? updatedItem : r))
+    );
+  }, []);
+
   return (
     <div className="return-product">
       <div className="return-product__main">
@@ -201,6 +211,7 @@ const ReturnProductPage: React.FC = () => {
         open={detailOpen}
         item={selectedItem}
         onClose={() => setDetailOpen(false)}
+        onConfirmed={handleConfirmed}
       />
     </div>
   );

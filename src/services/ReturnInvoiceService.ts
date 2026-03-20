@@ -73,6 +73,17 @@ export default {
     }).then((res) => res.json());
   },
 
+  /**
+   * Xác nhận phiếu trả / đổi: STATUS_PENDING → STATUS_DONE
+   * POST /sales/invoice/return/confirm?id={id}
+   */
+  confirmReturn: (invoiceId: number) => {
+    return fetch(`${urlsApi.returnInvoice.confirm}?id=${invoiceId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    }).then((res) => res.json());
+  },
+
   // ─── Inventory enrich ────────────────────────────────────────────────────────
 
   /**
