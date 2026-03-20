@@ -1,17 +1,17 @@
 .qr-modal {
   &__viewport {
     background: var(--ink);
-    border-radius: 14px;
-    padding: 24px;
+    border-radius: 1.4rem;
+    padding: 2.4rem;
     text-align: center;
-    margin-bottom: 14px;
+    margin-bottom: 1.4rem;
   }
 
   &__frame {
-    width: 160px;
-    height: 160px;
+    width: 16rem;
+    height: 16rem;
     border: 3px solid rgba(255, 255, 255, 0.15);
-    border-radius: 14px;
+    border-radius: 1.4rem;
     margin: 0 auto 12px;
     position: relative;
     display: flex;
@@ -22,15 +22,15 @@
   // ── Corner brackets ──
   &__corner {
     position: absolute;
-    width: 24px;
-    height: 24px;
+    width: 2.4rem;
+    height: 2.4rem;
 
     &--tl {
       top: -2px;
       left: -2px;
       border-top: 3px solid var(--lime);
       border-left: 3px solid var(--lime);
-      border-radius: 4px 0 0 0;
+      border-radius: 0.4rem 0 0 0;
     }
     &--tr {
       top: -2px;
@@ -56,7 +56,7 @@
   }
 
   &__camera-icon {
-    font-size: 40px;
+    font-size: 4rem;
     opacity: 0.35;
   }
 
@@ -72,23 +72,23 @@
 
   &__hint {
     color: rgba(255, 255, 255, 0.5);
-    font-size: 13px;
+    font-size: 1.3rem;
   }
 
   // ── Manual input ──
   &__input-row {
     display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
 
     input {
       flex: 1;
-      padding: 9px 12px;
-      font-family: "JetBrains Mono", monospace;
-      font-size: 14px;
+      padding: 0.9rem 12px;
+      font-family: var(--font-base);
+      font-size: 1.4rem;
       background: var(--paper);
       border: 1.5px solid var(--border);
-      border-radius: 9px;
+      border-radius: 0.9rem;
       color: var(--ink);
       outline: none;
       transition: border-color 0.2s;
@@ -104,26 +104,26 @@
   &__result {
     background: var(--lime-l);
     border: 1px solid var(--lime);
-    border-radius: 10px;
-    padding: 11px 14px;
+    border-radius: 1rem;
+    padding: 1.1rem 14px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 1rem;
   }
 
   &__result-icon {
-    font-size: 22px;
+    font-size: 2.2rem;
     flex-shrink: 0;
   }
 
   &__result-name {
-    font-size: 13px;
+    font-size: 1.3rem;
     font-weight: 800;
     color: var(--lime-d);
   }
 
   &__result-detail {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: var(--muted);
     margin-top: 2px;
   }
@@ -131,9 +131,9 @@
   &__not-found {
     background: var(--red-l);
     border: 1px solid var(--red);
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 13px;
+    border-radius: 1rem;
+    padding: 1rem 14px;
+    font-size: 1.3rem;
     color: var(--red);
   }
 }

@@ -4,15 +4,14 @@
   left: 0;
   right: 0;
   width: 100%;
-  // background: var(--white-color);
-  // box-shadow: var(--box-shadow);
-  height: 5.7rem;
-  padding-left: 31.2rem;
-  // margin-left: 31.2rem;
+  background: var(--white-color);
+  box-shadow: 0 1px 0 var(--border-color);
+  height: var(--header-height);
+  padding-left: calc(var(--sidebar-width) + 3.2rem);
   padding-right: 1.6rem;
-  z-index: 9;
-  transition: padding 0.5s ease-in-out;
-  margin-top: 1.5rem;
+  z-index: 99;
+  transition: padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  // ✅ Đã xóa margin-top: 1.5rem — gây lệch layout
 
   &-actions {
     .base-button {
@@ -89,7 +88,7 @@
     // border: 1px solid;
     // width: 18rem;
     .base-button {
-      font-weight: 400;
+      font-weight: var(--fw-regular);
       font-size: 1.4rem;
       white-space: nowrap;
 
@@ -225,11 +224,16 @@
   }
 
   @media (max-width: 1199px) {
-    padding-left: 0;
+    padding-left: 1.6rem;
 
     .notification-hot {
       padding-left: 5.2rem;
     }
+  }
+
+  // ✅ Large desktop ≥ 1440px — tăng padding header
+  @media (min-width: 1440px) {
+    padding-right: 2.4rem;
   }
 
   @media (max-width: 767px) {
@@ -339,7 +343,7 @@
 
       &__body {
         h3 {
-          font-weight: 500;
+          font-weight: var(--fw-medium);
           font-size: 1.4rem;
           margin: 0;
           color: var(--text-primary-color);
@@ -366,7 +370,7 @@
     height: auto;
     padding: 0.8rem 1.2rem;
     font-size: 1.2rem;
-    font-weight: 400;
+    font-weight: var(--fw-regular);
     border-top: 1px solid var(--border-color);
 
     &:hover:not(:disabled),
@@ -437,14 +441,14 @@
 
       .text-unRead {
         font-size: 12px;
-        font-weight: 400;
+        font-weight: var(--fw-regular);
         color: #015aa4;
         // cursor: pointer;
       }
 
       .text-Read {
         font-size: 12px;
-        font-weight: 400;
+        font-weight: var(--fw-regular);
         color: #939394;
         cursor: pointer;
 
@@ -530,7 +534,7 @@
             // border: 1px solid;
             .content {
               font-size: 1.2rem;
-              font-weight: 400;
+              font-weight: var(--fw-regular);
               color: #939394;
             }
           }
@@ -549,14 +553,14 @@
 
               .name-project {
                 font-size: 12px;
-                font-weight: 500;
+                font-weight: var(--fw-medium);
               }
 
             }
 
             .time {
               font-size: 1.2rem;
-              font-weight: 400;
+              font-weight: var(--fw-regular);
               color: #939394;
             }
           }
@@ -591,7 +595,7 @@
 
       .title-button {
         font-size: 12px;
-        font-weight: 400;
+        font-weight: var(--fw-regular);
         color: #015aa4;
         cursor: pointer;
 

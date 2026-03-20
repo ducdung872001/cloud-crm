@@ -28,13 +28,15 @@ section {
 
 body {
   margin: 0;
-  font-family: "Roboto";
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 2.4rem;
+  font-family: var(--font-base, "Roboto", sans-serif);
+  font-size: var(--text-base);    // 14px — base body
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-relaxed); // 1.6
   color: var(--text-primary-color);
   text-align: left;
   background-color: var(--white-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::-webkit-scrollbar {
@@ -358,39 +360,17 @@ h6,
 .h5,
 .h6 {
   margin-bottom: 0.5rem;
-  font-weight: 500;
-  line-height: 1.2;
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-tight);
+  color: var(--text-primary-color);
 }
 
-h1,
-.h1 {
-  font-size: 2.5rem;
-}
-
-h2,
-.h2 {
-  font-size: 2rem;
-}
-
-h3,
-.h3 {
-  font-size: 1.75rem;
-}
-
-h4,
-.h4 {
-  font-size: 1.5rem;
-}
-
-h5,
-.h5 {
-  font-size: 1.25rem;
-}
-
-h6,
-.h6 {
-  font-size: 1rem;
-}
+h1, .h1 { font-size: var(--text-4xl); }  // 30px
+h2, .h2 { font-size: var(--text-3xl); }  // 24px
+h3, .h3 { font-size: var(--text-2xl); }  // 20px
+h4, .h4 { font-size: var(--text-xl); }   // 18px
+h5, .h5 { font-size: var(--text-lg); }   // 16px
+h6, .h6 { font-size: var(--text-md); }   // 15px
 
 small,
 .small {
@@ -2701,17 +2681,13 @@ pre code {
 }
 
 .form-group {
-  margin-bottom: 1.2rem;
-  &__multiple {
-    gap: 1.6rem;
-    display: flex;
-    margin: 0;
-    align-items: flex-start;
-    justify-content: space-between;
-    .item {
-      margin-bottom: 1.2rem;
-      width: 50%;
-    }
+  margin-bottom: var(--spacing-12);  // ✅ Dùng token
+  label {
+    font-size: var(--text-base);     // ✅ Đồng nhất 14px
+    font-weight: var(--fw-regular);
+    margin-bottom: 0.4rem;
+    display: block;
+    color: var(--text-primary-color);
   }
   &:last-child {
     margin-bottom: 0;
@@ -2723,20 +2699,22 @@ pre code {
   ul {
     border-bottom: 1px solid var(--border-color);
     height: 5rem;
-    letter-spacing: 0.25px;
-    font-size: 1.4rem;
-    line-height: 2rem;
+    letter-spacing: var(--ls-base);
+    font-size: var(--text-base);    // ✅ 14px — trước là 1.4rem hardcode
+    line-height: var(--lh-snug);
     gap: 2.4rem;
     color: var(--text-extra-color);
     li {
       cursor: pointer;
       border-bottom: 3px solid transparent;
       padding: 1.5rem 0 1.2rem;
-      transition: color 0.2s ease-in-out;
+      transition: color 0.2s ease;
+      font-weight: var(--fw-regular);
       &:hover,
       &.active {
         border-bottom-color: var(--primary-color);
         color: var(--text-primary-color);
+        font-weight: var(--fw-medium);
       }
       &.active {
         cursor: default;
@@ -2745,6 +2723,11 @@ pre code {
     }
     @media (max-width: 767px) {
       padding: 0 1.6rem;
+      gap: 1.6rem;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      &::-webkit-scrollbar { display: none; }
     }
   }
 }
@@ -2752,64 +2735,55 @@ pre code {
   padding: 1.6rem 0;
   .tab-item {
     display: none;
-    &.active {
-      display: block;
-    }
+    &.active { display: block; }
   }
   .tab-pane {
     display: none;
-    &.active {
-      display: block;
-    }
+    &.active { display: block; }
   }
 }
 
 #container {
   background: var(--extra-color-5);
   min-height: calc(100% - env(safe-area-inset-bottom) - env(safe-area-inset-top));
+
   .page-wrapper {
-    margin-left: 28rem;
-    transition: all 0.5s ease-in-out;
+    margin-left: var(--sidebar-width);
+    transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 
     .main-content {
       position: relative;
-      margin-top: 5.7rem;
+      margin-top: var(--header-height);
       width: 100%;
-      height: calc(100% - env(safe-area-inset-bottom) - env(safe-area-inset-top) - 5.7rem);
+      height: calc(100% - env(safe-area-inset-bottom) - env(safe-area-inset-top) - var(--header-height));
+
       &__wrapper {
-        // padding: 2.4rem 3.2rem 3.2rem;
-        padding: 1.4rem 1.2rem 3.2rem;
+        // ✅ Padding đồng nhất: top=20px, ngang=24px, bottom=32px
+        padding: 2rem 2.4rem 3.2rem;
       }
+
       .page-content {
         min-height: calc(100% - 11.3rem);
       }
 
-      //? đoạn này là css cảnh báo sắp hết hạn gói
+      //? Cảnh báo sắp hết hạn gói
       .notification__warning--package {
         position: relative;
-        width: calc(100% - 6.4rem);
+        width: 100%;
         margin: 0 auto;
         height: 4.8rem;
         z-index: 9;
         padding-top: 1.2rem;
 
         .box__warning--notify {
-          // position: fixed;
-          // right: 3.2rem;
-          // left: 31.2rem;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          border-radius: 0.3rem;
-          padding: 0.6rem 1rem;
+          border-radius: 0.4rem;
+          padding: 0.6rem 1.2rem;
 
-          &.bg__warning {
-            background-color: #ffa500;
-          }
-
-          &.bg__error {
-            background-color: var(--error-darker-color);
-          }
+          &.bg__warning { background-color: #ffa500; }
+          &.bg__error   { background-color: var(--error-darker-color); }
         }
 
         .content__notify--left {
@@ -2818,16 +2792,8 @@ pre code {
           gap: 0 0.8rem;
           color: var(--white-color);
 
-          svg {
-            width: 2.5rem;
-            height: 2.5rem;
-            fill: var(--white-color);
-          }
-
-          .content {
-            font-size: 1.5rem;
-            font-weight: 500;
-          }
+          svg { width: 2.5rem; height: 2.5rem; fill: var(--white-color); }
+          .content { font-size: var(--text-md); font-weight: var(--fw-medium); }
         }
 
         .content__notify--right {
@@ -2836,9 +2802,7 @@ pre code {
           justify-content: flex-end;
           gap: 0 1.2rem;
 
-          .base-button {
-            padding: 0.5rem 2.4rem;
-          }
+          .base-button { padding: 0.5rem 2.4rem; }
 
           .action__close {
             background-color: var(--extra-color-10);
@@ -2850,42 +2814,56 @@ pre code {
             height: 3.2rem;
             cursor: pointer;
 
-            svg {
-              width: 1.8rem;
-              height: 1.8rem;
-            }
+            svg { width: 1.8rem; height: 1.8rem; }
 
             &:hover {
               background-color: var(--white-color);
-
-              svg {
-                fill: var(--error-darker-color);
-              }
+              svg { fill: var(--error-darker-color); }
             }
           }
         }
       }
     }
+
     &--collapsed-sidebar {
-      margin-left: 7.2rem;
-      .header {
-        padding-left: 10.4rem;
-      }
+      margin-left: var(--sidebar-collapsed-width);
+      .header { padding-left: calc(var(--sidebar-collapsed-width) + 3.2rem); }
     }
   }
+
+  // ── Large desktop ≥ 1440px ──
+  @media (min-width: 1440px) {
+    .page-wrapper .main-content__wrapper {
+      padding: 2.4rem 3.2rem 4rem;
+    }
+  }
+
+  // ── Extra-large ≥ 1920px ──
+  @media (min-width: 1920px) {
+    .page-wrapper .main-content__wrapper {
+      padding: 2.8rem 4rem 4.8rem;
+    }
+  }
+
+  // ── Tablet & small desktop < 1200px ──
   @media (max-width: 1199px) {
     .page-wrapper {
       margin-left: 0;
-      .main-content {
-        &__wrapper {
-          padding: 2rem 1.6rem;
-        }
+
+      .main-content__wrapper {
+        padding: 1.6rem 1.6rem 2.4rem;
       }
+
       &--collapsed-sidebar {
-        .header {
-          padding-left: 0;
-        }
+        .header { padding-left: 0; }
       }
+    }
+  }
+
+  // ── Mobile < 768px ──
+  @media (max-width: 767px) {
+    .page-wrapper .main-content__wrapper {
+      padding: 1.2rem 1.2rem 2rem;
     }
   }
 }

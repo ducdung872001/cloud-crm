@@ -1,0 +1,173 @@
+// =============================================
+// RESPONSIVE UTILITIES
+// Breakpoints: mobile 575 | tablet 768 | desktop 1200 | large 1440 | xlarge 1920
+// =============================================
+
+// ─── Form grid responsive ────────────────────
+// form-group__multiple: 2 cột trên tablet+, 1 cột trên mobile
+.form-group {
+  &__multiple {
+    gap: var(--spacing-16);
+    display: flex;
+    margin: 0;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .item {
+      margin-bottom: var(--spacing-12);
+      width: 50%;
+    }
+
+    @media (max-width: 575px) {
+      flex-direction: column;
+      .item {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// ─── Card-box responsive ─────────────────────
+.card-box {
+  background: var(--white-color);
+  box-shadow: var(--box-shadow);
+  border-radius: 0.6rem;
+
+  @media (max-width: 575px) {
+    border-radius: 0.4rem;
+  }
+}
+
+// ─── Hide/show helpers ───────────────────────
+.hide-on-mobile   { @media (max-width: 575px)  { display: none !important; } }
+.hide-on-tablet   { @media (max-width: 991px)  { display: none !important; } }
+.show-on-mobile   { @media (min-width: 576px)  { display: none !important; } }
+.show-on-tablet   { @media (min-width: 992px)  { display: none !important; } }
+
+// ─── Page-level padding classes ──────────────
+// Dùng khi page cần override padding mặc định
+.page-padded {
+  padding: 2rem 2.4rem 3.2rem;
+
+  @media (min-width: 1440px) { padding: 2.4rem 3.2rem 4rem; }
+  @media (min-width: 1920px) { padding: 2.8rem 4rem 4.8rem; }
+  @media (max-width: 1199px) { padding: 1.6rem 1.6rem 2.4rem; }
+  @media (max-width: 767px)  { padding: 1.2rem 1.2rem 2rem; }
+}
+
+// ─── Dashboard grid ──────────────────────────
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-16);
+
+  @media (max-width: 1439px) { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 1199px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 575px)  { grid-template-columns: 1fr; }
+}
+
+// ─── Stat cards grid ─────────────────────────
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+  gap: var(--spacing-16);
+
+  @media (max-width: 575px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-12);
+  }
+}
+
+// ─── Two-column split ────────────────────────
+.split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-24);
+
+  @media (max-width: 991px) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-16);
+  }
+}
+
+// ─── Three-column split ──────────────────────
+.three-col-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-16);
+
+  @media (max-width: 1199px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 575px)  { grid-template-columns: 1fr; }
+}
+
+// ─── Scrollable table wrapper ────────────────
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  @media (max-width: 767px) {
+    // Add thin scroll indicator on mobile
+    &::after {
+      content: '';
+      display: block;
+      height: 0.2rem;
+      background: linear-gradient(to right, transparent 80%, var(--primary-color-30) 100%);
+      pointer-events: none;
+    }
+  }
+}
+
+// ─── Large screen optimizations ──────────────
+@media (min-width: 1440px) {
+  // Tăng khoảng cách giữa các section trên màn hình lớn
+  .section-gap {
+    margin-bottom: var(--spacing-32);
+  }
+
+  // Tab nav có nhiều không gian hơn
+  .tab-nav ul {
+    height: 5.4rem;
+    gap: 3.2rem;
+    font-size: var(--text-md);
+  }
+}
+
+@media (min-width: 1920px) {
+  // Sidebar rộng hơn trên 4K/ultrawide
+  :root {
+    --sidebar-width: 30rem;
+  }
+
+  .page-wrapper {
+    margin-left: 30rem !important;
+  }
+
+  .tab-nav ul {
+    height: 5.8rem;
+    gap: 4rem;
+  }
+}
+
+// ─── Print media ─────────────────────────────
+@media print {
+  .sidebar,
+  .header,
+  .overlay-sidebar__mobile,
+  .pagination,
+  .title-action .actions {
+    display: none !important;
+  }
+
+  .page-wrapper {
+    margin-left: 0 !important;
+  }
+
+  .main-content {
+    margin-top: 0 !important;
+  }
+
+  .main-content__wrapper {
+    padding: 0 !important;
+  }
+}

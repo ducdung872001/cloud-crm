@@ -503,7 +503,7 @@
   }
 
   .mono {
-    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: var(--font-base);
   }
   .blue {
     color: #1a73e8;

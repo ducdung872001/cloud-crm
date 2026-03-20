@@ -11,11 +11,11 @@
   gap: 0.8rem;
   outline: none;
   position: relative;
-  transition: all 200ms linear;
-  transition-property: background-color, color, opacity;
-  font-size: 1.6rem;
-  line-height: 2.2rem;
-  font-weight: 500;
+  transition: background-color 180ms ease, color 180ms ease, opacity 180ms ease, border-color 180ms ease;
+  font-family: var(--font-base);
+  font-size: var(--text-base);   // ✅ 14px — thống nhất toàn app
+  line-height: var(--lh-relaxed);
+  font-weight: var(--fw-medium);
   svg {
     fill: var(--white-color);
     color: var(--white-color);
@@ -220,7 +220,7 @@
     color: var(--blue-color);
     padding: 0;
     background: none;
-    font-weight: 400;
+    font-weight: var(--fw-regular);
     line-height: 2rem;
     &:hover:not(:disabled):not([disabled]),
     &:focus:not(:disabled):not([disabled]),
@@ -244,7 +244,7 @@
     color: var(--text-primary-color);
     font-size: 1.4rem;
     padding: 0.8rem 2rem 0.8rem 2rem;
-    font-weight: 400;
+    font-weight: var(--fw-regular);
     line-height: 2.2rem;
     border-radius: 3px;
     &.base-button__has-icon {

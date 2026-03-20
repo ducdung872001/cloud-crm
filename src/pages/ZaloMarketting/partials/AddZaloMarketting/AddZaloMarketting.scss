@@ -11,12 +11,12 @@
 
       h1 {
         color: var(--text-primary-color);
-        font-size: 2.4rem;
+        font-size: var(--text-3xl);
         line-height: 2.8rem;
         padding-right: 1rem;
         margin: 0;
-        font-weight: 700;
-        text-transform: uppercase;
+        font-weight: var(--fw-bold);
+        text-transform: none; // ✅ standardized
       }
 
       .title-first {
@@ -60,7 +60,7 @@
         min-height: 60rem;
 
         .title_idx {
-          text-transform: uppercase;
+          text-transform: none; // ✅ standardized
           font-weight: 700;
           color: var(--primary-color-90);
           border-bottom: 1.5px dashed #e0e0e0;
@@ -727,7 +727,7 @@
             margin-top: 2.6rem;
 
             h3 {
-              text-transform: uppercase;
+              text-transform: none; // ✅ standardized
               font-weight: 700;
               color: var(--primary-color-90);
               border-bottom: 1.5px dashed #e0e0e0;

@@ -1,7 +1,7 @@
 .order-detail-modal {
   &__code {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 11.5px;
+    font-family: var(--font-base);
+    font-size: 1.1rem;
     color: var(--muted);
     margin-top: 2px;
   }
@@ -9,7 +9,7 @@
   &__header-right {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.8rem;
   }
 }
 
@@ -17,28 +17,28 @@
 .od-timeline {
   display: flex;
   align-items: center;
-  padding: 12px;
+  padding: 1.2rem;
   background: var(--paper);
-  border-radius: 10px;
-  margin-bottom: 18px;
+  border-radius: 1rem;
+  margin-bottom: 1.8rem;
 
   &__step {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 0.4rem;
     flex-shrink: 0;
   }
 
   &__dot {
-    width: 28px;
-    height: 28px;
+    width: 2.8rem;
+    height: 2.8rem;
     border-radius: 50%;
     background: var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 1.2rem;
     color: var(--muted2);
     transition: all 0.2s;
 
@@ -53,7 +53,7 @@
   }
 
   &__label {
-    font-size: 10px;
+    font-size: 1rem;
     color: var(--muted2);
     font-weight: 600;
     white-space: nowrap;
@@ -72,7 +72,7 @@
     flex: 1;
     height: 2px;
     background: var(--border);
-    margin-bottom: 14px;
+    margin-bottom: 1.4rem;
 
     &--done {
       background: var(--lime);
@@ -83,33 +83,33 @@
 // ── Info panels ───────────────────────────────────
 .od-panels {
   display: flex;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 1.2rem;
+  margin-bottom: 1.4rem;
 }
 
 .od-panel {
   flex: 1;
   background: var(--paper);
-  border-radius: 10px;
-  padding: 12px;
+  border-radius: 1rem;
+  padding: 1.2rem;
 
   &__title {
-    font-size: 11px;
+    font-size: 1.1rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.6px;
     color: var(--muted);
-    margin-bottom: 7px;
+    margin-bottom: 0.7rem;
   }
 
   &__name {
     font-weight: 800;
-    font-size: 14px;
+    font-size: 1.4rem;
     margin-bottom: 2px;
   }
 
   &__sub {
-    font-size: 12.5px;
+    font-size: 1.2rem;
     color: var(--muted);
     line-height: 1.7;
   }
@@ -118,13 +118,13 @@
 // ── Items table ───────────────────────────────────
 .od-items {
   border: 1.5px solid var(--border);
-  border-radius: 10px;
+  border-radius: 1rem;
   overflow: hidden;
 
   &__header {
-    padding: 9px 12px;
+    padding: 0.9rem 12px;
     background: var(--paper);
-    font-size: 11px;
+    font-size: 1.1rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.6px;
@@ -134,15 +134,15 @@
   }
 
   &__row {
-    padding: 10px 12px;
+    padding: 1rem 12px;
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 1rem;
   }
 
   &__icon {
-    font-size: 18px;
+    font-size: 1.8rem;
     flex-shrink: 0;
   }
 
@@ -151,25 +151,25 @@
   }
 
   &__name {
-    font-size: 13px;
+    font-size: 1.3rem;
     font-weight: 700;
   }
   &__detail {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: var(--muted);
   }
 
   &__total {
     font-weight: 800;
-    font-size: 13px;
+    font-size: 1.3rem;
   }
 
   &__grand {
-    padding: 12px 14px;
+    padding: 1.2rem 14px;
     border-top: 1.5px dashed var(--border);
     display: flex;
     justify-content: space-between;
-    font-size: 15px;
+    font-size: 1.5rem;
     font-weight: 900;
   }
 
@@ -184,8 +184,8 @@
   align-items: center;
   gap: 3px;
   padding: 3px 9px;
-  border-radius: 20px;
-  font-size: 11px;
+  border-radius: 2rem;
+  font-size: 1.1rem;
   font-weight: 700;
 }
 .bd-orange {

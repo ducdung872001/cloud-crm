@@ -11,7 +11,7 @@
             .button-connect {
                 border: 1px solid;
                 padding: 0.5rem 1.6rem;
-                border-radius: 10px;
+                border-radius: 1rem;
                 cursor: pointer;
 
                 &:hover {
@@ -37,7 +37,7 @@
             width: 24%;
             padding: 1.2rem 2rem;
             border: 1px solid var(--extra-color-20);
-            border-radius: 10px;
+            border-radius: 1rem;
             display: flex;
             flex-direction: column;
             gap: 0.5rem 0;
@@ -48,7 +48,7 @@
     .table-result-app{
         border: 1px solid var(--extra-color-20);
         margin-top: 2rem;
-        border-radius: 20px;
+        border-radius: 2rem;
         background-color: white;
 
         .table-header {
@@ -60,7 +60,7 @@
             .button-export {
                 border: 1px solid;
                 padding: 0.5rem 1.6rem;
-                border-radius: 10px;
+                border-radius: 1rem;
                 cursor: pointer;
 
                 &:hover {
@@ -81,7 +81,7 @@
                 .avatar {
                     width: 4rem;
                     height: 4rem;
-                    border-radius: 10px;
+                    border-radius: 1rem;
                     display: flex;
                     align-items: center;
                     justify-content: center;

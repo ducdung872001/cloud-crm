@@ -1,34 +1,34 @@
 .sidebar {
-  width: 64px;
+  width: 6.4rem;
   background: var(--ink);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 14px 0;
-  gap: 4px;
+  padding: 1.4rem 0;
+  gap: 0.4rem;
   z-index: 10;
   flex-shrink: 0;
 
   .sb-logo {
-    width: 38px;
-    height: 38px;
+    width: 3.8rem;
+    height: 3.8rem;
     background: var(--lime);
-    border-radius: 10px;
+    border-radius: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    margin-bottom: 14px;
+    font-size: 1.8rem;
+    margin-bottom: 1.4rem;
   }
 
   .sbi {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+    width: 4.4rem;
+    height: 4.4rem;
+    border-radius: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 1.8rem;
     cursor: pointer;
     color: #64748b;
     transition: all 0.2s;
@@ -54,12 +54,12 @@
 
     .tip {
       position: absolute;
-      left: 54px;
+      left: 5.4rem;
       background: var(--ink2);
       color: #fff;
-      padding: 5px 10px;
-      border-radius: 7px;
-      font-size: 11.5px;
+      padding: 0.5rem 10px;
+      border-radius: 0.7rem;
+      font-size: 1.1rem;
       font-weight: 600;
       white-space: nowrap;
       opacity: 0;
@@ -70,13 +70,13 @@
 
     .nb {
       position: absolute;
-      top: 6px;
-      right: 6px;
-      width: 16px;
-      height: 16px;
+      top: 0.6rem;
+      right: 0.6rem;
+      width: 1.6rem;
+      height: 1.6rem;
       background: var(--red);
       border-radius: 50%;
-      font-size: 9px;
+      font-size: 0.9rem;
       font-weight: 800;
       color: #fff;
       display: flex;

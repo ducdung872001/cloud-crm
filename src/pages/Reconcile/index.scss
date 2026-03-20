@@ -272,7 +272,7 @@
   }
 
   .mono {
-    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: var(--font-base);
   }
   .fw {
     font-weight: 900;
