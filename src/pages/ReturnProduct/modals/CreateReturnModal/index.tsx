@@ -153,43 +153,46 @@ export default function CreateReturnModal({
     const data: IInvoiceReturnItemResponse = res2.result;
     const inv = data.invoice;
 
-    // Kiểm tra còn hàng để trả không
-    const hasProducts = data.lstBoughtProduct?.length > 0;
-    const hasServices = data.lstBoughtService?.length > 0;
+    // Lọc qty > 0 (backend đã trừ, FE filter thêm để chắc)
+    const availableProducts = (data.lstBoughtProduct ?? []).filter((p) => (p.qty ?? 0) > 0);
+    const availableServices = (data.lstBoughtService ?? []).filter((s) => (s.serviceNumber ?? 0) > 0);
 
-    if (!hasProducts && !hasServices) {
+    if (availableProducts.length === 0 && availableServices.length === 0) {
       setLookupStatus("notfound");
-      setLookupMsg("Hóa đơn này không còn mặt hàng nào có thể trả.");
+      const hadItems = (data.lstBoughtProduct?.length ?? 0) > 0 || (data.lstBoughtService?.length ?? 0) > 0;
+      setLookupMsg(
+        hadItems
+          ? "Hóa đơn này đã được hoàn trả toàn bộ, không thể tạo thêm phiếu."
+          : "Hóa đơn này không có mặt hàng nào có thể trả."
+      );
       return;
     }
 
-    // Build autofill state
+    // Build autofill state chỉ với items còn qty > 0
     const af: IAutofillState = {
       originalInvoiceId: inv.id,
       customerName:  inv.customerName ?? (inv.customerId ? `KH #${inv.customerId}` : ""),
       customerId:    inv.customerId,
       customerPhone: inv.customerPhone,
-      products:      data.lstBoughtProduct ?? [],
-      services:      data.lstBoughtService ?? [],
+      products:      availableProducts,
+      services:      availableServices,
       originalFee:   inv.fee,
     };
 
     setAutofill(af);
 
-    // Fill customer field
     const customerDisplay = [inv.customerName, inv.customerPhone].filter(Boolean).join(" – ");
     if (customerDisplay) setCustomer(customerDisplay);
 
-    // Fill product rows từ API (thay thế blank rows)
     const productRows: ProductRow[] = af.products.map(apiProductToRow);
-
-    // Nếu không có sản phẩm nào → giữ row trống để user nhập tay
     setRetItems(productRows.length > 0 ? productRows : [mkRow()]);
 
     setLookupStatus("found");
+    const partialNote = availableProducts.length < (data.lstBoughtProduct?.length ?? 0)
+      ? " (một phần đã hoàn trả trước)" : "";
     setLookupMsg(
       `✓ Tìm thấy: ${af.customerName || "Khách hàng"}` +
-      ` — ${af.products.length} sản phẩm` +
+      ` — ${af.products.length} sản phẩm${partialNote}` +
       (af.services.length > 0 ? `, ${af.services.length} dịch vụ` : "")
     );
   }, []);
@@ -221,15 +224,14 @@ export default function CreateReturnModal({
       const res1 = await ReturnInvoiceService.findByCode(trimmed, ctrl.signal);
       if (ctrl.signal.aborted) return;
 
-      // Thử extract invoiceId từ response (Page<Invoice> hoặc InvoiceSale)
+      // Extract invoiceId từ response thực tế của /invoice/list/v2:
+      // { result: { pagedLst: { items: [{ invoiceId, invoice: { id } }] } } }
       let invoiceId: number | null = null;
 
-      // Cấu trúc từ /invoice/list/v2: { result: { invoices: [...] } } hoặc { result: { data: [...] } }
-      const pageData = res1?.result?.invoices ?? res1?.result?.data ?? res1?.result;
-      if (Array.isArray(pageData) && pageData.length > 0) {
-        invoiceId = pageData[0]?.id ?? null;
-      } else if (res1?.result?.id) {
-        invoiceId = res1.result.id;
+      const items = res1?.result?.pagedLst?.items;
+      if (Array.isArray(items) && items.length > 0) {
+        // items[0].invoiceId hoặc items[0].invoice.id
+        invoiceId = items[0]?.invoiceId ?? items[0]?.invoice?.id ?? null;
       }
 
       if (!invoiceId) {

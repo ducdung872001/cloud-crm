@@ -2,8 +2,14 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import {
   IReturnInvoiceListParams,
+  IReturnInvoiceResponse,
   ICreateReturnRequest,
   ICreateExchangeRequest,
+  IVariantDetail,
+  VariantMap,
+  mapApiToUi,
+  enrichProductSummary,
+  ReturnProduct,
 } from "@/types/returnProduct";
 
 export default {
@@ -24,10 +30,7 @@ export default {
   },
 
   /**
-   * Bước 1 của auto-fill: Tìm hóa đơn gốc theo mã invoice code
-   * Gọi API list với invoiceCode filter + invoiceTypes IV1 (chỉ HĐ bán hàng)
-   *
-   * GET /sales/invoice/list/v2?invoiceCode={code}&invoiceTypes=["IV1"]&page=0&limit=1
+   * Tìm hóa đơn gốc theo mã để autofill form
    */
   findByCode: (invoiceCode: string, signal?: AbortSignal) => {
     const params = {
@@ -43,15 +46,7 @@ export default {
   },
 
   /**
-   * Bước 2 của auto-fill: Lấy items còn được phép trả từ HĐ gốc (theo invoiceId)
-   * Response: InvoiceReturnItem {
-   *   invoice: Invoice,
-   *   lstBoughtProduct: BoughtProductResponse[],
-   *   lstBoughtService: BoughtServiceResponse[],
-   *   lstBoughtCardService: BoughtCardServiceResponse[]
-   * }
-   *
-   * GET /sales/invoice/get/return?id={invoiceId}
+   * Lấy items còn được phép trả từ HĐ gốc
    */
   getReturnItems: (originalInvoiceId: number, signal?: AbortSignal) => {
     return fetch(`${urlsApi.returnInvoice.getReturnItems}?id=${originalInvoiceId}`, {
@@ -77,4 +72,128 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+
+  /**
+   * Xác nhận phiếu trả / đổi: STATUS_PENDING → STATUS_DONE
+   * POST /sales/invoice/return/confirm?id={id}
+   */
+  confirmReturn: (invoiceId: number) => {
+    return fetch(`${urlsApi.returnInvoice.confirm}?id=${invoiceId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    }).then((res) => res.json());
+  },
+
+  // ─── Inventory enrich ────────────────────────────────────────────────────────
+
+  /**
+   * Lấy chi tiết variant từ Inventory microservice theo danh sách ID.
+   * GET /inventory/productVariant/list-detail?lstId=1,2,3
+   *
+   * Trả về VariantMap: { [variantId]: IVariantDetail }
+   */
+  fetchVariantDetails: async (
+    variantIds: number[],
+    signal?: AbortSignal
+  ): Promise<VariantMap> => {
+    if (variantIds.length === 0) return {};
+
+    const uniqueIds = [...new Set(variantIds)];
+    try {
+      const res = await fetch(
+        `${urlsApi.returnInvoice.variantListDetail}?lstId=${uniqueIds.join(",")}`,
+        { signal, method: "GET" }
+      );
+      const json = await res.json();
+
+      const list: IVariantDetail[] = json?.result ?? json?.data ?? [];
+      return list.reduce((acc, v) => {
+        acc[v.id] = v;
+        return acc;
+      }, {} as VariantMap);
+    } catch {
+      return {};
+    }
+  },
+
+  /**
+   * Wrapper tổng hợp:
+   *  1. Gọi list API → lấy danh sách phiếu
+   *  2. Collect tất cả variantId từ products trong response
+   *  3. Gọi Inventory để lấy tên variant
+   *  4. enrich productSummary cho từng phiếu
+   *
+   * Trả về ReturnProduct[] đã có productSummary đầy đủ.
+   */
+  listAndEnrich: async (
+    params?: IReturnInvoiceListParams,
+    signal?: AbortSignal
+  ): Promise<{ items: ReturnProduct[]; total: number }> => {
+    const res = await fetch(
+      `${urlsApi.returnInvoice.list}${convertParamsToString(
+        Object.fromEntries(Object.entries(params ?? {}).filter(([, v]) => v !== undefined && v !== null))
+      )}`,
+      { signal, method: "GET" }
+    ).then((r) => r.json());
+
+    // Extract items từ response (hỗ trợ cả 2 cấu trúc)
+    const rawItems: IReturnInvoiceResponse[] =
+      res?.result?.items ??
+      res?.result?.pagedLst?.items ??
+      res?.result?.data ??
+      [];
+
+    const total: number =
+      res?.result?.total ??
+      res?.result?.pagedLst?.total ??
+      0;
+
+    if (rawItems.length === 0) return { items: [], total };
+
+    // Collect tất cả variantId duy nhất trong batch này
+    const allVariantIds: number[] = [];
+    rawItems.forEach((item) => {
+      (item.products ?? []).forEach((p) => {
+        if (p.variantId) allVariantIds.push(p.variantId);
+      });
+    });
+
+    // Fetch variant details 1 lần cho cả batch
+    const variantMap = await (
+      // eslint-disable-next-line no-async-promise-executor
+      new ReturnInvoiceServiceClass().fetchVariantDetailsStatic(allVariantIds, signal)
+    );
+
+    // Map → UI type + enrich productSummary
+    const items = rawItems.map((raw) =>
+      enrichProductSummary(mapApiToUi(raw), raw, variantMap)
+    );
+
+    return { items, total };
+  },
 };
+
+/**
+ * Internal helper class để tái sử dụng fetchVariantDetails trong listAndEnrich
+ * (tránh circular reference với default export object)
+ */
+class ReturnInvoiceServiceClass {
+  async fetchVariantDetailsStatic(
+    variantIds: number[],
+    signal?: AbortSignal
+  ): Promise<VariantMap> {
+    if (variantIds.length === 0) return {};
+    const uniqueIds = [...new Set(variantIds)];
+    try {
+      const res = await fetch(
+        `${urlsApi.returnInvoice.variantListDetail}?lstId=${uniqueIds.join(",")}`,
+        { signal, method: "GET" }
+      );
+      const json = await res.json();
+      const list: IVariantDetail[] = json?.result ?? json?.data ?? [];
+      return list.reduce((acc, v) => { acc[v.id] = v; return acc; }, {} as VariantMap);
+    } catch {
+      return {};
+    }
+  }
+}

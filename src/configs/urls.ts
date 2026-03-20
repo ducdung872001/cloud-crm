@@ -431,6 +431,8 @@ export const urlsApi = {
     getReturnItems: prefixSales + "/invoice/get/return",
     createReturn: prefixSales + "/invoice/create/return",
     createExchange: prefixSales + "/invoice/create/exchange",
+    variantListDetail: prefixInventory + "/productVariant/list-detail", // ← THÊM DÒNG NÀY
+    confirm: prefixSales + "/invoice/return/confirm",
   },
   invoiceImport: {
     update: prefixInventory + "/invoice/import/update",
