@@ -1,0 +1,354 @@
+.page--app-notification {
+  // ─── Stats Grid ───────────────────────────────────────────────
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.6rem;
+    margin-bottom: 2rem;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .stats-card {
+    background: #fff;
+    border-radius: 1.2rem;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+
+    &--green {
+      background: #f0faf4;
+    }
+
+    &__content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    &__label {
+      font-size: 1.3rem;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    &__value {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #111827;
+      margin: 0;
+      line-height: 1.2;
+
+      &--blue {
+        color: #2563eb;
+      }
+
+      &--orange {
+        color: #ea580c;
+      }
+
+      &--purple {
+        color: #7c3aed;
+      }
+    }
+
+    &__change {
+      font-size: 1.2rem;
+      margin: 0;
+
+      &--up {
+        color: #16a34a;
+      }
+
+      &--down {
+        color: #dc2626;
+      }
+    }
+
+    &__icon {
+      width: 4.8rem;
+      height: 4.8rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      svg,
+      i {
+        font-size: 2rem;
+        color: #fff;
+      }
+
+      &--green {
+        background: #16a34a;
+      }
+
+      &--blue {
+        background: #2563eb;
+      }
+
+      &--orange {
+        background: #ea580c;
+      }
+
+      &--purple {
+        background: #7c3aed;
+      }
+    }
+  }
+
+  // ─── Campaign Form ─────────────────────────────────────────────
+  .campaign-form {
+    background: #fff;
+    border-radius: 1.2rem;
+    padding: 2.4rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+
+    &__title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #111827;
+      margin: 0 0 2rem 0;
+    }
+
+    &__row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.6rem;
+      margin-bottom: 1.6rem;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    &__field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+
+      &--full {
+        margin-bottom: 1.6rem;
+      }
+    }
+
+    &__label {
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    &__input,
+    &__select {
+      height: 4rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.8rem;
+      padding: 0 1.2rem;
+      font-size: 1.4rem;
+      color: #111827;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+
+      &:focus {
+        border-color: var(--primary-color, #2563eb);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      &::placeholder {
+        color: #9ca3af;
+      }
+    }
+
+    &__select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1.2rem center;
+      padding-right: 3.6rem;
+      cursor: pointer;
+    }
+
+    &__textarea {
+      border: 1px solid #d1d5db;
+      border-radius: 0.8rem;
+      padding: 1.2rem;
+      font-size: 1.4rem;
+      color: #111827;
+      resize: vertical;
+      min-height: 9.6rem;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+      width: 100%;
+      box-sizing: border-box;
+
+      &:focus {
+        border-color: var(--primary-color, #2563eb);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      &::placeholder {
+        color: #9ca3af;
+      }
+    }
+
+    &__char-count {
+      font-size: 1.2rem;
+      color: #9ca3af;
+      text-align: right;
+      margin-top: 0.4rem;
+    }
+
+    &__actions {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      margin-top: 0.8rem;
+    }
+  }
+
+  // ─── Buttons ───────────────────────────────────────────────────
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 4rem;
+    padding: 0 2rem;
+    border-radius: 0.8rem;
+    font-size: 1.4rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    svg,
+    i {
+      font-size: 1.4rem;
+    }
+
+    &--send {
+      background: var(--primary-color, #ea580c);
+      color: #fff;
+
+      &:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+    }
+
+    &--schedule {
+      background: #fff;
+      color: #374151;
+      border: 1px solid #d1d5db;
+
+      &:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+      }
+    }
+
+    &--preview {
+      background: #fff;
+      color: #374151;
+      border: 1px solid #d1d5db;
+
+      &:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+      }
+    }
+  }
+
+  // ─── History Section ───────────────────────────────────────────
+  .history-header {
+    margin-bottom: 1.6rem;
+
+    &__title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #111827;
+      margin: 0;
+    }
+  }
+
+  // ─── Channel Badge ─────────────────────────────────────────────
+  .channel-badge {
+    font-size: 1.3rem;
+    font-weight: 500;
+
+    &--sms {
+      color: #2563eb;
+    }
+
+    &--zalo {
+      color: #0d9488;
+    }
+
+    &--email {
+      color: #7c3aed;
+    }
+
+    &--app {
+      color: #ea580c;
+    }
+  }
+
+  // ─── Open Rate ─────────────────────────────────────────────────
+  .open-rate {
+    font-weight: 600;
+    font-size: 1.4rem;
+
+    &--high {
+      color: #16a34a;
+    }
+
+    &--medium {
+      color: #ea580c;
+    }
+
+    &--low {
+      color: #dc2626;
+    }
+  }
+
+  // ─── Table overrides ───────────────────────────────────────────
+  .card-box {
+    .box-table {
+      .box-table__wrapper {
+        .table {
+          thead {
+            tr {
+              th {
+                font-size: 1.2rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                color: #6b7280;
+              }
+            }
+          }
+
+          tbody {
+            tr {
+              td {
+                font-size: 1.4rem;
+                vertical-align: middle;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

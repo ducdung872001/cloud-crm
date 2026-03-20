@@ -1,11 +1,42 @@
 export type WarehouseReportViewKey = "landing" | "xnt" | "cost" | "slow" | "history";
 
-export const LANDING_REPORTS = [
-  { key: "xnt" as const, icon: "📊", iconBg: "#eff6ff", title: "Báo cáo nhập xuất tồn", description: "Tổng hợp biến động theo kỳ, theo kho, theo sản phẩm" },
-  { key: "cost" as const, icon: "💰", iconBg: "#fffbeb", title: "Giá vốn hàng tồn", description: "Tính giá vốn theo phương pháp bình quân / FIFO" },
-  { key: "slow" as const, icon: "⏳", iconBg: "#fff7ed", title: "Hàng chậm luân chuyển", description: "Sản phẩm tồn lâu ngày không xuất, rủi ro ứ đọng vốn" },
-  { key: "history" as const, icon: "📋", iconBg: "#f5f3ff", title: "Lịch sử theo sản phẩm", description: "Toàn bộ biến động của một sản phẩm cụ thể" },
+export const LANDING_REPORTS: Array<{
+  key: Exclude<WarehouseReportViewKey, "landing">;
+  title: string;
+  description: string;
+  icon: string;
+  iconBg: string;
+}> = [
+  {
+    key: "xnt",
+    title: "Báo cáo Xuất nhập tồn",
+    description: "Theo dõi tồn đầu kỳ, nhập xuất trong kỳ và tồn cuối kỳ theo từng kho.",
+    icon: "XT",
+    iconBg: "#dbeafe",
+  },
+  {
+    key: "cost",
+    title: "Báo cáo Giá vốn hàng hóa",
+    description: "Xem giá vốn bình quân, giá trị tồn kho và biên lợi nhuận gộp.",
+    icon: "GV",
+    iconBg: "#fef3c7",
+  },
+  {
+    key: "slow",
+    title: "Báo cáo Hàng chậm lưu chuyển",
+    description: "Phát hiện sản phẩm tồn lâu ngày để xử lý khuyến mãi hoặc điều chuyển.",
+    icon: "CL",
+    iconBg: "#fee2e2",
+  },
+  {
+    key: "history",
+    title: "Báo cáo Lịch sử tồn kho sản phẩm",
+    description: "Tra cứu biến động nhập, xuất và điều chuyển theo từng mã sản phẩm.",
+    icon: "LS",
+    iconBg: "#ede9fe",
+  },
 ];
+
 
 export const XNT_KPIS = [
   { label: "Tồn đầu kỳ", value: "2,412", valueClass: "b", delta: "Đầu tháng 3/2026", deltaClass: "neu" },

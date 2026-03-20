@@ -448,6 +448,57 @@ import IcOpenShiftMenu from "assets/icons-menu/ic-open-shift.svg";
 import IcShiftReportMenu from "assets/icons-menu/ic-shift-report.svg";
 import IcLoginMenu from "assets/icons-menu/ic-login.svg";
 import IcBellMenu from "assets/icons-menu/ic-bell.svg";
+import IcCustomerGroup from "assets/icons-menu/ic-customer-group.svg";
+import IcRelationship from "assets/icons-menu/ic-relationship.svg";
+import IcIndustry from "assets/icons-menu/ic-industry.svg";
+import IcPointsHistory from "assets/icons-menu/ic-points-history.svg";
+import IcCardList from "assets/icons-menu/ic-card-list.svg";
+import IcViewStructure from "assets/icons-menu/ic-view-structure.svg";
+import IcCustomField from "assets/icons-menu/ic-custom-field.svg";
+import IcCustomerSource from "assets/icons-menu/ic-customer-source.svg";
+import IcSegmentAnalysis from "assets/icons-menu/ic-segment-analysis.svg";
+import IcCustomerValue from "assets/icons-menu/ic-customer-value.svg";
+import IcCustomerLeave from "assets/icons-menu/ic-customers-leave.svg";
+import IcReceiveTicket from "assets/icons-menu/ic-receive-ticket.svg";
+import IcCareHistory from "assets/icons-menu/ic-care-history.svg";
+import IcCallCenter from "assets/icons-menu/ic-call-center.svg";
+import IcRateCustomer from "assets/icons-menu/ic-rate-customer.svg";
+import IcMemberCustomerList from "assets/icons-menu/ic-member-customer-list.svg";
+import IcMembershipClass from "assets/icons-menu/ic-membership-class.svg";
+import IcAccumulatePoints from "assets/icons-menu/ic-accumulate-points.svg";
+import IcExchangePoints from "assets/icons-menu/ic-exchange-points.svg";
+import IcCampaignHistory from "assets/icons-menu/ic-campaign-history.svg";
+import IcMasterialsList from "assets/icons-menu/ic-masterials-list.svg";
+import IcImportMasterials from "assets/icons-menu/ic-import-masterials.svg";
+import IcRecipeMasterials from "assets/icons-menu/ic-recipe-masterials.svg";
+import IcProductList from "assets/icons-menu/ic-product-list.svg";
+import IcProductGroupList from "assets/icons-menu/ic-product-group-list.svg";
+import IcProductUnitCategory from "assets/icons-menu/ic-product-unit-category.svg";
+import IcAttributeFieldProduct from "assets/icons-menu/ic-attribute-field-product.svg";
+import IcDefaultProcessSetting from "assets/icons-menu/ic-default-process-setting.svg";
+import IcBranchList from "assets/icons-menu/ic-branch-list.svg";
+import IcDepartmentist from "assets/icons-menu/ic-department-list.svg";
+import IcPermissionGroupList from "assets/icons-menu/ic-permission-group-list.svg";
+import IcEmployeeList from "assets/icons-menu/ic-employee-list.svg";
+import IcEmployeeGroup from "assets/icons-menu/ic-employee-group.svg";
+import IcStoreManagement from "assets/icons-menu/ic-store-management.svg";
+import IcMethodPaymentSetting from "assets/icons-menu/ic-method-payment-setting.svg";
+import IcMethodPaymentSelect from "assets/icons-menu/ic-method-payment-select.svg";
+import IcSmsConfig from "assets/icons-menu/ic-sms-config.svg";
+import IcPartnerSms from "assets/icons-menu/ic-partner-sms.svg";
+import IcTopicSms from "assets/icons-menu/ic-topic-sms.svg";
+import IcDeclarationBrandName from "assets/icons-menu/ic-declaration-brandname.svg";
+import IcDeclarationTemplateSms from "assets/icons-menu/ic-declaration-template-sms.svg";
+import IcTopicZalo from "assets/icons-menu/ic-topic-zalo.svg";
+import IcTemplateZalo from "assets/icons-menu/ic-template-zalo.svg";
+import IcCallCenterConfig from "assets/icons-menu/ic-callcenter-config.svg";
+import IcCallCenterIntegration from "assets/icons-menu/ic-callcenter-integration.svg";
+import IcIntegratedMonitoring from "assets/icons-menu/ic-integrated-monitoring.svg";
+import IcAppListIntegrated from "assets/icons-menu/ic-app-list-integrated.svg";
+import IcWebhookList from "assets/icons-menu/ic-webhook-list.svg";
+import IcSupportCategory from "assets/icons-menu/ic-support-category.svg";
+import IcQRManagement from "assets/icons-menu/ic-QR-management.svg";
+
 
 
 const iconTypes = {
@@ -885,7 +936,57 @@ const iconTypes = {
   OpenShiftMenu: IcOpenShiftMenu,
   ShiftReportMenu: IcShiftReportMenu,
   LoginMenu: IcLoginMenu,
-  BellMenu: IcBellMenu
+  BellMenu: IcBellMenu,
+  CustomerGroup: IcCustomerGroup,
+  Relationship: IcRelationship,
+  Industry: IcIndustry,
+  PointsHistory: IcPointsHistory,
+  CardList: IcCardList,
+  ViewStructure: IcViewStructure,
+  CustomField: IcCustomField,
+  CustomerSource: IcCustomerSource,
+  SegmentAnalysis: IcSegmentAnalysis,
+  CustomerValue: IcCustomerValue,
+  CustomerLeave: IcCustomerLeave,
+  ReceiveTicketCSKH: IcReceiveTicket,
+  CareHistory: IcCareHistory,
+  CallCenter: IcCallCenter,
+  RateCustomer: IcRateCustomer,
+  MemberCustomerList: IcMemberCustomerList,
+  MembershipClass: IcMembershipClass,
+  AccumulatePoints: IcAccumulatePoints,
+  ExchangePoints: IcExchangePoints,
+  CampaignHistory: IcCampaignHistory,
+  MasterialsList: IcMasterialsList,
+  ImportMasterials: IcImportMasterials,
+  RecipeMasterials: IcRecipeMasterials,
+  ProductList: IcProductList,
+  ProductGroupList: IcProductGroupList,
+  ProductUnitCategory: IcProductUnitCategory,
+  AttributeFieldProduct: IcAttributeFieldProduct,
+  DefaultProcessSetting: IcDefaultProcessSetting,
+  BranchList: IcBranchList,
+  Departmentist: IcDepartmentist,
+  PermissionGroupList: IcPermissionGroupList,
+  EmployeeList: IcEmployeeList,
+  EmployeeGroup: IcEmployeeGroup,
+  StoreManagement: IcStoreManagement,
+  MethodPaymentSetting: IcMethodPaymentSetting,
+  MethodPaymentSelect: IcMethodPaymentSelect,
+  SmsConfig: IcSmsConfig,
+  PartnerSms: IcPartnerSms,
+  TopicSms: IcTopicSms,
+  DeclarationBrandName: IcDeclarationBrandName,
+  DeclarationTemplateSms: IcDeclarationTemplateSms,
+  TopicZalo: IcTopicZalo,
+  TemplateZalo: IcTemplateZalo,
+  CallCenterConfig: IcCallCenterConfig,
+  CallCenterIntegration: IcCallCenterIntegration,
+  IntegratedMonitoring: IcIntegratedMonitoring,
+  AppListIntegrated: IcAppListIntegrated,
+  WebhookList: IcWebhookList,
+  SupportCategory: IcSupportCategory,
+  QRManagement: IcQRManagement
 
 };
 

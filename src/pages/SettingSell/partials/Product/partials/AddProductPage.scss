@@ -151,6 +151,10 @@
       color: #0f172a;
     }
 
+    &:focus {
+      outline: none;
+    }
+
     &--active {
       color: #2563eb;
       border-bottom-color: #2563eb;
@@ -717,7 +721,7 @@
   }
 
   &__sku {
-    flex: 0 0 180px;
+    flex: 0 0 160px;
     padding: 6px 10px;
     border: 1.5px solid #e5e7ef;
     border-radius: 8px;
@@ -736,6 +740,52 @@
     &::placeholder { color: #c4c9d8; }
   }
 
+  &__barcode-wrap {
+    flex: 0 0 234px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__barcode {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 10px;
+    border: 1.5px solid #e5e7ef;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: "monospace", "Courier New", monospace;
+    background: #fff;
+    color: #0f172a;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    &::placeholder { color: #c4c9d8; }
+  }
+
+  // Grid 4 cột giá bên trong biến thể
+  &__price-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    background: #f1f5ff;
+    border-radius: 8px;
+
+    // Override: fill cột, bỏ fixed width
+    .add-prod-vt-price {
+      flex: unset;
+      width: 100%;
+      height: 32px;
+    }
+  }
+
   // Vùng chứa danh sách dòng đơn vị-giá
   &__prices {
     display: flex;
@@ -751,6 +801,21 @@
   color: #0f172a;
   white-space: nowrap;
   min-width: 70px;
+}
+
+// Cột giá trong price-grid của biến thể
+.add-prod-vt-price-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &__label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
 }
 
 // Mỗi dòng: [dropdown đơn vị] [giá] [nút xóa]
@@ -982,4 +1047,195 @@
       background: rgba(0, 0, 0, 0.75);
     }
   }
+}
+
+// ── BARCODE SCANNER MODAL ──
+.bs-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bs-modal {
+  background: #fff;
+  border-radius: 14px;
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: #0f172a;
+    color: #fff;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  &__close {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+
+    &:hover { background: rgba(255, 255, 255, 0.3); }
+  }
+
+  &__body {
+    background: #000;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__video-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  &__video {
+    width: 100%;
+    display: block;
+    max-height: 340px;
+    object-fit: cover;
+  }
+
+  // Khung ngắm
+  &__reticle {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  &__reticle-corner {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-color: #38bdf8;
+    border-style: solid;
+    border-width: 0;
+
+    &--tl { top: 20%; left: 12%; border-top-width: 3px; border-left-width: 3px; border-radius: 3px 0 0 0; }
+    &--tr { top: 20%; right: 12%; border-top-width: 3px; border-right-width: 3px; border-radius: 0 3px 0 0; }
+    &--bl { bottom: 20%; left: 12%; border-bottom-width: 3px; border-left-width: 3px; border-radius: 0 0 0 3px; }
+    &--br { bottom: 20%; right: 12%; border-bottom-width: 3px; border-right-width: 3px; border-radius: 0 0 3px 0; }
+  }
+
+  // Đường quét chạy lên xuống
+  &__scan-line {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+    animation: bs-scan 1.8s ease-in-out infinite;
+  }
+
+  &__hint {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+  }
+
+  &__error {
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    text-align: center;
+
+    svg { width: 36px; height: 36px; color: #f87171; }
+
+    p {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #fca5a5;
+      margin: 0;
+    }
+  }
+}
+
+@keyframes bs-scan {
+  0%   { top: 20%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 78%; opacity: 0; }
+}
+
+// Nút scan icon cạnh barcode input
+.add-prod-scan-btn--icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 7px;
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  color: #2563eb;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+  }
+
+  svg { width: 15px; height: 15px; }
+}
+
+// Nút sinh mã EAN-13 tự động
+.add-prod-scan-btn--gen {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 7px;
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+  color: #16a34a;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: #dcfce7;
+    border-color: #86efac;
+  }
+
+  svg { width: 15px; height: 15px; }
 }

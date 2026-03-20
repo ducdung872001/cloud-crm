@@ -22,7 +22,7 @@ export default function ReceiptModal({ open, cartItems, onClose, customerId, inv
   const qrRef = useRef<HTMLDivElement>(null);
   const [isPaymentProcessing, setIsPaymentProcessing] = React.useState(false);
   const total = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
-  const paid = 150000;
+  const paid = total;
   const change = Math.max(0, paid - total);
   const fmt = (n: number) => n.toLocaleString("vi") + " ₫";
   const now = new Date();

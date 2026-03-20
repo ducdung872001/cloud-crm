@@ -13,13 +13,11 @@ export default function WarehouseReportCostView() {
 
   return (
     <div className="warehouse-report-view">
-      <div className="page-header page-header--split">
+      {/* <div className="page-header page-header--split">
         <div>
-          <div className="page-eyebrow">Báo cáo kho</div>
-          <div className="page-title">Giá vốn hàng tồn</div>
         </div>
         <WarehouseReportActions secondary="⬇ Xuất Excel" primary="📌 Phân tích biên lợi nhuận" />
-      </div>
+      </div> */}
       <WarehouseReportFilterBar leftLabel="Phương pháp:" leftButtons={["Bình quân", "FIFO"]} selects={["Tất cả kho", "Tất cả nhóm hàng"]} actionLabel="Xem báo cáo" />
       <WarehouseReportKpis items={COST_KPIS} />
       <div className="chart-row">

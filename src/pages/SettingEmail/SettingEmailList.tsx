@@ -9,6 +9,7 @@ import { getPermissions } from "utils/common";
 
 import "./SettingEmailList.scss";
 import { getSearchParameters } from "reborn-util";
+import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
 export default function SettingEmailList() {
   document.title = "Cài đặt Email";
@@ -19,12 +20,12 @@ export default function SettingEmailList() {
     return tabParamUrl ? tabParamUrl : "";
   });
 
-  const [isDetailCategory, setIsDetailCategory] = useState<boolean>(() => {
+  const [isDetail, setIsDetail] = useState<boolean>(() => {
     return tabParamUrl ? true : false;
   });
   const [permissions, setPermissions] = useState(getPermissions());
 
-  const menuCategoryEmail = [
+  const listTab = [
     permissions["GLOBAL_CONFIG_VIEW"] == 1
       ? {
           title: "Cấu hình Email",
@@ -53,69 +54,60 @@ export default function SettingEmailList() {
 
   return (
     <div className="page-setting-email">
-      {!isDetailCategory && <TitleAction title="Cài đặt Email" />}
-      <div className="card-box d-flex flex-column">
-        {!isDetailCategory && (
-          <ul className="menu">
-            {menuCategoryEmail.map((item, idx) => {
-              return (
-                <li
-                  key={idx}
-                  className="menu__category"
-                  onClick={(e) => {
-                    e.preventDefault();
+      {!isDetail && <TitleAction title="Cài đặt Email" />}
+      <div className="d-flex flex-column">
+        {!isDetail && (
+            <TabMenuList
+                listTab={listTab}
+                onClick={(item) => {
                     setTab(item.is_tab);
-                    setIsDetailCategory(true);
-                  }}
-                >
-                  {item.title}
-                </li>
-              );
-            })}
-          </ul>
+                    setIsDetail(true);
+                }}
+            />
         )}
       </div>
-      {isDetailCategory && tab === "tab_one" ? (
+  
+      {isDetail && tab === "tab_one" ? (
         <ConfigEmailList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "tab_two" ? (
+      ) : isDetail && tab === "tab_two" ? (
         <TemplateCategoryList
           titleProps="Cài đặt Email"
           nameProps="Chủ đề Email"
           typeProps="2"
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "tab_three" ? (
+      ) : isDetail && tab === "tab_three" ? (
         <PartnerEmailList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "tab_four" ? (
+      ) : isDetail && tab === "tab_four" ? (
         <DeclareEmailList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
       ) : (
-        isDetailCategory && (
+        isDetail && (
           <TemplateEmailList
             onBackProps={(isBack) => {
               if (isBack) {
-                setIsDetailCategory(false);
+                setIsDetail(false);
               }
             }}
           />

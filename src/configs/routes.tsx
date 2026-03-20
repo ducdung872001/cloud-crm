@@ -182,6 +182,9 @@ import MarketingCampaignPage from "@/pages/MarketingCampaignPage/MarketingCampai
 import CustomerAnalysisPage from "@/pages/CustomerAnalysisPage/CustomerAnalysisPage";
 import PaymentMethodList from "@/pages/PaymentMethod/PaymentMethod";
 import PaymentMethodPage from "@/pages/PaymentMethodPage/PaymentMethodPage";
+import FinanceContent from "@/pages/PaymentReconciliation";
+import ReturnProductPage from "@/pages/ReturnProduct";
+import Reconcile from "@/pages/Reconcile";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -218,7 +221,7 @@ export const menu: IMenuItem[] = [
       },
       {
         title: "returnInvoice", // Khách trả hàng
-        path: urls.customer_pay,
+        path: urls.return_invoice,
         icon: <Icon name="ReturnMenu" />,
         code: "RETURN_INVOICE",
       },
@@ -495,7 +498,6 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="DebtTransactionMenu" />,
         code: "",
       },
-     
     ],
   },
   {
@@ -576,7 +578,7 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="PointsLogMenu" />,
       //   code: "",
       // },
-      
+
       // {
       //   title: "receiveTicket", // Tiếp nhận hỗ trợ
       //   path: urls.ticket,
@@ -691,7 +693,7 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="ShippingReportMenu" />,
         code: "",
       },
-      
+
       {
         title: "settingCashbook", // Cài đặt tài chính
         path: urls.setting_cash_book,
@@ -740,7 +742,7 @@ export const menu: IMenuItem[] = [
         title: "manageDefaultProcesses",
         path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
         code: "BPM",
-        icon: <Icon name="DefaultProcessMenu" />,
+        icon: <Icon name="DefaultProcessSetting" />,
       },
       // {
       //   title: "business_rule", // Loại luật nghiệp vụ
@@ -1171,7 +1173,7 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_payment_method,
     // component: <SettingPaymentMethod />,
-    component: <PaymentMethodPage/>
+    component: <PaymentMethodPage />,
   },
   {
     path: urls.setting_timekeeping,
@@ -1199,11 +1201,11 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.member_list,
-    component: <MemberCustomersPage/>
+    component: <MemberCustomersPage />,
   },
   {
     path: urls.marketing_campaign,
-    component: <MarketingCampaignPage/>
+    component: <MarketingCampaignPage />,
   },
   {
     path: urls.loyalty_wallet,
@@ -1346,7 +1348,7 @@ export const routes: IRouter[] = [
     path: urls.report_warehouse,
     component: <WarehouseReport />,
   },
-  
+
   // tạo đơn bán hàng
   {
     path: urls.create_sale_add,
@@ -1361,7 +1363,7 @@ export const routes: IRouter[] = [
   {
     path: urls.promotional_program,
     // component: <PromotionalProgram />,
-    component: <PromotionPage/>
+    component: <PromotionPage />,
   },
   {
     path: urls.promotional_report,
@@ -1400,8 +1402,8 @@ export const routes: IRouter[] = [
   },
   // danh sách khách trả hàng
   {
-    path: urls.customer_pay,
-    component: <CustomerPayList />,
+    path: urls.return_invoice,
+    component: <ReturnProductPage />,
   },
   // bán hàng đa kênh
   {
@@ -1416,17 +1418,17 @@ export const routes: IRouter[] = [
   // Tổng đài
   {
     path: urls.call_center,
-    component: <CallCenterList />
+    component: <CallCenterList />,
   },
   //chăm sóc khách hàng
   {
     path: urls.customer_care_page,
-    component: <CustomerCarePage/>
+    component: <CustomerCarePage />,
   },
   //phân tích khách hàng
   {
     path: urls.customer_analysis,
-    component: <CustomerAnalysisPage/>
+    component: <CustomerAnalysisPage />,
   },
   //email
   {
@@ -1586,5 +1588,9 @@ export const routes: IRouter[] = [
   {
     path: urls.payment_mgt,
     component: <PaymentMethodList />,
+  },
+  {
+    path: urls.payment_control,
+    component: <Reconcile />,
   },
 ];

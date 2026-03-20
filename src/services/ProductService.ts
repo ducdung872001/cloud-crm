@@ -113,7 +113,6 @@ export default {
     return fetch(urlsApi.product.mediaUpload, {
       method: "POST",
       body: formData,
-      headers: { "Content-Type": undefined }, // bỏ Content-Type để browser tự set boundary
     }).then((res) => res.json());
   },
 
@@ -158,7 +157,6 @@ export default {
     return fetch(urlsApi.product.wUpdate, {
       method: "POST",
       body: formData,
-      headers: { "Content-Type": undefined },
     }).then((res) => res.json());
   },
   wDelete: (id: number) => {

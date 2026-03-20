@@ -12,30 +12,47 @@ import ServiceAttributeList from "./partials/ServiceAttributeList/ServiceAttribu
 import CategoryProductList from "./partials/CategoryProduct/CategoryProductList";
 import SettingPromotionList from "pages/SettingPromotion/SettingPromotionList";
 import ProductCategoryList from "./partials/ProductCategory";
+import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
 export default function SettingSellList() {
   document.title = "Cài đặt bán hàng";
 
   const [tab, setTab] = useState<string>("");
-  const [isDetailCategory, setIsDetailCategory] = useState<boolean>(false);
+  const [isDetail, setIsDetail] = useState<boolean>(false);
 
-  const productMenu = [
+  const listTab = [
     {
       title: "Danh mục sản phẩm",
       is_tab: "product_tab_five",
+      backgroundColor: "#E6F1FB",
+      strokeColor: "#185fa5",
+      icon: "ProductCategoryMenu",
+      des: "Tổ chức sản phẩm theo danh mục phân cấp, giúp tìm kiếm và quản lý nhanh hơn."
     },
 
     {
       title: "Danh sách sản phẩm",
       is_tab: "product_tab_one",
+      backgroundColor: "#E1F5EE",
+      strokeColor: "#0f6e56",
+      icon: "ProductList",
+      des: "Xem và quản lý toàn bộ sản phẩm, cập nhật thông tin, giá bán và trạng thái."
     },
     {
       title: "Danh sách nhóm sản phẩm",
       is_tab: "product_list_tab_one",
+      backgroundColor: "#FAEEDA",
+      strokeColor: "#854f0b",
+      icon: "ProductGroupList",
+      des: "Gom nhóm sản phẩm liên quan để áp dụng chính sách giá và khuyến mãi chung."
     },
     {
       title: "Danh mục đơn vị sản phẩm",
       is_tab: "product_tab_two",
+      backgroundColor: "#EEEDFE",
+      strokeColor: "#534ab7",
+      icon: "ProductUnitCategory",
+      des: "Định nghĩa các đơn vị tính như cái, hộp, kg, lít... dùng trong bán hàng và kho."
     },
 
     // {
@@ -46,190 +63,121 @@ export default function SettingSellList() {
     {
       title: "Định nghĩa trường thông tin bổ sung sản phẩm",
       is_tab: "product_tab_three",
+      backgroundColor: "#EAF3DE",
+      strokeColor: "#3b6d11",
+      icon: "AttributeFieldProduct",
+      des: "Tạo thêm các trường dữ liệu tuỳ chỉnh để lưu thông tin đặc thù của sản phẩm."
     },
 
-    {
-      title: "Cài đặt khuyến mãi",
-      is_tab: "product_tab_promotion",
-    },
+    // {
+    //   title: "Cài đặt khuyến mãi",
+    //   is_tab: "product_tab_promotion",
+    //   des: "Cấu hình quy tắc giảm giá, chiết khấu theo sản phẩm, nhóm hàng hoặc đơn hàng."
+    // },
   ];
 
-  const serviceMenu = [
-    {
-      title: "Danh mục dịch vụ",
-      is_tab: "service_tab_one",
-    },
-    {
-      title: "Danh sách dịch vụ",
-      is_tab: "service_tab_two",
-    },
-    {
-      title: "Danh sách thẻ dịch vụ",
-      is_tab: "service_tab_three",
-    },
-
-    {
-      title: "Định nghĩa trường thông tin bổ sung dịch vụ",
-      is_tab: "service_tab_four",
-    },
-  ];
-
-  const menuCategorySMS = [
-    {
-      title: "Danh sách thẻ dịch vụ",
-      is_tab: "tab_one",
-    },
-    {
-      title: "Danh sách sản phẩm",
-      is_tab: "tab_two",
-    },
-    {
-      title: "Danh sách dịch vụ",
-      is_tab: "tab_three",
-    },
-    {
-      title: "Danh mục dịch vụ",
-      is_tab: "tab_four",
-    },
-    {
-      title: "Danh mục đơn vị",
-      is_tab: "tab_five",
-    },
-    {
-      title: "Danh sách quà tặng",
-      is_tab: "tab_six",
-    },
-  ];
 
   return (
     <div className="page-content page-setting-sell">
-      {!isDetailCategory && <TitleAction title="Cài đặt bán hàng" />}
-      <div className="card-box d-flex flex-column">
-        {!isDetailCategory && (
-          // <div style={{ display: "flex" }}>
-            <ul className="menu">
-              {productMenu.map((item, idx) => {
-                return (
-                  <li
-                    key={idx}
-                    className="menu__category"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setTab(item.is_tab);
-                      setIsDetailCategory(true);
-                    }}
-                  >
-                    {item.title}
-                  </li>
-                );
-              })}
-            </ul>
-            // {/* <ul className="service-menu">
-            //   {serviceMenu.map((item, idx) => {
-            //     return (
-            //       <li
-            //         key={idx}
-            //         className="menu__category"
-            //         onClick={(e) => {
-            //           e.preventDefault();
-            //           setTab(item.is_tab);
-            //           setIsDetailCategory(true);
-            //         }}
-            //       >
-            //         {item.title}
-            //       </li>
-            //     );
-            //   })}
-            // </ul> */}
+      {!isDetail && <TitleAction title="Cài đặt bán hàng" />}
+      <div className="d-flex flex-column">
+        {!isDetail && (
+            <TabMenuList
+                listTab={listTab}
+                onClick={(item) => {
+                    setTab(item.is_tab);
+                    setIsDetail(true);
+                }}
+            />
         )}
       </div>
 
-      {isDetailCategory && tab === "service_tab_three" ? (
+      {isDetail && tab === "service_tab_three" ? (
         <CardServiceList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "service_tab_two" ? (
+      ) : isDetail && tab === "service_tab_two" ? (
         <ServiceList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "service_tab_one" ? (
+      ) : isDetail && tab === "service_tab_one" ? (
         <CategoryServiceList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "service_tab_four" ? (
+      ) : isDetail && tab === "service_tab_four" ? (
         <ServiceAttributeList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "product_tab_five" ? (
+      ) : isDetail && tab === "product_tab_five" ? (
         <CategoryProductList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "product_tab_one" ? (
+      ) : isDetail && tab === "product_tab_one" ? (
         <ProductList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "product_list_tab_one" ? (
+      ) : isDetail && tab === "product_list_tab_one" ? (
         <ProductCategoryList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "product_tab_two" ? (
+      ) : isDetail && tab === "product_tab_two" ? (
         <ProductUnitList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "product_tab_three" ? (
+      ) : isDetail && tab === "product_tab_three" ? (
         <ProductAttributeList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "product_tab_promotion" ? (
+      ) : isDetail && tab === "product_tab_promotion" ? (
         <SettingPromotionList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
       ) : (
-        isDetailCategory && (
+        isDetail && (
           <GiftList
             onBackProps={(isBack) => {
               if (isBack) {
-                setIsDetailCategory(false);
+                setIsDetail(false);
               }
             }}
           />

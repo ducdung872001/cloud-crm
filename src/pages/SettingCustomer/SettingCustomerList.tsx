@@ -25,35 +25,67 @@ export default function SettingCustomerList() {
   const listTab = [
     {
       title: "Danh sách thẻ khách hàng",
+      icon: "CardList",
       is_tab: "tab_one",
+      backgroundColor: "#EEEDFE",
+      strokeColor: "#534ab7",
+      des: "Quản lý các loại thẻ thành viên, thẻ tích điểm hoặc thẻ ưu đãi áp dụng cho khách hàng."
     },
     {
       title: "Danh sách nguồn khách hàng",
+      icon: "CustomerSource",
+      backgroundColor: "#E1F5EE",
+      strokeColor: "#0f6e56",
       is_tab: "tab_two",
+      des: "Định nghĩa các kênh tiếp cận khách hàng như mạng xã hội, giới thiệu, quảng cáo, v.v."
     },
     {
       title: "Danh sách nhóm khách hàng",
+      icon: "CustomerGroup",
+      backgroundColor: "#FAEEDA",
+      strokeColor: "#854f0b",
       is_tab: "tab_three",
+      des: "Phân loại khách hàng thành các nhóm để áp dụng chính sách giá, ưu đãi riêng biệt."
     },
     {
       title: "Danh sách ngành nghề/nghề nghiệp",
+      icon: "Industry",
+      backgroundColor: "#E6F1FB",
+      strokeColor: "#185fa5",
       is_tab: "tab_four",
+      des: "Cấu hình danh mục ngành nghề để phân tích và phân khúc tệp khách hàng hiệu quả hơn."
     },
     {
       title: "Danh sách mối quan hệ khách hàng",
+      icon: "Relationship",
+      backgroundColor: "#FAECE7",
+      strokeColor: "#993c1d",
       is_tab: "tab_five",
+      des: "Định nghĩa các loại quan hệ như người giới thiệu, người thân, đối tác để theo dõi mạng lưới khách hàng."
     },
     {
       title: "Định nghĩa trường thông tin bổ sung khách hàng",
+      icon: "CustomField",
+      backgroundColor: "#EAF3DE",
+      strokeColor: "#3b6d11",
       is_tab: "tab_six",
+      des: "Tạo thêm các trường dữ liệu tuỳ chỉnh để lưu trữ thông tin đặc thù của khách hàng theo nhu cầu doanh nghiệp."
     }, 
     {
       title: "Định nghĩa cấu trúc xem thông tin",
+      icon: "ViewStructure",
+      backgroundColor: "#FBEAF0",
+      strokeColor: "#993556",
       is_tab: "tab_seven",
+      des: "Tùy chỉnh bố cục hiển thị thông tin khách hàng trên màn hình chi tiết theo từng vai trò hoặc bộ phận."
     }, 
     {
       title: "Lịch sử điểm tích lũy của khách hàng",
+      icon: "PointsHistory",
+      backgroundColor: "#F1EFE8",
+      strokeColor: "#5f5e5a",
       is_tab: "tab_nine",
+      des: "Tra cứu toàn bộ lịch sử cộng/trừ điểm, đổi thưởng của từng khách hàng theo thời gian."
     },
     ...(checkSubdomainTNEX ? [
       {

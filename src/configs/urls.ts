@@ -19,6 +19,7 @@ const prefixInventory = prefixBiz + "/inventory";
 const prefixWarehouse = prefixBiz + "/warehouse";
 const prefixCare = prefixBiz + "/care";
 const prefixBilling = prefixBiz + "/billing";
+const prefixLogistics = prefixBiz + "/logistics";
 
 console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
@@ -401,15 +402,15 @@ export const urlsApi = {
     takeEstimate: prefixAdmin + "/customer/estimate",
   },
   invoice: {
-    createInvoice: prefixSales + "/invoiceDetail/get",
+    createInvoice: prefixSales + "/invoice/draft/create",
     list: prefixSales + "/invoice/list/v2",
     create: prefixSales + "/invoice/create",
-    invoiceDetail: prefixSales + "/invoiceDetail/import",
+    invoiceDetail: prefixSales + "/invoiceDetail/get",
     cardService: prefixSales + "/invoiceDetail/cardService",
     // Tạo hóa đơn bán hàng
     invoiceDetailCustomer: prefixSales + "/invoiceDetail/customer",
     // Xem chi tiết hóa đơn
-    invoiceDetailList: prefixSales + "/invoiceDetail/list",
+    invoiceDetailList: prefixSales + "/invoiceDetail/get",
     // Hủy hóa đơn
     cancelInvoice: prefixSales + "/invoice/delete",
     // vinh danh bán hàng
@@ -424,8 +425,25 @@ export const urlsApi = {
     invoiceCode: prefixSales + "/invoice/code",
     prefixSales,
   },
+  returnInvoice: {
+    list: prefixSales + "/invoice/return-exchange/list",
+    detail: prefixSales + "/invoice/get",
+    getReturnItems: prefixSales + "/invoice/get/return",
+    createReturn: prefixSales + "/invoice/create/return",
+    createExchange: prefixSales + "/invoice/create/exchange",
+    variantListDetail: prefixInventory + "/productVariant/list-detail", // ← THÊM DÒNG NÀY
+    confirm: prefixSales + "/invoice/return/confirm",
+  },
+  invoiceImport: {
+    update: prefixInventory + "/invoice/import/update",
+    get: prefixInventory + "/invoice/import/get",
+    list: prefixInventory + "/invoice/import/list",
+    approve: prefixInventory + "/invoice/import/approve",
+    cancel: prefixInventory + "/invoice/import/cancel",
+  },
   shipping: {
-    create: prefixAdmin + "/shipping/create",
+    create: prefixLogistics + "/shipment/create",
+    list: prefixLogistics + "/shipment/list",
   },
   boughtService: {
     addToInvoice: prefixAdmin + "/boughtService/update",
@@ -528,6 +546,7 @@ export const urlsApi = {
   },
 
   productImport: {
+    list: prefixInventory + "/product_import/list",
     update: prefixInventory + "/product_import/update",
     detail: prefixInventory + "/product_import/detail",
     delete: prefixInventory + "/product_import/delete",
@@ -537,7 +556,7 @@ export const urlsApi = {
     list: prefixInventory + "/inventory/list",
     update: prefixInventory + "/inventory/update",
     delete: prefixInventory + "/inventory/delete",
-    import: prefixInventory + "/inventory/import",
+    import: prefixInventory + "/warehouse/list",
     ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
     ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
   },
@@ -3225,7 +3244,8 @@ export const urls = {
   // đường dẫn quản lý đơn vị vận chuyển
   shipping_parther: "/shipping_parther",
   // đường dẫn danh sách khách trả hàng
-  customer_pay: "/customer_pay",
+  // customer_pay: "/customer_pay",
+  return_invoice: "/return_invoice",
   // bán hàng đa kênh
   multi_channel_sales: "/multi_channel_sales",
   //tạo báo giá

@@ -32,6 +32,7 @@ interface IOptionData {
   exchange?: number;
 }
 
+
 const mergeUnitOptions = (...sources: Array<IOptionData[] | undefined>) => {
   const map = new Map<string, IOptionData>();
 
@@ -397,11 +398,19 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
 
     setIsSubmit(true);
 
+    if (!invoiceId) {
+      showToast("Vui lòng tạo phiếu nhập trước khi thêm sản phẩm", "warning");
+      setIsSubmit(false);
+      return;
+    }
+
     const body: IInvoiceDetailRequest = {
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as IInvoiceDetailRequest),
-            mfgDate: moment(formData.values.mfgDate).format('YYYY-MM-DDTHH:mm:ss'),
-            expiryDate: moment(formData.values.expiryDate).format('YYYY-MM-DDTHH:mm:ss'),
+      invoiceId,
+      variantId: 0,
+      mfgDate: moment(formData.values.mfgDate).format("YYYY-MM-DDTHH:mm:ss"),
+      expiryDate: moment(formData.values.expiryDate).format("YYYY-MM-DDTHH:mm:ss"),
     };
 
     // let arrExchange = (listUnitProduct || []).filter((item) => item.value == body.unitId.toString());

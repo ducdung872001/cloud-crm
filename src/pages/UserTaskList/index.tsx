@@ -171,9 +171,9 @@ export default function UserTaskList() {
 
   return (
     <div className="page-content page-user-task-list">
-      <div className="actions-title">
+      {/* <div className="actions-title">
         {<TitleAction title={isDetailWork || isHandleTask ? "Công việc" : "Danh sách công việc"} titleActions={titleActions} />}
-      </div>
+      </div> */}
       {type == "project" ? (
         <div className={`wrapper-project ${isDetailWork || isHandleTask ? "d-none" : ""}`}>
           {/* <div className={`${isFullPage ? "hide-project-management" : "project-management"} ${!isVertical ? "show__vertical--project" : ""}`}>

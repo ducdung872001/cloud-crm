@@ -107,10 +107,12 @@ export default function ViewConfigDepartment(props: IViewConfigDepartmentProps) 
     let lstPermissionResource = permissionRes.result;
     let mapPermission = {};
     (lstPermissionResource || []).forEach((permissionResource: any) => {
-      let actions = JSON.parse(permissionResource.actions);
-      actions.forEach((action: any) => {
-        mapPermission[`${permissionResource.code}_${action}`] = 1;
-      });
+      if (permissionResource?.actions) {
+        let actions = JSON.parse(permissionResource.actions);
+        actions.forEach((action: any) => {
+          mapPermission[`${permissionResource.code}_${action}`] = 1;
+        });
+      }
     });
 
     // console.log("permissions =>", JSON.stringify(mapPermission));
@@ -473,19 +475,18 @@ export default function ViewConfigDepartment(props: IViewConfigDepartmentProps) 
                           return (
                             <div key={idx} className={`decentralization__item resource--item`}>
                               <div
-                                className={`department__permission--0  ${
-                                  item.parentId === null || item.parentId === 0 ? "lv__children" : "lv__sub--children"
-                                }`}
+                                className={`department__permission--0  ${item.parentId === null || item.parentId === 0 ? "lv__children" : "lv__sub--children"
+                                  }`}
                               >
                                 <Checkbox
                                   label={element.name}
                                   onClick={(e) => {
                                     if (e.target.checked) {
                                       //Add
-                                      getPermissionDepartmentAddMulti(element.id, jobTitles, element.actions);
+                                      getPermissionDepartmentAddMulti(element.id, jobTitles, element?.actions);
                                     } else if (e.target.checked === false) {
                                       //Remove
-                                      getPermissionDepartmentDeleteMulti(element.id, jobTitles, element.actions);
+                                      getPermissionDepartmentDeleteMulti(element.id, jobTitles, element?.actions);
                                     }
                                   }}
                                 />
