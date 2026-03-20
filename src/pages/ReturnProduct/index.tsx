@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import "./index.scss";
-import { ReturnProduct, IReturnInvoiceListParams, mapApiToUi } from "@/types/returnProduct";
+import { ReturnProduct, IReturnInvoiceListParams } from "@/types/returnProduct";
 import ReturnStats from "./components/ReturnStats";
 import ReturnTable from "./components/ReturnTable";
 import CreateReturnModal from "./modals/CreateReturnModal";
@@ -10,65 +10,111 @@ import ReturnInvoiceService from "@/services/ReturnInvoiceService";
 
 const PAGE_SIZE = 20;
 
+/** Loại bỏ key có giá trị undefined/null — tránh "param=undefined" trên URL */
+function stripUndefined<T extends Record<string, unknown>>(obj: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined && v !== null)
+  ) as Partial<T>;
+}
+
+/** Trả về fromDate/toDate dạng "dd/MM/yyyy" cho tháng N (0-indexed) năm Y */
+function monthRange(year: number, month: number): { fromDate: string; toDate: string } {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  return {
+    fromDate: `01/${pad(month + 1)}/${year}`,
+    toDate:   `${lastDay}/${pad(month + 1)}/${year}`,
+  };
+}
+
 const ReturnProductPage: React.FC = () => {
   // ── Data state ──────────────────────────────────────────────────────────────
-  const [data, setData] = useState<ReturnProduct[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [data,          setData]          = useState<ReturnProduct[]>([]);
+  const [total,         setTotal]         = useState(0);
+  const [lastMonthTotal, setLastMonthTotal] = useState<number | undefined>(undefined);
+  const [page,          setPage]          = useState(0);
+  const [loading,       setLoading]       = useState(false);
 
   // ── Filter state ────────────────────────────────────────────────────────────
-  const [filterType, setFilterType] = useState("");        // "" | "return" | "exchange"
-  const [filterStatus, setFilterStatus] = useState("");    // "" | "pending" | "done" | "cancel"
-  const [search, setSearch] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const [filterType,   setFilterType]   = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [search,       setSearch]       = useState("");
+  const [fromDate,     setFromDate]     = useState("");
+  const [toDate,       setToDate]       = useState("");
 
   // ── Modal state ─────────────────────────────────────────────────────────────
-  const [createOpen, setCreateOpen] = useState(false);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<ReturnProduct | null>(null);
+  const [createOpen,    setCreateOpen]    = useState(false);
+  const [detailOpen,    setDetailOpen]    = useState(false);
+  const [selectedItem,  setSelectedItem]  = useState<ReturnProduct | null>(null);
 
-  // Debounce search
   const searchTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  // ── API call ────────────────────────────────────────────────────────────────
+  // ── Fetch last month count (chỉ gọi 1 lần khi mount, không phụ thuộc filter) ──
+  const fetchLastMonthCount = useCallback(async () => {
+    const now = new Date();
+    const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+    const lastYear  = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+    const { fromDate: lmFrom, toDate: lmTo } = monthRange(lastYear, lastMonth);
+
+    try {
+      const res = await ReturnInvoiceService.list({
+        fromDate: lmFrom,
+        toDate:   lmTo,
+        page: 0,
+        size: 1, // Chỉ cần total, không cần items
+      });
+
+      const lmTotal =
+        res?.result?.total ??
+        res?.result?.pagedLst?.total ??
+        null;
+
+      if (lmTotal !== null) setLastMonthTotal(lmTotal);
+    } catch {
+      // Không ảnh hưởng UX chính nếu lỗi
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchLastMonthCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Main data fetch với Inventory enrich ─────────────────────────────────────
   const fetchData = useCallback(
     async (currentPage = 0) => {
       setLoading(true);
       const abortCtrl = new AbortController();
 
       try {
-        // Map UI filter values → API params
         const returnTypeNum =
           filterType === "return" ? 1 : filterType === "exchange" ? 2 : undefined;
-
         const statusNum =
-          filterStatus === "done"
-            ? 1
-            : filterStatus === "pending"
-            ? 2
-            : filterStatus === "cancel"
-            ? 3
-            : undefined;
+          filterStatus === "done"     ? 1
+          : filterStatus === "pending"  ? 2
+          : filterStatus === "cancel"   ? 3
+          : undefined;
 
-        const params: IReturnInvoiceListParams = {
-          returnType: returnTypeNum,
-          status: statusNum,
+        const rawParams: IReturnInvoiceListParams = {
+          returnType:  returnTypeNum,
+          status:      statusNum,
           invoiceCode: search.trim() || undefined,
-          fromDate: fromDate || undefined,
-          toDate: toDate || undefined,
-          page: currentPage,
-          size: PAGE_SIZE,
+          fromDate:    fromDate || undefined,
+          toDate:      toDate   || undefined,
+          page:        currentPage,
+          size:        PAGE_SIZE,
         };
 
-        const res = await ReturnInvoiceService.list(params, abortCtrl.signal);
+        const params = stripUndefined(rawParams) as IReturnInvoiceListParams;
 
-        if (res?.result?.data) {
-          const mapped = res.result.data.map(mapApiToUi);
-          setData(currentPage === 0 ? mapped : (prev) => [...prev, ...mapped]);
-          setTotal(res.result.total ?? 0);
-        }
+        // Dùng listAndEnrich thay vì list thuần — tự động enrich productSummary
+        const { items, total: apiTotal } = await ReturnInvoiceService.listAndEnrich(
+          params,
+          abortCtrl.signal
+        );
+
+        setData(currentPage === 0 ? items : (prev) => [...prev, ...items]);
+        setTotal(apiTotal);
       } catch (err: any) {
         if (err?.name !== "AbortError") {
           console.error("[ReturnProduct] fetch error:", err);
@@ -80,48 +126,34 @@ const ReturnProductPage: React.FC = () => {
     [filterType, filterStatus, search, fromDate, toDate]
   );
 
-  // Reset về trang 0 khi filter thay đổi
   useEffect(() => {
     setPage(0);
     fetchData(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterType, filterStatus, fromDate, toDate]);
 
-  // Debounce search input
   const handleSearch = useCallback((val: string) => {
     setSearch(val);
     clearTimeout(searchTimer.current);
-    searchTimer.current = setTimeout(() => {
-      setPage(0);
-      // fetchData sẽ được gọi qua effect khi search thay đổi
-    }, 400);
+    searchTimer.current = setTimeout(() => setPage(0), 400);
   }, []);
 
-  // Trigger fetch khi search state đổi (sau debounce)
   useEffect(() => {
     fetchData(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
-  // ── Handlers ────────────────────────────────────────────────────────────────
+  // ── Handlers ─────────────────────────────────────────────────────────────────
   const handleViewDetail = useCallback((item: ReturnProduct) => {
     setSelectedItem(item);
     setDetailOpen(true);
   }, []);
 
-  /**
-   * Callback sau khi tạo phiếu thành công:
-   * Prepend item mới lên đầu danh sách (optimistic update)
-   * và tăng counter thống kê.
-   */
   const handleCreate = useCallback((newItem: ReturnProduct) => {
     setData((prev) => [newItem, ...prev]);
     setTotal((t) => t + 1);
     setCreateOpen(false);
   }, []);
-
-  // ── Stats: tính từ data hiện có trong trang ──────────────────────────────────
-  // (Với production: nên có API riêng trả summary, hoặc dùng total từ API)
 
   return (
     <div className="return-product">
@@ -130,10 +162,12 @@ const ReturnProductPage: React.FC = () => {
 
         <div className="return-product__content">
           <div className="return-product__inner">
-            {/* Stats — tính từ data đang load */}
-            <ReturnStats data={data} totalFromApi={total} />
+            <ReturnStats
+              data={data}
+              totalFromApi={total}
+              lastMonthTotal={lastMonthTotal}
+            />
 
-            {/* Table + filters */}
             <ReturnTable
               data={data}
               filterType={filterType}
@@ -141,8 +175,8 @@ const ReturnProductPage: React.FC = () => {
               search={search}
               loading={loading}
               total={total}
-              onFilterType={(v) => { setFilterType(v); }}
-              onFilterStatus={(v) => { setFilterStatus(v); }}
+              onFilterType={(v) => setFilterType(v)}
+              onFilterStatus={(v) => setFilterStatus(v)}
               onSearch={handleSearch}
               onViewDetail={handleViewDetail}
               onCreateClick={() => setCreateOpen(true)}
@@ -156,7 +190,6 @@ const ReturnProductPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal tạo phiếu */}
       <CreateReturnModal
         open={createOpen}
         onClose={() => setCreateOpen(false)}
@@ -164,7 +197,6 @@ const ReturnProductPage: React.FC = () => {
         totalExisting={total}
       />
 
-      {/* Modal chi tiết */}
       <ReturnDetailModal
         open={detailOpen}
         item={selectedItem}

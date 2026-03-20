@@ -10,6 +10,7 @@ export interface ReturnProduct {
   customerName: string;
   originalOrderCode: string;
   type: ReturnType;
+  /** Tên sản phẩm tóm tắt — được enrich từ Inventory microservice */
   productSummary: string;
   refundAmount: number;
   status: ReturnStatus;
@@ -61,6 +62,8 @@ export interface IReturnInvoiceResponse {
   reason: string;
   refundMethod: number;
   receiptDate: string;
+  createdTime?: string;
+  updatedTime?: string;
   referId: number;
   customerId: number;
   customerName?: string;
@@ -70,21 +73,38 @@ export interface IReturnInvoiceResponse {
   bsnId: number;
   referInvoiceCode?: string;
   productSummary?: string;
+  /** Danh sách sản phẩm trong phiếu — dùng để enrich tên */
+  products?: Array<{
+    productId: number;
+    variantId?: number;
+    name?: string;
+    qty?: number;
+  }>;
 }
 
-// ─── Auto-fill: response from GET /invoice/get/return?id=X ───────────────────
+// ─── Inventory enrich types ───────────────────────────────────────────────────
 
-/**
- * Sản phẩm có thể trả lại (BoughtProductResponse từ backend)
- * Chỉ lấy các field cần thiết cho auto-fill form.
- */
+/** Response từ GET /inventory/productVariant/list-detail?lstId=1,2,3 */
+export interface IVariantDetail {
+  id: number;          // variantId
+  productId: number;
+  /** Tên biến thể: "Đen / 16GB / 512GB" */
+  name?: string;
+  variantName?: string;
+  /** Tên sản phẩm gốc */
+  productName?: string;
+}
+
+/** Map variantId → IVariantDetail, dùng để enrich nhanh */
+export type VariantMap = Record<number, IVariantDetail>;
+
+// ─── Auto-fill types ──────────────────────────────────────────────────────────
+
 export interface IReturnableProduct {
-  id: number;          // bought_product.id
+  id: number;
   productId: number;
   variantId?: number;
-  /** Tên sản phẩm (join từ product table) */
   name?: string;
-  /** Số lượng còn được phép trả (đã trừ các lần trả trước) */
   qty: number;
   price: number;
   priceDiscount?: number;
@@ -98,15 +118,10 @@ export interface IReturnableProduct {
   batchNo?: string;
 }
 
-/**
- * Dịch vụ có thể trả lại (BoughtServiceResponse)
- */
 export interface IReturnableService {
-  id: number;          // bought_service.id
+  id: number;
   serviceId: number;
-  /** Tên dịch vụ */
   name?: string;
-  /** Số buổi còn được trả */
   serviceNumber?: number;
   price: number;
   fee: number;
@@ -115,18 +130,12 @@ export interface IReturnableService {
   invoiceId?: number;
 }
 
-/**
- * Response đầy đủ của GET /invoice/get/return?id=X
- * Ánh xạ từ InvoiceReturnItem Java
- */
 export interface IInvoiceReturnItemResponse {
   invoice: {
     id: number;
     invoiceCode: string;
     customerId: number;
-    /** Tên khách hàng (nếu backend join) */
     customerName?: string;
-    /** SĐT khách hàng (nếu backend join) */
     customerPhone?: string;
     branchId: number;
     employeeId: number;
@@ -143,21 +152,13 @@ export interface IInvoiceReturnItemResponse {
   lstBoughtCardService: any[];
 }
 
-/**
- * State auto-fill trong form — kết quả sau khi lookup thành công
- */
 export interface IAutofillState {
-  /** ID hóa đơn gốc (dùng để truyền vào createReturn/createExchange) */
   originalInvoiceId: number;
-  /** Tên khách hàng hiển thị */
   customerName: string;
   customerId?: number;
   customerPhone?: string;
-  /** Sản phẩm có thể trả */
   products: IReturnableProduct[];
-  /** Dịch vụ có thể trả */
   services: IReturnableService[];
-  /** Tổng tiền hóa đơn gốc */
   originalFee: number;
 }
 
@@ -214,22 +215,34 @@ export interface ICreateExchangeRequest extends ICreateReturnRequest {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const STATUS_MAP: Record<number, ReturnStatus> = { 1: "done", 2: "pending", 3: "cancel" };
+
 const REFUND_LABEL: Record<number, string> = {
   1: "Tiền mặt", 2: "Chuyển khoản", 3: "Hoàn vào ví", 4: "Không hoàn tiền",
 };
 
+function formatDate(dateStr?: string | null): string {
+  if (!dateStr) return "";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "";
+    const p = (n: number) => String(n).padStart(2, "0");
+    return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+  } catch {
+    return "";
+  }
+}
+
 export function mapApiToUi(item: IReturnInvoiceResponse): ReturnProduct {
-  const dateStr = item.receiptDate
-    ? (() => {
-        const d = new Date(item.receiptDate);
-        const p = (n: number) => String(n).padStart(2, "0");
-        return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
-      })()
-    : "";
+  // Fix: fallback receiptDate → createdTime → updatedTime nếu null
+  const time = formatDate(item.receiptDate)
+    || formatDate(item.createdTime)
+    || formatDate(item.updatedTime)
+    || "";
+
   return {
     id: String(item.id),
     code: item.invoiceCode ?? `PTH-${item.id}`,
-    time: dateStr,
+    time,
     customerName: item.customerName ?? `KH #${item.customerId}`,
     originalOrderCode: item.referInvoiceCode ?? (item.referId ? `HD-${item.referId}` : "–"),
     type: item.invoiceType === "IV11" || item.returnType === 2 ? "exchange" : "return",
@@ -240,4 +253,33 @@ export function mapApiToUi(item: IReturnInvoiceResponse): ReturnProduct {
     staffName: item.employeeName ?? `NV #${item.employeeId}`,
     paymentMethod: REFUND_LABEL[item.refundMethod] ?? "–",
   };
+}
+
+/**
+ * Enrich productSummary từ VariantMap đã fetch từ Inventory.
+ * Gọi SAU mapApiToUi khi đã có variantMap.
+ *
+ * Format: "Tên SP / Biến thể (xN)" hoặc "Tên SP (xN)" nếu không có biến thể
+ */
+export function enrichProductSummary(
+  item: ReturnProduct,
+  apiItem: IReturnInvoiceResponse,
+  variantMap: VariantMap
+): ReturnProduct {
+  if (!apiItem.products || apiItem.products.length === 0) return item;
+
+  const parts = apiItem.products.map((p) => {
+    let label = "";
+    if (p.variantId && variantMap[p.variantId]) {
+      const v = variantMap[p.variantId];
+      const productName = v.productName ?? p.name ?? `SP #${p.productId}`;
+      const variantName = v.variantName ?? v.name;
+      label = variantName ? `${productName} / ${variantName}` : productName;
+    } else {
+      label = p.name ?? `SP #${p.productId}`;
+    }
+    return p.qty && p.qty > 1 ? `${label} (x${p.qty})` : label;
+  });
+
+  return { ...item, productSummary: parts.join(", ") };
 }

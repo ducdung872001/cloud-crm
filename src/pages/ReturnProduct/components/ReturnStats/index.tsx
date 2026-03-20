@@ -4,14 +4,16 @@ import "./index.scss";
 
 interface ReturnStatsProps {
   data: ReturnProduct[];
-  /**
-   * Tổng số phiếu từ API (page.total).
-   * Nếu không truyền → tính từ data hiện tại (fallback cho giai đoạn mock).
-   */
+  /** Tổng phiếu tháng này từ API */
   totalFromApi?: number;
+  /**
+   * Tổng phiếu tháng TRƯỚC từ API — dùng để tính delta "+N so với tháng trước".
+   * Nếu không truyền → ẩn dòng so sánh.
+   */
+  lastMonthTotal?: number;
 }
 
-const ReturnStats: React.FC<ReturnStatsProps> = ({ data, totalFromApi }) => {
+const ReturnStats: React.FC<ReturnStatsProps> = ({ data, totalFromApi, lastMonthTotal }) => {
   const thisMonth   = totalFromApi ?? data.length;
   const pending     = data.filter((r) => r.status === "pending").length;
   const totalRefund = data.filter((r) => r.type === "return").reduce((s, r) => s + r.refundAmount, 0);
@@ -19,29 +21,39 @@ const ReturnStats: React.FC<ReturnStatsProps> = ({ data, totalFromApi }) => {
 
   const fmt = (n: number) => n.toLocaleString("vi") + " ₫";
 
+  // "+N so với tháng trước" — chỉ hiển thị khi có số liệu thực
+  const deltaStr = (() => {
+    if (lastMonthTotal === undefined || lastMonthTotal === null) return null;
+    const delta = thisMonth - lastMonthTotal;
+    if (delta > 0) return `+${delta} so với tháng trước`;
+    if (delta < 0) return `${delta} so với tháng trước`;
+    return "Bằng tháng trước";
+  })();
+
   const CARDS = [
     {
-      label: "Tổng phiếu tháng này",
-      value: String(thisMonth),
-      sub: "+4 so với tháng trước",
+      label:   "Tổng phiếu tháng này",
+      value:   String(thisMonth),
+      // Chỉ hiện delta nếu có — không hardcode "+4"
+      sub:     deltaStr ?? "Phiếu trả & đổi hàng",
       variant: "default",
     },
     {
-      label: "Chờ xử lý",
-      value: String(pending),
-      sub: "Cần xử lý sớm",
+      label:   "Chờ xử lý",
+      value:   String(pending),
+      sub:     pending > 0 ? "Cần xử lý sớm" : "Không có phiếu chờ",
       variant: "warn",
     },
     {
-      label: "Tiền hoàn tháng này",
-      value: fmt(totalRefund),
-      sub: `${data.filter((r) => r.type === "return").length} phiếu trả hàng`,
+      label:   "Tiền hoàn tháng này",
+      value:   fmt(totalRefund),
+      sub:     `${data.filter((r) => r.type === "return").length} phiếu trả hàng`,
       variant: "success",
     },
     {
-      label: "Phiếu đổi hàng",
-      value: String(exchCount),
-      sub: "Không hoàn tiền",
+      label:   "Phiếu đổi hàng",
+      value:   String(exchCount),
+      sub:     exchCount > 0 ? `${exchCount} phiếu không hoàn tiền` : "Không có phiếu đổi",
       variant: "default",
     },
   ];
