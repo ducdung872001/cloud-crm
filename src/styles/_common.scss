@@ -3278,10 +3278,10 @@ pre code {
 // Any page-level "create" or "primary action" button not using .base-button
 // should inherit these styles via class
 .btn-page-primary {
-  background: var(--primary-bg-color);
+  background: var(--primary-color);
   color: var(--white-color);
   border: 1px solid var(--primary-color);
-  border-radius: 0.5rem;
+  border-radius: 0.3rem;
   padding: 0.8rem 2.4rem;
   font-size: var(--text-base);
   font-weight: var(--fw-medium);
@@ -3299,7 +3299,7 @@ pre code {
   background: var(--white-color);
   color: var(--text-primary-color);
   border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
+  border-radius: 0.3rem;
   padding: 0.8rem 2.4rem;
   font-size: var(--text-base);
   font-weight: var(--fw-regular);

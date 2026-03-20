@@ -81,7 +81,7 @@
   }
 
   &.sc-1::before {
-    background: var(--lime);
+    background: var(--primary-color);
   }
   &.sc-2::before {
     background: var(--blue);
@@ -119,7 +119,7 @@
     align-items: center;
     gap: 3px;
     padding: 2px 7px;
-    border-radius: 1rem;
+    border-radius: 0.3rem;
   }
 }
 
@@ -197,7 +197,7 @@
 .chart-bar {
   width: 100%;
   border-radius: 0.6rem 6px 0 0;
-  background: var(--lime);
+  background: var(--primary-color);
   opacity: 0.6;
   transition: all 0.3s;
   cursor: pointer;
@@ -283,7 +283,7 @@
   width: 3.4rem;
   height: 3.4rem;
   background: var(--paper);
-  border-radius: 0.8rem;
+  border-radius: 0.3rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -318,7 +318,7 @@
   &__fill {
     height: 100%;
     border-radius: 2px;
-    background: var(--lime);
+    background: var(--primary-color);
   }
 }
 
@@ -339,7 +339,7 @@
 
 .pm-card {
   background: var(--paper);
-  border-radius: 1rem;
+  border-radius: 0.3rem;
   padding: 1.2rem;
   text-align: center;
 

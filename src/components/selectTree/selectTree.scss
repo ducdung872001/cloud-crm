@@ -61,7 +61,7 @@
       z-index: 999;
       background: var(--white-color);
       box-shadow: var(--box-shadow-input);
-      border-radius: 0.5rem;
+      border-radius: 0.3rem;
       margin-top: 0.4rem;
       overflow-y: auto;
       max-height: 30rem;
@@ -372,7 +372,7 @@
         border: 1px solid var(--border-color);
         border-radius: 5px;
         input {
-          border-radius: 0.5rem;
+          border-radius: 0.3rem;
           font-size: 1.4rem;
           color: var(--text-primary-color);
         }
@@ -390,7 +390,7 @@
       div[class*="-control"] {
         padding: 0.7rem 3.2rem 0.7rem 1.2rem;
         border: 1px solid var(--border-color);
-        border-radius: 0.5rem;
+        border-radius: 0.3rem;
         color: var(--text-primary-color);
         width: 100%;
         background: transparent;

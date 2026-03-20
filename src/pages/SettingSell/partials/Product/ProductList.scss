@@ -112,7 +112,7 @@
   }
 
   &--primary {
-    background: #2563eb;
+    background: var(--primary-color);
     color: #fff;
     border: 1px solid #2563eb;
 
@@ -513,7 +513,7 @@
 
 .btn-edit {
   padding: 6px 16px;
-  background: #2563eb;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   border-radius: 6px;

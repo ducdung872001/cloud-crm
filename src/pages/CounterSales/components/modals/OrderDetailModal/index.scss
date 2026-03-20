@@ -19,7 +19,7 @@
   align-items: center;
   padding: 1.2rem;
   background: var(--paper);
-  border-radius: 1rem;
+  border-radius: 0.3rem;
   margin-bottom: 1.8rem;
 
   &__step {
@@ -43,7 +43,7 @@
     transition: all 0.2s;
 
     &--done {
-      background: var(--lime);
+      background: var(--primary-color);
       color: #fff;
     }
     &--active {
@@ -75,7 +75,7 @@
     margin-bottom: 1.4rem;
 
     &--done {
-      background: var(--lime);
+      background: var(--primary-color);
     }
   }
 }
@@ -90,7 +90,7 @@
 .od-panel {
   flex: 1;
   background: var(--paper);
-  border-radius: 1rem;
+  border-radius: 0.3rem;
   padding: 1.2rem;
 
   &__title {
@@ -118,7 +118,7 @@
 // ── Items table ───────────────────────────────────
 .od-items {
   border: 1.5px solid var(--border);
-  border-radius: 1rem;
+  border-radius: 0.3rem;
   overflow: hidden;
 
   &__header {

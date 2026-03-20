@@ -363,12 +363,12 @@
     font-size: 1.5rem;
     font-weight: 600;
     border: none;
-    border-radius: 1rem;
+    border-radius: 0.3rem;
     cursor: pointer;
     transition: background 0.15s, opacity 0.15s;
 
     svg { width: 1.8rem; height: 1.8rem; }
-    &:hover:not(:disabled) { background: #1e40af; }
+    &:hover:not(:disabled) { background: var(--primary-color); }
     &:disabled { opacity: 0.6; cursor: not-allowed; }
     &__loading { color: rgba(255,255,255,0.8); font-size: 1.4rem; }
   }

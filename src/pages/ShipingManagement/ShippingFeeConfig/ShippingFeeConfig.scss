@@ -219,12 +219,12 @@
   font-size: 1.4rem;
   font-weight: 600;
   border: none;
-  border-radius: 1rem;
+  border-radius: 0.3rem;
   cursor: pointer;
   transition: background 0.15s, opacity 0.15s;
 
   &:hover:not(:disabled) {
-    background: #1e40af;
+    background: var(--primary-color);
   }
   &:disabled {
     opacity: 0.6;

@@ -52,13 +52,13 @@
       background: var(--primary-color);
       color: #fff;
       border: none;
-      border-radius: 0.8rem;
+      border-radius: 0.3rem;
       font-size: 1.4rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.15s;
       svg { width: 1.5rem; height: 1.5rem; }
-      &:hover { background: #1e40af; }
+      &:hover { background: var(--primary-color); }
     }
   }
 

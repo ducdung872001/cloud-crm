@@ -125,7 +125,7 @@
     }
 
     &--connect {
-      background: #2563eb;
+      background: var(--primary-color);
       color: #fff;
     }
 
@@ -226,7 +226,7 @@
 
 .ps-btn-save {
   padding: 0.6rem 12px;
-  background: #2563eb;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   border-radius: 0.6rem;
@@ -326,7 +326,7 @@
 // Detail button in table
 .ps-btn-detail {
   padding: 0.6rem 18px;
-  background: #2563eb;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   border-radius: 0.7rem;

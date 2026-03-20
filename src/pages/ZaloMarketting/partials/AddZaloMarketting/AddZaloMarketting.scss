@@ -162,7 +162,7 @@
             }
 
             .render__ui--choose {
-              border-radius: 0.5rem;
+              border-radius: 0.3rem;
               box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
               width: 100%;
               margin: 5rem auto 0;
@@ -415,7 +415,7 @@
 
                         .btn-upload--file {
                           background-color: var(--primary-color-90);
-                          border-radius: 0.5rem;
+                          border-radius: 0.3rem;
                           padding: 0.6rem 2rem;
                           display: flex;
                           align-items: center;
@@ -787,7 +787,7 @@
                         div[class*="-control"] {
                           padding: 0.2rem 0 0.2rem 0.8rem;
                           border: 1px solid var(--border-color);
-                          border-radius: 0.5rem;
+                          border-radius: 0.3rem;
                           color: var(--text-primary-color);
                           width: 100%;
                           background: transparent;
@@ -840,7 +840,7 @@
                       gap: 0 0.3rem;
                       background-color: var(--extra-color-10);
                       padding: 0.6rem 1.2rem;
-                      border-radius: 0.5rem;
+                      border-radius: 0.3rem;
                       margin-bottom: 1.2rem;
                       cursor: pointer;
                       font-size: 1.4rem;
@@ -865,7 +865,7 @@
                       align-items: center;
                       justify-content: space-between;
                       padding: 0.6rem 1.2rem;
-                      border-radius: 0.5rem;
+                      border-radius: 0.3rem;
 
                       .info-user {
                         display: flex;

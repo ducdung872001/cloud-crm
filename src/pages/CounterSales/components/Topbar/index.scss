@@ -82,7 +82,7 @@
 // Shared button styles (can be moved to a global _buttons.scss)
 .btn {
   padding: 0.7rem 14px;
-  border-radius: 0.8rem;
+  border-radius: 0.3rem;
   border: none;
   font-family: var(--font-base);
   font-size: 1.2rem;
@@ -95,7 +95,7 @@
   white-space: nowrap;
 
   &--lime {
-    background: var(--lime);
+    background: var(--primary-color);
     color: var(--ink);
     box-shadow: 0 2px 8px rgba(132, 204, 22, 0.35);
     &:hover {

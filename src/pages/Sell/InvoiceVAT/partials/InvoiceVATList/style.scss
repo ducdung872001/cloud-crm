@@ -31,7 +31,7 @@
     gap: 8px;
     padding: 7px 16px;
     border: 1px solid #d1d5db;
-    border-radius: 6px;
+    border-radius: 0.3rem;
     background: #fff;
     font-size: 13px;
     font-weight: 500;
@@ -63,14 +63,14 @@
 
   .btn-primary-ds {
     padding: 8px 18px;
-    background: #d97706;
+    background: var(--primary-color);
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 0.3rem;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    &:hover { background: #b45309; }
+    &:hover { background: var(--primary-color); }
   }
 
   // ---- Filters ----
@@ -86,7 +86,7 @@
     align-items: center;
     gap: 8px;
     border: 1px solid #d1d5db;
-    border-radius: 6px;
+    border-radius: 0.3rem;
     background: #fff;
     padding: 7px 12px;
     min-width: 220px;
@@ -108,7 +108,7 @@
     select {
       padding: 7px 32px 7px 12px;
       border: 1px solid #d1d5db;
-      border-radius: 6px;
+      border-radius: 0.3rem;
       background: #fff;
       font-size: 13px;
       color: #374151;
@@ -128,7 +128,7 @@
     gap: 5px;
     padding: 7px 14px;
     border: 1px solid #d1d5db;
-    border-radius: 6px;
+    border-radius: 0.3rem;
     background: #fff;
     font-size: 13px;
     color: #374151;
@@ -147,8 +147,8 @@
     }
 
     &.active-error {
-      background: #1e3a5f;
-      border-color: #1e3a5f;
+      background: var(--primary-color);
+      border-color: var(--primary-color);
       color: #fff;
     }
   }
@@ -159,7 +159,7 @@
     gap: 6px;
     padding: 7px 14px;
     border: 1px solid #d1d5db;
-    border-radius: 6px;
+    border-radius: 0.3rem;
     background: #fff;
     font-size: 13px;
     color: #374151;
@@ -172,7 +172,7 @@
   // ---- Table ----
   .invoice-table-wrap {
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: 0.3rem;
     overflow: hidden;
     background: #fff;
   }
@@ -235,14 +235,14 @@
 
   .btn-sign {
     padding: 5px 16px;
-    background: #d97706;
+    background: var(--primary-color);
     color: #fff;
     border: none;
     border-radius: 5px;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    &:hover { background: #b45309; }
+    &:hover { background: var(--primary-color); }
   }
 
   .btn-replace {
@@ -293,7 +293,7 @@
     height: 34px;
     padding: 0 8px;
     border: 1px solid #e5e7eb;
-    border-radius: 6px;
+    border-radius: 0.3rem;
     background: #fff;
     font-size: 13px;
     color: #374151;
@@ -303,9 +303,9 @@
     &:hover:not(:disabled) { background: #f3f4f6; }
     &:disabled { color: #d1d5db; cursor: default; }
     &.active {
-      background: #1e3a5f;
+      background: var(--primary-color);
       color: #fff;
-      border-color: #1e3a5f;
+      border-color: var(--primary-color);
       font-weight: 600;
     }
   }

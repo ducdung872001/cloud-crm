@@ -90,7 +90,7 @@
       .popover-option {
         background-color: var(--white-color);
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-        border-radius: 0.5rem;
+        border-radius: 0.3rem;
   
         .menu-item {
           padding: 0.5rem;
@@ -98,7 +98,7 @@
           flex-direction: column;
   
           li {
-            border-radius: 0.5rem;
+            border-radius: 0.3rem;
   
             label {
               display: flex;

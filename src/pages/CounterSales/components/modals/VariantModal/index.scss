@@ -13,7 +13,7 @@
     width: 6.4rem;
     height: 6.4rem;
     background: var(--paper);
-    border-radius: 1.2rem;
+    border-radius: 0.3rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -139,7 +139,7 @@
     padding: 1.2rem 14px;
     background: var(--lime-l);
     border: 1.5px solid var(--lime);
-    border-radius: 1rem;
+    border-radius: 0.3rem;
 
     span:first-child {
       font-size: 1.3rem;
@@ -158,7 +158,7 @@
 // ── Variant option button ──────────────────────────
 .variant-opt {
   padding: 0.7rem 16px;
-  border-radius: 0.8rem;
+  border-radius: 0.3rem;
   border: 1.5px solid var(--border);
   background: var(--white);
   font-family: var(--font-base);

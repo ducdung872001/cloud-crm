@@ -104,7 +104,7 @@
   font-size: 1.1rem;
   font-weight: 800;
   padding: 2px 7px;
-  border-radius: 1.2rem;
+  border-radius: 0.3rem;
 }
 
 .ol-wrap {
@@ -277,6 +277,6 @@
   font-family: var(--font-base);
   transition: all 0.15s;
   &:hover {
-    background: var(--lime);
+    background: var(--primary-color);
   }
 }

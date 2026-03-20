@@ -42,7 +42,7 @@
 
       .info__package {
         background-color: var(--white-color);
-        border-radius: 0.5rem;
+        border-radius: 0.3rem;
         border: 1.3px solid rgba(var(--success-darker-color-rgb), 0.5);
         padding: 1.6rem 2rem;
         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -255,7 +255,7 @@
                 font-size: 1.3rem;
                 border: 1px solid var(--extra-color-30);
                 background-color: var(--extra-color-10);
-                border-radius: 0.5rem;
+                border-radius: 0.3rem;
                 padding: 0.5rem;
                 font-weight: 500;
                 cursor: pointer;
@@ -316,7 +316,7 @@
           text-align: center;
           padding: 0.8rem;
           font-weight: 500;
-          border-radius: 0.5rem;
+          border-radius: 0.3rem;
           color: var(--white-color);
           cursor: pointer;
 
@@ -385,7 +385,7 @@
       width: 48%;
       margin: 5rem auto;
       padding: 1.2rem 2rem;
-      border-radius: 0.5rem;
+      border-radius: 0.3rem;
       box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
       background-color: var(--warning-color);
       color: var(--white-color);

@@ -1,7 +1,78 @@
-.counter-sales-page {
-  // ✅ Removed font-family Outfit, using inherited Roboto
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+.counter-sales {
   display: flex;
-  flex-direction: column;
-  height: 100%;
+  height: 100vh;
   overflow: hidden;
+  background: var(--background-color);
+  color: var(--text-primary-color);
+  font-size: var(--text-base);
+
+  &__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  &__content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+  }
+
+  &__screen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    animation: screenFadeUp 0.2s ease;
+
+    &--pos {
+      flex-direction: row;  // ✅ side-by-side: product grid LEFT, cart RIGHT
+    }
+  }
+}
+
+@keyframes screenFadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.toast {
+  position: fixed;
+  top: 2.4rem;
+  right: 2.4rem;
+  background: var(--extra-color);
+  color: var(--white-color);
+  padding: 1.2rem 1.8rem;
+  border-radius: 0.3rem;
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  display: none;
+  align-items: center;
+  gap: 0.8rem;
+  z-index: 3000;
+  box-shadow: var(--box-shadow);
+  animation: toastFadeDown 0.3s ease;
+
+  &--show { display: flex; }
+}
+
+@keyframes toastFadeDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 30, 0.55);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+
+  &--open { display: flex; }
 }

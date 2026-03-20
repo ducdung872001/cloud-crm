@@ -212,7 +212,7 @@
       align-items: center;
       gap: 0.7rem;
       padding: 0.55rem 0.8rem;
-      border-radius: 0.5rem;
+      border-radius: 0.3rem;
       cursor: pointer;
       transition: background 0.1s;
 
@@ -620,7 +620,7 @@
                   .status-pause,
                   .status-play {
                     padding: 0.2rem 0.6rem;
-                    border-radius: 0.5rem;
+                    border-radius: 0.3rem;
                     color: var(--white-color);
                     font-size: 1.3rem;
                   }
