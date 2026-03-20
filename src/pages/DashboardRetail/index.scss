@@ -124,7 +124,7 @@
 
 .dashboard-retail-page {
   padding: 20px 24px;
-  font-family: 'Be Vietnam Pro', 'Segoe UI', sans-serif;
+  font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
   background: #f0f2f5;
   min-height: 100vh;
 
@@ -156,7 +156,7 @@
 
       &.safe {
         background: #e8fffe;
-        color: #47B5AC;
+        color: #47b5ac;
       }
 
       &.danger {
@@ -238,7 +238,7 @@
   }
 
   .revenue-card {
-    background: linear-gradient(135deg, #0f3460 0%, #1a5276 50%, #145C73 100%);
+    background: linear-gradient(135deg, #0f3460 0%, #1a5276 50%, #145c73 100%);
     border-radius: 12px;
     padding: 20px 22px;
     color: #fff;
@@ -298,21 +298,58 @@
       }
     }
 
+    // .mini-chart {
+    //   display: flex;
+    //   align-items: flex-end;
+    //   gap: 4px;
+    //   height: 60px;
+
+    //   &-bar {
+    //     flex: 1;
+    //     background: rgba(255, 255, 255, 0.25);
+    //     border-radius: 3px 3px 0 0;
+    //     transition: height 0.3s;
+
+    //     &.active {
+    //       background: #47B5AC;
+    //     }
+    //   }
+    // }
     .mini-chart {
       display: flex;
       align-items: flex-end;
       gap: 4px;
-      height: 60px;
+      height: 200px;
 
-      &-bar {
+      .mini-chart-bar-container {
         flex: 1;
-        background: rgba(255, 255, 255, 0.25);
-        border-radius: 3px 3px 0 0;
-        transition: height 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        height: 100%;
+      }
+
+      .bar-value {
+        font-size: 10px;
+        margin-bottom: 4px;
+      }
+
+      .mini-chart-bar {
+        width: 100%;
+        background-color: #4caf50;
+        border-radius: 2px 2px 0 0;
+        transition: height 0.2s;
 
         &.active {
-          background: #47B5AC;
+          background-color: #ff9800;
         }
+      }
+
+      .bar-label {
+        font-size: 10px;
+        margin-top: 4px;
+        color: #fff;
       }
     }
   }
@@ -360,7 +397,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #47B5AC;
+        color: #47b5ac;
         font-size: 24px;
 
         svg {
@@ -439,7 +476,7 @@
     .view-more {
       margin-left: auto;
       cursor: pointer;
-      color: #47B5AC;
+      color: #47b5ac;
       font-weight: 500;
     }
   }
@@ -477,7 +514,7 @@
     &-pct {
       font-size: 13px;
       font-weight: 600;
-      color: #47B5AC;
+      color: #47b5ac;
     }
 
     &-bar-bg {
@@ -489,7 +526,7 @@
 
     &-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, #47B5AC, #9AECE5);
+      background: linear-gradient(90deg, #47b5ac, #9aece5);
       border-radius: 3px;
       transition: width 0.8s ease;
     }
@@ -515,7 +552,7 @@
       }
 
       &.active {
-        background: #47B5AC;
+        background: #47b5ac;
         color: #fff;
       }
 
@@ -601,7 +638,7 @@
       input[type="checkbox"] {
         width: 18px;
         height: 18px;
-        accent-color: #47B5AC;
+        accent-color: #47b5ac;
         cursor: pointer;
       }
 
@@ -632,7 +669,7 @@
         padding: 10px 20px;
         border-radius: 8px;
         border: none;
-        background: #47B5AC;
+        background: #47b5ac;
         color: #fff;
         font-weight: 500;
         cursor: pointer;

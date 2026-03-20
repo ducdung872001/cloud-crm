@@ -42,8 +42,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
     params: params,
   });
 
-  console.log("categoryFiltered", categoryFiltered);
-
   // const filtered = PRODUCTS.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 
   // const handleAddToCart = (prod: Product) => {
