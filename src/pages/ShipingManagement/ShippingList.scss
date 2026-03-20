@@ -24,13 +24,13 @@
       white-space: nowrap;
 
       &:hover {
-        color: var(--primary-color, #1d4ed8);
+        color: var(--primary-color);
       }
 
       &.active {
-        color: var(--primary-color, #1d4ed8);
+        color: var(--primary-color);
         font-weight: 600;
-        border-bottom: 2px solid var(--primary-color, #1d4ed8);
+        border-bottom: 2px solid var(--primary-color);
       }
 
       // Count badge trên tab
@@ -42,7 +42,7 @@
         height: 2rem;
         padding: 0 6px;
         border-radius: 1rem;
-        background: var(--primary-color, #1d4ed8);
+        background: var(--primary-color);
         color: #fff;
         font-size: 1.1rem;
         font-weight: 600;
@@ -59,7 +59,7 @@
 
   // ---- Mã vận đơn clickable ----
   .tracking-code-link {
-    color: var(--primary-color, #1d4ed8);
+    color: var(--primary-color);
     font-weight: 500;
     cursor: pointer;
     text-decoration: underline;
@@ -67,7 +67,7 @@
     transition: text-decoration-color 0.15s;
 
     &:hover {
-      text-decoration-color: var(--primary-color, #1d4ed8);
+      text-decoration-color: var(--primary-color);
     }
   }
 
@@ -126,7 +126,7 @@
 
       &:hover {
         background: #f3f4f6;
-        color: var(--primary-color, #1d4ed8);
+        color: var(--primary-color);
       }
 
       &.icon__delete:hover {
@@ -194,7 +194,7 @@
     height: 4.4rem;
     font-size: 1.5rem;
     font-weight: 600;
-    background: #f97316;
+    background: var(--warning-color);
     color: #fff;
     border: none;
     border-radius: 0.8rem;
@@ -243,7 +243,7 @@
     transition: border-color 0.2s, box-shadow 0.2s;
 
     &:hover {
-      border-color: var(--primary-color, #1d4ed8);
+      border-color: var(--primary-color);
       box-shadow: 0 2px 8px rgba(29, 78, 216, 0.1);
     }
 
@@ -365,8 +365,8 @@
         z-index: 1;
 
         &.active {
-          background: var(--primary-color, #1d4ed8);
-          border-color: var(--primary-color, #1d4ed8);
+          background: var(--primary-color);
+          border-color: var(--primary-color);
         }
 
         &.future {
@@ -384,7 +384,7 @@
           color: #111827;
 
           &.active {
-            color: var(--primary-color, #1d4ed8);
+            color: var(--primary-color);
           }
         }
 
@@ -494,8 +494,8 @@
       svg { width: 1.5rem; height: 1.5rem; }
 
       &.active {
-        color: var(--primary-color, #1d4ed8);
-        border-bottom-color: var(--primary-color, #1d4ed8);
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
         font-weight: 600;
       }
 

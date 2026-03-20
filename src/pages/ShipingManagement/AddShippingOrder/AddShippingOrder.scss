@@ -11,7 +11,7 @@
     margin-bottom: 1.2rem;
     transition: color 0.15s;
     svg { width: 1.5rem; height: 1.5rem; }
-    &:hover { color: var(--primary-color, #1d4ed8); }
+    &:hover { color: var(--primary-color); }
   }
 
   // ---- Layout 2 cột ----
@@ -55,7 +55,7 @@
       border-bottom: 1px solid #f3f4f6;
       background: #fafafa;
       border-radius: 1rem 10px 0 0;
-      svg { width: 1.6rem; height: 1.6rem; color: var(--primary-color, #1d4ed8); }
+      svg { width: 1.6rem; height: 1.6rem; color: var(--primary-color); }
     }
 
     &__body {
@@ -358,7 +358,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.8rem;
-    background: var(--primary-color, #1d4ed8);
+    background: var(--primary-color);
     color: #fff;
     font-size: 1.5rem;
     font-weight: 600;

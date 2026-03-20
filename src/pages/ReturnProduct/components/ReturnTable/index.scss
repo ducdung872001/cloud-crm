@@ -183,10 +183,10 @@
   }
 
   &--return .rtype-dot__dot {
-    background: #f97316;
+    background: var(--warning-color);
   }
   &--exchange .rtype-dot__dot {
-    background: #6366f1;
+    background: var(--primary-color);
   }
 }
 

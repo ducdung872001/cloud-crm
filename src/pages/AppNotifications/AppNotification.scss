@@ -162,7 +162,7 @@
       width: 100%;
 
       &:focus {
-        border-color: var(--primary-color, #2563eb);
+        border-color: var(--primary-color);
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
       }
 
@@ -195,7 +195,7 @@
       box-sizing: border-box;
 
       &:focus {
-        border-color: var(--primary-color, #2563eb);
+        border-color: var(--primary-color);
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
       }
 
@@ -239,7 +239,7 @@
     }
 
     &--send {
-      background: var(--primary-color, #ea580c);
+      background: var(--primary-color);
       color: #fff;
 
       &:hover {
