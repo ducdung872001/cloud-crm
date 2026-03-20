@@ -18,6 +18,7 @@ const topProducts = [
 ];
 
 export default function DashboardRetail() {
+  document.title = "Bảng điều khiển";
   const navigate = useNavigate();
   const { dataBranch } = useContext(UserContext) as ContextType;
 

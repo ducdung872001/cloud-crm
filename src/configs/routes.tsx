@@ -107,7 +107,7 @@ import SettingProcess from "pages/SettingProcess/SettingProcess";
 import SaleFlowList from "pages/SaleFlow/SaleFlowList";
 import CreateSaleflow from "pages/SaleFlow/CreateSaleFlow/CreateSaleFlow";
 import ManagementSale from "pages/ManagementSale/ManagementSale";
-
+import NotificationList from "@/pages/NotificationList/NotificationList";
 // Phiếu điền chuyển kho
 import TransferOrderForm from "pages/TransferOrderForm";
 import DetailMarketingAutomation from "pages/MarketingAutomation/DetailMarketingAutomation";
@@ -194,6 +194,12 @@ export const menu: IMenuItem[] = [
     path: urls.dashboard,
     icon: <Icon name="DashboardMenu" />,
     code: "DASHBOARD",
+  },
+      {
+    title: "notification", // Thông báo
+    path: urls.notification,
+    icon: <Icon name="BellMenu" />,
+    code: "",
   },
   {
     title: "selling", // Bán hàng & Đơn hàng
@@ -896,6 +902,10 @@ export const routes: IRouter[] = [
     path: "",
     // component: <Dashboard />,
     component: <DashboardRetail />,
+  },
+      {
+    path: urls.notification,
+    component: <NotificationList />,
   },
   {
     path: urls.dashboard,
