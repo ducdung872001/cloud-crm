@@ -58,7 +58,8 @@
       cursor: pointer;
       transition: background 0.15s;
       svg { width: 1.5rem; height: 1.5rem; }
-      &:hover { background: var(--primary-color); }
+      &:hover { background: var(--primary-color);
+      color: var(--white-color); }
     }
   }
 

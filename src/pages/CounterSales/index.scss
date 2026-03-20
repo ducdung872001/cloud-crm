@@ -64,6 +64,49 @@
   to   { opacity: 1; transform: none; }
 }
 
+// ✅ CounterSales Responsive
+@media (min-width: 1440px) {
+  .counter-sales {
+    .pg-grid { grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
+  }
+}
+
+@media (max-width: 1199px) {
+  .counter-sales {
+    &__screen--pos {
+      // On tablet, stack vertically or reduce cart width
+      .cart-panel { min-width: 28rem; }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .counter-sales {
+    &__screen--pos {
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .product-grid-wrap {
+      flex: 0 0 auto;
+      height: 55vh;
+    }
+    .cart-panel {
+      flex: 0 0 auto;
+      height: 45vh;
+      overflow-y: auto;
+    }
+  }
+}
+
+@media (max-width: 575px) {
+  .counter-sales {
+    &__screen--pos {
+      .product-grid-wrap { height: 52vh; }
+      .cart-panel { height: 48vh; }
+    }
+  }
+}
+
 .modal-overlay {
   display: none;
   position: fixed;

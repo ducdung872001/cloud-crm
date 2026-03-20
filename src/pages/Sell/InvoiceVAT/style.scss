@@ -103,7 +103,8 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    &:hover { background: var(--primary-color); }
+    &:hover { background: var(--primary-color);
+      color: var(--white-color); }
   }
 
   // ---- OVERVIEW ----
@@ -471,13 +472,15 @@
     &-primary {
       background: var(--primary-color);
       color: #fff;
-      &:hover { background: var(--primary-color); }
+      &:hover { background: var(--primary-color);
+      color: var(--white-color); }
     }
 
     &-warning {
       background: var(--primary-color);
       color: #fff;
-      &:hover { background: var(--primary-color); }
+      &:hover { background: var(--primary-color);
+      color: var(--white-color); }
     }
 
     &-outline {

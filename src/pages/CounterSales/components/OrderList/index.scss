@@ -278,5 +278,6 @@
   transition: all 0.15s;
   &:hover {
     background: var(--primary-color);
+      color: var(--white-color);
   }
 }

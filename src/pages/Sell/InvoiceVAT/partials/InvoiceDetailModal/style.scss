@@ -335,6 +335,7 @@
     background: var(--primary-color);
     color: #fff;
     font-weight: 600;
-    &:hover { background: var(--primary-color); }
+    &:hover { background: var(--primary-color);
+      color: var(--white-color); }
   }
 }

@@ -50,7 +50,7 @@
             .on-checked,
             .on-indeterminate {
               .checkmark {
-                background-color: #ed1b34;
+                background: var(--error-darker-color);
                 border-color: #ed1b34;
               }
             }
@@ -95,7 +95,7 @@
             .on-checked,
             .on-indeterminate {
               .checkmark {
-                background-color: #ed1b34;
+                background: var(--error-darker-color);
                 border-color: #ed1b34;
               }
             }

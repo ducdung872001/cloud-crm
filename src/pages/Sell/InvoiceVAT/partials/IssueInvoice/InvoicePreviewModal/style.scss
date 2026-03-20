@@ -130,7 +130,8 @@
       font-weight: 600;
       cursor: pointer;
       svg { width: 14px; height: 14px; }
-      &:hover { background: var(--primary-color); }
+      &:hover { background: var(--primary-color);
+      color: var(--white-color); }
     }
   }
 }

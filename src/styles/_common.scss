@@ -2872,6 +2872,10 @@ pre code {
   background: var(--white-color);
   box-shadow: var(--box-shadow);
   border-radius: 0.4rem;
+  // ✅ TitleAction inside card-box cần padding để không sát lề
+  .title-action {
+    padding: 2rem 2.4rem 1.6rem;
+  }
 }
 
 //Loading
@@ -3315,4 +3319,45 @@ pre code {
 // Page content full width — prevent any page wrapper from narrowing content
 .main-content__wrapper {
   > * { width: 100%; }
+}
+
+// =============================================
+// GLOBAL FORM CONTROL HEIGHT STANDARDIZATION
+// All interactive controls: 3.6rem height
+// =============================================
+.base-select-fill,
+.base-select-icon {
+  div[class*="-control"] { min-height: 3.6rem; }
+}
+
+// Ensure date pickers, custom inputs also match
+input[type="date"],
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="tel"],
+input[type="search"],
+input[type="password"],
+textarea {
+  min-height: 3.6rem;
+}
+// But textarea can be taller
+textarea { min-height: 8rem; height: auto; }
+
+// =============================================
+// BUTTON HOVER GLOBAL SAFETY NET
+// Ensures text always remains readable on hover
+// =============================================
+.base-button {
+  // On ANY hover, ensure text stays white for primary buttons
+  &:not(.base-button--variant-outline):not(.base-button--color-secondary):not(.base-button--color-transparent):not(.base-button--color-link) {
+    &:hover { color: var(--white-color) !important; }
+  }
+}
+
+// =============================================
+// CARD-BOX RESPONSIVE
+// =============================================
+.card-box {
+  @media (max-width: 575px) { border-radius: 0.3rem; }
 }

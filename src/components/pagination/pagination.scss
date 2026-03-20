@@ -1,11 +1,13 @@
 .pagination {
-  padding: 1.6rem 0;    // ✅ Đối xứng: trước đây 2.4rem 2rem (không đều)
+  padding: 1.6rem 0;
   font-size: var(--text-base);
   line-height: var(--lh-snug);
   color: var(--text-primary-color);
   .count-item {
     width: 30%;
     flex-shrink: 0;
+    padding-left: 0.4rem;          // ✅ nhẹ nhàng, không sát lề trái
+    color: var(--text-extra-color); // ✅ subtle - không cạnh tranh với pager
   }
   .pager {
     width: 70%;

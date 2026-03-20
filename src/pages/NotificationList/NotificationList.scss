@@ -1,7 +1,6 @@
 .page-notification-list {
     .container-page {
-        // border: 1px solid;
-        padding: 0 2rem 0 2rem;
+        padding: 0;          // ✅ wrapper parent đã có padding ngang
         display: flex;
         justify-content: space-between;
 
@@ -286,4 +285,25 @@
 
         }
     }
+}
+
+// ✅ NotificationList Responsive
+@media (max-width: 1199px) {
+  .page-notification-list {
+    .container-page {
+      flex-direction: column;
+      .container-notification { width: 100%; }
+      .container-filter { width: 100%; margin-top: 2rem; }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .page-notification-list {
+    .container-page {
+      flex-direction: column;
+      .container-notification { width: 100%; }
+      .container-filter { width: 100%; }
+    }
+  }
 }

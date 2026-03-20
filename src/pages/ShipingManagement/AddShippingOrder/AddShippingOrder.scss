@@ -341,7 +341,7 @@
     &.ready {
       background: #ecfdf5;
       color: #065f46;
-      .readiness-dot { background: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,.2); }
+      .readiness-dot { background: var(--success-darker-color); box-shadow: 0 0 0 3px rgba(16,185,129,.2); }
     }
 
     &.not-ready {
@@ -368,7 +368,8 @@
     transition: background 0.15s, opacity 0.15s;
 
     svg { width: 1.8rem; height: 1.8rem; }
-    &:hover:not(:disabled) { background: var(--primary-color); }
+    &:hover:not(:disabled) { background: var(--primary-color);
+      color: var(--white-color); }
     &:disabled { opacity: 0.6; cursor: not-allowed; }
     &__loading { color: rgba(255,255,255,0.8); font-size: 1.4rem; }
   }

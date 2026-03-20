@@ -26,7 +26,8 @@
     font-weight: 600;
     cursor: pointer;
     svg { width: 15px; height: 15px; }
-    &:hover { background: var(--primary-color); }
+    &:hover { background: var(--primary-color);
+      color: var(--white-color); }
   }
 
   // ---- Grid ----

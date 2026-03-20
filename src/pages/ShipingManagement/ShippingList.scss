@@ -202,7 +202,7 @@
     transition: background 0.2s;
 
     &:hover {
-      background: #ea6c0a;
+      background: var(--warning-color);
     }
 
     &:disabled {
@@ -268,7 +268,7 @@
       position: absolute;
       top: 1rem;
       right: 1rem;
-      background: #10b981;
+      background: var(--success-darker-color);
       color: #fff;
       font-size: 1.1rem;
       font-weight: 600;
@@ -439,7 +439,7 @@
       width: 3.6rem;
       height: 3.6rem;
       border-radius: 50%;
-      background: #10b981;
+      background: var(--success-darker-color);
       color: #fff;
       border: none;
       cursor: pointer;
@@ -606,7 +606,7 @@
   flex-shrink: 0;
   transition: background 0.2s;
 
-  &.on  { background: #10b981; }
+  &.on  { background: var(--success-darker-color); }
   &.off { background: #d1d5db; }
 
   .toggle-thumb {
@@ -666,5 +666,41 @@
     .fee-input {
       width: 12rem;
     }
+  }
+}
+
+// =============================================
+// ShippingList Responsive
+// =============================================
+@media (max-width: 1199px) {
+  .page-shipping {
+    .shipping-table {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .page-shipping {
+    .shipping-tabs {
+      padding: 0 0.8rem;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      &::-webkit-scrollbar { display: none; }
+    }
+    .shipping-tab-item {
+      white-space: nowrap;
+      padding: 1rem 1.2rem;
+      font-size: var(--text-sm);
+    }
+  }
+}
+
+@media (max-width: 575px) {
+  .page-shipping {
+    .shipping-tabs { gap: 0; }
+    .shipping-tab-item { padding: 0.8rem 1rem; }
   }
 }

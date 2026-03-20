@@ -225,6 +225,7 @@
 
   &:hover:not(:disabled) {
     background: var(--primary-color);
+      color: var(--white-color);
   }
   &:disabled {
     opacity: 0.6;

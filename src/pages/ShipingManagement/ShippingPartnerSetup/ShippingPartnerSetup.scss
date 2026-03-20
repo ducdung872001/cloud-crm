@@ -234,7 +234,8 @@
   font-weight: 600;
   cursor: pointer;
   &:disabled { opacity: 0.6; cursor: not-allowed; }
-  &:hover:not(:disabled) { background: #1d4ed8; }
+  &:hover:not(:disabled) { background: var(--primary-color);
+      color: var(--white-color); }
 }
 
 .ps-btn-disconnect {
@@ -335,5 +336,6 @@
   cursor: pointer;
   transition: background 0.15s;
 
-  &:hover { background: #1d4ed8; }
+  &:hover { background: var(--primary-color);
+      color: var(--white-color); }
 }
