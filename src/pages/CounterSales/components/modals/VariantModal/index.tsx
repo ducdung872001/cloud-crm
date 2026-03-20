@@ -79,11 +79,11 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
     productId: Number(productData?.id) || 0,
     enabled: open,
   });
-  console.log("productData>>", productData, open, isLoading);
   useEffect(() => {
     if (dataProduct) {
       setProduct(dataProduct);
     }
+    console.log("dataProduct>>>", dataProduct);
   }, [dataProduct]);
 
   // Reset khi mở modal hoặc đổi product
@@ -190,7 +190,9 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
           <div>
             {/* Product info */}
             <div className="variant-modal__product">
-              <div className="variant-modal__product-icon">{product.icon ?? "📦"}</div>
+              <div className="variant-modal__product-icon">
+                {product.image ? <img src={product.image} alt={product.name} /> : product.icon ?? "📦"}
+              </div>
               <div className="variant-modal__product-info">
                 <div className="variant-modal__product-name">{product.name}</div>
 

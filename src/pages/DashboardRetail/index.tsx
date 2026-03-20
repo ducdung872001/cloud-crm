@@ -1,39 +1,24 @@
-import React, { useState, useEffect, useContext } from "react";
-import moment from "moment";
+import React, { useState, useContext } from "react";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "reborn-util";
 import urls from "configs/urls";
 import BoxTable from "components/boxTable/boxTable";
-import ReportService from "services/ReportService";
-import InvoiceService from "services/InvoiceService";
 import { UserContext, ContextType } from "contexts/userContext";
 import Icon from "@/components/icon";
-
-const topProducts = [
-  { name: "Modern Wifi 350", revenue: "10 N", pct: 85.6, color: "#47B5AC" },
-  { name: "Sim Viettel 350", revenue: "9,8 N", pct: 61.5, color: "#47B5AC" },
-  { name: "Modern Wifi 350", revenue: "9,7 N", pct: 59.3, color: "#47B5AC" },
-  { name: "Modern Wifi 350", revenue: "8,5 N", pct: 57.7, color: "#47B5AC" },
-];
+import { useDashBoard } from "@/hooks/useDashBoard";
 
 export default function DashboardRetail() {
   document.title = "Bảng điều khiển";
   const navigate = useNavigate();
   const { dataBranch } = useContext(UserContext) as ContextType;
+  const { dataTopProduct, dataRevenue } = useDashBoard({ enabled: !!dataBranch }); // fetch top products khi đã có dataBranch, nếu chưa có thì không fetch để tránh lỗi
+
+  console.log("dataRevenue", dataRevenue);
 
   const [masked, setMasked] = useState(true);
   const [topTab, setTopTab] = useState("qty");
   const [showShortcutModal, setShowShortcutModal] = useState(false);
-
-  // States for stats
-  const [stats, setStats] = useState({
-    monthlyRevenue: 0,
-    monthlyOrders: 0,
-    monthlyCanceled: 0,
-    dailyRevenue: 0,
-    dailyOrders: 0,
-  });
 
   const lowStockData = [
     { id: 1, name: "Modern Viettel 350", code: "GH-123456789", status: "sắp hết", qty: 20, statusColor: "#f59e0b" },
@@ -43,58 +28,22 @@ export default function DashboardRetail() {
     { id: 5, name: "Modern Viettel 350", code: "GH-123456789", status: "sắp hết", qty: 18, statusColor: "#f59e0b" },
   ];
 
-  const fetchStats = async () => {
-    const branchId = dataBranch?.value;
-    const today = moment().format("YYYY-MM-DD");
-
-    try {
-      // 1. Lấy tổng doanh thu & đơn hàng (all-time)
-      const invMonthRes = await InvoiceService.list({ branchId, page: 1, limit: 1 } as any);
-      let monthlyOrders = invMonthRes?.result?.pagedLst?.total || 0;
-      let monthlyRevenue = invMonthRes?.result?.totalRevenue || 0;
-
-      // 2. Lấy đơn hàng hủy tháng (all-time)
-      const invMonthCancelRes = await InvoiceService.list({ status: 4, branchId, page: 1, limit: 1 } as any);
-      let monthlyCanceled = invMonthCancelRes?.result?.totalItem || 0; // if status fails, returns 0
-
-      // 3. Lấy doanh thu ngày
-      const revDayRes = await ReportService.revenue({ fromTime: today, toTime: today, branchId });
-      let dailyRevenue = 0;
-      if (revDayRes.code === 0 && revDayRes.result) {
-        dailyRevenue = revDayRes.result.reduce((acc, curr) => acc + (curr.revenue || 0), 0);
-      }
-
-      // 5. Số đơn hàng hôm nay
-      const invDayRes = await InvoiceService.list({ fromTime: today, toTime: today, branchId, page: 1, limit: 1 } as any);
-      let dailyOrders = invDayRes?.result?.totalItem || 0;
-
-      setStats({
-        monthlyRevenue,
-        monthlyOrders,
-        monthlyCanceled: monthlyCanceled > 0 ? monthlyCanceled : 150, // mock fallback as requested image shows 150
-        dailyRevenue,
-        dailyOrders,
-      });
-    } catch (error) {
-      console.error("Error fetching stats:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchStats();
-  }, [dataBranch]);
-
   // BoxTable config
   const lowStockTitles = ["Tên sản phẩm", "Mã sản phẩm", "Trạng thái", "Số lượng"];
   const lowStockMappingArray = (item, index) => {
     return [
       item.name,
       item.code,
-      <span className="status-badge" style={{
-        color: item.statusColor,
-        background: item.statusColor + "18"
-      }}>{item.status}</span>,
-      item.qty
+      <span
+        className="status-badge"
+        style={{
+          color: item.statusColor,
+          background: item.statusColor + "18",
+        }}
+      >
+        {item.status}
+      </span>,
+      item.qty,
     ];
   };
 
@@ -107,9 +56,25 @@ export default function DashboardRetail() {
       {/* STAT CARDS ROW */}
       <div className="stat-cards-row">
         {[
-          { label: "Tổng số doanh thu", icon: <Icon name="MoneyFill" />, value: masked ? "••••••••••" : formatCurrency(stats.monthlyRevenue || 0, ".", ""), unit: "VNĐ" },
-          { label: "Tổng số đơn hàng", icon: <Icon name="CashBook" />, value: masked ? "••••••••••" : formatCurrency(stats.monthlyOrders || 0, ".", ""), unit: "đơn" },
-          { label: "Số đơn hàng hủy", icon: <Icon name="ReturnInvoice" />, value: formatCurrency(stats.monthlyCanceled || 0, ".", ""), unit: "đơn", noMask: true },
+          {
+            label: "Tổng số doanh thu",
+            icon: <Icon name="MoneyFill" />,
+            value: masked ? "••••••••••" : formatCurrency(dataRevenue.stats.totalRevenue || 0, ".", ""),
+            unit: "VNĐ",
+          },
+          {
+            label: "Tổng số đơn hàng",
+            icon: <Icon name="CashBook" />,
+            value: masked ? "••••••••••" : formatCurrency(dataRevenue.stats.totalOrder || 0, ".", ""),
+            unit: "đơn",
+          },
+          {
+            label: "Số đơn hàng hủy",
+            icon: <Icon name="ReturnInvoice" />,
+            value: formatCurrency(dataRevenue.stats.totalCancelOrder || 0, ".", ""),
+            unit: "đơn",
+            noMask: true,
+          },
         ].map((card, i) => (
           <div key={i} className="stat-card">
             <div className={`stat-card-icon ${i === 2 ? "danger" : "safe"}`}>{card.icon}</div>
@@ -118,11 +83,11 @@ export default function DashboardRetail() {
               <div className="stat-card-value-container">
                 <span className={`stat-card-value ${i === 2 ? "danger" : "normal"} ${masked && !card.noMask ? "masked" : ""}`}>{card.value}</span>
                 {!card.noMask && (
-                  <button onClick={() => setMasked(!masked)} className="stat-card-toggle">👁</button>
+                  <button onClick={() => setMasked(!masked)} className="stat-card-toggle">
+                    👁
+                  </button>
                 )}
-                {card.noMask && (
-                  <span className="stat-card-edit"></span>
-                )}
+                {card.noMask && <span className="stat-card-edit"></span>}
               </div>
             </div>
           </div>
@@ -133,33 +98,48 @@ export default function DashboardRetail() {
       <div className="middle-row">
         {/* Revenue card */}
         <div className="revenue-card">
-          <div className="revenue-card-title">
-            Doanh thu và đơn hàng trong ngày
-          </div>
+          <div className="revenue-card-title">Doanh thu và đơn hàng trong ngày</div>
           <div className="revenue-card-stats">
             <div className="revenue-card-stat">
-              <div className="revenue-card-stat-icon"><Icon name="MoneyFill" /></div>
+              <div className="revenue-card-stat-icon">
+                <Icon name="MoneyFill" />
+              </div>
               <div>
                 <div className="revenue-card-stat-label">Doanh thu trong ngày</div>
-                <div className="revenue-card-stat-value">{formatCurrency(stats.dailyRevenue || 0, ".", "")} VND
+                <div className="revenue-card-stat-value">
+                  {formatCurrency(dataRevenue.stats.todayRevenue || 0, ".", "")} VND
                   <span className="sync-icon">↻</span>
                 </div>
               </div>
             </div>
             <div className="revenue-card-stat">
-              <div className="revenue-card-stat-icon"><Icon name="CashBook" /></div>
+              <div className="revenue-card-stat-icon">
+                <Icon name="CashBook" />
+              </div>
               <div>
                 <div className="revenue-card-stat-label">Đơn hàng</div>
-                <div className="revenue-card-stat-value">{formatCurrency(stats.dailyOrders || 0, ".", "")}
+                <div className="revenue-card-stat-value">
+                  {formatCurrency(dataRevenue.stats.todayOrder || 0, ".", "")}
                   <span className="sync-icon">↻</span>
                 </div>
               </div>
             </div>
           </div>
           {/* Mini chart bars */}
-          <div className="mini-chart">
+          {/* <div className="mini-chart">
             {[30, 50, 40, 70, 55, 80, 45, 65, 90, 60, 75, 85, 50, 70, 40].map((h, i) => (
               <div key={i} className={`mini-chart-bar ${i === 8 ? "active" : ""}`} style={{ height: `${h}%` }} />
+            ))}
+          </div> */}
+
+          {/* Mini chart bars */}
+          <div className="mini-chart">
+            {dataRevenue.listOrderByHour?.map((value, i) => (
+              <div key={i} className="mini-chart-bar-container">
+                <div className="bar-value">{value}</div>
+                <div className={`mini-chart-bar ${i === 8 ? "active" : ""}`} style={{ height: `${value}%` }} />
+                <div className="bar-label">{i}:00</div>
+              </div>
             ))}
           </div>
         </div>
@@ -195,18 +175,14 @@ export default function DashboardRetail() {
             </div>
           </div>
 
-          <BoxTable
-            name="low-stock"
-            titles={lowStockTitles}
-            items={lowStockData}
-            dataMappingArray={lowStockMappingArray}
-            striped={false}
-          />
+          <BoxTable name="low-stock" titles={lowStockTitles} items={lowStockData} dataMappingArray={lowStockMappingArray} striped={false} />
 
           <div className="reminder-box">
             <span>🔔</span>
             <span>Nhắc nhở: Kiểm tra kho cuối ngày!</span>
-            <span className="view-more" onClick={() => navTo(urls.product_inventory)}>Xem thêm ▾</span>
+            <span className="view-more" onClick={() => navTo(urls.product_inventory)}>
+              Xem thêm ▾
+            </span>
           </div>
         </div>
 
@@ -216,13 +192,13 @@ export default function DashboardRetail() {
             <span className="section-title">Top sản phẩm</span>
           </div>
           <div className="top-product-list">
-            {topProducts.map((p, i) => (
+            {dataTopProduct.map((p, i) => (
               <div key={i} className="top-product-item">
                 <div className="top-product-item-header">
                   <span className="top-product-item-name">{p.name}</span>
                   <div className="top-product-item-stats">
-                    <span className="top-product-item-revenue">{p.revenue}</span>
-                    <span className="top-product-item-pct">{p.pct}%</span>
+                    <span className="top-product-item-revenue">{formatCurrency(p.revenue)}</span>
+                    <span className="top-product-item-pct">{p.pct} SP</span>
                   </div>
                 </div>
                 <div className="top-product-item-bar-bg">
@@ -232,9 +208,8 @@ export default function DashboardRetail() {
             ))}
           </div>
           <div className="tabs">
-            {["Theo số lượng", "Theo doanh thu"].map(tab => (
-              <button key={tab} onClick={() => setTopTab(tab)}
-                className={`tabs-btn ${topTab === tab ? "active" : "inactive"}`}>
+            {["Theo số lượng", "Theo doanh thu"].map((tab) => (
+              <button key={tab} onClick={() => setTopTab(tab)} className={`tabs-btn ${topTab === tab ? "active" : "inactive"}`}>
                 {tab}
               </button>
             ))}
@@ -248,7 +223,9 @@ export default function DashboardRetail() {
           <div className="shortcut-modal-content">
             <div className="shortcut-modal-header">
               <h3>Tùy chỉnh truy cập nhanh</h3>
-              <button onClick={() => setShowShortcutModal(false)} className="close-btn">✕</button>
+              <button onClick={() => setShowShortcutModal(false)} className="close-btn">
+                ✕
+              </button>
             </div>
 
             <p className="shortcut-modal-desc">
@@ -273,8 +250,12 @@ export default function DashboardRetail() {
             </div>
 
             <div className="shortcut-modal-footer">
-              <button onClick={() => setShowShortcutModal(false)} className="btn-cancel">Hủy</button>
-              <button onClick={() => setShowShortcutModal(false)} className="btn-save">Lưu thay đổi</button>
+              <button onClick={() => setShowShortcutModal(false)} className="btn-cancel">
+                Hủy
+              </button>
+              <button onClick={() => setShowShortcutModal(false)} className="btn-save">
+                Lưu thay đổi
+              </button>
             </div>
           </div>
         </div>
@@ -282,4 +263,3 @@ export default function DashboardRetail() {
     </div>
   );
 }
-

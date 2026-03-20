@@ -25,6 +25,9 @@ console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
+  dashboard: {
+    detail: prefixSales + "/invoice/dashboard",
+  },
   beautySalon: {
     list: prefixRebornVn + "/beautySalon/list",
     approve: prefixRebornVn + "/beautySalon/approve",
@@ -473,7 +476,7 @@ export const urlsApi = {
   product: {
     filterWarehouse: prefixWarehouse + "/product/in_warehouse",
     list: prefixInventory + "/product/list",
-    // list: prefixWarehouse + "/public/product/list",
+    topProduct: prefixSales + "/invoice/topProduct",
     detail: prefixInventory + "/product/get",
     update: prefixInventory + "/product/update",
     updateContent: prefixInventory + "/product/update/content",
