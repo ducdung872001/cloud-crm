@@ -12,13 +12,19 @@ interface ReturnTableProps {
   onSearch: (v: string) => void;
   onViewDetail: (item: ReturnProduct) => void;
   onCreateClick: () => void;
+  /** Đang fetch data từ API */
+  loading?: boolean;
+  /** Tổng số bản ghi từ API (dùng để hiện "Tải thêm") */
+  total?: number;
+  /** Callback khi bấm "Tải thêm" */
+  onLoadMore?: () => void;
 }
 
 const STATUS_MAP: Record<ReturnStatus, { label: string; cls: string }> = {
-  done: { label: "Hoàn thành", cls: "rbadge--done" },
-  pending: { label: "Chờ xử lý", cls: "rbadge--pending" },
+  done:       { label: "Hoàn thành", cls: "rbadge--done" },
+  pending:    { label: "Chờ xử lý",  cls: "rbadge--pending" },
   processing: { label: "Đang xử lý", cls: "rbadge--processing" },
-  cancel: { label: "Đã hủy", cls: "rbadge--cancel" },
+  cancel:     { label: "Đã hủy",     cls: "rbadge--cancel" },
 };
 
 const fmt = (n: number) => (n > 0 ? n.toLocaleString("vi") + " ₫" : "–");
@@ -33,12 +39,23 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
   onSearch,
   onViewDetail,
   onCreateClick,
+  loading = false,
+  total,
+  onLoadMore,
 }) => {
+  const hasMore = total !== undefined && data.length < total;
+
   return (
     <div className="return-table-panel">
       {/* Panel header */}
       <div className="return-table-panel__header">
-        <div className="return-table-panel__title">Danh sách phiếu trả / đổi hàng</div>
+        <div className="return-table-panel__title">
+          Danh sách phiếu trả / đổi hàng
+          {total !== undefined && (
+            <span className="return-table-panel__count"> ({total})</span>
+          )}
+        </div>
+
         <div className="return-table-panel__toolbar">
           <select className="rfilter" value={filterType} onChange={(e) => onFilterType(e.target.value)}>
             <option value="">Tất cả loại</option>
@@ -56,7 +73,11 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
 
           <div className="rsearch-wrap">
             <span className="rsearch-wrap__icon">🔍</span>
-            <input placeholder="Tìm mã phiếu, khách hàng..." value={search} onChange={(e) => onSearch(e.target.value)} />
+            <input
+              placeholder="Tìm mã phiếu, khách hàng..."
+              value={search}
+              onChange={(e) => onSearch(e.target.value)}
+            />
           </div>
 
           <button className="btn btn--lime btn--sm" onClick={onCreateClick}>
@@ -78,11 +99,22 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
               <th>Sản phẩm</th>
               <th>Tiền hoàn</th>
               <th>Trạng thái</th>
-              <th></th>
+              <th />
             </tr>
           </thead>
           <tbody>
-            {data.length === 0 ? (
+            {loading && data.length === 0 ? (
+              /* Skeleton rows khi chưa có data */
+              Array.from({ length: 5 }).map((_, i) => (
+                <tr key={`sk-${i}`} className="rtbl__skeleton">
+                  {Array.from({ length: 9 }).map((__, j) => (
+                    <td key={j}>
+                      <div className="rtbl__skeleton-bar" />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : data.length === 0 ? (
               <tr>
                 <td colSpan={9}>
                   <div className="rtbl__empty">
@@ -111,7 +143,9 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
                     <td className="rtbl__ellipsis" title={row.productSummary}>
                       {row.productSummary}
                     </td>
-                    <td className={`rtbl__amount${row.refundAmount > 0 ? " rtbl__amount--pos" : ""}`}>{fmt(row.refundAmount)}</td>
+                    <td className={`rtbl__amount${row.refundAmount > 0 ? " rtbl__amount--pos" : ""}`}>
+                      {fmt(row.refundAmount)}
+                    </td>
                     <td>
                       <span className={`rbadge ${st.cls}`}>{st.label}</span>
                     </td>
@@ -133,6 +167,19 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
           </tbody>
         </table>
       </div>
+
+      {/* Load more */}
+      {hasMore && (
+        <div className="return-table-panel__footer">
+          <button
+            className="btn btn--outline btn--sm"
+            onClick={onLoadMore}
+            disabled={loading}
+          >
+            {loading ? "Đang tải..." : `Tải thêm (${total - data.length} còn lại)`}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

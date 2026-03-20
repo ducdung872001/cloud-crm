@@ -1,158 +1,175 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import "./index.scss";
-import { ReturnProduct } from "@/types/returnProduct";
+import { ReturnProduct, IReturnInvoiceListParams, mapApiToUi } from "@/types/returnProduct";
 import ReturnStats from "./components/ReturnStats";
 import ReturnTable from "./components/ReturnTable";
 import CreateReturnModal from "./modals/CreateReturnModal";
 import ReturnDetailModal from "./modals/ReturnDetailModal";
 import ReturnTopbar from "./components/ReturnTopbar";
+import ReturnInvoiceService from "@/services/ReturnInvoiceService";
 
-const INITIAL_DATA: ReturnProduct[] = [
-  {
-    id: "1",
-    code: "PTH-2026-001",
-    time: "19/03/2026 09:15",
-    customerName: "Nguyễn Văn A",
-    originalOrderCode: "HD-2241",
-    type: "return",
-    productSummary: "Áo thun nam cổ tròn (x2)",
-    refundAmount: 240000,
-    status: "done",
-    reason: "Sản phẩm bị lỗi / hư hỏng",
-    staffName: "Hòa Phạm",
-    paymentMethod: "Tiền mặt",
-  },
-  {
-    id: "2",
-    code: "PTH-2026-002",
-    time: "18/03/2026 14:30",
-    customerName: "Trần Thị B",
-    originalOrderCode: "HD-2235",
-    type: "exchange",
-    productSummary: "Quần jeans slim (x1)",
-    refundAmount: 0,
-    status: "processing",
-    reason: "Không đúng size",
-    staffName: "Minh Tuấn",
-    paymentMethod: "–",
-  },
-  {
-    id: "3",
-    code: "PTH-2026-003",
-    time: "17/03/2026 11:00",
-    customerName: "Lê Minh C",
-    originalOrderCode: "HD-2220",
-    type: "return",
-    productSummary: "Giày thể thao nam (x1)",
-    refundAmount: 580000,
-    status: "pending",
-    reason: "Sản phẩm hết hạn sử dụng",
-    staffName: "Thu Hương",
-    paymentMethod: "Chuyển khoản",
-  },
-  {
-    id: "4",
-    code: "PTH-2026-004",
-    time: "15/03/2026 16:45",
-    customerName: "Phạm Thị D",
-    originalOrderCode: "HD-2198",
-    type: "exchange",
-    productSummary: "Váy đầm hoa nhí (x1)",
-    refundAmount: 0,
-    status: "done",
-    reason: "Khách hàng đổi ý",
-    staffName: "Hòa Phạm",
-    paymentMethod: "–",
-  },
-  {
-    id: "5",
-    code: "PTH-2026-005",
-    time: "12/03/2026 08:20",
-    customerName: "Hoàng Văn E",
-    originalOrderCode: "HD-2180",
-    type: "return",
-    productSummary: "Túi xách da tổng hợp (x1)",
-    refundAmount: 350000,
-    status: "cancel",
-    reason: "Sản phẩm bị lỗi / hư hỏng",
-    staffName: "Minh Tuấn",
-    paymentMethod: "Tiền mặt",
-  },
-  {
-    id: "6",
-    code: "PTH-2026-006",
-    time: "10/03/2026 13:10",
-    customerName: "Vũ Thị F",
-    originalOrderCode: "HD-2165",
-    type: "return",
-    productSummary: "Áo khoác dù (x1)",
-    refundAmount: 420000,
-    status: "done",
-    reason: "Không đúng mô tả",
-    staffName: "Thu Hương",
-    paymentMethod: "Hoàn ví",
-  },
-];
+const PAGE_SIZE = 20;
 
 const ReturnProductPage: React.FC = () => {
-  const [data, setData] = useState<ReturnProduct[]>(INITIAL_DATA);
+  // ── Data state ──────────────────────────────────────────────────────────────
+  const [data, setData] = useState<ReturnProduct[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  // ── Filter state ────────────────────────────────────────────────────────────
+  const [filterType, setFilterType] = useState("");        // "" | "return" | "exchange"
+  const [filterStatus, setFilterStatus] = useState("");    // "" | "pending" | "done" | "cancel"
+  const [search, setSearch] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  // ── Modal state ─────────────────────────────────────────────────────────────
   const [createOpen, setCreateOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ReturnProduct | null>(null);
-  const [filterType, setFilterType] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
-  const [search, setSearch] = useState("");
 
-  const filtered = data.filter((r) => {
-    const q = search.toLowerCase();
-    const matchQ =
-      !q || r.code.toLowerCase().includes(q) || r.customerName.toLowerCase().includes(q) || r.originalOrderCode.toLowerCase().includes(q);
-    const matchT = !filterType || r.type === filterType;
-    const matchS = !filterStatus || r.status === filterStatus;
-    return matchQ && matchT && matchS;
-  });
+  // Debounce search
+  const searchTimer = useRef<ReturnType<typeof setTimeout>>();
 
+  // ── API call ────────────────────────────────────────────────────────────────
+  const fetchData = useCallback(
+    async (currentPage = 0) => {
+      setLoading(true);
+      const abortCtrl = new AbortController();
+
+      try {
+        // Map UI filter values → API params
+        const returnTypeNum =
+          filterType === "return" ? 1 : filterType === "exchange" ? 2 : undefined;
+
+        const statusNum =
+          filterStatus === "done"
+            ? 1
+            : filterStatus === "pending"
+            ? 2
+            : filterStatus === "cancel"
+            ? 3
+            : undefined;
+
+        const params: IReturnInvoiceListParams = {
+          returnType: returnTypeNum,
+          status: statusNum,
+          invoiceCode: search.trim() || undefined,
+          fromDate: fromDate || undefined,
+          toDate: toDate || undefined,
+          page: currentPage,
+          size: PAGE_SIZE,
+        };
+
+        const res = await ReturnInvoiceService.list(params, abortCtrl.signal);
+
+        if (res?.result?.data) {
+          const mapped = res.result.data.map(mapApiToUi);
+          setData(currentPage === 0 ? mapped : (prev) => [...prev, ...mapped]);
+          setTotal(res.result.total ?? 0);
+        }
+      } catch (err: any) {
+        if (err?.name !== "AbortError") {
+          console.error("[ReturnProduct] fetch error:", err);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [filterType, filterStatus, search, fromDate, toDate]
+  );
+
+  // Reset về trang 0 khi filter thay đổi
+  useEffect(() => {
+    setPage(0);
+    fetchData(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterType, filterStatus, fromDate, toDate]);
+
+  // Debounce search input
+  const handleSearch = useCallback((val: string) => {
+    setSearch(val);
+    clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      setPage(0);
+      // fetchData sẽ được gọi qua effect khi search thay đổi
+    }, 400);
+  }, []);
+
+  // Trigger fetch khi search state đổi (sau debounce)
+  useEffect(() => {
+    fetchData(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+
+  // ── Handlers ────────────────────────────────────────────────────────────────
   const handleViewDetail = useCallback((item: ReturnProduct) => {
     setSelectedItem(item);
     setDetailOpen(true);
   }, []);
 
+  /**
+   * Callback sau khi tạo phiếu thành công:
+   * Prepend item mới lên đầu danh sách (optimistic update)
+   * và tăng counter thống kê.
+   */
   const handleCreate = useCallback((newItem: ReturnProduct) => {
     setData((prev) => [newItem, ...prev]);
+    setTotal((t) => t + 1);
     setCreateOpen(false);
   }, []);
 
+  // ── Stats: tính từ data hiện có trong trang ──────────────────────────────────
+  // (Với production: nên có API riêng trả summary, hoặc dùng total từ API)
+
   return (
     <div className="return-product">
-      {/* <Sidebar /> */}
       <div className="return-product__main">
         <ReturnTopbar onCreateClick={() => setCreateOpen(true)} />
 
         <div className="return-product__content">
           <div className="return-product__inner">
-            {/* Stats */}
-            <ReturnStats data={data} />
+            {/* Stats — tính từ data đang load */}
+            <ReturnStats data={data} totalFromApi={total} />
 
-            {/* Table panel */}
+            {/* Table + filters */}
             <ReturnTable
-              data={filtered}
+              data={data}
               filterType={filterType}
               filterStatus={filterStatus}
               search={search}
-              onFilterType={setFilterType}
-              onFilterStatus={setFilterStatus}
-              onSearch={setSearch}
+              loading={loading}
+              total={total}
+              onFilterType={(v) => { setFilterType(v); }}
+              onFilterStatus={(v) => { setFilterStatus(v); }}
+              onSearch={handleSearch}
               onViewDetail={handleViewDetail}
               onCreateClick={() => setCreateOpen(true)}
+              onLoadMore={() => {
+                const nextPage = page + 1;
+                setPage(nextPage);
+                fetchData(nextPage);
+              }}
             />
           </div>
         </div>
       </div>
 
-      {/* Modals */}
-      <CreateReturnModal open={createOpen} onClose={() => setCreateOpen(false)} onCreate={handleCreate} totalExisting={data.length} />
+      {/* Modal tạo phiếu */}
+      <CreateReturnModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreate={handleCreate}
+        totalExisting={total}
+      />
 
-      <ReturnDetailModal open={detailOpen} item={selectedItem} onClose={() => setDetailOpen(false)} />
+      {/* Modal chi tiết */}
+      <ReturnDetailModal
+        open={detailOpen}
+        item={selectedItem}
+        onClose={() => setDetailOpen(false)}
+      />
     </div>
   );
 };

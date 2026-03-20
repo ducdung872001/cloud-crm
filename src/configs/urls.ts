@@ -425,6 +425,13 @@ export const urlsApi = {
     invoiceCode: prefixSales + "/invoice/code",
     prefixSales,
   },
+  returnInvoice: {
+    list: prefixSales + "/invoice/return-exchange/list",
+    detail: prefixSales + "/invoice/get",
+    getReturnItems: prefixSales + "/invoice/get/return",
+    createReturn: prefixSales + "/invoice/create/return",
+    createExchange: prefixSales + "/invoice/create/exchange",
+  },
   invoiceImport: {
     update: prefixInventory + "/invoice/import/update",
     get: prefixInventory + "/invoice/import/get",

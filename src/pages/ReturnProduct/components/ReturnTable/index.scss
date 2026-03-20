@@ -217,3 +217,42 @@
     color: #991b1b;
   }
 }
+
+/* Count badge trong title */
+.return-table-panel__count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+/* Footer với nút "Tải thêm" */
+.return-table-panel__footer {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+}
+
+/* Skeleton rows */
+.rtbl__skeleton td {
+  padding: 12px 14px;
+}
+
+.rtbl__skeleton-bar {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  width: 80%;
+}
+
+.rtbl__skeleton-bar:nth-child(odd) {
+  width: 60%;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
