@@ -120,7 +120,7 @@ const enrichList = (items: SinvoiceLog[]): SinvoiceLog[] =>
   });
 
 /** Month string "2026-02" → fromDate "2026-02-01", toDate "2026-02-28" */
-const monthToRange = (month: string): { fromDate: string; toDate: string } => {
+export const monthToRange = (month: string): { fromDate: string; toDate: string } => {
   const [y, m] = month.split("-").map(Number);
   const lastDay = new Date(y, m, 0).getDate();
   return {
@@ -140,7 +140,7 @@ interface FetchParams {
   size:       number;
 }
 
-const fetchSinvoiceLogs = async (
+export const fetchSinvoiceLogs = async (
   params: FetchParams,
   signal?: AbortSignal
 ): Promise<{ items: SinvoiceLog[]; total: number }> => {
