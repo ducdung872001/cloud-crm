@@ -4,7 +4,7 @@
  * và lấy dữ liệu hóa đơn bán hàng từ cloud-sales.
  */
 
-const PREFIX_INTEGRATION = "/integration/sinvoice";
+const PREFIX_INTEGRATION = "/bizapi/integration/sinvoice";
 const PREFIX_SALES       = "/bizapi/sales";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
