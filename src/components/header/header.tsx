@@ -462,7 +462,7 @@ export default function Header(props: any) {
           break;
       }
     }
-    return "Marketing";
+    return "NotifyRox";
   };
 
   /** Render a single notification item using the new API fields */

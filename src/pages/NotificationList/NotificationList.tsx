@@ -467,7 +467,7 @@ export default function NotificationList(props: any) {
           break;
       }
     }
-    return "Marketing";
+    return "NotifyRox";
   };
 
   /** Render a single notification item */
