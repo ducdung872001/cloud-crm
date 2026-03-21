@@ -107,7 +107,7 @@ import SettingProcess from "pages/SettingProcess/SettingProcess";
 import SaleFlowList from "pages/SaleFlow/SaleFlowList";
 import CreateSaleflow from "pages/SaleFlow/CreateSaleFlow/CreateSaleFlow";
 import ManagementSale from "pages/ManagementSale/ManagementSale";
-
+import NotificationList from "@/pages/NotificationList/NotificationList";
 // Phiếu điền chuyển kho
 import TransferOrderForm from "pages/TransferOrderForm";
 import DetailMarketingAutomation from "pages/MarketingAutomation/DetailMarketingAutomation";
@@ -183,6 +183,8 @@ import CustomerAnalysisPage from "@/pages/CustomerAnalysisPage/CustomerAnalysisP
 import PaymentMethodList from "@/pages/PaymentMethod/PaymentMethod";
 import PaymentMethodPage from "@/pages/PaymentMethodPage/PaymentMethodPage";
 import FinanceContent from "@/pages/PaymentReconciliation";
+import ReturnProductPage from "@/pages/ReturnProduct";
+import Reconcile from "@/pages/Reconcile";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -192,6 +194,12 @@ export const menu: IMenuItem[] = [
     path: urls.dashboard,
     icon: <Icon name="DashboardMenu" />,
     code: "DASHBOARD",
+  },
+      {
+    title: "notification", // Thông báo
+    path: urls.notification,
+    icon: <Icon name="BellMenu" />,
+    code: "",
   },
   {
     title: "selling", // Bán hàng & Đơn hàng
@@ -213,7 +221,7 @@ export const menu: IMenuItem[] = [
       },
       {
         title: "returnInvoice", // Khách trả hàng
-        path: urls.customer_pay,
+        path: urls.return_invoice,
         icon: <Icon name="ReturnMenu" />,
         code: "RETURN_INVOICE",
       },
@@ -895,6 +903,10 @@ export const routes: IRouter[] = [
     // component: <Dashboard />,
     component: <DashboardRetail />,
   },
+      {
+    path: urls.notification,
+    component: <NotificationList />,
+  },
   {
     path: urls.dashboard,
     // component: <Dashboard />,
@@ -1390,8 +1402,8 @@ export const routes: IRouter[] = [
   },
   // danh sách khách trả hàng
   {
-    path: urls.customer_pay,
-    component: <CustomerPayList />,
+    path: urls.return_invoice,
+    component: <ReturnProductPage />,
   },
   // bán hàng đa kênh
   {
@@ -1579,6 +1591,6 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.payment_control,
-    component: <FinanceContent />,
+    component: <Reconcile />,
   },
 ];

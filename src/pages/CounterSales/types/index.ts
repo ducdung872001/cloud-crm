@@ -40,7 +40,7 @@ export interface Order {
   code: string;
   source: "offline" | "shopee" | "tiktok" | "website";
   sourceLabel: string;
-  status: "pending" | "shipping" | "delivered" | "cancelled";
+  status: "pending" | "shipping" | "success" | "cancelled";
   statusLabel: string;
   time: string;
   customer: Customer;

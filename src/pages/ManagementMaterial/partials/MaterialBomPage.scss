@@ -11,12 +11,12 @@
 
       h1 {
         color: var(--text-primary-color);
-        font-size: 2.4rem;
+        font-size: var(--text-3xl);
         line-height: 2.8rem;
         padding-right: 1rem;
         margin: 0;
-        font-weight: 700;
-        text-transform: uppercase;
+        font-weight: var(--fw-bold);
+        text-transform: none; // ✅ standardized
       }
 
       .title-first {
@@ -243,7 +243,7 @@
     color: var(--extra-color-50);
     background: var(--bg-color);
     padding: 0.2rem 0.7rem;
-    border-radius: 0.5rem;
+    border-radius: 0.3rem;
     border: 1px solid var(--border-color);
   }
 }
@@ -310,7 +310,7 @@
     font-size: 1.15rem;
     background: rgba(255, 255, 255, 0.15);
     padding: 0.2rem 0.7rem;
-    border-radius: 0.5rem;
+    border-radius: 0.3rem;
     color: rgba(255, 255, 255, 0.85);
   }
 
@@ -346,7 +346,7 @@
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--extra-color-50);
-    text-transform: uppercase;
+    text-transform: none; // ✅ standardized
     letter-spacing: 0.05em;
     padding: 1.2rem 1.6rem 0.6rem;
   }

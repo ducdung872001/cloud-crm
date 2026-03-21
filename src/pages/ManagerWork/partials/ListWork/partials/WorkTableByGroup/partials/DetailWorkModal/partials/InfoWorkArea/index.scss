@@ -257,7 +257,7 @@
       }
 
       .item.related-document .name.is-link {
-        color: var(--primary-color, #1976d2);
+        color: var(--primary-color);
         text-decoration: underline;
         font-weight: 500;
       }
@@ -370,7 +370,7 @@
         display: inline-block;
         margin-top: 8px;
         font-size: 13px;
-        color: var(--primary-color, #1976d2);
+        color: var(--primary-color);
         text-decoration: underline;
       }
 
@@ -399,7 +399,7 @@
         }
 
         &.active {
-          border-color: var(--primary-color, #1976d2);
+          border-color: var(--primary-color);
         }
       }
 

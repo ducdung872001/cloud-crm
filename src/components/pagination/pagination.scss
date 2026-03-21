@@ -1,11 +1,13 @@
 .pagination {
-  padding: 2.4rem 2rem;
-  font-size: 1.4rem;
-  line-height: 2rem;
+  padding: 1.6rem 0;
+  font-size: var(--text-base);
+  line-height: var(--lh-snug);
   color: var(--text-primary-color);
   .count-item {
     width: 30%;
     flex-shrink: 0;
+    padding-left: 0.4rem;          // ✅ nhẹ nhàng, không sát lề trái
+    color: var(--text-extra-color); // ✅ subtle - không cạnh tranh với pager
   }
   .pager {
     width: 70%;
@@ -112,7 +114,7 @@
               h4 {
                 padding: 1rem;
                 margin: 0;
-                font-weight: 400;
+                font-weight: var(--fw-regular);
                 text-decoration: none;
                 font-size: 1.4rem;
                 line-height: 1;
@@ -199,7 +201,7 @@
       .base-button {
         border: 1px solid var(--border-color);
         padding: 0.3rem 0.4rem 0.3rem 0.8rem;
-        font-weight: 400;
+        font-weight: var(--fw-regular);
         gap: 0;
       }
     }

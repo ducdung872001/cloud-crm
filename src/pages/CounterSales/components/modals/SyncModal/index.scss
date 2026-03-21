@@ -2,16 +2,16 @@
   &__channels {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 1rem;
   }
 
   &__summary {
-    margin-top: 14px;
-    padding: 11px 14px;
+    margin-top: 1.4rem;
+    padding: 1.1rem 14px;
     background: var(--gold-l);
     border: 1.5px solid var(--gold);
-    border-radius: 10px;
-    font-size: 13px;
+    border-radius: 0.3rem;
+    font-size: 1.3rem;
     color: var(--ink);
     line-height: 1.5;
   }
@@ -20,10 +20,10 @@
 .sync-channel {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
+  gap: 1.2rem;
+  padding: 1.4rem;
   background: var(--paper);
-  border-radius: 11px;
+  border-radius: 1.1rem;
   border: 1.5px solid var(--border);
   transition: border-color 0.2s;
 
@@ -32,7 +32,7 @@
   }
 
   &__icon {
-    font-size: 24px;
+    font-size: 2.4rem;
     flex-shrink: 0;
   }
 
@@ -42,16 +42,16 @@
 
   &__name {
     font-weight: 800;
-    font-size: 14px;
+    font-size: 1.4rem;
     margin-bottom: 3px;
   }
 
   &__meta {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: var(--muted);
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 0.5rem;
 
     &--off {
       color: var(--muted2);
@@ -59,13 +59,13 @@
   }
 
   &__dot {
-    width: 6px;
-    height: 6px;
+    width: 0.6rem;
+    height: 0.6rem;
     border-radius: 50%;
     flex-shrink: 0;
 
     &--online {
-      background: var(--lime);
+      background: var(--primary-color);
       box-shadow: 0 0 0 2px var(--lime-l);
     }
   }
@@ -78,10 +78,10 @@
 .sync-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
+  gap: 0.4rem;
+  padding: 0.4rem 10px;
+  border-radius: 2rem;
+  font-size: 1.2rem;
   font-weight: 700;
 
   &--lime {

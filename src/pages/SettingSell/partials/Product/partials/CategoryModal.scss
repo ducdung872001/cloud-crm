@@ -16,7 +16,7 @@
     transition: all 0.2s;
 
     &--active {
-      background: #3b82f6;
+      background: var(--primary-color);
       border-color: #3b82f6;
       color: #fff;
       font-weight: 600;
@@ -123,12 +123,13 @@
     }
 
     &--primary {
-      background: #3b82f6;
+      background: var(--primary-color);
       border-color: #3b82f6;
       color: #fff;
 
       &:hover {
-        background: #2563eb;
+        background: var(--primary-color);
+      color: var(--white-color);
       }
     }
 

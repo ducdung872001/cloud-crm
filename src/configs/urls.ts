@@ -13,7 +13,7 @@ const prefixApplication = "/application";
 const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
-const prefixNotification = "/notification";
+const prefixNotification = prefixBiz + "/notification";
 const prefixFinance = prefixBiz + "/finance";
 const prefixInventory = prefixBiz + "/inventory";
 const prefixWarehouse = prefixBiz + "/warehouse";
@@ -25,6 +25,9 @@ console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
 
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
+  dashboard: {
+    detail: prefixSales + "/invoice/dashboard",
+  },
   beautySalon: {
     list: prefixRebornVn + "/beautySalon/list",
     approve: prefixRebornVn + "/beautySalon/approve",
@@ -74,14 +77,14 @@ export const urlsApi = {
     fcmDevice: prefixNotification + "/fcmDevice/update",
   },
   notificationHistory: {
-    list: prefixNotification + "/notificationHistory/list",
-    update: prefixNotification + "/notificationHistory/update",
-    detail: prefixNotification + "/notificationHistory/get",
-    delete: prefixNotification + "/notificationHistory/delete",
+    list: prefixNotification + "/firebaseDeliveryHistory/list",
+    update: prefixNotification + "/firebaseDeliveryHistory/update",
+    detail: prefixNotification + "/firebaseDeliveryHistory/get",
+    delete: prefixNotification + "/firebaseDeliveryHistory/delete",
 
-    updateUnread: prefixNotification + "/notificationHistory/update/unread",
-    updateReadAll: prefixNotification + "/notificationHistory/update/readAll",
-    countUnread: prefixNotification + "/notificationHistory/count",
+    updateUnread: prefixNotification + "/firebaseDeliveryHistory/update/unread",
+    updateReadAll: prefixNotification + "/firebaseDeliveryHistory/update/readAll",
+    countUnread: prefixNotification + "/firebaseDeliveryHistory/count",
   },
 
   customer: {
@@ -402,10 +405,10 @@ export const urlsApi = {
     takeEstimate: prefixAdmin + "/customer/estimate",
   },
   invoice: {
-    createInvoice: prefixSales + "/invoiceDetail/get",
+    createInvoice: prefixSales + "/invoice/draft/create",
     list: prefixSales + "/invoice/list/v2",
     create: prefixSales + "/invoice/create",
-    invoiceDetail: prefixSales + "/invoiceDetail/import",
+    invoiceDetail: prefixSales + "/invoiceDetail/get",
     cardService: prefixSales + "/invoiceDetail/cardService",
     // Tạo hóa đơn bán hàng
     invoiceDetailCustomer: prefixSales + "/invoiceDetail/customer",
@@ -424,6 +427,15 @@ export const urlsApi = {
     // lấy mã hoá đơn
     invoiceCode: prefixSales + "/invoice/code",
     prefixSales,
+  },
+  returnInvoice: {
+    list: prefixSales + "/invoice/return-exchange/list",
+    detail: prefixSales + "/invoice/get",
+    getReturnItems: prefixSales + "/invoice/get/return",
+    createReturn: prefixSales + "/invoice/create/return",
+    createExchange: prefixSales + "/invoice/create/exchange",
+    variantListDetail: prefixInventory + "/productVariant/list-detail", // ← THÊM DÒNG NÀY
+    confirm: prefixSales + "/invoice/return/confirm",
   },
   invoiceImport: {
     update: prefixInventory + "/invoice/import/update",
@@ -464,7 +476,7 @@ export const urlsApi = {
   product: {
     filterWarehouse: prefixWarehouse + "/product/in_warehouse",
     list: prefixInventory + "/product/list",
-    // list: prefixWarehouse + "/public/product/list",
+    topProduct: prefixSales + "/invoice/topProduct",
     detail: prefixInventory + "/product/get",
     update: prefixInventory + "/product/update",
     updateContent: prefixInventory + "/product/update/content",
@@ -3154,6 +3166,7 @@ export const urlsApi = {
 
 export const urls = {
   dashboard: "/dashboard",
+  notification: "/notification",
   manager_work: "/manager_work",
   //Lĩnh vực BĐS - Đầu mối liên hệ
   contact: "/contact",
@@ -3234,7 +3247,8 @@ export const urls = {
   // đường dẫn quản lý đơn vị vận chuyển
   shipping_parther: "/shipping_parther",
   // đường dẫn danh sách khách trả hàng
-  customer_pay: "/customer_pay",
+  // customer_pay: "/customer_pay",
+  return_invoice: "/return_invoice",
   // bán hàng đa kênh
   multi_channel_sales: "/multi_channel_sales",
   //tạo báo giá

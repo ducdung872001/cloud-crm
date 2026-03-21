@@ -1,43 +1,6 @@
-.page__import--invoice {
-  .card-box {
-    position: relative;
-
-    .recover-public-debts {
-      gap: 0 0.6rem;
-
-      svg {
-        width: 2rem;
-        height: 2rem;
-        fill: var(--warning-color);
-      }
-    }
-
-    .total__summary {
-      position: absolute;
-      top: 1.3rem;
-      right: 2rem;
-      display: flex;
-      align-items: center;
-      gap: 0 2rem;
-
-      &--sales,
-      &--revenue {
-        .key {
-          font-weight: 600;
-          color: var(--success-darker-color);
-        }
-
-        .value {
-          font-weight: 500;
-        }
-      }
-    }
-  }
-}
-.counter-sales__screen {
+.sale-invoice-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  align-items: center;
-  justify-self: center;
+  width: 100%;       // ✅ fix: was missing width 100%, causing narrow layout
 }

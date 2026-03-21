@@ -37,7 +37,7 @@
                         width: 70%;
                         height: 0.3rem;
                         background-color: var(--extra-color-50);
-                        border-radius: 0.5rem;
+                        border-radius: 0.3rem;
                         transform: scaleX(0);
                         transform-origin: right;
                         transition: transform 0.4s ease;
@@ -71,7 +71,7 @@
 
                 .upload {
                     border: 1px dashed var(--extra-color-50);
-                    border-radius: 0.5rem;
+                    border-radius: 0.3rem;
 
                     label {
                         margin: 0;

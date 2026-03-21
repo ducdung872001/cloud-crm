@@ -13,7 +13,7 @@
         .item__add--file {
           box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
           border: 1.2px dashed transparent;
-          border-radius: 0.5rem;
+          border-radius: 0.3rem;
           padding: 1.6rem;
           cursor: pointer;
           width: 17.5rem;
@@ -235,7 +235,7 @@
 
             .btn-upload--file {
               background-color: var(--primary-color-90);
-              border-radius: 0.5rem;
+              border-radius: 0.3rem;
               padding: 0.6rem 2rem;
               display: flex;
               align-items: center;

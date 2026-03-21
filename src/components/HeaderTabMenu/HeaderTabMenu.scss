@@ -6,16 +6,16 @@
     .action-backup {
       display: flex;
       align-items: center;
-      margin-left: 2rem;
+      // margin-left: 2rem;
 
       h1 {
         color: var(--text-primary-color);
-        font-size: 2.4rem;
-        line-height: 2.8rem;
+        font-size: var(--text-3xl);
+        line-height: var(--lh-tight);
         padding-right: 1rem;
         margin: 0;
-        font-weight: 700;
-        text-transform: uppercase;
+        font-weight: var(--fw-bold);
+        text-transform: none;
       }
 
       .title-first {

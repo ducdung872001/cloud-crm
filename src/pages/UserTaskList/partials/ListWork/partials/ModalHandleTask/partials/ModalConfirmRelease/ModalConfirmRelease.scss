@@ -43,7 +43,7 @@
                 }
 
                 .button-accept{
-                    background-color: #ED1B34;
+                    background: var(--error-darker-color);
                     color: white;
                     display: flex;
                     &:hover {

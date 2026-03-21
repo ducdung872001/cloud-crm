@@ -18,15 +18,16 @@
     align-items: center;
     gap: 7px;
     padding: 9px 20px;
-    background: #d97706;
+    background: var(--primary-color);
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 0.3rem;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     svg { width: 15px; height: 15px; }
-    &:hover { background: #b45309; }
+    &:hover { background: var(--primary-color);
+      color: var(--white-color); }
   }
 
   // ---- Grid ----
@@ -48,7 +49,7 @@
   .cah__card {
     background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
+    border-radius: 0.3rem;
     padding: 22px 24px;
 
     h3 {
@@ -86,13 +87,13 @@
     input, select {
       padding: 8px 12px;
       border: 1px solid #d1d5db;
-      border-radius: 6px;
+      border-radius: 0.3rem;
       font-size: 13px;
       color: #111827;
       background: #fff;
       outline: none;
       transition: border-color 0.15s;
-      &:focus { border-color: #1e3a5f; }
+      &:focus { border-color: var(--primary-color); }
     }
     select { cursor: pointer; }
   }
@@ -137,7 +138,7 @@
   .toggle-switch {
     width: 44px;
     height: 24px;
-    border-radius: 12px;
+    border-radius: 0.3rem;
     background: #d1d5db;
     border: none;
     cursor: pointer;

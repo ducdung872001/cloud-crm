@@ -13,12 +13,12 @@
 
       h1 {
         color: var(--text-primary-color);
-        font-size: 2.4rem;
+        font-size: var(--text-3xl);
         line-height: 2.8rem;
         padding-right: 1rem;
         margin: 0;
-        font-weight: 700;
-        text-transform: uppercase;
+        font-weight: var(--fw-bold);
+        text-transform: none; // ✅ standardized
       }
       .title-first { cursor: pointer; &:hover { opacity: 0.8; } }
       .title-last  { color: var(--extra-color-50); }
@@ -55,7 +55,7 @@
       font-size: 1.15rem;
       font-weight: 700;
       color: var(--extra-color-50);
-      text-transform: uppercase;
+      text-transform: none; // ✅ standardized
       letter-spacing: 0.07em;
       padding-bottom: 1.2rem;
       margin-bottom: 1.6rem;
@@ -121,7 +121,7 @@
       font-size: 1.2rem;
       font-weight: 700;
       color: rgba(255,255,255,0.9);
-      text-transform: uppercase;
+      text-transform: none; // ✅ standardized
       letter-spacing: 0.07em;
 
       svg { width: 1.5rem; height: 1.5rem; flex-shrink: 0; }

@@ -19,6 +19,9 @@ export interface ContextType {
   isShowFeedback: boolean;
   setIsShowFeedback: (e: boolean) => void;
   product_store: any;
+  countUnread: any;
+  setCountUnread: any;
+  newNotificationPayload?: any;
 
   //chatbot
   isShowChatBot: boolean;

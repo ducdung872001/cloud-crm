@@ -20,7 +20,7 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  invoiceDetail: (params: IInvoiceDetailFilterRequest, signal?: AbortSignal) => {
+  invoiceDetail: (params: any, signal?: AbortSignal) => {
     return fetch(`${urlsApi.invoice.invoiceDetail}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

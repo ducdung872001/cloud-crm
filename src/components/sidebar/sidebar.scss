@@ -1,9 +1,9 @@
 .sidebar {
-  background: var(--primary-bg-color); // var(--menu-background-color)
-  width: 28rem;
+  background: var(--primary-bg-color);
+  width: var(--sidebar-width);
   box-shadow: var(--box-shadow);
   height: 100%;
-  transition: all 0.5s ease-in-out;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
   position: fixed;
   left: 0;
@@ -88,7 +88,7 @@
 
   @media (min-width: 1200px) {
     &--collapsed {
-      width: 7.2rem;
+      width: var(--sidebar-collapsed-width);
       .sidebar {
         &-logo {
           // padding: 1.2rem 1.4rem;
@@ -181,9 +181,13 @@
     }
   }
   @media (max-width: 1199px) {
-    left: -26rem;
+    // Slide in từ trái, ẩn khi thu gọn
+    left: calc(-1 * var(--sidebar-width));
     overflow: initial;
-    width: 26rem;
+    width: var(--sidebar-width);
+    transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+
     &--collapsed {
       left: 0;
     }
@@ -194,7 +198,21 @@
 
     &__option--show {
       visibility: visible;
-      width: 26rem;
+      width: var(--sidebar-width);
+    }
+  }
+
+  // ✅ Mobile nhỏ < 400px — sidebar hẹp hơn một chút
+  @media (max-width: 399px) {
+    width: calc(var(--sidebar-width) - 2rem);
+    left: calc(-1 * (var(--sidebar-width) - 2rem));
+
+    &--collapsed {
+      left: 0;
+    }
+
+    &__option--show {
+      width: calc(var(--sidebar-width) - 2rem);
     }
   }
 }
@@ -206,13 +224,16 @@
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(33, 43, 53, 0.86);
+  background: rgba(33, 43, 53, 0.72);
   display: none;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease;
 
   .btn-close-sidebar {
     position: absolute;
     top: 1rem;
-    left: 27rem;
+    left: calc(var(--sidebar-width) + 0.4rem);
     z-index: 999;
     transition: none;
     svg {

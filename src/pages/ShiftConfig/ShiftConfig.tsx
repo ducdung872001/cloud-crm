@@ -1,18 +1,21 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import React, { Fragment, useMemo, useState } from "react";
+import React, { Fragment, useContext, useEffect, useMemo, useState } from "react";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import BoxTable from "components/boxTable/boxTable";
 import Icon from "components/icon";
 import Checkbox from "components/checkbox/checkbox";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
-import { IAction } from "model/OtherModel";
+import { IAction, IOption } from "model/OtherModel";
 import Button from "components/button/button";
+import Input from "components/input/input";
+import NummericInput from "components/input/numericInput";
 import SelectCustom from "components/selectCustom/selectCustom";
-import FieldCustomize from "components/fieldCustomize/fieldCustomize";
-import { IFieldCustomize } from "model/FormModel";
-import "./ShiftConfig.scss";
+import { UserContext, ContextType } from "contexts/userContext";
+import ShiftService from "services/ShiftService";
+import { RulesSettings } from "./partials/ShiftRulesNotify/ShiftRulesNotifyTab";
 import ShiftRulesNotifyTab from "./partials/ShiftRulesNotify/ShiftRulesNotifyTab";
+import "./ShiftConfig.scss";
 
 type TabKey = "shift_config" | "staff_assign" | "rules_notify";
 
@@ -27,313 +30,123 @@ type ShiftConfigModel = {
   color?: string;
 };
 
-type RulesSettings = {
-  warningDiff: number;
-  requireReason: boolean;
-  allowDenomination: boolean;
-  maxOpenHours: number;
-  blockIfMissingStaff: boolean;
-  managerConfirmClose: boolean;
-  sendCloseReport: boolean;
-  sendDiffWarning: boolean;
-  remindOpenShift: boolean;
-  shiftOverRule: boolean;
-  receiver: string;
-  channel: string;
+const colorList = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444", "#06b6d4"];
+
+const CHANNEL_MAP: Record<string, string> = {
+  zalo_email: "ZALO+EMAIL",
+  email: "EMAIL",
+  zalo: "ZALO",
+};
+
+const POS_OPTIONS: IOption[] = [{ label: "POS Main Counter", value: "pos1" }];
+
+const DEFAULT_RULES: RulesSettings = {
+  warningDiff: 50,
+  requireReason: true,
+  allowDenomination: true,
+  maxOpenHours: 9,
+  blockIfMissingStaff: false,
+  managerConfirmClose: false,
+  sendCloseReport: true,
+  sendDiffWarning: true,
+  remindOpenShift: false,
+  shiftOverRule: true,
+  receiver: "all_manager",
+  channel: "zalo_email",
 };
 
 export default function ShiftConfigTabs() {
   document.title = "Thiết lập Ca Vận hành";
 
+  const { dataBranch } = useContext(UserContext) as ContextType;
+  const branchId: number = dataBranch?.value ?? 0;
+
   const [tab, setTab] = useState<TabKey>("shift_config");
+  const [saving, setSaving] = useState(false);
 
+  // ── Cấu hình ca ──────────────────────────────────────────────────────
   const [shiftConfigs, setShiftConfigs] = useState<ShiftConfigModel[]>([
-    {
-      id: 1,
-      shiftName: "Ca 1: Sáng",
-      startTime: "08:00 02/03/2026",
-      endTime: "15:00 02/03/2026",
-      posDevice: "pos1",
-      defaultCash: 1000000,
-      minStaff: 1,
-      color: "#3b82f6",
-    },
-    {
-      id: 2,
-      shiftName: "Ca 2: Chiều",
-      startTime: "15:00 02/03/2026",
-      endTime: "22:00 02/03/2026",
-      posDevice: "pos1",
-      defaultCash: 1000000,
-      minStaff: 1,
-      color: "#8b5cf6",
-    },
+    { id: 1, shiftName: "Ca 1: Sáng",  startTime: "08:00", endTime: "15:00", posDevice: "pos1", defaultCash: 1000000, minStaff: 1, color: "#3b82f6" },
+    { id: 2, shiftName: "Ca 2: Chiều", startTime: "15:00", endTime: "22:00", posDevice: "pos1", defaultCash: 1000000, minStaff: 1, color: "#8b5cf6" },
   ]);
-
   const [savedShiftConfigs, setSavedShiftConfigs] = useState<ShiftConfigModel[]>(shiftConfigs);
-
   const [listIdCheckedShift, setListIdCheckedShift] = useState<number[]>([]);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  const posOptions = useMemo(
-    () => [
-      { label: "POS Main Counter", value: "pos1" },
-      { label: "POS Quầy 2", value: "pos2" },
-    ],
-    []
-  );
+  // Dialog xóa — tách isOpen riêng để đúng với IDialog interface
+  const [dialogContent, setDialogContent] = useState<IContentDialog | null>(null);
+  const [showDialog, setShowDialog] = useState(false);
 
-  const shiftInlineFields: IFieldCustomize[] = useMemo(
-    () => [
-      { label: "Tiền lẻ đầu ca", name: "defaultCash", type: "number", placeholder: "0", fill: true },
-      { label: "NV tối thiểu", name: "minStaff", type: "number", placeholder: "0", fill: true },
-    ],
-    []
-  );
-
-  const colorList = useMemo(() => ["#f59e0b", "#3b82f6", "#8b5cf6", "#22c55e", "#ef4444", "#06b6d4"], []);
-
-  const showDialogConfirmDeleteShift = (item?: ShiftConfigModel) => {
-    const dialog: IContentDialog = {
-      color: "error",
-      className: "dialog-delete",
-      isCentered: true,
-      isLoading: true,
-      title: <Fragment>Xóa cấu hình ca</Fragment>,
-      message: (
-        <Fragment>
-          Bạn có chắc chắn muốn xóa{" "}
-          {item ? (
-            <Fragment>
-              ca <strong>{item.shiftName}</strong>
-            </Fragment>
-          ) : (
-            <strong>{listIdCheckedShift.length} ca đã chọn</strong>
-          )}
-          ? Thao tác này không thể khôi phục.
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Xóa",
-      defaultAction: () => {
-        if (item?.id) {
-          setShiftConfigs((prev) => prev.filter((s) => s.id !== item.id));
-          setListIdCheckedShift((prev) => prev.filter((id) => id !== item.id));
-        } else if (listIdCheckedShift.length > 0) {
-          setShiftConfigs((prev) => prev.filter((s) => !listIdCheckedShift.includes(s.id)));
-          setListIdCheckedShift([]);
-        }
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-    };
-
-    setContentDialog(dialog);
-    setShowDialog(true);
-  };
-
-  const bulkActionShiftItems: BulkActionItemModel[] = useMemo(
-    () => [
-      {
-        title: "Xóa cấu hình ca",
-        callback: () => showDialogConfirmDeleteShift(),
-      },
-    ],
-    [listIdCheckedShift]
-  );
-
-  const [pageShift, setPageShift] = useState(1);
-  const [sizeLimitShift, setSizeLimitShift] = useState(5);
-  const totalItemShift = shiftConfigs.length;
-  const totalPageShift = Math.ceil(totalItemShift / sizeLimitShift);
-  const startShift = (pageShift - 1) * sizeLimitShift;
-  const endShift = startShift + sizeLimitShift;
-  const shiftPage = shiftConfigs.slice(startShift, endShift);
-  const dataPaginationShift = {
-    name: "ca làm việc",
-    page: pageShift,
-    setPage: setPageShift,
-    sizeLimit: sizeLimitShift,
-    totalItem: totalItemShift,
-    totalPage: totalPageShift,
-    displayNumber: 5,
-    isChooseSizeLimit: true,
-    chooseSizeLimit: (limit: number) => {
-      setSizeLimitShift(limit);
-      setPageShift(1);
-    },
-  };
-  const shiftTitles = ["Tên ca", "Giờ bắt đầu", "Giờ kết thúc", "Thiết bị POS", "Tiền lẻ mặc định", "NV tối thiểu"];
-  const shiftDataMappingArray = (item: ShiftConfigModel) => [
-    item.shiftName,
-    item.startTime,
-    item.endTime,
-    item.posDevice,
-    `${Number(item.defaultCash || 0).toLocaleString()} VNĐ`,
-    item.minStaff,
-  ];
-  const shiftRowActions = (item: ShiftConfigModel): IAction[] => {
-    const isCheckedItem = listIdCheckedShift?.length > 0;
-    return [
-      {
-        title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
-        disabled: isCheckedItem,
-        // callback: () => {
-        //   if (!isCheckedItem) {
-        //     setSelectedShift(item);
-        //     setShowModalShift(true);
-        //   }
-        // },
-      },
-      {
-        title: "Xóa",
-        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
-        disabled: isCheckedItem,
-        callback: () => {
-          if (!isCheckedItem) showDialogConfirmDeleteShift(item);
-        },
-      },
-    ];
-  };
-
-  const updateShift = (id: number, patch: Partial<ShiftConfigModel>) => {
-    setShiftConfigs((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
-  };
-
-  const addNewShift = () => {
-    const newId = Math.max(0, ...shiftConfigs.map((s) => s.id)) + 1;
-    const nextColor = colorList[(newId - 1) % colorList.length];
-    setShiftConfigs((prev) => [
-      ...prev,
-      {
-        id: newId,
-        shiftName: `Ca ${newId}`,
-        startTime: "",
-        endTime: "",
-        posDevice: "pos1",
-        defaultCash: 0,
-        minStaff: 1,
-        color: nextColor,
-      },
-    ]);
-  };
-
+  // ── Phân công nhân viên ───────────────────────────────────────────────
   const [staffAssignment, setStaffAssignment] = useState([
-    { id: 1, name: "Nguyễn Hân", role: "Thu ngân", ca1: true, ca2: false },
-    { id: 2, name: "Nguyễn Dinh", role: "Thu ngân", ca1: true, ca2: true },
-    { id: 3, name: "Nguyễn Thông", role: "Thu ngân", ca1: false, ca2: true },
-    { id: 4, name: "Nguyễn Phom", role: "Thu ngân", ca1: false, ca2: false },
+    { id: 1, name: "Nguyễn Hân",    role: "Thu ngân", ca1: true,  ca2: false },
+    { id: 2, name: "Nguyễn Dinh",   role: "Thu ngân", ca1: true,  ca2: true  },
+    { id: 3, name: "Nguyễn Thông",  role: "Thu ngân", ca1: false, ca2: true  },
+    { id: 4, name: "Nguyễn Phom",   role: "Thu ngân", ca1: false, ca2: false },
     { id: 5, name: "Nguyễn Phương", role: "Thu ngân", ca1: false, ca2: false },
-    { id: 6, name: "Nguyễn Hòa", role: "Thu ngân", ca1: false, ca2: false },
-    { id: 7, name: "Nguyễn Long", role: "Thu ngân", ca1: false, ca2: false },
+    { id: 6, name: "Nguyễn Hòa",    role: "Thu ngân", ca1: false, ca2: false },
+    { id: 7, name: "Nguyễn Long",   role: "Thu ngân", ca1: false, ca2: false },
   ]);
-
-  const [savedStaffAssignment, setSavedStaffAssignment] = useState<any[]>(staffAssignment);
-
+  const [savedStaffAssignment, setSavedStaffAssignment] = useState<typeof staffAssignment>(staffAssignment);
   const [listIdCheckedStaff, setListIdCheckedStaff] = useState<number[]>([]);
 
-  const bulkActionStaffItems: BulkActionItemModel[] = useMemo(
-    () => [
-      {
-        title: "Gán Ca 1",
-        callback: () => {
-          const newData = staffAssignment.map((item) => (listIdCheckedStaff.includes(item.id) ? { ...item, ca1: true } : item));
-          setStaffAssignment(newData);
-          setListIdCheckedStaff([]);
-        },
-      },
-      {
-        title: "Gán Ca 2",
-        callback: () => {
-          const newData = staffAssignment.map((item) => (listIdCheckedStaff.includes(item.id) ? { ...item, ca2: true } : item));
-          setStaffAssignment(newData);
-          setListIdCheckedStaff([]);
-        },
-      },
-      {
-        title: "Bỏ phân ca",
-        callback: () => {
-          const newData = staffAssignment.map((item) => (listIdCheckedStaff.includes(item.id) ? { ...item, ca1: false, ca2: false } : item));
-          setStaffAssignment(newData);
-          setListIdCheckedStaff([]);
-        },
-      },
-    ],
-    [staffAssignment, listIdCheckedStaff]
-  );
+  // ── Quy tắc & Thông báo ──────────────────────────────────────────────
+  const [rulesSettings, setRulesSettings] = useState<RulesSettings>(DEFAULT_RULES);
+  const [savedRulesSettings, setSavedRulesSettings] = useState<RulesSettings>(DEFAULT_RULES);
 
-  const [pageStaff, setPageStaff] = useState(1);
-  const [sizeLimitStaff, setSizeLimitStaff] = useState(5);
+  // ── Load config từ API khi mount ──────────────────────────────────────
+  useEffect(() => {
+    if (!branchId) return;
+    ShiftService.getConfig(branchId)
+      .then((res) => {
+        const d = res?.data;
+        if (!d) return;
 
-  const totalItemStaff = staffAssignment.length;
-  const totalPageStaff = Math.ceil(totalItemStaff / sizeLimitStaff);
-  const startStaff = (pageStaff - 1) * sizeLimitStaff;
-  const endStaff = startStaff + sizeLimitStaff;
-  const staffPage = staffAssignment.slice(startStaff, endStaff);
+        if (d.configs && d.configs.length > 0) {
+          const mapped: ShiftConfigModel[] = d.configs.map((c: any, idx: number) => ({
+            id:          c.id ?? idx + 1,
+            shiftName:   c.name ?? `Ca ${idx + 1}`,
+            startTime:   c.startTime ?? "",
+            endTime:     c.endTime ?? "",
+            posDevice:   "pos1",
+            defaultCash: c.openingCashDefault ?? 0,
+            minStaff:    c.minStaff ?? 1,
+            color:       c.color ?? colorList[idx % colorList.length],
+          }));
+          setShiftConfigs(mapped);
+          setSavedShiftConfigs(mapped);
+        }
 
-  const dataPaginationStaff = {
-    name: "nhân viên",
-    page: pageStaff,
-    setPage: setPageStaff,
-    sizeLimit: sizeLimitStaff,
-    totalItem: totalItemStaff,
-    totalPage: totalPageStaff,
-    displayNumber: 5,
-    isChooseSizeLimit: true,
-    chooseSizeLimit: (limit: number) => {
-      setSizeLimitStaff(limit);
-      setPageStaff(1);
-    },
-  };
+        if (d.rules?.id) {
+          const r = d.rules;
+          const channelReverse: Record<string, string> = {
+            "ZALO+EMAIL": "zalo_email",
+            "EMAIL":      "email",
+            "ZALO":       "zalo",
+          };
+          const mapped: RulesSettings = {
+            warningDiff:         r.cashDiffThreshold ?? 50,
+            requireReason:       r.requireDiffReason === 1,
+            allowDenomination:   r.allowDenomination === 1,
+            maxOpenHours:        r.maxShiftHours ?? 9,
+            blockIfMissingStaff: r.blockOpenNoStaff === 1,
+            managerConfirmClose: r.requireManagerClose === 1,
+            sendCloseReport:     r.notifyShiftReport === 1,
+            sendDiffWarning:     r.notifyCashDiff === 1,
+            remindOpenShift:     r.notifyOpenReminder === 1,
+            shiftOverRule:       r.notifyOvertime === 1,
+            receiver:            r.notifyRecipient ?? "all_manager",
+            channel:             channelReverse[r.notifyChannel ?? ""] ?? "zalo_email",
+          };
+          setRulesSettings(mapped);
+          setSavedRulesSettings(mapped);
+        }
+      })
+      .catch(() => {});
+  }, [branchId]);
 
-  const staffTitles = ["Nhân viên", "Vai trò", "Ca 1 (08-15)", "Ca 2 (15-22)"];
+  const titleActions: ITitleActions = useMemo(() => ({ actions: [] }), []);
 
-  const handleToggle = (id: number, field: "ca1" | "ca2") => {
-    setStaffAssignment((prev) => prev.map((item) => (item.id === id ? { ...item, [field]: !item[field] } : item)));
-  };
-
-  const staffDataMappingArray = (item: any) => [
-    <div className="staff-info-cell" key={`staff-${item.id}`}>
-      <div className="text-wrapper">
-        <span className="name">{item.name}</span>
-      </div>
-    </div>,
-    <div key={`role-${item.id}`}>
-      <span className="role text-center">{item.role}</span>
-    </div>,
-    <Checkbox key={`c1-${item.id}`} checked={item.ca1} onChange={() => handleToggle(item.id, "ca1")} />,
-    <Checkbox key={`c2-${item.id}`} checked={item.ca2} onChange={() => handleToggle(item.id, "ca2")} />,
-  ];
-
-  const [rulesSettings, setRulesSettings] = useState<RulesSettings>({
-    warningDiff: 50,
-    requireReason: true,
-    allowDenomination: true,
-    maxOpenHours: 9,
-    blockIfMissingStaff: false,
-    managerConfirmClose: false,
-    sendCloseReport: true,
-    sendDiffWarning: true,
-    remindOpenShift: false,
-    shiftOverRule: true,
-    receiver: "all_manager",
-    channel: "zalo_email",
-  });
-
-  const [savedRulesSettings, setSavedRulesSettings] = useState<RulesSettings>(rulesSettings);
-
-  const titleActions: ITitleActions = useMemo(() => {
-    return {
-      actions: [],
-    };
-  }, [tab]);
-
+  // ── Hủy thay đổi ─────────────────────────────────────────────────────
   const onCancelSettings = () => {
     if (tab === "shift_config") {
       setShiftConfigs(savedShiftConfigs);
@@ -348,26 +161,178 @@ export default function ShiftConfigTabs() {
     setRulesSettings(savedRulesSettings);
   };
 
-  const onSaveSettings = () => {
-    if (tab === "shift_config") {
-      setSavedShiftConfigs(shiftConfigs);
-      console.log("Save shift configs", shiftConfigs);
-      return;
+  // ── Lưu cài đặt ──────────────────────────────────────────────────────
+  const onSaveSettings = async () => {
+    setSaving(true);
+    try {
+      if (tab === "shift_config") {
+        const payload = shiftConfigs.map((c) => ({
+          id:        c.id,
+          name:      c.shiftName,
+          color:     c.color ?? "#3b82f6",
+          startTime: c.startTime,
+          endTime:   c.endTime,
+          minStaff:  c.minStaff,
+        }));
+        await ShiftService.saveConfigs(branchId, payload).catch(() => {});
+        setSavedShiftConfigs(shiftConfigs);
+        setListIdCheckedShift([]);
+        return;
+      }
+
+      if (tab === "staff_assign") {
+        const assignments: any[] = [];
+        staffAssignment.forEach((s) => {
+          shiftConfigs.forEach((cfg, idx) => {
+            if (idx === 0 ? s.ca1 : s.ca2) {
+              assignments.push({ shiftConfigId: cfg.id, employeeId: s.id, role: s.role });
+            }
+          });
+        });
+        await ShiftService.saveStaff(assignments).catch(() => {});
+        setSavedStaffAssignment(staffAssignment);
+        setListIdCheckedStaff([]);
+        return;
+      }
+
+      // rules_notify
+      const rulesPayload = {
+        cashDiffThreshold:   rulesSettings.warningDiff,
+        requireDiffReason:   rulesSettings.requireReason ? 1 : 0,
+        allowDenomination:   rulesSettings.allowDenomination ? 1 : 0,
+        maxShiftHours:       rulesSettings.maxOpenHours,
+        blockOpenNoStaff:    rulesSettings.blockIfMissingStaff ? 1 : 0,
+        requireManagerClose: rulesSettings.managerConfirmClose ? 1 : 0,
+        notifyShiftReport:   rulesSettings.sendCloseReport ? 1 : 0,
+        notifyCashDiff:      rulesSettings.sendDiffWarning ? 1 : 0,
+        notifyOpenReminder:  rulesSettings.remindOpenShift ? 1 : 0,
+        notifyOvertime:      rulesSettings.shiftOverRule ? 1 : 0,
+        notifyRecipient:     rulesSettings.receiver,
+        notifyChannel:       CHANNEL_MAP[rulesSettings.channel] ?? "ZALO+EMAIL",
+      };
+      await ShiftService.saveRules(branchId, rulesPayload).catch(() => {});
+      setSavedRulesSettings(rulesSettings);
+    } catch (e) {
+      console.error("Lỗi lưu cài đặt:", e);
+    } finally {
+      setSaving(false);
     }
-    if (tab === "staff_assign") {
-      setSavedStaffAssignment(staffAssignment);
-      console.log("Save staff assignment", staffAssignment);
-      return;
-    }
-    setSavedRulesSettings(rulesSettings);
-    console.log("Save rules settings", rulesSettings);
   };
 
+  // ── Helpers ───────────────────────────────────────────────────────────
+  const updateShift = (id: number, patch: Partial<ShiftConfigModel>) => {
+    setShiftConfigs((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
+  };
+
+  const addNewShift = () => {
+    const newId = Math.max(0, ...shiftConfigs.map((s) => s.id)) + 1;
+    setShiftConfigs((prev) => [
+      ...prev,
+      {
+        id:          newId,
+        shiftName:   `Ca ${newId}`,
+        startTime:   "",
+        endTime:     "",
+        posDevice:   "pos1",
+        defaultCash: 0,
+        minStaff:    1,
+        color:       colorList[(newId - 1) % colorList.length],
+      },
+    ]);
+  };
+
+  const openDeleteDialog = (item: ShiftConfigModel) => {
+    setDialogContent({
+      title:         "Xóa ca làm việc",
+      message:       `Bạn có chắc chắn muốn xóa "${item.shiftName}" không?`,
+      cancelText:    "Hủy",
+      cancelAction:  () => setShowDialog(false),
+      defaultText:   "Xóa",
+      defaultAction: async () => {
+        try {
+          if (item.id > 0) await ShiftService.deleteConfig(item.id);
+        } catch (_) {}
+        setShiftConfigs((prev) => prev.filter((s) => s.id !== item.id));
+        setShowDialog(false);
+      },
+      color: "error",
+    });
+    setShowDialog(true);
+  };
+
+  const shiftRowActions = (item: ShiftConfigModel): IAction[] => {
+    const hasChecked = listIdCheckedShift.length > 0;
+    return [
+      {
+        title:    "Xóa",
+        icon:     <Icon name="Trash" className={hasChecked ? "icon-disabled" : "icon-error"} />,
+        disabled: hasChecked,
+        callback: () => { if (!hasChecked) openDeleteDialog(item); },
+      },
+    ];
+  };
+
+  const bulkActionShiftItems: BulkActionItemModel[] = useMemo(
+    () => [
+      {
+        title:    "Xóa đã chọn",
+        callback: () => {
+          setShiftConfigs((prev) => prev.filter((s) => !listIdCheckedShift.includes(s.id)));
+          setListIdCheckedShift([]);
+        },
+      },
+    ],
+    [listIdCheckedShift],
+  );
+
+  const bulkActionStaffItems: BulkActionItemModel[] = useMemo(
+    () => [
+      {
+        title:    "Gán Ca 1",
+        callback: () => {
+          setStaffAssignment((prev) =>
+            prev.map((s) => (listIdCheckedStaff.includes(s.id) ? { ...s, ca1: true } : s)),
+          );
+          setListIdCheckedStaff([]);
+        },
+      },
+      {
+        title:    "Gán Ca 2",
+        callback: () => {
+          setStaffAssignment((prev) =>
+            prev.map((s) => (listIdCheckedStaff.includes(s.id) ? { ...s, ca2: true } : s)),
+          );
+          setListIdCheckedStaff([]);
+        },
+      },
+      {
+        title:    "Bỏ phân ca",
+        callback: () => {
+          setStaffAssignment((prev) =>
+            prev.map((s) =>
+              listIdCheckedStaff.includes(s.id) ? { ...s, ca1: false, ca2: false } : s,
+            ),
+          );
+          setListIdCheckedStaff([]);
+        },
+      },
+    ],
+    [staffAssignment, listIdCheckedStaff],
+  );
+
+  const shiftTitles     = ["", "Ca làm việc", "Bắt đầu", "Kết thúc", "Thiết bị POS", "Tiền lẻ đầu ca", "NV tối thiểu", ""];
+  const shiftDataFormat  = ["text-center", "", "", "", "", "", "text-center", "text-center"];
+  const staffTitles     = ["", "Nhân viên", "Vai trò", ...shiftConfigs.map((c) => c.shiftName)];
+  const staffDataFormat  = ["text-center", "", "", ...shiftConfigs.map(() => "text-center")];
+
+  // ── JSX ───────────────────────────────────────────────────────────────
   return (
     <div className="page-content page-shift-config">
       <TitleAction title="Thiết lập Ca Vận hành" titleActions={titleActions} />
 
       <div className="card-box d-flex flex-column">
+
+        {/* Tab bar */}
         <div className="action-header">
           <div className="title__actions">
             <ul className="menu-list">
@@ -384,160 +349,160 @@ export default function ShiftConfigTabs() {
           </div>
         </div>
 
-        <div className="p-24">
-          {tab === "shift_config" ? (
-            <div className="shift-card-grid shift-card-grid--editable">
-              {shiftConfigs.map((item) => (
-                <div key={item.id} className="shift-card-editable">
-                  <div className="shift-card-editable__top" style={{ borderTopColor: item.color || "#3b82f6" }}>
-                    <div className="left">
-                      <span className="dot" style={{ background: item.color || "#3b82f6" }} />
-                      <input
-                        className="name-input"
-                        value={item.shiftName}
-                        onChange={(e) => updateShift(item.id, { shiftName: e.target.value })}
-                        placeholder="Tên ca"
-                      />
-                    </div>
+        {/* Tab body */}
+        <div className="tab-body p-24">
 
-                    <button
-                      type="button"
-                      className="btn-delete"
-                      onClick={() => {
-                        showDialogConfirmDeleteShift(item);
-                      }}
-                    >
-                      Xóa
-                    </button>
-                  </div>
+          {/* Tab 1 — Cấu hình ca */}
+          {tab === "shift_config" && (
+            <Fragment>
+              <BoxTable
+                name="ca làm việc"
+                titles={shiftTitles}
+                items={shiftConfigs}
+                isBulkAction={listIdCheckedShift.length > 0}
+                bulkActionItems={bulkActionShiftItems}
+                dataFormat={shiftDataFormat}
+                dataMappingArray={(item: ShiftConfigModel) => [
+                  <Checkbox
+                    key={`chk-${item.id}`}
+                    checked={listIdCheckedShift.includes(item.id)}
+                    onChange={(v) =>
+                      setListIdCheckedShift((prev) =>
+                        v ? [...prev, item.id] : prev.filter((id) => id !== item.id),
+                      )
+                    }
+                  />,
+                  <Input
+                    key={`name-${item.id}`}
+                    value={item.shiftName}
+                    placeholder="Tên ca..."
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      updateShift(item.id, { shiftName: e.target.value })
+                    }
+                  />,
+                  <Input
+                    key={`start-${item.id}`}
+                    value={item.startTime}
+                    placeholder="HH:mm"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      updateShift(item.id, { startTime: e.target.value })
+                    }
+                  />,
+                  <Input
+                    key={`end-${item.id}`}
+                    value={item.endTime}
+                    placeholder="HH:mm"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      updateShift(item.id, { endTime: e.target.value })
+                    }
+                  />,
+                  <SelectCustom
+                    key={`pos-${item.id}`}
+                    value={item.posDevice}
+                    options={POS_OPTIONS}
+                    onChange={(opt: IOption) =>
+                      updateShift(item.id, { posDevice: String(opt?.value ?? "pos1") })
+                    }
+                  />,
+                  <NummericInput
+                    key={`cash-${item.id}`}
+                    value={item.defaultCash}
+                    thousandSeparator
+                    placeholder="0"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      updateShift(item.id, {
+                        defaultCash: Number(String(e.target.value).replace(/,/g, "")) || 0,
+                      })
+                    }
+                  />,
+                  <NummericInput
+                    key={`staff-${item.id}`}
+                    value={item.minStaff}
+                    placeholder="1"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      updateShift(item.id, { minStaff: Number(e.target.value) || 1 })
+                    }
+                  />,
+                  <div key={`act-${item.id}`} className="d-flex gap-8 justify-content-center">
+                    {shiftRowActions(item).map((a, i) => (
+                      <span
+                        key={i}
+                        role="button"
+                        onClick={a.disabled ? undefined : a.callback}
+                        style={{ cursor: a.disabled ? "not-allowed" : "pointer", opacity: a.disabled ? 0.4 : 1 }}
+                      >
+                        {a.icon}
+                      </span>
+                    ))}
+                  </div>,
+                ]}
+              />
+              <Button variant="outline" color="primary" className="mt-16" onClick={addNewShift}>
+                <Icon name="Plus" className="mr-8" />
+                Thêm ca mới
+              </Button>
+            </Fragment>
+          )}
 
-                  <div className="shift-card-editable__body">
-                    <div className="block">
-                      <div className="block-label">Màu</div>
-                      <div className="color-row">
-                        {colorList.map((c) => (
-                          <button
-                            type="button"
-                            key={c}
-                            className={`color-dot${(item.color || "") === c ? " active" : ""}`}
-                            style={{ background: c }}
-                            onClick={() => updateShift(item.id, { color: c })}
-                            aria-label={`Chọn màu ${c}`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="time-grid">
-                      <div className="inline-field">
-                        <label>Bắt đầu</label>
-                        <div className="input-with-icon">
-                          <input
-                            value={item.startTime ?? ""}
-                            placeholder="08:00 02/03/2026"
-                            onChange={(e) => updateShift(item.id, { startTime: e.target.value })}
-                          />
-                          <span className="ic">
-                            <Icon name="Clock" />
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="inline-field">
-                        <label>Kết thúc</label>
-                        <div className="input-with-icon">
-                          <input
-                            value={item.endTime ?? ""}
-                            placeholder="15:00 02/03/2026"
-                            onChange={(e) => updateShift(item.id, { endTime: e.target.value })}
-                          />
-                          <span className="ic">
-                            <Icon name="Clock" />
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="block">
-                      <SelectCustom
-                        label="Thiết bị POS"
-                        options={posOptions}
-                        value={item.posDevice}
-                        onChange={(e: any) => updateShift(item.id, { posDevice: e?.value })}
-                        placeholder="Chọn thiết bị..."
-                        fill
-                        required
-                      />
-                    </div>
-
-                    <div className="grid-2">
-                      <div className="block">
-                        <FieldCustomize
-                          field={shiftInlineFields[0]}
-                          formData={{ values: { defaultCash: item.defaultCash } } as any}
-                          handleUpdate={(value) => updateShift(item.id, { defaultCash: Number(value?.defaultCash ?? value ?? 0) })}
-                        />
-                        <div className="hint">Mặc định khi mở ca</div>
-                      </div>
-
-                      <div className="block">
-                        <FieldCustomize
-                          field={shiftInlineFields[1]}
-                          formData={{ values: { minStaff: item.minStaff } } as any}
-                          handleUpdate={(value) => updateShift(item.id, { minStaff: Number(value?.minStaff ?? value ?? 0) })}
-                        />
-                        <div className="hint">Cảnh báo nếu thiếu</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              <div className="shift-card-add" onClick={addNewShift} role="button" tabIndex={0}>
-                <div className="add-inner">
-                  <div className="plus">+</div>
-                  <div className="add-text">Thêm ca mới</div>
-                </div>
-              </div>
-            </div>
-          ) : tab === "staff_assign" ? (
+          {/* Tab 2 — Phân công nhân viên */}
+          {tab === "staff_assign" && (
             <BoxTable
               name="nhân viên"
               titles={staffTitles}
-              items={staffPage}
-              dataMappingArray={(item) => staffDataMappingArray(item)}
-              isBulkAction={true}
+              items={staffAssignment}
+              isBulkAction={listIdCheckedStaff.length > 0}
               bulkActionItems={bulkActionStaffItems}
-              listIdChecked={listIdCheckedStaff}
-              setListIdChecked={setListIdCheckedStaff}
-              isPagination={true}
-              dataPagination={dataPaginationStaff}
-              striped={true}
+              dataFormat={staffDataFormat}
+              dataMappingArray={(item: typeof staffAssignment[0]) => [
+                <Checkbox
+                  key={`chk-${item.id}`}
+                  checked={listIdCheckedStaff.includes(item.id)}
+                  onChange={(v) =>
+                    setListIdCheckedStaff((prev) =>
+                      v ? [...prev, item.id] : prev.filter((id) => id !== item.id),
+                    )
+                  }
+                />,
+                item.name,
+                item.role,
+                ...shiftConfigs.map((_, cfgIdx) => {
+                  const caKey = cfgIdx === 0 ? "ca1" : "ca2";
+                  return (
+                    <Checkbox
+                      key={`${item.id}-ca${cfgIdx}`}
+                      checked={item[caKey as "ca1" | "ca2"]}
+                      onChange={(v) =>
+                        setStaffAssignment((prev) =>
+                          prev.map((s) => (s.id === item.id ? { ...s, [caKey]: v } : s)),
+                        )
+                      }
+                    />
+                  );
+                }),
+              ]}
             />
-          ) : (
-            <ShiftRulesNotifyTab value={rulesSettings} onChange={setRulesSettings} />
           )}
 
-          <div className="settings-footer">
-            <div className="left-note">
-              <span className="dot" />
-              <span>Thay đổi áp dụng từ ca tiếp theo</span>
-            </div>
+          {/* Tab 3 — Quy tắc & Thông báo */}
+          {tab === "rules_notify" && (
+            <ShiftRulesNotifyTab value={rulesSettings} onChange={setRulesSettings} />
+          )}
+        </div>
 
-            <div className="right-actions">
-              <Button color="secondary" variant="outline" onClick={onCancelSettings}>
-                Hủy
-              </Button>
-              <Button color="primary" onClick={onSaveSettings}>
-                <Icon name="Check" className="mr-8" />
-                Lưu cài đặt
-              </Button>
-            </div>
-          </div>
+        {/* Footer */}
+        <div className="action-footer p-24 border-top d-flex justify-content-end gap-12">
+          <p className="text-muted align-self-center">• Thay đổi áp dụng từ ca tiếp theo</p>
+          <Button variant="outline" onClick={onCancelSettings}>Hủy</Button>
+          <Button color="primary" disabled={saving} onClick={onSaveSettings}>
+            {saving ? "Đang lưu..." : "Lưu cài đặt"}
+          </Button>
         </div>
       </div>
 
-      <Dialog content={contentDialog} isOpen={showDialog} />
+      {/* Dialog xác nhận — isOpen tách riêng, content đúng IContentDialog */}
+      {dialogContent && (
+        <Dialog content={dialogContent} isOpen={showDialog} />
+      )}
     </div>
   );
 }

@@ -50,7 +50,7 @@
 
       .btn-upload--file {
         background-color: var(--primary-color-90);
-        border-radius: 0.5rem;
+        border-radius: 0.3rem;
         padding: 0.4rem 2rem;
         display: flex;
         align-items: center;
@@ -96,7 +96,7 @@
 
           .box__desc--attachment {
             padding: 0.6rem 1.5rem;
-            border-radius: 0.5rem;
+            border-radius: 0.3rem;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
             background-color: #e5efff;
 
@@ -185,7 +185,7 @@
                     .delete,
                     .download {
                       background-color: var(--white-color);
-                      border-radius: 0.5rem;
+                      border-radius: 0.3rem;
                       width: 2.6rem;
                       height: 2.6rem;
                       display: flex;

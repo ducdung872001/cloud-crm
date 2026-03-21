@@ -13,16 +13,21 @@ import { INotification, INotificationItem } from "model/OtherModel";
 import ImageThirdGender from "assets/images/third-gender.png";
 import { fadeIn, fadeOut, getDomain } from "reborn-util";
 import { useOnClickOutside } from "utils/hookCustom";
-import { getRootDomain } from "utils/common";
+import { getRootDomain, showToast } from "utils/common";
 import BeautyBranchService from "services/BeautyBranchService";
 import Input from "components/input/input";
 import ShowModalChangeRole from "pages/Common/ShowModalChangeRole";
 import "./header.scss";
 import Tippy from "@tippyjs/react";
+import { onMessage } from "firebase/messaging";
+import { messaging } from "@/firebase-config";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import Loading from "../loading";
+import NotificationService from "@/services/NotificationService";
+import { requestPermission } from "@/firebase-config";
 
 export default function Header(props: any) {
   const [cookies, setCookie, removeCookie] = useCookies();
@@ -40,6 +45,9 @@ export default function Header(props: any) {
     setValueLanguage,
     setDataBeauty,
     lstRole,
+    countUnread,
+    setCountUnread,
+    newNotificationPayload,
   } = useContext(UserContext) as ContextType;
 
   const checkUserRoot = localStorage.getItem("user.root");
@@ -159,11 +167,14 @@ export default function Header(props: any) {
   const [showPopoverNotification, setShowPopoverNotification] = useState<boolean>(false);
   useOnClickOutside(refNotification, () => setShowPopoverNotification(false), ["notification-dropdown"]);
 
-  const [listNotification, setListNotification] = useState<INotification>({
-    total: 0,
-    unread: 0,
-    list_noti: [],
-  });
+  // const [listNotification, setListNotification] = useState<INotification>({
+  //   total: 0,
+  //   unread: 0,
+  //   list_noti: [],
+  // });
+
+  const [listNotification, setListNotification] = useState([]);
+  const [isLoadingNotify, setLoadingNotify] = useState(false);
 
   const [detailNotification, setDetailNotification] = useState<INotificationItem>(null);
   const [showModalDetailNotification, setShowModalDetailNotification] = useState<boolean>(false);
@@ -186,17 +197,79 @@ export default function Header(props: any) {
     //   });
   };
 
+  // useEffect(() => {
+  //   getNotification();
+  //   return () => {
+  //     setIsLoadingNotification(false);
+  //     setListNotification({
+  //       total: 0,
+  //       unread: 0,
+  //       list_noti: [],
+  //     });
+  //   };
+  // }, [paramsNotification]);
+
+  const getListNotify = async (paramsSearch: any, disableLoading?: boolean) => {
+    setLoadingNotify(true);
+    const response = await NotificationService.list(paramsSearch);
+
+    if (response.code === 0) {
+      const result = response.result.items;
+
+      setListNotification(result);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+    setLoadingNotify(false);
+  };
+
   useEffect(() => {
-    getNotification();
-    return () => {
-      setIsLoadingNotification(false);
-      setListNotification({
-        total: 0,
-        unread: 0,
-        list_noti: [],
+    if (showPopoverNotification) {
+      getListNotify({
+        limit: 10,
+        page: 1,
       });
-    };
-  }, [paramsNotification]);
+    }
+  }, [showPopoverNotification]);
+
+  useEffect(() => {
+    if (newNotificationPayload && showPopoverNotification) {
+      getListNotify({
+        limit: 10,
+        page: 1,
+      });
+    }
+  }, [newNotificationPayload]);
+
+  const onUnread = async (id: number) => {
+    const response = await NotificationService.updateUnread({ id: id });
+    if (response.code === 0) {
+      console.log("Đã đọc");
+      getListNotify({
+        limit: 10,
+        page: 1,
+      });
+      getCountUnread();
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+  };
+
+  const onReadAll = async () => {
+    const body = {};
+    const response = await NotificationService.updateReadAll(body);
+    if (response.code === 0) {
+      console.log("Đã đọc hết");
+      // showToast("Đánh dấu đã đọc thành công", "success");
+      getListNotify({
+        limit: 10,
+        page: 1,
+      });
+      getCountUnread();
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+  };
 
   const readNotification = (e, item: INotificationItem) => {
     e.preventDefault();
@@ -297,7 +370,121 @@ export default function Header(props: any) {
   };
 
   const [showModalChangeRole, setShowModalChangeRole] = useState<boolean>(false);
+  const getCountUnread = async () => {
+    const response = await NotificationService.countUnread();
+    if (response.code === 0) {
+      const result = response.result;
+      setCountUnread(result);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    }
+  };
 
+  useEffect(() => {
+    getCountUnread();
+  }, []);
+
+
+
+  function isJsonString(str) {
+    try {
+      const parsed = JSON.parse(str);
+      return typeof parsed === "object" && parsed !== null;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /** Navigate based on targetLink or payload type from the new API */
+  const handleNotificationClick = (item: any) => {
+    // unread: 0 = chưa đọc, unread: 1 = đã đọc
+    if (item.unread === 0 || item.unread === null) {
+      onUnread(item.id);
+    }
+    setShowPopoverNotification(false);
+
+    // If targetLink is provided, navigate there directly
+    if (item.targetLink) {
+      navigate(item.targetLink);
+      return;
+    }
+
+    // Fallback: parse payload for typed routing
+    if (item.payload && isJsonString(item.payload)) {
+      const payload = JSON.parse(item.payload);
+      switch (payload?.type) {
+        case "ORDER":
+          if (payload.orderId) navigate(`/orders/${payload.orderId}`);
+          break;
+        case "CAMPAIGN":
+          if (payload.campaignId) navigate(`/campaigns/${payload.campaignId}`);
+          break;
+        case "BID":
+          if (payload.packageId)
+            navigate("/bpm/bid_management", { state: { viewDetail: true, packageId: payload.packageId } });
+          break;
+        case "TASK":
+          if (payload.workId)
+            navigate("/bpm/task_assignment", { state: { viewDetail: true, workId: payload.workId } });
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  /** Resolve icon name based on payload type */
+  const getNotificationIconName = (item: any): string => {
+    if (item.payload && isJsonString(item.payload)) {
+      const payload = JSON.parse(item.payload);
+      switch (payload?.type) {
+        case "ORDER":
+          return "Order";
+        case "CAMPAIGN":
+          return "Promotion";
+        case "BID":
+          return "NotifyExpire";
+        case "TASK":
+          return "NotifySetting";
+        case "TEST_PUSH":
+          return "NotifyRox";
+        default:
+          break;
+      }
+    }
+    return "NotifySetting";
+  };
+
+  /** Render a single notification item using the new API fields */
+  const renderNotificationItem = (item: any) => {
+    const isUnread = item.unread === 0 || item.unread === null; // 0/null = chưa đọc, 1 = đã đọc
+    const iconName = getNotificationIconName(item);
+    return (
+      <div
+        key={item.id}
+        className={isUnread ? "item-notification-unread" : "item-notification"}
+        onClick={() => handleNotificationClick(item)}
+      >
+        <Icon name={iconName} />
+        <div className="body-notification">
+          <div className="title-notification">
+            <div className="box-title">
+              <span className="title">{item.messageTitle || "Thông báo"}</span>
+            </div>
+            {isUnread ? <div className="icon-red" /> : null}
+          </div>
+          {item.messageText ? (
+            <div className="content-notification">
+              <span className="content">{item.messageText}</span>
+            </div>
+          ) : null}
+          <div className="footer-notification">
+            <span className="time">{item.sentAt ? moment(item.sentAt).format("DD/MM/YYYY - HH:mm") : ""}</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
   return (
     <div className="header d-flex justify-content-between">
       <Button type="button" color="transparent" className="d-block d-xl-none btn-menu-mobile" onClick={() => showMenuMobile()}>
@@ -440,11 +627,17 @@ export default function Header(props: any) {
           )}
         </div>
         <div className="notification-dropdown" ref={refNotificationContainer}>
-          <Button type="button" color="transparent" onClick={() => setShowPopoverNotification(!showPopoverNotification)}>
+          <div className="button-bell" onClick={() => setShowPopoverNotification(!showPopoverNotification)}>
+            <Icon name="NotifyRox" />
+            {/* {<span className="count">99</span>} */}
+
+            {countUnread ? <span className="count">{countUnread > 99 ? "99+" : countUnread}</span> : null}
+          </div>
+          {/* <Button type="button" color="transparent" onClick={() => setShowPopoverNotification(!showPopoverNotification)}>
             <Icon name="Bell" />
             {listNotification.unread > 0 && <span className="count">{listNotification.unread > 99 ? "99" : listNotification.unread}</span>}
-          </Button>
-          {showPopoverNotification && listNotification.list_noti.length > 0 && (
+          </Button> */}
+          {/* {showPopoverNotification && listNotification.list_noti.length > 0 && (
             <Popover
               alignment="right"
               isTriangle={true}
@@ -491,6 +684,62 @@ export default function Header(props: any) {
                     Xem thêm thông báo
                     {isLoadingNotification && <Icon name="Loading" />}
                   </Button>
+                )}
+              </div>
+            </Popover>
+          )} */}
+          {showPopoverNotification && (
+            <Popover
+              alignment="right"
+              isTriangle={true}
+              className="popover-notification-header-bpm"
+              refContainer={refNotificationContainer}
+              refPopover={refNotification}
+            >
+              <div className="container-notification">
+                <div className="popover-title">
+                  <span style={{ fontSize: 16, fontWeight: 600, color: "#015aa4" }}>Thông báo</span>
+                  <div
+                    className="button-close"
+                    onClick={() => {
+                      setShowPopoverNotification(false);
+                    }}
+                  >
+                    <Icon name="Times" />
+                  </div>
+                </div>
+
+                {listNotification && listNotification.length > 0 ? (
+                  <>
+                    <div className="header-notification">
+                      <div>
+                        <span className="text-unRead">{countUnread ? `Có ${countUnread} thông báo chưa đọc` : ""}</span>
+                      </div>
+                      <div
+                        onClick={() => {
+                          onReadAll();
+                        }}
+                      >
+                        <span className="text-Read">Đánh dấu là đã đọc</span>
+                      </div>
+                    </div>
+
+                    <div className="list-notification">
+                      {listNotification.map((item) => renderNotificationItem(item))}
+                    </div>
+
+                    <div
+                      className="button-view-all"
+                      onClick={() => {
+                        navigate("/notification");
+                        setShowPopoverNotification(false);
+                      }}
+                    >
+                      <span className="title-button">Xem tất cả thông báo</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="loading-notify">{isLoadingNotify ? <Loading /> : null}</div>
                 )}
               </div>
             </Popover>
