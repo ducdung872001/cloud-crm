@@ -5,37 +5,40 @@ export interface IProductFilterRequest {
 }
 
 export interface IProductRequest {
-  id: number;
-  name: string;
-  avatar: string;
-  code: string;
-  productLine: string;
-  position: number | string;
-  bsnId?: never;
-  unitId: number;
-  unitName: string;
-  price: number | string;
-  exchange: number;
-  status: number | string;
+  id?: number | null;
+  name?: string;
+  position?: number | string;
+  status?: number | string;
+  categoryId?: number | null;
+  exchange?: number;
   otherUnits?: string;
   type?: string;
-  expiredPeriod?: number;
-  minQuantity?: number;
-  productExtraInfos?: any;
-  categoryId?: number;
-  categoryName?: string;
-  documents?: any;
   description?: string;
-  costPrice?: number;
-  priceWholesale?: number;
-  pricePromo?: number;
+  variantGroups?: {
+    id?: number | null;
+    name: string;
+    key?: string;
+    options: {
+      id?: number | null;
+      label: string;
+    }[];
+  }[];
   variants?: {
-    id?: number;
+    id?: number | null;
     label: string;
-    sku: string;
+    sku?: string;
+    barcode?: string;
+    unitId?: number | null;
     price: number;
+    pricePromo?: number;
+    supplierId?: number | null;
     costPrice?: number;
-    quantity: number;
-    attributes: { name: string; value: string }[];
+    quantity?: number;
+    images?: string[];
+    optionValueIds?: number[];
+    attributes?: {
+      name: string;
+      value: string;
+    }[];
   }[];
 }
