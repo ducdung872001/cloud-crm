@@ -56,15 +56,15 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
 
   const focusedElement = useActiveElement();
 
-  const [isSubmit, setIsSubmit]         = useState<boolean>(false);
-  const [showDialog, setShowDialog]     = useState<boolean>(false);
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
   // ── Bước 1: chọn sản phẩm ─────────────────────────────────────────────────
   const [selectedProduct, setSelectedProduct] = useState<IProductOption | null>(null);
 
   // ── Bước 2: chọn biến thể ─────────────────────────────────────────────────
-  const [variantOptions, setVariantOptions]   = useState<IVariantOption[]>([]);
+  const [variantOptions, setVariantOptions] = useState<IVariantOption[]>([]);
   const [selectedVariant, setSelectedVariant] = useState<IVariantOption | null>(null);
   const [isLoadingVariants, setIsLoadingVariants] = useState(false);
 
@@ -118,11 +118,13 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
 
       if (res.code === 0) {
         const items: any[] = res.result?.items ?? res.result ?? [];
+        console.log("variant sample:", items[0]); 
+
         const opts: IVariantOption[] = items.map((v) => ({
           value: v.id,
           label: buildVariantLabel(v.selectedOptions ?? v.optionValues ?? []),
           sku: v.sku ?? "",
-          unitId: v.baseUnitId ?? v.unitId ?? 0,
+          unitId: v.baseUnit?? v.unitId ?? 0,
           unitName: v.baseUnitName ?? v.unitName ?? "",
           quantity: v.quantity ?? 0,
         }));
@@ -211,28 +213,28 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
   // ── Form values ───────────────────────────────────────────────────────────
   const values = useMemo(
     () =>
-      ({
-        customerId: -1,
-        invoiceId: invoiceId,
-        productId: data?.productId ?? null,
-        variantId: data?.variantId ?? null,
-        batchNo: data?.batchNo ?? "",
-        unitId: data?.unitId ?? null,
-        exchange: data?.exchange ?? 1,
-        mfgDate: data?.mfgDate ?? "",
-        expiryDate: data?.expiryDate ?? "",
-        quantity: data?.quantity?.toString() ?? "",
-        mainCost: data?.mainCost?.toString() ?? "",
-        discount: (data as any)?.discount?.toString() ?? "0",
-      } as IInvoiceDetailRequest & { discount?: string }),
+    ({
+      customerId: -1,
+      invoiceId: invoiceId,
+      productId: data?.productId ?? null,
+      variantId: data?.variantId ?? null,
+      batchNo: data?.batchNo ?? "",
+      unitId: data?.unitId ?? null,
+      exchange: data?.exchange ?? 1,
+      mfgDate: data?.mfgDate ?? "",
+      expiryDate: data?.expiryDate ?? "",
+      quantity: data?.quantity?.toString() ?? "",
+      mainCost: data?.mainCost?.toString() ?? "",
+      discount: (data as any)?.discount?.toString() ?? "0",
+    } as IInvoiceDetailRequest & { discount?: string }),
     [data, onShow, invoiceId]
   );
 
   const validations: IValidation[] = [
-    { name: "batchNo",    rules: "required" },
+    { name: "batchNo", rules: "required" },
     { name: "expiryDate", rules: "required" },
-    { name: "quantity",   rules: "required|min:0" },
-    { name: "mainCost",   rules: "required" },
+    { name: "quantity", rules: "required|min:0" },
+    { name: "mainCost", rules: "required" },
   ];
 
   const [formData, setFormData] = useState<IFormData>({ values });
@@ -278,6 +280,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
         type: "custom",
         name: "variantId",
         label: "Biến thể",
+        col: 12,
         snippet: (
           <SelectCustom
             fill={true}
@@ -311,10 +314,10 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
               !selectedProduct
                 ? "Chọn sản phẩm trước"
                 : isLoadingVariants
-                ? "Đang tải biến thể..."
-                : variantOptions.length === 0
-                ? "Sản phẩm không có biến thể"
-                : "Chọn biến thể"
+                  ? "Đang tải biến thể..."
+                  : variantOptions.length === 0
+                    ? "Sản phẩm không có biến thể"
+                    : "Chọn biến thể"
             }
             disabled={!selectedProduct || isLoadingVariants || variantOptions.length === 0}
             onChange={(e: any) => {
@@ -345,14 +348,13 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
             fill={true}
             id="unitId"
             name="unitId"
-            label="Đơn vị tính"
-            required={true}
+            label="Đơn vị tính"            
             options={
               selectedVariant
-                ? [{ value: String(selectedVariant.unitId), label: selectedVariant.unitName }]
+                ? [{ value: selectedVariant.unitId, label: selectedVariant.unitName }]
                 : []
             }
-            value={formData?.values?.unitId ? String(formData.values.unitId) : null}
+            value={formData?.values?.unitId ?? null}
             placeholder="Tự động điền từ biến thể"
             disabled={true}
             onChange={() => undefined}
