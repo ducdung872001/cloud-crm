@@ -1,8 +1,25 @@
 import React from "react";
 import { formatCurrency } from "reborn-util";
+import { IInventoryProductDetail } from "services/InventoryReportService";
 import { PRODUCT_ROWS } from "../mockData";
 
-export default function InventoryProductTable() {
+interface Props {
+  productDetails?: IInventoryProductDetail[];
+}
+
+const DEFAULT_PRODUCTS: IInventoryProductDetail[] = PRODUCT_ROWS.map((d) => ({
+  sku:           d.sku,
+  productName:   d.productName,
+  warehouseName: d.warehouseName,
+  closingQty:    d.closingQty,
+  availableQty:  d.availableQty,
+  stockValue:    d.stockValue,
+  turnoverDays:  d.turnoverDays,
+  status:        d.status,
+  color:         d.color,
+}));
+
+export default function InventoryProductTable({ productDetails = DEFAULT_PRODUCTS }: Props) {
   return (
     <div className="report-table-card">
       <div className="report-table-card__header">
@@ -26,16 +43,23 @@ export default function InventoryProductTable() {
             </tr>
           </thead>
           <tbody>
-            {PRODUCT_ROWS.map((item) => (
-              <tr key={item.sku}>
+            {(productDetails ?? []).map((item) => (
+              <tr key={`${item.sku}-${item.warehouseName}`}>
                 <td className="font-semibold">{item.sku}</td>
                 <td>{item.productName}</td>
                 <td>{item.warehouseName}</td>
-                <td className="text-right">{item.closingQty.toLocaleString("vi-VN")}</td>
-                <td className="text-right">{item.availableQty.toLocaleString("vi-VN")}</td>
-                <td className="text-right">{formatCurrency(item.stockValue)} đ</td>
-                <td className="text-right">{item.turnoverDays}</td>
-                <td><span className="report-status" style={{ "--status-color": item.color } as React.CSSProperties}>{item.status}</span></td>
+                <td className="text-right">{(item.closingQty  ?? 0).toLocaleString("vi-VN")}</td>
+                <td className="text-right">{(item.availableQty ?? 0).toLocaleString("vi-VN")}</td>
+                <td className="text-right">{formatCurrency(item.stockValue ?? 0)} đ</td>
+                <td className="text-right">{item.turnoverDays ?? 0}</td>
+                <td>
+                  <span
+                    className="report-status"
+                    style={{ "--status-color": item.color } as React.CSSProperties}
+                  >
+                    {item.status}
+                  </span>
+                </td>
               </tr>
             ))}
           </tbody>
