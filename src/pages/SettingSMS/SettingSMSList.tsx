@@ -23,7 +23,6 @@ export default function SettingSMSList() {
           title: "Cấu hình SMS",
           is_tab: "tab_one",
           backgroundColor: "#E6F1FB",
-          strokeColor: "#185fa5",
           icon: "SmsConfig",
           des: "Kết nối nhà cung cấp SMS, nhập API key và cấu hình thông số kỹ thuật gửi tin."
         }
@@ -34,7 +33,6 @@ export default function SettingSMSList() {
           title: "Danh mục đối tác SMS",
           is_tab: "tab_three",
           backgroundColor: "#E1F5EE",
-          strokeColor: "#0f6e56",
           icon: "PartnerSms",
           des: "Quản lý danh sách nhà cung cấp dịch vụ SMS tích hợp với hệ thống."
         }
@@ -43,7 +41,6 @@ export default function SettingSMSList() {
       title: "Chủ đề SMS",
       is_tab: "tab_two",
       backgroundColor: "#FAEEDA",
-      strokeColor: "#854f0b",
       icon: "TopicSms",
       des: "Phân loại tin nhắn theo chủ đề như chăm sóc, khuyến mãi, nhắc hẹn để quản lý chiến dịch rõ ràng hơn."
     },
@@ -51,7 +48,6 @@ export default function SettingSMSList() {
       title: "Khai báo Brandname",
       is_tab: "tab_four",
       backgroundColor: "#EEEDFE",
-      strokeColor: "#534ab7",
       icon: "DeclarationBrandName",
       des: "Đăng ký tên thương hiệu (Brandname) hiển thị thay số điện thoại khi gửi SMS đến khách hàng."
     },
@@ -59,7 +55,6 @@ export default function SettingSMSList() {
       title: "Khai báo mẫu tin nhắn SMS",
       is_tab: "tab_five",
       backgroundColor: "#EAF3DE",
-      strokeColor: "#3b6d11",
       icon: "DeclarationTemplateSms",
       des: "Tạo và quản lý các mẫu nội dung tin nhắn SMS có biến động (tên KH, số điểm, mã OTP...) dùng cho các chiến dịch gửi hàng loạt."
     },

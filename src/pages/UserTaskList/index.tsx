@@ -1,18 +1,17 @@
 import React, { useState, useCallback, useEffect } from "react";
 import Icon from "components/icon";
 import { getSearchParameters } from "reborn-util";
-import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
+import { ITitleActions } from "components/titleAction/titleAction";
 import { fadeIn, fadeOut } from "reborn-util";
 import ListWork from "./partials/ListWork/ListWork";
-import ProjectManagementList from "./partials/ProjectManagement/ProjectManagementList";
-
-import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
 import "./index.scss";
-import HandleTask from "./partials/ListWork/partials/HandleTask/HandleTask";
 import { useLocation } from "react-router-dom";
 import DetailTask from "./partials/ListWork/partials/DetailWork/DetailTask";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function UserTaskList() {
+export default function UserTaskList(props) {
+
+  const { onBackProps } = props;
   const paramsUrl: any = getSearchParameters();
   const location = useLocation();
   const state = location.state || null;
@@ -47,12 +46,7 @@ export default function UserTaskList() {
   const [isVertical, setIsVertical] = useState<boolean>(false);
   const [isRegimeReport, setIsRegimeReport] = useState<boolean>(false);
   const [isHandleTask, setIsHandleTask] = useState<boolean>(false);
-  // console.log('isHandleTask', isHandleTask);
   const [isModalHandleProcument, setIsModalHandleProcument] = useState(false);
-
-  const takeType = Object.keys(paramsUrl).length > 0 && paramsUrl?.workType ? paramsUrl?.workType : "project";
-  const [type, setType] = useState<string>(takeType);
-
   const takeIdOptManagement = Object.keys(paramsUrl).length > 0 && paramsUrl?.opportunityId ? +paramsUrl?.opportunityId : -1;
   const [idOptManagement, setIdOptManagement] = useState<number>(takeIdOptManagement);
 
@@ -64,7 +58,6 @@ export default function UserTaskList() {
   //! đẩy xuống dưới là do phụ thuộc vào biến ở trên để thay đổi tên
   document.title = `${isDetailWork ? "Chi tiết công việc" : isRegimeKanban ? "Kanban công việc" : "Công việc"}`;
 
-  // const [dataDetaiWork, setDataDetailWork] = useState<IWorkOrderResponseModel>(null);
   const [dataDetaiWork, setDataDetailWork] = useState<any>(null);
 
   const showProjectManagement = () => {
@@ -171,65 +164,38 @@ export default function UserTaskList() {
 
   return (
     <div className="page-content page-user-task-list">
-      {/* <div className="actions-title">
-        {<TitleAction title={isDetailWork || isHandleTask ? "Công việc" : "Danh sách công việc"} titleActions={titleActions} />}
-      </div> */}
-      {type == "project" ? (
-        <div className={`wrapper-project ${isDetailWork || isHandleTask ? "d-none" : ""}`}>
-          {/* <div className={`${isFullPage ? "hide-project-management" : "project-management"} ${!isVertical ? "show__vertical--project" : ""}`}>
-            <ProjectManagementList
-              setType={setType}
-              isRegimeKanban={isRegimeKanban}
-              isFullPage={isFullPage}
-              idProjectManagement={idProjectManagement}
-              setIdProjectManagement={setIdProjectManagement}
-            />
-          </div> */}
-          <div className={`${isFullPage ? "active-fullpage" : ""} list-project ${isVertical ? "show__vertical--work" : ""}`}>
-            <ListWork
-              type="process"
-              isDetailWork={isDetailWork}
-              idManagement={idProjectManagement}
-              isRegimeKanban={isRegimeKanban}
-              setIsRegimeKanban={setIsRegimeKanban}
-              isRegimeReport={isRegimeReport}
-              isFullPage={isFullPage}
-              showProjectManagement={showProjectManagement}
-              handleDetailWork={handleDetailWork}
-              setIsDetailWork={setIsDetailWork}
-              setIsHandleTask={setIsHandleTask}
-              setIsFullPage={setIsFullPage}
-              abortController={abortController}
-              isExportWork={onShowModalExport}
-              onHideExport={() => setOnShowModalExport(false)}
-              setOnShowModalExport={() => {
-                setOnShowModalExport(true);
-              }}
-            />
-          </div>
+      <HeaderTabMenu
+        title="Tác vụ"
+        titleBack="Hồ sơ & tác vụ"
+        onBackProps={onBackProps}
+        titleActions={titleActions}
+      />
+      <div className={`wrapper-project ${isDetailWork || isHandleTask ? "d-none" : ""}`}>
+        <div className={`${isFullPage ? "active-fullpage" : ""} list-project ${isVertical ? "show__vertical--work" : ""}`}>
+          <ListWork
+            type="process"
+            isDetailWork={isDetailWork}
+            idManagement={idProjectManagement}
+            isRegimeKanban={isRegimeKanban}
+            setIsRegimeKanban={setIsRegimeKanban}
+            isRegimeReport={isRegimeReport}
+            isFullPage={isFullPage}
+            showProjectManagement={showProjectManagement}
+            handleDetailWork={handleDetailWork}
+            setIsDetailWork={setIsDetailWork}
+            setIsHandleTask={setIsHandleTask}
+            setIsFullPage={setIsFullPage}
+            abortController={abortController}
+            isExportWork={onShowModalExport}
+            onHideExport={() => setOnShowModalExport(false)}
+            setOnShowModalExport={() => {
+              setOnShowModalExport(true);
+            }}
+          />
         </div>
-      ) : (
-        <div className={`wrapper-project ${isDetailWork || isHandleTask ? "d-none" : ""}`}>
-          <div className={`${isFullPage ? "active-fullpage" : ""} list-project ${isVertical ? "show__vertical--work" : ""}`}>
-            <ListWork
-              type="opportunity"
-              isDetailWork={isDetailWork}
-              idManagement={idOptManagement}
-              isRegimeKanban={isRegimeKanban}
-              handleDetailWork={handleDetailWork}
-              setIsDetailWork={setIsDetailWork}
-              setIsHandleTask={setIsHandleTask}
-              setIsFullPage={setIsFullPage}
-              showProjectManagement={showProjectManagement}
-              abortController={abortController}
-              isExportWork={onShowModalExport}
-              onHideExport={() => setOnShowModalExport(false)}
-            />
-          </div>
-        </div>
-      )}
+      </div>
       <div className={`wrapper__detail--work ${isDetailWork ? "" : "d-none"}`}>
-        <div className="action-navigation">
+        {/* <div className="action-navigation">
           <div className="action-backup">
             <h1
               onClick={() => {
@@ -245,7 +211,7 @@ export default function UserTaskList() {
             <Icon name="ChevronRight" />
             <h1 className="title-last">Chi tiết công việc</h1>
           </div>
-        </div>
+        </div> */}
 
         <DetailTask
           idData={dataDetaiWork?.id}

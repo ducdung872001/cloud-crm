@@ -23,7 +23,6 @@ export default function MaterialMenuPage() {
     {
       title: "Danh sách nguyên vật liệu",
       backgroundColor: "#E1F5EE",
-      strokeColor: "#0f6e56",
       icon: "MasterialsList",
       tab: "material",
       des: "Quản lý toàn bộ danh mục nguyên vật liệu, tra cứu thông tin và theo dõi tồn kho từng loại."
@@ -32,7 +31,6 @@ export default function MaterialMenuPage() {
     {
       title: "Nhập nguyên vật liệu",
       backgroundColor: "#FAEEDA",
-      strokeColor: "#854f0b",
       icon: "ImportMasterials",
       tab: "import",
       des: "Tạo phiếu nhập kho nguyên vật liệu từ nhà cung cấp, ghi nhận số lượng và giá nhập."
@@ -40,7 +38,6 @@ export default function MaterialMenuPage() {
     {
       title: "Công thức (BOM)",
       backgroundColor: "#EEEDFE",
-      strokeColor: "#534ab7",
       icon: "RecipeMasterials",
       tab: "bom",
       des: "Định nghĩa Bill of Materials — cấu trúc nguyên vật liệu cần thiết để sản xuất từng sản phẩm."
