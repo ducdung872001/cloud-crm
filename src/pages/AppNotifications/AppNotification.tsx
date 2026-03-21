@@ -488,9 +488,9 @@ export default function AppNotificationList(props) {
 
         {/* History Table */}
         <div className="card-box d-flex flex-column">
-          <div className="history-header">
+          {/* <div className="history-header">
             <h3 className="history-header__title">Lịch sử gửi</h3>
-          </div>
+          </div> */}
           <SearchBox
             name="Chiến dịch"
             params={params}
