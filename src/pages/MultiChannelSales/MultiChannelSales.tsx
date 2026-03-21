@@ -7,11 +7,19 @@ import MultiChannelOrders from "./MultiChannelOrders/MultiChannelOrders";
 import ConnectionChannel from "./ConnectionChannel/ConnectionChannel";
 import MultiChannelConfiguration from "./MultiChannelConfiguration/MultiChannelConfiguration";
 import SalesWebsite from "./SalesWebsite/SalesWebsite";
+import { useLocation } from "react-router-dom";
 
 export default function MultiChannelSales() {
   document.title = "Bán hàng đa kênh";
 
-  const [tab, setTab] = useState(1);
+  const location = useLocation();
+  const [tab, setTab] = useState(location.state?.tab || 1);
+
+  useEffect(() => {
+    if (location.state?.tab) {
+      setTab(location.state.tab);
+    }
+  }, [location.state?.tab]);
 
   const tabList = [
     {
