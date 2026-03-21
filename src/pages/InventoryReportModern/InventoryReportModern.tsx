@@ -36,7 +36,7 @@ function mockToSummary(): IInventorySummary {
     closingQty:     4750,
     stockValue:     3155000000,
     belowThreshold: 34,
-  };
+  }; 
 }
 
 function mockToMovement(): IInventoryMovement[] {
