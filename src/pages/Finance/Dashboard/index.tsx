@@ -2,6 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import urls from "configs/urls";
 import { Link } from "react-router-dom";
 import {
+  getFinanceDebtsMock,
+  getFinanceFundsMock,
+  getFinanceTransactionsMock,
+} from "../data";
+import {
   FinanceBadge,
   FinanceLoadMoreIndicator,
   FinancePageShell,
@@ -18,59 +23,85 @@ import FinanceDashboardService, {
 import { ICashBookResponse } from "model/cashbook/CashbookResponseModel";
 import "./index.scss";
 
+// ── Mock data dùng làm placeholder khi API chưa về ────────────────────────────
+const mockFunds      = getFinanceFundsMock();
+const mockTxns       = getFinanceTransactionsMock();
+const mockDebts      = getFinanceDebtsMock();
+
+const mockTotalFund    = mockFunds.reduce((s, f) => s + f.balance, 0);
+const mockTotalIncome  = mockTxns.filter((t) => t.kind === "income").reduce((s, t) => s + t.amount, 0);
+const mockTotalExpense = mockTxns.filter((t) => t.kind === "expense").reduce((s, t) => s + t.amount, 0);
+const mockReceivable   = mockDebts.filter((d) => d.kind === "receivable" && d.status !== "paid").reduce((s, d) => s + d.amount, 0);
+const mockPayable      = mockDebts.filter((d) => d.kind === "payable"    && d.status !== "paid").reduce((s, d) => s + d.amount, 0);
+const mockDebtAlerts   = mockDebts.filter((d) => d.status === "overdue" || d.status === "upcoming");
+
+/** Chuyển FinanceTransaction mock → shape giống ICashBookResponse để render cùng 1 template */
+function mockTxToApiShape(t: ReturnType<typeof getFinanceTransactionsMock>[0]): ICashBookResponse {
+  return {
+    id: Number(t.id.replace(/\D/g, "")) || 0,
+    note: t.title,
+    amount: t.amount,
+    type: t.kind === "income" ? 1 : 2,
+    transDate: t.createdAt,
+    empName: t.createdBy,
+    employeeId: 0,
+    branchId: 0,
+    categoryName: "",
+  };
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
 export default function FinanceDashboard() {
   document.title = "Dashboard tài chính";
 
-  // ── State ──────────────────────────────────────────────────────────────────
-  const [data, setData] = useState<IFinanceDashboardResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Khởi tạo ngay bằng mock — UI hiển thị được trước khi API về
+  const [data, setData]       = useState<IFinanceDashboardResponse | null>(null);
+  const [isMock, setIsMock]   = useState(true);   // true = đang hiển thị mock
+  const [error, setError]     = useState<string | null>(null);
 
   const abortRef = useRef<AbortController | null>(null);
 
-  // ── Fetch ──────────────────────────────────────────────────────────────────
+  // ── Fetch ────────────────────────────────────────────────────────────────────
   useEffect(() => {
-    // Hủy request cũ nếu re-mount
     if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
-    setLoading(true);
-    setError(null);
-
     FinanceDashboardService.full(
-      {
-        branchId: 0,
-        fromTime: getDaysAgoParam(30), // 30 ngày trước — giống pattern filter ở CashBook
-        toTime: getTodayParam(),
-      },
+      { branchId: 0, fromTime: getDaysAgoParam(30), toTime: getTodayParam() },
       controller.signal
     )
       .then((res) => {
         setData(res);
+        setIsMock(false);
+        setError(null);
       })
       .catch((err: Error) => {
         if (err.name !== "AbortError") {
-          setError(err.message ?? "Không thể tải dữ liệu");
+          // API lỗi → giữ nguyên mock, hiện banner nhỏ
+          setError("Không thể tải dữ liệu thực — đang hiển thị dữ liệu mẫu");
         }
-      })
-      .finally(() => {
-        setLoading(false);
       });
 
     return () => controller.abort();
   }, []);
 
-  // ── Derived values ─────────────────────────────────────────────────────────
+  // ── Derived values — dùng real data khi có, fallback mock khi chưa ──────────
+  const totalFundBalance = isMock ? mockTotalFund    : (data?.totalFundBalance ?? 0);
+  const totalIncome      = isMock ? mockTotalIncome  : (data?.totalIncome      ?? 0);
+  const totalExpense     = isMock ? mockTotalExpense : (data?.totalExpense     ?? 0);
+  const receivable       = isMock ? mockReceivable   : 0;  // billing DB không có
+  const payable          = isMock ? mockPayable      : 0;
 
-  // KPI cards — fallback 0 khi đang loading
-  const totalFundBalance = data?.totalFundBalance ?? 0;
-  const totalIncome = data?.totalIncome ?? 0;
-  const totalExpense = data?.totalExpense ?? 0;
+  // Giao dịch: dùng real khi API về VÀ có dữ liệu, còn lại giữ mock
+  const recentTransactions: ICashBookResponse[] =
+    !isMock && data?.recentTransactions?.length
+      ? data.recentTransactions
+      : mockTxns.map(mockTxToApiShape);
 
-  // Giao dịch gần nhất — API đã trả về đúng 10 bản ghi, dùng progressive list
-  // để giữ UX scroll giống các panel khác
-  const recentTransactions: ICashBookResponse[] = data?.recentTransactions ?? [];
+  // Cảnh báo công nợ: luôn dùng mock cho đến khi có API cloud-sales
+  const debtAlerts = mockDebtAlerts;
 
   const {
     visibleItems: visibleTransactions,
@@ -79,15 +110,14 @@ export default function FinanceDashboard() {
     handleScroll: handleTransactionsScroll,
   } = useFinanceProgressiveList(recentTransactions, 10);
 
-  // Cảnh báo công nợ — chưa có API từ cloud-sales, giữ mảng rỗng
   const {
     visibleItems: visibleDebtAlerts,
     isLoading: isDebtAlertsLoading,
     hasMore: hasMoreDebtAlerts,
     handleScroll: handleDebtAlertsScroll,
-  } = useFinanceProgressiveList([] as any[], 10);
+  } = useFinanceProgressiveList(debtAlerts, 10);
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <FinancePageShell
       title="Dashboard tài chính"
@@ -105,11 +135,8 @@ export default function FinanceDashboard() {
         </div>
       }
     >
-      {/* Lỗi load */}
       {error && (
-        <div className="finance-error-banner">
-          Không thể tải dữ liệu: {error}
-        </div>
+        <div className="finance-error-banner">{error}</div>
       )}
 
       <div className="finance-grid">
@@ -117,7 +144,7 @@ export default function FinanceDashboard() {
         <div className="finance-grid__span-3">
           <FinanceStatCard
             label="Tổng quỹ hiện tại"
-            value={loading ? "..." : formatCurrency(totalFundBalance)}
+            value={formatCurrency(totalFundBalance)}
             helper="Tổng số dư toàn hệ thống"
             tone="success"
           />
@@ -125,7 +152,7 @@ export default function FinanceDashboard() {
         <div className="finance-grid__span-3">
           <FinanceStatCard
             label="Tổng thu"
-            value={loading ? "..." : formatCurrency(totalIncome)}
+            value={formatCurrency(totalIncome)}
             helper="Tổng từ các phiếu thu"
             tone="success"
           />
@@ -133,18 +160,16 @@ export default function FinanceDashboard() {
         <div className="finance-grid__span-3">
           <FinanceStatCard
             label="Tổng chi"
-            value={loading ? "..." : formatCurrency(totalExpense)}
+            value={formatCurrency(totalExpense)}
             helper="Trừ từ các phiếu chi"
             tone="danger"
           />
         </div>
         <div className="finance-grid__span-3">
-          {/* Công nợ mở: billing DB không có bảng invoice.
-              Giữ nguyên card UI, hiển thị "—" cho đến khi có API cloud-sales */}
           <FinanceStatCard
             label="Công nợ mở"
-            value="—"
-            helper="Dữ liệu từ module Bán hàng"
+            value={formatCurrency(receivable + payable)}
+            helper={`Phải thu ${formatCurrency(receivable)} | Phải trả ${formatCurrency(payable)}`}
             tone="warning"
           />
         </div>
@@ -160,43 +185,30 @@ export default function FinanceDashboard() {
             </div>
             <div className="finance-scroll-panel" onScroll={handleTransactionsScroll}>
               <div className="finance-list">
-                {loading
-                  ? // Skeleton rows
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <div key={i} className="finance-list__item finance-list__item--skeleton">
-                        <div className="finance-skeleton finance-skeleton--title" />
-                        <div className="finance-skeleton finance-skeleton--meta" />
-                      </div>
-                    ))
-                  : visibleTransactions.length === 0
-                  ? <p className="finance-muted" style={{ padding: "1rem 0" }}>Chưa có giao dịch nào</p>
-                  : visibleTransactions.map((item) => {
-                      const isIncome = item.type === 1;
-                      return (
-                        <div key={item.id} className="finance-list__item">
-                          <div>
-                            {/* note là nội dung chính của cashbook */}
-                            <strong>{item.note || item.billCode || "—"}</strong>
-                            <div className="finance-list__meta">
-                              {formatDateTime(item.transDate)}
-                            </div>
-                          </div>
-                          <div style={{ textAlign: "right" }}>
-                            <FinanceBadge tone={isIncome ? "success" : "danger"}>
-                              {isIncome ? "Thu tiền" : "Chi tiền"}
-                            </FinanceBadge>
-                            <div
-                              className={
-                                isIncome ? "finance-amount--income" : "finance-amount--expense"
-                              }
-                              style={{ marginTop: "0.6rem", fontWeight: 700 }}
-                            >
-                              {isIncome ? "+" : "-"} {formatCurrency(item.amount)}
-                            </div>
-                          </div>
+                {visibleTransactions.map((item) => {
+                  const isIncome = item.type === 1;
+                  return (
+                    <div key={item.id} className="finance-list__item">
+                      <div>
+                        <strong>{item.note || item.billCode || "—"}</strong>
+                        <div className="finance-list__meta">
+                          {formatDateTime(item.transDate)}
                         </div>
-                      );
-                    })}
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <FinanceBadge tone={isIncome ? "success" : "danger"}>
+                          {isIncome ? "Thu tiền" : "Chi tiền"}
+                        </FinanceBadge>
+                        <div
+                          className={isIncome ? "finance-amount--income" : "finance-amount--expense"}
+                          style={{ marginTop: "0.6rem", fontWeight: 700 }}
+                        >
+                          {isIncome ? "+" : "-"} {formatCurrency(item.amount)}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <FinanceLoadMoreIndicator
                 loading={isTransactionsLoading}
@@ -211,41 +223,30 @@ export default function FinanceDashboard() {
           <section className="finance-panel">
             <div className="finance-panel__title">
               <h2>Cảnh báo công nợ</h2>
-              <Link
-                className="finance-link-button"
-                to={urls.finance_management_debt_management}
-              >
+              <Link className="finance-link-button" to={urls.finance_management_debt_management}>
                 Quản lý công nợ
               </Link>
             </div>
             <div className="finance-scroll-panel" onScroll={handleDebtAlertsScroll}>
               <div className="finance-summary-list">
-                {visibleDebtAlerts.length === 0 && !isDebtAlertsLoading ? (
-                  <p className="finance-muted" style={{ padding: "1rem 0" }}>
-                    Chưa có dữ liệu cảnh báo
-                  </p>
-                ) : (
-                  visibleDebtAlerts.map((item: any) => (
-                    <div key={item.id} className="finance-summary-list__item">
-                      <div>
-                        <strong>{item.name}</strong>
-                        <div className="finance-muted">
-                          {item.kind === "receivable" ? "Phải thu" : "Phải trả"}
-                        </div>
-                      </div>
-                      <div style={{ textAlign: "right" }}>
-                        <FinanceBadge
-                          tone={item.status === "overdue" ? "danger" : "warning"}
-                        >
-                          {item.status === "overdue" ? "Quá hạn" : "Sắp đến hạn"}
-                        </FinanceBadge>
-                        <div style={{ marginTop: "0.6rem", fontWeight: 700 }}>
-                          {formatCurrency(item.amount)}
-                        </div>
+                {visibleDebtAlerts.map((item) => (
+                  <div key={item.id} className="finance-summary-list__item">
+                    <div>
+                      <strong>{item.name}</strong>
+                      <div className="finance-muted">
+                        {item.kind === "receivable" ? "Phải thu" : "Phải trả"}
                       </div>
                     </div>
-                  ))
-                )}
+                    <div style={{ textAlign: "right" }}>
+                      <FinanceBadge tone={item.status === "overdue" ? "danger" : "warning"}>
+                        {item.status === "overdue" ? "Quá hạn" : "Sắp đến hạn"}
+                      </FinanceBadge>
+                      <div style={{ marginTop: "0.6rem", fontWeight: 700 }}>
+                        {formatCurrency(item.amount)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
               <FinanceLoadMoreIndicator
                 loading={isDebtAlertsLoading}

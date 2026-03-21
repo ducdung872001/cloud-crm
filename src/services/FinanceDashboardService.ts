@@ -43,9 +43,11 @@ function buildQuery(params: Record<string, string | number | undefined>) {
   return entries.length ? "?" + new URLSearchParams(entries).toString() : "";
 }
 
-/** Format Date → "d/M/yyyy" theo yêu cầu backend */
+/** Format Date → "dd/MM/yyyy" — pad tháng và ngày để backend parse đúng */
 export function formatDateParam(date: Date): string {
-  return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  const d = String(date.getDate()).padStart(2, "0");
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  return `${d}/${m}/${date.getFullYear()}`;
 }
 
 /** Lấy ngày hôm nay */
