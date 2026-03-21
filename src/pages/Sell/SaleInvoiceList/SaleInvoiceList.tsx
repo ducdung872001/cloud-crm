@@ -166,19 +166,24 @@ export default function SaleInvoiceList() {
     append = false
   ) => {
     const statusInt = STATUS_TO_INT[filter] ?? -1;
-    const newParams: IInvoiceFilterRequest = {
-      ...params,
-      page,
-    };
-    // Chỉ gán nếu có giá trị thực — tránh gửi "undefined" hoặc chuỗi rỗng
-    if (keyword?.trim())  newParams.keyword  = keyword.trim();
-    else                  delete newParams.keyword;
-    if (from?.trim())     newParams.fromDate = from.trim();
-    else                  delete newParams.fromDate;
-    if (to?.trim())       newParams.toDate   = to.trim();
-    else                  delete newParams.toDate;
-    if (statusInt > 0)    newParams.status   = statusInt;
-    else                  delete newParams.status;
+    const newParams: IInvoiceFilterRequest = { ...params, page };
+
+    // Backend dùng invoiceCode (likeRegex) để tìm theo mã HĐ
+    // keyword hiện không lọc gì trên backend nên dùng invoiceCode
+    if (keyword?.trim()) newParams.invoiceCode = keyword.trim();
+    else                 delete newParams.invoiceCode;
+
+    if (from?.trim())    newParams.fromDate    = from.trim();
+    else                 delete newParams.fromDate;
+
+    if (to?.trim())      newParams.toDate      = to.trim();
+    else                 delete newParams.toDate;
+
+    if (statusInt > 0)   newParams.status      = statusInt;
+    else                 delete newParams.status;
+
+    // Xóa keyword cũ nếu còn tồn tại
+    delete newParams.keyword;
 
     setParams(newParams);
     fetchList(newParams, append);
@@ -211,6 +216,16 @@ export default function SaleInvoiceList() {
     applyFilters(f, searchText, fromDate, toDate, 1);
   };
 
+  // Debounce auto-search khi gõ mã hóa đơn
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const handleSearchTextChange = (v: string) => {
+    setSearchText(v);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => {
+      applyFilters(activeFilter, v, fromDate, toDate, 1);
+    }, 400);
+  };
+
   const handleSearch = () => {
     applyFilters(activeFilter, searchText, fromDate, toDate, 1);
   };
@@ -239,7 +254,7 @@ export default function SaleInvoiceList() {
         activeFilter={activeFilter}
         onFilterChange={handleFilterChange}
         searchText={searchText}
-        onSearchChange={setSearchText}
+        onSearchChange={handleSearchTextChange}
         fromDate={fromDate}
         toDate={toDate}
         onFromDateChange={setFromDate}
