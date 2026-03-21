@@ -27,7 +27,6 @@ export default function SettingBasisList() {
       is_tab: "tab_one",
       icon: "BranchList",
       backgroundColor: "#E6F1FB",
-      strokeColor: "#185fa5",
       des: "Quản lý các chi nhánh, cửa hàng trực thuộc doanh nghiệp."
     },
     {
@@ -35,7 +34,6 @@ export default function SettingBasisList() {
       is_tab: "tab_two",
       icon: "Departmentist",
       backgroundColor: "#E1F5EE",
-      strokeColor: "#0f6e56",
       des: "Thiết lập cơ cấu tổ chức, phân chia phòng ban theo bộ máy doanh nghiệp."
     },
     {
@@ -43,7 +41,6 @@ export default function SettingBasisList() {
       is_tab: "tab_six",
       icon: "PermissionGroupList",
       backgroundColor: "#EEEDFE",
-      strokeColor: "#534ab7",
       des: "Cấu hình các nhóm quyền truy cập và phân quyền chức năng cho từng vai trò."
     },
     {
@@ -51,7 +48,6 @@ export default function SettingBasisList() {
       is_tab: "tab_three",
       icon: "EmployeeList",
       backgroundColor: "#FAEEDA",
-      strokeColor: "#854f0b",
       des: "Xem và quản lý hồ sơ toàn bộ nhân viên trong hệ thống."
     },
     {
@@ -59,7 +55,6 @@ export default function SettingBasisList() {
       is_tab: "tab_five",
       icon: "EmployeeGroup",
       backgroundColor: "#EAF3DE",
-      strokeColor: "#3b6d11",
       des: "Gom nhóm nhân viên theo bộ phận, kỹ năng hoặc phạm vi công việc."
     },
     {
@@ -67,7 +62,6 @@ export default function SettingBasisList() {
       is_tab: "tab_seven",
       icon: "StoreManagement",
       backgroundColor: "#FAECE7",
-      strokeColor: "#993c1d",
       des: "Cấu hình thông tin, địa chỉ và hoạt động của từng cửa hàng."
     },
     // ...(isBeauty && isBeauty == "1"

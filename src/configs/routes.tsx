@@ -185,6 +185,7 @@ import PaymentMethodPage from "@/pages/PaymentMethodPage/PaymentMethodPage";
 import FinanceContent from "@/pages/PaymentReconciliation";
 import ReturnProductPage from "@/pages/ReturnProduct";
 import Reconcile from "@/pages/Reconcile";
+import TaskProcessPage from "@/pages/TaskProcessPage/TaskProcessPage";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -539,7 +540,7 @@ export const menu: IMenuItem[] = [
       {
         title: "customerAnalysis", // phân tích khách hàng
         path: urls.customer_analysis,
-        icon: <Icon name="SupportMenu" />,
+        icon: <Icon name="AnalysisCustomer" />,
         code: "",
       },
       // {
@@ -1538,7 +1539,8 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.object_manage,
-    component: <ProcessedObjectList />,
+    // component: <ProcessedObjectList />,
+    component: <TaskProcessPage/>
   },
   {
     path: urls.setting_business_process,

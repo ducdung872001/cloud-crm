@@ -18,7 +18,6 @@ export default function SettingIntegration() {
       is_tab: "tab_three",
       icon: "IntegratedMonitoring",
       backgroundColor: "#EAF3DE",
-      strokeColor: "rgb(59, 109, 17)",
       des: "Theo dõi trạng thái hoạt động của các kết nối tích hợp, cảnh báo lỗi và lịch sử đồng bộ dữ liệu."
     }, 
     {
@@ -26,7 +25,6 @@ export default function SettingIntegration() {
       is_tab: "tab_one",
       icon: "AppListIntegrated",
       backgroundColor: "#E6F1FB",
-      strokeColor: "rgb(24, 95, 165)",
       des: "Quản lý các ứng dụng và dịch vụ bên thứ ba đã kết nối với hệ thống như TMĐT, kế toán, vận chuyển…"
     }, 
     {
@@ -34,7 +32,6 @@ export default function SettingIntegration() {
       is_tab: "tab_two",
       icon: "WebhookList",
       backgroundColor: "#EEEDFE",
-      strokeColor: "rgb(83, 74, 183)",
       des: "Cấu hình các endpoint nhận sự kiện từ hệ thống (đơn hàng mới, cập nhật KH…) để đồng bộ dữ liệu với hệ thống ngoài theo thời gian thực."
     }, 
   ];

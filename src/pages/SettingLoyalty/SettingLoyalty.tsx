@@ -42,7 +42,7 @@ export default function SettingLoyalty() {
           <TabMenuList
             listTab={listTab}
             onClick={(item) => {
-                setTab(item.tab);
+                setTab(item.is_tab);
                 setIsDetail(true);
             }}
           />

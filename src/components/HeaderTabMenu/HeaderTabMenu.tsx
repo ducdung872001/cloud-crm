@@ -23,7 +23,7 @@ export default function HeaderTabMenu(props: IHeaderTab) {
     }
   }
   return (
-    <div className="action-navigation">
+    <div className="header-tab-menu">
         <div className="action-backup">
           <h1
             onClick={() => {

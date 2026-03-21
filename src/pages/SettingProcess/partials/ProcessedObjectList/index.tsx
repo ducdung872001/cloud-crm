@@ -6,21 +6,19 @@ import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
 import Badge from "components/badge/badge";
-import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
+import { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
 import { showToast } from "utils/common";
-import { getPageOffset, getSearchParameters, isDifferenceObj, removeAccents } from "reborn-util";
+import { getPageOffset, isDifferenceObj, removeAccents } from "reborn-util";
 import { ContextType, UserContext } from "contexts/userContext";
 import AddObject from "./partials/AddObject";
-import AddTemplateFSQuote from "pages/Common/AddTemplateFSQuote";
 import { CustomExportReport } from "exports/customExportReport";
 import { useSearchParams } from "react-router-dom";
 import SheetFieldQuoteFormService from "services/SheetFieldQuoteFormService";
-
 import "./index.scss";
 import ProcessedObjectService from "services/ProcessedObjectService";
 import ModalSigner from "./partials/ModalSigner";
@@ -29,15 +27,14 @@ import { ExportExcel } from "exports";
 import WorkOrderService from "services/WorkOrderService";
 import ModalSelectProcessOLA from "./ModalSelectProcessOLA/ModalSelectProcessOLA";
 import ModalDebugObject from "./ModalDebugObject";
-import MiddleWorkList from "@/pages/MiddleWork/MiddleWorkList";
-import UserTaskList from "@/pages/UserTaskList";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function ProcessedObjectList() {
+export default function ProcessedObjectList(props) {
   document.title = "Danh sách hồ sơ";
 
   const isMounted = useRef(false);
+  const { onBackProps } = props;
   const { name, dataInfoEmployee } = useContext(UserContext) as ContextType;
-
   const [searchParams, setSearchParams] = useSearchParams();
   const [listObject, setListObject] = useState([]);
   const [dataObject, setDataObject] = useState(null);
@@ -94,14 +91,7 @@ export default function ProcessedObjectList() {
       name: "Danh sách hồ sơ",
       is_active: true,
     },
-    {
-      key: "handle_work",
-      name: "Tác vụ",
-      is_active: false,
-    },
   ]);
-
-  const [tabActive, setTabActive] = useState("all");
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
@@ -177,7 +167,6 @@ export default function ProcessedObjectList() {
 
   const titleActions: ITitleActions = {
     actions: [
-      ...tabActive === "all" ? [
       {
         title: !showModalSettingObject || !hasHistorySignature ? "Thêm mới" : "Quay lại",
         callback: () => {
@@ -187,8 +176,8 @@ export default function ProcessedObjectList() {
             setDataObject(null);
             setShowModalAdd(true);
           }
-        },
-      }] : [],
+        }
+      }
     ],
   };
 
@@ -725,7 +714,12 @@ export default function ProcessedObjectList() {
   return (
     <div>
       <div className={`page-content page__process_object${isNoItem ? " bg-white" : ""}`}>
-        <TitleAction title="Danh sách hồ sơ" titleActions={titleActions} />
+        <HeaderTabMenu
+          title="Danh sách hồ sơ"
+          titleBack="Hồ sơ & tác vụ"
+          onBackProps={onBackProps}
+          titleActions={titleActions}
+        />
         <div className="card-box d-flex flex-column">
           <div className={`${showModalSettingObject || hasHistorySignature ? "d-none" : ""}`}>
             <SearchBox
@@ -733,15 +727,12 @@ export default function ProcessedObjectList() {
               params={params}
               isSaveSearch={true}
               listSaveSearch={listSaveSearch}
-              isFilter={tabActive == "all" ? true : false}
+              isFilter={true}
               listFilterItem={customerFilterList}
               updateParams={(paramsNew) => setParams(paramsNew)}
-              setTabActive={setTabActive}
-              isHiddenSearch={tabActive == "all" ? false : true}
             />
 
-            {tabActive === "all" ? 
-              (!isLoading && listObject && listObject.length > 0 ? (
+            {!isLoading && listObject && listObject.length > 0 ? (
                 <BoxTable
                   name="hồ sơ"
                   titles={titles}
@@ -790,9 +781,7 @@ export default function ProcessedObjectList() {
                     />
                   )}
                 </Fragment>
-              ))
-            : null }
-            {tabActive === "handle_work" ? <UserTaskList/> : null}
+              )}
           </div>
 
           {/* <div className={`${showModalSettingObject ? "" : "d-none"}`}>
