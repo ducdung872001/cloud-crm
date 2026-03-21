@@ -5,32 +5,57 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import { IInvoiceFilterRequest } from "model/invoice/InvoiceRequestModel";
 import { showToast } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
-import { isDifferenceObj } from "reborn-util";
 import InvoiceService from "services/InvoiceService";
 import "./SaleInvoiceList.scss";
-import OrderList from "@/pages/CounterSales/components/OrderList";
+import OrderList, { StatusCounts } from "@/pages/CounterSales/components/OrderList";
 import { Order } from "@/pages/CounterSales/types";
 import Button from "@/components/button/button";
 import moment from "moment";
-import ReceiptModal from "@/pages/CounterSales/components/modals/ReceiptModal";
 import OrderDetailModal from "@/pages/CounterSales/components/modals/OrderDetailModal";
+import ReceiptModal from "@/pages/CounterSales/components/modals/ReceiptModal";
+
+// Map frontend status string → backend integer
+const STATUS_TO_INT: Record<string, number> = {
+  all:       -1,
+  pending:    2,
+  success:    1,
+  cancelled:  3,
+  // "shipping" maps to pending too since backend doesn't have a separate shipping status
+  shipping:   2,
+};
 
 export default function SaleInvoiceList() {
   document.title = "Danh sách đơn hàng";
 
   const { dataBranch } = useContext(UserContext) as ContextType;
-
   const isMounted = useRef(false);
-  const [invoiceId, setInvoiceId] = useState<number | null>(null);
-  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
+
+  // ── Modal state ────────────────────────────────────────────────────────────
+  const [invoiceId,            setInvoiceId]            = useState<number | null>(null);
+  const [receiptModalOpen,     setReceiptModalOpen]     = useState(false);
   const [orderDetailModalOpen, setOrderDetailModalOpen] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams,         setSearchParams]         = useSearchParams();
+
+  // ── List + loading state ───────────────────────────────────────────────────
   const [listSaleInvoice, setListSaleInvoice] = useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isNoItem, setIsNoItem] = useState<boolean>(false);
+  const [isLoading,       setIsLoading]       = useState(true);
+  const [isNoItem,        setIsNoItem]        = useState(false);
+  const [totalItem,       setTotalItem]       = useState(0);
+  const [currentPage,     setCurrentPage]     = useState(1);
+  const [totalPage,       setTotalPage]       = useState(1);
+
+  // ── Status counts from API response ───────────────────────────────────────
+  const [statusCounts, setStatusCounts] = useState<StatusCounts>({
+    all: 0, pending: 0, success: 0, cancelled: 0,
+  });
+
+  // ── Filter state (owned here, passed down to OrderList) ───────────────────
+  const [activeFilter,  setActiveFilter]  = useState<"all"|"pending"|"shipping"|"success"|"cancelled">("all");
+  const [searchText,    setSearchText]    = useState("");
+  const [fromDate,      setFromDate]      = useState("");
+  const [toDate,        setToDate]        = useState("");
 
   const [params, setParams] = useState<IInvoiceFilterRequest>({
-    invoiceCode: "",
     invoiceTypes: JSON.stringify(["IV1", "IV3"]),
     limit: 10,
     page: 1,
@@ -38,183 +63,205 @@ export default function SaleInvoiceList() {
 
   useEffect(() => {
     if (dataBranch) {
-      setParams((prevParams) => ({ ...prevParams, branchId: dataBranch.value }));
+      setParams(p => ({ ...p, branchId: dataBranch.value }));
     }
   }, [dataBranch]);
 
-  const [pagination, setPagination] = useState<PaginationProps>({
-    ...DataPaginationDefault,
-    name: "Danh sách đơn hàng",
-    isChooseSizeLimit: true,
-    setPage: (page) => {
-      setParams((prevParams) => ({ ...prevParams, page: page }));
+  // ── Map API item → Order ───────────────────────────────────────────────────
+  const mapToOrder = (item: any): Order => ({
+    id:          item.invoiceId,
+    code:        item.invoice.invoiceCode,
+    source:      "offline",
+    sourceLabel: "Bán hàng tại quầy",
+    status:      item.invoice.status === 1 ? "success"
+               : item.invoice.status === 2 ? "pending"
+               : "cancelled",
+    statusLabel: item.invoice.status === 1 ? "Hoàn thành"
+               : item.invoice.status === 2 ? "Chờ xử lý"
+               : "Đã hủy",
+    time:     item?.invoice?.createdTime
+              ? moment(item.invoice.createdTime).format("DD/MM/YYYY · HH:mm")
+              : "",
+    customer: {
+      id:      item.customerId,
+      name:    item?.invoice?.customerName || "Khách vãng lai",
+      phone:   item.customerPhone || "",
+      initial: item?.invoice?.customerName
+               ? item.invoice.customerName.charAt(0).toUpperCase()
+               : "K",
+      points:  item.customerPoints ?? 0,
+      tier:    item.customerTier ?? "",
+      color:   "#2563eb",
     },
-    chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, limit: limit }));
-    },
+    items: [...(item.products || []), ...(item.services || [])]
+      .map((i: any) => {
+        const productName = i.productName || i.name || "";
+        const variantName = i.name && i.name !== i.productName ? i.name : "";
+        return variantName ? `${productName} (${variantName})` : productName;
+      })
+      .filter(Boolean)
+      .join(", ") || "—",
+    total: item.invoice.fee,
   });
 
-  const abortController = new AbortController();
-  // export interface Order {
-  //   id: string;
-  //   code: string;
-  //   source: "offline" | "shopee" | "tiktok" | "website";
-  //   sourceLabel: string;
-  //   status: "pending" | "shipping" | "success" | "cancelled";
-  //   statusLabel: string;
-  //   time: string;
-  //   customer: Customer;
-  //   items: string;
-  //   total: number;
-  //   cancellationReason?: string;
-  // }
+  // ── Fetch list ─────────────────────────────────────────────────────────────
+  const abortRef = useRef<AbortController | null>(null);
 
-  const getListSaleInvoice = async (paramsSearch: IInvoiceFilterRequest) => {
+  const fetchList = async (p: IInvoiceFilterRequest, append = false) => {
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
     setIsLoading(true);
 
-    const response = await InvoiceService.list(paramsSearch, abortController.signal);
+    try {
+      const response = await InvoiceService.list(p, abortRef.current.signal);
 
-    if (response.code === 0) {
-      const result = response.result;
-      let listSaleInvoiceTemp: Order[] = result.pagedLst.items.map(
-        (item) =>
-          ({
-            id: item.invoiceId,
-            code: item.invoice.invoiceCode,
-            source: "offline",
-            sourceLabel: "Bán hàng tại quầy",
-            status: item.invoice.status == 1 ? "success" : item.invoice.status == 2 ? "pending" : "cancelled",
-            statusLabel: item.invoice.status === 1 ? "Hoàn thành" : item.invoice.status === 2 ? "Chưa hoàn thành" : "Đã hủy",
-            time: item?.invoice?.createdTime ? moment(item.invoice.createdTime).format("DD/MM/YYYY · HH:mm") : "",
-            customer: {
-              id: item.customerId,
-              name: item?.invoice?.customerName ? item.invoice.customerName : item?.invoice?.customerId ? "Khách vãng lai" : "Khách lẻ",
-              phone: item.customerPhone ? item.customerPhone : item?.invoice?.customerId ? "" : "",
-              initial: item?.invoice?.customerName ? item.invoice.customerName.charAt(0).toUpperCase() : "K",
-              points: item.customerPoints ?? 0,
-              tier: item.customerTier ?? "",
-              color: "#2563eb",
-            },
-            items: [...(item.products || []), ...(item.services || [])].map((i) => {
-                const productName = i.productName || i.name || "";
-                const variantName = (i.name && i.name !== i.productName) ? i.name : "";
-                return variantName ? `${productName} (${variantName})` : productName;
-              }).filter(Boolean).join(", ") || "—",
-            total: item.invoice.fee,
-          } as Order)
-      );
+      if (response.code === 0) {
+        const result = response.result;
+        const mapped: Order[] = result.pagedLst.items.map(mapToOrder);
 
-      setListSaleInvoice(result.pagedLst.page == 1 ? listSaleInvoiceTemp : [...listSaleInvoice, ...listSaleInvoiceTemp]);
+        setListSaleInvoice(append ? prev => [...prev, ...mapped] : mapped);
+        setTotalItem(+result.pagedLst.total);
+        setCurrentPage(+result.pagedLst.page);
+        setTotalPage(Math.ceil(+result.pagedLst.total / +(p.limit ?? 10)));
 
-      setPagination({
-        ...pagination,
-        page: +result.pagedLst.page,
-        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
-        totalItem: +result.pagedLst.total,
-        totalPage: Math.ceil(+result.pagedLst.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
-      });
+        if (+result.pagedLst.total === 0 && +result.pagedLst.page === 1) {
+          setIsNoItem(true);
+        } else {
+          setIsNoItem(false);
+        }
 
-      if (+result.pagedLst.total === 0 && !params?.invoiceCode && +result.pagedLst.page === 1) {
-        setIsNoItem(true);
+        // Update status counts from API response statusCounts field
+        if (result.statusCounts) {
+          // Backend: 1=done, 2=pending, 3=cancel
+          const sc = result.statusCounts;
+          const done     = Number(sc[1] ?? 0);
+          const pending  = Number(sc[2] ?? 0);
+          const cancel   = Number(sc[3] ?? 0);
+          setStatusCounts({
+            all:       done + pending + cancel,
+            success:   done,
+            pending:   pending,
+            cancelled: cancel,
+          });
+        }
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    } catch (e: any) {
+      if (e?.name !== "AbortError") {
+        showToast("Lỗi tải danh sách đơn hàng", "error");
+      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
-  useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
-    searchParams.forEach(async (key, value) => {
-      paramsTemp[value] = key;
-    });
-    setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
-    if (isMounted.current === true) {
-      getListSaleInvoice(params);
-      const paramsTemp = _.cloneDeep(params);
-      if (paramsTemp.limit === 10) {
-        delete paramsTemp["limit"];
-      }
-      Object.keys(paramsTemp).map(function (key) {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-      if (isDifferenceObj(searchParams, paramsTemp)) {
-        if (paramsTemp.page === 1) {
-          delete paramsTemp["page"];
-        }
-        setSearchParams(paramsTemp as Record<string, string | string[]>);
-      }
-    }
-    return () => {
-      abortController.abort();
+  // ── Build params from filters and call fetch ───────────────────────────────
+  const applyFilters = useCallback((
+    filter: typeof activeFilter,
+    keyword: string,
+    from: string,
+    to:   string,
+    page: number,
+    append = false
+  ) => {
+    const statusInt = STATUS_TO_INT[filter] ?? -1;
+    const newParams: IInvoiceFilterRequest = {
+      ...params,
+      keyword:      keyword  || undefined,
+      fromDate:     from     || undefined,
+      toDate:       to       || undefined,
+      status:       statusInt > 0 ? statusInt : undefined,
+      page,
     };
+    setParams(newParams);
+    fetchList(newParams, append);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
+  // Initial load when branch loaded
+  useEffect(() => {
+    if (!isMounted.current) { isMounted.current = true; return; }
+    applyFilters(activeFilter, searchText, fromDate, toDate, 1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataBranch]);
+
+  // First mount with URL params
+  useEffect(() => {
+    const urlFromDate = searchParams.get("fromDate") || "";
+    const urlToDate   = searchParams.get("toDate")   || "";
+    if (urlFromDate) setFromDate(urlFromDate);
+    if (urlToDate)   setToDate(urlToDate);
+    fetchList({
+      ...params,
+      fromDate: urlFromDate || undefined,
+      toDate:   urlToDate   || undefined,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Filter change handlers ─────────────────────────────────────────────────
+  const handleFilterChange = (f: typeof activeFilter) => {
+    setActiveFilter(f);
+    applyFilters(f, searchText, fromDate, toDate, 1);
+  };
+
+  const handleSearch = () => {
+    applyFilters(activeFilter, searchText, fromDate, toDate, 1);
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = currentPage + 1;
+    applyFilters(activeFilter, searchText, fromDate, toDate, nextPage, true);
+  };
+
+  // ── Modal handlers ─────────────────────────────────────────────────────────
   const handleViewReceipt = useCallback(() => setReceiptModalOpen(true), []);
-  const handleViewDetail = useCallback((invoiceId) => {
+  const handleViewDetail  = useCallback((id: number | null) => {
+    setInvoiceId(id);
     setOrderDetailModalOpen(true);
-    setInvoiceId(invoiceId);
   }, []);
   const handleConfirmOrder = useCallback(() => setOrderDetailModalOpen(false), []);
 
   return (
     <div className="sale-invoice-list">
       <OrderList
-        onViewDetail={(invoiceId) => {
-          handleViewDetail(invoiceId);
-        }}
+        onViewDetail={handleViewDetail}
         onViewReceipt={handleViewReceipt}
         onConfirm={handleConfirmOrder}
         listOrder={listSaleInvoice}
+        // Filter props (controlled)
+        activeFilter={activeFilter}
+        onFilterChange={handleFilterChange}
+        searchText={searchText}
+        onSearchChange={setSearchText}
+        fromDate={fromDate}
+        toDate={toDate}
+        onFromDateChange={setFromDate}
+        onToDateChange={setToDate}
+        onSearch={handleSearch}
+        statusCounts={statusCounts}
+        totalItem={totalItem}
       />
-      Hiển thị {listSaleInvoice.length}/{pagination.totalItem} đơn hàng
-      {pagination.page < pagination.totalPage && (
-        <Button
-          onClick={() => {
-            getListSaleInvoice({
-              ...params,
-              page: pagination.page + 1,
-            });
-          }}
-        >
-          Tải thêm
-        </Button>
+
+      {isLoading && (
+        <div style={{ textAlign: "center", padding: "12px 0", color: "#9ca3af", fontSize: 13 }}>
+          Đang tải...
+        </div>
       )}
-      {/* <ReceiptModal
-        open={receiptModalOpen}
-        // cartItems={cartItems}
-        // customerId={customer?.id ?? -1}
-        // invoiceId={invoiceId ?? -1}
-        // invoiceDraft={invoiceDraftToPaid}
-        // method={method}
-        // qrCodePro={qrCodePro}
-        onClose={() => {
-          // setCartItems([]);
-          // setCustomer(null);
-          // setInvoiceId(null);
-          // setReceiptModalOpen(false);
-          // setInvoiceDraftToPaid(null);
-          // setQrCodePro(null);
-          // setMethod("cash");
-        }}
-      /> */}
+
+      {!isLoading && currentPage < totalPage && (
+        <div style={{ textAlign: "center", padding: "12px 0" }}>
+          <Button onClick={handleLoadMore}>
+            Tải thêm ({totalItem - listSaleInvoice.length} đơn còn lại)
+          </Button>
+        </div>
+      )}
+
       <OrderDetailModal
         open={orderDetailModalOpen}
-        onClose={() => {
-          setInvoiceId(null);
-          setOrderDetailModalOpen(false);
-        }}
-        onPrint={() => {
-          setOrderDetailModalOpen(false);
-          setReceiptModalOpen(true);
-        }}
+        onClose={() => { setInvoiceId(null); setOrderDetailModalOpen(false); }}
+        onPrint={() => { setOrderDetailModalOpen(false); setReceiptModalOpen(true); }}
         invoiceId={invoiceId ?? -1}
         onConfirm={handleConfirmOrder}
       />
