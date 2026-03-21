@@ -395,15 +395,13 @@ export default function Header(props: any) {
     }
   }
 
-  /** Navigate based on targetLink or payload type from the new API */
   const handleNotificationClick = (item: any) => {
-    // unread: 0/null = chưa đọc, unread: 1 = đã đọc
+    // unread: 0 = chưa đọc, unread: 1 = đã đọc
     if (item.unread === 0 || item.unread === null) {
       onUnread(item.id);
     }
     setShowPopoverNotification(false);
 
-    // Bắt riêng sự kiện thông báo ORDER_REQUEST để chuyển trang sang Bán hàng đa kênh và hiển thị order
     if (item.payload && isJsonString(item.payload)) {
       const payload = JSON.parse(item.payload);
       if (payload?.type === "ORDER_REQUEST" && payload.orderId) {
@@ -412,7 +410,6 @@ export default function Header(props: any) {
       }
     }
 
-    // Nếu targetLink được truyền từ BE, chuyển trang trực tiếp
     if (item.targetLink) {
       navigate(item.targetLink);
       return;
@@ -442,7 +439,6 @@ export default function Header(props: any) {
     }
   };
 
-  /** Resolve icon name based on payload type */
   const getNotificationIconName = (item: any): string => {
     if (item.payload && isJsonString(item.payload)) {
       const payload = JSON.parse(item.payload);

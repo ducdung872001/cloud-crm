@@ -26,7 +26,7 @@ export default function MultiChannelOrders() {
 
   const [modalDetail, setModalDetail] = useState(false);
   const [dataOrder, setDataOrder] = useState(null);
-  
+
   const location = useLocation();
   const navigate = useNavigate();
   const orderIdFromNotification = location.state?.orderRequestModalId;
@@ -35,13 +35,12 @@ export default function MultiChannelOrders() {
     if (orderIdFromNotification) {
       const getDetailOrderRequest = async (id: number) => {
         try {
-           setIsLoading(true);
+          setIsLoading(true);
           const response = await OrderRequestService.detail(id);
           if (response.code === 0) {
             setDataOrder(response.result);
             setModalDetail(true);
-            
-            // Xóa state để không bị mở lại popup khi reload hoặc back lại
+
             navigate(location.pathname, { replace: true, state: {} });
           } else {
             showToast(response.message ?? "Có lỗi xảy ra", "error");
@@ -49,10 +48,10 @@ export default function MultiChannelOrders() {
         } catch (e) {
           showToast("Có lỗi xảy ra", "error");
         } finally {
-            setIsLoading(false);
+          setIsLoading(false);
         }
       };
-      
+
       getDetailOrderRequest(orderIdFromNotification);
     }
   }, [orderIdFromNotification]);
@@ -197,23 +196,23 @@ export default function MultiChannelOrders() {
           title={
             item.orderInfo && JSON.parse(item.orderInfo)
               ? JSON.parse(item.orderInfo)
-                  .items.map((i: any) => i.name)
-                  .join(", ")
+                .items.map((i: any) => i.name)
+                .join(", ")
               : ""
           }
         >
           {item.orderInfo && JSON.parse(item.orderInfo)
             ? JSON.parse(item.orderInfo)
-                .items.map((i: any) => i.name)
-                .join(", ")
+              .items.map((i: any) => i.name)
+              .join(", ")
             : ""}
         </span>
       </div>
     </div>,
     item.orderInfo && JSON.parse(item.orderInfo)
       ? JSON.parse(item.orderInfo)
-          .items.reduce((total: number, i: any) => total + i.price * i.qty, 0)
-          .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+        .items.reduce((total: number, i: any) => total + i.price * i.qty, 0)
+        .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
       : 0,
     <Badge
       key={item.id}
@@ -221,25 +220,25 @@ export default function MultiChannelOrders() {
         item?.status === "PENDING"
           ? "Chờ xử lý"
           : item?.status === "PROCESSING"
-          ? "Đang giao"
-          : item?.status === "COMPLETED"
-          ? "Hoàn thành"
-          : item?.status === "CONFIRMED"
-          ? "Đã xác nhận"
-          : item?.status === "REFUNDED"
-          ? "Đã huỷ"
-          : ""
+            ? "Đang giao"
+            : item?.status === "COMPLETED"
+              ? "Hoàn thành"
+              : item?.status === "CONFIRMED"
+                ? "Đã xác nhận"
+                : item?.status === "REFUNDED"
+                  ? "Đã huỷ"
+                  : ""
       }
       variant={
         item.status === "PENDING"
           ? "warning"
           : item.status === "PROCESSING"
-          ? "primary"
-          : item.status === "COMPLETED"
-          ? "success"
-          : item.status === "CONFIRMED"
-          ? "success"
-          : "error"
+            ? "primary"
+            : item.status === "COMPLETED"
+              ? "success"
+              : item.status === "CONFIRMED"
+                ? "success"
+                : "error"
       }
     />,
     <div style={{ width: "10rem" }}>{moment(item.orderDate).format("DD/MM/YYYY HH:mm")}</div>,
@@ -330,7 +329,7 @@ export default function MultiChannelOrders() {
   const bulkActionList: BulkActionItemModel[] = [
     {
       title: "Xóa hoá đơn",
-      callback: () => {},
+      callback: () => { },
     },
   ];
 
