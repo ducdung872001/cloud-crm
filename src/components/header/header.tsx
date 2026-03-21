@@ -397,23 +397,32 @@ export default function Header(props: any) {
 
   /** Navigate based on targetLink or payload type from the new API */
   const handleNotificationClick = (item: any) => {
-    // unread: 0 = chưa đọc, unread: 1 = đã đọc
+    // unread: 0/null = chưa đọc, unread: 1 = đã đọc
     if (item.unread === 0 || item.unread === null) {
       onUnread(item.id);
     }
     setShowPopoverNotification(false);
 
-    // If targetLink is provided, navigate there directly
+    // Bắt riêng sự kiện thông báo ORDER_REQUEST để chuyển trang sang Bán hàng đa kênh và hiển thị order
+    if (item.payload && isJsonString(item.payload)) {
+      const payload = JSON.parse(item.payload);
+      if (payload?.type === "ORDER_REQUEST" && payload.orderId) {
+        navigate("/multi_channel_sales", { state: { tab: 2, orderRequestModalId: payload.orderId } });
+        return;
+      }
+    }
+
+    // Nếu targetLink được truyền từ BE, chuyển trang trực tiếp
     if (item.targetLink) {
       navigate(item.targetLink);
       return;
     }
 
-    // Fallback: parse payload for typed routing
     if (item.payload && isJsonString(item.payload)) {
       const payload = JSON.parse(item.payload);
       switch (payload?.type) {
         case "ORDER":
+        case "ORDER_REQUEST":
           if (payload.orderId) navigate(`/orders/${payload.orderId}`);
           break;
         case "CAMPAIGN":
@@ -439,7 +448,8 @@ export default function Header(props: any) {
       const payload = JSON.parse(item.payload);
       switch (payload?.type) {
         case "ORDER":
-          return "Order";
+        case "ORDER_REQUEST":
+          return "OrderListMenu";
         case "CAMPAIGN":
           return "Promotion";
         case "BID":
@@ -452,7 +462,7 @@ export default function Header(props: any) {
           break;
       }
     }
-    return "NotifySetting";
+    return "Marketing";
   };
 
   /** Render a single notification item using the new API fields */

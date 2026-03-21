@@ -11,6 +11,7 @@ import ModalDetailOrder from "./ModaDetailOrder/ModalDetailOrder";
 import OrderRequestService from "@/services/OrderRequestService";
 import moment from "moment";
 import { showToast } from "@/utils/common";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function MultiChannelOrders() {
   document.title = "Đơn hàng đa kênh";
@@ -25,6 +26,37 @@ export default function MultiChannelOrders() {
 
   const [modalDetail, setModalDetail] = useState(false);
   const [dataOrder, setDataOrder] = useState(null);
+  
+  const location = useLocation();
+  const navigate = useNavigate();
+  const orderIdFromNotification = location.state?.orderRequestModalId;
+
+  useEffect(() => {
+    if (orderIdFromNotification) {
+      const getDetailOrderRequest = async (id: number) => {
+        try {
+           setIsLoading(true);
+          const response = await OrderRequestService.detail(id);
+          if (response.code === 0) {
+            setDataOrder(response.result);
+            setModalDetail(true);
+            
+            // Xóa state để không bị mở lại popup khi reload hoặc back lại
+            navigate(location.pathname, { replace: true, state: {} });
+          } else {
+            showToast(response.message ?? "Có lỗi xảy ra", "error");
+          }
+        } catch (e) {
+          showToast("Có lỗi xảy ra", "error");
+        } finally {
+            setIsLoading(false);
+        }
+      };
+      
+      getDetailOrderRequest(orderIdFromNotification);
+    }
+  }, [orderIdFromNotification]);
+
   const isMounted = useRef(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);

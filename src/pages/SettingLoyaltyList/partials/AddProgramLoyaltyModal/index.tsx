@@ -169,6 +169,13 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
       const result = response.result;
       setEmployeeData({ value: result.id, label: result.name });
       setEmployeeIdDefault(result.id);
+      setFormData((prev) => ({
+        ...prev,
+        values: {
+          ...prev.values,
+          employeeId: result.id,
+        },
+      }));
     }
   };
 
