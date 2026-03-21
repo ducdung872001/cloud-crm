@@ -36,10 +36,14 @@ export interface IInvoiceDetailRequest {
   id: number;
   batchNo: string;
   invoiceId: number;
-  variantId?: number;
+  /** ✅ Bắt buộc — biến thể sản phẩm. Backend tự fill productId từ variantId */
+  variantId: number;
+  /** Optional — giữ để tương thích ngược, backend sẽ tự điền nếu không gửi */
+  productId?: number;
   mainCost: string;
+  /** Chiết khấu % theo lô (0–100). Mới thêm */
+  discount?: number;
   mfgDate: string;
-  productId: number;
   quantity: string;
   exchange: number;
   unitId: number;
@@ -65,7 +69,6 @@ export interface IInvoiceCreateRequest {
   customerId?: number;
   campaignId?: number;
   saleflowId?: number;
-  // tạo tạm ông này để xử lý form
   card?: any;
   cardName?: string;
   cardPrice?: number;
