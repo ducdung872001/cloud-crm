@@ -18,12 +18,12 @@ import InvoiceVATMockService, {
   IInvoiceVATStats,
   MOCK_INVOICE_STATS,
 } from "./partials/InvoiceVATMock";
-import InvoiceVATList        from "./partials/InvoiceVATList/index";
 import IssueInvoice          from "./partials/IssueInvoice/index";
 import ElectronicInvoiceProvider from "./partials/ElectronicInvoiceProvider/index";
 import Configuration         from "./partials/Configuration/index";
 import InvoicePreviewModal from "./partials/IssueInvoice/InvoicePreviewModal/index";
-import InvoiceDetailModal, { SinvoiceLogItem } from "./partials/InvoiceDetailModal/index";
+import InvoiceVATList, { SinvoiceLog } from "./partials/InvoiceVATList/index";
+import InvoiceDetailModal               from "./partials/InvoiceDetailModal/index";
 
 const InvoiceVATService = InvoiceVATMockService;
 
@@ -82,11 +82,16 @@ export default function InvoiceVATOverview(props: any) {
   const handleRegisterPublish = (fn: () => void) => { issuePublishRef.current = fn; };
   const handleRegisterExport  = (fn: () => void) => { listExportRef.current  = fn; };
 
-  // ── InvoiceDetailModal (nút "Xem" trên từng hóa đơn) ──
-  const [showDetail, setShowDetail] = useState(false);
-  const [detailData, setDetailData] = useState<SinvoiceLogItem | null>(null);
+  // ── Live stats từ InvoiceVATList (cập nhật khi tab 2 load counts) ──
+  const [liveStats, setLiveStats] = useState<{
+    total: number; pending: number; issued: number; failed: number; monthLabel: string;
+  }>({ total: 0, pending: 0, issued: 0, failed: 0, monthLabel: "" });
 
-  const handleOpenDetail = (item: SinvoiceLogItem) => {
+  const handleCountsLoaded = (info: typeof liveStats) => setLiveStats(info);
+  const [showDetail, setShowDetail] = useState(false);
+  const [detailData, setDetailData] = useState<SinvoiceLog | null>(null);
+
+  const handleOpenDetail = (item: SinvoiceLog) => {
     setDetailData(item);
     setShowDetail(true);
   };
@@ -205,7 +210,9 @@ export default function InvoiceVATOverview(props: any) {
     },
     tab_two: {
       title: "Danh sách hóa đơn VAT",
-      subtitle: "128 hóa đơn trong tháng 2/2026",
+      subtitle: liveStats.total > 0
+        ? `${liveStats.total} hóa đơn trong ${liveStats.monthLabel}`
+        : "Đang tải...",
       actions: (
         <>
           <button className="btn-export-report" onClick={() => listExportRef.current?.()}>
@@ -264,7 +271,9 @@ export default function InvoiceVATOverview(props: any) {
                     className={item.is_active === tab.name ? "active" : ""}
                     onClick={(e) => { e && e.preventDefault(); setTab({ name: item.is_active }); }}>
                   {item.title}
-                  {item.is_active === "tab_two" && <span className="tab-badge">3</span>}
+                  {item.is_active === "tab_two" && liveStats.pending > 0 && (
+                    <span className="tab-badge">{liveStats.pending}</span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -342,18 +351,30 @@ export default function InvoiceVATOverview(props: any) {
                             // ── Nút "Xem" → mở InvoiceDetailModal ──
                             <button className="btn btn-outline btn-sm"
                                     onClick={() => handleOpenDetail({
-                                      id: item.id,
-                                      transactionUuid: "",
-                                      invoiceNo: item.invoiceNo,
-                                      invoiceSeries: "C26TNA",
-                                      invoiceIssuedDate: undefined,
-                                      templateCode: "01GTKT0/001",
-                                      buyerName: item.customerName,
-                                      buyerTaxCode: item.taxCode,
-                                      totalAmount: item.totalAmount,
-                                      status: "ISSUED",
-                                      rawRequestJson: null,
-                                      rawResponseJson: null,
+                                      id:               item.id,
+                                      bsnId:            0,
+                                      version:          1,
+                                      parentId:         null,
+                                      transactionUuid:  "",
+                                      transactionId:    "",
+                                      reservationCode:  "",
+                                      supplierTaxCode:  "",
+                                      invoiceNo:        item.invoiceNo,
+                                      invoiceType:      "1",
+                                      templateCode:     "01GTKT0/001",
+                                      invoiceSeries:    "C26TNA",
+                                      invoiceIssuedDate:null,
+                                      adjustmentType:   "1",
+                                      buyerTaxCode:     item.taxCode ?? "",
+                                      buyerName:        item.customerName,
+                                      totalAmount:      item.totalAmount,
+                                      currencyCode:     "VND",
+                                      status:           "ISSUED",
+                                      rawRequestJson:   null,
+                                      errorCode:        null,
+                                      errorDescription: null,
+                                      createdAt:        "",
+                                      updatedAt:        "",
                                     })}>
                               Xem
                             </button>
@@ -431,6 +452,7 @@ export default function InvoiceVATOverview(props: any) {
             onDataChanged={() => getListInvoice(params)}
             onOpenDetail={handleOpenDetail}
             onRegisterExport={handleRegisterExport}
+            onCountsLoaded={handleCountsLoaded}
           />
         )}
 
