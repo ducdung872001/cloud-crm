@@ -168,12 +168,18 @@ export default function SaleInvoiceList() {
     const statusInt = STATUS_TO_INT[filter] ?? -1;
     const newParams: IInvoiceFilterRequest = {
       ...params,
-      keyword:      keyword  || undefined,
-      fromDate:     from     || undefined,
-      toDate:       to       || undefined,
-      status:       statusInt > 0 ? statusInt : undefined,
       page,
     };
+    // Chỉ gán nếu có giá trị thực — tránh gửi "undefined" hoặc chuỗi rỗng
+    if (keyword?.trim())  newParams.keyword  = keyword.trim();
+    else                  delete newParams.keyword;
+    if (from?.trim())     newParams.fromDate = from.trim();
+    else                  delete newParams.fromDate;
+    if (to?.trim())       newParams.toDate   = to.trim();
+    else                  delete newParams.toDate;
+    if (statusInt > 0)    newParams.status   = statusInt;
+    else                  delete newParams.status;
+
     setParams(newParams);
     fetchList(newParams, append);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -192,11 +198,10 @@ export default function SaleInvoiceList() {
     const urlToDate   = searchParams.get("toDate")   || "";
     if (urlFromDate) setFromDate(urlFromDate);
     if (urlToDate)   setToDate(urlToDate);
-    fetchList({
-      ...params,
-      fromDate: urlFromDate || undefined,
-      toDate:   urlToDate   || undefined,
-    });
+    const initParams: IInvoiceFilterRequest = { ...params };
+    if (urlFromDate) initParams.fromDate = urlFromDate;
+    if (urlToDate)   initParams.toDate   = urlToDate;
+    fetchList(initParams);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
