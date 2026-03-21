@@ -3172,6 +3172,7 @@ export const urls = {
   contact: "/contact",
   customer: "/customer",
   customer_list: "/customer_list",
+  supplier_list: "/supplier",
   customer_sms: "/customer_sms",
   customer_segment: "/customer_segment",
   detail_person: "/detail_person/customerId/:id?/:type",

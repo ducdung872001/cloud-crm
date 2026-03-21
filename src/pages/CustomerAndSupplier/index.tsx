@@ -41,7 +41,8 @@ import PermissionService from "services/PermissionService";
 import ModalExportCustomer from "./ModalExportCustomer/ModalExportCustomer";
 import { StyleHeaderTable } from "components/StyleHeaderTable/StyleHeaderTable";
 
-export default function CustomerAndSupplier() {
+export default function CustomerAndSupplier(props: any) {
+  const {type} = props;
   const [showPageSendSMS, setShowPageSendSMS] = useState<boolean>(false);
   const [showPageSendEmail, setShowPageSendEmail] = useState<boolean>(false);
   const [activeTitleHeader, setActiveTitleHeader] = useState(1);
@@ -1433,7 +1434,7 @@ export default function CustomerAndSupplier() {
           showPageSendEmail ? " d-none" : ""
         }`}
       >
-        <TitleAction title={"Quản lý khách hàng và NCC"} titleActions={titleActions} />
+        <TitleAction title={`Quản lý ${type === 'customer' ? 'khách hàng' : 'nhà cung cấp'}`} titleActions={titleActions} />
         <div className="card-box d-flex flex-column">
           <div className="quick__search">
             <div className="quick__search--start">
@@ -1448,7 +1449,7 @@ export default function CustomerAndSupplier() {
                 // onChange={(e) =>() }
               />
             </div>
-            <ul className="quick__search--left">
+            {/* <ul className="quick__search--left">
               {dataQuickSearchLeft.map((item, idx) => {
                 return (
                   <li
@@ -1463,7 +1464,7 @@ export default function CustomerAndSupplier() {
                   </li>
                 );
               })}
-            </ul>
+            </ul> */}
             <div className="quick__search--right">
               <button className="filter-chip">🏷️ Nhóm</button>
               <button className="filter-chip">⭐ VIP</button>
