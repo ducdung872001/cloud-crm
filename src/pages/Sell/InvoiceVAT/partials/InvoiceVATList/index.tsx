@@ -5,6 +5,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { showToast, getPermissions } from "utils/common";
 import Badge from "components/badge/badge";
+import { ExportExcel } from "exports/excel";
 import "./style.scss";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -47,9 +48,10 @@ export interface SinvoiceLog {
 }
 
 interface Props {
-  onDataChanged?: () => void;
-  onGoToExport?:  () => void;
-  onOpenDetail?:  (item: SinvoiceLog) => void;
+  onDataChanged?:   () => void;
+  onGoToExport?:    () => void;
+  onOpenDetail?:    (item: SinvoiceLog) => void;
+  onRegisterExport?: (fn: () => void) => void;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -163,7 +165,7 @@ const fetchSinvoiceLogs = async (
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function InvoiceVATList({ onDataChanged, onGoToExport, onOpenDetail }: Props) {
+export default function InvoiceVATList({ onDataChanged, onGoToExport, onOpenDetail, onRegisterExport }: Props) {
   const [list,           setList]           = useState<SinvoiceLog[]>([]);
   const [statusFilter,   setStatusFilter]   = useState<StatusFilter>("all");
   const [searchText,     setSearchText]     = useState("");
@@ -243,6 +245,80 @@ export default function InvoiceVATList({ onDataChanged, onGoToExport, onOpenDeta
     }, 350);
     return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
   }, [searchText]);
+
+  const [exportLoading, setExportLoading] = useState(false);
+
+  const handleExportExcel = useCallback(async () => {
+    setExportLoading(true);
+    try {
+      // Lấy toàn bộ danh sách (tối đa 5000 bản ghi) theo filter hiện tại
+      const { fromDate, toDate } = monthToRange(selectedMonth);
+      const allData = await fetchSinvoiceLogs({
+        keyword:  searchText || undefined,
+        status:   statusFilter === "all" ? undefined : statusFilter,
+        fromDate, toDate,
+        page: 1,
+        size: 5000,
+      });
+
+      if (allData.items.length === 0) {
+        showToast("Không có dữ liệu để xuất.", "error");
+        return;
+      }
+
+      const statusLabel = (s: string) => {
+        const m: Record<string, string> = {
+          ISSUED:    "Đã phát hành",
+          PENDING:   "Chờ ký số",
+          FAILED:    "Lỗi / Hủy",
+          CANCELLED: "Đã hủy",
+        };
+        return m[s] ?? s;
+      };
+
+      ExportExcel({
+        title:        "DANH SÁCH HÓA ĐƠN VAT ĐIỆN TỬ",
+        fileName:     `HoaDon_VAT_${selectedMonth}`,
+        generateInfo: false,
+        generateSign: false,
+        header: [[
+          "STT",
+          "Số hóa đơn",
+          "Ký hiệu",
+          "Ngày xuất",
+          "Người mua",
+          "Mã số thuế",
+          "Tiền hàng (VNĐ)",
+          "Thuế GTGT (VNĐ)",
+          "Tổng tiền (VNĐ)",
+          "Trạng thái",
+          "Mã giao dịch (UUID)",
+        ]],
+        data: allData.items.map((item, idx) => [
+          idx + 1,
+          item.invoiceNo   || "Đang xử lý",
+          item.invoiceSeries || "",
+          fmtDate(item.invoiceIssuedDate),
+          item.buyerName   || "",
+          item.buyerTaxCode || "Cá nhân",
+          item.amountWithoutTax ?? 0,
+          item.taxAmount        ?? 0,
+          item.totalAmount      ?? 0,
+          statusLabel(item.status),
+          item.transactionUuid  || "",
+        ]),
+        columnsWidth: [6, 18, 12, 14, 30, 16, 18, 18, 18, 16, 38],
+        formatExcel:  ["center", "left", "center", "center", "left", "center", "right", "right", "right", "center", "left"],
+      });
+    } catch (e: any) {
+      showToast(e?.message || "Lỗi khi xuất Excel", "error");
+    } finally {
+      setExportLoading(false);
+    }
+  }, [searchText, statusFilter, selectedMonth]);
+
+  // Đăng ký hàm export lên parent (để header button gọi được)
+  useEffect(() => { onRegisterExport?.(handleExportExcel); }, [handleExportExcel]);
 
   // ── Pagination pages ───────────────────────────────────────────────────────
   const renderPages = () => {

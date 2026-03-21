@@ -77,8 +77,10 @@ export default function InvoiceVATOverview(props: any) {
 
   const issuePreviewRef  = useRef<(() => void) | null>(null);
   const issuePublishRef  = useRef<(() => void) | null>(null);
+  const listExportRef    = useRef<(() => void) | null>(null);
   const handleRegisterPreview = (fn: () => void) => { issuePreviewRef.current = fn; };
   const handleRegisterPublish = (fn: () => void) => { issuePublishRef.current = fn; };
+  const handleRegisterExport  = (fn: () => void) => { listExportRef.current  = fn; };
 
   // ── InvoiceDetailModal (nút "Xem" trên từng hóa đơn) ──
   const [showDetail, setShowDetail] = useState(false);
@@ -206,7 +208,9 @@ export default function InvoiceVATOverview(props: any) {
       subtitle: "128 hóa đơn trong tháng 2/2026",
       actions: (
         <>
-          <button className="btn-export-report"><Icon name="Download" /> Xuất Excel</button>
+          <button className="btn-export-report" onClick={() => listExportRef.current?.()}>
+            <Icon name="Download" /> Xuất Excel
+          </button>
           <button className="btn-new-invoice" onClick={() => setTab({ name: "tab_three" })}>+ Xuất hóa đơn mới</button>
         </>
       ),
@@ -426,6 +430,7 @@ export default function InvoiceVATOverview(props: any) {
             onGoToExport={() => setTab({ name: "tab_three" })}
             onDataChanged={() => getListInvoice(params)}
             onOpenDetail={handleOpenDetail}
+            onRegisterExport={handleRegisterExport}
           />
         )}
 
