@@ -48,10 +48,11 @@ export interface SinvoiceLog {
 }
 
 interface Props {
-  onDataChanged?:   () => void;
-  onGoToExport?:    () => void;
-  onOpenDetail?:    (item: SinvoiceLog) => void;
+  onDataChanged?:    () => void;
+  onGoToExport?:     () => void;
+  onOpenDetail?:     (item: SinvoiceLog) => void;
   onRegisterExport?: (fn: () => void) => void;
+  onCountsLoaded?:   (info: { total: number; pending: number; issued: number; failed: number; monthLabel: string }) => void;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -119,7 +120,7 @@ const enrichList = (items: SinvoiceLog[]): SinvoiceLog[] =>
   });
 
 /** Month string "2026-02" → fromDate "2026-02-01", toDate "2026-02-28" */
-const monthToRange = (month: string): { fromDate: string; toDate: string } => {
+export const monthToRange = (month: string): { fromDate: string; toDate: string } => {
   const [y, m] = month.split("-").map(Number);
   const lastDay = new Date(y, m, 0).getDate();
   return {
@@ -139,7 +140,7 @@ interface FetchParams {
   size:       number;
 }
 
-const fetchSinvoiceLogs = async (
+export const fetchSinvoiceLogs = async (
   params: FetchParams,
   signal?: AbortSignal
 ): Promise<{ items: SinvoiceLog[]; total: number }> => {
@@ -165,7 +166,7 @@ const fetchSinvoiceLogs = async (
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function InvoiceVATList({ onDataChanged, onGoToExport, onOpenDetail, onRegisterExport }: Props) {
+export default function InvoiceVATList({ onDataChanged, onGoToExport, onOpenDetail, onRegisterExport, onCountsLoaded }: Props) {
   const [list,           setList]           = useState<SinvoiceLog[]>([]);
   const [statusFilter,   setStatusFilter]   = useState<StatusFilter>("all");
   const [searchText,     setSearchText]     = useState("");
@@ -186,23 +187,26 @@ export default function InvoiceVATList({ onDataChanged, onGoToExport, onOpenDeta
   // ── Fetch counts ───────────────────────────────────────────────────────────
   const fetchCounts = useCallback(async (month: string) => {
     const { fromDate, toDate } = monthToRange(month);
-    const statuses: (StatusFilter | "FAILED_CANCELLED")[] = ["all", "ISSUED", "PENDING", "FAILED"];
     try {
-      const results = await Promise.allSettled(
-        statuses.map(s => fetchSinvoiceLogs({
-          fromDate, toDate,
-          status: s === "all" ? undefined : s === "FAILED" ? undefined : s,
-          page: 1, size: 1,
-        }))
-      );
-      // all, ISSUED, PENDING: use total from API
-      const [all, issued, pending] = results.map(r =>
-        r.status === "fulfilled" ? r.value.total : 0
-      );
-      // FAILED = all - issued - pending (rough)
-      setCounts({ all, ISSUED: issued, PENDING: pending, FAILED: Math.max(0, all - issued - pending) });
+      // 2 requests song song: tất cả + ISSUED
+      const [resAll, resIssued, resPending] = await Promise.allSettled([
+        fetchSinvoiceLogs({ fromDate, toDate, page: 1, size: 1 }),
+        fetchSinvoiceLogs({ fromDate, toDate, status: "ISSUED",  page: 1, size: 1 }),
+        fetchSinvoiceLogs({ fromDate, toDate, status: "PENDING", page: 1, size: 1 }),
+      ]);
+      const total   = resAll.status     === "fulfilled" ? resAll.value.total     : 0;
+      const issued  = resIssued.status  === "fulfilled" ? resIssued.value.total  : 0;
+      const pending = resPending.status === "fulfilled" ? resPending.value.total : 0;
+      const failed  = Math.max(0, total - issued - pending);
+
+      setCounts({ all: total, ISSUED: issued, PENDING: pending, FAILED: failed });
+
+      // Notify parent
+      const [y, m] = month.split("-").map(Number);
+      const monthLabel = `Tháng ${m}/${y}`;
+      onCountsLoaded?.({ total, pending, issued, failed, monthLabel });
     } catch { /* silent */ }
-  }, []);
+  }, [onCountsLoaded]);
 
   // ── Fetch list ─────────────────────────────────────────────────────────────
   const fetchList = useCallback(async (
@@ -462,7 +466,7 @@ export default function InvoiceVATList({ onDataChanged, onGoToExport, onOpenDeta
                         <>
                           <button className="btn-action-sm" onClick={() => showToast("Đang tải PDF...", "warning")}>PDF</button>
                           <button className="btn-action-sm" onClick={() => showToast("Đang gửi email...", "warning")}>Email</button>
-                          <button className="btn-action-sm" onClick={() => onOpenDetail?.(item as any)}>Xem</button>
+                          <button className="btn-action-sm" onClick={() => onOpenDetail?.(item)}>Xem</button>
                         </>
                       )}
                     </td>
