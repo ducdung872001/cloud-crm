@@ -54,7 +54,6 @@ export default function FileUpload(props: FileUploadProps) {
   };
 
   useEffect(() => {
-    console.log("vào đây rồi ", file);
     if (file) {
       handUploadFile(file);
     }

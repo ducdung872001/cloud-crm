@@ -19,7 +19,6 @@ export function useGetDetailInvoice({
   invoiceId,
   enabled = true, // ✅ mặc định true, truyền false để tắt
 }: UseGetDetailInvoiceParams): UseGetDetailInvoiceReturn {
-  console.log("invoiceId in useGetDetailInvoice>>>", invoiceId);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -35,7 +34,6 @@ export function useGetDetailInvoice({
 
       if (response.code === 0) {
         const result = response.result;
-        console.log("result.fetchInvoice1111111", result); // log kết quả đã map
         setDataInvoice(mappedDataInvoice(result)); // map dữ liệu API về đúng format UI cần
         setIsNoItem(false);
       } else if (response.code === 400) {
@@ -64,7 +62,6 @@ export function useGetDetailInvoice({
   // ── Auto fetch khi categoryId thay đổi ─────────────────────────────────────
 
   useEffect(() => {
-    console.log("invoiceId in useGetDetailInvoice", invoiceId);
     if (!enabled || !invoiceId || invoiceId <= 0) return; // ✅ guard: nếu không enabled thì không fetch
     setIsLoading(true);
     fetchInvoice(invoiceId);
@@ -167,6 +164,7 @@ const mappedDataInvoice = (invoiceDataApi) => {
     status: invoiceDataApi.invoice.status === 1 ? "pending" : invoiceDataApi.invoice.status === 2 ? "success" : "cancelled", // Cần map từ status
     items: invoiceDataApi.products.map((product) => ({
       icon: "📦", // Cần map từ một trường nào đó trong product
+      image: product?.productAvatar || "", // Cần map từ productAvatar
       name: product.name,
       detail: `${product.qty} × ${formatCurrency(product.price)}`, // Cần map từ qty và price
       total: `${product.qty * product.price}`, // Cần tính toán từ qty và price

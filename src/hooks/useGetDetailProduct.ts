@@ -22,12 +22,14 @@ export interface ProductVariant {
   stock: number;
   // map groupId → optionId
   combination: Record<string, string>;
+  images?: string[]; // giả sử API mới có thêm trường images là array để chứa nhiều ảnh của biến thể
 }
 
 export interface VariantProduct {
   id: string;
   name: string;
   image?: string;
+  avatar?: string; // tạm map image sang avatar để dùng chung component với product list
   icon?: string;
   unit: string;
   variantGroups: VariantGroup[];
@@ -523,6 +525,7 @@ function mapToVariantProduct(detail): VariantProduct {
     icon: detail?.icon || "📦",
     unit: detail.unitName,
     image: detail.image,
+    avatar: detail.avatar, // tạm map image sang avatar để dùng chung component với product list
     variantGroups: detail?.variantGroups
       ? detail.variantGroups.map((vg) => ({
           id: String(vg.id),
@@ -538,6 +541,7 @@ function mapToVariantProduct(detail): VariantProduct {
           id: String(v.id),
           sku: v.sku,
           price: v.price,
+          images: v?.images ? v.images.map((img) => img) : [], // giả sử API mới có thêm trường images là array để chứa nhiều ảnh của biến thể
           // stock: v?.quantity ?? 0, // giả sử API mới có thêm trường quantity để biết chính xác tồn kho từng biến thể
           stock: 100, // giả sử API mới có thêm trường quantity để biết chính xác tồn kho từng biến thể
           combination: v.selectedOptions

@@ -21,8 +21,6 @@ const prefixCare = prefixBiz + "/care";
 const prefixBilling = prefixBiz + "/billing";
 const prefixLogistics = prefixBiz + "/logistics";
 
-console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
-
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
   dashboard: {

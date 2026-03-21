@@ -14,8 +14,6 @@ export default function DashboardRetail() {
   const { dataBranch } = useContext(UserContext) as ContextType;
   const { dataTopProduct, dataRevenue } = useDashBoard({ enabled: !!dataBranch }); // fetch top products khi đã có dataBranch, nếu chưa có thì không fetch để tránh lỗi
 
-  console.log("dataRevenue", dataRevenue);
-
   const [masked, setMasked] = useState(true);
   const [topTab, setTopTab] = useState("qty");
   const [showShortcutModal, setShowShortcutModal] = useState(false);

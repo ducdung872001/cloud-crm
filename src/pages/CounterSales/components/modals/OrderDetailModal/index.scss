@@ -144,6 +144,12 @@
   &__icon {
     font-size: 1.8rem;
     flex-shrink: 0;
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 0.3rem;
+    }
   }
 
   &__info {
