@@ -5,11 +5,12 @@ import TabMenuList from "@/components/TabMenuList/TabMenuList";
 import LoyaltyWallet from "../LoyaltyWallet";
 import DashboardLoyalty from "../DashboardLoyalty";
 import LoyaltyPointLedger from "../LoyaltyPointLedger";
+import MembershipClass from "../MembershipClass/MembershipClass";
 
 export default function MemberCustomersPage() {
   document.title = "Khuyến mãi";
 
-  const [tab, setTab] = useState<number>(null);
+  const [tab, setTab] = useState(null);
   const [isDetail, setIsDetail] = useState<boolean>(false);
 
   const listTab = [
@@ -17,7 +18,7 @@ export default function MemberCustomersPage() {
       title: "Danh sách thành viên",
       backgroundColor: "#EEEDFE",
       icon: "MemberCustomerList",
-      tab: 1,
+      tab: 'member_list',
       des: "Quản lý toàn bộ hội viên, tìm kiếm và xem thông tin chi tiết từng thành viên"
     },
 
@@ -25,28 +26,28 @@ export default function MemberCustomersPage() {
       title: "Hạng thành viên",
       backgroundColor: "#FAEEDA",
       icon: "MembershipClass",
-      tab: 2,
+      tab: "membership_class",
       des: "Phân loại hội viên theo hạng (Bạc, Vàng, Kim cương) với quyền lợi riêng mỗi hạng"
     },
     {
       title: "Tích điểm",
       backgroundColor: "#E1F5EE",
       icon: "AccumulatePoints",
-      tab: 3,
+      tab: "accumulate_points",
       des: "Cấu hình quy tắc tích điểm theo đơn hàng, sản phẩm hoặc hành vi mua sắm"
     },
     {
       title: "Lịch sử điểm",
       backgroundColor: "#E6F1FB",
       icon: "PointsHistory",
-      tab: 4,
+      tab: "points_history",
       des: "Tra cứu toàn bộ lịch sử tích điểm, đổi điểm và biến động điểm của hội viên"
     },
     {
       title: "Đổi điểm",
       backgroundColor: "#FAECE7",
       icon: "ExchangePoints",
-      tab: 5,
+      tab: "exchange_points",
       des: "Thiết lập chương trình đổi điểm lấy quà, voucher hoặc ưu đãi cho hội viên"
     },
   ];
@@ -66,7 +67,7 @@ export default function MemberCustomersPage() {
         )}
       </div>
 
-      {isDetail && tab === 1 ? (
+      {isDetail && tab === "member_list" ? (
         <LoyaltyWallet
           onBackProps={(isBack) => {
             if (isBack) {
@@ -76,7 +77,17 @@ export default function MemberCustomersPage() {
         />
       ) : null }
 
-      {isDetail && tab === 4 ? (
+      {isDetail && tab === "membership_class" ? (
+        <MembershipClass
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetail(false);
+            }
+          }}
+        />
+      ) : null }
+
+      {isDetail && tab === "points_history" ? (
         <LoyaltyPointLedger
           onBackProps={(isBack) => {
             if (isBack) {
@@ -86,7 +97,7 @@ export default function MemberCustomersPage() {
         />
       ) : null }
 
-      {isDetail && tab === 3 ? (
+      {isDetail && tab === "accumulate_points" ? (
         <DashboardLoyalty
           onBackProps={(isBack) => {
             if (isBack) {
