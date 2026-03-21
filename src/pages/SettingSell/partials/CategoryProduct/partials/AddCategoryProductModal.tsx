@@ -49,7 +49,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
         parentId: 0,
         active: 1,
         featured: 0,
-        type: 2
+        type: 2,
       } as ICategoryServiceRequestModel),
     [data, onShow]
   );
@@ -84,7 +84,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
     },
   ];
 
-const [formData, setFormData] = useState<IFormData>({ values: values });
+  const [formData, setFormData] = useState<IFormData>({ values: values });
 
   useEffect(() => {
     setFormData({ values: values, errors: {} });
@@ -120,7 +120,6 @@ const [formData, setFormData] = useState<IFormData>({ values: values });
     setIsSubmit(true);
     const body: ICategoryServiceRequestModel = {
       ...(formData.values as ICategoryServiceRequestModel),
-      avatar: data?.avatar ?? "",
       ...(data ? { id: data.id } : {}),
     };
 
@@ -235,6 +234,8 @@ const [formData, setFormData] = useState<IFormData>({ values: values });
     };
   }, [checkKeyDown]);
 
+  console.log("formData", formData);
+
   return (
     <Fragment>
       <Modal
@@ -258,13 +259,7 @@ const [formData, setFormData] = useState<IFormData>({ values: values });
                 />
               ))}
             </div>
-            <FileUpload
-              type="avatar"
-              label="Ảnh danh mục sản phẩm"
-              formData={formData}
-              setFormData={setFormData}
-              onFileChange={setSelectedAvatarFile}
-            />
+            <FileUpload type="avatar" label="Ảnh danh mục sản phẩm" formData={formData} setFormData={setFormData} />
           </ModalBody>
           <ModalFooter actions={actions} />
         </form>
