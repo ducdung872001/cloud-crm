@@ -506,6 +506,7 @@ import IcTemplateEmail from "assets/icons-menu/ic-template-email.svg";
 import IcShiftManagement from "assets/icons-menu/ic-shift-management.svg";
 import IcObjectProcess from "assets/icons-menu/ic-object-process.svg";
 import IcTaskProcess from "assets/icons-menu/ic-task-process.svg";
+import IcAnalysisCustomer from "assets/icons-menu/ic-analysis-customer.svg";
 
 
 const iconTypes = {
@@ -1001,7 +1002,8 @@ const iconTypes = {
   TemplateEmail: IcTemplateEmail,
   ShiftManagement: IcShiftManagement,
   ObjectProcess: IcObjectProcess,
-  TaskProcess: IcTaskProcess
+  TaskProcess: IcTaskProcess,
+  AnalysisCustomer: IcAnalysisCustomer
 
 };
 

@@ -16,7 +16,6 @@ export default function MemberCustomersPage() {
     {
       title: "Danh sách thành viên",
       backgroundColor: "#EEEDFE",
-      strokeColor: "#534ab7",
       icon: "MemberCustomerList",
       tab: 1,
       des: "Quản lý toàn bộ hội viên, tìm kiếm và xem thông tin chi tiết từng thành viên"
@@ -25,7 +24,6 @@ export default function MemberCustomersPage() {
     {
       title: "Hạng thành viên",
       backgroundColor: "#FAEEDA",
-      strokeColor: "#854f0b",
       icon: "MembershipClass",
       tab: 2,
       des: "Phân loại hội viên theo hạng (Bạc, Vàng, Kim cương) với quyền lợi riêng mỗi hạng"
@@ -33,7 +31,6 @@ export default function MemberCustomersPage() {
     {
       title: "Tích điểm",
       backgroundColor: "#E1F5EE",
-      strokeColor: "#0f6e56",
       icon: "AccumulatePoints",
       tab: 3,
       des: "Cấu hình quy tắc tích điểm theo đơn hàng, sản phẩm hoặc hành vi mua sắm"
@@ -41,7 +38,6 @@ export default function MemberCustomersPage() {
     {
       title: "Lịch sử điểm",
       backgroundColor: "#E6F1FB",
-      strokeColor: "#185fa5",
       icon: "PointsHistory",
       tab: 4,
       des: "Tra cứu toàn bộ lịch sử tích điểm, đổi điểm và biến động điểm của hội viên"
@@ -49,7 +45,6 @@ export default function MemberCustomersPage() {
     {
       title: "Đổi điểm",
       backgroundColor: "#FAECE7",
-      strokeColor: "#993c1d",
       icon: "ExchangePoints",
       tab: 5,
       des: "Thiết lập chương trình đổi điểm lấy quà, voucher hoặc ưu đãi cho hội viên"

@@ -540,7 +540,7 @@ export const menu: IMenuItem[] = [
       {
         title: "customerAnalysis", // phân tích khách hàng
         path: urls.customer_analysis,
-        icon: <Icon name="SupportMenu" />,
+        icon: <Icon name="AnalysisCustomer" />,
         code: "",
       },
       // {

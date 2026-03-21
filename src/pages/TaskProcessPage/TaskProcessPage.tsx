@@ -17,7 +17,6 @@ export default function TaskProcessPage() {
       is_tab: 1,
       icon: "ObjectProcess",
       backgroundColor: "#e0f2f1",
-      strokeColor: "rgb(13, 148, 136)",
       des: "Xem và quản lý toàn bộ hồ sơ trong hệ thống, theo dõi trạng thái xử lý từng hồ sơ"
     },
     {
@@ -25,7 +24,6 @@ export default function TaskProcessPage() {
         is_tab: 2,
         icon: "TaskProcess",
         backgroundColor: "#f0fdf4",
-        strokeColor: "rgb(22, 163, 74)",
         des: "Quản lý các tác vụ cần thực hiện, phân công và theo dõi tiến độ xử lý công việc"
 
       },

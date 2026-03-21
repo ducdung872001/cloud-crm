@@ -22,7 +22,6 @@ export default function SettingZalo() {
       is_tab: "tab_one",
       icon: "TopicZalo",
       backgroundColor: "#E1F5EE",
-      strokeColor: "#0f6e56",
       des: "Phân loại tin nhắn Zalo OA theo chủ đề như chăm sóc, khuyến mãi, nhắc lịch hẹn để tổ chức chiến dịch rõ ràng và dễ quản lý hơn."
     },
    
@@ -31,7 +30,6 @@ export default function SettingZalo() {
       is_tab: "tab_two",
       icon: "TemplateZalo",
       backgroundColor: "#E6F1FB",
-      strokeColor: "#185fa5",
       des: "Tạo và quản lý các mẫu tin nhắn Zalo OA có nội dung động (tên khách hàng, số điểm, mã đơn hàng…) dùng cho chiến dịch gửi hàng loạt qua Zalo OA."
     },
   ].filter((e) => e);

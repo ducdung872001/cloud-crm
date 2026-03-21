@@ -30,7 +30,6 @@ export default function SettingCallList() {
       is_tab: "tab_one",
       icon: "CallCenterConfig",
       backgroundColor: "#FAEEDA",
-      strokeColor: "rgb(133, 79, 11)",
       des: "Thiết lập thông số kỹ thuật tổng đài như số đường dây, kịch bản IVR, giờ làm việc và phân luồng cuộc gọi đến."
     },
 
@@ -53,7 +52,6 @@ export default function SettingCallList() {
       is_tab: "tab_three",
       icon: "CallCenterIntegration",
       backgroundColor: "#EEEDFE",
-      strokeColor: "rgb(83, 74, 183)",
       des: "Kết nối hệ thống tổng đài với CRM để tự động ghi nhận cuộc gọi, hiển thị thông tin khách hàng và đồng bộ lịch sử liên lạc."
     }
   ].filter((e) => e);
