@@ -20,7 +20,7 @@ import InvoiceVATMockService, {
 } from "./partials/InvoiceVATMock";
 import InvoiceVATList        from "./partials/InvoiceVATList/index";
 import IssueInvoice          from "./partials/IssueInvoice/index";
-import ElectronicInvoiceProvider from "./partials/ ElectronicInvoiceProvider/index";
+import ElectronicInvoiceProvider from "./partials/ElectronicInvoiceProvider/index";
 import Configuration         from "./partials/Configuration/index";
 import InvoicePreviewModal from "./partials/IssueInvoice/InvoicePreviewModal/index";
 import InvoiceDetailModal, { InvoiceDetailData }   from "./partials/InvoiceDetailModal/index";
@@ -71,9 +71,14 @@ export default function InvoiceVATOverview(props: any) {
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions]   = useState(getPermissions());
 
-  // ── InvoicePreviewModal (tab 3 header buttons) ──
+  // ── IssueInvoice callbacks (tab 3 header buttons wire into child) ──
   const [showPreview, setShowPreview] = useState(false);
   const handleOpenPreview = () => setShowPreview(true);
+
+  const issuePreviewRef  = useRef<(() => void) | null>(null);
+  const issuePublishRef  = useRef<(() => void) | null>(null);
+  const handleRegisterPreview = (fn: () => void) => { issuePreviewRef.current = fn; };
+  const handleRegisterPublish = (fn: () => void) => { issuePublishRef.current = fn; };
 
   // ── InvoiceDetailModal (nút "Xem" trên từng hóa đơn) ──
   const [showDetail, setShowDetail] = useState(false);
@@ -228,8 +233,12 @@ export default function InvoiceVATOverview(props: any) {
       subtitle: "Hóa đơn GTGT theo Nghị định 123/2020/NĐ-CP · Ký số điện tử",
       actions: (
         <>
-          <button className="btn-export-report" onClick={handleOpenPreview}><Icon name="Eye" /> Xem trước</button>
-          <button className="btn-new-invoice"   onClick={handleOpenPreview}><Icon name="FileText" /> Phát hành hóa đơn</button>
+          <button className="btn-export-report" onClick={() => issuePreviewRef.current?.()}>
+            <Icon name="Eye" /> Xem trước
+          </button>
+          <button className="btn-new-invoice" onClick={() => issuePublishRef.current?.()}>
+            <Icon name="FileText" /> Phát hành hóa đơn
+          </button>
         </>
       ),
     },
@@ -424,7 +433,12 @@ export default function InvoiceVATOverview(props: any) {
           />
         )}
 
-        {tab.name === "tab_three" && <IssueInvoice />}
+        {tab.name === "tab_three" && (
+          <IssueInvoice
+            onRegisterPreview={handleRegisterPreview}
+            onRegisterPublish={handleRegisterPublish}
+          />
+        )}
         {tab.name === "tab_four"  && <ElectronicInvoiceProvider />}
         {tab.name === "tab_five"  && <Configuration />}
       </div>

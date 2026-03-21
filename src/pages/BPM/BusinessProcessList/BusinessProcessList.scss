@@ -67,7 +67,7 @@
 
   .button-import {
     padding: 0.5rem 1rem 0.5rem 1rem;
-    border-radius: 8px;
+    border-radius: 0.3rem;
     border: 1px solid var(--border-color);
     cursor: pointer;
     &:hover {
@@ -86,12 +86,12 @@
 
       h1 {
         color: var(--text-primary-color);
-        font-size: 2.4rem;
+        font-size: var(--text-3xl);
         line-height: 2.8rem;
         padding-right: 1rem;
         margin: 0;
-        font-weight: 700;
-        text-transform: uppercase;
+        font-weight: var(--fw-bold);
+        text-transform: none; // ✅ standardized
       }
 
       .title-first {
@@ -242,7 +242,7 @@
               font-size: 1.4rem;
               cursor: pointer;
               font-weight: 500;
-              border-radius: 0.5rem;
+              border-radius: 0.3rem;
               flex: 1;
               white-space: nowrap;
               opacity: 0.9;
@@ -308,7 +308,7 @@
               font-size: 1.4rem;
               cursor: pointer;
               font-weight: 500;
-              border-radius: 0.5rem;
+              border-radius: 0.3rem;
               flex: 1;
               white-space: nowrap;
               opacity: 0.9;
@@ -474,7 +474,7 @@
               font-size: 1.4rem;
               cursor: pointer;
               font-weight: 500;
-              border-radius: 0.5rem;
+              border-radius: 0.3rem;
               flex: 1;
               white-space: nowrap;
               opacity: 0.9;
@@ -501,7 +501,7 @@
             font-size: 1.4rem;
             cursor: pointer;
             font-weight: 500;
-            border-radius: 0.5rem;
+            border-radius: 0.3rem;
           }
 
           .relationship-item {
@@ -539,7 +539,7 @@
           justify-content: center;
           width: 4rem;
           height: 4rem;
-          border-radius: 8px;
+          border-radius: 0.3rem;
           background: #f8f8f8;
           // margin-right: 8px;
           cursor: pointer;
@@ -629,12 +629,12 @@
 
         h1 {
           color: var(--text-primary-color);
-          font-size: 2.4rem;
+          font-size: var(--text-3xl);
           line-height: 2.8rem;
           padding-right: 1rem;
           margin: 0;
-          font-weight: 700;
-          text-transform: uppercase;
+          font-weight: var(--fw-bold);
+          text-transform: none; // ✅ standardized
         }
 
         .title-first {

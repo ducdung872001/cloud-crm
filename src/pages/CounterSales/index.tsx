@@ -19,10 +19,12 @@ import { showToast } from "@/utils/common";
 import AddCustomerPersonModal from "../CustomerPerson/partials/AddCustomerPersonModal";
 import QrCodeProService from "@/services/QrCodeProService";
 import DraftOrders from "./components/DraftOrders";
+import SaleInvoiceList from "../Sell/SaleInvoiceList/SaleInvoiceList";
 
 const INITIAL_CART: CartItem[] = [];
 
 const CounterSales: React.FC = () => {
+  document.title = "Bán hàng tại quầy";
   const [activeTab, setActiveTab] = useState<TabType>("pos");
   const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
   const [invoiceId, setInvoiceId] = useState<number | null>(null);
@@ -156,7 +158,6 @@ const CounterSales: React.FC = () => {
             <div className="counter-sales__screen">
               <DraftOrders
                 onContinue={(draftId) => {
-                  console.log("Continue draft", draftId);
                   setActiveTab("pos");
                 }}
               />
@@ -166,7 +167,9 @@ const CounterSales: React.FC = () => {
           {/* Orders Tab */}
           {activeTab === "orders" && (
             <div className="counter-sales__screen">
-              <OrderList onViewDetail={handleViewDetail} onViewReceipt={handleViewReceipt} onConfirm={handleConfirmOrder} />
+              {/* <OrderList onViewDetail={handleViewDetail} onViewReceipt={handleViewReceipt} onConfirm={handleConfirmOrder} />
+               */}
+              <SaleInvoiceList />
             </div>
           )}
 
@@ -215,6 +218,7 @@ const CounterSales: React.FC = () => {
       <OrderDetailModal
         open={orderDetailModalOpen}
         onClose={() => setOrderDetailModalOpen(false)}
+        invoiceId={-1}
         onPrint={() => {
           setOrderDetailModalOpen(false);
           setReceiptModalOpen(true);

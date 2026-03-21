@@ -1,6 +1,6 @@
 .page-work {
   .card-box {
-    box-shadow: none;
+    // box-shadow: none;
     // border-top-left-radius: 0;
     // border-bottom-left-radius: 0;
 
@@ -130,7 +130,7 @@
             display: flex;
             padding: 8px 12px 8px 12px;
             align-items: center;
-            border-radius: 8px;
+            border-radius: 0.3rem;
             background-color: #ffffff;
             cursor: pointer;
             .label {
@@ -233,7 +233,7 @@
     .box-table {
       // margin-left: 2rem;
       // margin-right: 2rem;
-      margin-top: 1rem;
+      margin-top: 0;
       .box-table__wrapper {
         .table {
           tbody {
@@ -361,69 +361,3 @@
   }
 }
 
-// .popover-filter {
-//   border: 1px solid #EEEEEF;
-//   border-radius: 8px;
-//   .triangle {
-//     right: 1rem;
-//   }
-//   // border-radius: 0.2rem;
-//   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-//   padding: 0;
-//   width: 40rem;
-//   max-height: 50rem;
-
-//   .box__add--filter {
-//     border: 1px solid #EEEEEF;
-//     border-radius: 8px;
-//     .header_filter{
-//       // border: 1px solid;
-//       padding: 1rem 1.6rem 1rem 1.6rem;
-//       border-top-left-radius: 8px;
-//       border-top-right-radius:  8px;
-//       display: flex;
-//       align-items: center;
-//       justify-content: space-between;
-//       border-bottom: 1px solid #EEEEEF;
-
-//       .header_left{
-//         display: flex;
-//         align-items: center;
-//         gap: 0 0.6rem;
-//         .label{
-//           font-size: 14px;
-//           font-weight: 600;
-//         }
-//       }
-
-//       .header_right{
-//         align-items: center;
-//         display: flex;
-//         cursor: pointer;
-//         svg{
-//           width: 2rem;
-//           height: 2rem;
-//         }
-//       }
-//     }
-
-//     .border_filter {
-
-//     }
-
-//     .action__confirm {
-//       // border-top: 1px solid var(--extra-color-30);
-//       display: flex;
-//       align-items: center;
-//       justify-content: flex-end;
-//       gap: 0 1rem;
-//       padding: 0.8rem;
-//       // border: 1px solid;
-
-//       .base-button {
-//         padding: 0.6rem 2.4rem;
-//         font-size: 1.4rem;
-//       }
-//     }
-//   }
-// }

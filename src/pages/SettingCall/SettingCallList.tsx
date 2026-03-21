@@ -6,6 +6,7 @@ import ConfigSwitchboardList from "./partials/ConfigSwitchboard/SwitchboardList"
 import { getPermissions } from "utils/common";
 import "./SettingCallList.scss";
 import { getDomain } from "reborn-util";
+import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
 export default function SettingCallList() {
   document.title = "Cài đặt Tổng đài";
@@ -13,10 +14,10 @@ export default function SettingCallList() {
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
   const [tab, setTab] = useState<string>("");
-  const [isDetailCategory, setIsDetailCategory] = useState<boolean>(false);
+  const [isDetail, setIsDetail] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
 
-  const menuCategoryCall = [
+  const listTab = [
     // permissions["GLOBAL_CONFIG_VIEW"] == 1
     //   ? {
     //     title: "Cấu hình Tổng đài",
@@ -27,6 +28,9 @@ export default function SettingCallList() {
     {
       title: "Cấu hình Tổng đài",
       is_tab: "tab_one",
+      icon: "CallCenterConfig",
+      backgroundColor: "#FAEEDA",
+      des: "Thiết lập thông số kỹ thuật tổng đài như số đường dây, kịch bản IVR, giờ làm việc và phân luồng cuộc gọi đến."
     },
 
     // permissions["GLOBAL_CONFIG_VIEW"] == 1
@@ -46,54 +50,48 @@ export default function SettingCallList() {
     {
       title: "Tích hợp Tổng đài",
       is_tab: "tab_three",
+      icon: "CallCenterIntegration",
+      backgroundColor: "#EEEDFE",
+      des: "Kết nối hệ thống tổng đài với CRM để tự động ghi nhận cuộc gọi, hiển thị thông tin khách hàng và đồng bộ lịch sử liên lạc."
     }
   ].filter((e) => e);
 
   return (
     <div className="page-setting-call">
-      {!isDetailCategory && <TitleAction title="Cài đặt Tổng đài" />}
-      <div className="card-box d-flex flex-column">
-        {!isDetailCategory && (
-          <ul className="menu">
-            {menuCategoryCall.map((item, idx) => {
-              return (
-                <li
-                  key={idx}
-                  className="menu__category"
-                  onClick={(e) => {
-                    e.preventDefault();
+      {!isDetail && <TitleAction title="Cài đặt Tổng đài" />}
+      <div className="d-flex flex-column">
+        {!isDetail && (
+            <TabMenuList
+                listTab={listTab}
+                onClick={(item) => {
                     setTab(item.is_tab);
-                    setIsDetailCategory(true);
-                  }}
-                >
-                  {item.title}
-                </li>
-              );
-            })}
-          </ul>
+                    setIsDetail(true);
+                }}
+            />
         )}
       </div>
-      {isDetailCategory && tab === "tab_one" ? (
+     
+      {isDetail && tab === "tab_one" ? (
         <ConfigCallList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "tab_two" ? (
+      ) : isDetail && tab === "tab_two" ? (
         <PartnerCallList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />
-      ) : isDetailCategory && tab === "tab_three" ? (
+      ) : isDetail && tab === "tab_three" ? (
         <ConfigSwitchboardList
           onBackProps={(isBack) => {
             if (isBack) {
-              setIsDetailCategory(false);
+              setIsDetail(false);
             }
           }}
         />

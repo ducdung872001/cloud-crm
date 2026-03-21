@@ -47,6 +47,12 @@ export interface ILoyaltySegmentResposne {
   id?: number;
   point?: number;
   name?: string;
+  icon?: any;
+  backgroundColor?: string;
+  rate?: string;
+  desList?: any;
+  borderColor?: string;
+  member?: number 
 }
 
 export interface ILoyaltyWalletResponse {

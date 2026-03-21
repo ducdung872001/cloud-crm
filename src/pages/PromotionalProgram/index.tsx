@@ -297,7 +297,7 @@ export default function PromotionalProgram(props: any) {
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên chương trình khuyến mãi"
+          name="Tên mẫu báo giá"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}

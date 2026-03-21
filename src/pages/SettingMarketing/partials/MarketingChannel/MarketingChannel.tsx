@@ -160,7 +160,7 @@ export default function MarketingChannel(props: any) {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item);
+          showConfirmDelete([item.id], item.name);
           }
         },
       },
@@ -245,8 +245,10 @@ export default function MarketingChannel(props: any) {
 
   const bulkActionList: BulkActionItemModel[] = [
     permissions["CONTRACT_DELETE"] == 1 && {
-      title: "Xóa loại hợp đồng",
-      callback: () => showDialogConfirmDelete(),
+      title: "Xóa kênh truyền thông",
+      callback: () => {
+         showConfirmDelete(listIdChecked);
+      }
     },
   ];
 
@@ -346,7 +348,7 @@ export default function MarketingChannel(props: any) {
         }}
       />
 
-      <Dialog content={contentDialog} isOpen={showDialog} />
+      {DialogComponent}
     </div>
   );
 }

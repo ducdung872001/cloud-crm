@@ -102,7 +102,7 @@
               font-size: 1.4rem;
               cursor: pointer;
               font-weight: 500;
-              border-radius: 0.5rem;
+              border-radius: 0.3rem;
               flex: 1;
               opacity: 0.9;
               white-space: nowrap;
@@ -136,7 +136,7 @@
             font-size: 1.4rem;
             cursor: pointer;
             font-weight: 500;
-            border-radius: 0.5rem;
+            border-radius: 0.3rem;
           }
 
           .relationship-item {
@@ -256,7 +256,7 @@
             font-size: 1.4rem;
             cursor: pointer;
             font-weight: 500;
-            border-radius: 0.5rem;
+            border-radius: 0.3rem;
           }
 
           .relationship-item {
@@ -346,9 +346,9 @@
       justify-content: space-between;
 
       .button-split-data {
-        border-radius: 8px;
+        border-radius: 0.3rem;
         padding: 0.5rem 1.6rem;
-        background-color: #004353;
+        background: var(--primary-color);
         color: white;
         cursor: pointer;
 
@@ -651,7 +651,7 @@
 
     .btn {
       min-width: 9.6rem;
-      border-radius: 0.8rem;
+      border-radius: 0.3rem;
       font-weight: 600;
     }
   }

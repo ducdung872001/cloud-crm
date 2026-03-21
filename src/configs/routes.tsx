@@ -107,7 +107,7 @@ import SettingProcess from "pages/SettingProcess/SettingProcess";
 import SaleFlowList from "pages/SaleFlow/SaleFlowList";
 import CreateSaleflow from "pages/SaleFlow/CreateSaleFlow/CreateSaleFlow";
 import ManagementSale from "pages/ManagementSale/ManagementSale";
-
+import NotificationList from "@/pages/NotificationList/NotificationList";
 // Phiếu điền chuyển kho
 import TransferOrderForm from "pages/TransferOrderForm";
 import DetailMarketingAutomation from "pages/MarketingAutomation/DetailMarketingAutomation";
@@ -182,6 +182,10 @@ import MarketingCampaignPage from "@/pages/MarketingCampaignPage/MarketingCampai
 import CustomerAnalysisPage from "@/pages/CustomerAnalysisPage/CustomerAnalysisPage";
 import PaymentMethodList from "@/pages/PaymentMethod/PaymentMethod";
 import PaymentMethodPage from "@/pages/PaymentMethodPage/PaymentMethodPage";
+import FinanceContent from "@/pages/PaymentReconciliation";
+import ReturnProductPage from "@/pages/ReturnProduct";
+import Reconcile from "@/pages/Reconcile";
+import TaskProcessPage from "@/pages/TaskProcessPage/TaskProcessPage";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -191,6 +195,12 @@ export const menu: IMenuItem[] = [
     path: urls.dashboard,
     icon: <Icon name="DashboardMenu" />,
     code: "DASHBOARD",
+  },
+      {
+    title: "notification", // Thông báo
+    path: urls.notification,
+    icon: <Icon name="BellMenu" />,
+    code: "",
   },
   {
     title: "selling", // Bán hàng & Đơn hàng
@@ -212,7 +222,7 @@ export const menu: IMenuItem[] = [
       },
       {
         title: "returnInvoice", // Khách trả hàng
-        path: urls.customer_pay,
+        path: urls.return_invoice,
         icon: <Icon name="ReturnMenu" />,
         code: "RETURN_INVOICE",
       },
@@ -255,7 +265,7 @@ export const menu: IMenuItem[] = [
       {
         title: "shiftManagement", //Quản lý ca làm việc
         path: urls.shift_management,
-        icon: <Icon name="ManageWork" />,
+        icon: <Icon name="ShiftManagement" />,
         code: "",
       },
       {
@@ -402,9 +412,16 @@ export const menu: IMenuItem[] = [
       //   code: "CUSTOMER",
       // },
       {
-        title: "customerList", // Danh sách khách hàng và NCC
+        title: "customerList", // Danh sách khách hàng
         path: urls.customer_list,
-        icon: <Icon name="PartnerMenu" />,
+        icon: <Icon name="CustomerMenu" />,
+        code: "CUSTOMER",
+      },
+
+      {
+        title: "supplierList", // Danh sách NCC
+        path: urls.supplier_list,
+        icon: <Icon name="Partner" />,
         code: "CUSTOMER",
       },
       // {
@@ -425,12 +442,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="PartnerSettingMenu" />,
         code: "",
       },
-      {
-        title: "reportCustomer", // Báo cáo khách hàng
-        path: urls.report_customer,
-        icon: <Icon name="CustomerMenu" />,
-        code: "",
-      },
+      // {
+      //   title: "reportCustomer", // Báo cáo khách hàng
+      //   path: urls.report_customer,
+      //   icon: <Icon name="CustomerMenu" />,
+      //   code: "",
+      // },
     ],
   },
   {
@@ -484,12 +501,11 @@ export const menu: IMenuItem[] = [
       //   code: "",
       // },
       {
-        title: "paymentControl", // Tạo giao dịch nợ
+        title: "paymentControl", // đối soát thanh toán
         path: urls.payment_control,
-        icon: <Icon name="DebtTransactionMenu" />,
+        icon: <Icon name="PaymentControl" />,
         code: "",
       },
-     
     ],
   },
   {
@@ -531,7 +547,7 @@ export const menu: IMenuItem[] = [
       {
         title: "customerAnalysis", // phân tích khách hàng
         path: urls.customer_analysis,
-        icon: <Icon name="SupportMenu" />,
+        icon: <Icon name="AnalysisCustomer" />,
         code: "",
       },
       // {
@@ -570,7 +586,7 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="PointsLogMenu" />,
       //   code: "",
       // },
-      
+
       // {
       //   title: "receiveTicket", // Tiếp nhận hỗ trợ
       //   path: urls.ticket,
@@ -635,12 +651,12 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="SettingWarranty" />,
       //   code: "",
       // },
-      {
-        title: "settingLoyalty", // Cài đặt hệ thống tích điểm
-        path: urls.setting_loyalty,
-        icon: <Icon name="PointsSettingMenu" />,
-        code: "",
-      },
+      // {
+      //   title: "settingLoyalty", // Cài đặt hệ thống tích điểm
+      //   path: urls.setting_loyalty,
+      //   icon: <Icon name="PointsSettingMenu" />,
+      //   code: "",
+      // },
     ],
   },
   {
@@ -664,19 +680,19 @@ export const menu: IMenuItem[] = [
       {
         title: "customerReport", // Báo cáo khách hàng
         path: urls.customer_report,
-        icon: <Icon name="SalesReportMenu" />,
+        icon: <Icon name="CustomersMenu" />,
         code: "",
       },
       {
         title: "inventoryReport", // Báo cáo tồn kho
         path: urls.inventory_report_modern,
-        icon: <Icon name="SalesReportMenu" />,
+        icon: <Icon name="InventoryMenu" />,
         code: "",
       },
       {
-        title: "marketingReport", // Báo cáo tồn kho
+        title: "marketingReport", // Báo cáo marketing
         path: urls.marketing_report,
-        icon: <Icon name="SalesReportMenu" />,
+        icon: <Icon name="MarketingReport" />,
         code: "",
       },
       {
@@ -685,7 +701,7 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="ShippingReportMenu" />,
         code: "",
       },
-      
+
       {
         title: "settingCashbook", // Cài đặt tài chính
         path: urls.setting_cash_book,
@@ -734,7 +750,7 @@ export const menu: IMenuItem[] = [
         title: "manageDefaultProcesses",
         path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
         code: "BPM",
-        icon: <Icon name="DefaultProcessMenu" />,
+        icon: <Icon name="DefaultProcessSetting" />,
       },
       // {
       //   title: "business_rule", // Loại luật nghiệp vụ
@@ -895,6 +911,10 @@ export const routes: IRouter[] = [
     // component: <Dashboard />,
     component: <DashboardRetail />,
   },
+      {
+    path: urls.notification,
+    component: <NotificationList />,
+  },
   {
     path: urls.dashboard,
     // component: <Dashboard />,
@@ -911,11 +931,15 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.customer,
-    component: <CustomerPersonList />,
+    component: <CustomerPersonList/>,
   },
   {
     path: urls.customer_list,
-    component: <CustomerAndSupplier />,
+    component: <CustomerAndSupplier type="customer"/>,
+  },
+  {
+    path: urls.supplier_list,
+    component: <CustomerAndSupplier type="supplier"/>,
   },
   {
     path: urls.partner,
@@ -1161,7 +1185,7 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_payment_method,
     // component: <SettingPaymentMethod />,
-    component: <PaymentMethodPage/>
+    component: <PaymentMethodPage />,
   },
   {
     path: urls.setting_timekeeping,
@@ -1189,11 +1213,11 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.member_list,
-    component: <MemberCustomersPage/>
+    component: <MemberCustomersPage />,
   },
   {
     path: urls.marketing_campaign,
-    component: <MarketingCampaignPage/>
+    component: <MarketingCampaignPage />,
   },
   {
     path: urls.loyalty_wallet,
@@ -1336,7 +1360,7 @@ export const routes: IRouter[] = [
     path: urls.report_warehouse,
     component: <WarehouseReport />,
   },
-  
+
   // tạo đơn bán hàng
   {
     path: urls.create_sale_add,
@@ -1351,7 +1375,7 @@ export const routes: IRouter[] = [
   {
     path: urls.promotional_program,
     // component: <PromotionalProgram />,
-    component: <PromotionPage/>
+    component: <PromotionPage />,
   },
   {
     path: urls.promotional_report,
@@ -1390,8 +1414,8 @@ export const routes: IRouter[] = [
   },
   // danh sách khách trả hàng
   {
-    path: urls.customer_pay,
-    component: <CustomerPayList />,
+    path: urls.return_invoice,
+    component: <ReturnProductPage />,
   },
   // bán hàng đa kênh
   {
@@ -1406,17 +1430,17 @@ export const routes: IRouter[] = [
   // Tổng đài
   {
     path: urls.call_center,
-    component: <CallCenterList />
+    component: <CallCenterList />,
   },
   //chăm sóc khách hàng
   {
     path: urls.customer_care_page,
-    component: <CustomerCarePage/>
+    component: <CustomerCarePage />,
   },
   //phân tích khách hàng
   {
     path: urls.customer_analysis,
-    component: <CustomerAnalysisPage/>
+    component: <CustomerAnalysisPage />,
   },
   //email
   {
@@ -1526,7 +1550,8 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.object_manage,
-    component: <ProcessedObjectList />,
+    // component: <ProcessedObjectList />,
+    component: <TaskProcessPage/>
   },
   {
     path: urls.setting_business_process,
@@ -1576,5 +1601,9 @@ export const routes: IRouter[] = [
   {
     path: urls.payment_mgt,
     component: <PaymentMethodList />,
+  },
+  {
+    path: urls.payment_control,
+    component: <Reconcile />,
   },
 ];

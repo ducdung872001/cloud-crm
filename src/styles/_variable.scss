@@ -37,9 +37,58 @@ $chart-color-red: rgb(250, 75, 66);
 $chart-color-black: rgb(0, 0, 0);
 $chart-color-blue: #015aa4;
 
+// =============================================
+// SPACING TOKENS — единый источник отступов
+// =============================================
+$spacing-2: 0.2rem;
+$spacing-4: 0.4rem;
+$spacing-6: 0.6rem;
+$spacing-8: 0.8rem;
+$spacing-12: 1.2rem;
+$spacing-16: 1.6rem;
+$spacing-20: 2rem;
+$spacing-24: 2.4rem;
+$spacing-32: 3.2rem;
+$spacing-40: 4rem;
+$spacing-48: 4.8rem;
+
+// BREAKPOINTS
+$bp-mobile: 575px;
+$bp-tablet: 768px;
+$bp-desktop: 1200px;
+$bp-large: 1440px;
+$bp-xlarge: 1920px;
+
+// SIDEBAR WIDTH
+$sidebar-width: 28rem;
+$sidebar-collapsed-width: 7.2rem;
+$header-height: 5.7rem;
+$page-padding-desktop: 2rem 2.4rem 3.2rem;
+$page-padding-tablet: 1.6rem 1.6rem 2.4rem;
+$page-padding-mobile: 1.2rem 1.2rem 2rem;
+$page-padding-large: 2.4rem 3.2rem 4rem;
+
 :root {
   --white-color: #{$white-color};
   --black-color: #{$black-color};
+
+  // Spacing tokens
+  --spacing-2: #{$spacing-2};
+  --spacing-4: #{$spacing-4};
+  --spacing-6: #{$spacing-6};
+  --spacing-8: #{$spacing-8};
+  --spacing-12: #{$spacing-12};
+  --spacing-16: #{$spacing-16};
+  --spacing-20: #{$spacing-20};
+  --spacing-24: #{$spacing-24};
+  --spacing-32: #{$spacing-32};
+  --spacing-40: #{$spacing-40};
+  --spacing-48: #{$spacing-48};
+
+  // Layout tokens
+  --sidebar-width: #{$sidebar-width};
+  --sidebar-collapsed-width: #{$sidebar-collapsed-width};
+  --header-height: #{$header-height};
   --blue-color: #{$blue-color};
   --sea-green-color: #{$sea-green-color};
   --background-color: #{$background-color};

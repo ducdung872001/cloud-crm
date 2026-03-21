@@ -22,12 +22,14 @@ export interface ProductVariant {
   stock: number;
   // map groupId → optionId
   combination: Record<string, string>;
+  images?: string[]; // giả sử API mới có thêm trường images là array để chứa nhiều ảnh của biến thể
 }
 
 export interface VariantProduct {
   id: string;
   name: string;
   image?: string;
+  avatar?: string; // tạm map image sang avatar để dùng chung component với product list
   icon?: string;
   unit: string;
   variantGroups: VariantGroup[];
@@ -50,12 +52,10 @@ export function useGetDetailProduct({
   productId,
   enabled = true, // ✅ mặc định true, truyền false để tắt
 }: UseGetVariantParams): UseGetVariantReturn {
-  console.log("productId in useGetVariant>>>", productId);
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
-  const [dataProduct, setDataProduct] = useState<VariantProduct>(null);
+  const [dataProduct, setDataProduct] = useState<VariantProduct | null>(null);
 
   // ── Core fetch ──────────────────────────────────────────────────────────────
 
@@ -67,8 +67,6 @@ export function useGetDetailProduct({
 
       if (response.code === 0) {
         const result = response.result;
-        console.log("result.fetchProducts1111111", result); // log kết quả đã map
-        console.log("result.fetchProducts", mapToVariantProduct(result)); // log kết quả đã map
         setDataProduct(mapToVariantProduct(result)); // map API về đúng format rồi set vào state
         setIsNoItem(false);
       } else if (response.code === 400) {
@@ -81,7 +79,7 @@ export function useGetDetailProduct({
       if (error?.name === "AbortError") {
         console.log("Request was aborted");
       } else {
-        showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+        showToast(error?.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
     } finally {
       setIsLoading(false);
@@ -97,7 +95,6 @@ export function useGetDetailProduct({
   // ── Auto fetch khi categoryId thay đổi ─────────────────────────────────────
 
   useEffect(() => {
-    console.log("productId in useGetVariant", productId);
     if (!enabled) return; // ✅ guard: nếu không enabled thì không fetch
     setIsLoading(true);
     fetchProducts(productId);
@@ -527,24 +524,33 @@ function mapToVariantProduct(detail): VariantProduct {
     name: detail.name,
     icon: detail?.icon || "📦",
     unit: detail.unitName,
-    variantGroups: detail.variantGroups.map((vg) => ({
-      id: String(vg.id),
-      label: vg.name,
-      options: vg.options.map((opt) => ({
-        id: String(opt.id),
-        label: opt.label,
-      })),
-    })),
-    variants: detail.variants.map((v) => ({
-      id: String(v.id),
-      sku: v.sku,
-      price: v.price,
-      // stock: v?.quantity ?? 0, // giả sử API mới có thêm trường quantity để biết chính xác tồn kho từng biến thể
-      stock: 100, // giả sử API mới có thêm trường quantity để biết chính xác tồn kho từng biến thể
-      combination: v.selectedOptions.reduce((acc, opt) => {
-        acc[String(opt.groupId)] = String(opt.optionValueId);
-        return acc;
-      }, {}),
-    })),
+    image: detail.image,
+    avatar: detail.avatar, // tạm map image sang avatar để dùng chung component với product list
+    variantGroups: detail?.variantGroups
+      ? detail.variantGroups.map((vg) => ({
+          id: String(vg.id),
+          label: vg.name,
+          options: vg.options.map((opt) => ({
+            id: String(opt.id),
+            label: opt.label,
+          })),
+        }))
+      : [],
+    variants: detail?.variants
+      ? detail.variants.map((v) => ({
+          id: String(v.id),
+          sku: v.sku,
+          price: v.price,
+          images: v?.images ? v.images.map((img) => img) : [], // giả sử API mới có thêm trường images là array để chứa nhiều ảnh của biến thể
+          // stock: v?.quantity ?? 0, // giả sử API mới có thêm trường quantity để biết chính xác tồn kho từng biến thể
+          stock: 100, // giả sử API mới có thêm trường quantity để biết chính xác tồn kho từng biến thể
+          combination: v.selectedOptions
+            ? v.selectedOptions.reduce((acc, opt) => {
+                acc[String(opt.groupId)] = String(opt.optionValueId);
+                return acc;
+              }, {})
+            : {},
+        }))
+      : [],
   };
 }

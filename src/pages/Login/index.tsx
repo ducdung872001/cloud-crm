@@ -65,10 +65,12 @@ export default function Index() {
       let lstPermissionResource = permissionRes.result;
       let mapPermission = {};
       (lstPermissionResource || []).forEach((permissionResource: any) => {
-        let actions = JSON.parse(permissionResource.actions);
-        actions.forEach((action: any) => {
-          mapPermission[`${permissionResource.code}_${action}`] = 1;
-        });
+        if (permissionResource?.actions) {
+          let actions = JSON.parse(permissionResource?.actions);
+          actions.forEach((action: any) => {
+            mapPermission[`${permissionResource.code}_${action}`] = 1;
+          });
+        }
       });
 
       // console.log("permissions =>", JSON.stringify(mapPermission));

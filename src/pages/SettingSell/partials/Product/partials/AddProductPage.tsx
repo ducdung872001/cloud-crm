@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import Icon from "components/icon";
-import FileUpload from "components/fileUpload/fileUpload";
 import SelectCustom from "components/selectCustom/selectCustom";
+import FileService from "services/FileService";
 import NummericInput from "components/input/numericInput";
 import TextArea from "components/textarea/textarea";
 import ProductService from "services/ProductService";
@@ -37,16 +36,8 @@ const DISPLAY_TOGGLES = [
 
 const DEFAULT_FORM = {
   name: "",
-  code: "",
-  productLine: "",
-  price: "" as string | number,
-  priceWholesale: "" as string | number,
-  pricePromo: "" as string | number,
-  costPrice: "" as string | number,
   categoryId: null as number | null,
   categoryName: "",
-  unitId: null as number | null,
-  unitName: "",
   status: 1,
   description: "",
   avatar: "",
@@ -68,8 +59,10 @@ const DEFAULT_FORM = {
 // ── VARIANT TYPES ──
 interface VariantAttribute {
   tempId: string;
+  id?: number | null;                    // variantGroup.id từ API (cần khi update)
   name: string;
   values: string[];
+  optionIds?: Record<string, number>;    // { "Đỏ": 12, "Xanh": 13 } — option id theo label
   inputVal: string;
 }
 
@@ -82,9 +75,16 @@ interface UnitPrice {
 
 interface VariantCombination {
   key: string;
+  id?: number | null;
   label: string;
   sku: string;
-  image: string; // ảnh riêng cho từng biến thể
+  barcode: string;
+  images: string[];
+  unitId: number | null;
+  price: string | number;
+  costPrice: string | number;
+  priceWholesale: string | number;
+  pricePromo: string | number;
   unitPrices: UnitPrice[];
 }
 
@@ -99,6 +99,23 @@ const toSkuPart = (str: string): string =>
     .replace(/[^A-Z0-9]/g, "")
     .slice(0, 4);
 
+// Sinh EAN-13 hợp lệ theo chuẩn GS1 (prefix 893 = Việt Nam)
+const generateEAN13 = (): string => {
+  const prefix = "893";
+  const rand = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10)).join("");
+  const partial = prefix + rand; // 12 chữ số
+  let sum = 0;
+  for (let i = 0; i < 12; i++) {
+    sum += parseInt(partial[i]) * (i % 2 === 0 ? 1 : 3);
+  }
+  const check = (10 - (sum % 10)) % 10;
+  return partial + check;
+};
+
+// Fallback cuối cùng — đảm bảo SKU không bao giờ là chuỗi rỗng
+const safeSku = (candidate: string, prefix = "VT"): string =>
+  candidate.trim() || `${prefix}-${Date.now().toString(36).toUpperCase().slice(-5)}${Math.random().toString(36).slice(2, 4).toUpperCase()}`;
+
 const generateSku = (productName: string, comboLabel: string): string => {
   const namePart = toSkuPart(productName) || "SP";
   const valueParts = comboLabel
@@ -108,7 +125,7 @@ const generateSku = (productName: string, comboLabel: string): string => {
     .join("-");
   // Suffix độc nhất: 4 ký tự cuối của timestamp (base36) + 2 ký tự random
   // → xác suất trùng gần như bằng 0 dù tạo cùng lúc
-  const ts  = Date.now().toString(36).toUpperCase().slice(-4);
+  const ts = Date.now().toString(36).toUpperCase().slice(-4);
   const rnd = Math.random().toString(36).slice(2, 4).toUpperCase();
   const base = valueParts ? `${namePart}-${valueParts}` : namePart;
   return `${base}-${ts}${rnd}`;
@@ -133,63 +150,246 @@ const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
     key: active.map((a, i) => `${a.name}:${combo[i]}`).join("|"),
     label: combo.join(" / "),
     sku: "",
-    image: "",
+    barcode: "",
+    images: [],
+    unitId: null,
+    price: "" as string | number,
+    costPrice: "" as string | number,
+    priceWholesale: "" as string | number,
+    pricePromo: "" as string | number,
     unitPrices: [makeEmptyUnitPrice()],
   }));
 };
 
-// ── Compact image picker cho variant ──
-function VariantImagePicker({
-  image,
-  onChange,
-}: {
-  image: string;
-  onChange: (url: string) => void;
-}) {
-  const inputRef = useRef<HTMLInputElement>(null);
+// ── Barcode Scanner Modal (dùng BarcodeDetector API native) ──
+function BarcodeScannerModal({ onScan, onClose }: { onScan: (barcode: string) => void; onClose: () => void }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const detectorRef = useRef<any>(null);
+  const rafRef = useRef<number | null>(null);
+  const [error, setError] = useState<string>("");
+  const [isReady, setIsReady] = useState(false);
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => onChange(ev.target?.result as string);
-    reader.readAsDataURL(file);
-    e.target.value = "";
+  useEffect(() => {
+    startCamera();
+    return () => stopCamera();
+  }, []);
+
+  const stopCamera = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+  };
+
+  const startCamera = async () => {
+    if (!("BarcodeDetector" in window)) {
+      setError("Trình duyệt chưa hỗ trợ BarcodeDetector. Vui lòng dùng Chrome / Edge phiên bản mới.");
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      detectorRef.current = new (window as any).BarcodeDetector({
+        formats: ["ean_13", "ean_8", "code_128", "code_39", "qr_code", "upc_a", "upc_e", "itf", "codabar"],
+      });
+      setIsReady(true);
+      scanLoop();
+    } catch (err: any) {
+      if (err.name === "NotAllowedError") {
+        setError("Bạn chưa cấp quyền truy cập camera. Vui lòng cho phép trong cài đặt trình duyệt.");
+      } else {
+        setError("Không thể mở camera: " + (err.message || err));
+      }
+    }
+  };
+
+  const scanLoop = async () => {
+    if (!videoRef.current || !detectorRef.current) return;
+    if (videoRef.current.readyState < 2) {
+      rafRef.current = requestAnimationFrame(scanLoop);
+      return;
+    }
+    try {
+      const barcodes = await detectorRef.current.detect(videoRef.current);
+      if (barcodes.length > 0) {
+        stopCamera();
+        onScan(barcodes[0].rawValue);
+        return;
+      }
+    } catch (_) {}
+    rafRef.current = requestAnimationFrame(scanLoop);
   };
 
   return (
-    <div
-      className="vt-img-picker"
-      onClick={() => inputRef.current?.click()}
-      title="Chọn ảnh biến thể"
-    >
-      {image ? (
-        <>
-          <img src={image} alt="variant" className="vt-img-picker__img" />
-          <button
-            type="button"
-            className="vt-img-picker__clear"
-            onClick={(e) => {
-              e.stopPropagation();
-              onChange("");
-            }}
-          >
+    <div className="bs-overlay" onClick={onClose}>
+      <div className="bs-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="bs-modal__header">
+          <span className="bs-modal__title">Quét mã vạch</span>
+          <button type="button" className="bs-modal__close" onClick={onClose}>
             ✕
           </button>
-        </>
-      ) : (
-        <div className="vt-img-picker__placeholder">
-          <Icon name="Camera" />
-          <span>Ảnh</span>
+        </div>
+        <div className="bs-modal__body">
+          {error ? (
+            <div className="bs-modal__error">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <p>{error}</p>
+            </div>
+          ) : (
+            <div className="bs-modal__video-wrap">
+              <video ref={videoRef} className="bs-modal__video" playsInline muted />
+              {/* Khung ngắm */}
+              <div className="bs-modal__reticle">
+                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--tl" />
+                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--tr" />
+                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--bl" />
+                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--br" />
+                <div className="bs-modal__scan-line" />
+              </div>
+              <p className="bs-modal__hint">{isReady ? "Đưa mã vạch vào khung để quét tự động" : "Đang khởi động camera..."}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Multi-image picker cho variant (upload lên CDN, reorder bằng nút ◀▶) ──
+const MAX_VARIANT_IMAGES = 7;
+
+function VariantImagePicker({ images, onChange }: { images: string[]; onChange: (urls: string[]) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploadingCount, setUploadingCount] = useState(0);
+
+  // Luôn giữ ref mới nhất để callback async không bị stale closure
+  const imagesRef = useRef(images);
+  imagesRef.current = images;
+
+  const remaining = MAX_VARIANT_IMAGES - images.length - uploadingCount;
+
+  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []).slice(0, Math.max(0, remaining));
+    if (!files.length) return;
+    e.target.value = "";
+    files.forEach((file) => {
+      setUploadingCount((c) => c + 1);
+      FileService.uploadFile({
+        data: file,
+        onSuccess: (result: any) => {
+          const url = result?.fileUrl || result;
+          setUploadingCount((c) => c - 1);
+          onChange([...imagesRef.current, url]);
+        },
+        onError: () => {
+          setUploadingCount((c) => c - 1);
+          showToast("Upload ảnh thất bại, vui lòng thử lại", "error");
+        },
+      });
+    });
+  };
+
+  // Click vào ảnh → đặt làm ảnh chính (đưa lên index 0)
+  const setAsMain = (idx: number) => {
+    if (idx === 0) return;
+    const arr = [...images];
+    const [picked] = arr.splice(idx, 1);
+    onChange([picked, ...arr]);
+  };
+
+  const move = (idx: number, dir: -1 | 1) => {
+    const arr = [...images];
+    const target = idx + dir;
+    if (target < 0 || target >= arr.length) return;
+    [arr[idx], arr[target]] = [arr[target], arr[idx]];
+    onChange(arr);
+  };
+
+  const remove = (idx: number) => onChange(images.filter((_, i) => i !== idx));
+
+  return (
+    <div className="vt-img-strip">
+      {images.map((url, idx) => (
+        <div
+          className={`vt-img-strip__item${idx === 0 ? " vt-img-strip__item--main" : ""}`}
+          key={`${url}-${idx}`}
+          onClick={() => setAsMain(idx)}
+          title={idx === 0 ? "Ảnh chính" : "Click để đặt làm ảnh chính"}
+        >
+          {idx === 0 && <span className="vt-img-strip__main-badge">Chính</span>}
+          <img src={url} alt={`img-${idx}`} className="vt-img-strip__img" />
+          {/* Nút di chuyển (hiện khi hover) */}
+          <div className="vt-img-strip__move-row">
+            <button
+              type="button"
+              className="vt-img-strip__move"
+              style={{ visibility: idx > 0 ? "visible" : "hidden" }}
+              onClick={(e) => { e.stopPropagation(); move(idx, -1); }}
+              title="Dịch sang trái"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="12" height="12"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button
+              type="button"
+              className="vt-img-strip__move"
+              style={{ visibility: idx < images.length - 1 ? "visible" : "hidden" }}
+              onClick={(e) => { e.stopPropagation(); move(idx, 1); }}
+              title="Dịch sang phải"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="12" height="12"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          {/* Nút xoá */}
+          <button
+            type="button"
+            className="vt-img-strip__remove"
+            onClick={(e) => { e.stopPropagation(); remove(idx); }}
+            title="Xoá ảnh"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="10" height="10"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      ))}
+
+      {/* Spinner cho từng ảnh đang upload */}
+      {Array.from({ length: uploadingCount }).map((_, i) => (
+        <div className="vt-img-strip__item vt-img-strip__item--loading" key={`loading-${i}`}>
+          <div className="vt-img-strip__spinner" />
+        </div>
+      ))}
+
+      {/* Nút thêm ảnh — ẩn khi đã đủ MAX */}
+      {remaining > 0 && (
+        <div className="vt-img-strip__add" onClick={() => inputRef.current?.click()} title={`Thêm ảnh (còn ${remaining} slot)`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>Thêm</span>
         </div>
       )}
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        style={{ display: "none" }}
-        onChange={handleFile}
-      />
+
+      <input ref={inputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFiles} />
     </div>
   );
 }
@@ -204,17 +404,14 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const [selectedCategory, setSelectedCategory] = useState<{ value: number; label: string } | null>(null);
   const [formData, setFormData] = useState({ ...DEFAULT_FORM });
   const [isDuplicating, setIsDuplicating] = useState(false);
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
-  const [selectedImagePreview, setSelectedImagePreview] = useState("");
   // Variants
   const [variantAttrs, setVariantAttrs] = useState<VariantAttribute[]>([]);
   const [combinations, setCombinations] = useState<VariantCombination[]>([]);
+  const [scanningComboKey, setScanningComboKey] = useState<string | null>(null);
 
   const setField = (key: string, value: any) => setFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
-    setSelectedImageFile(null);
-    setSelectedImagePreview("");
     loadUnits();
     loadCategories();
     if (isEdit) loadDetail();
@@ -225,18 +422,10 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     setFormData((prev) => ({
       ...prev,
       name: p.name || "",
-      code: p.code || "",
-      productLine: p.productLine || "",
-      price: p.price ?? "",
-      priceWholesale: p.priceWholesale ?? "",
-      pricePromo: p.pricePromo ?? "",
-      costPrice: p.costPrice ?? "",
       categoryId: p.categoryId || null,
       categoryName: p.categoryName || "",
-      unitId: p.unitId ?? null,
-      unitName: p.unitName || "",
       status: p.status ?? 1,
-      avatar: p.avatar || "",
+      images: p.avatar || "",
       description: p.description || "",
       trackStock: p.trackStock ?? true,
       stock: p.stock ?? 0,
@@ -259,26 +448,29 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       // Map variantGroups → variantAttrs
       const attrs: VariantAttribute[] = p.variantGroups.map((g: any) => ({
         tempId: genId(),
+        id: g.id ?? null,
         name: g.name,
-        values: (g.options || []).map((o: any) => o.label),
+        values: [...new Set((g.options || []).map((o: any) => o.label as string))],
+        optionIds: Object.fromEntries((g.options || []).map((o: any) => [o.label, o.id])),
         inputVal: "",
       }));
       setVariantAttrs(attrs);
 
       // Map variants → combinations (bỏ qua biến thể "Mac dinh" / default)
-      const realVariants = (p.variants || []).filter(
-        (v: any) => v.selectedOptions?.some((o: any) => o.groupName)
-      );
+      const realVariants = (p.variants || []).filter((v: any) => v.label !== "Mac dinh");
 
       if (realVariants.length) {
         const combos: VariantCombination[] = realVariants.map((v: any) => {
+          // unitPrices: BE có thể trả field tên khác (prices / variantPrices / units)
+          const rawUnitPrices: any[] =
+            v.unitPrices ?? v.prices ?? v.variantPrices ?? v.units ?? [];
           const mappedUnitPrices =
-            v.unitPrices?.length > 0
-              ? v.unitPrices.map((u: any) => ({
+            rawUnitPrices.length > 0
+              ? rawUnitPrices.map((u: any) => ({
                   tempId: genId(),
-                  unitId: u.unitId ?? null,
-                  unitName: u.unitName ?? "",
-                  price: u.price ?? "",
+                  unitId: u.unitId ?? u.unit_id ?? null,
+                  unitName: u.unitName ?? u.unit_name ?? "",
+                  price: u.price ?? u.priceRetail ?? "",
                 }))
               : [
                   {
@@ -290,16 +482,32 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                 ];
 
           // Tạo key theo format "GroupName:value|GroupName:value|..."
-          const key = v.selectedOptions
-            .filter((o: any) => o.groupName)
-            .map((o: any) => `${o.groupName}:${o.label}`)
-            .join("|");
+          // Nếu API trả về groupName rỗng, fallback: tách label "Đỏ / M" theo attrs
+          const hasGroupName = v.selectedOptions?.some((o: any) => o.groupName);
+          let key: string;
+          if (hasGroupName) {
+            key = v.selectedOptions
+              .filter((o: any) => o.groupName)
+              .map((o: any) => `${o.groupName}:${o.label}`)
+              .join("|");
+          } else {
+            // Fallback: label "Đỏ" hoặc "Đỏ / M" → map theo thứ tự attrs
+            const parts = v.label.split(" / ").map((s: string) => s.trim());
+            key = attrs.map((attr, i) => `${attr.name}:${parts[i] || ""}`).join("|");
+          }
 
           return {
             key,
+            id: v.id ?? null,
             label: v.label,
             sku: v.sku || "",
-            image: v.avatar || "",
+            barcode: v.code || v.barcode || v.barcodeCode || "",
+            images: v.images?.length ? v.images : [v.avatar, v.image].filter(Boolean) as string[],
+            unitId: v.unitId ?? null,
+            price: v.price ?? v.priceRetail ?? "",
+            costPrice: v.costPrice ?? v.cost_price ?? "",
+            priceWholesale: v.priceWholesale ?? v.price_wholesale ?? v.wholesale ?? "",
+            pricePromo: v.pricePromo ?? v.pricePromotion ?? v.price_promo ?? "",
             unitPrices: mappedUnitPrices,
           };
         });
@@ -310,6 +518,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
   const loadDetail = async () => {
     const res = await ProductService.wDetail(idProduct);
+    console.log("[loadDetail] raw response:", JSON.stringify(res.result, null, 2));
     if (res.code === 0) {
       setDetailProduct(res.result);
       preFill(res.result);
@@ -331,32 +540,37 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     }
   };
 
-  const handleRemoveImage = () => {
-    setSelectedImageFile(null);
-    setSelectedImagePreview("");
-    setField("avatar", "");
-  };
-
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
       showToast("Vui lòng nhập tên sản phẩm", "error");
       return;
     }
-    if (!formData.description.trim()) {
-      showToast("Vui lòng nhập mô tả sản phẩm", "error");
+    if (combinations.length === 0) {
+      showToast("Vui lòng thêm ít nhất 1 biến thể sản phẩm", "error");
+      setActiveTab("variants");
       return;
     }
-    if (!formData.price) {
-      showToast("Vui lòng nhập giá bán", "error");
+    const longSku = combinations.find((c) => c.sku && c.sku.length > 20);
+    if (longSku) {
+      showToast(`SKU biến thể "${longSku.label}" vượt quá 20 ký tự`, "error");
+      setActiveTab("variants");
       return;
     }
-
+    const missingPrice = combinations.find((c) => !c.price || +c.price === 0);
+    if (missingPrice) {
+      showToast(`Biến thể "${missingPrice.label}" chưa có giá bán`, "error");
+      setActiveTab("variants");
+      return;
+    }
     const activeAttrs = variantAttrs.filter((a) => a.name.trim() && a.values.length > 0);
-
-    // ── Build variantGroups (DB tự sinh ID) ──
+    // ── Build variantGroups ──
     const variantGroups = activeAttrs.map((attr) => ({
+      ...(attr.id ? { id: attr.id } : {}),
       name: attr.name,
-      options: attr.values.map((val) => ({ label: val })),
+      options: attr.values.map((val) => ({
+        ...(attr.optionIds?.[val] ? { id: attr.optionIds[val] } : {}),
+        label: val,
+      })),
     }));
 
     // ── Build variants ──
@@ -374,19 +588,35 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         label: keyParts.find((k) => k.name === attr.name)?.value ?? "",
       }));
 
-      const variantSku = c.sku?.trim() || generateSku(formData.name, c.label);
+      const variantSku = safeSku(c.sku?.trim() || generateSku(formData.name, c.label));
+
+      // Map selectedOptions → attributes: [{ name, value }]
+      const attributes = selectedOptions.map((o) => ({ name: o.groupName, value: o.label }));
+
+      // Lấy optionValueIds từ optionIds đã lưu trong attrs
+      const optionValueIds = activeAttrs
+        .map((attr) => {
+          const value = keyParts.find((k) => k.name === attr.name)?.value ?? "";
+          return attr.optionIds?.[value] ?? null;
+        })
+        .filter((id): id is number => id != null);
 
       return {
+        ...(c.id ? { id: c.id } : {}),
         label: c.label,
         sku: variantSku,
-        price: +(firstUp?.price ?? 0) || 0,
-        promotionPrice: 0,
-        avatar: c.image || "",
+        barcode: c.barcode || "",
+        unitId: c.unitId ?? null,
+        price: +(c.price ?? 0) || 0,
+        costPrice: +(c.costPrice ?? 0) || 0,
+        pricePromo: +(c.pricePromo ?? 0) || 0,
+        images: c.images || [],
+        attributes,
         selectedOptions,
+        ...(optionValueIds.length ? { optionValueIds } : {}),
         unitPrices: c.unitPrices.map((u, ui) => {
           const unitPart = toSkuPart(u.unitName);
-          // SKU unit-price = variantSku + đơn vị (hoặc index nếu chưa chọn đơn vị)
-          const unitSku = `${variantSku}-${unitPart || `U${ui + 1}`}`;
+          const unitSku = safeSku(`${variantSku}-${unitPart || `U${ui + 1}`}`);
           return {
             sku: unitSku,
             unitId: u.unitId,
@@ -399,65 +629,36 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
     const defaultVariant = {
       label: "Mac dinh",
-      sku: toSkuPart(formData.name) || `SP-${Date.now()}`,
-      price: +formData.price,
+      sku: safeSku(toSkuPart(formData.name), "SP"),
+      price: 0,
+      costPrice: 0,
+      priceWholesale: 0,
+      pricePromo: 0,
     };
 
     const body = {
-      id: idProduct || 0,
+      ...(idProduct ? { id: idProduct } : {}),
       name: formData.name,
-      code: formData.code,
-      productLine: formData.productLine,
-      price: +formData.price,
       position: detailProduct?.position ?? 0,
       status: formData.status,
-      avatar: formData.avatar,
       categoryId: selectedCategory?.value ?? null,
       exchange: 1,
       otherUnits: detailProduct?.otherUnits ?? "",
       type: detailProduct?.type ? String(detailProduct.type) : "1",
       description: formData.description,
-      supplierId: null, // TODO: thêm field chọn NCC vào form
-      costPrice: +formData.costPrice || 0,
-      priceWholesale: +formData.priceWholesale || 0,
-      pricePromo: +formData.pricePromo || 0,
       variantGroups,
       variants: variants.length > 0 ? variants : [defaultVariant],
     };
 
-    console.log("📦 [AddProductPage] body gửi lên:", JSON.stringify(body, null, 2));
-
+    console.log("[AddProduct] submit body:", JSON.stringify(body, null, 2));
     setIsSubmitting(true);
     try {
-      const hasAvatarChange = !!selectedImageFile || (isEdit && !formData.avatar);
-      let res;
-      if (hasAvatarChange) {
-        const form = new FormData();
-        Object.entries(body).forEach(([key, value]) => {
-          if (value === undefined || value === null) return;
-          if (key === "avatar") return;
-          if (key === "variantGroups" || key === "variants") {
-            form.append(key, JSON.stringify(value));
-            return;
-          }
-          form.append(key, String(value));
-        });
-        if (selectedImageFile) {
-          form.append("avatar", selectedImageFile);
-        } else if (isEdit && !formData.avatar) {
-          form.append("avatar", "");
-        } else if (formData.avatar) {
-          form.append("avatar", formData.avatar);
-        }
-        res = await ProductService.wUpdateFormData(form);
-      } else {
-        res = await ProductService.wUpdate(body as any);
-      }
+      const res = await ProductService.wUpdate(body as any);
       if (res.code === 0) {
         showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
         onBack(true);
       } else {
-        showToast(res.message ?? "Có lỗi xảy ra", "error");
+        showToast(res.error ?? res.message ?? "Có lỗi xảy ra", "error");
       }
     } finally {
       setIsSubmitting(false);
@@ -473,7 +674,13 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         return {
           ...c,
           sku: existing?.sku || generateSku(formData.name, c.label),
-          image: existing?.image || "",
+          barcode: existing?.barcode || "",
+          images: existing?.images || [],
+          unitId: existing?.unitId ?? null,
+          price: existing?.price ?? "",
+          costPrice: existing?.costPrice ?? "",
+          priceWholesale: existing?.priceWholesale ?? "",
+          pricePromo: existing?.pricePromo ?? "",
           unitPrices: existing?.unitPrices?.length ? existing.unitPrices : [makeEmptyUnitPrice()],
         };
       })
@@ -488,8 +695,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     syncCombinations(updated);
   };
 
-  const updateAttrName = (id: string, name: string) =>
-    setVariantAttrs((prev) => prev.map((a) => (a.tempId === id ? { ...a, name } : a)));
+  const updateAttrName = (id: string, name: string) => setVariantAttrs((prev) => prev.map((a) => (a.tempId === id ? { ...a, name } : a)));
 
   const confirmAttrName = () => syncCombinations(variantAttrs);
 
@@ -505,18 +711,20 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   };
 
   const removeValue = (id: string, val: string) => {
-    const updated = variantAttrs.map((a) =>
-      a.tempId === id ? { ...a, values: a.values.filter((v) => v !== val) } : a
-    );
+    const updated = variantAttrs.map((a) => (a.tempId === id ? { ...a, values: a.values.filter((v) => v !== val) } : a));
     setVariantAttrs(updated);
     syncCombinations(updated);
   };
 
-  const updateComboSku = (key: string, sku: string) =>
-    setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, sku } : c)));
+  const updateComboSku = (key: string, sku: string) => setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, sku } : c)));
 
-  const updateComboImage = (key: string, image: string) =>
-    setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, image } : c)));
+  const updateComboImages = (key: string, images: string[]) => {
+    setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, images } : c)));
+  };
+
+  // Cập nhật field trực tiếp trên variant (barcode, price, costPrice, priceWholesale, pricePromo)
+  const updateComboField = (key: string, field: keyof VariantCombination, value: any) =>
+    setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, [field]: value } : c)));
 
   // ── UNIT PRICE HANDLERS ──
   // Biến thể đầu tiên: thêm hàng → tự động thêm vào tất cả biến thể còn lại
@@ -532,11 +740,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         }));
       }
       // Biến thể 2+: chỉ thêm vào biến thể đó
-      return prev.map((c) =>
-        c.key === comboKey
-          ? { ...c, unitPrices: [...c.unitPrices, makeEmptyUnitPrice()] }
-          : c
-      );
+      return prev.map((c) => (c.key === comboKey ? { ...c, unitPrices: [...c.unitPrices, makeEmptyUnitPrice()] } : c));
     });
   };
 
@@ -569,9 +773,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       }
       // Biến thể 2+: chỉ cập nhật biến thể đó
       return prev.map((c) =>
-        c.key === comboKey
-          ? { ...c, unitPrices: c.unitPrices.map((u) => (u.tempId === tempId ? { ...u, [field]: value } : u)) }
-          : c
+        c.key === comboKey ? { ...c, unitPrices: c.unitPrices.map((u) => (u.tempId === tempId ? { ...u, [field]: value } : u)) } : c
       );
     });
 
@@ -579,31 +781,77 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     if (!idProduct) return;
     setIsDuplicating(true);
     try {
-      const body: IProductRequest = {
+      // Copy variants — sinh SKU mới (thêm suffix "-C") để tránh trùng
+      const dupVariants = combinations.map((c) => {
+        const variantSku = safeSku((c.sku?.trim() || generateSku(formData.name, c.label)) + "-C");
+        const activeAttrs = variantAttrs.filter((a) => a.name.trim() && a.values.length > 0);
+        const keyParts = c.key.split("|").map((k) => {
+          const idx = k.indexOf(":");
+          return { name: k.slice(0, idx), value: k.slice(idx + 1) };
+        });
+        return {
+          label: c.label,
+          sku: variantSku,
+          code: c.barcode || "",
+          price: +(c.price ?? 0) || 0,
+          costPrice: +(c.costPrice ?? 0) || 0,
+          priceWholesale: +(c.priceWholesale ?? 0) || 0,
+          pricePromo: +(c.pricePromo ?? 0) || 0,
+          image: c.images?.[0] || "",
+          images: c.images || [],
+          selectedOptions: activeAttrs.map((attr) => ({
+            groupName: attr.name,
+            label: keyParts.find((k) => k.name === attr.name)?.value ?? "",
+          })),
+          unitPrices: c.unitPrices.map((u, ui) => ({
+            sku: safeSku(`${variantSku}-${toSkuPart(u.unitName) || `U${ui + 1}`}`),
+            unitId: u.unitId,
+            unitName: u.unitName,
+            price: +(u.price ?? 0) || 0,
+          })),
+        };
+      });
+
+      const activeAttrs = variantAttrs.filter((a) => a.name.trim() && a.values.length > 0);
+      const dupVariantGroups = activeAttrs.map((attr) => ({
+        name: attr.name,
+        options: attr.values.map((val) => ({ label: val })),
+      }));
+
+      const body = {
         id: 0,
         name: `${formData.name} (Copy)`,
-        code: "",
-        productLine: formData.productLine,
-        price: +formData.price,
         position: 0,
         status: formData.status,
         avatar: formData.avatar,
         categoryId: selectedCategory?.value ?? null,
-        categoryName: selectedCategory?.label ?? "",
         exchange: 1,
         otherUnits: detailProduct?.otherUnits ?? "",
         type: detailProduct?.type ? String(detailProduct.type) : "1",
         description: formData.description,
-        costPrice: +formData.costPrice || 0,
-        priceWholesale: +formData.priceWholesale || 0,
-        pricePromo: +formData.pricePromo || 0,
+        supplierId: null,
+        variantGroups: dupVariantGroups,
+        variants:
+          dupVariants.length > 0
+            ? dupVariants
+            : [
+                {
+                  label: "Mac dinh",
+                  sku: safeSku(`${toSkuPart(formData.name) || "SP"}-C`),
+                  price: 0,
+                  costPrice: 0,
+                  priceWholesale: 0,
+                  pricePromo: 0,
+                },
+              ],
       };
-      const res = await ProductService.wUpdate(body);
+
+      const res = await ProductService.wUpdate(body as any);
       if (res.code === 0) {
         showToast("Nhân bản sản phẩm thành công", "success");
         onBack(true);
       } else {
-        showToast(res.message ?? "Có lỗi xảy ra", "error");
+        showToast(res.error ?? res.message ?? "Có lỗi xảy ra", "error");
       }
     } finally {
       setIsDuplicating(false);
@@ -617,21 +865,27 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       <div className="add-prod-page__toolbar">
         <div className="add-prod-page__toolbar-left">
           <button className="add-prod-page__back-btn" onClick={() => onBack(false)}>
-            <Icon name="ArrowLeft" /> Quay lại
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>{" "}
+            Quay lại
           </button>
           <span className="add-prod-page__divider">|</span>
-          <span className="add-prod-page__title">
-            {isEdit ? `Chỉnh sửa: ${formData.name || "Sản phẩm"}` : "Thêm sản phẩm mới"}
-          </span>
+          <span className="add-prod-page__title">{isEdit ? `Chỉnh sửa: ${formData.name || "Sản phẩm"}` : "Thêm sản phẩm mới"}</span>
         </div>
         <div className="add-prod-page__toolbar-right">
           <button className="add-prod-page__btn add-prod-page__btn--outline">Xem trước Web</button>
           <button className="add-prod-page__btn add-prod-page__btn--outline">In mã vạch</button>
-          <button
-            className="add-prod-page__btn add-prod-page__btn--primary"
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-          >
+          <button className="add-prod-page__btn add-prod-page__btn--primary" onClick={handleSubmit} disabled={isSubmitting}>
             {isSubmitting ? "Đang lưu..." : "Lưu sản phẩm"}
           </button>
         </div>
@@ -639,10 +893,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
       {/* TABS */}
       <div className="add-prod-tabs">
-        <button
-          className={`add-prod-tabs__item${activeTab === "info" ? " add-prod-tabs__item--active" : ""}`}
-          onClick={() => setActiveTab("info")}
-        >
+        <button className={`add-prod-tabs__item${activeTab === "info" ? " add-prod-tabs__item--active" : ""}`} onClick={() => setActiveTab("info")}>
           Thông tin sản phẩm
         </button>
         <button
@@ -650,9 +901,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           onClick={() => setActiveTab("variants")}
         >
           Cài đặt biến thể
-          {combinations.length > 0 && (
-            <span className="add-prod-tabs__badge">{combinations.length}</span>
-          )}
+          {combinations.length > 0 && <span className="add-prod-tabs__badge">{combinations.length}</span>}
         </button>
       </div>
 
@@ -669,36 +918,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                   <label>
                     Tên sản phẩm <span className="required">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setField("name", e.target.value)}
-                    placeholder="Nhập tên sản phẩm..."
-                  />
-                </div>
-                <div className="add-prod-form-grid">
-                  <div className="add-prod-field">
-                    <label>Mã vạch (Barcode)</label>
-                    <div className="add-prod-field__barcode">
-                      <input
-                        type="text"
-                        value={formData.code}
-                        onChange={(e) => setField("code", e.target.value)}
-                        placeholder="8938507680019"
-                        className="monospace"
-                      />
-                      <button className="add-prod-scan-btn">Quét</button>
-                    </div>
-                  </div>
-                  <div className="add-prod-field">
-                    <label>Mã SKU nội bộ</label>
-                    <input
-                      type="text"
-                      value={formData.productLine}
-                      onChange={(e) => setField("productLine", e.target.value)}
-                      placeholder="VD: TH001"
-                    />
-                  </div>
+                  <input type="text" value={formData.name} onChange={(e) => setField("name", e.target.value)} placeholder="Nhập tên sản phẩm..." />
                 </div>
                 <div className="add-prod-field add-prod-field--full" style={{ marginTop: 12 }}>
                   <label>Danh mục sản phẩm</label>
@@ -718,73 +938,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                     isClearable
                   />
                 </div>
-              </div>
-
-              {/* Giá & Đơn vị */}
-              <div className="add-prod-card">
-                <div className="add-prod-card__title">Giá & Đơn vị</div>
-                <div className="add-prod-form-grid3">
-                  {[
-                    { key: "price", label: "Giá bán lẻ", required: true },
-                    { key: "priceWholesale", label: "Giá sỉ", required: false },
-                    { key: "pricePromo", label: "Giá khuyến mãi", required: false },
-                  ].map(({ key, label, required }) => (
-                    <div className="add-prod-field" key={key}>
-                      <label>
-                        {label} {required && <span className="required">*</span>}
-                      </label>
-                      <div className="add-prod-field__price">
-                        <span className="add-prod-field__price-icon">₫</span>
-                        <NummericInput
-                          value={formData[key]}
-                          onValueChange={(vals: any) => setField(key, vals.floatValue ?? 0)}
-                          placeholder="0"
-                          thousandSeparator={true}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="add-prod-form-grid" style={{ marginTop: 12 }}>
-                  <div className="add-prod-field">
-                    <label>Giá vốn</label>
-                    <div className="add-prod-field__price">
-                      <span className="add-prod-field__price-icon">₫</span>
-                      <NummericInput
-                        value={formData.costPrice}
-                        onValueChange={(vals: any) => setField("costPrice", vals.floatValue ?? 0)}
-                        placeholder="0"
-                        thousandSeparator={true}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Hình ảnh */}
-              <div className="add-prod-card">
-                <div className="add-prod-card__title">Hình ảnh sản phẩm</div>
-                <FileUpload
-                  type="avatar"
-                  label="Ảnh sản phẩm"
-                  formData={{ values: { avatar: selectedImagePreview || formData.avatar } }}
-                  setFormData={(fd: any) => {
-                    const nextAvatar = fd?.values?.avatar || "";
-                    if (!nextAvatar) {
-                      handleRemoveImage();
-                    }
-                  }}
-                  onFileChange={(file: File | null) => {
-                    if (!file) {
-                      handleRemoveImage();
-                      setField("avatar", "");
-                      return;
-                    }
-                    const previewUrl = URL.createObjectURL(file);
-                    setSelectedImageFile(file);
-                    setSelectedImagePreview(previewUrl);
-                  }}
-                />
               </div>
 
               {/* Mô tả */}
@@ -807,16 +960,10 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                 <div className="add-prod-stock-header">
                   <div>
                     <div className="add-prod-stock-header__label">Theo dõi tồn kho</div>
-                    <div className="add-prod-stock-header__sub">
-                      Hệ thống sẽ tự động trừ khi có đơn hàng
-                    </div>
+                    <div className="add-prod-stock-header__sub">Hệ thống sẽ tự động trừ khi có đơn hàng</div>
                   </div>
                   <label className="add-prod-toggle">
-                    <input
-                      type="checkbox"
-                      checked={formData.trackStock}
-                      onChange={(e) => setField("trackStock", e.target.checked)}
-                    />
+                    <input type="checkbox" checked={formData.trackStock} onChange={(e) => setField("trackStock", e.target.checked)} />
                     <span className="add-prod-toggle__slider" />
                   </label>
                 </div>
@@ -824,19 +971,11 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                   <div className="add-prod-form-grid" style={{ marginTop: 12 }}>
                     <div className="add-prod-field">
                       <label>Tồn kho hiện tại</label>
-                      <input
-                        type="number"
-                        value={formData.stock}
-                        onChange={(e) => setField("stock", +e.target.value)}
-                      />
+                      <input type="number" value={formData.stock} onChange={(e) => setField("stock", +e.target.value)} />
                     </div>
                     <div className="add-prod-field">
                       <label>Ngưỡng cảnh báo sắp hết</label>
-                      <input
-                        type="number"
-                        value={formData.stockWarning}
-                        onChange={(e) => setField("stockWarning", +e.target.value)}
-                      />
+                      <input type="number" value={formData.stockWarning} onChange={(e) => setField("stockWarning", +e.target.value)} />
                     </div>
                   </div>
                 )}
@@ -862,11 +1001,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                       <div className="add-prod-toggle-row__sub">{sub}</div>
                     </div>
                     <label className="add-prod-toggle">
-                      <input
-                        type="checkbox"
-                        checked={!!formData[key]}
-                        onChange={(e) => setField(key, e.target.checked)}
-                      />
+                      <input type="checkbox" checked={!!formData[key]} onChange={(e) => setField(key, e.target.checked)} />
                       <span className="add-prod-toggle__slider" />
                     </label>
                   </div>
@@ -875,16 +1010,10 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
               {isEdit && (
                 <div className="add-prod-right-box">
                   <div className="add-prod-right-box__title">Thao tác nhanh</div>
-                  <button
-                    className="add-prod-quick-btn"
-                    onClick={handleDuplicate}
-                    disabled={isDuplicating}
-                  >
+                  <button className="add-prod-quick-btn" onClick={handleDuplicate} disabled={isDuplicating}>
                     {isDuplicating ? "Đang xử lý..." : "Nhân bản sản phẩm"}
                   </button>
-                  <button className="add-prod-quick-btn add-prod-quick-btn--danger">
-                    Xóa sản phẩm
-                  </button>
+                  <button className="add-prod-quick-btn add-prod-quick-btn--danger">Xóa sản phẩm</button>
                 </div>
               )}
             </div>
@@ -897,9 +1026,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
             {/* Thuộc tính */}
             <div className="add-prod-card">
               <div className="add-prod-card__title">Thuộc tính biến thể</div>
-              <p className="add-prod-vt__hint">
-                Thêm các thuộc tính (Size, Màu sắc...) để hệ thống tự tạo các biến thể sản phẩm.
-              </p>
+              <p className="add-prod-vt__hint">Thêm các thuộc tính (Size, Màu sắc...) để hệ thống tự tạo các biến thể sản phẩm.</p>
 
               {variantAttrs.map((attr) => (
                 <div className="add-prod-vt-attr" key={attr.tempId}>
@@ -914,11 +1041,22 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                         placeholder="VD: Size, Màu sắc, Chất liệu..."
                       />
                     </div>
-                    <button
-                      className="add-prod-vt-attr__del"
-                      onClick={() => removeAttr(attr.tempId)}
-                    >
-                      <Icon name="Trash" />
+                    <button className="add-prod-vt-attr__del" onClick={() => removeAttr(attr.tempId)}>
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                      </svg>
                     </button>
                   </div>
                   <div className="add-prod-vt-attr__values">
@@ -926,7 +1064,10 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                       <span className="add-prod-vt-tag" key={v}>
                         {v}
                         <button onClick={() => removeValue(attr.tempId, v)}>
-                          <Icon name="Close" />
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
                         </button>
                       </span>
                     ))}
@@ -935,11 +1076,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                         type="text"
                         value={attr.inputVal}
                         onChange={(e) =>
-                          setVariantAttrs((prev) =>
-                            prev.map((a) =>
-                              a.tempId === attr.tempId ? { ...a, inputVal: e.target.value } : a
-                            )
-                          )
+                          setVariantAttrs((prev) => prev.map((a) => (a.tempId === attr.tempId ? { ...a, inputVal: e.target.value } : a)))
                         }
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
@@ -958,7 +1095,11 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
               ))}
 
               <button className="add-prod-vt__add-btn" onClick={addAttr}>
-                <Icon name="Plus" /> Thêm thuộc tính
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>{" "}
+                Thêm thuộc tính
               </button>
             </div>
 
@@ -974,22 +1115,14 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                   const isFirst = idx === 0;
                   return (
                     <div className="add-prod-vt-combo-card" key={c.key}>
-                      {/* Header: Ảnh | Tên biến thể + badge | SKU */}
+                      {/* Header: Tên biến thể + badge | SKU */}
                       <div className="add-prod-vt-combo-card__header">
-                        {/* Cột ảnh */}
-                        <VariantImagePicker
-                          image={c.image}
-                          onChange={(url) => updateComboImage(c.key, url)}
-                        />
-
                         {/* Tên biến thể */}
                         <div className="add-prod-vt-combo-card__label-wrap">
                           <span className="add-prod-vt-combo">{c.label}</span>
                           {isFirst && (
                             <Tippy content="Thêm đơn vị-giá ở biến thể này sẽ tự áp dụng cho tất cả biến thể còn lại" placement="top">
-                              <span className="add-prod-vt-combo-card__first-badge">
-                                Biến thể gốc
-                              </span>
+                              <span className="add-prod-vt-combo-card__first-badge">Biến thể gốc</span>
                             </Tippy>
                           )}
                         </div>
@@ -1002,6 +1135,116 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                           onChange={(e) => updateComboSku(c.key, e.target.value)}
                           placeholder="Mã SKU..."
                         />
+
+                        {/* Barcode */}
+                        <div className="add-prod-vt-combo-card__barcode-wrap">
+                          <input
+                            className="add-prod-vt-combo-card__barcode"
+                            type="text"
+                            value={c.barcode}
+                            onChange={(e) => updateComboField(c.key, "barcode", e.target.value)}
+                            placeholder="Mã vạch..."
+                          />
+                          <Tippy content="Quét mã vạch bằng camera" placement="top">
+                            <button type="button" className="add-prod-scan-btn add-prod-scan-btn--icon" onClick={() => setScanningComboKey(c.key)}>
+                              <svg
+                                width="15"
+                                height="15"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+                                <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                                <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+                                <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+                                <line x1="7" y1="12" x2="17" y2="12" />
+                              </svg>
+                            </button>
+                          </Tippy>
+                          <Tippy content="Tự sinh mã EAN-13" placement="top">
+                            <button
+                              type="button"
+                              className="add-prod-scan-btn add-prod-scan-btn--gen"
+                              onClick={() => updateComboField(c.key, "barcode", generateEAN13())}
+                            >
+                              <svg
+                                width="15"
+                                height="15"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M15 4V2" />
+                                <path d="M15 16v-2" />
+                                <path d="M8 9h2" />
+                                <path d="M20 9h2" />
+                                <path d="M17.8 11.8L19 13" />
+                                <path d="M15 9h.01" />
+                                <path d="M17.8 6.2L19 5" />
+                                <path d="M3 21l9-9" />
+                                <path d="M12.2 6.2L11 5" />
+                              </svg>
+                            </button>
+                          </Tippy>
+                        </div>
+                      </div>
+
+                      {/* Ảnh biến thể */}
+                      <VariantImagePicker images={c.images} onChange={(urls) => updateComboImages(c.key, urls)} />
+
+                      {/* Đơn vị cơ bản */}
+                      <div className="add-prod-vt-unit-row">
+                        <Tippy
+                          content="Đơn vị tính mặc định của biến thể này (VD: Chiếc, Cái, Hộp...). Dùng làm đơn vị gốc khi bán lẻ."
+                          placement="top"
+                        >
+                          <label className="add-prod-vt-unit-row__label" style={{ cursor: "help" }}>
+                            Đơn vị cơ bản
+                          </label>
+                        </Tippy>
+                        <div className="add-prod-vt-unit-row__select">
+                          <SelectCustom
+                            id={`unitId-${c.key}`}
+                            name="unitId"
+                            value={c.unitId}
+                            options={listUnit}
+                            onChange={(e) => updateComboField(c.key, "unitId", e?.value ?? null)}
+                            onMenuOpen={loadUnits}
+                            placeholder="Chọn đơn vị..."
+                            isSearchable
+                            isClearable
+                          />
+                        </div>
+                      </div>
+
+                      {/* Giá biến thể */}
+                      <div className="add-prod-vt-combo-card__price-grid">
+                        {[
+                          { field: "price", label: "Giá bán" },
+                          { field: "costPrice", label: "Giá nhập" },
+                          { field: "priceWholesale", label: "Giá sỉ" },
+                          { field: "pricePromo", label: "Giá KM" },
+                        ].map(({ field, label }) => (
+                          <div className="add-prod-vt-price-col" key={field}>
+                            <label className="add-prod-vt-price-col__label">{label}</label>
+                            <div className="add-prod-vt-price">
+                              <span className="add-prod-vt-price__icon">₫</span>
+                              <NummericInput
+                                value={c[field as keyof VariantCombination] as string | number}
+                                onValueChange={(vals: any) => updateComboField(c.key, field as keyof VariantCombination, vals.floatValue ?? 0)}
+                                placeholder="0"
+                                thousandSeparator={true}
+                              />
+                            </div>
+                          </div>
+                        ))}
                       </div>
 
                       {/* Danh sách đơn vị-giá */}
@@ -1020,8 +1263,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                                   updateUnitPrice(c.key, up.tempId, "unitName", e?.label ?? "");
                                 }}
                                 onMenuOpen={async () => {
-                                  if (!listUnit.length)
-                                    setListUnit((await SelectOptionData("unit")) || []);
+                                  if (!listUnit.length) setListUnit((await SelectOptionData("unit")) || []);
                                 }}
                                 placeholder="Chọn đơn vị..."
                                 isClearable
@@ -1033,9 +1275,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                               <span className="add-prod-vt-price__icon">₫</span>
                               <NummericInput
                                 value={up.price}
-                                onValueChange={(vals: any) =>
-                                  updateUnitPrice(c.key, up.tempId, "price", vals.floatValue ?? 0)
-                                }
+                                onValueChange={(vals: any) => updateUnitPrice(c.key, up.tempId, "price", vals.floatValue ?? 0)}
                                 placeholder="0"
                                 thousandSeparator={true}
                               />
@@ -1049,7 +1289,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                                 disabled={c.unitPrices.length === 1}
                                 onClick={() => removeUnitPrice(c.key, up.tempId)}
                               >
-                                <Icon name="Trash" style={{ width: 14 }} />
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
                               </button>
                             </Tippy>
                           </div>
@@ -1057,11 +1297,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
                         {/* Nút thêm đơn vị */}
                         <Tippy
-                          content={
-                            isFirst
-                              ? "Sẽ tự động thêm hàng mới vào tất cả biến thể còn lại"
-                              : "Chỉ thêm vào biến thể này"
-                          }
+                          content={isFirst ? "Sẽ tự động thêm hàng mới vào tất cả biến thể còn lại" : "Chỉ thêm vào biến thể này"}
                           placement="top"
                         >
                           <button
@@ -1069,7 +1305,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                             className={`add-prod-vt-unit-add-btn${isFirst ? " add-prod-vt-unit-add-btn--sync" : ""}`}
                             onClick={() => addUnitPrice(c.key)}
                           >
-                            <Icon name="Plus" style={{ width: 13 }} />
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                             {isFirst ? "Thêm đơn vị bán (áp dụng tất cả)" : "Thêm đơn vị bán"}
                           </button>
                         </Tippy>
@@ -1082,7 +1318,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
             {variantAttrs.length === 0 && (
               <div className="add-prod-vt__empty">
-                <Icon name="Settings" />
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 <p>Chưa có thuộc tính nào.</p>
                 <p>Thêm thuộc tính như Size, Màu sắc để tạo biến thể.</p>
               </div>
@@ -1090,6 +1326,17 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           </div>
         )}
       </div>
+
+      {/* Barcode Scanner Modal */}
+      {scanningComboKey && (
+        <BarcodeScannerModal
+          onScan={(barcode) => {
+            updateComboField(scanningComboKey, "barcode", barcode);
+            setScanningComboKey(null);
+          }}
+          onClose={() => setScanningComboKey(null)}
+        />
+      )}
     </div>
   );
 }

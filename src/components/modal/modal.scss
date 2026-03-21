@@ -89,9 +89,9 @@
       text-overflow: ellipsis;
       overflow: hidden;
       width: calc(100% - 3rem);
-      font-weight: 700;
+      font-weight: var(--fw-bold);
       span {
-        font-weight: 400;
+        font-weight: var(--fw-regular);
       }
     }
     .btn-close {
@@ -132,5 +132,46 @@
         min-width: 12rem;
       }
     }
+  }
+}
+
+// ✅ Modal responsive additions
+.modal {
+  &-dialog {
+    // Mobile: full-width with small margin
+    @media (max-width: 575px) {
+      margin: 1.6rem;
+      max-width: calc(100% - 3.2rem);
+
+      &--xxl,
+      &--xl,
+      &--lg,
+      &--md { max-width: calc(100% - 3.2rem); }
+    }
+
+    // Tablet: still constrained
+    @media (max-width: 767px) and (min-width: 576px) {
+      margin: 2rem auto;
+      &--xxl { max-width: calc(100% - 4rem); }
+      &--xl  { max-width: calc(100% - 4rem); }
+    }
+
+    // Large desktop ≥ 1440px — modals have more breathing room
+    @media (min-width: 1440px) {
+      &--xxl { max-width: 1400px; }
+    }
+  }
+
+  &-header {
+    h5, h4, h3 {
+      font-size: var(--text-xl);    // ✅ 18px
+      font-weight: var(--fw-medium);
+      margin: 0;
+    }
+  }
+
+  &-body {
+    font-size: var(--text-base);    // ✅ 14px
+    line-height: var(--lh-relaxed);
   }
 }

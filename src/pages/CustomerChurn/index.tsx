@@ -1,4 +1,6 @@
 import React, { Fragment, useState } from "react";
+import Highcharts, { Options, TooltipFormatterContextObject } from "highcharts";
+import HighchartsReact from "highcharts-react-official";
 import Icon from "components/icon";
 import BoxTable from "components/boxTable/boxTable";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
@@ -75,60 +77,79 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, sub, icon, color, tre
   </div>
 );
 
-interface LineDataPoint {
-  m: string;
-  v: number;
-}
-
-const LineMini: React.FC<{ data: LineDataPoint[]; color?: string; height?: number }> = ({
-  data,
-  color = "#ef4444",
-  height = 130,
-}) => {
-  const vals = data.map((d) => d.v);
-  const max = Math.max(...vals);
-  const min = Math.min(...vals);
-  const range = max - min || 1;
-  const wPct = 100 / (data.length - 1);
-  const pts = data.map((d, i) => `${i * wPct},${100 - ((d.v - min) / range) * 78 - 11}`).join(" ");
-  const area = `0,100 ${pts} 100,100`;
-
-  return (
-    <div style={{ height }}>
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none" width="100%" height="100%">
-        <defs>
-          <linearGradient id="churnLineGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-            <stop offset="100%" stopColor={color} stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <polygon points={area} fill="url(#churnLineGrad)" />
-        <polyline points={pts} fill="none" stroke={color} strokeWidth="2.5" vectorEffect="non-scaling-stroke" />
-        {data.map((d, i) => {
-          const cx = i * wPct;
-          const cy = 100 - ((d.v - min) / range) * 78 - 11;
-          return (
-            <circle
-              key={i}
-              cx={cx}
-              cy={cy}
-              r="2.2"
-              fill="white"
-              stroke={color}
-              strokeWidth="1.5"
-              vectorEffect="non-scaling-stroke"
-            />
-          );
-        })}
-      </svg>
-      <div className="churn-chart-labels">
-        {data.map((d, i) => (
-          <span key={i}>{d.m}</span>
-        ))}
-      </div>
-    </div>
-  );
-};
+const buildChurnChartOptions = (): Options => ({
+  chart: {
+    type: "area",
+    backgroundColor: "transparent",
+    style: {
+      fontFamily: "'Segoe UI', Arial, sans-serif",
+    },
+    height: 160,
+    margin: [10, 10, 25, 10],
+  },
+  title: {
+    text: undefined,
+  },
+  xAxis: {
+    categories: churnMonthData.map((d) => d.m),
+    labels: {
+      style: { color: "#94a3b8", fontSize: "11px", fontWeight: "600" },
+    },
+    gridLineWidth: 0,
+    lineColor: "transparent",
+    tickColor: "transparent",
+  },
+  yAxis: {
+    visible: false,
+    min: 0,
+  },
+  legend: {
+    enabled: false,
+  },
+  tooltip: {
+    backgroundColor: "#1e293b",
+    borderRadius: 8,
+    borderWidth: 0,
+    padding: 10,
+    style: { color: "#ffffff", fontSize: "12px" },
+    formatter(this: TooltipFormatterContextObject): string {
+      return `<b>${this.x}</b><br/>Tỷ lệ rời bỏ: <b>${this.y}%</b>`;
+    },
+  },
+  plotOptions: {
+    area: {
+      lineWidth: 2.5,
+      marker: {
+        enabled: true,
+        radius: 4,
+        symbol: "circle",
+      },
+    },
+  },
+  series: [
+    {
+      type: "area",
+      name: "Tỷ lệ rời bỏ",
+      data: churnMonthData.map((d) => d.v),
+      color: "#ef4444",
+      fillColor: {
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 } as any,
+        stops: [
+          [0, "rgba(239, 68, 68, 0.3)"],
+          [1, "rgba(239, 68, 68, 0)"],
+        ],
+      },
+      marker: {
+        fillColor: "#ffffff",
+        lineWidth: 2,
+        lineColor: "#ef4444",
+      },
+    },
+  ],
+  credits: {
+    enabled: false,
+  },
+});
 
 export default function CustomerChurn(props: any) {
   document.title = "Khách hàng rời bỏ";
@@ -314,7 +335,9 @@ export default function CustomerChurn(props: any) {
         <div className="churn-side-panel">
           <div className="churn-chart-card">
             <h3 className="churn-chart-card__title">Tỷ lệ rời bỏ theo tháng (%)</h3>
-            <LineMini data={churnMonthData} color="#ef4444" height={130} />
+            <div style={{ margin: "0 -8px" }}>
+              <HighchartsReact highcharts={Highcharts} options={buildChurnChartOptions()} />
+            </div>
           </div>
 
           <div className="churn-suggestion-card">

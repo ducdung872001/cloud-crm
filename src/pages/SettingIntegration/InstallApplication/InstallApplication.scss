@@ -10,12 +10,12 @@
   
         h1 {
           color: var(--text-primary-color);
-          font-size: 2.4rem;
+          font-size: var(--text-3xl);
           line-height: 2.8rem;
           padding-right: 1rem;
           margin: 0;
-          font-weight: 700;
-          text-transform: uppercase;
+          font-weight: var(--fw-bold);
+          text-transform: none; // ✅ standardized
         }
   
         .title-first {
@@ -90,7 +90,7 @@
                   .status-pause,
                   .status-play {
                     padding: 0.2rem 0.6rem;
-                    border-radius: 0.5rem;
+                    border-radius: 0.3rem;
                     color: var(--white-color);
                     font-size: 1.3rem;
                   }

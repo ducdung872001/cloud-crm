@@ -1,15 +1,12 @@
-// @import "../../styles/variables";
-
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 .counter-sales {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: var(--paper);
-  font-family: "Outfit", sans-serif;
-  color: var(--ink);
-  font-size: 14px;
+  background: var(--background-color);
+  color: var(--text-primary-color);
+  font-size: var(--text-base);
 
   &__main {
     flex: 1;
@@ -32,57 +29,84 @@
     animation: screenFadeUp 0.2s ease;
 
     &--pos {
-      flex-direction: row;
+      flex-direction: row;  // ✅ side-by-side: product grid LEFT, cart RIGHT
     }
   }
 }
 
 @keyframes screenFadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
 }
 
-// ── Toast ──────────────────────────────────────────
 .toast {
   position: fixed;
-  top: 24px;
-  right: 24px;
-  background: var(--ink);
-  color: #fff;
-  padding: 12px 18px;
-  border-radius: 12px;
-  font-size: 13.5px;
-  font-weight: 700;
+  top: 2.4rem;
+  right: 2.4rem;
+  background: var(--extra-color);
+  color: var(--white-color);
+  padding: 1.2rem 1.8rem;
+  border-radius: 0.3rem;
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
   display: none;
   align-items: center;
-  gap: 8px;
+  gap: 0.8rem;
   z-index: 3000;
-  box-shadow: var(--sh3);
+  box-shadow: var(--box-shadow);
   animation: toastFadeDown 0.3s ease;
 
-  &--show {
-    display: flex;
-  }
+  &--show { display: flex; }
 }
 
 @keyframes toastFadeDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+// ✅ CounterSales Responsive
+@media (min-width: 1440px) {
+  .counter-sales {
+    .pg-grid { grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
   }
 }
 
-// ── Modal overlay shared base ───────────────────────
+@media (max-width: 1199px) {
+  .counter-sales {
+    &__screen--pos {
+      // On tablet, stack vertically or reduce cart width
+      .cart-panel { min-width: 28rem; }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .counter-sales {
+    &__screen--pos {
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .product-grid-wrap {
+      flex: 0 0 auto;
+      height: 55vh;
+    }
+    .cart-panel {
+      flex: 0 0 auto;
+      height: 45vh;
+      overflow-y: auto;
+    }
+  }
+}
+
+@media (max-width: 575px) {
+  .counter-sales {
+    &__screen--pos {
+      .product-grid-wrap { height: 52vh; }
+      .cart-panel { height: 48vh; }
+    }
+  }
+}
+
 .modal-overlay {
   display: none;
   position: fixed;
@@ -93,59 +117,5 @@
   justify-content: center;
   backdrop-filter: blur(3px);
 
-  &--open {
-    display: flex;
-  }
+  &--open { display: flex; }
 }
-
-// .modal {
-//   background: #fff;
-//   border-radius: 18px;
-//   max-height: 88vh;
-//   overflow-y: auto;
-//   box-shadow: var(--sh3);
-//   width: 520px;
-
-//   &__header {
-//     padding: 20px 22px 16px;
-//     border-bottom: 1px solid var(--border);
-//     display: flex;
-//     justify-content: space-between;
-//     align-items: center;
-
-//     h3 {
-//       font-size: 16px;
-//       font-weight: 800;
-//     }
-//   }
-
-//   &__body {
-//     padding: 20px 22px;
-//   }
-
-//   &__footer {
-//     padding: 14px 22px;
-//     border-top: 1px solid var(--border);
-//     display: flex;
-//     justify-content: flex-end;
-//     gap: 8px;
-//   }
-
-//   &__close {
-//     background: var(--paper);
-//     border: none;
-//     width: 30px;
-//     height: 30px;
-//     border-radius: 8px;
-//     cursor: pointer;
-//     font-size: 14px;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     transition: background 0.15s;
-
-//     &:hover {
-//       background: var(--border);
-//     }
-//   }
-// }

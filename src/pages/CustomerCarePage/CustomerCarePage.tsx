@@ -16,7 +16,6 @@ export default function CustomerCarePage() {
       title: "Tiếp nhận hỗ trợ",
       tab: 1,
       backgroundColor: "#E6F1FB",
-      strokeColor: "#185fa5",
       icon: "ReceiveTicketCSKH",
       des: "Tiếp nhận và xử lý yêu cầu hỗ trợ từ khách hàng qua nhiều kênh liên lạc"
     },
@@ -25,7 +24,6 @@ export default function CustomerCarePage() {
       title: "Lịch sử chăm sóc",
       tab: 2,
       backgroundColor: "#E1F5EE",
-      strokeColor: "#0f6e56",
       icon: "CareHistory",
       des: "Xem lại toàn bộ tương tác, cuộc gọi và lịch sử chăm sóc của từng khách hàng"
     },
@@ -33,7 +31,6 @@ export default function CustomerCarePage() {
       title: "Cuộc gọi CSKH",
       tab: 3,
       backgroundColor: "#FAEEDA",
-      strokeColor: "#854f0b",
       icon: "CallCenter",
       des: "Quản lý các cuộc gọi chăm sóc khách hàng, ghi chú và phân loại kết quả"
     },
@@ -41,7 +38,6 @@ export default function CustomerCarePage() {
       title: "Đánh giá khách hàng",
       tab: 4,
       backgroundColor: "#EAF3DE",
-      strokeColor: "#3b6d11",
       icon: "RateCustomer",
       des: "Thu thập và phân tích phản hồi, đánh giá mức độ hài lòng của khách hàng"
     },

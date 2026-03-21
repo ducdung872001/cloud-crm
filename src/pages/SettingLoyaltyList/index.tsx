@@ -20,6 +20,7 @@ import { IProgramRoyaltyResposne } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
 import moment from "moment";
 import { ICustomerRoyaltyListProps } from "@/model/loyalty/PropsModal";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
 export default function SettingLoyaltyList(props: ICustomerRoyaltyListProps) {
   document.title = "Quản lý chương trình khách hàng thân thiết";
@@ -188,27 +189,12 @@ export default function SettingLoyaltyList(props: ICustomerRoyaltyListProps) {
 
   return (
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
-      <div className="action-navigation">
-        <div className="action-backup">
-          <h1
-            onClick={() => {
-              onBackProps(true);
-            }}
-            className="title-first"
-            title="Quay lại"
-          > 
-           Cài đặt hệ thống tích điểm
-            </h1>
-          <Icon
-            name="ChevronRight"
-            onClick={() => {
-              onBackProps(true);
-            }}
-          />
-          <h1 className="title-last">Cài đặt chương trình khách hàng thân thiết</h1>
-        </div>
-        <TitleAction title="" titleActions={titleActions} />
-      </div>
+      <HeaderTabMenu
+        title="Chương trình khách hàng thân thiết"
+        titleBack="Khách hàng thành viên"
+        onBackProps={onBackProps}
+        titleActions={titleActions}
+      />
 
       <div className="card-box d-flex flex-column">
         <SearchBox

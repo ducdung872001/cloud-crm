@@ -2,27 +2,27 @@
   &__methods {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 0.8rem;
+    margin-bottom: 1.6rem;
     .pms__image {
-      width: 24px;
-      height: 24px;
+      width: 2.4rem;
+      height: 2.4rem;
       object-fit: contain;
     }
   }
 
   &__summary {
     background: var(--paper);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
+    border-radius: 0.3rem;
+    padding: 1.4rem 16px;
+    margin-bottom: 1.4rem;
   }
 
   &__summary-row {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
-    padding: 4px 0;
+    font-size: 1.3rem;
+    padding: 0.4rem 0;
 
     span:first-child {
       color: var(--muted);
@@ -32,11 +32,11 @@
     }
 
     &--total {
-      font-size: 16px;
+      font-size: 1.6rem;
       font-weight: 900;
       border-top: 1.5px dashed var(--border);
-      padding-top: 10px;
-      margin-top: 6px;
+      padding-top: 1rem;
+      margin-top: 0.6rem;
 
       span {
         font-weight: 900;
@@ -55,26 +55,26 @@
 
   // ── Cash ──
   &__field {
-    margin-bottom: 12px;
+    margin-bottom: 1.2rem;
 
     label {
       display: block;
-      font-size: 11px;
+      font-size: 1.1rem;
       font-weight: 700;
-      text-transform: uppercase;
+      text-transform: none; // ✅ standardized
       letter-spacing: 0.7px;
       color: var(--muted);
-      margin-bottom: 6px;
+      margin-bottom: 0.6rem;
     }
 
     input {
       width: 100%;
-      padding: 10px 12px;
+      padding: 1rem 12px;
       background: var(--paper);
       border: 1.5px solid var(--border);
-      border-radius: 9px;
-      font-family: "Outfit", sans-serif;
-      font-size: 18px;
+      border-radius: 0.9rem;
+      font-family: var(--font-base);
+      font-size: 1.8rem;
       font-weight: 800;
       color: var(--ink);
       outline: none;
@@ -89,18 +89,18 @@
 
   &__quick-btns {
     display: flex;
-    gap: 6px;
-    margin-top: 8px;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
   }
 
   &__quick-btn {
     flex: 1;
-    padding: 5px 0;
+    padding: 0.5rem 0;
     background: var(--paper);
     border: 1.5px solid var(--border);
-    border-radius: 7px;
-    font-family: "Outfit", sans-serif;
-    font-size: 12px;
+    border-radius: 0.7rem;
+    font-family: var(--font-base);
+    font-size: 1.2rem;
     font-weight: 700;
     cursor: pointer;
     color: var(--ink);
@@ -116,71 +116,71 @@
   &__change {
     background: var(--lime-l);
     border: 1.5px solid var(--lime);
-    border-radius: 10px;
-    padding: 10px 14px;
+    border-radius: 0.3rem;
+    padding: 1rem 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 
     span {
-      font-size: 13px;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--lime-d);
     }
   }
 
   &__change-val {
-    font-size: 22px !important;
+    font-size: 2.2rem !important;
     font-weight: 900 !important;
   }
 
   // ── QR ──
   &__qr-box {
     background: var(--ink);
-    border-radius: 14px;
-    padding: 20px;
+    border-radius: 1.4rem;
+    padding: 2rem;
     text-align: center;
   }
 
   &__qr-inner {
     background: #fff;
-    border-radius: 10px;
-    width: 140px;
-    height: 140px;
+    border-radius: 0.3rem;
+    width: 14rem;
+    height: 14rem;
     margin: 0 auto 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 48px;
+    font-size: 4.8rem;
   }
 
   &__qr-amount {
-    font-size: 24px;
+    font-size: 2.4rem;
     font-weight: 900;
     color: var(--lime);
   }
 
   &__qr-note {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.5);
-    margin-top: 4px;
+    margin-top: 0.4rem;
   }
 
   // ── Transfer ──
   &__transfer {
     background: var(--blue-l);
     border: 1.5px solid var(--blue);
-    border-radius: 12px;
-    padding: 14px 16px;
+    border-radius: 0.3rem;
+    padding: 1.4rem 16px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.8rem;
   }
 
   &__transfer-row {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
+    font-size: 1.3rem;
 
     span {
       color: var(--muted);
@@ -194,9 +194,9 @@
 
 // ── Pay method selector ───────────────────────────
 .pms {
-  padding: 14px 10px;
+  padding: 1.4rem 10px;
   border: 2px solid var(--border);
-  border-radius: 12px;
+  border-radius: 0.3rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.18s;
@@ -208,11 +208,11 @@
   }
 
   &__icon {
-    font-size: 24px;
-    margin-bottom: 6px;
+    font-size: 2.4rem;
+    margin-bottom: 0.6rem;
   }
   &__label {
-    font-size: 12.5px;
+    font-size: 1.2rem;
     font-weight: 700;
   }
 }

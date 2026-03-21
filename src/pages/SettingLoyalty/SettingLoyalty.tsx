@@ -27,11 +27,11 @@ export default function SettingLoyalty() {
       is_tab: "tab_two",
       des: "Quản lý các phần thưởng, quà tặng và voucher dùng để đổi điểm cho hội viên"
     },
-    {
-      title: "Cài đặt hạng hội viên",
-      is_tab: "tab_three",
-      des: "Định nghĩa các hạng thành viên, ngưỡng điểm thăng hạng và quyền lợi tương ứng"
-    },
+    // {
+    //   title: "Cài đặt hạng hội viên",
+    //   is_tab: "tab_three",
+    //   des: "Định nghĩa các hạng thành viên, ngưỡng điểm thăng hạng và quyền lợi tương ứng"
+    // },
   ];
 
   return (
@@ -42,7 +42,7 @@ export default function SettingLoyalty() {
           <TabMenuList
             listTab={listTab}
             onClick={(item) => {
-                setTab(item.tab);
+                setTab(item.is_tab);
                 setIsDetail(true);
             }}
           />

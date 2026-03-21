@@ -13,18 +13,20 @@ const prefixApplication = "/application";
 const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
 const prefixOperation = "https://reborn.vn/operation";
-const prefixNotification = "/notification";
+const prefixNotification = prefixBiz + "/notification";
 const prefixFinance = prefixBiz + "/finance";
 const prefixInventory = prefixBiz + "/inventory";
 const prefixWarehouse = prefixBiz + "/warehouse";
 const prefixCare = prefixBiz + "/care";
 const prefixBilling = prefixBiz + "/billing";
 const prefixLogistics = prefixBiz + "/logistics";
-
-console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
+const prefixIntegration = prefixBiz + "/integration";
 
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
+  dashboard: {
+    detail: prefixSales + "/invoice/dashboard",
+  },
   beautySalon: {
     list: prefixRebornVn + "/beautySalon/list",
     approve: prefixRebornVn + "/beautySalon/approve",
@@ -74,14 +76,14 @@ export const urlsApi = {
     fcmDevice: prefixNotification + "/fcmDevice/update",
   },
   notificationHistory: {
-    list: prefixNotification + "/notificationHistory/list",
-    update: prefixNotification + "/notificationHistory/update",
-    detail: prefixNotification + "/notificationHistory/get",
-    delete: prefixNotification + "/notificationHistory/delete",
+    list: prefixNotification + "/firebaseDeliveryHistory/list",
+    update: prefixNotification + "/firebaseDeliveryHistory/update",
+    detail: prefixNotification + "/firebaseDeliveryHistory/get",
+    delete: prefixNotification + "/firebaseDeliveryHistory/delete",
 
-    updateUnread: prefixNotification + "/notificationHistory/update/unread",
-    updateReadAll: prefixNotification + "/notificationHistory/update/readAll",
-    countUnread: prefixNotification + "/notificationHistory/count",
+    updateUnread: prefixNotification + "/firebaseDeliveryHistory/update/unread",
+    updateReadAll: prefixNotification + "/firebaseDeliveryHistory/update/readAll",
+    countUnread: prefixNotification + "/firebaseDeliveryHistory/count",
   },
 
   customer: {
@@ -402,10 +404,10 @@ export const urlsApi = {
     takeEstimate: prefixAdmin + "/customer/estimate",
   },
   invoice: {
-    createInvoice: prefixSales + "/invoiceDetail/get",
+    createInvoice: prefixSales + "/invoice/draft/create",
     list: prefixSales + "/invoice/list/v2",
     create: prefixSales + "/invoice/create",
-    invoiceDetail: prefixSales + "/invoiceDetail/import",
+    invoiceDetail: prefixSales + "/invoiceDetail/get",
     cardService: prefixSales + "/invoiceDetail/cardService",
     // Tạo hóa đơn bán hàng
     invoiceDetailCustomer: prefixSales + "/invoiceDetail/customer",
@@ -424,6 +426,30 @@ export const urlsApi = {
     // lấy mã hoá đơn
     invoiceCode: prefixSales + "/invoice/code",
     prefixSales,
+  },
+  // Hóa đơn VAT điện tử – tích hợp Viettel S-Invoice qua cloud-integration
+  sinvoice: {
+    previewDraft:      prefixIntegration + "/sinvoice/query/preview-draft",
+    createInvoice:     prefixIntegration + "/sinvoice/invoice/create",
+    sendEmailCustomer: prefixIntegration + "/sinvoice/ext/send-email-customer",
+    allTemplates:      prefixIntegration + "/sinvoice/ext/all-templates",
+    searchInvoices:    prefixIntegration + "/sinvoice/query/search",
+  },
+  returnInvoice: {
+    list: prefixSales + "/invoice/return-exchange/list",
+    detail: prefixSales + "/invoice/get",
+    getReturnItems: prefixSales + "/invoice/get/return",
+    createReturn: prefixSales + "/invoice/create/return",
+    createExchange: prefixSales + "/invoice/create/exchange",
+    variantListDetail: prefixInventory + "/productVariant/list-detail", // ← THÊM DÒNG NÀY
+    confirm: prefixSales + "/invoice/return/confirm",
+  },
+  invoiceImport: {
+    update: prefixInventory + "/invoice/import/update",
+    get: prefixInventory + "/invoice/import/get",
+    list: prefixInventory + "/invoice/import/list",
+    approve: prefixInventory + "/invoice/import/approve",
+    cancel: prefixInventory + "/invoice/import/cancel",
   },
   shipping: {
     create: prefixLogistics + "/shipment/create",
@@ -457,7 +483,7 @@ export const urlsApi = {
   product: {
     filterWarehouse: prefixWarehouse + "/product/in_warehouse",
     list: prefixInventory + "/product/list",
-    // list: prefixWarehouse + "/public/product/list",
+    topProduct: prefixSales + "/invoice/topProduct",
     detail: prefixInventory + "/product/get",
     update: prefixInventory + "/product/update",
     updateContent: prefixInventory + "/product/update/content",
@@ -530,16 +556,18 @@ export const urlsApi = {
   },
 
   productImport: {
+    list: prefixInventory + "/product_import/list",
     update: prefixInventory + "/product_import/update",
     detail: prefixInventory + "/product_import/detail",
     delete: prefixInventory + "/product_import/delete",
+    variantList: prefixInventory + "/productVariant/list",
   },
 
   inventory: {
     list: prefixInventory + "/inventory/list",
     update: prefixInventory + "/inventory/update",
     delete: prefixInventory + "/inventory/delete",
-    import: prefixInventory + "/inventory/import",
+    import: prefixInventory + "/warehouse/list",
     ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
     ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
   },
@@ -673,6 +701,9 @@ export const urlsApi = {
     list: prefixAdmin + "/timekeeping/list",
     update: prefixAdmin + "/timekeeping/update",
     delete: prefixAdmin + "/timekeeping/delete",
+  },
+  financeDashboard: {
+    full: prefixBilling + "/finance/dashboard",
   },
   cashbook: {
     list: prefixAdmin + "/cashbook/list",
@@ -2116,6 +2147,23 @@ export const urlsApi = {
     //* Danh sách lịch sử cuộc gọi
     customerCallList: prefixAdmin + "/customerCall/list",
   },
+  // Báo cáo tồn kho (inventory service)
+  inventoryReport: {
+    full:           prefixInventory + "/report/stock",              // gộp 1 lần
+    summary:        prefixInventory + "/report/stock/summary",      // 5 KPI card
+    movement:       prefixInventory + "/report/stock/movement",     // biến động nhập/xuất
+    health:         prefixInventory + "/report/stock/health",       // sức khỏe tồn kho
+    trend:          prefixInventory + "/report/stock/trend",        // xu hướng tồn cuối kỳ
+    warehousePerf:  prefixInventory + "/report/stock/warehouse-perf", // hiệu suất từng kho
+    productDetails: prefixInventory + "/report/stock/product-details", // chi tiết sản phẩm
+  },
+  // Báo cáo bán hàng (sales service)
+  salesReport: {
+    full:             prefixSales + "/report/sales",           // API 4 — gộp 1 lần (khuyến nghị)
+    summary:          prefixSales + "/report/summary",         // API 1 — chỉ 4 KPI card
+    dailySeries:      prefixSales + "/report/daily-series",    // API 2 — biểu đồ cột
+    channelBreakdown: prefixSales + "/report/channel-breakdown", // API 3 — bảng kênh bán
+  },
   // Báo cáo
   report: {
     // báo cáo doanh thu
@@ -3146,11 +3194,13 @@ export const urlsApi = {
 
 export const urls = {
   dashboard: "/dashboard",
+  notification: "/notification",
   manager_work: "/manager_work",
   //Lĩnh vực BĐS - Đầu mối liên hệ
   contact: "/contact",
   customer: "/customer",
   customer_list: "/customer_list",
+  supplier_list: "/supplier",
   customer_sms: "/customer_sms",
   customer_segment: "/customer_segment",
   detail_person: "/detail_person/customerId/:id?/:type",
@@ -3226,7 +3276,8 @@ export const urls = {
   // đường dẫn quản lý đơn vị vận chuyển
   shipping_parther: "/shipping_parther",
   // đường dẫn danh sách khách trả hàng
-  customer_pay: "/customer_pay",
+  // customer_pay: "/customer_pay",
+  return_invoice: "/return_invoice",
   // bán hàng đa kênh
   multi_channel_sales: "/multi_channel_sales",
   //tạo báo giá

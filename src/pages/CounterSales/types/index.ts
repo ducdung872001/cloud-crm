@@ -3,6 +3,7 @@ export interface CartItem {
   variantId: string;
   icon: string;
   avatar?: string;
+  image?: string;
   unitName?: string;
   name: string;
   priceLabel?: string;
@@ -40,7 +41,7 @@ export interface Order {
   code: string;
   source: "offline" | "shopee" | "tiktok" | "website";
   sourceLabel: string;
-  status: "pending" | "shipping" | "delivered" | "cancelled";
+  status: "pending" | "shipping" | "success" | "cancelled";
   statusLabel: string;
   time: string;
   customer: Customer;

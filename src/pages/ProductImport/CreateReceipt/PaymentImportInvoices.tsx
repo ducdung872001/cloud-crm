@@ -1,22 +1,18 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { PaymentImportInvoicesProps } from "model/invoice/PropsModel";
 import { IInvoiceCreateRequest } from "model/invoice/InvoiceRequestModel";
+import { IInvoiceCreateResponse } from "model/invoice/InvoiceResponse";
 import InvoiceService from "services/InvoiceService";
 import InventoryService from "services/InventoryService";
-import ProductImportService from "services/ProductImportService";
 import Icon from "components/icon";
 import Input from "components/input/input";
 import Button from "components/button/button";
-import RadioList from "components/radio/radioList";
 import NummericInput from "components/input/numericInput";
-import FileUpload from "components/fileUpload/fileUpload";
 import SelectCustom from "components/selectCustom/selectCustom";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { showToast } from "utils/common";
-import ShowInvoiceModal from "./partials/ShowInvoiceModal/ShowInvoiceModal";
 import "./PaymentImportInvoices.scss";
 
 interface IOptionInventory {
@@ -26,155 +22,154 @@ interface IOptionInventory {
   branchName: string;
 }
 
+const DEFAULT_FORM: IInvoiceCreateRequest = {
+  id: 0,
+  paymentType: 1,
+  invoiceType: "IV4",
+  amount: 0,
+  debt: 0,
+  discount: 0,
+  fee: 0,
+  paid: 0,
+  receiptDate: "",
+  vatAmount: 0,
+  inventoryId: null,
+};
+
+const getInvoiceFromResponse = (response: any): IInvoiceCreateResponse | null => {
+  const result = response?.result ?? response?.data ?? null;
+  if (!result) return null;
+  return (result.invoice ?? result) as IInvoiceCreateResponse;
+};
+
 export default function PaymentImportInvoices(props: PaymentImportInvoicesProps) {
-  const { data, listInvoiceDetail } = props;
+  const { data, listInvoiceDetail = [], onInvoiceCreated, onInvoiceApproved, onInventoryChanged } = props;
 
   const navigate = useNavigate();
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [showModalInvoice, setShowModalInvoice] = useState<boolean>(false);
-  const [idInvoice, setIdInvoice] = useState<number>(null);
-  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-
-  const [formData, setFormData] = useState<IInvoiceCreateRequest>(data);
-
-  //! đoạn này xử lý vấn đề validate
+  const [formData, setFormData] = useState<IInvoiceCreateRequest>(DEFAULT_FORM);
   const [validateReceiptDate, setValidateReceiptDate] = useState<boolean>(false);
-  const [validatePaid, setValidatePaid] = useState<boolean>(false);
   const [validateInventory, setValidateInventory] = useState<boolean>(false);
-
-  useEffect(() => {
-    setFormData({ ...formData, id: data?.id, amount: data?.amount });
-  }, [data]);
-
-  const [infoBranch, setInfoBranch] = useState({
-    branch: "",
-    address: "",
-  });
-
+  const [infoBranch, setInfoBranch] = useState({ branch: "", address: "" });
   const [listInventory, setListInventory] = useState<IOptionInventory[]>([]);
   const [isLoadingInventory, setIsLoadingInventory] = useState<boolean>(false);
+  const [isUpdatingInventory, setIsUpdatingInventory] = useState<boolean>(false);
 
-  //! đoạn này call api lấy ra thông tin kho hàng
+  const invoiceStatus = data?.status ?? 2;
+  const isCreated = !!data?.id;
+  const isPending = invoiceStatus === 2;
+  const hasLineItems = listInvoiceDetail.length > 0;
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      ...DEFAULT_FORM,
+      ...data,
+      id: data?.id ?? 0,
+      invoiceType: data?.invoiceType ?? "IV4",
+      receiptDate: data?.receiptDate ?? "",
+      inventoryId: data?.inventoryId ?? null,
+    }));
+  }, [data]);
+
+  const selectedInventory = useMemo(
+    () => listInventory.find((item) => item.value === formData?.inventoryId) ?? null,
+    [listInventory, formData?.inventoryId]
+  );
+
   const getListInventory = async () => {
-    if (!listInventory || listInventory.length === 0) {
-      setIsLoadingInventory(true);
+    if (listInventory.length > 0) return;
 
-      const response = await InventoryService.import();
+    setIsLoadingInventory(true);
+    const response = await InventoryService.import();
 
-      if (response.code === 0) {
-        const dataOption = response.result || [];
-
-        setListInventory([
-          ...(dataOption.length > 0
-            ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                  address: item.address,
-                  branchName: item.branchName,
-                };
-              })
-            : []),
-        ]);
-      }
-
-      setIsLoadingInventory(false);
+    if (response.code === 0) {
+      const dataOption = Array.isArray(response.result)
+        ? response.result
+        : Array.isArray(response.result?.items)
+          ? response.result.items
+          : [];
+      setListInventory(
+        dataOption.map((item) => ({
+          value: item.id,
+          label: item.name,
+          address: item.address ?? "",
+          branchName: item.branchName ?? item.name ?? "",
+        }))
+      );
+    } else {
+      showToast(response.message ?? "Không lấy được danh sách kho", "error");
     }
+
+    setIsLoadingInventory(false);
   };
 
   useEffect(() => {
-    if (data?.inventoryId) {
+    if (formData?.inventoryId) {
       getListInventory();
     }
-  }, [data]);
+  }, [formData?.inventoryId]);
 
-  //! đoạn này xử lý vấn đề thay đổi kho hàng
+  useEffect(() => {
+    if (!selectedInventory) {
+      setInfoBranch({ branch: "", address: "" });
+      return;
+    }
+
+    setInfoBranch({
+      address: selectedInventory.address,
+      branch: selectedInventory.branchName,
+    });
+  }, [selectedInventory]);
+
   const handleChangeValueInventory = (e) => {
+    const nextInventoryId = e?.value ?? null;
+    const previousInventoryId = formData?.inventoryId ?? null;
+
     setValidateInventory(false);
-    setFormData({ ...formData, inventoryId: e.value });
-    setInfoBranch({ address: e.address, branch: e.branchName });
+    setFormData((prev) => ({ ...prev, inventoryId: nextInventoryId }));
+    onInventoryChanged?.(nextInventoryId);
+
+    if (!data?.id || !isPending || nextInventoryId == null || nextInventoryId === previousInventoryId) {
+      return;
+    }
+
+    const updateInventory = async () => {
+      setIsUpdatingInventory(true);
+      const response = await InvoiceService.importUpdate({
+        id: data.id,
+        inventoryId: nextInventoryId,
+      });
+      const invoice = getInvoiceFromResponse(response);
+
+      if (response.code === 0) {
+        showToast("Cập nhật kho hàng thành công", "success");
+        onInvoiceCreated?.({
+          ...(data as IInvoiceCreateResponse),
+          ...(invoice ?? {}),
+          id: invoice?.id ?? data.id,
+          inventoryId: invoice?.inventoryId ?? nextInventoryId,
+        });
+      } else {
+        setFormData((prev) => ({ ...prev, inventoryId: previousInventoryId }));
+        onInventoryChanged?.(previousInventoryId);
+        showToast(response.message ?? "Cập nhật kho hàng thất bại", "error");
+      }
+
+      setIsUpdatingInventory(false);
+    };
+
+    updateInventory();
   };
 
-  //! đoạn này xử lý vấn đề thay đổi ngày nhập hàng
   const handleChangeValueReceiptDate = (e) => {
     setValidateReceiptDate(false);
-
     const newReceiptDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
-
     setFormData({ ...formData, receiptDate: newReceiptDate });
   };
 
-  //! đoạn này xử lý vấn đề thay đổi số tiền đã trả
-  const handleChangeValuePaid = (e) => {
-    oninput = () => {
-      setValidatePaid(false);
-    };
-
-    setFormData({ ...formData, paid: +e.value });
-  };
-
-  //! đoạn này validate số tiền đã trả
-  const handleBlurValuePaid = (e) => {
-    const value = formData?.paid;
-
-    if (Math.abs(formData?.fee) < value) {
-      setValidatePaid(true);
-    }
-  };
-
-  //! đoạn này xử lý tính toán lại dữ liệu số tiền phải trả và đã trả khi có tổng tiền
-  useEffect(() => {
-    if (formData?.discount > 0) {
-      const recalculation = formData?.amount - formData?.discount;
-      setFormData({ ...formData, fee: recalculation, paid: recalculation });
-    }
-
-    if (formData?.discount === 0 || isNaN(formData?.discount) == true) {
-      const totalAmount = formData?.amount;
-      setFormData({ ...formData, fee: totalAmount, paid: totalAmount });
-    }
-
-    if (formData?.amount < formData?.discount) {
-      setFormData({ ...formData, fee: 0, paid: 0, debt: 0 });
-    }
-
-    if (formData?.amount - formData?.discount == 0) {
-      setFormData({ ...formData, fee: 0, paid: 0, debt: 0 });
-    }
-  }, [formData?.discount, formData?.amount]);
-
-  //! đoạn này tính toán lại số tiền đã trả
-  useEffect(() => {
-    if (formData?.paid > 0) {
-      const recalculation = formData?.fee - formData?.paid;
-      setFormData({ ...formData, debt: recalculation });
-    }
-
-    if (formData?.paid == 0 || isNaN(formData?.paid) == true) {
-      const totalFee = formData?.fee;
-      setFormData({ ...formData, debt: totalFee });
-    }
-
-    if (Math.abs(formData?.fee) < formData?.paid) {
-      setFormData({ ...formData, debt: 0 });
-    }
-  }, [formData?.paid, formData?.fee]);
-
-  //! đoạn này tính toán lại công nợ
-  useEffect(() => {
-    if (formData?.debt > 0) {
-      const recalculation = formData?.fee - formData?.debt;
-      setFormData({ ...formData, paid: recalculation });
-    }
-
-    if (formData?.debt > formData?.fee) {
-      setFormData({ ...formData, paid: 0 });
-    }
-  }, [formData?.fee, formData?.debt]);
-
-  const onSubmit = async (e) => {
+  const handleCreateInvoice = async (e) => {
     e.preventDefault();
 
     if (formData?.inventoryId == null) {
@@ -182,109 +177,62 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       return;
     }
 
-    if (formData?.receiptDate == "") {
+    if (!formData?.receiptDate) {
       setValidateReceiptDate(true);
       return;
     }
 
     setIsSubmit(true);
 
-    const body: IInvoiceCreateRequest = {
-      ...(formData as IInvoiceCreateRequest),
-      ...(data ? { id: data.id } : {}),
+    const body = {
+      ...(formData?.id ? { id: formData.id } : {}),
+      invoiceType: "IV4",
+      inventoryId: formData.inventoryId,
+      receiptDate: moment(formData.receiptDate).format("YYYY-MM-DDTHH:mm:ss"),
     };
 
-    const response = await InvoiceService.create(body);
+    const response = await InvoiceService.importUpdate(body);
+    const invoice = getInvoiceFromResponse(response);
 
-    if (response.code === 0) {
-      showToast("Nhập hàng thành công", "success");
-      setIdInvoice(response.result?.id);
-      setShowModalInvoice(true);
+    if (response.code === 0 && invoice?.id) {
+      showToast(formData?.id ? "Cập nhật phiếu nhập thành công" : "Tạo phiếu nhập thành công", "success");
+      onInvoiceCreated?.(invoice);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-      setShowModalInvoice(false);
     }
 
     setIsSubmit(false);
   };
 
-  const showDialogConfirmCancel = () => {
-    const contentDialog: IContentDialog = {
-      color: "warning",
-      className: "dialog-cancel",
-      isCentered: true,
-      isLoading: false,
-      title: <Fragment>Lưu tạm hóa đơn nhập hàng</Fragment>,
-      message: <Fragment>Bạn có chắc chắn muốn lưu tạm hóa đơn nhập hàng? Thao tác này không thể khôi phục.</Fragment>,
-      cancelText: "Quay lại",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Xác nhận",
-      defaultAction: () => {
-        showToast("Lưu tạm hóa đơn thành công", "success");
-        navigate("/invoice_order");
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-    };
-    setContentDialog(contentDialog);
-    setShowDialog(true);
-  };
+  const handleApproveInvoice = async () => {
+    if (!data?.id) {
+      showToast("Phiếu nhập chưa được tạo", "warning");
+      return;
+    }
 
-  const showDialogConfirmDelete = () => {
-    const contentDialog: IContentDialog = {
-      color: "error",
-      className: "dialog-delete",
-      isCentered: true,
-      isLoading: false,
-      title: <Fragment>Hủy hóa đơn nhập hàng</Fragment>,
-      message: <Fragment>Bạn có chắc chắn muốn hủy hóa đơn nhập hàng? Thao tác này không thể khôi phục.</Fragment>,
-      cancelText: "Quay lại",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Xác nhận",
-      defaultAction: () => {
-        handleDeleteInvoice();
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-    };
-    setContentDialog(contentDialog);
-    setShowDialog(true);
-  };
+    if (!hasLineItems) {
+      showToast("Phiếu nhập phải có ít nhất 1 dòng hàng trước khi duyệt", "warning");
+      return;
+    }
 
-  const handleDeleteInvoice = () => {
-    const arrPromise = [];
+    setIsSubmit(true);
+    const response = await InvoiceService.importApprove(data.id);
 
-    listInvoiceDetail.map((item) => {
-      const promise = new Promise((resolve, reject) => {
-        ProductImportService.delete(item?.id).then((res) => {
-          resolve(res);
-        });
-      });
+    if (response.code === 0) {
+      showToast("Duyệt phiếu nhập thành công", "success");
+      onInvoiceApproved?.({ ...(data as IInvoiceCreateResponse), status: 1 });
+    } else {
+      showToast(response.message ?? "Duyệt phiếu nhập thất bại", "error");
+    }
 
-      arrPromise.push(promise);
-    });
-
-    Promise.all(arrPromise).then((result) => {
-      if (result.length > 0) {
-        showToast("Hủy hóa đơn thành công", "success");
-        navigate("/invoice_order");
-      } else {
-        showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-      }
-    });
+    setIsSubmit(false);
   };
 
   return (
     <div className="payment__import--invoice">
       <div className="card-box">
         <label className="label-title">Thông tin phiếu nhập kho</label>
-        <form className="form__payment__import--invoice" onSubmit={(e) => onSubmit(e)}>
+        <form className="form__payment__import--invoice" onSubmit={handleCreateInvoice}>
           <div className="list-form-group">
             <div className="form-group">
               <SelectCustom
@@ -300,6 +248,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
                 isLoading={isLoadingInventory}
                 error={validateInventory}
                 message="Vui lòng chọn kho hàng"
+                isDisabled={isUpdatingInventory || (isCreated && !isPending)}
               />
             </div>
 
@@ -322,167 +271,81 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
                 required={true}
                 iconPosition="left"
                 icon={<Icon name="Calendar" />}
-                disabled={formData?.amount == 0}
                 isMaxDate={true}
                 error={validateReceiptDate}
                 message="Vui lòng chọn ngày nhập hàng"
+                disabled={isUpdatingInventory || (isCreated && !isPending)}
               />
             </div>
 
             <div className="form-group">
-              <NummericInput
-                label="Tổng tiền"
-                name="amount"
+              <NummericInput label="Tổng tiền" name="amount" fill={true} required={true} value={data?.amount} disabled={true} thousandSeparator={true} />
+            </div>
+
+            <div className="form-group">
+              <Input
                 fill={true}
-                required={true}
-                value={formData?.amount}
                 disabled={true}
-                thousandSeparator={true}
+                label="Trạng thái"
+                value={invoiceStatus === 1 ? "Đã hoàn thành" : invoiceStatus === 3 ? "Đã hủy" : "Chờ duyệt"}
+                placeholder="Trạng thái phiếu nhập"
               />
             </div>
 
             <div className="form-group">
-              <NummericInput
-                label="Được giảm giá"
-                name="discount"
+              <Input
                 fill={true}
-                value={formData?.discount}
-                disabled={formData?.amount === 0}
-                thousandSeparator={true}
-                onValueChange={(e) => setFormData({ ...formData, discount: +e.value })}
-                error={formData?.amount < formData?.discount}
-                message="Số tiền được giảm giá phải nhỏ hơn tổng tiền"
-              />
-            </div>
-
-            <div className="form-group">
-              <NummericInput
-                label="Số tiền phải trả"
-                name="fee"
-                fill={true}
-                required={true}
-                value={formData?.fee}
                 disabled={true}
-                thousandSeparator={true}
-              />
-            </div>
-
-            <div className="form-group">
-              <NummericInput
-                label="Số tiền đã trả"
-                name="paid"
-                fill={true}
-                required={true}
-                value={formData?.paid}
-                disabled={formData?.amount === 0 || formData?.amount - formData?.discount === 0}
-                thousandSeparator={true}
-                onValueChange={(e) => handleChangeValuePaid(e)}
-                error={validatePaid}
-                message="Số tiền đã trả nhỏ hơn số tiền phải trả"
-                onBlur={(e) => handleBlurValuePaid(e)}
-              />
-            </div>
-
-            <div className="form-group">
-              <NummericInput
-                label="Công nợ"
-                name="debt"
-                fill={true}
-                value={formData?.debt}
-                disabled={formData?.amount === 0 || formData?.amount - formData?.discount === 0}
-                onValueChange={(e) => setFormData({ ...formData, debt: +e.value })}
-                thousandSeparator={true}
-                error={formData?.debt > formData?.fee}
-                message="Công nợ nhỏ hơn hoặc bằng với số tiền đã trả"
-              />
-            </div>
-
-            <div className="form-group">
-              <RadioList
-                name="paymentType"
-                title="Kiểu thanh toán"
-                options={[
-                  {
-                    value: 1,
-                    label: "Tiền mặt",
-                  },
-                  {
-                    value: 2,
-                    label: "Chuyển khoản",
-                  },
-                ]}
-                value={formData?.paymentType}
-                onChange={(e) => setFormData({ ...formData, paymentType: +e.target.value })}
+                label="Mã phiếu"
+                value={data?.invoiceCode || (data?.id ? `#${data.id}` : "")}
+                placeholder="Chưa tạo phiếu nhập"
               />
             </div>
           </div>
-          {formData?.paymentType == 2 && (
-            <div className="form-group">
-              <FileUpload type="avatar" label="Ảnh chứng từ" formData={formData} setFormData={setFormData} />
-            </div>
-          )}
+
           <div className="action__import--order">
             <div className="side__action">
-              {data?.amount === 0 ? (
-                <Button
-                  color="primary"
-                  variant="outline"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate("/invoice_order");
-                  }}
-                >
-                  Quay lại
-                </Button>
-              ) : (
-                <Fragment>
-                  <Button
-                    color="destroy"
-                    variant="outline"
-                    disabled={isSubmit}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      showDialogConfirmDelete();
-                    }}
-                  >
-                    Hủy đơn
-                  </Button>
-                  <Button
-                    color="warning"
-                    variant="outline"
-                    disabled={isSubmit}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      showDialogConfirmCancel();
-                    }}
-                  >
-                    Lưu tạm
-                  </Button>
-                </Fragment>
-              )}
+              <Button
+                color="primary"
+                variant="outline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/invoice_order");
+                }}
+              >
+                Quay lại
+              </Button>
             </div>
 
-            <Button
-              type="submit"
-              color="primary"
-              disabled={
-                isSubmit ||
-                formData?.amount === 0 ||
-                validateReceiptDate ||
-                validatePaid ||
-                validateInventory ||
-                formData?.amount < formData?.discount ||
-                formData?.debt > formData?.fee
-              }
-            >
-              Tạo đơn nhập
-              {isSubmit ? <Icon name="Loading" /> : null}
-            </Button>
+            {isPending ? (
+              <>
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="outline"
+                  disabled={isSubmit || isUpdatingInventory}
+                >
+                  {isCreated ? "Cập nhật phiếu nhập" : "Tạo phiếu nhập"}
+                  {isSubmit ? <Icon name="Loading" /> : null}
+                </Button>
+                <Button
+                  type="button"
+                  color="primary"
+                  disabled={isSubmit || isUpdatingInventory || !isCreated || !hasLineItems}
+                  onClick={handleApproveInvoice}
+                >
+                  Duyệt phiếu nhập
+                  {isSubmit ? <Icon name="Loading" /> : null}
+                </Button>
+              </>
+            ) : (
+              <Button type="button" color="primary" disabled={true}>
+                Phiếu đã hoàn thành
+              </Button>
+            )}
           </div>
         </form>
       </div>
-      <ShowInvoiceModal onShow={showModalInvoice} idInvoice={idInvoice} />
-      <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );
 }

@@ -1,26 +1,26 @@
 .customer-modal {
   &__search {
     position: relative;
-    margin-bottom: 12px;
+    margin-bottom: 1.2rem;
     display: flex;
     align-items: center;
 
     span {
       position: absolute;
-      left: 11px;
-      font-size: 14px;
+      left: 1.1rem;
+      font-size: 1.4rem;
       color: var(--muted2);
       pointer-events: none;
     }
 
     input {
       width: 100%;
-      padding: 9px 12px 9px 36px;
+      padding: 0.9rem 12px 9px 36px;
       background: var(--paper);
       border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-family: "Outfit", sans-serif;
-      font-size: 13.5px;
+      border-radius: 0.3rem;
+      font-family: var(--font-base);
+      font-size: 1.4rem;
       color: var(--ink);
       outline: none;
       transition: border-color 0.2s;
@@ -36,17 +36,17 @@
   &__list {
     display: flex;
     flex-direction: column;
-    gap: 7px;
-    max-height: 320px;
+    gap: 0.7rem;
+    max-height: 32rem;
     overflow-y: auto;
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
   }
 
   &__empty {
     text-align: center;
-    padding: 24px;
+    padding: 2.4rem;
     color: var(--muted2);
-    font-size: 13px;
+    font-size: 1.3rem;
   }
 
   &__add-btn {
@@ -59,11 +59,11 @@
 .cust-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 11px 12px;
+  gap: 1rem;
+  padding: 1.1rem 12px;
   background: var(--paper);
   border: 1.5px solid var(--border);
-  border-radius: 10px;
+  border-radius: 0.3rem;
   cursor: pointer;
   transition: all 0.15s;
 
@@ -78,15 +78,15 @@
   }
 
   &__av {
-    width: 34px;
-    height: 34px;
-    border-radius: 9px;
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 0.9rem;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    font-size: 15px;
+    font-size: 1.5rem;
     flex-shrink: 0;
   }
 
@@ -97,21 +97,21 @@
 
   &__name {
     font-weight: 800;
-    font-size: 13.5px;
+    font-size: 1.4rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   &__sub {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: var(--muted);
     margin-top: 1px;
   }
 
   &__check {
     color: var(--blue);
-    font-size: 16px;
+    font-size: 1.6rem;
     font-weight: 800;
     flex-shrink: 0;
   }

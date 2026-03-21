@@ -18,7 +18,7 @@
 
         .mat-menu__item-title {
           font-weight: 600;
-          color: var(--primary-color, #2563eb);
+          color: var(--primary-color);
         }
       }
 
@@ -31,7 +31,7 @@
         justify-content: center;
         background: var(--background-color, #f1f5f9);
         border-radius: 0.8rem;
-        color: var(--primary-color, #2563eb);
+        color: var(--primary-color);
 
         svg {
           width: 2rem;

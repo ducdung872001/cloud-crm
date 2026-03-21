@@ -40,7 +40,7 @@ const formatCurrencyHighlight = (v: number) => v.toLocaleString("vi-VN") + "đ";
 interface Props {
   onDataChanged?: () => void;
   onGoToExport?: () => void;
-  onOpenDetail?: () => void;
+  onOpenDetail?: (item: IInvoiceVATResponse) => void;
 }
 
 export default function InvoiceVATList({ onDataChanged, onGoToExport, onOpenDetail }: Props) {
@@ -275,6 +275,7 @@ export default function InvoiceVATList({ onDataChanged, onGoToExport, onOpenDeta
                       <>
                         <button className="btn-action-sm">PDF</button>
                         <button className="btn-action-sm">Email</button>
+                        <button className="btn-action-sm" onClick={() => onOpenDetail?.(item)}>Xem</button>
                       </>
                     )}
                   </td>

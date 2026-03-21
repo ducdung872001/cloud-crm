@@ -1,25 +1,30 @@
 .variant-modal {
-  //   width: 480px; // Chỉ cần bỏ đi là modal sẽ tự nhảy vào giữa màn hình
+  //   width: 48rem; // Chỉ cần bỏ đi là modal sẽ tự nhảy vào giữa màn hình
 
   // ── Product info ───────────────────────────────
   &__product {
     display: flex;
-    gap: 14px;
+    gap: 1.4rem;
     align-items: flex-start;
-    margin-bottom: 16px;
+    margin-bottom: 1.6rem;
   }
 
   &__product-icon {
-    width: 64px;
-    height: 64px;
+    width: 6.4rem;
+    height: 6.4rem;
     background: var(--paper);
-    border-radius: 12px;
+    border-radius: 0.3rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
+    font-size: 3.2rem;
     flex-shrink: 0;
     border: 1.5px solid var(--border);
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   }
 
   &__product-info {
@@ -28,27 +33,27 @@
   }
 
   &__product-name {
-    font-size: 16px;
+    font-size: 1.6rem;
     font-weight: 800;
-    margin-bottom: 6px;
+    margin-bottom: 0.6rem;
     line-height: 1.3;
   }
 
   &__price {
-    font-size: 22px;
+    font-size: 2.2rem;
     font-weight: 900;
     color: var(--lime-d);
-    margin-bottom: 4px;
+    margin-bottom: 0.4rem;
 
     &--placeholder {
-      font-size: 13px;
+      font-size: 1.3rem;
       font-weight: 500;
       color: var(--muted2);
     }
   }
 
   &__stock {
-    font-size: 12px;
+    font-size: 1.2rem;
     font-weight: 600;
     color: var(--lime-d);
     margin-bottom: 2px;
@@ -62,8 +67,8 @@
   }
 
   &__sku {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 11px;
+    font-family: var(--font-base);
+    font-size: 1.1rem;
     color: var(--muted2);
     margin-top: 2px;
   }
@@ -71,12 +76,12 @@
   &__divider {
     height: 1px;
     background: var(--border);
-    margin: 14px 0;
+    margin: 1.4rem 0;
   }
 
   // ── Variant groups ─────────────────────────────
   &__group {
-    margin-bottom: 14px;
+    margin-bottom: 1.4rem;
 
     &:last-of-type {
       margin-bottom: 0;
@@ -84,10 +89,10 @@
   }
 
   &__group-label {
-    font-size: 13px;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--ink);
-    margin-bottom: 8px;
+    margin-bottom: 0.8rem;
   }
 
   &__group-selected {
@@ -98,21 +103,21 @@
   &__options {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 0.8rem;
   }
 
   // ── Quantity ───────────────────────────────────
   &__qty-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 1.2rem;
   }
 
   &__qty-label {
-    font-size: 13px;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--ink);
-    min-width: 70px;
+    min-width: 7rem;
   }
 
   &__qty {
@@ -120,12 +125,12 @@
     align-items: center;
     gap: 0;
     border: 1.5px solid var(--border);
-    border-radius: 9px;
+    border-radius: 0.9rem;
     overflow: hidden;
   }
 
   &__qty-max {
-    font-size: 12px;
+    font-size: 1.2rem;
     color: var(--muted2);
     font-weight: 600;
   }
@@ -135,21 +140,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 14px;
-    padding: 12px 14px;
+    margin-top: 1.4rem;
+    padding: 1.2rem 14px;
     background: var(--lime-l);
     border: 1.5px solid var(--lime);
-    border-radius: 10px;
+    border-radius: 0.3rem;
 
     span:first-child {
-      font-size: 13px;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--lime-d);
     }
   }
 
   &__total-val {
-    font-size: 22px;
+    font-size: 2.2rem;
     font-weight: 900;
     color: var(--lime-d);
   }
@@ -157,12 +162,12 @@
 
 // ── Variant option button ──────────────────────────
 .variant-opt {
-  padding: 7px 16px;
-  border-radius: 8px;
+  padding: 0.7rem 16px;
+  border-radius: 0.3rem;
   border: 1.5px solid var(--border);
   background: var(--white);
-  font-family: "Outfit", sans-serif;
-  font-size: 13px;
+  font-family: var(--font-base);
+  font-size: 1.3rem;
   font-weight: 600;
   color: var(--ink);
   cursor: pointer;
@@ -191,7 +196,7 @@
   &__slash {
     position: absolute;
     inset: 0;
-    border-radius: 7px;
+    border-radius: 0.7rem;
     overflow: hidden;
     pointer-events: none;
 
@@ -211,12 +216,12 @@
 
 // ── Qty buttons & input ────────────────────────────
 .vqb {
-  width: 36px;
-  height: 36px;
+  width: 3.6rem;
+  height: 3.6rem;
   border: none;
   background: var(--paper);
-  font-family: "Outfit", sans-serif;
-  font-size: 18px;
+  font-family: var(--font-base);
+  font-size: 1.8rem;
   font-weight: 700;
   color: var(--ink);
   cursor: pointer;
@@ -235,14 +240,14 @@
 }
 
 .vqi {
-  width: 52px;
-  height: 36px;
+  width: 5.2rem;
+  height: 3.6rem;
   text-align: center;
   border: none;
   border-left: 1.5px solid var(--border);
   border-right: 1.5px solid var(--border);
-  font-family: "Outfit", sans-serif;
-  font-size: 15px;
+  font-family: var(--font-base);
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--ink);
   background: var(--white);

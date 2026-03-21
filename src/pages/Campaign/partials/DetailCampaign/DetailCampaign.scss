@@ -55,7 +55,7 @@
 
       .item_button{
         border: 0.5px solid  var(--extra-color-20);
-        border-radius: 10px;
+        border-radius: 0.3rem;
         padding: 0.5rem 1rem 0.5rem 1rem ;
         cursor: pointer;
         width: 80px;
@@ -235,7 +235,7 @@
 
             .item-history {
               background-color: var(--extra-color-10);
-              border-radius: 0.5rem;
+              border-radius: 0.3rem;
               display: flex;
               justify-content: space-between;
               overflow: hidden;

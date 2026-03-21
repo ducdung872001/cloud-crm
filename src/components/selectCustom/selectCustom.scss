@@ -261,11 +261,12 @@
       div[class*="-control"] {
         padding: 0.3rem 0 0.3rem 1.2rem;
         border: 1px solid var(--border-color);
-        border-radius: 0.5rem;
+        border-radius: 0.3rem;
         color: var(--text-primary-color);
         width: 100%;
         background: transparent;
         box-shadow: var(--box-shadow-input);
+        min-height: 3.6rem;   // ✅ align với button/input height
       }
     }
 

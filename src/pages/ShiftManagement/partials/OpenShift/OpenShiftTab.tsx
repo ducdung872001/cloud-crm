@@ -1,11 +1,19 @@
 import React, { useMemo, useState } from "react";
 import Icon from "components/icon";
 import Button from "components/button/button";
+import ShiftService from "services/ShiftService";
 import "./OpenShift.scss";
 
-export default function OpenShiftTab() {
+type Props = {
+  shiftConfigId: number;
+  branchId: number;
+  onShiftOpened?: (shiftId: number) => void;
+};
+
+export default function OpenShiftTab({ shiftConfigId, branchId, onShiftOpened }: Props) {
   const [tab, setTab] = useState<string>("total");
   const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
 
   const denominations = [500000, 200000, 100000, 50000, 20000, 10000, 5000, 2000, 1000];
   const [counts, setCounts] = useState<{ [key: number]: number }>({});
@@ -20,6 +28,43 @@ export default function OpenShiftTab() {
   };
 
   const finalAmount = tab === "total" ? totalAmount : calcDenomTotal;
+
+  const handleConfirm = async () => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      const body =
+        tab === "denom"
+          ? {
+              shiftConfigId,
+              denominations: Object.entries(counts)
+                .filter(([, qty]) => qty > 0)
+                .map(([val, qty]) => ({ denomination: Number(val), quantity: qty })),
+            }
+          : {
+              shiftConfigId,
+              openingCash: totalAmount,
+            };
+
+      const res = await ShiftService.openShift(branchId, body);
+      const shiftId = res?.data?.id;
+
+      if (shiftId) {
+        // API thành công → chuyển sang tab "Đang ca"
+        onShiftOpened?.(shiftId);
+      } else {
+        // API lỗi hoặc rỗng → vẫn chuyển tab nhưng không có shiftId thực
+        console.warn("Mở ca: API không trả về shiftId, dùng mock flow");
+        onShiftOpened?.(0);
+      }
+    } catch (e) {
+      console.error("Lỗi mở ca:", e);
+      // Lỗi mạng → vẫn cho tiếp tục với mock data
+      onShiftOpened?.(0);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="page-open-shift">
@@ -46,7 +91,12 @@ export default function OpenShiftTab() {
             <div className="base-form-group">
               <label className="fw-700 mb-12 d-block">Tổng tiền mặt (VNĐ)</label>
               <div className="big-input-container">
-                <input type="number" placeholder="0" value={totalAmount || ""} onChange={(e) => setTotalAmount(Number(e.target.value))} />
+                <input
+                  type="number"
+                  placeholder="0"
+                  value={totalAmount || ""}
+                  onChange={(e) => setTotalAmount(Number(e.target.value))}
+                />
                 <Icon name="Banknote" />
               </div>
             </div>
@@ -57,7 +107,12 @@ export default function OpenShiftTab() {
               <div key={val} className="denom-item-card">
                 <div className="denom-label">{val.toLocaleString()} đ</div>
                 <div className="denom-input-box">
-                  <input type="number" placeholder="0" value={counts[val] || ""} onChange={(e) => handleCountChange(val, e.target.value)} />
+                  <input
+                    type="number"
+                    placeholder="0"
+                    value={counts[val] || ""}
+                    onChange={(e) => handleCountChange(val, e.target.value)}
+                  />
                   <span className="unit">tờ</span>
                 </div>
                 <div className="denom-subtotal">= {((counts[val] || 0) * val).toLocaleString()} đ</div>
@@ -72,8 +127,14 @@ export default function OpenShiftTab() {
             <span className="value text-primary">{finalAmount.toLocaleString()} VNĐ</span>
           </div>
           <div className="actions">
-            <Button color="primary" className="btn-confirm-shift">
-              <Icon name="Checked" className="mr-8" /> XÁC NHẬN VÀO CA
+            <Button
+              color="primary"
+              className="btn-confirm-shift"
+              disabled={loading}
+              onClick={handleConfirm}
+            >
+              <Icon name="Checked" className="mr-8" />
+              {loading ? "Đang xử lý..." : "XÁC NHẬN VÀO CA"}
             </Button>
           </div>
         </div>

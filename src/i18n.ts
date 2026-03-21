@@ -10,7 +10,7 @@ i18n.use(initReactI18next).init({
         },
         sidebar: {
           dashboard: "Dashboard",
-
+          notification: "Notification",
           personal: "Personal",
           // đoạn này là children của personal
           internalMail: "Internal mail",
@@ -256,7 +256,7 @@ i18n.use(initReactI18next).init({
         },
         sidebar: {
           dashboard: "Bảng điều khiển",
-
+          notification: "Thông báo",
           personal: "Cá nhân",
           // đoạn này là children của cá nhân
           internalMail: "Thư nội bộ",
@@ -278,7 +278,8 @@ i18n.use(initReactI18next).init({
           teacher: "Giáo viên",
           // đoạn này là children của khách hàng
           customerProfile: "Hồ sơ khách hàng",
-          customerList: "Khách hàng & NCC",
+          customerList: "Khách hàng",
+          supplierList: "Nhà cung cấp",
           partnerProfile: "Nhà cung cấp",
           customerSegments: "Phân khúc & Nhãn",
           customerAnalysis: "Phân tích khách hàng",

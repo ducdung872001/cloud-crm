@@ -4,6 +4,12 @@ import { IProductFilterRequest, IProductRequest } from "model/product/ProductReq
 
 export default {
   // ── API cũ (adminapi) ──
+  topProduct: (signal?: AbortSignal) => {
+    return fetch(`${urlsApi.product.topProduct}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
   filterWarehouse: (params: any, signal?: AbortSignal) => {
     return fetch(`${urlsApi.product.filterWarehouse}${convertParamsToString(params)}`, {
       signal,
@@ -176,7 +182,14 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  wUpdatePrice: (body: { id: number; unitId?: number; priceRetail?: number; priceWholesale?: number; pricePromotion?: number; costPrice?: number }) => {
+  wUpdatePrice: (body: {
+    id: number;
+    unitId?: number;
+    priceRetail?: number;
+    priceWholesale?: number;
+    pricePromotion?: number;
+    costPrice?: number;
+  }) => {
     return fetch(urlsApi.product.wUpdatePrice, {
       method: "POST",
       body: JSON.stringify(body),

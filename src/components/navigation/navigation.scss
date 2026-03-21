@@ -5,9 +5,9 @@
       gap: 1.2rem;
       color: var(--white-color);
       text-decoration: none;
-      transition: all 0.5s ease-in-out;
+      transition: background 0.25s ease, color 0.25s ease;
       cursor: pointer;
-      font-size: 1.6rem;
+      font-size: var(--text-base);   // ✅ 14px — trước là 1.6rem (16px)
       position: relative;
       svg {
         width: 2.4rem;

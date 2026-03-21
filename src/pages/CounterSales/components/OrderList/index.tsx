@@ -34,11 +34,11 @@ const ORDERS: Order[] = [
     code: "#DH-20231021-0040",
     source: "tiktok",
     sourceLabel: "🎵 TikTok Shop",
-    status: "delivered",
-    statusLabel: "✅ Đã giao",
+    status: "success",
+    statusLabel: "✅ Hoàn thành",
     time: "20/10 · 16:10",
     customer: { id: "3", name: "Lê Thị Minh", initial: "L", phone: "0978 654 321", points: 1200, tier: "Bạc", color: "#d97706" },
-    items: "2 sản phẩm · Đã thanh toán QR · Đã giao 20/10",
+    items: "2 sản phẩm · Đã thanh toán QR · Hoàn thành 20/10",
     total: 89000,
   },
   {
@@ -60,28 +60,27 @@ const STATUS_FILTERS = [
   { id: "all", label: "Tất cả", count: 42 },
   { id: "pending", label: "⏳ Chờ xử lý", count: 8 },
   { id: "shipping", label: "🚚 Đang giao", count: 12 },
-  { id: "delivered", label: "✅ Đã giao", count: 18 },
+  { id: "success", label: "✅ Hoàn thành", count: 18 },
   { id: "cancelled", label: "❌ Đã hủy", count: 4 },
 ];
 
 const STATUS_BADGE_CLASS: Record<string, string> = {
   pending: "bd-orange",
   shipping: "bd-blue",
-  delivered: "bd-lime",
+  success: "bd-lime",
   cancelled: "bd-red",
 };
 
 interface OrderListProps {
-  onViewDetail: () => void;
-  onViewReceipt: () => void;
-  onConfirm: () => void;
+  onViewDetail: (invoiceId: number | null) => void;
+  onViewReceipt: (invoiceId: number | null) => void;
+  onConfirm: (invoiceId: number | null) => void;
   listOrder?: Order[];
 }
 
 const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onConfirm, listOrder = ORDERS }) => {
   const [activeFilter, setActiveFilter] = useState("all");
   const navigate = useNavigate();
-  console.log("listOrder", listOrder);
 
   const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
 
@@ -97,7 +96,7 @@ const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onCo
           <option>Tất cả trạng thái</option>
           <option>Chờ xử lý</option>
           <option>Đang giao</option>
-          <option>Đã giao</option>
+          <option>Hoàn thành</option>
           <option>Đã hủy</option>
         </select>
         <select className="ff">
@@ -128,7 +127,11 @@ const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onCo
       {/* Order cards */}
       <div className="ol-wrap">
         {listOrder.map((order) => (
-          <div key={order.id} className={`order-card${order.status === "cancelled" ? " order-card--cancelled" : ""}`} onClick={onViewDetail}>
+          <div
+            key={order.id}
+            className={`order-card${order.status === "cancelled" ? " order-card--cancelled" : ""}`}
+            onClick={() => onViewDetail(Number(order.id))}
+          >
             <div className="order-card__top">
               <span className="oc-id">{order.code}</span>
               <div className="order-card__meta">
@@ -155,18 +158,18 @@ const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onCo
                     className="btn btn--xs btn--outline"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onViewReceipt();
+                      onViewReceipt(Number(order.id));
                     }}
                   >
                     🧾 Biên lai
                   </button>
                 )}
-                {order.status !== "cancelled" && (
+                {order.status === "pending" && (
                   <button
                     className="btn btn--xs btn--outline"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/add_shipping?invoiceId=${order.id}`);
+                      navigate(`/add_shipping?invoiceId=${Number(order.id)}`);
                     }}
                   >
                     <Icon name="Send" /> Tạo đơn vận chuyển
@@ -179,7 +182,7 @@ const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onCo
                       className="btn btn--xs btn--confirm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        onConfirm();
+                        onConfirm(Number(order.id));
                       }}
                     >
                       ✅ Xác nhận
@@ -187,10 +190,12 @@ const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onCo
                   </>
                 )}
                 {order.status === "shipping" && <button className="btn btn--xs btn--outline">📍 Theo dõi vận chuyển</button>}
-                {order.status === "delivered" && <button className="btn btn--xs btn--outline">📩 Gửi HĐ điện tử</button>}
+                {order.status === "success" && <button className="btn btn--xs btn--outline">📩 Gửi HĐ điện tử</button>}
                 {order.status === "cancelled" && (
                   <>
-                    <button className="btn btn--xs btn--outline">Xem chi tiết</button>
+                    <button className="btn btn--xs btn--outline" onClick={() => onViewDetail(Number(order.id))}>
+                      Xem chi tiết
+                    </button>
                     <button className="btn btn--xs btn--outline">↩️ Tái tạo đơn</button>
                   </>
                 )}

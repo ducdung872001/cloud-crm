@@ -5,11 +5,9 @@ import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IProductFilterRequest } from "model/product/ProductRequestModel";
 import { AddProductImportModalProps } from "model/invoice/PropsModel";
 import { IInvoiceDetailRequest } from "model/invoice/InvoiceRequestModel";
-import { IUnitFilterRequest } from "model/unit/UnitRequestModel";
 import { IInfoExpiryDateProductionDate } from "model/warehouse/WarehouseRequestModel";
 import ProductImportService from "services/ProductImportService";
 import ProductService from "services/ProductService";
-import UnitService from "services/UnitService";
 import WarehouseService from "services/WarehouseService";
 import Icon from "components/icon";
 import SelectCustom from "components/selectCustom/selectCustom";
@@ -22,32 +20,36 @@ import { showToast } from "utils/common";
 import { useDebounce } from "utils/hookCustom";
 import ImageThirdGender from "assets/images/third-gender.png";
 import { isDifferenceObj } from "reborn-util";
+import { urlsApi } from "configs/urls";
 import "./AddProductImportModal.scss";
 import moment from "moment";
 
-interface IOptionData {
-  value: string;
-  label: string;
-  unitId?: number;
-  exchange?: number;
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface IVariantOption {
+  value: number;          // variantId
+  label: string;          // "Intel i7 · 16GB · 512GB SSD"
+  sku: string;
+  unitId: number;
+  unitName: string;
+  quantity: number;       // tồn kho hiện tại
 }
 
-const mergeUnitOptions = (...sources: Array<IOptionData[] | undefined>) => {
-  const map = new Map<string, IOptionData>();
+interface IProductOption {
+  value: number;
+  label: string;
+  avatar?: string;
+}
 
-  sources.flat().filter(Boolean).forEach((item) => {
-    const key = String(item.value);
-    if (!map.has(key)) {
-      map.set(key, {
-        ...item,
-        value: key,
-        exchange: item.exchange ?? 1,
-      });
-    }
-  });
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
-  return Array.from(map.values());
+/** Gộp selectedOptions thành chuỗi "Màu đỏ · Size L · 16GB" */
+const buildVariantLabel = (selectedOptions: Array<{ optionName?: string; value?: string }> = []): string => {
+  const parts = selectedOptions.map((o) => o.value).filter(Boolean);
+  return parts.length > 0 ? parts.join(" · ") : "Mặc định";
 };
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export default function AddProductImportModal(props: AddProductImportModalProps) {
   const { onShow, onHide, data, invoiceId } = props;
@@ -58,379 +60,422 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  const [dataProduct, setDataProduct] = useState(null);
-  const [idProduct, setIdProduct] = useState(null);
-  const [listUnitProduct, setListUnitProduct] = useState<IOptionData[]>([]);
+  // ── Bước 1: chọn sản phẩm ─────────────────────────────────────────────────
+  const [selectedProduct, setSelectedProduct] = useState<IProductOption | null>(null);
+
+  // ── Bước 2: chọn biến thể ─────────────────────────────────────────────────
+  const [variantOptions, setVariantOptions] = useState<IVariantOption[]>([]);
+  const [selectedVariant, setSelectedVariant] = useState<IVariantOption | null>(null);
+  const [isLoadingVariants, setIsLoadingVariants] = useState(false);
+
+  // ── Validate checks ────────────────────────────────────────────────────────
+  const [checkFieldProduct, setCheckFieldProduct] = useState<boolean>(false);
+  const [checkFieldVariant, setCheckFieldVariant] = useState<boolean>(false);
 
   const [valueBatchNo, setValueBatchNo] = useState<string>(null);
   const queryDebounce = useDebounce(valueBatchNo, 500);
 
-  //! validate
-  const [checkFieldProduct, setCheckFieldProduct] = useState<boolean>(false);
-  const [checkFieldUnit, setCheckFieldUnit] = useState<boolean>(false);
-
-  const loadedOptionProduct = async (search, loadedOptions, { page }) => {
-    const param: IProductFilterRequest = {
-      name: search,
-      page: page,
-      limit: 10,
-    };
-
+  // ── Async load sản phẩm (giữ nguyên pattern cũ) ───────────────────────────
+  const loadedOptionProduct = async (search: string, _loadedOptions: any, { page }: { page: number }) => {
+    const param: IProductFilterRequest = { name: search, page, limit: 10 };
     const response = await ProductService.list(param);
 
     if (response.code === 0) {
-      const dataOption = response.result.items || [];
-
+      const items = response.result.items || [];
       return {
-        options: [
-          ...(dataOption.length > 0
-            ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                  avatar: item.avatar,
-                };
-              })
-            : []),
-        ],
+        options: items.map((item: any) => ({
+          value: item.id,
+          label: item.name,
+          avatar: item.avatar,
+        })),
         hasMore: response.result.loadMoreAble,
-        additional: {
-          page: page + 1,
-        },
+        additional: { page: page + 1 },
       };
     }
-
     return { options: [], hasMore: false };
   };
 
-  //! đoạn này xử lý vấn đề hiển thị hình ảnh sản phẩm
-  const formatOptionLabelProduct = ({ label, avatar }) => {
-    return (
-      <div className="selected--item">
-        <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
-        </div>
-        {label}
+  const formatOptionLabelProduct = ({ label, avatar }: { label: string; avatar?: string }) => (
+    <div className="selected--item">
+      <div className="avatar">
+        <img src={avatar || ImageThirdGender} alt={label} />
       </div>
-    );
+      {label}
+    </div>
+  );
+
+  // ── Load biến thể khi chọn sản phẩm ──────────────────────────────────────
+  const loadVariants = async (productId: number) => {
+    setIsLoadingVariants(true);
+    setVariantOptions([]);
+    setSelectedVariant(null);
+
+    try {
+      const res = await fetch(
+        `${urlsApi.productImport.variantList}?productId=${productId}&limit=50&page=1`,
+        { method: "GET" }
+      ).then((r) => r.json());
+
+      if (res.code === 0) {
+        const items: any[] = res.result?.items ?? res.result ?? [];
+        console.log("variant sample:", items[0]); 
+
+        const opts: IVariantOption[] = items.map((v) => ({
+          value: v.id,
+          label: buildVariantLabel(v.selectedOptions ?? v.optionValues ?? []),
+          sku: v.sku ?? "",
+          unitId: v.baseUnit?? v.unitId ?? 0,
+          unitName: v.baseUnitName ?? v.unitName ?? "",
+          quantity: v.quantity ?? 0,
+        }));
+        setVariantOptions(opts);
+
+        // Edit mode: tự chọn lại variant cũ
+        if (data?.variantId) {
+          const found = opts.find((o) => o.value === data.variantId);
+          if (found) applyVariant(found);
+        }
+        // Nếu chỉ có 1 variant → auto-select
+        else if (opts.length === 1) {
+          applyVariant(opts[0]);
+        }
+      }
+    } catch (_) {
+      showToast("Không tải được danh sách biến thể", "error");
+    } finally {
+      setIsLoadingVariants(false);
+    }
   };
 
-  //! đoạn này xử lý thay đổi sản phẩm
-  const handleChangeValueProduct = (e) => {
-    setDataProduct(e);
-    setIdProduct(e.value);
-    setListUnitProduct([]);
+  /** Áp dụng variant được chọn → tự fill unitId */
+  const applyVariant = (variant: IVariantOption) => {
+    setSelectedVariant(variant);
+    setCheckFieldVariant(false);
+    setFormData((prev) => ({
+      ...prev,
+      values: {
+        ...prev.values,
+        variantId: variant.value,
+        unitId: variant.unitId,
+      },
+    }));
+  };
+
+  const handleChangeProduct = (e: IProductOption) => {
+    setSelectedProduct(e);
     setCheckFieldProduct(false);
-    setCheckFieldUnit(false);
-    setFormData({ ...formData, values: { ...formData?.values, productId: e.value, unitId: null } });
+    setCheckFieldVariant(false);
+    setSelectedVariant(null);
+    setVariantOptions([]);
+    setFormData((prev) => ({
+      ...prev,
+      values: { ...prev.values, productId: e.value, variantId: undefined, unitId: null },
+    }));
+    loadVariants(e.value);
   };
 
-  const getUnitOptions = async () => {
-    const params: IUnitFilterRequest = {
-      limit: 100,
-      page: 1,
-    };
-
-    const response = await UnitService.list(params);
-
-    if (response.code === 0) {
-      const result = response.result?.items ?? response.result ?? [];
-
-      return result.map((item) => ({
-        value: String(item.id),
-        label: item.name,
-        exchange: 1,
-      })) as IOptionData[];
-    }
-
-    return [];
-  };
-
-  //! đoạn này xử lý vấn đề update sản phẩm
-  const getDetailProduct = async () => {
-    const response = await ProductService.detail(data?.productId);
-
-    if (response.code === 0) {
-      const result = response.result;
-
-      setDataProduct({ value: result.id, label: result.name, avatar: result.avatar });
-
-      const dataOtherUnits = JSON.parse(result.otherUnits ? result.otherUnits : "[]");
-      const unitOptions = await getUnitOptions();
-      onSelectOpenUnit(result, dataOtherUnits, unitOptions);
-    }
-  };
-
+  // ── Tự load lại khi edit ──────────────────────────────────────────────────
   useEffect(() => {
-    if (data?.productId) {
-      getDetailProduct();
-    }
+    if (!data?.productId) return;
+
+    ProductService.detail(data.productId).then((res) => {
+      if (res.code === 0) {
+        const r = res.result;
+        setSelectedProduct({ value: r.id, label: r.name, avatar: r.avatar });
+        loadVariants(r.id);
+      }
+    });
   }, [data?.productId]);
 
-  //! Từ idProduct xử lý lấy ra đơn vị sản phẩm tương ứng
-  const onSelectOpenUnit = (productDetail: any, dataOtherUnits: any[] = [], unitOptions: IOptionData[] = []) => {
-    const primaryUnit = productDetail?.unitId
-      ? [
-          {
-            value: String(productDetail.unitId),
-            label: productDetail.unitName,
-            exchange: productDetail.exchange ?? 1,
-          },
-        ]
-      : [];
-
-    const productUnits = dataOtherUnits.map((item) => {
-      return { value: String(item.unitId), label: item.unitName, exchange: item.exchange };
-    });
-
-    setListUnitProduct(mergeUnitOptions(primaryUnit, productUnits, unitOptions));
-  };
-
-  const detailProduct = async () => {
-    const response = await ProductService.detail(idProduct);
-
-    if (response.code === 0) {
+  // ── Auto-fill ngày từ batch no ────────────────────────────────────────────
+  const checkInputBatchNo = async () => {
+    if (!formData?.values?.productId || !formData?.values?.batchNo) return;
+    const param: IInfoExpiryDateProductionDate = {
+      productId: formData.values.productId,
+      batchNo: formData.values.batchNo,
+    };
+    const response = await WarehouseService.infoExpiryDateProductionDate(param);
+    if (response?.code === 0) {
       const result = response.result;
-      const dataOtherUnits = JSON.parse(result.otherUnits ? result.otherUnits : "[]");
-      const unitOptions = await getUnitOptions();
-      onSelectOpenUnit(result, dataOtherUnits, unitOptions);
+      setFormData((prev) => ({
+        ...prev,
+        values: { ...prev.values, mfgDate: result?.mfgDate, expiryDate: result?.expiryDate },
+      }));
     }
   };
 
   useEffect(() => {
-    if (idProduct) {
-      detailProduct();
+    if (selectedProduct?.value && queryDebounce) {
+      checkInputBatchNo();
     }
-  }, [idProduct]);
+  }, [selectedProduct?.value, queryDebounce]);
 
-  const handleChangeValueUnit = (e) => {
-    setCheckFieldUnit(false);
-    setFormData({ ...formData, values: { ...formData?.values, unitId: e.value } });
-  };
-
+  // ── Form values ───────────────────────────────────────────────────────────
   const values = useMemo(
     () =>
-      ({
-        customerId: -1,
-        invoiceId: invoiceId,
-        productId: data?.productId ?? null,
-        batchNo: data?.batchNo ?? "",
-        unitId: data?.unitId ?? null,
-        exchange: data?.exchange ?? 1,
-        mfgDate: data?.mfgDate ?? "",
-        expiryDate: data?.expiryDate ?? "",
-        quantity: data?.quantity?.toString() ?? "",
-        mainCost: data?.mainCost?.toString() ?? "",
-      } as IInvoiceDetailRequest),
+    ({
+      customerId: -1,
+      invoiceId: invoiceId,
+      productId: data?.productId ?? null,
+      variantId: data?.variantId ?? null,
+      batchNo: data?.batchNo ?? "",
+      unitId: data?.unitId ?? null,
+      exchange: data?.exchange ?? 1,
+      mfgDate: data?.mfgDate ?? "",
+      expiryDate: data?.expiryDate ?? "",
+      quantity: data?.quantity?.toString() ?? "",
+      mainCost: data?.mainCost?.toString() ?? "",
+      discount: (data as any)?.discount?.toString() ?? "0",
+    } as IInvoiceDetailRequest & { discount?: string }),
     [data, onShow, invoiceId]
   );
 
   const validations: IValidation[] = [
-    {
-      name: "batchNo",
-      rules: "required",
-    },
-    {
-      name: "expiryDate",
-      rules: "required",
-    },
-    {
-      name: "quantity",
-      rules: "required|min:0",
-    },
-    {
-      name: "mainCost",
-      rules: "required",
-    },
+    { name: "batchNo", rules: "required" },
+    { name: "expiryDate", rules: "required" },
+    { name: "quantity", rules: "required|min:0" },
+    { name: "mainCost", rules: "required" },
   ];
 
-  const [formData, setFormData] = useState<IFormData>({
-    values: values,
-  });
-
-  //! đoạn này xử lý vấn đề kiểm tra xem số lô có trong sản phẩm chưa để fill ra ngày sản xuất và ngày hết hạn
-  const checkInputBatchNo = async () => {
-    const param: IInfoExpiryDateProductionDate = {
-      productId: formData?.values?.productId,
-      batchNo: formData?.values?.batchNo,
-    };
-
-    const response = await WarehouseService.infoExpiryDateProductionDate(param);
-
-    if (response && response.code === 0) {
-      const result = response.result;
-
-      setFormData({ ...formData, values: { ...formData?.values, mfgDate: result?.mfgDate, expiryDate: result?.expiryDate } });
-    }
-  };
+  const [formData, setFormData] = useState<IFormData>({ values });
 
   useEffect(() => {
-    if (dataProduct?.value && queryDebounce) {
-      //! đoạn này bh nghĩ cách tối ưu vì mỗi 1 lần gõ call api 1 lần không nhất thiết
-      checkInputBatchNo();
-    }
-  }, [dataProduct?.value, queryDebounce]);
-
-  const listField = useMemo(
-    () =>
-      [
-        {
-          type: "custom",
-          name: "productId",
-          snippet: (
-            <SelectCustom
-              fill={true}
-              id="productId"
-              name="productId"
-              label="Sản phẩm"
-              options={[]}
-              required={true}
-              isAsyncPaginate={true}
-              isFormatOptionLabel={true}
-              placeholder="Chọn sản phẩm"
-              additional={{
-                page: 1,
-              }}
-              value={dataProduct}
-              onChange={(e) => handleChangeValueProduct(e)}
-              loadOptionsPaginate={loadedOptionProduct}
-              formatOptionLabel={formatOptionLabelProduct}
-              error={checkFieldProduct}
-              message="Sản phẩm không được bỏ trống"
-            />
-          ),
-        },
-        {
-          label: "Số lô",
-          name: "batchNo",
-          type: "text",
-          fill: true,
-          required: true,
-          onChange: (e) => setValueBatchNo(e.target.value),
-        },
-        {
-          type: "custom",
-          name: "unitId",
-          snippet: (
-            <SelectCustom
-              fill={true}
-              id="unitId"
-              name="unitId"
-              label="Đơn vị tính"
-              options={listUnitProduct}
-              required={true}
-              value={formData?.values?.unitId}
-              error={checkFieldUnit}
-              placeholder="Chọn đơn vị tính"
-              message="Đơn vị tính không được bỏ trống"
-              onChange={(e) => handleChangeValueUnit(e)}
-            />
-          ),
-        },
-        {
-          label: "Ngày sản xuất",
-          name: "mfgDate",
-          type: "date",
-          fill: true,
-          isMaxDate: true,
-          placeholder: "Chọn ngày sản xuất",
-          icon: <Icon name="Calendar" />,
-          iconPosition: "left",
-        },
-        {
-          label: "Ngày hết hạn",
-          name: "expiryDate",
-          type: "date",
-          fill: true,
-          required: true,
-          isMinDate: true,
-          placeholder: "Chọn ngày hết hạn",
-          icon: <Icon name="Calendar" />,
-          iconPosition: "left",
-        },
-        {
-          label: "Số lượng",
-          name: "quantity",
-          type: "number",
-          fill: true,
-          required: true,
-        },
-        {
-          label: "Giá nhập",
-          name: "mainCost",
-          type: "number",
-          fill: true,
-          required: true,
-        },
-      ] as IFieldCustomize[],
-    [dataProduct, listUnitProduct, formData?.values, checkFieldProduct, checkFieldUnit]
-  );
-
-  useEffect(() => {
-    setFormData({ ...formData, values: values, errors: {} });
+    setFormData({ values, errors: {} });
     setIsSubmit(false);
-
-    return () => {
-      setIsSubmit(false);
-    };
+    return () => setIsSubmit(false);
   }, [values]);
 
-  const onSubmit = async (e) => {
+  // ── Field list ────────────────────────────────────────────────────────────
+  const listField = useMemo<IFieldCustomize[]>(
+    () => [
+      // ── Bước 1: Chọn sản phẩm ──
+      {
+        type: "custom",
+        name: "productId",
+        label: "Sản phẩm",
+        snippet: (
+          <SelectCustom
+            fill={true}
+            id="productId"
+            name="productId"
+            label="Sản phẩm"
+            options={[]}
+            required={true}
+            isAsyncPaginate={true}
+            isFormatOptionLabel={true}
+            placeholder="Tìm theo tên sản phẩm..."
+            additional={{ page: 1 }}
+            value={selectedProduct}
+            onChange={(e) => handleChangeProduct(e)}
+            loadOptionsPaginate={loadedOptionProduct}
+            formatOptionLabel={formatOptionLabelProduct}
+            error={checkFieldProduct}
+            message="Sản phẩm không được bỏ trống"
+          />
+        ),
+      },
+
+      // ── Bước 2: Chọn biến thể ──
+      {
+        type: "custom",
+        name: "variantId",
+        label: "Biến thể",
+        col: 12,
+        snippet: (
+          <SelectCustom
+            fill={true}
+            id="variantId"
+            name="variantId"
+            label="Biến thể"
+            required={true}
+            options={variantOptions.map((v) => ({
+              value: v.value,
+              label: v.label,
+              sku: v.sku,
+              quantity: v.quantity,
+              unitName: v.unitName,
+            }))}
+            isFormatOptionLabel={true}
+            formatOptionLabel={(opt: any) => (
+              <div className="selected--item variant-option-item">
+                <div className="variant-option-main">
+                  <span>{opt.label}</span>
+                  {opt.sku && (
+                    <span className="variant-option-sku">{opt.sku}</span>
+                  )}
+                </div>
+                <span className="variant-option-stock">
+                  Tồn: {opt.quantity ?? 0} {opt.unitName}
+                </span>
+              </div>
+            )}
+            value={selectedVariant?.value ?? null}
+            placeholder={
+              !selectedProduct
+                ? "Chọn sản phẩm trước"
+                : isLoadingVariants
+                  ? "Đang tải biến thể..."
+                  : variantOptions.length === 0
+                    ? "Sản phẩm không có biến thể"
+                    : "Chọn biến thể"
+            }
+            disabled={!selectedProduct || isLoadingVariants || variantOptions.length === 0}
+            onChange={(e: any) => {
+              const found = variantOptions.find((v) => v.value === e.value);
+              if (found) applyVariant(found);
+            }}
+            error={checkFieldVariant}
+            message="Biến thể không được bỏ trống"
+          />
+        ),
+      },
+
+      // ── Thông tin lô hàng ──
+      {
+        label: "Số lô",
+        name: "batchNo",
+        type: "text",
+        fill: true,
+        required: true,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setValueBatchNo(e.target.value),
+      },
+      {
+        type: "custom",
+        name: "unitId",
+        label: "Đơn vị tính",
+        snippet: (
+          <SelectCustom
+            fill={true}
+            id="unitId"
+            name="unitId"
+            label="Đơn vị tính"            
+            options={
+              selectedVariant
+                ? [{ value: selectedVariant.unitId, label: selectedVariant.unitName }]
+                : []
+            }
+            value={formData?.values?.unitId ?? null}
+            placeholder="Tự động điền từ biến thể"
+            disabled={true}
+            onChange={() => undefined}
+          />
+        ),
+      },
+      {
+        label: "Ngày sản xuất",
+        name: "mfgDate",
+        type: "date",
+        fill: true,
+        isMaxDate: true,
+        placeholder: "Chọn ngày sản xuất",
+        icon: <Icon name="Calendar" />,
+        iconPosition: "left",
+      },
+      {
+        label: "Ngày hết hạn",
+        name: "expiryDate",
+        type: "date",
+        fill: true,
+        required: true,
+        isMinDate: true,
+        placeholder: "Chọn ngày hết hạn",
+        icon: <Icon name="Calendar" />,
+        iconPosition: "left",
+      },
+
+      // ── Số lượng & Giá ──
+      {
+        label: "Số lượng",
+        name: "quantity",
+        type: "number",
+        fill: true,
+        required: true,
+      },
+      {
+        label: "Giá nhập / đơn vị",
+        name: "mainCost",
+        type: "number",
+        fill: true,
+        required: true,
+      },
+      {
+        label: "Chiết khấu (%)",
+        name: "discount",
+        type: "number",
+        fill: true,
+        placeholder: "0",
+      },
+    ],
+    [selectedProduct, selectedVariant, variantOptions, isLoadingVariants, formData?.values, checkFieldProduct, checkFieldVariant]
+  );
+
+  // ── Submit ────────────────────────────────────────────────────────────────
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (formData?.values?.productId == null) {
+    if (!selectedProduct) {
       setCheckFieldProduct(true);
       return;
     }
 
-    if (formData?.values?.unitId == null) {
-      setCheckFieldUnit(true);
+    if (!selectedVariant) {
+      setCheckFieldVariant(true);
       return;
     }
 
     const errors = Validate(validations, formData, listField);
-
     if (Object.keys(errors).length > 0) {
-      setFormData((prevState) => ({ ...prevState, errors: errors }));
+      setFormData((prev) => ({ ...prev, errors }));
       return;
     }
 
     setIsSubmit(true);
 
+    if (!invoiceId) {
+      showToast("Vui lòng tạo phiếu nhập trước khi thêm sản phẩm", "warning");
+      setIsSubmit(false);
+      return;
+    }
+
+    const discountVal = parseFloat((formData.values as any).discount ?? "0") || 0;
+
     const body: IInvoiceDetailRequest = {
-      ...(data ? { id: data?.id } : {}),
+      ...(data ? { id: data.id } : {}),
       ...(formData.values as IInvoiceDetailRequest),
-            mfgDate: moment(formData.values.mfgDate).format('YYYY-MM-DDTHH:mm:ss'),
-            expiryDate: moment(formData.values.expiryDate).format('YYYY-MM-DDTHH:mm:ss'),
+      invoiceId,
+      // ✅ Truyền đúng variantId
+      variantId: selectedVariant.value,
+      productId: selectedProduct.value,
+      unitId: selectedVariant.unitId,
+      discount: discountVal,
+      mfgDate: formData.values.mfgDate
+        ? moment(formData.values.mfgDate).format("YYYY-MM-DDTHH:mm:ss")
+        : null,
+      expiryDate: moment(formData.values.expiryDate).format("YYYY-MM-DDTHH:mm:ss"),
     };
-
-    // let arrExchange = (listUnitProduct || []).filter((item) => item.value == body.unitId.toString());
-
-    // if (arrExchange.length > 0) {
-    //   body.exchange = arrExchange[0].exchange;
-    // }
 
     const response = await ProductImportService.update(body);
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} sản phẩm thành công`, "success");
       onHide(true);
-      setValueBatchNo(null);
-      setDataProduct(null);
-      setIdProduct(null);
-      setListUnitProduct([]);
+      clearForm();
     } else {
       showToast(response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
 
+  const clearForm = () => {
+    setValueBatchNo(null);
+    setSelectedProduct(null);
+    setSelectedVariant(null);
+    setVariantOptions([]);
+  };
+
   const handClearForm = () => {
     onHide(false);
-    setValueBatchNo(null);
-    setDataProduct(null);
-    setIdProduct(null);
-    setListUnitProduct([]);
+    clearForm();
   };
 
   const actions = useMemo<IActionModal>(
@@ -453,7 +498,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
             disabled:
               isSubmit ||
               checkFieldProduct ||
-              checkFieldUnit ||
+              checkFieldVariant ||
               !isDifferenceObj(formData.values, values) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
@@ -461,7 +506,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
         ],
       },
     }),
-    [formData, values, isSubmit, checkFieldProduct, checkFieldUnit]
+    [formData, values, isSubmit, checkFieldProduct, checkFieldVariant]
   );
 
   const showDialogConfirmCancel = () => {
@@ -473,30 +518,20 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
       title: <Fragment>{`Hủy bỏ thao tác ${data ? "chỉnh sửa" : "thêm mới"}`}</Fragment>,
       message: <Fragment>Bạn có chắc chắn muốn hủy bỏ? Thao tác này không thể khôi phục.</Fragment>,
       cancelText: "Quay lại",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
+      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
       defaultText: "Xác nhận",
-      defaultAction: () => {
-        onHide(false);
-        setShowDialog(false);
-        setContentDialog(null);
-      },
+      defaultAction: () => { onHide(false); setShowDialog(false); setContentDialog(null); },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);
   };
 
   const checkKeyDown = useCallback(
-    (e) => {
-      const { keyCode } = e;
-      if (keyCode === 27 && !showDialog) {
+    (e: KeyboardEvent) => {
+      if (e.keyCode === 27 && !showDialog) {
         if (isDifferenceObj(formData.values, values)) {
           showDialogConfirmCancel();
-          if (focusedElement instanceof HTMLElement) {
-            focusedElement.blur();
-          }
+          if (focusedElement instanceof HTMLElement) focusedElement.blur();
         } else {
           onHide(false);
         }
@@ -507,10 +542,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
 
   useEffect(() => {
     window.addEventListener("keydown", checkKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", checkKeyDown);
-    };
+    return () => window.removeEventListener("keydown", checkKeyDown);
   }, [checkKeyDown]);
 
   return (
@@ -523,15 +555,14 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
         toggle={() => !isSubmit && onHide(false)}
         className="modal-add-product--import"
       >
-        <form className="form-product-import-group" onSubmit={(e) => onSubmit(e)}>
+        <form className="form-product-import-group" onSubmit={onSubmit}>
           <ModalHeader
             title={`${data ? "Chỉnh sửa" : "Thêm mới"} sản phẩm nhập hàng`}
             toggle={() => {
-              !isSubmit && onHide(false);
-              !isSubmit && setValueBatchNo(null);
-              !isSubmit && setDataProduct(null);
-              !isSubmit && setIdProduct(null);
-              !isSubmit && setListUnitProduct([]);
+              if (!isSubmit) {
+                onHide(false);
+                clearForm();
+              }
             }}
           />
           <ModalBody>
@@ -540,7 +571,9 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
                 <FieldCustomize
                   key={index}
                   field={field}
-                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
+                  handleUpdate={(value) =>
+                    handleChangeValidate(value, field, formData, validations, listField, setFormData)
+                  }
                   formData={formData}
                 />
               ))}

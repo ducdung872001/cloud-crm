@@ -14,16 +14,18 @@ export default function PaymentMethodPage() {
   const listTab = [
     {
       title: "Cài đặt phương thức thanh toán",
-      icon: "SettingsMenu",
+      icon: "MethodPaymentSetting",
       tab: 1,
-      des: ""
+      backgroundColor: "#EEEDFE",
+      des: "Định nghĩa và cấu hình toàn bộ các phương thức thanh toán khả dụng trên hệ thống, bao gồm tiền mặt, thẻ ngân hàng, ví điện tử, QR code... Chỉ Admin hệ thống mới có quyền thực hiện."
     },
 
     {
       title: "Lựa chọn phưong thức thanh toán",
-      icon: "ZaloMenu",
+      icon: "MethodPaymentSelect",
       tab: 2,
-      des: ""
+      backgroundColor: "#E1F5EE",
+      des: "Kích hoạt hoặc tắt các phương thức thanh toán phù hợp với từng cửa hàng, dựa trên danh sách đã được Admin hệ thống thiết lập sẵn."
     },
   ];
 

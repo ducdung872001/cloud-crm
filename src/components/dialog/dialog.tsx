@@ -7,7 +7,7 @@ import "./dialog.scss";
 
 export interface IDialog {
   content: IContentDialog;
-  isOpen: boolean;
+  isOpen?: boolean;
 }
 
 export interface IContentDialog {

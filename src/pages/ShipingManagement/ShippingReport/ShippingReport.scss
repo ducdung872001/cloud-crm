@@ -1,17 +1,17 @@
 .page-shipping-report {
-  padding-bottom: 48px;
+  padding-bottom: 4.8rem;
 
   .page-back {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 13px;
+    gap: 0.6rem;
+    font-size: 1.3rem;
     color: #6b7280;
     cursor: pointer;
-    margin-bottom: 12px;
+    margin-bottom: 1.2rem;
     transition: color 0.15s;
-    svg { width: 15px; height: 15px; }
-    &:hover { color: var(--primary-color, #1d4ed8); }
+    svg { width: 1.5rem; height: 1.5rem; }
+    &:hover { color: var(--primary-color); }
   }
 
   // =============================================
@@ -21,44 +21,45 @@
     display: flex;
     align-items: flex-end;
     flex-wrap: wrap;
-    gap: 12px;
-    padding: 16px 20px;
+    gap: 1.2rem;
+    padding: 1.6rem 20px;
     background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    margin-bottom: 20px;
+    border-radius: 1.2rem;
+    margin-bottom: 2rem;
 
     .filter-item {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      min-width: 160px;
+      gap: 0.5rem;
+      min-width: 16rem;
 
-      &--date { min-width: 240px; }
+      &--date { min-width: 24rem; }
 
       label {
-        font-size: 12px;
+        font-size: 1.2rem;
         font-weight: 500;
         color: #6b7280;
       }
     }
 
     .btn-apply-filter {
-      height: 40px;
+      height: 4rem;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 0.6rem;
       padding: 0 18px;
-      background: var(--primary-color, #1d4ed8);
+      background: var(--primary-color);
       color: #fff;
       border: none;
-      border-radius: 8px;
-      font-size: 13.5px;
+      border-radius: 0.3rem;
+      font-size: 1.4rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.15s;
-      svg { width: 15px; height: 15px; }
-      &:hover { background: #1e40af; }
+      svg { width: 1.5rem; height: 1.5rem; }
+      &:hover { background: var(--primary-color);
+      color: var(--white-color); }
     }
   }
 
@@ -68,8 +69,8 @@
   .kpi-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 14px;
-    margin-bottom: 20px;
+    gap: 1.4rem;
+    margin-bottom: 2rem;
 
     @media (max-width: 1200px) { grid-template-columns: repeat(3, 1fr); }
     @media (max-width: 720px)  { grid-template-columns: repeat(2, 1fr); }
@@ -79,41 +80,41 @@
   .kpi-card {
     background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 16px;
+    border-radius: 1.2rem;
+    padding: 1.6rem;
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 1.2rem;
     position: relative;
     transition: box-shadow 0.2s;
 
     &:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
 
     &__icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
+      width: 4.4rem;
+      height: 4.4rem;
+      border-radius: 1rem;
       background: var(--kpi-bg);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      svg { width: 20px; height: 20px; color: var(--kpi-color); }
+      svg { width: 2rem; height: 2rem; color: var(--kpi-color); }
     }
 
     &__body { flex: 1; min-width: 0; }
 
     &__label {
-      font-size: 12px;
+      font-size: 1.2rem;
       color: #9ca3af;
-      margin-bottom: 4px;
+      margin-bottom: 0.4rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     &__value {
-      font-size: 20px;
+      font-size: 2rem;
       font-weight: 700;
       color: #111827;
       line-height: 1.2;
@@ -121,16 +122,16 @@
 
     &__trend {
       position: absolute;
-      top: 12px;
-      right: 12px;
+      top: 1.2rem;
+      right: 1.2rem;
       display: flex;
       align-items: center;
       gap: 3px;
-      font-size: 11.5px;
+      font-size: 1.1rem;
       font-weight: 600;
       padding: 2px 7px;
-      border-radius: 20px;
-      svg { width: 12px; height: 12px; }
+      border-radius: 2rem;
+      svg { width: 1.2rem; height: 1.2rem; }
 
       &.up   { color: #059669; background: #ecfdf5; }
       &.down { color: #e11d48; background: #fff1f2; }
@@ -143,8 +144,8 @@
   .chart-row {
     display: grid;
     grid-template-columns: 1fr 300px;
-    gap: 16px;
-    margin-bottom: 16px;
+    gap: 1.6rem;
+    margin-bottom: 1.6rem;
 
     @media (max-width: 960px) { grid-template-columns: 1fr; }
   }
@@ -152,35 +153,35 @@
   .chart-card {
     background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 12px;
+    border-radius: 1.2rem;
     overflow: hidden;
     margin-bottom: 0;
 
-    &--bar { margin-bottom: 16px; }
+    &--bar { margin-bottom: 1.6rem; }
 
     &__header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 20px 10px;
+      padding: 1.4rem 20px 10px;
       border-bottom: 1px solid #f3f4f6;
     }
 
     &__title {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 14px;
+      gap: 0.8rem;
+      font-size: 1.4rem;
       font-weight: 600;
       color: #111827;
-      svg { width: 16px; height: 16px; color: var(--primary-color, #1d4ed8); }
+      svg { width: 1.6rem; height: 1.6rem; color: var(--primary-color); }
     }
 
   }
 
   // chart body wrapper (replaces recharts-responsive-container)
   .chart-body {
-    padding: 8px 8px 4px;
+    padding: 0.8rem 8px 4px;
 
     .highcharts-container,
     .highcharts-root {
@@ -188,7 +189,7 @@
     }
 
     &--donut {
-      padding: 4px 0 0;
+      padding: 0.4rem 0 0;
     }
   }
 
@@ -197,23 +198,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 2rem;
     padding: 0 16px 14px;
   }
 
   .chart-legend-item {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 12px;
+    gap: 0.6rem;
+    font-size: 1.2rem;
     font-weight: 500;
     color: #374151;
   }
 
   .chart-legend-dot {
     display: inline-block;
-    width: 10px;
-    height: 10px;
+    width: 1rem;
+    height: 1rem;
     border-radius: 50%;
     flex-shrink: 0;
   }
@@ -222,16 +223,16 @@
   .metric-toggle {
     display: flex;
     background: #f3f4f6;
-    border-radius: 8px;
+    border-radius: 0.8rem;
     padding: 3px;
     gap: 2px;
 
     button {
       background: none;
       border: none;
-      padding: 5px 12px;
-      font-size: 12.5px;
-      border-radius: 6px;
+      padding: 0.5rem 12px;
+      font-size: 1.2rem;
+      border-radius: 0.6rem;
       cursor: pointer;
       color: #9ca3af;
       font-weight: 500;
@@ -250,19 +251,19 @@
   .donut-legend {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.8rem;
     padding: 0 20px 16px;
 
     &__item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 13px;
+      gap: 0.8rem;
+      font-size: 1.3rem;
     }
 
     &__dot {
-      width: 10px;
-      height: 10px;
+      width: 1rem;
+      height: 1rem;
       border-radius: 50%;
       flex-shrink: 0;
     }
@@ -281,11 +282,11 @@
   .report-table-card {
     background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 12px;
+    border-radius: 1.2rem;
     overflow: hidden;
 
     &__header {
-      padding: 14px 20px 10px;
+      padding: 1.4rem 20px 10px;
       border-bottom: 1px solid #f3f4f6;
     }
   }
@@ -297,21 +298,21 @@
   .report-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13.5px;
+    font-size: 1.4rem;
 
     th {
-      padding: 11px 16px;
+      padding: 1.1rem 16px;
       background: #f9fafb;
       color: #6b7280;
       font-weight: 600;
-      font-size: 12.5px;
+      font-size: 1.2rem;
       text-align: left;
       border-bottom: 1px solid #e5e7eb;
       white-space: nowrap;
     }
 
     td {
-      padding: 12px 16px;
+      padding: 1.2rem 16px;
       color: #374151;
       border-bottom: 1px solid #f3f4f6;
       white-space: nowrap;
@@ -336,10 +337,10 @@
 
   .partner-dot {
     display: inline-block;
-    width: 10px;
-    height: 10px;
+    width: 1rem;
+    height: 1rem;
     border-radius: 50%;
-    margin-right: 8px;
+    margin-right: 0.8rem;
     vertical-align: middle;
   }
 
@@ -347,13 +348,13 @@
   .success-rate-wrap {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.8rem;
     justify-content: flex-end;
   }
 
   .success-rate-bar {
-    width: 72px;
-    height: 6px;
+    width: 7.2rem;
+    height: 0.6rem;
     background: #e5e7eb;
     border-radius: 3px;
     overflow: hidden;
@@ -366,9 +367,9 @@
   }
 
   .success-rate-pct {
-    min-width: 40px;
+    min-width: 4rem;
     text-align: right;
-    font-size: 13px;
+    font-size: 1.3rem;
   }
 
   // =============================================
@@ -377,32 +378,32 @@
   .chart-tooltip {
     background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 10px 14px;
+    border-radius: 1rem;
+    padding: 1rem 14px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    min-width: 160px;
+    min-width: 16rem;
 
     &__date {
-      font-size: 12px;
+      font-size: 1.2rem;
       font-weight: 600;
       color: #111827;
-      margin-bottom: 8px;
-      padding-bottom: 6px;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.6rem;
       border-bottom: 1px solid #f3f4f6;
     }
 
     &__row {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 12.5px;
-      margin-bottom: 5px;
+      gap: 0.6rem;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
       &:last-child { margin-bottom: 0; }
     }
 
     &__dot {
-      width: 8px;
-      height: 8px;
+      width: 0.8rem;
+      height: 0.8rem;
       border-radius: 50%;
       flex-shrink: 0;
     }

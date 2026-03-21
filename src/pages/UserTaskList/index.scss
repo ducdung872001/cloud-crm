@@ -1,12 +1,13 @@
 .page-user-task-list {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  // padding: 1rem;
   .switch-head {
     margin-bottom: 2rem;
   }
 
   .wrapper-project {
+    margin-top: 2rem;
     width: 100%;
     display: flex;
     align-items: flex-start;
