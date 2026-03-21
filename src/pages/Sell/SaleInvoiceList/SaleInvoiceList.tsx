@@ -95,7 +95,11 @@ export default function SaleInvoiceList() {
               tier: item.customerTier ?? "",
               color: "#2563eb",
             },
-            items: [...(item.products || []), ...(item.services || [])].map((i) => i.productName + " (" + i.name + ")").join(", "),
+            items: [...(item.products || []), ...(item.services || [])].map((i) => {
+                const productName = i.productName || i.name || "";
+                const variantName = (i.name && i.name !== i.productName) ? i.name : "";
+                return variantName ? `${productName} (${variantName})` : productName;
+              }).filter(Boolean).join(", ") || "—",
             total: item.invoice.fee,
           } as Order)
       );

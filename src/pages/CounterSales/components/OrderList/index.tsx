@@ -146,7 +146,9 @@ const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onCo
               </div>
               <div>
                 <div className="oc-name">{order.customer.name}</div>
-                <div className="oc-phone">{order.customer.phone}</div>
+                {order.customer.phone && (
+                  <div className="oc-phone">{order.customer.phone}</div>
+                )}
                 <div className={`oc-items${order.status === "cancelled" ? " oc-items--cancelled" : ""}`}>{order.items}</div>
               </div>
             </div>
