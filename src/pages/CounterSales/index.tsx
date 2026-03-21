@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import "./index.scss";
 
 import Sidebar from "@/components/sidebar/sidebar";
@@ -25,6 +26,7 @@ const INITIAL_CART: CartItem[] = [];
 
 const CounterSales: React.FC = () => {
   document.title = "Bán hàng tại quầy";
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<TabType>("pos");
   const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
   const [invoiceId, setInvoiceId] = useState<number | null>(null);
@@ -42,6 +44,22 @@ const CounterSales: React.FC = () => {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [customerQuickAdd, setCustomerQuickAdd] = useState(false);
   const [customerPhoneAdd, setCustomerPhoneAdd] = useState("");
+
+  // Khi navigate từ "Tái tạo đơn" → tự động điền giỏ hàng + chuyển sang tab POS
+  useEffect(() => {
+    const state = location.state as { preloadCart?: CartItem[]; fromInvoiceCode?: string } | null;
+    if (state?.preloadCart?.length) {
+      setCartItems(state.preloadCart);
+      setActiveTab("pos");
+      showToast(
+        `Đã tải lại ${state.preloadCart.length} sản phẩm từ đơn ${state.fromInvoiceCode ?? ""}`,
+        "success"
+      );
+      // Xóa state khỏi history để F5 không nạp lại
+      window.history.replaceState({}, document.title);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Cart actions
   const handleAddToCart = useCallback((item: Omit<CartItem, "qty"> & { qty: number }) => {

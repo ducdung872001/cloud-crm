@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Order } from "../../types";
 import Icon from "components/icon";
+import { showToast } from "utils/common";
 import "./index.scss";
 
 const ORDERS: Order[] = [
@@ -80,9 +81,53 @@ interface OrderListProps {
 
 const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onConfirm, listOrder = ORDERS }) => {
   const [activeFilter, setActiveFilter] = useState("all");
+  const [recreatingId, setRecreatingId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
+
+  /** Tái tạo đơn hàng đã hủy: lấy sản phẩm → điền vào giỏ POS */
+  const handleRecreateOrder = async (e: React.MouseEvent, order: Order) => {
+    e.stopPropagation();
+    setRecreatingId(order.id);
+    try {
+      const res  = await fetch(`/bizapi/sales/invoiceDetail/get?id=${order.id}`);
+      const json = await res.json();
+      if (json.code === 0) {
+        // InvoiceDetailPOM: { products: [...], invoice: {...}, invoiceId: N }
+        const result   = json.result ?? {};
+        const products: any[] = result.products ?? result.items ?? [];
+        if (products.length === 0) {
+          showToast("Đơn hàng này không có sản phẩm để tái tạo.", "error");
+          return;
+        }
+        const cartItems = products.map((p: any) => ({
+          id:        String(p.productId),
+          variantId: String(p.variantId ?? p.productId),
+          name:      p.name        || p.productName || "Sản phẩm",
+          icon:      "📦",
+          avatar:    p.productAvatar || "",
+          image:     p.productAvatar || "",
+          price:     p.price       || 0,
+          qty:       p.qty         || 1,
+          unit:      p.unitName    || "Cái",
+          unitName:  p.unitName    || "Cái",
+        }));
+        navigate("/create_sale_add", {
+          state: {
+            preloadCart:     cartItems,
+            fromInvoiceCode: order.code,
+          },
+        });
+      } else {
+        showToast(json.message || json.error || "Không lấy được thông tin đơn hàng.", "error");
+      }
+    } catch {
+      showToast("Lỗi kết nối khi tái tạo đơn hàng.", "error");
+    } finally {
+      setRecreatingId(null);
+    }
+  };
 
   return (
     <div className="order-list">
@@ -208,7 +253,13 @@ const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onCo
                     <button className="btn btn--xs btn--outline" onClick={() => onViewDetail(Number(order.id))}>
                       Xem chi tiết
                     </button>
-                    <button className="btn btn--xs btn--outline">↩️ Tái tạo đơn</button>
+                    <button
+                      className="btn btn--xs btn--outline"
+                      disabled={recreatingId === order.id}
+                      onClick={(e) => handleRecreateOrder(e, order)}
+                    >
+                      {recreatingId === order.id ? "Đang tải..." : "↩️ Tái tạo đơn"}
+                    </button>
                   </>
                 )}
               </div>
