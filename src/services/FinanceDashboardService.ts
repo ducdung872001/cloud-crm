@@ -1,94 +1,93 @@
 import { urlsApi } from "configs/urls";
+import { ICashBookResponse } from "model/cashbook/CashbookResponseModel";
 
-// ─── Response types ───────────────────────────────────────────────────────────
+// ─── Response types — khớp với FinanceDashboardResponse.java ─────────────────
 
-export interface IFinanceDashboardSummary {
-  totalFund: number;
+/**
+ * Response từ GET /billing/finance/dashboard
+ *
+ * Mapping field:
+ *   totalFundBalance   ← fund.balance tổng hợp (is_active=1)
+ *   totalIncome        ← SUM cashbook.amount WHERE type=1 trong kỳ
+ *   totalExpense       ← SUM cashbook.amount WHERE type=2 trong kỳ
+ *   recentTransactions ← 10 cashbook gần nhất (ICashBookResponse có sẵn)
+ */
+export interface IFinanceDashboardResponse {
+  totalFundBalance: number;
   totalIncome: number;
   totalExpense: number;
-  receivable: number;
-  payable: number;
+  recentTransactions: ICashBookResponse[];
 }
 
-export interface IFinanceRecentTransaction {
-  id: string;
-  title: string;
-  kind: "income" | "expense";
-  amount: number;
-  createdAt: string; // ISO hoặc "DD/MM/YYYY HH:mm"
-}
-
-export interface IFinanceDebtAlert {
-  id: string;
-  name: string;
-  kind: "receivable" | "payable";
-  amount: number;
-  status: "overdue" | "upcoming";
-}
-
-export interface IFinanceDashboardFull {
-  summary: IFinanceDashboardSummary;
-  recentTransactions: IFinanceRecentTransaction[];
-  debtAlerts: IFinanceDebtAlert[];
-}
-
-// Wrapper chuẩn backend
-interface IApiWrapper<T> {
+/** Wrapper chuẩn backend DfResponse<T> */
+interface IDfResponse<T> {
   code: number;
   message: string;
-  result: T;
+  data: T;
+}
+
+// ─── Params ───────────────────────────────────────────────────────────────────
+
+export interface IFinanceDashboardParams {
+  branchId?: number;
+  fromTime?: string; // "d/M/yyyy"
+  toTime?: string;   // "d/M/yyyy"
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-async function apiFetch<T>(url: string, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(url, { method: "GET", signal });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const json: IApiWrapper<T> = await res.json();
-  if (json.code !== 0) throw new Error(json.message ?? "Lỗi không xác định");
-  return json.result;
+function buildQuery(params: Record<string, string | number | undefined>) {
+  const entries = Object.entries(params)
+    .filter(([, v]) => v !== undefined && v !== "")
+    .map(([k, v]) => [k, String(v)]);
+  return entries.length ? "?" + new URLSearchParams(entries).toString() : "";
 }
 
-function buildQuery(params: Record<string, string | number>) {
-  return new URLSearchParams(
-    Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)]))
-  ).toString();
+/** Format Date → "d/M/yyyy" theo yêu cầu backend */
+export function formatDateParam(date: Date): string {
+  return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+}
+
+/** Lấy ngày hôm nay */
+export function getTodayParam(): string {
+  return formatDateParam(new Date());
+}
+
+/** Lấy ngày X ngày trước hôm nay */
+export function getDaysAgoParam(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return formatDateParam(d);
 }
 
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 const FinanceDashboardService = {
   /**
-   * Full dashboard — 1 lần gọi, lấy tất cả (khuyến nghị dùng)
-   * GET /billing/finance/dashboard?branchId=0&fromTime=&toTime=
+   * Lấy toàn bộ dữ liệu dashboard tài chính.
+   * GET /billing/finance/dashboard?branchId=0&fromTime=d/M/yyyy&toTime=d/M/yyyy
+   *
+   * Trả về: tổng quỹ, tổng thu/chi trong kỳ, 10 giao dịch gần nhất.
+   *
+   * Ghi chú: "Cảnh báo công nợ" không có trong billing service —
+   * dữ liệu nằm ở cloud-sales. Giữ nguyên UI, truyền mảng rỗng cho đến
+   * khi có API từ cloud-sales.
    */
-  full: (
-    params: { fromTime: string; toTime: string; branchId?: number },
-    signal?: AbortSignal
-  ) => {
-    const q = buildQuery({ branchId: params.branchId ?? 0, fromTime: params.fromTime, toTime: params.toTime });
-    return apiFetch<IFinanceDashboardFull>(`${urlsApi.financeDashboard.full}?${q}`, signal);
-  },
-
-  /** Chỉ 4 KPI card — dùng khi chỉ cần refresh summary */
-  summary: (
-    params: { fromTime: string; toTime: string; branchId?: number },
-    signal?: AbortSignal
-  ) => {
-    const q = buildQuery({ branchId: params.branchId ?? 0, fromTime: params.fromTime, toTime: params.toTime });
-    return apiFetch<IFinanceDashboardSummary>(`${urlsApi.financeDashboard.summary}?${q}`, signal);
-  },
-
-  /** Giao dịch gần nhất */
-  recentTransactions: (params: { branchId?: number; limit?: number }, signal?: AbortSignal) => {
-    const q = buildQuery({ branchId: params.branchId ?? 0, limit: params.limit ?? 10 });
-    return apiFetch<IFinanceRecentTransaction[]>(`${urlsApi.financeDashboard.recentTransactions}?${q}`, signal);
-  },
-
-  /** Cảnh báo công nợ */
-  debtAlerts: (params: { branchId?: number; limit?: number }, signal?: AbortSignal) => {
-    const q = buildQuery({ branchId: params.branchId ?? 0, limit: params.limit ?? 10 });
-    return apiFetch<IFinanceDebtAlert[]>(`${urlsApi.financeDashboard.debtAlerts}?${q}`, signal);
+  full: (params: IFinanceDashboardParams, signal?: AbortSignal) => {
+    const query = buildQuery({
+      branchId: params.branchId ?? 0,
+      fromTime: params.fromTime,
+      toTime: params.toTime,
+    });
+    return fetch(`${urlsApi.financeDashboard.full}${query}`, {
+      method: "GET",
+      signal,
+    })
+      .then((res) => res.json() as Promise<IDfResponse<IFinanceDashboardResponse>>)
+      .then((json) => {
+        if (json.code !== 0) throw new Error(json.message ?? "Lỗi không xác định");
+        return json.data;
+      });
   },
 };
 

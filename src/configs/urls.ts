@@ -694,6 +694,9 @@ export const urlsApi = {
     update: prefixAdmin + "/timekeeping/update",
     delete: prefixAdmin + "/timekeeping/delete",
   },
+  financeDashboard: {
+    full: prefixBilling + "/finance/dashboard",
+  },
   cashbook: {
     list: prefixAdmin + "/cashbook/list",
     update: prefixAdmin + "/cashbook/update",
