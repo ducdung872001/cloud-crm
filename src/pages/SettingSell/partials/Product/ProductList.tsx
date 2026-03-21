@@ -44,7 +44,7 @@ export default function ProductList(props: IProductListProps) {
 
   const { onBackProps } = props;
 
-  const isMounted = useRef(false);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
   const targetBsnId_product = localStorage.getItem("targetBsnId_product");
 
   const [listProduct, setListProduct] = useState<IProductResponse[]>([]);
@@ -65,12 +65,6 @@ export default function ProductList(props: IProductListProps) {
   const [isConfigIntegrateModal, setIsConfigIntegrateModal] = useState(false);
   const [activeTab, setActiveTab] = useState<StatusTab>("all");
   const [searchValue, setSearchValue] = useState("");
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setParams((prev) => ({ ...prev, name: searchValue, page: 1 }));
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [searchValue]);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showProductPage, setShowProductPage] = useState(false);
 
@@ -538,7 +532,14 @@ export default function ProductList(props: IProductListProps) {
             type="text"
             placeholder="Tìm tên sản phẩm, mã vạch, SKU..."
             value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearchValue(value);
+              clearTimeout(searchTimerRef.current);
+              searchTimerRef.current = setTimeout(() => {
+                setParams((prev) => ({ ...prev, name: value, page: 1 }));
+              }, 400);
+            }}
           />
         </div>
 

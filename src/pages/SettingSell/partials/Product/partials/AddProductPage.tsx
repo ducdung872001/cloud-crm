@@ -68,6 +68,7 @@ interface VariantAttribute {
 
 interface UnitPrice {
   tempId: string;
+  id?: number | null;
   unitId: number | null;
   unitName: string;
   price: string | number;
@@ -85,7 +86,7 @@ interface VariantCombination {
   costPrice: string | number;
   priceWholesale: string | number;
   pricePromo: string | number;
-  unitPrices: UnitPrice[];
+  variantPrices: UnitPrice[];
 }
 
 const genId = () => Math.random().toString(36).slice(2, 9);
@@ -157,7 +158,7 @@ const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
     costPrice: "" as string | number,
     priceWholesale: "" as string | number,
     pricePromo: "" as string | number,
-    unitPrices: [makeEmptyUnitPrice()],
+    variantPrices: [makeEmptyUnitPrice()],
   }));
 };
 
@@ -461,13 +462,14 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
       if (realVariants.length) {
         const combos: VariantCombination[] = realVariants.map((v: any) => {
-          // unitPrices: BE có thể trả field tên khác (prices / variantPrices / units)
+          // variantPrices: BE có thể trả field tên khác (prices / variantPrices / units)
           const rawUnitPrices: any[] =
-            v.unitPrices ?? v.prices ?? v.variantPrices ?? v.units ?? [];
+            v.variantPrices ?? v.prices ?? v.units ?? [];
           const mappedUnitPrices =
             rawUnitPrices.length > 0
               ? rawUnitPrices.map((u: any) => ({
                   tempId: genId(),
+                  id: u.id ?? null,
                   unitId: u.unitId ?? u.unit_id ?? null,
                   unitName: u.unitName ?? u.unit_name ?? "",
                   price: u.price ?? u.priceRetail ?? "",
@@ -508,7 +510,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
             costPrice: v.costPrice ?? v.cost_price ?? "",
             priceWholesale: v.priceWholesale ?? v.price_wholesale ?? v.wholesale ?? "",
             pricePromo: v.pricePromo ?? v.pricePromotion ?? v.price_promo ?? "",
-            unitPrices: mappedUnitPrices,
+            variantPrices: mappedUnitPrices,
           };
         });
         setCombinations(combos);
@@ -575,7 +577,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
     // ── Build variants ──
     const variants = combinations.map((c) => {
-      const firstUp = c.unitPrices[0];
+      const firstUp = c.variantPrices[0];
 
       // Parse key "Màu sắc:Hồng|Size:8 GB" → [{ name, value }, ...]
       const keyParts = c.key.split("|").map((k) => {
@@ -614,17 +616,18 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         attributes,
         selectedOptions,
         ...(optionValueIds.length ? { optionValueIds } : {}),
-        unitPrices: c.unitPrices.map((u, ui) => {
-          const unitPart = toSkuPart(u.unitName);
-          const unitSku = safeSku(`${variantSku}-${unitPart || `U${ui + 1}`}`);
-          return {
-            sku: unitSku,
-            unitId: u.unitId,
-            unitName: u.unitName,
-            price: +(u.price ?? 0) || 0,
-          };
-        }),
+        variantPrices: c.variantPrices.map((u) => ({
+          ...(u.id ? { id: u.id } : {}),
+          unitId: u.unitId,
+          unitName: u.unitName,
+          price: +(u.price ?? 0) || 0,
+        })),
       };
+    });
+
+    console.log("[variantPrices] data gửi lên theo từng biến thể:");
+    variants.forEach((v) => {
+      console.log(`  variant "${v.label}" (id=${(v as any).id ?? "new"}):`, JSON.stringify(v.variantPrices, null, 2));
     });
 
     const defaultVariant = {
@@ -681,7 +684,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           costPrice: existing?.costPrice ?? "",
           priceWholesale: existing?.priceWholesale ?? "",
           pricePromo: existing?.pricePromo ?? "",
-          unitPrices: existing?.unitPrices?.length ? existing.unitPrices : [makeEmptyUnitPrice()],
+          variantPrices: existing?.variantPrices?.length ? existing.variantPrices : [makeEmptyUnitPrice()],
         };
       })
     );
@@ -736,11 +739,11 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         // Propagate thêm hàng mới đến TẤT CẢ biến thể
         return prev.map((c) => ({
           ...c,
-          unitPrices: [...c.unitPrices, makeEmptyUnitPrice()],
+          variantPrices: [...c.variantPrices, makeEmptyUnitPrice()],
         }));
       }
       // Biến thể 2+: chỉ thêm vào biến thể đó
-      return prev.map((c) => (c.key === comboKey ? { ...c, unitPrices: [...c.unitPrices, makeEmptyUnitPrice()] } : c));
+      return prev.map((c) => (c.key === comboKey ? { ...c, variantPrices: [...c.variantPrices, makeEmptyUnitPrice()] } : c));
     });
   };
 
@@ -748,8 +751,8 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     setCombinations((prev) =>
       prev.map((c) => {
         if (c.key !== comboKey) return c;
-        const filtered = c.unitPrices.filter((u) => u.tempId !== tempId);
-        return { ...c, unitPrices: filtered.length ? filtered : [makeEmptyUnitPrice()] };
+        const filtered = c.variantPrices.filter((u) => u.tempId !== tempId);
+        return { ...c, variantPrices: filtered.length ? filtered : [makeEmptyUnitPrice()] };
       })
     );
 
@@ -758,22 +761,22 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       const isFirst = prev[0]?.key === comboKey;
       if (isFirst) {
         // Tìm index của row trong variant 1
-        const rowIndex = prev[0].unitPrices.findIndex((u) => u.tempId === tempId);
+        const rowIndex = prev[0].variantPrices.findIndex((u) => u.tempId === tempId);
         return prev.map((c) => {
           if (c.key === comboKey) {
             // Cập nhật variant 1 theo tempId
-            return { ...c, unitPrices: c.unitPrices.map((u) => (u.tempId === tempId ? { ...u, [field]: value } : u)) };
+            return { ...c, variantPrices: c.variantPrices.map((u) => (u.tempId === tempId ? { ...u, [field]: value } : u)) };
           }
           // Áp dụng cùng field/value vào row cùng vị trí ở variants còn lại
           return {
             ...c,
-            unitPrices: c.unitPrices.map((u, ui) => (ui === rowIndex ? { ...u, [field]: value } : u)),
+            variantPrices: c.variantPrices.map((u, ui) => (ui === rowIndex ? { ...u, [field]: value } : u)),
           };
         });
       }
       // Biến thể 2+: chỉ cập nhật biến thể đó
       return prev.map((c) =>
-        c.key === comboKey ? { ...c, unitPrices: c.unitPrices.map((u) => (u.tempId === tempId ? { ...u, [field]: value } : u)) } : c
+        c.key === comboKey ? { ...c, variantPrices: c.variantPrices.map((u) => (u.tempId === tempId ? { ...u, [field]: value } : u)) } : c
       );
     });
 
@@ -803,7 +806,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
             groupName: attr.name,
             label: keyParts.find((k) => k.name === attr.name)?.value ?? "",
           })),
-          unitPrices: c.unitPrices.map((u, ui) => ({
+          variantPrices: c.variantPrices.map((u, ui) => ({
             sku: safeSku(`${variantSku}-${toSkuPart(u.unitName) || `U${ui + 1}`}`),
             unitId: u.unitId,
             unitName: u.unitName,
@@ -1249,7 +1252,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
                       {/* Danh sách đơn vị-giá */}
                       <div className="add-prod-vt-combo-card__prices">
-                        {c.unitPrices.map((up) => (
+                        {c.variantPrices.map((up) => (
                           <div className="add-prod-vt-unit-row" key={up.tempId}>
                             {/* Chọn đơn vị */}
                             <div className="add-prod-vt-unit-select">
@@ -1286,7 +1289,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                               <button
                                 type="button"
                                 className="add-prod-vt-unit-del"
-                                disabled={c.unitPrices.length === 1}
+                                disabled={c.variantPrices.length === 1}
                                 onClick={() => removeUnitPrice(c.key, up.tempId)}
                               >
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
