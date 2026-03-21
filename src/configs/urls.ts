@@ -21,8 +21,6 @@ const prefixCare = prefixBiz + "/care";
 const prefixBilling = prefixBiz + "/billing";
 const prefixLogistics = prefixBiz + "/logistics";
 
-console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
-
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
   dashboard: {
@@ -693,6 +691,9 @@ export const urlsApi = {
     list: prefixAdmin + "/timekeeping/list",
     update: prefixAdmin + "/timekeeping/update",
     delete: prefixAdmin + "/timekeeping/delete",
+  },
+  financeDashboard: {
+    full: prefixBilling + "/finance/dashboard",
   },
   cashbook: {
     list: prefixAdmin + "/cashbook/list",
@@ -2135,6 +2136,23 @@ export const urlsApi = {
     makeCallOTP: prefixAdmin + "/callCenter/makeCallOTP",
     //* Danh sách lịch sử cuộc gọi
     customerCallList: prefixAdmin + "/customerCall/list",
+  },
+  // Báo cáo tồn kho (inventory service)
+  inventoryReport: {
+    full:           prefixInventory + "/report/stock",              // gộp 1 lần
+    summary:        prefixInventory + "/report/stock/summary",      // 5 KPI card
+    movement:       prefixInventory + "/report/stock/movement",     // biến động nhập/xuất
+    health:         prefixInventory + "/report/stock/health",       // sức khỏe tồn kho
+    trend:          prefixInventory + "/report/stock/trend",        // xu hướng tồn cuối kỳ
+    warehousePerf:  prefixInventory + "/report/stock/warehouse-perf", // hiệu suất từng kho
+    productDetails: prefixInventory + "/report/stock/product-details", // chi tiết sản phẩm
+  },
+  // Báo cáo bán hàng (sales service)
+  salesReport: {
+    full:             prefixSales + "/report/sales",           // API 4 — gộp 1 lần (khuyến nghị)
+    summary:          prefixSales + "/report/summary",         // API 1 — chỉ 4 KPI card
+    dailySeries:      prefixSales + "/report/daily-series",    // API 2 — biểu đồ cột
+    channelBreakdown: prefixSales + "/report/channel-breakdown", // API 3 — bảng kênh bán
   },
   // Báo cáo
   report: {

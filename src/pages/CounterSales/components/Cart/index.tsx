@@ -30,8 +30,6 @@ const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSele
   const subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
   const itemCount = items.length;
 
-  console.log("itemsCart", items);
-
   const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
 
   const ORDER_TYPES: { id: OrderType; label: string }[] = [
@@ -105,7 +103,7 @@ const Cart: React.FC<CartProps> = ({ items, onChangeQty, onRemove, onPay, onSele
         {items.map((item) => (
           <div key={item.id} className="ci">
             <div className="ci__icon">
-              {item.avatar ? <img src={item.avatar} alt={item.name} /> : <span style={{ fontSize: "30px" }}>{item.icon}</span>}
+              {item.image ? <img src={item.image} alt={item.name} /> : <span style={{ fontSize: "30px" }}>{item.icon}</span>}
               {/* {item.icon} */}
             </div>
             <div className="ci__info">
