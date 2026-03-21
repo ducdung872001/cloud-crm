@@ -256,7 +256,7 @@ export const menu: IMenuItem[] = [
       {
         title: "shiftManagement", //Quản lý ca làm việc
         path: urls.shift_management,
-        icon: <Icon name="ManageWork" />,
+        icon: <Icon name="ShiftManagement" />,
         code: "",
       },
       {
