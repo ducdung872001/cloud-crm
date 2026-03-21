@@ -474,9 +474,7 @@ export default function NotificationList(props: any) {
 
   return (
     <div className="page-content page-notification-list card-box">
-      <div style={{ paddingTop: '20px' }}>
-        <TitleAction title="Thông báo" />
-      </div>
+      <TitleAction title="Thông báo" />
 
       <div className="container-page">
 

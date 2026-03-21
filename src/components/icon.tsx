@@ -498,7 +498,12 @@ import IcAppListIntegrated from "assets/icons-menu/ic-app-list-integrated.svg";
 import IcWebhookList from "assets/icons-menu/ic-webhook-list.svg";
 import IcSupportCategory from "assets/icons-menu/ic-support-category.svg";
 import IcQRManagement from "assets/icons-menu/ic-QR-management.svg";
-
+import IcEmailConfig from "assets/icons-menu/ic-email-config.svg";
+import IcPartnerEmail from "assets/icons-menu/ic-partner-email.svg";
+import IcTopicEmail from "assets/icons-menu/ic-topic-email.svg";
+import IcSourceEmail from "assets/icons-menu/ic-source-email.svg";
+import IcTemplateEmail from "assets/icons-menu/ic-template-email.svg";
+import IcShiftManagement from "assets/icons-menu/ic-shift-management.svg";
 
 
 const iconTypes = {
@@ -986,7 +991,13 @@ const iconTypes = {
   AppListIntegrated: IcAppListIntegrated,
   WebhookList: IcWebhookList,
   SupportCategory: IcSupportCategory,
-  QRManagement: IcQRManagement
+  QRManagement: IcQRManagement,
+  EmailConfig: IcEmailConfig,
+  PartnerEmail: IcPartnerEmail,
+  TopicEmail: IcTopicEmail,
+  SourceEmail: IcSourceEmail,
+  TemplateEmail: IcTemplateEmail,
+  ShiftManagement: IcShiftManagement
 
 };
 
