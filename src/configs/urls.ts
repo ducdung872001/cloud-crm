@@ -20,6 +20,7 @@ const prefixWarehouse = prefixBiz + "/warehouse";
 const prefixCare = prefixBiz + "/care";
 const prefixBilling = prefixBiz + "/billing";
 const prefixLogistics = prefixBiz + "/logistics";
+const prefixIntegration = prefixBiz + "/integration";
 
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
@@ -425,6 +426,14 @@ export const urlsApi = {
     // lấy mã hoá đơn
     invoiceCode: prefixSales + "/invoice/code",
     prefixSales,
+  },
+  // Hóa đơn VAT điện tử – tích hợp Viettel S-Invoice qua cloud-integration
+  sinvoice: {
+    previewDraft:      prefixIntegration + "/sinvoice/query/preview-draft",
+    createInvoice:     prefixIntegration + "/sinvoice/invoice/create",
+    sendEmailCustomer: prefixIntegration + "/sinvoice/ext/send-email-customer",
+    allTemplates:      prefixIntegration + "/sinvoice/ext/all-templates",
+    searchInvoices:    prefixIntegration + "/sinvoice/query/search",
   },
   returnInvoice: {
     list: prefixSales + "/invoice/return-exchange/list",
