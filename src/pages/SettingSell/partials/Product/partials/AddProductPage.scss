@@ -978,7 +978,178 @@
   }
 }
 
-// ── Variant image picker ────────────────────────────────────
+// ── Multi-image strip cho variant ───────────────────────────
+.vt-img-strip {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 2px 0 10px;
+
+  // Mỗi thumbnail
+  &__item {
+    position: relative;
+    width: 5.6rem;
+    height: 5.6rem;
+    border-radius: 0.75rem;
+    border: 1.5px solid #e5e7ef;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #f8fafc;
+
+    // Ảnh chính — viền xanh nổi bật, không đổi cursor
+    &--main {
+      border-color: #2563eb;
+      border-width: 2px;
+      cursor: default;
+    }
+
+    // Ảnh không phải chính — pointer để gợi ý click được
+    &:not(&--main):not(&--loading) {
+      cursor: pointer;
+
+      &:hover {
+        border-color: #64748b;
+      }
+    }
+
+    &--loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-style: dashed;
+      border-color: #94a3b8;
+      background: #f1f5f9;
+    }
+
+    // Hiện action buttons khi hover
+    &:hover .vt-img-strip__move-row {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    &:hover .vt-img-strip__remove {
+      opacity: 1;
+    }
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  // Badge "Chính" ở góc dưới trái ảnh đầu tiên
+  &__main-badge {
+    position: absolute;
+    bottom: 3px;
+    left: 3px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: rgba(37, 99, 235, 0.82);
+    color: #fff;
+    z-index: 2;
+    pointer-events: none;
+    line-height: 1.5;
+  }
+
+  // Hàng nút ◀▶ giữa ảnh
+  &__move-row {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 3px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  &__move {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.52);
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.12s;
+
+    &:hover { background: rgba(0, 0, 0, 0.78); }
+  }
+
+  // Nút ✕ xoá (góc trên phải)
+  &__remove {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.52);
+    border: none;
+    color: #fff;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.12s, background 0.12s;
+    z-index: 3;
+
+    &:hover { background: rgba(0, 0, 0, 0.78); }
+  }
+
+  &__spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2.5px solid #e2e8f0;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: vt-spin 0.7s linear infinite;
+  }
+
+  // Nút + thêm ảnh
+  &__add {
+    width: 5.6rem;
+    height: 5.6rem;
+    border-radius: 0.75rem;
+    border: 1.5px dashed #cdd0e0;
+    background: #f8fafc;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.28rem;
+    color: #94a3b8;
+    font-size: 1.05rem;
+    font-weight: 500;
+    user-select: none;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+
+    &:hover {
+      border-color: #2563eb;
+      background: #eff6ff;
+      color: #2563eb;
+    }
+  }
+}
+
+// ── Variant image picker (legacy, kept for keyframe) ────────
 .vt-img-picker {
   position: relative;
   width: 6rem;
@@ -991,13 +1162,32 @@
   overflow: hidden;
   transition: border-color 0.15s, background 0.15s;
 
-  &:hover {
+  &:hover:not(&--loading) {
     border-color: #2563eb;
     background: #eff6ff;
 
     .vt-img-picker__placeholder {
       color: #2563eb;
     }
+  }
+
+  &--loading {
+    cursor: not-allowed;
+    border-color: #94a3b8;
+    background: #f1f5f9;
+  }
+
+  &__spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2.5px solid #e2e8f0;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: vt-spin 0.7s linear infinite;
+  }
+
+  @keyframes vt-spin {
+    to { transform: rotate(360deg); }
   }
 
   &__img {

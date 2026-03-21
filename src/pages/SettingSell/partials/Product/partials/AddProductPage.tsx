@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import FileUpload from "components/fileUpload/fileUpload";
 import SelectCustom from "components/selectCustom/selectCustom";
+import FileService from "services/FileService";
 import NummericInput from "components/input/numericInput";
 import TextArea from "components/textarea/textarea";
 import ProductService from "services/ProductService";
@@ -76,7 +76,7 @@ interface VariantCombination {
   label: string;
   sku: string;
   barcode: string;
-  image: string;
+  images: string[];
   price: string | number;
   costPrice: string | number;
   priceWholesale: string | number;
@@ -147,7 +147,7 @@ const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
     label: combo.join(" / "),
     sku: "",
     barcode: "",
-    image: "",
+    images: [],
     price: "" as string | number,
     costPrice: "" as string | number,
     priceWholesale: "" as string | number,
@@ -271,54 +271,120 @@ function BarcodeScannerModal({ onScan, onClose }: { onScan: (barcode: string) =>
   );
 }
 
-// ── Compact image picker cho variant ──
-function VariantImagePicker({ image, onChange }: { image: string; onChange: (url: string) => void }) {
-  const inputRef = useRef<HTMLInputElement>(null);
+// ── Multi-image picker cho variant (upload lên CDN, reorder bằng nút ◀▶) ──
+const MAX_VARIANT_IMAGES = 7;
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => onChange(ev.target?.result as string);
-    reader.readAsDataURL(file);
+function VariantImagePicker({ images, onChange }: { images: string[]; onChange: (urls: string[]) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploadingCount, setUploadingCount] = useState(0);
+
+  // Luôn giữ ref mới nhất để callback async không bị stale closure
+  const imagesRef = useRef(images);
+  imagesRef.current = images;
+
+  const remaining = MAX_VARIANT_IMAGES - images.length - uploadingCount;
+
+  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []).slice(0, Math.max(0, remaining));
+    if (!files.length) return;
     e.target.value = "";
+    files.forEach((file) => {
+      setUploadingCount((c) => c + 1);
+      FileService.uploadFile({
+        data: file,
+        onSuccess: (result: any) => {
+          const url = result?.fileUrl || result;
+          setUploadingCount((c) => c - 1);
+          onChange([...imagesRef.current, url]);
+        },
+        onError: () => {
+          setUploadingCount((c) => c - 1);
+          showToast("Upload ảnh thất bại, vui lòng thử lại", "error");
+        },
+      });
+    });
   };
 
+  // Click vào ảnh → đặt làm ảnh chính (đưa lên index 0)
+  const setAsMain = (idx: number) => {
+    if (idx === 0) return;
+    const arr = [...images];
+    const [picked] = arr.splice(idx, 1);
+    onChange([picked, ...arr]);
+  };
+
+  const move = (idx: number, dir: -1 | 1) => {
+    const arr = [...images];
+    const target = idx + dir;
+    if (target < 0 || target >= arr.length) return;
+    [arr[idx], arr[target]] = [arr[target], arr[idx]];
+    onChange(arr);
+  };
+
+  const remove = (idx: number) => onChange(images.filter((_, i) => i !== idx));
+
   return (
-    <div className="vt-img-picker" onClick={() => inputRef.current?.click()} title="Chọn ảnh biến thể">
-      {image ? (
-        <>
-          <img src={image} alt="variant" className="vt-img-picker__img" />
+    <div className="vt-img-strip">
+      {images.map((url, idx) => (
+        <div
+          className={`vt-img-strip__item${idx === 0 ? " vt-img-strip__item--main" : ""}`}
+          key={`${url}-${idx}`}
+          onClick={() => setAsMain(idx)}
+          title={idx === 0 ? "Ảnh chính" : "Click để đặt làm ảnh chính"}
+        >
+          {idx === 0 && <span className="vt-img-strip__main-badge">Chính</span>}
+          <img src={url} alt={`img-${idx}`} className="vt-img-strip__img" />
+          {/* Nút di chuyển (hiện khi hover) */}
+          <div className="vt-img-strip__move-row">
+            <button
+              type="button"
+              className="vt-img-strip__move"
+              style={{ visibility: idx > 0 ? "visible" : "hidden" }}
+              onClick={(e) => { e.stopPropagation(); move(idx, -1); }}
+              title="Dịch sang trái"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="12" height="12"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button
+              type="button"
+              className="vt-img-strip__move"
+              style={{ visibility: idx < images.length - 1 ? "visible" : "hidden" }}
+              onClick={(e) => { e.stopPropagation(); move(idx, 1); }}
+              title="Dịch sang phải"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="12" height="12"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          {/* Nút xoá */}
           <button
             type="button"
-            className="vt-img-picker__clear"
-            onClick={(e) => {
-              e.stopPropagation();
-              onChange("");
-            }}
+            className="vt-img-strip__remove"
+            onClick={(e) => { e.stopPropagation(); remove(idx); }}
+            title="Xoá ảnh"
           >
-            ✕
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="10" height="10"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
-        </>
-      ) : (
-        <div className="vt-img-picker__placeholder">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-            <circle cx="12" cy="13" r="4" />
+        </div>
+      ))}
+
+      {/* Spinner cho từng ảnh đang upload */}
+      {Array.from({ length: uploadingCount }).map((_, i) => (
+        <div className="vt-img-strip__item vt-img-strip__item--loading" key={`loading-${i}`}>
+          <div className="vt-img-strip__spinner" />
+        </div>
+      ))}
+
+      {/* Nút thêm ảnh — ẩn khi đã đủ MAX */}
+      {remaining > 0 && (
+        <div className="vt-img-strip__add" onClick={() => inputRef.current?.click()} title={`Thêm ảnh (còn ${remaining} slot)`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
-          <span>Ảnh</span>
+          <span>Thêm</span>
         </div>
       )}
-      <input ref={inputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleFile} />
+
+      <input ref={inputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFiles} />
     </div>
   );
 }
@@ -333,8 +399,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const [selectedCategory, setSelectedCategory] = useState<{ value: number; label: string } | null>(null);
   const [formData, setFormData] = useState({ ...DEFAULT_FORM });
   const [isDuplicating, setIsDuplicating] = useState(false);
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
-  const [selectedImagePreview, setSelectedImagePreview] = useState("");
   // Variants
   const [variantAttrs, setVariantAttrs] = useState<VariantAttribute[]>([]);
   const [combinations, setCombinations] = useState<VariantCombination[]>([]);
@@ -343,8 +407,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const setField = (key: string, value: any) => setFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
-    setSelectedImageFile(null);
-    setSelectedImagePreview("");
     loadUnits();
     loadCategories();
     if (isEdit) loadDetail();
@@ -388,7 +450,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       setVariantAttrs(attrs);
 
       // Map variants → combinations (bỏ qua biến thể "Mac dinh" / default)
-      console.log("🔍 [preFill] raw variants từ API:", JSON.stringify(p.variants, null, 2));
       const realVariants = (p.variants || []).filter((v: any) => v.label !== "Mac dinh");
 
       if (realVariants.length) {
@@ -433,7 +494,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
             label: v.label,
             sku: v.sku || "",
             barcode: v.code || v.barcode || v.barcodeCode || "",
-            image: v.avatar || v.image || "",
+            images: [v.avatar, v.image].filter(Boolean) as string[],
             price: v.price ?? v.priceRetail ?? "",
             costPrice: v.costPrice ?? v.cost_price ?? "",
             priceWholesale: v.priceWholesale ?? v.price_wholesale ?? v.wholesale ?? "",
@@ -469,12 +530,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     }
   };
 
-  const handleRemoveImage = () => {
-    setSelectedImageFile(null);
-    setSelectedImagePreview("");
-    setField("avatar", "");
-  };
-
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
       showToast("Vui lòng nhập tên sản phẩm", "error");
@@ -482,6 +537,12 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     }
     if (combinations.length === 0) {
       showToast("Vui lòng thêm ít nhất 1 biến thể sản phẩm", "error");
+      setActiveTab("variants");
+      return;
+    }
+    const longSku = combinations.find((c) => c.sku && c.sku.length > 20);
+    if (longSku) {
+      showToast(`SKU biến thể "${longSku.label}" vượt quá 20 ký tự`, "error");
       setActiveTab("variants");
       return;
     }
@@ -524,7 +585,8 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         costPrice: +(c.costPrice ?? 0) || 0,
         priceWholesale: +(c.priceWholesale ?? 0) || 0,
         pricePromo: +(c.pricePromo ?? 0) || 0,
-        avatar: c.image || "",
+        avatar: c.images?.[0] || "",
+        avatars: c.images || [],
         selectedOptions,
         unitPrices: c.unitPrices.map((u, ui) => {
           const unitPart = toSkuPart(u.unitName);
@@ -564,34 +626,9 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       variants: variants.length > 0 ? variants : [defaultVariant],
     };
 
-    console.log("📦 [AddProductPage] body gửi lên:", JSON.stringify(body, null, 2));
-
     setIsSubmitting(true);
     try {
-      const hasAvatarChange = !!selectedImageFile || (isEdit && !formData.avatar);
-      let res;
-      if (hasAvatarChange) {
-        const form = new FormData();
-        Object.entries(body).forEach(([key, value]) => {
-          if (value === undefined || value === null) return;
-          if (key === "avatar") return;
-          if (key === "variantGroups" || key === "variants") {
-            form.append(key, JSON.stringify(value));
-            return;
-          }
-          form.append(key, String(value));
-        });
-        if (selectedImageFile) {
-          form.append("avatar", selectedImageFile);
-        } else if (isEdit && !formData.avatar) {
-          form.append("avatar", "");
-        } else if (formData.avatar) {
-          form.append("avatar", formData.avatar);
-        }
-        res = await ProductService.wUpdateFormData(form);
-      } else {
-        res = await ProductService.wUpdate(body as any);
-      }
+      const res = await ProductService.wUpdate(body as any);
       if (res.code === 0) {
         showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
         onBack(true);
@@ -655,7 +692,17 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
   const updateComboSku = (key: string, sku: string) => setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, sku } : c)));
 
-  const updateComboImage = (key: string, image: string) => setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, image } : c)));
+  const updateComboImages = (key: string, images: string[]) => {
+    setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, images } : c)));
+    // Lưu tạm vào localStorage cho đến khi có API post link ảnh
+    try {
+      const storageKey = `prd_vt_imgs_${idProduct ?? "new"}`;
+      const existing = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      if (images.length) existing[key] = images;
+      else delete existing[key];
+      localStorage.setItem(storageKey, JSON.stringify(existing));
+    } catch (_) {}
+  };
 
   // Cập nhật field trực tiếp trên variant (barcode, price, costPrice, priceWholesale, pricePromo)
   const updateComboField = (key: string, field: keyof VariantCombination, value: any) =>
@@ -732,7 +779,8 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           costPrice: +(c.costPrice ?? 0) || 0,
           priceWholesale: +(c.priceWholesale ?? 0) || 0,
           pricePromo: +(c.pricePromo ?? 0) || 0,
-          avatar: c.image || "",
+          avatar: c.images?.[0] || "",
+          avatars: c.images || [],
           selectedOptions: activeAttrs.map((attr) => ({
             groupName: attr.name,
             label: keyParts.find((k) => k.name === attr.name)?.value ?? "",
@@ -872,32 +920,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                     isClearable
                   />
                 </div>
-              </div>
-
-              {/* Hình ảnh */}
-              <div className="add-prod-card">
-                <div className="add-prod-card__title">Hình ảnh sản phẩm</div>
-                <FileUpload
-                  type="avatar"
-                  label="Ảnh sản phẩm"
-                  formData={{ values: { avatar: selectedImagePreview || formData.avatar } }}
-                  setFormData={(fd: any) => {
-                    const nextAvatar = fd?.values?.avatar || "";
-                    if (!nextAvatar) {
-                      handleRemoveImage();
-                    }
-                  }}
-                  onFileChange={(file: File | null) => {
-                    if (!file) {
-                      handleRemoveImage();
-                      setField("avatar", "");
-                      return;
-                    }
-                    const previewUrl = URL.createObjectURL(file);
-                    setSelectedImageFile(file);
-                    setSelectedImagePreview(previewUrl);
-                  }}
-                />
               </div>
 
               {/* Mô tả */}
@@ -1075,11 +1097,8 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                   const isFirst = idx === 0;
                   return (
                     <div className="add-prod-vt-combo-card" key={c.key}>
-                      {/* Header: Ảnh | Tên biến thể + badge | SKU */}
+                      {/* Header: Tên biến thể + badge | SKU */}
                       <div className="add-prod-vt-combo-card__header">
-                        {/* Cột ảnh */}
-                        <VariantImagePicker image={c.image} onChange={(url) => updateComboImage(c.key, url)} />
-
                         {/* Tên biến thể */}
                         <div className="add-prod-vt-combo-card__label-wrap">
                           <span className="add-prod-vt-combo">{c.label}</span>
@@ -1158,6 +1177,9 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                           </Tippy>
                         </div>
                       </div>
+
+                      {/* Ảnh biến thể */}
+                      <VariantImagePicker images={c.images} onChange={(urls) => updateComboImages(c.key, urls)} />
 
                       {/* Giá biến thể */}
                       <div className="add-prod-vt-combo-card__price-grid">
