@@ -35,13 +35,9 @@ type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock
 
 const isSuccessResponse = (response: any) => response?.code === 0 || response?.status === 1;
 
-const getProductWebState = (item: IProductResponse) => {
-  if (typeof item?.showOnWebsite !== "undefined") {
-    return item.showOnWebsite === 1 || item.showOnWebsite === true;
-  }
-
-  return Boolean(item?.showOnWeb);
-};
+// showOnWebsite (số 0/1) ưu tiên hơn showOnWeb (boolean) vì API trả không nhất quán
+const getProductWebState = (item: IProductResponse) =>
+  Boolean(item?.showOnWebsite ?? item?.showOnWeb);
 
 export default function ProductList(props: IProductListProps) {
   document.title = "Danh sách sản phẩm";
@@ -196,44 +192,23 @@ export default function ProductList(props: IProductListProps) {
     // TODO: call getListProduct with corresponding status filter
   };
 
-  // TODO: Implement toggle web display per product
   const handleToggleWebDisplay = async (item: IProductResponse, newValue: boolean) => {
     const previousValue = getProductWebState(item);
+    const patch = (value: boolean) =>
+      setListProduct((prev) =>
+        prev.map((p) => (p.id === item.id ? { ...p, showOnWeb: value, showOnWebsite: value ? 1 : 0 } : p))
+      );
 
-    setListProduct((prev) =>
-      prev.map((product) =>
-        product.id === item.id
-          ? {
-              ...product,
-              showOnWeb: newValue,
-              showOnWebsite: newValue ? 1 : 0,
-            }
-          : product
-      )
-    );
+    patch(newValue);
 
-    const response = await ProductService.wWebsiteToggle({
-      productId: item.id,
-      showOnWebsite: newValue ? 1 : 0,
-    });
+    const response = await ProductService.wWebsiteToggle({ id: item.id, showOnWebsite: newValue ? 1 : 0 });
 
     if (isSuccessResponse(response)) {
       showToast(newValue ? "Đã đẩy sản phẩm lên website" : "Đã ẩn sản phẩm khỏi website", "success");
       return;
     }
 
-    setListProduct((prev) =>
-      prev.map((product) =>
-        product.id === item.id
-          ? {
-              ...product,
-              showOnWeb: previousValue,
-              showOnWebsite: previousValue ? 1 : 0,
-            }
-          : product
-      )
-    );
-
+    patch(previousValue);
     showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
   };
 
