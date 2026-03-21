@@ -1,0 +1,7 @@
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#993C1D" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+        <polyline points="2,4 12,13 22,4"></polyline>
+        <!-- template lines with placeholder -->
+        <line x1="6" y1="16" x2="10" y2="16" stroke-width="1.3"></line>
+        <rect x="11" y="14.5" width="5" height="3" rx="0.8" stroke-width="1.2"></rect>
+      </svg>

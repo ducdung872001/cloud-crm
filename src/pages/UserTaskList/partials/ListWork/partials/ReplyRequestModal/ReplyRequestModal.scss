@@ -103,7 +103,7 @@
                         padding: 8px;
                         // width: 13.4rem;
                         // height: 3.6rem;
-                        border-radius: 0.8rem;
+                        border-radius: 0.3rem;
                         background-color: #fdfcfc;
                         border: 1px solid #eceaea;
                         //styleName: Medium/text-sm;
@@ -150,7 +150,7 @@
                           .item-loading{
                             height: 8px;
                             border-radius: 8px;
-                            background-color: #ED1B34;
+                            background: var(--error-darker-color);
                           }
                         }
                       }
@@ -275,7 +275,7 @@
                           width: 80%;
                           height: 80%;
                           object-fit: contain;
-                          border-radius: 0.5rem;
+                          border-radius: 0.3rem;
                         }
         
                         .icon-delete {
@@ -324,7 +324,7 @@
                           width: 100%;
                           height: 100%;
                           object-fit: contain;
-                          border-radius: 0.5rem;
+                          border-radius: 0.3rem;
                         }
         
                         .icon-delete {
@@ -355,7 +355,7 @@
                       .add-image {
                         width: 10rem;
                         height: 10rem;
-                        border-radius: 0.5rem;
+                        border-radius: 0.3rem;
                         cursor: pointer;
                         border: 1px dashed var(--extra-color-50);
                         margin: 0 0 0 0.3rem;
@@ -443,7 +443,7 @@
                       .item-loading{
                         height: 8px;
                         border-radius: 8px;
-                        background-color: #ED1B34;
+                        background: var(--error-darker-color);
                       }
                     }
                   }

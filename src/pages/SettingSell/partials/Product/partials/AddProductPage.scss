@@ -77,10 +77,11 @@
     }
 
     &--primary {
-      background: #2563eb;
+      background: var(--primary-color);
       color: #fff;
       &:hover {
-        background: #1d4ed8;
+        background: var(--primary-color);
+      color: var(--white-color);
       }
       &:disabled {
         opacity: 0.6;
@@ -162,7 +163,7 @@
   }
 
   &__badge {
-    background: #2563eb;
+    background: var(--primary-color);
     color: #fff;
     font-size: 10px;
     font-weight: 700;

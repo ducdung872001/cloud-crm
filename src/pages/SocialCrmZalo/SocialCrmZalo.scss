@@ -17,10 +17,10 @@
           padding-right: 1rem;
           margin: 0;
           color: var(--text-primary-color);
-          font-size: 2.4rem;
+          font-size: var(--text-3xl);
           line-height: 2.8rem;
-          font-weight: 700;
-          text-transform: uppercase;
+          font-weight: var(--fw-bold);
+          text-transform: none; // ✅ standardized
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;

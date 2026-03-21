@@ -1,16 +1,15 @@
 .page-multi-channel-sale {
-    padding: 1.6rem;
     .container-tab-list {
-        padding: 5px;
+        padding: 0.5rem;
         display: flex;
         gap: 0 0.5rem;
         background-color: #EEEEEF;
-        border-radius: 10px;
+        border-radius: 1rem;
         margin-bottom: 1.6rem;
 
         .item-tab {
             padding: 0.3rem 1.6rem;
-            border-radius: 10px;
+            border-radius: 1rem;
             cursor: pointer;
 
             &--active {
@@ -38,7 +37,7 @@
             .button-connect {
                 border: 1px solid;
                 padding: 0.5rem 1.6rem;
-                border-radius: 10px;
+                border-radius: 0.3rem;
                 cursor: pointer;
 
                 &:hover {
@@ -64,7 +63,7 @@
             width: 24%;
             padding: 1.2rem 2rem;
             border: 1px solid var(--extra-color-20);
-            border-radius: 10px;
+            border-radius: 1rem;
             display: flex;
             flex-direction: column;
             gap: 0.5rem 0;
@@ -75,7 +74,7 @@
     .table-result-app{
         border: 1px solid var(--extra-color-20);
         margin-top: 2rem;
-        border-radius: 20px;
+        border-radius: 2rem;
         background-color: white;
 
         .table-header {
@@ -87,7 +86,7 @@
             .button-export {
                 border: 1px solid;
                 padding: 0.5rem 1.6rem;
-                border-radius: 10px;
+                border-radius: 0.3rem;
                 cursor: pointer;
 
                 &:hover {

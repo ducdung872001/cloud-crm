@@ -30,25 +30,45 @@ export default function SettingEmailList() {
       ? {
           title: "Cấu hình Email",
           is_tab: "tab_one",
+          icon: "EmailConfig",
+          backgroundColor: "#E6F1FB",
+          strokeColor: "rgb(24, 95, 165)",
+          des: "Thiết lập máy chủ SMTP/API gửi email, xác thực tên miền và các thông số kết nối kỹ thuật."
         }
       : null,
     permissions["PARTNER_EMAIL_VIEW"] == 1
       ? {
           title: "Danh mục đối tác Email",
           is_tab: "tab_three",
+          icon: "PartnerEmail",
+          backgroundColor: "#E1F5EE",
+          strokeColor: "rgb(15, 110, 86)",
+          des: "Quản lý danh sách nhà cung cấp dịch vụ Email marketing tích hợp với hệ thống (SendGrid, Mailgun…)."
         }
       : null,
     {
       title: "Chủ đề Email",
       is_tab: "tab_two",
+      icon: "TopicEmail",
+      backgroundColor: "#FAEEDA",
+      strokeColor: "rgb(133, 79, 11)",
+      des: "Phân loại email theo chủ đề như chào mừng, khuyến mãi, nhắc lịch để tổ chức chiến dịch rõ ràng hơn."
     },
     {
       title: "Khai báo nguồn gửi Email",
       is_tab: "tab_four",
+      icon: "SourceEmail",
+      backgroundColor: "#EEEDFE",
+      strokeColor: "rgb(83, 74, 183)",
+      des: "Đăng ký địa chỉ email và tên hiển thị người gửi (From name / From address) để xác thực và tránh bị đánh dấu spam."
     },
     {
       title: "Khai báo mẫu Email",
       is_tab: "tab_five",
+      icon: "TemplateEmail",
+      backgroundColor: "#FAECE7",
+      strokeColor: "rgb(153, 60, 29)",
+      des: "Tạo và quản lý các mẫu nội dung email có biến động (tên khách hàng, mã đơn hàng, link xác nhận…) dùng cho các chiến dịch gửi hàng loạt."
     },
   ].filter((e) => e);
 

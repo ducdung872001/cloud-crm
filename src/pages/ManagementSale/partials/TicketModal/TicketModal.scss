@@ -119,7 +119,7 @@
                   width: 100%;
                   height: 100%;
                   object-fit: cover;
-                  border-radius: 0.5rem;
+                  border-radius: 0.3rem;
                 }
   
                 .icon-delete {
@@ -150,7 +150,7 @@
               .add-image {
                 width: 9rem;
                 height: 9rem;
-                border-radius: 0.5rem;
+                border-radius: 0.3rem;
                 cursor: pointer;
                 border: 1px dashed var(--extra-color-50);
                 margin: 0 0 0 1rem;
@@ -197,7 +197,7 @@
         }
       }
       ::-webkit-scrollbar-track {
-        border-radius: 0.5rem;
+        border-radius: 0.3rem;
       }
     }
   }

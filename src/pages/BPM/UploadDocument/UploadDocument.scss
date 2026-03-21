@@ -222,7 +222,7 @@
                     height: 8px;
                     border-radius: 5px;
                     // transform: translate(-50%, -50%);
-                    background-color: #ed1b34;
+                    background: var(--error-darker-color);
                   }
                 }
               }
@@ -345,7 +345,7 @@
           .add-image {
             width: 9.6rem;
             height: 9.6rem;
-            border-radius: 0.5rem;
+            border-radius: 0.3rem;
             cursor: pointer;
             border: 1px dashed var(--extra-color-50);
             // margin: 0 0 0 0.3rem;

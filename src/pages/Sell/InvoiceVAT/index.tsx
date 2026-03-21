@@ -20,7 +20,7 @@ import InvoiceVATMockService, {
 } from "./partials/InvoiceVATMock";
 import InvoiceVATList        from "./partials/InvoiceVATList/index";
 import IssueInvoice          from "./partials/IssueInvoice/index";
-import ElectronicInvoiceProvider from "./partials/ ElectronicInvoiceProvider/index";
+import ElectronicInvoiceProvider from "./partials/ElectronicInvoiceProvider/index";
 import Configuration         from "./partials/Configuration/index";
 import InvoicePreviewModal from "./partials/IssueInvoice/InvoicePreviewModal/index";
 import InvoiceDetailModal, { InvoiceDetailData }   from "./partials/InvoiceDetailModal/index";

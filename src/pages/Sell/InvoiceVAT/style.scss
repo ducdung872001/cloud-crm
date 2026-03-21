@@ -28,15 +28,15 @@
         }
 
         &.active {
-          color: #1e3a5f;
+          color: var(--primary-color);
           font-weight: 600;
-          border-bottom-color: #1e3a5f;
+          border-bottom-color: var(--primary-color);
         }
 
         .tab-badge {
-          background: #f59e0b;
+          background: var(--primary-color);
           color: #fff;
-          border-radius: 10px;
+          border-radius: 0.3rem;
           padding: 1px 7px;
           font-size: 11px;
           font-weight: 700;
@@ -55,7 +55,7 @@
     .page-title-text {
       h1 {
         font-size: 22px;
-        font-weight: 700;
+        font-weight: var(--fw-bold);
         color: #111827;
         margin: 0 0 4px;
         line-height: 1.2;
@@ -81,7 +81,7 @@
     gap: 7px;
     padding: 8px 18px;
     border: 1px solid #374151;
-    border-radius: 6px;
+    border-radius: 0.3rem;
     background: #fff;
     font-size: 13px;
     font-weight: 500;
@@ -96,14 +96,15 @@
     align-items: center;
     gap: 6px;
     padding: 8px 18px;
-    background: #d97706;
+    background: var(--primary-color);
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 0.3rem;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    &:hover { background: #b45309; }
+    &:hover { background: var(--primary-color);
+      color: var(--white-color); }
   }
 
   // ---- OVERVIEW ----
@@ -127,7 +128,7 @@
   .stat-card {
     background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: 0.3rem;
     padding: 20px;
 
     &__label {
@@ -172,7 +173,7 @@
   .recent-invoices {
     background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: 0.3rem;
     overflow: hidden;
 
     .section-header {
@@ -197,7 +198,7 @@
 
     .view-all-link {
       font-size: 13px;
-      color: #1e3a5f;
+      color: var(--primary-color);
       text-decoration: none;
       white-space: nowrap;
       font-weight: 500;
@@ -281,7 +282,7 @@
   .sidebar-card {
     background: #fff;
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: 0.3rem;
     padding: 16px 20px;
 
     h4 {
@@ -305,7 +306,7 @@
   .provider-logo {
     width: 40px;
     height: 40px;
-    border-radius: 8px;
+    border-radius: 0.3rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -353,8 +354,8 @@
   }
 
   .quota-bar-card {
-    background: #1e3a5f;
-    border-radius: 8px;
+    background: var(--primary-color);
+    border-radius: 0.3rem;
     padding: 14px 16px;
 
     .quota-bar-header {
@@ -382,7 +383,7 @@
 
       .quota-bar-fill {
         height: 100%;
-        background: #f59e0b;
+        background: var(--primary-color);
         border-radius: 3px;
         transition: width 0.4s ease;
       }
@@ -459,7 +460,7 @@
   // Buttons
   .btn {
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 0.3rem;
     font-size: 13px;
     font-weight: 500;
     padding: 6px 14px;
@@ -469,15 +470,17 @@
     &-sm { padding: 4px 12px; font-size: 12px; }
 
     &-primary {
-      background: #f59e0b;
+      background: var(--primary-color);
       color: #fff;
-      &:hover { background: #d97706; }
+      &:hover { background: var(--primary-color);
+      color: var(--white-color); }
     }
 
     &-warning {
-      background: #f59e0b;
+      background: var(--primary-color);
       color: #fff;
-      &:hover { background: #d97706; }
+      &:hover { background: var(--primary-color);
+      color: var(--white-color); }
     }
 
     &-outline {

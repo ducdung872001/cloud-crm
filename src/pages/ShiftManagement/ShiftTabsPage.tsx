@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import TitleAction from "components/titleAction/titleAction";
+import { UserContext, ContextType } from "contexts/userContext";
 import "./ShiftTabsPage.scss";
 
 import NotOpenShiftTab from "./partials/NotOpenShift/NotOpenShiftTab";
@@ -15,7 +16,16 @@ type TabKey = "preopen" | "open" | "orders" | "onshift" | "close" | "report" | "
 export default function ShiftTabsPage() {
   document.title = "Quản lý ca";
 
+  const { dataBranch } = useContext(UserContext) as ContextType;
+  const branchId: number = dataBranch?.value ?? 0;
+
   const [tab, setTab] = useState<TabKey>("preopen");
+
+  // ID ca đang active (sau khi mở ca thành công)
+  const [activeShiftId, setActiveShiftId] = useState<number | null>(null);
+
+  // Config ID ca đang được chọn ở màn "Chưa vào ca" → truyền sang "Vào ca"
+  const [pendingConfigId, setPendingConfigId] = useState<number>(0);
 
   return (
     <div className="page-content page-shift-tabs">
@@ -51,13 +61,58 @@ export default function ShiftTabsPage() {
         </div>
 
         <div className="tab-body">
-          {tab === "preopen" && <NotOpenShiftTab />}
-          {tab === "open" && <OpenShiftTab />}
-          {tab === "orders" && <OrdersInShiftTab />}
-          {tab === "onshift" && <OnShiftTab />}
-          {tab === "close" && <CloseShiftTab />}
-          {tab === "report" && <ShiftReportTab />}
-          {tab === "overview" && <OverviewTab />}
+          {tab === "preopen" && (
+            <NotOpenShiftTab
+              onOpenShiftClick={(configId) => {
+                setPendingConfigId(configId);
+                setTab("open");
+              }}
+            />
+          )}
+
+          {tab === "open" && (
+            <OpenShiftTab
+              shiftConfigId={pendingConfigId}
+              branchId={branchId}
+              onShiftOpened={(shiftId) => {
+                setActiveShiftId(shiftId);
+                setTab("onshift");
+              }}
+            />
+          )}
+
+          {tab === "onshift" && (
+            <OnShiftTab
+              shiftId={activeShiftId}
+              branchId={branchId}
+              onEndShift={() => setTab("close")}
+            />
+          )}
+
+          {tab === "orders" && (
+            <OrdersInShiftTab shiftId={activeShiftId} />
+          )}
+
+          {tab === "close" && (
+            <CloseShiftTab
+              shiftId={activeShiftId}
+              branchId={branchId}
+              onShiftClosed={() => {
+                setTab("report");
+              }}
+            />
+          )}
+
+          {tab === "report" && (
+            <ShiftReportTab
+              shiftId={activeShiftId}
+              branchId={branchId}
+            />
+          )}
+
+          {tab === "overview" && (
+            <OverviewTab branchId={branchId} />
+          )}
         </div>
       </div>
     </div>

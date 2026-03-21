@@ -10,12 +10,12 @@
   
         h1 {
           color: var(--text-primary-color);
-          font-size: 2.4rem;
+          font-size: var(--text-3xl);
           line-height: 2.8rem;
           padding-right: 1rem;
           margin: 0;
-          font-weight: 700;
-          text-transform: uppercase;
+          font-weight: var(--fw-bold);
+          text-transform: none; // ✅ standardized
           overflow: hidden;
           text-overflow: ellipsis;
         }
@@ -171,7 +171,7 @@
                 font-size: 1.4rem;
                 cursor: pointer;
                 font-weight: 500;
-                border-radius: 0.5rem;
+                border-radius: 0.3rem;
                 flex: 1;
                 white-space: nowrap;
                 opacity: 0.9;
@@ -237,7 +237,7 @@
                 font-size: 1.4rem;
                 cursor: pointer;
                 font-weight: 500;
-                border-radius: 0.5rem;
+                border-radius: 0.3rem;
                 flex: 1;
                 white-space: nowrap;
                 opacity: 0.9;
@@ -403,7 +403,7 @@
                 font-size: 1.4rem;
                 cursor: pointer;
                 font-weight: 500;
-                border-radius: 0.5rem;
+                border-radius: 0.3rem;
                 flex: 1;
                 white-space: nowrap;
                 opacity: 0.9;
@@ -430,7 +430,7 @@
               font-size: 1.4rem;
               cursor: pointer;
               font-weight: 500;
-              border-radius: 0.5rem;
+              border-radius: 0.3rem;
             }
   
             .relationship-item {
@@ -485,12 +485,12 @@
   
           h1 {
             color: var(--text-primary-color);
-            font-size: 2.4rem;
+            font-size: var(--text-3xl);
             line-height: 2.8rem;
             padding-right: 1rem;
             margin: 0;
-            font-weight: 700;
-            text-transform: uppercase;
+            font-weight: var(--fw-bold);
+            text-transform: none; // ✅ standardized
           }
   
           .title-first {

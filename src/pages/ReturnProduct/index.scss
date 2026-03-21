@@ -1,11 +1,6 @@
 .return-product {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--paper);
-  font-family: "Outfit", sans-serif;
-  color: var(--ink);
-  font-size: 14px;
+  // ✅ Removed font-family Outfit, font-size px
+  // Layout handled by #container wrapper
 
   &__main {
     flex: 1;
@@ -18,14 +13,17 @@
   &__content {
     flex: 1;
     overflow-y: auto;
-    background: #f4f6f8;
+    background: var(--background-color);
   }
 
   &__inner {
-    padding: 20px;
+    padding: 2.4rem 0;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    // max-width: 1400px;
+    gap: var(--spacing-16);
+
+    @media (max-width: 767px) {
+      padding: 1.2rem;
+    }
   }
 }

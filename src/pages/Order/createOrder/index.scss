@@ -11,7 +11,7 @@
         padding-right: 1rem;
         margin: 0;
         font-weight: 700;
-        text-transform: uppercase;
+        text-transform: none; // ✅ standardized
       }
   
       .action__header {

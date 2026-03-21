@@ -12,7 +12,7 @@
       line-height: 2.4rem;
       font-weight: 700;
       margin: 0;
-      text-transform: uppercase;
+      text-transform: none; // ✅ standardized
     }
     .report-filter {
       display: flex;
@@ -148,7 +148,7 @@
       }
       &__info {
         h3 {
-          text-transform: uppercase;
+          text-transform: none; // ✅ standardized
           font-size: 2rem;
           line-height: 2.4rem;
           font-weight: bold;
@@ -160,7 +160,7 @@
           line-height: 2.4rem;
           font-style: italic;
           &:first-letter {
-            text-transform: uppercase;
+            text-transform: none; // ✅ standardized
           }
         }
       }
@@ -263,7 +263,7 @@
         font-size: 1.4rem;
         line-height: 2.4rem;
         text-align: center;
-        text-transform: uppercase;
+        text-transform: none; // ✅ standardized
         font-weight: bold;
         color: var(--white-color);
         text-decoration: none;
@@ -448,7 +448,7 @@
     .btn-more {
       margin-top: 3rem;
       background-color: var(--extra-color-20);
-      border-radius: 0.5rem;
+      border-radius: 0.3rem;
       padding: 0.8rem 1rem;
       width: 100%;
       display: flex;

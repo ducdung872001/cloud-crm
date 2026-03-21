@@ -37,7 +37,7 @@
             .cell-last {
               border-right: 1px solid #FFFFFF;
               height: 12px;
-              // background-color: #ED1B34;
+              // background: var(--error-darker-color);
             }
 
             .cell-first {
@@ -73,7 +73,7 @@
               width: 2.2rem;
               height: 2.2rem;
               border-radius: 50%;
-              background-color: #ED1B34;
+              background: var(--error-darker-color);
               display: flex;
               align-items: center;
               justify-content: center;
@@ -114,7 +114,7 @@
           .line-loading {
             height: 8px;
             border-radius: 8px;
-            background-color: #ED1B34;
+            background: var(--error-darker-color);
           }
         }
       }
@@ -137,7 +137,7 @@
         .line-loading {
           height: 8px;
           border-radius: 8px;
-          background-color: #ED1B34;
+          background: var(--error-darker-color);
         }
       }
 

@@ -1,13 +1,13 @@
 .page-partner-setup {
-  padding-bottom: 48px;
+  padding-bottom: 4.8rem;
 }
 
 // ===== Stats bar =====
 .ps-stats-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 1.6rem;
+  margin-bottom: 2.4rem;
 
   @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
 }
@@ -15,18 +15,18 @@
 .ps-stat-card {
   background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 18px 22px;
+  border-radius: 1.2rem;
+  padding: 1.8rem 22px;
   text-align: center;
 
   &__label {
-    font-size: 13px;
+    font-size: 1.3rem;
     color: #6b7280;
-    margin-bottom: 8px;
+    margin-bottom: 0.8rem;
   }
 
   &__value {
-    font-size: 28px;
+    font-size: 2.8rem;
     font-weight: 700;
     color: #1d4ed8;
     line-height: 1;
@@ -37,8 +37,8 @@
 .ps-partner-cards {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 14px;
-  margin-bottom: 24px;
+  gap: 1.4rem;
+  margin-bottom: 2.4rem;
 
   @media (max-width: 1200px) { grid-template-columns: repeat(3, 1fr); }
   @media (max-width: 700px)  { grid-template-columns: repeat(2, 1fr); }
@@ -47,12 +47,12 @@
 .ps-partner-card {
   background: #fff;
   border: 1.5px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 18px 14px 16px;
+  border-radius: 1.2rem;
+  padding: 1.8rem 14px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 1rem;
   text-align: center;
   transition: box-shadow 0.18s, border-color 0.18s;
 
@@ -71,8 +71,8 @@
 
   // Logo area
   &__logo {
-    width: 60px;
-    height: 40px;
+    width: 6rem;
+    height: 4rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -86,21 +86,21 @@
   }
 
   &__logo-fallback {
-    font-size: 11px;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #374151;
     letter-spacing: 0.03em;
   }
 
   &__name {
-    font-size: 13px;
+    font-size: 1.3rem;
     font-weight: 600;
     color: #111827;
     line-height: 1.35;
   }
 
   &__status {
-    min-height: 22px;
+    min-height: 2.2rem;
     display: flex;
     align-items: center;
   }
@@ -108,9 +108,9 @@
   // Action buttons
   &__btn {
     width: 100%;
-    padding: 7px 0;
-    border-radius: 7px;
-    font-size: 13px;
+    padding: 0.7rem 0;
+    border-radius: 0.7rem;
+    font-size: 1.3rem;
     font-weight: 600;
     cursor: pointer;
     border: none;
@@ -125,7 +125,7 @@
     }
 
     &--connect {
-      background: #2563eb;
+      background: var(--primary-color);
       color: #fff;
     }
 
@@ -138,7 +138,7 @@
 
 // Connection status badges
 .ps-conn-badge {
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 600;
   padding: 2px 0;
 
@@ -151,8 +151,8 @@
     background: #fce7f3;
     color: #9d174d;
     padding: 2px 10px;
-    border-radius: 20px;
-    font-size: 11.5px;
+    border-radius: 2rem;
+    font-size: 1.1rem;
   }
 
   &--none {
@@ -165,29 +165,29 @@
   width: 100%;
   text-align: left;
   border-top: 1px dashed #e5e7eb;
-  padding-top: 12px;
+  padding-top: 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 1rem;
 
   &__field {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 0.5rem;
 
     label {
-      font-size: 12px;
+      font-size: 1.2rem;
       font-weight: 500;
       color: #374151;
 
       .required { color: #ef4444; margin-left: 2px; }
-      .optional  { font-size: 11px; color: #9ca3af; font-weight: 400; }
+      .optional  { font-size: 1.1rem; color: #9ca3af; font-weight: 400; }
     }
   }
 
   &__actions {
     display: flex;
-    gap: 6px;
+    gap: 0.6rem;
     justify-content: flex-end;
     padding-top: 2px;
   }
@@ -198,7 +198,7 @@
 
   .ps-pw-toggle {
     position: absolute;
-    right: 8px;
+    right: 0.8rem;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -207,17 +207,17 @@
     color: #9ca3af;
     padding: 0;
     display: flex;
-    svg { width: 15px; height: 15px; }
+    svg { width: 1.5rem; height: 1.5rem; }
     &:hover { color: #374151; }
   }
 }
 
 .ps-btn-cancel {
-  padding: 6px 12px;
+  padding: 0.6rem 12px;
   background: #f3f4f6;
   border: none;
-  border-radius: 6px;
-  font-size: 12px;
+  border-radius: 0.6rem;
+  font-size: 1.2rem;
   font-weight: 500;
   color: #374151;
   cursor: pointer;
@@ -225,25 +225,26 @@
 }
 
 .ps-btn-save {
-  padding: 6px 12px;
-  background: #2563eb;
+  padding: 0.6rem 12px;
+  background: var(--primary-color);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 12px;
+  border-radius: 0.6rem;
+  font-size: 1.2rem;
   font-weight: 600;
   cursor: pointer;
   &:disabled { opacity: 0.6; cursor: not-allowed; }
-  &:hover:not(:disabled) { background: #1d4ed8; }
+  &:hover:not(:disabled) { background: var(--primary-color);
+      color: var(--white-color); }
 }
 
 .ps-btn-disconnect {
-  padding: 6px 12px;
+  padding: 0.6rem 12px;
   background: #fee2e2;
   color: #dc2626;
   border: none;
-  border-radius: 6px;
-  font-size: 12px;
+  border-radius: 0.6rem;
+  font-size: 1.2rem;
   font-weight: 600;
   cursor: pointer;
   &:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -254,7 +255,7 @@
 .ps-table-wrap {
   background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: 1.2rem;
   overflow: hidden;
 }
 
@@ -268,8 +269,8 @@
   }
 
   th {
-    padding: 12px 16px;
-    font-size: 11.5px;
+    padding: 1.2rem 16px;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #6b7280;
     letter-spacing: 0.05em;
@@ -278,8 +279,8 @@
   }
 
   td {
-    padding: 14px 16px;
-    font-size: 14px;
+    padding: 1.4rem 16px;
+    font-size: 1.4rem;
     color: #111827;
     border-bottom: 1px solid #f3f4f6;
     vertical-align: middle;
@@ -302,9 +303,9 @@
 // Table status badges
 .ps-status {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12.5px;
+  padding: 0.4rem 12px;
+  border-radius: 2rem;
+  font-size: 1.2rem;
   font-weight: 600;
 
   &--active {
@@ -325,15 +326,16 @@
 
 // Detail button in table
 .ps-btn-detail {
-  padding: 6px 18px;
-  background: #2563eb;
+  padding: 0.6rem 18px;
+  background: var(--primary-color);
   color: #fff;
   border: none;
-  border-radius: 7px;
-  font-size: 13px;
+  border-radius: 0.7rem;
+  font-size: 1.3rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s;
 
-  &:hover { background: #1d4ed8; }
+  &:hover { background: var(--primary-color);
+      color: var(--white-color); }
 }

@@ -164,7 +164,7 @@
         width: 0.6rem;
         height: 0.6rem;
         border-radius: 999px;
-        background: #f59e0b;
+        background: var(--primary-color);
         flex-shrink: 0;
       }
     }
@@ -241,7 +241,7 @@
         color: var(--error-color);
         font-weight: 800;
         padding: 0.6rem 1.2rem;
-        border-radius: 0.8rem;
+        border-radius: 0.3rem;
         cursor: pointer;
         flex-shrink: 0;
 

@@ -42,8 +42,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
     params: params,
   });
 
-  console.log("categoryFiltered", categoryFiltered);
-
   // const filtered = PRODUCTS.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 
   // const handleAddToCart = (prod: Product) => {
@@ -109,7 +107,25 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
             }}
           >
             <div className="pg-card__icon">
-              {prod.avatar ? <img src={prod.avatar} alt={prod.name} /> : <span style={{ fontSize: "40px" }}>{prod.icon}</span>}
+              {prod.avatar ? (
+                <img
+                  src={prod.avatar}
+                  alt={prod.name}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                    const parent = (e.target as HTMLImageElement).parentElement;
+                    if (parent && !parent.querySelector(".pg-img-fallback")) {
+                      const fb = document.createElement("span");
+                      fb.className = "pg-img-fallback";
+                      fb.style.fontSize = "3.2rem";
+                      fb.textContent = prod.icon || "📦";
+                      parent.appendChild(fb);
+                    }
+                  }}
+                />
+              ) : (
+                <span style={{ fontSize: "3.2rem" }}>{prod.icon || "📦"}</span>
+              )}
             </div>
             <div className="pg-card__name">{prod.name}</div>
             <div className="pg-card__price">{prod.priceLabel}</div>
