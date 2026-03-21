@@ -551,6 +551,7 @@ export const urlsApi = {
     update: prefixInventory + "/product_import/update",
     detail: prefixInventory + "/product_import/detail",
     delete: prefixInventory + "/product_import/delete",
+    variantList: prefixInventory + "/productVariant/list",
   },
 
   inventory: {

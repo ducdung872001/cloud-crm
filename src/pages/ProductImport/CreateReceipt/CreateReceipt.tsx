@@ -97,13 +97,11 @@ export default function CreateReceipt() {
       showToast(response.message ?? "Không lấy được thông tin phiếu nhập", "error");
       return null;
     }
-
     const invoice = getInvoiceFromResponse(response);
     if (!invoice) {
       showToast("Không lấy được dữ liệu phiếu nhập", "error");
       return null;
     }
-
     return { invoice };
   };
 
@@ -113,13 +111,11 @@ export default function CreateReceipt() {
       showToast(response.message ?? "Không lấy được danh sách sản phẩm nhập", "error");
       return [] as IInvoiceDetailResponse[];
     }
-
     return getImportedProductsFromResponse(response);
   };
 
   const reloadInvoiceContext = async (id: number) => {
     if (!id) return;
-
     setIsLoading(true);
     try {
       const [payload, items] = await Promise.all([loadInvoiceMeta(id), loadInvoiceItems(id)]);
@@ -154,7 +150,6 @@ export default function CreateReceipt() {
         showToast(response.message ?? "Không lấy được danh sách phiếu nhập", "error");
         return;
       }
-
       const result = response?.result;
       const items = Array.isArray(result)
         ? result
@@ -163,7 +158,6 @@ export default function CreateReceipt() {
           : Array.isArray(result?.pagedLst?.items)
             ? result.pagedLst.items
             : [];
-
       setInvoiceOptions(
         items.map((item: any) => ({
           value: item.id,
@@ -196,20 +190,57 @@ export default function CreateReceipt() {
   };
 
   const handleInventoryChanged = (inventoryId: number) => {
-    setInvoiceInfo((prev) => ({
-      ...prev,
-      inventoryId,
-    }));
+    setInvoiceInfo((prev) => ({ ...prev, inventoryId }));
   };
 
-  const dataCreate = useMemo(() => syncInvoiceTotals(invoiceInfo, listInvoiceDetail), [invoiceInfo, listInvoiceDetail]);
+  const dataCreate = useMemo(
+    () => syncInvoiceTotals(invoiceInfo, listInvoiceDetail),
+    [invoiceInfo, listInvoiceDetail]
+  );
 
-  const titles = ["STT", "Tên sản phẩm", "Số lô", "Ngày sản xuất", "Ngày hết hạn", "Đơn vị tính", "Số lượng", "Giá nhập", "Thành tiền"];
-  const dataFormat = ["text-center", "", "text-right", "text-center", "text-center", "text-center", "text-right", "text-right", "text-right"];
+  // ── ✅ Cột bảng — thêm "Biến thể / SKU" ──────────────────────────────────
+  const titles = [
+    "STT",
+    "Tên sản phẩm / Biến thể",   // ← đổi tên cột
+    "Số lô",
+    "Ngày sản xuất",
+    "Ngày hết hạn",
+    "Đơn vị tính",
+    "Số lượng",
+    "Giá nhập",
+    "Thành tiền",
+  ];
+  const dataFormat = [
+    "text-center",
+    "",
+    "text-right",
+    "text-center",
+    "text-center",
+    "text-center",
+    "text-right",
+    "text-right",
+    "text-right",
+  ];
 
+  // ── ✅ Mapping — hiển thị tên sản phẩm + badge SKU/label biến thể ─────────
   const dataMappingArray = (item: IInvoiceDetailResponse, index: number) => [
     index + 1,
-    item.productName,
+
+    // Cột "Tên sản phẩm / Biến thể": tên sản phẩm + badge SKU variant
+    <div className="product-import-cell" key={item.id}>
+      <span className="product-import-cell__name">{item.productName}</span>
+      {(item.variantSku || item.variantLabel) && (
+        <div className="product-import-cell__variant">
+          {item.variantSku && (
+            <span className="product-import-cell__sku">{item.variantSku}</span>
+          )}
+          {item.variantLabel && (
+            <span className="product-import-cell__label">{item.variantLabel}</span>
+          )}
+        </div>
+      )}
+    </div>,
+
     item.batchNo,
     item.mfgDate ? moment(item.mfgDate).format("DD/MM/YYYY") : "",
     item.expiryDate ? moment(item.expiryDate).format("DD/MM/YYYY") : "",
@@ -235,7 +266,6 @@ export default function CreateReceipt() {
   const actionsTable = (item: IInvoiceDetailResponse): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     const isLocked = !isPendingInvoice;
-
     return [
       {
         title: "Sửa",
@@ -265,9 +295,7 @@ export default function CreateReceipt() {
     const response = await ProductImportService.delete(id);
     if (response.code === 0) {
       showToast("Xóa sản phẩm thành công", "success");
-      if (invoiceId) {
-        await reloadInvoiceContext(invoiceId);
-      }
+      if (invoiceId) await reloadInvoiceContext(invoiceId);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -278,12 +306,9 @@ export default function CreateReceipt() {
   const onDeleteAllProductImportService = async () => {
     const responses = await Promise.all((listIdChecked || []).map((id) => ProductImportService.delete(id)));
     const hasSuccess = responses.some((item) => item?.code === 0);
-
     if (hasSuccess) {
       showToast("Xóa sản phẩm thành công", "success");
-      if (invoiceId) {
-        await reloadInvoiceContext(invoiceId);
-      }
+      if (invoiceId) await reloadInvoiceContext(invoiceId);
       setListIdChecked([]);
     } else {
       showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -302,14 +327,12 @@ export default function CreateReceipt() {
       message: (
         <Fragment>
           Bạn có chắc chắn muốn xóa {item ? "sản phẩm " : `${listIdChecked.length} sản phẩm đã chọn`}
-          {item ? <strong>{item.productName}</strong> : ""}? Thao tác này không thể khôi phục.
+          {item ? <strong>{item.productName}{item.variantLabel ? ` · ${item.variantLabel}` : ""}</strong> : ""}?
+          Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
+      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
       defaultText: "Xóa",
       defaultAction: () => {
         if (listIdChecked.length > 0) {
@@ -319,16 +342,12 @@ export default function CreateReceipt() {
         }
       },
     };
-
     setContentDialog(content);
     setShowDialog(true);
   };
 
   const bulkActionList: BulkActionItemModel[] = [
-    {
-      title: "Xóa sản phẩm",
-      callback: () => showDialogConfirmDelete(),
-    },
+    { title: "Xóa sản phẩm", callback: () => showDialogConfirmDelete() },
   ];
 
   return (
@@ -366,10 +385,7 @@ export default function CreateReceipt() {
                   onMenuOpen={loadInvoiceOptions}
                   onChange={async (option) => {
                     const nextId = option?.value ?? null;
-                    if (!nextId) {
-                      resetCurrentInvoice();
-                      return;
-                    }
+                    if (!nextId) { resetCurrentInvoice(); return; }
                     await reloadInvoiceContext(nextId);
                   }}
                   placeholder="Chọn phiếu nhập để thao tác"
@@ -379,9 +395,7 @@ export default function CreateReceipt() {
                   isFormatOptionLabel
                   formatOptionLabel={(option: any, meta: any) =>
                     meta.context === "value" ? (
-                      <div className="create-receipt__invoice-value">
-                        {option.label}
-                      </div>
+                      <div className="create-receipt__invoice-value">{option.label}</div>
                     ) : (
                       <div className="create-receipt__invoice-option">
                         <div className="create-receipt__invoice-option-title">{option.label}</div>
@@ -407,7 +421,6 @@ export default function CreateReceipt() {
             <ul className="action__header--title">
               <li className="active">Thông tin sản phẩm cần nhập</li>
             </ul>
-
             <div className="add__product">
               <Button color="primary" disabled={!invoiceId || !isPendingInvoice} onClick={openAddProductModal}>
                 Thêm sản phẩm
@@ -470,9 +483,7 @@ export default function CreateReceipt() {
           onShow={showModalAdd}
           data={dataInvoiceDetail}
           onHide={async (reload) => {
-            if (reload && invoiceId) {
-              await reloadInvoiceContext(invoiceId);
-            }
+            if (reload && invoiceId) await reloadInvoiceContext(invoiceId);
             setShowModalAdd(false);
           }}
         />
