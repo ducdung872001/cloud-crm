@@ -17,7 +17,7 @@ import { ICategoryServiceResponseModel } from "model/categoryService/CategorySer
 import { showToast } from "utils/common";
 import { getPermissions } from "utils/common";
 import CategoryServiceService from "services/CategoryServiceService";
-import { getPageOffset } from 'reborn-util';
+import { getPageOffset } from "reborn-util";
 
 import "./CategoryProductList.scss";
 import AddCategoryProductModal from "./partials/AddCategoryProductModal";
@@ -42,7 +42,7 @@ export default function CategoryProductList(props: ICategoryServiceListProps) {
   const [params, setParams] = useState<ICategoryServiceFilterRequest>({
     keyword: "",
     limit: 10,
-    type: 2
+    type: 2,
   });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
@@ -140,9 +140,9 @@ export default function CategoryProductList(props: ICategoryServiceListProps) {
   const dataMappingArray = (item: ICategoryServiceResponseModel, index: number) => [
     getPageOffset(params) + index + 1,
     <a key={item.id} data-fancybox="gallery" href={item.avatar}>
-      <Image src={item.avatar} alt={item.groupName} width={"64rem"} />
+      <Image src={item.avatar} alt={item.name} width={"64rem"} />
     </a>,
-    item.groupName,
+    item.name,
     item.position,
   ];
 
@@ -151,12 +151,12 @@ export default function CategoryProductList(props: ICategoryServiceListProps) {
     return [
       permissions["PRODUCT_UPDATE"] == 1 && {
         title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""}/>,
+        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          setDataCategoryProduct(item);
-          setShowModalAdd(true);
+            setDataCategoryProduct(item);
+            setShowModalAdd(true);
           }
         },
       },
@@ -166,7 +166,7 @@ export default function CategoryProductList(props: ICategoryServiceListProps) {
         disabled: isCheckedItem,
         callback: () => {
           if (!isCheckedItem) {
-          showDialogConfirmDelete(item);
+            showDialogConfirmDelete(item);
           }
         },
       },
@@ -199,21 +199,21 @@ export default function CategoryProductList(props: ICategoryServiceListProps) {
       }
     });
     Promise.all(arrPromises)
-    .then((results) => {
-      const checkbox = results.filter (Boolean)?.length ||0;
-      if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} danh mục sản phẩm`, "success");
-        getListCategoryProduct(params);
-        setListIdChecked([]);
-      } else {
-        showToast("Không có danh mục sản phẩm nào được xóa", "error");
-      }
-   })
-    .finally(() => {
-      setShowDialog(false);
-      setContentDialog(null);
-    });
-  }
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} danh mục sản phẩm`, "success");
+          getListCategoryProduct(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có danh mục sản phẩm nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
+  };
 
   const showDialogConfirmDelete = (item?: ICategoryServiceResponseModel) => {
     const contentDialog: IContentDialog = {
@@ -239,11 +239,11 @@ export default function CategoryProductList(props: ICategoryServiceListProps) {
           onDelete(item.id);
           return;
         }
-        if (listIdChecked.length>0) {
+        if (listIdChecked.length > 0) {
           onDeleteAll();
           return;
         }
-      }
+      },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

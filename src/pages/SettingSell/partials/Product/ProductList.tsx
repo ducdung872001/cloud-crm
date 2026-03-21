@@ -69,6 +69,12 @@ export default function ProductList(props: IProductListProps) {
   const [isConfigIntegrateModal, setIsConfigIntegrateModal] = useState(false);
   const [activeTab, setActiveTab] = useState<StatusTab>("all");
   const [searchValue, setSearchValue] = useState("");
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setParams((prev) => ({ ...prev, name: searchValue, page: 1 }));
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchValue]);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showProductPage, setShowProductPage] = useState(false);
 
@@ -557,10 +563,7 @@ export default function ProductList(props: IProductListProps) {
             type="text"
             placeholder="Tìm tên sản phẩm, mã vạch, SKU..."
             value={searchValue}
-            onChange={(e) => {
-              setSearchValue(e.target.value);
-              setParams((prev) => ({ ...prev, name: e.target.value, page: 1 }));
-            }}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
         </div>
 

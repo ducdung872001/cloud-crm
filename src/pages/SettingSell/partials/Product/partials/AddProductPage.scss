@@ -804,6 +804,26 @@
   min-width: 70px;
 }
 
+// Đơn vị cơ bản trong variant card
+.add-prod-vt-unit-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0 4px;
+
+  &__label {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #64748b;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  &__select {
+    width: 220px;
+  }
+}
+
 // Cột giá trong price-grid của biến thể
 .add-prod-vt-price-col {
   display: flex;

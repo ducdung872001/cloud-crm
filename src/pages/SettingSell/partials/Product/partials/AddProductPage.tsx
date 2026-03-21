@@ -59,8 +59,10 @@ const DEFAULT_FORM = {
 // ── VARIANT TYPES ──
 interface VariantAttribute {
   tempId: string;
+  id?: number | null;                    // variantGroup.id từ API (cần khi update)
   name: string;
   values: string[];
+  optionIds?: Record<string, number>;    // { "Đỏ": 12, "Xanh": 13 } — option id theo label
   inputVal: string;
 }
 
@@ -73,10 +75,12 @@ interface UnitPrice {
 
 interface VariantCombination {
   key: string;
+  id?: number | null;
   label: string;
   sku: string;
   barcode: string;
   images: string[];
+  unitId: number | null;
   price: string | number;
   costPrice: string | number;
   priceWholesale: string | number;
@@ -148,6 +152,7 @@ const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
     sku: "",
     barcode: "",
     images: [],
+    unitId: null,
     price: "" as string | number,
     costPrice: "" as string | number,
     priceWholesale: "" as string | number,
@@ -420,7 +425,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       categoryId: p.categoryId || null,
       categoryName: p.categoryName || "",
       status: p.status ?? 1,
-      avatar: p.avatar || "",
+      images: p.avatar || "",
       description: p.description || "",
       trackStock: p.trackStock ?? true,
       stock: p.stock ?? 0,
@@ -443,8 +448,10 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       // Map variantGroups → variantAttrs
       const attrs: VariantAttribute[] = p.variantGroups.map((g: any) => ({
         tempId: genId(),
+        id: g.id ?? null,
         name: g.name,
-        values: (g.options || []).map((o: any) => o.label),
+        values: [...new Set((g.options || []).map((o: any) => o.label as string))],
+        optionIds: Object.fromEntries((g.options || []).map((o: any) => [o.label, o.id])),
         inputVal: "",
       }));
       setVariantAttrs(attrs);
@@ -491,10 +498,12 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
           return {
             key,
+            id: v.id ?? null,
             label: v.label,
             sku: v.sku || "",
             barcode: v.code || v.barcode || v.barcodeCode || "",
-            images: [v.avatar, v.image].filter(Boolean) as string[],
+            images: v.images?.length ? v.images : [v.avatar, v.image].filter(Boolean) as string[],
+            unitId: v.unitId ?? null,
             price: v.price ?? v.priceRetail ?? "",
             costPrice: v.costPrice ?? v.cost_price ?? "",
             priceWholesale: v.priceWholesale ?? v.price_wholesale ?? v.wholesale ?? "",
@@ -509,6 +518,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
   const loadDetail = async () => {
     const res = await ProductService.wDetail(idProduct);
+    console.log("[loadDetail] raw response:", JSON.stringify(res.result, null, 2));
     if (res.code === 0) {
       setDetailProduct(res.result);
       preFill(res.result);
@@ -553,11 +563,14 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       return;
     }
     const activeAttrs = variantAttrs.filter((a) => a.name.trim() && a.values.length > 0);
-
-    // ── Build variantGroups (DB tự sinh ID) ──
+    // ── Build variantGroups ──
     const variantGroups = activeAttrs.map((attr) => ({
+      ...(attr.id ? { id: attr.id } : {}),
       name: attr.name,
-      options: attr.values.map((val) => ({ label: val })),
+      options: attr.values.map((val) => ({
+        ...(attr.optionIds?.[val] ? { id: attr.optionIds[val] } : {}),
+        label: val,
+      })),
     }));
 
     // ── Build variants ──
@@ -577,17 +590,30 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
       const variantSku = safeSku(c.sku?.trim() || generateSku(formData.name, c.label));
 
+      // Map selectedOptions → attributes: [{ name, value }]
+      const attributes = selectedOptions.map((o) => ({ name: o.groupName, value: o.label }));
+
+      // Lấy optionValueIds từ optionIds đã lưu trong attrs
+      const optionValueIds = activeAttrs
+        .map((attr) => {
+          const value = keyParts.find((k) => k.name === attr.name)?.value ?? "";
+          return attr.optionIds?.[value] ?? null;
+        })
+        .filter((id): id is number => id != null);
+
       return {
+        ...(c.id ? { id: c.id } : {}),
         label: c.label,
         sku: variantSku,
         barcode: c.barcode || "",
+        unitId: c.unitId ?? null,
         price: +(c.price ?? 0) || 0,
         costPrice: +(c.costPrice ?? 0) || 0,
-        priceWholesale: +(c.priceWholesale ?? 0) || 0,
         pricePromo: +(c.pricePromo ?? 0) || 0,
-        avatar: c.images?.[0] || "",
-        avatars: c.images || [],
+        images: c.images || [],
+        attributes,
         selectedOptions,
+        ...(optionValueIds.length ? { optionValueIds } : {}),
         unitPrices: c.unitPrices.map((u, ui) => {
           const unitPart = toSkuPart(u.unitName);
           const unitSku = safeSku(`${variantSku}-${unitPart || `U${ui + 1}`}`);
@@ -611,21 +637,20 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     };
 
     const body = {
-      id: idProduct || 0,
+      ...(idProduct ? { id: idProduct } : {}),
       name: formData.name,
       position: detailProduct?.position ?? 0,
       status: formData.status,
-      avatar: formData.avatar,
       categoryId: selectedCategory?.value ?? null,
       exchange: 1,
       otherUnits: detailProduct?.otherUnits ?? "",
       type: detailProduct?.type ? String(detailProduct.type) : "1",
       description: formData.description,
-      supplierId: null, // TODO: thêm field chọn NCC vào form
       variantGroups,
       variants: variants.length > 0 ? variants : [defaultVariant],
     };
 
+    console.log("[AddProduct] submit body:", JSON.stringify(body, null, 2));
     setIsSubmitting(true);
     try {
       const res = await ProductService.wUpdate(body as any);
@@ -633,7 +658,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
         onBack(true);
       } else {
-        showToast(res.message ?? "Có lỗi xảy ra", "error");
+        showToast(res.error ?? res.message ?? "Có lỗi xảy ra", "error");
       }
     } finally {
       setIsSubmitting(false);
@@ -650,7 +675,8 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           ...c,
           sku: existing?.sku || generateSku(formData.name, c.label),
           barcode: existing?.barcode || "",
-          image: existing?.image || "",
+          images: existing?.images || [],
+          unitId: existing?.unitId ?? null,
           price: existing?.price ?? "",
           costPrice: existing?.costPrice ?? "",
           priceWholesale: existing?.priceWholesale ?? "",
@@ -694,14 +720,6 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
   const updateComboImages = (key: string, images: string[]) => {
     setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, images } : c)));
-    // Lưu tạm vào localStorage cho đến khi có API post link ảnh
-    try {
-      const storageKey = `prd_vt_imgs_${idProduct ?? "new"}`;
-      const existing = JSON.parse(localStorage.getItem(storageKey) || "{}");
-      if (images.length) existing[key] = images;
-      else delete existing[key];
-      localStorage.setItem(storageKey, JSON.stringify(existing));
-    } catch (_) {}
   };
 
   // Cập nhật field trực tiếp trên variant (barcode, price, costPrice, priceWholesale, pricePromo)
@@ -779,8 +797,8 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           costPrice: +(c.costPrice ?? 0) || 0,
           priceWholesale: +(c.priceWholesale ?? 0) || 0,
           pricePromo: +(c.pricePromo ?? 0) || 0,
-          avatar: c.images?.[0] || "",
-          avatars: c.images || [],
+          image: c.images?.[0] || "",
+          images: c.images || [],
           selectedOptions: activeAttrs.map((attr) => ({
             groupName: attr.name,
             label: keyParts.find((k) => k.name === attr.name)?.value ?? "",
@@ -833,7 +851,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         showToast("Nhân bản sản phẩm thành công", "success");
         onBack(true);
       } else {
-        showToast(res.message ?? "Có lỗi xảy ra", "error");
+        showToast(res.error ?? res.message ?? "Có lỗi xảy ra", "error");
       }
     } finally {
       setIsDuplicating(false);
@@ -1180,6 +1198,31 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
                       {/* Ảnh biến thể */}
                       <VariantImagePicker images={c.images} onChange={(urls) => updateComboImages(c.key, urls)} />
+
+                      {/* Đơn vị cơ bản */}
+                      <div className="add-prod-vt-unit-row">
+                        <Tippy
+                          content="Đơn vị tính mặc định của biến thể này (VD: Chiếc, Cái, Hộp...). Dùng làm đơn vị gốc khi bán lẻ."
+                          placement="top"
+                        >
+                          <label className="add-prod-vt-unit-row__label" style={{ cursor: "help" }}>
+                            Đơn vị cơ bản
+                          </label>
+                        </Tippy>
+                        <div className="add-prod-vt-unit-row__select">
+                          <SelectCustom
+                            id={`unitId-${c.key}`}
+                            name="unitId"
+                            value={c.unitId}
+                            options={listUnit}
+                            onChange={(e) => updateComboField(c.key, "unitId", e?.value ?? null)}
+                            onMenuOpen={loadUnits}
+                            placeholder="Chọn đơn vị..."
+                            isSearchable
+                            isClearable
+                          />
+                        </div>
+                      </div>
 
                       {/* Giá biến thể */}
                       <div className="add-prod-vt-combo-card__price-grid">
