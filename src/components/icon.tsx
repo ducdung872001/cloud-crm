@@ -509,6 +509,7 @@ import IcTaskProcess from "assets/icons-menu/ic-task-process.svg";
 import IcAnalysisCustomer from "assets/icons-menu/ic-analysis-customer.svg";
 import IcPaymentControl from "assets/icons-menu/ic-payment-control.svg";
 import IcMarketingReport from "assets/icons-menu/ic-marketing-report.svg";
+import IcLoyaltyCustomerProgram from "assets/icons-menu/ic-loyalty-customer-program.svg";
 
 
 const iconTypes = {
@@ -1007,7 +1008,8 @@ const iconTypes = {
   TaskProcess: IcTaskProcess,
   AnalysisCustomer: IcAnalysisCustomer,
   PaymentControl: IcPaymentControl,
-  MarketingReport: IcMarketingReport
+  MarketingReport: IcMarketingReport,
+  LoyaltyCustomerProgram: IcLoyaltyCustomerProgram
 
 };
 

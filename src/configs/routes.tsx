@@ -651,12 +651,12 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="SettingWarranty" />,
       //   code: "",
       // },
-      {
-        title: "settingLoyalty", // Cài đặt hệ thống tích điểm
-        path: urls.setting_loyalty,
-        icon: <Icon name="PointsSettingMenu" />,
-        code: "",
-      },
+      // {
+      //   title: "settingLoyalty", // Cài đặt hệ thống tích điểm
+      //   path: urls.setting_loyalty,
+      //   icon: <Icon name="PointsSettingMenu" />,
+      //   code: "",
+      // },
     ],
   },
   {
