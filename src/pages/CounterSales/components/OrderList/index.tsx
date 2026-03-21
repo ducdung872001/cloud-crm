@@ -192,7 +192,17 @@ const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onCo
                   </>
                 )}
                 {order.status === "shipping" && <button className="btn btn--xs btn--outline">📍 Theo dõi vận chuyển</button>}
-                {order.status === "success" && <button className="btn btn--xs btn--outline">📩 Gửi HĐ điện tử</button>}
+                {order.status === "success" && (
+                  <button
+                    className="btn btn--xs btn--outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/invoiceVAT?tab=issue&code=${encodeURIComponent(order.code)}`);
+                    }}
+                  >
+                    📩 Gửi HĐ điện tử
+                  </button>
+                )}
                 {order.status === "cancelled" && (
                   <>
                     <button className="btn btn--xs btn--outline" onClick={() => onViewDetail(Number(order.id))}>

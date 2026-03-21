@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useCallback } from "react";
 import _ from "lodash";
+import { useLocation } from "react-router-dom";
 import Icon from "components/icon";
 import Loading from "components/loading";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
@@ -59,7 +60,23 @@ interface TabHeaderConfig { title: string; subtitle?: string; actions: React.Rea
 export default function InvoiceVATOverview(props: any) {
   document.title = "Hóa đơn VAT điện tử";
 
+  const location = useLocation();
   const isMounted = useRef(false);
+
+  // Đọc query params: ?tab=issue&code=HD003198
+  // Khi navigate từ màn hình đơn hàng → chuyển thẳng vào tab Xuất hóa đơn + auto-fill mã
+  const [initialInvoiceCode, setInitialInvoiceCode] = useState("");
+
+  useEffect(() => {
+    const sp = new URLSearchParams(location.search);
+    const tabParam  = sp.get("tab");
+    const codeParam = sp.get("code");
+    if (tabParam === "issue") {
+      setTab({ name: "tab_three" });
+      if (codeParam) setInitialInvoiceCode(codeParam);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   const [listInvoice, setListInvoice]   = useState<IInvoiceVATResponse[]>([]);
   const [dataInvoice, setDataInvoice]   = useState<IInvoiceVATResponse>(null);
@@ -528,6 +545,7 @@ export default function InvoiceVATOverview(props: any) {
           <IssueInvoice
             onRegisterPreview={handleRegisterPreview}
             onRegisterPublish={handleRegisterPublish}
+            initialInvoiceCode={initialInvoiceCode || undefined}
           />
         )}
         {tab.name === "tab_four"  && <ElectronicInvoiceProvider />}
