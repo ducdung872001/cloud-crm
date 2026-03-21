@@ -2139,6 +2139,16 @@ export const urlsApi = {
     //* Danh sách lịch sử cuộc gọi
     customerCallList: prefixAdmin + "/customerCall/list",
   },
+  // Báo cáo tồn kho (inventory service)
+  inventoryReport: {
+    full:           prefixInventory + "/report/stock",              // gộp 1 lần
+    summary:        prefixInventory + "/report/stock/summary",      // 5 KPI card
+    movement:       prefixInventory + "/report/stock/movement",     // biến động nhập/xuất
+    health:         prefixInventory + "/report/stock/health",       // sức khỏe tồn kho
+    trend:          prefixInventory + "/report/stock/trend",        // xu hướng tồn cuối kỳ
+    warehousePerf:  prefixInventory + "/report/stock/warehouse-perf", // hiệu suất từng kho
+    productDetails: prefixInventory + "/report/stock/product-details", // chi tiết sản phẩm
+  },
   // Báo cáo bán hàng (sales service)
   salesReport: {
     full:             prefixSales + "/report/sales",           // API 4 — gộp 1 lần (khuyến nghị)

@@ -1,8 +1,12 @@
 import React from "react";
 import { formatCurrency } from "reborn-util";
-import { PRODUCT_ROWS } from "../mockData";
+import { IInventoryProductDetail } from "services/InventoryReportService";
 
-export default function InventoryProductTable() {
+interface Props {
+  productDetails: IInventoryProductDetail[];
+}
+
+export default function InventoryProductTable({ productDetails }: Props) {
   return (
     <div className="report-table-card">
       <div className="report-table-card__header">
@@ -26,8 +30,8 @@ export default function InventoryProductTable() {
             </tr>
           </thead>
           <tbody>
-            {PRODUCT_ROWS.map((item) => (
-              <tr key={item.sku}>
+            {productDetails.map((item) => (
+              <tr key={`${item.sku}-${item.warehouseName}`}>
                 <td className="font-semibold">{item.sku}</td>
                 <td>{item.productName}</td>
                 <td>{item.warehouseName}</td>
@@ -35,7 +39,14 @@ export default function InventoryProductTable() {
                 <td className="text-right">{item.availableQty.toLocaleString("vi-VN")}</td>
                 <td className="text-right">{formatCurrency(item.stockValue)} đ</td>
                 <td className="text-right">{item.turnoverDays}</td>
-                <td><span className="report-status" style={{ "--status-color": item.color } as React.CSSProperties}>{item.status}</span></td>
+                <td>
+                  <span
+                    className="report-status"
+                    style={{ "--status-color": item.color } as React.CSSProperties}
+                  >
+                    {item.status}
+                  </span>
+                </td>
               </tr>
             ))}
           </tbody>
