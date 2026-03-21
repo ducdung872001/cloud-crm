@@ -20,6 +20,11 @@
     font-size: 3.2rem;
     flex-shrink: 0;
     border: 1.5px solid var(--border);
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   }
 
   &__product-info {

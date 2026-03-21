@@ -72,13 +72,7 @@ export default function SettingCustomerList() {
       is_tab: "tab_seven",
       des: "Tùy chỉnh bố cục hiển thị thông tin khách hàng trên màn hình chi tiết theo từng vai trò hoặc bộ phận."
     }, 
-    {
-      title: "Lịch sử điểm tích lũy của khách hàng",
-      icon: "PointsHistory",
-      backgroundColor: "#F1EFE8",
-      is_tab: "tab_nine",
-      des: "Tra cứu toàn bộ lịch sử cộng/trừ điểm, đổi thưởng của từng khách hàng theo thời gian."
-    },
+
     ...(checkSubdomainTNEX ? [
       {
         title: "Nguồn Marketing gửi Lead",
@@ -163,14 +157,6 @@ export default function SettingCustomerList() {
           />
       ) : isDetail && tab === "tab_eight" ? (
         <CustomerMarketingLead
-            onBackProps={(isBack) => {
-              if (isBack) {
-                setIsDetail(false);
-              }
-            }}
-          />
-      ) : isDetail && tab === "tab_nine" ? (
-        <CustomerLoyaltyPointLedger
             onBackProps={(isBack) => {
               if (isBack) {
                 setIsDetail(false);

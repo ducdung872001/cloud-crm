@@ -20,8 +20,7 @@ const prefixWarehouse = prefixBiz + "/warehouse";
 const prefixCare = prefixBiz + "/care";
 const prefixBilling = prefixBiz + "/billing";
 const prefixLogistics = prefixBiz + "/logistics";
-
-console.log("process.env.APP_API_LOCAL", process.env.APP_API_LOCAL);
+const prefixIntegration = prefixBiz + "/integration";
 
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
@@ -428,6 +427,16 @@ export const urlsApi = {
     invoiceCode: prefixSales + "/invoice/code",
     prefixSales,
   },
+  // Hóa đơn VAT điện tử – tích hợp Viettel S-Invoice qua cloud-integration
+  sinvoice: {
+    previewDraft:      prefixIntegration + "/sinvoice/query/preview-draft",
+    createInvoice:     prefixIntegration + "/sinvoice/invoice/create",
+    sendEmailCustomer: prefixIntegration + "/sinvoice/ext/send-email-customer",
+    allTemplates:      prefixIntegration + "/sinvoice/ext/all-templates",
+    searchInvoices:    prefixIntegration + "/sinvoice/query/search",
+    logList:           prefixIntegration + "/sinvoice/log/list",
+    logGet:            prefixIntegration + "/sinvoice/log/get",
+  },
   returnInvoice: {
     list: prefixSales + "/invoice/return-exchange/list",
     detail: prefixSales + "/invoice/get",
@@ -553,6 +562,7 @@ export const urlsApi = {
     update: prefixInventory + "/product_import/update",
     detail: prefixInventory + "/product_import/detail",
     delete: prefixInventory + "/product_import/delete",
+    variantList: prefixInventory + "/productVariant/list",
   },
 
   inventory: {
@@ -2139,6 +2149,16 @@ export const urlsApi = {
     //* Danh sách lịch sử cuộc gọi
     customerCallList: prefixAdmin + "/customerCall/list",
   },
+  // Báo cáo tồn kho (inventory service)
+  inventoryReport: {
+    full:           prefixInventory + "/report/stock",              // gộp 1 lần
+    summary:        prefixInventory + "/report/stock/summary",      // 5 KPI card
+    movement:       prefixInventory + "/report/stock/movement",     // biến động nhập/xuất
+    health:         prefixInventory + "/report/stock/health",       // sức khỏe tồn kho
+    trend:          prefixInventory + "/report/stock/trend",        // xu hướng tồn cuối kỳ
+    warehousePerf:  prefixInventory + "/report/stock/warehouse-perf", // hiệu suất từng kho
+    productDetails: prefixInventory + "/report/stock/product-details", // chi tiết sản phẩm
+  },
   // Báo cáo bán hàng (sales service)
   salesReport: {
     full:             prefixSales + "/report/sales",           // API 4 — gộp 1 lần (khuyến nghị)
@@ -3182,6 +3202,7 @@ export const urls = {
   contact: "/contact",
   customer: "/customer",
   customer_list: "/customer_list",
+  supplier_list: "/supplier",
   customer_sms: "/customer_sms",
   customer_segment: "/customer_segment",
   detail_person: "/detail_person/customerId/:id?/:type",

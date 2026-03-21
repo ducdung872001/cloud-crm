@@ -34,8 +34,8 @@ export function useProductCategory(): UseProductCategoryReturn {
 
       if (response.code === 0) {
         const items: CategoryItem[] = response.result.items.map((item) => ({
-          id: item.groupId,
-          label: item.groupName,
+          id: item.id,
+          label: item.name,
         }));
         setCategoryFiltered([ALL_CATEGORY, ...items]);
       } else if (response.code === 400) {

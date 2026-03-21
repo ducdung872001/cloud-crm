@@ -234,8 +234,6 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
     };
   }, [checkKeyDown]);
 
-  console.log("formData", formData);
-
   return (
     <Fragment>
       <Modal

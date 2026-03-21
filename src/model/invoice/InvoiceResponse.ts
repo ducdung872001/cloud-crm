@@ -26,12 +26,23 @@ export interface IInvoiceDetailResponse {
   id: number;
   invoiceId: number;
   bsnId: number;
+
   productId: number;
   productName: string;
+
+  /** ✅ Mới — ID biến thể sản phẩm */
+  variantId?: number;
+  /** ✅ Mới — SKU biến thể, VD: "DELL-P5570-I7-16" */
+  variantSku?: string;
+  /** ✅ Mới — Nhãn biến thể, VD: "Intel i7 · 16GB · 512GB SSD" */
+  variantLabel?: string;
+
   unitId: number;
   unitName: string;
   quantity: number;
   mainCost: number;
+  /** ✅ Mới — Chiết khấu % theo lô (0–100) */
+  discount?: number;
   exchange: string | null;
   preCost: string | null;
   batchNo: string;

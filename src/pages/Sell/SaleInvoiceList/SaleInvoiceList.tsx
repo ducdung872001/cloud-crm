@@ -76,7 +76,6 @@ export default function SaleInvoiceList() {
 
     if (response.code === 0) {
       const result = response.result;
-      console.log("result", result);
       let listSaleInvoiceTemp: Order[] = result.pagedLst.items.map(
         (item) =>
           ({
@@ -89,18 +88,17 @@ export default function SaleInvoiceList() {
             time: item?.invoice?.createdTime ? moment(item.invoice.createdTime).format("DD/MM/YYYY · HH:mm") : "",
             customer: {
               id: item.customerId,
-              name: item?.invoice?.customerName ? item.invoice.customerName : item?.invoice?.customerId ? "Chưa có tên khách hàng" : "Khách lẻ",
-              phone: item.customerPhone ? item.customerPhone : item?.invoice?.customerId ? "Chưa lấy được SĐT" : "",
-              initial: item?.invoice?.customerName ? item.invoice.customerName.charAt(0).toUpperCase() : "KL",
+              name: item?.invoice?.customerName ? item.invoice.customerName : item?.invoice?.customerId ? "Khách vãng lai" : "Khách lẻ",
+              phone: item.customerPhone ? item.customerPhone : item?.invoice?.customerId ? "" : "",
+              initial: item?.invoice?.customerName ? item.invoice.customerName.charAt(0).toUpperCase() : "K",
               points: item.customerPoints ?? 0,
               tier: item.customerTier ?? "",
               color: "#2563eb",
             },
-            items: [...(item.products || []), ...(item.services || [])].map((i) => i.name).join(", "),
+            items: [...(item.products || []), ...(item.services || [])].map((i) => i.productName + " (" + i.name + ")").join(", "),
             total: item.invoice.fee,
           } as Order)
       );
-      console.log("listSaleInvoiceTemp", listSaleInvoiceTemp);
 
       setListSaleInvoice(result.pagedLst.page == 1 ? listSaleInvoiceTemp : [...listSaleInvoice, ...listSaleInvoiceTemp]);
 

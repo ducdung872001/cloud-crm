@@ -83,7 +83,6 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
     if (dataProduct) {
       setProduct(dataProduct);
     }
-    console.log("dataProduct>>>", dataProduct);
   }, [dataProduct]);
 
   // Reset khi mở modal hoặc đổi product
@@ -145,6 +144,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
     onAddToCart({
       id: product.id,
       variantId: matchedVariant.id,
+      image: matchedVariant.images?.[0] || product.avatar || "", // ưu tiên ảnh của biến thể, fallback sang ảnh chung của sản phẩm
       icon: product.icon ?? "📦",
       name: `${product.name} (${variantLabel})`,
       priceLabel: fmt(matchedVariant.price),
@@ -191,7 +191,13 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
             {/* Product info */}
             <div className="variant-modal__product">
               <div className="variant-modal__product-icon">
-                {product.image ? <img src={product.image} alt={product.name} /> : product.icon ?? "📦"}
+                {matchedVariant?.images?.[0] ? (
+                  <img src={matchedVariant.images[0]} alt={matchedVariant.sku} />
+                ) : product?.avatar ? (
+                  <img src={product.avatar} alt={product.name} />
+                ) : (
+                  product.icon ?? "📦"
+                )}
               </div>
               <div className="variant-modal__product-info">
                 <div className="variant-modal__product-name">{product.name}</div>

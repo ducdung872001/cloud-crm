@@ -412,9 +412,16 @@ export const menu: IMenuItem[] = [
       //   code: "CUSTOMER",
       // },
       {
-        title: "customerList", // Danh sách khách hàng và NCC
+        title: "customerList", // Danh sách khách hàng
         path: urls.customer_list,
-        icon: <Icon name="PartnerMenu" />,
+        icon: <Icon name="CustomerMenu" />,
+        code: "CUSTOMER",
+      },
+
+      {
+        title: "supplierList", // Danh sách NCC
+        path: urls.supplier_list,
+        icon: <Icon name="Partner" />,
         code: "CUSTOMER",
       },
       // {
@@ -435,12 +442,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="PartnerSettingMenu" />,
         code: "",
       },
-      {
-        title: "reportCustomer", // Báo cáo khách hàng
-        path: urls.report_customer,
-        icon: <Icon name="CustomerMenu" />,
-        code: "",
-      },
+      // {
+      //   title: "reportCustomer", // Báo cáo khách hàng
+      //   path: urls.report_customer,
+      //   icon: <Icon name="CustomerMenu" />,
+      //   code: "",
+      // },
     ],
   },
   {
@@ -494,9 +501,9 @@ export const menu: IMenuItem[] = [
       //   code: "",
       // },
       {
-        title: "paymentControl", // Tạo giao dịch nợ
+        title: "paymentControl", // đối soát thanh toán
         path: urls.payment_control,
-        icon: <Icon name="DebtTransactionMenu" />,
+        icon: <Icon name="PaymentControl" />,
         code: "",
       },
     ],
@@ -644,12 +651,12 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="SettingWarranty" />,
       //   code: "",
       // },
-      {
-        title: "settingLoyalty", // Cài đặt hệ thống tích điểm
-        path: urls.setting_loyalty,
-        icon: <Icon name="PointsSettingMenu" />,
-        code: "",
-      },
+      // {
+      //   title: "settingLoyalty", // Cài đặt hệ thống tích điểm
+      //   path: urls.setting_loyalty,
+      //   icon: <Icon name="PointsSettingMenu" />,
+      //   code: "",
+      // },
     ],
   },
   {
@@ -673,19 +680,19 @@ export const menu: IMenuItem[] = [
       {
         title: "customerReport", // Báo cáo khách hàng
         path: urls.customer_report,
-        icon: <Icon name="SalesReportMenu" />,
+        icon: <Icon name="CustomersMenu" />,
         code: "",
       },
       {
         title: "inventoryReport", // Báo cáo tồn kho
         path: urls.inventory_report_modern,
-        icon: <Icon name="SalesReportMenu" />,
+        icon: <Icon name="InventoryMenu" />,
         code: "",
       },
       {
-        title: "marketingReport", // Báo cáo tồn kho
+        title: "marketingReport", // Báo cáo marketing
         path: urls.marketing_report,
-        icon: <Icon name="SalesReportMenu" />,
+        icon: <Icon name="MarketingReport" />,
         code: "",
       },
       {
@@ -924,11 +931,15 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.customer,
-    component: <CustomerPersonList />,
+    component: <CustomerPersonList/>,
   },
   {
     path: urls.customer_list,
-    component: <CustomerAndSupplier />,
+    component: <CustomerAndSupplier type="customer"/>,
+  },
+  {
+    path: urls.supplier_list,
+    component: <CustomerAndSupplier type="supplier"/>,
   },
   {
     path: urls.partner,

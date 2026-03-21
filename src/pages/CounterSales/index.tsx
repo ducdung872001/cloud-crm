@@ -158,7 +158,6 @@ const CounterSales: React.FC = () => {
             <div className="counter-sales__screen">
               <DraftOrders
                 onContinue={(draftId) => {
-                  console.log("Continue draft", draftId);
                   setActiveTab("pos");
                 }}
               />

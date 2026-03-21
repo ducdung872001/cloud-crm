@@ -19,6 +19,7 @@ import { IRoyaltyFilterRequest } from "@/model/loyalty/RoyaltyRequest";
 import { ILoyaltyRewardResposne } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
 import { ICustomerRoyaltyListProps } from "@/model/loyalty/PropsModal";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
 export default function LoyaltyReward(props: ICustomerRoyaltyListProps) {
   document.title = "Danh sách phần thưởng";
@@ -180,27 +181,12 @@ export default function LoyaltyReward(props: ICustomerRoyaltyListProps) {
 
   return (
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
-      <div className="action-navigation">
-        <div className="action-backup">
-          <h1
-            onClick={() => {
-              onBackProps(true);
-            }}
-            className="title-first"
-            title="Quay lại"
-          > 
-           Cài đặt hệ thống tích điểm
-            </h1>
-          <Icon
-            name="ChevronRight"
-            onClick={() => {
-              onBackProps(true);
-            }}
-          />
-          <h1 className="title-last">Danh sách phần thưởng</h1>
-        </div>
-        <TitleAction title="" titleActions={titleActions} />
-      </div>
+      <HeaderTabMenu
+        title="Danh sách phần thưởng"
+        titleBack="Khách hàng thành viên"
+        onBackProps={onBackProps}
+        titleActions={titleActions}
+      />
 
       <div className="card-box d-flex flex-column">
         <SearchBox

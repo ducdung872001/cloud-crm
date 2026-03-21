@@ -278,7 +278,8 @@ i18n.use(initReactI18next).init({
           teacher: "Giáo viên",
           // đoạn này là children của khách hàng
           customerProfile: "Hồ sơ khách hàng",
-          customerList: "Khách hàng & NCC",
+          customerList: "Khách hàng",
+          supplierList: "Nhà cung cấp",
           partnerProfile: "Nhà cung cấp",
           customerSegments: "Phân khúc & Nhãn",
           customerAnalysis: "Phân tích khách hàng",

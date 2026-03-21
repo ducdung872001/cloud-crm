@@ -159,7 +159,9 @@ export default function OrderDetailModal({ open, onClose, onPrint, onConfirm, in
               </div>
               {dataInvoice.items.map((item, i) => (
                 <div key={i} className="od-items__row">
-                  <span className="od-items__icon">{item.icon}</span>
+                  <span className="od-items__icon">
+                    {item.image ? <img src={item.image} alt={item.name} /> : <span style={{ fontSize: "30px" }}>{item.icon}</span>}
+                  </span>
                   <div className="od-items__info">
                     <div className="od-items__name">{item.name}</div>
                     <div className="od-items__detail">{item.detail}</div>
