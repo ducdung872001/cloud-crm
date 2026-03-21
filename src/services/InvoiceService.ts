@@ -28,7 +28,7 @@ export default {
   },
   // Xem chi tiết hóa đơn
   listInvoiceDetail: (id: number) => {
-    return fetch(`${urlsApi.invoice.invoiceDetailList}?invoiceId=${id}`, {
+    return fetch(`${urlsApi.invoice.invoiceDetailList}?id=${id}`, {
       method: "GET",
     }).then((res) => res.json());
   },
