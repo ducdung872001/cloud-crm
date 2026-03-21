@@ -694,6 +694,9 @@ export const urlsApi = {
     update: prefixAdmin + "/timekeeping/update",
     delete: prefixAdmin + "/timekeeping/delete",
   },
+  financeDashboard: {
+    full: prefixBilling + "/finance/dashboard",
+  },
   cashbook: {
     list: prefixAdmin + "/cashbook/list",
     update: prefixAdmin + "/cashbook/update",
@@ -2135,6 +2138,13 @@ export const urlsApi = {
     makeCallOTP: prefixAdmin + "/callCenter/makeCallOTP",
     //* Danh sách lịch sử cuộc gọi
     customerCallList: prefixAdmin + "/customerCall/list",
+  },
+  // Báo cáo bán hàng (sales service)
+  salesReport: {
+    full:             prefixSales + "/report/sales",           // API 4 — gộp 1 lần (khuyến nghị)
+    summary:          prefixSales + "/report/summary",         // API 1 — chỉ 4 KPI card
+    dailySeries:      prefixSales + "/report/daily-series",    // API 2 — biểu đồ cột
+    channelBreakdown: prefixSales + "/report/channel-breakdown", // API 3 — bảng kênh bán
   },
   // Báo cáo
   report: {

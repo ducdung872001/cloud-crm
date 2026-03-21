@@ -16,11 +16,10 @@ interface FileUploadProps {
   type?: string;
   name?: string;
   source?: string;
-  onFileChange?: (file: File | null) => void;
 }
 
 export default function FileUpload(props: FileUploadProps) {
-  const { label, isRequired, type, formData, setFormData, name, source = "reborn", onFileChange } = props;  
+  const { label, isRequired, type, formData, setFormData, name, source = "reborn" } = props;
 
   const refInputUpload = useRef<HTMLInputElement>();
 
@@ -31,18 +30,13 @@ export default function FileUpload(props: FileUploadProps) {
   const handleImageUpload = (e) => {
     e.preventDefault();
     if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      if (selectedFile.size > FILE_IMAGE_MAX) {
+      if (e.target.files[0].size > FILE_IMAGE_MAX) {
         showToast(`Ảnh tải lên giới hạn dung lượng không quá ${FILE_IMAGE_MAX / 1024 / 1024}MB`, "warning");
         e.target.value = "";
       } else {
-        const previewUrl = URL.createObjectURL(selectedFile);
-        setImagePreview(previewUrl);
-        if (typeof onFileChange === "function") {
-          onFileChange(selectedFile);
-          showImage(previewUrl);
-        } else {
-          source === "reborn" ? setFile(selectedFile) : uploadImageFromFiles(e.target.files, showImage, false);
+        setImagePreview(URL.createObjectURL(e.target.files[0]));
+        {
+          source === "reborn" ? setFile(e.target.files[0]) : uploadImageFromFiles(e.target.files, showImage, false);
         }
 
         e.target.value = null;
@@ -60,14 +54,14 @@ export default function FileUpload(props: FileUploadProps) {
   };
 
   useEffect(() => {
+    console.log("vào đây rồi ", file);
     if (file) {
       handUploadFile(file);
     }
   }, [file]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const showImage = (url, filekey?: any,) => {
-    
+  const showImage = (url, filekey?: any) => {
     switch (type) {
       case "avatar":
         setFormData({ ...formData, values: { ...formData.values, avatar: url } });
@@ -89,17 +83,13 @@ export default function FileUpload(props: FileUploadProps) {
         break;
       case "cardvisitBack":
         setFormData({ ...formData, values: { ...formData.values, cardvisitBack: url } });
-      break;
+        break;
       default:
         throw new Error("message image");
     }
   };
 
   const handleDeteleImage = (type) => {
-    if (typeof onFileChange === "function") {
-      onFileChange(null);
-    }
-    setImagePreview("");
     switch (type) {
       case "avatar":
         setFormData({ ...formData, values: { ...formData.values, avatar: "" } });
@@ -121,7 +111,7 @@ export default function FileUpload(props: FileUploadProps) {
         break;
       case "cardvisitBack":
         setFormData({ ...formData, values: { ...formData.values, cardvisitBack: "" } });
-      break;
+        break;
       default:
         throw new Error("delete image");
     }
@@ -146,11 +136,11 @@ export default function FileUpload(props: FileUploadProps) {
             ? formData?.values?.cover
             : type === "prevProof"
             ? formData?.values?.prevProof
-            : type === "afterProof" 
+            : type === "afterProof"
             ? formData?.values?.afterProof
-            : type === "cardvisitFront" 
+            : type === "cardvisitFront"
             ? formData?.values?.cardvisitFront
-            : type === "cardvisitBack" 
+            : type === "cardvisitBack"
             ? formData?.values?.cardvisitBack
             : ""
         ) ? (
@@ -168,11 +158,11 @@ export default function FileUpload(props: FileUploadProps) {
                     ? formData?.values?.cover
                     : type === "prevProof"
                     ? formData?.values?.prevProof
-                    : type === "afterProof" 
+                    : type === "afterProof"
                     ? formData?.values?.afterProof
-                    : type === "cardvisitFront" 
+                    : type === "cardvisitFront"
                     ? formData?.values?.cardvisitFront
-                    : type === "cardvisitBack" 
+                    : type === "cardvisitBack"
                     ? formData?.values?.cardvisitBack
                     : ""
                 }
@@ -210,11 +200,11 @@ export default function FileUpload(props: FileUploadProps) {
                   ? formData?.values?.cover
                   : type === "prevProof"
                   ? formData?.values?.prevProof
-                  : type === "afterProof" 
+                  : type === "afterProof"
                   ? formData?.values?.afterProof
-                  : type === "cardvisitFront" 
+                  : type === "cardvisitFront"
                   ? formData?.values?.cardvisitFront
-                  : type === "cardvisitBack" 
+                  : type === "cardvisitBack"
                   ? formData?.values?.cardvisitBack
                   : ""
               )
@@ -231,11 +221,11 @@ export default function FileUpload(props: FileUploadProps) {
                   ? formData?.values?.cover
                   : type === "prevProof"
                   ? formData?.values?.prevProof
-                  : type === "afterProof" 
+                  : type === "afterProof"
                   ? formData?.values?.afterProof
-                  : type === "cardvisitFront" 
+                  : type === "cardvisitFront"
                   ? formData?.values?.cardvisitFront
-                  : type === "cardvisitBack" 
+                  : type === "cardvisitBack"
                   ? formData?.values?.cardvisitBack
                   : ""
               )
