@@ -43,11 +43,11 @@ export interface VatInvoiceRequest {
     exchangeRate:         number;   // 1
     adjustmentType:       string;   // "1"
     paymentStatus:        boolean;
-    cusGetInvoiceRight:   boolean;
+    cusGetInvoiceRight:   boolean;    
     reservationCode?:     string;
     certificateSerial?:   string;
     transactionUuid?:     string;
-    invoiceIssuedDate?:   number;
+    invoiceIssuedDate?:   number; // Unix ms (VD: Date("28/02/2026").getTime())
   };
   sellerInfo?: {
     sellerLegalName:    string;

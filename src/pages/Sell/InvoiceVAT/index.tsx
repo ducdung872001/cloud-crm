@@ -23,7 +23,7 @@ import IssueInvoice          from "./partials/IssueInvoice/index";
 import ElectronicInvoiceProvider from "./partials/ElectronicInvoiceProvider/index";
 import Configuration         from "./partials/Configuration/index";
 import InvoicePreviewModal from "./partials/IssueInvoice/InvoicePreviewModal/index";
-import InvoiceDetailModal, { InvoiceDetailData }   from "./partials/InvoiceDetailModal/index";
+import InvoiceDetailModal, { SinvoiceLogItem } from "./partials/InvoiceDetailModal/index";
 
 const InvoiceVATService = InvoiceVATMockService;
 
@@ -82,27 +82,10 @@ export default function InvoiceVATOverview(props: any) {
 
   // ── InvoiceDetailModal (nút "Xem" trên từng hóa đơn) ──
   const [showDetail, setShowDetail] = useState(false);
-  const [detailData, setDetailData] = useState<InvoiceDetailData | null>(null);
+  const [detailData, setDetailData] = useState<SinvoiceLogItem | null>(null);
 
-  const handleOpenDetail = (item: IInvoiceVATResponse) => {
-    setDetailData({
-      invoiceNo:    item.invoiceNo,
-      symbol:       "C26TNA",
-      invoiceDate:  item.invoiceDate,
-      providerName: "VNPT Invoice",
-      templateCode: "01GTKT0/001",
-      status:       item.status as "issued" | "pending_sign" | "error",
-      buyerName:    item.customerName,
-      buyerTaxCode: item.taxCode ?? undefined,
-      buyerAddress: "15 Nguyễn Huệ, Q.1, TP.HCM",
-      paymentMethod: "Chuyển khoản",
-      emailReceive: "ketoan@khachhang.vn",
-      items: [
-        { id: 1, name: "Áo thun oversize unisex", unit: "Cái", qty: 5, unitPrice: 2_000_000, taxRate: 10, total: 10_000_000 },
-        { id: 2, name: "Quần jogger thể thao",    unit: "Cái", qty: 2, unitPrice: 1_500_000, taxRate: 10, total:  3_000_000 },
-      ],
-      cqtCode: "AB28022026001280001",
-    });
+  const handleOpenDetail = (item: SinvoiceLogItem) => {
+    setDetailData(item);
     setShowDetail(true);
   };
 
@@ -354,7 +337,20 @@ export default function InvoiceVATOverview(props: any) {
                           {item.status === "issued" && (
                             // ── Nút "Xem" → mở InvoiceDetailModal ──
                             <button className="btn btn-outline btn-sm"
-                                    onClick={() => handleOpenDetail(item)}>
+                                    onClick={() => handleOpenDetail({
+                                      id: item.id,
+                                      transactionUuid: "",
+                                      invoiceNo: item.invoiceNo,
+                                      invoiceSeries: "C26TNA",
+                                      invoiceIssuedDate: undefined,
+                                      templateCode: "01GTKT0/001",
+                                      buyerName: item.customerName,
+                                      buyerTaxCode: item.taxCode,
+                                      totalAmount: item.totalAmount,
+                                      status: "ISSUED",
+                                      rawRequestJson: null,
+                                      rawResponseJson: null,
+                                    })}>
                               Xem
                             </button>
                           )}

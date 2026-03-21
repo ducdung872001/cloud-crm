@@ -434,6 +434,8 @@ export const urlsApi = {
     sendEmailCustomer: prefixIntegration + "/sinvoice/ext/send-email-customer",
     allTemplates:      prefixIntegration + "/sinvoice/ext/all-templates",
     searchInvoices:    prefixIntegration + "/sinvoice/query/search",
+    logList:           prefixIntegration + "/sinvoice/log/list",
+    logGet:            prefixIntegration + "/sinvoice/log/get",
   },
   returnInvoice: {
     list: prefixSales + "/invoice/return-exchange/list",
