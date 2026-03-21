@@ -28,9 +28,7 @@ export default function MembershipClass(props) {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
 
-  const getType = (point) => {
-    console.log('point', point);
-    
+  const getType = (point) => {    
     switch (true) {
         case point <= 300:
             return {
