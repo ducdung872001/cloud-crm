@@ -12,12 +12,12 @@ export default function ConnectionChannel() {
         logo: 'SPE',
         color: '#FF3300',
         lable: 'Shopee',
-        des: 'shop.shopee.vn/posme_store · 1.243 sản phẩm sync',
-        order: 72,
-        benifit: '18.3M',
-        rate: '4.8★',
-        time: '5 phút trước',
-        active: 1
+        des: 'Chưa kết nối · Kết nối để bán hàng trên Shopee',
+        order: '',
+        benifit: '',
+        rate: '',
+        time: '',
+        active: 0
     },
     {
         logo: 'LZD',
@@ -34,34 +34,34 @@ export default function ConnectionChannel() {
         logo: 'TKI',
         lable: 'Tiki',
         color: '#0099FF',
-        des: 'tiki.vn/posme-shop · 634 sản phẩm sync',
-        order: 30,
-        benifit: '7.7M',
-        rate: '4.7★',
-        time: '8 phút trước',
-        active: 1
+        des: 'Chưa kết nối · Kết nối để bán hàng trên Tiki',
+        order: '',
+        benifit: '',
+        rate: '',
+        time: '',
+        active: 0
     },
     {
         logo: 'FB',
         color: '#3366FF',
         lable: 'Facebook Shop',
-        des: 'fb.com/posme.store · 312 sản phẩm sync',
-        order: 22,
-        benifit: '5.8M',
-        rate: '4.5★',
-        time: '3 phút trước',
-        active: 1
+        des: 'Chưa kết nối · Kết nối để bán hàng trên Facebook Shop',
+        order: '',
+        benifit: '',
+        rate: '',
+        time: '',
+        active: 0
     },
     {
         logo: 'ZLO',
         color: '#3366FF',
         lable: 'Zalo OA',
-        des: 'zalo.me/posme · 198 sản phẩm sync',
-        order: 11,
-        benifit: '2.2M',
+        des: 'Chưa kết nối · Kết nối để bán hàng trên Zalo OA',
+        order: '',
+        benifit: '',
         rate: '',
-        time: '18 phút trước',
-        active: 1
+        time: '',
+        active: 0
     },
     {
         logo: 'SĐO',

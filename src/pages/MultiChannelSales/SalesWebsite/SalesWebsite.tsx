@@ -9,9 +9,9 @@ export default function SalesWebsite() {
   document.title = "Website bán hàng";
 
   const [dataInfo, setDataInfo] = useState({
-    domain: 'reborn.store',
-    storeName: 'Reborn Fashion Store',
-    des: 'Cửa hàng thời trang nam nữ chất lượng cao, cập nhật xu hướng mới nhất 2026.',
+    domain: 'storefront.reborn.vn',
+    storeName: 'Minh Hoa',
+    des: 'Thực phẩm tươi ngon mỗi ngày tại nhà bạn. Giao hàng nhanh trong 2 giờ · Cam kết tươi ngon · 500+ sản phẩm',
     shipping_fee: '30.000₫',
     freeship_form: '500.000₫'
   });
@@ -55,7 +55,7 @@ export default function SalesWebsite() {
             </div>
 
             <div className="conatiner-button">
-                <div className="button-export">
+                <div className="button-export" onClick={() => window.open('https://storefront.reborn.vn', '_blank')} style={{cursor: 'pointer'}}>
                     <span style={{fontSize: 14, fontWeight: '500'}}>Xem Website</span>
                 </div>
                 <div className="button-connect">
@@ -155,7 +155,7 @@ export default function SalesWebsite() {
                     <div>
                         <span style={{fontSize: 14, fontWeight: '600', color: 'green'}}>Website đang hoạt động</span>
                         <div>
-                            <span  style={{fontSize: 12, fontWeight: '600'}}>posme.store · Uptime 99.9%</span>
+                            <span  style={{fontSize: 12, fontWeight: '600'}}>storefront.reborn.vn · Uptime 99.9%</span>
                         </div>
                     </div>
                 </div>
@@ -237,13 +237,13 @@ export default function SalesWebsite() {
 
                 <div className="card">
                     <div>
-                        <span style={{fontSize: 20, fontWeight: '600', color: 'white'}}>Reborn Fashion Store</span>
+                        <span style={{fontSize: 20, fontWeight: '600', color: 'white'}}>Minh Hoa</span>
                     </div>
                     <div>
-                        <span style={{fontSize: 14, fontWeight: '500', color: 'white'}}>reborn.store</span>
+                        <span style={{fontSize: 14, fontWeight: '500', color: 'white'}}>storefront.reborn.vn</span>
                     </div>
                     <div>
-                        <span style={{fontSize: 14, fontWeight: '500', color: 'white'}}>23 Nguyễn Huệ, Q.1, TP.HCM</span>
+                        <span style={{fontSize: 14, fontWeight: '500', color: 'white'}}>123 Nguyễn Trãi, Q.1, TP.HCM</span>
                     </div>
                     <div>
                         <span style={{fontSize: 14, fontWeight: '500', color: 'white'}}>0901 234 567</span>
