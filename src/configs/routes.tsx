@@ -521,9 +521,9 @@ export const menu: IMenuItem[] = [
         code: "", //Tài nguyên cho show quản lý đặt hàng hay không
       },
       {
-        title: "multiChannelCommunication", // truyền thông đa kênh
-        path: urls.setting_marketing,
-        icon: <Icon name="BroadcastMenu" />,
+        title: "memberList", // Danh sách hội viên
+        path: urls.member_list,
+        icon: <Icon name="MemberListMenu" />,
         code: "",
       },
       {
@@ -531,13 +531,7 @@ export const menu: IMenuItem[] = [
         path: urls.marketing_campaign,
         icon: <Icon name="Marketing" />,
         code: "MA",
-      },
-      {
-        title: "memberList", // Danh sách hội viên
-        path: urls.member_list,
-        icon: <Icon name="MemberListMenu" />,
-        code: "",
-      },
+      },      
       {
         title: "customerCare", // Chăm sóc khách hàng
         path: urls.customer_care_page,
