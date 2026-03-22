@@ -17,11 +17,13 @@ const DraftSummary: React.FC<Props> = ({ items }) => {
       </div>
       <div className="sum-r">
         <span>Giảm giá voucher</span>
-        <span className="minus">- 0 đ</span>
+        {/* <span className="minus">- 0 đ</span> */}
+        <span className="minus">0 đ</span>
       </div>
       <div className="sum-r">
         <span>Điểm tích lũy dùng</span>
-        <span className="minus">- 0 đ</span>
+        {/* <span className="minus">- 0 đ</span> */}
+        <span className="minus">0 đ</span>
       </div>
       <div className="sum-r tot">
         <span>TỔNG THANH TOÁN</span>

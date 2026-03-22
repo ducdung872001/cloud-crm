@@ -6,16 +6,22 @@ interface TopbarProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
   onSync: () => void;
+  draftCount?: number;
+  orderCount?: number;
 }
 
-const tabs: { id: TabType; label: string; badge?: number }[] = [
-  { id: "pos", label: "🛒 Bán hàng (POS)" },
-  { id: "draft", label: "📋 Đơn tạm", badge: 5 },
-  { id: "orders", label: "📋 Đơn hàng", badge: 8 },
-  { id: "report", label: "📊 Báo cáo" },
-];
+const Topbar: React.FC<TopbarProps> = ({
+  activeTab, onTabChange, onSync,
+  draftCount = 0,
+  orderCount = 0,
+}) => {
+  const tabs: { id: TabType; label: string; badge?: number }[] = [
+    { id: "pos", label: "🛒 Bán hàng (POS)" },
+    { id: "draft", label: "📋 Đơn tạm", badge: draftCount > 0 ? draftCount : undefined },
+    { id: "orders", label: "📋 Đơn hàng", badge: orderCount > 0 ? orderCount : undefined },
+    { id: "report", label: "📊 Báo cáo" },
+  ];
 
-const Topbar: React.FC<TopbarProps> = ({ activeTab, onTabChange, onSync }) => {
   return (
     <div className="topbar">
       <div className="topbar__tabs">

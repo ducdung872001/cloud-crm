@@ -14,6 +14,56 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+
+  /**
+   * Export danh sách hóa đơn ra file Excel (.xlsx).
+   * Backend trả Base64 string (do framework wrap JSON) → FE decode → download.
+   */
+  exportExcel: async (
+    params: IInvoiceFilterRequest,
+    signal?: AbortSignal
+  ): Promise<void> => {
+    // Loại bỏ param phân trang — backend export không cần
+    const { page, limit, ...exportParams } = params;
+
+    const res = await fetch(
+      `${urlsApi.invoice.export}${convertParamsToString(exportParams)}`,
+      { signal, method: "GET" }
+    );
+
+    const json = await res.json();
+
+    if (!res.ok || json.code !== 0) {
+      throw new Error(json.message || `Export thất bại (HTTP ${res.status})`);
+    }
+
+    // json.result là Base64 string của file .xlsx
+    const base64: string = json.result;
+    const binaryStr = atob(base64);
+    const bytes = new Uint8Array(binaryStr.length);
+    for (let i = 0; i < binaryStr.length; i++) {
+      bytes[i] = binaryStr.charCodeAt(i);
+    }
+
+    const blob = new Blob([bytes], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a   = document.createElement("a");
+
+    const today = new Date();
+    const dd    = String(today.getDate()).padStart(2, "0");
+    const mm    = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy  = today.getFullYear();
+    a.download  = `DanhSachHoaDon_${dd}${mm}${yyyy}.xlsx`;
+    a.href      = url;
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  },
+
   createInvoice: (params: any, signal?: AbortSignal) => {
     return fetch(`${urlsApi.invoice.createInvoice}${convertParamsToString(params)}`, {
       signal,

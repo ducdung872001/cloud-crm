@@ -40,7 +40,7 @@ export default function NotificationList(props: any) {
 
   const navigate = useNavigate();
   const isMounted = useRef(false);
-  const { dataInfoEmployee, countUnread, setCountUnread } = useContext(UserContext) as ContextType;
+  const { dataInfoEmployee, countUnread, setCountUnread, newNotificationPayload } = useContext(UserContext) as ContextType;
 
   const [listNotification, setListNotification] = useState([]);
 
@@ -155,6 +155,14 @@ export default function NotificationList(props: any) {
       abortController.abort();
     };
   }, [params]);
+
+  useEffect(() => {
+    if (newNotificationPayload) {
+      // Khi có thông báo mới, set page về 1 để fetch lại danh sách mới nhất
+      setParams((prev) => ({ ...prev, page: 1 }));
+      getCountUnread();
+    }
+  }, [newNotificationPayload]);
 
   const onDelete = async (id: number) => {
     const response = await NotificationService.delete(id);
@@ -394,10 +402,19 @@ export default function NotificationList(props: any) {
 
   /** Navigate based on targetLink or payload type from the new API */
   const handleNotificationClick = (item: any) => {
-    // unread: 0/null = chưa đọc, unread: 1 = đã đọc
+    // unread: 0 = chưa đọc, unread: 1 = đã đọc
     if (item.unread === 0 || item.unread === null) {
       onUnread(item.id);
     }
+
+    if (item.payload && isJsonString(item.payload)) {
+      const payload = JSON.parse(item.payload);
+      if (payload?.type === "ORDER_REQUEST" && payload.orderId) {
+        navigate("/multi_channel_sales", { state: { tab: 2, orderRequestModalId: payload.orderId } });
+        return;
+      }
+    }
+
     if (item.targetLink) {
       navigate(item.targetLink);
       return;
@@ -406,6 +423,7 @@ export default function NotificationList(props: any) {
       const payload = JSON.parse(item.payload);
       switch (payload?.type) {
         case "ORDER":
+        case "ORDER_REQUEST":
           if (payload.orderId) navigate(`/orders/${payload.orderId}`);
           break;
         case "CAMPAIGN":
@@ -425,20 +443,26 @@ export default function NotificationList(props: any) {
     }
   };
 
-  /** Pick icon name based on payload.type */
   const getNotificationIconName = (item: any): string => {
     if (item.payload && isJsonString(item.payload)) {
       const payload = JSON.parse(item.payload);
       switch (payload?.type) {
-        case "ORDER": return "Order";
-        case "CAMPAIGN": return "Promotion";
-        case "BID": return "NotifyExpire";
-        case "TASK": return "NotifySetting";
-        case "TEST_PUSH": return "NotifyRox";
-        default: break;
+        case "ORDER":
+        case "ORDER_REQUEST":
+          return "OrderListMenu";
+        case "CAMPAIGN":
+          return "Promotion";
+        case "BID":
+          return "NotifyExpire";
+        case "TASK":
+          return "NotifySetting";
+        case "TEST_PUSH":
+          return "NotifyRox";
+        default:
+          break;
       }
     }
-    return "NotifySetting";
+    return "NotifyRox";
   };
 
   /** Render a single notification item */

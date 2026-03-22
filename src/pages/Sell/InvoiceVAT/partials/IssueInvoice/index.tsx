@@ -60,14 +60,16 @@ const STEPS = [
 const fmt = (v: number) => v.toLocaleString("vi-VN");
 
 interface IssueInvoiceProps {
-  onRegisterPreview?: (fn: () => void) => void;
-  onRegisterPublish?: (fn: () => void) => void;
+  onRegisterPreview?:  (fn: () => void) => void;
+  onRegisterPublish?:  (fn: () => void) => void;
+  /** Mã hóa đơn bán hàng truyền vào từ màn hình danh sách đơn hàng → tự động load */
+  initialInvoiceCode?: string;
 }
 
-export default function IssueInvoice({ onRegisterPreview, onRegisterPublish }: IssueInvoiceProps) {
+export default function IssueInvoice({ onRegisterPreview, onRegisterPublish, initialInvoiceCode }: IssueInvoiceProps) {
   const [step,           setStep]          = useState(2);
   const [form,           setForm]          = useState<InvoiceFormData>(DEFAULT_FORM);
-  const [orderCode,      setOrderCode]     = useState("");
+  const [orderCode,      setOrderCode]     = useState(initialInvoiceCode ?? "");
   const [loadingOrder,   setLoadingOrder]  = useState(false);
   const [loadingPreview, setLoadingPreview]= useState(false);
   const [loadingPublish, setLoadingPublish]= useState(false);
@@ -177,6 +179,14 @@ export default function IssueInvoice({ onRegisterPreview, onRegisterPublish }: I
         invoiceType: "1", templateCode: TEMPLATE_CODE, invoiceSeries: form.symbol,
         currencyCode: "VND", exchangeRate: 1, adjustmentType: "1",
         paymentStatus: true, cusGetInvoiceRight: true,
+        invoiceIssuedDate: (() => {
+          // form.invoiceDate là "dd/MM/yyyy" → chuyển sang Unix ms (UTC+7)
+          try {
+            const [d, m, y] = form.invoiceDate.split("/").map(Number);
+            if (!d || !m || !y) return undefined;
+            return new Date(y, m - 1, d, 0, 0, 0).getTime();
+          } catch { return undefined; }
+        })(),
       },
       buyerInfo: {
         buyerName: form.buyerName, buyerLegalName: form.buyerName,
@@ -274,6 +284,14 @@ export default function IssueInvoice({ onRegisterPreview, onRegisterPublish }: I
   // Đăng ký callbacks lên parent để header button gọi được
   useEffect(() => { onRegisterPreview?.(handlePreview); }, [handlePreview,  onRegisterPreview]);
   useEffect(() => { onRegisterPublish?.(handlePublish); }, [handlePublish,  onRegisterPublish]);
+
+  // Tự động load hóa đơn nếu được truyền initialInvoiceCode từ màn hình đơn hàng
+  useEffect(() => {
+    if (initialInvoiceCode?.trim()) {
+      handleLoadOrder();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialInvoiceCode]);
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
