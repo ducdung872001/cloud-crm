@@ -24,19 +24,19 @@ const Cart: React.FC<CartProps> = ({
   setInvoiceDraftToPaid,
   onSavedDraft,
 }) => {
-  const [orderType,   setOrderType]   = useState<OrderType>("retail");
-  const [voucher,     setVoucher]     = useState("");
-  const [isSaving,    setIsSaving]    = useState(false);  // Trạng thái "Lưu tạm"
+  const [orderType, setOrderType] = useState<OrderType>("retail");
+  const [voucher, setVoucher] = useState("");
+  const [isSaving, setIsSaving] = useState(false);  // Trạng thái "Lưu tạm"
 
-  const subtotal  = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
   const itemCount = items.length;
 
   const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
 
   const ORDER_TYPES: { id: OrderType; label: string }[] = [
-    { id: "retail",    label: "Lẻ"   },
+    { id: "retail", label: "Lẻ" },
     { id: "wholesale", label: "Buôn" },
-    { id: "ship",      label: "Ship" },
+    { id: "ship", label: "Ship" },
   ];
 
   // ── Tạo đơn hàng (thanh toán) ─────────────────────────────────────────────
@@ -83,15 +83,15 @@ const Cart: React.FC<CartProps> = ({
 
       // Bước 2: Gắn sản phẩm vào invoiceId
       const body = items.map((item) => ({
-        productId:  Number(item.id),
-        variantId:  Number(item.variantId),
-        price:      item.price,
+        productId: Number(item.id),
+        variantId: Number(item.variantId),
+        price: item.price,
         customerId: Number(customer?.id ?? -1),
-        qty:        item.qty,
-        name:       item.name,
-        avatar:     item.avatar ?? "",
-        unitName:   item.unitName ?? item.unit ?? "",
-        fee:        item.price * item.qty,
+        qty: item.qty,
+        name: item.name,
+        avatar: item.avatar ?? "",
+        unitName: item.unitName ?? item.unit ?? "",
+        fee: item.price * item.qty,
       }));
 
       const insertRes = await BoughtProductService.insert(body, { invoiceId });
@@ -114,6 +114,9 @@ const Cart: React.FC<CartProps> = ({
       setIsSaving(false);
     }
   };
+
+  const discount = 0;
+  const pointsUsed = 0;
 
   return (
     <div className="cart">
@@ -208,11 +211,15 @@ const Cart: React.FC<CartProps> = ({
           </div>
           <div className="sr">
             <span className="sr__k">Giảm giá voucher</span>
-            <span className="sr__v sr__v--red">−0 ₫</span>
+            <span className="sr__v sr__v--red">
+              {discount > 0 ? `−${discount.toLocaleString("vi")} ₫` : "0 ₫"}
+            </span>
           </div>
           <div className="sr">
             <span className="sr__k">Điểm tích lũy dùng</span>
-            <span className="sr__v sr__v--blue">−0 ₫</span>
+            <span className="sr__v sr__v--blue">
+              {pointsUsed > 0 ? `−${pointsUsed.toLocaleString("vi")} ₫` : "0 ₫"}
+            </span>
           </div>
           <div className="sr sr--total">
             <span className="sr__k">TỔNG THANH TOÁN</span>

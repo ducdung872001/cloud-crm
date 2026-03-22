@@ -93,7 +93,7 @@ export function mapRawToDraftOrder(raw: RawInvoiceDetail): DraftOrder {
 
   const sanPhams: DraftProduct[] = (raw.products ?? []).map((p) => ({
     ten:    p.productName || p.name || "Sản phẩm",
-    maSP:   p.batchNo || `#${p.productId}`,
+    maSP: p.batchNo || (p.productId ? `#${p.productId}` : ""),
     sl:     p.qty ?? 1,
     donGia: p.price ?? 0,
   }));
