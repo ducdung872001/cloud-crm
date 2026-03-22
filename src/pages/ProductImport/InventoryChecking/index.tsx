@@ -1,6 +1,7 @@
 // Quản lý kho — index.tsx
 // Tab "Tồn kho"     → API: GET /inventoryBalance/stockProduct/list   ✅
 // Tab "Phiếu nhập"  → API: GET /invoice/import/list                  ✅
+// Tab "Phiếu xuất"  → API: GET /inventoryTransaction/sale/list       ✅
 // Tab "Chuyển kho"  → API: GET /stockTransfer/list                   ✅
 // Tab "Xuất hủy"    → stockAdjust type=DESTROY (coming soon)         ⏳
 // Tab "Phiếu kiểm"  → API: GET /stockAdjust/list                     ✅
@@ -104,6 +105,25 @@ interface IStockAdjustItem {
   creatorName?: string;
 }
 
+// Khớp với SaleExportListItemResponse từ backend
+// GET /inventoryTransaction/sale/list
+// Aggregate từ inventory_transaction WHERE ref_type='SALE' GROUP BY ref_id
+interface ISaleExportItem {
+  refId: number;
+  exportCode?: string;         // "PXK-{refId}"
+  warehouseId?: number;
+  warehouseName?: string;
+  productCount?: number;       // số loại SP
+  lineCount?: number;          // số dòng giao dịch
+  totalQty?: number;           // tổng SL xuất
+  totalCost?: number;          // tổng giá vốn
+  employeeId?: number;
+  employeeName?: string;
+  exportTime?: string;
+  status?: number;             // luôn = 1
+  statusName?: string;
+}
+
 export default function InventoryManagement() {
   document.title = "Quản lý kho";
 
@@ -135,10 +155,11 @@ export default function InventoryManagement() {
   });
 
   // ── Per-tab data ──────────────────────────────────────────────────────────
-  const [listStock,    setListStock]    = useState<IVariantStockItem[]>([]);
-  const [listImport,   setListImport]   = useState<IImportInvoiceItem[]>([]);
+  const [listStock, setListStock] = useState<IVariantStockItem[]>([]);
+  const [listImport, setListImport] = useState<IImportInvoiceItem[]>([]);
   const [listTransfer, setListTransfer] = useState<IStockTransferItem[]>([]);
-  const [listCheck,    setListCheck]    = useState<IStockAdjustItem[]>([]);
+  const [listCheck, setListCheck] = useState<IStockAdjustItem[]>([]);
+  const [listExport, setListExport] = useState<ISaleExportItem[]>([]);
 
   // ── Summary counters ──────────────────────────────────────────────────────
   const [stockSummary, setStockSummary] = useState({
@@ -155,21 +176,26 @@ export default function InventoryManagement() {
   const [checkSummary, setCheckSummary] = useState({
     total: 0, pending: 0, completed: 0, rejected: 0,
   });
+  const [exportSummary, setExportSummary] = useState({
+    totalExport: 0, totalQty: 0, totalCost: 0, totalProduct: 0,
+  });
+  const exportSummaryLoaded = useRef(false);
 
   const listTabs: { key: TabType; label: string; icon: string }[] = [
-    { key: "stock",    label: "Tồn kho",    icon: "Warehouse" },
-    { key: "import",   label: "Phiếu nhập", icon: "Download" },
-    { key: "export",   label: "Phiếu xuất", icon: "Upload" },
+    { key: "stock", label: "Tồn kho", icon: "Warehouse" },
+    { key: "import", label: "Phiếu nhập", icon: "Download" },
+    { key: "export", label: "Phiếu xuất", icon: "Upload" },
     { key: "transfer", label: "Chuyển kho", icon: "ArrowLeftRight" },
-    { key: "destroy",  label: "Xuất hủy",   icon: "Trash2" },
-    { key: "check",    label: "Phiếu kiểm", icon: "ClipboardList" },
-    { key: "cost",     label: "Giá vốn",    icon: "Calculator" },
+    { key: "destroy", label: "Xuất hủy", icon: "Trash2" },
+    { key: "check", label: "Phiếu kiểm", icon: "ClipboardList" },
+    { key: "cost", label: "Giá vốn", icon: "Calculator" },
   ];
 
   useEffect(() => {
     setParams({ keyword: "", status: "", limit: 10, page: 1 });
     // Reset summary loaded flag khi chuyển tab để load lại summary mới
     if (activeTab === "import") importSummaryLoaded.current = false;
+    if (activeTab === "export") exportSummaryLoaded.current = false;
   }, [activeTab]);
 
   useEffect(() => {
@@ -195,9 +221,9 @@ export default function InventoryManagement() {
         // Dùng API mới: trả về đầy đủ variant SKU, variantLabel, đơn vị bán, giá vốn
         case "stock": {
           const stockParams: Record<string, any> = { page: pageIdx, size };
-          if (p.keyword)       stockParams.keyword     = p.keyword;
-          if (p.warehouseId)   stockParams.warehouseId = +p.warehouseId;
-          if (p.status !== "") stockParams.stockStatus  = +p.status;
+          if (p.keyword) stockParams.keyword = p.keyword;
+          if (p.warehouseId) stockParams.warehouseId = +p.warehouseId;
+          if (p.status !== "") stockParams.stockStatus = +p.status;
           const res = await InventoryService.variantStockList(stockParams as any, abortCtrl.signal);
           if (res.code === 0 || res.status === 1) {
             const result = res.result ?? res.data ?? {};
@@ -207,7 +233,7 @@ export default function InventoryManagement() {
             setStockSummary({
               total,
               totalValue: items.reduce((s, i) => s + (i.quantity ?? 0) * (i.avgCost ?? 0), 0),
-              lowStock:   items.filter((i) => (i.stockStatus ?? ((i.quantity ?? 0) <= 10 && (i.quantity ?? 0) > 0 ? 1 : -1)) === 1).length,
+              lowStock: items.filter((i) => (i.stockStatus ?? ((i.quantity ?? 0) <= 10 && (i.quantity ?? 0) > 0 ? 1 : -1)) === 1).length,
               outOfStock: items.filter((i) => (i.stockStatus ?? ((i.quantity ?? 0) === 0 ? 0 : -1)) === 0).length,
             });
             setPaginationMeta(total, p.page, size);
@@ -223,8 +249,8 @@ export default function InventoryManagement() {
         // Summary: gọi 1 lần để lấy KPI cards chính xác (không bị giới hạn page)
         case "import": {
           const importParams: Record<string, any> = { page: pageIdx, size };
-          if (p.keyword)       importParams.keyword = p.keyword;
-          if (p.status !== "") importParams.status  = +p.status;
+          if (p.keyword) importParams.keyword = p.keyword;
+          if (p.status !== "") importParams.status = +p.status;
 
           // Chạy song song: list + summary
           const [res, summaryRes] = await Promise.all([
@@ -249,11 +275,11 @@ export default function InventoryManagement() {
           if (summaryRes && (summaryRes.code === 0 || summaryRes.status === 1)) {
             const s = summaryRes.result ?? summaryRes.data ?? {};
             setImportSummary({
-              totalSlip:   +(s.totalSlip   ?? 0),
+              totalSlip: +(s.totalSlip ?? 0),
               totalAmount: +(s.totalAmount ?? 0),
-              completed:   +(s.completed   ?? 0),
-              pending:     +(s.pending     ?? 0),
-              cancelled:   +(s.cancelled   ?? 0),
+              completed: +(s.completed ?? 0),
+              pending: +(s.pending ?? 0),
+              cancelled: +(s.cancelled ?? 0),
             });
             importSummaryLoaded.current = true;
           }
@@ -272,7 +298,7 @@ export default function InventoryManagement() {
             setListTransfer(items);
             setTransferSummary({
               total,
-              pending:   items.filter((i) => i.status === 0).length,
+              pending: items.filter((i) => i.status === 0).length,
               completed: items.filter((i) => i.status === 1).length,
               cancelled: items.filter((i) => i.status === 2).length,
             });
@@ -287,7 +313,7 @@ export default function InventoryManagement() {
         // ── Phiếu kiểm → /stockAdjust/list ────────────────────────────────
         case "check": {
           const checkParams: Record<string, any> = { page: pageIdx, limit: size };
-          if (p.keyword)       checkParams.name   = p.keyword;
+          if (p.keyword) checkParams.name = p.keyword;
           if (p.status !== "") checkParams.status = +p.status;
           const res = await AdjustmentSlipService.list(checkParams as any, abortCtrl.signal);
           if (res.code === 0 || res.status === 1) {
@@ -297,9 +323,9 @@ export default function InventoryManagement() {
             setListCheck(items);
             setCheckSummary({
               total,
-              pending:  items.filter((i) => i.status === 0).length,
+              pending: items.filter((i) => i.status === 0).length,
               completed: items.filter((i) => i.status === 1).length,
-              rejected:  items.filter((i) => i.status === 2).length,
+              rejected: items.filter((i) => i.status === 2).length,
             });
             setPaginationMeta(total, p.page, size);
             setIsNoItem(total === 0 && p.page === 1);
@@ -309,8 +335,47 @@ export default function InventoryManagement() {
           break;
         }
 
-        // ── Phiếu xuất / Xuất hủy / Giá vốn → chưa có API ─────────────────
-        case "export":
+        // ── Phiếu xuất → /inventoryTransaction/sale/list + /sale/summary ──
+        // Aggregate từ inventory_transaction WHERE ref_type='SALE' GROUP BY ref_id
+        // Tự động từ Kafka khi Sales service gửi INVENTORY_SALE_DONE
+        // Không có tên KH / mã ĐB bán (cross-DB reference sang Sales DB)
+        case "export": {
+          const exportParams: Record<string, any> = { page: pageIdx, size };
+          if (p.keyword) exportParams.keyword = p.keyword;
+          if (p.warehouseId) exportParams.warehouseId = +p.warehouseId;
+
+          const [res, summaryRes] = await Promise.all([
+            InventoryService.saleExportList(exportParams),
+            exportSummaryLoaded.current
+              ? Promise.resolve(null)
+              : InventoryService.saleExportSummary(abortCtrl.signal),
+          ]);
+
+          if (res.code === 0 || res.status === 1) {
+            const result = res.result ?? res.data ?? {};
+            const items: ISaleExportItem[] = result.items ?? result.content ?? result.data ?? [];
+            const total = +(result.total ?? result.totalElements ?? items.length ?? 0);
+            setListExport(items);
+            setPaginationMeta(total, p.page, size);
+            setIsNoItem(total === 0 && p.page === 1);
+          } else {
+            showToast(res.message ?? "Không tải được danh sách phiếu xuất", "error");
+          }
+
+          if (summaryRes && (summaryRes.code === 0 || summaryRes.status === 1)) {
+            const s = summaryRes.result ?? summaryRes.data ?? {};
+            setExportSummary({
+              totalExport: +(s.totalExport ?? 0),
+              totalQty: +(s.totalQty ?? 0),
+              totalCost: +(s.totalCost ?? 0),
+              totalProduct: +(s.totalProduct ?? 0),
+            });
+            exportSummaryLoaded.current = true;
+          }
+          break;
+        }
+
+        // ── Xuất hủy / Giá vốn → chưa có API ───────────────────────────────
         case "destroy":
         case "cost":
           setIsNoItem(true);
@@ -351,28 +416,28 @@ export default function InventoryManagement() {
 
   // InvoiceConstant: STATUS_DONE=1, STATUS_PENDING=2, STATUS_CANCEL=3
   const IMPORT_STATUS_MAP: Record<number, { label: string; color: string }> = {
-    1: { label: "Hoàn thành",  color: "success" },
-    2: { label: "Chờ duyệt",   color: "warning" },
-    3: { label: "Đã hủy",      color: "error" },
+    1: { label: "Hoàn thành", color: "success" },
+    2: { label: "Chờ duyệt", color: "warning" },
+    3: { label: "Đã hủy", color: "error" },
   };
 
   const TRANSFER_STATUS_MAP = {
-    0: { label: "Chờ duyệt",  color: "warning" },
+    0: { label: "Chờ duyệt", color: "warning" },
     1: { label: "Hoàn thành", color: "success" },
-    2: { label: "Đã hủy",     color: "error" },
+    2: { label: "Đã hủy", color: "error" },
   };
 
   const CHECK_STATUS_MAP = {
-    0: { label: "Chờ duyệt",  color: "warning" },
+    0: { label: "Chờ duyệt", color: "warning" },
     1: { label: "Hoàn thành", color: "success" },
-    2: { label: "Từ chối",    color: "error" },
+    2: { label: "Từ chối", color: "error" },
   };
 
   const renderStockStatus = (qty: number) => {
     const { label, color } =
-      qty === 0   ? { label: "Hết hàng", color: "error" }
-      : qty <= 10 ? { label: "Sắp hết",  color: "warning" }
-                  : { label: "Còn hàng", color: "success" };
+      qty === 0 ? { label: "Hết hàng", color: "error" }
+        : qty <= 10 ? { label: "Sắp hết", color: "warning" }
+          : { label: "Còn hàng", color: "success" };
     return (
       <div style={{ display: "flex", justifyContent: "center", marginTop: "0.9rem" }}>
         <span className={`status__item--signature status__item--signature-${color}`}>{label}</span>
@@ -412,8 +477,8 @@ export default function InventoryManagement() {
           <div className="inventory__summary">
             {card("Tổng sản phẩm", stockSummary.total)}
             {card("Tổng giá trị tồn", <span className="summary__value--primary">{formatCurrency(stockSummary.totalValue)}</span>)}
-            {card("Sắp hết hàng",    <span className="summary__value--warning">{stockSummary.lowStock} SP</span>)}
-            {card("Hết hàng",        <span className="summary__value--error">{stockSummary.outOfStock} SP</span>)}
+            {card("Sắp hết hàng", <span className="summary__value--warning">{stockSummary.lowStock} SP</span>)}
+            {card("Hết hàng", <span className="summary__value--error">{stockSummary.outOfStock} SP</span>)}
           </div>
         );
       case "import":
@@ -421,26 +486,35 @@ export default function InventoryManagement() {
           <div className="inventory__summary">
             {card("Tổng phiếu nhập", importSummary.totalSlip)}
             {card("Tổng tiền hoàn thành", <span className="summary__value--primary">{formatCurrency(importSummary.totalAmount)}</span>)}
-            {card("Hoàn thành",  <span className="summary__value--success">{importSummary.completed} phiếu</span>)}
-            {card("Chờ duyệt",   <span className="summary__value--warning">{importSummary.pending} phiếu</span>)}
+            {card("Hoàn thành", <span className="summary__value--success">{importSummary.completed} phiếu</span>)}
+            {card("Chờ duyệt", <span className="summary__value--warning">{importSummary.pending} phiếu</span>)}
+          </div>
+        );
+      case "export":
+        return (
+          <div className="inventory__summary">
+            {card("Tổng phiếu xuất", exportSummary.totalExport)}
+            {card("Tổng giá vốn xuất", <span className="summary__value--primary">{formatCurrency(exportSummary.totalCost)}</span>)}
+            {card("Tổng SL xuất", <span className="summary__value--warning">{exportSummary.totalQty.toLocaleString()} SP</span>)}
+            {card("Loại sản phẩm", <span className="summary__value--success">{exportSummary.totalProduct} loại</span>)}
           </div>
         );
       case "transfer":
         return (
           <div className="inventory__summary">
             {card("Tổng phiếu chuyển", transferSummary.total)}
-            {card("Chờ duyệt",  <span className="summary__value--warning">{transferSummary.pending} phiếu</span>)}
+            {card("Chờ duyệt", <span className="summary__value--warning">{transferSummary.pending} phiếu</span>)}
             {card("Hoàn thành", <span className="summary__value--success">{transferSummary.completed} phiếu</span>)}
-            {card("Đã hủy",     <span className="summary__value--error">{transferSummary.cancelled} phiếu</span>)}
+            {card("Đã hủy", <span className="summary__value--error">{transferSummary.cancelled} phiếu</span>)}
           </div>
         );
       case "check":
         return (
           <div className="inventory__summary">
             {card("Tổng phiếu kiểm", checkSummary.total)}
-            {card("Chờ duyệt",  <span className="summary__value--warning">{checkSummary.pending} phiếu</span>)}
+            {card("Chờ duyệt", <span className="summary__value--warning">{checkSummary.pending} phiếu</span>)}
             {card("Hoàn thành", <span className="summary__value--success">{checkSummary.completed} phiếu</span>)}
-            {card("Từ chối",    <span className="summary__value--error">{checkSummary.rejected} phiếu</span>)}
+            {card("Từ chối", <span className="summary__value--error">{checkSummary.rejected} phiếu</span>)}
           </div>
         );
       default:
@@ -474,6 +548,47 @@ export default function InventoryManagement() {
   const getTableConfig = () => {
     switch (activeTab) {
 
+      // ── Phiếu xuất kho ──────────────────────────────────────────────────
+      // Aggregate từ inventory_transaction (ref_type=SALE).
+      // Không có tên KH / mã ĐB bán (cross-DB — Sales DB khác Inventory DB).
+      case "export":
+        return {
+          titles: ["STT", "Mã phiếu xuất", "Kho xuất", "Số loại SP", "Tổng SL", "Tổng giá vốn", "Người thực hiện", "Thời gian xuất", "Trạng thái"],
+          dataFormat: ["text-center", "", "", "text-center", "text-center", "text-right", "", "text-center", "text-center"],
+          items: listExport,
+          dataMappingArray: (item: ISaleExportItem, index: number) => [
+            getPageOffset(params) + index + 1,
+            // Mã phiếu xuất — tham chiếu đơn bán bên Sales DB
+            <div key={item.refId}>
+              <div className="inventory__code">{item.exportCode ?? `PXK-${item.refId}`}</div>
+              <div style={{ fontSize: "1.1rem", color: "var(--extra-color-40)" }}>
+                Ref đơn bán: #{item.refId}
+              </div>
+            </div>,
+            item.warehouseName ?? "—",
+            item.productCount != null ? `${item.productCount} loại` : "—",
+            item.totalQty != null
+              ? <span style={{ fontWeight: 600 }}>{item.totalQty.toLocaleString()}</span>
+              : "—",
+            item.totalCost != null && item.totalCost > 0
+              ? formatCurrency(item.totalCost) + "đ"
+              : "—",
+            item.employeeName ?? "—",
+            item.exportTime
+              ? moment(item.exportTime).format("DD/MM/YYYY HH:mm")
+              : "—",
+            <span key={`st-${item.refId}`}
+              style={{
+                background: "#00b69b", color: "#fff",
+                padding: "2px 10px", borderRadius: 20,
+                fontSize: "1.2rem", fontWeight: 600
+              }}>
+              Hoàn thành
+            </span>,
+          ],
+          actions: (_: ISaleExportItem): IAction[] => [],
+        };
+
       // ── Tồn kho theo biến thể + đơn vị bán ───────────────────────────────
       case "stock":
         return {
@@ -481,10 +596,10 @@ export default function InventoryManagement() {
           dataFormat: ["text-center", "", "", "", "text-center", "text-center", "text-right", "text-right", "text-right", "text-center"],
           items: listStock,
           dataMappingArray: (item: IVariantStockItem, index: number) => {
-            const qty      = item.quantity ?? 0;
-            const avgCost  = item.avgCost  ?? 0;
-            const isLow    = (item.stockStatus ?? (qty <= 10 && qty > 0 ? 1 : -1)) === 1;
-            const isOut    = (item.stockStatus ?? (qty === 0 ? 0 : -1)) === 0;
+            const qty = item.quantity ?? 0;
+            const avgCost = item.avgCost ?? 0;
+            const isLow = (item.stockStatus ?? (qty <= 10 && qty > 0 ? 1 : -1)) === 1;
+            const isOut = (item.stockStatus ?? (qty === 0 ? 0 : -1)) === 0;
             return [
               getPageOffset(params) + index + 1,
               // Cột Sản phẩm / Biến thể
@@ -610,8 +725,8 @@ export default function InventoryManagement() {
             getPageOffset(params) + index + 1,
             <span key={item.id} className="inventory__code">{item.code ?? `#${item.id}`}</span>,
             item.fromWarehouseName ?? "—",
-            item.toWarehouseName   ?? "—",
-            item.createdBy         ?? "—",
+            item.toWarehouseName ?? "—",
+            item.createdBy ?? "—",
             item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "—",
             item.note ?? "—",
             renderBadge(item.status ?? 0, TRANSFER_STATUS_MAP),
@@ -666,7 +781,7 @@ export default function InventoryManagement() {
             getPageOffset(params) + index + 1,
             <span key={item.id} className="inventory__code">{item.code ?? `#${item.id}`}</span>,
             item.inventoryName ?? "—",
-            item.creatorName   ?? "—",
+            item.creatorName ?? "—",
             item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "—",
             renderBadge(item.status ?? 0, CHECK_STATUS_MAP),
           ],
@@ -722,24 +837,24 @@ export default function InventoryManagement() {
     switch (activeTab) {
       case "import":
         return [
-          { label: "Tất cả",     value: "" },
-          { label: "Chờ duyệt",  value: "2" },
+          { label: "Tất cả", value: "" },
+          { label: "Chờ duyệt", value: "2" },
           { label: "Hoàn thành", value: "1" },
-          { label: "Đã hủy",     value: "3" },
+          { label: "Đã hủy", value: "3" },
         ];
       case "transfer":
         return [
-          { label: "Tất cả",    value: "" },
+          { label: "Tất cả", value: "" },
           { label: "Chờ duyệt", value: "0" },
-          { label: "Hoàn thành",value: "1" },
-          { label: "Đã hủy",    value: "2" },
+          { label: "Hoàn thành", value: "1" },
+          { label: "Đã hủy", value: "2" },
         ];
       case "check":
         return [
-          { label: "Tất cả",    value: "" },
+          { label: "Tất cả", value: "" },
           { label: "Chờ duyệt", value: "0" },
-          { label: "Hoàn thành",value: "1" },
-          { label: "Từ chối",   value: "2" },
+          { label: "Hoàn thành", value: "1" },
+          { label: "Từ chối", value: "2" },
         ];
       default:
         return null;
@@ -750,22 +865,22 @@ export default function InventoryManagement() {
 
   // ── Coming-soon panel ──────────────────────────────────────────────────────
   const renderComingSoon = () => (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center",
-                  justifyContent:"center", padding:"60px 20px",
-                  color:"var(--extra-color-50)", gap: 12 }}>
+    <div style={{
+      display: "flex", flexDirection: "column", alignItems: "center",
+      justifyContent: "center", padding: "60px 20px",
+      color: "var(--extra-color-50)", gap: 12
+    }}>
       <Icon name="Construction" style={{ width: 48, opacity: 0.4 }} />
-      <span style={{ fontSize:"1.5rem", fontWeight: 600 }}>Tính năng đang được phát triển</span>
-      <span style={{ fontSize:"1.3rem" }}>
-        {activeTab === "export"
-          ? "Phiếu xuất sẽ được đồng bộ tự động từ đơn bán hàng. Tính năng đang phát triển."
-          : activeTab === "destroy"
+      <span style={{ fontSize: "1.5rem", fontWeight: 600 }}>Tính năng đang được phát triển</span>
+      <span style={{ fontSize: "1.3rem" }}>
+        {activeTab === "destroy"
           ? "Xuất hủy sẽ sớm được bổ sung vào hệ thống."
           : "Báo cáo giá vốn (FIFO / Bình quân gia quyền) sẽ sớm ra mắt."}
       </span>
     </div>
   );
 
-  const isComingSoon = activeTab === "export" || activeTab === "destroy" || activeTab === "cost";
+  const isComingSoon = activeTab === "destroy" || activeTab === "cost";
 
   return (
     <div className={`page-content page-inventory-management${isNoItem ? " bg-white" : ""}`}>
@@ -803,10 +918,11 @@ export default function InventoryManagement() {
         {!isComingSoon && (
           <SearchBox
             name={
-              activeTab === "import"   ? "Mã phiếu / Nhà cung cấp" :
-              activeTab === "transfer" ? "Mã phiếu chuyển kho" :
-              activeTab === "check"    ? "Mã phiếu kiểm" :
-              "Tên sản phẩm"
+              activeTab === "import" ? "Mã phiếu / Nhà cung cấp" :
+                activeTab === "export" ? "Tên sản phẩm" :
+                  activeTab === "transfer" ? "Mã phiếu chuyển kho" :
+                    activeTab === "check" ? "Mã phiếu kiểm" :
+                      "Tên sản phẩm"
             }
             params={params}
             updateParams={(p) => setParams(p)}
@@ -817,31 +933,31 @@ export default function InventoryManagement() {
         {isComingSoon
           ? renderComingSoon()
           : isLoading
-          ? <Loading />
-          : tableConfig && tableConfig.items.length > 0
-          ? (
-            <BoxTable
-              name="Kho hàng"
-              titles={tableConfig.titles}
-              items={tableConfig.items}
-              isPagination={true}
-              dataPagination={pagination}
-              dataMappingArray={(item, index) => tableConfig.dataMappingArray(item, index)}
-              dataFormat={tableConfig.dataFormat}
-              striped={true}
-              isBulkAction={false}
-              actions={tableConfig.actions}
-              actionType="inline"
-            />
-          )
-          : (
-            <Fragment>
-              {isNoItem
-                ? <SystemNotification description={<span>Không có dữ liệu.<br />Hãy thêm mới nhé!</span>} type="no-item" />
-                : <SystemNotification description={<span>Không có dữ liệu trùng khớp.</span>} type="no-result" />
-              }
-            </Fragment>
-          )
+            ? <Loading />
+            : tableConfig && tableConfig.items.length > 0
+              ? (
+                <BoxTable
+                  name="Kho hàng"
+                  titles={tableConfig.titles}
+                  items={tableConfig.items}
+                  isPagination={true}
+                  dataPagination={pagination}
+                  dataMappingArray={(item, index) => tableConfig.dataMappingArray(item, index)}
+                  dataFormat={tableConfig.dataFormat}
+                  striped={true}
+                  isBulkAction={false}
+                  actions={tableConfig.actions}
+                  actionType="inline"
+                />
+              )
+              : (
+                <Fragment>
+                  {isNoItem
+                    ? <SystemNotification description={<span>Không có dữ liệu.<br />Hãy thêm mới nhé!</span>} type="no-item" />
+                    : <SystemNotification description={<span>Không có dữ liệu trùng khớp.</span>} type="no-result" />
+                  }
+                </Fragment>
+              )
         }
       </div>
 

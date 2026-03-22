@@ -600,8 +600,10 @@ export const urlsApi = {
     update: prefixInventory + "/inventory/update",
     delete: prefixInventory + "/inventory/delete",
     import: prefixInventory + "/warehouse/list",
-    ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
+    ledgerList:   prefixInventory + "/inventoryTransaction/ledger/list",
     ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
+    saleExportList:    prefixInventory + "/inventoryTransaction/sale/list",
+    saleExportSummary: prefixInventory + "/inventoryTransaction/sale/summary",
   },
   pom: {
     //định nghĩa pom cho sản phẩm, dịch vụ

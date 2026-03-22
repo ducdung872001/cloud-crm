@@ -111,14 +111,14 @@ export default {
   // POST /stockTransfer/approve?id=:id
   stockTransferApprove: (id: number) => {
     return fetch(`${urlsApi.stockTransfer.approve}?id=${id}`, {
-      method: "POST",
+      method: "GET",
     }).then((res) => res.json());
   },
 
   // POST /stockTransfer/cancel?id=:id
   stockTransferCancel: (id: number) => {
     return fetch(`${urlsApi.stockTransfer.cancel}?id=${id}`, {
-      method: "POST",
+      method: "GET",
     }).then((res) => res.json());
   },
   
@@ -130,6 +130,28 @@ export default {
   //           avgCost, quantity, warehouseId, warehouseName, stockStatus
   variantStockList: (params?: IVariantStockFilterRequest, signal?: AbortSignal) => {
     return fetch(`${urlsApi.inventoryBalance.variantList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
+  // ── Phiếu xuất kho — aggregate từ inventory_transaction (ref_type=SALE) ──
+  // Mỗi row = 1 phiếu xuất = 1 đơn bán đã được ghi nhận xuất kho qua Kafka
+  // Không có tên KH / mã ĐB vì cross-DB reference (Sales DB khác Inventory DB)
+  //
+  // GET /inventoryTransaction/sale/list
+  // Params: warehouseId, keyword, page, size
+  saleExportList: (params?: { warehouseId?: number; keyword?: string; page?: number; size?: number }, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.inventory.saleExportList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
+  // GET /inventoryTransaction/sale/summary
+  // Response: { totalExport, totalQty, totalCost, totalProduct }
+  saleExportSummary: (signal?: AbortSignal) => {
+    return fetch(urlsApi.inventory.saleExportSummary, {
       signal,
       method: "GET",
     }).then((res) => res.json());
