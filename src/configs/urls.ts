@@ -406,6 +406,7 @@ export const urlsApi = {
   invoice: {
     createInvoice: prefixSales + "/invoice/draft/create",
     list: prefixSales + "/invoice/list/v2",
+    export: prefixSales + "/invoice/export",
     create: prefixSales + "/invoice/create",
     invoiceDetail: prefixSales + "/invoiceDetail/get",
     cardService: prefixSales + "/invoiceDetail/cardService",
@@ -435,7 +436,7 @@ export const urlsApi = {
     allTemplates:      prefixIntegration + "/sinvoice/ext/all-templates",
     searchInvoices:    prefixIntegration + "/sinvoice/query/search",
     logList:           prefixIntegration + "/sinvoice/log/list",
-    logGet:            prefixIntegration + "/sinvoice/log/get",
+    logGet:            prefixIntegration + "/sinvoice/log/get", 
   },
   returnInvoice: {
     list: prefixSales + "/invoice/return-exchange/list",

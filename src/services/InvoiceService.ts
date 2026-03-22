@@ -14,6 +14,49 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+
+  /**
+   * Export danh sách hóa đơn ra file Excel (.xlsx).
+   * Dùng cùng bộ filter với list(), không phân trang.
+   * Tự động trigger download file về máy người dùng.
+   */
+  exportExcel: async (
+    params: IInvoiceFilterRequest,
+    signal?: AbortSignal
+  ): Promise<void> => {
+    // Loại bỏ các param phân trang — backend export không cần
+    const { page, limit, ...exportParams } = params;
+
+    const res = await fetch(
+      `${urlsApi.invoice.export}${convertParamsToString(exportParams)}`,
+      { signal, method: "GET" }
+    );
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(text || `Export thất bại (HTTP ${res.status})`);
+    }
+
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+
+    // Tên file: lấy từ Content-Disposition header nếu có, fallback về tên mặc định
+    const disposition = res.headers.get("Content-Disposition") ?? "";
+    const match       = disposition.match(/filename="?([^";\n]+)"?/i);
+    const today       = new Date();
+    const dd          = String(today.getDate()).padStart(2, "0");
+    const mm          = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy        = today.getFullYear();
+    a.download        = match?.[1] ?? `DanhSachHoaDon_${dd}${mm}${yyyy}.xlsx`;
+
+    a.href = url;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  },
+
   createInvoice: (params: any, signal?: AbortSignal) => {
     return fetch(`${urlsApi.invoice.createInvoice}${convertParamsToString(params)}`, {
       signal,
