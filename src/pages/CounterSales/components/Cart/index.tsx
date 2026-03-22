@@ -232,9 +232,13 @@ const Cart: React.FC<CartProps> = ({
           </div>
         </div>
 
-        <button className="btn btn--outline"
-          style={{ width: "100%", padding: "1rem", marginBottom: "0.8rem", fontWeight: 700, fontSize: "1.4rem", borderRadius: "0.3rem" }}
-          onClick={onSaveDraft} disabled={isSaving || items.length === 0}
+        <button
+          className="btn btn--outline"
+          style={{ width: "100%", padding: "1rem", marginBottom: "0.8rem",
+                   fontWeight: 700, fontSize: "1.4rem", borderRadius: "0.3rem",
+                   display: "flex", alignItems: "center", justifyContent: "center", gap: "0.6rem" }}
+          onClick={onSaveDraft}
+          disabled={isSaving || items.length === 0}
         >
           {isSaving ? "⏳ Đang lưu..." : "💾 Lưu tạm"}
         </button>
