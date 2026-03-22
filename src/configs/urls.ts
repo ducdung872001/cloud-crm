@@ -405,6 +405,9 @@ export const urlsApi = {
   },
   invoice: {
     createInvoice: prefixSales + "/invoice/draft/create",
+    draftList:             prefixSales + "/invoice/draft/list",
+    draftListWithProducts: prefixSales + "/invoice/draft/list-with-products",
+    draftDelete:           prefixSales + "/invoice/draft/delete",
     list: prefixSales + "/invoice/list/v2",
     export: prefixSales + "/invoice/export",
     tabCounts: prefixSales + "/invoice/tab-counts",

@@ -38,13 +38,13 @@ const CounterSales: React.FC = () => {
   const [qrCodePro, setQrCodePro] = useState<string | null>(null);
 
   // ── Tab badge counts ────────────────────────────────────────────────────────
-  const [draftCount, setDraftCount] = useState(0);
-  const [orderCount, setOrderCount] = useState(0);
+  const [draftCount,  setDraftCount]  = useState(0);
+  const [orderCount,  setOrderCount]  = useState(0);
 
   const fetchTabCounts = useCallback(async () => {
     try {
       const branchId = dataBranch?.value ?? 0;
-      const res = await fetch(`${urlsApi.invoice.tabCounts}?branchId=${branchId}`);
+      const res  = await fetch(`${urlsApi.invoice.tabCounts}?branchId=${branchId}`);
       const json = await res.json();
       if (json.code === 0 && json.result) {
         setDraftCount(Number(json.result.draftCount ?? 0));
@@ -65,15 +65,15 @@ const CounterSales: React.FC = () => {
   };
 
   // Modal states
-  const [payModalOpen, setPayModalOpen] = useState(false);
-  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
+  const [payModalOpen,         setPayModalOpen]         = useState(false);
+  const [receiptModalOpen,     setReceiptModalOpen]     = useState(false);
   const [orderDetailModalOpen, setOrderDetailModalOpen] = useState(false);
-  const [qrScanModalOpen, setQrScanModalOpen] = useState(false);
-  const [syncModalOpen, setSyncModalOpen] = useState(false);
-  const [customerModalOpen, setCustomerModalOpen] = useState(false);
-  const [customer, setCustomer] = useState<Customer | null>(null);
-  const [customerQuickAdd, setCustomerQuickAdd] = useState(false);
-  const [customerPhoneAdd, setCustomerPhoneAdd] = useState("");
+  const [qrScanModalOpen,      setQrScanModalOpen]      = useState(false);
+  const [syncModalOpen,        setSyncModalOpen]        = useState(false);
+  const [customerModalOpen,    setCustomerModalOpen]    = useState(false);
+  const [customer,             setCustomer]             = useState<Customer | null>(null);
+  const [customerQuickAdd,     setCustomerQuickAdd]     = useState(false);
+  const [customerPhoneAdd,     setCustomerPhoneAdd]     = useState("");
 
   // Khi navigate từ "Tái tạo đơn" → tự động điền giỏ hàng + chuyển sang tab POS
   useEffect(() => {
@@ -87,7 +87,7 @@ const CounterSales: React.FC = () => {
       );
       window.history.replaceState({}, document.title);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Cart actions
@@ -157,8 +157,8 @@ const CounterSales: React.FC = () => {
     }
   };
 
-  const handleViewReceipt = useCallback(() => setReceiptModalOpen(true), []);
-  const handleViewDetail = useCallback(() => setOrderDetailModalOpen(true), []);
+  const handleViewReceipt  = useCallback(() => setReceiptModalOpen(true), []);
+  const handleViewDetail   = useCallback(() => setOrderDetailModalOpen(true), []);
   const handleConfirmOrder = useCallback(() => setOrderDetailModalOpen(false), []);
 
   const handleQrAddToCart = useCallback(() => {
@@ -194,13 +194,33 @@ const CounterSales: React.FC = () => {
                 onPay={(invoiceId) => { setInvoiceId(invoiceId); setPayModalOpen(true); }}
                 onSelectCustomer={() => setCustomerModalOpen(true)}
                 customer={customer || undefined}
+                onSavedDraft={() => {
+                  // Xóa giỏ hàng + refresh badge sau khi lưu tạm
+                  setCartItems([]);
+                  setCustomer(null);
+                  fetchTabCounts();
+                }}
               />
             </div>
           )}
 
           {activeTab === "draft" && (
             <div className="counter-sales__screen">
-              <DraftOrders onContinue={() => { setActiveTab("pos"); fetchTabCounts(); }} />
+              <DraftOrders
+                onContinue={(draftId) => {
+                  // Tìm đơn tạm đã chọn trong list của DraftOrders
+                  // onContinue nhận draftId (string invoiceId)
+                  // DraftOrders.useDraftOrders đã có list với cartItems
+                  // Ta dùng navigate state để truyền cartItems + fromDraftId
+                  // Thực tế CounterSales không có reference đến list DraftOrders
+                  // → dùng global event đơn giản qua CustomEvent
+                  document.dispatchEvent(
+                    new CustomEvent("draft:continue", { detail: { draftId } })
+                  );
+                  setActiveTab("pos");
+                  fetchTabCounts();
+                }}
+              />
             </div>
           )}
 
