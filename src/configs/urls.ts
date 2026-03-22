@@ -606,6 +606,7 @@ export const urlsApi = {
     saleExportSummary: prefixInventory + "/inventoryTransaction/sale/summary",
     destroyList: prefixInventory + "/inventoryTransaction/destroy/list",
     destroySummary: prefixInventory + "/inventoryTransaction/destroy/summary",
+    costSummary: prefixInventory + "/inventoryBalance/cost/summary",
   },
   pom: {
     //định nghĩa pom cho sản phẩm, dịch vụ

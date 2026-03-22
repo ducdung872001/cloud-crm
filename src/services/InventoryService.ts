@@ -135,6 +135,20 @@ export default {
     }).then((res) => res.json());
   },
 
+  // ── Giá vốn bình quân — tái sử dụng /inventoryBalance/variant/list ────────
+  // Tab "Giá vốn" dùng cùng API với tab "Tồn kho" nhưng sort theo avgCost desc,
+  // filter bỏ sp hết hàng (stockStatus=2: còn hàng).
+  // Không cần API mới — chỉ truyền param khác nhau.
+
+  // GET /inventoryBalance/cost/summary
+  // Response: { totalProducts, totalQty, totalCostValue, avgCostOverall }
+  costSummary: (params?: { warehouseId?: number }, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.inventory.costSummary}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
   // ── Phiếu xuất hủy — aggregate từ inventory_transaction (ref_type=DESTROY) ──
   // Mỗi row = 1 phiếu hủy ghi nhận xuất kho
   //
