@@ -21,6 +21,12 @@ interface CartProps {
   exchangeRate?: number;
   pointsToUse?: number;
   onPointsChange?: (points: number, moneyValue: number) => void;
+  // ── Khuyến mãi ───────────────────────────────────────────────────────────
+  eligiblePromoCount?: number;
+  appliedPromo?:       { id: number; name: string; discountAmount: number; promotionType: number; gifts?: any[] } | null;
+  promoDiscount?:      number;
+  onViewPromos?:       () => void;
+  onRemovePromo?:      () => void;
 }
 
 const Cart: React.FC<CartProps> = ({
@@ -29,6 +35,8 @@ const Cart: React.FC<CartProps> = ({
   setInvoiceDraftToPaid,
   onSavedDraft,
   loyaltyWallet, exchangeRate = 1000, pointsToUse = 0, onPointsChange,
+  eligiblePromoCount = 0, appliedPromo, promoDiscount = 0,
+  onViewPromos, onRemovePromo,
 }) => {
   const [orderType, setOrderType] = useState<OrderType>("retail");
   const [voucher, setVoucher] = useState("");
@@ -45,7 +53,7 @@ const Cart: React.FC<CartProps> = ({
     : 0;
   const discount        = 0;
   const moneyFromPoints = (pointsToUse ?? 0) * exchangeRate;
-  const finalTotal      = Math.max(0, subtotal - discount - moneyFromPoints);
+  const finalTotal      = Math.max(0, subtotal - discount - moneyFromPoints - promoDiscount);
 
   const ORDER_TYPES: { id: OrderType; label: string }[] = [
     { id: "retail",    label: "Lẻ"   },
@@ -185,6 +193,53 @@ const Cart: React.FC<CartProps> = ({
             <span className="sr__k">Giảm giá voucher</span>
             <span className="sr__v sr__v--red">
               {discount > 0 ? `−${discount.toLocaleString("vi")} ₫` : "0 ₫"}
+            </span>
+          </div>
+
+          {/* ── Banner khuyến mãi ── */}
+          {!appliedPromo && eligiblePromoCount > 0 && (
+            <div
+              onClick={onViewPromos}
+              style={{
+                display: "flex", alignItems: "center", gap: 8,
+                padding: "8px 10px", background: "#EAF3DE",
+                borderRadius: "0.6rem", cursor: "pointer",
+                marginBottom: 6, marginTop: 2,
+              }}
+            >
+              <span style={{ fontSize: 12, color: "#3B6D11", fontWeight: 600, flex: 1 }}>
+                Có {eligiblePromoCount} khuyến mãi phù hợp
+              </span>
+              <span style={{
+                fontSize: 11, background: "#3B6D11", color: "#fff",
+                padding: "2px 8px", borderRadius: "0.4rem",
+              }}>Xem ngay</span>
+            </div>
+          )}
+
+          {/* ── Khuyến mãi đã chọn ── */}
+          {appliedPromo && (
+            <div style={{
+              display: "flex", alignItems: "center", gap: 6,
+              padding: "7px 10px", background: "#EAF3DE",
+              borderRadius: "0.6rem", marginBottom: 6, marginTop: 2,
+            }}>
+              <span style={{ flex: 1, fontSize: 12, color: "#3B6D11", fontWeight: 600 }}>
+                {appliedPromo.name}
+              </span>
+              <button
+                onClick={onRemovePromo}
+                style={{ background: "none", border: "none", color: "#3B6D11",
+                         cursor: "pointer", fontSize: 14, lineHeight: 1, padding: 0 }}
+              >✕</button>
+            </div>
+          )}
+
+          {/* ── Dòng giảm giá KM ── */}
+          <div className="sr">
+            <span className="sr__k">Khuyến mãi</span>
+            <span className="sr__v" style={{ color: promoDiscount > 0 ? "#3B6D11" : undefined }}>
+              {promoDiscount > 0 ? `−${promoDiscount.toLocaleString("vi")} ₫` : "0 ₫"}
             </span>
           </div>
 

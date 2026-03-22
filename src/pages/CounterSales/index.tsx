@@ -21,6 +21,7 @@ import QrCodeProService from "@/services/QrCodeProService";
 import DraftOrders from "./components/DraftOrders";
 import SaleInvoiceList from "../Sell/SaleInvoiceList/SaleInvoiceList";
 import { urlsApi } from "configs/urls";
+import PromotionModal, { EligiblePromotion, IneligiblePromotion } from "./components/modals/PromotionModal";
 import { ContextType, UserContext } from "contexts/userContext";
 
 const INITIAL_CART: CartItem[] = [];
@@ -74,10 +75,18 @@ const CounterSales: React.FC = () => {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [customerQuickAdd, setCustomerQuickAdd] = useState(false);
   // ── Loyalty wallet (tầng 3: hội viên) ────────────────────────────────────
-  const [loyaltyWallet,   setLoyaltyWallet]   = useState<any | null>(null);
-  const [exchangeRate,    setExchangeRate]     = useState<number>(1000);
-  const [pointsToUse,     setPointsToUse]      = useState<number>(0);
-  const [moneyFromPoints, setMoneyFromPoints]  = useState<number>(0);
+  const [loyaltyWallet, setLoyaltyWallet] = useState<any | null>(null);
+
+  // ── Khuyến mãi ───────────────────────────────────────────────────────────
+  const [promoModalOpen, setPromoModalOpen] = useState(false);
+  const [eligiblePromos, setEligiblePromos] = useState<EligiblePromotion[]>([]);
+  const [ineligiblePromos, setIneligiblePromos] = useState<IneligiblePromotion[]>([]);
+  const [appliedPromo, setAppliedPromo] = useState<EligiblePromotion | null>(null);
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const checkPromoRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [exchangeRate, setExchangeRate] = useState<number>(1000);
+  const [pointsToUse, setPointsToUse] = useState<number>(0);
+  const [moneyFromPoints, setMoneyFromPoints] = useState<number>(0);
   const [customerPhoneAdd, setCustomerPhoneAdd] = useState("");
 
   // Khi navigate từ "Tái tạo đơn" → tự động điền giỏ hàng + chuyển sang tab POS
@@ -104,11 +113,95 @@ const CounterSales: React.FC = () => {
     });
   }, []);
 
-  const handleChangeQty = useCallback((id: string, delta: number) => {
-    setCartItems((prev) => prev.map((c) => (c.id === id ? { ...c, qty: c.qty + delta } : c)).filter((c) => c.qty > 0));
+  // ── Kiểm tra khuyến mãi (debounce 600ms) ────────────────────────────────
+  const checkEligiblePromos = React.useCallback((items: CartItem[], cust: typeof customer) => {
+    if (checkPromoRef.current) clearTimeout(checkPromoRef.current);
+    checkPromoRef.current = setTimeout(async () => {
+      const orderAmount = items.reduce((s, c) => s + c.price * c.qty, 0);
+      if (orderAmount <= 0) { setEligiblePromos([]); setIneligiblePromos([]); return; }
+      try {
+        const res = await fetch(urlsApi.ma.promotionCheckEligible, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderAmount,
+            customerId: cust ? Number(cust.id) : -1,
+            cartItems: items.map(i => ({
+              productId: Number(i.id), variantId: Number(i.variantId),
+              qty: i.qty, price: i.price,
+            })),
+          }),
+        });
+        const json = await res.json();
+        // if (json.code === 0 && json.result) {
+        //   setEligiblePromos(json.result.eligible ?? []);
+        //   setIneligiblePromos(json.result.ineligible ?? []);
+        // }
+
+        const eligible = json.result?.eligible ?? [];
+        const ineligible = json.result?.ineligible ?? [];
+
+        // ── MOCK DATA — xóa khi BE có dữ liệu thật ──────────────────────────
+        const DEV_MOCK = true; // ← đổi thành false để tắt mock
+        if (DEV_MOCK && eligible.length === 0) {
+          setEligiblePromos([
+            {
+              id: 901,
+              name: "Tặng ốp lưng khi mua iPhone",
+              promotionType: 2,            // 2 = Quà tặng
+              discountAmount: 0,
+              gifts: [
+                {
+                  productId: 999, productName: "Ốp lưng iPhone 15 chính hãng",
+                  avatar: "", unitName: "Cái", qty: 1
+                },
+              ],
+            },
+            {
+              id: 902,
+              name: "Giảm 10% đơn trên 15M",
+              promotionType: 1,            // 1 = Giảm giá
+              discountType: 1,             // 1 = %
+              discount: 10,
+              discountAmount: Math.round(orderAmount * 0.1),
+              gifts: [],
+            },
+          ]);
+          setIneligiblePromos([
+            {
+              id: 903,
+              name: "Giảm 15% đơn VIP",
+              promotionType: 1,
+              discount: 15,
+              discountType: 1,
+              reason: "Khách hàng chưa đạt hạng Vàng (đang hạng Đồng)",
+            },
+          ]);
+          return;
+        }
+        // ── END MOCK ─────────────────────────────────────────────────────────
+
+        setEligiblePromos(eligible);
+        setIneligiblePromos(ineligible);
+      } catch { /* không block UX */ }
+    }, 600);
   }, []);
 
-  const handleRemove = useCallback((id: string) => setCartItems((prev) => prev.filter((c) => c.id !== id)), []);
+  const handleChangeQty = useCallback((id: string, delta: number) => {
+    setCartItems((prev) => {
+      const next = prev.map((c) => (c.id === id ? { ...c, qty: c.qty + delta } : c)).filter((c) => c.qty > 0);
+      checkEligiblePromos(next, customer);
+      return next;
+    });
+  }, [customer, checkEligiblePromos]);
+
+  const handleRemove = useCallback((id: string) => {
+    setCartItems((prev) => {
+      const next = prev.filter((c) => c.id !== id);
+      checkEligiblePromos(next, customer);
+      return next;
+    });
+  }, [customer, checkEligiblePromos]);
 
   // ── Fetch loyalty wallet khi chọn KH ─────────────────────────────────────
   const fetchLoyaltyWallet = useCallback(async (customerId: string | number) => {
@@ -117,7 +210,7 @@ const CounterSales: React.FC = () => {
       return;
     }
     try {
-      const res  = await fetch(`${urlsApi.ma.getWalletByCustomer}?customerId=${customerId}`);
+      const res = await fetch(`${urlsApi.ma.getWalletByCustomer}?customerId=${customerId}`);
       const json = await res.json();
       if (json.code === 0 && json.result?.isMember) {
         setLoyaltyWallet(json.result.wallet);
@@ -143,9 +236,10 @@ const CounterSales: React.FC = () => {
           avatar: item.avatar,
           unitName: item.unitName,
         }));
+        const totalDiscount = promoDiscount + moneyFromPoints;
         const paidInvoice = await BoughtProductService.insert(body, {
           invoiceId,
-          ...(moneyFromPoints > 0 ? { moneyUsed: moneyFromPoints } : {}),
+          ...(totalDiscount > 0 ? { moneyUsed: totalDiscount } : {}),
         });
         if (paidInvoice.code == 0) {
           if (method === "qr") {
@@ -178,12 +272,13 @@ const CounterSales: React.FC = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  customerId:  Number(customer.id),
-                  point:       -pointsToUse,
+                  customerId: Number(customer.id),
+                  point: -pointsToUse,
                   description: `Tiêu điểm đơn hàng #${invoiceId}`,
                 }),
-              }).catch(() => {});
+              }).catch(() => { });
               setLoyaltyWallet(null); setPointsToUse(0); setMoneyFromPoints(0);
+              setAppliedPromo(null); setPromoDiscount(0); setEligiblePromos([]);
             }
           }
           // Refresh badge sau khi tạo đơn thành công
@@ -238,6 +333,11 @@ const CounterSales: React.FC = () => {
                 exchangeRate={exchangeRate}
                 pointsToUse={pointsToUse}
                 onPointsChange={(pts, money) => { setPointsToUse(pts); setMoneyFromPoints(money); }}
+                eligiblePromoCount={eligiblePromos.length}
+                appliedPromo={appliedPromo}
+                promoDiscount={promoDiscount}
+                onViewPromos={() => setPromoModalOpen(true)}
+                onRemovePromo={() => { setAppliedPromo(null); setPromoDiscount(0); }}
                 onSavedDraft={() => {
                   // Xóa giỏ hàng + refresh badge sau khi lưu tạm
                   setCartItems([]);
@@ -315,21 +415,39 @@ const CounterSales: React.FC = () => {
       <QrScanModal open={qrScanModalOpen} onClose={() => setQrScanModalOpen(false)} onAdd={handleQrAddToCart} />
       <SyncModal open={syncModalOpen} onClose={() => setSyncModalOpen(false)} />
 
+      {/* Khuyến mãi */}
+      <PromotionModal
+        open={promoModalOpen}
+        onClose={() => setPromoModalOpen(false)}
+        eligible={eligiblePromos}
+        ineligible={ineligiblePromos}
+        orderAmount={cartItems.reduce((s, c) => s + c.price * c.qty, 0)}
+        customerName={customer?.name}
+        onApply={(promo) => {
+          setAppliedPromo(promo);
+          setPromoDiscount(promo ? promo.discountAmount : 0);
+        }}
+      />
+
       <CustomerModal
         open={customerModalOpen}
         onClose={() => setCustomerModalOpen(false)}
-        onSelect={(c) => { setCustomer(c); fetchLoyaltyWallet(c.id); }}
+        onSelect={(c) => {
+          setCustomer(c);
+          fetchLoyaltyWallet(c.id);
+          checkEligiblePromos(cartItems, c);
+        }}
         onSelectWalkIn={() => {
           // Set object "Khách vãng lai" thay vì null
           // → Cart hiển thị tường minh, không bị mơ hồ "Chọn khách hàng"
           setCustomer({
-            id:      "-1",
-            name:    "Khách vãng lai",
+            id: "-1",
+            name: "Khách vãng lai",
             initial: "👤",
-            phone:   "",
-            points:  0,
-            tier:    "",
-            color:   "#64748b",
+            phone: "",
+            points: 0,
+            tier: "",
+            color: "#64748b",
           });
           setLoyaltyWallet(null); setPointsToUse(0); setMoneyFromPoints(0);
           setCustomerModalOpen(false);

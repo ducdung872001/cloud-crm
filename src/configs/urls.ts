@@ -2364,6 +2364,7 @@ export const urlsApi = {
     //ví hội viên
     listLoyaltyWallet: prefixBiz + "/market/loyaltyWallet/list",
     getWalletByCustomer: prefixBiz + "/market/loyaltyWallet/getByCustomer",
+    promotionCheckEligible:  prefixBiz + "/market/promotion/check-eligible",
     createLoyaltyWallet: prefixBiz + "/market/loyaltyWallet/update",
     fluctuatePoint:      prefixBiz + "/market/loyaltyPointLedger/fluctuatePoint",
   },
