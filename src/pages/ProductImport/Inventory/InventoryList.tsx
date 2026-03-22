@@ -10,9 +10,9 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import { IFilterItem, ISaveSearch } from "model/OtherModel";
 import { IInventoryLedgerFilterRequest } from "model/inventory/InventoryRequestModel";
 import { IInventoryLedgerResponse } from "model/inventory/InventoryResponseModel";
-import { showToast, getPermissions } from "utils/common";
+import { showToast } from "utils/common";
 import { getPageOffset, isDifferenceObj } from "reborn-util";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import InventoryService from "services/InventoryService";
 import urls from "@/configs/urls";
 import "./InventoryList.scss";
@@ -76,10 +76,8 @@ const renderQuantity = (item: IInventoryLedgerResponse) => {
 export default function WarehouseBookList() {
   document.title = "Sổ kho";
 
-  const navigate = useNavigate();
   const isMounted = useRef(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [permissions] = useState(getPermissions());
 
   const [listWarehouseBook, setListWarehouseBook] = useState<IInventoryLedgerResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -225,32 +223,9 @@ export default function WarehouseBookList() {
     };
   }, [params]);
 
-  // ── Button đúng ngữ cảnh theo từng tab ──────────────────────────────────
-  // Sổ kho = nhật ký giao dịch (read-only ledger); không tạo phiếu trực tiếp ở
-  // tab "Tất cả", "Bán hàng", "Khách trả" — các tab đó chỉ xem.
-  const tabActionMap: Record<string, { title: string; callback: () => void } | null> = {
-    "": null,
-    IMPORT: permissions["WAREHOUSE_ADD"] == 1
-      ? { title: "Tạo phiếu nhập", callback: () => navigate(urls.create_inventory) }
-      : null,
-    SALE: null,      // Đơn bán tạo từ module Bán hàng & Đơn hàng
-    RETURN: null,    // Khách trả tạo từ đơn bán → không tạo trực tiếp tại đây
-    TRANSFER: permissions["WAREHOUSE_ADD"] == 1
-      ? { title: "Tạo phiếu chuyển kho", callback: () => navigate(urls.inventory_transfer_document) }
-      : null,
-    ADJUSTMENT: permissions["WAREHOUSE_ADD"] == 1
-      ? { title: "Tạo phiếu điều chỉnh", callback: () => navigate(urls.adjustment_slip) }
-      : null,
-    DESTROY: permissions["WAREHOUSE_ADD"] == 1
-      ? { title: "Tạo phiếu xuất hủy", callback: () => navigate(urls.inventory_checking) }
-      : null,
-  };
-
-  const currentTabAction = tabActionMap[params.refType ?? ""] ?? null;
-
-  const titleActions: ITitleActions = {
-    actions: currentTabAction ? [currentTabAction] : [],
-  };
+  // ── Sổ kho = nhật ký giao dịch (read-only) → không có button tạo mới ──────
+  // Mọi thao tác tạo phiếu thực hiện tại menu "Quản lý kho"
+  const titleActions: ITitleActions = { actions: [] };
 
   const titles = ["STT", "Mã chứng từ", "Loại chứng từ", "Thời gian", "Sản phẩm", "Đối tác", "Kho", "Biến động SL", "Tồn trước", "Tồn sau", "Người thực hiện", "Ref tài chính", "Trạng thái"];
   const dataFormat = ["text-center", "", "text-center", "text-center", "", "", "", "text-center", "text-center", "text-center", "", "text-center", "text-center"];
