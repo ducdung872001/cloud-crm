@@ -52,16 +52,33 @@ interface IVariantStockItem {
   updatedTime?: string;
 }
 
+// Khớp với ImportInvoiceListItemResponse từ backend
 interface IImportInvoiceItem {
   id: number;
   invoiceCode?: string;
-  code?: string;
+  invoiceType?: string;
+  invoiceTypeName?: string;
+  // Kho nhập
+  inventoryId?: number;
+  inventoryName?: string;        // warehouseName alias
+  // Nhà cung cấp
+  businessPartnerId?: number;
   supplierName?: string;
-  warehouseName?: string;
-  totalAmount?: number;
+  // Người tạo
+  employeeId?: number;
   createdBy?: string;
-  createdTime?: string;
-  status?: number; // 0: nháp, 1: hoàn thành, 2: hủy
+  // Tài chính
+  totalAmount?: number;          // invoice.amount
+  vatAmount?: number;
+  discount?: number;
+  // Số dòng SP
+  lineCount?: number;
+  // Thời gian
+  receiptDate?: string;          // ngày nhận hàng
+  createdTime?: string;          // ngày tạo phiếu
+  // Trạng thái: 1=hoàn thành, 2=nháp/chờ, 3=hủy
+  status?: number;
+  statusName?: string;
 }
 
 interface IStockTransferItem {
@@ -201,7 +218,9 @@ export default function InventoryManagement() {
         case "import": {
           const importParams: Record<string, any> = { page: pageIdx, size };
           if (p.keyword)       importParams.keyword = p.keyword;
-          if (p.status !== "") importParams.status  = +p.status;
+          // InvoiceConstant: 1=done, 2=pending, 3=cancel
+          // Service filter: status > 0 means filter, so -1 or omit = all
+          if (p.status !== "") importParams.status = +p.status;
           const res = await InvoiceService.importList(importParams);
           if (res.code === 0 || res.status === 1) {
             const result = res.result ?? res.data ?? {};
@@ -210,9 +229,10 @@ export default function InventoryManagement() {
             setListImport(items);
             setImportSummary({
               totalSlip:   total,
+              // status 1=Hoàn thành, 2=Chờ duyệt (nháp), 3=Đã hủy
               totalAmount: items.filter((i) => i.status === 1).reduce((s, i) => s + (i.totalAmount ?? 0), 0),
               completed:   items.filter((i) => i.status === 1).length,
-              draft:       items.filter((i) => i.status === 0).length,
+              draft:       items.filter((i) => i.status === 2).length,
             });
             setPaginationMeta(total, p.page, size);
             setIsNoItem(total === 0 && p.page === 1);
@@ -311,10 +331,11 @@ export default function InventoryManagement() {
     );
   };
 
-  const ORDER_STATUS_MAP = {
-    0: { label: "Nháp",       color: "secondary" },
-    1: { label: "Hoàn thành", color: "success" },
-    2: { label: "Đã hủy",     color: "error" },
+  // InvoiceConstant: STATUS_DONE=1, STATUS_PENDING=2, STATUS_CANCEL=3
+  const IMPORT_STATUS_MAP: Record<number, { label: string; color: string }> = {
+    1: { label: "Hoàn thành",  color: "success" },
+    2: { label: "Chờ duyệt",   color: "warning" },
+    3: { label: "Đã hủy",      color: "error" },
   };
 
   const TRANSFER_STATUS_MAP = {
@@ -381,7 +402,7 @@ export default function InventoryManagement() {
         return (
           <div className="inventory__summary">
             {card("Tổng phiếu nhập", importSummary.totalSlip)}
-            {card("Tổng tiền nhập",  <span className="summary__value--primary">{formatCurrency(importSummary.totalAmount)}đ</span>)}
+            {card("Tổng tiền nhập",  <span className="summary__value--primary">{formatCurrency(importSummary.totalAmount)}</span>)}
             {card("Hoàn thành",      <span className="summary__value--success">{importSummary.completed} phiếu</span>)}
             {card("Đang nhập",       <span className="summary__value--warning">{importSummary.draft} phiếu</span>)}
           </div>
@@ -491,18 +512,35 @@ export default function InventoryManagement() {
       // ── Phiếu nhập ───────────────────────────────────────────────────────
       case "import":
         return {
-          titles: ["STT", "Mã phiếu", "Nhà cung cấp", "Kho nhập", "Tổng tiền", "Người tạo", "Ngày tạo", "Trạng thái"],
-          dataFormat: ["text-center", "", "", "", "text-right", "", "text-center", "text-center"],
+          titles: ["STT", "Mã phiếu", "Loại phiếu", "Nhà cung cấp", "Kho nhập", "Số SP", "Tổng tiền", "Người tạo", "Ngày nhận", "Ngày tạo", "Trạng thái"],
+          dataFormat: ["text-center", "", "", "", "", "text-center", "text-right", "", "text-center", "text-center", "text-center"],
           items: listImport,
           dataMappingArray: (item: IImportInvoiceItem, index: number) => [
             getPageOffset(params) + index + 1,
-            <span key={item.id} className="inventory__code">{item.invoiceCode ?? item.code ?? `#${item.id}`}</span>,
-            item.supplierName ?? "—",
-            item.warehouseName ?? "—",
-            item.totalAmount ? formatCurrency(item.totalAmount) + "đ" : "—",
+            // Mã phiếu — click-able
+            <span key={item.id} className="inventory__code">{item.invoiceCode ?? `#${item.id}`}</span>,
+            // Loại phiếu
+            <span key={`type-${item.id}`} style={{ fontSize: "1.2rem", color: "var(--extra-color-50)" }}>
+              {item.invoiceTypeName ?? item.invoiceType ?? "—"}
+            </span>,
+            // Nhà cung cấp
+            item.supplierName ?? <span style={{ color: "var(--extra-color-30)" }}>Không xác định</span>,
+            // Kho nhập
+            item.inventoryName ?? "—",
+            // Số dòng SP
+            item.lineCount != null ? `${item.lineCount} SP` : "—",
+            // Tổng tiền
+            item.totalAmount != null && item.totalAmount > 0
+              ? formatCurrency(item.totalAmount) + "đ"
+              : "—",
+            // Người tạo
             item.createdBy ?? "—",
+            // Ngày nhận hàng
+            item.receiptDate ? moment(item.receiptDate).format("DD/MM/YYYY") : "—",
+            // Ngày tạo phiếu
             item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "—",
-            renderBadge(item.status ?? 0, ORDER_STATUS_MAP),
+            // Trạng thái
+            renderBadge(item.status ?? 0, IMPORT_STATUS_MAP),
           ],
           actions: (item: IImportInvoiceItem): IAction[] => [
             {
@@ -510,13 +548,13 @@ export default function InventoryManagement() {
               icon: <Icon name="CollectInfo" style={{ width: 17 }} />,
               callback: () => navigate(`${urls.create_inventory}?invoiceId=${item.id}`),
             },
-            ...(item.status === 0 ? [
+            ...(item.status === 2 ? [  // 2 = STATUS_PENDING (chờ duyệt)
               {
                 title: "Xác nhận nhập",
                 icon: <Icon name="Check" />,
                 callback: () => confirmDialog(
                   <Fragment>Xác nhận nhập hàng</Fragment>,
-                  <Fragment>Xác nhận phiếu <strong>{item.invoiceCode ?? item.code}</strong>? Tồn kho sẽ được cập nhật.</Fragment>,
+                  <Fragment>Xác nhận phiếu <strong>{item.invoiceCode}</strong>? Tồn kho sẽ được cập nhật.</Fragment>,
                   "success",
                   async () => {
                     const res = await InvoiceService.importApprove(item.id);
@@ -530,7 +568,7 @@ export default function InventoryManagement() {
                 icon: <Icon name="Trash" className="icon-error" />,
                 callback: () => confirmDialog(
                   <Fragment>Hủy phiếu nhập</Fragment>,
-                  <Fragment>Bạn có chắc muốn hủy phiếu <strong>{item.invoiceCode ?? item.code}</strong>?</Fragment>,
+                  <Fragment>Bạn có chắc muốn hủy phiếu <strong>{item.invoiceCode}</strong>?</Fragment>,
                   "error",
                   async () => {
                     const res = await InvoiceService.importCancel(item.id);
@@ -666,10 +704,10 @@ export default function InventoryManagement() {
     switch (activeTab) {
       case "import":
         return [
-          { label: "Tất cả",    value: "" },
-          { label: "Nháp",      value: "0" },
-          { label: "Hoàn thành",value: "1" },
-          { label: "Đã hủy",    value: "2" },
+          { label: "Tất cả",     value: "" },
+          { label: "Chờ duyệt",  value: "2" },
+          { label: "Hoàn thành", value: "1" },
+          { label: "Đã hủy",     value: "3" },
         ];
       case "transfer":
         return [
