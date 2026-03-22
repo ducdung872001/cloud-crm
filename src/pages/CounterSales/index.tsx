@@ -323,7 +323,7 @@ const CounterSales: React.FC = () => {
           setCustomer(null);
           setLoyaltyWallet(null); setPointsToUse(0); setMoneyFromPoints(0);
           setCustomerModalOpen(false);
-          showToast("Đã chọn Khách vãng lai", "info");
+          showToast("Đã chọn Khách vãng lai", "warning");
         }}
         onQuickAdd={(search) => { setCustomerQuickAdd(true); setCustomerPhoneAdd(search); }}
       />
