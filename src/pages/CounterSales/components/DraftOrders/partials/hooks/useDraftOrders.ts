@@ -4,7 +4,13 @@ import { urlsApi } from "configs/urls";
 import { showToast } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
 
-export function useDraftOrders() {
+interface UseDraftOrdersOptions {
+  /** Gọi sau khi xóa thành công — dùng để refresh badge ở CounterSales */
+  onDeleted?: () => void;
+}
+
+export function useDraftOrders(options?: UseDraftOrdersOptions) {
+  const { onDeleted } = options ?? {};
   const { dataBranch } = useContext(UserContext) as ContextType;
 
   const [query,      setQuery]      = useState("");
@@ -15,7 +21,7 @@ export function useDraftOrders() {
 
   const abortRef = useRef<AbortController | null>(null);
 
-  // ── Fetch danh sách đơn tạm từ API ────────────────────────────────────────
+  // ── Fetch danh sách đơn tạm từ API ──────────────────────────────────────
   const fetchDrafts = useCallback(async () => {
     abortRef.current?.abort();
     abortRef.current = new AbortController();
@@ -30,13 +36,10 @@ export function useDraftOrders() {
         const mapped: DraftOrder[] = (json.result as RawInvoiceDetail[])
           .map(mapRawToDraftOrder);
         setList(mapped);
-
-        // Nếu đơn đang chọn bị xóa khỏi server → reset
         setSelectedId(prev =>
           prev && mapped.some(d => d.id === prev) ? prev : null
         );
       } else {
-        // Không báo lỗi nếu empty array (code=0 nhưng result=[])
         if (json.code !== 0) {
           showToast(json.message ?? "Không thể tải đơn tạm", "error");
         }
@@ -51,13 +54,12 @@ export function useDraftOrders() {
     }
   }, []);
 
-  // Fetch khi mount + khi đổi branch
   useEffect(() => {
     fetchDrafts();
     return () => abortRef.current?.abort();
   }, [fetchDrafts, dataBranch]);
 
-  // ── Filter danh sách ──────────────────────────────────────────────────────
+  // ── Filter ───────────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return list;
@@ -75,7 +77,7 @@ export function useDraftOrders() {
     [list, selectedId]
   );
 
-  // ── Xóa đơn tạm ──────────────────────────────────────────────────────────
+  // ── Xóa đơn tạm ─────────────────────────────────────────────────────────
   const deleteDraft = useCallback(async (id: string) => {
     const draft = list.find(d => d.id === id);
     if (!draft) return;
@@ -89,9 +91,12 @@ export function useDraftOrders() {
       const json = await res.json();
 
       if (json.code === 0) {
+        // Cập nhật local list ngay lập tức (không chờ refetch)
         setList(prev => prev.filter(x => x.id !== id));
         setSelectedId(prev => prev === id ? null : prev);
         showToast("Đã xóa đơn tạm", "success");
+        // Báo lên CounterSales để refresh badge trên Topbar
+        onDeleted?.();
       } else {
         showToast(json.message ?? "Xóa đơn tạm thất bại", "error");
       }
@@ -100,29 +105,19 @@ export function useDraftOrders() {
     } finally {
       setDeleting(null);
     }
-  }, [list]);
+  }, [list, onDeleted]);
 
-  // ── Tạo mới đơn tạm (+ Tạo mới button) ───────────────────────────────────
-  // Không dùng nữa vì "Lưu tạm" được thực hiện từ Cart
-  // Giữ lại signature để không break DraftListPanel
   const createDraft = useCallback(() => {
     showToast("Hãy thêm sản phẩm vào giỏ hàng và nhấn 'Lưu tạm' để tạo đơn tạm mới", "warning");
   }, []);
 
   return {
-    query,
-    setQuery,
-    list,
-    setList,
-    filtered,
-    loading,
-    deleting,
-    selectedId,
-    setSelectedId,
+    query, setQuery,
+    list, setList,
+    filtered, loading, deleting,
+    selectedId, setSelectedId,
     selected,
-    createDraft,
-    deleteDraft,
-    fetchDrafts,
+    createDraft, deleteDraft, fetchDrafts,
     stats: { totalDrafts: list.length },
   };
 }
