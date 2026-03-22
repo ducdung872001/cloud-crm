@@ -405,9 +405,9 @@ export const urlsApi = {
   },
   invoice: {
     createInvoice: prefixSales + "/invoice/draft/create",
-    draftList:             prefixSales + "/invoice/draft/list",
+    draftList: prefixSales + "/invoice/draft/list",
     draftListWithProducts: prefixSales + "/invoice/draft/list-with-products",
-    draftDelete:           prefixSales + "/invoice/draft/delete",
+    draftDelete: prefixSales + "/invoice/draft/delete",
     list: prefixSales + "/invoice/list/v2",
     export: prefixSales + "/invoice/export",
     tabCounts: prefixSales + "/invoice/tab-counts",
@@ -458,12 +458,12 @@ export const urlsApi = {
     confirm: prefixSales + "/invoice/return/confirm",
   },
   invoiceImport: {
-    update:  prefixInventory + "/invoice/import/update",
-    get:     prefixInventory + "/invoice/import/get",
-    list:    prefixInventory + "/invoice/import/list",
+    update: prefixInventory + "/invoice/import/update",
+    get: prefixInventory + "/invoice/import/get",
+    list: prefixInventory + "/invoice/import/list",
     summary: prefixInventory + "/invoice/import/summary",
     approve: prefixInventory + "/invoice/import/approve",
-    cancel:  prefixInventory + "/invoice/import/cancel",
+    cancel: prefixInventory + "/invoice/import/cancel",
   },
   shipping: {
     create: prefixLogistics + "/shipment/create",
@@ -501,7 +501,7 @@ export const urlsApi = {
   product: {
     filterWarehouse: prefixWarehouse + "/product/in_warehouse",
     list: prefixInventory + "/product/list",
-    topProduct: prefixSales + "/invoice/topProduct",    
+    topProduct: prefixSales + "/invoice/topProduct",
     detail: prefixInventory + "/product/get",
     update: prefixInventory + "/product/update",
     updateContent: prefixInventory + "/product/update/content",
@@ -553,18 +553,18 @@ export const urlsApi = {
 
   //warehouse
   stockTransfer: {
-    list:    prefixInventory + "/stockTransfer/list",
-    get:     prefixInventory + "/stockTransfer/get",
-    update:  prefixInventory + "/stockTransfer/update",
-    delete:  prefixInventory + "/stockTransfer/delete",
+    list: prefixInventory + "/stockTransfer/list",
+    get: prefixInventory + "/stockTransfer/get",
+    update: prefixInventory + "/stockTransfer/update",
+    delete: prefixInventory + "/stockTransfer/delete",
     approve: prefixInventory + "/stockTransfer/approve",
-    cancel:  prefixInventory + "/stockTransfer/cancel",
+    cancel: prefixInventory + "/stockTransfer/cancel",
   },
   inventoryBalance: {
     stockProductList: prefixInventory + "/inventoryBalance/stockProduct/list",
-    variantList:      prefixInventory + "/inventoryBalance/variant/list",    // Tồn kho theo biến thể + đơn vị bán
-    list:             prefixInventory + "/inventoryBalance/list",
-    get:              prefixInventory + "/inventoryBalance/get",
+    variantList: prefixInventory + "/inventoryBalance/variant/list", // Tồn kho theo biến thể + đơn vị bán
+    list: prefixInventory + "/inventoryBalance/list",
+    get: prefixInventory + "/inventoryBalance/get",
   },
 
   integration: {
@@ -600,10 +600,12 @@ export const urlsApi = {
     update: prefixInventory + "/inventory/update",
     delete: prefixInventory + "/inventory/delete",
     import: prefixInventory + "/warehouse/list",
-    ledgerList:   prefixInventory + "/inventoryTransaction/ledger/list",
+    ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
     ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
-    saleExportList:    prefixInventory + "/inventoryTransaction/sale/list",
+    saleExportList: prefixInventory + "/inventoryTransaction/sale/list",
     saleExportSummary: prefixInventory + "/inventoryTransaction/sale/summary",
+    destroyList: prefixInventory + "/inventoryTransaction/destroy/list",
+    destroySummary: prefixInventory + "/inventoryTransaction/destroy/summary",
   },
   pom: {
     //định nghĩa pom cho sản phẩm, dịch vụ
@@ -2381,9 +2383,9 @@ export const urlsApi = {
     //ví hội viên
     listLoyaltyWallet: prefixBiz + "/market/loyaltyWallet/list",
     getWalletByCustomer: prefixBiz + "/market/loyaltyWallet/getByCustomer",
-    promotionCheckEligible:  prefixBiz + "/market/promotion/check-eligible",
+    promotionCheckEligible: prefixBiz + "/market/promotion/check-eligible",
     createLoyaltyWallet: prefixBiz + "/market/loyaltyWallet/update",
-    fluctuatePoint:      prefixBiz + "/market/loyaltyPointLedger/fluctuatePoint",
+    fluctuatePoint: prefixBiz + "/market/loyaltyPointLedger/fluctuatePoint",
   },
 
   //TODO: Start quy trình bpm

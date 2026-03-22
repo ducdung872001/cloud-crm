@@ -3,7 +3,7 @@
 // Tab "Phiếu nhập"  → API: GET /invoice/import/list                  ✅
 // Tab "Phiếu xuất"  → API: GET /inventoryTransaction/sale/list       ✅
 // Tab "Chuyển kho"  → API: GET /stockTransfer/list                   ✅
-// Tab "Xuất hủy"    → stockAdjust type=DESTROY (coming soon)         ⏳
+// Tab "Xuất hủy"    → API: GET /inventoryTransaction/destroy/list       ✅
 // Tab "Phiếu kiểm"  → API: GET /stockAdjust/list                     ✅
 // Tab "Giá vốn"     → coming soon                                    ⏳
 
@@ -124,6 +124,25 @@ interface ISaleExportItem {
   statusName?: string;
 }
 
+// Khớp với DestroyExportListItemResponse từ backend
+// GET /inventoryTransaction/destroy/list
+// Aggregate từ inventory_transaction WHERE ref_type='DESTROY' GROUP BY ref_id
+interface IDestroyItem {
+  refId: number;
+  destroyCode?: string;        // "PXH-{refId}"
+  warehouseId?: number;
+  warehouseName?: string;
+  productCount?: number;       // số loại SP
+  lineCount?: number;
+  totalQty?: number;
+  totalCost?: number;
+  employeeId?: number;
+  employeeName?: string;
+  destroyTime?: string;
+  status?: number;             // 1 = Hoàn thành
+  statusName?: string;
+}
+
 export default function InventoryManagement() {
   document.title = "Quản lý kho";
 
@@ -160,6 +179,7 @@ export default function InventoryManagement() {
   const [listTransfer, setListTransfer] = useState<IStockTransferItem[]>([]);
   const [listCheck, setListCheck] = useState<IStockAdjustItem[]>([]);
   const [listExport, setListExport] = useState<ISaleExportItem[]>([]);
+  const [listDestroy, setListDestroy] = useState<IDestroyItem[]>([]);
 
   // ── Summary counters ──────────────────────────────────────────────────────
   const [stockSummary, setStockSummary] = useState({
@@ -180,6 +200,10 @@ export default function InventoryManagement() {
     totalExport: 0, totalQty: 0, totalCost: 0, totalProduct: 0,
   });
   const exportSummaryLoaded = useRef(false);
+  const [destroySummary, setDestroySummary] = useState({
+    totalDestroy: 0, totalQty: 0, totalCost: 0, totalProduct: 0,
+  });
+  const destroySummaryLoaded = useRef(false);
 
   const listTabs: { key: TabType; label: string; icon: string }[] = [
     { key: "stock", label: "Tồn kho", icon: "Warehouse" },
@@ -196,6 +220,7 @@ export default function InventoryManagement() {
     // Reset summary loaded flag khi chuyển tab để load lại summary mới
     if (activeTab === "import") importSummaryLoaded.current = false;
     if (activeTab === "export") exportSummaryLoaded.current = false;
+    if (activeTab === "destroy") destroySummaryLoaded.current = false;
   }, [activeTab]);
 
   useEffect(() => {
@@ -375,8 +400,44 @@ export default function InventoryManagement() {
           break;
         }
 
-        // ── Xuất hủy / Giá vốn → chưa có API ───────────────────────────────
-        case "destroy":
+        // ── Phiếu xuất hủy → /inventoryTransaction/destroy/list + /destroy/summary ──
+        case "destroy": {
+          const destroyParams: Record<string, any> = { page: pageIdx, size };
+          if (p.keyword) destroyParams.keyword = p.keyword;
+          if (p.warehouseId) destroyParams.warehouseId = +p.warehouseId;
+
+          const [res, summaryRes] = await Promise.all([
+            InventoryService.destroyList(destroyParams),
+            destroySummaryLoaded.current
+              ? Promise.resolve(null)
+              : InventoryService.destroySummary(abortCtrl.signal),
+          ]);
+
+          if (res.code === 0 || res.status === 1) {
+            const result = res.result ?? res.data ?? {};
+            const items: IDestroyItem[] = result.items ?? result.content ?? result.data ?? [];
+            const total = +(result.total ?? result.totalElements ?? items.length ?? 0);
+            setListDestroy(items);
+            setPaginationMeta(total, p.page, size);
+            setIsNoItem(total === 0 && p.page === 1);
+          } else {
+            showToast(res.message ?? "Không tải được danh sách phiếu xuất hủy", "error");
+          }
+
+          if (summaryRes && (summaryRes.code === 0 || summaryRes.status === 1)) {
+            const s = summaryRes.result ?? summaryRes.data ?? {};
+            setDestroySummary({
+              totalDestroy: +(s.totalDestroy ?? 0),
+              totalQty:     +(s.totalQty ?? 0),
+              totalCost:    +(s.totalCost ?? 0),
+              totalProduct: +(s.totalProduct ?? 0),
+            });
+            destroySummaryLoaded.current = true;
+          }
+          break;
+        }
+
+        // ── Giá vốn → chưa có API ───────────────────────────────────────────
         case "cost":
           setIsNoItem(true);
           setPaginationMeta(0, 1, size);
@@ -508,6 +569,15 @@ export default function InventoryManagement() {
             {card("Đã hủy", <span className="summary__value--error">{transferSummary.cancelled} phiếu</span>)}
           </div>
         );
+      case "destroy":
+        return (
+          <div className="inventory__summary">
+            {card("Tổng phiếu hủy", destroySummary.totalDestroy)}
+            {card("Tổng giá vốn hủy", <span className="summary__value--primary">{formatCurrency(destroySummary.totalCost)}</span>)}
+            {card("Tổng SL hủy", <span className="summary__value--warning">{destroySummary.totalQty.toLocaleString()} SP</span>)}
+            {card("Loại sản phẩm", <span className="summary__value--error">{destroySummary.totalProduct} loại</span>)}
+          </div>
+        );
       case "check":
         return (
           <div className="inventory__summary">
@@ -571,7 +641,7 @@ export default function InventoryManagement() {
               ? <span style={{ fontWeight: 600 }}>{item.totalQty.toLocaleString()}</span>
               : "—",
             item.totalCost != null && item.totalCost > 0
-              ? formatCurrency(item.totalCost) + "đ"
+              ? formatCurrency(item.totalCost)
               : "—",
             item.employeeName ?? "—",
             item.exportTime
@@ -664,7 +734,7 @@ export default function InventoryManagement() {
             item.lineCount != null ? `${item.lineCount} SP` : "—",
             // Tổng tiền
             item.totalAmount != null && item.totalAmount > 0
-              ? formatCurrency(item.totalAmount) + "đ"
+              ? formatCurrency(item.totalAmount)
               : "—",
             // Người tạo
             item.createdBy ?? "—",
@@ -771,6 +841,44 @@ export default function InventoryManagement() {
           ],
         };
 
+      // ── Phiếu xuất hủy ───────────────────────────────────────────────────
+      case "destroy":
+        return {
+          titles: ["STT", "Mã phiếu hủy", "Kho hủy", "Số loại SP", "Tổng SL", "Tổng giá vốn", "Người thực hiện", "Thời gian hủy", "Trạng thái"],
+          dataFormat: ["text-center", "", "", "text-center", "text-center", "text-right", "", "text-center", "text-center"],
+          items: listDestroy,
+          dataMappingArray: (item: IDestroyItem, index: number) => [
+            getPageOffset(params) + index + 1,
+            <div key={item.refId}>
+              <div className="inventory__code">{item.destroyCode ?? `PXH-${item.refId}`}</div>
+              <div style={{ fontSize: "1.1rem", color: "var(--extra-color-40)" }}>
+                Ref: #{item.refId}
+              </div>
+            </div>,
+            item.warehouseName ?? "—",
+            item.productCount != null ? `${item.productCount} loại` : "—",
+            item.totalQty != null
+              ? <span style={{ fontWeight: 600 }}>{item.totalQty.toLocaleString()}</span>
+              : "—",
+            item.totalCost != null && item.totalCost > 0
+              ? formatCurrency(item.totalCost)
+              : "—",
+            item.employeeName ?? "—",
+            item.destroyTime
+              ? moment(item.destroyTime).format("DD/MM/YYYY HH:mm")
+              : "—",
+            <span key={`ds-${item.refId}`}
+              style={{
+                background: "#e74c3c", color: "#fff",
+                padding: "2px 10px", borderRadius: 20,
+                fontSize: "1.2rem", fontWeight: 600
+              }}>
+              Hoàn thành
+            </span>,
+          ],
+          actions: (_: IDestroyItem): IAction[] => [],
+        };
+
       // ── Phiếu kiểm ───────────────────────────────────────────────────────
       case "check":
         return {
@@ -873,14 +981,12 @@ export default function InventoryManagement() {
       <Icon name="Construction" style={{ width: 48, opacity: 0.4 }} />
       <span style={{ fontSize: "1.5rem", fontWeight: 600 }}>Tính năng đang được phát triển</span>
       <span style={{ fontSize: "1.3rem" }}>
-        {activeTab === "destroy"
-          ? "Xuất hủy sẽ sớm được bổ sung vào hệ thống."
-          : "Báo cáo giá vốn (FIFO / Bình quân gia quyền) sẽ sớm ra mắt."}
+        Báo cáo giá vốn (FIFO / Bình quân gia quyền) sẽ sớm ra mắt.
       </span>
     </div>
   );
 
-  const isComingSoon = activeTab === "destroy" || activeTab === "cost";
+  const isComingSoon = activeTab === "cost";
 
   return (
     <div className={`page-content page-inventory-management${isNoItem ? " bg-white" : ""}`}>
@@ -920,9 +1026,10 @@ export default function InventoryManagement() {
             name={
               activeTab === "import" ? "Mã phiếu / Nhà cung cấp" :
                 activeTab === "export" ? "Tên sản phẩm" :
-                  activeTab === "transfer" ? "Mã phiếu chuyển kho" :
-                    activeTab === "check" ? "Mã phiếu kiểm" :
-                      "Tên sản phẩm"
+                  activeTab === "destroy" ? "Tên sản phẩm" :
+                    activeTab === "transfer" ? "Mã phiếu chuyển kho" :
+                      activeTab === "check" ? "Mã phiếu kiểm" :
+                        "Tên sản phẩm"
             }
             params={params}
             updateParams={(p) => setParams(p)}

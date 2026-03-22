@@ -108,14 +108,14 @@ export default {
     }).then((res) => res.json());
   },
 
-  // POST /stockTransfer/approve?id=:id
+  // GET /stockTransfer/approve?id=:id
   stockTransferApprove: (id: number) => {
     return fetch(`${urlsApi.stockTransfer.approve}?id=${id}`, {
       method: "GET",
     }).then((res) => res.json());
   },
 
-  // POST /stockTransfer/cancel?id=:id
+  // GET /stockTransfer/cancel?id=:id
   stockTransferCancel: (id: number) => {
     return fetch(`${urlsApi.stockTransfer.cancel}?id=${id}`, {
       method: "GET",
@@ -130,6 +130,27 @@ export default {
   //           avgCost, quantity, warehouseId, warehouseName, stockStatus
   variantStockList: (params?: IVariantStockFilterRequest, signal?: AbortSignal) => {
     return fetch(`${urlsApi.inventoryBalance.variantList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
+  // ── Phiếu xuất hủy — aggregate từ inventory_transaction (ref_type=DESTROY) ──
+  // Mỗi row = 1 phiếu hủy ghi nhận xuất kho
+  //
+  // GET /inventoryTransaction/destroy/list
+  // Params: warehouseId, keyword, page, size
+  destroyList: (params?: { warehouseId?: number; keyword?: string; page?: number; size?: number }, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.inventory.destroyList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
+  // GET /inventoryTransaction/destroy/summary
+  // Response: { totalDestroy, totalQty, totalCost, totalProduct }
+  destroySummary: (signal?: AbortSignal) => {
+    return fetch(urlsApi.inventory.destroySummary, {
       signal,
       method: "GET",
     }).then((res) => res.json());
