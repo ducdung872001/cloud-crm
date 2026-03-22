@@ -2359,6 +2359,9 @@ export const urlsApi = {
     deleteLoyaltySegment: prefixBiz + "/market/loyaltySegment/delete",
     //ví hội viên
     listLoyaltyWallet: prefixBiz + "/market/loyaltyWallet/list",
+    getWalletByCustomer: prefixBiz + "/market/loyaltyWallet/getByCustomer",
+    createLoyaltyWallet: prefixBiz + "/market/loyaltyWallet/update",
+    fluctuatePoint:      prefixBiz + "/market/loyaltyPointLedger/fluctuatePoint",
   },
 
   //TODO: Start quy trình bpm

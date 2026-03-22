@@ -73,6 +73,11 @@ const CounterSales: React.FC = () => {
   const [customerModalOpen, setCustomerModalOpen] = useState(false);
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [customerQuickAdd, setCustomerQuickAdd] = useState(false);
+  // ── Loyalty wallet (tầng 3: hội viên) ────────────────────────────────────
+  const [loyaltyWallet,   setLoyaltyWallet]   = useState<any | null>(null);
+  const [exchangeRate,    setExchangeRate]     = useState<number>(1000);
+  const [pointsToUse,     setPointsToUse]      = useState<number>(0);
+  const [moneyFromPoints, setMoneyFromPoints]  = useState<number>(0);
   const [customerPhoneAdd, setCustomerPhoneAdd] = useState("");
 
   // Khi navigate từ "Tái tạo đơn" → tự động điền giỏ hàng + chuyển sang tab POS
@@ -105,6 +110,25 @@ const CounterSales: React.FC = () => {
 
   const handleRemove = useCallback((id: string) => setCartItems((prev) => prev.filter((c) => c.id !== id)), []);
 
+  // ── Fetch loyalty wallet khi chọn KH ─────────────────────────────────────
+  const fetchLoyaltyWallet = useCallback(async (customerId: string | number) => {
+    if (!customerId || Number(customerId) <= 0) {
+      setLoyaltyWallet(null); setPointsToUse(0); setMoneyFromPoints(0);
+      return;
+    }
+    try {
+      const res  = await fetch(`${urlsApi.ma.getWalletByCustomer}?customerId=${customerId}`);
+      const json = await res.json();
+      if (json.code === 0 && json.result?.isMember) {
+        setLoyaltyWallet(json.result.wallet);
+        setExchangeRate(json.result.exchangeRate ?? 1000);
+      } else {
+        setLoyaltyWallet(null);
+      }
+    } catch { setLoyaltyWallet(null); }
+    setPointsToUse(0); setMoneyFromPoints(0);
+  }, []);
+
   // Payment flow
   const handlePayConfirm = async (invoiceId: number | null) => {
     if (invoiceId) {
@@ -119,7 +143,10 @@ const CounterSales: React.FC = () => {
           avatar: item.avatar,
           unitName: item.unitName,
         }));
-        const paidInvoice = await BoughtProductService.insert(body, { invoiceId });
+        const paidInvoice = await BoughtProductService.insert(body, {
+          invoiceId,
+          ...(moneyFromPoints > 0 ? { moneyUsed: moneyFromPoints } : {}),
+        });
         if (paidInvoice.code == 0) {
           if (method === "qr") {
             try {
@@ -145,6 +172,19 @@ const CounterSales: React.FC = () => {
             showToast("Tạo hoá đơn thành công.", "success");
             setQrCodePro(null);
             setMethod("cash");
+            // Ghi nhận tiêu điểm nếu có
+            if (moneyFromPoints > 0 && customer?.id && loyaltyWallet) {
+              fetch(urlsApi.ma.fluctuatePoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  customerId:  Number(customer.id),
+                  point:       -pointsToUse,
+                  description: `Tiêu điểm đơn hàng #${invoiceId}`,
+                }),
+              }).catch(() => {});
+              setLoyaltyWallet(null); setPointsToUse(0); setMoneyFromPoints(0);
+            }
           }
           // Refresh badge sau khi tạo đơn thành công
           fetchTabCounts();
@@ -194,6 +234,10 @@ const CounterSales: React.FC = () => {
                 onPay={(invoiceId) => { setInvoiceId(invoiceId); setPayModalOpen(true); }}
                 onSelectCustomer={() => setCustomerModalOpen(true)}
                 customer={customer || undefined}
+                loyaltyWallet={loyaltyWallet}
+                exchangeRate={exchangeRate}
+                pointsToUse={pointsToUse}
+                onPointsChange={(pts, money) => { setPointsToUse(pts); setMoneyFromPoints(money); }}
                 onSavedDraft={() => {
                   // Xóa giỏ hàng + refresh badge sau khi lưu tạm
                   setCartItems([]);
@@ -274,7 +318,13 @@ const CounterSales: React.FC = () => {
       <CustomerModal
         open={customerModalOpen}
         onClose={() => setCustomerModalOpen(false)}
-        onSelect={(c) => setCustomer(c)}
+        onSelect={(c) => { setCustomer(c); fetchLoyaltyWallet(c.id); }}
+        onSelectWalkIn={() => {
+          setCustomer(null);
+          setLoyaltyWallet(null); setPointsToUse(0); setMoneyFromPoints(0);
+          setCustomerModalOpen(false);
+          showToast("Đã chọn Khách vãng lai", "info");
+        }}
         onQuickAdd={(search) => { setCustomerQuickAdd(true); setCustomerPhoneAdd(search); }}
       />
 
