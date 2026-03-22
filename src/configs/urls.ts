@@ -427,17 +427,23 @@ export const urlsApi = {
     historyUseCard: prefixSales + "/invoice/using/card",
     // lấy mã hoá đơn
     invoiceCode: prefixSales + "/invoice/code",
-    prefixSales,
+    salesReport: {
+      posSummary: prefixSales + "/report/pos-summary",
+      summary: prefixSales + "/report/summary",
+      dailySeries: prefixSales + "/report/daily-series",
+      channelBreakdown: prefixSales + "/report/channel-breakdown",
+      full: prefixSales + "/report/sales",
+    },
   },
   // Hóa đơn VAT điện tử – tích hợp Viettel S-Invoice qua cloud-integration
   sinvoice: {
-    previewDraft:      prefixIntegration + "/sinvoice/query/preview-draft",
-    createInvoice:     prefixIntegration + "/sinvoice/invoice/create",
+    previewDraft: prefixIntegration + "/sinvoice/query/preview-draft",
+    createInvoice: prefixIntegration + "/sinvoice/invoice/create",
     sendEmailCustomer: prefixIntegration + "/sinvoice/ext/send-email-customer",
-    allTemplates:      prefixIntegration + "/sinvoice/ext/all-templates",
-    searchInvoices:    prefixIntegration + "/sinvoice/query/search",
-    logList:           prefixIntegration + "/sinvoice/log/list",
-    logGet:            prefixIntegration + "/sinvoice/log/get", 
+    allTemplates: prefixIntegration + "/sinvoice/ext/all-templates",
+    searchInvoices: prefixIntegration + "/sinvoice/query/search",
+    logList: prefixIntegration + "/sinvoice/log/list",
+    logGet: prefixIntegration + "/sinvoice/log/get",
   },
   returnInvoice: {
     list: prefixSales + "/invoice/return-exchange/list",
@@ -487,7 +493,7 @@ export const urlsApi = {
   product: {
     filterWarehouse: prefixWarehouse + "/product/in_warehouse",
     list: prefixInventory + "/product/list",
-    topProduct: prefixSales + "/invoice/topProduct",
+    topProduct: prefixSales + "/invoice/topProduct",    
     detail: prefixInventory + "/product/get",
     update: prefixInventory + "/product/update",
     updateContent: prefixInventory + "/product/update/content",
@@ -2153,19 +2159,19 @@ export const urlsApi = {
   },
   // Báo cáo tồn kho (inventory service)
   inventoryReport: {
-    full:           prefixInventory + "/report/stock",              // gộp 1 lần
-    summary:        prefixInventory + "/report/stock/summary",      // 5 KPI card
-    movement:       prefixInventory + "/report/stock/movement",     // biến động nhập/xuất
-    health:         prefixInventory + "/report/stock/health",       // sức khỏe tồn kho
-    trend:          prefixInventory + "/report/stock/trend",        // xu hướng tồn cuối kỳ
-    warehousePerf:  prefixInventory + "/report/stock/warehouse-perf", // hiệu suất từng kho
+    full: prefixInventory + "/report/stock", // gộp 1 lần
+    summary: prefixInventory + "/report/stock/summary", // 5 KPI card
+    movement: prefixInventory + "/report/stock/movement", // biến động nhập/xuất
+    health: prefixInventory + "/report/stock/health", // sức khỏe tồn kho
+    trend: prefixInventory + "/report/stock/trend", // xu hướng tồn cuối kỳ
+    warehousePerf: prefixInventory + "/report/stock/warehouse-perf", // hiệu suất từng kho
     productDetails: prefixInventory + "/report/stock/product-details", // chi tiết sản phẩm
   },
   // Báo cáo bán hàng (sales service)
   salesReport: {
-    full:             prefixSales + "/report/sales",           // API 4 — gộp 1 lần (khuyến nghị)
-    summary:          prefixSales + "/report/summary",         // API 1 — chỉ 4 KPI card
-    dailySeries:      prefixSales + "/report/daily-series",    // API 2 — biểu đồ cột
+    full: prefixSales + "/report/sales", // API 4 — gộp 1 lần (khuyến nghị)
+    summary: prefixSales + "/report/summary", // API 1 — chỉ 4 KPI card
+    dailySeries: prefixSales + "/report/daily-series", // API 2 — biểu đồ cột
     channelBreakdown: prefixSales + "/report/channel-breakdown", // API 3 — bảng kênh bán
   },
   // Báo cáo
