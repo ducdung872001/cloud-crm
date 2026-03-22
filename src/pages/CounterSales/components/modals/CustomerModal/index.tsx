@@ -89,23 +89,30 @@ export default function CustomerModal({
     setIsRegistering(true);
     try {
       const createRes = await CustomerService.update({
-        id:           0,
-        name:         newName.trim(),
-        phone:        newPhone.trim(),
-        branchId:     branchId || undefined,
-        customerType: 1,   // 1 = Cá nhân (mặc định)
+        id:       0,
+        name:     newName.trim(),
+        phone:    newPhone.trim(),
+        branchId: branchId || undefined,
+        custType: 1,   // 1 = Cá nhân (mặc định)
       } as any);
       if (createRes.code !== 0 || !createRes.result) {
         showToast(createRes.message ?? "Không thể tạo khách hàng", "error");
         return;
       }
       const newCustomerId = createRes.result.id;
-      // Tạo loyalty wallet → trở thành hội viên ngay
-      await fetch(urlsApi.ma.createLoyaltyWallet, {
-        method: "POST",
+
+      // Đăng ký loyalty wallet ngay sau khi tạo KH thành công
+      // POST /market/loyaltyWallet/update { customerId, status: 1 }
+      const walletRes = await fetch(urlsApi.ma.createLoyaltyWallet, {
+        method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerId: newCustomerId, status: 1 }),
-      }).catch(() => {});
+        body:    JSON.stringify({ customerId: newCustomerId, status: 1 }),
+      }).then(r => r.json()).catch(() => ({ code: -1 }));
+
+      if (walletRes.code !== 0) {
+        // Không block luồng chính — KH đã tạo thành công, chỉ warn
+        showToast("Tạo khách hàng thành công nhưng chưa đăng ký được hội viên", "warning");
+      }
       // Auto-select
       const newCustomer: Customer = {
         id: String(newCustomerId), name: newName.trim(),
