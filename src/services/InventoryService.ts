@@ -2,6 +2,17 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import { IInventoryFilterRequest, IInventoryLedgerFilterRequest, IInventoryRequest } from "model/inventory/InventoryRequestModel";
 
+export interface IVariantStockFilterRequest {
+  keyword?: string;
+  warehouseId?: number;
+  productId?: number;
+  stockStatus?: number; // -1: all, 0: out-of-stock, 1: low-stock (<=10), 2: in-stock
+  sortBy?: "productName" | "sku" | "quantity";
+  sortDir?: "asc" | "desc";
+  page?: number;
+  size?: number;
+}
+
 export interface IStockProductFilterRequest {
   keyword?: string;
   warehouseId?: number;
@@ -110,4 +121,18 @@ export default {
       method: "POST",
     }).then((res) => res.json());
   },
+  
+  // ── Tồn kho theo biến thể + đơn vị bán + giá vốn ───────────────────────
+  // GET /inventoryBalance/variant/list
+  // Response: inventoryBalanceId, productId, productName, productCode,
+  //           variantId, sku, variantLabel, baseUnitId, baseUnitName,
+  //           sellingUnitId, sellingUnitName, sellingPrice,
+  //           avgCost, quantity, warehouseId, warehouseName, stockStatus
+  variantStockList: (params?: IVariantStockFilterRequest, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.inventoryBalance.variantList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
 };

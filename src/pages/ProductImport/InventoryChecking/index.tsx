@@ -29,20 +29,26 @@ import "./styles.scss";
 type TabType = "stock" | "import" | "export" | "transfer" | "destroy" | "check" | "cost";
 
 // ── Response shapes ───────────────────────────────────────────────────────
-interface IStockProductItem {
+// Khớp với InventoryVariantStockResponse từ backend
+// GET /inventoryBalance/variant/list
+interface IVariantStockItem {
   inventoryBalanceId: number;
   productId: number;
-  variantId?: number;
-  warehouseId: number;
   productName: string;
   productCode?: string;
-  batchNo?: string;
-  expiryDate?: string;
-  unitName: string;
+  variantId?: number;
+  sku?: string;
+  variantLabel?: string;       // vd "Đỏ / XL"
+  baseUnitId?: number;
+  baseUnitName?: string;        // đơn vị cơ bản (nhập/lưu kho)
+  sellingUnitId?: number;
+  sellingUnitName?: string;     // đơn vị bán
+  sellingPrice?: number;        // giá bán
+  avgCost?: number;             // giá vốn bình quân
   quantity: number;
+  warehouseId: number;
   warehouseName: string;
-  avgCost?: number;
-  stockStatus?: number;
+  stockStatus?: number;         // 0: hết, 1: sắp hết, 2: còn hàng
   updatedTime?: string;
 }
 
@@ -112,7 +118,7 @@ export default function InventoryManagement() {
   });
 
   // ── Per-tab data ──────────────────────────────────────────────────────────
-  const [listStock,    setListStock]    = useState<IStockProductItem[]>([]);
+  const [listStock,    setListStock]    = useState<IVariantStockItem[]>([]);
   const [listImport,   setListImport]   = useState<IImportInvoiceItem[]>([]);
   const [listTransfer, setListTransfer] = useState<IStockTransferItem[]>([]);
   const [listCheck,    setListCheck]    = useState<IStockAdjustItem[]>([]);
@@ -164,23 +170,24 @@ export default function InventoryManagement() {
     try {
       switch (activeTab) {
 
-        // ── Tồn kho → /inventoryBalance/stockProduct/list ──────────────────
+        // ── Tồn kho → /inventoryBalance/variant/list ────────────────────────
+        // Dùng API mới: trả về đầy đủ variant SKU, variantLabel, đơn vị bán, giá vốn
         case "stock": {
           const stockParams: Record<string, any> = { page: pageIdx, size };
           if (p.keyword)       stockParams.keyword     = p.keyword;
           if (p.warehouseId)   stockParams.warehouseId = +p.warehouseId;
           if (p.status !== "") stockParams.stockStatus  = +p.status;
-          const res = await InventoryService.stockProductList(stockParams as any, abortCtrl.signal);
+          const res = await InventoryService.variantStockList(stockParams as any, abortCtrl.signal);
           if (res.code === 0 || res.status === 1) {
             const result = res.result ?? res.data ?? {};
-            const items: IStockProductItem[] = result.items ?? result.content ?? result.data ?? [];
+            const items: IVariantStockItem[] = result.items ?? result.content ?? result.data ?? [];
             const total = +(result.total ?? result.totalElements ?? items.length ?? 0);
             setListStock(items);
             setStockSummary({
               total,
               totalValue: items.reduce((s, i) => s + (i.quantity ?? 0) * (i.avgCost ?? 0), 0),
-              lowStock:   items.filter((i) => (i.quantity ?? 0) <= 10 && (i.quantity ?? 0) > 0).length,
-              outOfStock: items.filter((i) => (i.quantity ?? 0) === 0).length,
+              lowStock:   items.filter((i) => (i.stockStatus ?? ((i.quantity ?? 0) <= 10 && (i.quantity ?? 0) > 0 ? 1 : -1)) === 1).length,
+              outOfStock: items.filter((i) => (i.stockStatus ?? ((i.quantity ?? 0) === 0 ? 0 : -1)) === 0).length,
             });
             setPaginationMeta(total, p.page, size);
             setIsNoItem(total === 0 && p.page === 1);
@@ -365,7 +372,7 @@ export default function InventoryManagement() {
         return (
           <div className="inventory__summary">
             {card("Tổng sản phẩm", stockSummary.total)}
-            {card("Tổng giá trị tồn", <span className="summary__value--primary">{formatCurrency(stockSummary.totalValue)}đ</span>)}
+            {card("Tổng giá trị tồn", <span className="summary__value--primary">{formatCurrency(stockSummary.totalValue)}</span>)}
             {card("Sắp hết hàng",    <span className="summary__value--warning">{stockSummary.lowStock} SP</span>)}
             {card("Hết hàng",        <span className="summary__value--error">{stockSummary.outOfStock} SP</span>)}
           </div>
@@ -428,32 +435,57 @@ export default function InventoryManagement() {
   const getTableConfig = () => {
     switch (activeTab) {
 
-      // ── Tồn kho ──────────────────────────────────────────────────────────
+      // ── Tồn kho theo biến thể + đơn vị bán ───────────────────────────────
       case "stock":
         return {
-          titles: ["STT", "Sản phẩm", "Kho", "Tồn kho", "Giá vốn BQ", "Giá trị tồn", "Trạng thái"],
-          dataFormat: ["text-center", "", "", "text-center", "text-right", "text-right", "text-center"],
+          titles: ["STT", "Sản phẩm / Biến thể", "SKU", "Kho", "Tồn kho", "Đơn vị bán", "Giá bán", "Giá vốn BQ", "Giá trị tồn", "Trạng thái"],
+          dataFormat: ["text-center", "", "", "", "text-center", "text-center", "text-right", "text-right", "text-right", "text-center"],
           items: listStock,
-          dataMappingArray: (item: IStockProductItem, index: number) => [
-            getPageOffset(params) + index + 1,
-            <div key={item.inventoryBalanceId}>
-              <div className="inventory__product-name">{item.productName}</div>
-              {item.productCode && <div className="inventory__product-code">{item.productCode}</div>}
-              {item.batchNo    && <div className="inventory__product-code">Lô: {item.batchNo}</div>}
-            </div>,
-            item.warehouseName ?? "—",
-            <span key={`qty-${item.inventoryBalanceId}`}
-              className={`inventory__qty ${(item.quantity ?? 0) <= 10 ? "inventory__qty--low" : ""}`}>
-              {item.quantity ?? 0} {item.unitName}
-              {(item.quantity ?? 0) <= 10 && (item.quantity ?? 0) > 0 && (
-                <span className="inventory__badge--low">Sắp hết</span>
-              )}
-            </span>,
-            item.avgCost ? formatCurrency(item.avgCost) + "đ" : "—",
-            item.avgCost ? formatCurrency((item.quantity ?? 0) * item.avgCost) + "đ" : "—",
-            renderStockStatus(item.quantity ?? 0),
-          ],
-          actions: (_: IStockProductItem): IAction[] => [],
+          dataMappingArray: (item: IVariantStockItem, index: number) => {
+            const qty      = item.quantity ?? 0;
+            const avgCost  = item.avgCost  ?? 0;
+            const isLow    = (item.stockStatus ?? (qty <= 10 && qty > 0 ? 1 : -1)) === 1;
+            const isOut    = (item.stockStatus ?? (qty === 0 ? 0 : -1)) === 0;
+            return [
+              getPageOffset(params) + index + 1,
+              // Cột Sản phẩm / Biến thể
+              <div key={item.inventoryBalanceId}>
+                <div className="inventory__product-name">{item.productName}</div>
+                {item.productCode && (
+                  <div className="inventory__product-code">{item.productCode}</div>
+                )}
+                {item.variantLabel && (
+                  <div className="inventory__variant-label">
+                    <span className="inventory__variant-badge">{item.variantLabel}</span>
+                  </div>
+                )}
+              </div>,
+              // Cột SKU
+              item.sku
+                ? <span key={`sku-${item.inventoryBalanceId}`} className="inventory__sku">{item.sku}</span>
+                : "—",
+              // Kho
+              item.warehouseName ?? "—",
+              // Tồn kho (hiển thị theo base unit)
+              <span key={`qty-${item.inventoryBalanceId}`}
+                className={`inventory__qty ${isLow ? "inventory__qty--low" : ""} ${isOut ? "inventory__qty--out" : ""}`}>
+                {qty} {item.baseUnitName ?? ""}
+                {isLow && <span className="inventory__badge--low">Sắp hết</span>}
+                {isOut && <span className="inventory__badge--out">Hết hàng</span>}
+              </span>,
+              // Đơn vị bán
+              item.sellingUnitName ?? item.baseUnitName ?? "—",
+              // Giá bán
+              item.sellingPrice ? formatCurrency(item.sellingPrice) : "—",
+              // Giá vốn BQ
+              avgCost > 0 ? formatCurrency(avgCost) : "—",
+              // Giá trị tồn
+              avgCost > 0 ? formatCurrency(qty * avgCost) : "—",
+              // Trạng thái
+              renderStockStatus(qty),
+            ];
+          },
+          actions: (_: IVariantStockItem): IAction[] => [],
         };
 
       // ── Phiếu nhập ───────────────────────────────────────────────────────
