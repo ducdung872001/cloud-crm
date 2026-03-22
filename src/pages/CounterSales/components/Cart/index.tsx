@@ -121,15 +121,24 @@ const Cart: React.FC<CartProps> = ({
         <div className="cust-box cust-box--filled" onClick={onSelectCustomer}>
           {customer ? (
             <>
-              <div className="cust-av" style={{ background: customer.color }}>{customer.initial}</div>
+              <div className="cust-av" style={{ background: customer.color }}>
+                {customer.id === "-1" ? "👤" : customer.initial}
+              </div>
               <div className="cust-info">
                 <div className="cust-name">{customer.name}</div>
-                <div className="cust-pts">
-                  ⭐ {customer.points.toLocaleString("vi")} điểm · Hạng {customer.tier}
-                  {isLoyaltyMember && loyaltyWallet!.segmentName && (
-                    <span style={{ color: "var(--lime-d)", marginLeft: 4 }}>· {loyaltyWallet!.segmentName}</span>
-                  )}
-                </div>
+                {customer.id === "-1" ? (
+                  // Khách vãng lai — không hiện điểm/hạng
+                  <div className="cust-pts" style={{ color: "var(--muted)" }}>
+                    Không lưu thông tin
+                  </div>
+                ) : (
+                  <div className="cust-pts">
+                    ⭐ {customer.points.toLocaleString("vi")} điểm · Hạng {customer.tier}
+                    {isLoyaltyMember && loyaltyWallet!.segmentName && (
+                      <span style={{ color: "var(--lime-d)", marginLeft: 4 }}>· {loyaltyWallet!.segmentName}</span>
+                    )}
+                  </div>
+                )}
               </div>
             </>
           ) : (
@@ -223,9 +232,13 @@ const Cart: React.FC<CartProps> = ({
           </div>
         </div>
 
-        <button className="btn btn--outline"
-          style={{ width: "100%", padding: "1rem", marginBottom: "0.8rem", fontWeight: 700, fontSize: "1.4rem", borderRadius: "0.3rem" }}
-          onClick={onSaveDraft} disabled={isSaving || items.length === 0}
+        <button
+          className="btn btn--outline"
+          style={{ width: "100%", padding: "1rem", marginBottom: "0.8rem",
+                   fontWeight: 700, fontSize: "1.4rem", borderRadius: "0.3rem",
+                   display: "flex", alignItems: "center", justifyContent: "center", gap: "0.6rem" }}
+          onClick={onSaveDraft}
+          disabled={isSaving || items.length === 0}
         >
           {isSaving ? "⏳ Đang lưu..." : "💾 Lưu tạm"}
         </button>
