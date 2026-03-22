@@ -6,7 +6,6 @@ import Sidebar from "@/components/sidebar/sidebar";
 import Topbar from "./components/Topbar";
 import ProductGrid from "./components/ProductGrid";
 import Cart from "./components/Cart";
-import OrderList from "./components/OrderList";
 import Report from "./components/Report";
 import { CartItem, Customer, PayMethod, TabType } from "./types";
 import OrderDetailModal from "./components/modals/OrderDetailModal";
@@ -21,18 +20,49 @@ import AddCustomerPersonModal from "../CustomerPerson/partials/AddCustomerPerson
 import QrCodeProService from "@/services/QrCodeProService";
 import DraftOrders from "./components/DraftOrders";
 import SaleInvoiceList from "../Sell/SaleInvoiceList/SaleInvoiceList";
+import { urlsApi } from "configs/urls";
+import { ContextType, UserContext } from "contexts/userContext";
 
 const INITIAL_CART: CartItem[] = [];
 
 const CounterSales: React.FC = () => {
   document.title = "Bán hàng tại quầy";
   const location = useLocation();
+  const { dataBranch } = React.useContext(UserContext) as ContextType;
+
   const [activeTab, setActiveTab] = useState<TabType>("pos");
   const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
   const [invoiceId, setInvoiceId] = useState<number | null>(null);
   const [invoiceDraftToPaid, setInvoiceDraftToPaid] = useState<any>(null);
   const [method, setMethod] = useState<PayMethod>("cash");
   const [qrCodePro, setQrCodePro] = useState<string | null>(null);
+
+  // ── Tab badge counts ────────────────────────────────────────────────────────
+  const [draftCount, setDraftCount] = useState(0);
+  const [orderCount, setOrderCount] = useState(0);
+
+  const fetchTabCounts = useCallback(async () => {
+    try {
+      const branchId = dataBranch?.value ?? 0;
+      const res = await fetch(`${urlsApi.invoice.tabCounts}?branchId=${branchId}`);
+      const json = await res.json();
+      if (json.code === 0 && json.result) {
+        setDraftCount(Number(json.result.draftCount ?? 0));
+        setOrderCount(Number(json.result.orderCount ?? 0));
+      }
+    } catch {
+      // Badge không hiển thị được cũng không critical — bỏ qua lỗi
+    }
+  }, [dataBranch]);
+
+  // Gọi khi mount + khi đổi branch
+  useEffect(() => { fetchTabCounts(); }, [fetchTabCounts]);
+
+  // Refresh badge khi chuyển tab (để cập nhật sau khi tạo/xóa đơn)
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    fetchTabCounts();
+  };
 
   // Modal states
   const [payModalOpen, setPayModalOpen] = useState(false);
@@ -55,10 +85,9 @@ const CounterSales: React.FC = () => {
         `Đã tải lại ${state.preloadCart.length} sản phẩm từ đơn ${state.fromInvoiceCode ?? ""}`,
         "success"
       );
-      // Xóa state khỏi history để F5 không nạp lại
       window.history.replaceState({}, document.title);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Cart actions
@@ -80,7 +109,7 @@ const CounterSales: React.FC = () => {
   const handlePayConfirm = async (invoiceId: number | null) => {
     if (invoiceId) {
       try {
-        let body = cartItems.map((item: CartItem) => ({
+        const body = cartItems.map((item: CartItem) => ({
           productId: Number(item.id),
           variantId: Number(item.variantId),
           price: item.price,
@@ -90,7 +119,7 @@ const CounterSales: React.FC = () => {
           avatar: item.avatar,
           unitName: item.unitName,
         }));
-        const paidInvoice = await BoughtProductService.insert(body, { invoiceId: invoiceId });
+        const paidInvoice = await BoughtProductService.insert(body, { invoiceId });
         if (paidInvoice.code == 0) {
           if (method === "qr") {
             try {
@@ -99,16 +128,16 @@ const CounterSales: React.FC = () => {
                 orderId: invoiceId,
                 amount: cartItems.reduce((s, c) => s + c.price * c.qty, 0),
               });
-              if (qrCodeRes.code === 0 && qrCodeRes?.result && qrCodeRes?.result?.qrCode) {
+              if (qrCodeRes.code === 0 && qrCodeRes?.result?.qrCode) {
                 setPayModalOpen(false);
                 setReceiptModalOpen(true);
                 showToast("Tạo hoá đơn thành công.", "success");
                 setQrCodePro(qrCodeRes.result.qrCode);
               } else {
-                showToast(qrCodeRes.message || "Có lỗi xảy ra khi tạo QR Code Pro. Vui lòng thử lại sau.", "error");
+                showToast(qrCodeRes.message || "Có lỗi xảy ra khi tạo QR Code Pro.", "error");
               }
-            } catch (error) {
-              showToast("Có lỗi xảy ra khi tạo QR Code Pro. Vui lòng thử lại sau.", "error");
+            } catch {
+              showToast("Có lỗi xảy ra khi tạo QR Code Pro.", "error");
             }
           } else {
             setPayModalOpen(false);
@@ -117,11 +146,13 @@ const CounterSales: React.FC = () => {
             setQrCodePro(null);
             setMethod("cash");
           }
+          // Refresh badge sau khi tạo đơn thành công
+          fetchTabCounts();
         } else {
-          showToast(paidInvoice.message || "Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại sau.", "error");
+          showToast(paidInvoice.message || "Có lỗi xảy ra khi xử lý thanh toán.", "error");
         }
-      } catch (error) {
-        showToast("Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại sau.", "error");
+      } catch {
+        showToast("Có lỗi xảy ra khi xử lý thanh toán.", "error");
       }
     }
   };
@@ -132,14 +163,8 @@ const CounterSales: React.FC = () => {
 
   const handleQrAddToCart = useCallback(() => {
     handleAddToCart({
-      id: "1",
-      icon: "🥛",
-      name: "Sữa TH True Milk 1L",
-      priceLabel: "32,000 ₫",
-      price: 32000,
-      unit: "hộp",
-      qty: 1,
-      variantId: "1",
+      id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫",
+      price: 32000, unit: "hộp", qty: 1, variantId: "1",
     });
     setQrScanModalOpen(false);
   }, [handleAddToCart]);
@@ -149,10 +174,15 @@ const CounterSales: React.FC = () => {
       <Sidebar />
 
       <div className="counter-sales__main">
-        <Topbar activeTab={activeTab} onTabChange={setActiveTab} onSync={() => setSyncModalOpen(true)} />
+        <Topbar
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          onSync={() => setSyncModalOpen(true)}
+          draftCount={draftCount}
+          orderCount={orderCount}
+        />
 
         <div className="counter-sales__content">
-          {/* POS Tab */}
           {activeTab === "pos" && (
             <div className="counter-sales__screen counter-sales__screen--pos">
               <ProductGrid onAddToCart={handleAddToCart} onQrScan={() => setQrScanModalOpen(true)} />
@@ -161,37 +191,25 @@ const CounterSales: React.FC = () => {
                 onChangeQty={handleChangeQty}
                 onRemove={handleRemove}
                 setInvoiceDraftToPaid={setInvoiceDraftToPaid}
-                onPay={(invoiceId) => {
-                  setInvoiceId(invoiceId);
-                  setPayModalOpen(true);
-                }}
+                onPay={(invoiceId) => { setInvoiceId(invoiceId); setPayModalOpen(true); }}
                 onSelectCustomer={() => setCustomerModalOpen(true)}
                 customer={customer || undefined}
               />
             </div>
           )}
 
-          {/* Draft Orders Tab */}
           {activeTab === "draft" && (
             <div className="counter-sales__screen">
-              <DraftOrders
-                onContinue={(draftId) => {
-                  setActiveTab("pos");
-                }}
-              />
+              <DraftOrders onContinue={() => { setActiveTab("pos"); fetchTabCounts(); }} />
             </div>
           )}
 
-          {/* Orders Tab */}
           {activeTab === "orders" && (
             <div className="counter-sales__screen">
-              {/* <OrderList onViewDetail={handleViewDetail} onViewReceipt={handleViewReceipt} onConfirm={handleConfirmOrder} />
-               */}
               <SaleInvoiceList />
             </div>
           )}
 
-          {/* Report Tab */}
           {activeTab === "report" && (
             <div className="counter-sales__screen">
               <Report />
@@ -202,72 +220,45 @@ const CounterSales: React.FC = () => {
 
       {/* ── Modals ── */}
       <PayModal
-        open={payModalOpen}
-        cartItems={cartItems}
-        invoiceId={invoiceId}
-        method={method}
-        setMethod={setMethod}
-        onClose={() => {
-          setInvoiceId(null);
-          setPayModalOpen(false);
-        }}
+        open={payModalOpen} cartItems={cartItems} invoiceId={invoiceId}
+        method={method} setMethod={setMethod}
+        onClose={() => { setInvoiceId(null); setPayModalOpen(false); }}
         onConfirm={(id) => handlePayConfirm(id)}
       />
 
       <ReceiptModal
-        open={receiptModalOpen}
-        cartItems={cartItems}
-        customerId={customer?.id ?? -1}
-        invoiceId={invoiceId ?? -1}
-        invoiceDraft={invoiceDraftToPaid}
-        method={method}
-        qrCodePro={qrCodePro}
+        open={receiptModalOpen} cartItems={cartItems}
+        customerId={customer?.id ?? -1} invoiceId={invoiceId ?? -1}
+        invoiceDraft={invoiceDraftToPaid} method={method} qrCodePro={qrCodePro}
         onClose={() => {
-          setCartItems([]);
-          setCustomer(null);
-          setInvoiceId(null);
-          setReceiptModalOpen(false);
-          setInvoiceDraftToPaid(null);
-          setQrCodePro(null);
-          setMethod("cash");
+          setCartItems([]); setCustomer(null); setInvoiceId(null);
+          setReceiptModalOpen(false); setInvoiceDraftToPaid(null);
+          setQrCodePro(null); setMethod("cash");
         }}
       />
 
       <OrderDetailModal
-        open={orderDetailModalOpen}
-        onClose={() => setOrderDetailModalOpen(false)}
+        open={orderDetailModalOpen} onClose={() => setOrderDetailModalOpen(false)}
         invoiceId={-1}
-        onPrint={() => {
-          setOrderDetailModalOpen(false);
-          setReceiptModalOpen(true);
-        }}
+        onPrint={() => { setOrderDetailModalOpen(false); setReceiptModalOpen(true); }}
         onConfirm={handleConfirmOrder}
       />
 
       <QrScanModal open={qrScanModalOpen} onClose={() => setQrScanModalOpen(false)} onAdd={handleQrAddToCart} />
-
       <SyncModal open={syncModalOpen} onClose={() => setSyncModalOpen(false)} />
 
       <CustomerModal
         open={customerModalOpen}
         onClose={() => setCustomerModalOpen(false)}
-        onSelect={(customer) => setCustomer(customer)}
-        onQuickAdd={(search) => {
-          setCustomerQuickAdd(true);
-          setCustomerPhoneAdd(search);
-        }}
+        onSelect={(c) => setCustomer(c)}
+        onQuickAdd={(search) => { setCustomerQuickAdd(true); setCustomerPhoneAdd(search); }}
       />
 
       <AddCustomerPersonModal
-        onShow={customerQuickAdd}
-        phoneQuickAdd={customerPhoneAdd}
+        onShow={customerQuickAdd} phoneQuickAdd={customerPhoneAdd}
         onHide={(reload) => {
-          if (reload) {
-            setCustomerModalOpen(false);
-            setTimeout(() => setCustomerModalOpen(true), 300);
-          }
-          setCustomerQuickAdd(false);
-          setCustomerPhoneAdd("");
+          if (reload) { setCustomerModalOpen(false); setTimeout(() => setCustomerModalOpen(true), 300); }
+          setCustomerQuickAdd(false); setCustomerPhoneAdd("");
         }}
       />
     </div>

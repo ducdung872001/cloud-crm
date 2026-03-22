@@ -27,30 +27,32 @@ export interface StatusCounts {
 }
 
 interface OrderListProps {
-  onViewDetail:    (invoiceId: number | null) => void;
-  onViewReceipt:   (invoiceId: number | null) => void;
-  onConfirm:       (invoiceId: number | null) => void;
-  listOrder?:      Order[];
+  onViewDetail: (invoiceId: number | null) => void;
+  onViewReceipt: (invoiceId: number | null) => void;
+  onConfirm: (invoiceId: number | null) => void;
+  listOrder?: Order[];
   // Filter props (controlled from parent SaleInvoiceList)
-  activeFilter?:      StatusFilter;
-  onFilterChange?:    (f: StatusFilter) => void;
-  searchText?:        string;
-  onSearchChange?:    (v: string) => void;
-  fromDate?:          string;
-  toDate?:            string;
-  onFromDateChange?:  (v: string) => void;
-  onToDateChange?:    (v: string) => void;
-  onSearch?:          () => void;
-  statusCounts?:      StatusCounts;
-  totalItem?:         number;
+  activeFilter?: StatusFilter;
+  onFilterChange?: (f: StatusFilter) => void;
+  searchText?: string;
+  onSearchChange?: (v: string) => void;
+  fromDate?: string;
+  toDate?: string;
+  onFromDateChange?: (v: string) => void;
+  onToDateChange?: (v: string) => void;
+  onSearch?: () => void;
+  statusCounts?: StatusCounts;
+  totalItem?: number;
+  onExport?: () => void;
+  isExporting?: boolean;
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const STATUS_BADGE_CLASS: Record<string, string> = {
-  pending:   "bd-orange",
-  shipping:  "bd-blue",
-  success:   "bd-lime",
+  pending: "bd-orange",
+  shipping: "bd-blue",
+  success: "bd-lime",
   cancelled: "bd-red",
 };
 
@@ -65,24 +67,26 @@ const OrderList: React.FC<OrderListProps> = ({
   searchText: searchTextProp,
   onSearchChange,
   fromDate: fromDateProp,
-  toDate:   toDateProp,
+  toDate: toDateProp,
   onFromDateChange,
   onToDateChange,
   onSearch,
   statusCounts,
   totalItem,
+  onExport,
+  isExporting = false,
 }) => {
   // Local fallback state (when used standalone without parent control)
-  const [localFilter,   setLocalFilter]   = useState<StatusFilter>("all");
-  const [localSearch,   setLocalSearch]   = useState("");
+  const [localFilter, setLocalFilter] = useState<StatusFilter>("all");
+  const [localSearch, setLocalSearch] = useState("");
   const [localFromDate, setLocalFromDate] = useState("2023-10-20");
-  const [localToDate,   setLocalToDate]   = useState("2023-10-21");
+  const [localToDate, setLocalToDate] = useState("2023-10-21");
 
-  const isControlled   = activeFilterProp !== undefined;
-  const activeFilter   = isControlled ? activeFilterProp   : localFilter;
-  const searchText     = isControlled ? (searchTextProp ?? "") : localSearch;
-  const fromDate       = isControlled ? (fromDateProp  ?? "") : localFromDate;
-  const toDate         = isControlled ? (toDateProp    ?? "") : localToDate;
+  const isControlled = activeFilterProp !== undefined;
+  const activeFilter = isControlled ? activeFilterProp : localFilter;
+  const searchText = isControlled ? (searchTextProp ?? "") : localSearch;
+  const fromDate = isControlled ? (fromDateProp ?? "") : localFromDate;
+  const toDate = isControlled ? (toDateProp ?? "") : localToDate;
 
   const handleFilterChange = (f: StatusFilter) => {
     if (onFilterChange) onFilterChange(f);
@@ -109,11 +113,11 @@ const OrderList: React.FC<OrderListProps> = ({
   const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
 
   const STATUS_FILTERS: { id: StatusFilter; label: string }[] = [
-    { id: "all",       label: "Tất cả"     },
-    { id: "pending",   label: "⏳ Chờ xử lý" },
-    { id: "shipping",  label: "🚚 Đang giao"  },
-    { id: "success",   label: "✅ Hoàn thành" },
-    { id: "cancelled", label: "❌ Đã hủy"     },
+    { id: "all", label: "Tất cả" },
+    { id: "pending", label: "⏳ Chờ xử lý" },
+    { id: "shipping", label: "🚚 Đang giao" },
+    { id: "success", label: "✅ Hoàn thành" },
+    { id: "cancelled", label: "❌ Đã hủy" },
   ];
 
   const getCount = (id: StatusFilter): number => {
@@ -126,26 +130,26 @@ const OrderList: React.FC<OrderListProps> = ({
     e.stopPropagation();
     setRecreatingId(order.id);
     try {
-      const res  = await fetch(`/bizapi/sales/invoiceDetail/get?id=${order.id}`);
+      const res = await fetch(`/bizapi/sales/invoiceDetail/get?id=${order.id}`);
       const json = await res.json();
       if (json.code === 0) {
-        const result   = json.result ?? {};
+        const result = json.result ?? {};
         const products: any[] = result.products ?? result.items ?? [];
         if (products.length === 0) {
           showToast("Đơn hàng này không có sản phẩm để tái tạo.", "error");
           return;
         }
         const cartItems = products.map((p: any) => ({
-          id:        String(p.productId),
+          id: String(p.productId),
           variantId: String(p.variantId ?? p.productId),
-          name:      p.name || p.productName || "Sản phẩm",
-          icon:      "📦",
-          avatar:    p.productAvatar || "",
-          image:     p.productAvatar || "",
-          price:     p.price    || 0,
-          qty:       p.qty      || 1,
-          unit:      p.unitName || "Cái",
-          unitName:  p.unitName || "Cái",
+          name: p.name || p.productName || "Sản phẩm",
+          icon: "📦",
+          avatar: p.productAvatar || "",
+          image: p.productAvatar || "",
+          price: p.price || 0,
+          qty: p.qty || 1,
+          unit: p.unitName || "Cái",
+          unitName: p.unitName || "Cái",
         }));
         navigate("/create_sale_add", {
           state: { preloadCart: cartItems, fromInvoiceCode: order.code },
@@ -198,9 +202,18 @@ const OrderList: React.FC<OrderListProps> = ({
           🔍 Lọc
         </button>
 
-        <div className="ol-toolbar__right">
-          <button className="btn btn--outline btn--sm">📥 Xuất Excel</button>
-        </div>
+        {onExport && (
+          <div className="ol-toolbar__right">
+            <button
+              className="btn btn--outline btn--sm"
+              onClick={onExport}
+              disabled={isExporting}
+              style={{ opacity: isExporting ? 0.6 : 1 }}
+            >
+              {isExporting ? "⏳ Đang xuất..." : "📥 Xuất Excel"}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Status filter tabs */}

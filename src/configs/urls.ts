@@ -407,6 +407,7 @@ export const urlsApi = {
     createInvoice: prefixSales + "/invoice/draft/create",
     list: prefixSales + "/invoice/list/v2",
     export: prefixSales + "/invoice/export",
+    tabCounts: prefixSales + "/invoice/tab-counts",
     create: prefixSales + "/invoice/create",
     invoiceDetail: prefixSales + "/invoiceDetail/get",
     cardService: prefixSales + "/invoiceDetail/cardService",

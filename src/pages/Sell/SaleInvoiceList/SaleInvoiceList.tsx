@@ -16,11 +16,11 @@ import ReceiptModal from "@/pages/CounterSales/components/modals/ReceiptModal";
 
 // Map frontend status string → backend integer
 const STATUS_TO_INT: Record<string, number> = {
-  all:       -1,
-  pending:    2,
-  success:    1,
-  cancelled:  3,
-  shipping:   2,
+  all: -1,
+  pending: 2,
+  success: 1,
+  cancelled: 3,
+  shipping: 2,
 };
 
 export default function SaleInvoiceList() {
@@ -30,18 +30,18 @@ export default function SaleInvoiceList() {
   const isMounted = useRef(false);
 
   // ── Modal state ────────────────────────────────────────────────────────────
-  const [invoiceId,            setInvoiceId]            = useState<number | null>(null);
-  const [receiptModalOpen,     setReceiptModalOpen]     = useState(false);
+  const [invoiceId, setInvoiceId] = useState<number | null>(null);
+  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
   const [orderDetailModalOpen, setOrderDetailModalOpen] = useState(false);
-  const [searchParams,         setSearchParams]         = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // ── List + loading state ───────────────────────────────────────────────────
   const [listSaleInvoice, setListSaleInvoice] = useState<Order[]>([]);
-  const [isLoading,       setIsLoading]       = useState(true);
-  const [isNoItem,        setIsNoItem]        = useState(false);
-  const [totalItem,       setTotalItem]       = useState(0);
-  const [currentPage,     setCurrentPage]     = useState(1);
-  const [totalPage,       setTotalPage]       = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isNoItem, setIsNoItem] = useState(false);
+  const [totalItem, setTotalItem] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   // ── Export state ───────────────────────────────────────────────────────────
   const [isExporting, setIsExporting] = useState(false);
@@ -52,10 +52,10 @@ export default function SaleInvoiceList() {
   });
 
   // ── Filter state (owned here, passed down to OrderList) ───────────────────
-  const [activeFilter,  setActiveFilter]  = useState<"all"|"pending"|"shipping"|"success"|"cancelled">("all");
-  const [searchText,    setSearchText]    = useState("");
-  const [fromDate,      setFromDate]      = useState("");
-  const [toDate,        setToDate]        = useState("");
+  const [activeFilter, setActiveFilter] = useState<"all" | "pending" | "shipping" | "success" | "cancelled">("all");
+  const [searchText, setSearchText] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const [params, setParams] = useState<IInvoiceFilterRequest>({
     invoiceTypes: JSON.stringify(["IV1", "IV3"]),
@@ -71,27 +71,27 @@ export default function SaleInvoiceList() {
 
   // ── Map API item → Order ───────────────────────────────────────────────────
   const mapToOrder = (item: any): Order => ({
-    id:          item.invoiceId,
-    code:        item.invoice.invoiceCode,
-    source:      "offline",
+    id: item.invoiceId,
+    code: item.invoice.invoiceCode,
+    source: "offline",
     sourceLabel: "Bán hàng tại quầy",
-    status:      item.invoice.status === 1 ? "success"
-               : item.invoice.status === 2 ? "pending"
-               : "cancelled",
+    status: item.invoice.status === 1 ? "success"
+      : item.invoice.status === 2 ? "pending"
+        : "cancelled",
     statusLabel: item.invoice.status === 1 ? "Hoàn thành"
-               : item.invoice.status === 2 ? "Chờ xử lý"
-               : "Đã hủy",
+      : item.invoice.status === 2 ? "Chờ xử lý"
+        : "Đã hủy",
     time: formatDisplayDate(item?.invoice?.createdTime, true),
     customer: {
-      id:      item.customerId,
-      name:    item?.invoice?.customerName || "Khách vãng lai",
-      phone:   item.customerPhone || "",
+      id: item.customerId,
+      name: item?.invoice?.customerName || "Khách vãng lai",
+      phone: item.customerPhone || "",
       initial: item?.invoice?.customerName
-               ? item.invoice.customerName.charAt(0).toUpperCase()
-               : "K",
-      points:  item.customerPoints ?? 0,
-      tier:    item.customerTier ?? "",
-      color:   "#2563eb",
+        ? item.invoice.customerName.charAt(0).toUpperCase()
+        : "K",
+      points: item.customerPoints ?? 0,
+      tier: item.customerTier ?? "",
+      color: "#2563eb",
     },
     items: [...(item.products || []), ...(item.services || [])]
       .map((i: any) => {
@@ -132,13 +132,13 @@ export default function SaleInvoiceList() {
 
         if (result.statusCounts) {
           const sc = result.statusCounts;
-          const done     = Number(sc[1] ?? 0);
-          const pending  = Number(sc[2] ?? 0);
-          const cancel   = Number(sc[3] ?? 0);
+          const done = Number(sc[1] ?? 0);
+          const pending = Number(sc[2] ?? 0);
+          const cancel = Number(sc[3] ?? 0);
           setStatusCounts({
-            all:       done + pending + cancel,
-            success:   done,
-            pending:   pending,
+            all: done + pending + cancel,
+            success: done,
+            pending: pending,
             cancelled: cancel,
           });
         }
@@ -159,7 +159,7 @@ export default function SaleInvoiceList() {
     filter: typeof activeFilter,
     keyword: string,
     from: string,
-    to:   string,
+    to: string,
     page: number,
     append = false
   ) => {
@@ -167,43 +167,43 @@ export default function SaleInvoiceList() {
     const newParams: IInvoiceFilterRequest = { ...params, page };
 
     if (keyword?.trim()) newParams.invoiceCode = keyword.trim();
-    else                 delete newParams.invoiceCode;
+    else delete newParams.invoiceCode;
 
     // Convert sang format dd/MM/yyyy mà backend expect
-    if (from?.trim())    newParams.fromDate = toApiDateFormat(from.trim());
-    else                 delete newParams.fromDate;
+    if (from?.trim()) newParams.fromDate = toApiDateFormat(from.trim());
+    else delete newParams.fromDate;
 
-    if (to?.trim())      newParams.toDate   = toApiDateFormat(to.trim());
-    else                 delete newParams.toDate;
+    if (to?.trim()) newParams.toDate = toApiDateFormat(to.trim());
+    else delete newParams.toDate;
 
-    if (statusInt > 0)   newParams.status   = statusInt;
-    else                 delete newParams.status;
+    if (statusInt > 0) newParams.status = statusInt;
+    else delete newParams.status;
 
     delete newParams.keyword;
 
     setParams(newParams);
     fetchList(newParams, append);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   // Initial load when branch loaded
   useEffect(() => {
     if (!isMounted.current) { isMounted.current = true; return; }
     applyFilters(activeFilter, searchText, fromDate, toDate, 1);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataBranch]);
 
   // First mount with URL params
   useEffect(() => {
     const urlFromDate = searchParams.get("fromDate") || "";
-    const urlToDate   = searchParams.get("toDate")   || "";
+    const urlToDate = searchParams.get("toDate") || "";
     if (urlFromDate) setFromDate(urlFromDate);
-    if (urlToDate)   setToDate(urlToDate);
+    if (urlToDate) setToDate(urlToDate);
     const initParams: IInvoiceFilterRequest = { ...params };
     if (urlFromDate) initParams.fromDate = toApiDateFormat(urlFromDate);
-    if (urlToDate)   initParams.toDate   = toApiDateFormat(urlToDate);
+    if (urlToDate) initParams.toDate = toApiDateFormat(urlToDate);
     fetchList(initParams);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Filter change handlers ─────────────────────────────────────────────────
@@ -230,12 +230,11 @@ export default function SaleInvoiceList() {
     applyFilters(activeFilter, searchText, fromDate, toDate, nextPage, true);
   };
 
-  // ── Export Excel ───────────────────────────────────────────────────────────
+  // ── Export Excel ───────────────────────────────────────────────────────────  
   const handleExportExcel = async () => {
     if (isExporting) return;
     setIsExporting(true);
     try {
-      // Dùng bộ filter hiện tại (params đã có fromDate/toDate đúng format)
       await InvoiceService.exportExcel(params);
       showToast("Xuất Excel thành công", "success");
     } catch (err: any) {
@@ -247,7 +246,7 @@ export default function SaleInvoiceList() {
 
   // ── Modal handlers ─────────────────────────────────────────────────────────
   const handleViewReceipt = useCallback(() => setReceiptModalOpen(true), []);
-  const handleViewDetail  = useCallback((id: number | null) => {
+  const handleViewDetail = useCallback((id: number | null) => {
     setInvoiceId(id);
     setOrderDetailModalOpen(true);
   }, []);
@@ -255,44 +254,6 @@ export default function SaleInvoiceList() {
 
   return (
     <div className="sale-invoice-list">
-
-      {/* ── Toolbar: Xuất Excel ── */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          padding: "8px 16px 4px",
-        }}
-      >
-        <Button
-          onClick={handleExportExcel}
-          disabled={isExporting}
-          style={{
-            display:        "flex",
-            alignItems:     "center",
-            gap:            6,
-            padding:        "6px 16px",
-            borderRadius:   6,
-            fontSize:       13,
-            fontWeight:     500,
-            backgroundColor: isExporting ? "#e5e7eb" : "#217346",
-            color:           isExporting ? "#9ca3af" : "#fff",
-            border:         "none",
-            cursor:          isExporting ? "not-allowed" : "pointer",
-            transition:     "background-color 0.2s",
-          }}
-        >
-          {/* Excel icon */}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
-            <path d="M14 2v6h6" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-            <path d="M8 13h2l2 4 2-4h2" fill="none" stroke="white" strokeWidth="1.2"
-                  strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          {isExporting ? "Đang xuất..." : "Xuất Excel"}
-        </Button>
-      </div>
-
       <OrderList
         onViewDetail={handleViewDetail}
         onViewReceipt={handleViewReceipt}
@@ -309,6 +270,8 @@ export default function SaleInvoiceList() {
         onSearch={handleSearch}
         statusCounts={statusCounts}
         totalItem={totalItem}
+        onExport={handleExportExcel}
+        isExporting={isExporting}
       />
 
       {isLoading && (
