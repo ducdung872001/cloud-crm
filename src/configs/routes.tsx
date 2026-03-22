@@ -330,12 +330,6 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "stockedProducts", // Báo cáo Kho & Hàng bán (Hàng tồn, Kho, Đơn vị, Số lượng, Giá vốn, PP Giá vốn; Cảnh báo tồn dưới ngưỡng)
-        path: urls.product_inventory,
-        icon: <Icon name="StockMenu" />,
-        code: "",
-      },
-      {
         title: "warehouseManagement", // Sổ kho
         path: urls.inventory,
         icon: <Icon name="LedgerMenu" />,
@@ -343,7 +337,7 @@ export const menu: IMenuItem[] = [
       },
 
       {
-        title: "warehouseChecking", // Kiểm kho
+        title: "warehouseChecking", // Quản lý kho
         path: urls.inventory_checking,
         icon: <Icon name="AuditMenu" />,
         code: "INVENTORY",
@@ -521,9 +515,9 @@ export const menu: IMenuItem[] = [
         code: "", //Tài nguyên cho show quản lý đặt hàng hay không
       },
       {
-        title: "memberList", // Danh sách hội viên
-        path: urls.member_list,
-        icon: <Icon name="MemberListMenu" />,
+        title: "multiChannelCommunication", // truyền thông đa kênh
+        path: urls.setting_marketing,
+        icon: <Icon name="BroadcastMenu" />,
         code: "",
       },
       {
@@ -531,7 +525,13 @@ export const menu: IMenuItem[] = [
         path: urls.marketing_campaign,
         icon: <Icon name="Marketing" />,
         code: "MA",
-      },      
+      },
+      {
+        title: "memberList", // Danh sách hội viên
+        path: urls.member_list,
+        icon: <Icon name="MemberListMenu" />,
+        code: "",
+      },
       {
         title: "customerCare", // Chăm sóc khách hàng
         path: urls.customer_care_page,

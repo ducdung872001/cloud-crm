@@ -20,7 +20,7 @@ import "./InventoryList.scss";
 const REF_TYPE_TABS = [
   { label: "Tất cả", value: "" },
   { label: "Nhập kho", value: "IMPORT" },
-  { label: "Bán hàng", value: "SALE" },
+  { label: "Xuất bán", value: "SALE" },
   { label: "Khách trả", value: "RETURN" },
   { label: "Chuyển kho", value: "TRANSFER" },
   { label: "Điều chỉnh", value: "ADJUSTMENT" },

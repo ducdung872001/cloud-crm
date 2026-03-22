@@ -74,7 +74,7 @@ interface IStockAdjustItem {
 }
 
 export default function InventoryManagement() {
-  document.title = "Quản lý kho hàng";
+  document.title = "Quản lý kho";
 
   const navigate = useNavigate();
   const isMounted = useRef(false);
@@ -121,9 +121,9 @@ export default function InventoryManagement() {
 
   const listTabs: { key: TabType; label: string; icon: string }[] = [
     { key: "stock",  label: "Tồn kho",    icon: "Warehouse" },
-    { key: "import", label: "Nhập hàng",  icon: "Download" },
-    { key: "export", label: "Xuất hàng",  icon: "Upload" },
-    { key: "check",  label: "Kiểm kho",   icon: "ClipboardList" },
+    { key: "import", label: "Phiếu nhập", icon: "Download" },
+    { key: "export", label: "Phiếu xuất", icon: "Upload" },
+    { key: "check",  label: "Phiếu kiểm", icon: "ClipboardList" },
     { key: "cost",   label: "Giá vốn",    icon: "Calculator" },
   ];
 
@@ -607,7 +607,7 @@ export default function InventoryManagement() {
       <span style={{ fontSize: "1.5rem", fontWeight: 600 }}>Tính năng đang được phát triển</span>
       <span style={{ fontSize: "1.3rem" }}>
         {activeTab === "export"
-          ? "Xuất hàng sẽ được đồng bộ tự động từ đơn bán hàng."
+          ? "Phiếu xuất sẽ được đồng bộ tự động từ đơn bán hàng."
           : "Báo cáo giá vốn (FIFO / Bình quân) sẽ sớm ra mắt."}
       </span>
     </div>
@@ -615,7 +615,7 @@ export default function InventoryManagement() {
 
   return (
     <div className={`page-content page-inventory-management${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Quản lý kho hàng" titleActions={titleActions} />
+      <TitleAction title="Quản lý kho" titleActions={titleActions} />
 
       {/* Summary cards */}
       {renderSummary()}
@@ -668,7 +668,7 @@ export default function InventoryManagement() {
           <SearchBox
             name={
               activeTab === "import" ? "Mã phiếu / Nhà cung cấp"
-              : activeTab === "check" ? "Mã phiếu kiểm kho"
+              : activeTab === "check" ? "Mã phiếu kiểm"
               : "Tên sản phẩm"
             }
             params={params}
