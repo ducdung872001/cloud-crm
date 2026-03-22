@@ -157,4 +157,14 @@ export default {
       method: "POST",
     }).then((res) => res.json());
   },
+  // KPI summary cho tab Phiếu nhập — 1 call lấy đủ tổng tất cả trạng thái
+  // GET /invoice/import/summary
+  // Response: { totalSlip, totalAmount, completed, pending, cancelled }
+  importSummary: (signal?: AbortSignal) => {
+    return fetch(urlsApi.invoiceImport.summary, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
 };

@@ -145,8 +145,10 @@ export default function InventoryManagement() {
     total: 0, totalValue: 0, lowStock: 0, outOfStock: 0,
   });
   const [importSummary, setImportSummary] = useState({
-    totalSlip: 0, totalAmount: 0, completed: 0, draft: 0,
+    totalSlip: 0, totalAmount: 0, completed: 0, pending: 0, cancelled: 0,
   });
+  // Flag để biết summary đã load chưa (load 1 lần, không theo page)
+  const importSummaryLoaded = useRef(false);
   const [transferSummary, setTransferSummary] = useState({
     total: 0, pending: 0, completed: 0, cancelled: 0,
   });
@@ -166,6 +168,8 @@ export default function InventoryManagement() {
 
   useEffect(() => {
     setParams({ keyword: "", status: "", limit: 10, page: 1 });
+    // Reset summary loaded flag khi chuyển tab để load lại summary mới
+    if (activeTab === "import") importSummaryLoaded.current = false;
   }, [activeTab]);
 
   useEffect(() => {
@@ -214,30 +218,44 @@ export default function InventoryManagement() {
           break;
         }
 
-        // ── Phiếu nhập → /invoice/import/list ─────────────────────────────
+        // ── Phiếu nhập → /invoice/import/list + /invoice/import/summary ─────
+        // List: lấy data bảng theo page + filter
+        // Summary: gọi 1 lần để lấy KPI cards chính xác (không bị giới hạn page)
         case "import": {
           const importParams: Record<string, any> = { page: pageIdx, size };
           if (p.keyword)       importParams.keyword = p.keyword;
-          // InvoiceConstant: 1=done, 2=pending, 3=cancel
-          // Service filter: status > 0 means filter, so -1 or omit = all
-          if (p.status !== "") importParams.status = +p.status;
-          const res = await InvoiceService.importList(importParams);
+          if (p.status !== "") importParams.status  = +p.status;
+
+          // Chạy song song: list + summary
+          const [res, summaryRes] = await Promise.all([
+            InvoiceService.importList(importParams),
+            importSummaryLoaded.current
+              ? Promise.resolve(null)               // summary chỉ load 1 lần nếu không đổi filter
+              : InvoiceService.importSummary(abortCtrl.signal),
+          ]);
+
           if (res.code === 0 || res.status === 1) {
             const result = res.result ?? res.data ?? {};
             const items: IImportInvoiceItem[] = result.items ?? result.content ?? result.data ?? [];
             const total = +(result.total ?? result.totalElements ?? items.length ?? 0);
             setListImport(items);
-            setImportSummary({
-              totalSlip:   total,
-              // status 1=Hoàn thành, 2=Chờ duyệt (nháp), 3=Đã hủy
-              totalAmount: items.filter((i) => i.status === 1).reduce((s, i) => s + (i.totalAmount ?? 0), 0),
-              completed:   items.filter((i) => i.status === 1).length,
-              draft:       items.filter((i) => i.status === 2).length,
-            });
             setPaginationMeta(total, p.page, size);
             setIsNoItem(total === 0 && p.page === 1);
           } else {
             showToast(res.message ?? "Không tải được danh sách phiếu nhập", "error");
+          }
+
+          // Cập nhật KPI summary từ API riêng (đúng tổng toàn bộ, không theo page)
+          if (summaryRes && (summaryRes.code === 0 || summaryRes.status === 1)) {
+            const s = summaryRes.result ?? summaryRes.data ?? {};
+            setImportSummary({
+              totalSlip:   +(s.totalSlip   ?? 0),
+              totalAmount: +(s.totalAmount ?? 0),
+              completed:   +(s.completed   ?? 0),
+              pending:     +(s.pending     ?? 0),
+              cancelled:   +(s.cancelled   ?? 0),
+            });
+            importSummaryLoaded.current = true;
           }
           break;
         }
@@ -402,9 +420,9 @@ export default function InventoryManagement() {
         return (
           <div className="inventory__summary">
             {card("Tổng phiếu nhập", importSummary.totalSlip)}
-            {card("Tổng tiền nhập",  <span className="summary__value--primary">{formatCurrency(importSummary.totalAmount)}</span>)}
-            {card("Hoàn thành",      <span className="summary__value--success">{importSummary.completed} phiếu</span>)}
-            {card("Đang nhập",       <span className="summary__value--warning">{importSummary.draft} phiếu</span>)}
+            {card("Tổng tiền hoàn thành", <span className="summary__value--primary">{formatCurrency(importSummary.totalAmount)}</span>)}
+            {card("Hoàn thành",  <span className="summary__value--success">{importSummary.completed} phiếu</span>)}
+            {card("Chờ duyệt",   <span className="summary__value--warning">{importSummary.pending} phiếu</span>)}
           </div>
         );
       case "transfer":
