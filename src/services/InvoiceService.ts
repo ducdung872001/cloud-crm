@@ -17,14 +17,13 @@ export default {
 
   /**
    * Export danh sách hóa đơn ra file Excel (.xlsx).
-   * Dùng cùng bộ filter với list(), không phân trang.
-   * Tự động trigger download file về máy người dùng.
+   * Backend trả Base64 string (do framework wrap JSON) → FE decode → download.
    */
   exportExcel: async (
     params: IInvoiceFilterRequest,
     signal?: AbortSignal
   ): Promise<void> => {
-    // Loại bỏ các param phân trang — backend export không cần
+    // Loại bỏ param phân trang — backend export không cần
     const { page, limit, ...exportParams } = params;
 
     const res = await fetch(
@@ -32,25 +31,33 @@ export default {
       { signal, method: "GET" }
     );
 
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      throw new Error(text || `Export thất bại (HTTP ${res.status})`);
+    const json = await res.json();
+
+    if (!res.ok || json.code !== 0) {
+      throw new Error(json.message || `Export thất bại (HTTP ${res.status})`);
     }
 
-    const blob = await res.blob();
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement("a");
+    // json.result là Base64 string của file .xlsx
+    const base64: string = json.result;
+    const binaryStr = atob(base64);
+    const bytes = new Uint8Array(binaryStr.length);
+    for (let i = 0; i < binaryStr.length; i++) {
+      bytes[i] = binaryStr.charCodeAt(i);
+    }
 
-    // Tên file: lấy từ Content-Disposition header nếu có, fallback về tên mặc định
-    const disposition = res.headers.get("Content-Disposition") ?? "";
-    const match       = disposition.match(/filename="?([^";\n]+)"?/i);
-    const today       = new Date();
-    const dd          = String(today.getDate()).padStart(2, "0");
-    const mm          = String(today.getMonth() + 1).padStart(2, "0");
-    const yyyy        = today.getFullYear();
-    a.download        = match?.[1] ?? `DanhSachHoaDon_${dd}${mm}${yyyy}.xlsx`;
+    const blob = new Blob([bytes], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a   = document.createElement("a");
 
-    a.href = url;
+    const today = new Date();
+    const dd    = String(today.getDate()).padStart(2, "0");
+    const mm    = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy  = today.getFullYear();
+    a.download  = `DanhSachHoaDon_${dd}${mm}${yyyy}.xlsx`;
+    a.href      = url;
+
     document.body.appendChild(a);
     a.click();
     a.remove();
