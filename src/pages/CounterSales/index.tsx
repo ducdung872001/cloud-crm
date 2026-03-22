@@ -320,10 +320,19 @@ const CounterSales: React.FC = () => {
         onClose={() => setCustomerModalOpen(false)}
         onSelect={(c) => { setCustomer(c); fetchLoyaltyWallet(c.id); }}
         onSelectWalkIn={() => {
-          setCustomer(null);
+          // Set object "Khách vãng lai" thay vì null
+          // → Cart hiển thị tường minh, không bị mơ hồ "Chọn khách hàng"
+          setCustomer({
+            id:      "-1",
+            name:    "Khách vãng lai",
+            initial: "👤",
+            phone:   "",
+            points:  0,
+            tier:    "",
+            color:   "#64748b",
+          });
           setLoyaltyWallet(null); setPointsToUse(0); setMoneyFromPoints(0);
           setCustomerModalOpen(false);
-          showToast("Đã chọn Khách vãng lai", "warning");
         }}
         onQuickAdd={(search) => { setCustomerQuickAdd(true); setCustomerPhoneAdd(search); }}
       />
