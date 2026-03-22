@@ -23,11 +23,11 @@ export default {
   },
 
   // Chi tiết đơn vận chuyển
-  // detail: (id: number) => {
-  //   return fetch(`${urlsApi.shipping.detail}?id=${id}`, {
-  //     method: "GET",
-  //   }).then((res) => res.json());
-  // },
+  tracking: (id: string) => {
+    return fetch(`${urlsApi.shipping.tracking}/${id}/tracking`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
 
   // Tạo đơn vận chuyển
   create: (body: IShippingOrderCreateRequest) => {
@@ -135,6 +135,22 @@ export default {
   //     body: JSON.stringify(body),
   //   }).then((res) => res.json());
   // },
+
+  districts: (id: number) => {
+    return fetch(`${urlsApi.shipping.districts}?provinceId=${id}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  wards: (id: number) => {
+    return fetch(`${urlsApi.shipping.wards}?districtId=${id}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  provinces: () => {
+    return fetch(`${urlsApi.shipping.provinces}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
 };
 
 // Map status UI → statusCode API

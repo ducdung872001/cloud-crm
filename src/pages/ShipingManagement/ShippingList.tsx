@@ -302,7 +302,7 @@ export default function ShippingOrderList() {
 
   const dataFormat = [
     "text-center",
-    "text-center",
+    "text-left",
     "text-center",
     "",
     "text-center",

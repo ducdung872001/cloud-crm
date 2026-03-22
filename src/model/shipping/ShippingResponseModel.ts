@@ -83,6 +83,24 @@ export interface IShippingTrackingHistoryResponse {
   timestamp: string;
 }
 
+// ---- Kết quả API tracking theo shipmentOrder ----
+export interface ITrackingTimelineItem {
+  status: string;                  // "pending" | "picked_up" | "in_transit" | "delivered" | "failed" | "returned"
+  statusName: string;              // "Đã gửi hàng VC"
+  timestamp?: string;              // ISO string
+  location?: string;               // "Hà Nội"
+}
+
+export interface ITrackingResult {
+  shipmentOrder: string;           // "SHIP240101-001"
+  carrierName: string;             // "Giao Hàng Nhanh"
+  carrierTrackingCode: string;     // "GHN123456789"
+  currentStatus: string;           // "SUBMITTED" (UPPERCASE từ API)
+  currentStatusLabel: string;      // "Đã gửi hàng VC"
+  colorHex: string;                // "#607D8B"
+  timeline: ITrackingTimelineItem[];
+}
+
 // ---- Phân trang danh sách đơn ----
 export interface IShippingOrderListResponse {
   items: IShippingOrderResponse[];
@@ -143,4 +161,29 @@ export interface IShippingReportItemResponse {
   returnedOrders: number;
   codAmount: number;
   shippingFee: number;
+}
+
+export interface IProvince {
+  ProvinceID: number;
+  ProvinceName: string;
+  Code?: string;
+}
+
+export interface IDistrict {
+  DistrictID: number;
+  ProvinceID: number;
+  DistrictName: string;
+}
+
+export interface IWard {
+  WardCode: string;
+  DistrictID: number;
+  WardName: string;
+}
+// ---- Hóa đơn được chọn kèm thông tin sản phẩm (dùng trong form tạo đơn) ----
+import { IInvoiceResponse, IProductInvoiceServiceResponse } from "model/invoice/InvoiceResponse";
+
+export interface ISelectedInvoice extends IInvoiceResponse {
+  productSummary: string;
+  _products?: IProductInvoiceServiceResponse[];
 }

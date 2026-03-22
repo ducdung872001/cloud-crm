@@ -8,17 +8,121 @@ import Loading from "components/loading";
 import Icon from "components/icon";
 import { showToast } from "utils/common";
 import { formatCurrency } from "reborn-util";
-import { IShippingOrderResponse } from "model/shipping/ShippingResponseModel";
-import { IInvoiceFilterRequest , IShipmentCreatePayload } from "model/invoice/InvoiceRequestModel";
+import { IShippingOrderResponse, IProvince, IDistrict, IWard, ISelectedInvoice } from "model/shipping/ShippingResponseModel";
+import { IShippingFormState } from "model/shipping/ShippingRequestModel";
+import { IInvoiceFilterRequest, IShipmentCreatePayload } from "model/invoice/InvoiceRequestModel";
 import { IInvoiceResponse, IProductInvoiceServiceResponse, ICardInvoiceServiceResponse } from "model/invoice/InvoiceResponse";
 import InvoiceService from "services/InvoiceService";
 import ShippingService from "services/ShippingService";
 import DepartmentService from "services/DepartmentService";
 import { IDepartmentResponse } from "model/department/DepartmentResponseModel";
 import "./AddShippingOrder.scss";
-interface ISelectedInvoice extends IInvoiceResponse {
-  productSummary: string;
-  _products?: IProductInvoiceServiceResponse[]; // lưu để build items khi submit
+
+function useAddressOptions() {
+  const [provinces, setProvinces] = useState<IProvince[]>([]);
+  const [districts, setDistricts] = useState<IDistrict[]>([]);
+  const [wards, setWards] = useState<IWard[]>([]);
+  const [loadingProvinces, setLoadingProvinces] = useState(false);
+  const [loadingDistricts, setLoadingDistricts] = useState(false);
+  const [loadingWards, setLoadingWards] = useState(false);
+
+  const [selectedProvince, setSelectedProvince] = useState<{ value: number; label: string } | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<{ value: number; label: string } | null>(null);
+  const [selectedWard, setSelectedWard] = useState<{ value: string; label: string } | null>(null);
+
+  // Load tỉnh khi mount
+  useEffect(() => {
+    setLoadingProvinces(true);
+    ShippingService.provinces()
+      .then((data) => {
+        if (data.code === 0) setProvinces(data.result ?? []);
+      })
+      .finally(() => setLoadingProvinces(false));
+  }, []);
+
+  // Load quận khi chọn tỉnh
+  const onProvinceChange = (opt: { value: number; label: string } | null) => {
+    setSelectedProvince(opt);
+    setSelectedDistrict(null);
+    setSelectedWard(null);
+    setDistricts([]);
+    setWards([]);
+    if (!opt) return;
+    setLoadingDistricts(true);
+    ShippingService.districts(opt.value)
+      .then((data) => {
+        if (data.code === 0) setDistricts(data.result ?? []);
+      })
+      .finally(() => setLoadingDistricts(false));
+  };
+
+  // Load phường khi chọn quận
+  const onDistrictChange = (opt: { value: number; label: string } | null) => {
+    setSelectedDistrict(opt);
+    setSelectedWard(null);
+    setWards([]);
+    if (!opt) return;
+    setLoadingWards(true);
+    ShippingService.wards(opt.value)
+      .then((data) => {
+        if (data.code === 0) setWards(data.result ?? []);
+      })
+      .finally(() => setLoadingWards(false));
+  };
+
+  const onWardChange = (opt: { value: string; label: string } | null) => {
+    setSelectedWard(opt);
+  };
+
+  const provinceOptions = provinces.map((p) => ({ value: p.ProvinceID, label: p.ProvinceName }));
+  const districtOptions = districts.map((d) => ({ value: d.DistrictID, label: d.DistrictName }));
+  const wardOptions = wards.map((w) => ({ value: w.WardCode, label: w.WardName }));
+
+  // Set giá trị từ ngoài vào (khi edit hoặc autofill từ hóa đơn / chi nhánh)
+  const setValuesByName = (provinceName: string, districtName: string, wardName: string) => {
+    const foundProv = provinces.find((p) =>
+      p.ProvinceName?.toLowerCase().includes(provinceName?.toLowerCase())
+    );
+    if (!foundProv) return;
+    setSelectedProvince({ value: foundProv.ProvinceID, label: foundProv.ProvinceName });
+    ShippingService.districts(foundProv.ProvinceID)
+      .then((data) => {
+        const list: IDistrict[] = data.result ?? [];
+        setDistricts(list);
+        const foundDist = list.find((d) =>
+          d.DistrictName?.toLowerCase().includes(districtName?.toLowerCase())
+        );
+        if (!foundDist) return;
+        setSelectedDistrict({ value: foundDist.DistrictID, label: foundDist.DistrictName });
+        ShippingService.wards(foundDist.DistrictID)
+          .then((data2) => {
+            const wardList: IWard[] = data2.result ?? [];
+            setWards(wardList);
+            const foundWard = wardList.find((w) =>
+              w.WardName?.toLowerCase().includes(wardName?.toLowerCase())
+            );
+            if (foundWard) {
+              setSelectedWard({ value: foundWard.WardCode, label: foundWard.WardName });
+            }
+          })
+      })
+  };
+
+  const reset = () => {
+    setSelectedProvince(null);
+    setSelectedDistrict(null);
+    setSelectedWard(null);
+    setDistricts([]);
+    setWards([]);
+  };
+
+  return {
+    provinceOptions, districtOptions, wardOptions,
+    selectedProvince, selectedDistrict, selectedWard,
+    loadingProvinces, loadingDistricts, loadingWards,
+    onProvinceChange, onDistrictChange, onWardChange,
+    setValuesByName, reset,
+  };
 }
 
 const PARTNER_OPTIONS = [
@@ -27,53 +131,36 @@ const PARTNER_OPTIONS = [
   { value: 3, label: "GHN" },
 ];
 
-// Map partnerId → carrierCode gửi lên API
 const CARRIER_CODE_MAP: Record<number, string> = {
   1: "GHTK",
   2: "VTP",
   3: "GHN",
 };
 
-// Form state nội bộ — tách riêng khỏi API payload
-interface IFormState {
-  // --- Người gửi ---
-  senderEmployeeId: number | null;
-  senderName: string;
-  senderPhone: string;
-  senderEmail: string;
-  senderStreet: string;
-  senderDistrict: string;
-  senderWard: string;
-  id?: number;
-  partnerId: number | null;
-  invoiceId: number | null;
-  receiverName: string;
-  receiverPhone: string;
-  receiverStreet: string;   // Số nhà, tên đường
-  receiverDistrict: string; // Quận / Huyện
-  receiverWard: string;     // Phường / Xã
-  weight: number | null;
-  width: number | null;
-  height: number | null;
-  length: number | null;
-  codAmount: number | null;
-  note: string;
-}
+// IShippingFormState được import từ model/shipping/ShippingRequestModel
 
-const DEFAULT_FORM: IFormState = {
+const DEFAULT_FORM: IShippingFormState = {
   senderEmployeeId: null,
   senderName: "",
   senderPhone: "",
   senderEmail: "",
   senderStreet: "",
+  senderProvinceId: null,
+  senderProvinceName: "",
+  senderDistrictId: null,
   senderDistrict: "",
+  senderWardCode: "",
   senderWard: "",
   partnerId: null,
   invoiceId: null,
   receiverName: "",
   receiverPhone: "",
   receiverStreet: "",
+  receiverProvinceId: null,
+  receiverProvinceName: "",
+  receiverDistrictId: null,
   receiverDistrict: "",
+  receiverWardCode: "",
   receiverWard: "",
   weight: null,
   width: null,
@@ -85,105 +172,120 @@ const DEFAULT_FORM: IFormState = {
 
 export default function AddShippingOrder() {
   const navigate = useNavigate();
-  const { id }   = useParams<{ id?: string }>();
+  const { id } = useParams<{ id?: string }>();
   const [searchParams] = useSearchParams();
 
-  // invoiceId truyền từ màn khác qua query param ?invoiceId=xxx
   const invoiceIdFromParam = searchParams.get("invoiceId");
-
   const isEdit = !!id;
   document.title = isEdit ? "Chỉnh sửa đơn vận chuyển" : "Tạo đơn vận chuyển mới";
 
-  const [form, setForm]             = useState<IFormState>(DEFAULT_FORM);
+  const [form, setForm] = useState<IShippingFormState>(DEFAULT_FORM);
   const [originData, setOriginData] = useState<IShippingOrderResponse | null>(null);
-  const [isLoading, setIsLoading]   = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
-  const [errors, setErrors]         = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Sender picker state
   const [selectedSender, setSelectedSender] = useState<IDepartmentResponse | null>(null);
-
-  // Invoice picker state
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<ISelectedInvoice | null>(null);
 
-  // ---- loadOptions cho AsyncPaginate ----
-  // Khi inputValue rỗng → load trang đầu để hiện sẵn dữ liệu (dùng với defaultOptions={true})
-  // Khi user gõ → lọc theo invoiceCode / keyword
+  // ---- Address hooks ----
+  const senderAddr = useAddressOptions();
+  const receiverAddr = useAddressOptions();
+
+  // ---- Sync address selections vào form ----
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      senderProvinceId: senderAddr.selectedProvince?.value ?? null,
+      senderProvinceName: senderAddr.selectedProvince?.label ?? "",
+      senderDistrictId: senderAddr.selectedDistrict?.value ?? null,
+      senderDistrict: senderAddr.selectedDistrict?.label ?? "",
+      senderWardCode: senderAddr.selectedWard?.value ?? "",
+      senderWard: senderAddr.selectedWard?.label ?? "",
+    }));
+    if (senderAddr.selectedDistrict) setErrors((p) => ({ ...p, senderDistrict: "" }));
+    if (senderAddr.selectedWard) setErrors((p) => ({ ...p, senderWard: "" }));
+  }, [senderAddr.selectedProvince, senderAddr.selectedDistrict, senderAddr.selectedWard]);
+
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      receiverProvinceId: receiverAddr.selectedProvince?.value ?? null,
+      receiverProvinceName: receiverAddr.selectedProvince?.label ?? "",
+      receiverDistrictId: receiverAddr.selectedDistrict?.value ?? null,
+      receiverDistrict: receiverAddr.selectedDistrict?.label ?? "",
+      receiverWardCode: receiverAddr.selectedWard?.value ?? "",
+      receiverWard: receiverAddr.selectedWard?.label ?? "",
+    }));
+    if (receiverAddr.selectedDistrict) setErrors((p) => ({ ...p, receiverDistrict: "" }));
+    if (receiverAddr.selectedWard) setErrors((p) => ({ ...p, receiverWard: "" }));
+  }, [receiverAddr.selectedProvince, receiverAddr.selectedDistrict, receiverAddr.selectedWard]);
+
+  // ---- loadOptions Invoice ----
   const loadInvoiceOptions = async (inputValue: string) => {
     const filterParams: IInvoiceFilterRequest = {
       invoiceTypes: JSON.stringify(["IV1", "IV2", "IV3", "IV4", "IV5D"]),
-      page:  1,
+      page: 1,
       limit: 20,
       ...(inputValue?.trim() ? { invoiceCode: inputValue.trim() } : {}),
     };
-
     const response = await InvoiceService.list(filterParams);
-
     if (response.code === 0) {
       const rawItems: any[] = response.result?.pagedLst?.items ?? [];
-
       const options = rawItems
         .map((item) => {
-          const inv: IInvoiceResponse = item.invoice ?? item; 
+          const inv: IInvoiceResponse = item.invoice ?? item;
           const id = item.invoiceId ?? inv.id;
           if (!id) return null;
           return {
-            value:  id,
-            label:  `${inv.invoiceCode} — ${inv.customerName} — ${inv.customerPhone}`,
+            value: id,
+            label: `${inv.invoiceCode ?? ""}${inv.customerName ? " — " + inv.customerName : ""}${inv.customerPhone ? " — " + inv.customerPhone : ""}`,
             origin: { ...inv, id },
           };
         })
         .filter(Boolean);
-
       return { options, hasMore: false };
     }
-
     return { options: [], hasMore: false };
   };
 
-  // ---- loadOptions Người gửi (DepartmentService) ----
+  // ---- loadOptions Người gửi ----
   const loadSenderOptions = async (inputValue: string, _loadedOptions: any, { page }: { page: number }) => {
-    const response = await DepartmentService.list({
-      name: inputValue?.trim() ?? "",
-      page,
-      limit: 20,
-    });
-
+    const response = await DepartmentService.list({ name: inputValue?.trim() ?? "", page, limit: 20 });
     if (response.code === 0) {
       const items: IDepartmentResponse[] = response.result?.items ?? response.result ?? [];
       return {
-        options: items.map((item) => ({
-          value:  item.id,
-          label:  item.name,
-          origin: item,
-        })),
+        options: items.map((item) => ({ value: item.id, label: item.name, origin: item })),
         hasMore: response.result?.loadMoreAble ?? false,
         additional: { page: page + 1 },
       };
     }
-
     return { options: [], hasMore: false, additional: { page: page + 1 } };
   };
 
-  // Khi chọn người gửi → fill name, phone, email vào form
   const applySenderToForm = (dept: IDepartmentResponse) => {
     const deptAny = dept as any;
     setSelectedSender(dept);
     setForm((prev) => ({
       ...prev,
       senderEmployeeId: dept.id,
-      senderName:       deptAny.managerName    ?? deptAny.leaderName    ?? dept.name ?? "",
-      senderPhone:      deptAny.managerPhone   ?? deptAny.leaderPhone   ?? deptAny.phone ?? "",
-      senderEmail:      deptAny.managerEmail   ?? deptAny.leaderEmail   ?? deptAny.email ?? "",
-      senderStreet:     deptAny.address        ?? deptAny.street        ?? "",
-      senderDistrict:   deptAny.district       ?? "",
-      senderWard:       deptAny.ward           ?? "",
+      senderName: deptAny.managerName ?? deptAny.leaderName ?? dept.name ?? "",
+      senderPhone: deptAny.managerPhone ?? deptAny.leaderPhone ?? deptAny.phone ?? "",
+      senderEmail: deptAny.managerEmail ?? deptAny.leaderEmail ?? deptAny.email ?? "",
+      senderStreet: deptAny.address ?? deptAny.street ?? "",
     }));
     setErrors((prev) => ({
       ...prev,
       senderName: "", senderPhone: "", senderStreet: "", senderDistrict: "", senderWard: "",
     }));
+    // Auto-fill địa chỉ nếu có
+    const province = deptAny.province ?? deptAny.provinceName ?? "";
+    const district = deptAny.district ?? deptAny.districtName ?? "";
+    const ward = deptAny.ward ?? deptAny.wardName ?? "";
+    if (province || district) {
+      senderAddr.setValuesByName(province, district, ward);
+    }
   };
 
   const clearSender = () => {
@@ -191,13 +293,12 @@ export default function AddShippingOrder() {
     setForm((prev) => ({
       ...prev,
       senderEmployeeId: null,
-      senderName:       "",
-      senderPhone:      "",
-      senderEmail:      "",
-      senderStreet:     "",
-      senderDistrict:   "",
-      senderWard:       "",
+      senderName: "", senderPhone: "", senderEmail: "", senderStreet: "",
+      senderProvinceId: null, senderProvinceName: "",
+      senderDistrictId: null, senderDistrict: "",
+      senderWardCode: "", senderWard: "",
     }));
+    senderAddr.reset();
   };
 
   // ---- Khởi tạo ----
@@ -209,58 +310,39 @@ export default function AddShippingOrder() {
     }
   }, [id, invoiceIdFromParam]); // eslint-disable-line
 
-  // ---- Gọi invoiceDetail để lấy productSummary, fill form ngay từ invoiceBasic ----
-  const loadInvoiceDetailAndApply = async (
-    invoiceId: number,
-    invoiceBasic?: IInvoiceResponse
-  ) => {
-    // Fill form ngay lập tức từ data đã có trong option — không chờ API detail
+  const loadInvoiceDetailAndApply = async (invoiceId: number, invoiceBasic?: IInvoiceResponse) => {
     if (invoiceBasic) {
       applyInvoiceToForm({ ...invoiceBasic, id: invoiceId, productSummary: "" });
     }
-
-    // Gọi detail để lấy thêm productSummary (danh sách sản phẩm)
     setIsLoadingDetail(true);
     const response = await InvoiceService.listInvoiceDetail(invoiceId);
-
     if (response.code === 0) {
       const detail = response.result ?? {};
-
       const products: IProductInvoiceServiceResponse[] = detail.products ?? [];
-      const services: ICardInvoiceServiceResponse[]    = detail.services ?? [];
-
+      const services: ICardInvoiceServiceResponse[] = detail.services ?? [];
       const productNames: string[] = [
         ...products.map((p) => `${p.name} × ${p.qty}`),
         ...services.map((s) => `${s.serviceName} × ${s.qty}`),
       ];
       const productSummary =
-        productNames.slice(0, 4).join(", ") +
-        (productNames.length > 4 ? ` +${productNames.length - 4} khác` : "");
-
-      // API mới: invoiceId nằm ở result.invoiceId (ngoài result.invoice)
-      // Ưu tiên: result.invoice → merge với invoiceBasic để giữ lại field không-null
+        productNames.slice(0, 4).join(", ") + (productNames.length > 4 ? ` +${productNames.length - 4} khác` : "");
       const invFromApi: IInvoiceResponse = detail.invoice ?? null;
       const resolvedId: number = detail.invoiceId ?? invoiceId;
-
-      // Merge: invoiceBasic từ list thường có customerName/Phone đầy đủ hơn
-      // nếu detail trả null thì fallback về invoiceBasic
       const inv = {
         ...(invoiceBasic ?? {}),
         ...(invFromApi ?? {}),
-        id:              resolvedId,
-        customerName:    invFromApi?.customerName    ?? invoiceBasic?.customerName    ?? "",
-        customerPhone:   invFromApi?.customerPhone   ?? invoiceBasic?.customerPhone   ?? "",
+        id: resolvedId,
+        customerName: invFromApi?.customerName ?? invoiceBasic?.customerName ?? "",
+        customerPhone: invFromApi?.customerPhone ?? invoiceBasic?.customerPhone ?? "",
         customerAddress: invFromApi?.customerAddress ?? invoiceBasic?.customerAddress ?? "",
-        amount:          invFromApi?.amount          ?? invoiceBasic?.amount          ?? 0,
-        amountCard:      invFromApi?.amountCard      ?? invoiceBasic?.amountCard      ?? 0,
-        invoiceCode:     invFromApi?.invoiceCode     ?? invoiceBasic?.invoiceCode     ?? "",
+        amount: invFromApi?.amount ?? invoiceBasic?.amount ?? 0,
+        amountCard: invFromApi?.amountCard ?? invoiceBasic?.amountCard ?? 0,
+        invoiceCode: invFromApi?.invoiceCode ?? invoiceBasic?.invoiceCode ?? "",
       } as IInvoiceResponse;
-
       applyInvoiceToForm({ ...inv, productSummary, _products: products } as any);
     } else {
       showToast(response.message ?? "Không thể tải thông tin hóa đơn", "error");
     }
-
     setIsLoadingDetail(false);
   };
 
@@ -269,14 +351,19 @@ export default function AddShippingOrder() {
     setSelectedInvoice(inv);
     setForm((prev) => ({
       ...prev,
-      invoiceId:        inv.id,
-      receiverName:     inv.customerName,
-      receiverPhone:    inv.customerPhone,
-      receiverStreet:   inv.customerAddress ?? "",
-      receiverDistrict: invAny.customerDistrict ?? invAny.district ?? "",
-      receiverWard:     invAny.customerWard     ?? invAny.ward     ?? "",
+      invoiceId: inv.id,
+      receiverName: inv.customerName,
+      receiverPhone: inv.customerPhone,
+      receiverStreet: inv.customerAddress ?? "",
       codAmount: (inv.amountCard ?? 0) > 0 ? inv.amountCard : inv.amount,
     }));
+    // Auto-fill địa chỉ người nhận
+    const province = invAny.customerProvince ?? invAny.province ?? "";
+    const district = invAny.customerDistrict ?? invAny.district ?? "";
+    const ward = invAny.customerWard ?? invAny.ward ?? "";
+    if (province || district) {
+      receiverAddr.setValuesByName(province, district, ward);
+    }
     setErrors({});
   };
 
@@ -284,17 +371,17 @@ export default function AddShippingOrder() {
     setSelectedInvoice(null);
     setForm((prev) => ({
       ...prev,
-      invoiceId:        undefined,
-      receiverName:     "",
-      receiverPhone:    "",
-      receiverStreet:   "",
-      receiverDistrict: "",
-      receiverWard:     "",
-      codAmount:        null,
+      invoiceId: undefined,
+      receiverName: "", receiverPhone: "", receiverStreet: "",
+      receiverProvinceId: null, receiverProvinceName: "",
+      receiverDistrictId: null, receiverDistrict: "",
+      receiverWardCode: "", receiverWard: "",
+      codAmount: null,
     }));
+    receiverAddr.reset();
   };
 
-  const loadShippingDetail = async (orderId: number) => {
+  const loadShippingDetail = async (_orderId: number) => {
     // setIsLoadingPage(true);
     // try {
     //   const res = await ShippingService.detail(orderId);
@@ -335,13 +422,13 @@ export default function AddShippingOrder() {
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
-    if (!form.partnerId)                 errs.partnerId        = "Vui lòng chọn hãng vận chuyển";
-    if (!form.receiverName?.trim())      errs.receiverName     = "Vui lòng nhập tên người nhận";
-    if (!form.receiverPhone?.trim())     errs.receiverPhone    = "Vui lòng nhập số điện thoại";
-    if (!form.receiverStreet?.trim())    errs.receiverStreet   = "Vui lòng nhập địa chỉ (số nhà, đường)";
-    if (!form.receiverDistrict?.trim())  errs.receiverDistrict = "Vui lòng nhập quận / huyện";
-    if (!form.receiverWard?.trim())      errs.receiverWard     = "Vui lòng nhập phường / xã";
-    if (!form.weight || +form.weight <= 0) errs.weight         = "Vui lòng nhập trọng lượng";
+    if (!form.partnerId) errs.partnerId = "Vui lòng chọn hãng vận chuyển";
+    if (!form.receiverName?.trim()) errs.receiverName = "Vui lòng nhập tên người nhận";
+    if (!form.receiverPhone?.trim()) errs.receiverPhone = "Vui lòng nhập số điện thoại";
+    if (!form.receiverStreet?.trim()) errs.receiverStreet = "Vui lòng nhập địa chỉ (số nhà, đường)";
+    if (!form.receiverDistrict?.trim()) errs.receiverDistrict = "Vui lòng chọn quận / huyện";
+    if (!form.receiverWard?.trim()) errs.receiverWard = "Vui lòng chọn phường / xã";
+    if (!form.weight || +form.weight <= 0) errs.weight = "Vui lòng nhập trọng lượng";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -349,7 +436,6 @@ export default function AddShippingOrder() {
   const handleSubmit = async () => {
     if (!validate()) return;
     setIsLoading(true);
-
     try {
       if (isEdit) {
         const res = await ShippingService.create({ ...form as any });
@@ -362,73 +448,58 @@ export default function AddShippingOrder() {
         return;
       }
 
-      // ---- Build payload theo API /logistics/shipment/create ----
       const rawProducts = selectedInvoice?._products ?? [];
-
-      // Tổng số lượng sản phẩm để chia đều weight nếu cần
       const totalQty = rawProducts.reduce((sum, p) => sum + (p.qty ?? 1), 0) || 1;
       const totalWeightGram = form.weight ? +form.weight : 0;
 
       const items = rawProducts.length > 0
         ? rawProducts.map((p) => ({
-            name:        p.name,
-            quantity:    p.qty ?? 1,
-            // Ưu tiên weightGram từ product, fallback chia đều tổng weight
-            weightGram:  (p as any).weightGram
-                           ? +(p as any).weightGram
-                           : Math.round(totalWeightGram / totalQty),
-            price:       p.price ?? 0,
+            name: p.name,
+            quantity: p.qty ?? 1,
+            weightGram: (p as any).weightGram
+              ? +(p as any).weightGram
+              : Math.round(totalWeightGram / totalQty),
+            price: p.price ?? 0,
           }))
         : selectedInvoice
-          ? [{
-              name:       selectedInvoice.invoiceCode,
-              quantity:   1,
-              weightGram: totalWeightGram,
-              price:      selectedInvoice.amount ?? 0,
-            }]
+          ? [{ name: selectedInvoice.invoiceCode, quantity: 1, weightGram: totalWeightGram, price: selectedInvoice.amount ?? 0 }]
           : [];
 
-      // ward / district / province từ form (user đã nhập trực tiếp)
-      const receiverWard     = form.receiverWard     ?? "";
-      const receiverDistrict = form.receiverDistrict ?? "";
-      const receiverProvince = (selectedInvoice as any)?.customerProvince ?? (selectedInvoice as any)?.province ?? "";
-
       const payload: IShipmentCreatePayload = {
-        internalOrderId:  selectedInvoice?.invoiceCode ?? String(form.invoiceId ?? ""),
-        carrierCode:      CARRIER_CODE_MAP[form.partnerId] ?? "",
+        internalOrderId: selectedInvoice?.invoiceCode ?? String(form.invoiceId ?? ""),
+        carrierCode: CARRIER_CODE_MAP[form.partnerId] ?? "",
         sender: {
-          name:     form.senderName     ?? "",
-          phone:    form.senderPhone    ?? "",
-          email:    form.senderEmail    ?? "",
-          address:  form.senderStreet   ?? "",
-          ward:     form.senderWard     ?? "",
+          name: form.senderName ?? "",
+          phone: form.senderPhone ?? "",
+          email: form.senderEmail ?? "",
+          address: form.senderStreet ?? "",
+          ward: form.senderWard ?? "",
           district: form.senderDistrict ?? "",
-          province: "",
+          province: form.senderProvinceName ?? "",
         },
         receiver: {
-          name:     form.receiverName    ?? "",
-          phone:    form.receiverPhone   ?? "",
-          email:    "",
-          address:  form.receiverStreet  ?? "",
-          ward:     receiverWard,
-          district: receiverDistrict,
-          province: receiverProvince,
+          name: form.receiverName ?? "",
+          phone: form.receiverPhone ?? "",
+          email: "",
+          address: form.receiverStreet ?? "",
+          ward: form.receiverWard ?? "",
+          district: form.receiverDistrict ?? "",
+          province: form.receiverProvinceName ?? "",
         },
         parcel: {
           weightGram: totalWeightGram,
-          lengthCm:   form.length ? +form.length : 1,
-          widthCm:    form.width  ? +form.width  : 1,
-          heightCm:   form.height ? +form.height : 1,
+          lengthCm: form.length ? +form.length : 1,
+          widthCm: form.width ? +form.width : 1,
+          heightCm: form.height ? +form.height : 1,
         },
-        codAmount:         form.codAmount ? +form.codAmount : 0,
-        declaredValue:     selectedInvoice?.amount ?? 0,
+        codAmount: form.codAmount ? +form.codAmount : 0,
+        declaredValue: selectedInvoice?.amount ?? 0,
         shippingFeeBearer: "RECEIVER",
         items,
         note: form.note ?? "",
       };
 
       const response = await ShippingService.create(payload as any);
-
       if (response.code === 0) {
         showToast("Tạo đơn vận chuyển thành công", "success");
         navigate("/shipping");
@@ -443,12 +514,7 @@ export default function AddShippingOrder() {
   };
 
   const titleActions: ITitleActions = {
-    actions: [
-      {
-        title: isEdit ? "Cập nhật đơn" : "Đẩy qua Hãng Vận Chuyển",
-        callback: handleSubmit,
-      },
-    ],
+    actions: [{ title: isEdit ? "Cập nhật đơn" : "Đẩy qua Hãng Vận Chuyển", callback: handleSubmit }],
     actions_extra: [],
   };
 
@@ -457,7 +523,6 @@ export default function AddShippingOrder() {
   return (
     <Fragment>
       <div className="page-content page-add-shipping">
-
         <TitleAction
           title={isEdit ? "Chỉnh sửa đơn vận chuyển" : "Tạo Đơn Vận Chuyển Mới"}
           titleActions={titleActions}
@@ -468,7 +533,7 @@ export default function AddShippingOrder() {
           {/* ========== CỘT TRÁI ========== */}
           <div className="add-shipping-main">
 
-            {/* ---- Card: Liên kết hóa đơn (chỉ hiện khi tạo mới) ---- */}
+            {/* Card: Liên kết hóa đơn */}
             {!isEdit && (
               <div className="form-card">
                 <div className="form-card__title">
@@ -476,8 +541,6 @@ export default function AddShippingOrder() {
                   Liên kết hóa đơn
                 </div>
                 <div className="form-card__body">
-
-                  {/* AsyncPaginate trực tiếp — search theo mã HD / tên / SĐT */}
                   <div className={`base-select base-select-fill has-label${selectedInvoice ? " has-value" : ""}`}>
                     <div style={{ display: "flex" }}>
                       <label htmlFor="invoiceId">Chọn hóa đơn</label>
@@ -496,49 +559,16 @@ export default function AddShippingOrder() {
                       loadOptions={loadInvoiceOptions}
                       value={
                         selectedInvoice
-                          ? {
-                              value:  selectedInvoice.id,
-                              label:  `${selectedInvoice.invoiceCode}`,
-                            }
+                          ? { value: selectedInvoice.id, label: `${selectedInvoice.invoiceCode} — ${selectedInvoice.customerName}` }
                           : null
                       }
-                      onChange={(option: any) => {
-                        if (!option) {
-                          clearSelectedInvoice();
-                          return;
-                        }
-                        loadInvoiceDetailAndApply(option.value, option.origin);
+                      onChange={(opt: any) => {
+                        if (!opt) { clearSelectedInvoice(); return; }
+                        loadInvoiceDetailAndApply(opt.value, opt.origin);
                       }}
-                      noOptionsMessage={({ inputValue }) =>
-                        inputValue ? "Không tìm thấy hóa đơn phù hợp" : "Nhập để tìm kiếm"
-                      }
-                      loadingMessage={() => "Đang tải..."}
-                      formatOptionLabel={(option: any) =>
-                        option?.origin ? (
-                          <div className="invoice-option">
-                            <div className="invoice-option__top">
-                              <span className="invoice-option__code">{option.origin.invoiceCode}</span>
-                            </div>
-                          </div>
-                        ) : (
-                          <span>{option?.label}</span>
-                        )
-                      }
-                      theme={(theme) => ({
-                        ...theme,
-                        colors: {
-                          ...theme.colors,
-                          primary:   "#015aa4",
-                          primary25: "#e9eaeb",
-                          primary50: "#e9eaeb",
-                          neutral0:  "#ffffff",
-                          neutral70: "#015aa4",
-                        },
-                      })}
                     />
                   </div>
 
-                  {/* Loading detail */}
                   {isLoadingDetail && (
                     <div className="invoice-loading">
                       <Loading />
@@ -546,20 +576,23 @@ export default function AddShippingOrder() {
                     </div>
                   )}
 
-                  {/* Info card sau khi chọn */}
-                  {selectedInvoice && (
+                  {selectedInvoice && !isLoadingDetail && (
                     <div className="invoice-info-card">
                       <div className="invoice-info-card__code-row">
                         <Icon name="FileText" />
                         <strong>{selectedInvoice.invoiceCode}</strong>
-                        {isLoadingDetail && <span className="invoice-info-card__loading-badge">Đang tải...</span>}
+                        <button
+                          onClick={clearSelectedInvoice}
+                          style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", fontSize: "1.2rem" }}
+                        >
+                          <Icon name="X" />
+                        </button>
                       </div>
                       <div className="invoice-info-card__row">
                         <Icon name="User" />
-                        <span>{selectedInvoice.customerName || "—"}</span>
+                        <span>{selectedInvoice.customerName}</span>
                         <span className="invoice-divider">·</span>
-                        <Icon name="Phone" />
-                        <span>{selectedInvoice.customerPhone || "—"}</span>
+                        <span>{selectedInvoice.customerPhone}</span>
                       </div>
                       {selectedInvoice.customerAddress && (
                         <div className="invoice-info-card__row">
@@ -567,22 +600,15 @@ export default function AddShippingOrder() {
                           <span>{selectedInvoice.customerAddress}</span>
                         </div>
                       )}
-                      {selectedInvoice.productSummary && (
-                        <div className="invoice-info-card__row">
-                          <Icon name="ShoppingBag" />
-                          <span>{selectedInvoice.productSummary}</span>
-                        </div>
-                      )}
                       <div className="invoice-info-card__footer">
                         <div className="invoice-info-card__amount">
-                          <span>Tổng tiền</span>
+                          <span>Giá trị đơn</span>
                           <strong>{formatCurrency(selectedInvoice.amount ?? 0)} đ</strong>
                         </div>
                         {(selectedInvoice.amountCard ?? 0) > 0 && (
                           <div className="invoice-info-card__cod">
-                            <Icon name="Banknote" />
-                            <span>COD:&nbsp;</span>
-                            <strong>{formatCurrency(selectedInvoice.amountCard ?? 0)} đ</strong>
+                            <Icon name="CreditCard" />
+                            COD: <strong>{formatCurrency(selectedInvoice.amountCard)} đ</strong>
                           </div>
                         )}
                       </div>
@@ -592,90 +618,38 @@ export default function AddShippingOrder() {
               </div>
             )}
 
-            {/* Banner edit mode */}
-            {/* {isEdit && originData?.salesOrderCode && (
-              <div className="autofill-banner">
-                <Icon name="CheckCircle" />
-                <span>
-                  Đã liên kết với hóa đơn&nbsp;
-                  <strong>{originData.salesOrderCode}</strong>
-                </span>
-              </div>
-            )} */}
-
-            {/* Card: Thông tin người gửi */}
+            {/* Card: Người gửi */}
             <div className="form-card">
               <div className="form-card__title">
-                <Icon name="UserCheck" />
+                <Icon name="Building2" />
                 Thông tin người gửi
-                {selectedSender && (
-                  <span className="autofill-badge">
-                    <Icon name="Zap" /> Tự động điền
-                  </span>
-                )}
               </div>
               <div className="form-card__body">
-
-                {/* AsyncPaginate chọn người gửi từ danh sách phòng ban / nhân viên */}
+                {/* Chọn chi nhánh */}
                 <div className={`base-select base-select-fill has-label${selectedSender ? " has-value" : ""}`}>
                   <div style={{ display: "flex" }}>
-                    <label htmlFor="senderId">Chọn người gửi</label>
+                    <label>Chọn chi nhánh / nhân viên gửi</label>
                   </div>
                   <AsyncPaginate
-                    inputId="senderId"
-                    placeholder="Tìm theo tên phòng ban / nhân viên..."
+                    placeholder="Tìm chi nhánh..."
                     className="select-custom select__custom-label"
                     isSearchable
                     isClearable
-                    debounceTimeout={400}
+                    debounceTimeout={350}
                     defaultOptions
                     menuPortalTarget={document.body}
                     menuPosition="fixed"
                     styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
                     loadOptions={loadSenderOptions}
                     additional={{ page: 1 }}
-                    value={
-                      selectedSender
-                        ? { 
-                            value: selectedSender.id, 
-                            label: selectedSender.managerName 
-                          }
-                        : null
-                    }
-                    onChange={(option: any) => {
-                      if (!option) { clearSender(); return; }
-                      applySenderToForm(option.origin);
+                    value={selectedSender ? { value: selectedSender.id, label: selectedSender.name } : null}
+                    onChange={(opt: any) => {
+                      if (!opt) { clearSender(); return; }
+                      applySenderToForm(opt.origin);
                     }}
-                    noOptionsMessage={({ inputValue }) =>
-                      inputValue ? "Không tìm thấy kết quả phù hợp" : "Nhập để tìm kiếm"
-                    }
-                    loadingMessage={() => "Đang tải..."}
-                    formatOptionLabel={(option: any) =>
-                      option?.origin ? (
-                        <div className="invoice-option">
-                          <div className="invoice-option__top">
-                            <span className="invoice-option__code">{option.origin.managerName}</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <span>{option?.label}</span>
-                      )
-                    }
-                    theme={(theme) => ({
-                      ...theme,
-                      colors: {
-                        ...theme.colors,
-                        primary:   "#015aa4",
-                        primary25: "#e9eaeb",
-                        primary50: "#e9eaeb",
-                        neutral0:  "#ffffff",
-                        neutral70: "#015aa4",
-                      },
-                    })}
                   />
                 </div>
 
-                {/* Các trường fill sau khi chọn người gửi */}
                 <div className="form-row-2">
                   <div>
                     <Input
@@ -686,7 +660,6 @@ export default function AddShippingOrder() {
                       onChange={setField("senderName")}
                       placeholder="Nguyễn Văn A"
                     />
-                    {errors.senderName && <span className="field-error">{errors.senderName}</span>}
                   </div>
                   <div>
                     <Input
@@ -697,52 +670,100 @@ export default function AddShippingOrder() {
                       onChange={setField("senderPhone")}
                       placeholder="09xxxxxxxx"
                     />
-                    {errors.senderPhone && <span className="field-error">{errors.senderPhone}</span>}
                   </div>
                 </div>
-                <div>
-                  <Input
-                    name="senderEmail"
-                    label="Email"
-                    fill
-                    value={form.senderEmail}
-                    onChange={setField("senderEmail")}
-                    placeholder="example@company.com"
-                  />
-                </div>
-                <div>
-                  <Input
-                    name="senderStreet"
-                    label="Số nhà, tên đường"
-                    fill
-                    value={form.senderStreet}
-                    onChange={setField("senderStreet")}
-                    placeholder="VD: 123 Nguyễn Trãi"
-                  />
-                  {errors.senderStreet && <span className="field-error">{errors.senderStreet}</span>}
-                </div>
-                <div className="form-row-2">
-                  <div>
-                    <Input
-                      name="senderDistrict"
-                      label="Quận / Huyện"
-                      fill
-                      value={form.senderDistrict}
-                      onChange={setField("senderDistrict")}
-                      placeholder="VD: Quận 1"
+
+                <Input
+                  name="senderStreet"
+                  label="Số nhà, tên đường"
+                  fill
+                  value={form.senderStreet}
+                  onChange={setField("senderStreet")}
+                  placeholder="VD: 123 Nguyễn Trãi"
+                />
+
+                {/* Địa chỉ người gửi — cascading dropdown */}
+                <div className="form-row-3">
+                  {/* Tỉnh / Thành phố */}
+                  <div className="base-select base-select-fill has-label">
+                    <label>Tỉnh / Thành phố</label>
+                    <AsyncPaginate
+                      placeholder={senderAddr.loadingProvinces ? "Đang tải..." : "Chọn tỉnh / TP..."}
+                      className="select-custom select__custom-label"
+                      isSearchable
+                      isClearable
+                      isDisabled={senderAddr.loadingProvinces}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                      value={senderAddr.selectedProvince}
+                      loadOptions={async (q) => ({
+                        options: senderAddr.provinceOptions.filter((o) =>
+                          o.label.toLowerCase().includes(q.toLowerCase())
+                        ),
+                        hasMore: false,
+                      })}
+                      defaultOptions={senderAddr.provinceOptions}
+                      onChange={(opt: any) => senderAddr.onProvinceChange(opt)}
                     />
-                    {errors.senderDistrict && <span className="field-error">{errors.senderDistrict}</span>}
                   </div>
-                  <div>
-                    <Input
-                      name="senderWard"
-                      label="Phường / Xã"
-                      fill
-                      value={form.senderWard}
-                      onChange={setField("senderWard")}
-                      placeholder="VD: Phường Bến Nghé"
+
+                  {/* Quận / Huyện */}
+                  <div className="base-select base-select-fill has-label">
+                    <label>Quận / Huyện</label>
+                    <AsyncPaginate
+                      placeholder={
+                        !senderAddr.selectedProvince ? "Chọn tỉnh trước"
+                        : senderAddr.loadingDistricts ? "Đang tải..."
+                        : "Chọn quận / huyện..."
+                      }
+                      className="select-custom select__custom-label"
+                      isSearchable
+                      isClearable
+                      isDisabled={!senderAddr.selectedProvince || senderAddr.loadingDistricts}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                      key={`sender-district-${senderAddr.selectedProvince?.value ?? "none"}`}
+                      value={senderAddr.selectedDistrict}
+                      loadOptions={async (q) => ({
+                        options: senderAddr.districtOptions.filter((o) =>
+                          o.label.toLowerCase().includes(q.toLowerCase())
+                        ),
+                        hasMore: false,
+                      })}
+                      defaultOptions={senderAddr.districtOptions}
+                      onChange={(opt: any) => senderAddr.onDistrictChange(opt)}
                     />
-                    {errors.senderWard && <span className="field-error">{errors.senderWard}</span>}
+                  </div>
+
+                  {/* Phường / Xã */}
+                  <div className="base-select base-select-fill has-label">
+                    <label>Phường / Xã</label>
+                    <AsyncPaginate
+                      placeholder={
+                        !senderAddr.selectedDistrict ? "Chọn quận trước"
+                        : senderAddr.loadingWards ? "Đang tải..."
+                        : "Chọn phường / xã..."
+                      }
+                      className="select-custom select__custom-label"
+                      isSearchable
+                      isClearable
+                      isDisabled={!senderAddr.selectedDistrict || senderAddr.loadingWards}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                      key={`sender-ward-${senderAddr.selectedDistrict?.value ?? "none"}`}
+                      value={senderAddr.selectedWard}
+                      loadOptions={async (q) => ({
+                        options: senderAddr.wardOptions.filter((o) =>
+                          o.label.toLowerCase().includes(q.toLowerCase())
+                        ),
+                        hasMore: false,
+                      })}
+                      defaultOptions={senderAddr.wardOptions}
+                      onChange={(opt: any) => senderAddr.onWardChange(opt)}
+                    />
                   </div>
                 </div>
               </div>
@@ -751,29 +772,29 @@ export default function AddShippingOrder() {
             {/* Card: Hãng vận chuyển */}
             <div className="form-card">
               <div className="form-card__title">
-                <Icon name="Send" />
+                <Icon name="Truck" />
                 Hãng vận chuyển
               </div>
               <div className="form-card__body">
-                <SelectCustom
-                  id="partnerId"
-                  name="partnerId"
-                  label="Chọn hãng vận chuyển"
-                  required
-                  options={PARTNER_OPTIONS}
-                  fill
-                  value={form.partnerId}
-                  onChange={(e) => {
-                    setForm((prev) => ({ ...prev, partnerId: e.value }));
-                    setErrors((prev) => ({ ...prev, partnerId: "" }));
-                  }}
-                  placeholder="Chọn hãng..."
-                />
-                {errors.partnerId && <span className="field-error">{errors.partnerId}</span>}
+                <div>
+                  <SelectCustom
+                    label="Hãng vận chuyển"
+                    required
+                    fill
+                    options={PARTNER_OPTIONS}
+                    value={form.partnerId ? PARTNER_OPTIONS.find((o) => o.value === form.partnerId) : null}
+                    onChange={(opt: any) => {
+                      setForm((prev) => ({ ...prev, partnerId: opt?.value ?? null }));
+                      setErrors((prev) => ({ ...prev, partnerId: "" }));
+                    }}
+                    placeholder="Chọn hãng..."
+                  />
+                  {errors.partnerId && <span className="field-error">{errors.partnerId}</span>}
+                </div>
               </div>
             </div>
 
-            {/* Card: Thông tin người nhận */}
+            {/* Card: Người nhận */}
             <div className="form-card">
               <div className="form-card__title">
                 <Icon name="User" />
@@ -809,13 +830,14 @@ export default function AddShippingOrder() {
                         onChange={setField("receiverPhone")}
                         placeholder="09xxxxxxxx"
                       />
-                      {(form.receiverPhone?.length >= 10 && !errors.receiverPhone) && (
+                      {form.receiverPhone?.length >= 10 && !errors.receiverPhone && (
                         <span className="verified-icon"><Icon name="CheckCircle" /></span>
                       )}
                     </div>
                     {errors.receiverPhone && <span className="field-error">{errors.receiverPhone}</span>}
                   </div>
                 </div>
+
                 <div>
                   <Input
                     name="receiverStreet"
@@ -828,28 +850,89 @@ export default function AddShippingOrder() {
                   />
                   {errors.receiverStreet && <span className="field-error">{errors.receiverStreet}</span>}
                 </div>
-                <div className="form-row-2">
-                  <div>
-                    <Input
-                      name="receiverDistrict"
-                      label="Quận / Huyện"
-                      required
-                      fill
-                      value={form.receiverDistrict}
-                      onChange={setField("receiverDistrict")}
-                      placeholder="VD: Quận 1"
+
+                {/* Địa chỉ người nhận — cascading dropdown */}
+                <div className="form-row-3">
+                  {/* Tỉnh / Thành phố */}
+                  <div className="base-select base-select-fill has-label">
+                    <label>Tỉnh / Thành phố</label>
+                    <AsyncPaginate
+                      placeholder={receiverAddr.loadingProvinces ? "Đang tải..." : "Chọn tỉnh / TP..."}
+                      className="select-custom select__custom-label"
+                      isSearchable
+                      isClearable
+                      isDisabled={receiverAddr.loadingProvinces}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                      value={receiverAddr.selectedProvince}
+                      loadOptions={async (q) => ({
+                        options: receiverAddr.provinceOptions.filter((o) =>
+                          o.label.toLowerCase().includes(q.toLowerCase())
+                        ),
+                        hasMore: false,
+                      })}
+                      defaultOptions={receiverAddr.provinceOptions}
+                      onChange={(opt: any) => receiverAddr.onProvinceChange(opt)}
+                    />
+                  </div>
+
+                  {/* Quận / Huyện */}
+                  <div className="base-select base-select-fill has-label">
+                    <label>Quận / Huyện <span style={{ color: "#ef4444" }}>*</span></label>
+                    <AsyncPaginate
+                      placeholder={
+                        !receiverAddr.selectedProvince ? "Chọn tỉnh trước"
+                        : receiverAddr.loadingDistricts ? "Đang tải..."
+                        : "Chọn quận / huyện..."
+                      }
+                      className="select-custom select__custom-label"
+                      isSearchable
+                      isClearable
+                      isDisabled={!receiverAddr.selectedProvince || receiverAddr.loadingDistricts}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                      key={`receiver-district-${receiverAddr.selectedProvince?.value ?? "none"}`}
+                      value={receiverAddr.selectedDistrict}
+                      loadOptions={async (q) => ({
+                        options: receiverAddr.districtOptions.filter((o) =>
+                          o.label.toLowerCase().includes(q.toLowerCase())
+                        ),
+                        hasMore: false,
+                      })}
+                      defaultOptions={receiverAddr.districtOptions}
+                      onChange={(opt: any) => receiverAddr.onDistrictChange(opt)}
                     />
                     {errors.receiverDistrict && <span className="field-error">{errors.receiverDistrict}</span>}
                   </div>
-                  <div>
-                    <Input
-                      name="receiverWard"
-                      label="Phường / Xã"
-                      required
-                      fill
-                      value={form.receiverWard}
-                      onChange={setField("receiverWard")}
-                      placeholder="VD: Phường Bến Nghé"
+
+                  {/* Phường / Xã */}
+                  <div className="base-select base-select-fill has-label">
+                    <label>Phường / Xã <span style={{ color: "#ef4444" }}>*</span></label>
+                    <AsyncPaginate
+                      placeholder={
+                        !receiverAddr.selectedDistrict ? "Chọn quận trước"
+                        : receiverAddr.loadingWards ? "Đang tải..."
+                        : "Chọn phường / xã..."
+                      }
+                      className="select-custom select__custom-label"
+                      isSearchable
+                      isClearable
+                      isDisabled={!receiverAddr.selectedDistrict || receiverAddr.loadingWards}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                      key={`receiver-ward-${receiverAddr.selectedDistrict?.value ?? "none"}`}
+                      value={receiverAddr.selectedWard}
+                      loadOptions={async (q) => ({
+                        options: receiverAddr.wardOptions.filter((o) =>
+                          o.label.toLowerCase().includes(q.toLowerCase())
+                        ),
+                        hasMore: false,
+                      })}
+                      defaultOptions={receiverAddr.wardOptions}
+                      onChange={(opt: any) => receiverAddr.onWardChange(opt)}
                     />
                     {errors.receiverWard && <span className="field-error">{errors.receiverWard}</span>}
                   </div>
@@ -888,11 +971,11 @@ export default function AddShippingOrder() {
                         : ""
                     }
                     onChange={(e) => {
-                      const parts = e.target.value.split("x").map((s) => s.trim());
+                      const parts = e.target.value.split("x").map((s: string) => s.trim());
                       setForm((prev) => ({
                         ...prev,
                         length: parts[0] ? +parts[0] : null,
-                        width:  parts[1] ? +parts[1] : null,
+                        width: parts[1] ? +parts[1] : null,
                         height: parts[2] ? +parts[2] : null,
                       }));
                     }}
@@ -913,17 +996,11 @@ export default function AddShippingOrder() {
 
           {/* ========== CỘT PHẢI ========== */}
           <div className="add-shipping-side">
-
             {/* Card: COD */}
             <div className="form-card">
               <div className="form-card__title">
                 <Icon name="Banknote" />
                 Tiền thu hộ (COD)
-                {/* {selectedInvoice && (
-                  <span className="autofill-badge">
-                    <Icon name="Zap" /> Tự động điền
-                  </span>
-                )} */}
               </div>
               <div className="form-card__body">
                 <Input
@@ -947,12 +1024,12 @@ export default function AddShippingOrder() {
             {/* Card: Action */}
             <div className="form-card action-card">
               <div className={`readiness-indicator ${
-                form.partnerId && form.receiverName && form.receiverPhone && form.receiverStreet && form.weight
+                form.partnerId && form.receiverName && form.receiverPhone && form.receiverStreet && form.receiverDistrict && form.receiverWard && form.weight
                   ? "ready" : "not-ready"
               }`}>
                 <span className="readiness-dot" />
                 <span className="readiness-label">
-                  {form.partnerId && form.receiverName && form.receiverPhone && form.receiverStreet && form.weight
+                  {form.partnerId && form.receiverName && form.receiverPhone && form.receiverStreet && form.receiverDistrict && form.receiverWard && form.weight
                     ? "Đã điền đủ thông tin, sẵn sàng đẩy đơn"
                     : "Vui lòng điền đủ thông tin bắt buộc (*)"}
                 </span>
@@ -973,10 +1050,7 @@ export default function AddShippingOrder() {
                 )}
               </button>
 
-              <button
-                className="btn-back-link"
-                onClick={() => navigate("/shipping")}
-              >
+              <button className="btn-back-link" onClick={() => navigate("/shipping")}>
                 <Icon name="ArrowLeft" />
                 Quay lại danh sách
               </button>

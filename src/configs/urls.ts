@@ -454,6 +454,10 @@ export const urlsApi = {
   shipping: {
     create: prefixLogistics + "/shipment/create",
     list: prefixLogistics + "/shipment/list",
+    tracking: prefixLogistics + "/shipment",
+    wards: prefixIntegration + "/address/wards",
+    districts: prefixIntegration + "/address/districts",
+    provinces: prefixIntegration + "/address/provinces",
   },
   boughtService: {
     addToInvoice: prefixAdmin + "/boughtService/update",
