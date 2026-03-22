@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef, useContext } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { IActionModal } from "model/OtherModel";
 import { Customer } from "../../../types";
 import "./index.scss";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ICustomerListParams, useCustomerList } from "@/hooks/useCustomerList";
+import { ContextType, UserContext } from "contexts/userContext";
 import CustomerService from "@/services/CustomerService";
 import { showToast } from "utils/common";
 import { urlsApi } from "configs/urls";
@@ -34,6 +35,10 @@ export default function CustomerModal({
   const [newPhone,      setNewPhone]      = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [registerMode,  setRegisterMode]  = useState(false);
+
+  // Lấy branchId từ context để gửi kèm khi tạo khách hàng mới
+  const { dataBranch } = useContext(UserContext) as ContextType;
+  const branchId = dataBranch?.value ?? 0;
 
   // useCustomerList đã tự quản lý accumulated list (page=1→replace, page>1→append)
   // listCustomer = danh sách đã accumulated từ hook
@@ -84,7 +89,11 @@ export default function CustomerModal({
     setIsRegistering(true);
     try {
       const createRes = await CustomerService.update({
-        id: 0, name: newName.trim(), phone: newPhone.trim(),
+        id:           0,
+        name:         newName.trim(),
+        phone:        newPhone.trim(),
+        branchId:     branchId || undefined,
+        customerType: 1,   // 1 = Cá nhân (mặc định)
       } as any);
       if (createRes.code !== 0 || !createRes.result) {
         showToast(createRes.message ?? "Không thể tạo khách hàng", "error");
