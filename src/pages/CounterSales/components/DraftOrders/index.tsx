@@ -7,11 +7,12 @@ import { useDraftOrders } from "./partials/hooks/useDraftOrders";
 
 type Props = {
   onContinue?: (draftId: string) => void;
+  /** Gọi sau khi xóa thành công → CounterSales dùng để refresh badge */
   onDeleted?:  () => void;
 };
 
 const DraftOrders: React.FC<Props> = ({ onContinue, onDeleted }) => {
-  const vm = useDraftOrders();
+  const vm = useDraftOrders({ onDeleted });
 
   const [showDialog,    setShowDialog]    = useState(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
@@ -19,8 +20,8 @@ const DraftOrders: React.FC<Props> = ({ onContinue, onDeleted }) => {
   const askDelete = (id: string) => {
     const item = vm.list.find((x) => x.id === id);
     const dialog: IContentDialog = {
-      color:     "error",
-      className: "dialog-delete",
+      color:      "error",
+      className:  "dialog-delete",
       isCentered: true,
       isLoading:  false,
       title:   <Fragment>Xóa đơn tạm?</Fragment>,
@@ -34,7 +35,7 @@ const DraftOrders: React.FC<Props> = ({ onContinue, onDeleted }) => {
       cancelAction:  () => { setShowDialog(false); setContentDialog(null); },
       defaultText:   "Xóa",
       defaultAction: () => {
-        vm.deleteDraft(id);
+        vm.deleteDraft(id);   // onDeleted được gọi bên trong hook sau khi xóa OK
         setShowDialog(false);
         setContentDialog(null);
       },
@@ -45,7 +46,6 @@ const DraftOrders: React.FC<Props> = ({ onContinue, onDeleted }) => {
 
   return (
     <div className="draft-orders">
-      {/* Loading overlay */}
       {vm.loading && (
         <div
           style={{
