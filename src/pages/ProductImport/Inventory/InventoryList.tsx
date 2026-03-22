@@ -210,7 +210,14 @@ export default function WarehouseBookList() {
       if (paramsTemp.page === 1) {
         delete paramsTemp["page"];
       }
-      setSearchParams(paramsTemp as Record<string, string | string[]>);
+      // Convert tất cả giá trị sang string trước khi set URL params
+      const searchParamsObj: Record<string, string> = {};
+      Object.keys(paramsTemp).forEach((key) => {
+        if (paramsTemp[key] !== undefined && paramsTemp[key] !== null) {
+          searchParamsObj[key] = String(paramsTemp[key]);
+        }
+      });
+      setSearchParams(searchParamsObj);
     }
 
     return () => {
@@ -218,13 +225,31 @@ export default function WarehouseBookList() {
     };
   }, [params]);
 
+  // ── Button đúng ngữ cảnh theo từng tab ──────────────────────────────────
+  // Sổ kho = nhật ký giao dịch (read-only ledger); không tạo phiếu trực tiếp ở
+  // tab "Tất cả", "Bán hàng", "Khách trả" — các tab đó chỉ xem.
+  const tabActionMap: Record<string, { title: string; callback: () => void } | null> = {
+    "": null,
+    IMPORT: permissions["WAREHOUSE_ADD"] == 1
+      ? { title: "Tạo phiếu nhập", callback: () => navigate(urls.create_inventory) }
+      : null,
+    SALE: null,      // Đơn bán tạo từ module Bán hàng & Đơn hàng
+    RETURN: null,    // Khách trả tạo từ đơn bán → không tạo trực tiếp tại đây
+    TRANSFER: permissions["WAREHOUSE_ADD"] == 1
+      ? { title: "Tạo phiếu chuyển kho", callback: () => navigate(urls.inventory_transfer_document) }
+      : null,
+    ADJUSTMENT: permissions["WAREHOUSE_ADD"] == 1
+      ? { title: "Tạo phiếu điều chỉnh", callback: () => navigate(urls.adjustment_slip) }
+      : null,
+    DESTROY: permissions["WAREHOUSE_ADD"] == 1
+      ? { title: "Tạo phiếu xuất hủy", callback: () => navigate(urls.inventory_checking) }
+      : null,
+  };
+
+  const currentTabAction = tabActionMap[params.refType ?? ""] ?? null;
+
   const titleActions: ITitleActions = {
-    actions: [
-      permissions["WAREHOUSE_ADD"] == 1 && {
-        title: "Tạo phiếu nhập",
-        callback: () => navigate(urls.create_inventory),
-      },
-    ],
+    actions: currentTabAction ? [currentTabAction] : [],
   };
 
   const titles = ["STT", "Mã chứng từ", "Loại chứng từ", "Thời gian", "Sản phẩm", "Đối tác", "Kho", "Biến động SL", "Tồn trước", "Tồn sau", "Người thực hiện", "Ref tài chính", "Trạng thái"];

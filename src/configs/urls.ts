@@ -551,6 +551,19 @@ export const urlsApi = {
   },
 
   //warehouse
+  stockTransfer: {
+    list:    prefixInventory + "/stockTransfer/list",
+    get:     prefixInventory + "/stockTransfer/get",
+    update:  prefixInventory + "/stockTransfer/update",
+    delete:  prefixInventory + "/stockTransfer/delete",
+    approve: prefixInventory + "/stockTransfer/approve",
+    cancel:  prefixInventory + "/stockTransfer/cancel",
+  },
+  inventoryBalance: {
+    stockProductList: prefixInventory + "/inventoryBalance/stockProduct/list",
+    list:             prefixInventory + "/inventoryBalance/list",
+    get:              prefixInventory + "/inventoryBalance/get",
+  },
 
   integration: {
     list: prefixAdmin + "/integrationPartner/list",

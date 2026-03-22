@@ -1,6 +1,11 @@
-// InventoryManagement.tsx
+// InventoryManagement.tsx — Quản lý kho hàng
+// Tab "Tồn kho"    → API: GET /inventoryBalance/stockProduct/list   ✅ real
+// Tab "Nhập hàng"  → API: GET /invoice/import/list                  ✅ real
+// Tab "Xuất hàng"  → chưa có API riêng, hiển thị coming-soon        ⏳
+// Tab "Kiểm kho"   → API: GET /stockAdjust/list                     ✅ real
+// Tab "Giá vốn"    → chưa có API riêng, hiển thị coming-soon        ⏳
+
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
 import moment from "moment";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -13,45 +18,83 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { IAction } from "model/OtherModel";
 import { showToast, getPermissions } from "utils/common";
 import { getPageOffset, formatCurrency } from "reborn-util";
-import {
-  MOCK_STOCK,
-  MOCK_IMPORT_ORDERS,
-  MOCK_EXPORT_ORDERS,
-  MOCK_STOCK_CHECK,
-  IStockItem,
-  IImportOrder,
-  IExportOrder,
-  IStockCheckItem,
-} from "assets/mock/Product";
-// import AddImportOrderModal from "./partials/AddImportOrderModal";
-// import AddExportOrderModal from "./partials/AddExportOrderModal";
+import { useNavigate } from "react-router-dom";
+import InventoryService from "services/InventoryService";
+import InvoiceService from "services/InvoiceService";
+import AdjustmentSlipService from "services/AdjustmentSlipService";
+import urls from "@/configs/urls";
 import "./styles.scss";
 
 type TabType = "stock" | "import" | "export" | "check" | "cost";
-type CostMethod = "average" | "fifo";
+
+// ── Response shape từ /inventoryBalance/stockProduct/list ──
+interface IStockProductItem {
+  inventoryBalanceId: number;
+  productId: number;
+  variantId?: number;
+  warehouseId: number;
+  productName: string;
+  batchNo?: string;
+  expiryDate?: string;
+  unitName: string;
+  quantity: number;
+  warehouseName: string;
+  updatedTime?: string;
+  // các field phụ BE có thể trả về thêm
+  productCode?: string;
+  avgCost?: number;
+  stockStatus?: number; // 0: hết, 1: sắp hết, 2: còn hàng
+}
+
+// ── Response shape từ /invoice/import/list ──
+interface IImportInvoiceItem {
+  id: number;
+  invoiceCode?: string;
+  code?: string;
+  supplierName?: string;
+  warehouseName?: string;
+  totalAmount?: number;
+  createdBy?: string;
+  createdTime?: string;
+  status?: number; // 0: nháp, 1: hoàn thành, 2: hủy
+  productCount?: number;
+}
+
+// ── Response shape từ /stockAdjust/list ──
+interface IStockAdjustItem {
+  id: number;
+  code?: string;
+  inventoryId?: number;
+  inventoryName?: string;
+  status?: number; // 0: chờ duyệt, 1: hoàn thành, 2: từ chối
+  createdTime?: string;
+  createdBy?: string;
+  note?: string;
+  totalDiff?: number;
+}
 
 export default function InventoryManagement() {
   document.title = "Quản lý kho hàng";
 
+  const navigate = useNavigate();
   const isMounted = useRef(false);
   const [activeTab, setActiveTab] = useState<TabType>("stock");
-  const [costMethod, setCostMethod] = useState<CostMethod>("average");
   const [permissions] = useState(getPermissions());
 
-  // Modal states
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [dataImport, setDataImport] = useState<IImportOrder>(null);
-  const [dataExport, setDataExport] = useState<IExportOrder>(null);
   const [showDialog, setShowDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  // =====================
-  // Shared
-  // =====================
+  // ── Shared state ─────────────────────────────────────────────────────────
   const [isLoading, setIsLoading] = useState(true);
   const [isNoItem, setIsNoItem] = useState(false);
-  const [params, setParams] = useState({ name: "", status: "", limit: 10, page: 1 });
+  const [params, setParams] = useState<{
+    keyword: string;
+    status: string;
+    warehouseId?: string;
+    limit: number;
+    page: number;
+  }>({ keyword: "", status: "", limit: 10, page: 1 });
+
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
     name: "Mục",
@@ -60,107 +103,166 @@ export default function InventoryManagement() {
     chooseSizeLimit: (limit) => setParams((prev) => ({ ...prev, limit })),
   });
 
-  // =====================
-  // Data states
-  // =====================
-  const [listStock, setListStock] = useState<IStockItem[]>([]);
-  const [listImport, setListImport] = useState<IImportOrder[]>([]);
-  const [listExport, setListExport] = useState<IExportOrder[]>([]);
-  const [listCheck, setListCheck] = useState<IStockCheckItem[]>([]);
+  // ── Per-tab data ─────────────────────────────────────────────────────────
+  const [listStock, setListStock] = useState<IStockProductItem[]>([]);
+  const [listImport, setListImport] = useState<IImportInvoiceItem[]>([]);
+  const [listCheck, setListCheck] = useState<IStockAdjustItem[]>([]);
 
-  const listTabs = [
-    { key: "stock", label: "Tồn kho", icon: "Warehouse" },
-    { key: "import", label: "Nhập hàng", icon: "Download" },
-    { key: "export", label: "Xuất hàng", icon: "Upload" },
-    { key: "check", label: "Kiểm kho", icon: "ClipboardList" },
-    { key: "cost", label: "Giá vốn", icon: "Calculator" },
+  // ── Summary counters (filled when data loads) ────────────────────────────
+  const [stockSummary, setStockSummary] = useState({
+    total: 0, totalValue: 0, lowStock: 0, outOfStock: 0,
+  });
+  const [importSummary, setImportSummary] = useState({
+    totalSlip: 0, totalAmount: 0, completed: 0, draft: 0,
+  });
+  const [checkSummary, setCheckSummary] = useState({
+    total: 0, pending: 0, completed: 0, rejected: 0,
+  });
+
+  const listTabs: { key: TabType; label: string; icon: string }[] = [
+    { key: "stock",  label: "Tồn kho",    icon: "Warehouse" },
+    { key: "import", label: "Nhập hàng",  icon: "Download" },
+    { key: "export", label: "Xuất hàng",  icon: "Upload" },
+    { key: "check",  label: "Kiểm kho",   icon: "ClipboardList" },
+    { key: "cost",   label: "Giá vốn",    icon: "Calculator" },
   ];
 
-  // Reset params khi đổi tab
+  // ── Reset params on tab switch ───────────────────────────────────────────
   useEffect(() => {
-    setParams({ name: "", status: "", limit: 10, page: 1 });
+    setParams({ keyword: "", status: "", limit: 10, page: 1 });
   }, [activeTab]);
 
   useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true;
+      loadData(params);
       return;
     }
     loadData(params);
   }, [params, activeTab]);
 
-  useEffect(() => {
-    loadData(params);
-  }, []);
-
-  // =====================
-  // Load data theo tab
-  // =====================
-  const loadData = (paramsSearch: any) => {
+  // ── Load data theo tab, từ API thực ─────────────────────────────────────
+  const loadData = async (p: typeof params) => {
     setIsLoading(true);
-    setTimeout(() => {
-      const page = paramsSearch.page ?? 1;
-      const limit = paramsSearch.limit ?? 10;
-      const name = (paramsSearch.name ?? "").toLowerCase();
-      const status = paramsSearch.status;
+    const abortCtrl = new AbortController();
+    const pageIdx = Math.max((p.page ?? 1) - 1, 0);
+    const size = p.limit ?? 10;
 
-      let filtered: any[] = [];
-
+    try {
       switch (activeTab) {
-        case "stock":
-          filtered = MOCK_STOCK.filter((i) => i.productName.toLowerCase().includes(name));
-          setListStock(filtered.slice((page - 1) * limit, page * limit));
+        // ── Tồn kho → /inventoryBalance/stockProduct/list ────────────────
+        case "stock": {
+          // Chỉ truyền các param có giá trị thực, tránh gửi keyword=undefined lên API
+          const stockParams: Record<string, any> = { page: pageIdx, size };
+          if (p.keyword)      stockParams.keyword     = p.keyword;
+          if (p.warehouseId)  stockParams.warehouseId = +p.warehouseId;
+          if (p.status !== "") stockParams.stockStatus = +p.status;
+          const res = await InventoryService.stockProductList(stockParams as any, abortCtrl.signal);
+          if (res.code === 0 || res.status === 1) {
+            const result = res.result ?? res.data ?? {};
+            const items: IStockProductItem[] = result.items ?? result.content ?? result.data ?? [];
+            const total = +(result.total ?? result.totalElements ?? items.length ?? 0);
+            setListStock(items);
+            setStockSummary({
+              total,
+              totalValue: items.reduce((s, i) => s + (i.quantity ?? 0) * (i.avgCost ?? 0), 0),
+              lowStock: items.filter((i) => (i.stockStatus ?? (i.quantity <= 10 && i.quantity > 0 ? 1 : i.quantity === 0 ? 0 : 2)) === 1).length,
+              outOfStock: items.filter((i) => (i.stockStatus ?? (i.quantity === 0 ? 0 : 2)) === 0).length,
+            });
+            setPaginationMeta(total, p.page, size);
+            setIsNoItem(total === 0 && p.page === 1);
+          } else {
+            showToast(res.message ?? "Không tải được dữ liệu tồn kho", "error");
+          }
           break;
+        }
 
-        case "import":
-          filtered = MOCK_IMPORT_ORDERS.filter(
-            (i) =>
-              (i.code.toLowerCase().includes(name) || i.supplierName.toLowerCase().includes(name)) && (status !== "" ? i.status === +status : true)
-          );
-          setListImport(filtered.slice((page - 1) * limit, page * limit));
+        // ── Nhập hàng → /invoice/import/list ─────────────────────────────
+        case "import": {
+          const importParams: Record<string, any> = { page: pageIdx, size };
+          if (p.keyword)      importParams.keyword = p.keyword;
+          if (p.status !== "") importParams.status = +p.status;
+          const res = await InvoiceService.importList(importParams);
+          if (res.code === 0 || res.status === 1) {
+            const result = res.result ?? res.data ?? {};
+            const items: IImportInvoiceItem[] = result.items ?? result.content ?? result.data ?? [];
+            const total = +(result.total ?? result.totalElements ?? items.length ?? 0);
+            setListImport(items);
+            setImportSummary({
+              totalSlip: total,
+              totalAmount: items.filter((i) => i.status === 1).reduce((s, i) => s + (i.totalAmount ?? 0), 0),
+              completed: items.filter((i) => i.status === 1).length,
+              draft: items.filter((i) => i.status === 0).length,
+            });
+            setPaginationMeta(total, p.page, size);
+            setIsNoItem(total === 0 && p.page === 1);
+          } else {
+            showToast(res.message ?? "Không tải được danh sách phiếu nhập", "error");
+          }
           break;
+        }
 
+        // ── Kiểm kho → /stockAdjust/list ─────────────────────────────────
+        case "check": {
+          const checkParams: Record<string, any> = { page: pageIdx, limit: size };
+          if (p.keyword)       checkParams.name   = p.keyword;
+          if (p.status !== "") checkParams.status = +p.status;
+          const res = await AdjustmentSlipService.list(checkParams as any, abortCtrl.signal);
+          if (res.code === 0 || res.status === 1) {
+            const result = res.result ?? res.data ?? {};
+            const items: IStockAdjustItem[] = result.items ?? result.content ?? result.data ?? [];
+            const total = +(result.total ?? result.totalElements ?? items.length ?? 0);
+            setListCheck(items);
+            setCheckSummary({
+              total,
+              pending: items.filter((i) => i.status === 0).length,
+              completed: items.filter((i) => i.status === 1).length,
+              rejected: items.filter((i) => i.status === 2).length,
+            });
+            setPaginationMeta(total, p.page, size);
+            setIsNoItem(total === 0 && p.page === 1);
+          } else {
+            showToast(res.message ?? "Không tải được danh sách phiếu kiểm kho", "error");
+          }
+          break;
+        }
+
+        // ── Xuất hàng / Giá vốn → chưa có API, để trống ─────────────────
         case "export":
-          filtered = MOCK_EXPORT_ORDERS.filter(
-            (i) =>
-              (i.code.toLowerCase().includes(name) || i.customerName.toLowerCase().includes(name)) && (status !== "" ? i.status === +status : true)
-          );
-          setListExport(filtered.slice((page - 1) * limit, page * limit));
-          break;
-
-        case "check":
-          filtered = MOCK_STOCK_CHECK.filter((i) => i.productName.toLowerCase().includes(name));
-          setListCheck(filtered.slice((page - 1) * limit, page * limit));
-          break;
-
         case "cost":
-          filtered = MOCK_STOCK.filter((i) => i.productName.toLowerCase().includes(name));
-          setListStock(filtered.slice((page - 1) * limit, page * limit));
+          setIsNoItem(true);
+          setPaginationMeta(0, 1, size);
           break;
       }
-
-      const total = filtered.length;
-      setPagination((prev) => ({
-        ...prev,
-        page,
-        sizeLimit: limit,
-        totalItem: total,
-        totalPage: Math.ceil(total / limit),
-      }));
-      setIsNoItem(total === 0 && page === 1);
+    } catch (err) {
+      if ((err as any)?.name !== "AbortError") {
+        showToast("Có lỗi xảy ra khi tải dữ liệu", "error");
+      }
+    } finally {
       setIsLoading(false);
-    }, 300);
+    }
+
+    return () => abortCtrl.abort();
   };
 
-  // =====================
-  // Helpers
-  // =====================
-  const renderStatus = (status: number, type: "order" | "stock" = "order") => {
-    const map =
-      type === "order"
-        ? { 0: { label: "Nháp", color: "secondary" }, 1: { label: "Hoàn thành", color: "success" }, 2: { label: "Đã hủy", color: "error" } }
-        : { 0: { label: "Hết hàng", color: "error" }, 1: { label: "Sắp hết", color: "warning" }, 2: { label: "Còn hàng", color: "success" } };
-    const { label, color } = map[status] ?? { label: "—", color: "secondary" };
+  const setPaginationMeta = (total: number, page: number, size: number) => {
+    setPagination((prev) => ({
+      ...prev,
+      page,
+      sizeLimit: size,
+      totalItem: total,
+      totalPage: Math.ceil(total / size),
+    }));
+  };
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+  const renderOrderStatus = (status: number, map?: Record<number, { label: string; color: string }>) => {
+    const defaultMap = {
+      0: { label: "Nháp",       color: "secondary" },
+      1: { label: "Hoàn thành", color: "success" },
+      2: { label: "Đã hủy",     color: "error" },
+    };
+    const { label, color } = (map ?? defaultMap)[status] ?? { label: "—", color: "secondary" };
     return (
       <div style={{ display: "flex", justifyContent: "center", marginTop: "0.9rem" }}>
         <span className={`status__item--signature status__item--signature-${color}`}>{label}</span>
@@ -168,34 +270,44 @@ export default function InventoryManagement() {
     );
   };
 
-  // Tính giá vốn FIFO
-  const calcFIFO = (productId: number, exportQty: number) => {
-    const imports = MOCK_IMPORT_ORDERS.filter((o) => o.status === 1)
-      .flatMap((o) => o.items.filter((i) => i.productId === productId))
-      .map((i) => ({ qty: i.quantity, price: i.priceUnit }));
-
-    let remaining = exportQty;
-    let totalCost = 0;
-    for (const batch of imports) {
-      if (remaining <= 0) break;
-      const used = Math.min(remaining, batch.qty);
-      totalCost += used * batch.price;
-      remaining -= used;
-    }
-    return exportQty > 0 ? Math.round(totalCost / exportQty) : 0;
+  const renderStockStatus = (qty: number) => {
+    const { label, color } =
+      qty === 0    ? { label: "Hết hàng",  color: "error" }
+      : qty <= 10  ? { label: "Sắp hết",   color: "warning" }
+                   : { label: "Còn hàng",  color: "success" };
+    return (
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "0.9rem" }}>
+        <span className={`status__item--signature status__item--signature-${color}`}>{label}</span>
+      </div>
+    );
   };
 
-  // Tính giá vốn bình quân
-  const calcAverage = (currentStock: number, currentAvgCost: number, importQty: number, importPrice: number) => {
-    if (currentStock + importQty === 0) return 0;
-    return Math.round((currentStock * currentAvgCost + importQty * importPrice) / (currentStock + importQty));
+  const confirmDialog = (
+    title: string | React.ReactElement,
+    message: string | React.ReactElement,
+    color: "success" | "error" | "warning",
+    onConfirm: () => void,
+    confirmText = "Xác nhận"
+  ) => {
+    setContentDialog({
+      color,
+      isCentered: true,
+      isLoading: true,
+      title,
+      message,
+      cancelText: "Hủy",
+      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
+      defaultText: confirmText,
+      defaultAction: () => {
+        onConfirm();
+        setShowDialog(false);
+        setContentDialog(null);
+      },
+    });
+    setShowDialog(true);
   };
 
-  const getStockStatus = (qty: number) => (qty === 0 ? 0 : qty <= 10 ? 1 : 2);
-
-  // =====================
-  // Summary cards
-  // =====================
+  // ── Summary cards ────────────────────────────────────────────────────────
   const renderSummary = () => {
     switch (activeTab) {
       case "stock":
@@ -203,21 +315,21 @@ export default function InventoryManagement() {
           <div className="inventory__summary">
             <div className="summary__card">
               <span className="summary__label">Tổng sản phẩm</span>
-              <span className="summary__value">{MOCK_STOCK.length}</span>
+              <span className="summary__value">{stockSummary.total}</span>
             </div>
             <div className="summary__card">
               <span className="summary__label">Tổng giá trị tồn</span>
               <span className="summary__value summary__value--primary">
-                {formatCurrency(MOCK_STOCK.reduce((s, i) => s + i.currentStock * i.avgCost, 0))}đ
+                {formatCurrency(stockSummary.totalValue)}đ
               </span>
             </div>
             <div className="summary__card">
               <span className="summary__label">Sắp hết hàng</span>
-              <span className="summary__value summary__value--warning">{MOCK_STOCK.filter((i) => i.currentStock <= 10).length} SP</span>
+              <span className="summary__value summary__value--warning">{stockSummary.lowStock} SP</span>
             </div>
             <div className="summary__card">
               <span className="summary__label">Hết hàng</span>
-              <span className="summary__value summary__value--error">{MOCK_STOCK.filter((i) => i.currentStock === 0).length} SP</span>
+              <span className="summary__value summary__value--error">{stockSummary.outOfStock} SP</span>
             </div>
           </div>
         );
@@ -227,57 +339,21 @@ export default function InventoryManagement() {
           <div className="inventory__summary">
             <div className="summary__card">
               <span className="summary__label">Tổng phiếu nhập</span>
-              <span className="summary__value">{MOCK_IMPORT_ORDERS.length}</span>
+              <span className="summary__value">{importSummary.totalSlip}</span>
             </div>
             <div className="summary__card">
               <span className="summary__label">Tổng tiền nhập</span>
               <span className="summary__value summary__value--primary">
-                {formatCurrency(MOCK_IMPORT_ORDERS.filter((o) => o.status === 1).reduce((s, o) => s + o.totalAmount, 0))}đ
+                {formatCurrency(importSummary.totalAmount)}đ
               </span>
             </div>
             <div className="summary__card">
               <span className="summary__label">Hoàn thành</span>
-              <span className="summary__value summary__value--success">{MOCK_IMPORT_ORDERS.filter((o) => o.status === 1).length} phiếu</span>
+              <span className="summary__value summary__value--success">{importSummary.completed} phiếu</span>
             </div>
             <div className="summary__card">
-              <span className="summary__label">Đang nháp</span>
-              <span className="summary__value summary__value--warning">{MOCK_IMPORT_ORDERS.filter((o) => o.status === 0).length} phiếu</span>
-            </div>
-          </div>
-        );
-
-      case "export":
-        return (
-          <div className="inventory__summary">
-            <div className="summary__card">
-              <span className="summary__label">Tổng phiếu xuất</span>
-              <span className="summary__value">{MOCK_EXPORT_ORDERS.length}</span>
-            </div>
-            <div className="summary__card">
-              <span className="summary__label">Doanh thu</span>
-              <span className="summary__value summary__value--primary">
-                {formatCurrency(MOCK_EXPORT_ORDERS.filter((o) => o.status === 1).reduce((s, o) => s + o.totalAmount, 0))}đ
-              </span>
-            </div>
-            <div className="summary__card">
-              <span className="summary__label">Lợi nhuận</span>
-              <span className="summary__value summary__value--success">
-                {formatCurrency(
-                  MOCK_EXPORT_ORDERS.filter((o) => o.status === 1)
-                    .flatMap((o) => o.items)
-                    .reduce((s, i) => s + (i.priceUnit - i.avgCost) * i.quantity, 0)
-                )}
-                đ
-              </span>
-            </div>
-            <div className="summary__card">
-              <span className="summary__label">Tổng SL xuất</span>
-              <span className="summary__value">
-                {MOCK_EXPORT_ORDERS.filter((o) => o.status === 1)
-                  .flatMap((o) => o.items)
-                  .reduce((s, i) => s + i.quantity, 0)}{" "}
-                SP
-              </span>
+              <span className="summary__label">Đang nhập</span>
+              <span className="summary__value summary__value--warning">{importSummary.draft} phiếu</span>
             </div>
           </div>
         );
@@ -286,361 +362,256 @@ export default function InventoryManagement() {
         return (
           <div className="inventory__summary">
             <div className="summary__card">
-              <span className="summary__label">Tổng SP kiểm</span>
-              <span className="summary__value">{MOCK_STOCK_CHECK.length}</span>
+              <span className="summary__label">Tổng phiếu kiểm</span>
+              <span className="summary__value">{checkSummary.total}</span>
             </div>
             <div className="summary__card">
-              <span className="summary__label">SP lệch</span>
-              <span className="summary__value summary__value--warning">{MOCK_STOCK_CHECK.filter((i) => i.difference !== 0).length} SP</span>
+              <span className="summary__label">Chờ duyệt</span>
+              <span className="summary__value summary__value--warning">{checkSummary.pending} phiếu</span>
             </div>
             <div className="summary__card">
-              <span className="summary__label">Tổng chênh lệch</span>
-              <span
-                className={`summary__value ${
-                  MOCK_STOCK_CHECK.reduce((s, i) => s + i.diffAmount, 0) >= 0 ? "summary__value--success" : "summary__value--error"
-                }`}
-              >
-                {formatCurrency(MOCK_STOCK_CHECK.reduce((s, i) => s + i.diffAmount, 0))}đ
-              </span>
+              <span className="summary__label">Hoàn thành</span>
+              <span className="summary__value summary__value--success">{checkSummary.completed} phiếu</span>
             </div>
             <div className="summary__card">
-              <span className="summary__label">Khớp số liệu</span>
-              <span className="summary__value summary__value--success">{MOCK_STOCK_CHECK.filter((i) => i.difference === 0).length} SP</span>
+              <span className="summary__label">Từ chối</span>
+              <span className="summary__value summary__value--error">{checkSummary.rejected} phiếu</span>
             </div>
           </div>
         );
 
-      case "cost":
-        return (
-          <div className="inventory__summary">
-            <div className="summary__card">
-              <span className="summary__label">Phương pháp</span>
-              <span className="summary__value" style={{ fontSize: "1.6rem" }}>
-                {costMethod === "average" ? "Bình quân gia quyền" : "FIFO"}
-              </span>
-            </div>
-            <div className="summary__card">
-              <span className="summary__label">Tổng giá vốn tồn kho</span>
-              <span className="summary__value summary__value--primary">
-                {formatCurrency(MOCK_STOCK.reduce((s, i) => s + i.currentStock * i.avgCost, 0))}đ
-              </span>
-            </div>
-            <div className="summary__card">
-              <span className="summary__label">Lợi nhuận gộp</span>
-              <span className="summary__value summary__value--success">
-                {formatCurrency(
-                  MOCK_EXPORT_ORDERS.filter((o) => o.status === 1)
-                    .flatMap((o) => o.items)
-                    .reduce((s, i) => s + (i.priceUnit - i.avgCost) * i.quantity, 0)
-                )}
-                đ
-              </span>
-            </div>
-          </div>
-        );
+      default:
+        return null;
     }
   };
 
-  // =====================
-  // Title actions theo tab
-  // =====================
+  // ── Title actions theo tab ───────────────────────────────────────────────
   const titleActions: ITitleActions = {
     actions: [
-      activeTab === "import" && {
+      activeTab === "import" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu nhập",
-        callback: () => {
-          setDataImport(null);
-          setShowImportModal(true);
-        },
+        callback: () => navigate(urls.create_inventory),
       },
-      activeTab === "export" && {
-        title: "Tạo phiếu xuất",
-        callback: () => {
-          setDataExport(null);
-          setShowExportModal(true);
-        },
-      },
-      activeTab === "check" && {
+      activeTab === "check" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu kiểm kho",
-        callback: () => showToast("Tính năng đang phát triển", "warning"),
+        callback: () => navigate(urls.adjustment_slip),
       },
     ].filter(Boolean),
   };
 
-  // =====================
-  // Table configs theo tab
-  // =====================
+  // ── Table config theo tab ────────────────────────────────────────────────
   const getTableConfig = () => {
     switch (activeTab) {
+
+      // ── Tồn kho ─────────────────────────────────────────────────────────
       case "stock":
         return {
           titles: ["STT", "Sản phẩm", "Kho", "Tồn kho", "Giá vốn BQ", "Giá trị tồn", "Trạng thái"],
           dataFormat: ["text-center", "", "", "text-center", "text-right", "text-right", "text-center"],
           items: listStock,
-          dataMappingArray: (item: IStockItem, index: number) => [
+          dataMappingArray: (item: IStockProductItem, index: number) => [
             getPageOffset(params) + index + 1,
-            <div key={item.id}>
+            <div key={item.inventoryBalanceId}>
               <div className="inventory__product-name">{item.productName}</div>
-              <div className="inventory__product-code">{item.productCode}</div>
+              {item.productCode && (
+                <div className="inventory__product-code">{item.productCode}</div>
+              )}
+              {item.batchNo && (
+                <div className="inventory__product-code">Lô: {item.batchNo}</div>
+              )}
             </div>,
-            item.warehouseName,
-            <span key={`qty-${item.id}`} className={`inventory__qty ${item.currentStock <= 10 ? "inventory__qty--low" : ""}`}>
-              {item.currentStock} {item.unitName}
-              {item.currentStock <= 10 && item.currentStock > 0 && <span className="inventory__badge--low">Sắp hết</span>}
+            item.warehouseName ?? "—",
+            <span
+              key={`qty-${item.inventoryBalanceId}`}
+              className={`inventory__qty ${(item.quantity ?? 0) <= 10 ? "inventory__qty--low" : ""}`}
+            >
+              {item.quantity ?? 0} {item.unitName}
+              {(item.quantity ?? 0) <= 10 && (item.quantity ?? 0) > 0 && (
+                <span className="inventory__badge--low">Sắp hết</span>
+              )}
             </span>,
-            formatCurrency(item.avgCost) + "đ",
-            formatCurrency(item.currentStock * item.avgCost) + "đ",
-            renderStatus(getStockStatus(item.currentStock), "stock"),
+            item.avgCost ? formatCurrency(item.avgCost) + "đ" : "—",
+            item.avgCost ? formatCurrency((item.quantity ?? 0) * item.avgCost) + "đ" : "—",
+            renderStockStatus(item.quantity ?? 0),
           ],
-          actions: (_item: IStockItem): IAction[] => [],
+          actions: (_item: IStockProductItem): IAction[] => [],
         };
 
+      // ── Nhập hàng ────────────────────────────────────────────────────────
       case "import":
         return {
-          titles: ["STT", "Mã phiếu", "Nhà cung cấp", "Kho nhập", "Số SP", "Tổng tiền", "Người tạo", "Ngày tạo", "Trạng thái"],
-          dataFormat: ["text-center", "", "", "", "text-center", "text-right", "", "text-center", "text-center"],
+          titles: ["STT", "Mã phiếu", "Nhà cung cấp", "Kho nhập", "Tổng tiền", "Người tạo", "Ngày tạo", "Trạng thái"],
+          dataFormat: ["text-center", "", "", "", "text-right", "", "text-center", "text-center"],
           items: listImport,
-          dataMappingArray: (item: IImportOrder, index: number) => [
+          dataMappingArray: (item: IImportInvoiceItem, index: number) => [
             getPageOffset(params) + index + 1,
             <span key={item.id} className="inventory__code">
-              {item.code}
+              {item.invoiceCode ?? item.code ?? `#${item.id}`}
             </span>,
-            item.supplierName,
-            item.warehouseName,
-            item.items.reduce((s, i) => s + i.quantity, 0),
-            formatCurrency(item.totalAmount) + "đ",
-            item.createdBy,
-            moment(item.createdAt).format("DD/MM/YYYY HH:mm"),
-            renderStatus(item.status),
+            item.supplierName ?? "—",
+            item.warehouseName ?? "—",
+            item.totalAmount ? formatCurrency(item.totalAmount) + "đ" : "—",
+            item.createdBy ?? "—",
+            item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "—",
+            renderOrderStatus(item.status ?? 0),
           ],
-          actions: (item: IImportOrder): IAction[] =>
+          actions: (item: IImportInvoiceItem): IAction[] =>
             [
               {
                 title: "Chi tiết",
                 icon: <Icon name="CollectInfo" style={{ width: 17 }} />,
-                callback: () => {
-                  setDataImport(item);
-                  setShowImportModal(true);
-                },
+                callback: () => navigate(`${urls.create_inventory}?invoiceId=${item.id}`),
               },
               item.status === 0 && {
                 title: "Xác nhận nhập",
                 icon: <Icon name="Check" />,
-                callback: () => {
-                  setContentDialog({
-                    color: "primary",
-                    isCentered: true,
-                    isLoading: true,
-                    title: <Fragment>Xác nhận nhập hàng</Fragment>,
-                    message: (
-                      <Fragment>
-                        Xác nhận nhập hàng phiếu <strong>{item.code}</strong>? Tồn kho sẽ được cập nhật.
-                      </Fragment>
-                    ),
-                    cancelText: "Hủy",
-                    cancelAction: () => {
-                      setShowDialog(false);
-                      setContentDialog(null);
-                    },
-                    defaultText: "Xác nhận",
-                    defaultAction: () => {
-                      showToast("Nhập hàng thành công!", "success");
-                      loadData(params);
-                      setShowDialog(false);
-                      setContentDialog(null);
-                    },
-                  });
-                  setShowDialog(true);
-                },
+                callback: () =>
+                  confirmDialog(
+                    <Fragment>Xác nhận nhập hàng</Fragment>,
+                    <Fragment>
+                      Xác nhận phiếu <strong>{item.invoiceCode ?? item.code}</strong>? Tồn kho sẽ được cập nhật.
+                    </Fragment>,
+                    "success",
+                    async () => {
+                      const res = await InvoiceService.importApprove(item.id);
+                      if (res.code === 0 || res.status === 1) {
+                        showToast("Nhập hàng thành công!", "success");
+                        loadData(params);
+                      } else {
+                        showToast(res.message ?? "Xác nhận thất bại", "error");
+                      }
+                    }
+                  ),
               },
               item.status === 0 && {
                 title: "Hủy phiếu",
                 icon: <Icon name="Trash" className="icon-error" />,
-                callback: () => {
-                  setContentDialog({
-                    color: "error",
-                    isCentered: true,
-                    isLoading: true,
-                    title: <Fragment>Hủy phiếu nhập</Fragment>,
-                    message: (
-                      <Fragment>
-                        Bạn có chắc muốn hủy phiếu <strong>{item.code}</strong>?
-                      </Fragment>
-                    ),
-                    cancelText: "Quay lại",
-                    cancelAction: () => {
-                      setShowDialog(false);
-                      setContentDialog(null);
+                callback: () =>
+                  confirmDialog(
+                    <Fragment>Hủy phiếu nhập</Fragment>,
+                    <Fragment>
+                      Bạn có chắc muốn hủy phiếu <strong>{item.invoiceCode ?? item.code}</strong>?
+                    </Fragment>,
+                    "error",
+                    async () => {
+                      const res = await InvoiceService.importCancel(item.id);
+                      if (res.code === 0 || res.status === 1) {
+                        showToast("Đã hủy phiếu nhập", "success");
+                        loadData(params);
+                      } else {
+                        showToast(res.message ?? "Hủy thất bại", "error");
+                      }
                     },
-                    defaultText: "Xác nhận hủy",
-                    defaultAction: () => {
-                      showToast("Đã hủy phiếu nhập", "success");
-                      loadData(params);
-                      setShowDialog(false);
-                      setContentDialog(null);
-                    },
-                  });
-                  setShowDialog(true);
-                },
+                    "Xác nhận hủy"
+                  ),
               },
             ].filter(Boolean) as IAction[],
         };
 
-      case "export":
+      // ── Kiểm kho ─────────────────────────────────────────────────────────
+      case "check":
         return {
-          titles: ["STT", "Mã phiếu", "Khách hàng", "Kho xuất", "Số SP", "Doanh thu", "Lợi nhuận", "Người tạo", "Ngày tạo", "Trạng thái"],
-          dataFormat: ["text-center", "", "", "", "text-center", "text-right", "text-right", "", "text-center", "text-center"],
-          items: listExport,
-          dataMappingArray: (item: IExportOrder, index: number) => {
-            const profit = item.items.reduce((s, i) => s + (i.priceUnit - i.avgCost) * i.quantity, 0);
-            return [
-              getPageOffset(params) + index + 1,
-              <span key={item.id} className="inventory__code">
-                {item.code}
-              </span>,
-              item.customerName,
-              item.warehouseName,
-              item.items.reduce((s, i) => s + i.quantity, 0),
-              formatCurrency(item.totalAmount) + "đ",
-              <span key={`profit-${item.id}`} className={profit >= 0 ? "inventory__profit--positive" : "inventory__profit--negative"}>
-                {profit >= 0 ? "+" : ""}
-                {formatCurrency(profit)}đ
-              </span>,
-              item.createdBy,
-              moment(item.createdAt).format("DD/MM/YYYY HH:mm"),
-              renderStatus(item.status),
-            ];
-          },
-          actions: (item: IExportOrder): IAction[] =>
+          titles: ["STT", "Mã phiếu", "Kho kiểm", "Người tạo", "Ngày tạo", "Ghi chú", "Trạng thái"],
+          dataFormat: ["text-center", "", "", "", "text-center", "", "text-center"],
+          items: listCheck,
+          dataMappingArray: (item: IStockAdjustItem, index: number) => [
+            getPageOffset(params) + index + 1,
+            <span key={item.id} className="inventory__code">
+              {item.code ?? `#${item.id}`}
+            </span>,
+            item.inventoryName ?? "—",
+            item.createdBy ?? "—",
+            item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "—",
+            item.note ?? "—",
+            renderOrderStatus(item.status ?? 0, {
+              0: { label: "Chờ duyệt",  color: "warning" },
+              1: { label: "Hoàn thành", color: "success" },
+              2: { label: "Từ chối",    color: "error" },
+            }),
+          ],
+          actions: (item: IStockAdjustItem): IAction[] =>
             [
               {
                 title: "Chi tiết",
                 icon: <Icon name="CollectInfo" style={{ width: 17 }} />,
-                callback: () => {
-                  setDataExport(item);
-                  setShowExportModal(true);
-                },
+                callback: () => navigate(`${urls.adjustment_slip}?id=${item.id}`),
+              },
+              item.status === 0 && permissions["WAREHOUSE_APPROVE"] == 1 && {
+                title: "Duyệt phiếu",
+                icon: <Icon name="Check" />,
+                callback: () =>
+                  confirmDialog(
+                    <Fragment>Duyệt phiếu kiểm kho</Fragment>,
+                    <Fragment>
+                      Duyệt phiếu <strong>{item.code}</strong>? Tồn kho thực tế sẽ được cập nhật theo.
+                    </Fragment>,
+                    "success",
+                    async () => {
+                      const res = await AdjustmentSlipService.approved(item.id);
+                      if (res.code === 0 || res.status === 1) {
+                        showToast("Đã duyệt phiếu kiểm kho", "success");
+                        loadData(params);
+                      } else {
+                        showToast(res.message ?? "Duyệt thất bại", "error");
+                      }
+                    }
+                  ),
               },
               item.status === 0 && {
-                title: "Xác nhận xuất",
-                icon: <Icon name="Check" />,
-                callback: () => {
-                  setContentDialog({
-                    color: "primary",
-                    isCentered: true,
-                    isLoading: true,
-                    title: <Fragment>Xác nhận xuất hàng</Fragment>,
-                    message: (
-                      <Fragment>
-                        Xác nhận xuất hàng phiếu <strong>{item.code}</strong>?
-                      </Fragment>
-                    ),
-                    cancelText: "Hủy",
-                    cancelAction: () => {
-                      setShowDialog(false);
-                      setContentDialog(null);
+                title: "Từ chối",
+                icon: <Icon name="Trash" className="icon-error" />,
+                callback: () =>
+                  confirmDialog(
+                    <Fragment>Từ chối phiếu kiểm kho</Fragment>,
+                    <Fragment>
+                      Từ chối phiếu <strong>{item.code}</strong>?
+                    </Fragment>,
+                    "error",
+                    async () => {
+                      const res = await AdjustmentSlipService.cancel(item.id);
+                      if (res.code === 0 || res.status === 1) {
+                        showToast("Đã từ chối phiếu kiểm kho", "success");
+                        loadData(params);
+                      } else {
+                        showToast(res.message ?? "Từ chối thất bại", "error");
+                      }
                     },
-                    defaultText: "Xác nhận",
-                    defaultAction: () => {
-                      showToast("Xuất hàng thành công!", "success");
-                      loadData(params);
-                      setShowDialog(false);
-                      setContentDialog(null);
-                    },
-                  });
-                  setShowDialog(true);
-                },
+                    "Từ chối"
+                  ),
               },
             ].filter(Boolean) as IAction[],
         };
 
-      case "check":
-        return {
-          titles: ["STT", "Sản phẩm", "Tồn hệ thống", "Tồn thực tế", "Chênh lệch", "Giá vốn", "Giá trị CL", "Kết quả"],
-          dataFormat: ["text-center", "", "text-center", "text-center", "text-center", "text-right", "text-right", "text-center"],
-          items: listCheck,
-          dataMappingArray: (item: IStockCheckItem, index: number) => [
-            getPageOffset(params) + index + 1,
-            <div key={item.productId}>
-              <div className="inventory__product-name">{item.productName}</div>
-              <div className="inventory__product-code">{item.productCode}</div>
-            </div>,
-            `${item.systemStock} ${item.unitName}`,
-            `${item.actualStock} ${item.unitName}`,
-            <span
-              key={`diff-${item.productId}`}
-              className={`inventory__diff ${item.difference > 0 ? "positive" : item.difference < 0 ? "negative" : "zero"}`}
-            >
-              {item.difference > 0 ? `+${item.difference}` : item.difference} {item.unitName}
-            </span>,
-            formatCurrency(item.avgCost) + "đ",
-            <span key={`amt-${item.productId}`} className={`inventory__diff ${item.diffAmount >= 0 ? "positive" : "negative"}`}>
-              {item.diffAmount >= 0 ? "+" : ""}
-              {formatCurrency(item.diffAmount)}đ
-            </span>,
-            item.difference === 0 ? (
-              <span className="status__item--signature status__item--signature-success">Khớp</span>
-            ) : (
-              <span className="status__item--signature status__item--signature-warning">Lệch</span>
-            ),
-          ],
-          actions: (_item: IStockCheckItem): IAction[] => [],
-        };
-
-      case "cost":
-        return {
-          titles: ["STT", "Sản phẩm", "Tồn kho", "Giá vốn hiện tại", "Giá trị tồn", "Lần nhập cuối", "Giá vốn mới", "Lợi nhuận/SP"],
-          dataFormat: ["text-center", "", "text-center", "text-right", "text-right", "", "text-right", "text-right"],
-          items: listStock,
-          dataMappingArray: (item: IStockItem, index: number) => {
-            const lastImport = MOCK_IMPORT_ORDERS.filter((o) => o.status === 1)
-              .flatMap((o) => o.items.filter((i) => i.productId === item.productId))
-              .pop();
-
-            const newAvgCost = lastImport
-              ? costMethod === "average"
-                ? calcAverage(item.currentStock, item.avgCost, lastImport.quantity, lastImport.priceUnit)
-                : calcFIFO(item.productId, lastImport.quantity)
-              : item.avgCost;
-
-            const lastExport = MOCK_EXPORT_ORDERS.filter((o) => o.status === 1)
-              .flatMap((o) => o.items.filter((i) => i.productId === item.productId))
-              .pop();
-
-            const profitPerUnit = lastExport ? lastExport.priceUnit - newAvgCost : null;
-
-            return [
-              getPageOffset(params) + index + 1,
-              <div key={item.id}>
-                <div className="inventory__product-name">{item.productName}</div>
-                <div className="inventory__product-code">{item.productCode}</div>
-              </div>,
-              `${item.currentStock} ${item.unitName}`,
-              formatCurrency(item.avgCost) + "đ",
-              formatCurrency(item.currentStock * item.avgCost) + "đ",
-              lastImport ? `${lastImport.quantity} ${item.unitName} × ${formatCurrency(lastImport.priceUnit)}đ` : "—",
-              <span
-                key={`new-cost-${item.id}`}
-                className={newAvgCost > item.avgCost ? "inventory__cost--up" : newAvgCost < item.avgCost ? "inventory__cost--down" : ""}
-              >
-                {formatCurrency(newAvgCost)}đ {newAvgCost > item.avgCost ? "▲" : newAvgCost < item.avgCost ? "▼" : ""}
-              </span>,
-              profitPerUnit !== null ? (
-                <span key={`profit-${item.id}`} className={profitPerUnit >= 0 ? "inventory__profit--positive" : "inventory__profit--negative"}>
-                  {profitPerUnit >= 0 ? "+" : ""}
-                  {formatCurrency(profitPerUnit)}đ
-                </span>
-              ) : (
-                "—"
-              ),
-            ];
-          },
-          actions: (_item: IStockItem): IAction[] => [],
-        };
+      // ── Xuất hàng / Giá vốn → placeholder ───────────────────────────────
+      default:
+        return null;
     }
   };
 
   const tableConfig = getTableConfig();
+
+  // ── Coming-soon panel cho Xuất hàng / Giá vốn ───────────────────────────
+  const renderComingSoon = () => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "60px 20px",
+        color: "var(--extra-color-50)",
+        gap: 12,
+      }}
+    >
+      <Icon name="Construction" style={{ width: 48, opacity: 0.4 }} />
+      <span style={{ fontSize: "1.5rem", fontWeight: 600 }}>Tính năng đang được phát triển</span>
+      <span style={{ fontSize: "1.3rem" }}>
+        {activeTab === "export"
+          ? "Xuất hàng sẽ được đồng bộ tự động từ đơn bán hàng."
+          : "Báo cáo giá vốn (FIFO / Bình quân) sẽ sớm ra mắt."}
+      </span>
+    </div>
+  );
 
   return (
     <div className={`page-content page-inventory-management${isNoItem ? " bg-white" : ""}`}>
@@ -656,7 +627,7 @@ export default function InventoryManagement() {
             <div
               key={tab.key}
               className={`inventory__tab-item ${activeTab === tab.key ? "active" : ""}`}
-              onClick={() => setActiveTab(tab.key as TabType)}
+              onClick={() => setActiveTab(tab.key)}
             >
               <Icon name={tab.icon} style={{ width: 16 }} />
               <span>{tab.label}</span>
@@ -664,30 +635,23 @@ export default function InventoryManagement() {
           ))}
         </div>
 
-        {/* Cost method selector - chỉ hiện ở tab giá vốn */}
-        {activeTab === "cost" && (
-          <div className="inventory__cost-method">
-            <span className="cost-method__label">Phương pháp tính:</span>
-            <div className="cost-method__options">
-              <div className={`cost-method__item ${costMethod === "average" ? "active" : ""}`} onClick={() => setCostMethod("average")}>
-                Bình quân gia quyền
-              </div>
-              <div className={`cost-method__item ${costMethod === "fifo" ? "active" : ""}`} onClick={() => setCostMethod("fifo")}>
-                FIFO
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Status filter - chỉ hiện ở tab nhập/xuất */}
-        {(activeTab === "import" || activeTab === "export") && (
+        {/* Sub status filter – hiển thị ở tab nhập và kiểm kho */}
+        {(activeTab === "import" || activeTab === "check") && (
           <div className="inventory__status-tabs">
-            {[
-              { label: "Tất cả", value: "" },
-              { label: "Nháp", value: "0" },
-              { label: "Hoàn thành", value: "1" },
-              { label: "Đã hủy", value: "2" },
-            ].map((tab) => (
+            {(activeTab === "import"
+              ? [
+                  { label: "Tất cả",    value: "" },
+                  { label: "Nháp",      value: "0" },
+                  { label: "Hoàn thành",value: "1" },
+                  { label: "Đã hủy",   value: "2" },
+                ]
+              : [
+                  { label: "Tất cả",    value: "" },
+                  { label: "Chờ duyệt", value: "0" },
+                  { label: "Hoàn thành",value: "1" },
+                  { label: "Từ chối",   value: "2" },
+                ]
+            ).map((tab) => (
               <div
                 key={tab.value}
                 className={`inventory__status-tab ${params.status === tab.value ? "active" : ""}`}
@@ -699,64 +663,63 @@ export default function InventoryManagement() {
           </div>
         )}
 
-        <SearchBox
-          name={activeTab === "import" ? "Mã phiếu / Nhà cung cấp" : activeTab === "export" ? "Mã phiếu / Khách hàng" : "Tên sản phẩm"}
-          params={params}
-          updateParams={(p) => setParams(p)}
-        />
-
-        {!isLoading && tableConfig.items.length > 0 ? (
-          <BoxTable
-            name="Kho hàng"
-            titles={tableConfig.titles}
-            items={tableConfig.items}
-            isPagination={true}
-            dataPagination={pagination}
-            dataMappingArray={(item, index) => tableConfig.dataMappingArray(item, index)}
-            dataFormat={tableConfig.dataFormat}
-            striped={true}
-            isBulkAction={false}
-            actions={tableConfig.actions}
-            actionType="inline"
+        {/* SearchBox */}
+        {activeTab !== "export" && activeTab !== "cost" && (
+          <SearchBox
+            name={
+              activeTab === "import" ? "Mã phiếu / Nhà cung cấp"
+              : activeTab === "check" ? "Mã phiếu kiểm kho"
+              : "Tên sản phẩm"
+            }
+            params={params}
+            updateParams={(p) => setParams(p)}
           />
-        ) : isLoading ? (
-          <Loading />
-        ) : (
-          <Fragment>
-            {isNoItem ? (
-              <SystemNotification
-                description={
-                  <span>
-                    Không có dữ liệu.
-                    <br />
-                    Hãy thêm mới nhé!
-                  </span>
-                }
-                type="no-item"
-              />
-            ) : (
-              <SystemNotification description={<span>Không có dữ liệu trùng khớp.</span>} type="no-result" />
-            )}
-          </Fragment>
         )}
+
+        {/* Content */}
+        {activeTab === "export" || activeTab === "cost"
+          ? renderComingSoon()
+          : isLoading
+          ? <Loading />
+          : tableConfig && tableConfig.items.length > 0
+          ? (
+            <BoxTable
+              name="Kho hàng"
+              titles={tableConfig.titles}
+              items={tableConfig.items}
+              isPagination={true}
+              dataPagination={pagination}
+              dataMappingArray={(item, index) => tableConfig.dataMappingArray(item, index)}
+              dataFormat={tableConfig.dataFormat}
+              striped={true}
+              isBulkAction={false}
+              actions={tableConfig.actions}
+              actionType="inline"
+            />
+          )
+          : (
+            <Fragment>
+              {isNoItem ? (
+                <SystemNotification
+                  description={
+                    <span>
+                      Không có dữ liệu.
+                      <br />
+                      Hãy thêm mới nhé!
+                    </span>
+                  }
+                  type="no-item"
+                />
+              ) : (
+                <SystemNotification
+                  description={<span>Không có dữ liệu trùng khớp. Thử thay đổi tiêu chí tìm kiếm.</span>}
+                  type="no-result"
+                />
+              )}
+            </Fragment>
+          )}
       </div>
 
-      {/* <AddImportOrderModal
-        onShow={showImportModal}
-        data={dataImport}
-        onHide={(reload) => {
-          if (reload) loadData(params);
-          setShowImportModal(false);
-        }}
-      /> */}
-      {/* <AddExportOrderModal
-        onShow={showExportModal}
-        data={dataExport}
-        onHide={(reload) => {
-          if (reload) loadData(params);
-          setShowExportModal(false);
-        }}
-      /> */}
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );
