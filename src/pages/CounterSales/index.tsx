@@ -207,16 +207,22 @@ const CounterSales: React.FC = () => {
           {activeTab === "draft" && (
             <div className="counter-sales__screen">
               <DraftOrders
-                onContinue={(draftId) => {
-                  document.dispatchEvent(
-                    new CustomEvent("draft:continue", { detail: { draftId } })
-                  );
+                onContinue={(cartItemsFromDraft, draftLabel) => {
+                  // Load thẳng cartItems vào giỏ, chuyển tab POS
+                  // (không dùng navigate vì đang ở cùng route /create_sale_add)
+                  if (cartItemsFromDraft.length > 0) {
+                    setCartItems(cartItemsFromDraft);
+                    showToast(
+                      `Đã tải ${cartItemsFromDraft.length} sản phẩm từ ${draftLabel}`,
+                      "success"
+                    );
+                  }
                   setActiveTab("pos");
                   fetchTabCounts();
                 }}
                 onDeleted={() => {
-                  setDraftCount(prev => Math.max(0, prev - 1)); // ← cập nhật tức thì
-                  fetchTabCounts();                              // ← đồng bộ số thật
+                  setDraftCount(prev => Math.max(0, prev - 1));
+                  fetchTabCounts();
                 }}
               />
             </div>

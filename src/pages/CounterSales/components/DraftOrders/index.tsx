@@ -4,10 +4,15 @@ import "./index.scss";
 import DraftListPanel from "./partials/DraftListPanel";
 import DraftDetailPanel from "./partials/DraftDetailPanel";
 import { useDraftOrders } from "./partials/hooks/useDraftOrders";
+import { CartItemForDraft } from "./types";
 
 type Props = {
-  onContinue?: (draftId: string) => void;
-  /** Gọi sau khi xóa thành công → CounterSales dùng để refresh badge */
+  /**
+   * Gọi khi "Tiếp tục xử lý" — trả cartItems + label đơn tạm trực tiếp
+   * để CounterSales load vào giỏ hàng mà không cần navigate.
+   */
+  onContinue?: (cartItems: CartItemForDraft[], draftLabel: string) => void;
+  /** Gọi sau khi xóa thành công → CounterSales refresh badge */
   onDeleted?:  () => void;
 };
 
@@ -35,7 +40,7 @@ const DraftOrders: React.FC<Props> = ({ onContinue, onDeleted }) => {
       cancelAction:  () => { setShowDialog(false); setContentDialog(null); },
       defaultText:   "Xóa",
       defaultAction: () => {
-        vm.deleteDraft(id);   // onDeleted được gọi bên trong hook sau khi xóa OK
+        vm.deleteDraft(id);
         setShowDialog(false);
         setContentDialog(null);
       },
@@ -71,7 +76,7 @@ const DraftOrders: React.FC<Props> = ({ onContinue, onDeleted }) => {
       <DraftDetailPanel
         order={vm.selected}
         onDelete={(id) => askDelete(id)}
-        onContinue={onContinue}
+        onContinue={(cartItems, label) => onContinue?.(cartItems, label)}
         deleting={vm.deleting}
       />
 

@@ -1,19 +1,20 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { DraftOrder } from "../types";
+import { DraftOrder, CartItemForDraft } from "../types";
 import DraftItemsTable from "./DraftItemsTable";
 import DraftSummary from "./DraftSummary";
 
 type Props = {
   order:      DraftOrder | null;
   onDelete:   (id: string) => void;
-  onContinue?: (draftId: string) => void;
+  /**
+   * Truyền cartItems + label đơn tạm lên để CounterSales load vào giỏ.
+   * Không dùng navigate() vì đang ở cùng route với CounterSales.
+   */
+  onContinue?: (cartItems: CartItemForDraft[], draftLabel: string) => void;
   deleting?:  string | null;
 };
 
 const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue, deleting }) => {
-  const navigate = useNavigate();
-
   if (!order) {
     return (
       <div className="draft-right">
@@ -33,17 +34,9 @@ const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue, deleti
   const isDeleting = deleting === order.id;
 
   const handleContinue = () => {
-    // Dùng cùng pattern với "Tái tạo đơn" trong OrderList:
-    // navigate về trang POS với preloadCart + fromDraftId trong location.state.
-    // CounterSales.useEffect sẽ đọc state, load lại giỏ hàng và chuyển tab POS.
-    navigate("/create_sale_add", {
-      state: {
-        preloadCart:   order.cartItems ?? [],
-        fromDraftId:   order.invoiceId,
-        fromInvoiceCode: order.tenDon,
-      },
-    });
-    onContinue?.(order.id);
+    const cartItems: CartItemForDraft[] = order.cartItems ?? [];
+    if (cartItems.length === 0) return;
+    onContinue?.(cartItems, order.tenDon);
   };
 
   return (
@@ -71,7 +64,7 @@ const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue, deleti
           <button
             className="btn btn--ink btn--sm"
             onClick={handleContinue}
-            disabled={isDeleting || (order.sanPhams ?? []).length === 0}
+            disabled={isDeleting || (order.cartItems ?? []).length === 0}
           >
             ⚡ Tiếp tục xử lý
           </button>
