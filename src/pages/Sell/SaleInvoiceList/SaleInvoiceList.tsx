@@ -3,7 +3,7 @@ import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { IInvoiceFilterRequest } from "model/invoice/InvoiceRequestModel";
-import { showToast } from "utils/common";
+import { showToast, toApiDateFormat, formatDisplayDate } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
 import InvoiceService from "services/InvoiceService";
 import "./SaleInvoiceList.scss";
@@ -16,12 +16,12 @@ import ReceiptModal from "@/pages/CounterSales/components/modals/ReceiptModal";
 
 // Map frontend status string → backend integer
 const STATUS_TO_INT: Record<string, number> = {
-  all:       -1,
-  pending:    2,
-  success:    1,
-  cancelled:  3,
+  all: -1,
+  pending: 2,
+  success: 1,
+  cancelled: 3,
   // "shipping" maps to pending too since backend doesn't have a separate shipping status
-  shipping:   2,
+  shipping: 2,
 };
 
 export default function SaleInvoiceList() {
@@ -31,18 +31,18 @@ export default function SaleInvoiceList() {
   const isMounted = useRef(false);
 
   // ── Modal state ────────────────────────────────────────────────────────────
-  const [invoiceId,            setInvoiceId]            = useState<number | null>(null);
-  const [receiptModalOpen,     setReceiptModalOpen]     = useState(false);
+  const [invoiceId, setInvoiceId] = useState<number | null>(null);
+  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
   const [orderDetailModalOpen, setOrderDetailModalOpen] = useState(false);
-  const [searchParams,         setSearchParams]         = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // ── List + loading state ───────────────────────────────────────────────────
   const [listSaleInvoice, setListSaleInvoice] = useState<Order[]>([]);
-  const [isLoading,       setIsLoading]       = useState(true);
-  const [isNoItem,        setIsNoItem]        = useState(false);
-  const [totalItem,       setTotalItem]       = useState(0);
-  const [currentPage,     setCurrentPage]     = useState(1);
-  const [totalPage,       setTotalPage]       = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isNoItem, setIsNoItem] = useState(false);
+  const [totalItem, setTotalItem] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   // ── Status counts from API response ───────────────────────────────────────
   const [statusCounts, setStatusCounts] = useState<StatusCounts>({
@@ -50,10 +50,10 @@ export default function SaleInvoiceList() {
   });
 
   // ── Filter state (owned here, passed down to OrderList) ───────────────────
-  const [activeFilter,  setActiveFilter]  = useState<"all"|"pending"|"shipping"|"success"|"cancelled">("all");
-  const [searchText,    setSearchText]    = useState("");
-  const [fromDate,      setFromDate]      = useState("");
-  const [toDate,        setToDate]        = useState("");
+  const [activeFilter, setActiveFilter] = useState<"all" | "pending" | "shipping" | "success" | "cancelled">("all");
+  const [searchText, setSearchText] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const [params, setParams] = useState<IInvoiceFilterRequest>({
     invoiceTypes: JSON.stringify(["IV1", "IV3"]),
@@ -69,29 +69,29 @@ export default function SaleInvoiceList() {
 
   // ── Map API item → Order ───────────────────────────────────────────────────
   const mapToOrder = (item: any): Order => ({
-    id:          item.invoiceId,
-    code:        item.invoice.invoiceCode,
-    source:      "offline",
+    id: item.invoiceId,
+    code: item.invoice.invoiceCode,
+    source: "offline",
     sourceLabel: "Bán hàng tại quầy",
-    status:      item.invoice.status === 1 ? "success"
-               : item.invoice.status === 2 ? "pending"
-               : "cancelled",
+    status: item.invoice.status === 1 ? "success"
+      : item.invoice.status === 2 ? "pending"
+        : "cancelled",
     statusLabel: item.invoice.status === 1 ? "Hoàn thành"
-               : item.invoice.status === 2 ? "Chờ xử lý"
-               : "Đã hủy",
-    time:     item?.invoice?.createdTime
-              ? moment(item.invoice.createdTime).format("DD/MM/YYYY · HH:mm")
-              : "",
+      : item.invoice.status === 2 ? "Chờ xử lý"
+        : "Đã hủy",
+    time: item?.invoice?.createdTime
+      ? formatDisplayDate(item.invoice.createdTime, true)
+      : "",
     customer: {
-      id:      item.customerId,
-      name:    item?.invoice?.customerName || "Khách vãng lai",
-      phone:   item.customerPhone || "",
+      id: item.customerId,
+      name: item?.invoice?.customerName || "Khách vãng lai",
+      phone: item.customerPhone || "",
       initial: item?.invoice?.customerName
-               ? item.invoice.customerName.charAt(0).toUpperCase()
-               : "K",
-      points:  item.customerPoints ?? 0,
-      tier:    item.customerTier ?? "",
-      color:   "#2563eb",
+        ? item.invoice.customerName.charAt(0).toUpperCase()
+        : "K",
+      points: item.customerPoints ?? 0,
+      tier: item.customerTier ?? "",
+      color: "#2563eb",
     },
     items: [...(item.products || []), ...(item.services || [])]
       .map((i: any) => {
@@ -134,13 +134,13 @@ export default function SaleInvoiceList() {
         if (result.statusCounts) {
           // Backend: 1=done, 2=pending, 3=cancel
           const sc = result.statusCounts;
-          const done     = Number(sc[1] ?? 0);
-          const pending  = Number(sc[2] ?? 0);
-          const cancel   = Number(sc[3] ?? 0);
+          const done = Number(sc[1] ?? 0);
+          const pending = Number(sc[2] ?? 0);
+          const cancel = Number(sc[3] ?? 0);
           setStatusCounts({
-            all:       done + pending + cancel,
-            success:   done,
-            pending:   pending,
+            all: done + pending + cancel,
+            success: done,
+            pending: pending,
             cancelled: cancel,
           });
         }
@@ -161,7 +161,7 @@ export default function SaleInvoiceList() {
     filter: typeof activeFilter,
     keyword: string,
     from: string,
-    to:   string,
+    to: string,
     page: number,
     append = false
   ) => {
@@ -171,43 +171,44 @@ export default function SaleInvoiceList() {
     // Backend dùng invoiceCode (likeRegex) để tìm theo mã HĐ
     // keyword hiện không lọc gì trên backend nên dùng invoiceCode
     if (keyword?.trim()) newParams.invoiceCode = keyword.trim();
-    else                 delete newParams.invoiceCode;
+    else delete newParams.invoiceCode;
 
-    if (from?.trim())    newParams.fromDate    = from.trim();
-    else                 delete newParams.fromDate;
+    // Trong applyFilters (thay thế dòng 176-180):
+    if (from?.trim()) newParams.fromDate = toApiDateFormat(from.trim());
+    else delete newParams.fromDate;
 
-    if (to?.trim())      newParams.toDate      = to.trim();
-    else                 delete newParams.toDate;
+    if (to?.trim()) newParams.toDate = toApiDateFormat(to.trim());
+    else delete newParams.toDate;
 
-    if (statusInt > 0)   newParams.status      = statusInt;
-    else                 delete newParams.status;
+    if (statusInt > 0) newParams.status = statusInt;
+    else delete newParams.status;
 
     // Xóa keyword cũ nếu còn tồn tại
     delete newParams.keyword;
 
     setParams(newParams);
     fetchList(newParams, append);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   // Initial load when branch loaded
   useEffect(() => {
     if (!isMounted.current) { isMounted.current = true; return; }
     applyFilters(activeFilter, searchText, fromDate, toDate, 1);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataBranch]);
 
   // First mount with URL params
   useEffect(() => {
     const urlFromDate = searchParams.get("fromDate") || "";
-    const urlToDate   = searchParams.get("toDate")   || "";
+    const urlToDate = searchParams.get("toDate") || "";
     if (urlFromDate) setFromDate(urlFromDate);
-    if (urlToDate)   setToDate(urlToDate);
+    if (urlToDate) setToDate(urlToDate);
     const initParams: IInvoiceFilterRequest = { ...params };
     if (urlFromDate) initParams.fromDate = urlFromDate;
-    if (urlToDate)   initParams.toDate   = urlToDate;
+    if (urlToDate) initParams.toDate = urlToDate;
     fetchList(initParams);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Filter change handlers ─────────────────────────────────────────────────
@@ -237,7 +238,7 @@ export default function SaleInvoiceList() {
 
   // ── Modal handlers ─────────────────────────────────────────────────────────
   const handleViewReceipt = useCallback(() => setReceiptModalOpen(true), []);
-  const handleViewDetail  = useCallback((id: number | null) => {
+  const handleViewDetail = useCallback((id: number | null) => {
     setInvoiceId(id);
     setOrderDetailModalOpen(true);
   }, []);

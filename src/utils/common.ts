@@ -548,3 +548,69 @@ export const getField = (str) => {
 
   return str;
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DATE UTILITIES
+// Tập trung xử lý date format dùng chung toàn project.
+// Backend (Java) expect format "dd/MM/yyyy", còn HTML <input type="date">
+// luôn trả về "yyyy-MM-dd" — cần convert trước khi gửi API.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Chuyển date string từ bất kỳ format nào sang "dd/MM/yyyy" (format backend).
+ * - "2026-03-22"              → "22/03/2026"  (ISO, từ input[type=date])
+ * - "22/03/2026"              → "22/03/2026"  (đã đúng, giữ nguyên)
+ * - "2026-03-22T00:00:00"     → "22/03/2026"  (ISO datetime)
+ * - ""  / null / undefined    → ""
+ */
+export const toApiDateFormat = (dateStr: string | null | undefined): string => {
+  if (!dateStr?.trim()) return "";
+  const s = dateStr.trim();
+
+  // Đã đúng format dd/MM/yyyy
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s;
+
+  // yyyy-MM-dd hoặc yyyy-MM-ddTHH:mm:ss (ISO từ input type="date")
+  const isoMatch = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoMatch) return `${isoMatch[3]}/${isoMatch[2]}/${isoMatch[1]}`;
+
+  // Fallback: dùng moment nếu format lạ khác
+  const m = moment(s);
+  return m.isValid() ? m.format("DD/MM/YYYY") : "";
+};
+
+/**
+ * Chuyển date string từ backend "dd/MM/yyyy" → "yyyy-MM-dd" cho input[type=date].
+ * - "22/03/2026" → "2026-03-22"
+ */
+export const toInputDateFormat = (dateStr: string | null | undefined): string => {
+  if (!dateStr?.trim()) return "";
+  const match = dateStr.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (match) return `${match[3]}-${match[2]}-${match[1]}`;
+  return dateStr;
+};
+
+/**
+ * Format date để hiển thị UI: "22/03/2026" hoặc "22/03/2026 · 14:30"
+ * @param dateStr  - ISO string, timestamp, hoặc bất kỳ format moment nhận được
+ * @param showTime - có hiển thị giờ phút hay không (default: false)
+ */
+export const formatDisplayDate = (
+  dateStr: string | number | null | undefined,
+  showTime = false
+): string => {
+  if (!dateStr) return "";
+  const m = moment(dateStr);
+  if (!m.isValid()) return "";
+  return showTime ? m.format("DD/MM/YYYY · HH:mm") : m.format("DD/MM/YYYY");
+};
+
+/**
+ * Lấy ngày hôm nay ở format "dd/MM/yyyy" (format API).
+ */
+export const todayApiFormat = (): string => moment().format("DD/MM/YYYY");
+
+/**
+ * Lấy ngày hôm nay ở format "yyyy-MM-dd" (format HTML input[type=date]).
+ */
+export const todayInputFormat = (): string => moment().format("YYYY-MM-DD");
