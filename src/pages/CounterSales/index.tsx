@@ -104,15 +104,6 @@ const CounterSales: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Cart actions
-  const handleAddToCart = useCallback((item: Omit<CartItem, "qty"> & { qty: number }) => {
-    setCartItems((prev) => {
-      const existing = prev.find((c) => c.variantId === item.variantId);
-      if (existing) return prev.map((c) => (c.variantId === item.variantId ? { ...c, qty: c.qty + item.qty } : c));
-      return [...prev, { ...item, qty: item.qty }];
-    });
-  }, []);
-
   // ── Kiểm tra khuyến mãi (debounce 600ms) ────────────────────────────────
   const checkEligiblePromos = React.useCallback((items: CartItem[], cust: typeof customer) => {
     if (checkPromoRef.current) clearTimeout(checkPromoRef.current);
@@ -183,9 +174,56 @@ const CounterSales: React.FC = () => {
 
         setEligiblePromos(eligible);
         setIneligiblePromos(ineligible);
-      } catch { /* không block UX */ }
+      } catch {        
+        // API chưa sẵn sàng — vẫn chạy mock để test UI
+        const DEV_MOCK_FALLBACK = true;
+        if (DEV_MOCK_FALLBACK) {
+          const orderAmount = items.reduce((s, c) => s + c.price * c.qty, 0);
+          setEligiblePromos([
+            {
+              id: 901,
+              name: "Tặng ốp lưng khi mua iPhone",
+              promotionType: 2,
+              discountAmount: 0,
+              gifts: [
+                {
+                  productId: 999, productName: "Ốp lưng iPhone 15 chính hãng",
+                  avatar: "", unitName: "Cái", qty: 1
+                },
+              ],
+            },
+            {
+              id: 902,
+              name: "Giảm 10% đơn trên 15M",
+              promotionType: 1, discountType: 1, discount: 10,
+              discountAmount: Math.round(orderAmount * 0.1),
+              gifts: [],
+            },
+          ]);
+          setIneligiblePromos([
+            {
+              id: 903,
+              name: "Giảm 15% đơn VIP",
+              promotionType: 1, discount: 15, discountType: 1,
+              reason: "Khách hàng chưa đạt hạng Vàng (đang hạng Đồng)",
+            },
+          ]);
+        }
+      }
     }, 600);
   }, []);
+
+  // Cart actions
+  const handleAddToCart = useCallback((item: Omit<CartItem, "qty"> & { qty: number }) => {
+    setCartItems((prev) => {
+      const existing = prev.find((c) => c.variantId === item.variantId);
+      const next = existing
+        ? prev.map((c) => (c.variantId === item.variantId ? { ...c, qty: c.qty + item.qty } : c))
+        : [...prev, { ...item, qty: item.qty }];
+      checkEligiblePromos(next, customer);
+      return next;
+    });
+  }, [customer, checkEligiblePromos]);
 
   const handleChangeQty = useCallback((id: string, delta: number) => {
     setCartItems((prev) => {
