@@ -1,151 +1,219 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Tạo phiếu nhập kho — 2-column layout
+// ─────────────────────────────────────────────────────────────────────────────
+
 .page__create--invoice {
-  .wrapper__product--import {
-    .card-box {
-      overflow: hidden;
 
-      .create-receipt__invoice-picker {
-        padding: 2rem 2rem 0;
+  // ── 2-column grid ──────────────────────────────────────────────────────────
+  .cr-layout {
+    display: grid;
+    grid-template-columns: 1fr 36rem;
+    gap: 1.6rem;
+    align-items: start;
 
-        .create-receipt__invoice-filter-row {
-          display: flex;
-          align-items: flex-end;
-          justify-content: space-between;
-          gap: 1.2rem;
-          flex-wrap: wrap;
-        }
+    @media (max-width: 1100px) {
+      grid-template-columns: 1fr;
+    }
+  }
 
-        .create-receipt__invoice-filter {
-          display: flex;
-          gap: 0.8rem;
-          flex-wrap: wrap;
-        }
+  // Sidebar luôn hiện tại vị trí, không cuộn cùng trang
+  .cr-layout__sidebar {
+    position: sticky;
+    top: 7rem;    // chiều cao topbar
+  }
 
-        .create-receipt__invoice-select {
-          width: min(42rem, 100%);
-          flex: 1 1 32rem;
-        }
+  .cr-layout__main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    min-width: 0;
+  }
 
-        .create-receipt__invoice-select-control {
-          margin-bottom: 0;
-        }
+  // ── Invoice picker card ─────────────────────────────────────────────────────
+  .cr-picker-card {
+    padding: 1.6rem 2rem;
 
-        .create-receipt__invoice-filter-btn {
-          border: 1px solid var(--border-color);
-          background: #fff;
-          border-radius: 0.6rem;
-          padding: 0 1.2rem;
-          min-height: 4rem;
-          font-size: 1.3rem;
-          color: var(--text-extra-color);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
+    &__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+    }
 
-          &.active {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            font-weight: 600;
-          }
-        }
-      }
+    &__label {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text-primary-color);
+      white-space: nowrap;
+    }
 
-      .create-receipt__invoice-option {
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
-      }
+    &__filters {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+  }
 
-      .create-receipt__invoice-value {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-      }
+  .cr-filter-btn {
+    border: 1px solid var(--border-color);
+    background: #fff;
+    border-radius: 2rem;
+    padding: 0 1.2rem;
+    min-height: 3.2rem;
+    font-size: 1.25rem;
+    color: var(--text-extra-color);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
 
-      .create-receipt__invoice-option-title {
-        font-weight: 600;
-      }
+    &.active {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      background: rgba(var(--primary-rgb, 58, 100, 220), 0.06);
+      font-weight: 600;
+    }
 
-      .create-receipt__invoice-option-meta {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        color: var(--text-extra-color);
-        font-size: 1.2rem;
-      }
+    &:hover:not(.active) {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+  }
 
-      .create-receipt__invoice-option-status {
-        border-radius: 999px;
-        padding: 0.2rem 0.8rem;
-        font-size: 1.1rem;
-        font-weight: 600;
-      }
+  // Invoice active bar — hiện khi đã chọn phiếu
+  .cr-invoice-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1.2rem;
+    background: var(--bg-extra-color, #f7f8fc);
+    border-radius: 0.8rem;
+    border: 1px solid var(--border-color);
 
-      .status-pending {
-        background: #fff4db;
-        color: #9a6700;
-      }
+    &__left {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
 
-      .status-approved {
-        background: #e8f6ec;
-        color: #107c41;
-      }
+    &__code {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--text-primary-color);
+    }
 
-      .status-cancelled {
-        background: #fdecec;
-        color: #d83b01;
-      }
+    &__right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-      .create-receipt__invoice-summary {
-        padding: 0 2rem 1.2rem;
-      }
+    &__amount {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
 
-      .action__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: relative;
+    &__amount-label {
+      font-size: 1.2rem;
+      color: var(--text-extra-color);
+    }
+  }
 
-        &--title {
-          width: 100%;
-          border-radius: 0.8rem 0.8rem 0 0;
-          border-bottom: 1px solid var(--border-color);
-          height: 5rem;
-          letter-spacing: 0.25px;
-          font-size: 1.4rem;
-          line-height: 2rem;
-          padding: 0 2rem;
-          color: var(--text-extra-color);
-          display: flex;
-          align-items: center;
-          gap: 2.2rem;
+  // Dropdown option label
+  .cr-invoice-option {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
 
-          li {
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            padding: 1.5rem 0 1.2rem;
-            transition: color 0.2s ease-in-out;
-            &:hover,
-            &.active {
-              border-bottom-color: var(--primary-color);
-              color: var(--text-primary-color);
-            }
-            &.active {
-              cursor: default;
-              pointer-events: none;
-            }
-          }
-        }
+    &__title { font-weight: 600; font-size: 1.3rem; }
 
-        .add__product {
-          position: absolute;
-          right: 2.2rem;
+    &__meta {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      color: var(--text-extra-color);
+      font-size: 1.2rem;
+    }
+  }
 
-          .base-button {
-            padding: 0.8rem 1rem;
-          }
-        }
-      }
+  .cr-invoice-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // ── Status badge ────────────────────────────────────────────────────────────
+  .cr-status-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.2rem 0.9rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+
+    &--pending  { background: #fff4db; color: #9a6700; }
+    &--approved { background: #e8f6ec; color: #107c41; }
+    &--cancelled { background: #fdecec; color: #d83b01; }
+  }
+
+  // ── Product table card ──────────────────────────────────────────────────────
+  .cr-product-card {
+    overflow: hidden;
+
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+
+      .base-button { padding: 0.7rem 1.2rem; font-size: 1.3rem; }
+    }
+
+    &__title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text-primary-color);
+    }
+  }
+
+  // ── Product cell in table ───────────────────────────────────────────────────
+  .product-import-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    &__name {
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--text-primary-color);
+    }
+
+    &__variant {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    &__sku {
+      font-size: 1.1rem;
+      color: var(--text-extra-color);
+      background: var(--bg-extra-color, #f0f2f5);
+      border-radius: 0.4rem;
+      padding: 0.1rem 0.5rem;
+      font-family: monospace;
+    }
+
+    &__label {
+      font-size: 1.15rem;
+      color: var(--primary-color);
+      background: rgba(var(--primary-rgb, 58,100,220), 0.08);
+      border-radius: 0.4rem;
+      padding: 0.1rem 0.6rem;
     }
   }
 }
