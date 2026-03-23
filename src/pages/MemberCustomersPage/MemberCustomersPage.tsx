@@ -55,13 +55,6 @@ export default function MemberCustomersPage() {
       des: "Thiết lập chương trình đổi điểm lấy quà, voucher hoặc ưu đãi cho hội viên"
     },
     {
-      title: "Lịch sử điểm tích lũy của khách hàng",
-      icon: "PointsHistory",
-      backgroundColor: "#F1EFE8",
-      is_tab: "points_history_ledger",
-      des: "Tra cứu toàn bộ lịch sử cộng/trừ điểm, đổi thưởng của từng khách hàng theo thời gian."
-    },
-    {
       title: "Chương trình khách hàng thân thiết",
       backgroundColor: "#fef3c7",
       icon: "LoyaltyCustomerProgram",

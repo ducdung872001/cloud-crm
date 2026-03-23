@@ -833,12 +833,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="LoginMenu" />,
         code: "",
       },
-      {
-        title: "settingDashboard", // cài đặt Dashboard
-        path: urls.setting_dashboard,
-        icon: <Icon name="ReportFill" />,
-        code: "",
-      },
+      // {
+      //   title: "settingDashboard", // cài đặt Dashboard
+      //   path: urls.setting_dashboard,
+      //   icon: <Icon name="ReportFill" />,
+      //   code: "",
+      // },
       {
         title: "settingTicket", // Cài đặt hỗ trợ
         path: urls.setting_ticket,
