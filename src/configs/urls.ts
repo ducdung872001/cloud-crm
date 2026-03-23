@@ -3459,6 +3459,7 @@ export const urls = {
   report_customer: "/report_customer",
   // điều chỉnh kho
   adjustment_slip: "/adjustment_slip",
+  destroy_slip: "/destroy_slip",
   // thông tin cá nhân
   setting_account: "/setting_account",
   setting_kpi: "/setting_kpi",
