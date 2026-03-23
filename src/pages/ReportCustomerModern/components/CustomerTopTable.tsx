@@ -1,17 +1,11 @@
 import React from "react";
 import { formatCurrency } from "reborn-util";
+import ReportPanel from "components/reportShared/ReportPanel";
 import { CUSTOMER_ROWS } from "../mockData";
 
 export default function CustomerTopTable() {
   return (
-    <div className="table-card">
-      <div className="table-header">
-        <div>
-          <h3>Danh sách khách hàng tiêu biểu</h3>
-          <span>Xếp theo doanh thu tích lũy</span>
-        </div>
-      </div>
-      <div className="table-scroll">
+    <ReportPanel className="table-card" headerClassName="table-header" bodyClassName="table-scroll" title={<h3>Danh sách khách hàng tiêu biểu</h3>} subtitle={<span>Xếp theo doanh thu tích lũy</span>}>
         <table>
           <thead>
             <tr>
@@ -38,7 +32,6 @@ export default function CustomerTopTable() {
             ))}
           </tbody>
         </table>
-      </div>
-    </div>
+    </ReportPanel>
   );
 }

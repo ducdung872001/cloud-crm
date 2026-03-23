@@ -1,6 +1,7 @@
 import React from "react";
 import SelectCustom from "components/selectCustom/selectCustom";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
+import ReportFilterShell from "components/reportShared/ReportFilterShell";
 import { GROUP_OPTIONS, WAREHOUSE_OPTIONS } from "../mockData";
 
 interface Props {
@@ -16,7 +17,7 @@ export default function InventoryFilterBar(props: Props) {
   const { groupBy, setGroupBy, warehouseId, setWarehouseId, dateRange, setDateRange } = props;
 
   return (
-    <div className="report-toolbar">
+    <ReportFilterShell className="report-toolbar">
       <div className="report-toolbar__item">
         <label>Kho</label>
         <SelectCustom id="inventoryModernWarehouse" name="inventoryModernWarehouse" options={WAREHOUSE_OPTIONS} fill value={warehouseId} onChange={(option) => setWarehouseId(option.value)} />
@@ -29,6 +30,6 @@ export default function InventoryFilterBar(props: Props) {
         <label>Khoảng thời gian</label>
         <DatePickerCustom value={dateRange} onChange={(range) => setDateRange(range)} placeholder="Chọn khoảng ngày..." />
       </div>
-    </div>
+    </ReportFilterShell>
   );
 }

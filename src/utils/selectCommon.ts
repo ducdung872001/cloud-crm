@@ -311,6 +311,9 @@ export async function SelectOptionData(key: string, params?: any) {
     case "walletId":
       response = await LoyaltyService.listLoyaltyWallet(params);
       break;
+    case "warehouseId":
+      response = await InventoryService.list(params);
+      break;
     case "loyaltyProgramId":
       response = await LoyaltyService.list(params);
       break;
