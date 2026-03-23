@@ -42,26 +42,28 @@ export default function AddTransferOrderForm(props) {
   const isReadyToAdd = !!dataInventoryOrg;
   const totalQty = lstProducts.reduce((s, i) => s + (Number(i.quanlityAffter) || 0), 0);
 
-  // ── Warehouse loaders ─────────────────────────────────────────────────────
-  const loadedOptionInventoryOrg = useCallback(async (search, loadedOptions, { page }) => {
-    const response = await InventoryService.list({ name: search, page, limit: 10 });
-    if (response.code === 0) {
-      const data = response.result ?? [];
-      const filtered = dataInventoryArrive ? data.filter((i) => i.id !== dataInventoryArrive.value) : data;
-      return { options: filtered.map((i) => ({ value: i.id, label: i.name })), hasMore: response.result?.loadMoreAble, additional: { page: page + 1 } };
-    }
-    return { options: [], hasMore: false };
-  }, [dataInventoryArrive]);
+  // ── Warehouse loader — load 1 lần, filter client-side ──────────────────────
+  const [listInventory, setListInventory] = useState<any[]>([]);
+  const [isLoadingInventory, setIsLoadingInventory] = useState(false);
 
-  const loadedOptionInventoryArrive = useCallback(async (search, loadedOptions, { page }) => {
-    const response = await InventoryService.list({ name: search, page, limit: 10 });
+  const getListInventory = useCallback(async () => {
+    if (listInventory.length > 0) return;
+    setIsLoadingInventory(true);
+    const response = await InventoryService.list({ page: 1, limit: 100 });
     if (response.code === 0) {
-      const data = response.result ?? [];
-      const filtered = dataInventoryOrg ? data.filter((i) => i.id !== dataInventoryOrg.value) : data;
-      return { options: filtered.map((i) => ({ value: i.id, label: i.name })), hasMore: response.result?.loadMoreAble, additional: { page: page + 1 } };
+      const data = Array.isArray(response.result)
+        ? response.result
+        : Array.isArray(response.result?.items) ? response.result.items : [];
+      setListInventory(data.map((i: any) => ({ value: i.id, label: i.name })));
+    } else {
+      showToast("Không lấy được danh sách kho", "error");
     }
-    return { options: [], hasMore: false };
-  }, [dataInventoryOrg]);
+    setIsLoadingInventory(false);
+  }, [listInventory.length]);
+
+  // Danh sách lọc bỏ kho đã chọn ở chiều ngược lại
+  const optionsOrg = listInventory.filter(i => i.value !== dataInventoryArrive?.value);
+  const optionsArrive = listInventory.filter(i => i.value !== dataInventoryOrg?.value);
 
   // ── Product handlers ──────────────────────────────────────────────────────
   const handChangeDataProps = (data: any[]) => {
@@ -129,6 +131,8 @@ export default function AddTransferOrderForm(props) {
         {/* ── LEFT: danh sách sản phẩm ─────────────────────────────── */}
         <div className="tf-layout__main">
           <div className="card-box tf-product-card">
+
+            {/* Header — block độc lập, không nằm trong flex container */}
             <div className="tf-product-card__header">
               <span className="tf-product-card__title">
                 <Icon name="Bill" style={{ width: 16, opacity: 0.7 }} />
@@ -147,77 +151,79 @@ export default function AddTransferOrderForm(props) {
               </Button>
             </div>
 
+            {/* Content area */}
             <div className={`tf-product-card__body${lstProducts.length > 0 ? " tf-product-card__body--has-data" : ""}`}>
               {lstProducts.length > 0 ? (
-              <div className="tf-product-table-wrapper">
-                <table className="tf-product-table">
-                  <thead>
-                    <tr>
-                      <th className="tf-col-stt">STT</th>
-                      <th>Sản phẩm</th>
-                      <th className="tf-col-center">Kho nguồn</th>
-                      <th className="tf-col-center">Đơn vị</th>
-                      <th className="tf-col-num">Tồn kho</th>
-                      <th className="tf-col-num tf-col-input">SL chuyển</th>
-                      <th>Ghi chú</th>
-                      <th className="tf-col-action"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {lstProducts.map((item, idx) => (
-                      <tr key={idx} className="tf-product-row">
-                        <td className="tf-col-stt">{idx + 1}</td>
-                        <td>
-                          <div className="tf-product-name">{item.productName}</div>
-                        </td>
-                        <td className="tf-col-center">
-                          <span className="tf-tag">{item.inventoryName}</span>
-                        </td>
-                        <td className="tf-col-center">{item.unitName || "—"}</td>
-                        <td className="tf-col-num">
-                          <span className="tf-qty-current">{item.quanlityBefor ?? "—"}</span>
-                        </td>
-                        <td className="tf-col-num tf-col-input">
-                          <NummericInput
-                            name={`qty-${idx}`} id={`qty-${idx}`}
-                            fill={true} value={item.quanlityAffter} placeholder="0"
-                            onValueChange={(e) => handleChangeQty(e.floatValue, idx)}
-                            className="tf-qty-input"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            className="tf-reason-input"
-                            placeholder="Ghi chú..."
-                            value={item.reason}
-                            onChange={(e) => handleChangeReason(e.target.value, idx)}
-                          />
-                        </td>
-                        <td className="tf-col-action">
-                          <button type="button" className="tf-remove-btn" onClick={() => handleRemove(idx)} title="Xóa">
-                            <Icon name="Times" style={{ width: 14 }} />
-                          </button>
-                        </td>
+                <div className="tf-product-table-wrapper">
+                  <table className="tf-product-table">
+                    <thead>
+                      <tr>
+                        <th className="tf-col-stt">STT</th>
+                        <th>Sản phẩm</th>
+                        <th className="tf-col-center">Kho nguồn</th>
+                        <th className="tf-col-center">Đơn vị</th>
+                        <th className="tf-col-num">Tồn kho</th>
+                        <th className="tf-col-num tf-col-input">SL chuyển</th>
+                        <th>Ghi chú</th>
+                        <th className="tf-col-action"></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <SystemNotification
-                description={
-                  <span>
-                    {isReadyToAdd
-                      ? <>Chưa có sản phẩm nào. Nhấn <strong>Thêm sản phẩm</strong> để bắt đầu.</>
-                      : <>Vui lòng chọn <strong>kho nguồn</strong> ở bên phải trước.</>}
-                  </span>
-                }
-                type="no-item"
-                titleButton={isReadyToAdd ? "Thêm sản phẩm cần chuyển kho" : undefined}
-                action={isReadyToAdd ? () => setShowModalAdd(true) : undefined}
-              />
-            )}
-            </div>{/* end tf-product-card__body */}
+                    </thead>
+                    <tbody>
+                      {lstProducts.map((item, idx) => (
+                        <tr key={idx} className="tf-product-row">
+                          <td className="tf-col-stt">{idx + 1}</td>
+                          <td>
+                            <div className="tf-product-name">{item.productName}</div>
+                          </td>
+                          <td className="tf-col-center">
+                            <span className="tf-tag">{item.inventoryName}</span>
+                          </td>
+                          <td className="tf-col-center">{item.unitName || "—"}</td>
+                          <td className="tf-col-num">
+                            <span className="tf-qty-current">{item.quanlityBefor ?? "—"}</span>
+                          </td>
+                          <td className="tf-col-num tf-col-input">
+                            <NummericInput
+                              name={`qty-${idx}`} id={`qty-${idx}`}
+                              fill={true} value={item.quanlityAffter} placeholder="0"
+                              onValueChange={(e) => handleChangeQty(e.floatValue, idx)}
+                              className="tf-qty-input"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              className="tf-reason-input"
+                              placeholder="Ghi chú..."
+                              value={item.reason}
+                              onChange={(e) => handleChangeReason(e.target.value, idx)}
+                            />
+                          </td>
+                          <td className="tf-col-action">
+                            <button type="button" className="tf-remove-btn" onClick={() => handleRemove(idx)} title="Xóa">
+                              <Icon name="Times" style={{ width: 14 }} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <SystemNotification
+                  description={
+                    <span>
+                      {isReadyToAdd
+                        ? <>Chưa có sản phẩm nào. Nhấn <strong>Thêm sản phẩm</strong> để bắt đầu.</>
+                        : <>Vui lòng chọn <strong>kho nguồn</strong> ở bên phải trước.</>}
+                    </span>
+                  }
+                  type="no-item"
+                  titleButton={isReadyToAdd ? "Thêm sản phẩm cần chuyển kho" : undefined}
+                  action={isReadyToAdd ? () => setShowModalAdd(true) : undefined}
+                />
+              )}
+            </div>
+
           </div>
         </div>
 
@@ -238,13 +244,14 @@ export default function AddTransferOrderForm(props) {
               {/* Từ kho */}
               <SelectCustom
                 id="inventoryOrg" name="inventoryOrg"
-                label="Từ kho" fill={true} options={[]} required={true}
-                value={dataInventoryOrg}
+                label="Từ kho" fill={true}
+                options={optionsOrg}
+                required={true}
+                value={dataInventoryOrg?.value ?? null}
+                onMenuOpen={getListInventory}
                 onChange={(e) => setDataInventoryOrg(e)}
-                isAsyncPaginate={true}
-                loadOptionsPaginate={loadedOptionInventoryOrg}
+                isLoading={isLoadingInventory}
                 placeholder="Chọn kho nguồn"
-                additional={{ page: 1 }}
               />
 
               {/* Arrow indicator */}
@@ -257,13 +264,14 @@ export default function AddTransferOrderForm(props) {
               {/* Đến kho */}
               <SelectCustom
                 id="inventoryArrive" name="inventoryArrive"
-                label="Đến kho" fill={true} options={[]} required={true}
-                value={dataInventoryArrive}
+                label="Đến kho" fill={true}
+                options={optionsArrive}
+                required={true}
+                value={dataInventoryArrive?.value ?? null}
+                onMenuOpen={getListInventory}
                 onChange={(e) => setDataInventoryArrive(e)}
-                isAsyncPaginate={true}
-                loadOptionsPaginate={loadedOptionInventoryArrive}
+                isLoading={isLoadingInventory}
                 placeholder="Chọn kho đích"
-                additional={{ page: 1 }}
                 disabled={!dataInventoryOrg}
               />
 

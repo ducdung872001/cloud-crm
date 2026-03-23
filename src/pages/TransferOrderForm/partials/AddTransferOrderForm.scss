@@ -65,7 +65,7 @@
 // ── Product card (left) ───────────────────────────────────────────────────────
 .tf-product-card {
   overflow: hidden;
-  padding: 0 !important;    // override card-box padding nếu có
+  padding: 0 !important;
 
   &__header {
     display: flex;
@@ -73,19 +73,7 @@
     justify-content: space-between;
     padding: 1.4rem 2rem;
     border-bottom: 1px solid var(--border-color);
-
     .base-button { padding: 0.7rem 1.2rem; font-size: 1.3rem; }
-  }
-
-  &__body {
-    min-height: 30rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    &--has-data {
-      justify-content: flex-start;
-    }
   }
 
   &__title {
@@ -97,6 +85,14 @@
     color: var(--text-primary-color);
 
     svg { flex-shrink: 0; }
+  }
+
+  &__body {
+    min-height: 30rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    &--has-data { justify-content: flex-start; }
   }
 }
 
@@ -111,15 +107,7 @@
   font-weight: 600;
 }
 
-// ── Product table wrapper — khi có data, body không cần center ───────────────
-.tf-product-table-wrapper {
-  overflow-x: auto;
-  padding: 0 2rem 2rem;
-  // Khi có table, parent body không còn justify-content:center
-  .tf-product-card__body & {
-    margin-top: 0;
-  }
-}
+// ── Product table wrapper ─────────────────────────────────────────────────────
 .tf-product-table-wrapper {
   overflow-x: auto;
   padding: 0 2rem 2rem;

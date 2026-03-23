@@ -90,19 +90,27 @@ export default function AddDestroySlip({ id, onHide }: Props) {
     setLstBatchNoProduct(lstProducts.map((i) => i.batchNo));
   }, [lstProducts]);
 
-  // ── Warehouse loader ──────────────────────────────────────────────────────
-  const loadedOptionInventory = useCallback(async (search, _loaded, { page }) => {
-    const response = await InventoryService.list({ name: search, page, limit: 10 });
+  const [listInventory, setListInventory] = useState<any[]>([]);
+  const [isLoadingInventory, setIsLoadingInventory] = useState(false);
+
+  // ── Warehouse loader — chỉ gọi khi mở dropdown, không auto-load ──────────
+  const getListInventory = useCallback(async () => {
+    if (listInventory.length > 0) return;
+    setIsLoadingInventory(true);
+    const response = await InventoryService.list({ page: 1, limit: 100 });
     if (response.code === 0) {
-      const data = response.result ?? [];
-      return {
-        options: data.map((i: any) => ({ value: i.id, label: i.name, address: i.address, branchName: i.branchName })),
-        hasMore: response.result?.loadMoreAble,
-        additional: { page: page + 1 },
-      };
+      const data = Array.isArray(response.result)
+        ? response.result
+        : Array.isArray(response.result?.items) ? response.result.items : [];
+      setListInventory(data.map((i: any) => ({
+        value: i.id, label: i.name,
+        address: i.address ?? "", branchName: i.branchName ?? "",
+      })));
+    } else {
+      showToast("Không lấy được danh sách kho", "error");
     }
-    return { options: [], hasMore: false };
-  }, []);
+    setIsLoadingInventory(false);
+  }, [listInventory.length]);
 
   const handleChangeInventory = (e: any) => {
     setDataInventory(e);
@@ -322,13 +330,14 @@ export default function AddDestroySlip({ id, onHide }: Props) {
               {/* Kho xuất hủy */}
               <SelectCustom
                 id="inventory" name="inventory"
-                label="Kho xuất hủy" fill={true} options={[]} required={true}
-                value={dataInventory}
+                label="Kho xuất hủy" fill={true}
+                options={listInventory}
+                required={true}
+                value={dataInventory?.value ?? null}
+                onMenuOpen={getListInventory}
                 onChange={handleChangeInventory}
-                isAsyncPaginate={true}
-                loadOptionsPaginate={loadedOptionInventory}
+                isLoading={isLoadingInventory}
                 placeholder="Chọn kho xuất hủy"
-                additional={{ page: 1 }}
               />
 
               {/* Địa chỉ / Chi nhánh */}
