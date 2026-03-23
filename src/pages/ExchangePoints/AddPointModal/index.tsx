@@ -128,7 +128,7 @@ export default function AddPointModal(props: IAddCategoryServiceModelProps) {
     const response = await CategoryServiceService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} Phần thưởng đổi điểm thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} phần thưởng đổi điểm thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -222,7 +222,7 @@ export default function AddPointModal(props: IAddCategoryServiceModelProps) {
         className="modal-add-payment-method"
       >
         <form className="form-payment-method" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} Phần thưởng đổi điểm`} toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} phần thưởng đổi điểm`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (

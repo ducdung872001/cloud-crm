@@ -4,6 +4,8 @@ import "./CustomerCarePage.scss";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 import CallCenterList from "../CallCenter/CallCenterList";
 import TicketList from "../Ticket/TicketList";
+import CareHistory from "../CareHistory";
+import RateCustomer from "../RateCustomer";
 
 export default function CustomerCarePage() {
   document.title = "Chăm sóc khách hàng";
@@ -48,13 +50,13 @@ export default function CustomerCarePage() {
       {!isDetail && <TitleAction title="Chăm sóc khách hàng" />}
       <div className="d-flex flex-column">
         {!isDetail && (
-            <TabMenuList
-                listTab={listTab}
-                onClick={(item) => {
-                    setTab(item.tab);
-                    setIsDetail(true);
-                }}
-            />
+          <TabMenuList
+            listTab={listTab}
+            onClick={(item) => {
+              setTab(item.tab);
+              setIsDetail(true);
+            }}
+          />
         )}
       </div>
 
@@ -66,7 +68,17 @@ export default function CustomerCarePage() {
             }
           }}
         />
-      ) : null }
+      ) : null}
+
+      {isDetail && tab === 2 ? (
+        <CareHistory
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetail(false);
+            }
+          }}
+        />
+      ) : null}
 
       {isDetail && tab === 3 ? (
         <CallCenterList
@@ -76,7 +88,17 @@ export default function CustomerCarePage() {
             }
           }}
         />
-      ) : null }
+      ) : null}
+
+      {isDetail && tab === 4 ? (
+        <RateCustomer
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetail(false);
+            }
+          }}
+        />
+      ) : null}
 
 
     </div>
