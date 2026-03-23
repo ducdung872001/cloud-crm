@@ -596,10 +596,9 @@ export const urlsApi = {
   },
 
   inventory: {
-    list: prefixInventory + "/inventory/list",
-    update: prefixInventory + "/inventory/update",
-    delete: prefixInventory + "/inventory/delete",
-    import: prefixInventory + "/warehouse/list",
+    list: prefixInventory + "/warehouse/list",
+    update: prefixInventory + "/warehouse/update",
+    delete: prefixInventory + "/warehouse/delete",
     ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
     ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
     saleExportList: prefixInventory + "/inventoryTransaction/sale/list",

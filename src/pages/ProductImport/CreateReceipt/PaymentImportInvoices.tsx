@@ -82,7 +82,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
     if (listInventory.length > 0) return;
 
     setIsLoadingInventory(true);
-    const response = await InventoryService.import();
+    const response = await InventoryService.list();
 
     if (response.code === 0) {
       const dataOption = Array.isArray(response.result)

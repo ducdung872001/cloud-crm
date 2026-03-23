@@ -55,12 +55,6 @@ export default {
     }).then((res) => res.json());
   },
 
-  import: () => {
-    return fetch(urlsApi.inventory.import, {
-      method: "GET",
-    }).then((res) => res.json());
-  },
-
   // ── Sổ kho (Ledger) ──────────────────────────────────────────────────────
   // GET /inventoryTransaction/ledger/list
   // refType: "" | "IMPORT" | "SALE" | "RETURN" | "TRANSFER" | "ADJUSTMENT" | "DESTROY"
