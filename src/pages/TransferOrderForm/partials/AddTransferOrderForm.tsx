@@ -147,7 +147,8 @@ export default function AddTransferOrderForm(props) {
               </Button>
             </div>
 
-            {lstProducts.length > 0 ? (
+            <div className="tf-product-card__body">
+              {lstProducts.length > 0 ? (
               <div className="tf-product-table-wrapper">
                 <table className="tf-product-table">
                   <thead>
@@ -216,6 +217,7 @@ export default function AddTransferOrderForm(props) {
                 action={isReadyToAdd ? () => setShowModalAdd(true) : undefined}
               />
             )}
+            </div>{/* end tf-product-card__body */}
           </div>
         </div>
 

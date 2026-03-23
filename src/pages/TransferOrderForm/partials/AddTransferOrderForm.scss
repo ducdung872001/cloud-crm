@@ -76,6 +76,12 @@
     .base-button { padding: 0.7rem 1.2rem; font-size: 1.3rem; }
   }
 
+  &__body {
+    min-height: 28rem;   // luôn có chiều cao dù empty
+    display: flex;
+    flex-direction: column;
+  }
+
   &__title {
     display: flex;
     align-items: center;
