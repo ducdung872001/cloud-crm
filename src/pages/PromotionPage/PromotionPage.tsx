@@ -3,7 +3,9 @@ import TitleAction from "components/titleAction/titleAction";
 import "./PromotionPage.scss";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 import PromotionalProgram from "@/pages/PromotionalProgram";
-import PromotionDashboard from "../PromotionalReport/partials/PromotionDashboard";
+import PromoCode from "../PromoCode";
+import PromotionBundle from "../PromotionBundle";
+import PromotionDashboard from "../PromoReport/PromotionDashboard";
 
 export default function PromotionPage() {
   document.title = "Khuyến mãi";
@@ -44,13 +46,13 @@ export default function PromotionPage() {
       {!isDetail && <TitleAction title="Khuyến mãi" />}
       <div className="d-flex flex-column">
         {!isDetail && (
-            <TabMenuList
-                listTab={listTab}
-                onClick={(item) => {
-                    setTab(item.tab);
-                    setIsDetail(true);
-                }}
-            />
+          <TabMenuList
+            listTab={listTab}
+            onClick={(item) => {
+              setTab(item.tab);
+              setIsDetail(true);
+            }}
+          />
         )}
       </div>
 
@@ -62,7 +64,27 @@ export default function PromotionPage() {
             }
           }}
         />
-      ) : null }
+      ) : null}
+
+      {isDetail && tab === 2 ? (
+        <PromoCode
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetail(false);
+            }
+          }}
+        />
+      ) : null}
+
+      {isDetail && tab === 3 ? (
+        <PromotionBundle
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetail(false);
+            }
+          }}
+        />
+      ) : null}
 
       {isDetail && tab === 4 ? (
         <PromotionDashboard
@@ -72,7 +94,7 @@ export default function PromotionPage() {
             }
           }}
         />
-      ) : null }
+      ) : null}
     </div>
   );
 }
