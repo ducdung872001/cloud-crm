@@ -1,54 +1,126 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Sidebar form — thông tin phiếu nhập kho
+// ─────────────────────────────────────────────────────────────────────────────
+
 .payment__import--invoice {
-  margin-top: 2rem;
-
+  // Không cần margin-top nữa vì nằm trong sidebar của grid
   .card-box {
-    padding: 2rem;
+    padding: 0;
+    overflow: hidden;
+  }
 
-    .label-title {
-      font-weight: 600;
-      margin-bottom: 2rem;
+  .pii-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1.4rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+
+    &__icon {
+      width: 3.2rem;
+      height: 3.2rem;
+      border-radius: 0.8rem;
+      background: rgba(var(--primary-rgb, 58,100,220), 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      svg, img { width: 18px; height: 18px; color: var(--primary-color); }
     }
 
-    .form__payment__import--invoice {
-      .list-form-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1.2rem 3.2rem;
+    &__title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text-primary-color);
+    }
+  }
 
-        .form-group {
-          width: calc(32% - 1.6rem);
+  .pii-body {
+    padding: 1.6rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
 
-          &:last-child {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 0 2rem;
-            margin-bottom: 1rem;
+  .pii-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 
-            .base-radio {
-              margin-top: 0;
-            }
-          }
-        }
-      }
+    // Override component spacing for compact sidebar
+    .form-group, .select-custom, .date-picker-custom { margin-bottom: 0; }
+  }
 
-      .action__import--order {
-        position: relative;
-        padding: 1.6rem;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 0 1.2rem;
-        border-top: 1px solid var(--border-color);
-        border-bottom-left-radius: 0.3rem;
-        border-bottom-right-radius: 0.3rem;
+  // Readonly info rows (Địa chỉ, Chi nhánh, Trạng thái, Mã phiếu)
+  .pii-info-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
 
-        .side__action {
-          display: flex;
-          align-items: center;
-          gap: 0 1.2rem;
-        }
-      }
+    &__label {
+      font-size: 1.2rem;
+      color: var(--text-extra-color);
+      font-weight: 500;
+    }
+
+    &__value {
+      font-size: 1.35rem;
+      color: var(--text-primary-color);
+      font-weight: 500;
+      padding: 0.7rem 1rem;
+      background: var(--bg-extra-color, #f7f8fc);
+      border-radius: 0.6rem;
+      border: 1px solid var(--border-color);
+      min-height: 3.8rem;
+      display: flex;
+      align-items: center;
+
+      &--placeholder { color: var(--text-extra-color); font-weight: 400; }
+      &--code { font-family: monospace; font-size: 1.3rem; }
+    }
+  }
+
+  // Total amount highlight
+  .pii-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.2rem;
+    background: rgba(var(--primary-rgb, 58,100,220), 0.05);
+    border-radius: 0.8rem;
+    border: 1px solid rgba(var(--primary-rgb, 58,100,220), 0.15);
+
+    &__label {
+      font-size: 1.3rem;
+      color: var(--text-extra-color);
+    }
+
+    &__value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+  }
+
+  // Action footer
+  .pii-actions {
+    padding: 1.2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    border-top: 1px solid var(--border-color);
+
+    .base-button {
+      width: 100%;
+      justify-content: center;
+    }
+
+    &__secondary {
+      display: flex;
+      gap: 0.8rem;
+
+      .base-button { flex: 1; }
     }
   }
 }

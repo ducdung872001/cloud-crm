@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import moment from "moment";
 import Loading from "components/loading";
@@ -14,64 +14,174 @@ import { showToast } from "utils/common";
 import { getPageOffset, isDifferenceObj } from "reborn-util";
 import { useSearchParams } from "react-router-dom";
 import InventoryService from "services/InventoryService";
-import urls from "@/configs/urls";
 import "./InventoryList.scss";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Constants
+// ─────────────────────────────────────────────────────────────────────────────
+
 const REF_TYPE_TABS = [
-  { label: "Tất cả", value: "" },
-  { label: "Nhập kho", value: "IMPORT" },
-  { label: "Xuất bán", value: "SALE" },
+  { label: "Tất cả",    value: "" },
+  { label: "Nhập kho",  value: "IMPORT" },
+  { label: "Xuất bán",  value: "SALE" },
   { label: "Khách trả", value: "RETURN" },
-  { label: "Chuyển kho", value: "TRANSFER" },
-  { label: "Điều chỉnh", value: "ADJUSTMENT" },
-  { label: "Xuất hủy", value: "DESTROY" },
+  { label: "Chuyển kho",value: "TRANSFER" },
+  { label: "Điều chỉnh",value: "ADJUSTMENT" },
+  { label: "Xuất hủy",  value: "DESTROY" },
 ];
 
-const renderRefType = (item: IInventoryLedgerResponse) => {
-  const colorMap = {
-    IMPORT: "success",
-    SALE: "error",
-    RETURN: "warning",
-    TRANSFER: "primary",
-    ADJUSTMENT: "warning",
-    DESTROY: "secondary",
-  };
-
-  const color = colorMap[item.refType] ?? "secondary";
-
-  return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <span className={`status__item--signature status__item--signature-${color}`}>{item.refTypeName ?? item.refType ?? "—"}</span>
-    </div>
-  );
+// Màu badge loại chứng từ
+const REF_TYPE_COLOR: Record<string, string> = {
+  IMPORT:     "success",   // xanh  — nhập vào
+  SALE:       "error",     // đỏ    — xuất bán
+  RETURN:     "warning",   // vàng  — khách trả
+  TRANSFER:   "primary",   // xanh dương — chuyển kho
+  ADJUSTMENT: "warning",   // vàng  — điều chỉnh
+  DESTROY:    "secondary", // xám   — xuất hủy
 };
 
-const renderStatus = (item: IInventoryLedgerResponse) => (
-  <div style={{ display: "flex", justifyContent: "center", marginTop: "0.9rem" }}>
-    <span className={`status__item--signature status__item--signature-${item.status === 1 ? "success" : "secondary"}`}>
-      {item.statusName ?? (item.status === 1 ? "Hoàn thành" : "—")}
+// Màu badge trạng thái
+const STATUS_COLOR: Record<string, string> = {
+  "Hoàn thành":  "success",
+  "Đã duyệt":    "success",
+  "Chờ duyệt":   "warning",
+  "Đã hủy":      "error",
+  "Không duyệt": "error",
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Render helpers — mỗi hàm nhận item, trả JSX hoặc string
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Badge loại chứng từ */
+const renderRefType = (item: IInventoryLedgerResponse) => (
+  <div className="wbl-cell-center">
+    <span className={`status__item--signature status__item--signature-${REF_TYPE_COLOR[item.refType] ?? "secondary"}`}>
+      {item.refTypeName ?? item.refType ?? "—"}
     </span>
   </div>
 );
 
+/** Mã chứng từ — mỗi refType có nguồn khác nhau */
+const renderRefCode = (item: IInventoryLedgerResponse) => {
+  const code = item.refCode ?? (item.refId ? `#${item.refId}` : null);
+  if (!code) return <span className="wbl-dash">—</span>;
+  return <span className="wbl-code">{code}</span>;
+};
+
+/**
+ * Đối tác — chỉ có với IMPORT (nhà cung cấp) và SALE/RETURN (khách hàng)
+ * TRANSFER, ADJUSTMENT, DESTROY không có đối tác → "—"
+ */
+const renderPartner = (item: IInventoryLedgerResponse) => {
+  const hasPartner = ["IMPORT", "SALE", "RETURN"].includes(item.refType);
+  if (!hasPartner) return <span className="wbl-dash">—</span>;
+
+  const name = item.partnerName && item.partnerName !== "Không xác định"
+    ? item.partnerName : null;
+
+  return (
+    <div className="wbl-partner">
+      <div className="wbl-partner__name">
+        {name ?? <span className="wbl-unknown">{item.partnerType ?? "—"}</span>}
+      </div>
+      {item.partnerType && name && (
+        <div className="wbl-partner__type">{item.partnerType}</div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Kho — TRANSFER hiện "Kho A → Kho B", các loại khác hiện tên kho đơn
+ */
 const renderWarehouse = (item: IInventoryLedgerResponse) => {
   if (item.refType === "TRANSFER") {
     return (
-      <span className="warehouse__transfer" style={{ minWidth: "120px" }}>
-        {item.fromWarehouseName ?? "—"} → {item.toWarehouseName ?? "—"}
+      <div className="wbl-transfer">
+        <span className="wbl-transfer__from">{item.fromWarehouseName ?? "—"}</span>
+        <span className="wbl-transfer__arrow">→</span>
+        <span className="wbl-transfer__to">{item.toWarehouseName ?? "—"}</span>
+      </div>
+    );
+  }
+  return <span>{item.warehouseName ?? "—"}</span>;
+};
+
+/**
+ * Biến động số lượng — + xanh, - đỏ, 0 xám
+ * ADJUSTMENT có thể + hoặc -
+ */
+const renderQuantity = (item: IInventoryLedgerResponse) => {
+  const qty = item.quantityChange ?? item.quantity ?? 0;
+  const formatted = qty > 0
+    ? `+${qty.toLocaleString("vi-VN")}`
+    : qty.toLocaleString("vi-VN");
+  const cls = qty > 0 ? "wbl-qty--pos" : qty < 0 ? "wbl-qty--neg" : "wbl-qty--zero";
+  return (
+    <span className={`wbl-qty ${cls}`}>
+      {formatted}{item.unitName ? ` ${item.unitName}` : ""}
+    </span>
+  );
+};
+
+/**
+ * Ghi chú — ý nghĩa khác nhau theo refType:
+ *   IMPORT:     Số lô (batchNo) — thông tin lô hàng nhập
+ *   SALE/RETURN: — (không có ghi chú riêng)
+ *   TRANSFER:   Ghi chú phiếu (reason)
+ *   ADJUSTMENT: Lý do điều chỉnh (reason)
+ *   DESTROY:    — (lý do hủy chưa có field riêng)
+ */
+const renderNote = (item: IInventoryLedgerResponse) => {
+  if (item.refType === "IMPORT" && item.batchNo) {
+    return <span className="wbl-batchno" title={`Số lô: ${item.batchNo}`}>Lô: {item.batchNo}</span>;
+  }
+  if ((item.refType === "ADJUSTMENT" || item.refType === "TRANSFER") && item.reason) {
+    return (
+      <span className="wbl-reason" title={item.reason}>
+        {item.reason.length > 30 ? `${item.reason.slice(0, 30)}…` : item.reason}
       </span>
     );
   }
-
-  return <span style={{ minWidth: "120px" }}>{item.warehouseName ?? "—"}</span>;
+  return <span className="wbl-dash">—</span>;
 };
 
-const renderQuantity = (item: IInventoryLedgerResponse) => {
-  const quantity = item.quantityChange ?? item.quantity ?? 0;
-  const quantityText = quantity > 0 ? `+${quantity}` : quantity;
-
-  return <span className={quantity > 0 ? "warehouse__qty--positive" : "warehouse__qty--negative"}>{quantityText} {item.unitName ?? ""}</span>;
+/**
+ * Ref tài chính — ý nghĩa theo refType:
+ *   IMPORT:     Mã hóa đơn nhập (import_invoice_code)
+ *   SALE/RETURN:Mã hóa đơn bán (sale_invoice_code)
+ *   ADJUSTMENT: Mã phiếu kiểm kho (adjust_audit_code → KK-xxxx)
+ *   TRANSFER:   — (không có ref tài chính)
+ *   DESTROY:    — (không có ref tài chính riêng)
+ */
+const renderRefFinance = (item: IInventoryLedgerResponse) => {
+  if (!item.refFinanceCode || item.refType === "TRANSFER") {
+    return <span className="wbl-dash">—</span>;
+  }
+  const label = item.refType === "ADJUSTMENT" ? "KK" : "HĐ";
+  return (
+    <span className="wbl-reffinance" title={`${label}: ${item.refFinanceCode}`}>
+      {item.refFinanceCode}
+    </span>
+  );
 };
+
+/** Trạng thái */
+const renderStatus = (item: IInventoryLedgerResponse) => {
+  const name = item.statusName;
+  if (!name || name === "Không xác định") return <span className="wbl-dash">—</span>;
+  const color = STATUS_COLOR[name] ?? "secondary";
+  return (
+    <div className="wbl-cell-center">
+      <span className={`status__item--signature status__item--signature-${color}`}>{name}</span>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Component
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function WarehouseBookList() {
   document.title = "Sổ kho";
@@ -79,178 +189,169 @@ export default function WarehouseBookList() {
   const isMounted = useRef(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [listWarehouseBook, setListWarehouseBook] = useState<IInventoryLedgerResponse[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isNoItem, setIsNoItem] = useState<boolean>(false);
+  const [listData, setListData]     = useState<IInventoryLedgerResponse[]>([]);
+  const [isLoading, setIsLoading]   = useState(true);
+  const [isNoItem, setIsNoItem]     = useState(false);
+  const [listWarehouse, setListWarehouse] = useState<{ value: string; label: string }[]>([]);
 
   const [params, setParams] = useState<{
-    keyword: string;
-    refType: string;
-    warehouseId?: string;
-    page: number;
-    limit: number;
+    keyword:     string;
+    refType:     string;
+    warehouseId: string;
+    fromTime:    string;
+    toTime:      string;
+    page:        number;
+    limit:       number;
   }>({
-    keyword: "",
-    refType: "",
-    warehouseId: "",
-    limit: 10,
-    page: 1,
+    keyword: "", refType: "", warehouseId: "",
+    fromTime: "", toTime: "", limit: 10, page: 1,
   });
 
-  const customerFilterList = useMemo(
-    () =>
-      [
-        {
-          key: "warehouseId",
-          name: "Kho hàng",
-          type: "select",
-          is_featured: true,
-          value: searchParams.get("warehouseId") ?? "",
-        },
-      ] as IFilterItem[],
-    [searchParams]
-  );
+  const [filterList, setFilterList] = useState<IFilterItem[]>([
+    {
+      key: "warehouseId", name: "Kho hàng", type: "select",
+      is_featured: true, value: searchParams.get("warehouseId") ?? "",
+      list: [],
+    },
+    {
+      key: "time_range", name: "Khoảng thời gian", type: "date-two",
+      param_name: ["fromTime", "toTime"], is_featured: true,
+      value: searchParams.get("fromTime") ?? "",
+      value_extra: searchParams.get("toTime") ?? "",
+      is_fmt_text: true,
+    },
+  ]);
+
+  // Cập nhật options kho vào filter khi listWarehouse thay đổi
+  useEffect(() => {
+    if (listWarehouse.length === 0) return;
+    setFilterList(prev => prev.map(f =>
+      f.key === "warehouseId" ? { ...f, list: listWarehouse } : f
+    ));
+  }, [listWarehouse]);
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
-    {
-      key: "all",
-      name: "Sổ kho",
-      is_active: true,
-    },
+    { key: "all", name: "Sổ kho", is_active: true },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Sổ kho",
+    name: "giao dịch",
     isChooseSizeLimit: true,
-    setPage: (page) => setParams((prev) => ({ ...prev, page })),
-    chooseSizeLimit: (limit) => setParams((prev) => ({ ...prev, limit })),
+    setPage:       (page)  => setParams(p => ({ ...p, page })),
+    chooseSizeLimit:(limit) => setParams(p => ({ ...p, limit })),
   });
 
   const abortController = new AbortController();
 
-  const getListWarehouseBook = async (paramsSearch: typeof params) => {
+  const fetchData = async (p: typeof params) => {
     setIsLoading(true);
+    const req: IInventoryLedgerFilterRequest & Record<string, any> = {};
+    if (p.keyword)     req.keyword     = p.keyword;
+    if (p.refType)     req.refType     = p.refType;
+    if (p.warehouseId) req.warehouseId = +p.warehouseId;
+    if (p.fromTime)    req.fromTime    = p.fromTime;
+    if (p.toTime)      req.toTime      = p.toTime;
+    req.page = Math.max((p.page ?? 1) - 1, 0);
+    req.size = p.limit ?? 10;
 
-    const requestParams: IInventoryLedgerFilterRequest = {};
-
-    if (paramsSearch.keyword) {
-      requestParams.keyword = paramsSearch.keyword;
-    }
-
-    if (paramsSearch.refType) {
-      requestParams.refType = paramsSearch.refType;
-    }
-
-    if (paramsSearch.warehouseId) {
-      requestParams.warehouseId = +paramsSearch.warehouseId;
-    }
-
-    if (typeof paramsSearch.page === "number") {
-      requestParams.page = Math.max(paramsSearch.page - 1, 0);
-    }
-
-    if (typeof paramsSearch.limit === "number") {
-      requestParams.size = paramsSearch.limit;
-    }
-
-    const response = await InventoryService.ledgerList(requestParams, abortController.signal);
-
-    if (response.code === 0 || response.status === 1) {
-      const result = response.result ?? response.data ?? {};
-      const items = result.items ?? result.content ?? result.data ?? [];
-      const total = +(result.total ?? result.totalElements ?? items.length ?? 0);
-      const currentPage = +(result.page ?? requestParams.page ?? 0) + 1;
-
-      setListWarehouseBook(items);
-      setPagination((prev) => ({
+    const res = await InventoryService.ledgerList(req, abortController.signal);
+    if (res.code === 0 || res.status === 1) {
+      const result = res.result ?? res.data ?? {};
+      const items  = result.items ?? result.content ?? result.data ?? [];
+      const total  = +(result.total ?? result.totalElements ?? items.length ?? 0);
+      const curPage = +(result.page ?? req.page ?? 0) + 1;
+      setListData(items);
+      setPagination(prev => ({
         ...prev,
-        page: currentPage,
-        sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
+        page: curPage,
+        sizeLimit: p.limit ?? DataPaginationDefault.sizeLimit,
         totalItem: total,
-        totalPage: Math.ceil(total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)),
+        totalPage: Math.ceil(total / (p.limit ?? DataPaginationDefault.sizeLimit)),
       }));
-      setIsNoItem(total === 0 && currentPage === 1);
+      setIsNoItem(total === 0 && curPage === 1);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(res.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
-
     setIsLoading(false);
   };
 
+  // Sync URL params on mount + load danh sách kho cho filter
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
-    searchParams.forEach((value, key) => {
-      paramsTemp[key] = value;
+    const tmp = _.cloneDeep(params);
+    searchParams.forEach((v, k) => { tmp[k] = v; });
+    setParams(prev => ({ ...prev, ...tmp }));
+
+    // Load warehouse list cho filter dropdown
+    InventoryService.list({ page: 1, limit: 200 }).then(res => {
+      if (res.code === 0) {
+        const data = Array.isArray(res.result) ? res.result
+          : Array.isArray(res.result?.items) ? res.result.items : [];
+        setListWarehouse(data.map((i: any) => ({ value: String(i.id), label: i.name })));
+      }
     });
-    setParams((prev) => ({ ...prev, ...paramsTemp }));
   }, []);
 
+  // Fetch + sync URL on param change
   useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
+    if (!isMounted.current) { isMounted.current = true; return; }
+    fetchData(params);
+
+    const tmp = _.cloneDeep(params) as Record<string, any>;
+    if (tmp.limit === 10) delete tmp.limit;
+    Object.keys(tmp).forEach(k => { if (tmp[k] === "" || tmp[k] == null) delete tmp[k]; });
+    if (tmp.page === 1) delete tmp.page;
+
+    if (isDifferenceObj(searchParams, tmp)) {
+      const sp: Record<string, string> = {};
+      Object.keys(tmp).forEach(k => { if (tmp[k] != null) sp[k] = String(tmp[k]); });
+      setSearchParams(sp);
     }
-
-    getListWarehouseBook(params);
-
-    const paramsTemp = _.cloneDeep(params);
-    if (paramsTemp.limit === 10) {
-      delete paramsTemp["limit"];
-    }
-    Object.keys(paramsTemp).forEach((key) => {
-      if (paramsTemp[key] === "") {
-        delete paramsTemp[key];
-      }
-    });
-
-    if (isDifferenceObj(searchParams, paramsTemp)) {
-      if (paramsTemp.page === 1) {
-        delete paramsTemp["page"];
-      }
-      // Convert tất cả giá trị sang string trước khi set URL params
-      const searchParamsObj: Record<string, string> = {};
-      Object.keys(paramsTemp).forEach((key) => {
-        if (paramsTemp[key] !== undefined && paramsTemp[key] !== null) {
-          searchParamsObj[key] = String(paramsTemp[key]);
-        }
-      });
-      setSearchParams(searchParamsObj);
-    }
-
-    return () => {
-      abortController.abort();
-    };
+    return () => abortController.abort();
   }, [params]);
 
-  // ── Sổ kho = nhật ký giao dịch (read-only) → không có button tạo mới ──────
-  // Mọi thao tác tạo phiếu thực hiện tại menu "Quản lý kho"
+  // ── Table columns ──────────────────────────────────────────────────────────
+  // Dùng chung cho tất cả tabs — các cell render đã xử lý null/N/A theo refType
+
+  const titles = [
+    "STT", "Mã chứng từ", "Loại", "Thời gian",
+    "Sản phẩm", "Đối tác", "Kho",
+    "Biến động", "Tồn trước", "Tồn sau",
+    "Ghi chú", "Số phiếu/HĐ",
+    "Người TH", "Trạng thái",
+  ];
+
+  const dataFormat = [
+    "text-center", "",          "text-center", "text-center",
+    "",            "",          "",
+    "text-right",  "text-right","text-right",
+    "",            "",
+    "",            "text-center",
+  ];
+
   const titleActions: ITitleActions = { actions: [] };
 
-  const titles = ["STT", "Mã chứng từ", "Loại chứng từ", "Thời gian", "Sản phẩm", "Đối tác", "Kho", "Biến động SL", "Tồn trước", "Tồn sau", "Người thực hiện", "Ref tài chính", "Trạng thái"];
-  const dataFormat = ["text-center", "", "text-center", "text-center", "", "", "", "text-center", "text-center", "text-center", "", "text-center", "text-center"];
-
-  const dataMappingArray = (item: IInventoryLedgerResponse, index: number) => [
+  const mapRow = (item: IInventoryLedgerResponse, index: number) => [
     getPageOffset(params) + index + 1,
-    <span key={`code-${item.id}`} className="warehouse__code">{item.refCode ?? "—"}</span>,
+    renderRefCode(item),
     renderRefType(item),
     item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "—",
-    <div key={`product-${item.id}`}>
-      <div className="warehouse__product-name">{item.productName ?? "—"}</div>
-      <div className="warehouse__product-code">{item.variantSku ?? item.productSku ?? item.batchNo ?? ""}</div>
+    // Sản phẩm: tên + SKU/lô phụ
+    <div key={`prod-${item.id}`}>
+      <div className="wbl-prod-name">{item.productName ?? "—"}</div>
+      {(item.variantSku ?? item.productSku) && (
+        <div className="wbl-prod-sku">{item.variantSku ?? item.productSku}</div>
+      )}
     </div>,
-    item.partnerName ? (
-      <div key={`partner-${item.id}`} style={{ minWidth: "120px" }}>
-        <div className="warehouse__partner-name">{item.partnerName}</div>
-        <div className="warehouse__partner-type">{item.partnerType ?? ""}</div>
-      </div>
-    ) : "—",
+    renderPartner(item),
     renderWarehouse(item),
     renderQuantity(item),
-    item.prevQuantity ?? 0,
-    item.afterQuantity ?? 0,
-    item.employeeName ?? "—",
-    item.refFinanceCode ?? "—",
+    (item.prevQuantity  ?? 0).toLocaleString("vi-VN"),
+    (item.afterQuantity ?? 0).toLocaleString("vi-VN"),
+    renderNote(item),
+    renderRefFinance(item),
+    (item.employeeName && item.employeeName !== "Không xác định")
+      ? item.employeeName : "—",
     renderStatus(item),
   ];
 
@@ -259,36 +360,39 @@ export default function WarehouseBookList() {
       <TitleAction title="Sổ kho" titleActions={titleActions} />
 
       <div className="card-box d-flex flex-column">
-        <div className="warehouse__tabs">
-          {REF_TYPE_TABS.map((tab) => (
+        {/* ── Tabs ── */}
+        <div className="wbl-tabs">
+          {REF_TYPE_TABS.map(tab => (
             <div
               key={tab.value}
-              className={`warehouse__tab-item ${params.refType === tab.value ? "active" : ""}`}
-              onClick={() => setParams((prev) => ({ ...prev, refType: tab.value, page: 1 }))}
+              className={`wbl-tab${params.refType === tab.value ? " wbl-tab--active" : ""}`}
+              onClick={() => setParams(p => ({ ...p, refType: tab.value, page: 1 }))}
             >
               {tab.label}
             </div>
           ))}
         </div>
 
+        {/* ── Search + filter ── */}
         <SearchBox
           name="Tên sản phẩm / mã chứng từ"
           params={params}
           isSaveSearch={false}
           listSaveSearch={listSaveSearch}
           isFilter={true}
-          listFilterItem={customerFilterList}
-          updateParams={(paramsNew) => setParams(paramsNew)}
+          listFilterItem={filterList}
+          updateParams={p => setParams(p)}
         />
 
-        {!isLoading && listWarehouseBook.length > 0 ? (
+        {/* ── Table / Loading / Empty ── */}
+        {!isLoading && listData.length > 0 ? (
           <BoxTable
             name="Sổ kho"
             titles={titles}
-            items={listWarehouseBook}
+            items={listData}
             isPagination={true}
             dataPagination={pagination}
-            dataMappingArray={(item, index) => dataMappingArray(item, index)}
+            dataMappingArray={(item, idx) => mapRow(item, idx)}
             dataFormat={dataFormat}
             striped={true}
           />
@@ -297,15 +401,13 @@ export default function WarehouseBookList() {
         ) : (
           <Fragment>
             {isNoItem ? (
-              <SystemNotification description={<span>Hiện tại chưa có dữ liệu sổ kho nào.</span>} type="no-item" />
+              <SystemNotification
+                description={<span>Chưa có giao dịch kho nào{params.refType ? ` loại "${REF_TYPE_TABS.find(t => t.value === params.refType)?.label}"` : ""}.</span>}
+                type="no-item"
+              />
             ) : (
               <SystemNotification
-                description={
-                  <span>
-                    Không có dữ liệu trùng khớp. <br />
-                    Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
-                  </span>
-                }
+                description={<span>Không tìm thấy dữ liệu khớp. Thử thay đổi bộ lọc nhé!</span>}
                 type="no-result"
               />
             )}

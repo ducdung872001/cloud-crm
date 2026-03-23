@@ -1,0 +1,208 @@
+@keyframes promoFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.promo-page {
+  min-height: 100vh;
+  animation: promoFadeUp 0.22s ease-out both;
+
+  /* ── Header Override ── */
+  .action-navigation {
+    margin-bottom: 24px;
+
+    .action-backup {
+      background: #f8fafc;
+      padding: 6px 12px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #64748b;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-left: 0;
+
+      &:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+      }
+    }
+  }
+
+  p,
+  h3 {
+    margin-bottom: 0;
+  }
+}
+
+/* ── Combo Grid ── */
+.combo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.combo-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  &__badge-wrap {
+    margin-top: 6px;
+  }
+
+  &__prices {
+    text-align: right;
+  }
+
+  &__price-sale {
+    font-size: 24px;
+    font-weight: 800;
+    color: #f97316;
+    line-height: 1.2;
+  }
+
+  &__price-orig {
+    font-size: 14px;
+    color: #94a3b8;
+    text-decoration: line-through;
+    margin-top: 2px;
+  }
+
+  &__products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  &__product-tag {
+    padding: 4px 10px;
+    background: #fff7ed;
+    color: #c2410c;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid #f8fafc;
+  }
+
+  &__stats {
+    display: flex;
+    gap: 20px;
+  }
+
+  &__stat-label {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 2px;
+  }
+
+  &__stat-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+
+    &--green {
+      color: #059669;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &--outline {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+
+      &:hover {
+        background: #f8fafc;
+      }
+    }
+
+    &--solid {
+      background: #f97316;
+      border: 1px solid #f97316;
+      color: #fff;
+
+      &:hover {
+        background: #ea580c;
+        border-color: #ea580c;
+      }
+    }
+  }
+}
+
+/* Badges */
+.combo-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &--active {
+    background: #d1fae5;
+    color: #047857;
+  }
+
+  &--pending {
+    background: #fef3c7;
+    color: #b45309;
+  }
+
+  &--expired {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+}

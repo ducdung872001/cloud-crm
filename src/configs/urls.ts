@@ -566,6 +566,11 @@ export const urlsApi = {
     list: prefixInventory + "/inventoryBalance/list",
     get: prefixInventory + "/inventoryBalance/get",
   },
+  stockTransferDetail: {
+    list: prefixInventory + "/stockTransferDetail/list",
+    update: prefixInventory + "/stockTransferDetail/update",
+    delete: prefixInventory + "/stockTransferDetail/delete",
+  },
 
   integration: {
     list: prefixAdmin + "/integrationPartner/list",
@@ -2185,13 +2190,16 @@ export const urlsApi = {
   },
   // Báo cáo tồn kho (inventory service)
   inventoryReport: {
-    full: prefixInventory + "/report/stock", // gộp 1 lần
-    summary: prefixInventory + "/report/stock/summary", // 5 KPI card
-    movement: prefixInventory + "/report/stock/movement", // biến động nhập/xuất
-    health: prefixInventory + "/report/stock/health", // sức khỏe tồn kho
-    trend: prefixInventory + "/report/stock/trend", // xu hướng tồn cuối kỳ
-    warehousePerf: prefixInventory + "/report/stock/warehouse-perf", // hiệu suất từng kho
-    productDetails: prefixInventory + "/report/stock/product-details", // chi tiết sản phẩm
+    full: prefixInventory + "/report/stock",
+    summary: prefixInventory + "/report/stock/summary",
+    movement: prefixInventory + "/report/stock/movement",
+    health: prefixInventory + "/report/stock/health",
+    trend: prefixInventory + "/report/stock/trend",
+    warehousePerf: prefixInventory + "/report/stock/warehouse-perf",
+    productDetails: prefixInventory + "/report/stock/product-details",
+    cost: prefixInventory + "/report/stock/cost", // Báo cáo Giá vốn
+    slow: prefixInventory + "/report/stock/slow",  // Báo cáo hàng chậm luân chuyển
+    history: prefixInventory + "/report/stock/history", // Báo cáo lịch sử tồn kho
   },
   // Báo cáo bán hàng (sales service)
   salesReport: {
@@ -2236,6 +2244,15 @@ export const urlsApi = {
     productList: prefixInventory + "/inventoryBalance/stockProduct/list",
     // xóa đi 1 sản phẩm
     deletePro: prefixInventory + "/stockAdjustDetail/delete",
+  },
+  // Phiếu xuất hủy — dùng StockAdjust với adjustType = "DESTROY"
+  destroySlip: {
+    temp: prefixInventory + "/stockAdjust/destroy/temp",
+    create: prefixInventory + "/stockAdjust/destroy/create",
+    // Reuse stockAdjustDetail endpoints
+    addUpdatePro: prefixInventory + "/stockAdjustDetail/update",
+    deletePro: prefixInventory + "/stockAdjustDetail/delete",
+    view: prefixInventory + "/stockAdjust/view",
   },
   kpiDatasource: {
     list: prefixAdmin + "/kpiDatasource/list",
@@ -3458,6 +3475,7 @@ export const urls = {
   report_customer: "/report_customer",
   // điều chỉnh kho
   adjustment_slip: "/adjustment_slip",
+  destroy_slip: "/destroy_slip",
   // thông tin cá nhân
   setting_account: "/setting_account",
   setting_kpi: "/setting_kpi",
