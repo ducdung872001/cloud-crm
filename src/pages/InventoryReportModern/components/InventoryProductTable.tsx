@@ -1,5 +1,6 @@
 import React from "react";
 import { formatCurrency } from "reborn-util";
+import ReportPanel from "components/reportShared/ReportPanel";
 import { IInventoryProductDetail } from "services/InventoryReportService";
 import { PRODUCT_ROWS } from "../mockData";
 
@@ -21,14 +22,15 @@ const DEFAULT_PRODUCTS: IInventoryProductDetail[] = PRODUCT_ROWS.map((d) => ({
 
 export default function InventoryProductTable({ productDetails = DEFAULT_PRODUCTS }: Props) {
   return (
-    <div className="report-table-card">
-      <div className="report-table-card__header">
-        <div>
-          <div className="report-panel__title">Chi tiết sản phẩm tồn kho</div>
-          <div className="report-panel__sub">Danh sách SKU cần theo dõi trong kỳ báo cáo</div>
-        </div>
-      </div>
-      <div className="report-table-wrap">
+    <ReportPanel
+      className="report-table-card"
+      headerClassName="report-table-card__header"
+      bodyClassName="report-table-wrap"
+      titleClassName="report-panel__title"
+      subtitleClassName="report-panel__sub"
+      title="Chi tiết sản phẩm tồn kho"
+      subtitle="Danh sách SKU cần theo dõi trong kỳ báo cáo"
+    >
         <table className="report-table">
           <thead>
             <tr>
@@ -64,7 +66,6 @@ export default function InventoryProductTable({ productDetails = DEFAULT_PRODUCT
             ))}
           </tbody>
         </table>
-      </div>
-    </div>
+    </ReportPanel>
   );
 }

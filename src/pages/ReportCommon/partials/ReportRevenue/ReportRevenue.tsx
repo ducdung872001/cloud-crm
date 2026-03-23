@@ -378,7 +378,7 @@ export default function ReportRevenue(props: IReportCommonProps) {
       {/* ── Bảng kênh bán hàng ── */}
       <div className="tbl-card">
         <div className="tbl-head">
-          <h3>Phân tích doanh thu theo kênh bán hàng</h3>
+          <h3>Kênh bán hàng</h3>
           <span className="tbl-meta">
             {channelTableRows.length} kênh hoạt động
           </span>
