@@ -9,7 +9,7 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { showToast } from "utils/common";
 import InventoryService from "services/InventoryService";
-import ChooseProduct from "./ChooseProduct/ChooseProduct";
+import ChooseProductVariant from "pages/ProductImport/common/ChooseProductVariant/ChooseProductVariant";
 import "./AddTransferOrderForm.scss";
 
 interface ITransferProduct {
@@ -399,11 +399,12 @@ export default function AddTransferOrderForm(props) {
 
       </div>
 
-      <ChooseProduct
+      <ChooseProductVariant
         onShow={showModalAdd}
         onHide={() => setShowModalAdd(false)}
-        lstBatchNoProduct={lstBatchNoProduct}
+        excludeKeys={lstBatchNoProduct}
         inventory={dataInventoryOrg}
+        title="Chọn sản phẩm cần chuyển kho"
         takeData={(data) => handChangeDataProps(data)}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />

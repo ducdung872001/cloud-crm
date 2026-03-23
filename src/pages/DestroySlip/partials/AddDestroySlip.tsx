@@ -9,7 +9,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import { showToast } from "utils/common";
 import InventoryService from "services/InventoryService";
 import DestroySlipService from "services/DestroySlipService";
-import ChooseProduct from "pages/AdjustmentSlip/partials/AddAdjustmentSlip/partials/ChooseProduct/ChooseProduct";
+import ChooseProductVariant from "pages/ProductImport/common/ChooseProductVariant/ChooseProductVariant";
 import "./AddDestroySlip.scss";
 
 interface IDestroyProduct {
@@ -393,15 +393,12 @@ export default function AddDestroySlip({ id, onHide }: Props) {
         </div>
       </div>
 
-      <ChooseProduct
+      <ChooseProductVariant
         onShow={showModalAdd}
-        onHide={(reload) => {
-          if (reload && dataInventory?.value) loadTempSlip(dataInventory.value);
-          setShowModalAdd(false);
-        }}
-        lstBatchNoProduct={lstBatchNoProduct}
-        satId={satId}
+        onHide={() => setShowModalAdd(false)}
+        excludeKeys={lstBatchNoProduct}
         inventory={dataInventory}
+        title="Chọn sản phẩm xuất hủy"
         takeData={handChangeDataProps}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
