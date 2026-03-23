@@ -15,7 +15,6 @@ interface NavigationProps {
 }
 
 const filterMenuItemList = (menuItemList: any) => {
-  //Lọc menu ở đây
   const permissions = getPermissions();
 
   return menuItemList
@@ -24,10 +23,8 @@ const filterMenuItemList = (menuItemList: any) => {
         if (permissions[m.code + "_VIEW"] == 1) {
           return m;
         }
-
         return null;
       }
-
       return m;
     })
     .filter((m) => m);
@@ -53,6 +50,8 @@ export default function Navigation(props: NavigationProps) {
       };
     })
   );
+
+  // Toggle submenu của item có children
   const setShowChildren = (idx: number) => {
     const menuListNew = _.cloneDeep(menuList);
     setMenuList(
@@ -62,6 +61,17 @@ export default function Navigation(props: NavigationProps) {
           is_show_children: m.is_show_children === true ? false : index === idx,
         };
       })
+    );
+  };
+
+  // ✅ FIX: Đóng tất cả submenu đang mở
+  const closeAllChildren = () => {
+    const menuListNew = _.cloneDeep(menuList);
+    setMenuList(
+      menuListNew.map((m) => ({
+        ...m,
+        is_show_children: false,
+      }))
     );
   };
 
@@ -78,7 +88,6 @@ export default function Navigation(props: NavigationProps) {
   return (
     <ul className="navigation">
       {menuList.map((item, idx) => {
-        //Lọc thêm dựa vào quyền
         if (item.children && item.children.length > 0) {
           item.children = filterMenuItemList(item.children);
         }
@@ -87,16 +96,21 @@ export default function Navigation(props: NavigationProps) {
           item.path === location.pathname ||
           (item.children && item.children.filter((children) => children.path === location.pathname)?.length > 0) ||
           item.is_active;
+
         const disabledChildrenCount =
           item.children?.length > 0 &&
-          item.children.filter((children) => children.permission && permissions.filter((per) => children.permission?.includes(per)).length === 0)
-            .length;
+          item.children.filter(
+            (children) =>
+              children.permission &&
+              permissions.filter((per) => children.permission?.includes(per)).length === 0
+          ).length;
 
         return (
           <li
             key={idx}
             className={`level-1${isActive ? " active" : ""}${item.is_show_children ? " show-children" : ""}${
-              (item.permission && permissions.filter((per) => item.permission?.includes(per)).length === 0) ||
+              (item.permission &&
+                permissions.filter((per) => item.permission?.includes(per)).length === 0) ||
               (item.children?.length > 0 && disabledChildrenCount === item.children.length) ||
               (dataExpired && dataExpired.numDay <= 0)
                 ? " disabled"
@@ -104,6 +118,7 @@ export default function Navigation(props: NavigationProps) {
             }`}
           >
             {item.children && item.children.length > 0 ? (
+              // Item CÓ children → toggle submenu
               <a
                 className="d-flex align-items-center"
                 onClick={() => {
@@ -117,11 +132,14 @@ export default function Navigation(props: NavigationProps) {
               >
                 {item.icon}
                 <span>{t(`sidebar.${item.title}`)}</span>
-                {item.children &&
-                  item.children.length > 0 &&
-                  (item.is_show_children ? <Icon name="ChevronDown" className="arrow-menu" /> : <Icon name="ChevronRight" className="arrow-menu" />)}
+                {item.is_show_children ? (
+                  <Icon name="ChevronDown" className="arrow-menu" />
+                ) : (
+                  <Icon name="ChevronRight" className="arrow-menu" />
+                )}
               </a>
             ) : (
+              // ✅ Item KHÔNG có children → đóng tất cả submenu đang mở
               <Link
                 className="d-flex align-items-center"
                 to={item.path}
@@ -130,6 +148,7 @@ export default function Navigation(props: NavigationProps) {
                 onClick={() => {
                   if (dataExpired && dataExpired.numDay > 0) {
                     handShowChildren(item);
+                    closeAllChildren(); // ← đóng tất cả submenu
                   }
                 }}
               >
@@ -137,11 +156,13 @@ export default function Navigation(props: NavigationProps) {
                 <span>{t(`sidebar.${item.title}`)}</span>
               </Link>
             )}
+
             {item.children && item.children.length > 0 && (
               <ul
                 style={{
                   maxHeight:
-                    item.is_show_children || (isActive && menuList.find((m) => m.is_show_children) === item)
+                    item.is_show_children ||
+                    (isActive && menuList.find((m) => m.is_show_children) === item)
                       ? item.children.length === 1
                         ? item.children.length * 62
                         : item.children.length * 48
@@ -153,13 +174,19 @@ export default function Navigation(props: NavigationProps) {
                   <li
                     key={idxChild}
                     className={`level-2${childrenItem.path === location.pathname ? " active" : ""}${
-                      (childrenItem.permission && permissions.filter((per) => childrenItem.permission?.includes(per)).length === 0) ||
+                      (childrenItem.permission &&
+                        permissions.filter((per) => childrenItem.permission?.includes(per)).length === 0) ||
                       (dataExpired && dataExpired.numDay <= 0)
                         ? " disabled"
                         : ""
                     }`}
                   >
-                    <Link className="d-flex align-items-center" to={childrenItem.path} title={childrenItem.title} target={childrenItem.target}>
+                    <Link
+                      className="d-flex align-items-center"
+                      to={childrenItem.path}
+                      title={childrenItem.title}
+                      target={childrenItem.target}
+                    >
                       {childrenItem.icon}
                       {t(`sidebar.${childrenItem.title}`)}
                     </Link>
