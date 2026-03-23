@@ -141,6 +141,10 @@
 .tf-col-input  { width: 12rem; }
 .tf-col-action { width: 4.4rem; text-align: center; }
 
+// Override browser user-agent th alignment
+.tf-th-right  { text-align: right !important; }
+.tf-th-center { text-align: center !important; }
+
 .tf-product-name {
   font-weight: 500;
   color: var(--text-primary-color);

@@ -113,8 +113,14 @@
 .cpv-col-stt    { width: 4.5rem; text-align: center; color: var(--text-extra-color); }
 .cpv-col-avatar { width: 5rem;   text-align: center; }
 .cpv-col-sku    { width: 13rem; }
-.cpv-col-right  { width: 11rem;  text-align: right; }
-.cpv-col-unit   { width: 8rem;   text-align: center; }
+.cpv-col-unit   { width: 8rem;   text-align: center !important; }
+
+// td + th cùng căn phải cho cột số/tiền
+.cpv-col-right,
+.cpv-th-right {
+  width: 11rem;
+  text-align: right !important;
+}
 
 // ── Content cells ─────────────────────────────────────────────────────────────
 .cpv-avatar {
@@ -122,7 +128,17 @@
   border-radius: 0.6rem; overflow: hidden;
   border: 1px solid var(--border-color);
   margin: 0 auto;
-  img { width: 100%; height: 100%; object-fit: cover; }
+  background: var(--bg-extra-color, #f0f2f5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 }
 
 .cpv-name {

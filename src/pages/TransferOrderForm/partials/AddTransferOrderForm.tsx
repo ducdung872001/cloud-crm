@@ -237,9 +237,9 @@ export default function AddTransferOrderForm(props) {
                       <tr>
                         <th className="tf-col-stt">STT</th>
                         <th>Sản phẩm</th>
-                        <th className="tf-col-center">Kho nguồn</th>
-                        <th className="tf-col-center">Đơn vị</th>
-                        <th className="tf-col-num">Tồn kho</th>
+                        <th>Kho nguồn</th>
+                        <th className="tf-col-center tf-th-center">Đơn vị</th>
+                        <th className="tf-col-num tf-th-right">Tồn kho</th>
                         <th className="tf-col-num tf-col-input">SL chuyển</th>
                         <th>Ghi chú</th>
                         <th className="tf-col-action"></th>

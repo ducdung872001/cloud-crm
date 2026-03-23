@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import ImageError from "assets/images/error.png";
 import Icon from "components/icon";
-import Image from "components/image";
 import Loading from "components/loading";
 import Button from "components/button/button";
 import Checkbox from "components/checkbox/checkbox";
@@ -251,9 +251,9 @@ export default function ChooseProductVariant({
                       <th className="cpv-col-avatar"></th>
                       <th>Sản phẩm / Biến thể</th>
                       <th className="cpv-col-sku">SKU</th>
-                      <th className="cpv-col-right">Tồn kho</th>
+                      <th className="cpv-col-right cpv-th-right">Tồn kho</th>
                       <th className="cpv-col-unit">Đơn vị</th>
-                      <th className="cpv-col-right">Giá vốn BQ</th>
+                      <th className="cpv-col-right cpv-th-right">Giá vốn BQ</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -273,7 +273,14 @@ export default function ChooseProductVariant({
                           </td>
                           <td className="cpv-col-avatar">
                             <div className="cpv-avatar">
-                              <Image src={item.productAvatar} alt={item.productName} />
+                              <img
+                                src={item.productAvatar || ImageError}
+                                alt={item.productName}
+                                onError={e => {
+                                  (e.currentTarget as HTMLImageElement).onerror = null;
+                                  (e.currentTarget as HTMLImageElement).src = ImageError;
+                                }}
+                              />
                             </div>
                           </td>
                           <td>
