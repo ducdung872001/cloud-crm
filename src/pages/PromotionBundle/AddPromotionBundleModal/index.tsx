@@ -121,7 +121,7 @@ export default function AddPromotionBundleModal(props: IAddCategoryServiceModelP
     const response = await CategoryServiceService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} Combo khuyến mãi thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} combo khuyến mãi thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -215,7 +215,7 @@ export default function AddPromotionBundleModal(props: IAddCategoryServiceModelP
         className="modal-add-payment-method"
       >
         <form className="form-payment-method" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} Combo khuyến mãi`} toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} combo khuyến mãi`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (

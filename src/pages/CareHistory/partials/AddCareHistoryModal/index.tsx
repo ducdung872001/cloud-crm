@@ -1,12 +1,9 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo } from "react";
-import { IAddCategoryServiceModelProps } from "model/categoryService/PropsModel";
-import { ICategoryServiceRequestModel } from "model/categoryService/CategoryServiceRequestModel";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
-import FileUpload from "components/fileUpload/fileUpload";
 import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
@@ -14,7 +11,13 @@ import { isDifferenceObj } from "reborn-util";
 import CategoryServiceService from "services/CategoryServiceService";
 import "./index.scss";
 
-export default function AddPromoCodeModal(props: IAddCategoryServiceModelProps) {
+interface IAddCareHistoryModalProps {
+  onShow: boolean;
+  onHide: (reload?: boolean) => void;
+  data?: any;
+}
+
+export default function AddCareHistoryModal(props: IAddCareHistoryModalProps) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -22,94 +25,87 @@ export default function AddPromoCodeModal(props: IAddCategoryServiceModelProps) 
   const focusedElement = useActiveElement();
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  7;
 
   const values = useMemo(
-    () => {
-      const d = data as any;
-      return {
-        code: d?.code ?? "",
-        type: d?.type ?? "Phần trăm",
-        valueText: d?.value ?? "",
-        min: d?.min ? parseInt(d.min.replace(/\./g, '')) : 0,
-        total: d?.total ?? 100,
-        expiry: d?.expiry ?? "",
-        status: d?.status ?? "active",
-        id: d?.id,
-      } as any;
-    },
+    () => ({
+      customer: data?.customer ?? "",
+      typeLabel: data?.typeLabel ?? "phone",
+      content: data?.content ?? "",
+      staff: data?.staff ?? "",
+      duration: data?.duration ?? "",
+      result: data?.result ?? "",
+      date: data?.date ?? "",
+    }),
     [data, onShow]
   );
 
   const validations: IValidation[] = [
-    { name: "code", rules: "required" },
-    { name: "valueText", rules: "required" },
-    { name: "total", rules: "required" },
-    { name: "expiry", rules: "required" },
+    {
+      name: "customer",
+      rules: "required",
+    },
+    {
+      name: "typeLabel",
+      rules: "required",
+    },
+    {
+      name: "content",
+      rules: "required",
+    },
   ];
 
   const listField: IFieldCustomize[] = [
     {
-      label: "Mã giảm giá",
-      name: "code",
+      label: "Khách hàng",
+      name: "customer",
       type: "text",
       fill: true,
       required: true,
-      placeholder: "VD: REBORN20, FREESHIP...",
     },
     {
-      label: "Loại giảm giá",
-      name: "type",
+      label: "Loại tương tác",
+      name: "typeLabel",
       type: "select",
       fill: true,
+      placeholder: "Chọn loại tương tác",
       options: [
-        { label: "Phần trăm", value: "Phần trăm" },
-        { label: "Số tiền", value: "Số tiền" },
-        { label: "Miễn ship", value: "Miễn ship" },
+        { label: "Cuộc gọi", value: "phone" },
+        { label: "Zalo", value: "zalo" },
+        { label: "Tin nhắn", value: "message" },
+        { label: "Tại cửa hàng", value: "store" },
       ],
       required: true,
     },
     {
-      label: "Mức giảm",
-      name: "valueText",
+      label: "Nội dung chăm sóc",
+      name: "content",
+      type: "textarea",
+      fill: true,
+      required: true,
+    },
+    {
+      label: "Nhân viên phụ trách",
+      name: "staff",
       type: "text",
       fill: true,
-      required: true,
-      placeholder: "VD: 20%, 50.000đ...",
     },
     {
-      label: "Đơn tối thiểu (VNĐ)",
-      name: "min",
-      type: "number",
-      fill: true,
-      required: false,
-      placeholder: "Nhập 0 nếu không giới hạn",
-    },
-    {
-      label: "Tổng số lượt dùng",
-      name: "total",
-      type: "number",
-      fill: true,
-      required: true,
-    },
-    {
-      label: "Hạn sử dụng",
-      name: "expiry",
+      label: "Thời lượng",
+      name: "duration",
       type: "text",
       fill: true,
-      required: true,
-      placeholder: "VD: 31/12/2026",
     },
     {
-      label: "Trạng thái hiển thị",
-      name: "status",
-      type: "select",
+      label: "Kết quả",
+      name: "result",
+      type: "text",
       fill: true,
-      options: [
-        { label: "Đang chạy", value: "active" },
-        { label: "Chờ duyệt", value: "pending" },
-        { label: "Hết hạn", value: "expired" },
-      ],
+    },
+    {
+      label: "Ngày (Ví dụ: 15/03 10:30)",
+      name: "date",
+      type: "text",
+      fill: true,
       required: true,
     },
   ];
@@ -135,15 +131,15 @@ export default function AddPromoCodeModal(props: IAddCategoryServiceModelProps) 
     }
 
     setIsSubmit(true);
-    const body: ICategoryServiceRequestModel = {
-      ...(formData.values as ICategoryServiceRequestModel),
+    const body: any = {
+      ...(formData.values as any),
       ...(data ? { id: data.id } : {}),
     };
 
     const response = await CategoryServiceService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} mã giảm giá thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} lịch sử chăm sóc thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -165,7 +161,7 @@ export default function AddPromoCodeModal(props: IAddCategoryServiceModelProps) 
             },
           },
           {
-            title: data ? "Cập nhật" : "Tạo mới",
+            title: data ? "Cập nhật" : "Ghi nhận",
             type: "submit",
             color: "primary",
             disabled: isSubmit || !isDifferenceObj(formData.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
@@ -237,7 +233,7 @@ export default function AddPromoCodeModal(props: IAddCategoryServiceModelProps) 
         className="modal-add-payment-method"
       >
         <form className="form-payment-method" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} mã giảm giá`} toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Ghi nhận"} lịch sử chăm sóc`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (
@@ -257,3 +253,4 @@ export default function AddPromoCodeModal(props: IAddCategoryServiceModelProps) 
     </Fragment>
   );
 }
+
