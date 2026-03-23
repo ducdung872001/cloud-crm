@@ -2,6 +2,7 @@ import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import Icon from "components/icon";
+import ReportPanel from "components/reportShared/ReportPanel";
 import { Options } from "highcharts";
 import { ExpenseCategoryPoint } from "./types";
 
@@ -20,17 +21,21 @@ export default function ExpenseCard(props: ExpenseCardProps) {
   const { displayTabType, refreshKey, isRefreshing, chartOptions, hasData, expenseSeries, expenseColors, onReset } = props;
 
   return (
-    <div className="finance-report__card">
-      <div className="finance-report__card-body finance-report__card-body--enter" key={`expense-${displayTabType}-${refreshKey}`}>
-        <div className="finance-report__card-header">
-          <div>
-            <div className="finance-report__card-title">Cơ cấu chi phí</div>
-            <div className="finance-report__card-subtitle">Top nhóm chi lớn nhất theo danh mục giao dịch</div>
-          </div>
-          <button className={`finance-report__reset-btn${isRefreshing ? " is-spinning" : ""}`} type="button" onClick={onReset} title="Reset dữ liệu">
-            <Icon name="Refresh" />
-          </button>
-        </div>
+    <ReportPanel
+      className="finance-report__card"
+      bodyClassName="finance-report__card-body finance-report__card-body--enter"
+      headerClassName="finance-report__card-header"
+      titleClassName="finance-report__card-title"
+      subtitleClassName="finance-report__card-subtitle"
+      title="Cơ cấu chi phí"
+      subtitle="Top nhóm chi lớn nhất theo danh mục giao dịch"
+      headerRight={
+        <button className={`finance-report__reset-btn${isRefreshing ? " is-spinning" : ""}`} type="button" onClick={onReset} title="Reset dữ liệu">
+          <Icon name="Refresh" />
+        </button>
+      }
+    >
+      <div key={`expense-${displayTabType}-${refreshKey}`}>
         <div className="finance-report__legend">
           {expenseSeries.map((item, index) => (
             <div className="finance-report__legend-item" key={item.label}>
@@ -47,6 +52,6 @@ export default function ExpenseCard(props: ExpenseCardProps) {
           )}
         </div>
       </div>
-    </div>
+    </ReportPanel>
   );
 }

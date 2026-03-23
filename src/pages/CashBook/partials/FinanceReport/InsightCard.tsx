@@ -1,6 +1,7 @@
 import React from "react";
 import moment from "moment";
 import Icon from "components/icon";
+import ReportPanel from "components/reportShared/ReportPanel";
 import { formatCurrency } from "reborn-util";
 import { RecentTransactionsCardProps } from "./types";
 
@@ -24,8 +25,8 @@ export default function InsightCard(props: RecentTransactionsCardProps) {
   } = props;
 
   return (
-    <div className="finance-report__card">
-      <div className={`finance-report__card-body finance-report__card-body--enter${isTabSwitching ? " is-content-loading" : ""}`}>
+    <ReportPanel className="finance-report__card" bodyClassName={`finance-report__card-body finance-report__card-body--enter${isTabSwitching ? " is-content-loading" : ""}`}>
+      <div>
         <div className="finance-report__table-head">
           <div className="finance-report__panel-tabs">
             <button className={`finance-report__panel-tab${insightTab === "transactions" ? " active" : ""}`} onClick={() => onChangeInsightTab("transactions")}>
@@ -157,6 +158,6 @@ export default function InsightCard(props: RecentTransactionsCardProps) {
           </div>
         )}
       </div>
-    </div>
+    </ReportPanel>
   );
 }

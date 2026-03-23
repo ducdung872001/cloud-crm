@@ -2,6 +2,7 @@ import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import Icon from "components/icon";
+import ReportPanel from "components/reportShared/ReportPanel";
 import { Options } from "highcharts";
 
 interface CashFlowCardProps {
@@ -17,17 +18,21 @@ export default function CashFlowCard(props: CashFlowCardProps) {
   const { displayTabType, refreshKey, isRefreshing, chartOptions, hasData, onReset } = props;
 
   return (
-    <div className="finance-report__card">
-      <div className="finance-report__card-body finance-report__card-body--enter" key={`cashflow-${displayTabType}-${refreshKey}`}>
-        <div className="finance-report__card-header">
-          <div>
-            <div className="finance-report__card-title">Dòng tiền thu chi gần đây</div>
-            <div className="finance-report__card-subtitle">Nhóm theo ngày phát sinh trong dữ liệu đang hiển thị</div>
-          </div>
-          <button className={`finance-report__reset-btn${isRefreshing ? " is-spinning" : ""}`} type="button" onClick={onReset} title="Reset dữ liệu">
-            <Icon name="Refresh" />
-          </button>
-        </div>
+    <ReportPanel
+      className="finance-report__card"
+      bodyClassName="finance-report__card-body finance-report__card-body--enter"
+      headerClassName="finance-report__card-header"
+      titleClassName="finance-report__card-title"
+      subtitleClassName="finance-report__card-subtitle"
+      title="Dòng tiền thu chi gần đây"
+      subtitle="Nhóm theo ngày phát sinh trong dữ liệu đang hiển thị"
+      headerRight={
+        <button className={`finance-report__reset-btn${isRefreshing ? " is-spinning" : ""}`} type="button" onClick={onReset} title="Reset dữ liệu">
+          <Icon name="Refresh" />
+        </button>
+      }
+    >
+      <div key={`cashflow-${displayTabType}-${refreshKey}`}>
         <div className="finance-report__legend">
           <div className="finance-report__legend-item">
             <span className="finance-report__legend-dot income"></span> Thu
@@ -44,6 +49,6 @@ export default function CashFlowCard(props: CashFlowCardProps) {
           )}
         </div>
       </div>
-    </div>
+    </ReportPanel>
   );
 }

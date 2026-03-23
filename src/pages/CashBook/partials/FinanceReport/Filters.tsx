@@ -1,5 +1,6 @@
 import React from "react";
 import SearchBox from "components/searchBox/searchBox";
+import ReportFilterShell from "components/reportShared/ReportFilterShell";
 import { IFilterItem } from "model/OtherModel";
 import { ICashbookFilterRequest } from "model/cashbook/CashbookRequestModel";
 
@@ -16,7 +17,7 @@ export default function Filters(props: FiltersProps) {
   const { listTabs, activeTabName, params, filterList, onChangeTab, onUpdateParams } = props;
 
   return (
-    <div className="finance-report__filters">
+    <ReportFilterShell className="finance-report__filters">
       <div className="action-header">
         <div className="title__actions">
           <ul className="menu-list">
@@ -43,6 +44,6 @@ export default function Filters(props: FiltersProps) {
           updateParams={onUpdateParams}
         />
       </div>
-    </div>
+    </ReportFilterShell>
   );
 }

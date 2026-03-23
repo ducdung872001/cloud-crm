@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import TitleAction from "components/titleAction/titleAction";
+import ReportPanel from "components/reportShared/ReportPanel";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import moment from "moment";
 import {
   HEALTH_DATA,
-  INVENTORY_KPIS,
   MOVEMENT_DATA,
   PRODUCT_ROWS,
   WAREHOUSE_DATA,
@@ -177,19 +177,11 @@ export default function InventoryReportModern() {
         <InventoryKpiGrid summary={summary} loading={isLoading} />
 
         <div className="report-grid">
-          <div className="report-panel report-panel--wide">
-            <div className="report-panel__header">
-              <div className="report-panel__title">Biến động nhập xuất tồn</div>
-              <div className="report-panel__sub">So sánh nhập, xuất và điều chỉnh trong kỳ</div>
-            </div>
+          <ReportPanel className="report-panel report-panel--wide" headerClassName="report-panel__header" titleClassName="report-panel__title" subtitleClassName="report-panel__sub" title="Biến động nhập xuất tồn" subtitle="So sánh nhập, xuất và điều chỉnh trong kỳ">
             <HighchartsReact highcharts={Highcharts} options={movementOptions} />
-          </div>
+          </ReportPanel>
 
-          <div className="report-panel">
-            <div className="report-panel__header">
-              <div className="report-panel__title">Sức khỏe tồn kho</div>
-              <div className="report-panel__sub">Phân loại theo mức cảnh báo</div>
-            </div>
+          <ReportPanel className="report-panel" headerClassName="report-panel__header" titleClassName="report-panel__title" subtitleClassName="report-panel__sub" title="Sức khỏe tồn kho" subtitle="Phân loại theo mức cảnh báo">
             <HighchartsReact highcharts={Highcharts} options={healthOptions} />
             <div className="report-legend">
               {health.map((item) => (
@@ -200,15 +192,11 @@ export default function InventoryReportModern() {
                 </div>
               ))}
             </div>
-          </div>
+          </ReportPanel>
 
-          <div className="report-panel report-panel--wide">
-            <div className="report-panel__header">
-              <div className="report-panel__title">Xu hướng tồn cuối kỳ</div>
-              <div className="report-panel__sub">Theo dõi lượng tồn còn lại theo chu kỳ</div>
-            </div>
+          <ReportPanel className="report-panel report-panel--wide" headerClassName="report-panel__header" titleClassName="report-panel__title" subtitleClassName="report-panel__sub" title="Xu hướng tồn cuối kỳ" subtitle="Theo dõi lượng tồn còn lại theo chu kỳ">
             <HighchartsReact highcharts={Highcharts} options={closingOptions} />
-          </div>
+          </ReportPanel>
 
           <InventoryWarehouseSummary warehousePerf={warehousePerf} />
         </div>
