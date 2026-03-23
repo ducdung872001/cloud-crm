@@ -30,4 +30,6 @@ export interface ICashbookRequest {
   actionType?: number;
   projectId?: number;
   contractId?: number;
+  fundId?: number;         // Quỹ tiền (thêm mới)
+  relatedEntity?: string;  // Đối tượng liên quan KH/NCC (thêm mới)
 }

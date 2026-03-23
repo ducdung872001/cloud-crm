@@ -745,6 +745,7 @@ export const urlsApi = {
   },
   financeDashboard: {
     full: prefixBilling + "/finance/dashboard",
+    chart: prefixBilling + "/finance/chart"
   },
   cashbook: {
     list: prefixAdmin + "/cashbook/list",
