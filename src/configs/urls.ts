@@ -2243,6 +2243,15 @@ export const urlsApi = {
     // xóa đi 1 sản phẩm
     deletePro: prefixInventory + "/stockAdjustDetail/delete",
   },
+  // Phiếu xuất hủy — dùng StockAdjust với adjustType = "DESTROY"
+  destroySlip: {
+    temp:   prefixInventory + "/stockAdjust/destroy/temp",
+    create: prefixInventory + "/stockAdjust/destroy/create",
+    // Reuse stockAdjustDetail endpoints
+    addUpdatePro: prefixInventory + "/stockAdjustDetail/update",
+    deletePro:    prefixInventory + "/stockAdjustDetail/delete",
+    view:         prefixInventory + "/stockAdjust/view",
+  },
   kpiDatasource: {
     list: prefixAdmin + "/kpiDatasource/list",
     update: prefixAdmin + "/kpiDatasource/update",

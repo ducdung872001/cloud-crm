@@ -8,7 +8,7 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { showToast } from "utils/common";
 import InventoryService from "services/InventoryService";
-import AdjustmentSlipService from "services/AdjustmentSlipService";
+import DestroySlipService from "services/DestroySlipService";
 import ChooseProduct from "pages/AdjustmentSlip/partials/AddAdjustmentSlip/partials/ChooseProduct/ChooseProduct";
 import "./AddDestroySlip.scss";
 
@@ -52,7 +52,7 @@ export default function AddDestroySlip({ id, onHide }: Props) {
   // ── Load temp phiếu khi chọn kho ─────────────────────────────────────────
   const loadTempSlip = async (inventoryId: number) => {
     setIsLoading(true);
-    const response = await AdjustmentSlipService.temp(inventoryId);
+    const response = await DestroySlipService.temp(inventoryId);
     if (response.code === 0) {
       const result = response.result;
       setSatId(result.satId);
@@ -72,7 +72,7 @@ export default function AddDestroySlip({ id, onHide }: Props) {
     if (id) {
       (async () => {
         setIsLoading(true);
-        const response = await AdjustmentSlipService.view(id);
+        const response = await DestroySlipService.view(id);
         if (response.code === 0) {
           const result = response.result;
           if (result?.stockAdjust) {
@@ -128,7 +128,7 @@ export default function AddDestroySlip({ id, onHide }: Props) {
   };
 
   const handleRemove = async (itemId: number) => {
-    const response = await AdjustmentSlipService.deletePro(itemId);
+    const response = await DestroySlipService.deletePro(itemId);
     if (response.code === 0) {
       showToast("Đã xóa sản phẩm", "success");
       if (dataInventory?.value) loadTempSlip(dataInventory.value);
@@ -169,10 +169,10 @@ export default function AddDestroySlip({ id, onHide }: Props) {
     setIsSubmit(true);
 
     // Update từng dòng trước
-    await Promise.all(lstProducts.map((item) => AdjustmentSlipService.addUpdatePro(item)));
+    await Promise.all(lstProducts.map((item) => DestroySlipService.addUpdatePro(item)));
 
     // Tạo phiếu chính thức
-    const response = await AdjustmentSlipService.createAdjSlip({
+    const response = await DestroySlipService.create({
       id: satId,
       inventoryId: dataInventory.value,
     });
