@@ -60,6 +60,33 @@ export default function ChatBot() {
     }
   }, [isShowChatBot]);
 
+  // ── Ẩn/hiện toàn bộ widget (icon + cửa sổ chat) bằng phím F2 ─────────────
+  // true  = hiện (mặc định)
+  // false = ẩn hoàn toàn — không render gì cả, đỡ vướng màn hình
+  const [isWidgetVisible, setIsWidgetVisible] = useState(true);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "F2") return;
+      // Bỏ qua khi đang gõ trong ô input / textarea / contentEditable
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        (e.target as HTMLElement)?.isContentEditable
+      ) return;
+      e.preventDefault();
+      setIsWidgetVisible(prev => {
+        // Khi ẩn → đóng cửa sổ chat luôn, lần sau F2 hiện lại ở dạng icon
+        if (prev) setIsShowChatBot(false);
+        return !prev;
+      });
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [setIsShowChatBot]);
+  // ──────────────────────────────────────────────────────────────────────────
+
   const [activeStatus, setActiveStatus] = useState<number>(0);
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
   const [isUnmount, setIsUnmount] = useState<boolean>(false);
@@ -245,9 +272,11 @@ export default function ChatBot() {
     }
   
     useEffect(() => {
-   
       dragElement(document.getElementById("mydiv"));
     }, []);
+
+  // ── Ẩn hoàn toàn khi isWidgetVisible = false ─────────────────────────────
+  if (!isWidgetVisible) return null;
 
   return (
     <div>
@@ -463,34 +492,13 @@ export default function ChatBot() {
                   setIsShowChatBot(true)
                 }}
               >
-                <Tippy content='Trợ lý ảo Reborn'>
+                <Tippy content='Trợ lý ảo Reborn (F2 để ẩn)'>
                   <div className="image-chatbot-icon">
                       <img src={NoImageChatBot} alt="" />
                   </div>
                 </Tippy>
               </div>
             </div>
-            
-            // <div 
-            //   id="mydiv"
-            //   className="chat__icon"
-            //   onDoubleClick={() => {
-            //       setIsShowChatBot(true)
-            //   }}
-            // >
-            //   <div style={{display: 'flex'}}>
-            //     <Tippy content='Chat bot'>
-            //       <div className="notify-chatbot-icon">
-            //           <div className="image-chatbot-icon">
-            //               <img src={NoImageChatBot} alt="" />
-            //           </div>
-            //       </div>
-            //     </Tippy>
-            //     <span className="icon-minus">
-            //       <Icon name="Minus" />
-            //     </span>
-            //   </div>
-            // </div>
         }
     </div>
   );

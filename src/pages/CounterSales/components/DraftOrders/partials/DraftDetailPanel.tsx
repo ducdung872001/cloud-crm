@@ -1,15 +1,20 @@
 import React from "react";
-import { DraftOrder } from "../types";
+import { DraftOrder, CartItemForDraft } from "../types";
 import DraftItemsTable from "./DraftItemsTable";
 import DraftSummary from "./DraftSummary";
 
 type Props = {
-  order: DraftOrder | null;
-  onDelete: (id: string) => void;
-  onContinue?: (draftId: string) => void;
+  order:      DraftOrder | null;
+  onDelete:   (id: string) => void;
+  /**
+   * Truyền cartItems + label đơn tạm lên để CounterSales load vào giỏ.
+   * Không dùng navigate() vì đang ở cùng route với CounterSales.
+   */
+  onContinue?: (cartItems: CartItemForDraft[], draftLabel: string) => void;
+  deleting?:  string | null;
 };
 
-const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue }) => {
+const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue, deleting }) => {
   if (!order) {
     return (
       <div className="draft-right">
@@ -26,6 +31,14 @@ const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue }) => {
     );
   }
 
+  const isDeleting = deleting === order.id;
+
+  const handleContinue = () => {
+    const cartItems: CartItemForDraft[] = order.cartItems ?? [];
+    if (cartItems.length === 0) return;
+    onContinue?.(cartItems, order.tenDon);
+  };
+
   return (
     <div className="draft-right">
       <div className="draft-right__head">
@@ -39,10 +52,20 @@ const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue }) => {
         </div>
 
         <div className="acts">
-          <button className="btn btn--outline btn--sm" onClick={() => onDelete(order.id)}>
-            🗑️ Xóa đơn
+          <button
+            className="btn btn--outline btn--sm"
+            onClick={() => onDelete(order.id)}
+            disabled={isDeleting}
+            style={{ opacity: isDeleting ? 0.5 : 1 }}
+          >
+            {isDeleting ? "⏳ Đang xóa..." : "🗑️ Xóa đơn"}
           </button>
-          <button className="btn btn--ink btn--sm" onClick={() => (onContinue ? onContinue(order.id) : undefined)}>
+
+          <button
+            className="btn btn--ink btn--sm"
+            onClick={handleContinue}
+            disabled={isDeleting || (order.cartItems ?? []).length === 0}
+          >
             ⚡ Tiếp tục xử lý
           </button>
         </div>

@@ -82,8 +82,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
         </div>
         <button className="qr-pill" onClick={onQrScan}>
           📷 Quét QR
-        </button>
-        <button className="btn btn--outline btn--sm">+ Tạo SP nhanh</button>
+        </button>        
       </div>
 
       {/* Category tabs */}

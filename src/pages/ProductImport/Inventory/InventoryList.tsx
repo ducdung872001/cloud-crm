@@ -10,9 +10,9 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import { IFilterItem, ISaveSearch } from "model/OtherModel";
 import { IInventoryLedgerFilterRequest } from "model/inventory/InventoryRequestModel";
 import { IInventoryLedgerResponse } from "model/inventory/InventoryResponseModel";
-import { showToast, getPermissions } from "utils/common";
+import { showToast } from "utils/common";
 import { getPageOffset, isDifferenceObj } from "reborn-util";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import InventoryService from "services/InventoryService";
 import urls from "@/configs/urls";
 import "./InventoryList.scss";
@@ -20,7 +20,7 @@ import "./InventoryList.scss";
 const REF_TYPE_TABS = [
   { label: "Tất cả", value: "" },
   { label: "Nhập kho", value: "IMPORT" },
-  { label: "Bán hàng", value: "SALE" },
+  { label: "Xuất bán", value: "SALE" },
   { label: "Khách trả", value: "RETURN" },
   { label: "Chuyển kho", value: "TRANSFER" },
   { label: "Điều chỉnh", value: "ADJUSTMENT" },
@@ -76,10 +76,8 @@ const renderQuantity = (item: IInventoryLedgerResponse) => {
 export default function WarehouseBookList() {
   document.title = "Sổ kho";
 
-  const navigate = useNavigate();
   const isMounted = useRef(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [permissions] = useState(getPermissions());
 
   const [listWarehouseBook, setListWarehouseBook] = useState<IInventoryLedgerResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -210,7 +208,14 @@ export default function WarehouseBookList() {
       if (paramsTemp.page === 1) {
         delete paramsTemp["page"];
       }
-      setSearchParams(paramsTemp as Record<string, string | string[]>);
+      // Convert tất cả giá trị sang string trước khi set URL params
+      const searchParamsObj: Record<string, string> = {};
+      Object.keys(paramsTemp).forEach((key) => {
+        if (paramsTemp[key] !== undefined && paramsTemp[key] !== null) {
+          searchParamsObj[key] = String(paramsTemp[key]);
+        }
+      });
+      setSearchParams(searchParamsObj);
     }
 
     return () => {
@@ -218,14 +223,9 @@ export default function WarehouseBookList() {
     };
   }, [params]);
 
-  const titleActions: ITitleActions = {
-    actions: [
-      permissions["WAREHOUSE_ADD"] == 1 && {
-        title: "Tạo phiếu nhập",
-        callback: () => navigate(urls.create_inventory),
-      },
-    ],
-  };
+  // ── Sổ kho = nhật ký giao dịch (read-only) → không có button tạo mới ──────
+  // Mọi thao tác tạo phiếu thực hiện tại menu "Quản lý kho"
+  const titleActions: ITitleActions = { actions: [] };
 
   const titles = ["STT", "Mã chứng từ", "Loại chứng từ", "Thời gian", "Sản phẩm", "Đối tác", "Kho", "Biến động SL", "Tồn trước", "Tồn sau", "Người thực hiện", "Ref tài chính", "Trạng thái"];
   const dataFormat = ["text-center", "", "text-center", "text-center", "", "", "", "text-center", "text-center", "text-center", "", "text-center", "text-center"];

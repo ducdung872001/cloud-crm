@@ -107,7 +107,8 @@ i18n.use(initReactI18next).init({
           outboundInvoice: "Outbound invoice",
           soldProducts: "Sold products",
           stockedProducts: "Stocked products",
-          warehouseManagement: "Warehouse management",
+          warehouseManagement: "Warehouse ledger",
+          warehouseChecking: "Warehouse management",
           inventoryTransferDocument: "Inventory transfer document",
           stockAdjustmentVoucher: "Stock adjustment voucher",
           managementMaterial: "Management material",
@@ -367,8 +368,8 @@ i18n.use(initReactI18next).init({
           outboundInvoice: "Hóa đơn xuất kho",
           soldProducts: "Sản phẩm đã bán",
           stockedProducts: "Tồn kho",
-          warehouseManagement: "Sổ kho", //Lưu giao dịch liên quan kho
-          warehouseChecking: "Kiểm kho", //Thực hiện kiểm thực tế (Đếm thực tế) => Nếu lệch thì Tạo phiếu điều chỉnh
+          warehouseManagement: "Sổ kho",     // Nhật ký giao dịch kho (read-only ledger)
+          warehouseChecking: "Quản lý kho",   // Nghiệp vụ kho: tồn kho, phiếu nhập, phiếu kiểm, giá vốn
           reportWarhouse: "Báo cáo kho",
           inventoryTransferDocument: "Phiếu điều chuyển kho",
           stockAdjustmentVoucher: "Phiếu điều chỉnh kho",

@@ -45,6 +45,7 @@ export default function AppNotificationList(props) {
   const [idNotification, setIdNotification] = useState<number>(null);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
+  const [showCampaignModal, setShowCampaignModal] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
 
   // Stats state
@@ -195,7 +196,12 @@ export default function AppNotificationList(props) {
       {
         title: "+ Tạo chiến dịch",
         callback: () => {
-          setIdNotification(null);
+          setCampaignName("");
+          setTargetAudience("all");
+          setMessageContent("");
+          setSendTime("");
+          setPromoCode("none");
+          setShowCampaignModal(true);
         },
       },
     ],
@@ -404,87 +410,98 @@ export default function AppNotificationList(props) {
           </div>
         </div>
 
-        {/* Create Campaign Form */}
-        <div className="card-box campaign-form">
-          <h3 className="campaign-form__title">✍️ Soạn chiến dịch mới</h3>
+        {/* Campaign Modal */}
+        {showCampaignModal && (
+          <div className="campaign-modal__overlay" onClick={() => setShowCampaignModal(false)}>
+            <div className="campaign-modal__box" onClick={(e) => e.stopPropagation()}>
+              <div className="campaign-modal__header">
+                <h3 className="campaign-modal__title">✍️ Soạn chiến dịch mới</h3>
+                <button className="campaign-modal__close" onClick={() => setShowCampaignModal(false)}>
+                  <Icon name="X" />
+                </button>
+              </div>
 
-          <div className="campaign-form__row">
-            <div className="campaign-form__field">
-              <label className="campaign-form__label">Tên chiến dịch</label>
-              <input
-                type="text"
-                className="campaign-form__input"
-                placeholder="VD: Flash Sale App tháng 3"
-                value={campaignName}
-                onChange={(e) => setCampaignName(e.target.value)}
-              />
-            </div>
-            <div className="campaign-form__field">
-              <label className="campaign-form__label">Đối tượng gửi</label>
-              <select
-                className="campaign-form__select"
-                value={targetAudience}
-                onChange={(e) => setTargetAudience(e.target.value)}
-              >
-                <option value="all">Tất cả thành viên</option>
-                <option value="new">Khách hàng mới</option>
-                <option value="loyal">Khách hàng thân thiết</option>
-                <option value="inactive">Khách hàng không hoạt động</option>
-              </select>
+              <div className="campaign-modal__body">
+                <div className="campaign-form__row">
+                  <div className="campaign-form__field">
+                    <label className="campaign-form__label">Tên chiến dịch</label>
+                    <input
+                      type="text"
+                      className="campaign-form__input"
+                      placeholder="VD: Flash Sale App tháng 3"
+                      value={campaignName}
+                      onChange={(e) => setCampaignName(e.target.value)}
+                    />
+                  </div>
+                  <div className="campaign-form__field">
+                    <label className="campaign-form__label">Đối tượng gửi</label>
+                    <select
+                      className="campaign-form__select"
+                      value={targetAudience}
+                      onChange={(e) => setTargetAudience(e.target.value)}
+                    >
+                      <option value="all">Tất cả thành viên</option>
+                      <option value="new">Khách hàng mới</option>
+                      <option value="loyal">Khách hàng thân thiết</option>
+                      <option value="inactive">Khách hàng không hoạt động</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="campaign-form__field campaign-form__field--full">
+                  <label className="campaign-form__label">Nội dung tin nhắn</label>
+                  <textarea
+                    className="campaign-form__textarea"
+                    placeholder="Nhập nội dung gửi qua App..."
+                    value={messageContent}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 160) setMessageContent(e.target.value);
+                    }}
+                    rows={4}
+                  />
+                  <span className="campaign-form__char-count">{messageContent.length}/160 ký tự</span>
+                </div>
+
+                <div className="campaign-form__row">
+                  <div className="campaign-form__field">
+                    <label className="campaign-form__label">Thời gian gửi</label>
+                    <input
+                      type="datetime-local"
+                      className="campaign-form__input"
+                      value={sendTime}
+                      onChange={(e) => setSendTime(e.target.value)}
+                    />
+                  </div>
+                  <div className="campaign-form__field">
+                    <label className="campaign-form__label">Mã khuyến mãi đính kèm</label>
+                    <select
+                      className="campaign-form__select"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value)}
+                    >
+                      <option value="none">Không đính kèm</option>
+                      <option value="SALE10">SALE10 - Giảm 10%</option>
+                      <option value="SALE20">SALE20 - Giảm 20%</option>
+                      <option value="FREESHIP">FREESHIP - Miễn phí vận chuyển</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="campaign-modal__footer">
+                <button className="btn btn--preview" onClick={handlePreview}>
+                  <Icon name="Eye" /> Xem trước
+                </button>
+                <button className="btn btn--schedule" onClick={handleSchedule}>
+                  <Icon name="Calendar" /> Lên lịch
+                </button>
+                <button className="btn btn--send" onClick={handleSendNow}>
+                  <Icon name="Send" /> Gửi ngay
+                </button>
+              </div>
             </div>
           </div>
-
-          <div className="campaign-form__field campaign-form__field--full">
-            <label className="campaign-form__label">Nội dung tin nhắn</label>
-            <textarea
-              className="campaign-form__textarea"
-              placeholder="Nhập nội dung gửi qua App..."
-              value={messageContent}
-              onChange={(e) => {
-                if (e.target.value.length <= 160) setMessageContent(e.target.value);
-              }}
-              rows={4}
-            />
-            <span className="campaign-form__char-count">{messageContent.length}/160 ký tự</span>
-          </div>
-
-          <div className="campaign-form__row">
-            <div className="campaign-form__field">
-              <label className="campaign-form__label">Thời gian gửi</label>
-              <input
-                type="datetime-local"
-                className="campaign-form__input"
-                value={sendTime}
-                onChange={(e) => setSendTime(e.target.value)}
-              />
-            </div>
-            <div className="campaign-form__field">
-              <label className="campaign-form__label">Mã khuyến mãi đính kèm</label>
-              <select
-                className="campaign-form__select"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value)}
-              >
-                <option value="none">Không đính kèm</option>
-                <option value="SALE10">SALE10 - Giảm 10%</option>
-                <option value="SALE20">SALE20 - Giảm 20%</option>
-                <option value="FREESHIP">FREESHIP - Miễn phí vận chuyển</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="campaign-form__actions">
-            <button className="btn btn--send" onClick={handleSendNow}>
-              <Icon name="Send" /> Gửi ngay
-            </button>
-            <button className="btn btn--schedule" onClick={handleSchedule}>
-              <Icon name="Calendar" /> Lên lịch
-            </button>
-            <button className="btn btn--preview" onClick={handlePreview}>
-              <Icon name="Eye" /> Xem trước
-            </button>
-          </div>
-        </div>
+        )}
 
         {/* History Table */}
         <div className="card-box d-flex flex-column">

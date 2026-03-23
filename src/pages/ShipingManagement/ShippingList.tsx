@@ -37,8 +37,8 @@ const STATUS_TABS = [
 ];
 
 const ROUTES = {
-  shippingCreate:       "/shipping/create",
-  shippingEdit:         (id: number) => `/shipping/edit/${id}`,
+  shippingCreate:       "/add_shipping",
+  shippingEdit:         (id: number) => `/add_shipping/id=${id}`,
   shippingPartnerSetup: "/shipping/partner-setup",
   shippingFeeConfig:    "/shipping/fee-config",
 };
@@ -78,7 +78,7 @@ export default function ShippingOrderList() {
   const abortRef     = useRef<AbortController | null>(null);
 
   const [params, setParams] = useState<IShippingOrderFilterRequest>({
-    keyword: "", status: -1, page: 1, limit: 10,
+    keyword: "", status: "all", page: 1, limit: 10,
   });
 
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -302,7 +302,7 @@ export default function ShippingOrderList() {
 
   const dataFormat = [
     "text-center",
-    "text-center",
+    "text-left",
     "text-center",
     "",
     "text-center",

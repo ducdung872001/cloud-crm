@@ -395,7 +395,6 @@ export default function Header(props: any) {
     }
   }
 
-  /** Navigate based on targetLink or payload type from the new API */
   const handleNotificationClick = (item: any) => {
     // unread: 0 = chưa đọc, unread: 1 = đã đọc
     if (item.unread === 0 || item.unread === null) {
@@ -403,17 +402,24 @@ export default function Header(props: any) {
     }
     setShowPopoverNotification(false);
 
-    // If targetLink is provided, navigate there directly
+    if (item.payload && isJsonString(item.payload)) {
+      const payload = JSON.parse(item.payload);
+      if (payload?.type === "ORDER_REQUEST" && payload.orderId) {
+        navigate("/multi_channel_sales", { state: { tab: 2, orderRequestModalId: payload.orderId } });
+        return;
+      }
+    }
+
     if (item.targetLink) {
       navigate(item.targetLink);
       return;
     }
 
-    // Fallback: parse payload for typed routing
     if (item.payload && isJsonString(item.payload)) {
       const payload = JSON.parse(item.payload);
       switch (payload?.type) {
         case "ORDER":
+        case "ORDER_REQUEST":
           if (payload.orderId) navigate(`/orders/${payload.orderId}`);
           break;
         case "CAMPAIGN":
@@ -433,13 +439,13 @@ export default function Header(props: any) {
     }
   };
 
-  /** Resolve icon name based on payload type */
   const getNotificationIconName = (item: any): string => {
     if (item.payload && isJsonString(item.payload)) {
       const payload = JSON.parse(item.payload);
       switch (payload?.type) {
         case "ORDER":
-          return "Order";
+        case "ORDER_REQUEST":
+          return "OrderListMenu";
         case "CAMPAIGN":
           return "Promotion";
         case "BID":
@@ -452,7 +458,7 @@ export default function Header(props: any) {
           break;
       }
     }
-    return "NotifySetting";
+    return "NotifyRox";
   };
 
   /** Render a single notification item using the new API fields */

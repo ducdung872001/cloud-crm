@@ -408,6 +408,96 @@
     .cert-sub   { font-size: 11px; color: #16a34a; }
   }
 
+  // ── Load from order ──────────────────────────────────────────────────────
+  .load-from-order {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 0.3rem;
+
+    &__label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #0369a1;
+      white-space: nowrap;
+    }
+
+    .order-code-input {
+      flex: 1;
+      max-width: 280px;
+      padding: 7px 12px;
+      border: 1px solid #7dd3fc;
+      border-radius: 5px;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+      transition: border-color 0.15s;
+      &:focus { border-color: #0ea5e9; }
+    }
+
+    .btn-load-order {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      background: #0ea5e9;
+      border: none;
+      color: #fff;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+      svg { width: 13px; height: 13px; }
+      &:hover:not(:disabled) { background: #0284c7; }
+      &:disabled { opacity: 0.55; cursor: not-allowed; }
+    }
+  }
+
+  // ── Empty items placeholder ───────────────────────────────────────────────
+  .empty-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 0 20px;
+    color: #9ca3af;
+    font-size: 13px;
+    svg { width: 28px; height: 28px; opacity: 0.4; }
+  }
+
+  // ── Spinner sm ────────────────────────────────────────────────────────────
+  .spinner-sm {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  // ── Publish-only button (sidebar) ─────────────────────────────────────────
+  .btn-publish-only {
+    width: 100%;
+    margin-top: 4px;
+    padding: 8px;
+    background: transparent;
+    border: 1px solid #d1d5db;
+    border-radius: 0.3rem;
+    font-size: 11px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s;
+    &:hover:not(:disabled) { border-color: #9ca3af; background: #f9fafb; color: #374151; }
+    &:disabled { opacity: 0.55; cursor: not-allowed; }
+  }
+
   .sidebar-email-actions {
     display: flex;
     gap: 8px;

@@ -4,8 +4,8 @@ import Icon from "components/icon";
 import moment from "moment";
 import { formatCurrency } from "reborn-util";
 import { showToast } from "utils/common";
-import { IShippingOrderResponse, IShippingTrackingHistoryResponse } from "model/shipping/ShippingResponseModel";
-import { mockGetTrackingHistory } from "../ShippingMockData"; // TODO: thay bằng ShippingService
+import ShippingService from "services/ShippingService";
+import { IShippingOrderResponse, ITrackingTimelineItem, ITrackingResult } from "model/shipping/ShippingResponseModel";
 
 interface Props {
   onShow: boolean;
@@ -38,55 +38,80 @@ function getStepIndex(status: string): number {
 }
 
 export default function ShippingOrderDetailModal({ onShow, data, onHide, onReload }: Props) {
-  const [trackingHistory, setTrackingHistory] = useState<IShippingTrackingHistoryResponse[]>([]);
+  const [trackingResult, setTrackingResult] = useState<ITrackingResult | null>(null);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [activeTab, setActiveTab] = useState<"info" | "tracking">("tracking");
 
   useEffect(() => {
     if (onShow && data) {
-      loadTracking(data.id);
+      loadTracking(data.shipmentOrder);
       setActiveTab("tracking");
     }
   }, [onShow, data]);
 
-  const loadTracking = async (id: number) => {
+  const loadTracking = async (shipmentOrder: string) => {
     setIsLoadingHistory(true);
-    await new Promise((r) => setTimeout(r, 250));
-    // TODO: const res = await ShippingService.getTrackingHistory(id);
-    const res = mockGetTrackingHistory(id);
-    if (res.code === 0) {
-      setTrackingHistory(res.result.items as IShippingTrackingHistoryResponse[]);
+    try {
+      const res = await ShippingService.tracking(shipmentOrder);
+      if (res.code === 0) {
+        setTrackingResult(res.result as ITrackingResult);
+      } else {
+        showToast(res.message ?? "Không thể tải lịch sử vận chuyển", "warning");
+      }
+    } catch {
+      showToast("Lỗi kết nối khi tải lịch sử vận chuyển", "error");
+    } finally {
+      setIsLoadingHistory(false);
     }
-    setIsLoadingHistory(false);
   };
 
   const handleCallShipper = () => {
-    if (data?.shipperPhone) {
-      window.location.href = `tel:${data.shipperPhone}`;
-    } else {
-      showToast("Chưa có thông tin shipper", "warning");
-    }
+    showToast("Chưa có thông tin shipper", "warning");
   };
 
   if (!data) return null;
 
-  const isReturned = data.status === "returned" || data.status === "failed";
+  // Ưu tiên dùng currentStatus từ API tracking, fallback về statusCode từ danh sách
+  const currentStatus = trackingResult?.currentStatus
+    ? trackingResult.currentStatus.toLowerCase()
+    : data.statusCode?.toLowerCase() ?? "";
+
+  const isReturned = currentStatus === "returned" || currentStatus === "failed";
   const steps = isReturned ? RETURNED_STEPS : ALL_STEPS;
-  const currentStepIdx = getStepIndex(data.status);
+  const currentStepIdx = getStepIndex(currentStatus);
 
   // ---- Render tracking timeline ----
   const renderTimeline = () => {
-    // Ghép history vào steps: nếu có history thực thì dùng, ngược lại dùng step placeholder
-    const historyMap: Record<string, IShippingTrackingHistoryResponse> = {};
-    trackingHistory.forEach((h) => { historyMap[h.status] = h; });
+    // Map timeline API theo status để tra cứu nhanh
+    const timelineMap: Record<string, ITrackingTimelineItem> = {};
+    (trackingResult?.timeline ?? []).forEach((item) => {
+      timelineMap[item.status.toLowerCase()] = item;
+    });
 
     return (
       <div className="tracking-timeline">
+
+        {/* Header: tên hãng + mã vận đơn hãng từ API */}
+        {trackingResult && (
+          <div className="tracking-header">
+            <div className="carrier-logo-wrap">
+              <Icon name="Truck" />
+            </div>
+            <div className="carrier-info">
+              <span className="carrier-name">{trackingResult.carrierName}</span>
+              <span className="carrier-tracking-code">{trackingResult.carrierTrackingCode}</span>
+            </div>
+            <span className="current-status-badge">
+              {trackingResult.currentStatusLabel}
+            </span>
+          </div>
+        )}
+
         {steps.map((step, idx) => {
           const isPast = idx < currentStepIdx;
-          const isActive = step.status === data.status || idx === currentStepIdx;
+          const isActive = step.status === currentStatus || idx === currentStepIdx;
           const isFuture = idx > currentStepIdx;
-          const historyItem = historyMap[step.status];
+          const timelineItem = timelineMap[step.status];
 
           return (
             <div
@@ -103,12 +128,12 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
 
               <div className="timeline-content">
                 <div className={`status-label ${isActive ? "active" : ""}`}>
-                  {historyItem?.statusName || step.label}
+                  {timelineItem?.statusName || step.label}
                 </div>
-                {historyItem?.timestamp && (
+                {timelineItem?.timestamp && (
                   <div className="timestamp">
-                    {moment(historyItem.timestamp).format("HH:mm - DD/MM/YYYY")}
-                    {historyItem.location ? `, ${historyItem.location}` : ""}
+                    {moment(timelineItem.timestamp).format("HH:mm - DD/MM/YYYY")}
+                    {timelineItem.location ? `, ${timelineItem.location}` : ""}
                   </div>
                 )}
                 {isFuture && <div className="timestamp">—</div>}
@@ -118,17 +143,14 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
         })}
 
         {/* Shipper info (chỉ hiện khi đang giao) */}
-        {data.status === "in_transit" && (
+        {currentStatus === "in_transit" && (
           <div className="shipper-info">
             <div className="shipper-avatar">
               <Icon name="User" />
             </div>
             <div className="shipper-name">
-              Tài xế: {data.shipperName || "Đang phân công"}
+              Tài xế: Đang phân công
             </div>
-            <button className="btn-call" onClick={handleCallShipper} title="Gọi điện">
-              <Icon name="Phone" />
-            </button>
           </div>
         )}
       </div>
@@ -140,16 +162,18 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
     <div className="order-info-grid">
       <div className="info-row">
         <span className="info-label">Mã vận đơn</span>
-        <span className="info-value tracking-bold">{data.trackingCode}</span>
+        <span className="info-value">
+          {trackingResult?.carrierTrackingCode || data.carrierTrackingCode || data.shipmentOrder}
+        </span>
       </div>
       <div className="info-row">
         <span className="info-label">Hãng vận chuyển</span>
-        <span className="info-value">{data.partnerName}</span>
+        <span className="info-value">{trackingResult?.carrierName || data.carrierName}</span>
       </div>
-      {data.salesOrderCode && (
+      {data.orderCode && (
         <div className="info-row">
           <span className="info-label">Đơn hàng bán</span>
-          <span className="info-value">{data.salesOrderCode}</span>
+          <span className="info-value">{data.orderCode}</span>
         </div>
       )}
       <div className="info-row">
@@ -166,18 +190,18 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
       </div>
       <div className="info-row">
         <span className="info-label">Trọng lượng</span>
-        <span className="info-value">{data.weight} gram</span>
+        <span className="info-value">{data.weightGram} gram</span>
       </div>
-      {(data.width || data.height || data.length) && (
+      {(data.widthCm || data.heightCm || data.lengthCm) && (
         <div className="info-row">
           <span className="info-label">Kích thước</span>
-          <span className="info-value">{data.length} x {data.width} x {data.height} cm</span>
+          <span className="info-value">{data.lengthCm} x {data.widthCm} x {data.heightCm} cm</span>
         </div>
       )}
       <div className="info-row">
         <span className="info-label">Tiền thu hộ (COD)</span>
         <span className="info-value cod-highlight">
-          {data.codAmount > 0 ? `${formatCurrency(+data.codAmount)} đ` : "Không thu hộ"}
+          {(data.codAmount ?? 0) > 0 ? `${formatCurrency(+data.codAmount)} đ` : "Không thu hộ"}
         </span>
       </div>
       {data.shippingFee > 0 && (
@@ -189,13 +213,13 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
       <div className="info-row">
         <span className="info-label">Ngày tạo</span>
         <span className="info-value">
-          {data.createdTime ? moment(data.createdTime).format("HH:mm DD/MM/YYYY") : "—"}
+          {data.createdAt ? moment(data.createdAt).format("HH:mm DD/MM/YYYY") : "—"}
         </span>
       </div>
-      {data.note && (
+      {data.noteForShipper && (
         <div className="info-row">
           <span className="info-label">Ghi chú</span>
-          <span className="info-value">{data.note}</span>
+          <span className="info-value">{data.noteForShipper}</span>
         </div>
       )}
     </div>
@@ -214,7 +238,7 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
         title={
           <Fragment>
             Chi tiết đơn vận chuyển
-            <span className="detail-tracking-code"> #{data.trackingCode}</span>
+            <span className="detail-tracking-code"> #{data.carrierTrackingCode || data.shipmentOrder}</span>
           </Fragment>
         }
         toggle={onHide}

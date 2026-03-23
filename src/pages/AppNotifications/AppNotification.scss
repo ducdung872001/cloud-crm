@@ -106,19 +106,102 @@
     }
   }
 
-  // ─── Campaign Form ─────────────────────────────────────────────
-  .campaign-form {
-    background: #fff;
-    border-radius: 1.2rem;
-    padding: 2.4rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  // ─── Campaign Modal ────────────────────────────────────────────
+  .campaign-modal {
+    &__overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      animation: modalFadeIn 0.2s ease;
+    }
+
+    &__box {
+      background: #fff;
+      border-radius: 1.2rem;
+      width: 100%;
+      max-width: 64rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+      animation: modalSlideUp 0.22s ease;
+    }
+
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2rem 2.4rem 1.6rem;
+      border-bottom: 1px solid #f3f4f6;
+      flex-shrink: 0;
+    }
 
     &__title {
       font-size: 1.6rem;
       font-weight: 600;
       color: #111827;
-      margin: 0 0 2rem 0;
+      margin: 0;
+    }
+
+    &__close {
+      width: 3.2rem;
+      height: 3.2rem;
+      border-radius: 50%;
+      border: none;
+      background: #f3f4f6;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      flex-shrink: 0;
+
+      svg, i {
+        font-size: 1.6rem;
+        color: #6b7280;
+      }
+
+      &:hover {
+        background: #e5e7eb;
+      }
+    }
+
+    &__body {
+      padding: 2rem 2.4rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    &__footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 1.2rem;
+      padding: 1.6rem 2.4rem;
+      border-top: 1px solid #f3f4f6;
+      flex-shrink: 0;
+    }
+  }
+
+  @keyframes modalFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes modalSlideUp {
+    from { opacity: 0; transform: translateY(1.6rem) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  // ─── Campaign Form fields (shared inside modal) ────────────────
+  .campaign-form {
+    &__title {
+      display: none; // Title is now in modal header
     }
 
     &__row {
@@ -211,12 +294,6 @@
       margin-top: 0.4rem;
     }
 
-    &__actions {
-      display: flex;
-      align-items: center;
-      gap: 1.2rem;
-      margin-top: 0.8rem;
-    }
   }
 
   // ─── Buttons ───────────────────────────────────────────────────

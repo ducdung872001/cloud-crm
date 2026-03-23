@@ -86,3 +86,39 @@ export interface IShippingReportFilterRequest {
   page?: number;
   limit?: number;
 }
+// ---- Form state nội bộ màn Tạo / Chỉnh sửa đơn vận chuyển ----
+export interface IShippingFormState {
+  id?: number;
+  // Người gửi
+  senderEmployeeId: number | null;
+  senderName: string;
+  senderPhone: string;
+  senderEmail: string;
+  senderStreet: string;
+  senderProvinceId: number | null;
+  senderProvinceName: string;
+  senderDistrictId: number | null;
+  senderDistrict: string;
+  senderWardCode: string;
+  senderWard: string;
+  // Hãng & hóa đơn
+  partnerId: number | null;
+  invoiceId: number | null;
+  // Người nhận
+  receiverName: string;
+  receiverPhone: string;
+  receiverStreet: string;
+  receiverProvinceId: number | null;
+  receiverProvinceName: string;
+  receiverDistrictId: number | null;
+  receiverDistrict: string;
+  receiverWardCode: string;
+  receiverWard: string;
+  // Hàng hóa
+  weight: number | null;
+  width: number | null;
+  height: number | null;
+  length: number | null;
+  codAmount: number | null;
+  note: string;
+}

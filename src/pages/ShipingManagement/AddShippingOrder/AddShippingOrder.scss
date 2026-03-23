@@ -73,6 +73,15 @@
     @media (max-width: 600px) { grid-template-columns: 1fr; }
   }
 
+  // ---- 3 cột cho Tỉnh / Quận / Phường ----
+  .form-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.2rem;
+    @media (max-width: 768px) { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 480px) { grid-template-columns: 1fr; }
+  }
+
   .input-verified-wrap {
     position: relative;
     .verified-icon {
@@ -136,7 +145,6 @@
   // ---- AsyncPaginate / react-select menu z-index fix ----
   .base-select {
     position: relative;
-    // Đảm bảo menu dropdown nổi lên trên các section bên dưới
     .select-custom {
       .select-custom__menu,
       [class$="menu"],
@@ -151,7 +159,7 @@
     }
   }
 
-  // ---- Option trong dropdown AsyncPaginate (formatOptionLabel) ----
+  // ---- Option trong dropdown AsyncPaginate ----
   .invoice-option {
     display: flex;
     flex-direction: column;
@@ -206,7 +214,7 @@
     }
   }
 
-  // ---- Invoice info card (hiển thị sau khi chọn từ Select) ----
+  // ---- Invoice info card ----
   .invoice-info-card {
     display: flex;
     flex-direction: column;
@@ -368,8 +376,7 @@
     transition: background 0.15s, opacity 0.15s;
 
     svg { width: 1.8rem; height: 1.8rem; }
-    &:hover:not(:disabled) { background: var(--primary-color);
-      color: var(--white-color); }
+    &:hover:not(:disabled) { background: var(--primary-color); color: var(--white-color); }
     &:disabled { opacity: 0.6; cursor: not-allowed; }
     &__loading { color: rgba(255,255,255,0.8); font-size: 1.4rem; }
   }

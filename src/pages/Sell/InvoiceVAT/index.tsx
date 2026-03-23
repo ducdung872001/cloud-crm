@@ -1,5 +1,6 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
+import React, { Fragment, useState, useEffect, useRef, useCallback } from "react";
 import _ from "lodash";
+import { useLocation } from "react-router-dom";
 import Icon from "components/icon";
 import Loading from "components/loading";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
@@ -18,12 +19,12 @@ import InvoiceVATMockService, {
   IInvoiceVATStats,
   MOCK_INVOICE_STATS,
 } from "./partials/InvoiceVATMock";
-import InvoiceVATList        from "./partials/InvoiceVATList/index";
 import IssueInvoice          from "./partials/IssueInvoice/index";
 import ElectronicInvoiceProvider from "./partials/ElectronicInvoiceProvider/index";
 import Configuration         from "./partials/Configuration/index";
 import InvoicePreviewModal from "./partials/IssueInvoice/InvoicePreviewModal/index";
-import InvoiceDetailModal, { InvoiceDetailData }   from "./partials/InvoiceDetailModal/index";
+import InvoiceVATList, { SinvoiceLog, fetchSinvoiceLogs, monthToRange } from "./partials/InvoiceVATList/index";
+import InvoiceDetailModal               from "./partials/InvoiceDetailModal/index";
 
 const InvoiceVATService = InvoiceVATMockService;
 
@@ -59,7 +60,23 @@ interface TabHeaderConfig { title: string; subtitle?: string; actions: React.Rea
 export default function InvoiceVATOverview(props: any) {
   document.title = "Hóa đơn VAT điện tử";
 
+  const location = useLocation();
   const isMounted = useRef(false);
+
+  // Đọc query params: ?tab=issue&code=HD003198
+  // Khi navigate từ màn hình đơn hàng → chuyển thẳng vào tab Xuất hóa đơn + auto-fill mã
+  const [initialInvoiceCode, setInitialInvoiceCode] = useState("");
+
+  useEffect(() => {
+    const sp = new URLSearchParams(location.search);
+    const tabParam  = sp.get("tab");
+    const codeParam = sp.get("code");
+    if (tabParam === "issue") {
+      setTab({ name: "tab_three" });
+      if (codeParam) setInitialInvoiceCode(codeParam);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   const [listInvoice, setListInvoice]   = useState<IInvoiceVATResponse[]>([]);
   const [dataInvoice, setDataInvoice]   = useState<IInvoiceVATResponse>(null);
@@ -71,33 +88,28 @@ export default function InvoiceVATOverview(props: any) {
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions]   = useState(getPermissions());
 
-  // ── InvoicePreviewModal (tab 3 header buttons) ──
+  // ── IssueInvoice callbacks (tab 3 header buttons wire into child) ──
   const [showPreview, setShowPreview] = useState(false);
   const handleOpenPreview = () => setShowPreview(true);
 
-  // ── InvoiceDetailModal (nút "Xem" trên từng hóa đơn) ──
-  const [showDetail, setShowDetail] = useState(false);
-  const [detailData, setDetailData] = useState<InvoiceDetailData | null>(null);
+  const issuePreviewRef  = useRef<(() => void) | null>(null);
+  const issuePublishRef  = useRef<(() => void) | null>(null);
+  const listExportRef    = useRef<(() => void) | null>(null);
+  const handleRegisterPreview = (fn: () => void) => { issuePreviewRef.current = fn; };
+  const handleRegisterPublish = (fn: () => void) => { issuePublishRef.current = fn; };
+  const handleRegisterExport  = (fn: () => void) => { listExportRef.current  = fn; };
 
-  const handleOpenDetail = (item: IInvoiceVATResponse) => {
-    setDetailData({
-      invoiceNo:    item.invoiceNo,
-      symbol:       "C26TNA",
-      invoiceDate:  item.invoiceDate,
-      providerName: "VNPT Invoice",
-      templateCode: "01GTKT0/001",
-      status:       item.status as "issued" | "pending_sign" | "error",
-      buyerName:    item.customerName,
-      buyerTaxCode: item.taxCode ?? undefined,
-      buyerAddress: "15 Nguyễn Huệ, Q.1, TP.HCM",
-      paymentMethod: "Chuyển khoản",
-      emailReceive: "ketoan@khachhang.vn",
-      items: [
-        { id: 1, name: "Áo thun oversize unisex", unit: "Cái", qty: 5, unitPrice: 2_000_000, taxRate: 10, total: 10_000_000 },
-        { id: 2, name: "Quần jogger thể thao",    unit: "Cái", qty: 2, unitPrice: 1_500_000, taxRate: 10, total:  3_000_000 },
-      ],
-      cqtCode: "AB28022026001280001",
-    });
+  // ── Live stats từ InvoiceVATList (cập nhật khi tab 2 load counts) ──
+  const [liveStats, setLiveStats] = useState<{
+    total: number; pending: number; issued: number; failed: number; monthLabel: string;
+  }>({ total: 0, pending: 0, issued: 0, failed: 0, monthLabel: "" });
+
+  const handleCountsLoaded = (info: typeof liveStats) => setLiveStats(info);
+  const [showDetail, setShowDetail] = useState(false);
+  const [detailData, setDetailData] = useState<SinvoiceLog | null>(null);
+
+  const handleOpenDetail = (item: SinvoiceLog) => {
+    setDetailData(item);
     setShowDetail(true);
   };
 
@@ -199,13 +211,87 @@ export default function InvoiceVATOverview(props: any) {
     setContentDialog(dialog); setShowDialog(true);
   };
 
-  const stats = MOCK_INVOICE_STATS;
+  // ─── Overview: real stats ─────────────────────────────────────────────────
+  const SUPPLIER_TAX_CODE = (window as any).__VAT_SUPPLIER_TAX_CODE__ || "0100109106-501";
+  const TEMPLATE_CODE     = (window as any).__VAT_TEMPLATE_CODE__     || "1/6553";
+
+  const currentMonth = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  })();
+
+  interface OverviewStats {
+    total: number; issued: number; pending: number; failed: number;
+    totalVAT: number; monthLabel: string;
+    usedQuota: number; maxQuota: number; quotaExpiry: string;
+  }
+  const [overviewStats, setOverviewStats] = useState<OverviewStats>({
+    total: 0, issued: 0, pending: 0, failed: 0, totalVAT: 0,
+    monthLabel: "", usedQuota: 0, maxQuota: 99999999, quotaExpiry: "—",
+  });
+  const [recentInvoices, setRecentInvoices] = useState<SinvoiceLog[]>([]);
+  const [loadingOverview, setLoadingOverview] = useState(false);
+
+  const fmtVND = (v: number): string => {
+    if (v >= 1_000_000_000) return (v / 1_000_000_000).toFixed(1).replace(".0","") + " Tỷ";
+    if (v >= 1_000_000)     return (v / 1_000_000).toFixed(1).replace(".0","") + "M";
+    if (v >= 1_000)         return (v / 1_000).toFixed(0) + "K";
+    return v.toLocaleString("vi-VN");
+  };
+
+  const loadOverview = useCallback(async () => {
+    setLoadingOverview(true);
+    const { fromDate, toDate } = monthToRange(currentMonth);
+    const [y, m] = currentMonth.split("-").map(Number);
+    const monthLabel = `Tháng ${m}/${y}`;
+    try {
+      const [resAll, resIssued, resPending, resRecent, resQuota] = await Promise.allSettled([
+        fetchSinvoiceLogs({ fromDate, toDate, page: 1, size: 1 }),
+        fetchSinvoiceLogs({ fromDate, toDate, status: "ISSUED",  page: 1, size: 1 }),
+        fetchSinvoiceLogs({ fromDate, toDate, status: "PENDING", page: 1, size: 1 }),
+        fetchSinvoiceLogs({ fromDate, toDate, page: 1, size: 6 }),
+        fetch(`/bizapi/integration/sinvoice/query/usage-status?supplierTaxCode=${SUPPLIER_TAX_CODE}&templateCode=${encodeURIComponent(TEMPLATE_CODE)}&serial=`)
+          .then(r => r.json()).catch(() => null),
+      ]);
+      const total   = resAll.status     === "fulfilled" ? resAll.value.total     : 0;
+      const issued  = resIssued.status  === "fulfilled" ? resIssued.value.total  : 0;
+      const pending = resPending.status === "fulfilled" ? resPending.value.total : 0;
+      const failed  = Math.max(0, total - issued - pending);
+      const recent  = resRecent.status  === "fulfilled" ? resRecent.value.items  : [];
+
+      let totalVAT = 0;
+      recent.forEach(item => { totalVAT += item.taxAmount ?? 0; });
+
+      let usedQuota = total, maxQuota = 99999999, quotaExpiry = "—";
+      if (resQuota.status === "fulfilled" && resQuota.value?.code === 0) {
+        try {
+          const q = typeof resQuota.value.result === "string"
+            ? JSON.parse(resQuota.value.result)
+            : resQuota.value.result;
+          usedQuota = q?.numOfpublishInv ?? total;
+          maxQuota  = q?.totalInv        ?? 99999999;
+        } catch { /* ignore */ }
+      }
+      setOverviewStats({ total, issued, pending, failed, totalVAT, monthLabel, usedQuota, maxQuota, quotaExpiry });
+      setRecentInvoices(recent);
+    } catch (e) {
+      console.error("Overview load error:", e);
+    } finally {
+      setLoadingOverview(false);
+    }
+  }, [currentMonth]);
+
+  useEffect(() => {
+    if (tab.name === "tab_one") loadOverview();
+  }, [tab.name]);
+
+  const stats = MOCK_INVOICE_STATS; // giữ lại cho các vùng chưa chuyển hết
 
   // ---- Per-tab header configs ----
   const tabHeaderConfig: Record<TabName, TabHeaderConfig> = {
     tab_one: {
       title: "Hóa đơn VAT điện tử",
-      subtitle: "Xuất và quản lý hóa đơn GTGT theo nghị định 123/2020/NĐ-CP · Tháng 2/2026",
+      subtitle: `Xuất và quản lý hóa đơn GTGT theo nghị định 123/2020/NĐ-CP${overviewStats.monthLabel ? " · " + overviewStats.monthLabel : ""}`,
       actions: (
         <>
           <button className="btn-export-report"><Icon name="Download" /> Xuất báo cáo</button>
@@ -215,10 +301,14 @@ export default function InvoiceVATOverview(props: any) {
     },
     tab_two: {
       title: "Danh sách hóa đơn VAT",
-      subtitle: "128 hóa đơn trong tháng 2/2026",
+      subtitle: liveStats.total > 0
+        ? `${liveStats.total} hóa đơn trong ${liveStats.monthLabel}`
+        : "Đang tải...",
       actions: (
         <>
-          <button className="btn-export-report"><Icon name="Download" /> Xuất Excel</button>
+          <button className="btn-export-report" onClick={() => listExportRef.current?.()}>
+            <Icon name="Download" /> Xuất Excel
+          </button>
           <button className="btn-new-invoice" onClick={() => setTab({ name: "tab_three" })}>+ Xuất hóa đơn mới</button>
         </>
       ),
@@ -228,8 +318,12 @@ export default function InvoiceVATOverview(props: any) {
       subtitle: "Hóa đơn GTGT theo Nghị định 123/2020/NĐ-CP · Ký số điện tử",
       actions: (
         <>
-          <button className="btn-export-report" onClick={handleOpenPreview}><Icon name="Eye" /> Xem trước</button>
-          <button className="btn-new-invoice"   onClick={handleOpenPreview}><Icon name="FileText" /> Phát hành hóa đơn</button>
+          <button className="btn-export-report" onClick={() => issuePreviewRef.current?.()}>
+            <Icon name="Eye" /> Xem trước
+          </button>
+          <button className="btn-new-invoice" onClick={() => issuePublishRef.current?.()}>
+            <Icon name="FileText" /> Phát hành hóa đơn
+          </button>
         </>
       ),
     },
@@ -268,7 +362,9 @@ export default function InvoiceVATOverview(props: any) {
                     className={item.is_active === tab.name ? "active" : ""}
                     onClick={(e) => { e && e.preventDefault(); setTab({ name: item.is_active }); }}>
                   {item.title}
-                  {item.is_active === "tab_two" && <span className="tab-badge">3</span>}
+                  {item.is_active === "tab_two" && liveStats.pending > 0 && (
+                    <span className="tab-badge">{liveStats.pending}</span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -287,15 +383,30 @@ export default function InvoiceVATOverview(props: any) {
         {/* ── Tab: Tổng quan ── */}
         {tab.name === "tab_one" && (
           <div className="invoice-overview">
+            {loadingOverview && (
+              <div style={{ textAlign: "center", padding: "12px 0", color: "#9ca3af", fontSize: 13 }}>
+                Đang tải dữ liệu...
+              </div>
+            )}
             <div className="stat-cards-row">
-              <StatCard label="TỔNG HĐ THÁNG NÀY"        value={stats.totalInvoices}
-                        sub={<span className="trend-up">↑ +14 so với tháng trước</span>}       accentColor="#1e3a5f" />
-              <StatCard label="TỔNG TIỀN VAT"             value={stats.totalVATFormatted}
-                        sub={<span className="trend-up">↑ Thuế GTGT: {stats.vatGTGTFormatted}</span>} accentColor="#f59e0b" />
-              <StatCard label="CHỜ KÝ SỐ / PHÁT HÀNH"    value={stats.pendingSign}
-                        sub={<span className="trend-neutral">⏱ Cần xử lý hôm nay</span>}       accentColor="#f59e0b" />
-              <StatCard label="ĐÃ PHÁT HÀNH THÀNH CÔNG"  value={stats.issued}
-                        sub={<span className="trend-up">✓ 96.9% tỷ lệ thành công</span>}       accentColor="#16a34a" />
+              <StatCard label="TỔNG HĐ THÁNG NÀY"
+                        value={overviewStats.total || "—"}
+                        sub={<span className="trend-up">{overviewStats.monthLabel}</span>}
+                        accentColor="#1e3a5f" />
+              <StatCard label="TỔNG TIỀN VAT (tháng này)"
+                        value={overviewStats.totalVAT ? fmtVND(overviewStats.totalVAT) : "—"}
+                        sub={<span className="trend-up">Thuế GTGT tháng này</span>}
+                        accentColor="#f59e0b" />
+              <StatCard label="CHỜ KÝ SỐ / PHÁT HÀNH"
+                        value={overviewStats.pending}
+                        sub={<span className="trend-neutral">⏱ Cần xử lý hôm nay</span>}
+                        accentColor="#f59e0b" />
+              <StatCard label="ĐÃ PHÁT HÀNH THÀNH CÔNG"
+                        value={overviewStats.issued}
+                        sub={overviewStats.total > 0
+                          ? <span className="trend-up">✓ {Math.round(overviewStats.issued / overviewStats.total * 100)}% tỷ lệ thành công</span>
+                          : <span>—</span>}
+                        accentColor="#16a34a" />
             </div>
 
             <div className="overview-body">
@@ -316,34 +427,38 @@ export default function InvoiceVATOverview(props: any) {
                   <tr><th>SỐ HĐ</th><th>KHÁCH HÀNG</th><th>GIÁ TRỊ</th><th>TRẠNG THÁI</th><th></th></tr>
                   </thead>
                   <tbody>
-                  {listInvoice.map((item) => {
-                    const si = statusBadgeMap[item.status] ?? { text: item.status, variant: "wait-collect" as BadgeVariant };
+                  {recentInvoices.length === 0 && !loadingOverview && (
+                    <tr><td colSpan={5} style={{ textAlign: "center", color: "#9ca3af", padding: "24px", fontSize: 13 }}>Chưa có hóa đơn trong tháng này.</td></tr>
+                  )}
+                  {recentInvoices.map((item) => {
+                    const fmtDateOv = (ts?: number | null) => { if (!ts) return "—"; const d=new Date(ts); return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`; };
+                    const OV_BADGE: Record<string, {text:string;variant:BadgeVariant}> = { ISSUED:{text:"Đã phát hành",variant:"success"}, PENDING:{text:"Chờ ký số",variant:"warning"}, FAILED:{text:"Lỗi / Hủy",variant:"error"}, CANCELLED:{text:"Đã hủy",variant:"error"} };
+                    const si = OV_BADGE[item.status] ?? { text: item.status, variant: "wait-collect" as BadgeVariant };
                     return (
                       <tr key={item.id}>
                         <td>
-                          <div className="invoice-no">{item.invoiceNo}</div>
-                          <div className="invoice-date">{item.invoiceDate}</div>
+                          <div className="invoice-no">{item.invoiceNo || <em style={{color:"#9ca3af"}}>Đang xử lý</em>}</div>
+                          <div className="invoice-date">{fmtDateOv(item.invoiceIssuedDate)}</div>
                         </td>
                         <td>
-                          <div className="customer-name">{item.customerName}</div>
-                          <div className="tax-code">{item.taxCode ? `MST: ${item.taxCode}` : "Cá nhân"}</div>
+                          <div className="customer-name">{item.buyerName || "—"}</div>
+                          <div className="tax-code">{item.buyerTaxCode ? `MST: ${item.buyerTaxCode}` : "Cá nhân"}</div>
                         </td>
                         <td className="text-right">
-                          <div className="total-amount">{formatCurrency(item.totalAmount)}</div>
-                          <div className="vat-amount">VAT: {formatCurrency(item.vatAmount)}</div>
+                          <div className="total-amount">{formatCurrency(item.totalAmount ?? 0)}</div>
+                          <div className="vat-amount">VAT: {formatCurrency(item.taxAmount ?? 0)}</div>
                         </td>
                         <td className="text-center">
                           <Badge text={si.text} variant={si.variant} />
                         </td>
                         <td className="text-center">
-                          {item.status === "pending_sign" && (
+                          {item.status === "PENDING" && (
                             <button className="btn btn-warning btn-sm">Ký số</button>
                           )}
-                          {item.status === "error" && (
+                          {(item.status === "FAILED" || item.status === "CANCELLED") && (
                             <button className="btn btn-outline btn-sm">Thay thế</button>
                           )}
-                          {item.status === "issued" && (
-                            // ── Nút "Xem" → mở InvoiceDetailModal ──
+                          {item.status === "ISSUED" && (
                             <button className="btn btn-outline btn-sm"
                                     onClick={() => handleOpenDetail(item)}>
                               Xem
@@ -373,12 +488,12 @@ export default function InvoiceVATOverview(props: any) {
                     <div className="quota-bar-card">
                       <div className="quota-bar-header">
                         <span>Đã dùng tháng này</span>
-                        <span className="quota-numbers">{stats.usedQuota} / {stats.maxQuota}</span>
+                        <span className="quota-numbers">{overviewStats.usedQuota} / {overviewStats.maxQuota === 99999999 ? "∞" : overviewStats.maxQuota}</span>
                       </div>
                       <div className="quota-bar">
-                        <div className="quota-bar-fill" style={{ width: `${(stats.usedQuota / stats.maxQuota) * 100}%` }} />
+                        <div className="quota-bar-fill" style={{ width: `${overviewStats.maxQuota === 99999999 ? 2 : Math.min(100, overviewStats.usedQuota / overviewStats.maxQuota * 100)}%` }} />
                       </div>
-                      <p className="quota-expiry">Còn lại {stats.maxQuota - stats.usedQuota} hóa đơn · Hết hạn {stats.quotaExpiry}</p>
+                      <p className="quota-expiry">{overviewStats.maxQuota === 99999999 ? "Không giới hạn" : `Còn lại ${overviewStats.maxQuota - overviewStats.usedQuota} hóa đơn`}{overviewStats.quotaExpiry !== "—" && ` · Hết hạn ${overviewStats.quotaExpiry}`}</p>
                     </div>
                   </div>
                 </div>
@@ -391,7 +506,7 @@ export default function InvoiceVATOverview(props: any) {
                         <span className="status-label">Phát hành thành công</span>
                         <span className="status-sub">Khách hàng đã nhận HĐVAT</span>
                       </div>
-                      <span className="status-count success">{stats.issued}</span>
+                      <span className="status-count success">{overviewStats.issued}</span>
                     </div>
                     <div className="status-item">
                       <span className="status-icon warning">⏱</span>
@@ -399,7 +514,7 @@ export default function InvoiceVATOverview(props: any) {
                         <span className="status-label">Chờ ký số / xử lý</span>
                         <span className="status-sub">Đang chờ ký điện tử</span>
                       </div>
-                      <span className="status-count warning">{stats.pendingSign}</span>
+                      <span className="status-count warning">{overviewStats.pending}</span>
                     </div>
                     <div className="status-item">
                       <span className="status-icon error">⊗</span>
@@ -407,7 +522,7 @@ export default function InvoiceVATOverview(props: any) {
                         <span className="status-label">Lỗi / Đã hủy</span>
                         <span className="status-sub">Cần xuất hóa đơn thay thế</span>
                       </div>
-                      <span className="status-count error">{stats.error}</span>
+                      <span className="status-count error">{overviewStats.failed}</span>
                     </div>
                   </div>
                 </div>
@@ -421,10 +536,18 @@ export default function InvoiceVATOverview(props: any) {
             onGoToExport={() => setTab({ name: "tab_three" })}
             onDataChanged={() => getListInvoice(params)}
             onOpenDetail={handleOpenDetail}
+            onRegisterExport={handleRegisterExport}
+            onCountsLoaded={handleCountsLoaded}
           />
         )}
 
-        {tab.name === "tab_three" && <IssueInvoice />}
+        {tab.name === "tab_three" && (
+          <IssueInvoice
+            onRegisterPreview={handleRegisterPreview}
+            onRegisterPublish={handleRegisterPublish}
+            initialInvoiceCode={initialInvoiceCode || undefined}
+          />
+        )}
         {tab.name === "tab_four"  && <ElectronicInvoiceProvider />}
         {tab.name === "tab_five"  && <Configuration />}
       </div>

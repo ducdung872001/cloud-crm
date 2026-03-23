@@ -10,10 +10,10 @@ type Props = {
   query: string;
   onQueryChange: (v: string) => void;
   onSelect: (id: string) => void;
-  onCreate: () => void;
+  onCreate: () => void; // giữ prop để không break useDraftOrders, nhưng không dùng nút nữa
 };
 
-const DraftListPanel: React.FC<Props> = ({ items, selectedId, query, onQueryChange, onSelect, onCreate }) => {
+const DraftListPanel: React.FC<Props> = ({ items, selectedId, query, onQueryChange, onSelect }) => {
   return (
     <div className="draft-left">
       <div className="draft-left__head">
@@ -21,23 +21,18 @@ const DraftListPanel: React.FC<Props> = ({ items, selectedId, query, onQueryChan
           Danh sách đơn tạm <span className="badge">{items.length}</span>
         </div>
 
-        <div className="search-row">
-          <div className="search-wrap">
-            <Input
-              type="text"
-              placeholder="Tìm mã đơn, khách hàng..."
-              icon={<Icon name="Search" />}
-              iconPosition="left"
-              value={query}
-              fill={true}
-              onChange={(e) => onQueryChange(e.target.value)}
-            />
-          </div>
-
-          <button className="btn btn--ink btn--sm" onClick={onCreate}>
-            ＋ Tạo mới
-          </button>
-        </div>
+        {/* Chỉ giữ ô tìm kiếm — bỏ nút "Tạo mới" */}
+        <div className="search-wrap" style={{ width: "100%", marginTop: 10 }}>
+          <Input
+            type="text"
+            placeholder="Tìm mã đơn, khách hàng..."
+            icon={<Icon name="Search" />}
+            iconPosition="left"
+            value={query}
+            fill={true}
+            onChange={(e) => onQueryChange(e.target.value)}
+          />
+        </div>       
       </div>
 
       <div className="draft-left__list">
@@ -45,7 +40,11 @@ const DraftListPanel: React.FC<Props> = ({ items, selectedId, query, onQueryChan
           <DraftListItem key={d.id} order={d} active={d.id === selectedId} onClick={() => onSelect(d.id)} />
         ))}
 
-        {items.length === 0 && <div className="empty">Không tìm thấy đơn tạm nào</div>}
+        {items.length === 0 && (
+          <div className="empty">
+            {query ? "Không tìm thấy đơn tạm nào" : "Chưa có đơn tạm nào"}
+          </div>
+        )}
       </div>
     </div>
   );

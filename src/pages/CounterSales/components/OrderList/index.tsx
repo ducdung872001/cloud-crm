@@ -2,67 +2,52 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Order } from "../../types";
 import Icon from "components/icon";
+import { showToast } from "utils/common";
 import "./index.scss";
 
+// ─── Mock orders (only used when listOrder not passed) ───────────────────────
 const ORDERS: Order[] = [
   {
-    id: "1",
-    code: "#DH-20231021-0042",
-    source: "offline",
-    sourceLabel: "🏪 Tại quầy",
-    status: "pending",
-    statusLabel: "⏳ Chờ xử lý",
-    time: "21/10 · 09:45",
+    id: "1", code: "#DH-20231021-0042", source: "offline", sourceLabel: "🏪 Tại quầy",
+    status: "pending", statusLabel: "⏳ Chờ xử lý", time: "21/10 · 09:45",
     customer: { id: "1", name: "Nguyễn Thị Hoa", initial: "N", phone: "0901 234 567", points: 2450, tier: "Bạc", color: "#7c3aed" },
-    items: "3 sản phẩm: Sữa TH, Mì Hảo Hảo, Pepsi...",
-    total: 122500,
-  },
-  {
-    id: "2",
-    code: "#DH-20231021-0041",
-    source: "shopee",
-    sourceLabel: "🛍️ Shopee",
-    status: "shipping",
-    statusLabel: "🚚 Đang giao",
-    time: "21/10 · 08:22",
-    customer: { id: "2", name: "Trần Văn Bình", initial: "T", phone: "0912 456 789", points: 850, tier: "Đồng", color: "#059669" },
-    items: "5 sản phẩm · Giao GHTK · Phí ship 30,000 ₫",
-    total: 285000,
-  },
-  {
-    id: "3",
-    code: "#DH-20231021-0040",
-    source: "tiktok",
-    sourceLabel: "🎵 TikTok Shop",
-    status: "success",
-    statusLabel: "✅ Hoàn thành",
-    time: "20/10 · 16:10",
-    customer: { id: "3", name: "Lê Thị Minh", initial: "L", phone: "0978 654 321", points: 1200, tier: "Bạc", color: "#d97706" },
-    items: "2 sản phẩm · Đã thanh toán QR · Hoàn thành 20/10",
-    total: 89000,
-  },
-  {
-    id: "4",
-    code: "#DH-20231020-0038",
-    source: "offline",
-    sourceLabel: "🏪 Tại quầy",
-    status: "cancelled",
-    statusLabel: "❌ Đã hủy",
-    time: "20/10 · 14:30",
-    customer: { id: "4", name: "Phạm Quốc Huy", initial: "P", phone: "0965 111 222", points: 0, tier: "", color: "#dc2626" },
-    items: "Lý do hủy: Khách đổi ý",
-    total: 156000,
-    cancellationReason: "Khách đổi ý",
+    items: "3 sản phẩm: Sữa TH, Mì Hảo Hảo, Pepsi...", total: 122500,
   },
 ];
 
-const STATUS_FILTERS = [
-  { id: "all", label: "Tất cả", count: 42 },
-  { id: "pending", label: "⏳ Chờ xử lý", count: 8 },
-  { id: "shipping", label: "🚚 Đang giao", count: 12 },
-  { id: "success", label: "✅ Hoàn thành", count: 18 },
-  { id: "cancelled", label: "❌ Đã hủy", count: 4 },
-];
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+type StatusFilter = "all" | "pending" | "shipping" | "success" | "cancelled";
+
+export interface StatusCounts {
+  all: number;
+  pending: number;
+  success: number;
+  cancelled: number;
+}
+
+interface OrderListProps {
+  onViewDetail: (invoiceId: number | null) => void;
+  onViewReceipt: (invoiceId: number | null) => void;
+  onConfirm: (invoiceId: number | null) => void;
+  listOrder?: Order[];
+  // Filter props (controlled from parent SaleInvoiceList)
+  activeFilter?: StatusFilter;
+  onFilterChange?: (f: StatusFilter) => void;
+  searchText?: string;
+  onSearchChange?: (v: string) => void;
+  fromDate?: string;
+  toDate?: string;
+  onFromDateChange?: (v: string) => void;
+  onToDateChange?: (v: string) => void;
+  onSearch?: () => void;
+  statusCounts?: StatusCounts;
+  totalItem?: number;
+  onExport?: () => void;
+  isExporting?: boolean;
+}
+
+// ─── Constants ───────────────────────────────────────────────────────────────
 
 const STATUS_BADGE_CLASS: Record<string, string> = {
   pending: "bd-orange",
@@ -71,61 +56,194 @@ const STATUS_BADGE_CLASS: Record<string, string> = {
   cancelled: "bd-red",
 };
 
-interface OrderListProps {
-  onViewDetail: (invoiceId: number | null) => void;
-  onViewReceipt: (invoiceId: number | null) => void;
-  onConfirm: (invoiceId: number | null) => void;
-  listOrder?: Order[];
-}
+// ─── Component ───────────────────────────────────────────────────────────────
 
-const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onConfirm, listOrder = ORDERS }) => {
-  const [activeFilter, setActiveFilter] = useState("all");
+const OrderList: React.FC<OrderListProps> = ({
+  onViewDetail, onViewReceipt, onConfirm,
+  listOrder = ORDERS,
+  // Filter props with fallback to local state if not controlled
+  activeFilter: activeFilterProp,
+  onFilterChange,
+  searchText: searchTextProp,
+  onSearchChange,
+  fromDate: fromDateProp,
+  toDate: toDateProp,
+  onFromDateChange,
+  onToDateChange,
+  onSearch,
+  statusCounts,
+  totalItem,
+  onExport,
+  isExporting = false,
+}) => {
+  // Local fallback state (when used standalone without parent control)
+  const [localFilter, setLocalFilter] = useState<StatusFilter>("all");
+  const [localSearch, setLocalSearch] = useState("");
+  const [localFromDate, setLocalFromDate] = useState("2023-10-20");
+  const [localToDate, setLocalToDate] = useState("2023-10-21");
+
+  const isControlled = activeFilterProp !== undefined;
+  const activeFilter = isControlled ? activeFilterProp : localFilter;
+  const searchText = isControlled ? (searchTextProp ?? "") : localSearch;
+  const fromDate = isControlled ? (fromDateProp ?? "") : localFromDate;
+  const toDate = isControlled ? (toDateProp ?? "") : localToDate;
+
+  const handleFilterChange = (f: StatusFilter) => {
+    if (onFilterChange) onFilterChange(f);
+    else setLocalFilter(f);
+  };
+  const handleSearchChange = (v: string) => {
+    if (onSearchChange) onSearchChange(v);
+    else setLocalSearch(v);
+  };
+  const handleFromDateChange = (v: string) => {
+    if (onFromDateChange) onFromDateChange(v);
+    else setLocalFromDate(v);
+  };
+  const handleToDateChange = (v: string) => {
+    if (onToDateChange) onToDateChange(v);
+    else setLocalToDate(v);
+  };
+  const handleSearch = () => {
+    if (onSearch) onSearch();
+  };
+
+  const [recreatingId, setRecreatingId] = useState<string | null>(null);
   const navigate = useNavigate();
-
   const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
 
+  const STATUS_FILTERS: { id: StatusFilter; label: string }[] = [
+    { id: "all", label: "Tất cả" },
+    { id: "pending", label: "⏳ Chờ xử lý" },
+    { id: "shipping", label: "🚚 Đang giao" },
+    { id: "success", label: "✅ Hoàn thành" },
+    { id: "cancelled", label: "❌ Đã hủy" },
+  ];
+
+  const getCount = (id: StatusFilter): number => {
+    if (!statusCounts) return 0;
+    return statusCounts[id] ?? 0;
+  };
+
+  // ── Tái tạo đơn đã hủy ──────────────────────────────────────────────────
+  const handleRecreateOrder = async (e: React.MouseEvent, order: Order) => {
+    e.stopPropagation();
+    setRecreatingId(order.id);
+    try {
+      const res = await fetch(`/bizapi/sales/invoiceDetail/get?id=${order.id}`);
+      const json = await res.json();
+      if (json.code === 0) {
+        const result = json.result ?? {};
+        const products: any[] = result.products ?? result.items ?? [];
+        if (products.length === 0) {
+          showToast("Đơn hàng này không có sản phẩm để tái tạo.", "error");
+          return;
+        }
+        const cartItems = products.map((p: any) => ({
+          id: String(p.productId),
+          variantId: String(p.variantId ?? p.productId),
+          name: p.name || p.productName || "Sản phẩm",
+          icon: "📦",
+          avatar: p.productAvatar || "",
+          image: p.productAvatar || "",
+          price: p.price || 0,
+          qty: p.qty || 1,
+          unit: p.unitName || "Cái",
+          unitName: p.unitName || "Cái",
+        }));
+        navigate("/create_sale_add", {
+          state: { preloadCart: cartItems, fromInvoiceCode: order.code },
+        });
+      } else {
+        showToast(json.message || json.error || "Không lấy được thông tin đơn hàng.", "error");
+      }
+    } catch {
+      showToast("Lỗi kết nối khi tái tạo đơn hàng.", "error");
+    } finally {
+      setRecreatingId(null);
+    }
+  };
+
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="order-list">
+
       {/* Toolbar */}
       <div className="ol-toolbar">
         <div className="ol-search">
           <span>🔍</span>
-          <input type="text" placeholder="Mã đơn, tên, SĐT..." />
+          <input
+            type="text"
+            placeholder="Mã đơn, tên, SĐT..."
+            value={searchText}
+            onChange={e => handleSearchChange(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleSearch()}
+          />
+          {searchText && (
+            <button className="ol-search__clear" onClick={() => handleSearchChange("")}>×</button>
+          )}
         </div>
-        <select className="ff">
-          <option>Tất cả trạng thái</option>
-          <option>Chờ xử lý</option>
-          <option>Đang giao</option>
-          <option>Hoàn thành</option>
-          <option>Đã hủy</option>
-        </select>
-        <select className="ff">
-          <option>Nguồn đơn (tất cả)</option>
-          <option>Offline - Tại quầy</option>
-          <option>Shopee</option>
-          <option>TikTok Shop</option>
-        </select>
-        <input type="date" className="ff" defaultValue="2023-10-20" />
+
+        <input
+          type="date"
+          className="ff"
+          value={fromDate}
+          onChange={e => handleFromDateChange(e.target.value)}
+        />
         <span className="ol-arrow">→</span>
-        <input type="date" className="ff" defaultValue="2023-10-21" />
-        <button className="btn btn--lime btn--sm">🔍 Lọc</button>
-        <div className="ol-toolbar__right">
-          <button className="btn btn--outline btn--sm">📥 Xuất Excel</button>
-        </div>
+        <input
+          type="date"
+          className="ff"
+          value={toDate}
+          onChange={e => handleToDateChange(e.target.value)}
+        />
+
+        <button className="btn btn--lime btn--sm" onClick={handleSearch}>
+          🔍 Lọc
+        </button>
+
+        {onExport && (
+          <div className="ol-toolbar__right">
+            <button
+              className="btn btn--outline btn--sm"
+              onClick={onExport}
+              disabled={isExporting}
+              style={{ opacity: isExporting ? 0.6 : 1 }}
+            >
+              {isExporting ? "⏳ Đang xuất..." : "📥 Xuất Excel"}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Status filter tabs */}
       <div className="kanban-header">
-        {STATUS_FILTERS.map((f) => (
-          <div key={f.id} className={`kh${activeFilter === f.id ? " active" : ""}`} onClick={() => setActiveFilter(f.id)}>
-            {f.label}
-            <span className={`kc ${f.id !== "all" ? STATUS_BADGE_CLASS[f.id] : "bd-gray"}`}>{f.count}</span>
-          </div>
-        ))}
+        {STATUS_FILTERS.map((f) => {
+          const count = getCount(f.id);
+          return (
+            <div
+              key={f.id}
+              className={`kh${activeFilter === f.id ? " active" : ""}`}
+              onClick={() => handleFilterChange(f.id)}
+            >
+              {f.label}
+              {(statusCounts || f.id === "all") && (
+                <span className={`kc ${f.id !== "all" ? STATUS_BADGE_CLASS[f.id] : "bd-gray"}`}>
+                  {f.id === "all" ? (totalItem ?? getCount("all")) : count}
+                </span>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Order cards */}
       <div className="ol-wrap">
+        {listOrder.length === 0 && (
+          <div style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af", fontSize: 13 }}>
+            Không có đơn hàng nào.
+          </div>
+        )}
         {listOrder.map((order) => (
           <div
             key={order.id}
@@ -146,57 +264,62 @@ const OrderList: React.FC<OrderListProps> = ({ onViewDetail, onViewReceipt, onCo
               </div>
               <div>
                 <div className="oc-name">{order.customer.name}</div>
-                <div className="oc-phone">{order.customer.phone}</div>
-                <div className={`oc-items${order.status === "cancelled" ? " oc-items--cancelled" : ""}`}>{order.items}</div>
+                {order.customer.phone && (
+                  <div className="oc-phone">{order.customer.phone}</div>
+                )}
+                <div className={`oc-items${order.status === "cancelled" ? " oc-items--cancelled" : ""}`}>
+                  {order.items}
+                </div>
               </div>
             </div>
-            <div className="order-card__bot" onClick={(e) => e.stopPropagation()}>
-              <div className={`oc-total${order.status === "cancelled" ? " oc-total--cancelled" : ""}`}>{formatVND(order.total)}</div>
+            <div className="order-card__bot" onClick={e => e.stopPropagation()}>
+              <div className={`oc-total${order.status === "cancelled" ? " oc-total--cancelled" : ""}`}>
+                {formatVND(order.total)}
+              </div>
               <div className="oc-actions">
                 {order.status !== "cancelled" && (
-                  <button
-                    className="btn btn--xs btn--outline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onViewReceipt(Number(order.id));
-                    }}
-                  >
+                  <button className="btn btn--xs btn--outline"
+                    onClick={e => { e.stopPropagation(); onViewReceipt(Number(order.id)); }}>
                     🧾 Biên lai
                   </button>
                 )}
                 {order.status === "pending" && (
-                  <button
-                    className="btn btn--xs btn--outline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/add_shipping?invoiceId=${Number(order.id)}`);
-                    }}
-                  >
+                  <button className="btn btn--xs btn--outline"
+                    onClick={e => { e.stopPropagation(); navigate(`/add_shipping?invoiceId=${Number(order.id)}`); }}>
                     <Icon name="Send" /> Tạo đơn vận chuyển
                   </button>
                 )}
                 {order.status === "pending" && (
                   <>
                     <button className="btn btn--xs btn--outline">✏️ Sửa</button>
-                    <button
-                      className="btn btn--xs btn--confirm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onConfirm(Number(order.id));
-                      }}
-                    >
+                    <button className="btn btn--xs btn--confirm"
+                      onClick={e => { e.stopPropagation(); onConfirm(Number(order.id)); }}>
                       ✅ Xác nhận
                     </button>
                   </>
                 )}
-                {order.status === "shipping" && <button className="btn btn--xs btn--outline">📍 Theo dõi vận chuyển</button>}
-                {order.status === "success" && <button className="btn btn--xs btn--outline">📩 Gửi HĐ điện tử</button>}
+                {order.status === "shipping" && (
+                  <button className="btn btn--xs btn--outline">📍 Theo dõi vận chuyển</button>
+                )}
+                {order.status === "success" && (
+                  <button className="btn btn--xs btn--outline"
+                    onClick={e => { e.stopPropagation(); navigate(`/invoiceVAT?tab=issue&code=${encodeURIComponent(order.code)}`); }}>
+                    📩 Gửi HĐ điện tử
+                  </button>
+                )}
                 {order.status === "cancelled" && (
                   <>
-                    <button className="btn btn--xs btn--outline" onClick={() => onViewDetail(Number(order.id))}>
+                    <button className="btn btn--xs btn--outline"
+                      onClick={() => onViewDetail(Number(order.id))}>
                       Xem chi tiết
                     </button>
-                    <button className="btn btn--xs btn--outline">↩️ Tái tạo đơn</button>
+                    <button
+                      className="btn btn--xs btn--outline"
+                      disabled={recreatingId === order.id}
+                      onClick={e => handleRecreateOrder(e, order)}
+                    >
+                      {recreatingId === order.id ? "Đang tải..." : "↩️ Tái tạo đơn"}
+                    </button>
                   </>
                 )}
               </div>
