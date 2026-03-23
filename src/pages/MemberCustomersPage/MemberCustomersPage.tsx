@@ -9,6 +9,7 @@ import MembershipClass from "../MembershipClass/MembershipClass";
 import LoyaltyReward from "../LoyaltyReward";
 import SettingLoyaltyList from "../SettingLoyaltyList";
 import CustomerLoyaltyPointLedger from "../SettingCustomer/partials/CustomerLoyaltyPointLedger";
+import ExchangePoints from "../ExchangePoints";
 
 export default function MemberCustomersPage() {
   document.title = "Khuyến mãi";
@@ -82,13 +83,13 @@ export default function MemberCustomersPage() {
       {!isDetail && <TitleAction title="Khách hàng thành viên" />}
       <div className="d-flex flex-column">
         {!isDetail && (
-            <TabMenuList
-                listTab={listTab}
-                onClick={(item) => {
-                    setTab(item.tab);
-                    setIsDetail(true);
-                }}
-            />
+          <TabMenuList
+            listTab={listTab}
+            onClick={(item) => {
+              setTab(item.tab);
+              setIsDetail(true);
+            }}
+          />
         )}
       </div>
 
@@ -100,7 +101,7 @@ export default function MemberCustomersPage() {
             }
           }}
         />
-      ) : null }
+      ) : null}
 
       {isDetail && tab === "membership_class" ? (
         <MembershipClass
@@ -110,7 +111,17 @@ export default function MemberCustomersPage() {
             }
           }}
         />
-      ) : null }
+      ) : null}
+
+      {isDetail && tab === "exchange_points" ? (
+        <ExchangePoints
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetail(false);
+            }
+          }}
+        />
+      ) : null}
 
       {isDetail && tab === "points_history" ? (
         <LoyaltyPointLedger
@@ -120,7 +131,7 @@ export default function MemberCustomersPage() {
             }
           }}
         />
-      ) : null }
+      ) : null}
 
       {isDetail && tab === "accumulate_points" ? (
         <DashboardLoyalty
@@ -130,9 +141,9 @@ export default function MemberCustomersPage() {
             }
           }}
         />
-      ) : null }
+      ) : null}
 
-    {isDetail && tab === "loyalty_program" ? (
+      {isDetail && tab === "loyalty_program" ? (
         <SettingLoyaltyList
           onBackProps={(isBack) => {
             if (isBack) {
@@ -153,12 +164,12 @@ export default function MemberCustomersPage() {
 
       {isDetail && tab === "points_history_ledger" ? (
         <CustomerLoyaltyPointLedger
-            onBackProps={(isBack) => {
-              if (isBack) {
-                setIsDetail(false);
-              }
-            }}
-          />
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetail(false);
+            }
+          }}
+        />
       ) : null}
     </div>
   );
