@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { IAddAdjustmentSlipProps } from "model/adjustmentSlip/PropsModel";
 import Icon from "components/icon";
 import Image from "components/image";
@@ -32,6 +32,10 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
   const isReadyToAdd = !!dataInventory;
   const totalItems = lstProducts.length;
 
+  // Ref để tránh stale closure trong useCallback mà không trigger re-render
+  const dataInventoryRef = useRef(dataInventory);
+  useEffect(() => { dataInventoryRef.current = dataInventory; }, [dataInventory]);
+
   // ── Load temp khi chọn kho ───────────────────────────────────────────────
   const handAdjustmentSlipTemp = useCallback(async (inventoryId: number) => {
     setIsLoading(true);
@@ -42,14 +46,14 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
       setSatId(result.satId);
       const items = (result?.stockAdjustDetails ?? []).map((item: any) => ({
         ...item,
-        inventoryName: result?.stockAdjust?.inventoryName ?? dataInventory?.label ?? "",
+        inventoryName: result?.stockAdjust?.inventoryName ?? dataInventoryRef.current?.label ?? "",
       }));
       setLstProducts(items);
     } else {
       showToast("Có lỗi xảy ra khi tải dữ liệu kho", "error");
     }
     setIsLoading(false);
-  }, [dataInventory]);
+  }, []); // deps rỗng — dùng ref để đọc dataInventory tránh re-create function
 
   // ── Load chi tiết phiếu khi edit ─────────────────────────────────────────
   useEffect(() => {
@@ -84,24 +88,30 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
     setLstBatchNoProduct(lstProducts.map((item) => item.batchNo));
   }, [lstProducts]);
 
-  // ── Warehouse loader ──────────────────────────────────────────────────────
-  const loadedOptionInventory = useCallback(async (search, _loaded, { page }) => {
-    const response = await InventoryService.list({ name: search, page, limit: 10 });
+  const [listInventory, setListInventory] = useState<any[]>([]);
+  const [isLoadingInventory, setIsLoadingInventory] = useState(false);
+
+  // ── Warehouse loader — chỉ load khi mở dropdown, không auto-load ─────────
+  const getListInventory = useCallback(async () => {
+    if (listInventory.length > 0) return; // cache, không load lại
+    setIsLoadingInventory(true);
+    const response = await InventoryService.list({ page: 1, limit: 100 });
     if (response.code === 0) {
-      const data = response.result ?? [];
-      return {
-        options: data.map((i: any) => ({
-          value: i.id, label: i.name,
-          address: i.address, branchName: i.branchName,
-        })),
-        hasMore: response.result?.loadMoreAble,
-        additional: { page: page + 1 },
-      };
+      const data = Array.isArray(response.result)
+        ? response.result
+        : Array.isArray(response.result?.items) ? response.result.items : [];
+      setListInventory(data.map((i: any) => ({
+        value: i.id, label: i.name,
+        address: i.address ?? "", branchName: i.branchName ?? "",
+      })));
+    } else {
+      showToast("Không lấy được danh sách kho", "error");
     }
-    return { options: [], hasMore: false };
-  }, []);
+    setIsLoadingInventory(false);
+  }, [listInventory.length]);
 
   const handleChangeInventory = (e: any) => {
+    // e là option object {value, label, address, branchName}
     setDataInventory(e);
     setLstProducts([]);
     if (e?.value) handAdjustmentSlipTemp(e.value);
@@ -342,13 +352,14 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
               {/* Kho hàng */}
               <SelectCustom
                 id="inventory" name="inventory"
-                label="Kho hàng" fill={true} options={[]} required={true}
-                value={dataInventory}
+                label="Kho hàng" fill={true}
+                options={listInventory}
+                required={true}
+                value={dataInventory?.value ?? null}
+                onMenuOpen={getListInventory}
                 onChange={handleChangeInventory}
-                isAsyncPaginate={true}
-                loadOptionsPaginate={loadedOptionInventory}
+                isLoading={isLoadingInventory}
                 placeholder="Chọn kho hàng"
-                additional={{ page: 1 }}
               />
 
               {/* Địa chỉ / Chi nhánh */}
