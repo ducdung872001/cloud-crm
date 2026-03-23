@@ -2,6 +2,31 @@
 // Tạo phiếu nhập kho — 2-column layout
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ── Breadcrumb ────────────────────────────────────────────────────────────────
+.cr-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.6rem;
+
+  &__parent {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary-color);
+    cursor: pointer;
+    transition: opacity 0.15s;
+    &:hover { opacity: 0.65; }
+  }
+
+  &__current {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--extra-color-50);
+  }
+
+  svg { width: 14px; }
+}
+
 .page__create--invoice {
 
   // ── 2-column grid ──────────────────────────────────────────────────────────

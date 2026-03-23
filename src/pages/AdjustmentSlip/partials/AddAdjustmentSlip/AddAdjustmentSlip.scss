@@ -134,6 +134,10 @@
 .adj-col-input  { width: 13rem; }
 .adj-col-action { width: 4.4rem; text-align: center; }
 
+// Override browser user-agent th text-align
+.adj-th-right  { text-align: right !important; }
+.adj-th-center { text-align: center !important; }
+
 .adj-product-info {
   display: flex;
   align-items: center;
@@ -301,6 +305,8 @@
   &__value {
     font-weight: 600;
     color: var(--text-primary-color);
-    &--hl { color: var(--primary-color); font-size: 1.5rem; }
+    &--hl  { color: var(--primary-color); font-size: 1.5rem; }
+    &--pos { color: #27ae60; font-weight: 700; }
+    &--neg { color: #e74c3c; font-weight: 700; }
   }
 }

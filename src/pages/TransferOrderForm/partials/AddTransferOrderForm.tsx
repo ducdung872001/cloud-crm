@@ -9,7 +9,7 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { showToast } from "utils/common";
 import InventoryService from "services/InventoryService";
-import ChooseProduct from "./ChooseProduct/ChooseProduct";
+import ChooseProductVariant from "pages/ProductImport/common/ChooseProductVariant/ChooseProductVariant";
 import "./AddTransferOrderForm.scss";
 
 interface ITransferProduct {
@@ -237,9 +237,9 @@ export default function AddTransferOrderForm(props) {
                       <tr>
                         <th className="tf-col-stt">STT</th>
                         <th>Sản phẩm</th>
-                        <th className="tf-col-center">Kho nguồn</th>
-                        <th className="tf-col-center">Đơn vị</th>
-                        <th className="tf-col-num">Tồn kho</th>
+                        <th>Kho nguồn</th>
+                        <th className="tf-col-center tf-th-center">Đơn vị</th>
+                        <th className="tf-col-num tf-th-right">Tồn kho</th>
                         <th className="tf-col-num tf-col-input">SL chuyển</th>
                         <th>Ghi chú</th>
                         <th className="tf-col-action"></th>
@@ -399,11 +399,12 @@ export default function AddTransferOrderForm(props) {
 
       </div>
 
-      <ChooseProduct
+      <ChooseProductVariant
         onShow={showModalAdd}
         onHide={() => setShowModalAdd(false)}
-        lstBatchNoProduct={lstBatchNoProduct}
+        excludeKeys={lstBatchNoProduct}
         inventory={dataInventoryOrg}
+        title="Chọn sản phẩm cần chuyển kho"
         takeData={(data) => handChangeDataProps(data)}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />

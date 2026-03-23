@@ -3,7 +3,9 @@ import TitleAction from "components/titleAction/titleAction";
 import "./PromotionPage.scss";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 import PromotionalProgram from "@/pages/PromotionalProgram";
-import PromotionDashboard from "../PromotionalReport/partials/PromotionDashboard";
+import PromoCode from "../PromoCode";
+import PromotionBundle from "../PromotionBundle";
+import PromotionDashboard from "../PromoReport/PromotionDashboard";
 
 export default function PromotionPage() {
   document.title = "Khuyến mãi";
@@ -15,6 +17,8 @@ export default function PromotionPage() {
     {
       title: "Chương trình khuyến mãi",
       icon: "PromotionMenu",
+      strokeColor: "rgb(217, 119, 6)",
+      backgroundColor: "#fef3c7",
       tab: 1,
       des: "Quản lý các chương trình giảm giá theo thời gian, sản phẩm, nhóm khách hàng"
     },
@@ -22,18 +26,24 @@ export default function PromotionPage() {
     {
       title: "Mã giảm giá",
       icon: "ProcessConfigMenu",
+      strokeColor: "rgb(37, 99, 235)",
+      backgroundColor: "#dbeafe",
       tab: 2,
       des: "Tạo mã coupon áp dụng trực tiếp khi thanh toán tại quầy hoặc đơn hàng online"
     },
     {
       title: "Combo khuyến mãi",
       icon: "LoyaltyMenu",
+      strokeColor: "rgb(124, 58, 237)",
+      backgroundColor: "#ede9fe",
       tab: 3,
       des: "Thiết lập các gói sản phẩm bán kèm với giá ưu đãi để tăng giá trị đơn hàng"
     },
     {
       title: "Báo cáo khuyến mãi",
       icon: "PromoReportMenu",
+      strokeColor: "rgb(22, 163, 74)",
+      backgroundColor: "#dcfce7",
       tab: 4,
       des: "Thống kê hiệu quả từng chương trình, mã giảm giá và doanh thu phát sinh"
     },
@@ -44,13 +54,13 @@ export default function PromotionPage() {
       {!isDetail && <TitleAction title="Khuyến mãi" />}
       <div className="d-flex flex-column">
         {!isDetail && (
-            <TabMenuList
-                listTab={listTab}
-                onClick={(item) => {
-                    setTab(item.tab);
-                    setIsDetail(true);
-                }}
-            />
+          <TabMenuList
+            listTab={listTab}
+            onClick={(item) => {
+              setTab(item.tab);
+              setIsDetail(true);
+            }}
+          />
         )}
       </div>
 
@@ -62,7 +72,27 @@ export default function PromotionPage() {
             }
           }}
         />
-      ) : null }
+      ) : null}
+
+      {isDetail && tab === 2 ? (
+        <PromoCode
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetail(false);
+            }
+          }}
+        />
+      ) : null}
+
+      {isDetail && tab === 3 ? (
+        <PromotionBundle
+          onBackProps={(isBack) => {
+            if (isBack) {
+              setIsDetail(false);
+            }
+          }}
+        />
+      ) : null}
 
       {isDetail && tab === 4 ? (
         <PromotionDashboard
@@ -72,7 +102,7 @@ export default function PromotionPage() {
             }
           }}
         />
-      ) : null }
+      ) : null}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { IAddAdjustmentSlipProps } from "model/adjustmentSlip/PropsModel";
 import Icon from "components/icon";
-import Image from "components/image";
+import ImageError from "assets/images/error.png";
 import Loading from "components/loading";
 import Button from "components/button/button";
 import NummericInput from "components/input/numericInput";
@@ -207,7 +207,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
   };
 
   return (
-    <div className="page-content adj-page">
+    <div className="adj-page">
 
       {/* ── Breadcrumb ──────────────────────────────────────────────── */}
       <div className="adj-header">
@@ -252,13 +252,13 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
                   <table className="adj-table">
                     <thead>
                       <tr>
-                        <th className="adj-col-stt">STT</th>
+                        <th className="adj-col-stt adj-th-center">STT</th>
                         <th>Sản phẩm</th>
-                        <th className="adj-col-center">Kho</th>
-                        <th className="adj-col-center">Đơn vị</th>
-                        <th className="adj-col-num">Tồn kho</th>
-                        <th className="adj-col-num adj-col-input">SL thực tế</th>
-                        <th className="adj-col-num">Lệch</th>
+                        <th>Kho</th>
+                        <th className="adj-col-center adj-th-center">Đơn vị</th>
+                        <th className="adj-col-num adj-th-right">Tồn kho</th>
+                        <th className="adj-col-num adj-col-input adj-th-right">SL thực tế</th>
+                        <th className="adj-col-num adj-th-right">Lệch</th>
                         <th>Lý do điều chỉnh</th>
                         <th className="adj-col-action"></th>
                       </tr>
@@ -269,11 +269,16 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
                           <td className="adj-col-stt">{idx + 1}</td>
                           <td>
                             <div className="adj-product-info">
-                              {item.productAvatar && (
-                                <div className="adj-product-avatar">
-                                  <Image src={item.productAvatar} alt={item.productName} />
-                                </div>
-                              )}
+                              <div className="adj-product-avatar">
+                                <img
+                                  src={item.productAvatar || ImageError}
+                                  alt={item.productName}
+                                  onError={e => {
+                                    (e.currentTarget as HTMLImageElement).onerror = null;
+                                    (e.currentTarget as HTMLImageElement).src = ImageError;
+                                  }}
+                                />
+                              </div>
                               <div className="adj-product-name">{item.productName}</div>
                             </div>
                           </td>
@@ -382,10 +387,25 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
                   <span className="adj-summary__label">Số loại SP</span>
                   <span className="adj-summary__value">{totalItems} loại</span>
                 </div>
-                <div className="adj-summary__row adj-summary__row--total">
-                  <span className="adj-summary__label">Sản phẩm lệch</span>
+                <div className="adj-summary__row">
+                  <span className="adj-summary__label">SP lệch</span>
                   <span className="adj-summary__value adj-summary__value--hl">
                     {lstProducts.filter(i => (i.offsetQty ?? 0) !== 0).length} SP
+                  </span>
+                </div>
+                <div className="adj-summary__row adj-summary__row--total">
+                  <span className="adj-summary__label">Tổng lệch</span>
+                  <span className={`adj-summary__value ${
+                    lstProducts.reduce((s, i) => s + (i.offsetQty ?? 0), 0) < 0
+                      ? "adj-summary__value--neg"
+                      : lstProducts.reduce((s, i) => s + (i.offsetQty ?? 0), 0) > 0
+                      ? "adj-summary__value--pos"
+                      : "adj-summary__value--hl"
+                  }`}>
+                    {(() => {
+                      const total = lstProducts.reduce((s, i) => s + (i.offsetQty ?? 0), 0);
+                      return total > 0 ? `+${total}` : total;
+                    })()}
                   </span>
                 </div>
               </div>

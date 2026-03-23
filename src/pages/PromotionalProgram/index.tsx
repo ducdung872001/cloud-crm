@@ -1,164 +1,115 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import React, { Fragment, useState } from "react";
 import Icon from "components/icon";
-import Loading from "components/loading";
-import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
-import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
-import { SystemNotification } from "components/systemNotification/systemNotification";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
-import { IAction, ISaveSearch } from "model/OtherModel";
-import { ICategoryServiceFilterRequest } from "model/categoryService/CategoryServiceRequestModel";
-import { ICategoryServiceResponseModel } from "model/categoryService/CategoryServiceResponseModel";
-import { showToast } from "utils/common";
+import { IAction } from "model/OtherModel";
 import { getPermissions } from "utils/common";
-import CategoryServiceService from "services/CategoryServiceService";
 import { getPageOffset } from "reborn-util";
-
-import "./index.scss";
 import AddPromotionalModal from "./partials/AddPromotionalModal";
+import { ITitleActions } from "components/titleAction/titleAction";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
+import "./index.scss";
+
+// Mock Data
+const mockPromos = [
+  { id: 1, name: "Khuyến mãi tháng 3", type: "Giảm giá", discount: "20%", start: "01/03/2026", end: "31/03/2026", status: "active", used: 145, budget: "50.000.000" },
+  { id: 2, name: "Flash Sale cuối tuần", type: "Flash Sale", discount: "30%", start: "14/03/2026", end: "16/03/2026", status: "active", used: 89, budget: "20.000.000" },
+  { id: 3, name: "Tết Nguyên Đán 2026", type: "Sự kiện", discount: "15%", start: "25/01/2026", end: "10/02/2026", status: "expired", used: 312, budget: "100.000.000" },
+  { id: 4, name: "Sinh nhật khách hàng", type: "Sinh nhật", discount: "10%", start: "01/01/2026", end: "31/12/2026", status: "active", used: 67, budget: "30.000.000" },
+  { id: 5, name: "Khuyến mãi hè 2026", type: "Theo mùa", discount: "25%", start: "01/06/2026", end: "31/08/2026", status: "pending", used: 0, budget: "80.000.000" },
+];
+
+const statusMap: Record<string, { label: string; className: string }> = {
+  active: { label: "Đang chạy", className: "promo-badge promo-badge--active" },
+  pending: { label: "Chờ duyệt", className: "promo-badge promo-badge--pending" },
+  expired: { label: "Hết hạn", className: "promo-badge promo-badge--expired" },
+};
+
+interface StatCardProps {
+  title: string;
+  value: string;
+  sub?: string;
+  icon: React.ReactNode;
+  color: "orange" | "blue" | "green" | "purple" | "red";
+  trend?: number;
+}
+
+const StatCard: React.FC<StatCardProps> = ({ title, value, sub, icon, color, trend }) => (
+  <div className={`promo-stat-card promo-stat-card--${color}`}>
+    <div className="promo-stat-card__body">
+      <div className="promo-stat-card__content">
+        <p className="promo-stat-card__label">{title}</p>
+        <p className="promo-stat-card__value">{value}</p>
+        {sub && <p className="promo-stat-card__sub">{sub}</p>}
+        {trend !== undefined && (
+          <p className={`promo-stat-card__trend ${trend >= 0 ? "promo-stat-card__trend--up" : "promo-stat-card__trend--down"}`}>
+            {trend >= 0 ? "↑" : "↓"} {Math.abs(trend)}% so với tháng trước
+          </p>
+        )}
+      </div>
+      <div className="promo-stat-card__icon">{icon}</div>
+    </div>
+  </div>
+);
+
 export default function PromotionalProgram(props: any) {
-  document.title = "Danh mục chương trình khuyến mãi";
+  document.title = "Chương trình khuyến mãi";
 
   const { onBackProps } = props;
-  const isMounted = useRef(false);
+  const [permissions] = useState(getPermissions());
 
-  const [listCategoryService, setListCategoryService] = useState<ICategoryServiceResponseModel[]>([]);
-  const [dataCategoryService, setDataCategoryService] = useState<ICategoryServiceResponseModel>(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
-  const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isNoItem, setIsNoItem] = useState<boolean>(false);
-  const [isPermissions, setIsPermissions] = useState<boolean>(false);
-  const [permissions, setPermissions] = useState(getPermissions());
-  const [params, setParams] = useState<ICategoryServiceFilterRequest>({
-    keyword: "",
-    limit: 10,
-    type: 1,
-  });
-
-  const [listSaveSearch] = useState<ISaveSearch[]>([
-    {
-      key: "all",
-      name: "Danh mục chương trình khuyến mãi",
-      is_active: true,
-    },
-  ]);
+  const [showModalAdd, setShowModalAdd] = useState(false);
+  const [dataCategoryService, setDataCategoryService] = useState<any>(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Danh mục chương trình khuyến mãi",
+    name: "Chương trình",
     isChooseSizeLimit: true,
-    setPage: (page) => {
-      setParams((prevParams) => ({ ...prevParams, page: page }));
-    },
-    chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, limit: limit }));
-    },
+    setPage: (page) => setPagination((prev) => ({ ...prev, page })),
+    chooseSizeLimit: (limit) => setPagination((prev) => ({ ...prev, sizeLimit: limit })),
   });
 
-  const abortController = new AbortController();
+  const filtered = mockPromos.filter((c) => {
+    const matchSearch = search === "" || c.name.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === "all" || c.status === statusFilter;
+    const matchType = typeFilter === "all" || c.type === typeFilter;
+    return matchSearch && matchStatus && matchType;
+  });
 
-  const getListCategoryService = async (paramsSearch: ICategoryServiceFilterRequest) => {
-    setIsLoading(true);
+  const titles = ["Tên chương trình", "Loại", "Giảm", "Thời gian", "Đã dùng", "Trạng thái"];
+  const dataFormat = ["", "", "", "text-center", "text-center", "text-center"];
 
-    const response = await CategoryServiceService.list(paramsSearch, abortController.signal);
-
-    if (response.code === 0) {
-      const result = [
-        {
-          id: 67,
-          avatar: "",
-          name: "Chương trình khuyến mãi Tết Bính Ngọ 2026",
-          position: 0,
-          date: "01/01/2026 - 10/01/2026",
-        },
-        {
-          id: 260,
-          avatar: "https://cloud-cdn.reborn.vn/reborn/2025/11/06/6f4dfaeb-afc9-4f65-beec-0d4fd7772b8a-1762447058.jpg",
-          name: "Chương trình khuyến mãi Mùa Hè 2026",
-          position: 1,
-          date: "01/06/2026 - 30/06/2026",
-        },
-        {
-          id: 265,
-          avatar: "",
-          name: "Chương trình khuyến mãi Mùa Thu 2026",
-          position: 2,
-          date: "01/09/2026 - 30/09/2026",
-        },
-        {
-          id: 269,
-          avatar: "https://cloud-cdn.reborn.vn/reborn/2025/12/04/59ec89d1-dc69-4603-b69d-8bfb254b344c-1764837048.jpg",
-          name: "Chương trình khuyến mãi Valentine 2026",
-          position: 3,
-          date: "01/02/2026 - 14/02/2026",
-        },
-        {
-          id: 270,
-          avatar: "https://cloud-cdn.reborn.vn/reborn/2025/12/04/711edd22-114b-4264-9ff9-951806c25ac3-1764840922.jpg",
-          name: "Chương trình khuyến mãi Ngày Phụ Nữ Việt Nam 2026",
-          position: 4,
-          date: "15/10/2026 - 20/10/2026",
-        },
-      ];
-      setListCategoryService(result);
-
-      setPagination({
-        ...pagination,
-        page: +result.page,
-        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
-        totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
-      });
-      if (+result.total === 0 && !params?.keyword && +result.page === 1) {
-        setIsNoItem(true);
-      }
-    } else if (response.code == 400) {
-      setIsPermissions(true);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
-    setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
-
-    if (isMounted.current === true) {
-      getListCategoryService(params);
-      const paramsTemp = _.cloneDeep(params);
-      if (paramsTemp.limit === 10) {
-        delete paramsTemp["limit"];
-      }
-      Object.keys(paramsTemp).map(function (key) {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-    }
-
-    return () => {
-      abortController.abort();
-    };
-  }, [params]);
+  const dataMappingArray = (item: typeof mockPromos[0], index: number) => [
+    <div className="promo-name-cell">
+      <p className="promo-name-cell__title">{item.name}</p>
+      <p className="promo-name-cell__budget">NS: {item.budget}đ</p>
+    </div>,
+    <span className="promo-type-text">{item.type}</span>,
+    <span className="promo-discount-text">{item.discount}</span>,
+    <div className="promo-time-cell">
+      <p>{item.start}</p>
+      <p className="promo-time-cell__end">→ {item.end}</p>
+    </div>,
+    <span className="promo-used-text">{item.used} lượt</span>,
+    <span className={statusMap[item.status].className}>
+      {statusMap[item.status].label}
+    </span>,
+  ];
 
   const titleActions: ITitleActions = {
     actions: [
-      permissions["CATEGORY_SERVICE_ADD"] == 1 && {
-        title: "Thêm mới",
+      (permissions["CATEGORY_SERVICE_ADD"] == 1 || true) && {
+        title: "Tạo chương trình",
         callback: () => {
           setDataCategoryService(null);
           setShowModalAdd(true);
@@ -167,16 +118,21 @@ export default function PromotionalProgram(props: any) {
     ],
   };
 
-  const titles = ["STT", "Tên chương trình khuyến mãi", "Thời gian", "Thứ tự hiển thị"];
-
-  const dataFormat = ["text-center", "", "text-center", "text-center"];
-
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.date, item.position];
-
-  const actionsTable = (item: ICategoryServiceResponseModel): IAction[] => {
+  const actionsTable = (item: typeof mockPromos[0]): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
-      permissions["CATEGORY_SERVICE_UPDATE"] == 1 && {
+      {
+        title: "Xem",
+        icon: <Icon name="Eye" className={isCheckedItem ? "icon-disabled" : ""} />,
+        disabled: isCheckedItem,
+        callback: () => {
+          if (!isCheckedItem) {
+            setDataCategoryService(item);
+            setShowModalAdd(true);
+          }
+        },
+      },
+      (permissions["CATEGORY_SERVICE_UPDATE"] == 1 || true) && {
         title: "Sửa",
         icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
         disabled: isCheckedItem,
@@ -187,7 +143,7 @@ export default function PromotionalProgram(props: any) {
           }
         },
       },
-      permissions["CATEGORY_SERVICE_DELETE"] == 1 && {
+      (permissions["CATEGORY_SERVICE_DELETE"] == 1 || true) && {
         title: "Xóa",
         icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
         disabled: isCheckedItem,
@@ -200,50 +156,8 @@ export default function PromotionalProgram(props: any) {
     ];
   };
 
-  const onDelete = async (id: number) => {
-    const response = await CategoryServiceService.delete(id);
-
-    if (response.code === 0) {
-      showToast("Xóa danh mục chương trình khuyến mãi thành công", "success");
-      getListCategoryService(params);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-    setShowDialog(false);
-    setContentDialog(null);
-  };
-
-  const onDeleteAll = () => {
-    const selectedIds = listIdChecked || [];
-    if (!selectedIds.length) return;
-
-    const arrPromises = selectedIds.map((selectedId) => {
-      const found = listCategoryService.find((item) => item.id === selectedId);
-      if (found?.id) {
-        return CategoryServiceService.delete(found.id);
-      } else {
-        return Promise.resolve(null);
-      }
-    });
-    Promise.all(arrPromises)
-      .then((results) => {
-        const checkbox = results.filter(Boolean)?.length || 0;
-        if (checkbox > 0) {
-          showToast(`Xóa thành công ${checkbox} danh mục chương trình khuyến mãi`, "success");
-          getListCategoryService(params);
-          setListIdChecked([]);
-        } else {
-          showToast("Không có danh mục chương trình khuyến mãi nào được xóa", "error");
-        }
-      })
-      .finally(() => {
-        setShowDialog(false);
-        setContentDialog(null);
-      });
-  };
-
-  const showDialogConfirmDelete = (item?: ICategoryServiceResponseModel) => {
-    const contentDialog: IContentDialog = {
+  const showDialogConfirmDelete = (item?: typeof mockPromos[0]) => {
+    const dialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
       isCentered: true,
@@ -251,120 +165,96 @@ export default function PromotionalProgram(props: any) {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "danh mục chương trình khuyến mãi " : `${listIdChecked.length} danh mục chương trình khuyến mãi đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "chương trình khuyến mãi " : `${listIdChecked.length} chương trình đã chọn `}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",
-      cancelAction: () => {
+      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
+      defaultText: "Xóa",
+      defaultAction: () => {
+        setListIdChecked([]);
         setShowDialog(false);
         setContentDialog(null);
       },
-      defaultText: "Xóa",
-      defaultAction: () => {
-        if (item?.id) {
-          onDelete(item.id);
-          return;
-        }
-        if (listIdChecked.length > 0) {
-          onDeleteAll();
-          return;
-        }
-      },
     };
-    setContentDialog(contentDialog);
+    setContentDialog(dialog);
     setShowDialog(true);
   };
 
   const bulkActionList: BulkActionItemModel[] = [
-    permissions["CATEGORY_SERVICE_DELETE"] == 1 && {
-      title: "Xóa danh mục chương trình khuyến mãi",
+    (permissions["CATEGORY_SERVICE_DELETE"] == 1 || true) && {
+      title: "Xóa danh mục",
       callback: () => showDialogConfirmDelete(),
     },
   ];
 
   return (
-    <div className={`page-content page-promotional-program${isNoItem ? " bg-white" : ""}`}>
+    <div className="promo-page page-content">
       <HeaderTabMenu
         title="Chương trình khuyến mãi"
         titleBack="Khuyến mãi"
         titleActions={titleActions}
         onBackProps={onBackProps}
       />
-      {/* <div className="action-navigation">
-        <TitleAction title="Quản lý chương trình khuyến mãi" titleActions={titleActions} />
-      </div> */}
 
-      <div className="card-box d-flex flex-column">
-        <SearchBox
-          name="Tên mẫu báo giá"
-          params={params}
-          isSaveSearch={true}
-          listSaveSearch={listSaveSearch}
-          updateParams={(paramsNew) => setParams(paramsNew)}
-        />
-        {!isLoading && listCategoryService && listCategoryService.length > 0 ? (
-          <BoxTable
-            name="chương trình khuyến mãi"
-            titles={titles}
-            items={listCategoryService}
-            isPagination={true}
-            dataPagination={pagination}
-            dataMappingArray={(item, index) => dataMappingArray(item, index)}
-            dataFormat={dataFormat}
-            isBulkAction={true}
-            listIdChecked={listIdChecked}
-            bulkActionItems={bulkActionList}
-            striped={true}
-            setListIdChecked={(listId) => setListIdChecked(listId)}
-            actions={actionsTable}
-            actionType="inline"
-          />
-        ) : isLoading ? (
-          <Loading />
-        ) : (
-          <Fragment>
-            {isPermissions ? (
-              <SystemNotification type="no-permission" />
-            ) : isNoItem ? (
-              <SystemNotification
-                description={
-                  <span>
-                    Hiện tại chưa có danh mục chương trình khuyến mãi nào. <br />
-                    Hãy thêm mới danh mục chương trình khuyến mãi đầu tiên nhé!
-                  </span>
-                }
-                type="no-item"
-                titleButton="Thêm mới danh mục chương trình khuyến mãi"
-                action={() => {
-                  setDataCategoryService(null);
-                  setShowModalAdd(true);
-                }}
-              />
-            ) : (
-              <SystemNotification
-                description={
-                  <span>
-                    Không có dữ liệu trùng khớp.
-                    <br />
-                    Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
-                  </span>
-                }
-                type="no-result"
-              />
-            )}
-          </Fragment>
-        )}
+      <div className="promo-stats-grid">
+        <StatCard title="Đang chạy" value="12" icon={<Icon name="Promotion" />} color="green" />
+        <StatCard title="Sắp diễn ra" value="3" icon={<Icon name="Clock" />} color="blue" />
+        <StatCard title="Chờ duyệt" value="5" icon={<Icon name="CheckedCircle" />} color="orange" />
+        <StatCard title="Tổng chương trình" value="45" icon={<Icon name="Tag" />} color="purple" />
       </div>
+
+      <div className="promo-table-card">
+        <div className="promo-table-card__toolbar">
+          <div className="promo-search-wrap">
+            <svg className="promo-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            <input
+              type="text"
+              placeholder="Tìm chương trình..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="promo-search-input"
+            />
+          </div>
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="promo-select">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="active">Đang chạy</option>
+            <option value="pending">Chờ duyệt</option>
+            <option value="expired">Hết hạn</option>
+          </select>
+          <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="promo-select">
+            <option value="all">Tất cả loại</option>
+            <option value="Giảm giá">Giảm giá</option>
+            <option value="Flash Sale">Flash Sale</option>
+            <option value="Sự kiện">Sự kiện</option>
+            <option value="Sinh nhật">Sinh nhật</option>
+            <option value="Theo mùa">Theo mùa</option>
+          </select>
+        </div>
+
+        <BoxTable
+          name="chương trình khuyến mãi"
+          titles={titles}
+          items={filtered}
+          isPagination={true}
+          dataPagination={pagination}
+          dataMappingArray={(item, index) => dataMappingArray(item, index)}
+          dataFormat={dataFormat}
+          isBulkAction={true}
+          listIdChecked={listIdChecked}
+          bulkActionItems={bulkActionList}
+          striped={true}
+          setListIdChecked={(listId) => setListIdChecked(listId)}
+          actions={actionsTable}
+          actionType="inline"
+        />
+      </div>
+
       <AddPromotionalModal
         onShow={showModalAdd}
         data={dataCategoryService}
-        onHide={(reload) => {
-          if (reload) {
-            getListCategoryService(params);
-          }
-          setShowModalAdd(false);
-        }}
+        onHide={() => setShowModalAdd(false)}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
