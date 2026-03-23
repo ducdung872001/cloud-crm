@@ -233,7 +233,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
         {/* Header */}
         <div className="pii-header">
           <div className="pii-header__icon">
-            <Icon name="ClipboardList" />
+            <Icon name="ImportBill" />
           </div>
           <span className="pii-header__title">Thông tin phiếu nhập kho</span>
         </div>
@@ -248,7 +248,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
               required={true}
               name="inventoryId"
               placeholder="Chọn kho hàng"
-              label="Kho hàng *"
+              label="Kho hàng"
               value={formData?.inventoryId}
               onMenuOpen={getListInventory}
               onChange={(e) => handleChangeValueInventory(e)}
@@ -277,7 +277,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
           {/* Ngày nhập */}
           <div className="pii-field">
             <DatePickerCustom
-              label="Ngày nhập *"
+              label="Ngày nhập"
               name="receiptDate"
               fill={true}
               value={formData?.receiptDate}
