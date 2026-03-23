@@ -4,21 +4,15 @@ import _ from "lodash";
 import moment from "moment";
 import { useSearchParams } from "react-router-dom";
 import { Options } from "highcharts";
-import Icon from "components/icon";
 import TitleAction from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
-import { IAction, IFilterItem } from "model/OtherModel";
+import { IFilterItem } from "model/OtherModel";
 import { ICustomerResponse } from "model/customer/CustomerResponseModel";
 import { ICashbookFilterRequest } from "model/cashbook/CashbookRequestModel";
 import { ICashBookResponse } from "model/cashbook/CashbookResponseModel";
 import { showToast } from "utils/common";
 import { formatCurrency } from "reborn-util";
-import AddCashBookModal from "./partials/AddCashBookModal";
 import CashbookService from "services/CashbookService";
-import { getPermissions } from "utils/common";
-import LoadingUpload from "components/loadingUpload/loadingUpload";
-import ExportListModal from "pages/Common/ExportListModal/ExportListModal";
-import { downloadDataUrlFromJavascript } from "reborn-util";
 import "./CashBookList.scss";
 import { ContextType, UserContext } from "contexts/userContext";
 import Filters from "./partials/FinanceReport/Filters";
@@ -223,14 +217,8 @@ export default function CashBookList() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isTabSwitching, setIsTabSwitching] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
-  const [showModalCashBook, setShowModalCashBook] = useState<boolean>(false);
-  const [dataCashBook, setDataCashBook] = useState<ICashBookResponse>(null);
   const [listCashBook, setListCashBook] = useState<ICustomerResponse[]>([]);
   const [listCashBookTotal, setListCashBookTotal] = useState<any>({});
-  const [typeProps, setTypeProps] = useState<number>(0);
-  const [permissions] = useState(getPermissions());
-  const [showModalExport, setShowModalExport] = useState<boolean>(false);
-  const [showModalLoading, setShowModalLoading] = useState<boolean>(false);
   const [listReportCashBook, setListReportCashBook] = useState<ICustomerResponse[]>([]);
   const [prevBalance, setPrevBalance] = useState<number>(0);
   const [posBalance, setPosBalance] = useState<number>(0);
@@ -521,21 +509,6 @@ export default function CashBookList() {
     setIsTabSwitching(false);
   };
 
-  const exportCashBookReport = async (paramsSearch: ICashbookFilterRequest) => {
-    setShowModalLoading(true);
-
-    const response = await CashbookService.export(paramsSearch);
-    if (response.code === 0) {
-      const result = response.result;
-      downloadDataUrlFromJavascript(`cashbook-${new Date().toString()}.xlsx`, result);
-      showToast("Xuất báo cáo thành công", "success");
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-
-    setShowModalLoading(false);
-  };
-
   const reportSource = displayTabType === 1 ? (listCashBook as ICashBookResponse[]) : (listReportCashBook as ICashBookResponse[]);
 
   const cashFlowSeriesRaw = useMemo(() => buildCashFlowSeries(reportSource), [reportSource]);
@@ -561,32 +534,6 @@ export default function CashBookList() {
   useEffect(() => {
     setRecentPage(1);
   }, [displayTabType, reportSource]);
-
-  const titleActions = useMemo<{ actions: IAction[] }>(
-    () => ({
-      actions: [
-        {
-          title: "Xuất Excel",
-          color: "secondary",
-          icon: <Icon name="Download" />,
-          callback: () => setShowModalExport(true),
-        },
-        permissions["CASHBOOK_ADD"] == 1
-          ? {
-              title: "Thêm giao dịch",
-              color: "primary",
-              icon: <Icon name="PlusCircle" />,
-              callback: () => {
-                setDataCashBook(null);
-                setTypeProps(1);
-                setShowModalCashBook(true);
-              },
-            }
-          : null,
-      ].filter(Boolean) as IAction[],
-    }),
-    [permissions]
-  );
 
   const cashFlowChartOptions = useMemo<Options>(
     () => ({
@@ -734,7 +681,7 @@ export default function CashBookList() {
 
   return (
     <div className={`page-content cashbook${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Báo cáo Tài chính" titleActions={titleActions} />
+      <TitleAction title="Báo cáo Tài chính" />
 
       <div className={`finance-report${isTabSwitching ? " is-updating" : ""}`}>
         <Filters listTabs={listTabs} activeTabName={tab.name} params={params} filterList={filterList} onChangeTab={handleChangeTab} onUpdateParams={setParams} />
@@ -791,31 +738,6 @@ export default function CashBookList() {
       </div>
 
       {isTabSwitching && <div className="finance-report__loading-indicator">Đang cập nhật dữ liệu...</div>}
-
-      <AddCashBookModal
-        onShow={showModalCashBook}
-        dataCashBook={dataCashBook}
-        type={typeProps}
-        onHide={(reload) => {
-          if (reload) {
-            getListCashBook(params);
-          }
-          setShowModalCashBook(false);
-        }}
-      />
-
-      <ExportListModal
-        code="cashbook"
-        onShow={showModalExport}
-        onHide={() => setShowModalExport(false)}
-        exampleFile="https://cdn.reborn.vn/2023/04/18/a283bb81-666a-4b44-afd3-c22460dd760a-1681809889.xlsx"
-        chooseTemplate={(template) => {
-          params.template = template;
-          exportCashBookReport(params);
-        }}
-      />
-
-      <LoadingUpload onShow={showModalLoading} />
     </div>
   );
 }
