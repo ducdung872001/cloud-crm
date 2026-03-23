@@ -2199,6 +2199,7 @@ export const urlsApi = {
     warehousePerf: prefixInventory + "/report/stock/warehouse-perf",
     productDetails: prefixInventory + "/report/stock/product-details",
     cost: prefixInventory + "/report/stock/cost", // Báo cáo Giá vốn
+    slow: prefixInventory + "/report/stock/slow",  // Báo cáo hàng chậm luân chuyển
   },
   // Báo cáo bán hàng (sales service)
   salesReport: {
