@@ -1,6 +1,7 @@
 import React from "react";
 import SelectCustom from "components/selectCustom/selectCustom";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
+import ReportFilterShell from "components/reportShared/ReportFilterShell";
 import moment from "moment";
 import { RANGE_OPTIONS, SOURCE_OPTIONS } from "../mockData";
 
@@ -17,7 +18,7 @@ export default function CustomerFilterBar(props: Props) {
   const { activeRange, setActiveRange, source, setSource, dateRange, setDateRange } = props;
 
   return (
-    <div className="report-topbar">
+    <ReportFilterShell className="report-topbar">
       <div className="report-topbar__left">
         <div className="report-topbar__title">Toàn cảnh khách hàng</div>
         <div className="report-topbar__subtitle">Cập nhật lúc {moment().format("HH:mm")} · {moment().format("DD/MM/YYYY")}</div>
@@ -45,6 +46,6 @@ export default function CustomerFilterBar(props: Props) {
           <DatePickerCustom value={dateRange} onChange={(range) => setDateRange(range)} placeholder="Chọn khoảng ngày..." />
         </div>
       </div>
-    </div>
+    </ReportFilterShell>
   );
 }
