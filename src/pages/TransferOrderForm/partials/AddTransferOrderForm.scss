@@ -65,6 +65,7 @@
 // ── Product card (left) ───────────────────────────────────────────────────────
 .tf-product-card {
   overflow: hidden;
+  padding: 0 !important;    // override card-box padding nếu có
 
   &__header {
     display: flex;
@@ -77,9 +78,14 @@
   }
 
   &__body {
-    min-height: 28rem;   // luôn có chiều cao dù empty
+    min-height: 30rem;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+
+    &--has-data {
+      justify-content: flex-start;
+    }
   }
 
   &__title {
@@ -105,7 +111,15 @@
   font-weight: 600;
 }
 
-// ── Product table ─────────────────────────────────────────────────────────────
+// ── Product table wrapper — khi có data, body không cần center ───────────────
+.tf-product-table-wrapper {
+  overflow-x: auto;
+  padding: 0 2rem 2rem;
+  // Khi có table, parent body không còn justify-content:center
+  .tf-product-card__body & {
+    margin-top: 0;
+  }
+}
 .tf-product-table-wrapper {
   overflow-x: auto;
   padding: 0 2rem 2rem;

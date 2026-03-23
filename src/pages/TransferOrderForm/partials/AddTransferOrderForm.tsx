@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "components/icon";
 import Button from "components/button/button";
@@ -43,7 +43,7 @@ export default function AddTransferOrderForm(props) {
   const totalQty = lstProducts.reduce((s, i) => s + (Number(i.quanlityAffter) || 0), 0);
 
   // ── Warehouse loaders ─────────────────────────────────────────────────────
-  const loadedOptionInventoryOrg = async (search, loadedOptions, { page }) => {
+  const loadedOptionInventoryOrg = useCallback(async (search, loadedOptions, { page }) => {
     const response = await InventoryService.list({ name: search, page, limit: 10 });
     if (response.code === 0) {
       const data = response.result ?? [];
@@ -51,9 +51,9 @@ export default function AddTransferOrderForm(props) {
       return { options: filtered.map((i) => ({ value: i.id, label: i.name })), hasMore: response.result?.loadMoreAble, additional: { page: page + 1 } };
     }
     return { options: [], hasMore: false };
-  };
+  }, [dataInventoryArrive]);
 
-  const loadedOptionInventoryArrive = async (search, loadedOptions, { page }) => {
+  const loadedOptionInventoryArrive = useCallback(async (search, loadedOptions, { page }) => {
     const response = await InventoryService.list({ name: search, page, limit: 10 });
     if (response.code === 0) {
       const data = response.result ?? [];
@@ -61,7 +61,7 @@ export default function AddTransferOrderForm(props) {
       return { options: filtered.map((i) => ({ value: i.id, label: i.name })), hasMore: response.result?.loadMoreAble, additional: { page: page + 1 } };
     }
     return { options: [], hasMore: false };
-  };
+  }, [dataInventoryOrg]);
 
   // ── Product handlers ──────────────────────────────────────────────────────
   const handChangeDataProps = (data: any[]) => {
@@ -147,7 +147,7 @@ export default function AddTransferOrderForm(props) {
               </Button>
             </div>
 
-            <div className="tf-product-card__body">
+            <div className={`tf-product-card__body${lstProducts.length > 0 ? " tf-product-card__body--has-data" : ""}`}>
               {lstProducts.length > 0 ? (
               <div className="tf-product-table-wrapper">
                 <table className="tf-product-table">
@@ -237,7 +237,6 @@ export default function AddTransferOrderForm(props) {
 
               {/* Từ kho */}
               <SelectCustom
-                key={dataInventoryArrive?.value?.toString()}
                 id="inventoryOrg" name="inventoryOrg"
                 label="Từ kho" fill={true} options={[]} required={true}
                 value={dataInventoryOrg}
@@ -257,7 +256,6 @@ export default function AddTransferOrderForm(props) {
 
               {/* Đến kho */}
               <SelectCustom
-                key={dataInventoryOrg?.value?.toString()}
                 id="inventoryArrive" name="inventoryArrive"
                 label="Đến kho" fill={true} options={[]} required={true}
                 value={dataInventoryArrive}
