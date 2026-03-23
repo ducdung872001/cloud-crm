@@ -566,6 +566,11 @@ export const urlsApi = {
     list: prefixInventory + "/inventoryBalance/list",
     get: prefixInventory + "/inventoryBalance/get",
   },
+  stockTransferDetail: {
+    list: prefixInventory + "/stockTransferDetail/list",
+    update: prefixInventory + "/stockTransferDetail/update",
+    delete: prefixInventory + "/stockTransferDetail/delete",
+  },
 
   integration: {
     list: prefixAdmin + "/integrationPartner/list",
@@ -2237,6 +2242,15 @@ export const urlsApi = {
     // xóa đi 1 sản phẩm
     deletePro: prefixInventory + "/stockAdjustDetail/delete",
   },
+  // Phiếu xuất hủy — dùng StockAdjust với adjustType = "DESTROY"
+  destroySlip: {
+    temp:   prefixInventory + "/stockAdjust/destroy/temp",
+    create: prefixInventory + "/stockAdjust/destroy/create",
+    // Reuse stockAdjustDetail endpoints
+    addUpdatePro: prefixInventory + "/stockAdjustDetail/update",
+    deletePro:    prefixInventory + "/stockAdjustDetail/delete",
+    view:         prefixInventory + "/stockAdjust/view",
+  },
   kpiDatasource: {
     list: prefixAdmin + "/kpiDatasource/list",
     update: prefixAdmin + "/kpiDatasource/update",
@@ -3458,6 +3472,7 @@ export const urls = {
   report_customer: "/report_customer",
   // điều chỉnh kho
   adjustment_slip: "/adjustment_slip",
+  destroy_slip: "/destroy_slip",
   // thông tin cá nhân
   setting_account: "/setting_account",
   setting_kpi: "/setting_kpi",

@@ -7,9 +7,7 @@ import { IInvoiceCreateResponse } from "model/invoice/InvoiceResponse";
 import InvoiceService from "services/InvoiceService";
 import InventoryService from "services/InventoryService";
 import Icon from "components/icon";
-import Input from "components/input/input";
 import Button from "components/button/button";
-import NummericInput from "components/input/numericInput";
 import SelectCustom from "components/selectCustom/selectCustom";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import { showToast } from "utils/common";
@@ -231,120 +229,142 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
   return (
     <div className="payment__import--invoice">
       <div className="card-box">
-        <label className="label-title">Thông tin phiếu nhập kho</label>
-        <form className="form__payment__import--invoice" onSubmit={handleCreateInvoice}>
-          <div className="list-form-group">
-            <div className="form-group">
-              <SelectCustom
-                fill={true}
-                options={listInventory}
-                required={true}
-                name="inventoryId"
-                placeholder="Chọn kho hàng"
-                label="Kho hàng"
-                value={formData?.inventoryId}
-                onMenuOpen={getListInventory}
-                onChange={(e) => handleChangeValueInventory(e)}
-                isLoading={isLoadingInventory}
-                error={validateInventory}
-                message="Vui lòng chọn kho hàng"
-                isDisabled={isUpdatingInventory || (isCreated && !isPending)}
-              />
-            </div>
 
-            <div className="form-group">
-              <Input fill={true} disabled={true} label="Địa chỉ" value={infoBranch?.address} placeholder="Chọn kho hàng để xem địa chỉ" />
-            </div>
+        {/* Header */}
+        <div className="pii-header">
+          <div className="pii-header__icon">
+            <Icon name="ImportBill" />
+          </div>
+          <span className="pii-header__title">Thông tin phiếu nhập kho</span>
+        </div>
 
-            <div className="form-group">
-              <Input fill={true} disabled={true} label="Chi nhánh" value={infoBranch?.branch} placeholder="Chọn kho hàng để xem chi nhánh" />
-            </div>
+        <form className="pii-body" onSubmit={handleCreateInvoice}>
 
-            <div className="form-group">
-              <DatePickerCustom
-                label="Ngày nhập"
-                name="receiptDate"
-                fill={true}
-                value={formData?.receiptDate}
-                onChange={(e) => handleChangeValueReceiptDate(e)}
-                placeholder="Chọn ngày nhập hàng"
-                required={true}
-                iconPosition="left"
-                icon={<Icon name="Calendar" />}
-                isMaxDate={true}
-                error={validateReceiptDate}
-                message="Vui lòng chọn ngày nhập hàng"
-                disabled={isUpdatingInventory || (isCreated && !isPending)}
-              />
-            </div>
-
-            <div className="form-group">
-              <NummericInput label="Tổng tiền" name="amount" fill={true} required={true} value={data?.amount} disabled={true} thousandSeparator={true} />
-            </div>
-
-            <div className="form-group">
-              <Input
-                fill={true}
-                disabled={true}
-                label="Trạng thái"
-                value={invoiceStatus === 1 ? "Đã hoàn thành" : invoiceStatus === 3 ? "Đã hủy" : "Chờ duyệt"}
-                placeholder="Trạng thái phiếu nhập"
-              />
-            </div>
-
-            <div className="form-group">
-              <Input
-                fill={true}
-                disabled={true}
-                label="Mã phiếu"
-                value={data?.invoiceCode || (data?.id ? `#${data.id}` : "")}
-                placeholder="Chưa tạo phiếu nhập"
-              />
-            </div>
+          {/* Kho hàng */}
+          <div className="pii-field">
+            <SelectCustom
+              fill={true}
+              options={listInventory}
+              required={true}
+              name="inventoryId"
+              placeholder="Chọn kho hàng"
+              label="Kho hàng"
+              value={formData?.inventoryId}
+              onMenuOpen={getListInventory}
+              onChange={(e) => handleChangeValueInventory(e)}
+              isLoading={isLoadingInventory}
+              error={validateInventory}
+              message="Vui lòng chọn kho hàng"
+              disabled={isUpdatingInventory || (isCreated && !isPending)}
+            />
           </div>
 
-          <div className="action__import--order">
-            <div className="side__action">
-              <Button
-                color="primary"
-                variant="outline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate("/invoice_order");
-                }}
-              >
-                Quay lại
-              </Button>
-            </div>
+          {/* Địa chỉ + Chi nhánh */}
+          <div className="pii-info-row">
+            <span className="pii-info-row__label">Địa chỉ</span>
+            <span className={`pii-info-row__value${!infoBranch?.address ? " pii-info-row__value--placeholder" : ""}`}>
+              {infoBranch?.address || "Chọn kho hàng để xem địa chỉ"}
+            </span>
+          </div>
 
-            {isPending ? (
-              <>
+          <div className="pii-info-row">
+            <span className="pii-info-row__label">Chi nhánh</span>
+            <span className={`pii-info-row__value${!infoBranch?.branch ? " pii-info-row__value--placeholder" : ""}`}>
+              {infoBranch?.branch || "Chọn kho hàng để xem chi nhánh"}
+            </span>
+          </div>
+
+          {/* Ngày nhập */}
+          <div className="pii-field">
+            <DatePickerCustom
+              label="Ngày nhập"
+              name="receiptDate"
+              fill={true}
+              value={formData?.receiptDate}
+              onChange={(e) => handleChangeValueReceiptDate(e)}
+              placeholder="Chọn ngày nhập hàng"
+              required={true}
+              iconPosition="left"
+              icon={<Icon name="Calendar" />}
+              isMaxDate={true}
+              error={validateReceiptDate}
+              message="Vui lòng chọn ngày nhập hàng"
+              disabled={isUpdatingInventory || (isCreated && !isPending)}
+            />
+          </div>
+
+          {/* Tổng tiền highlight */}
+          <div className="pii-total">
+            <span className="pii-total__label">Tổng tiền hàng</span>
+            <span className="pii-total__value">{new Intl.NumberFormat("vi-VN").format(data?.amount ?? 0)}đ</span>
+          </div>
+
+          {/* Trạng thái + Mã phiếu */}
+          <div className="pii-info-row">
+            <span className="pii-info-row__label">Trạng thái</span>
+            <span className="pii-info-row__value">
+              {invoiceStatus === 1 ? "✅ Đã hoàn thành" : invoiceStatus === 3 ? "❌ Đã hủy" : "🕐 Chờ duyệt"}
+            </span>
+          </div>
+
+          <div className="pii-info-row">
+            <span className="pii-info-row__label">Mã phiếu</span>
+            <span className={`pii-info-row__value pii-info-row__value--code${!data?.id ? " pii-info-row__value--placeholder" : ""}`}>
+              {data?.invoiceCode || (data?.id ? `#${data.id}` : "Chưa tạo phiếu nhập")}
+            </span>
+          </div>
+
+        </form>
+
+        {/* Actions */}
+        <div className="pii-actions">
+          {isPending ? (
+            <>
+              <Button
+                type="submit"
+                color="primary"
+                disabled={isSubmit || isUpdatingInventory}
+                onClick={handleCreateInvoice}
+              >
+                {isCreated ? "Cập nhật phiếu nhập" : "Tạo phiếu nhập"}
+                {isSubmit && <Icon name="Loading" />}
+              </Button>
+              <div className="pii-actions__secondary">
                 <Button
-                  type="submit"
                   color="primary"
                   variant="outline"
-                  disabled={isSubmit || isUpdatingInventory}
+                  onClick={(e) => { e.preventDefault(); navigate("/invoice_order"); }}
                 >
-                  {isCreated ? "Cập nhật phiếu nhập" : "Tạo phiếu nhập"}
-                  {isSubmit ? <Icon name="Loading" /> : null}
+                  Quay lại
                 </Button>
                 <Button
                   type="button"
                   color="primary"
+                  variant="outline"
                   disabled={isSubmit || isUpdatingInventory || !isCreated || !hasLineItems}
                   onClick={handleApproveInvoice}
                 >
                   Duyệt phiếu nhập
-                  {isSubmit ? <Icon name="Loading" /> : null}
+                  {isSubmit && <Icon name="Loading" />}
                 </Button>
-              </>
-            ) : (
+              </div>
+            </>
+          ) : (
+            <div className="pii-actions__secondary">
+              <Button
+                color="primary"
+                variant="outline"
+                onClick={(e) => { e.preventDefault(); navigate("/invoice_order"); }}
+              >
+                Quay lại
+              </Button>
               <Button type="button" color="primary" disabled={true}>
                 Phiếu đã hoàn thành
               </Button>
-            )}
-          </div>
-        </form>
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );

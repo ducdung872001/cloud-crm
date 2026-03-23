@@ -322,7 +322,7 @@ export default function Header(props: any) {
       setDataCompany(response);
       setDataBeauty(response);
     } else {
-      setDataCompany("");
+      setDataCompany("Viettel Store");
     }
   };
 
