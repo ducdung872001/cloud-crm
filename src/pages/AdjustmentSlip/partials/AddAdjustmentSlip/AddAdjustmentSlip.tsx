@@ -1,13 +1,9 @@
-import React, { Fragment, useEffect, useState } from "react";
-import _ from "lodash";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { IAddAdjustmentSlipProps } from "model/adjustmentSlip/PropsModel";
-import { IAdjustmentSlipRequest } from "model/adjustmentSlip/AdjustmentSlipRequestModel";
 import Icon from "components/icon";
 import Image from "components/image";
 import Loading from "components/loading";
-import Input from "components/input/input";
 import Button from "components/button/button";
-import TextArea from "components/textarea/textarea";
 import NummericInput from "components/input/numericInput";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -23,534 +19,391 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
 
   const [lstProducts, setLstProducts] = useState([]);
   const [lstBatchNoProduct, setLstBatchNoProduct] = useState<string[]>([]);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModalAdd, setShowModalAdd] = useState(false);
   const [dataInventory, setDataInventory] = useState(null);
   const [satId, setSatId] = useState<number>(null);
   const [dataOrgProducts, setDataOrgProducts] = useState([]);
-  const [isLoadingAddItem, setIsLoadingAddItem] = useState<boolean>(false);
+  const [isSubmit, setIsSubmit] = useState(false);
 
-  const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const isDirty = !!(dataInventory || lstProducts.length > 0);
+  const isReadyToAdd = !!dataInventory;
+  const totalItems = lstProducts.length;
 
-  const [formData, setFormData] = useState(null);
-
-  const getDetailDataAdjustmentSlip = async (id: number) => {
-    isLoadingAddItem && setIsLoading(true);
-
-    const response = await AdjustmentSlipService.view(id);
-
+  // ── Load temp khi chọn kho ───────────────────────────────────────────────
+  const handAdjustmentSlipTemp = useCallback(async (inventoryId: number) => {
+    setIsLoading(true);
+    const response = await AdjustmentSlipService.temp(inventoryId);
     if (response.code === 0) {
       const result = response.result;
-      if (result?.stockAdjust && result?.stockAdjustDetails) {
-        setFormData(result);
-        setDataInventory({
-          value: result.stockAdjust.inventoryId,
-          label: result.stockAdjust.inventoryName,
-        });
-      }
+      setDataOrgProducts(result?.stockAdjustDetails ?? []);
+      setSatId(result.satId);
+      const items = (result?.stockAdjustDetails ?? []).map((item: any) => ({
+        ...item,
+        inventoryName: result?.stockAdjust?.inventoryName ?? dataInventory?.label ?? "",
+      }));
+      setLstProducts(items);
     } else {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
+      showToast("Có lỗi xảy ra khi tải dữ liệu kho", "error");
     }
+    setIsLoading(false);
+  }, [dataInventory]);
 
-    isLoadingAddItem && setIsLoading(false);
-  };
-
+  // ── Load chi tiết phiếu khi edit ─────────────────────────────────────────
   useEffect(() => {
     if (onShow && id) {
-      getDetailDataAdjustmentSlip(id);
+      (async () => {
+        setIsLoading(true);
+        const response = await AdjustmentSlipService.view(id);
+        if (response.code === 0) {
+          const result = response.result;
+          if (result?.stockAdjust) {
+            setDataInventory({
+              value: result.stockAdjust.inventoryId,
+              label: result.stockAdjust.inventoryName,
+            });
+            setSatId(result.stockAdjust.id);
+            const items = (result.stockAdjustDetails ?? []).map((item: any) => ({
+              ...item,
+              inventoryName: result.stockAdjust.inventoryName,
+            }));
+            setLstProducts(items);
+            setDataOrgProducts(items);
+          }
+        } else {
+          showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
+        }
+        setIsLoading(false);
+      })();
     }
   }, [onShow, id]);
 
-  const handClearForm = () => {
-    setLstProducts([]);
-    setSatId(null);
-    setDataInventory(null);
-    setDataOrgProducts([]);
-    setFormData(null);
-  };
-
-  const handAdjustmentSlipTemp = async (inventoryId) => {
-    setIsLoading(true);
-
-    const response = await AdjustmentSlipService.temp(inventoryId);
-
-    if (response.code === 0) {
-      const result = response.result;
-      setFormData(result);
-      setSatId(result.satId);
-    } else {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau !", "error");
-    }
-
-    setIsLoading(false);
-  };
-
   useEffect(() => {
-    if (formData && onShow) {
-      const changeDataPro = [...formData?.stockAdjustDetails].map((item) => {
-        return {
-          ...item,
-          inventoryName: formData?.stockAdjust?.inventoryName,
-        };
-      });
+    setLstBatchNoProduct(lstProducts.map((item) => item.batchNo));
+  }, [lstProducts]);
 
-      setLstProducts(changeDataPro);
-      setDataOrgProducts(changeDataPro);
-    }
-  }, [formData, onShow]);
-
-  // đoạn này xử lý kho hàng
-  const loadedOptionInventory = async (search, loadedOptions, { page }) => {
-    const param = {
-      name: search,
-      page: page,
-      limit: 10,
-    };
-
-    const response = await InventoryService.list(param);
-
+  // ── Warehouse loader ──────────────────────────────────────────────────────
+  const loadedOptionInventory = useCallback(async (search, _loaded, { page }) => {
+    const response = await InventoryService.list({ name: search, page, limit: 10 });
     if (response.code === 0) {
-      const dataOption = response.result;
-
+      const data = response.result ?? [];
       return {
-        options: [
-          ...(dataOption.length > 0
-            ? dataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                  address: item.address,
-                  branchName: item.branchName,
-                };
-              })
-            : []),
-        ],
-        hasMore: response.result.loadMoreAble,
-        additional: {
-          page: page + 1,
-        },
+        options: data.map((i: any) => ({
+          value: i.id, label: i.name,
+          address: i.address, branchName: i.branchName,
+        })),
+        hasMore: response.result?.loadMoreAble,
+        additional: { page: page + 1 },
       };
     }
-
     return { options: [], hasMore: false };
-  };
+  }, []);
 
-  const handleChangeValueInventory = (e) => {
+  const handleChangeInventory = (e: any) => {
     setDataInventory(e);
     setLstProducts([]);
-    handAdjustmentSlipTemp(e.value);
+    if (e?.value) handAdjustmentSlipTemp(e.value);
   };
 
-  // đoạn này xử lý số lượng
-  const handleChangeValueQuanlity = (e, idx) => {
-    const value = e.floatValue;
-
-    setLstProducts((preState) =>
-      preState.map((item, index) => {
-        if (index === idx) {
-          return { ...item, availQty: value, offsetQty: value - dataOrgProducts[idx]["availQty"] || 0 };
-        }
-
-        return item;
-      })
+  // ── Product handlers ──────────────────────────────────────────────────────
+  const handleChangeQty = (val: number, idx: number) => {
+    setLstProducts((prev) =>
+      prev.map((item, i) =>
+        i === idx
+          ? { ...item, availQty: val, offsetQty: val - (dataOrgProducts[idx]?.availQty || 0) }
+          : item
+      )
     );
   };
 
-  // đoạn này xử lý do điều chỉnh
-  const handleChangeValueReason = (e, idx) => {
-    const value = e.target.value;
-
-    setLstProducts((preState) =>
-      preState.map((item, index) => {
-        if (index === idx) {
-          return { ...item, reason: value };
-        }
-
-        return item;
-      })
-    );
+  const handleChangeReason = (val: string, idx: number) => {
+    setLstProducts((prev) => prev.map((item, i) => i === idx ? { ...item, reason: val } : item));
   };
 
-  // xóa đi 1 sản phẩm
-  const handRemoveProItem = async (id: number) => {
-    const response = await AdjustmentSlipService.deletePro(id);
-
+  const handRemoveProItem = async (itemId: number) => {
+    const response = await AdjustmentSlipService.deletePro(itemId);
     if (response.code === 0) {
       showToast("Xóa sản phẩm thành công", "success");
-      setIsLoadingAddItem(true);
-      handAdjustmentSlipTemp(dataInventory.value);
+      if (dataInventory?.value) handAdjustmentSlipTemp(dataInventory.value);
     } else {
       showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
-  useEffect(() => {
-    const takeIdPro = lstProducts.map((item) => item.batchNo);
-    setLstBatchNoProduct(takeIdPro);
-  }, [lstProducts]);
-
-  const showDialogConfirmConfirm = () => {
-    const contentDialog: IContentDialog = {
-      color: "warning",
-      className: "dialog-warning",
-      isCentered: true,
-      isLoading: true,
-      title: <Fragment>Quay lại...</Fragment>,
-      message: (
-        <Fragment>
-          Hiện tại phiếu của bạn đang có sự thay đổi. Bạn có muốn <strong>quay lại</strong>? Thao tác này không thể khôi phục.
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Xác nhận",
-      defaultAction: () => {
-        onHide(false);
-        setLstProducts([]);
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-    };
-    setContentDialog(contentDialog);
-    setShowDialog(true);
+  const handChangeDataProps = (data: any[]) => {
+    if (!data?.length) return;
+    const converted = data.map((item) => ({
+      id: item.id ?? 0,
+      productId: item.productId ?? item.productId,
+      productName: item.productName ?? "",
+      productAvatar: item.productAvatar ?? "",
+      batchNo: item.batchNo ?? "",
+      unitId: item.unitId ?? null,
+      unitName: item.unitName ?? (item.unit?.name ?? ""),
+      reason: "",
+      availQty: item.quantity ?? item.availQty ?? 0,
+      offsetQty: 0,
+      satId: satId ?? null,
+      inventoryId: item.inventoryId ?? dataInventory?.value ?? null,
+      inventoryName: item.inventoryName ?? dataInventory?.label ?? "",
+    }));
+    setLstProducts((prev) => {
+      const existKeys = new Set(prev.map((p) => `${p.productId}_${p.batchNo}`));
+      return [...prev, ...converted.filter((c) => !existKeys.has(`${c.productId}_${c.batchNo}`))];
+    });
   };
 
-  const checkChangePro = _.isEqual(lstProducts, dataOrgProducts);
-
-  //! đoạn này thêm mới sản phẩm sẽ check xem nếu như sản phẩm thay đổi thì call api update
-  const handleAddItemPro = async (e) => {
-    e.preventDefault();
-
-    const arrayPromise = [];
-
-    if (!checkChangePro) {
-      [...lstProducts].map((item) => {
-        const promise = new Promise((resolve, reject) => {
-          AdjustmentSlipService.addUpdatePro(item).then((res) => resolve(res));
-        });
-
-        arrayPromise.push(promise);
-      });
-
-      Promise.all(arrayPromise).then((result) => {
-        if (result.length > 0) {
-          //TODO: đoạn này nghĩ ra thông báo sau
-          handAdjustmentSlipTemp(dataInventory.value);
-        } else {
-          //TODO: đoạn này nghĩ ra cảnh báo sau
-        }
-      });
-    }
-    setIsLoadingAddItem(false);
-    setShowModalAdd(true);
-  };
-
-  //? gửi dữ liệu đi
-  const handleSubmitForm = async (e) => {
-    e.preventDefault();
+  // ── Submit ────────────────────────────────────────────────────────────────
+  const handleSubmit = async (e: React.FormEvent) => {
+    e?.preventDefault();
+    if (!dataInventory) { showToast("Vui lòng chọn kho hàng", "warning"); return; }
+    if (lstProducts.length === 0) { showToast("Vui lòng thêm ít nhất 1 sản phẩm", "warning"); return; }
 
     setIsSubmit(true);
 
-    const arrayPromise = [];
+    // Update từng dòng
+    await Promise.all(lstProducts.map((item) => AdjustmentSlipService.addUpdatePro(item)));
 
-    if (!checkChangePro) {
-      [...lstProducts].map((item) => {
-        const promise = new Promise((resolve, reject) => {
-          AdjustmentSlipService.addUpdatePro(item).then((res) => resolve(res));
-        });
+    // Tạo phiếu chính thức
+    const response = await AdjustmentSlipService.createAdjSlip({
+      id: satId,
+      inventoryId: dataInventory.value,
+    });
 
-        arrayPromise.push(promise);
-      });
-
-      Promise.all(arrayPromise).then(async (result) => {
-        if (result.length > 0) {
-          handAdjustmentSlipTemp(dataInventory.value);
-
-          const body: IAdjustmentSlipRequest = {
-            id: formData?.stockAdjust?.id,
-            inventoryId: dataInventory?.value,
-          };
-
-          const response = await AdjustmentSlipService.createAdjSlip(body);
-
-          if (response.code === 0) {
-            setIsSubmit(false);
-            showToast(`${id ? "Chỉnh sửa" : "Thêm mới"} phiếu thành công`, "success");
-            handClearForm();
-            onHide(true);
-          } else {
-            setIsSubmit(false);
-            showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-          }
-        } else {
-          showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-          setIsSubmit(false);
-        }
-      });
+    if (response.code === 0) {
+      showToast(`${id ? "Chỉnh sửa" : "Tạo"} phiếu kiểm kho thành công`, "success");
+      onHide(true);
     } else {
-      const body: IAdjustmentSlipRequest = {
-        id: formData?.stockAdjust?.id,
-        inventoryId: dataInventory?.value,
-      };
-
-      const response = await AdjustmentSlipService.createAdjSlip(body);
-
-      if (response.code === 0) {
-        setIsSubmit(false);
-        showToast(`${id ? "Chỉnh sửa" : "Thêm mới"} phiếu thành công`, "success");
-        handClearForm();
-        onHide(true);
-      } else {
-        setIsSubmit(false);
-        showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-      }
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
+    setIsSubmit(false);
   };
 
-  const handChangeDataProps = (data) => {
-    if (!data || data.length === 0) return;
-
-    const converData = data.map((item) => {
-      return {
-        id: item.id ?? 0,
-        productId: item.productId ?? item.productId,
-        productName: item.productName ?? "",
-        productAvatar: item.productAvatar ?? "",
-        batchNo: item.batchNo ?? "",
-        unitId: item.unitId ?? null,
-        unitName: item.unitName ?? (item.unit?.name ?? ""),
-        reason: "",
-        availQty: item.quantity ?? item.availQty ?? 0,
-        offsetQty: 0,
-        satId: satId ?? null,
-        inventoryId: item.inventoryId ?? dataInventory?.value ?? null,
-        inventoryName: item.inventoryName ?? dataInventory?.label ?? "",
-      };
+  // ── Confirm back ──────────────────────────────────────────────────────────
+  const showConfirmBack = () => {
+    if (!isDirty) { onHide(false); return; }
+    setContentDialog({
+      color: "warning", isCentered: true, isLoading: true,
+      title: <Fragment>Quay lại</Fragment>,
+      message: <Fragment>Phiếu đang có thay đổi chưa lưu. Bạn có chắc muốn <strong>quay lại</strong>?</Fragment>,
+      cancelText: "Hủy",
+      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
+      defaultText: "Quay lại",
+      defaultAction: () => { setShowDialog(false); onHide(false); },
     });
-    
-    setLstProducts((prev) => {
-      const existKeys = new Set(prev.map((p) => `${p.productId}_${p.batchNo}`));
-      const filtered = converData.filter((c) => !existKeys.has(`${c.productId}_${c.batchNo}`));
-      return [...prev, ...filtered];
-    });
+    setShowDialog(true);
   };
 
   return (
-    <div className="wrapper__add--adjustment--slip">
-      <div className="action-navigation">
-        <div className="action-backup">
-          <h1
-            onClick={() => {
-              dataInventory || lstProducts.length > 0 ? showDialogConfirmConfirm() : !isSubmit && onHide(false);
-            }}
-            className="title-first"
-            title="Quay lại"
-          >
-            Phiếu điều chỉnh kho
-          </h1>
-          <Icon
-            name="ChevronRight"
-            onClick={() => {
-              dataInventory || lstProducts.length > 0 ? showDialogConfirmConfirm() : onHide(false);
-            }}
-          />
-          <h1 className="title-last">{`${id ? "Chỉnh sửa" : "Thêm mới"} phiếu`}</h1>
+    <div className="page-content adj-page">
+
+      {/* ── Breadcrumb ──────────────────────────────────────────────── */}
+      <div className="adj-header">
+        <div className="adj-breadcrumb">
+          <span className="adj-breadcrumb__parent" onClick={showConfirmBack}>
+            Quản lý kho
+          </span>
+          <Icon name="ArrowRight" style={{ width: 14, opacity: 0.4 }} />
+          <span className="adj-breadcrumb__current">
+            {id ? "Chỉnh sửa phiếu kiểm" : "Tạo phiếu kiểm kho"}
+          </span>
         </div>
-        <Button
-          type="button"
-          disabled={isSubmit}
-          onClick={() => (dataInventory || lstProducts.length > 0 ? showDialogConfirmConfirm() : onHide(false))}
-        >
-          Quay lại
-        </Button>
       </div>
 
-      <form className="box__adjustment--slip" onSubmit={(e) => handleSubmitForm(e)}>
-        <div className="card-box d-flex flex-column info__top">
-          <label className="title--info">Thông tin kho hàng</label>
+      {/* ── 2-column layout ─────────────────────────────────────────── */}
+      <div className="adj-layout">
 
-          <div className="dept__inventory">
-            <div className="form-group">
+        {/* ── LEFT: bảng sản phẩm ────────────────────────────────── */}
+        <div className="adj-layout__main">
+          <div className="card-box adj-product-card">
+            <div className="adj-product-card__header">
+              <span className="adj-product-card__title">
+                <Icon name="CollectInfo" style={{ width: 16, opacity: 0.7 }} />
+                Danh sách hàng hóa cần kiểm
+                {totalItems > 0 && <span className="adj-badge">{totalItems}</span>}
+              </span>
+              <Button
+                variant="outline"
+                disabled={isSubmit || !isReadyToAdd}
+                onClick={(e) => { e.preventDefault(); setShowModalAdd(true); }}
+              >
+                <Icon name="Plus" style={{ width: 14, marginRight: 5 }} />
+                Thêm sản phẩm
+              </Button>
+            </div>
+
+            <div className={`adj-product-card__body${totalItems > 0 ? " adj-product-card__body--has-data" : ""}`}>
+              {isLoading ? (
+                <div className="adj-loading"><Loading /></div>
+              ) : totalItems > 0 ? (
+                <div className="adj-table-wrapper">
+                  <table className="adj-table">
+                    <thead>
+                      <tr>
+                        <th className="adj-col-stt">STT</th>
+                        <th>Sản phẩm</th>
+                        <th className="adj-col-center">Kho</th>
+                        <th className="adj-col-center">Đơn vị</th>
+                        <th className="adj-col-num">Tồn kho</th>
+                        <th className="adj-col-num adj-col-input">SL thực tế</th>
+                        <th className="adj-col-num">Lệch</th>
+                        <th>Lý do điều chỉnh</th>
+                        <th className="adj-col-action"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lstProducts.map((item, idx) => (
+                        <tr key={idx} className="adj-product-row">
+                          <td className="adj-col-stt">{idx + 1}</td>
+                          <td>
+                            <div className="adj-product-info">
+                              {item.productAvatar && (
+                                <div className="adj-product-avatar">
+                                  <Image src={item.productAvatar} alt={item.productName} />
+                                </div>
+                              )}
+                              <div className="adj-product-name">{item.productName}</div>
+                            </div>
+                          </td>
+                          <td className="adj-col-center">
+                            <span className="adj-tag">{item.inventoryName}</span>
+                          </td>
+                          <td className="adj-col-center">{item.unitName || "—"}</td>
+                          <td className="adj-col-num">
+                            <span className="adj-qty-stock">{item.availQty ?? "—"}</span>
+                          </td>
+                          <td className="adj-col-num adj-col-input">
+                            <NummericInput
+                              name={`qty-${idx}`} id={`qty-${idx}`}
+                              fill={true} value={item.availQty} placeholder="0"
+                              onValueChange={(e) => handleChangeQty(e.floatValue, idx)}
+                              className="adj-qty-input"
+                            />
+                          </td>
+                          <td className="adj-col-num">
+                            <span className={`adj-offset${(item.offsetQty ?? 0) < 0 ? " adj-offset--neg" : (item.offsetQty ?? 0) > 0 ? " adj-offset--pos" : ""}`}>
+                              {(item.offsetQty ?? 0) > 0 ? `+${item.offsetQty}` : (item.offsetQty ?? 0)}
+                            </span>
+                          </td>
+                          <td>
+                            <input
+                              className="adj-reason-input"
+                              placeholder="Lý do điều chỉnh..."
+                              value={item.reason || ""}
+                              onChange={(e) => handleChangeReason(e.target.value, idx)}
+                            />
+                          </td>
+                          <td className="adj-col-action">
+                            <button
+                              type="button" className="adj-remove-btn"
+                              onClick={() => handRemoveProItem(item.id)} title="Xóa"
+                            >
+                              <Icon name="Times" style={{ width: 14 }} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <SystemNotification
+                  description={
+                    <span>
+                      {isReadyToAdd
+                        ? <>Chưa có sản phẩm. Nhấn <strong>Thêm sản phẩm</strong> để bắt đầu.</>
+                        : <>Vui lòng chọn <strong>kho hàng</strong> ở bên phải trước.</>}
+                    </span>
+                  }
+                  type="no-item"
+                  titleButton={isReadyToAdd ? "Thêm mới sản phẩm cần điều chỉnh" : undefined}
+                  action={isReadyToAdd ? () => setShowModalAdd(true) : undefined}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ── RIGHT: sidebar thông tin phiếu ──────────────────────── */}
+        <div className="adj-layout__sidebar">
+          <div className="card-box adj-sidebar">
+
+            <div className="adj-sidebar__header">
+              <div className="adj-sidebar__icon">
+                <Icon name="PaperClipboard" />
+              </div>
+              <span className="adj-sidebar__title">Thông tin phiếu kiểm kho</span>
+            </div>
+
+            <div className="adj-sidebar__body">
+
+              {/* Kho hàng */}
               <SelectCustom
-                id="inventory"
-                name="inventory"
-                label="Kho hàng"
-                fill={true}
-                options={[]}
-                required={true}
+                id="inventory" name="inventory"
+                label="Kho hàng" fill={true} options={[]} required={true}
                 value={dataInventory}
-                onChange={(e) => handleChangeValueInventory(e)}
+                onChange={handleChangeInventory}
                 isAsyncPaginate={true}
                 loadOptionsPaginate={loadedOptionInventory}
                 placeholder="Chọn kho hàng"
-                additional={{
-                  page: 1,
-                }}
+                additional={{ page: 1 }}
               />
-            </div>
 
-            <div className="form-group">
-              <Input
-                name="address"
-                id="address"
-                fill={true}
-                label="Địa chỉ kho"
-                value={dataInventory?.address || ""}
-                placeholder="Chọn kho hàng để xem địa chỉ"
-                disabled
-              />
-            </div>
+              {/* Địa chỉ / Chi nhánh */}
+              {dataInventory?.address && (
+                <div className="adj-info-row">
+                  <span className="adj-info-row__label">Địa chỉ kho</span>
+                  <span className="adj-info-row__value">{dataInventory.address}</span>
+                </div>
+              )}
+              {dataInventory?.branchName && (
+                <div className="adj-info-row">
+                  <span className="adj-info-row__label">Chi nhánh</span>
+                  <span className="adj-info-row__value">{dataInventory.branchName}</span>
+                </div>
+              )}
 
-            <div className="form-group">
-              <Input
-                name="branchName"
-                id="branchName"
-                fill={true}
-                label="Chi nhánh kho"
-                value={dataInventory?.branchName || ""}
-                placeholder="Chọn kho hàng để xem chi nhánh"
-                disabled
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="card-box d-flex flex-column info__body">
-          <div className="header__action">
-            <ul className="header__action--title">
-              <li className="item-title">Danh sách hàng hóa cần điều chỉnh</li>
-            </ul>
-          </div>
-
-          <div className="box__product">
-            {!isLoading && lstProducts && lstProducts.length > 0 ? (
-              <div className="lst__product--item">
-                {lstProducts.map((item, idx) => {
-                  return (
-                    <div key={idx} className="product-item">
-                      <div className="avtar-pro">
-                        <label className="name-ava">Ảnh sản phẩm</label>
-                        <div className="ava">
-                          <Image src={item.productAvatar} alt={item.productName} />
-                        </div>
-                      </div>
-
-                      <div className="dept__content">
-                        <div className="form-group">
-                          <Input id="inventory" name="inventory" label="Kho hàng" fill={true} value={item.inventoryName} disabled />
-                        </div>
-
-                        <div className="form-group">
-                          <Input name="name" id="name" label="Tên sản phẩm" fill={true} value={item.productName} disabled />
-                        </div>
-                        <div className="form-group">
-                          <Input name="unit" id="unit" label="Đơn vị tính" fill={true} value={item.unitName} disabled />
-                        </div>
-                        <div className="form-group">
-                          <Input
-                            name="reason"
-                            id="reason"
-                            label="Lý do điều chỉnh"
-                            fill={true}
-                            value={item.reason}
-                            placeholder="Nhập lý do điều chỉnh"
-                            onChange={(e) => handleChangeValueReason(e, idx)}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <NummericInput
-                            name="quantity"
-                            id="quantity"
-                            label="Số lượng thực tế"
-                            fill={true}
-                            value={item.availQty}
-                            onValueChange={(e) => handleChangeValueQuanlity(e, idx)}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <Input name="discrepancy" id="discrepancy" label="Số lượng lệch" fill={true} value={item.offsetQty} disabled />
-                        </div>
-                      </div>
-                      <div className="action__delete--item" onClick={() => handRemoveProItem(item.id)}>
-                        <div className="icon-remove">
-                          <Icon name="Times" />
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                <div className="action__add--item--large">
-                  <Button variant="outline" disabled={isSubmit} onClick={(e) => handleAddItemPro(e)}>
-                    <Icon name="PlusCircleFill" />
-                    Thêm sản phẩm
-                  </Button>
+              {/* Summary */}
+              <div className="adj-summary">
+                <div className="adj-summary__row">
+                  <span className="adj-summary__label">Số loại SP</span>
+                  <span className="adj-summary__value">{totalItems} loại</span>
+                </div>
+                <div className="adj-summary__row adj-summary__row--total">
+                  <span className="adj-summary__label">Sản phẩm lệch</span>
+                  <span className="adj-summary__value adj-summary__value--hl">
+                    {lstProducts.filter(i => (i.offsetQty ?? 0) !== 0).length} SP
+                  </span>
                 </div>
               </div>
-            ) : isLoading ? (
-              <Loading />
-            ) : (
-              <SystemNotification
-                description={
-                  <span>
-                    Hiện tại chưa có sản phẩm cần điều chỉnh nào. <br />
-                    Hãy thêm mới sản phẩm cần điều chỉnh đầu tiên nhé!
-                  </span>
-                }
-                type="no-item"
-                titleButton="Thêm mới sản phẩm cần điều chỉnh"
-                disabled={!dataInventory}
-                action={() => {
-                  setShowModalAdd(true);
-                }}
-              />
-            )}
-          </div>
-        </div>
 
-        <div className="card-box d-flex flex-column info__bottom">
-          {/* <label className="title--info">Nội dung điều chỉnh</label>
-
-          <div className="content-adjust">
-            <div className="form-group">
-              <TextArea
-                name="adjust"
-                value={formData.note}
-                onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                fill={true}
-                placeholder="Nhập nội dung cần điều chỉnh"
-              />
             </div>
-          </div> */}
 
-          <div className="action__submit--form">
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isSubmit}
-              onClick={() => (dataInventory || lstProducts.length > 0 ? showDialogConfirmConfirm() : onHide(false))}
-            >
-              Quay lại
-            </Button>
+            {/* Actions */}
+            <div className="adj-sidebar__actions">
+              <Button
+                type="submit" color="primary"
+                disabled={totalItems === 0 || isSubmit || !dataInventory}
+                onClick={handleSubmit}
+              >
+                {id ? "Cập nhật phiếu" : "Tạo phiếu kiểm kho"}
+                {isSubmit && <Icon name="Loading" />}
+              </Button>
+              <Button type="button" variant="outline" disabled={isSubmit} onClick={showConfirmBack}>
+                Quay lại
+              </Button>
+            </div>
 
-            <Button type="submit" disabled={lstProducts.length === 0 || isSubmit}>
-              {id ? "Chỉnh sửa" : "Thêm mới"}
-              {isSubmit && <Icon name="Loading" />}
-            </Button>
           </div>
         </div>
-      </form>
+      </div>
+
       <ChooseProduct
         onShow={showModalAdd}
         onHide={(reload) => {
-          if (reload) {
-            handAdjustmentSlipTemp(dataInventory.value);
-          }
+          if (reload && dataInventory?.value) handAdjustmentSlipTemp(dataInventory.value);
           setShowModalAdd(false);
         }}
         lstBatchNoProduct={lstBatchNoProduct}
