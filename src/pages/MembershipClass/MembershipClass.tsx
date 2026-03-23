@@ -12,6 +12,7 @@ import { formatCurrency, showToast } from "@/utils/common";
 import Tippy from "@tippyjs/react";
 import AddLoyaltySegmentModal from "./AddLoyaltySegmentModal";
 import Dialog, { IContentDialog } from "@/components/dialog/dialog";
+import { ITitleActions } from "@/components/titleAction/titleAction";
 
 export default function MembershipClass(props) {
   document.title = "Hạng thành viên";
@@ -174,6 +175,19 @@ export default function MembershipClass(props) {
     setShowDialog(true);
   };
 
+
+  const titleActions: ITitleActions = {
+    actions: [
+      {
+        title: "Thêm mới",
+        callback: () => {
+          setSelectedItem(null); 
+          setShowModalAdd(true);
+        },
+      },
+    ],
+  };
+
   return (
     <Fragment>
       <div className={`page-content page-membership-class`}>
@@ -181,29 +195,8 @@ export default function MembershipClass(props) {
           title="Hạng thành viên"
           titleBack="Khách hàng thành viên"
           onBackProps={onBackProps}
-        //   titleActions={titleActions}
+          titleActions={titleActions}
         />
-
-        <div className="container-header">
-            <div className="title-header">
-                <h1>Hạng thành viên</h1>
-                <span style={{fontSize: 14, fontWeight: '500', color: 'rgb(100 116 139 / var(--tw-text-opacity, 1))'}}>Cấu hình hạng và quyền lợi thành viên</span>
-            </div>
-
-            <div>
-                <Button 
-                    type="button" 
-                    onClick={() => { 
-                        setSelectedItem(null); 
-                        setShowModalAdd(true); 
-                    }}
-                >
-                    {/* <Icon name="Plus" style={{width: '1.2rem', height: '1.2rem'}}/> */}
-                    Thêm mới
-                </Button>
-            </div>
-        </div>
-
         {listData && listData.length > 0 ? 
             <div className="package-list">
                 {listData.map((item, index) => (
