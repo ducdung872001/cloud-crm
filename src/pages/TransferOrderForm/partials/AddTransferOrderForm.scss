@@ -50,9 +50,6 @@
 }
 
 .tf-layout__main {
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
   min-width: 0;
 }
 
@@ -65,6 +62,7 @@
 // ── Product card (left) ───────────────────────────────────────────────────────
 .tf-product-card {
   overflow: hidden;
+  padding: 0 !important;
 
   &__header {
     display: flex;
@@ -72,14 +70,7 @@
     justify-content: space-between;
     padding: 1.4rem 2rem;
     border-bottom: 1px solid var(--border-color);
-
     .base-button { padding: 0.7rem 1.2rem; font-size: 1.3rem; }
-  }
-
-  &__body {
-    min-height: 28rem;   // luôn có chiều cao dù empty
-    display: flex;
-    flex-direction: column;
   }
 
   &__title {
@@ -91,6 +82,14 @@
     color: var(--text-primary-color);
 
     svg { flex-shrink: 0; }
+  }
+
+  &__body {
+    min-height: 30rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    &--has-data { justify-content: flex-start; }
   }
 }
 
@@ -105,7 +104,7 @@
   font-weight: 600;
 }
 
-// ── Product table ─────────────────────────────────────────────────────────────
+// ── Product table wrapper ─────────────────────────────────────────────────────
 .tf-product-table-wrapper {
   overflow-x: auto;
   padding: 0 2rem 2rem;
@@ -141,6 +140,10 @@
 .tf-col-num    { width: 10rem; text-align: right; }
 .tf-col-input  { width: 12rem; }
 .tf-col-action { width: 4.4rem; text-align: center; }
+
+// Override browser user-agent th alignment
+.tf-th-right  { text-align: right !important; }
+.tf-th-center { text-align: center !important; }
 
 .tf-product-name {
   font-weight: 500;

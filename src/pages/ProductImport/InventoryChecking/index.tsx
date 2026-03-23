@@ -653,11 +653,11 @@ export default function InventoryManagement() {
       },
       activeTab === "transfer" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu chuyển kho",
-        callback: () => navigate(urls.inventory_transfer_document),
+        callback: () => navigate(`${urls.inventory_transfer_document}?mode=create`),
       },
       activeTab === "destroy" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu xuất hủy",
-        callback: () => showToast("Tính năng đang phát triển", "warning"),
+        callback: () => navigate(urls.destroy_slip),
       },
       activeTab === "check" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu kiểm kho",

@@ -76,6 +76,7 @@ import SocialCrmFacebook from "pages/SocialCrmFacebook/SocialCrmFacebook";
 import SocialCrmZalo from "pages/SocialCrmZalo/SocialCrmZalo";
 // Phiếu điều chỉnh kho
 import AdjustmentSlip from "pages/AdjustmentSlip/AdjustmentSlip";
+import DestroySlip from "pages/DestroySlip";
 // Thông tin tài khoản cá nhân
 import SettingAccount from "pages/SettingAccount/SettingAccount";
 import ReportCustomer from "pages/ReportCustomer/ReportCustomer";
@@ -196,7 +197,7 @@ export const menu: IMenuItem[] = [
     icon: <Icon name="DashboardMenu" />,
     code: "DASHBOARD",
   },
-      {
+  {
     title: "notification", // Thông báo
     path: urls.notification,
     icon: <Icon name="BellMenu" />,
@@ -899,7 +900,7 @@ export const routes: IRouter[] = [
     // component: <Dashboard />,
     component: <DashboardRetail />,
   },
-      {
+  {
     path: urls.notification,
     component: <NotificationList />,
   },
@@ -919,15 +920,15 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.customer,
-    component: <CustomerPersonList/>,
+    component: <CustomerPersonList />,
   },
   {
     path: urls.customer_list,
-    component: <CustomerAndSupplier type="customer"/>,
+    component: <CustomerAndSupplier type="customer" />,
   },
   {
     path: urls.supplier_list,
-    component: <CustomerAndSupplier type="supplier"/>,
+    component: <CustomerAndSupplier type="supplier" />,
   },
   {
     path: urls.partner,
@@ -1451,6 +1452,10 @@ export const routes: IRouter[] = [
     path: urls.adjustment_slip,
     component: <AdjustmentSlip />,
   },
+  {
+    path: urls.destroy_slip,
+    component: <DestroySlip />,
+  },
   // quản lý vật tư
   {
     path: urls.material,
@@ -1539,7 +1544,7 @@ export const routes: IRouter[] = [
   {
     path: urls.object_manage,
     // component: <ProcessedObjectList />,
-    component: <TaskProcessPage/>
+    component: <TaskProcessPage />
   },
   {
     path: urls.setting_business_process,
