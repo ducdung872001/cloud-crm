@@ -566,6 +566,11 @@ export const urlsApi = {
     list: prefixInventory + "/inventoryBalance/list",
     get: prefixInventory + "/inventoryBalance/get",
   },
+  stockTransferDetail: {
+    list: prefixInventory + "/stockTransferDetail/list",
+    update: prefixInventory + "/stockTransferDetail/update",
+    delete: prefixInventory + "/stockTransferDetail/delete",
+  },
 
   integration: {
     list: prefixAdmin + "/integrationPartner/list",
