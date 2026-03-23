@@ -50,6 +50,12 @@
 
   .warehouse__qty--positive { color: var(--success-color); font-weight: 600; }
   .warehouse__qty--negative { color: var(--error-color);   font-weight: 600; }
+  .warehouse__qty--zero     { color: var(--text-extra-color); font-weight: 600; }
+
+  .warehouse__note { font-size: 1.3rem; max-width: 16rem; }
+  .warehouse__reason  { color: var(--text-extra-color); font-style: italic; }
+  .warehouse__batchno { color: var(--text-extra-color); font-size: 1.2rem; }
+  .warehouse__refcode { color: var(--primary-color); font-weight: 500; }
 
   .card-box {
     .status__item--signature {

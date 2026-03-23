@@ -68,9 +68,10 @@ const renderWarehouse = (item: IInventoryLedgerResponse) => {
 
 const renderQuantity = (item: IInventoryLedgerResponse) => {
   const quantity = item.quantityChange ?? item.quantity ?? 0;
-  const quantityText = quantity > 0 ? `+${quantity}` : quantity;
+  const quantityText = quantity > 0 ? `+${quantity.toLocaleString("vi-VN")}` : quantity.toLocaleString("vi-VN");
+  const cls = quantity > 0 ? "warehouse__qty--positive" : quantity < 0 ? "warehouse__qty--negative" : "warehouse__qty--zero";
 
-  return <span className={quantity > 0 ? "warehouse__qty--positive" : "warehouse__qty--negative"}>{quantityText} {item.unitName ?? ""}</span>;
+  return <span className={cls}>{quantityText} {item.unitName ?? ""}</span>;
 };
 
 export default function WarehouseBookList() {
@@ -87,12 +88,16 @@ export default function WarehouseBookList() {
     keyword: string;
     refType: string;
     warehouseId?: string;
+    fromTime?: string;
+    toTime?: string;
     page: number;
     limit: number;
   }>({
     keyword: "",
     refType: "",
     warehouseId: "",
+    fromTime: "",
+    toTime: "",
     limit: 10,
     page: 1,
   });
@@ -106,6 +111,16 @@ export default function WarehouseBookList() {
           type: "select",
           is_featured: true,
           value: searchParams.get("warehouseId") ?? "",
+        },
+        {
+          key: "time_range",
+          name: "Khoảng thời gian",
+          type: "date-two",
+          param_name: ["fromTime", "toTime"],
+          is_featured: true,
+          value: searchParams.get("fromTime") ?? "",
+          value_extra: searchParams.get("toTime") ?? "",
+          is_fmt_text: true,
         },
       ] as IFilterItem[],
     [searchParams]
@@ -144,6 +159,14 @@ export default function WarehouseBookList() {
 
     if (paramsSearch.warehouseId) {
       requestParams.warehouseId = +paramsSearch.warehouseId;
+    }
+
+    if (paramsSearch.fromTime) {
+      (requestParams as any).fromTime = paramsSearch.fromTime;
+    }
+
+    if (paramsSearch.toTime) {
+      (requestParams as any).toTime = paramsSearch.toTime;
     }
 
     if (typeof paramsSearch.page === "number") {
@@ -227,12 +250,12 @@ export default function WarehouseBookList() {
   // Mọi thao tác tạo phiếu thực hiện tại menu "Quản lý kho"
   const titleActions: ITitleActions = { actions: [] };
 
-  const titles = ["STT", "Mã chứng từ", "Loại chứng từ", "Thời gian", "Sản phẩm", "Đối tác", "Kho", "Biến động SL", "Tồn trước", "Tồn sau", "Người thực hiện", "Ref tài chính", "Trạng thái"];
-  const dataFormat = ["text-center", "", "text-center", "text-center", "", "", "", "text-center", "text-center", "text-center", "", "text-center", "text-center"];
+  const titles = ["STT", "Mã chứng từ", "Loại", "Thời gian", "Sản phẩm", "Đối tác", "Kho", "Biến động", "Tồn trước", "Tồn sau", "Ghi chú", "Người TH", "Trạng thái"];
+  const dataFormat = ["text-center", "", "text-center", "text-center", "", "", "", "text-right", "text-right", "text-right", "", "", "text-center"];
 
   const dataMappingArray = (item: IInventoryLedgerResponse, index: number) => [
     getPageOffset(params) + index + 1,
-    <span key={`code-${item.id}`} className="warehouse__code">{item.refCode ?? "—"}</span>,
+    <span key={`code-${item.id}`} className="warehouse__code">{item.refCode ?? (item.refId ? `#${item.refId}` : "—")}</span>,
     renderRefType(item),
     item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "—",
     <div key={`product-${item.id}`}>
@@ -247,10 +270,19 @@ export default function WarehouseBookList() {
     ) : "—",
     renderWarehouse(item),
     renderQuantity(item),
-    item.prevQuantity ?? 0,
-    item.afterQuantity ?? 0,
+    (item.prevQuantity ?? 0).toLocaleString("vi-VN"),
+    (item.afterQuantity ?? 0).toLocaleString("vi-VN"),
+    // Ghi chú: reason (Điều chỉnh/Xuất hủy) hoặc batchNo (Nhập kho) hoặc refFinanceCode
+    <div key={`note-${item.id}`} className="warehouse__note">
+      {item.reason ? (
+        <span className="warehouse__reason">{item.reason}</span>
+      ) : item.batchNo ? (
+        <span className="warehouse__batchno">Lô: {item.batchNo}</span>
+      ) : item.refFinanceCode ? (
+        <span className="warehouse__refcode">{item.refFinanceCode}</span>
+      ) : "—"}
+    </div>,
     item.employeeName ?? "—",
-    item.refFinanceCode ?? "—",
     renderStatus(item),
   ];
 
