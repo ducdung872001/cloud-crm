@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import moment from "moment";
 import Loading from "components/loading";
@@ -192,6 +192,7 @@ export default function WarehouseBookList() {
   const [listData, setListData]     = useState<IInventoryLedgerResponse[]>([]);
   const [isLoading, setIsLoading]   = useState(true);
   const [isNoItem, setIsNoItem]     = useState(false);
+  const [listWarehouse, setListWarehouse] = useState<{ value: string; label: string }[]>([]);
 
   const [params, setParams] = useState<{
     keyword:     string;
@@ -206,10 +207,11 @@ export default function WarehouseBookList() {
     fromTime: "", toTime: "", limit: 10, page: 1,
   });
 
-  const filterList = useMemo<IFilterItem[]>(() => [
+  const [filterList, setFilterList] = useState<IFilterItem[]>([
     {
       key: "warehouseId", name: "Kho hàng", type: "select",
       is_featured: true, value: searchParams.get("warehouseId") ?? "",
+      list: [],
     },
     {
       key: "time_range", name: "Khoảng thời gian", type: "date-two",
@@ -218,7 +220,15 @@ export default function WarehouseBookList() {
       value_extra: searchParams.get("toTime") ?? "",
       is_fmt_text: true,
     },
-  ], [searchParams]);
+  ]);
+
+  // Cập nhật options kho vào filter khi listWarehouse thay đổi
+  useEffect(() => {
+    if (listWarehouse.length === 0) return;
+    setFilterList(prev => prev.map(f =>
+      f.key === "warehouseId" ? { ...f, list: listWarehouse } : f
+    ));
+  }, [listWarehouse]);
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     { key: "all", name: "Sổ kho", is_active: true },
@@ -266,11 +276,20 @@ export default function WarehouseBookList() {
     setIsLoading(false);
   };
 
-  // Sync URL params on mount
+  // Sync URL params on mount + load danh sách kho cho filter
   useEffect(() => {
     const tmp = _.cloneDeep(params);
     searchParams.forEach((v, k) => { tmp[k] = v; });
     setParams(prev => ({ ...prev, ...tmp }));
+
+    // Load warehouse list cho filter dropdown
+    InventoryService.list({ page: 1, limit: 200 }).then(res => {
+      if (res.code === 0) {
+        const data = Array.isArray(res.result) ? res.result
+          : Array.isArray(res.result?.items) ? res.result.items : [];
+        setListWarehouse(data.map((i: any) => ({ value: String(i.id), label: i.name })));
+      }
+    });
   }, []);
 
   // Fetch + sync URL on param change
