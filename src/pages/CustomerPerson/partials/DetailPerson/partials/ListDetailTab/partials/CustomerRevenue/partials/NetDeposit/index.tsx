@@ -11,7 +11,6 @@ import BoxTable from "components/boxTable/boxTable";
 import { IAction } from "model/OtherModel";
 import Icon from "components/icon";
 import ModalAddData from "./partials/ModalAddData";
-import NetDepositService from "services/fintech/NetDepositService";
 
 import "./index.scss";
 
@@ -43,7 +42,7 @@ export default function NetDeposit({ data, onShow, callBack }) {
   const getListNetDeposit = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await NetDepositService.list(paramsSearch);
+    const response = null;
 
     if (response.code === 0) {
       const result = response.result;
@@ -130,7 +129,7 @@ export default function NetDeposit({ data, onShow, callBack }) {
   const [contentDialog, setContentDialog] = useState<any>(null);
 
   const onDelete = async (id: number) => {
-    const response = await NetDepositService.delete(id);
+    const response = null;
 
     if (response.code === 0) {
       showToast("Xóa thu thuần tiền gửi thành công", "success");

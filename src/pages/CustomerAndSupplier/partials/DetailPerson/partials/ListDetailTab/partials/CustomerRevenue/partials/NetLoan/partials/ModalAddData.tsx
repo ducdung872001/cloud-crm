@@ -10,7 +10,6 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
-import NetLoanService from "services/fintech/NetLoanService";
 import { showToast } from "utils/common";
 
 import "./ModalAddData.scss";
@@ -115,7 +114,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       transactionDate: moment(formData.values.transactionDate).format('YYYY-MM-DDTHH:mm:ss'),
     };
 
-    const response = await NetLoanService.update(body);
+    const response = null;
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} thu phí tiền vay thành công`, "success");
