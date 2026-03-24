@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reborn CRM Retail — Hệ thống Báo cáo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+/* ============================================================
+   RESET & VARIABLES
+============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #f5f4f0;
+  --surface:   #ffffff;
+  --surface2:  #f0efe9;
+  --border:    #e2e0d8;
+  --border2:   #d0cec4;
+  --text1:     #1a1916;
+  --text2:     #5a5852;
+  --text3:     #9a9890;
+  --sidebar-w: 220px;
+  --topbar-h:  56px;
+  --blue:      #2563eb;  --blue-l:   #dbeafe;  --blue-d:  #1e3a8a;
+  --amber:     #b45309;  --amber-l:  #fef3c7;
+  --purple:    #6d28d9;  --purple-l: #ede9fe;
+  --green:     #047857;  --green-l:  #d1fae5;
+  --pink:      #be185d;  --pink-l:   #fce7f3;
+  --orange:    #c2410c;  --orange-l: #ffedd5;
+  --red:       #b91c1c;  --red-l:    #fee2e2;
+  --radius:    10px;
+  --radius-sm: 6px;
+  --shadow:    0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+}
+
+body {
+  font-family: 'Be Vietnam Pro', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text1);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   APP SHELL
+============================================================ */
+.app { display: flex; min-height: 100vh; }
+
+/* ============================================================
+   OVERLAY — mobile drawer backdrop
+============================================================ */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 90;
+}
+.overlay.show { display: block; }
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--text1);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  transition: transform 0.25s ease;
+  overflow-y: auto;
+}
+.sb-logo {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+.sb-logo-brand { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.3px; }
+.sb-logo-sub   { font-size: 10px; color: rgba(255,255,255,0.38); margin-top: 2px; letter-spacing: 0.5px; text-transform: uppercase; }
+.sb-section    { padding: 16px 14px 5px; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.28); font-weight: 500; }
+.sb-nav        { flex: 1; padding: 4px 8px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--radius-sm);
+  cursor: pointer; color: rgba(255,255,255,0.52);
+  font-size: 13px; font-weight: 400; transition: all 0.15s;
+  border: none; background: transparent; width: 100%;
+  text-align: left; margin-bottom: 2px; white-space: nowrap;
+}
+.nav-item:hover  { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+.nav-item.active { background: rgba(255,255,255,0.12); color: #fff; font-weight: 500; }
+.nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.sb-footer { padding: 14px 18px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 11px; color: rgba(255,255,255,0.22); flex-shrink: 0; }
+
+/* ============================================================
+   MAIN AREA
+============================================================ */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
+
+/* ============================================================
+   TOPBAR
+============================================================ */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: var(--topbar-h);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50; gap: 12px;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.hamburger {
+  display: none; flex-direction: column; gap: 4px;
+  cursor: pointer; padding: 6px; border: none; background: transparent;
+  border-radius: var(--radius-sm); flex-shrink: 0;
+}
+.hamburger span { display: block; width: 18px; height: 2px; background: var(--text2); border-radius: 2px; transition: all 0.2s; }
+.hamburger:hover span { background: var(--text1); }
+.topbar-titles { min-width: 0; }
+.topbar-titles h1 { font-size: 15px; font-weight: 600; color: var(--text1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-titles p  { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.date-filters { display: flex; gap: 4px; flex-shrink: 0; }
+.df-btn {
+  font-size: 12px; padding: 5px 11px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: transparent; color: var(--text2); cursor: pointer;
+  font-family: inherit; transition: all 0.15s; white-space: nowrap;
+}
+.df-btn:hover  { border-color: var(--border2); background: var(--surface2); }
+.df-btn.active { background: var(--text1); color: #fff; border-color: var(--text1); }
+
+/* ============================================================
+   CONTENT
+============================================================ */
+.content { padding: 24px; flex: 1; }
+
+/* ============================================================
+   KPI GRID
+============================================================ */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 20px; }
+.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); }
+.kpi-label { font-size: 11px; color: var(--text3); font-weight: 400; margin-bottom: 6px; }
+.kpi-value { font-size: 24px; font-weight: 600; color: var(--text1); line-height: 1.2; }
+.kpi-value.accent-blue   { color: var(--blue);   }
+.kpi-value.accent-amber  { color: var(--amber);  }
+.kpi-value.accent-purple { color: var(--purple); }
+.kpi-value.accent-green  { color: var(--green);  }
+.kpi-value.accent-pink   { color: var(--pink);   }
+.kpi-value.accent-orange { color: var(--orange); }
+.kpi-value.accent-red    { color: var(--red);    }
+.kpi-delta { font-size: 11px; margin-top: 5px; }
+.kpi-delta.up      { color: var(--green); }
+.kpi-delta.dn      { color: var(--red);   }
+.kpi-delta.neutral { color: var(--text3); }
+
+/* ============================================================
+   CHART ROW
+============================================================ */
+.chart-row { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-bottom: 20px; }
+.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); min-width: 0; }
+.chart-title    { font-size: 13px; font-weight: 500; color: var(--text1); margin-bottom: 3px; }
+.chart-subtitle { font-size: 11px; color: var(--text3); margin-bottom: 12px; }
+.chart-wrap     { position: relative; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* ============================================================
+   TABLE
+============================================================ */
+.table-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 4px; }
+.table-header { padding: 13px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.table-header h3   { font-size: 13px; font-weight: 500; color: var(--text1); }
+.table-header span { font-size: 11px; color: var(--text3); white-space: nowrap; }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; min-width: 480px; }
+thead th { text-align: left; padding: 9px 20px; font-size: 10px; font-weight: 500; color: var(--text3); background: var(--surface2); border-bottom: 1px solid var(--border); letter-spacing: 0.4px; text-transform: uppercase; white-space: nowrap; }
+tbody td { padding: 10px 20px; font-size: 13px; color: var(--text1); border-bottom: 1px solid var(--border); white-space: nowrap; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--surface2); }
+
+/* ============================================================
+   BADGES & VALUE COLORS
+============================================================ */
+.badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; }
+.badge-green  { background: var(--green-l);  color: var(--green);  }
+.badge-amber  { background: var(--amber-l);  color: var(--amber);  }
+.badge-red    { background: var(--red-l);    color: var(--red);    }
+.badge-blue   { background: var(--blue-l);   color: var(--blue-d); }
+.badge-purple { background: var(--purple-l); color: var(--purple); }
+.badge-pink   { background: var(--pink-l);   color: var(--pink);   }
+.badge-orange { background: var(--orange-l); color: var(--orange); }
+.val-green { color: var(--green); font-weight: 500; }
+.val-red   { color: var(--red);   font-weight: 500; }
+.val-amber { color: var(--amber); font-weight: 500; }
+.val-blue  { color: var(--blue);  font-weight: 500; }
+
+/* ============================================================
+   SECTION VISIBILITY
+============================================================ */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ============================================================
+   SALES REPORT — match standalone report layout
+============================================================ */
+.sales-report .page-header {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.sales-report .page-header-meta {
+  font-size: 12px;
+  color: var(--text3);
+  margin-bottom: 3px;
+}
+.sales-report .page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text1);
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}
+.sales-report .page-desc {
+  font-size: 13px;
+  color: var(--text3);
+}
+.sales-report .page-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sales-report .btn {
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.sales-report .btn:hover {
+  border-color: var(--border2);
+  background: var(--surface2);
+}
+.sales-report .btn-primary {
+  background: var(--text1);
+  color: #fff;
+  border-color: var(--text1);
+}
+.sales-report .btn-primary:hover {
+  background: #2c2c20;
+  border-color: #2c2c20;
+}
+.sales-report .filter-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow);
+}
+.sales-report .filter-label {
+  font-size: 11px;
+  color: var(--text3);
+  white-space: nowrap;
+  font-weight: 500;
+}
+.sales-report .filter-group {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.sales-report .f-btn {
+  font-size: 12px;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.sales-report .f-btn:hover {
+  border-color: var(--border2);
+  background: var(--surface2);
+}
+.sales-report .f-btn.on {
+  background: var(--text1);
+  color: #fff;
+  border-color: var(--text1);
+}
+.sales-report .filter-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.sales-report .f-select {
+  font-size: 12px;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text2);
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+.sales-report .filter-spacer {
+  flex: 1;
+}
+.sales-report .kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.sales-report .kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 15px 17px;
+  box-shadow: var(--shadow);
+}
+.sales-report .kpi-l {
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 5px;
+}
+.sales-report .kpi-v {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text1);
+  line-height: 1.2;
+}
+.sales-report .kpi-v.g { color: var(--green); }
+.sales-report .kpi-v.a { color: var(--amber); }
+.sales-report .kpi-v.r { color: var(--red); }
+.sales-report .kpi-v.b { color: var(--blue); }
+.sales-report .kpi-d {
+  font-size: 11px;
+  margin-top: 4px;
+}
+.sales-report .kpi-d.up { color: var(--green); }
+.sales-report .kpi-d.dn { color: var(--red); }
+.sales-report .kpi-d.neu { color: var(--text3); }
+.sales-report .chart-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.sales-report .chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+.sales-report .cc-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text1);
+}
+.sales-report .cc-sub {
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 12px;
+}
+.sales-report .tbl-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.sales-report .tbl-head {
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sales-report .tbl-head h3 {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text1);
+}
+.sales-report .tbl-meta {
+  font-size: 11px;
+  color: var(--text3);
+}
+.sales-report .tbl-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.sales-report table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+}
+.sales-report thead th {
+  text-align: left;
+  padding: 9px 18px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text3);
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+.sales-report thead th.r,
+.sales-report tbody td.r {
+  text-align: right;
+}
+.sales-report tbody td {
+  padding: 10px 18px;
+  font-size: 13px;
+  color: var(--text1);
+  border-bottom: 1px solid var(--border);
+}
+.sales-report tbody tr:last-child td {
+  border-bottom: none;
+}
+.sales-report tbody tr:hover td {
+  background: var(--surface2);
+}
+
+/* ============================================================
+   BOTTOM NAV — mobile only
+============================================================ */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--text1);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.bottom-nav-inner { display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.bottom-nav-inner::-webkit-scrollbar { display: none; }
+.bn-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 8px 10px 6px; cursor: pointer; border: none; background: transparent;
+  color: rgba(255,255,255,0.38); font-size: 9px; font-family: inherit;
+  font-weight: 400; transition: color 0.15s; flex-shrink: 0; min-width: 56px;
+}
+.bn-item.active { color: #fff; font-weight: 500; }
+.bn-dot { width: 7px; height: 7px; border-radius: 50%; margin-bottom: 1px; }
+
+/* ============================================================
+   RESPONSIVE — LARGE DESKTOP ≥ 1440px
+============================================================ */
+@media (min-width: 1440px) {
+  :root { --sidebar-w: 240px; }
+  .content { padding: 28px 36px; }
+  .kpi-value { font-size: 26px; }
+  .kpi-label { font-size: 12px; }
+  .kpi-card  { padding: 20px 22px; }
+  .chart-card { padding: 20px 22px; }
+  .topbar { padding: 0 32px; }
+  .topbar-titles h1 { font-size: 16px; }
+  .df-btn { font-size: 13px; padding: 6px 14px; }
+}
+
+/* ============================================================
+   RESPONSIVE — TABLET 768–1023px
+   Sidebar hidden by default → slides in via hamburger
+============================================================ */
+@media (max-width: 1023px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.2); }
+  .main { margin-left: 0; }
+  .hamburger { display: flex; }
+  .topbar { padding: 0 16px; }
+  .content { padding: 18px 16px; }
+  /* KPI: 2×2 on tablet */
+  .kpi-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-bottom: 16px; }
+  .kpi-value { font-size: 22px; }
+  /* Charts stay 2-col on landscape tablet, stack on portrait */
+  .chart-row { gap: 12px; margin-bottom: 16px; }
+  /* Hide last filter button to save space */
+  .df-btn:last-child { display: none; }
+  .sales-report .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .sales-report .chart-row { gap: 12px; }
+}
+
+/* ============================================================
+   RESPONSIVE — SMALL TABLET / LARGE PHONE 480–767px
+   Charts stack to 1 column
+============================================================ */
+@media (max-width: 767px) {
+  .chart-row { grid-template-columns: 1fr; }
+  .kpi-grid  { gap: 8px; }
+  .df-btn:nth-child(3) { display: none; } /* hide "Tháng này" too */
+  .sales-report .chart-row { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   RESPONSIVE — MOBILE < 480px
+   Bottom nav appears, date filters hidden, full stack
+============================================================ */
+@media (max-width: 479px) {
+  :root { --topbar-h: 52px; }
+  .topbar { padding: 0 12px; }
+  .topbar-titles h1 { font-size: 14px; }
+  .topbar-titles p  { display: none; }
+  .date-filters     { display: none; }
+
+  /* Extra bottom padding so content isn't hidden behind bottom nav */
+  .content { padding: 12px 12px 76px; }
+
+  .kpi-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-bottom: 12px; }
+  .kpi-card { padding: 12px 13px; }
+  .kpi-value { font-size: 19px; }
+  .kpi-label { font-size: 10px; }
+  .kpi-delta { font-size: 10px; }
+
+  .chart-row  { grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; }
+  .chart-card { padding: 14px; }
+  .chart-title    { font-size: 12px; }
+  .chart-subtitle { font-size: 10px; }
+  .sales-report .filter-bar { padding: 10px 12px; gap: 8px; }
+  .sales-report .page-title { font-size: 17px; }
+  .sales-report .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+  .sales-report .kpi { padding: 12px 13px; }
+  .sales-report .kpi-v { font-size: 18px; }
+  .sales-report .kpi-l { font-size: 10px; }
+  .sales-report .chart-row { gap: 10px; margin-bottom: 12px; }
+
+  .table-header { padding: 10px 14px; }
+  .table-header h3 { font-size: 12px; }
+  thead th { padding: 8px 14px; font-size: 9px; }
+  tbody td { padding: 9px 14px; font-size: 12px; }
+
+  .bottom-nav { display: flex; }
+}
+
+/* ============================================================
+   RESPONSIVE — VERY SMALL < 360px
+============================================================ */
+@media (max-width: 359px) {
+  .kpi-value { font-size: 17px; }
+  .bn-item   { min-width: 48px; font-size: 8px; padding: 7px 6px 5px; }
+  .kpi-card  { padding: 10px 11px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- ======================================================
+       SIDEBAR
+  ====================================================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-brand">Reborn CRM</div>
+      <div class="sb-logo-sub">Retail Analytics</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">Hệ thống báo cáo</div>
+      <button class="nav-item active" onclick="showSection(0)">
+        <span class="nav-dot" style="background:#3b82f6"></span>Báo cáo Bán hàng
+      </button>
+      <button class="nav-item" onclick="showSection(1)">
+        <span class="nav-dot" style="background:#f59e0b"></span>Báo cáo Tài chính
+      </button>
+      <button class="nav-item" onclick="showSection(2)">
+        <span class="nav-dot" style="background:#8b5cf6"></span>Báo cáo Khách hàng
+      </button>
+      <button class="nav-item" onclick="showSection(3)">
+        <span class="nav-dot" style="background:#10b981"></span>Báo cáo Tồn kho
+      </button>
+      <button class="nav-item" onclick="showSection(4)">
+        <span class="nav-dot" style="background:#ec4899"></span>Báo cáo Marketing
+      </button>
+      <button class="nav-item" onclick="showSection(5)">
+        <span class="nav-dot" style="background:#f97316"></span>Báo cáo Giao vận
+      </button>
+    </nav>
+    <div class="sb-footer">v2.4.1 &nbsp;·&nbsp; 16/03/2026</div>
+  </aside>
+
+  <!-- ======================================================
+       MAIN
+  ====================================================== -->
+  <div class="main">
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="topbar-titles">
+          <h1 id="page-title">Báo cáo Bán hàng</h1>
+          <p>Cập nhật lúc 20:25 · 16/03/2026</p>
+        </div>
+      </div>
+      <div class="date-filters">
+        <button class="df-btn active" onclick="setFilter(this)">Hôm nay</button>
+        <button class="df-btn" onclick="setFilter(this)">7 ngày</button>
+        <button class="df-btn" onclick="setFilter(this)">Tháng này</button>
+        <button class="df-btn" onclick="setFilter(this)">Tháng trước</button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- === 0 · BÁN HÀNG === -->
+      <div class="section active sales-report" id="sec0">
+        <div class="page-header">
+          <div>
+            <div class="page-header-meta">Hệ thống báo cáo</div>
+            <div class="page-title">Báo cáo Bán hàng</div>
+            <div class="page-desc">Theo dõi doanh thu, đơn hàng, kênh bán và hiệu suất sản phẩm theo cùng layout của mockup báo cáo</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn" onclick="void(0)">⬇ Xuất Excel</button>
+            <button class="btn btn-primary" onclick="void(0)">🖨 In báo cáo</button>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <span class="filter-label">Kỳ:</span>
+          <div class="filter-group">
+            <button class="f-btn on" onclick="setSalesFilter(this)">Hôm nay</button>
+            <button class="f-btn" onclick="setSalesFilter(this)">7 ngày</button>
+            <button class="f-btn" onclick="setSalesFilter(this)">Tháng 3/2026</button>
+          </div>
+          <div class="filter-sep"></div>
+          <span class="filter-label">Chi nhánh:</span>
+          <select class="f-select">
+            <option>Tất cả chi nhánh</option>
+            <option>Chi nhánh Hà Nội</option>
+            <option>Chi nhánh HCM</option>
+            <option>Chi nhánh Đà Nẵng</option>
+          </select>
+          <span class="filter-label">Kênh bán:</span>
+          <select class="f-select">
+            <option>Tất cả kênh</option>
+            <option>Tại quầy (POS)</option>
+            <option>Website</option>
+            <option>Fanpage / Zalo OA</option>
+            <option>Sàn TMĐT</option>
+          </select>
+          <div class="filter-spacer"></div>
+          <button class="btn btn-primary" onclick="void(0)">Xem báo cáo</button>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-l">Doanh thu thuần</div><div class="kpi-v b">342M</div><div class="kpi-d up">↑ 15.3% so tháng trước</div></div>
+          <div class="kpi"><div class="kpi-l">Tổng đơn hàng</div><div class="kpi-v g">1,284</div><div class="kpi-d up">↑ 124 đơn so kỳ trước</div></div>
+          <div class="kpi"><div class="kpi-l">Giá trị đơn trung bình</div><div class="kpi-v a">266K</div><div class="kpi-d dn">↓ 2.1% so kỳ trước</div></div>
+          <div class="kpi"><div class="kpi-l">Tỷ lệ chốt đơn</div><div class="kpi-v">68.4%</div><div class="kpi-d neu">Ổn định trong 7 ngày gần nhất</div></div>
+        </div>
+
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="cc-title">Doanh thu và số đơn theo ngày</div>
+            <div class="cc-sub">7 ngày gần nhất · Triệu đồng</div>
+            <div class="chart-wrap" style="height:190px"><canvas id="c0a"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="cc-title">Top sản phẩm bán chạy</div>
+            <div class="cc-sub">Theo số lượng bán trong tháng</div>
+            <div class="chart-wrap" style="height:190px"><canvas id="c0b"></canvas></div>
+          </div>
+        </div>
+
+        <div class="tbl-card">
+          <div class="tbl-head"><h3>Phân tích doanh thu theo kênh bán hàng</h3><span class="tbl-meta">Tháng 3/2026 · 4 kênh hoạt động</span></div>
+          <div class="tbl-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Kênh bán hàng</th>
+                  <th class="r">Số đơn</th>
+                  <th class="r">Doanh thu</th>
+                  <th class="r">Giá trị TB</th>
+                  <th class="r">Tỷ trọng</th>
+                  <th>Xu hướng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div style="font-weight:500">Tại quầy (POS)</div><div style="font-size:11px;color:var(--text3)">Bán trực tiếp tại cửa hàng</div></td>
+                  <td class="r">612</td>
+                  <td class="r val-blue">168M</td>
+                  <td class="r">274K</td>
+                  <td class="r">49.1%</td>
+                  <td><span class="badge badge-green">↑ Tăng mạnh</span></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:500">Website bán hàng</div><div style="font-size:11px;color:var(--text3)">Đơn online từ web</div></td>
+                  <td class="r">338</td>
+                  <td class="r val-blue">96M</td>
+                  <td class="r">284K</td>
+                  <td class="r">28.1%</td>
+                  <td><span class="badge badge-green">↑ Tăng</span></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:500">Fanpage / Zalo OA</div><div style="font-size:11px;color:var(--text3)">Đơn từ social inbox</div></td>
+                  <td class="r">214</td>
+                  <td class="r val-blue">52M</td>
+                  <td class="r">243K</td>
+                  <td class="r">15.2%</td>
+                  <td><span class="badge badge-amber">→ Ổn định</span></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:500">Sàn thương mại điện tử</div><div style="font-size:11px;color:var(--text3)">Shopee, Lazada, TikTok Shop</div></td>
+                  <td class="r">120</td>
+                  <td class="r val-blue">26M</td>
+                  <td class="r">217K</td>
+                  <td class="r">7.6%</td>
+                  <td><span class="badge badge-red">↓ Giảm</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- === 1 · TÀI CHÍNH === -->
+      <div class="section" id="sec1">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Tổng thu tháng này</div><div class="kpi-value accent-green">342M</div><div class="kpi-delta up">↑ 15.3% tháng trước</div></div>
+          <div class="kpi-card"><div class="kpi-label">Tổng chi tháng này</div><div class="kpi-value">218M</div><div class="kpi-delta dn">↑ 4.2% tháng trước</div></div>
+          <div class="kpi-card"><div class="kpi-label">Lợi nhuận ròng</div><div class="kpi-value accent-green">124M</div><div class="kpi-delta up">↑ 22.7% tháng trước</div></div>
+          <div class="kpi-card"><div class="kpi-label">Tỷ suất lợi nhuận</div><div class="kpi-value accent-amber">36.3%</div><div class="kpi-delta up">↑ 2.4% tháng trước</div></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">Thu - Chi 6 tháng gần nhất</div>
+            <div class="chart-subtitle">Đơn vị: triệu đồng</div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#10b981"></span>Thu</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#ef4444"></span>Chi</div>
+            </div>
+            <div class="chart-wrap" style="height:165px"><canvas id="c1a"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Cơ cấu chi phí tháng này</div>
+            <div class="chart-subtitle">Phân bổ theo hạng mục</div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#b45309"></span>Nhập hàng 52%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>Vận hành 18%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#fcd34d"></span>Nhân sự 15%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#fde68a"></span>Marketing 10%</div>
+            </div>
+            <div class="chart-wrap" style="height:140px"><canvas id="c1b"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header"><h3>Giao dịch thu chi gần nhất</h3><span>4 giao dịch mới nhất</span></div>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Nội dung</th><th>Loại</th><th>Số tiền</th><th>Ngày</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+              <tr><td>Thu tiền bán hàng</td><td>Thu</td><td class="val-green">+12.4M</td><td>16/03/2026</td><td><span class="badge badge-green">Đã xác nhận</span></td></tr>
+              <tr><td>Nhập hàng NCC Minh Phát</td><td>Chi</td><td class="val-red">−8.2M</td><td>15/03/2026</td><td><span class="badge badge-green">Đã xác nhận</span></td></tr>
+              <tr><td>Chi phí vận hành</td><td>Chi</td><td class="val-red">−2.1M</td><td>15/03/2026</td><td><span class="badge badge-green">Đã xác nhận</span></td></tr>
+              <tr><td>Thu tiền bán hàng</td><td>Thu</td><td class="val-green">+9.8M</td><td>14/03/2026</td><td><span class="badge badge-amber">Chờ duyệt</span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- === 2 · KHÁCH HÀNG === -->
+      <div class="section" id="sec2">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Tổng khách hàng</div><div class="kpi-value accent-purple">4,821</div><div class="kpi-delta up">↑ 89 KH mới tháng này</div></div>
+          <div class="kpi-card"><div class="kpi-label">KH mới tháng này</div><div class="kpi-value">89</div><div class="kpi-delta up">↑ 12.3% tháng trước</div></div>
+          <div class="kpi-card"><div class="kpi-label">Tỷ lệ quay lại mua</div><div class="kpi-value accent-purple">68.4%</div><div class="kpi-delta up">↑ 3.1% tháng trước</div></div>
+          <div class="kpi-card"><div class="kpi-label">Tổng công nợ KH</div><div class="kpi-value accent-red">42.6M</div><div class="kpi-delta dn">↑ 5.2M từ tháng trước</div></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">Khách hàng mới theo tuần</div>
+            <div class="chart-subtitle">Tháng 3 / 2026</div>
+            <div class="chart-wrap" style="height:200px"><canvas id="c2a"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Phân loại khách hàng</div>
+            <div class="chart-subtitle">Theo hạng tích lũy</div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#7c3aed"></span>VIP 8%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#a78bfa"></span>Thân thiết 22%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#c4b5fd"></span>Thường xuyên 35%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#ede9fe"></span>Mới 35%</div>
+            </div>
+            <div class="chart-wrap" style="height:145px"><canvas id="c2b"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header"><h3>Danh sách khách hàng tiêu biểu</h3><span>Xếp theo doanh thu tích lũy</span></div>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Khách hàng</th><th>Điện thoại</th><th>Tổng mua</th><th>Điểm tích lũy</th><th>Nhóm</th></tr></thead>
+            <tbody>
+              <tr><td>Nguyễn Thị Mai</td><td>0901 234 567</td><td>12.4M</td><td>1,240</td><td><span class="badge badge-purple">VIP</span></td></tr>
+              <tr><td>Trần Văn Hùng</td><td>0912 345 678</td><td>8.6M</td><td>860</td><td><span class="badge badge-purple">VIP</span></td></tr>
+              <tr><td>Lê Thị Hoa</td><td>0923 456 789</td><td>5.2M</td><td>520</td><td><span class="badge badge-blue">Thân thiết</span></td></tr>
+              <tr><td>Phạm Minh Tuấn</td><td>0934 567 890</td><td>3.8M</td><td>380</td><td><span class="badge badge-green">Thường xuyên</span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- === 3 · TỒN KHO === -->
+      <div class="section" id="sec3">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Tổng SKU đang kinh doanh</div><div class="kpi-value accent-green">1,248</div><div class="kpi-delta neutral">Đang hoạt động</div></div>
+          <div class="kpi-card"><div class="kpi-label">Hàng sắp hết (&lt; 10 SL)</div><div class="kpi-value accent-amber">34</div><div class="kpi-delta dn">Cần theo dõi</div></div>
+          <div class="kpi-card"><div class="kpi-label">Hàng đã hết hàng</div><div class="kpi-value accent-red">12</div><div class="kpi-delta dn">Cần nhập gấp</div></div>
+          <div class="kpi-card"><div class="kpi-label">Giá trị tồn kho</div><div class="kpi-value">2.4 tỷ</div><div class="kpi-delta up">↑ 3.2% tuần trước</div></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">Nhập / Xuất kho 7 ngày gần nhất</div>
+            <div class="chart-subtitle">Theo số lượng sản phẩm</div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#10b981"></span>Nhập kho</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#f97316"></span>Xuất kho</div>
+            </div>
+            <div class="chart-wrap" style="height:160px"><canvas id="c3a"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Tồn kho theo danh mục</div>
+            <div class="chart-subtitle">Phân bổ giá trị tồn</div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#10b981"></span>Thời trang 45%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#34d399"></span>Giày dép 22%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#6ee7b7"></span>Phụ kiện 15%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#a7f3d0"></span>Nội y 12%</div>
+            </div>
+            <div class="chart-wrap" style="height:140px"><canvas id="c3b"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header"><h3>Cảnh báo tồn kho</h3><span>Hàng sắp hết &amp; hết hàng</span></div>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Sản phẩm</th><th>Mã SP</th><th>Tồn kho</th><th>Đã bán (tháng)</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+              <tr><td>Áo thun nam basic S/M/L</td><td>SP001</td><td class="val-red">0</td><td>245</td><td><span class="badge badge-red">Hết hàng</span></td></tr>
+              <tr><td>Quần jean slim fit</td><td>SP024</td><td class="val-amber">5</td><td>189</td><td><span class="badge badge-amber">Sắp hết</span></td></tr>
+              <tr><td>Váy hoa mùa hè</td><td>SP067</td><td class="val-amber">8</td><td>156</td><td><span class="badge badge-amber">Sắp hết</span></td></tr>
+              <tr><td>Giày thể thao nữ</td><td>SP089</td><td>124</td><td>432</td><td><span class="badge badge-green">Đủ hàng</span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- === 4 · MARKETING === -->
+      <div class="section" id="sec4">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Chiến dịch đang chạy</div><div class="kpi-value accent-pink">8</div><div class="kpi-delta neutral">2 chiến dịch mới tuần này</div></div>
+          <div class="kpi-card"><div class="kpi-label">Lượt sử dụng voucher</div><div class="kpi-value">1,284</div><div class="kpi-delta up">↑ 23.1% tháng trước</div></div>
+          <div class="kpi-card"><div class="kpi-label">Doanh thu từ khuyến mãi</div><div class="kpi-value accent-pink">87.4M</div><div class="kpi-delta neutral">25.5% tổng doanh thu</div></div>
+          <div class="kpi-card"><div class="kpi-label">Điểm tích lũy phát ra</div><div class="kpi-value">34,200</div><div class="kpi-delta up">↑ 8.4% tháng trước</div></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">Lượt sử dụng theo chiến dịch</div>
+            <div class="chart-subtitle">Top 6 chiến dịch hiệu quả nhất</div>
+            <div class="chart-wrap" style="height:200px"><canvas id="c4a"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Doanh thu theo kênh bán</div>
+            <div class="chart-subtitle">Phân bổ đóng góp</div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#ec4899"></span>Tại quầy 38%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#f472b6"></span>Website 25%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#f9a8d4"></span>Fanpage 18%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#fce7f3"></span>Zalo 12%</div>
+            </div>
+            <div class="chart-wrap" style="height:145px"><canvas id="c4b"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header"><h3>Danh sách chiến dịch khuyến mãi</h3><span>Tháng 3 / 2026</span></div>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Chiến dịch</th><th>Loại</th><th>Lượt sử dụng</th><th>Doanh thu đóng góp</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+              <tr><td>Sale 8/3 — Giảm 20%</td><td>Giảm giá</td><td>456</td><td>28.4M</td><td><span class="badge badge-pink">Đang chạy</span></td></tr>
+              <tr><td>Freeship đơn từ 200K</td><td>Freeship</td><td>312</td><td>18.2M</td><td><span class="badge badge-pink">Đang chạy</span></td></tr>
+              <tr><td>Mua 2 tặng 1</td><td>Combo</td><td>198</td><td>15.6M</td><td><span class="badge badge-pink">Đang chạy</span></td></tr>
+              <tr><td>Flash Sale cuối tuần</td><td>Flash Sale</td><td>318</td><td>25.2M</td><td><span class="badge badge-amber">Đã kết thúc</span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- === 5 · GIAO VẬN === -->
+      <div class="section" id="sec5">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Tổng đơn vận chuyển</div><div class="kpi-value accent-orange">1,842</div><div class="kpi-delta neutral">Tháng 3 / 2026</div></div>
+          <div class="kpi-card"><div class="kpi-label">Đang giao</div><div class="kpi-value">234</div><div class="kpi-delta dn">12 đơn chậm hạn</div></div>
+          <div class="kpi-card"><div class="kpi-label">Giao thành công</div><div class="kpi-value accent-green">1,524</div><div class="kpi-delta up">Tỷ lệ 82.7%</div></div>
+          <div class="kpi-card"><div class="kpi-label">Hoàn / Trả hàng</div><div class="kpi-value accent-red">84</div><div class="kpi-delta dn">4.6% tỷ lệ hoàn</div></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">Trạng thái đơn vận chuyển</div>
+            <div class="chart-subtitle">Tổng quan tháng này</div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#10b981"></span>Đã giao 82.7%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span>Đang giao 12.7%</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#ef4444"></span>Hoàn hàng 4.6%</div>
+            </div>
+            <div class="chart-wrap" style="height:150px"><canvas id="c5a"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Đơn vận chuyển 7 ngày</div>
+            <div class="chart-subtitle">Giao thành công vs hoàn hàng</div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#10b981"></span>Giao thành công</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#ef4444"></span>Hoàn hàng</div>
+            </div>
+            <div class="chart-wrap" style="height:150px"><canvas id="c5b"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header"><h3>Hiệu suất đối tác vận chuyển</h3><span>Tháng 3 / 2026</span></div>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Đối tác vận chuyển</th><th>Tổng đơn</th><th>Giao thành công</th><th>Tỷ lệ thành công</th><th>Phí trung bình</th></tr></thead>
+            <tbody>
+              <tr><td>GHN — Giao Hàng Nhanh</td><td>842</td><td>714</td><td class="val-green">84.8%</td><td>28,000đ</td></tr>
+              <tr><td>GHTK — Giao Hàng Tiết Kiệm</td><td>634</td><td>521</td><td class="val-green">82.2%</td><td>22,000đ</td></tr>
+              <tr><td>J&amp;T Express</td><td>248</td><td>198</td><td class="val-amber">79.8%</td><td>24,000đ</td></tr>
+              <tr><td>Viettel Post</td><td>118</td><td>91</td><td class="val-amber">77.1%</td><td>20,000đ</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ======================================================
+       BOTTOM NAV — mobile only (shown via CSS)
+  ====================================================== -->
+  <nav class="bottom-nav" id="bottomNav">
+    <div class="bottom-nav-inner">
+      <button class="bn-item active" onclick="showSection(0)"><span class="bn-dot" style="background:#3b82f6"></span>Bán hàng</button>
+      <button class="bn-item" onclick="showSection(1)"><span class="bn-dot" style="background:#f59e0b"></span>Tài chính</button>
+      <button class="bn-item" onclick="showSection(2)"><span class="bn-dot" style="background:#8b5cf6"></span>Khách hàng</button>
+      <button class="bn-item" onclick="showSection(3)"><span class="bn-dot" style="background:#10b981"></span>Tồn kho</button>
+      <button class="bn-item" onclick="showSection(4)"><span class="bn-dot" style="background:#ec4899"></span>Marketing</button>
+      <button class="bn-item" onclick="showSection(5)"><span class="bn-dot" style="background:#f97316"></span>Giao vận</button>
+    </div>
+  </nav>
+
+</div>
+
+<script>
+/* ---- NAVIGATION ---- */
+const titles = ['Báo cáo Bán hàng','Báo cáo Tài chính','Báo cáo Khách hàng','Báo cáo Tồn kho','Báo cáo Marketing','Báo cáo Giao vận'];
+
+function showSection(i) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.bn-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec' + i).classList.add('active');
+  document.getElementById('page-title').textContent = titles[i];
+  document.querySelectorAll('.nav-item')[i].classList.add('active');
+  document.querySelectorAll('.bn-item')[i].classList.add('active');
+  if (window.innerWidth < 1024) closeSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setFilter(btn) {
+  document.querySelectorAll('.df-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setSalesFilter(btn) {
+  const group = btn.closest('.filter-group');
+  if (group) group.querySelectorAll('.f-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+/* ---- SIDEBAR TOGGLE ---- */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+/* ---- CHARTS ---- */
+Chart.defaults.font.family = "'Be Vietnam Pro', 'Segoe UI', sans-serif";
+Chart.defaults.font.size   = 11;
+Chart.defaults.color       = '#9a9890';
+
+const days  = ['10/3','11/3','12/3','13/3','14/3','15/3','16/3'];
+const gridC = 'rgba(0,0,0,0.06)';
+const sc    = { x: { grid: { display: false }, border: { display: false } }, y: { grid: { color: gridC }, border: { display: false } } };
+const base  = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
+
+new Chart('c0a',{type:'bar',data:{labels:days,datasets:[
+  {data:[36,42,48,45,53,56,62],backgroundColor:'#1d4ed8',borderRadius:3},
+  {data:[124,138,152,149,176,185,198],backgroundColor:'#f97316',borderRadius:3,yAxisID:'y1'}
+]},options:{...base,scales:{
+  x:{grid:{display:false},border:{display:false}},
+  y:{grid:{color:gridC},border:{display:false},ticks:{callback:v=>v+'M'}},
+  y1:{position:'right',grid:{display:false},border:{display:false}}
+}}});
+new Chart('c0b',{type:'bar',data:{labels:['Áo thun basic','Quần jean slim fit','Váy hè hoa nhí','Giày thể thao nữ','Phụ kiện belt'],datasets:[{data:[245,189,156,134,98],backgroundColor:['#1d4ed8','#3b82f6','#60a5fa','#93c5fd','#bfdbfe'],borderRadius:4}]},options:{...base,indexAxis:'y',scales:{x:{grid:{color:gridC},border:{display:false}},y:{grid:{display:false},border:{display:false}}}}});
+
+new Chart('c1a',{type:'bar',data:{labels:['T10','T11','T12','T1','T2','T3'],datasets:[{data:[280,295,310,290,297,342],backgroundColor:'#10b981',borderRadius:3},{data:[195,201,215,198,209,218],backgroundColor:'#ef4444',borderRadius:3}]},options:{...base,scales:sc}});
+new Chart('c1b',{type:'doughnut',data:{labels:['Nhập hàng','Vận hành','Nhân sự','Marketing','Khác'],datasets:[{data:[52,18,15,10,5],backgroundColor:['#b45309','#f59e0b','#fcd34d','#fde68a','#d1d5db'],borderWidth:0}]},options:{...base,cutout:'64%'}});
+
+new Chart('c2a',{type:'bar',data:{labels:['Tuần 1','Tuần 2','Tuần 3','Tuần 4'],datasets:[{data:[18,24,21,26],backgroundColor:'#8b5cf6',borderRadius:4}]},options:{...base,scales:sc}});
+new Chart('c2b',{type:'doughnut',data:{labels:['VIP','Thân thiết','Thường xuyên','Mới'],datasets:[{data:[8,22,35,35],backgroundColor:['#7c3aed','#a78bfa','#c4b5fd','#ede9fe'],borderWidth:0}]},options:{...base,cutout:'64%'}});
+
+new Chart('c3a',{type:'bar',data:{labels:days,datasets:[{data:[120,85,210,95,140,180,90],backgroundColor:'#10b981',borderRadius:3},{data:[98,134,87,112,156,143,178],backgroundColor:'#f97316',borderRadius:3}]},options:{...base,scales:sc}});
+new Chart('c3b',{type:'doughnut',data:{labels:['Thời trang','Giày dép','Phụ kiện','Nội y','Khác'],datasets:[{data:[45,22,15,12,6],backgroundColor:['#10b981','#34d399','#6ee7b7','#a7f3d0','#d1fae5'],borderWidth:0}]},options:{...base,cutout:'64%'}});
+
+new Chart('c4a',{type:'bar',data:{labels:['Sale 8/3','Freeship','Mua 2T1','Flash Sale','Tích điểm','Nhóm KH'],datasets:[{data:[456,312,198,318,245,187],backgroundColor:'#ec4899',borderRadius:4}]},options:{...base,scales:{x:{grid:{display:false},border:{display:false},ticks:{maxRotation:30}},y:{grid:{color:gridC},border:{display:false}}}}});
+new Chart('c4b',{type:'doughnut',data:{labels:['Tại quầy','Website','Fanpage','Zalo','Sàn TMĐT'],datasets:[{data:[38,25,18,12,7],backgroundColor:['#ec4899','#f472b6','#f9a8d4','#fce7f3','#e5e7eb'],borderWidth:0}]},options:{...base,cutout:'64%'}});
+
+new Chart('c5a',{type:'doughnut',data:{labels:['Đã giao','Đang giao','Hoàn hàng'],datasets:[{data:[1524,234,84],backgroundColor:['#10b981','#3b82f6','#ef4444'],borderWidth:0}]},options:{...base,cutout:'64%'}});
+new Chart('c5b',{type:'bar',data:{labels:days,datasets:[{data:[78,92,85,112,96,108,89],backgroundColor:'#10b981',borderRadius:3},{data:[4,6,3,8,5,7,4],backgroundColor:'#ef4444',borderRadius:3}]},options:{...base,scales:sc}});
+</script>
+</body>
+</html>
