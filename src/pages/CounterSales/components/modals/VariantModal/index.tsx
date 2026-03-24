@@ -117,7 +117,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
       if (prev[groupId] === optionId) {
         const next = { ...prev };
         delete next[groupId];
-        return next;
+        return next
       }
       return { ...prev, [groupId]: optionId };
     });
