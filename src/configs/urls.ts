@@ -754,6 +754,14 @@ export const urlsApi = {
     close: prefixBilling + "/fund/close",
     history: prefixBilling + "/fund/history", // endpoint mới — xem FundResource
   },
+  debt: {
+    list: prefixBilling + "/debt/list",
+    detail: prefixBilling + "/debt/detail",
+    save: prefixBilling + "/debt/save",
+    pay: prefixBilling + "/debt/pay",
+    markPaid: prefixBilling + "/debt/mark-paid",
+    qr: prefixBilling + "/debt/qr",
+  },
   cashbook: {
     list: prefixAdmin + "/cashbook/list",
     update: prefixAdmin + "/cashbook/update",
