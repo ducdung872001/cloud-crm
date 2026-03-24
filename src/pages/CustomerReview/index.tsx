@@ -1,34 +1,34 @@
 import React, { useState } from "react";
-import TitleAction from "components/titleAction/titleAction";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 import "./index.scss";
 
 /* ─── Mock data ─── */
 const MOCK_REVIEWS = [
-  { id: 1, customer: "Nguyễn Thị Lan",  stars: 5, comment: "Sản phẩm rất tốt, giao hàng nhanh!", product: "Sản phẩm A", date: "15/03/2026", status: "published", sentiment: "positive" },
-  { id: 2, customer: "Trần Văn Minh",   stars: 4, comment: "Chất lượng ổn, giá hợp lý.", product: "Sản phẩm B", date: "14/03/2026", status: "published", sentiment: "positive" },
-  { id: 3, customer: "Lê Thị Hoa",      stars: 2, comment: "Sản phẩm không như mô tả.", product: "Sản phẩm C", date: "13/03/2026", status: "pending",   sentiment: "negative" },
-  { id: 4, customer: "Phạm Quốc Bảo",  stars: 5, comment: "Tuyệt vời! Sẽ mua lại.", product: "Sản phẩm A", date: "12/03/2026", status: "published", sentiment: "positive" },
-  { id: 5, customer: "Hoàng Thị Mai",   stars: 3, comment: "Bình thường, không có gì đặc biệt.", product: "Sản phẩm D", date: "11/03/2026", status: "published", sentiment: "neutral" },
-  { id: 6, customer: "Đỗ Thanh Tùng",   stars: 1, comment: "Giao hàng quá chậm, dịch vụ kém.", product: "Sản phẩm B", date: "10/03/2026", status: "pending",   sentiment: "negative" },
-  { id: 7, customer: "Vũ Thị Hằng",    stars: 5, comment: "Rất hài lòng, đóng gói cẩn thận.", product: "Sản phẩm E", date: "09/03/2026", status: "published", sentiment: "positive" },
-  { id: 8, customer: "Ngô Minh Đức",   stars: 4, comment: "Tốt, sẽ giới thiệu bạn bè.", product: "Sản phẩm A", date: "08/03/2026", status: "published", sentiment: "positive" },
+  { id: 1, customer: "Nguyễn Thị Lan", stars: 5, comment: "Sản phẩm rất tốt, giao hàng nhanh!", product: "Sản phẩm A", date: "15/03/2026", status: "published", sentiment: "positive" },
+  { id: 2, customer: "Trần Văn Minh", stars: 4, comment: "Chất lượng ổn, giá hợp lý.", product: "Sản phẩm B", date: "14/03/2026", status: "published", sentiment: "positive" },
+  { id: 3, customer: "Lê Thị Hoa", stars: 2, comment: "Sản phẩm không như mô tả.", product: "Sản phẩm C", date: "13/03/2026", status: "pending", sentiment: "negative" },
+  { id: 4, customer: "Phạm Quốc Bảo", stars: 5, comment: "Tuyệt vời! Sẽ mua lại.", product: "Sản phẩm A", date: "12/03/2026", status: "published", sentiment: "positive" },
+  { id: 5, customer: "Hoàng Thị Mai", stars: 3, comment: "Bình thường, không có gì đặc biệt.", product: "Sản phẩm D", date: "11/03/2026", status: "published", sentiment: "neutral" },
+  { id: 6, customer: "Đỗ Thanh Tùng", stars: 1, comment: "Giao hàng quá chậm, dịch vụ kém.", product: "Sản phẩm B", date: "10/03/2026", status: "pending", sentiment: "negative" },
+  { id: 7, customer: "Vũ Thị Hằng", stars: 5, comment: "Rất hài lòng, đóng gói cẩn thận.", product: "Sản phẩm E", date: "09/03/2026", status: "published", sentiment: "positive" },
+  { id: 8, customer: "Ngô Minh Đức", stars: 4, comment: "Tốt, sẽ giới thiệu bạn bè.", product: "Sản phẩm A", date: "08/03/2026", status: "published", sentiment: "positive" },
 ];
 
 const DIST = [
   { label: "5 ★", pct: 72, color: "#22c55e" },
   { label: "4 ★", pct: 15, color: "#86efac" },
-  { label: "3 ★", pct: 8,  color: "#f59e0b" },
-  { label: "2 ★", pct: 3,  color: "#fb923c" },
-  { label: "1 ★", pct: 2,  color: "#ef4444" },
+  { label: "3 ★", pct: 8, color: "#f59e0b" },
+  { label: "2 ★", pct: 3, color: "#fb923c" },
+  { label: "1 ★", pct: 2, color: "#ef4444" },
 ];
 
 const SENTIMENT_TREND = [
   { month: "T10", positive: 68, neutral: 20, negative: 12 },
   { month: "T11", positive: 71, neutral: 18, negative: 11 },
   { month: "T12", positive: 69, neutral: 19, negative: 12 },
-  { month: "T1",  positive: 73, neutral: 17, negative: 10 },
-  { month: "T2",  positive: 75, neutral: 16, negative: 9  },
-  { month: "T3",  positive: 78, neutral: 14, negative: 8  },
+  { month: "T1", positive: 73, neutral: 17, negative: 10 },
+  { month: "T2", positive: 75, neutral: 16, negative: 9 },
+  { month: "T3", positive: 78, neutral: 14, negative: 8 },
 ];
 
 /* ─── Sub-components ─── */
@@ -45,8 +45,8 @@ function Stars({ n }: { n: number }) {
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
-    published: { label: "Đã đăng",    cls: "cr-badge--published" },
-    pending:   { label: "Chờ duyệt",  cls: "cr-badge--pending" },
+    published: { label: "Đã đăng", cls: "cr-badge--published" },
+    pending: { label: "Chờ duyệt", cls: "cr-badge--pending" },
   };
   const { label, cls } = map[status] || { label: status, cls: "" };
   return <span className={`cr-badge ${cls}`}>{label}</span>;
@@ -55,8 +55,8 @@ function StatusBadge({ status }: { status: string }) {
 function SentimentDot({ sentiment }: { sentiment: string }) {
   const map: Record<string, { label: string; color: string }> = {
     positive: { label: "Tích cực", color: "#16a34a" },
-    neutral:  { label: "Trung lập", color: "#d97706" },
-    negative: { label: "Tiêu cực",  color: "#dc2626" },
+    neutral: { label: "Trung lập", color: "#d97706" },
+    negative: { label: "Tiêu cực", color: "#dc2626" },
   };
   const { label, color } = map[sentiment] || { label: sentiment, color: "#9ca3af" };
   return (
@@ -79,7 +79,7 @@ export default function CustomerReview(props: { onBackProps?: (v: boolean) => vo
 
   const filtered = MOCK_REVIEWS.filter(r => {
     const matchSearch = !search || r.customer.toLowerCase().includes(search.toLowerCase()) || r.comment.toLowerCase().includes(search.toLowerCase());
-    const matchStar   = starFilter === "all" || r.stars.toString() === starFilter || (starFilter === "3-" && r.stars <= 3);
+    const matchStar = starFilter === "all" || r.stars.toString() === starFilter || (starFilter === "3-" && r.stars <= 3);
     const matchStatus = statusFilter === "all" || r.status === statusFilter;
     return matchSearch && matchStar && matchStatus;
   });
@@ -100,17 +100,18 @@ export default function CustomerReview(props: { onBackProps?: (v: boolean) => vo
 
   /* ─── KPI row ─── */
   const kpis = [
-    { label: "Tổng đánh giá",  value: "1.245", change: "+8%",   color: "#F97316" },
-    { label: "Điểm TB",         value: "4.6/5",  change: "+0.2",  color: "#16A34A" },
-    { label: "5 sao",           value: "72%",    change: "+3%",   color: "#2563EB" },
-    { label: "Chờ duyệt",       value: String(pendingCount), change: null, color: "#7C3AED" },
+    { label: "Tổng đánh giá", value: "1.245", change: "+8%", color: "#F97316" },
+    { label: "Điểm TB", value: "4.6/5", change: "+0.2", color: "#16A34A" },
+    { label: "5 sao", value: "72%", change: "+3%", color: "#2563EB" },
+    { label: "Chờ duyệt", value: String(pendingCount), change: null, color: "#7C3AED" },
   ];
 
   return (
     <div className="page-content">
-      <TitleAction
+      <HeaderTabMenu
         title="Đánh giá & phản hồi"
-        breadcrumb={[{ title: "Phân tích khách hàng", onClick: () => onBackProps?.(true) }]}
+        titleBack="Phân tích khách hàng"
+        onBackProps={onBackProps}
       />
 
       {/* KPI row */}
@@ -156,7 +157,7 @@ export default function CustomerReview(props: { onBackProps?: (v: boolean) => vo
           <div className="cr-filters">
             <div className="cr-search-wrap">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
               </svg>
               <input
                 placeholder="Tìm theo tên hoặc nội dung..."
@@ -270,7 +271,7 @@ export default function CustomerReview(props: { onBackProps?: (v: boolean) => vo
             {[
               { label: "Tích cực", value: "78%", icon: "😊", color: "#16a34a", bg: "#f0fdf4" },
               { label: "Trung lập", value: "14%", icon: "😐", color: "#d97706", bg: "#fffbeb" },
-              { label: "Tiêu cực", value: "8%",  icon: "😞", color: "#dc2626", bg: "#fef2f2" },
+              { label: "Tiêu cực", value: "8%", icon: "😞", color: "#dc2626", bg: "#fef2f2" },
             ].map(s => (
               <div className="cr-sentiment-card" key={s.label} style={{ borderLeft: `4px solid ${s.color}`, background: s.bg }}>
                 <div className="cr-sentiment-card__icon">{s.icon}</div>
@@ -290,9 +291,9 @@ export default function CustomerReview(props: { onBackProps?: (v: boolean) => vo
               {SENTIMENT_TREND.map(d => (
                 <div key={d.month} className="cr-stacked-col">
                   <div className="cr-stacked-bars">
-                    <div title={`Tiêu cực: ${d.negative}%`}  className="cr-bar cr-bar--neg"      style={{ height: `${d.negative}%` }} />
-                    <div title={`Trung lập: ${d.neutral}%`}  className="cr-bar cr-bar--neutral"  style={{ height: `${d.neutral}%` }} />
-                    <div title={`Tích cực: ${d.positive}%`}  className="cr-bar cr-bar--pos"      style={{ height: `${d.positive}%` }} />
+                    <div title={`Tiêu cực: ${d.negative}%`} className="cr-bar cr-bar--neg" style={{ height: `${d.negative}%` }} />
+                    <div title={`Trung lập: ${d.neutral}%`} className="cr-bar cr-bar--neutral" style={{ height: `${d.neutral}%` }} />
+                    <div title={`Tích cực: ${d.positive}%`} className="cr-bar cr-bar--pos" style={{ height: `${d.positive}%` }} />
                   </div>
                   <div className="cr-stacked-label">{d.month}</div>
                 </div>
@@ -311,13 +312,13 @@ export default function CustomerReview(props: { onBackProps?: (v: boolean) => vo
             <div className="cr-keywords">
               {[
                 { word: "giao hàng nhanh", count: 89, sentiment: "positive" },
-                { word: "chất lượng tốt",  count: 76, sentiment: "positive" },
-                { word: "giá hợp lý",       count: 54, sentiment: "positive" },
+                { word: "chất lượng tốt", count: 76, sentiment: "positive" },
+                { word: "giá hợp lý", count: 54, sentiment: "positive" },
                 { word: "đóng gói cẩn thận", count: 43, sentiment: "positive" },
-                { word: "giao chậm",        count: 31, sentiment: "negative" },
+                { word: "giao chậm", count: 31, sentiment: "negative" },
                 { word: "không như mô tả", count: 18, sentiment: "negative" },
-                { word: "bình thường",      count: 24, sentiment: "neutral"  },
-                { word: "sẽ mua lại",       count: 67, sentiment: "positive" },
+                { word: "bình thường", count: 24, sentiment: "neutral" },
+                { word: "sẽ mua lại", count: 67, sentiment: "positive" },
               ].map(k => (
                 <span
                   key={k.word}
