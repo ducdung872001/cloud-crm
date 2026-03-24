@@ -31,7 +31,7 @@ export default function ReceiptModal({ open, cartItems, onClose, customerId, inv
 
   const handleConfirmPay = async () => {
     try {
-      let body: any = {
+      const body: any = {
         id: invoiceId,
         amount: total,
         discount: 0,

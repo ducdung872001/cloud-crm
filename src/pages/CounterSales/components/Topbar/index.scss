@@ -38,6 +38,31 @@
     font-weight: 800;
     font-size: 1.4rem;
     cursor: pointer;
+    border: none;
+  }
+
+  &__warehouse {
+    position: relative;
+  }
+
+  &__warehouse-menu {
+    position: absolute;
+    top: calc(100% + 0.8rem);
+    right: 0;
+    width: 24rem;
+    padding: 1.2rem;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 0.8rem;
+    box-shadow: var(--sh2);
+    z-index: 30;
+  }
+
+  &__warehouse-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
   }
 }
 
@@ -155,5 +180,9 @@
     padding: 0 1rem;
     &__right { gap: 0.6rem; }
     &__shift { display: none; }
+    &__warehouse-menu {
+      right: -0.6rem;
+      width: 22rem;
+    }
   }
 }
