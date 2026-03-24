@@ -970,16 +970,19 @@ export default function ListWork(props: any) {
   const titleActions: ITitleActions = {
     actions: [
       {
-        icon: <Icon name="RefreshCw" style={{ width: 13, height: 13 }} />,
+        icon: <Icon name="RefreshCw" style={{ width: 14, height: 14 }} />,
         title: "Làm mới",
+        color: "secondary",
+        variant: "outline",
         callback: () => {
           reLoadListWork();
         },
       },
       // permissions["WORK_MANAGEMENT_ADD"] == 1 && {
       true && {
-        icon: <Icon name="Plus" style={{ width: 13, height: 13 }} />,
+        icon: <Icon name="Plus" style={{ width: 14, height: 14 }} />,
         title: "Thêm mới",
+        color: "primary",
         callback: () => {
           // setDataWo(null);
           setShowModalAdd(true);
@@ -992,7 +995,8 @@ export default function ListWork(props: any) {
     <div className={`page-content page-work${isNoItem ? " bg-white" : ""}`}>
       <div className="card-box d-flex flex-column">
         <div className="action-header">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          {/* Row 1: Tabs + Actions */}
+          <div className="toolbar-row toolbar-row--top">
             <div className="header_tab">
               {dataHeaderTab.map((item, index) => (
                 <div
@@ -1008,11 +1012,10 @@ export default function ListWork(props: any) {
                 </div>
               ))}
             </div>
-            <div>
-              <TitleAction title="" titleActions={titleActions} />
-            </div>
+            <TitleAction title="" titleActions={titleActions} />
           </div>
-          <div className="line__height--work">
+          {/* Row 2: View switcher + Search + Filter */}
+          <div className="toolbar-row toolbar-row--bottom">
             <div className="container-button-header">
               <div
                 className={isRegimeKanban ? "style-list-button-inactive" : "style-list-button-active"}
@@ -1025,7 +1028,6 @@ export default function ListWork(props: any) {
                 <Icon name="ListData" />
                 <span className="title">Danh sách</span>
               </div>
-
               <div
                 className={isRegimeKanban ? "style-list-button-active" : "style-list-button-inactive"}
                 onClick={() => {

@@ -37,12 +37,7 @@ export default function KanbanStatusWork(props: any) {
 
     onReload,
     isShow,
-    setIsDetailWork,
-    handleDetailWork
   } = props;
-
-  console.log('dataStart', dataStart);
-  
 
   const paramsUrl = getSearchParameters();
 
@@ -53,43 +48,36 @@ export default function KanbanStatusWork(props: any) {
   const [listStatusWork] = useState([
     {
       id: 0,
-      name: "Mới tiếp nhận",
-      icon:'NewWork'
+      name: "Chưa thực hiện",
     },
     {
       id: 1,
-      // name: "Đang thực hiện",
-      name: 'Quá hạn',
-      icon:'ExpireWork'
-    },
-    {
-      id: 4,
-      name: "Tạm dừng",
-      icon:'PauseWork'
+      name: "Đang thực hiện",
     },
     {
       id: 2,
       name: "Đã hoàn thành",
-      icon:'CompleteWork'
     },
     {
       id: 3,
       name: "Đã hủy",
-      icon:'CancelWork'
     },
-    
+    {
+      id: 4,
+      name: "Tạm dừng",
+    },
   ]);
 
-  const [processId, setProcessId] = useState<number>(null);
+  const [idProduct, setIdProduct] = useState<number>(null);
   const [dataProject, setDataProject] = useState(null);
 
   useEffect(() => {
-    if (paramsUrl && paramsUrl.processId) {
-      setProcessId(+paramsUrl.processId);
+    if (paramsUrl && paramsUrl.projectId) {
+      setIdProduct(+paramsUrl.projectId);
     }
   }, [paramsUrl]);
 
-  const getDetailProcess = async (id: number) => {
+  const getDetailProject = async (id: number) => {
     if (!id) return;
 
     const response = await WorkProjectService.detail(id);
@@ -106,13 +94,13 @@ export default function KanbanStatusWork(props: any) {
   };
 
   useEffect(() => {
-    if (processId && processId !== -1 && isShow) {
-      getDetailProcess(processId);
+    if (idProduct && idProduct !== -1 && isShow) {
+      getDetailProject(idProduct);
     }
-  }, [processId, isShow]);
+  }, [idProduct, isShow]);
 
   const [columns, setColumns] = useState<any[]>([]);
-  console.log('columns', columns);
+  // console.log('columns', columns);
 
   const [idStartPoint, setIdStartPoint] = useState<number>(null);
   const [idEndPoint, setIdEndPoint] = useState<number>(null);
@@ -127,7 +115,6 @@ export default function KanbanStatusWork(props: any) {
       return {
         id: item.id,
         title: item.name,
-        icon: item.icon,
         // items: data.filter((element) => {
         //   return element.status === item.id;
         // }),
@@ -170,19 +157,6 @@ export default function KanbanStatusWork(props: any) {
             : item.id === 4
             ? dataPending?.items
             : [],
-
-        total:
-          item.id === 0
-            ? dataStart?.total
-            : item.id === 1
-            ? dataDo?.total
-            : item.id === 2
-            ? dataSuccess?.total
-            : item.id === 3
-            ? dataFail?.total
-            : item.id === 4
-            ? dataPending?.total
-            : false,
       };
     });
 
@@ -287,7 +261,7 @@ export default function KanbanStatusWork(props: any) {
     if (result && itemApproach.hasMore) {
       // console.log('itemApproach', itemApproach);
       const param = {
-        projectId: processId,
+        projectId: idProduct,
         limit: 10,
         page: itemApproach.page + 1,
         status: status,
@@ -319,7 +293,7 @@ export default function KanbanStatusWork(props: any) {
   };
 
   return (
-    <div className="kanban__status--work" style={columns.length > 4 ? { width: `${columns.length * 30}rem`, paddingBottom: "3rem" } : {}}>
+    <div className="kanban__status--work" style={columns.length > 4 ? { width: `${columns.length * 25.5}rem`, paddingBottom: "3rem" } : {}}>
       <DragDropContext onDragEnd={onDragEnd}>
         {columns.map((column, idx) => {
           return (
@@ -329,18 +303,15 @@ export default function KanbanStatusWork(props: any) {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    // style={{ backgroundColor: snapshot.isDraggingOver ? "#D1FAE5" : "#f4f5f7" }}
+                    style={{ backgroundColor: snapshot.isDraggingOver ? "#D1FAE5" : "#f4f5f7" }}
                     className="task-list"
                   >
                     <div className="wrapper__title">
-                      <div className="col-header-left">
-                        <Icon name={column.icon}/>
-                        <span className="title-task">{column.title}</span>
-                      </div>
-                      <span className="total-task">{column.total ?? 0}</span>
+                      <span className="title-task">{column.title}</span>
+                      <span className="total-task">{column.items?.length}</span>
                     </div>
                     <div className="lst__task--item">
-                      {/* {column.id !== 2 && column.id !== 3 && (
+                      {column.id !== 2 && column.id !== 3 && (
                         <div
                           className="action__add--work"
                           onClick={() => {
@@ -350,7 +321,7 @@ export default function KanbanStatusWork(props: any) {
                         >
                           <Icon name="PlusCircleFill" /> Thêm mới
                         </div>
-                      )} */}
+                      )}
 
                       <div
                         className="__task"
@@ -373,8 +344,6 @@ export default function KanbanStatusWork(props: any) {
                               type="status"
                               takeDescWork={(data) => setDescWork(data)}
                               onReload={onReload}
-                              setIsDetailWork={setIsDetailWork}
-                              handleDetailWork={handleDetailWork}
                             />
                           );
                         })}
