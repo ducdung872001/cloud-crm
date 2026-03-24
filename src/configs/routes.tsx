@@ -723,6 +723,12 @@ export const menu: IMenuItem[] = [
         code: "OBJECT_MANAGE",
         icon: <Icon name="FileMgmtMenu" />,
       },
+      {
+        title: "business_rule", // Loại luật nghiệp vụ
+        path: urls.business_rule,
+        icon: <Icon name="RulesMenu" />,
+        code: "",
+      },
       // {
       //   title: "userTaskList", // Xử lý hồ sơ
       //   path: urls.user_task_list,
@@ -741,12 +747,7 @@ export const menu: IMenuItem[] = [
         code: "BPM",
         icon: <Icon name="DefaultProcessSetting" />,
       },
-      // {
-      //   title: "business_rule", // Loại luật nghiệp vụ
-      //   path: urls.business_rule,
-      //   icon: <Icon name="RulesMenu" />,
-      //   code: "",
-      // },
+      
     ],
   },
   {
