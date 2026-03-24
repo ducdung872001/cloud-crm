@@ -1,4 +1,5 @@
-import React, { Fragment, useState, useEffect, useCallback, useRef } from "react";
+import React, { Fragment, useState, useEffect, useCallback, useRef, useLayoutEffect } from "react";
+import ReactDOM from "react-dom";
 import Icon from "components/icon";
 import Badge from "components/badge/badge";
 import BoxTable from "components/boxTable/boxTable";
@@ -99,7 +100,11 @@ export default function PromotionalProgram(props: any) {
     chooseSizeLimit: (limit) => setPagination((prev) => ({ ...prev, sizeLimit: limit, page: 1 })),
   });
 
-  const [statusMenuId, setStatusMenuId] = useState<number | null>(null);
+  const [statusMenu, setStatusMenu] = useState<{
+    id: number;
+    top: number;
+    left: number;
+  } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   // ─── Load danh sách ─────────────────────────────────────────────
@@ -140,7 +145,7 @@ export default function PromotionalProgram(props: any) {
 
   // ─── Đổi trạng thái ─────────────────────────────────────────────
   const handleUpdateStatus = async (id: number, status: number) => {
-    setStatusMenuId(null);
+    setStatusMenu(null);
     const res = await PromotionService.updateStatus(id, status);
     if (res?.code === 0) {
       const label = PROMOTION_STATUS_MAP[status]?.label ?? "trạng thái mới";
@@ -175,7 +180,7 @@ export default function PromotionalProgram(props: any) {
 
   // Đóng status dropdown khi click ngoài
   useEffect(() => {
-    const handler = () => setStatusMenuId(null);
+    const handler = () => setStatusMenu(null);
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
   }, []);
@@ -264,24 +269,31 @@ export default function PromotionalProgram(props: any) {
             <span
               className="promo-status-chevron"
               title="Đổi trạng thái"
-              onClick={(e) => { e.stopPropagation(); setStatusMenuId(statusMenuId === item.id ? null : item.id); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (statusMenu?.id === item.id) {
+                  setStatusMenu(null);
+                  return;
+                }
+                const DROPDOWN_W = 220;
+                const DROPDOWN_H = 110;
+                // Lấy rect của wrapper .promo-status-wrap (cha của chevron)
+                const wrap = (e.currentTarget as HTMLElement).closest(".promo-status-wrap") as HTMLElement;
+                const rect = (wrap ?? e.currentTarget as HTMLElement).getBoundingClientRect();
+                // Right-align: mép phải dropdown = mép phải wrap
+                let left = rect.right - DROPDOWN_W;
+                // Clamp trong viewport
+                left = Math.max(8, Math.min(left, window.innerWidth - DROPDOWN_W - 8));
+                // Flip lên nếu không đủ chỗ phía dưới
+                const spaceBelow = window.innerHeight - rect.bottom;
+                const top = spaceBelow < DROPDOWN_H + 8
+                  ? rect.top - DROPDOWN_H - 4   // hiện lên trên
+                  : rect.bottom + 4;             // hiện xuống dưới
+                setStatusMenu({ id: item.id, top, left });
+              }}
             >
               <Icon name="CaretDown" />
             </span>
-          )}
-          {statusMenuId === item.id && transitions.length > 0 && (
-            <div className="promo-status-dropdown" onClick={(e) => e.stopPropagation()}>
-              {transitions.map((t) => (
-                <div
-                  key={t.status}
-                  className="promo-status-dropdown__item"
-                  onClick={() => handleUpdateStatus(item.id, t.status)}
-                >
-                  <Icon name={t.icon} />
-                  <span>{t.label}</span>
-                </div>
-              ))}
-            </div>
           )}
         </div>
       );
@@ -450,6 +462,36 @@ export default function PromotionalProgram(props: any) {
       </div>
 
       {/* Modal tạo / sửa */}
+      {/* ── Status dropdown portal: ReactDOM.createPortal → render vào document.body
+           Hoàn toàn thoát khỏi mọi overflow/stacking context của bảng ── */}
+      {statusMenu && ReactDOM.createPortal(
+        <div
+          className="promo-status-dropdown"
+          style={{
+            position: "fixed",
+            zIndex: 9999,
+            top:  statusMenu.top,
+            left: statusMenu.left,
+            minWidth: 220,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {(STATUS_TRANSITIONS[
+            listData.find(d => d.id === statusMenu.id)?.status ?? 0
+          ] ?? []).map((t) => (
+            <div
+              key={t.status}
+              className="promo-status-dropdown__item"
+              onClick={() => handleUpdateStatus(statusMenu.id, t.status)}
+            >
+              <Icon name={t.icon} />
+              <span>{t.label}</span>
+            </div>
+          ))}
+        </div>,
+        document.body
+      )}
+
       <AddPromotionalModal
         onShow={showModalAdd}
         data={selectedItem}

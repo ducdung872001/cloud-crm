@@ -373,7 +373,6 @@
 }
 // ── Status badge + dropdown ─────────────────────────────────────────
 .promo-status-wrap {
-  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -394,39 +393,46 @@
 
     svg { width: 12px; height: 12px; }
   }
+}
 
-  .promo-status-dropdown {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    z-index: 99;
-    min-width: 200px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    overflow: hidden;
+// Portal dropdown – render fixed để thoát overflow clip của table/scroll container
+.promo-status-dropdown {
+  // position:fixed + top/left set inline từ getBoundingClientRect
+  // render vào document.body qua ReactDOM.createPortal
+  min-width: 210px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+  // Animation
+  animation: dropdownFadeIn 0.12s ease;
 
-    &__item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      cursor: pointer;
-      font-size: 13px;
-      color: #334155;
-      transition: background 0.15s;
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #334155;
+    transition: background 0.12s;
+    white-space: nowrap;
 
-      &:hover {
-        background: #f8fafc;
-        color: #0f172a;
-      }
-
-      &:not(:last-child) {
-        border-bottom: 1px solid #f1f5f9;
-      }
-
-      svg { width: 15px; height: 15px; flex-shrink: 0; }
+    &:hover {
+      background: #f8fafc;
+      color: #0f172a;
     }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    svg { width: 15px; height: 15px; flex-shrink: 0; color: #64748b; }
   }
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);     }
 }
