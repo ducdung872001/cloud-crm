@@ -67,7 +67,10 @@ export default function PromotionalProgram(props: any) {
     ...DataPaginationDefault,
     name: "Chương trình",
     isChooseSizeLimit: true,
-    setPage:       (page)  => setPagination((prev) => ({ ...prev, page })),
+    // Reset về 0 – tránh DataPaginationDefault hardcode totalPage:10, totalItem:100
+    totalPage: 0,
+    totalItem: 0,
+    setPage:         (page)  => setPagination((prev) => ({ ...prev, page })),
     chooseSizeLimit: (limit) => setPagination((prev) => ({ ...prev, sizeLimit: limit, page: 1 })),
   });
 
@@ -90,8 +93,13 @@ export default function PromotionalProgram(props: any) {
         abortRef.current.signal
       );
       if (res?.code === 0) {
+        const total = res.data?.total ?? 0;
         setListData(res.data?.data ?? []);
-        setPagination((prev) => ({ ...prev, totalItems: res.data?.total ?? 0 }));
+        setPagination((prev) => ({
+          ...prev,
+          totalItem: total,
+          totalPage: Math.ceil(total / prev.sizeLimit) || 0,
+        }));
       } else {
         showToast(res?.message ?? "Không thể tải dữ liệu", "error");
       }
