@@ -73,7 +73,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
   const [qty, setQty] = useState(1);
   const [product, setProduct] = useState<VariantProduct | null>(MOCK_IPHONE);
 
-  const fmt = (n?: number | null) => `${Number(n ?? 0).toLocaleString("vi")} ₫`;
+  const fmt = (n?: number) => (n || 0).toLocaleString("vi") + " ₫";
 
   const { isLoading, dataProduct } = useGetDetailProduct({
     productId: Number(productData?.id) || 0,
@@ -117,7 +117,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
       if (prev[groupId] === optionId) {
         const next = { ...prev };
         delete next[groupId];
-        return next;
+        return next
       }
       return { ...prev, [groupId]: optionId };
     });
