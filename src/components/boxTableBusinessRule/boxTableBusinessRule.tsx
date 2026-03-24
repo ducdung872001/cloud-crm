@@ -122,7 +122,27 @@ export default function BoxTableBusinessRule(props: BoxTableProps) {
       <div className="box-table__wrapper">
         <table className={`table${striped ? " table-striped" : ""}${isPagination ? " has-pagination" : ""}${className ? ` ${className}` : ""}`}>
           <thead>
-            <tr>
+            {/* Hàng group: gộp cột theo loại */}
+            <tr className="thead-group">
+              {isBulkAction && bulkActionItems && bulkActionItems?.length > 0 && listIdChecked && setListIdChecked && (
+                <th className="group-checkbox"></th>
+              )}
+              {titles?.map((title, idx) => {
+                const isOutput = title?.type === "output";
+                const isSTT = title === "STT";
+                return (
+                  <th
+                    key={idx}
+                    className={isSTT ? "group-stt" : isOutput ? "group-output" : "group-input"}
+                  >
+                    {isSTT ? "" : isOutput ? "Kết quả" : "Điều kiện"}
+                  </th>
+                );
+              })}
+              {actions && actions?.length > 0 && <th className="group-actions"></th>}
+            </tr>
+            {/* Hàng tên cột */}
+            <tr className="thead-cols">
               {isBulkAction && bulkActionItems && bulkActionItems?.length > 0 && listIdChecked && setListIdChecked && (
                 <th className="checkbox">
                   <Checkbox
@@ -130,22 +150,19 @@ export default function BoxTableBusinessRule(props: BoxTableProps) {
                     checked={listIdChecked?.length === items.length}
                     onChange={(e) => checkAll(e.target.checked)}
                   />
-                  {/* <BulkAction name={name} selectedCount={listIdChecked?.length} bulkActionItems={bulkActionItems} /> */}
                 </th>
               )}
-              {titles?.map((title, idx) => (
-                <>
-                  {title?.type && title?.type === "output" ? (
-                    <th key={idx} className={`header-output ${dataFormat ? dataFormat[idx] : ""}`}>
-                      <div className="header-content">{title?.name || title?.title || ""}</div>
-                    </th>
-                  ) : (
-                    <th key={idx} className={`${dataFormat ? dataFormat[idx] : ""}`}>
-                      <div className="header-content">{title}</div>
-                    </th>
-                  )}
-                </>
-              ))}
+              {titles?.map((title, idx) => {
+                const isOutput = title?.type === "output";
+                const isSTT = title === "STT";
+                const colClass = isSTT ? "col-stt" : isOutput ? "col-output" : "col-input";
+                const label = isOutput ? (title?.name || title?.title || "") : (typeof title === "string" ? title : "");
+                return (
+                  <th key={idx} className={`${colClass} ${dataFormat ? dataFormat[idx] : ""}`}>
+                    <div className="header-content">{label}</div>
+                  </th>
+                );
+              })}
               {actions && actions?.length > 0 && (
                 <th className={`actions${!actionType || actionType === "dropdown" ? " actions-dropdown" : ""}`}></th>
               )}
@@ -168,10 +185,15 @@ export default function BoxTableBusinessRule(props: BoxTableProps) {
                         <Checkbox checked={isChecked} onChange={(e) => checkOne(item.id, e.target.checked)} />
                       </td>
                     )}
-                    {item.data?.map((d: any, idx: number) => (
+                    {item.data?.map((d: any, idx: number) => {
+                      const titleItem = titles[idx];
+                      const isOutput = titleItem?.type === "output";
+                      const isSTT = titleItem === "STT";
+                      const colClass = isSTT ? "" : isOutput ? "col-output" : "col-input";
+                      return (
                       // remaing: Trường dùng để đánh dấu màu sắc kế toán (> 0 thì xanh, còn <0 thì đỏ)
                       <td
-                        className={`${dataFormat ? dataFormat[idx] : ""} ${
+                        className={`${colClass} ${dataFormat ? dataFormat[idx] : ""} ${
                           titles[idx] == "Tồn" ? (item.raw.remaining >= 0 ? "text-success" : "text-error") : ""
                         }`}
                         key={idx}
@@ -182,7 +204,7 @@ export default function BoxTableBusinessRule(props: BoxTableProps) {
                           <div style={dataSize ? { width: `${typeof dataSize[idx] === "string" ? "auto" : `${dataSize[idx]}rem`}` } : {}}>{d}</div>
                         )}
                       </td>
-                    ))}
+                    );})}
                     {actions && actions?.length > 0 && (
                       <td
                         className={`actions${!actionType || actionType === "dropdown" ? " actions-dropdown" : ""}`}

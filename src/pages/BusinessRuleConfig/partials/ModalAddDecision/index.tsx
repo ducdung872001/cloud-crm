@@ -252,7 +252,7 @@ export default function ModalAddDecision(props: any) {
           </div>
           <ModalBody>
             <div className="list-form-group">
-              <div style={{ marginBottom: "16px" }}>
+              <div className="rule-index-field">
                 <NummericInput
                   name={"ruleIndex"}
                   label="Chỉ số luật"
@@ -269,7 +269,10 @@ export default function ModalAddDecision(props: any) {
                 />
               </div>
               <div className="list-field-item list-field-basic">
-                <h3>Danh sách điều kiện</h3>
+                <div className="section-heading">
+                  <span className="section-badge section-badge--condition">Điều kiện</span>
+                  <h3>Danh sách điều kiện</h3>
+                </div>
                 <div className="list-condition">
                   {inputs.map((item, index) => (
                     <div className="item" key={index}>
@@ -496,7 +499,10 @@ export default function ModalAddDecision(props: any) {
                     </div>
                   ))}
                 </div>
-                <h3>Danh sách kết quả</h3>
+                <div className="section-heading" style={{ marginTop: "2rem" }}>
+                  <span className="section-badge section-badge--result">Kết quả</span>
+                  <h3>Danh sách kết quả</h3>
+                </div>
                 <div className="list-decision">
                   {outputs.map((item, index) => (
                     <div className="item" key={index}>
