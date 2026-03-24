@@ -1,57 +1,56 @@
 @import "../shared.scss";
 
-// ─── Screen header ────────────────────────────────────────────────────────────
+// ─── Screen header (đồng bộ với shared.scss) ─────────────────────────────────
 
 .finance-screen-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 1.2rem;
+  align-items: center;
+  margin-bottom: 1.6rem;
 
   h1 {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.8rem;
+    font-weight: 700;
     color: #133042;
-    font-weight: 600;
   }
 }
 
-// ─── Action buttons ───────────────────────────────────────────────────────────
+// ─── Action buttons (đồng bộ với shared.scss) ────────────────────────────────
 
 .finance-action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   padding: 0.9rem 1.6rem;
   border-radius: 0.9rem;
-  font-size: 1.4rem;
-  font-weight: 500;
+  font-size: 1.3rem;
+  font-weight: 600;
   cursor: pointer;
-  border: 1px solid #c9d9e4;
-  background: #ffffff;
-  color: #2d4f62;
-  transition: background 0.15s, border-color 0.15s;
-
-  &:hover:not(:disabled) {
-    background: #f2f7fb;
-    border-color: #aac4d3;
-  }
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  line-height: 1;
 
   &:disabled {
-    opacity: 0.55;
+    opacity: 0.6;
     cursor: not-allowed;
   }
 
   &--primary {
-    background: #155472;
-    border-color: #155472;
+    background: #133042;
     color: #ffffff;
+    border-color: #133042;
 
-    &:hover:not(:disabled) {
-      background: #1a6a90;
-      border-color: #1a6a90;
-    }
+    &:hover:not(:disabled) { background: #1d4a66; }
+  }
+
+  &--ghost {
+    background: #f0f4f8;
+    color: #476274;
+    border-color: #d6e2ea;
+
+    &:hover:not(:disabled) { background: #e2eaf2; }
   }
 }
 
@@ -282,34 +281,49 @@
   pointer-events: none;
 }
 
-// ─── Type toggle ──────────────────────────────────────────────────────────────
+// ─── Type radio group (đồng bộ với Dashboard) ────────────────────────────────
 
-.finance-type-toggle {
+.finance-radio-group {
   display: flex;
-  border: 1px solid #c9d9e4;
-  border-radius: 0.9rem;
-  overflow: hidden;
+  gap: 0.8rem;
+  padding: 0.4rem;
+  border-radius: 1rem;
+  background: #f3f8fb;
   width: fit-content;
 }
 
-.finance-type-toggle__btn {
-  padding: 0.8rem 2rem;
-  font-size: 1.4rem;
+.finance-radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.4rem;
+  border-radius: 0.8rem;
   cursor: pointer;
-  border: none;
-  background: #f7f9fb;
-  color: #4d6273;
+  color: #294a5f;
+  font-size: 1.35rem;
   font-weight: 500;
   transition: background 0.15s, color 0.15s;
+  user-select: none;
+}
 
-  &:first-child { border-right: 1px solid #c9d9e4; }
+.finance-radio-option input[type="radio"] {
+  width: 1.4rem;
+  height: 1.4rem;
+  accent-color: #133042;
+  cursor: pointer;
+  flex-shrink: 0;
+}
 
-  &--active {
-    color: #ffffff;
-  }
+.finance-radio-option.is-active.finance-radio-option--income {
+  background: #e9faef;
+  color: #167a45;
+  font-weight: 600;
+}
 
-  &--active.finance-type-toggle__btn--income  { background: #138a4b; }
-  &--active.finance-type-toggle__btn--expense { background: #c54a37; }
+.finance-radio-option.is-active.finance-radio-option--expense {
+  background: #fdecea;
+  color: #be4435;
+  font-weight: 600;
 }
 
 // ─── Form error ───────────────────────────────────────────────────────────────

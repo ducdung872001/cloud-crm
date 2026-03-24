@@ -15,13 +15,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { urlsApi } from "configs/urls";
 import CashbookService from "services/CashbookService";
-import CategoryService from "services/CategoryService";
 import {
+  CashbookSlideOver,
   FinanceBadge,
   FinanceEmptyState,
   FinanceLoadMoreIndicator,
   FinancePageShell,
-  FinanceSlideOver,
   FinanceStatCard,
   formatCurrency,
   formatDate,
@@ -60,25 +59,7 @@ interface CategoryItem {
   type: number; // 1=thu, 2=chi
 }
 
-interface CreateForm {
-  type:          1 | 2;
-  categoryId:    string;
-  fundId:        string;
-  amount:        string;
-  relatedEntity: string;
-  transDate:     string;
-  note:          string;
-}
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-
-const todayISO = () => new Date().toISOString().split("T")[0];
-
-const FORM_INIT: CreateForm = {
-  type: 1, categoryId: "", fundId: "",
-  amount: "", relatedEntity: "",
-  transDate: todayISO(), note: "",
-};
 
 /** Lấy URL fund overview từ billing prefix */
 const fundOverviewUrl = () =>
@@ -122,13 +103,7 @@ export default function FinanceCashBook() {
   const [filterFunds, setFilterFunds] = useState<FundItem[]>([]);
 
   // ── Slide-over tạo phiếu ─────────────────────────────────────────────────
-  const [showCreate, setShowCreate]           = useState(false);
-  const [form, setForm]                       = useState<CreateForm>(FORM_INIT);
-  const [submitting, setSubmitting]           = useState(false);
-  const [formError, setFormError]             = useState("");
-  const [categories, setCategories]           = useState<CategoryItem[]>([]);
-  const [formFunds, setFormFunds]             = useState<FundItem[]>([]);
-  const [dropdownLoading, setDropdownLoading] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
 
   const { toast, ToastNode } = useFinanceToast();
   const abortRef = useRef<AbortController | null>(null);
@@ -199,85 +174,6 @@ export default function FinanceCashBook() {
       .catch(() => {/* silent */});
   }, []);
 
-  // ── Load categories + funds khi mở slide-over ────────────────────────────
-  useEffect(() => {
-    if (!showCreate) return;
-    setDropdownLoading(true);
-
-    Promise.allSettled([
-      CategoryService.list({ page: 1, limit: 200 } as any),
-      fetch(fundOverviewUrl()).then(r => r.json()),
-    ]).then(([catRes, fundRes]) => {
-      if (catRes.status === "fulfilled") {
-        const raw = catRes.value?.data?.content ?? catRes.value?.data ?? [];
-        setCategories(
-          (Array.isArray(raw) ? raw : []).map((c: any) => ({
-            id:   Number(c.id),
-            name: String(c.name ?? ""),
-            type: Number(c.type ?? 1),
-          }))
-        );
-      }
-      if (fundRes.status === "fulfilled") {
-        const rawFunds = fundRes.value?.data?.funds ?? [];
-        setFormFunds(
-          (Array.isArray(rawFunds) ? rawFunds : []).map((f: any) => ({
-            id:      Number(f.id),
-            name:    String(f.name ?? ""),
-            balance: Number(f.balance ?? 0),
-          }))
-        );
-      }
-    }).finally(() => setDropdownLoading(false));
-  }, [showCreate]);
-
-  // ── Reset form ───────────────────────────────────────────────────────────
-  const closeCreate = useCallback(() => {
-    setShowCreate(false);
-    setForm(FORM_INIT);
-    setFormError("");
-  }, []);
-
-  // ── Submit tạo phiếu ─────────────────────────────────────────────────────
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError("");
-
-    if (!form.categoryId) { setFormError("Vui lòng chọn khoản mục");  return; }
-    if (!form.fundId)     { setFormError("Vui lòng chọn quỹ tiền");   return; }
-    const amountNum = parseInt(form.amount.replace(/\D/g, ""), 10);
-    if (!amountNum || amountNum <= 0) { setFormError("Số tiền phải lớn hơn 0"); return; }
-
-    setSubmitting(true);
-    try {
-      const catName = categories.find(c => c.id === Number(form.categoryId))?.name ?? "";
-      const res = await CashbookService.update({
-        type:          form.type,
-        categoryId:    Number(form.categoryId),
-        categoryName:  catName,
-        fundId:        Number(form.fundId),
-        amount:        amountNum,
-        note:          form.note,
-        transDate:     form.transDate,
-        relatedEntity: form.relatedEntity,
-        empName:       "",
-        branchId:      0,
-      });
-
-      if (res?.code === 0 || res?.code === 200) {
-        toast("✓ Tạo phiếu thành công");
-        closeCreate();
-        fetchTransactions();   // Reload danh sách
-      } else {
-        setFormError(res?.message ?? "Tạo phiếu thất bại — vui lòng thử lại");
-      }
-    } catch {
-      setFormError("Lỗi kết nối — vui lòng thử lại");
-    } finally {
-      setSubmitting(false);
-    }
-  }, [form, categories, closeCreate, fetchTransactions]);
-
   // ── Progressive list ─────────────────────────────────────────────────────
   const {
     visibleItems: visibleTxns,
@@ -294,13 +190,6 @@ export default function FinanceCashBook() {
     setMonthFilter("this_month");
     setFundFilter("all");
   };
-
-  // ── Amount format cho input ───────────────────────────────────────────────
-  const displayAmount = form.amount
-    ? new Intl.NumberFormat("vi-VN").format(parseInt(form.amount, 10))
-    : "";
-
-  const filteredCats = categories.filter(c => c.type === form.type);
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
@@ -465,149 +354,15 @@ export default function FinanceCashBook() {
       </div>
 
       {/* ── Slide-over: Tạo phiếu Thu / Chi ── */}
-      <FinanceSlideOver
+      <CashbookSlideOver
         open={showCreate}
-        title={form.type === 1 ? "Tạo phiếu thu" : "Tạo phiếu chi"}
-        onClose={closeCreate}
-        footer={
-          <div className="finance-inline-actions">
-            <button
-              className="finance-action-btn finance-action-btn--primary"
-              onClick={handleSubmit}
-              disabled={submitting}
-            >
-              {submitting ? "Đang lưu…" : "Lưu phiếu"}
-            </button>
-            <button
-              className="finance-action-btn"
-              onClick={closeCreate}
-              disabled={submitting}
-            >
-              Hủy
-            </button>
-          </div>
-        }
-      >
-        {dropdownLoading ? (
-          <div className="finance-loading-center">
-            <span className="finance-spinner" />
-          </div>
-        ) : (
-          <div className="finance-form">
-            {/* Loại phiếu */}
-            <div className="finance-form__field">
-              <label className="finance-form__label">Loại phiếu *</label>
-              <div className="finance-type-toggle">
-                <button
-                  type="button"
-                  className={`finance-type-toggle__btn${form.type === 1 ? " finance-type-toggle__btn--active finance-type-toggle__btn--income" : ""}`}
-                  onClick={() => setForm(f => ({ ...f, type: 1, categoryId: "" }))}
-                >
-                  Thu tiền
-                </button>
-                <button
-                  type="button"
-                  className={`finance-type-toggle__btn${form.type === 2 ? " finance-type-toggle__btn--active finance-type-toggle__btn--expense" : ""}`}
-                  onClick={() => setForm(f => ({ ...f, type: 2, categoryId: "" }))}
-                >
-                  Chi tiền
-                </button>
-              </div>
-            </div>
+        onClose={() => setShowCreate(false)}
+        onSuccess={() => {
+          toast("✓ Tạo phiếu thành công");
+          fetchTransactions();
+        }}
+      />
 
-            {/* Khoản mục */}
-            <div className="finance-form__field">
-              <label className="finance-form__label">Khoản mục *</label>
-              <select
-                value={form.categoryId}
-                onChange={e => setForm(f => ({ ...f, categoryId: e.target.value }))}
-                className="finance-filter-select finance-filter-select--full"
-              >
-                <option value="">-- Chọn khoản mục --</option>
-                {filteredCats.map(c => (
-                  <option key={c.id} value={String(c.id)}>{c.name}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Quỹ tiền */}
-            <div className="finance-form__field">
-              <label className="finance-form__label">Quỹ tiền *</label>
-              <select
-                value={form.fundId}
-                onChange={e => setForm(f => ({ ...f, fundId: e.target.value }))}
-                className="finance-filter-select finance-filter-select--full"
-              >
-                <option value="">-- Chọn quỹ --</option>
-                {formFunds.map(fund => (
-                  <option key={fund.id} value={String(fund.id)}>
-                    {fund.name} ({formatCurrency(fund.balance)})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Số tiền */}
-            <div className="finance-form__field">
-              <label className="finance-form__label">Số tiền *</label>
-              <div className="finance-amount-input-wrap">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={displayAmount}
-                  onChange={e => {
-                    const digits = e.target.value.replace(/\D/g, "");
-                    setForm(f => ({ ...f, amount: digits }));
-                  }}
-                  placeholder="0"
-                  className="finance-text-input"
-                />
-                <span className="finance-amount-input-suffix">VND</span>
-              </div>
-            </div>
-
-            {/* Ngày giao dịch */}
-            <div className="finance-form__field">
-              <label className="finance-form__label">Ngày giao dịch</label>
-              <input
-                type="date"
-                value={form.transDate}
-                onChange={e => setForm(f => ({ ...f, transDate: e.target.value }))}
-                className="finance-text-input"
-              />
-            </div>
-
-            {/* Đối tượng liên quan */}
-            <div className="finance-form__field">
-              <label className="finance-form__label">Đối tượng liên quan</label>
-              <input
-                type="text"
-                value={form.relatedEntity}
-                onChange={e => setForm(f => ({ ...f, relatedEntity: e.target.value }))}
-                placeholder="Tên khách hàng / nhà cung cấp..."
-                className="finance-text-input"
-              />
-            </div>
-
-            {/* Ghi chú */}
-            <div className="finance-form__field">
-              <label className="finance-form__label">Ghi chú</label>
-              <textarea
-                value={form.note}
-                onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
-                placeholder="Nội dung phiếu..."
-                rows={3}
-                className="finance-text-input finance-text-input--textarea"
-              />
-            </div>
-
-            {/* Error */}
-            {formError && (
-              <div className="finance-form__error">{formError}</div>
-            )}
-          </div>
-        )}
-      </FinanceSlideOver>
-    </FinancePageShell>
+          </FinancePageShell>
   );
 }
