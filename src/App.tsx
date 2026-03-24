@@ -293,11 +293,11 @@ export default function App() {
   // Khởi tạo tổng đài
   const [showModalCallIncome, setShowModalCallIncome] = useState<boolean>(false);
   const pbxCustomerCode = "d9cf985baac44238b3d930ae569d9f0912";
-  const employeeSip470 = "470"; // Test với tài khoản Nguyễn Ngọc Trung trên rebornjsc sdt 0962829352 có id là 81
+  const employeeSip470 = "101"; // Test với tài khoản Nguyễn Ngọc Trung trên rebornjsc sdt 0962829352 có id là 81
   const employeeSip471 = "471"; // Test với tài khoản Hoàng Văn Lợi trên rebornjsc sdt 0862999272 có id là 703
 
   const { callState, incomingNumber, makeCall, answer, hangup, transfer } = useSTWebRTC({
-    extension: parseInt(dataInfoEmployee?.id) == 81 ? employeeSip470 : parseInt(dataInfoEmployee?.id) == 703 ? employeeSip471 : null, //test tạm thời, sau này lấy theo dataInfoEmployee?.sip
+    extension: parseInt(dataInfoEmployee?.id) == 4699513 ? employeeSip470 : parseInt(dataInfoEmployee?.id) == 703 ? employeeSip471 : null, //test tạm thời, sau này lấy theo dataInfoEmployee?.sip
     pbxCustomerCode: pbxCustomerCode,
   });
 
