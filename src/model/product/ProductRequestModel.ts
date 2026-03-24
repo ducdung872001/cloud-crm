@@ -2,6 +2,7 @@ export interface IProductFilterRequest {
   name?: string;
   page?: number;
   limit?: number;
+  warehouseId?: number;
 }
 
 export interface IProductRequest {
@@ -31,10 +32,23 @@ export interface IProductRequest {
     unitId?: number | null;
     price: number;
     pricePromo?: number;
+    priceWholesale?: number;
+    pricePromotion?: number;
     supplierId?: number | null;
     costPrice?: number;
     quantity?: number;
     images?: string[];
+    variantPrices?: {
+      id?: number | null;
+      unitId?: number | null;
+      unitName?: string;
+      price?: number;
+    }[];
+    selectedOptions?: {
+      groupName?: string;
+      label?: string;
+      optionValueId?: number;
+    }[];
     optionValueIds?: number[];
     attributes?: {
       name: string;

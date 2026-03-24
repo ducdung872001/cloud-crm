@@ -268,7 +268,12 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 1.2rem;
+    padding: 1.8rem 2rem 0;
     margin-bottom: 1.2rem;
+  }
+
+  .finance-report__card-header + .finance-report__card-body {
+    padding-top: 0;
   }
 
   .finance-report__card-title {
@@ -579,6 +584,11 @@
     .finance-report__table-actions {
       width: 100%;
       justify-content: space-between;
+    }
+
+    .finance-report__card-header {
+      padding-left: 1.4rem;
+      padding-right: 1.4rem;
     }
 
     .finance-report__pager {

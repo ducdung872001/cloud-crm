@@ -14,6 +14,7 @@ export interface IProductListParams {
   limit?: number;
   page?: number;
   categoryId?: string;
+  warehouseId?: number;
   [key: string]: unknown;
 }
 

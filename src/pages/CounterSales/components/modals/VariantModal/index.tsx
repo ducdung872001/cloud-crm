@@ -73,7 +73,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
   const [qty, setQty] = useState(1);
   const [product, setProduct] = useState<VariantProduct | null>(MOCK_IPHONE);
 
-  const fmt = (n: number) => n.toLocaleString("vi") + " ₫";
+  const fmt = (n?: number | null) => `${Number(n ?? 0).toLocaleString("vi")} ₫`;
 
   const { isLoading, dataProduct } = useGetDetailProduct({
     productId: Number(productData?.id) || 0,
@@ -117,7 +117,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
       if (prev[groupId] === optionId) {
         const next = { ...prev };
         delete next[groupId];
-        return next;
+        return next
       }
       return { ...prev, [groupId]: optionId };
     });
@@ -131,6 +131,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
 
   const handleAddToCart = () => {
     if (!product || !matchedVariant) return;
+    const matchedPrice = Number(matchedVariant.price ?? 0);
 
     // Tạo label từ các lựa chọn
     const variantLabel = product.variantGroups
@@ -147,8 +148,8 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
       image: matchedVariant.images?.[0] || product.avatar || "", // ưu tiên ảnh của biến thể, fallback sang ảnh chung của sản phẩm
       icon: product.icon ?? "📦",
       name: `${product.name} (${variantLabel})`,
-      priceLabel: fmt(matchedVariant.price),
-      price: matchedVariant.price,
+      priceLabel: fmt(matchedPrice),
+      price: matchedPrice,
       unit: product.unit,
       qty,
     });
