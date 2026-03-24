@@ -611,7 +611,9 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         unitId: c.unitId ?? null,
         price: +(c.price ?? 0) || 0,
         costPrice: +(c.costPrice ?? 0) || 0,
+        priceWholesale: +(c.priceWholesale ?? 0) || 0,
         pricePromo: +(c.pricePromo ?? 0) || 0,
+        pricePromotion: +(c.pricePromo ?? 0) || 0,
         images: c.images || [],
         attributes,
         selectedOptions,
@@ -800,6 +802,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           costPrice: +(c.costPrice ?? 0) || 0,
           priceWholesale: +(c.priceWholesale ?? 0) || 0,
           pricePromo: +(c.pricePromo ?? 0) || 0,
+          pricePromotion: +(c.pricePromo ?? 0) || 0,
           image: c.images?.[0] || "",
           images: c.images || [],
           selectedOptions: activeAttrs.map((attr) => ({
