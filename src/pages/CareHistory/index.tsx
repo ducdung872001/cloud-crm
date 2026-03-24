@@ -56,7 +56,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, sub, icon, color, tre
 );
 
 export default function CareHistory(props: any) {
-  document.title = "Lịch sử chăm sóc KH";
+  document.title = "Lịch sử chăm sóc";
 
   const { onBackProps } = props;
   const [permissions] = useState(getPermissions());
@@ -190,7 +190,7 @@ export default function CareHistory(props: any) {
   return (
     <div className="promo-page page-content">
       <HeaderTabMenu
-        title="Lịch sử chăm sóc KH"
+        title="Lịch sử chăm sóc"
         titleBack="Chăm sóc khách hàng"
         titleActions={titleActions}
         onBackProps={onBackProps}
