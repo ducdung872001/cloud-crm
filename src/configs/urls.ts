@@ -2397,11 +2397,11 @@ export const urlsApi = {
     deleteCustomer: prefixAdmin + "/maCustomer/delete",
     updateMapping: prefixAdmin + "/maMapping/update",
     detailMapping: prefixAdmin + "/maMapping/get",
-    //Chương trình khách hàng thân thiết
+    //Quy tắc tích điểm
     listLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/list",
     updateLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/update",
     deleteLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/delete",
-    //Danh sách hội viên
+    //Danh sách thành viên
     listLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/list",
     updateLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/update",
     deleteLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/delete",

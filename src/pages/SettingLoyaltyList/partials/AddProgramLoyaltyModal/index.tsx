@@ -308,7 +308,7 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
     () =>
       [
         {
-          label: "Tên chương trình khách hàng thân thiết",
+          label: "Tên quy tắc tích điểm",
           name: "name",
           type: "text",
           fill: true,

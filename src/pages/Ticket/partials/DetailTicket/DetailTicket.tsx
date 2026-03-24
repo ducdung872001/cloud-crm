@@ -126,7 +126,7 @@ export default function DetailTicket() {
             className="title-first"
             title="Quay lại"
           >
-            Tiếp nhận hỗ trợ
+            Phiếu hỗ trợ
           </h1>
           <Icon name="ChevronRight" />
           <h1 className="title-last">Chi tiết hỗ trợ</h1>

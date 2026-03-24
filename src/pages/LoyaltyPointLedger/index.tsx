@@ -22,7 +22,7 @@ import moment from "moment";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
 export default function LoyaltyPointLedger(props) {
-  document.title = "Nhật ký điểm hội viên";
+  document.title = "Lịch sử điểm";
 
   const isMounted = useRef(false);
   const { onBackProps } = props;
@@ -38,12 +38,12 @@ export default function LoyaltyPointLedger(props) {
   const [params, setParams] = useState<IRoyaltyFilterRequest>({ name: "", limit: 10 });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
-    { key: "all", name: "Nhật ký điểm hội viên", is_active: true },
+    { key: "all", name: "Lịch sử điểm", is_active: true },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Nhật ký điểm hội viên",
+    name: "Lịch sử điểm",
     isChooseSizeLimit: true,
     setPage: (page) => setParams((prev) => ({ ...prev, page })),
     chooseSizeLimit: (limit) => setParams((prev) => ({ ...prev, limit })),
@@ -112,7 +112,7 @@ export default function LoyaltyPointLedger(props) {
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Nhật ký điểm hội viên"
+          name="Lịch sử điểm"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -120,7 +120,7 @@ export default function LoyaltyPointLedger(props) {
         />
         {!isLoading && listData && listData.length > 0 ? (
           <BoxTable
-            name="nhật ký điểm hội viên"
+            name="lịch sử điểm"
             titles={titles}
             items={listData}
             isPagination={true}

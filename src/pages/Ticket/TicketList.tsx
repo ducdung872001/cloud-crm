@@ -24,7 +24,7 @@ import "./TicketList.scss";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
 export default function TicketList(props) {
-  document.title = "Tiếp nhận hỗ trợ";
+  document.title = "Phiếu hỗ trợ";
 
   const isMounted = useRef(false);
   const { onBackProps } = props;
@@ -51,7 +51,7 @@ export default function TicketList(props) {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách hỗ trợ",
+      name: "Danh sách phiếu hỗ trợ",
       is_active: true,
     },
   ]);
@@ -564,12 +564,12 @@ export default function TicketList(props) {
   return (
     <div className={`page-content page-ticket${isNoItem ? " bg-white" : ""}`}>
       <HeaderTabMenu
-        title="Tiếp nhận hỗ trợ"
+        title="Phiếu hỗ trợ"
         titleBack="Chăm sóc khách hàng"
         onBackProps={onBackProps}
         titleActions={titleActions}
       />
-      {/* <TitleAction title="Tiếp nhận hỗ trợ" titleActions={titleActions} /> */}
+      {/* <TitleAction title="Phiếu hỗ trợ" titleActions={titleActions} /> */}
       <div className="card-box d-flex flex-column">
         <div className={`${isRegimeKanban ? "d-none" : ""}`}>
           <div className="option-improve">

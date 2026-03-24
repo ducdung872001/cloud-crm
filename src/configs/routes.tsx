@@ -516,7 +516,7 @@ export const menu: IMenuItem[] = [
         code: "", //Tài nguyên cho show quản lý đặt hàng hay không
       },
       {
-        title: "memberList", // Danh sách hội viên
+        title: "memberList", // Danh sách thành viên
         path: urls.member_list,
         icon: <Icon name="MemberListMenu" />,
         code: "",
@@ -570,14 +570,14 @@ export const menu: IMenuItem[] = [
       //   code: "",
       // },
       // {
-      //   title: "loyaltyPointLedger", // Nhật ký điểm hội viên
+      //   title: "loyaltyPointLedger", // Lịch sử điểm
       //   path: urls.loyalty_point_ledger,
       //   icon: <Icon name="PointsLogMenu" />,
       //   code: "",
       // },
 
       // {
-      //   title: "receiveTicket", // Tiếp nhận hỗ trợ
+      //   title: "receiveTicket", // Phiếu hỗ trợ
       //   path: urls.ticket,
       //   icon: <Icon name="SupportMenu" />,
       //   code: "TICKET",
@@ -607,7 +607,7 @@ export const menu: IMenuItem[] = [
       //   code: "KANBAN_V2",
       // },
       // {
-      //   title: "receiveTicketProcess", // Tiếp nhận hỗ trợ
+      //   title: "receiveTicketProcess", // Phiếu hỗ trợ
       //   path: urls.ticket_process,
       //   icon: <Icon name="ReceiveTicket" />,
       //   code: "KANBAN_V2",

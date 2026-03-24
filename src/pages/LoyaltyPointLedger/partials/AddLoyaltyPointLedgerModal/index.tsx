@@ -308,7 +308,7 @@ export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerM
               key={countCheckAddLoyaltyProgram}
               id="loyaltyProgramId"
               name="loyaltyProgramId"
-              label="Chương trình khách hàng thân thiết"
+              label="Quy tắc tích điểm"
               fill={true}
               options={[]}
               value={loyaltyProgramData}
