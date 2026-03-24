@@ -1,6 +1,66 @@
-/* MemberCustomersPage.scss */
+/* ─── Hub: section headers bao quanh .menu của TabMenuList ─── */
 
-/* ─── Reward cards grid ─── */
+.mcp-hub {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mcp-section {
+  /* Không có border riêng — để .menu và .item-menu tự render như TabMenuList */
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  &__dot {
+    width: 4px;
+    height: 16px;
+    border-radius: 2px;
+    background: var(--primary-bg-color);
+    flex-shrink: 0;
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #6B7280;
+    letter-spacing: 0.06em;
+  }
+}
+
+/* .menu và .item-menu đã được định nghĩa trong TabMenuList.scss — không cần override */
+
+/* ─── Stat cards ─── */
+.promo-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.promo-stat-card {
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid;
+  background: #fff;
+
+  &__body    { display: flex; align-items: flex-start; justify-content: space-between; }
+  &__content { flex: 1; }
+  &__label   { font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 6px; }
+  &__value   { font-size: 22px; font-weight: 700; }
+
+  &--orange { border-color: #fed7aa; .promo-stat-card__value { color: #ea580c; } }
+  &--green  { border-color: #bbf7d0; .promo-stat-card__value { color: #16a34a; } }
+  &--blue   { border-color: #bfdbfe; .promo-stat-card__value { color: #2563eb; } }
+  &--purple { border-color: #ddd6fe; .promo-stat-card__value { color: #7c3aed; } }
+}
+
+/* ─── Rewards grid ─── */
 .mcp-rewards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -36,14 +96,8 @@
   span { font-size: 11px; font-weight: 400; color: #9CA3AF; }
 }
 
-.mcp-reward-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 10px;
-}
-
-.mcp-progress-wrap { margin-bottom: 8px; }
+.mcp-reward-name     { font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 10px; }
+.mcp-progress-wrap   { margin-bottom: 8px; }
 
 .mcp-progress-bar {
   width: 100%;
@@ -54,16 +108,10 @@
   overflow: hidden;
 }
 
-.mcp-progress-fill {
-  height: 100%;
-  background: #F97316;
-  border-radius: 3px;
-}
-
-.mcp-progress-text { font-size: 11px; color: #6B7280; }
-.mcp-reward-expiry { font-size: 11px; color: #9CA3AF; margin-bottom: 12px; }
-
-.mcp-reward-actions { display: flex; gap: 8px; }
+.mcp-progress-fill   { height: 100%; background: #F97316; border-radius: 3px; }
+.mcp-progress-text   { font-size: 11px; color: #6B7280; }
+.mcp-reward-expiry   { font-size: 11px; color: #9CA3AF; margin-bottom: 12px; }
+.mcp-reward-actions  { display: flex; gap: 8px; }
 
 /* ─── Add form ─── */
 .mcp-form-card {
@@ -73,12 +121,7 @@
   padding: 20px;
   margin-bottom: 20px;
 
-  &__title {
-    font-size: 15px;
-    font-weight: 600;
-    color: #065F46;
-    margin-bottom: 14px;
-  }
+  &__title { font-size: 15px; font-weight: 600; color: #065F46; margin-bottom: 14px; }
 }
 
 .mcp-form-row {
@@ -112,13 +155,12 @@
   gap: 10px;
 }
 
-/* ─── Charts layout ─── */
+/* ─── Charts ─── */
 .mcp-charts-row {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 16px;
   margin-top: 4px;
-
   @media (max-width: 900px) { grid-template-columns: 1fr; }
 }
 
@@ -140,7 +182,7 @@
   color: #6B7280;
 }
 
-.mcp-clv-list { display: flex; flex-direction: column; gap: 14px; margin-top: 10px; }
+.mcp-clv-list  { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
 
 .mcp-clv-row {
   display: flex;
@@ -148,7 +190,7 @@
   gap: 10px;
 }
 
-.mcp-clv-tier { width: 80px; font-size: 13px; font-weight: 500; color: #374151; }
+.mcp-clv-tier     { width: 80px; font-size: 13px; font-weight: 500; color: #374151; }
 
 .mcp-clv-bar-wrap {
   flex: 1;
@@ -158,10 +200,10 @@
   overflow: hidden;
 }
 
-.mcp-clv-bar { height: 100%; border-radius: 4px; }
-.mcp-clv-val { font-size: 13px; font-weight: 600; color: #374151; min-width: 44px; text-align: right; }
+.mcp-clv-bar      { height: 100%; border-radius: 4px; }
+.mcp-clv-val      { font-size: 13px; font-weight: 600; color: #374151; min-width: 44px; text-align: right; }
 
-/* ─── Shared buttons — uses project CSS variable for primary color ─── */
+/* ─── Buttons ─── */
 .mcp-btn {
   padding: 8px 16px;
   border-radius: 7px;
@@ -170,51 +212,9 @@
   cursor: pointer;
   border: none;
   transition: opacity 0.15s;
-
   &:hover { opacity: 0.88; }
 
-  &--primary {
-    background: var(--primary-bg-color);
-    color: #fff;
-  }
-
-  &--secondary {
-    background: #fff;
-    color: #374151;
-    border: 1px solid var(--border-color);
-  }
-
-  &--sm {
-    padding: 5px 12px;
-    font-size: 12px;
-  }
-}
-
-/* ─── Reuse project stat card pattern ─── */
-/* promo-stats-grid and promo-stat-card defined in RateCustomer/index.scss
-   are not globally available, so redeclare them here */
-.promo-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
-
-  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
-}
-
-.promo-stat-card {
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid;
-  background: #fff;
-
-  &__body { display: flex; align-items: flex-start; justify-content: space-between; }
-  &__content { flex: 1; }
-  &__label { font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 6px; }
-  &__value { font-size: 22px; font-weight: 700; }
-
-  &--orange { border-color: #fed7aa; .promo-stat-card__value { color: #ea580c; } }
-  &--green  { border-color: #bbf7d0; .promo-stat-card__value { color: #16a34a; } }
-  &--blue   { border-color: #bfdbfe; .promo-stat-card__value { color: #2563eb; } }
-  &--purple { border-color: #ddd6fe; .promo-stat-card__value { color: #7c3aed; } }
+  &--primary   { background: var(--primary-bg-color); color: #fff; }
+  &--secondary { background: #fff; color: #374151; border: 1px solid var(--border-color); }
+  &--sm        { padding: 5px 12px; font-size: 12px; }
 }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Chart } from "components/chart/Chart";
 import Badge from "components/badge/badge";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
 // --- data giữ nguyên ---
 const MOCK_CAMPAIGNS = [
@@ -134,11 +135,12 @@ export default function MarketingHistoryPage({ onBackProps }: MarketingHistoryPa
 
   return (
     <div style={s.page}>
-      {/* Header */}
-      <div>
-        <h1 style={s.heading}>Lịch sử chiến dịch</h1>
-        <p style={s.subText}>Tổng hợp hiệu quả toàn bộ chiến dịch Marketing</p>
-      </div>
+      {/* HeaderTabMenu — breadcrumb back to "Chiến dịch Marketing" */}
+      <HeaderTabMenu
+        title="Lịch sử chiến dịch"
+        titleBack="Chiến dịch Marketing"
+        onBackProps={onBackProps}
+      />
 
       {/* Stat cards */}
       <div style={s.grid4}>
