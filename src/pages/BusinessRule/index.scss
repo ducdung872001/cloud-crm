@@ -1,83 +1,25 @@
 .page-business-rule-list {
-  .title-action {
-    // padding-top: 2rem;
+
+  // Code badge cho cột Mã loại nghiệp vụ
+  .code-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.8rem;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.4rem;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 1.2rem;
+    color: #475569;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    max-width: 22rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .action-navigation {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
 
-    .action-backup {
-      display: flex;
-      align-items: center;
-
-      h1 {
-        color: var(--text-primary-color);
-        font-size: var(--text-3xl);
-        line-height: 2.8rem;
-        padding-right: 1rem;
-        margin: 0;
-        font-weight: var(--fw-bold);
-        text-transform: none; // ✅ standardized
-      }
-
-      .title-first {
-        cursor: pointer;
-
-        &:hover {
-          opacity: 0.8;
-        }
-      }
-
-      .title-last {
-        color: var(--extra-color-50);
-      }
-
-      svg {
-        width: 4rem;
-        height: 4rem;
-        padding-right: 1rem;
-      }
-    }
-
-    @media (max-width: 760px) {
-      justify-content: flex-start;
-      flex-direction: column;
-
-      .action-backup {
-        position: relative;
-
-        .title-first {
-          display: none;
-        }
-
-        svg {
-          position: absolute;
-          left: -1.4rem;
-          padding-right: 0.5rem;
-          transform: rotate(180deg);
-        }
-
-        .title-last {
-          color: var(--text-primary-color);
-          margin-left: 3rem;
-        }
-      }
-
-      .title-action {
-        display: block !important;
-        margin-left: 3rem;
-      }
-    }
-
-    @media (max-width: 360px) {
-      .action-backup {
-        .title-last {
-          font-size: 2rem;
-          color: var(--text-primary-color);
-          margin-left: 3rem;
-        }
-      }
-    }
+  // Settings action — nhãn tooltip rõ hơn
+  .action-config-btn {
+    position: relative;
   }
 }

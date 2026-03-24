@@ -559,6 +559,72 @@ export default function ListWork(props: any) {
 
   const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", "text-center", "text-center", "text-center"];
 
+  // Helper render status badge — pill có text rõ ràng
+  const renderStatusBadge = (item: any) => {
+    const isOverdue = new Date() > new Date(item?.endTime);
+    const overdueDays = handleUnfulfilled(item.endTime, true);
+    const overdueFull = handleUnfulfilled(item.endTime);
+
+    if (isOverdue && (item.status === 0 || item.status === 1)) {
+      return (
+        <Tippy content={<span>Quá hạn {overdueFull}</span>}>
+          <span className="status-badge status-badge--overdue">
+            <span className="status-dot" />
+            Quá hạn {overdueDays}
+          </span>
+        </Tippy>
+      );
+    }
+
+    switch (item.status) {
+      case 0:
+        return (
+          <Tippy content="Chưa tiếp nhận">
+            <span className="status-badge status-badge--pending">
+              <span className="status-dot" />
+              Chưa tiếp nhận
+            </span>
+          </Tippy>
+        );
+      case 1:
+        return (
+          <Tippy content="Mới tiếp nhận">
+            <span className="status-badge status-badge--new">
+              <span className="status-dot" />
+              Mới tiếp nhận
+            </span>
+          </Tippy>
+        );
+      case 2:
+        return (
+          <Tippy content="Hoàn thành">
+            <span className="status-badge status-badge--done">
+              <span className="status-dot" />
+              Hoàn thành
+            </span>
+          </Tippy>
+        );
+      case 3:
+        return (
+          <Tippy content="Đã huỷ">
+            <span className="status-badge status-badge--cancelled">
+              <span className="status-dot" />
+              Đã huỷ
+            </span>
+          </Tippy>
+        );
+      default:
+        return (
+          <Tippy content={<span>Tạm dừng {overdueFull}</span>}>
+            <span className="status-badge status-badge--paused">
+              <span className="status-dot" />
+              Tạm dừng {overdueDays}
+            </span>
+          </Tippy>
+        );
+    }
+  };
+
   const dataMappingArray = (item: any, index: number, type?: string) =>
     type !== "export"
       ? [
@@ -663,131 +729,8 @@ export default function ListWork(props: any) {
           </div>,
           // <div style={{ width: "20rem" }}>{item.extendedData && JSON.parse(item.extendedData) ? JSON.parse(item.extendedData).prName : ""}</div>,
           <div>{item.employeeName}</div>,
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            {item.status == 0 ? (
-              new Date() > new Date(item?.endTime) ? (
-                <Tippy content={<span>Quá hạn {handleUnfulfilled(item.endTime)}</span>}>
-                  <div
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 100,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: "#C94B1C",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <span style={{ fontSize: 12, fontWeight: 600, color: "#FFFFFF" }}>{handleUnfulfilled(item.endTime, true)}</span>
-                  </div>
-                </Tippy>
-              ) : (
-                <Tippy content={<span>Chưa tiếp nhận</span>}>
-                  <div
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 100,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: "#047BC1",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <Icon name="ArrowDownRight" />
-                  </div>
-                </Tippy>
-              )
-            ) : item.status == 1 ? (
-              new Date() > new Date(item?.endTime) ? (
-                <Tippy content={<span>Quá hạn {handleUnfulfilled(item.endTime)}</span>}>
-                  <div
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 100,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: "#C94B1C",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <span style={{ fontSize: 12, fontWeight: 600, color: "#FFFFFF" }}>{handleUnfulfilled(item.endTime, true)}</span>
-                  </div>
-                </Tippy>
-              ) : (
-                <Tippy content={<span>Mới tiếp nhận</span>}>
-                  <div
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 100,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: "#047BC1",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <Icon name="ArrowDownRight" />
-                  </div>
-                </Tippy>
-              )
-            ) : item.status == 2 ? (
-              <Tippy content={"Hoàn thành"}>
-                <div
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 100,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "#B7B8B9",
-                    cursor: "pointer",
-                  }}
-                >
-                  <Icon name="Checked" style={{ width: 15, height: 15, fill: "#FFFFFF" }} />
-                </div>
-              </Tippy>
-            ) : item.status == 3 ? (
-              <Tippy content={"Đã huỷ"}>
-                <div
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 100,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "#B7B8B9",
-                    cursor: "pointer",
-                  }}
-                >
-                  <Icon name="Times" style={{ width: 15, height: 15, fill: "#FFFFFF" }} />
-                </div>
-              </Tippy>
-            ) : (
-              <Tippy content={<span>Tạm dừng {handleUnfulfilled(item.endTime)}</span>}>
-                <div
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 100,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "#CA8A04",
-                    cursor: "pointer",
-                  }}
-                >
-                  <span style={{ fontSize: 12, fontWeight: 600, color: "#FFFFFF" }}>{handleUnfulfilled(item.endTime, true)}</span>
-                </div>
-              </Tippy>
-            )}
+          <div className="status-cell">
+            {renderStatusBadge(item)}
           </div>,
         ]
       : [
@@ -1048,7 +991,7 @@ export default function ListWork(props: any) {
   return (
     <div className={`page-content page-work${isNoItem ? " bg-white" : ""}`}>
       <div className="card-box d-flex flex-column">
-        {/* <div className="action-header">
+        <div className="action-header">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div className="header_tab">
               {dataHeaderTab.map((item, index) => (
@@ -1192,7 +1135,7 @@ export default function ListWork(props: any) {
               </div>
             </div>
           </div>
-        </div> */}
+        </div>
 
         <div className={`${isRegimeKanban || isRegimeReport ? "d-none" : ""}`}>
           <TableWork

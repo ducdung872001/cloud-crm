@@ -147,7 +147,11 @@ export default function BusinessRule(props: any) {
 
   const dataFormat = ["text-center", "", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.code];
+  const dataMappingArray = (item: any, index: number) => [
+    getPageOffset(params) + index + 1,
+    item.name,
+    <span className="code-badge" title={item.code}>{item.code}</span>,
+  ];
 
   const actionsTable = (item: any): IAction[] => {
     return [
