@@ -5,7 +5,7 @@ import TabMenuList from "@/components/TabMenuList/TabMenuList";
 import MarketingHistoryPage from "../MarketingHistory/MarketingHistoryPage";
 import CampaignManagementPage from "../CampaignManagement/CampaignManagementPage";
 import ContentTemplatePage from "../ContentTemplate/ContentTemplatePage";
-import CustomerSegmentBridge from "../CampaignManagement/CustomerSegmentBridge";
+import AudienceManagementPage from "../CampaignManagement/AudienceManagementPage";
 
 export default function MarketingCampaignPage() {
   document.title = "Chiến dịch Marketing";
@@ -15,11 +15,13 @@ export default function MarketingCampaignPage() {
 
   const listTab = [
     {
-      title: "Phân khúc khách hàng",
+      // Đây là OPERATIONAL — tạo & quản lý audience để TARGET campaigns.
+      // Khác với "Phân khúc khách hàng" trong Phân tích KH (analytics/read-only).
+      title: "Đối tượng chiến dịch",
       backgroundColor: "#EEEDFE",
       icon: "SegmentAnalysis",
-      tab: "segments",
-      des: "Tạo và quản lý nhóm khách hàng mục tiêu để gửi chiến dịch phù hợp từng nhóm",
+      tab: "audience",
+      des: "Tạo và quản lý nhóm đối tượng mục tiêu để gửi chiến dịch, bao gồm điều kiện lọc và thao tác tạo chiến dịch trực tiếp",
     },
     {
       title: "Tạo & quản lý chiến dịch",
@@ -33,7 +35,7 @@ export default function MarketingCampaignPage() {
       backgroundColor: "#E1F5EE",
       icon: "EmailMenu",
       tab: "templates",
-      des: "Quản lý thư viện template cho SMS, Email, Zalo — tái sử dụng khi tạo chiến dịch",
+      des: "Quản lý thư viện template cho SMS, Email, Zalo — tái sử dụng khi tạo chiến dịch, tiết kiệm thời gian soạn nội dung",
     },
     {
       title: "Lịch sử chiến dịch",
@@ -61,10 +63,10 @@ export default function MarketingCampaignPage() {
         />
       )}
 
-      {isDetail && tab === "segments" && <CustomerSegmentBridge {...backProps} />}
-      {isDetail && tab === "campaigns" && <CampaignManagementPage {...backProps} />}
-      {isDetail && tab === "templates" && <ContentTemplatePage {...backProps} />}
-      {isDetail && tab === "history" && <MarketingHistoryPage {...backProps} />}
+      {isDetail && tab === "audience"   && <AudienceManagementPage {...backProps} />}
+      {isDetail && tab === "campaigns"  && <CampaignManagementPage {...backProps} />}
+      {isDetail && tab === "templates"  && <ContentTemplatePage    {...backProps} />}
+      {isDetail && tab === "history"    && <MarketingHistoryPage   {...backProps} />}
     </div>
   );
 }

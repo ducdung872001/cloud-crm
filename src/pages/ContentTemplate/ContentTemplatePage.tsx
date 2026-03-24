@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import TitleAction from "components/titleAction/titleAction";
-import Badge from "components/badge/badge";
+import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
+import { ITitleActions } from "components/titleAction/titleAction";
 import "./ContentTemplatePage.scss";
 
 type Channel = "SMS" | "Zalo" | "Email" | "App";
@@ -16,15 +16,15 @@ interface Template {
 }
 
 const MOCK_TEMPLATES: Template[] = [
-  { id: 1, name: "Chúc mừng sinh nhật", channel: "SMS", category: "Sinh nhật", content: "{{ten_kh}} ơi, chúc mừng sinh nhật bạn! Tặng bạn ưu đãi 20% hôm nay. Xem chi tiết: {{link}}", usedCount: 45, lastUsed: "15/03/2026" },
-  { id: 2, name: "Flash Sale thông báo", channel: "SMS", category: "Khuyến mãi", content: "🔥 FLASH SALE! {{ten_km}} giảm đến {{phan_tram}}%. Áp dụng đến {{ngay_het_han}}. Mua ngay: {{link}}", usedCount: 23, lastUsed: "14/03/2026" },
-  { id: 3, name: "Nhắc điểm sắp hết hạn", channel: "Zalo", category: "Loyalty", content: "Xin chào {{ten_kh}}, {{so_diem}} điểm của bạn sẽ hết hạn vào {{ngay_het_han}}. Đổi điểm ngay tại đây: {{link}}", usedCount: 12, lastUsed: "12/03/2026" },
-  { id: 4, name: "Chào mừng thành viên mới", channel: "Email", category: "Onboarding", content: "Chào mừng {{ten_kh}} đến với cộng đồng của chúng tôi! Bạn vừa nhận được {{so_diem}} điểm chào mừng.", usedCount: 67, lastUsed: "20/03/2026" },
-  { id: 5, name: "Push sale cuối tuần", channel: "App", category: "Khuyến mãi", content: "📣 Weekend Sale! Giảm {{phan_tram}}% cho tất cả sản phẩm. Áp dụng đến hết {{ngay_het_han}}.", usedCount: 8, lastUsed: "08/03/2026" },
-  { id: 6, name: "Tái kích hoạt khách cũ", channel: "SMS", category: "Retention", content: "{{ten_kh}} ơi, bạn đã lâu không ghé thăm chúng tôi. Ưu đãi {{phan_tram}}% dành riêng cho bạn hôm nay!", usedCount: 31, lastUsed: "10/03/2026" },
+  { id: 1, name: "Chúc mừng sinh nhật",     channel: "SMS",   category: "Sinh nhật",  content: "{{ten_kh}} ơi, chúc mừng sinh nhật! Tặng bạn ưu đãi 20% hôm nay. Xem: {{link}}", usedCount: 45, lastUsed: "15/03/2026" },
+  { id: 2, name: "Flash Sale thông báo",    channel: "SMS",   category: "Khuyến mãi", content: "🔥 FLASH SALE! {{ten_km}} giảm {{phan_tram}}%. Mua ngay: {{link}}", usedCount: 23, lastUsed: "14/03/2026" },
+  { id: 3, name: "Nhắc điểm sắp hết hạn",  channel: "Zalo",  category: "Loyalty",    content: "{{ten_kh}} ơi, {{so_diem}} điểm sắp hết hạn vào {{ngay_het_han}}. Đổi ngay: {{link}}", usedCount: 12, lastUsed: "12/03/2026" },
+  { id: 4, name: "Chào mừng thành viên",    channel: "Email", category: "Onboarding", content: "Chào mừng {{ten_kh}}! Bạn vừa nhận {{so_diem}} điểm chào mừng.", usedCount: 67, lastUsed: "20/03/2026" },
+  { id: 5, name: "Push sale cuối tuần",     channel: "App",   category: "Khuyến mãi", content: "📣 Weekend Sale! Giảm {{phan_tram}}% hết {{ngay_het_han}}.", usedCount: 8,  lastUsed: "08/03/2026" },
+  { id: 6, name: "Tái kích hoạt khách cũ", channel: "SMS",   category: "Retention",  content: "{{ten_kh}} ơi, lâu rồi chưa gặp! Ưu đãi {{phan_tram}}% dành riêng cho bạn hôm nay!", usedCount: 31, lastUsed: "10/03/2026" },
 ];
 
-const CHANNEL_CONFIG = {
+const CH_CFG = {
   SMS:   { color: "#15803D", bg: "#DCFCE7" },
   Zalo:  { color: "#1D4ED8", bg: "#DBEAFE" },
   Email: { color: "#C2410C", bg: "#FFEDD5" },
@@ -38,10 +38,14 @@ export default function ContentTemplatePage({ onBackProps }: { onBackProps: (v: 
 
   const [filterChannel, setFilterChannel] = useState<Channel | "all">("all");
   const [filterCategory, setFilterCategory] = useState("Tất cả");
-  const [showCreate, setShowCreate] = useState(false);
-  const [search, setSearch] = useState("");
-  const [form, setForm] = useState({ name: "", channel: "SMS" as Channel, category: "", content: "" });
+  const [search, setSearch]   = useState("");
+  const [showCreate, setCreate] = useState(false);
   const [preview, setPreview] = useState<Template | null>(null);
+  const [form, setForm]       = useState({ name: "", channel: "SMS" as Channel, category: "", content: "" });
+
+  const titleActions: ITitleActions = {
+    actions: [{ title: "+ Tạo mẫu mới", color: "primary", callback: () => setCreate(true) }],
+  };
 
   const filtered = MOCK_TEMPLATES.filter(t => {
     if (filterChannel !== "all" && t.channel !== filterChannel) return false;
@@ -52,26 +56,25 @@ export default function ContentTemplatePage({ onBackProps }: { onBackProps: (v: 
 
   return (
     <div className="page-content">
-      <TitleAction
+      <HeaderTabMenu
         title="Mẫu nội dung"
-        breadcrumb={[{ title: "Chiến dịch Marketing", onClick: () => onBackProps(true) }]}
-        listRightAction={[
-          { title: "+ Tạo mẫu mới", type: "primary", onClick: () => setShowCreate(true) },
-        ]}
+        titleBack="Chiến dịch Marketing"
+        titleActions={showCreate ? undefined : titleActions}
+        onBackProps={onBackProps}
       />
 
       {/* Create form */}
       {showCreate && (
-        <div className="ct-create-form">
-          <div className="ct-create-form__title">Tạo mẫu nội dung mới</div>
+        <div className="ct-form-card">
+          <div className="ct-form-card__title">Tạo mẫu nội dung mới</div>
           <div className="ct-form-row">
             <div className="cm-field">
               <label>Tên mẫu *</label>
-              <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="VD: Chúc mừng sinh nhật SMS" />
+              <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="VD: Chúc mừng sinh nhật SMS" />
             </div>
             <div className="cm-field">
               <label>Kênh *</label>
-              <select value={form.channel} onChange={e => setForm({...form, channel: e.target.value as Channel})}>
+              <select value={form.channel} onChange={e => setForm({ ...form, channel: e.target.value as Channel })}>
                 <option value="SMS">SMS</option>
                 <option value="Zalo">Zalo / OTT</option>
                 <option value="Email">Email</option>
@@ -80,57 +83,49 @@ export default function ContentTemplatePage({ onBackProps }: { onBackProps: (v: 
             </div>
             <div className="cm-field">
               <label>Danh mục</label>
-              <select value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
+              <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
                 <option value="">-- Chọn danh mục --</option>
-                <option>Sinh nhật</option>
-                <option>Khuyến mãi</option>
-                <option>Loyalty</option>
-                <option>Onboarding</option>
-                <option>Retention</option>
+                {CATEGORIES.filter(c => c !== "Tất cả").map(c => <option key={c}>{c}</option>)}
                 <option>Thông báo</option>
               </select>
             </div>
           </div>
           <div className="cm-field">
             <label>Nội dung mẫu *</label>
-            <textarea
-              rows={form.channel === "Email" ? 8 : 4}
-              value={form.content}
-              onChange={e => setForm({...form, content: e.target.value})}
-              placeholder="Nhập nội dung. Dùng {{ten_kh}}, {{so_diem}}, {{link}} để chèn dữ liệu động..."
-            />
+            <textarea rows={form.channel === "Email" ? 7 : 4} value={form.content}
+              onChange={e => setForm({ ...form, content: e.target.value })}
+              placeholder="Dùng {{ten_kh}}, {{so_diem}}, {{phan_tram}}, {{ngay_het_han}}, {{link}} để chèn dữ liệu động..." />
           </div>
           <div className="ct-placeholder-hint">
             Biến động: <code>{"{{ten_kh}}"}</code> <code>{"{{so_diem}}"}</code> <code>{"{{phan_tram}}"}</code> <code>{"{{ngay_het_han}}"}</code> <code>{"{{link}}"}</code>
           </div>
           <div className="ct-form-actions">
-            <button className="btn-secondary" onClick={() => setShowCreate(false)}>Hủy</button>
-            <button className="btn-primary" onClick={() => { alert("Đã lưu mẫu (demo)"); setShowCreate(false); }}>Lưu mẫu</button>
+            <button className="cm-btn cm-btn--secondary" onClick={() => setCreate(false)}>Hủy</button>
+            <button className="cm-btn cm-btn--primary" onClick={() => { alert("Đã lưu mẫu (demo)"); setCreate(false); }}>Lưu mẫu</button>
           </div>
         </div>
       )}
 
       {/* Filters */}
       <div className="ct-filters">
-        <input className="re-search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Tìm mẫu nội dung..." />
-        <div className="ct-filter-channels">
+        <div className="cm-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input placeholder="Tìm mẫu nội dung..." value={search} onChange={e => setSearch(e.target.value)} />
+        </div>
+        <div className="ct-filter-row">
           {(["all", "SMS", "Zalo", "Email", "App"] as const).map(ch => (
-            <button
-              key={ch}
-              className={`cm-filter-btn ${filterChannel === ch ? "cm-filter-btn--active" : ""}`}
-              onClick={() => setFilterChannel(ch as any)}
-            >
+            <button key={ch} className={`cm-filter-btn ${filterChannel === ch ? "cm-filter-btn--active" : ""}`}
+              onClick={() => setFilterChannel(ch as any)}>
               {ch === "all" ? "Tất cả kênh" : ch}
             </button>
           ))}
         </div>
-        <div className="ct-filter-categories">
+        <div className="ct-filter-row">
           {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              className={`ct-cat-btn ${filterCategory === cat ? "ct-cat-btn--active" : ""}`}
-              onClick={() => setFilterCategory(cat)}
-            >
+            <button key={cat} className={`ct-cat-btn ${filterCategory === cat ? "ct-cat-btn--active" : ""}`}
+              onClick={() => setFilterCategory(cat)}>
               {cat}
             </button>
           ))}
@@ -140,32 +135,30 @@ export default function ContentTemplatePage({ onBackProps }: { onBackProps: (v: 
       {/* Template grid */}
       <div className="ct-template-grid">
         {filtered.map(t => {
-          const chCfg = CHANNEL_CONFIG[t.channel];
+          const cfg = CH_CFG[t.channel];
           return (
             <div className="ct-template-card" key={t.id}>
               <div className="ct-template-card__header">
-                <span className="ct-channel-pill" style={{ background: chCfg.bg, color: chCfg.color }}>{t.channel}</span>
-                <span className="ct-category-pill">{t.category}</span>
+                <span className="ct-channel-pill" style={{ background: cfg.bg, color: cfg.color }}>{t.channel}</span>
+                <span className="ct-cat-pill">{t.category}</span>
               </div>
               <div className="ct-template-card__name">{t.name}</div>
               <div className="ct-template-card__content">{t.content}</div>
               <div className="ct-template-card__footer">
-                <span className="ct-template-card__usage">Đã dùng: {t.usedCount} lần</span>
-                <span className="ct-template-card__date">{t.lastUsed}</span>
+                <span>Đã dùng: {t.usedCount} lần</span>
+                <span>{t.lastUsed}</span>
               </div>
               <div className="ct-template-card__actions">
-                <button className="cm-action-btn" onClick={() => setPreview(t)}>Xem trước</button>
-                <button className="cm-action-btn">Chỉnh sửa</button>
-                <button className="cm-action-btn cm-action-btn--primary" onClick={() => alert(`Dùng mẫu "${t.name}" cho chiến dịch (demo)`)}>
-                  Dùng mẫu
-                </button>
+                <button className="cm-btn cm-btn--secondary cm-btn--sm" onClick={() => setPreview(t)}>Xem trước</button>
+                <button className="cm-btn cm-btn--secondary cm-btn--sm">Chỉnh sửa</button>
+                <button className="cm-btn cm-btn--primary cm-btn--sm" onClick={() => alert(`Dùng mẫu "${t.name}" (demo)`)}>Dùng mẫu</button>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Preview modal */}
+      {/* Preview overlay */}
       {preview && (
         <div className="ct-preview-overlay" onClick={() => setPreview(null)}>
           <div className="ct-preview-modal" onClick={e => e.stopPropagation()}>
@@ -175,7 +168,7 @@ export default function ContentTemplatePage({ onBackProps }: { onBackProps: (v: 
                 <div className="ct-preview-bubble">{preview.content}</div>
               </div>
             </div>
-            <button className="btn-secondary ct-preview-close" onClick={() => setPreview(null)}>Đóng</button>
+            <button className="cm-btn cm-btn--secondary" style={{ width: "100%" }} onClick={() => setPreview(null)}>Đóng</button>
           </div>
         </div>
       )}
