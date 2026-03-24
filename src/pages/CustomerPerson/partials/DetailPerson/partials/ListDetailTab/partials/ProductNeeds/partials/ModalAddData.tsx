@@ -10,7 +10,6 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
-import ProductDemandService from "services/fintech/ProductDemandService";
 import { showToast } from "utils/common";
 
 import "./ModalAddData.scss";
@@ -182,7 +181,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       customerId
     };
 
-    const response = await ProductDemandService.update(body);
+    const response = null;
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} nhu cầu sản phẩm thành công`, "success");

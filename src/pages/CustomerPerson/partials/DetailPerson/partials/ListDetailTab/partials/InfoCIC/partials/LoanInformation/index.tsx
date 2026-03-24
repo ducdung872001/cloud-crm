@@ -11,7 +11,6 @@ import BoxTable from "components/boxTable/boxTable";
 import { IAction } from "model/OtherModel";
 import Icon from "components/icon";
 import ModalAddData from "./partials/ModalAddData";
-import LoanInformationService from "services/fintech/LoanInformationService";
 
 import "./index.scss";
 
@@ -43,7 +42,7 @@ export default function LoanInformation({ data, onShow, callBack }) {
   const getListLoanInformation = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await LoanInformationService.list(paramsSearch);
+    const response = null;
 
     if (response.code === 0) {
       const result = response.result;
@@ -150,7 +149,7 @@ export default function LoanInformation({ data, onShow, callBack }) {
   const [contentDialog, setContentDialog] = useState<any>(null);
 
   const onDelete = async (id: number) => {
-    const response = await LoanInformationService.delete(id);
+    const response = null;
 
     if (response.code === 0) {
       showToast("Xóa khoản vay LPBank thành công", "success");

@@ -10,7 +10,6 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
-import LoanInformationService from "services/fintech/LoanInformationService";
 import { showToast } from "utils/common";
 
 import "./ModalAddData.scss";
@@ -362,7 +361,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       customerId
     };
 
-    const response = await LoanInformationService.update(body);
+    const response = null;
 
     if (response.code === 0) {
       showToast(`${dataProps ? "Cập nhật" : "Thêm mới"} khoản vay tại LPBank thành công`, "success");

@@ -9,7 +9,6 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
-import TransactionInformationService from "services/fintech/TransactionInformationService";
 import { showToast } from "utils/common";
 
 import "./ModalAddData.scss";
@@ -153,7 +152,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       transactionDate: moment(formData.values.transactionDate).format("YYYY-MM-DD[T]HH:mm:ss"),
     };
 
-    const response = await TransactionInformationService.update(body);
+    const response = null;
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} thông tin giao dịch thành công`, "success");

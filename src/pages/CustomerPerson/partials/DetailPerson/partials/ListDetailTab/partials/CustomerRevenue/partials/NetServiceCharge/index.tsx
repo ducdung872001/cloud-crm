@@ -12,7 +12,6 @@ import BoxTable from "components/boxTable/boxTable";
 import { IAction } from "model/OtherModel";
 import Icon from "components/icon";
 import ModalAddData from "./partials/ModalAddData";
-import NetServiceChargeService from "services/fintech/NetServiceChargeService";
 
 import "./index.scss";
 
@@ -44,7 +43,7 @@ export default function NetServiceCharge({ data, onShow, callBack }) {
   const getListNetServiceCharge = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await NetServiceChargeService.list(paramsSearch);
+    const response = null;
 
     if (response.code === 0) {
       const result = response.result;
@@ -134,7 +133,7 @@ export default function NetServiceCharge({ data, onShow, callBack }) {
   const [contentDialog, setContentDialog] = useState<any>(null);
 
   const onDelete = async (id: number) => {
-    const response = await NetServiceChargeService.delete(id);
+    const response = null;
 
     if (response.code === 0) {
       showToast("Xóa khoản thu phí dịch vụ thành công", "success");

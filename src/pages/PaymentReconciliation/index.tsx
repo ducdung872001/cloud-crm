@@ -1,251 +1,314 @@
-import React, { Fragment, useMemo, useState } from "react";
-import Dialog, { IContentDialog } from "components/dialog/dialog";
+import React, { useMemo, useState } from "react";
+import { QRCodeCanvas } from "qrcode.react";
 import Button from "components/button/button";
-import Icon from "components/icon";
-
+import QrCodeProService from "services/QrCodeProService";
 import "./index.scss";
-import { useFinanceMock } from "./useFinanceMock";
-import { FinanceScreenId, formatVnd, pct } from "./financeTypes";
-import Reconcile from "./partials/Reconcile";
-import Debt from "./partials/Debt";
-import Cashbook from "./partials/Cashbook";
-import Overview from "./partials/Overview";
-import VatInvoice from "./partials/VatInvoice";
-import FundManagement from "./partials/FundManagement";
 
-type Props = {
-  initialScreen?: FinanceScreenId;
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type BankStmt = {
+  date: string;
+  ref: string;
+  desc: string;
+  amount: number;
+  type: "thu" | "chi";
+  matched: boolean;
 };
 
-const FinanceContent: React.FC<Props> = ({ initialScreen = "tong-quan" }) => {
-  const data = useFinanceMock();
-  const [active, setActive] = useState<FinanceScreenId>(initialScreen);
+// ─── Mock data ────────────────────────────────────────────────────────────────
 
-  const [showDialog, setShowDialog] = useState(false);
-  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+const MOCK_BANK_STMTS: BankStmt[] = [
+  { date: "16/03", ref: "FT26075123", desc: "TT don hang SO2318",         amount: 31200000, type: "thu", matched: true  },
+  { date: "16/03", ref: "FT26075234", desc: "KH Nguyen Lan chuyen khoan", amount: 8750000,  type: "thu", matched: true  },
+  { date: "15/03", ref: "FT26074345", desc: "CHUYEN TIEN LUONG T3/2026",  amount: 28000000, type: "chi", matched: false },
+  { date: "15/03", ref: "FT26074456", desc: "VNPAY QR giao dich online",  amount: 3500000,  type: "thu", matched: true  },
+  { date: "14/03", ref: "FT26073567", desc: "TT nha cung cap Minh Hoang", amount: 12500000, type: "chi", matched: false },
+];
 
-  const titles: Record<FinanceScreenId, string> = {
-    "tong-quan": "Tổng quan tài chính",
-    "so-thu-chi": "Sổ thu chi",
-    "hoa-don-vat": "Xuất hóa đơn VAT",
-    "quan-ly-quy": "Quản lý quỹ",
-    "cong-no": "Quản lý công nợ",
-    "doi-soat": "Đối soát thanh toán",
+const formatVnd = (v: number) => new Intl.NumberFormat("vi-VN").format(v) + " VND";
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+const Reconcile: React.FC = () => {
+  const [bankAccount, setBankAccount] = useState("Vietcombank ****1234");
+  const [date, setDate]               = useState("2026-03-16");
+  const [running, setRunning]         = useState(false);
+  const [doneMsg, setDoneMsg]         = useState<string | null>(null);
+
+  const matched  = useMemo(() => MOCK_BANK_STMTS.filter((b) => b.matched).length, []);
+  const totalThu = useMemo(() => MOCK_BANK_STMTS.filter((b) => b.type === "thu").reduce((a, b) => a + b.amount, 0), []);
+  const totalTx  = MOCK_BANK_STMTS.length;
+
+  // ── QR Drawer ──────────────────────────────────────────────────────────────
+  const [showQR,      setShowQR]      = useState(false);
+  const [qrTarget,    setQrTarget]    = useState("");
+  const [qrAmount,    setQrAmount]    = useState("");
+  const [qrCode,      setQrCode]      = useState<string | null>(null);
+  const [qrLoading,   setQrLoading]   = useState(false);
+  const [qrConfirmed, setQrConfirmed] = useState(false);
+
+  const handleOpenQR = () => {
+    setShowQR(true);
+    setQrCode(null);
+    setQrTarget("");
+    setQrAmount("");
+    setQrConfirmed(false);
   };
 
-  const openModal = (dialog: IContentDialog) => {
-    setContentDialog(dialog);
-    setShowDialog(true);
+  const handleCloseQR = () => {
+    setShowQR(false);
+    setQrCode(null);
+    setQrConfirmed(false);
   };
 
-  // Example modals (prototype-level)
-  const openAddTxModal = () => {
-    openModal({
-      color: "success",
-      className: "finance-modal",
-      isCentered: true,
-      isLoading: false,
-      title: <Fragment>Tạo giao dịch mới</Fragment>,
-      message: (
-        <Fragment>
-          <div className="fin-form">
-            <div className="fin-row">
-              <label>Loại giao dịch</label>
-              <select defaultValue="thu">
-                <option value="thu">Thu tiền</option>
-                <option value="chi">Chi tiền</option>
-              </select>
-            </div>
-
-            <div className="fin-row">
-              <label>Khoản mục</label>
-              <select defaultValue="Thu bán hàng">
-                <option>Thu bán hàng</option>
-                <option>Thu công nợ</option>
-                <option>Thu khác</option>
-                <option>Chi nhập hàng</option>
-                <option>Chi nhân sự</option>
-                <option>Chi vận hành</option>
-              </select>
-            </div>
-
-            <div className="fin-grid2">
-              <div className="fin-row">
-                <label>Số tiền (VND)</label>
-                <input type="number" placeholder="0" />
-              </div>
-              <div className="fin-row">
-                <label>Nguồn tiền</label>
-                <select defaultValue={data.funds[0]?.name}>
-                  {data.funds.map((f) => (
-                    <option key={f.id}>{f.name}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="fin-row">
-              <label>Ngày giao dịch</label>
-              <input type="date" defaultValue="2026-03-16" />
-            </div>
-
-            <div className="fin-row">
-              <label>Diễn giải</label>
-              <input placeholder="Nhập diễn giải giao dịch..." />
-            </div>
-
-            <div className="fin-row">
-              <label>Ghi chú</label>
-              <textarea rows={2} placeholder="Ghi chú thêm..." />
-            </div>
-          </div>
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Lưu giao dịch",
-      defaultAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-    });
+  const handleGenerateQR = async () => {
+    const amt = Number(qrAmount.replace(/\D/g, "") || 0);
+    if (!qrTarget.trim() || amt <= 0) return;
+    setQrLoading(true);
+    try {
+      const res = await QrCodeProService.generate({
+        content: "THU NO " + qrTarget.trim(),
+        orderId: Date.now(),
+        amount: amt,
+      });
+      if (res.code === 0 && res?.result?.qrCode) {
+        setQrCode(res.result.qrCode);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setQrLoading(false);
+    }
   };
 
-  const openTransferModal = () => {
-    openModal({
-      color: "success",
-      className: "finance-modal",
-      isCentered: true,
-      isLoading: false,
-      title: <Fragment>Chuyển tiền giữa các quỹ</Fragment>,
-      message: (
-        <Fragment>
-          <div className="fin-form">
-            <div className="fin-row">
-              <label>Quỹ nguồn (Từ)</label>
-              <select defaultValue={data.funds[0]?.name}>
-                {data.funds.map((f) => (
-                  <option key={f.id}>
-                    {f.name} — {formatVnd(f.balance)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="fin-row fin-center">
-              <span className="fin-arrow">↓</span>
-            </div>
-
-            <div className="fin-row">
-              <label>Quỹ đích (Đến)</label>
-              <select defaultValue={data.funds[1]?.name ?? data.funds[0]?.name}>
-                {data.funds.map((f) => (
-                  <option key={f.id}>
-                    {f.name} — {formatVnd(f.balance)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="fin-row">
-              <label>Số tiền chuyển (VND)</label>
-              <input type="number" placeholder="0" />
-            </div>
-
-            <div className="fin-row">
-              <label>Ghi chú</label>
-              <input placeholder="Lý do chuyển quỹ..." />
-            </div>
-          </div>
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Thực hiện chuyển",
-      defaultAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-    });
+  const handleShareQR = () => {
+    const canvas = document.querySelector(".reconcile-qr-display canvas") as HTMLCanvasElement;
+    if (canvas) {
+      const link = document.createElement("a");
+      link.download = `qr-thu-no-${qrTarget || "payment"}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    }
   };
 
-  const totals = useMemo(() => {
-    const totalFunds = data.funds.reduce((a, f) => a + f.balance, 0);
-    const totalThu = data.txs.filter((t) => t.type === "thu").reduce((a, t) => a + t.amount, 0);
-    const totalChi = data.txs.filter((t) => t.type === "chi").reduce((a, t) => a + t.amount, 0);
-    return { totalFunds, totalThu, totalChi };
-  }, [data]);
+  const amtNumber  = Number(qrAmount.replace(/\D/g, "") || 0);
+  const canGenerate = qrTarget.trim().length > 0 && amtNumber > 0;
+
+  // ── Run reconcile ─────────────────────────────────────────────────────────
+  const run = async () => {
+    setRunning(true);
+    setDoneMsg(null);
+    await new Promise((r) => setTimeout(r, 1400));
+    setRunning(false);
+    setDoneMsg(`Đối soát hoàn thành! Đã khớp ${matched}/${totalTx} giao dịch. ${totalTx - matched} cần xử lý thủ công.`);
+  };
 
   return (
-    <div className="finance-content">
-      <div className="finance-content__header">
-        <div className="fin-title">
-          <div className="h1">{titles[active]}</div>
-          <div className="sub">Tháng 3/2026 · Dữ liệu demo</div>
-        </div>
-
-        <div className="fin-actions">
-          {active === "so-thu-chi" && (
-            <Button color="primary" onClick={openAddTxModal}>
-              <Icon name="Plus" className="mr-6" />
-              Tạo giao dịch
-            </Button>
-          )}
-          {active === "quan-ly-quy" && (
-            <Button color="primary" onClick={openTransferModal}>
-              <Icon name="Swap" className="mr-6" />
-              Chuyển quỹ
-            </Button>
-          )}
+    <div className="reconcile-page">
+      {/* ── Page header ── */}
+      <div className="page-header">
+        <div>
+          <div className="page-title">Đối soát thanh toán</div>
+          <div className="page-desc">Tự động khớp giao dịch ngân hàng với sổ thu chi</div>
         </div>
       </div>
 
-      <div className="finance-content__tabs">
-        <button className={`tab${active === "tong-quan" ? " active" : ""}`} onClick={() => setActive("tong-quan")}>
-          Thông tin tài chính
-        </button>
-        <button className={`tab${active === "so-thu-chi" ? " active" : ""}`} onClick={() => setActive("so-thu-chi")}>
-          Sổ thu chi
-        </button>
-        <button className={`tab${active === "hoa-don-vat" ? " active" : ""}`} onClick={() => setActive("hoa-don-vat")}>
-          Xuất hóa đơn VAT
-        </button>
-        <button className={`tab${active === "quan-ly-quy" ? " active" : ""}`} onClick={() => setActive("quan-ly-quy")}>
-          Quản lý quỹ
-        </button>
-        <button className={`tab${active === "cong-no" ? " active" : ""}`} onClick={() => setActive("cong-no")}>
-          Công nợ
-        </button>
-        <button className={`tab${active === "doi-soat" ? " active" : ""}`} onClick={() => setActive("doi-soat")}>
-          Đối soát
-        </button>
-
-        <div className="quick">
-          <span className="pill">Tổng quỹ: {formatVnd(totals.totalFunds)}</span>
-          <span className="pill pill--gr">Thu: {formatVnd(totals.totalThu)}</span>
-          <span className="pill pill--rd">Chi: {formatVnd(totals.totalChi)}</span>
-          <span className="pill pill--bl">Tỷ lệ thu/chi: {pct(totals.totalThu, totals.totalChi)}%</span>
+      {/* ── Run banner ── */}
+      <div className="banner mb16">
+        <div className="banner-left">
+          <div className="banner-title">Đối soát tự động với ngân hàng</div>
+          <div className="banner-sub">Chọn tài khoản và ngày để chạy đối soát. Kết quả hiển thị bên dưới.</div>
+        </div>
+        <div className="banner-right">
+          <select value={bankAccount} onChange={(e) => setBankAccount(e.target.value)}>
+            <option>Vietcombank ****1234</option>
+            <option>Techcombank ****5678</option>
+          </select>
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          <Button color="primary" onClick={run} disabled={running}>
+            {running ? "⟳ Đang đối soát..." : "⟳ Chạy đối soát"}
+          </Button>
         </div>
       </div>
 
-      <div className="finance-content__body">
-        {active === "tong-quan" && <Overview data={data} onOpenCashbook={() => setActive("so-thu-chi")} />}
-        {active === "so-thu-chi" && <Cashbook data={data} onAddTx={openAddTxModal} />}
-        {active === "hoa-don-vat" && <VatInvoice data={data} />}
-        {active === "quan-ly-quy" && <FundManagement data={data} onTransfer={openTransferModal} />}
-        {active === "cong-no" && <Debt data={data} />}
-        {active === "doi-soat" && <Reconcile data={data} />}
+      {/* ── KPI cards ── */}
+      <div className="grid3 mb16">
+        <div className="stat">
+          <div className="stat-lbl">Đã khớp tự động</div>
+          <div className="stat-val c-gr">{matched}/{totalTx} GD</div>
+          <div className="stat-chg c-gr">Tỷ lệ khớp {Math.round((matched / totalTx) * 100)}%</div>
+          <div className="stat-bar stat-bar--gr" />
+        </div>
+        <div className="stat">
+          <div className="stat-lbl">Chưa khớp</div>
+          <div className="stat-val c-am">{totalTx - matched} GD</div>
+          <div className="stat-chg c-t2">Cần xử lý thủ công</div>
+          <div className="stat-bar stat-bar--am" />
+        </div>
+        <div className="stat">
+          <div className="stat-lbl">Tổng thu trong kỳ</div>
+          <div className="stat-val c-bl">{formatVnd(totalThu)}</div>
+          <div className="stat-chg c-t2">{MOCK_BANK_STMTS.filter((b) => b.type === "thu").length} phát sinh</div>
+          <div className="stat-bar stat-bar--bl" />
+        </div>
       </div>
 
-      <Dialog content={contentDialog} isOpen={showDialog} />
+      {doneMsg && <div className="alert alert--success mb16">{doneMsg}</div>}
+
+      {/* ── Table ── */}
+      <div className="card mb16">
+        <div className="card-title mb12">
+          Bảng đối soát · {bankAccount} · {date}
+        </div>
+        <div className="table-wrap">
+          <table className="fin-table">
+            <thead>
+              <tr>
+                <th>Ngày</th>
+                <th>Mã tham chiếu</th>
+                <th>Nội dung ngân hàng</th>
+                <th className="tr">Số tiền</th>
+                <th>Kết quả</th>
+                <th className="hide-m"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {MOCK_BANK_STMTS.map((b, idx) => (
+                <tr key={idx}>
+                  <td className="muted">{b.date}</td>
+                  <td className="mono blue">{b.ref}</td>
+                  <td className="fw">{b.desc}</td>
+                  <td className={`tr mono fw ${b.type === "thu" ? "c-gr" : "c-rd"}`}>
+                    {b.type === "thu" ? "+ " : "- "}{formatVnd(b.amount)}
+                  </td>
+                  <td>
+                    {b.matched
+                      ? <span className="badge bg">Đã khớp</span>
+                      : <span className="badge ba">Chưa khớp</span>}
+                  </td>
+                  <td className="hide-m">
+                    {!b.matched && (
+                      <Button color="secondary" variant="outline">Khớp thủ công</Button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ── QR Pro banner ── */}
+      <div className="banner banner--warn">
+        <div className="banner-left">
+          <div className="banner-title">📱 Thu tiền nhanh bằng QR Pro</div>
+          <div className="banner-sub">
+            QR động cho từng giao dịch. Khi khách quét &amp; thanh toán, hệ thống tự ghi nhận vào sổ thu chi và đối soát ngân hàng tức thì.
+          </div>
+          <div className="badges">
+            <span className="badge bg">VietQR</span>
+            <span className="badge bb">Napas 247</span>
+            <span className="badge ba">Tức thì</span>
+          </div>
+        </div>
+        <div className="banner-right">
+          {/* ← Đây là nút mở drawer */}
+          <Button color="primary" onClick={handleOpenQR}>
+            Tạo QR thanh toán
+          </Button>
+        </div>
+      </div>
+
+      {/* ── QR Drawer ──────────────────────────────────────────────────────── */}
+      {showQR && (
+        <div
+          className="reconcile-qr-overlay"
+          onClick={(e) => e.target === e.currentTarget && handleCloseQR()}
+        >
+          <div className="reconcile-qr-drawer">
+            {/* Header */}
+            <div className="reconcile-qr-drawer__header">
+              <h3>QR Thu nợ</h3>
+              <button type="button" className="reconcile-qr-drawer__close" onClick={handleCloseQR}>
+                ✕
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="reconcile-qr-drawer__body">
+              {/* Đối tượng */}
+              <div className="reconcile-qr-field">
+                <label>Đối tượng</label>
+                <input
+                  type="text"
+                  value={qrTarget}
+                  onChange={(e) => { setQrTarget(e.target.value); setQrCode(null); setQrConfirmed(false); }}
+                  placeholder="Tên khách hàng / NCC..."
+                  className="reconcile-qr-input"
+                />
+              </div>
+
+              {/* Số tiền */}
+              <div className="reconcile-qr-field">
+                <label>Số tiền</label>
+                <div className="reconcile-qr-input-wrap">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={amtNumber > 0 ? new Intl.NumberFormat("vi-VN").format(amtNumber) : ""}
+                    onChange={(e) => { setQrAmount(e.target.value.replace(/\D/g, "")); setQrCode(null); setQrConfirmed(false); }}
+                    placeholder="0"
+                    className="reconcile-qr-input"
+                  />
+                  <span className="reconcile-qr-suffix">VND</span>
+                </div>
+              </div>
+
+              {/* QR display */}
+              <div className="reconcile-qr-display">
+                {qrCode ? (
+                  <>
+                    <QRCodeCanvas value={qrCode} size={180} />
+                    <p className="reconcile-qr-hint">Quét để thanh toán</p>
+                  </>
+                ) : (
+                  <div className="reconcile-qr-placeholder">
+                    <div className="reconcile-qr-placeholder__icon">▣</div>
+                    <p>Nhập thông tin và nhấn tạo QR</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Actions */}
+              {!qrCode ? (
+                <button
+                  className="reconcile-qr-btn reconcile-qr-btn--primary"
+                  onClick={handleGenerateQR}
+                  disabled={qrLoading || !canGenerate}
+                >
+                  {qrLoading ? "Đang tạo..." : "Tạo mã QR"}
+                </button>
+              ) : qrConfirmed ? (
+                <p className="reconcile-qr-confirmed">✓ Đã xác nhận nhận tiền thành công!</p>
+              ) : (
+                <div className="reconcile-qr-actions">
+                  <button className="reconcile-qr-btn reconcile-qr-btn--dark" onClick={handleShareQR}>
+                    Chia sẻ mã QR
+                  </button>
+                  <button
+                    className="reconcile-qr-btn reconcile-qr-btn--success"
+                    onClick={() => setQrConfirmed(true)}
+                  >
+                    ✓ Xác nhận đã nhận tiền
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default FinanceContent;
+export default Reconcile;
