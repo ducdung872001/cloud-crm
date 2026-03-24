@@ -9,6 +9,13 @@ import AddWorkInprogressModal from "../../../AddWorkInprogressModal/AddWorkInpro
 import UpdateLevelWorkModal from "../UpdateLevelWork";
 import "./index.scss";
 
+const getInitials = (name: string) => {
+  if (!name) return "?";
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+
 interface ITaskItemProps {
   type: "status" | "employee" | "mine";
   takeDescWork: (id: number) => void;
@@ -18,8 +25,38 @@ interface ITaskItemProps {
   totalTask: number;
 }
 
-export default function TaskItem(props: ITaskItemProps) {
-  const { type, takeDescWork, item, index, totalTask, onReload } = props;
+
+// Avatar component với fallback initials — React state driven
+function AvatarEmployee({ name, src }: { name: string; src?: string }) {
+  const [imgError, setImgError] = useState(false);
+  const initials = getInitials(name);
+
+  return (
+    <div className="avatar-implementer">
+      {src && !imgError ? (
+        <img
+          src={src}
+          alt={name}
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <span className="avatar-initials">{initials}</span>
+      )}
+    </div>
+  );
+}
+
+export default function TaskItem(props: any) {
+  const { 
+    type,
+    takeDescWork, 
+    item, 
+    index, 
+    totalTask, 
+    onReload,
+    setIsDetailWork,
+    handleDetailWork
+  } = props;
 
   const isComponentUnmounted = useRef(false);
 
@@ -58,7 +95,8 @@ export default function TaskItem(props: ITaskItemProps) {
       <Draggable
         key={item.id}
         draggableId={item.id.toString()}
-        isDragDisabled={type === "employee" ? false : item.status === 2 || item.status === 3 ? true : false}
+        isDragDisabled={true}
+        // isDragDisabled={type === "employee" ? false : item.status === 2 || item.status === 3 ? true : false}
         index={index}
       >
         {(provided, snapshot) => (
@@ -68,98 +106,61 @@ export default function TaskItem(props: ITaskItemProps) {
             {...provided.dragHandleProps}
             style={{
               userSelect: "none",
-              backgroundColor: snapshot.isDragging
-                ? "white"
-                : (item.status === 2 || item.status === 3) && type !== "employee"
-                ? "var(--extra-color-10)"
-                : "white",
+              backgroundColor: '#FFFFFF',
+              // backgroundColor: snapshot.isDragging
+              //   ? "white"
+              //   : (item.status === 2 || item.status === 3) && type !== "employee"
+              //   ? "var(--extra-color-10)"
+              //   : "white",
               ...provided.draggableProps.style,
             }}
             className={`task__item--work ${totalTask >= 3 ? "task__item--work--lot" : ""}`}
           >
             <div className="info__task">
               <div className="title__work">
-                <h4 className="name__work">
-                  {trimContent(item.name, 42, true, true)}{" "}
-                  <Tippy content="Trao đổi" placement="bottom">
-                    <span className="action__exchange" onClick={() => takeDescWork(item)}>
-                      <Icon name="Feedback" />
-                    </span>
-                  </Tippy>
-                </h4>
-              </div>
-
-              <div className="time__work">
-                <div className="time__work--left">
-                  <div className="start-work">
-                    <span className="key">Bắt đầu</span>
-                    <span className="value">{moment(item.startTime).format("DD/MM/YYYY")}</span>
-                  </div>
-
-                  <div className="end-work">
-                    <span className="key">Kết thúc</span>
-                    <span className="value">{moment(item.endTime).format("DD/MM/YYYY")}</span>
-                  </div>
-                </div>
-                <div
-                  className={`time__work--right ${calculateRemainingDays(item.startTime, item.endTime) <= 2 ? "one-day" : ""} ${
-                    item.status == 3 || item.status == 2 ? "d-none" : ""
-                  }`}
+                <h4 
+                  className="name__work"
+                  onDoubleClick={() => {
+                    setIsDetailWork(true);
+                    handleDetailWork(item, totalTask);
+                  }}
                 >
-                  <Tippy content="Thời gian còn lại">
-                    <span className="time-remaining">
-                      {calculateRemainingDays(item.startTime, item.endTime) >= 1
-                        ? `${calculateRemainingDays(item.startTime, item.endTime)} ngày`
-                        : `Quá hạn`}
-                    </span>
-                  </Tippy>
+                  {trimContent(`${item.nodeName || item.name}`, 65, true, true)}{" "}
+                </h4>
+                <div className="icon_star">
+                  <Icon 
+                    name='Star' 
+                    style={{
+                      width: 16, 
+                      height: 16, 
+                      fill: (item.priorityLevel === 1 || item.priorityLevel === 2) ? 'var(--extra-color-30)' : '#FDE047',
+                      marginTop: -4,
+                      marginRight: 5
+                    }}
+                  />
                 </div>
               </div>
 
-              <div className="condition__work">
-                <div className="progress-work" style={item.percent === 100 || item.status !== 1 ? { paddingBottom: "0.5rem" } : {}}>
-                  <div className="des-progress">
-                    <span className="name">Tiến độ</span>
-                    <span className="des">{`${item.percent}%`}</span>
-                  </div>
-
-                  {item.percent < 100 && item.status === 1 && (
-                    <Tippy content="Cập nhật tiến độ" placement="right">
-                      <span className="action__edit action__edit--progress" onClick={() => setShowModalUpdateInprogress(true)}>
-                        <Icon name="Pencil" />
-                      </span>
-                    </Tippy>
-                  )}
-                </div>
-                <div className="level-work" style={item.percent === 100 || item.status == 3 || item.status == 2 ? { paddingBottom: "0.3rem" } : {}}>
-                  <div className="des-level">
-                    <span className="name-level">Ưu tiên</span>
-                    <span
-                      className={`status-level ${
-                        item.priorityLevel === 1
-                          ? "status-level--short"
-                          : item.priorityLevel === 2
-                          ? "status-level--medium"
-                          : item.priorityLevel === 3
-                          ? "status-level--high"
-                          : "status-level--veryhigh"
-                      }`}
-                    >
-                      {item.priorityLevel === 1 ? "Thấp" : item.priorityLevel === 2 ? "Trung bình" : item.priorityLevel === 3 ? "Cao" : "Rất cao"}
-                    </span>
-                  </div>
-
-                  {item.percent < 100 && item.status !== 3 && item.status !== 2 && (
-                    <Tippy content="Cập nhật độ ưu tiên" placement="right">
-                      <span className="action__edit action__edit--level" onClick={() => setShowModalUpdateLevel(true)}>
-                        <Icon name="Pencil" />
-                      </span>
-                    </Tippy>
-                  )}
+              <div className="employee_task">
+                <div className="implementer">
+                  <AvatarEmployee name={item.employeeName} src={item.employeeAvatar} />
+                  <h4 className="name-implementer">{item.employeeName}</h4>
                 </div>
               </div>
 
-              {type === "status" ? (
+              <div className="container_time__work">
+                <div className="time__work">
+                  <Icon name='CalenderWork'/>
+                  <span className="text_date">{moment(item.startTime).format("DD/MM/YYYY")} - {moment(item.endTime).format("DD/MM/YYYY")}</span>
+                </div>
+                {item.status === 1 ?
+                  <div className="item_expire">
+                    Quá hạn
+                  </div>
+                : null}
+              </div>
+
+              {/* {type === "status" ? (
                 <div className="implementer">
                   <span className="avatar-implementer">
                     <img src={item.employeeAvatar || OtherGenders} alt={item.employeeName} />
@@ -194,7 +195,7 @@ export default function TaskItem(props: ITaskItemProps) {
                 </div>
               ) : (
                 ""
-              )}
+              )} */}
             </div>
           </div>
         )}
