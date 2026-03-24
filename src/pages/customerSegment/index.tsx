@@ -160,14 +160,12 @@ export default function CustomerSegment(props) {
       key={item.id}
       text={
         item.status === "draft"
-          ? "Chưa phê duyệt"
+          ? "Nháp"
           : item.status === "approved"
-          ? "Đã phê duyệt"
+          ? "Đang hoạt động"
           : item.status === "paused"
           ? "Tạm dừng"
-          : // : item.status === "running"
-            // ? "Đang chạy"
-            "Hủy"
+          : "Đã hủy"
       }
       variant={
         item.status === "draft"
@@ -198,10 +196,20 @@ export default function CustomerSegment(props) {
           }
         },
       },
+      {
+        title: "Tạo chiến dịch",
+        icon: <Icon name="SmsMenu" className={isCheckedItem ? "icon-disabled" : "icon-primary"} />,
+        disabled: isCheckedItem,
+        callback: () => {
+          if (!isCheckedItem) {
+            showToast(`Đang tạo chiến dịch cho phân khúc "${item.name}"`, "success");
+          }
+        },
+      },
       ...(item.status !== "canceled"
         ? [
             {
-              title: "Chuyển trạng thái",
+              title: "Bật/Tắt",
               icon: <Icon name="FingerTouch" className={isCheckedItem ?"icon-disabled": "icon-warning"} />,
               disabled: isCheckedItem,
               callback: () => {
