@@ -84,17 +84,19 @@ export default function PromotionalProgram(props: any) {
     try {
       const res = await PromotionService.list(
         {
-          name:          search || undefined,
-          status:        statusFilter,
-          promotionType: typeFilter > 0 ? typeFilter : undefined,
-          page:          pagination.page,
-          sizeLimit:     pagination.sizeLimit,
+          // Chỉ truyền name khi có giá trị - tránh ?name=undefined trên URL
+          ...(search.trim() ? { name: search.trim() } : {}),
+          status:    statusFilter,
+          // Chỉ truyền promotionType khi chọn loại cụ thể (0 = tất cả → bỏ qua)
+          ...(typeFilter > 0 ? { promotionType: typeFilter } : {}),
+          page:      pagination.page,
+          sizeLimit: pagination.sizeLimit,
         },
         abortRef.current.signal
       );
       if (res?.code === 0) {
-        const total = res.data?.total ?? 0;
-        setListData(res.data?.data ?? []);
+        const total = res.result?.total ?? 0;
+        setListData(res.result?.items ?? []);
         setPagination((prev) => ({
           ...prev,
           totalItem: total,

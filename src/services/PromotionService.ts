@@ -1,10 +1,20 @@
 // =====================================================================
-// FILE: src/services/PromotionService.ts  — THAY THẾ toàn bộ file cũ
+// FILE: src/services/PromotionService.ts
 // =====================================================================
 
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import { IPromotionListParams, IPromotionRequest } from "model/promotion/PromotionModel";
+
+/**
+ * Lọc object: bỏ các key có value là undefined, null, hoặc chuỗi rỗng ""
+ * Giữ lại số 0 và -1 (status=-1 là hợp lệ, có nghĩa "tất cả")
+ */
+function cleanParams<T extends Record<string, any>>(params: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== "")
+  ) as Partial<T>;
+}
 
 const PromotionService = {
 
@@ -13,7 +23,7 @@ const PromotionService = {
    * BE: GET /market/promotion/list
    */
   list: (params: IPromotionListParams, signal?: AbortSignal) =>
-    fetch(`${urlsApi.promotionalProgram.list}${convertParamsToString(params)}`, {
+    fetch(`${urlsApi.promotionalProgram.list}${convertParamsToString(cleanParams(params))}`, {
       signal,
       method: "GET",
     }).then((r) => r.json()),
@@ -26,7 +36,7 @@ const PromotionService = {
     params: { mode?: number; page?: number; sizeLimit?: number },
     signal?: AbortSignal
   ) =>
-    fetch(`${urlsApi.promotionalProgram.listActive}${convertParamsToString(params)}`, {
+    fetch(`${urlsApi.promotionalProgram.listActive}${convertParamsToString(cleanParams(params))}`, {
       signal,
       method: "GET",
     }).then((r) => r.json()),
@@ -76,7 +86,7 @@ const PromotionService = {
       method: "GET",
     })
       .then((r) => r.json())
-      .then((res) => res?.data ?? 0),
+      .then((res) => res?.result ?? 0),
 };
 
 export default PromotionService;
