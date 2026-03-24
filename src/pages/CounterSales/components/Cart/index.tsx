@@ -141,7 +141,7 @@ const Cart: React.FC<CartProps> = ({
                   </div>
                 ) : (
                   <div className="cust-pts">
-                    ⭐ {customer.points.toLocaleString("vi")} điểm · Hạng {customer.tier}
+                    ⭐ {(customer.points || 0).toLocaleString("vi")} điểm · Hạng {customer.tier}
                     {isLoyaltyMember && loyaltyWallet!.segmentName && (
                       <span style={{ color: "var(--lime-d)", marginLeft: 4 }}>· {loyaltyWallet!.segmentName}</span>
                     )}
@@ -249,7 +249,7 @@ const Cart: React.FC<CartProps> = ({
               <span className="sr__k" style={{ paddingTop: 2 }}>
                 Điểm tích lũy dùng
                 <span style={{ display: "block", fontSize: 11, color: "var(--muted)", fontWeight: 400, marginTop: 2 }}>
-                  Số dư: {loyaltyWallet!.currentBalance.toLocaleString("vi-VN")} điểm (tối đa {maxPoints.toLocaleString("vi-VN")})
+                  Số dư: {(loyaltyWallet!.currentBalance || 0).toLocaleString("vi-VN")} điểm (tối đa {(maxPoints || 0).toLocaleString("vi-VN")})
                 </span>
               </span>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>

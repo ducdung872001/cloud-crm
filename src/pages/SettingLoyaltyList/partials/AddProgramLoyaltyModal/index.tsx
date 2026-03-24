@@ -598,13 +598,15 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
                     if (field.name === "startDate" || field.name === "endDate") {
                       const updatedValues = { ...formData.values, [field.name]: value };
                       const dateErrors = validateDateRange(updatedValues);
-                      setFormData((prev) => ({
-                        ...prev,
-                        errors: {
-                          ...prev.errors,
-                          endDate: dateErrors["endDate"] ?? undefined,
-                        },
-                      }));
+                      setFormData((prev) => {
+                        const newErrors = { ...prev.errors };
+                        if (dateErrors["endDate"]) {
+                          newErrors.endDate = dateErrors["endDate"];
+                        } else {
+                          delete newErrors.endDate;
+                        }
+                        return { ...prev, errors: newErrors };
+                      });
                     }
                   }}
                   formData={formData}
