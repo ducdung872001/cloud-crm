@@ -205,9 +205,11 @@ export default function PromotionalProgram(props: any) {
 
     <span className="promo-used-text">{item.usedCount ?? 0} lượt</span>,
 
-    <span className={(PROMOTION_STATUS_MAP[item.status] ?? PROMOTION_STATUS_MAP[0]).className}>
-      {(PROMOTION_STATUS_MAP[item.status] ?? PROMOTION_STATUS_MAP[0]).label}
-    </span>,
+    (() => {
+      // status null (legacy) → treat as 0 (Chờ duyệt)
+      const statusEntry = PROMOTION_STATUS_MAP[item.status ?? 0] ?? PROMOTION_STATUS_MAP[0];
+      return <span className={statusEntry.className}>{statusEntry.label}</span>;
+    })(),
   ];
 
   // ─── Actions ─────────────────────────────────────────────────────
