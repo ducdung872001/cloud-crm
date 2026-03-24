@@ -2368,6 +2368,15 @@ export const urlsApi = {
     countByStatus: prefixMarket + "/promotion/count-by-status",
     updateStatus:  prefixMarket + "/promotion/update/status",
   },
+  couponProgram: {
+    list:          prefixMarket + "/coupon/list",
+    get:           prefixMarket + "/coupon/get",
+    update:        prefixMarket + "/coupon/update",
+    delete:        prefixMarket + "/coupon/delete",
+    updateStatus:  prefixMarket + "/coupon/update/status",
+    countByStatus: prefixMarket + "/coupon/count-by-status",
+    sumUsed:       prefixMarket + "/coupon/sum-used",
+  },
   email: {
     list: prefixAdmin + "/outlookMail/list",
     detail: prefixAdmin + "/outlookMail/get",
