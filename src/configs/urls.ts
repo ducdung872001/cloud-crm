@@ -2366,6 +2366,7 @@ export const urlsApi = {
     update: prefixMarket + "/promotion/update",
     delete: prefixMarket + "/promotion/delete",
     countByStatus: prefixMarket + "/promotion/count-by-status",
+    updateStatus:  prefixMarket + "/promotion/update/status",
   },
   email: {
     list: prefixAdmin + "/outlookMail/list",

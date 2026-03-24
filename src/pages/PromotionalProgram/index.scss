@@ -371,3 +371,62 @@
     }
   }
 }
+// ── Status badge + dropdown ─────────────────────────────────────────
+.promo-status-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  .promo-status-chevron {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: #94a3b8;
+    padding: 2px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+
+    &:hover {
+      color: #475569;
+      background: #f1f5f9;
+    }
+
+    svg { width: 12px; height: 12px; }
+  }
+
+  .promo-status-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 99;
+    min-width: 200px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+
+    &__item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #334155;
+      transition: background 0.15s;
+
+      &:hover {
+        background: #f8fafc;
+        color: #0f172a;
+      }
+
+      &:not(:last-child) {
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      svg { width: 15px; height: 15px; flex-shrink: 0; }
+    }
+  }
+}

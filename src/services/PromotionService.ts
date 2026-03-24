@@ -76,6 +76,19 @@ const PromotionService = {
     }).then((r) => r.json()),
 
   /**
+   * Đổi trạng thái chương trình
+   * BE: POST /market/promotion/update/status
+   * Body: { id, status }
+   */
+  updateStatus: (id: number, status: number, signal?: AbortSignal) =>
+    fetch(urlsApi.promotionalProgram.updateStatus, {
+      signal,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status }),
+    }).then((r) => r.json()),
+
+  /**
    * Đếm theo trạng thái – dùng cho stat cards
    * BE: GET /market/promotion/count-by-status?status=xxx
    *   status: -1=tất cả, 0=Chờ duyệt, 1=Đang chạy, 2=Hết hạn, 99=Sắp diễn ra

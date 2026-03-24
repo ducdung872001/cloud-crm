@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useRef } from "react";
 import Icon from "components/icon";
+import Badge from "components/badge/badge";
 import BoxTable from "components/boxTable/boxTable";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -15,6 +16,30 @@ import {
   PROMOTION_TYPE_LABELS,
   PROMOTION_STATUS_MAP,
 } from "model/promotion/PromotionModel";
+
+// Badge variant tương ứng với từng status
+const STATUS_BADGE_VARIANT: Record<number, "success"|"warning"|"error"|"secondary"> = {
+  0: "warning",    // Chờ duyệt
+  1: "success",    // Đang chạy
+  2: "error",      // Hết hạn
+  3: "secondary",  // Tạm dừng
+};
+
+// Danh sách trạng thái có thể chuyển sang
+const STATUS_TRANSITIONS: Record<number, { status: number; label: string; icon: string }[]> = {
+  0: [  // Chờ duyệt → có thể Duyệt (1) hoặc Từ chối (2)
+    { status: 1, label: "Duyệt – Bắt đầu chạy", icon: "CheckedCircle" },
+    { status: 2, label: "Từ chối",               icon: "CloseCircle"   },
+  ],
+  1: [  // Đang chạy → có thể Tạm dừng (3)
+    { status: 3, label: "Tạm dừng", icon: "PauseCircle" },
+  ],
+  2: [], // Hết hạn → không đổi được
+  3: [  // Tạm dừng → có thể Tiếp tục (1) hoặc Kết thúc (2)
+    { status: 1, label: "Tiếp tục chạy", icon: "CheckedCircle" },
+    { status: 2, label: "Kết thúc",      icon: "CloseCircle"   },
+  ],
+};
 
 import "./index.scss";
 
@@ -74,6 +99,7 @@ export default function PromotionalProgram(props: any) {
     chooseSizeLimit: (limit) => setPagination((prev) => ({ ...prev, sizeLimit: limit, page: 1 })),
   });
 
+  const [statusMenuId, setStatusMenuId] = useState<number | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   // ─── Load danh sách ─────────────────────────────────────────────
@@ -112,6 +138,20 @@ export default function PromotionalProgram(props: any) {
     }
   }, [search, statusFilter, typeFilter, pagination.page, pagination.sizeLimit]);
 
+  // ─── Đổi trạng thái ─────────────────────────────────────────────
+  const handleUpdateStatus = async (id: number, status: number) => {
+    setStatusMenuId(null);
+    const res = await PromotionService.updateStatus(id, status);
+    if (res?.code === 0) {
+      const label = PROMOTION_STATUS_MAP[status]?.label ?? "trạng thái mới";
+      showToast(`Đã chuyển sang "${label}" thành công`, "success");
+      loadList();
+      loadStats();
+    } else {
+      showToast(res?.message ?? "Đổi trạng thái thất bại", "error");
+    }
+  };
+
   // ─── Load stat cards ─────────────────────────────────────────────
   const loadStats = useCallback(async () => {
     setStatsLoading(true);
@@ -132,6 +172,13 @@ export default function PromotionalProgram(props: any) {
 
   useEffect(() => { loadList(); }, [loadList]);
   useEffect(() => { loadStats(); }, []);
+
+  // Đóng status dropdown khi click ngoài
+  useEffect(() => {
+    const handler = () => setStatusMenuId(null);
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, []);
 
   // ─── Xóa ────────────────────────────────────────────────────────
   const handleDelete = async (id: number) => {
@@ -206,9 +253,38 @@ export default function PromotionalProgram(props: any) {
     <span className="promo-used-text">{item.usedCount ?? 0} lượt</span>,
 
     (() => {
-      // status null (legacy) → treat as 0 (Chờ duyệt)
-      const statusEntry = PROMOTION_STATUS_MAP[item.status ?? 0] ?? PROMOTION_STATUS_MAP[0];
-      return <span className={statusEntry.className}>{statusEntry.label}</span>;
+      const st = item.status ?? 0;
+      const entry = PROMOTION_STATUS_MAP[st] ?? PROMOTION_STATUS_MAP[0];
+      const variant = STATUS_BADGE_VARIANT[st] ?? "warning";
+      const transitions = STATUS_TRANSITIONS[st] ?? [];
+      return (
+        <div className="promo-status-wrap">
+          <Badge text={entry.label} variant={variant} />
+          {transitions.length > 0 && (
+            <span
+              className="promo-status-chevron"
+              title="Đổi trạng thái"
+              onClick={(e) => { e.stopPropagation(); setStatusMenuId(statusMenuId === item.id ? null : item.id); }}
+            >
+              <Icon name="CaretDown" />
+            </span>
+          )}
+          {statusMenuId === item.id && transitions.length > 0 && (
+            <div className="promo-status-dropdown" onClick={(e) => e.stopPropagation()}>
+              {transitions.map((t) => (
+                <div
+                  key={t.status}
+                  className="promo-status-dropdown__item"
+                  onClick={() => handleUpdateStatus(item.id, t.status)}
+                >
+                  <Icon name={t.icon} />
+                  <span>{t.label}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
     })(),
   ];
 
