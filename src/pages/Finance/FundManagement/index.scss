@@ -1,49 +1,5 @@
 @import "../shared.scss";
 
-// ─── Page header ──────────────────────────────────────────────────────────────
-
-.fund-page-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.6rem 2rem;
-  background: linear-gradient(135deg, #f6fbff 0%, #ffffff 55%, #eef8f3 100%);
-  border: 1px solid #d9e8f4;
-  border-radius: 1.2rem;
-}
-
-.fund-page-header__left {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.fund-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 1.3rem;
-  color: #6a7f8e;
-
-  .fund-breadcrumb__sep {
-    color: #b0c0cc;
-  }
-
-  .fund-breadcrumb__current {
-    color: #2e7d32;
-    font-weight: 500;
-  }
-}
-
-.fund-page-title {
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #133042;
-  line-height: 1.3;
-}
-
 // ─── Fund list items ──────────────────────────────────────────────────────────
 
 .finance-fund-list {

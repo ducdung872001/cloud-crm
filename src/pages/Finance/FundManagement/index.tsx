@@ -524,18 +524,14 @@ export default function FinanceFundManagement() {
   return (
     <FinancePageShell title="Quản lý quỹ">
       {/* ── Header row ── */}
-      <div className="fund-page-header">
-        <div className="fund-page-header__left">
-          <nav className="fund-breadcrumb">
-            <span>Tài chính &amp; Thanh toán</span>
-            <span className="fund-breadcrumb__sep">›</span>
-            <span className="fund-breadcrumb__current">Quản lý quỹ</span>
-          </nav>
-          <h1 className="fund-page-title">Quản lý quỹ</h1>
-        </div>
-        <Button color="primary" onClick={handleOpenCreate}>
+      <div className="finance-screen-header">
+        <h1>Quản lý quỹ</h1>
+        <button
+          className="finance-action-btn finance-action-btn--primary"
+          onClick={handleOpenCreate}
+        >
           + Thêm quỹ mới
-        </Button>
+        </button>
       </div>
 
       {/* ── Summary card ── */}

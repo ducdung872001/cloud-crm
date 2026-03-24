@@ -73,7 +73,8 @@ async function parseResponse<T>(res: Response): Promise<T> {
   if (json.code !== 0 && json.code !== 200) {
     throw new Error(json.message ?? "Lỗi API không xác định");
   }
-  return json.data as T;
+  // Backend Reborn trả "result", không phải "data"
+  return (json.result ?? json.data) as T;
 }
 
 // ─── Service ──────────────────────────────────────────────────────────────────
