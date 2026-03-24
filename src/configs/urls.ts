@@ -745,7 +745,22 @@ export const urlsApi = {
   },
   financeDashboard: {
     full: prefixBilling + "/finance/dashboard",
-    chart: prefixBilling + "/finance/chart"
+    chart: prefixBilling + "/finance/chart",
+  },
+  fund: {
+    overview: prefixBilling + "/fund/overview",
+    detail: prefixBilling + "/fund/detail",
+    save: prefixBilling + "/fund/save",
+    close: prefixBilling + "/fund/close",
+    history: prefixBilling + "/fund/history", // endpoint mới — xem FundResource
+  },
+  debt: {
+    list: prefixBilling + "/debt/list",
+    detail: prefixBilling + "/debt/detail",
+    save: prefixBilling + "/debt/save",
+    pay: prefixBilling + "/debt/pay",
+    markPaid: prefixBilling + "/debt/mark-paid",
+    qr: prefixBilling + "/debt/qr",
   },
   cashbook: {
     list: prefixAdmin + "/cashbook/list",
@@ -2199,7 +2214,7 @@ export const urlsApi = {
     warehousePerf: prefixInventory + "/report/stock/warehouse-perf",
     productDetails: prefixInventory + "/report/stock/product-details",
     cost: prefixInventory + "/report/stock/cost", // Báo cáo Giá vốn
-    slow: prefixInventory + "/report/stock/slow",  // Báo cáo hàng chậm luân chuyển
+    slow: prefixInventory + "/report/stock/slow", // Báo cáo hàng chậm luân chuyển
     history: prefixInventory + "/report/stock/history", // Báo cáo lịch sử tồn kho
   },
   // Báo cáo bán hàng (sales service)
