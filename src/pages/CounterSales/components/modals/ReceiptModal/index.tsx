@@ -18,9 +18,10 @@ interface ReceiptModalProps {
   qrCodePro: string | null;
   couponDiscount?: number;
   promoDiscount?: number;
+  onPaymentSuccess?: () => void;
 }
 
-export default function ReceiptModal({ open, cartItems, onClose, customerId, invoiceId, invoiceDraft, method, qrCodePro, couponDiscount = 0, promoDiscount = 0 }: ReceiptModalProps) {
+export default function ReceiptModal({ open, cartItems, onClose, customerId, invoiceId, invoiceDraft, method, qrCodePro, couponDiscount = 0, promoDiscount = 0, onPaymentSuccess }: ReceiptModalProps) {
   const qrRef = useRef<HTMLDivElement>(null);
   const [isPaymentProcessing, setIsPaymentProcessing] = React.useState(false);
   const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
@@ -57,12 +58,16 @@ export default function ReceiptModal({ open, cartItems, onClose, customerId, inv
       if (res.code === 0) {
         showToast("Thanh toán thành công.", "success");
         setIsPaymentProcessing(true);
+        onPaymentSuccess?.();
       } else {
         showToast(res.message || "Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại sau.", "error");
       }
     } catch (error) {}
   };
   const handleClose = async () => {
+    if (isPaymentProcessing) {
+      onPaymentSuccess?.();
+    }
     onClose();
     setIsPaymentProcessing(false);
   };

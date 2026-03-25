@@ -106,6 +106,7 @@ const CounterSales: React.FC = () => {
   // Modal states
   const [payModalOpen, setPayModalOpen] = useState(false);
   const [receiptModalOpen, setReceiptModalOpen] = useState(false);
+  const [paymentSuccessCount, setPaymentSuccessCount] = useState(0);
   const [orderDetailModalOpen, setOrderDetailModalOpen] = useState(false);
   const [qrScanModalOpen, setQrScanModalOpen] = useState(false);
   const [syncModalOpen, setSyncModalOpen] = useState(false);
@@ -422,6 +423,7 @@ const CounterSales: React.FC = () => {
                 onViewPromos={() => setPromoModalOpen(true)}
                 onRemovePromo={() => { setAppliedPromo(null); setPromoDiscount(0); }}
                 onCouponDiscountChange={setCouponDiscount}
+                onResetVoucher={paymentSuccessCount > 0 ? () => {} : undefined}
                 onSavedDraft={() => {
                   // Xóa giỏ hàng + refresh badge sau khi lưu tạm
                   setCartItems([]);
@@ -486,6 +488,12 @@ const CounterSales: React.FC = () => {
         invoiceDraft={invoiceDraftToPaid} method={method} qrCodePro={qrCodePro}
         couponDiscount={couponDiscount}
         promoDiscount={promoDiscount}
+        onPaymentSuccess={() => {
+          setCouponDiscount(0);
+          setPromoDiscount(0);
+          setAppliedPromo(null);
+          setPaymentSuccessCount(prev => prev + 1);
+        }}
         onClose={() => {
           setCartItems([]); setCustomer(null); setInvoiceId(null);
           setReceiptModalOpen(false); setInvoiceDraftToPaid(null);

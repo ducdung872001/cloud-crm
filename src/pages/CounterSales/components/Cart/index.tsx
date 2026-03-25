@@ -28,7 +28,8 @@ interface CartProps {
   promoDiscount?:      number;
   onViewPromos?:       () => void;
   onRemovePromo?:      () => void;
-  onCouponDiscountChange?: (discount: number) => void;  // ← THÊM
+  onCouponDiscountChange?: (discount: number) => void;
+  onResetVoucher?: () => void;
 }
 
 const Cart: React.FC<CartProps> = ({
@@ -38,7 +39,7 @@ const Cart: React.FC<CartProps> = ({
   onSavedDraft,
   loyaltyWallet, exchangeRate = 1000, pointsToUse = 0, onPointsChange,
   eligiblePromoCount = 0, appliedPromo, promoDiscount = 0,
-  onViewPromos, onRemovePromo, onCouponDiscountChange,
+  onViewPromos, onRemovePromo, onCouponDiscountChange, onResetVoucher,
 }) => {
   const [orderType, setOrderType] = useState<OrderType>("retail");
   const [voucher, setVoucher]     = useState("");
@@ -59,6 +60,20 @@ const Cart: React.FC<CartProps> = ({
   const subtotal  = items.reduce((sum, item) => sum + item.price * item.qty, 0);
   const itemCount = items.length;
   const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
+
+  // Reset voucher khi thanh toán thành công
+  React.useEffect(() => {
+    const handleReset = () => {
+      setVoucher("");
+      setCouponDiscount(0);
+      setCouponMessage("");
+      setCouponError("");
+    };
+    
+    if (onResetVoucher) {
+      handleReset();
+    }
+  }, [onResetVoucher]);
 
   // ── Loyalty ───────────────────────────────────────────────────────────────
   const isLoyaltyMember = !!loyaltyWallet;
