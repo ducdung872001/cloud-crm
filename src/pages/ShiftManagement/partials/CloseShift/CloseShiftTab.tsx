@@ -48,7 +48,7 @@ export default function CloseShiftTab({ shiftId, branchId, onShiftClosed }: Prop
               };
 
         const res = await ShiftService.closeShift(branchId, body);
-        if (res?.data?.status === "CLOSED" || res?.data?.id) {
+        if (res?.result?.status === "CLOSED" || res?.result?.id) {
           onShiftClosed?.();
           return;
         }

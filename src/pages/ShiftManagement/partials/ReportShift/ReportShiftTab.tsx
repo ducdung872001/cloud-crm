@@ -36,7 +36,7 @@ export default function ShiftReportTab({ shiftId, branchId }: Props) {
     if (!shiftId || shiftId <= 0) return; // mock mode
     ShiftService.getCloseReport(shiftId)
       .then((res) => {
-        const d = res?.data;
+        const d = res?.result;
         if (!d) return; // API rỗng → giữ mock
         setReportData({
           cash: formatNum(d.totalCash ?? 0),
@@ -69,7 +69,7 @@ export default function ShiftReportTab({ shiftId, branchId }: Props) {
     setSending(true);
     try {
       const res = await ShiftService.sendShiftReport(shiftId, branchId);
-      const msg = res?.data ?? "Đã gửi báo cáo kết ca thành công!";
+      const msg = res?.result ?? "Đã gửi báo cáo kết ca thành công!";
       alert(msg);
     } catch (e) {
       alert("Gửi báo cáo thất bại, vui lòng thử lại.");

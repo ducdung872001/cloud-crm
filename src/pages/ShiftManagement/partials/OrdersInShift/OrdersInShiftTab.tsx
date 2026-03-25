@@ -99,7 +99,7 @@ export default function OrdersInShiftTab({ shiftId }: Props) {
       size: params.limit,
     })
       .then((res) => {
-        const d = res?.data;
+        const d = res?.result;
         if (!d || !d.orders) {
           // API rỗng → giữ mock data nhưng filter phía client
           setIsLoading(false);

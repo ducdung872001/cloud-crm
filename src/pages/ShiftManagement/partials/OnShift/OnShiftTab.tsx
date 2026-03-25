@@ -71,7 +71,7 @@ export default function OnShiftTab({ shiftId, branchId, onEndShift }: Props) {
     if (!branchId) return;
     ShiftService.getActiveDashboard(branchId)
       .then((res) => {
-        const d = res?.data;
+        const d = res?.result;
         if (!d) return; // API rỗng → giữ mock
 
         setShiftInfo({

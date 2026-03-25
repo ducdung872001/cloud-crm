@@ -55,7 +55,7 @@ export default function ShiftStatus({ branchId }: Props) {
     if (!branchId) return;
     ShiftService.getGeneralReport(branchId)
       .then((res) => {
-        const d = res?.data;
+        const d = res?.result;
         if (!d || !d.shiftStatuses || d.shiftStatuses.length === 0) return; // giữ mock
         setShifts(
           d.shiftStatuses.map((s: any) => ({

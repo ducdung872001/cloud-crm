@@ -47,7 +47,7 @@ export default function OpenShiftTab({ shiftConfigId, branchId, onShiftOpened }:
             };
 
       const res = await ShiftService.openShift(branchId, body);
-      const shiftId = res?.data?.id;
+      const shiftId = res?.result?.id;
 
       if (shiftId) {
         // API thành công → chuyển sang tab "Đang ca"

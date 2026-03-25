@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import Button from "components/button/button";
 import Icon from "components/icon";
 import { UserContext } from "contexts/userContext";
@@ -33,9 +33,7 @@ const EMPTY_SHIFT: ShiftInfo = {
 };
 
 type Props = {
-  /** Khi bấm "Mở ca làm việc" → chuyển sang tab Vào ca với configId */
   onOpenShiftClick?: (shiftConfigId: number) => void;
-  /** Nếu đang có ca active → tự động chuyển sang tab Đang ca */
   onActiveShiftFound?: (shiftId: number) => void;
 };
 
@@ -45,31 +43,35 @@ export default function NotOpenShiftTab({ onOpenShiftClick, onActiveShiftFound }
   const { dataBranch } = useContext(UserContext) as ContextType;
   const branchId: number = dataBranch?.value ?? 0;
 
-  const [loadState, setLoadState]   = useState<LoadState>("loading");
-  const [shift, setShift]           = useState<ShiftInfo>(EMPTY_SHIFT);
-  const [staffs, setStaffs]         = useState<StaffItem[]>([]);
-  const [noConfig, setNoConfig]     = useState(false);
+  const [loadState, setLoadState] = useState<LoadState>("loading");
+  const [shift, setShift]         = useState<ShiftInfo>(EMPTY_SHIFT);
+  const [staffs, setStaffs]       = useState<StaffItem[]>([]);
+  const [noConfig, setNoConfig]   = useState(false);
 
-  useEffect(() => {
+  // FIX 1: dùng useCallback để fetchData có thể gọi lại độc lập (nút Thử lại)
+  const fetchData = useCallback(() => {
     if (!branchId) return;
+
     setLoadState("loading");
+    setNoConfig(false);
 
     ShiftService.getOverview(branchId)
       .then((res) => {
-        const d = res?.data;
+        // FIX 2: dùng res?.result thay vì res?.result
+        const d = res?.result;
 
         if (!d) {
           setLoadState("error");
           return;
         }
 
-        // Nếu đang có ca active → báo lên parent chuyển luôn sang tab Đang ca
+        // Đang có ca active → báo lên parent chuyển sang tab Đang ca
         if (d.hasActiveShift && d.activeShift?.shiftId && onActiveShiftFound) {
           onActiveShiftFound(d.activeShift.shiftId);
           return;
         }
 
-        // Không có config ca nào → hiện thông báo cấu hình
+        // FIX 3: null shiftConfigId → noConfig (không phải error)
         if (!d.shiftConfigId) {
           setNoConfig(true);
           setLoadState("ok");
@@ -78,12 +80,12 @@ export default function NotOpenShiftTab({ onOpenShiftClick, onActiveShiftFound }
 
         setShift({
           shiftConfigId: d.shiftConfigId,
-          name:         d.shiftName  ?? "Ca làm việc",
+          name:         d.shiftName       ?? "Ca làm việc",
           time:         d.startTime && d.endTime
                           ? `${d.startTime} - ${d.endTime}`
                           : "—",
           dateText:     new Date().toLocaleDateString("vi-VN"),
-          posName:      d.posDeviceName ?? "—",
+          posName:      d.posDeviceName   ?? "—",
           defaultCash:  d.openingCashDefault ?? 0,
         });
 
@@ -106,7 +108,12 @@ export default function NotOpenShiftTab({ onOpenShiftClick, onActiveShiftFound }
       .catch(() => {
         setLoadState("error");
       });
-  }, [branchId]);
+  }, [branchId, onActiveShiftFound]);
+
+  // FIX 4: useEffect phụ thuộc fetchData — tự re-run khi branchId đổi
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const getInitials = (fullName: string) => {
     const parts = fullName.trim().split(" ").filter(Boolean);
@@ -116,12 +123,9 @@ export default function NotOpenShiftTab({ onOpenShiftClick, onActiveShiftFound }
   };
 
   const handleOpenShift = () => {
-    if (onOpenShiftClick) {
-      onOpenShiftClick(shift.shiftConfigId);
-    }
+    if (onOpenShiftClick) onOpenShiftClick(shift.shiftConfigId);
   };
 
-  // ── Loading ──
   if (loadState === "loading") {
     return (
       <div className="not-open-shift-tab">
@@ -132,13 +136,13 @@ export default function NotOpenShiftTab({ onOpenShiftClick, onActiveShiftFound }
     );
   }
 
-  // ── Error ──
   if (loadState === "error") {
     return (
       <div className="not-open-shift-tab">
         <div className="not-open-shift-card not-open-shift-card--error">
           <p className="text-danger">Không thể tải thông tin ca. Vui lòng thử lại.</p>
-          <Button color="secondary" onClick={() => setLoadState("loading")}>
+          {/* FIX 5: gọi fetchData() — thực sự re-fetch, không chỉ đổi state UI */}
+          <Button color="secondary" onClick={fetchData}>
             Thử lại
           </Button>
         </div>
@@ -146,20 +150,20 @@ export default function NotOpenShiftTab({ onOpenShiftClick, onActiveShiftFound }
     );
   }
 
-  // ── Chưa thiết lập ca ──
   if (noConfig) {
     return (
       <div className="not-open-shift-tab">
         <div className="not-open-shift-card not-open-shift-card--empty">
           <Icon name="Clock" />
           <p className="mt-12">Chưa có ca nào được cấu hình cho chi nhánh này.</p>
-          <p className="text-muted">Vui lòng vào <strong>Thiết lập ca</strong> để tạo ca trước.</p>
+          <p className="text-muted">
+            Vui lòng vào <strong>Thiết lập ca</strong> để tạo ca trước.
+          </p>
         </div>
       </div>
     );
   }
 
-  // ── Normal ──
   return (
     <div className="not-open-shift-tab">
       <div className="not-open-shift-card">

@@ -32,7 +32,7 @@ export default function StaffActive({ branchId }: Props) {
     if (!branchId) return;
     ShiftService.getGeneralReport(branchId)
       .then((res) => {
-        const d = res?.data;
+        const d = res?.result;
         if (!d || !d.activeStaff || d.activeStaff.length === 0) return; // giữ mock
 
         const mapped: StaffItem[] = d.activeStaff.map((s: any, idx: number) => ({
