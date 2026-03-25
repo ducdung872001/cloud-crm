@@ -9,7 +9,7 @@ export interface IProgramRoyaltyResposne {
   description?: string;
   priorityLevel?: number;
   active?: boolean;
-  branchIds?: number[] | string; // [1,2,3,4]
+  branchIds?: number[] | string;
   processId?: number;
   processName?: string;
   startNodeId?: string;
@@ -47,12 +47,16 @@ export interface ILoyaltySegmentResposne {
   id?: number;
   point?: number;
   name?: string;
+  /** Tỷ lệ tích điểm từ DB, vd: "1%", "1.5%" */
+  rate?: string;
+  /** JSON string array quyền lợi từ DB */
+  benefits?: string;
+  // UI-only fields được merge từ getType()
   icon?: any;
   backgroundColor?: string;
-  rate?: string;
-  desList?: any;
   borderColor?: string;
-  member?: number 
+  desList?: string[];
+  member?: number;
 }
 
 export interface ILoyaltyWalletResponse {
@@ -66,4 +70,3 @@ export interface ILoyaltyWalletResponse {
   segmentName?: string;
   createdTime?: string;
 }
-

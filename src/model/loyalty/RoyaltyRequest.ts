@@ -1,42 +1,27 @@
 export interface IRoyaltyFilterRequest {
   name?: string;
-  page?: number;
   limit?: number;
+  page?: number;
 }
 
-export interface IProgramRoyaltyRequest {
+export interface ILoyaltySegmentRequest {
   id?: number;
+  point?: number;
   name?: string;
-  processCode?: string;
-  employeeId?: number;
-  employeeName?: string;
-  startDate?: string;
-  endDate?: string;
-  description?: string;
-  priorityLevel?: number;
-  active?: boolean;
-  branchIds?: number[] | string; // [1,2,3,4]
-  processId?: number;
-  processName?: string;
-  startNodeId?: string;
-  createdAt?: string;
+  /** Tỷ lệ tích điểm, vd: "1%", "3%" */
+  rate?: string;
+  /**
+   * Quyền lợi – JSON array string
+   * vd: '["Tích 1% điểm thưởng","Giảm 5% sinh nhật"]'
+   */
+  benefits?: string;
 }
 
-export interface ILoyaltyPointLedgerRequest {
+export interface ILoyaltyWalletRequest {
   id?: number;
-  name?: string;
-  walletId?: number;
+  status?: number;
   customerId?: number;
   customerName?: string;
-  point?: number;
-  description?: string;
-  createdTime?: string;
-  employeeId?: number;
-  employeeName?: string;
-  loyaltyProgramId?: number;
-  loyaltyProgramName?: string;
-  loyaltyRewardId?: number;
-  loyaltyRewardName?: string;
 }
 
 export interface ILoyaltyRewardRequest {
@@ -45,27 +30,5 @@ export interface ILoyaltyRewardRequest {
   description?: string;
   pointsRequired?: number;
   status?: number;
-  createdAt?: string;
-  updatedAt?: string;
   rewardItems?: string;
-}
-
-export interface ILoyaltySegmentRequest {
-  id?: number;
-  point?: number;
-  name?: string;
-}
-
-export interface ILoyaltyWalletRequest {
-  id?: number;
-  status?: number;
-  customerId?: number;
-  customerName?: string;
-  totalEarn?: number;
-  currentBalance?: number;
-  segmentId?: number;
-  segmentName?: string;
-  createdTime?: string;
-  page?: number;
-  limit?: number;
 }
