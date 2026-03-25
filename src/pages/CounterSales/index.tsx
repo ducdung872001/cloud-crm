@@ -325,7 +325,7 @@ const CounterSales: React.FC = () => {
               const qrCodeRes = await QrCodeProService.generate({
                 content: "DON HANG " + invoiceId,
                 orderId: invoiceId,
-                amount: cartItems.reduce((s, c) => s + c.price * c.qty, 0),
+                amount: cartItems.reduce((s, c) => s + c.price * c.qty, 0) - couponDiscount - promoDiscount,
               });
               if (qrCodeRes.code === 0 && qrCodeRes?.result?.qrCode) {
                 setPayModalOpen(false);
