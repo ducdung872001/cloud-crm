@@ -14,8 +14,9 @@ import { IInvoiceFilterRequest, IShipmentCreatePayload } from "model/invoice/Inv
 import { IInvoiceResponse, IProductInvoiceServiceResponse, ICardInvoiceServiceResponse } from "model/invoice/InvoiceResponse";
 import InvoiceService from "services/InvoiceService";
 import ShippingService from "services/ShippingService";
-import DepartmentService from "services/DepartmentService";
-import { IDepartmentResponse } from "model/department/DepartmentResponseModel";
+import EmployeeService from "services/EmployeeService";
+import { IEmployeeResponse } from "model/employee/EmployeeResponseModel";
+import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import "./AddShippingOrder.scss";
 
 function useAddressOptions() {
@@ -166,6 +167,7 @@ const DEFAULT_FORM: IShippingFormState = {
   width: null,
   height: null,
   length: null,
+  receiverEmail: "",
   codAmount: null,
   note: "",
 };
@@ -185,7 +187,7 @@ export default function AddShippingOrder() {
   const [isLoadingPage, setIsLoadingPage] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const [selectedSender, setSelectedSender] = useState<IDepartmentResponse | null>(null);
+  const [selectedSender, setSelectedSender] = useState<IEmployeeResponse | null>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<ISelectedInvoice | null>(null);
 
@@ -252,37 +254,41 @@ export default function AddShippingOrder() {
 
   // ---- loadOptions Người gửi ----
   const loadSenderOptions = async (inputValue: string, _loadedOptions: any, { page }: { page: number }) => {
-    const response = await DepartmentService.list({ name: inputValue?.trim() ?? "", page, limit: 20 });
+    const params: IEmployeeFilterRequest = { name: inputValue?.trim() ?? "", page, limit: 20 };
+    const response = await EmployeeService.list(params);
     if (response.code === 0) {
-      const items: IDepartmentResponse[] = response.result?.items ?? response.result ?? [];
+      const items: IEmployeeResponse[] = response.result?.items ?? [];
       return {
-        options: items.map((item) => ({ value: item.id, label: item.name, origin: item })),
-        hasMore: response.result?.loadMoreAble ?? false,
+        options: items.map((item) => ({
+          value: item.id,
+          label: `${item.name}${item.phone ? " — " + item.phone : ""}${item.branchName ? " | " + item.branchName : ""}`,
+          origin: item,
+        })),
+        hasMore: response.result?.total > page * 20,
         additional: { page: page + 1 },
       };
     }
     return { options: [], hasMore: false, additional: { page: page + 1 } };
   };
 
-  const applySenderToForm = (dept: IDepartmentResponse) => {
-    const deptAny = dept as any;
-    setSelectedSender(dept);
+  const applySenderToForm = (emp: IEmployeeResponse) => {
+    setSelectedSender(emp);
     setForm((prev) => ({
       ...prev,
-      senderEmployeeId: dept.id,
-      senderName: deptAny.managerName ?? deptAny.leaderName ?? dept.name ?? "",
-      senderPhone: deptAny.managerPhone ?? deptAny.leaderPhone ?? deptAny.phone ?? "",
-      senderEmail: deptAny.managerEmail ?? deptAny.leaderEmail ?? deptAny.email ?? "",
-      senderStreet: deptAny.address ?? deptAny.street ?? "",
+      senderEmployeeId: emp.id,
+      senderName: emp.name ?? "",
+      senderPhone: emp.phone ?? "",
+      senderEmail: (emp as any).email ?? "",
+      senderStreet: (emp as any).address ?? (emp as any).street ?? "",
     }));
     setErrors((prev) => ({
       ...prev,
       senderName: "", senderPhone: "", senderStreet: "", senderDistrict: "", senderWard: "",
     }));
     // Auto-fill địa chỉ nếu có
-    const province = deptAny.province ?? deptAny.provinceName ?? "";
-    const district = deptAny.district ?? deptAny.districtName ?? "";
-    const ward = deptAny.ward ?? deptAny.wardName ?? "";
+    const province = (emp as any).province ?? (emp as any).provinceName ?? "";
+    const district = (emp as any).district ?? (emp as any).districtName ?? "";
+    const ward = (emp as any).ward ?? (emp as any).wardName ?? "";
     if (province || district) {
       senderAddr.setValuesByName(province, district, ward);
     }
@@ -480,7 +486,7 @@ export default function AddShippingOrder() {
         receiver: {
           name: form.receiverName ?? "",
           phone: form.receiverPhone ?? "",
-          email: "",
+          email: form.receiverEmail ?? "",
           address: form.receiverStreet ?? "",
           ward: form.receiverWard ?? "",
           district: form.receiverDistrict ?? "",
@@ -642,7 +648,7 @@ export default function AddShippingOrder() {
                     styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
                     loadOptions={loadSenderOptions}
                     additional={{ page: 1 }}
-                    value={selectedSender ? { value: selectedSender.id, label: selectedSender.name } : null}
+                    value={selectedSender ? { value: selectedSender.id, label: `${selectedSender.name}${selectedSender.phone ? " — " + selectedSender.phone : ""}${selectedSender.branchName ? " | " + selectedSender.branchName : ""}` } : null}
                     onChange={(opt: any) => {
                       if (!opt) { clearSender(); return; }
                       applySenderToForm(opt.origin);
@@ -672,6 +678,16 @@ export default function AddShippingOrder() {
                     />
                   </div>
                 </div>
+
+                <Input
+                  name="senderEmail"
+                  label="Email người gửi"
+                  fill
+                  type="email"
+                  value={form.senderEmail}
+                  onChange={setField("senderEmail")}
+                  placeholder="example@email.com"
+                />
 
                 <Input
                   name="senderStreet"
@@ -782,9 +798,15 @@ export default function AddShippingOrder() {
                     required
                     fill
                     options={PARTNER_OPTIONS}
-                    value={form.partnerId ? PARTNER_OPTIONS.find((o) => o.value === form.partnerId) : null}
+                    value={form.partnerId ?? null}
                     onChange={(opt: any) => {
-                      setForm((prev) => ({ ...prev, partnerId: opt?.value ?? null }));
+                      const partnerId =
+                        opt === null || opt === undefined
+                          ? null
+                          : typeof opt === "object"
+                          ? (opt.value ?? null)
+                          : opt;
+                      setForm((prev) => ({ ...prev, partnerId }));
                       setErrors((prev) => ({ ...prev, partnerId: "" }));
                     }}
                     placeholder="Chọn hãng..."
@@ -850,6 +872,16 @@ export default function AddShippingOrder() {
                   />
                   {errors.receiverStreet && <span className="field-error">{errors.receiverStreet}</span>}
                 </div>
+
+                <Input
+                  name="receiverEmail"
+                  label="Email người nhận"
+                  fill
+                  type="email"
+                  value={(form as any).receiverEmail ?? ""}
+                  onChange={setField("receiverEmail")}
+                  placeholder="example@email.com"
+                />
 
                 {/* Địa chỉ người nhận — cascading dropdown */}
                 <div className="form-row-3">

@@ -469,7 +469,7 @@ export const urlsApi = {
   shipping: {
     create: prefixLogistics + "/shipment/create",
     list: prefixLogistics + "/shipment/list",
-    tracking: prefixLogistics + "/shipment",
+    shipment: prefixLogistics + "/shipment",
     wards: prefixIntegration + "/address/wards",
     districts: prefixIntegration + "/address/districts",
     provinces: prefixIntegration + "/address/provinces",

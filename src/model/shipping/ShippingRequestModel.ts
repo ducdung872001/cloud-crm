@@ -59,6 +59,7 @@ export interface IShippingOrderFilterRequest {
   toDate?: string;
   page?: number;
   limit?: number;
+  shipmentOrder?: string;       // Lọc theo ID đơn vận chuyển cụ thể
 }
 
 // ---- Cập nhật trạng thái đơn hàng ----
@@ -114,6 +115,7 @@ export interface IShippingFormState {
   receiverDistrict: string;
   receiverWardCode: string;
   receiverWard: string;
+  receiverEmail: string;
   // Hàng hóa
   weight: number | null;
   width: number | null;
