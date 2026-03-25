@@ -11,6 +11,7 @@ import { getPermissions, showToast } from "utils/common";
 import { ITitleActions } from "components/titleAction/titleAction";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 import AddPromotionalModal from "./partials/AddPromotionalModal";
+import DmnSettingModal from "./partials/DmnSettingModal";
 import PromotionService from "services/PromotionService";
 import {
   IPromotion,
@@ -41,6 +42,9 @@ const STATUS_TRANSITIONS: Record<number, { status: number; label: string; icon: 
     { status: 2, label: "Kết thúc",      icon: "CloseCircle"   },
   ],
 };
+
+// mode = 2 tương ứng với "DMN Rule"
+const MODE_DMN = 2;
 
 import "./index.scss";
 
@@ -89,11 +93,14 @@ export default function PromotionalProgram(props: any) {
   const [showDialog, setShowDialog]       = useState(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
+  // ── DMN Setting modal ─────────────────────────────────────────────────────
+  const [showDmnModal, setShowDmnModal]         = useState(false);
+  const [selectedDmnItem, setSelectedDmnItem]   = useState<IPromotion | null>(null);
+
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
     name: "Chương trình",
     isChooseSizeLimit: true,
-    // Reset về 0 – tránh DataPaginationDefault hardcode totalPage:10, totalItem:100
     totalPage: 0,
     totalItem: 0,
     setPage:         (page)  => setPagination((prev) => ({ ...prev, page })),
@@ -115,10 +122,8 @@ export default function PromotionalProgram(props: any) {
     try {
       const res = await PromotionService.list(
         {
-          // Chỉ truyền name khi có giá trị - tránh ?name=undefined trên URL
           ...(search.trim() ? { name: search.trim() } : {}),
           status:    statusFilter,
-          // Chỉ truyền promotionType khi chọn loại cụ thể (0 = tất cả → bỏ qua)
           ...(typeFilter > 0 ? { promotionType: typeFilter } : {}),
           page:      pagination.page,
           sizeLimit: pagination.sizeLimit,
@@ -162,14 +167,14 @@ export default function PromotionalProgram(props: any) {
     setStatsLoading(true);
     try {
       const [active, upcoming, pending, total] = await Promise.all([
-        PromotionService.countByStatus(1),   // Đang chạy
-        PromotionService.countByStatus(99),  // Sắp diễn ra (start > now)
-        PromotionService.countByStatus(0),   // Chờ duyệt
-        PromotionService.countByStatus(-1),  // Tất cả
+        PromotionService.countByStatus(1),
+        PromotionService.countByStatus(99),
+        PromotionService.countByStatus(0),
+        PromotionService.countByStatus(-1),
       ]);
       setStats({ active, upcoming, pending, total });
     } catch {
-      /* silent – stat cards không critical */
+      /* silent */
     } finally {
       setStatsLoading(false);
     }
@@ -227,7 +232,6 @@ export default function PromotionalProgram(props: any) {
 
   const formatDate = (dt?: string) => {
     if (!dt) return "--";
-    // "2026-03-01T00:00:00" → "01/03/2026"
     return dt.substring(0, 10).split("-").reverse().join("/");
   };
 
@@ -277,18 +281,14 @@ export default function PromotionalProgram(props: any) {
                 }
                 const DROPDOWN_W = 220;
                 const DROPDOWN_H = 110;
-                // Lấy rect của wrapper .promo-status-wrap (cha của chevron)
                 const wrap = (e.currentTarget as HTMLElement).closest(".promo-status-wrap") as HTMLElement;
                 const rect = (wrap ?? e.currentTarget as HTMLElement).getBoundingClientRect();
-                // Right-align: mép phải dropdown = mép phải wrap
                 let left = rect.right - DROPDOWN_W;
-                // Clamp trong viewport
                 left = Math.max(8, Math.min(left, window.innerWidth - DROPDOWN_W - 8));
-                // Flip lên nếu không đủ chỗ phía dưới
                 const spaceBelow = window.innerHeight - rect.bottom;
                 const top = spaceBelow < DROPDOWN_H + 8
-                  ? rect.top - DROPDOWN_H - 4   // hiện lên trên
-                  : rect.bottom + 4;             // hiện xuống dưới
+                  ? rect.top - DROPDOWN_H - 4
+                  : rect.bottom + 4;
                 setStatusMenu({ id: item.id, top, left });
               }}
             >
@@ -312,7 +312,12 @@ export default function PromotionalProgram(props: any) {
 
   const actionsTable = (item: IPromotion): IAction[] => {
     const isChecked = listIdChecked?.length > 0;
-    return [
+
+    // Kiểm tra có phải mode DMN Rule không (mode = 2)
+    // API trả về mode: 2 cho DMN Rule
+    const isDmnMode = Number(item.mode) === MODE_DMN;
+
+    const baseActions: IAction[] = [
       {
         title: "Xem",
         icon: <Icon name="Eye" className={isChecked ? "icon-disabled" : ""} />,
@@ -321,7 +326,7 @@ export default function PromotionalProgram(props: any) {
           if (!isChecked) { setSelectedItem(item); setShowModalAdd(true); }
         },
       },
-      (permissions["CATEGORY_SERVICE_UPDATE"] == 1 || true) && {
+      {
         title: "Sửa",
         icon: <Icon name="Pencil" className={isChecked ? "icon-disabled" : ""} />,
         disabled: isChecked,
@@ -329,15 +334,38 @@ export default function PromotionalProgram(props: any) {
           if (!isChecked) { setSelectedItem(item); setShowModalAdd(true); }
         },
       },
-      (permissions["CATEGORY_SERVICE_DELETE"] == 1 || true) && {
-        title: "Xóa",
-        icon: <Icon name="Trash" className={isChecked ? "icon-disabled" : "icon-error"} />,
+    ];
+
+    // ── Nút Settings – chỉ thêm vào khi mode = DMN Rule (2) ─────────────────
+    if (isDmnMode) {
+      baseActions.push({
+        title: "Cài đặt DMN",
+        icon: (
+          <Icon
+            name="GearSix"
+            className={isChecked ? "icon-disabled" : "icon-setting-dmn"}
+          />
+        ),
         disabled: isChecked,
         callback: () => {
-          if (!isChecked) showDialogConfirmDelete(item);
+          if (!isChecked) {
+            setSelectedDmnItem(item);
+            setShowDmnModal(true);
+          }
         },
+      });
+    }
+
+    baseActions.push({
+      title: "Xóa",
+      icon: <Icon name="Trash" className={isChecked ? "icon-disabled" : "icon-error"} />,
+      disabled: isChecked,
+      callback: () => {
+        if (!isChecked) showDialogConfirmDelete(item);
       },
-    ];
+    });
+
+    return baseActions;
   };
 
   const bulkActionList: BulkActionItemModel[] = [
@@ -357,7 +385,7 @@ export default function PromotionalProgram(props: any) {
         onBackProps={onBackProps}
       />
 
-      {/* Stat Cards – lấy số liệu thực từ API */}
+      {/* Stat Cards */}
       <div className="promo-stats-grid">
         <StatCard
           title="Đang chạy"
@@ -461,9 +489,7 @@ export default function PromotionalProgram(props: any) {
         />
       </div>
 
-      {/* Modal tạo / sửa */}
-      {/* ── Status dropdown portal: ReactDOM.createPortal → render vào document.body
-           Hoàn toàn thoát khỏi mọi overflow/stacking context của bảng ── */}
+      {/* Status dropdown portal */}
       {statusMenu && ReactDOM.createPortal(
         <div
           className="promo-status-dropdown"
@@ -492,6 +518,7 @@ export default function PromotionalProgram(props: any) {
         document.body
       )}
 
+      {/* Modal tạo / sửa chương trình */}
       <AddPromotionalModal
         onShow={showModalAdd}
         data={selectedItem}
@@ -501,6 +528,17 @@ export default function PromotionalProgram(props: any) {
             loadList();
             loadStats();
           }
+        }}
+      />
+
+      {/* Modal cài đặt DMN Rule */}
+      <DmnSettingModal
+        onShow={showDmnModal}
+        data={selectedDmnItem}
+        onHide={(refresh) => {
+          setShowDmnModal(false);
+          setSelectedDmnItem(null);
+          if (refresh) loadList();
         }}
       />
 

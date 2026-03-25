@@ -2367,6 +2367,7 @@ export const urlsApi = {
     delete: prefixMarket + "/promotion/delete",
     countByStatus: prefixMarket + "/promotion/count-by-status",
     updateStatus:  prefixMarket + "/promotion/update/status",
+    updateDmnSetting: prefixMarket + "/promotion/update/dmn-setting",
   },
   couponProgram: {
     list:          prefixMarket + "/coupon/list",

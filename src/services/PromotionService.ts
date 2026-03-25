@@ -1,6 +1,6 @@
-// =====================================================================
+// =============================================================================
 // FILE: src/services/PromotionService.ts
-// =====================================================================
+// =============================================================================
 
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
@@ -14,6 +14,14 @@ function cleanParams<T extends Record<string, any>>(params: T): Partial<T> {
   return Object.fromEntries(
     Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== "")
   ) as Partial<T>;
+}
+
+// ── Request shape cho API cập nhật cài đặt DMN ───────────────────────────────
+export interface IPromotionDmnSettingRequest {
+  id: number;
+  businessRuleId: number;
+  input: string;   // JSON string: { ruleField: mappingField, ... }
+  output: string;  // JSON string: { ruleField: mappingField, ... }
 }
 
 const PromotionService = {
@@ -100,6 +108,20 @@ const PromotionService = {
     })
       .then((r) => r.json())
       .then((res) => res?.result ?? 0),
+
+  /**
+   * Cập nhật cài đặt DMN Rule cho chương trình khuyến mãi
+   * Lưu businessRuleId, input mapping, output mapping
+   * BE: POST /market/promotion/update/dmn-setting
+   * Body: { id, businessRuleId, input, output }
+   */
+  updateDmnSetting: (body: IPromotionDmnSettingRequest, signal?: AbortSignal) =>
+    fetch(urlsApi.promotionalProgram.updateDmnSetting, {
+      signal,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then((r) => r.json()),
 };
 
 export default PromotionService;
