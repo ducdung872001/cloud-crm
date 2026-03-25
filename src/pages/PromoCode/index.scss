@@ -202,6 +202,33 @@
   }
 }
 
+
+/* ── Coupon Toolbar — search + filters trên 1 hàng ── */
+.coupon-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: nowrap;      // không bao giờ xuống dòng
+  margin-bottom: 2rem;
+
+  .promo-search-wrap {
+    flex: 1;              // search chiếm hết space còn lại
+    min-width: 0;
+  }
+
+  .promo-select {
+    flex-shrink: 0;       // filter không co lại
+    min-width: 15rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;      // chỉ wrap trên mobile nhỏ
+    .promo-search-wrap { flex: 1 1 100%; }
+    .promo-select { flex: 1 1 calc(50% - 0.5rem); min-width: 0; }
+  }
+}
+
 /* ── Coupon Grid ── */
 .coupon-grid {
   display: grid;
@@ -378,12 +405,21 @@
   }
 
   &--pending {
-    background: #fef3c7;
-    color: #b45309;
+    background: rgba(255,255,255,0.2);
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.3);
   }
 
   &--expired {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: rgba(255,255,255,0.15);
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  // Badge trên nền active (primary) — trắng
+  &--active {
+    background: rgba(255,255,255,0.2);
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.3);
   }
 }
