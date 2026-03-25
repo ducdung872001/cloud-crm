@@ -73,14 +73,24 @@ export default function LoyaltyWallet(props) {
   // Ví điểm là read-only, không có thao tác thêm/sửa/xóa từ UI
   // Cột: STT | Khách hàng | Tổng điểm tích lũy | Điểm hiện tại | Hạng hội viên | Trạng thái
   const titles = ["STT", "Khách hàng", "Tổng điểm tích lũy", "Điểm hiện tại", "Hạng hội viên", "Trạng thái"];
-  const dataFormat = ["text-center", "", "text-center", "text-center", "", "text-center"];
+  const dataFormat = ["text-center", "", "text-right", "text-right", "", "text-center"];
   const dataMappingArray = (item: ILoyaltyWalletResponse, index: number) => [
     getPageOffset(params) + index + 1,
     item.customerName ?? "—",
-    item.totalEarn ?? 0,
-    item.currentBalance ?? 0,
+    <span className="loyalty-points loyalty-points--total">
+      {(item.totalEarn ?? 0).toLocaleString("vi-VN")}
+      <span className="loyalty-points__unit"> </span>
+    </span>,
+    <span className={`loyalty-points${
+      (item.currentBalance ?? 0) === 0 ? " loyalty-points--zero" : " loyalty-points--current"
+    }`}>
+      {(item.currentBalance ?? 0).toLocaleString("vi-VN")}
+      <span className="loyalty-points__unit"> </span>
+    </span>,
     item.segmentName ?? "—",
-    item.status === 1 ? "Kích hoạt" : "Không kích hoạt",
+    item.status === 1
+      ? <span className="loyalty-status loyalty-status--active">Kích hoạt</span>
+      : <span className="loyalty-status loyalty-status--inactive">Không kích hoạt</span>,
   ];
 
   return (
