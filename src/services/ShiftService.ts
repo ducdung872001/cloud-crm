@@ -1,13 +1,14 @@
 import { convertParamsToString } from "reborn-util";
 
 // Base URL khớp với prefixSales = "/sales" trong urls.ts
-const prefixSales = "/sales";
+const prefixBiz = "/bizapi";
+const prefixSales = prefixBiz + "/sales";
 
 const SHIFT_URLS = {
   overview:        prefixSales + "/shift/overview",
   open:            prefixSales + "/shift/open",
   activeDashboard: prefixSales + "/shift/active-dashboard",
-  summary:         prefixSales + "/shift/summary",
+  summary:         prefixSales + "/shift/summary", 
   orders:          prefixSales + "/shift/orders",
   close:           prefixSales + "/shift/close",
   closeReport:     prefixSales + "/shift/close-report",
