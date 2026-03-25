@@ -3414,6 +3414,8 @@ export const urls = {
   setting_call: "/setting_call",
   setting_email: "/setting_email",
   setting_zalo: "/setting_zalo",
+  setting_channels: "/setting_channels",   // Landing page: Kênh liên lạc (SMS/Email/Zalo/Tổng đài)
+  setting_integrations: "/setting_integrations", // Landing page: Tích hợp & kết nối
   sms_marketting: "/sms_marketting",
   email_marketting: "/email_marketting",
   zalo_marketting: "/zalo_marketting",
@@ -3423,6 +3425,7 @@ export const urls = {
   setting_common: "/setting_common",
   setting_rose: "/setting_rose",
   setting_basis: "/setting_basis",
+  setting_org: "/setting_org",        // Tổ chức & phân quyền
   setting_payment_method: "/setting_payment_method",
   setting_operate: "/setting_operate",
   setting_timekeeping: "/setting_timekeeping",

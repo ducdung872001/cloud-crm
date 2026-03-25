@@ -34,6 +34,10 @@ import SMSMarkettingList from "pages/SMSMarketting/SMSMarkettingList";
 import EmailMarkettingList from "pages/EmailMarketting/EmailMarkettingList";
 import SettingRoseList from "pages/SettingRose/SettingRoseList";
 import SettingBasisList from "pages/SettingBasis/SettingBasisList";
+import SettingOrgList from "pages/SettingOrg/SettingOrgList";
+import SettingAccountLanding from "pages/SettingAccountLanding/SettingAccountLanding";
+import SettingChannels from "pages/SettingChannels/SettingChannels";
+import SettingIntegrations from "pages/SettingIntegrations/SettingIntegrations";
 import SettingTimekeepingList from "pages/SettingTimekeeping/SettingTimekeepingList";
 import SettingCustomerList from "pages/SettingCustomer/SettingCustomerList";
 import SettingSellList from "pages/SettingSell/SettingSellList";
@@ -756,92 +760,57 @@ export const menu: IMenuItem[] = [
     icon: <Icon name="SettingsMenu" />,
     code: "",
     children: [
+      // ── NHÓM 1: Vận hành cửa hàng ──────────────────────────────────
       {
-        title: "settingBasis", // Cài đặt cơ sở
+        title: "settingBasis", // Vận hành cửa hàng (cửa hàng, thanh toán, ca, cấu hình chung)
         path: urls.setting_basis,
         icon: <Icon name="BaseSettingsMenu" />,
         code: "MENU_SETUP_BASIC",
       },
+
+      // ── NHÓM 2: Tổ chức & phân quyền ───────────────────────────────
       {
-        title: "settingPaymentMethod", // Cài đặt phương thức thanh toán
-        path: urls.setting_payment_method,
-        icon: <Icon name="PaymentMethodMenu" />,
+        title: "settingOrg", // Tổ chức & phân quyền (phòng ban, nhóm quyền, nhân viên)
+        path: urls.setting_org,
+        icon: <Icon name="PersonalMenu" />,
         code: "",
       },
+
+      // ── NHÓM 2: Kênh liên lạc (1 trang / 4 tabs) ─────────────────
       {
-        title: "settingPersonal", // Cài đặt cá nhân
+        title: "multiChannelCommunication", // Kênh liên lạc khách hàng
+        path: urls.setting_channels, // Landing page gộp 4 kênh
+        icon: <Icon name="SmsMenu" />,
+        code: "MENU_SETUP_SMS",
+        // sub-tabs: SMS, Email, Zalo, Tổng đài
+        // (Hiện tại giữ 4 route riêng để không breaking change,
+        //  có thể gộp thành 1 page sau khi refactor)
+      },
+      // -- Giữ lại để routing hoạt động, ẩn khỏi menu chính --
+      // settingSMS     → /setting_sms
+      // settingEmail   → /setting_email
+      // settingZalo    → /setting_zalo
+      // settingCall    → /setting_call
+
+      // ── NHÓM 3: Tích hợp & kết nối ───────────────────────────────
+      {
+        title: "settingIntegrations", // Viettel + Ứng dụng + Giám sát webhook
+        path: urls.setting_integrations,
+        icon: <Icon name="IntegrationViettelMenu" />,
+        code: "",
+      },
+
+      // ── NHÓM 4: Tài khoản & bảo mật ──────────────────────────────
+      {
+        title: "settingPersonal", // Tài khoản & bảo mật (cá nhân, kết nối, gói DV, nhật ký)
         path: urls.setting_account,
         icon: <Icon name="PersonalMenu" />,
         code: "",
       },
-      // {
-      //   title: "settingEform", // Cài đặt biểu mẫu
-      //   path: urls.setting_eform,
-      //   icon: <Icon name="SettingSell" />,
-      //   code: "",
-      // },
+
+      // ── NHÓM 5: Hỗ trợ khách hàng ────────────────────────────────
       {
-        title: "settingSMS", // Cài đặt SMS
-        path: urls.setting_sms,
-        icon: <Icon name="SmsMenu" />,
-        code: "MENU_SETUP_SMS",
-      },
-      {
-        title: "settingEmail", // Cài đặt Email
-        path: urls.setting_email,
-        icon: <Icon name="EmailMenu" />,
-        code: "MENU_SETUP_EMAIL",
-      },
-      {
-        title: "settingZalo", //Cài đặt Zalo
-        path: urls.setting_zalo,
-        icon: <Icon name="ZaloMenu" />,
-        code: "",
-      },
-      {
-        title: "settingSwitchboard", // Cài đặt tổng đài
-        path: urls.setting_call,
-        icon: <Icon name="PbxMenu" />,
-        code: "MENU_SETUP_CALL",
-      },
-      {
-        title: "settingApplication", // Cài đặt ứng dụng
-        path: urls.install_app,
-        icon: <Icon name="IntegrationMenu" />,
-        code: "",
-      },
-      {
-        title: "settingConfiguration", // Cài đặt danh mục
-        path: urls.setting,
-        icon: <Icon name="GeneralConfigMenu" />,
-        code: "",
-      },
-      {
-        title: "viettelIntegration", // Tích hợp Viettel
-        path: urls.viettel_integration,
-        icon: <Icon name="IntegrationViettelMenu" />,
-        code: "",
-      },
-      {
-        title: "shiftConfig", // Cài đặt ca làm việc
-        path: urls.shift_config,
-        icon: <Icon name="OpenShiftMenu" />,
-        code: "",
-      },
-      {
-        title: "reportLogin", // Báo cáo đăng nhập
-        path: urls.report_login,
-        icon: <Icon name="LoginMenu" />,
-        code: "",
-      },
-      // {
-      //   title: "settingDashboard", // cài đặt Dashboard
-      //   path: urls.setting_dashboard,
-      //   icon: <Icon name="ReportFill" />,
-      //   code: "",
-      // },
-      {
-        title: "settingTicket", // Cài đặt hỗ trợ
+        title: "settingTicket", // Cài đặt hỗ trợ & QR Code
         path: urls.setting_ticket,
         icon: <Icon name="SupportSettingMenu" />,
         code: "",
@@ -1169,6 +1138,18 @@ export const routes: IRouter[] = [
     component: <SettingRoseList />,
   },
   {
+    path: urls.setting_channels,
+    component: <SettingChannels />,
+  },
+  {
+    path: urls.setting_integrations,
+    component: <SettingIntegrations />,
+  },
+  {
+    path: urls.setting_org,
+    component: <SettingOrgList />,
+  },
+  {
     path: urls.setting_basis,
     component: <SettingBasisList />,
   },
@@ -1465,7 +1446,7 @@ export const routes: IRouter[] = [
   // thông tin cá nhân
   {
     path: urls.setting_account,
-    component: <SettingAccount />,
+    component: <SettingAccountLanding />,
   },
   // Cài đặt ứng dụng
   {
