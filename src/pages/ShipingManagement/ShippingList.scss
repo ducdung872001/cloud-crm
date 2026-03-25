@@ -1,4 +1,21 @@
 .page-shipping {
+  // ---- Căn chỉnh cột bảng ----
+  // BoxTable dùng dataFormat để inject class vào cả th và td.
+  // Thêm override cụ thể để đảm bảo nhất quán label & data.
+  .box-table {
+    th, td {
+      &.text-left  { text-align: left  !important; }
+      &.text-right { text-align: right !important; }
+
+      // Cột COD: số tiền căn phải, font nhỏ hơn chút cho gọn
+      &.col-cod {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+    }
+  }
+
   // ---- Tab trạng thái ----
   .shipping-tabs {
     display: flex;

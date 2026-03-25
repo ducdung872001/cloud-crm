@@ -316,15 +316,15 @@ export default function ShippingOrderList() {
   ];
 
   const dataFormat = [
-    "text-center",
-    "text-left",
-    "text-center",
-    "",
-    "text-center",
-    "text-center",
-    "text-center",
-    "text-center",
-    "text-center",
+    "text-center",  // STT
+    "text-left",    // Mã vận đơn
+    "text-left",    // Hãng VC — căn trái (label + data)
+    "",             // Khách hàng
+    "text-center",  // SĐT
+    "text-center",  // Ngày tạo
+    "text-right",   // COD — căn phải (label + data)
+    "text-center",  // Trạng thái
+    "text-center",  // Hành động
   ];
 
   const dataSize = Array(9).fill("auto");
@@ -411,7 +411,7 @@ export default function ShippingOrderList() {
       item.createdAt ? moment(item.createdAt).format("DD/MM/YYYY") : "",
 
       // COD: totalAmount từ API
-      codValue > 0 ? `${formatCurrency(codValue)}đ` : "0đ",
+      codValue > 0 ? `${formatCurrency(codValue)}` : "0đ",
 
       <Badge
         key={`badge-${item.id}`}

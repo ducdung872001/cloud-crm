@@ -85,12 +85,48 @@ const Cart: React.FC<CartProps> = ({
     try {
       const res = await CouponService.apply(code, subtotal);
 
-      if (res?.success && res.data) {
-        setCouponDiscount(res.data.discountAmount);
-        setCouponMessage(res.data.message ?? "Áp dụng thành công");
+      // ── Trích discountAmount từ response ──────────────────────────────────
+      // Hỗ trợ cả 2 format:
+      //   1. Flat:    { code, orderAmount, discountAmount?, finalAmount? }
+      //   2. Wrapped: { success, data: { discountAmount, finalAmount, ... } }
+      const payload = (res as any)?.data ?? res;
+
+      // discountAmount: lấy trực tiếp nếu có, nếu không tính từ finalAmount
+      let calcDiscount: number = 0;
+      if (typeof payload?.discountAmount === "number" && payload.discountAmount > 0) {
+        calcDiscount = payload.discountAmount;
+      } else if (
+        typeof payload?.finalAmount === "number" &&
+        typeof payload?.orderAmount === "number"
+      ) {
+        calcDiscount = Math.max(0, payload.orderAmount - payload.finalAmount);
+      }
+
+      // Kiểm tra response hợp lệ: phải có code khớp hoặc không có lỗi
+      const hasError = payload?.error || payload?.message?.toLowerCase().includes("không hợp lệ")
+                    || payload?.message?.toLowerCase().includes("invalid")
+                    || payload?.message?.toLowerCase().includes("expired")
+                    || (res as any)?.success === false;
+
+      if (hasError) {
+        setCouponDiscount(0);
+        setCouponError(payload?.message ?? payload?.error ?? "Mã không hợp lệ hoặc đã hết hạn");
+      } else if (payload?.code || (res as any)?.success === true) {
+        // Response hợp lệ — có thể không có discountAmount nếu API chưa implement
+        setCouponDiscount(calcDiscount);
+        if (calcDiscount > 0) {
+          setCouponMessage(
+            payload?.message ?? `Áp dụng thành công − ${calcDiscount.toLocaleString("vi")} đ`
+          );
+        } else {
+          // API confirm mã hợp lệ nhưng chưa trả discountAmount
+          // Hiển thị thông báo xác nhận, không trừ tiền (chờ backend cập nhật)
+          setCouponDiscount(0);
+          setCouponMessage(payload?.message ?? "Mã hợp lệ ✓ (giá trị giảm sẽ áp dụng khi tạo đơn)");
+        }
       } else {
         setCouponDiscount(0);
-        setCouponError(res?.message ?? res?.data?.message ?? "Mã không hợp lệ");
+        setCouponError("Mã không hợp lệ hoặc đã hết hạn");
       }
     } catch {
       setCouponDiscount(0);
