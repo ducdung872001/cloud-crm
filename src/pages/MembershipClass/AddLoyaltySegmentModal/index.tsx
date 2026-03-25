@@ -162,12 +162,12 @@ export default function AddLoyaltySegmentModal(props: AddLoyaltySegmentProps) {
           title: data ? "Cập nhật" : "Tạo mới",
           type: "submit",
           color: "primary",
-          disabled: isSubmit || !hasChanged || Object.keys(errors).length > 0,
+          disabled: isSubmit || !hasChanged || Object.values(errors).filter(Boolean).length > 0,
           is_loading: isSubmit,
         },
       ],
     },
-  }), [isSubmit, hasChanged, errors]);
+  }), [isSubmit, hasChanged, errors, data]);
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
