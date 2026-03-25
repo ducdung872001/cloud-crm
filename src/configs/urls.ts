@@ -21,6 +21,7 @@ const prefixCare = prefixBiz + "/care";
 const prefixBilling = prefixBiz + "/billing";
 const prefixLogistics = prefixBiz + "/logistics";
 const prefixIntegration = prefixBiz + "/integration";
+const prefixMarket = prefixBiz + "/market";
 
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
@@ -2358,7 +2359,24 @@ export const urlsApi = {
   voucher: {
     list: prefixAdmin + "/promotion/list-active",
   },
-
+  promotionalProgram: {
+    list: prefixMarket + "/promotion/list",
+    listActive: prefixMarket + "/promotion/list-active",
+    get: prefixMarket + "/promotion/get",
+    update: prefixMarket + "/promotion/update",
+    delete: prefixMarket + "/promotion/delete",
+    countByStatus: prefixMarket + "/promotion/count-by-status",
+    updateStatus:  prefixMarket + "/promotion/update/status",
+  },
+  couponProgram: {
+    list:          prefixMarket + "/coupon/list",
+    get:           prefixMarket + "/coupon/get",
+    update:        prefixMarket + "/coupon/update",
+    delete:        prefixMarket + "/coupon/delete",
+    updateStatus:  prefixMarket + "/coupon/update/status",
+    countByStatus: prefixMarket + "/coupon/count-by-status",
+    sumUsed:       prefixMarket + "/coupon/sum-used",
+  },
   email: {
     list: prefixAdmin + "/outlookMail/list",
     detail: prefixAdmin + "/outlookMail/get",

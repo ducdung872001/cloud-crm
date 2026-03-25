@@ -1,6 +1,7 @@
 .modal-add-decision {
   .modal-dialog--xxl {
-    max-width: 1200px;
+    max-width: 700px;
+    width: 90vw;
     .list-field-item {
       .list-condition,
       .list-decision {
@@ -46,15 +47,18 @@
       max-height: calc(100vh - 20rem);
       overflow: auto;
     }
+
     .container-header {
       display: flex;
       flex-shrink: 0;
       align-items: center;
       justify-content: space-between;
-      padding: 1.6rem;
+      padding: 1.6rem 2rem;
       border-bottom: 1px solid var(--border-color);
       border-top-left-radius: 0.3rem;
       border-top-right-radius: 0.3rem;
+      background: var(--white-color);
+
       .box-title {
         display: flex;
         align-items: center;
@@ -64,19 +68,21 @@
       .container-button {
         display: flex;
         align-items: center;
+        gap: 0.4rem;
       }
+
       h4 {
         font-size: 1.8rem;
         margin: 0;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
-        // width: calc(100% - 3rem);
         font-weight: 700;
         span {
           font-weight: 400;
         }
       }
+
       .btn-close {
         opacity: 0.5;
         svg {
@@ -90,6 +96,7 @@
           box-shadow: none;
         }
       }
+
       .btn-setting {
         opacity: 0.5;
         margin-right: 10px;
@@ -111,124 +118,258 @@
     .list-form-group {
       display: flex;
       flex-direction: column;
-      padding: 1.6rem;
+      padding: 2rem;
+      gap: 2rem;
+
+      .rule-index-field {
+        max-width: 28rem;
+      }
+
       .base-input__wrapper {
         label {
-          font-size: 1.75rem;
+          font-size: 1.4rem;
           font-weight: 500;
+          color: var(--text-secondary-color, #666);
         }
+      }
+    }
+
+    // ---- Section heading ----
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+
+      .section-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.2rem 0.9rem;
+        border-radius: 2rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+
+        &--condition {
+          background: #e8f4fd;
+          color: #1a6fa8;
+          border: 1px solid #b3d8f0;
+        }
+
+        &--result {
+          background: #eaf6ef;
+          color: #1a7a4a;
+          border: 1px solid #a7dfc0;
+        }
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-primary-color);
       }
     }
 
     .list-field-item {
       width: 100%;
 
+      // ---- Shared grid wrapper ----
       .list-condition,
       .list-decision {
-        margin-bottom: 1.6rem;
+        margin-bottom: 0;
         width: 100%;
-        border: 1px dashed #d9d9d9;
-        border-radius: 0.4rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.6rem;
+        background: var(--extra-color-1, #fafafa);
         display: grid;
-        // grid-template-columns: repeat(1, 1fr);
-        padding: 1rem;
-        gap: 2rem;
-        .item {
-          padding: 1.6rem;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          width: 100%;
-          border: 1px solid #d9d9d9;
-          border-radius: 0.4rem;
-        }
+        padding: 1.2rem;
+        gap: 0.8rem;
       }
+
+      // ---- Condition rows (3-column: name | operator | value) ----
       .list-condition {
         .item {
+          width: 100%;
+          background: var(--white-color, #fff);
+          border: 1px solid var(--border-color, #e5e7eb);
+          border-radius: 0.5rem;
+          overflow: visible; // KHÔNG được overflow:hidden — sẽ clip dropdown menu
+          display: grid;
+          grid-template-columns: 28% 22% 50%;
+          align-items: stretch;
+          min-height: 4.8rem;
+
+          // Column dividers
+          > * + * {
+            border-left: 1px solid var(--border-color, #e5e7eb);
+          }
+
           .item-name {
-            width: 30%;
-            white-space: nowrap; /* Không cho phép xuống dòng */
-            overflow: hidden; /* Ẩn phần văn bản vượt quá chiều rộng */
-            text-overflow: ellipsis; /* Hiển thị dấu "..." khi văn bản bị cắt */
-            border-right: 1px solid #d9d9d9;
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--text-primary-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: var(--extra-color-2, #f5f6f7);
+            border-radius: 0.5rem 0 0 0.5rem; // clip góc trái
           }
+
           .item-condition {
-            width: 24%;
-            border-right: 1px solid #d9d9d9;
-            padding-right: 5px;
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 0.8rem;
+            // Remove default bottom margin from select
+            .select-customize,
+            > div {
+              width: 100%;
+              margin-bottom: 0 !important;
+            }
           }
+
           .item-input {
-            width: 44%;
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 1rem;
+            border-radius: 0 0.5rem 0.5rem 0; // clip góc phải
+
+            > * {
+              width: 100%;
+              margin-bottom: 0 !important;
+            }
+
             .component-compare-in {
               width: 100%;
               display: flex;
               align-items: center;
-              justify-content: center;
-              gap: 1rem;
-              max-width: 40rem;
-              // flex-wrap: wrap;
-              overflow: scroll;
+              gap: 0.6rem;
+              overflow-x: auto;
+              flex-wrap: nowrap;
+
               .value-compare-in {
-                padding: 2px 5px;
+                padding: 0.3rem 0.8rem;
                 border: 1px solid var(--border-color);
                 background: linear-gradient(to bottom, var(--white-color), var(--extra-color-5));
-                border-radius: 2px;
+                border-radius: 0.3rem;
+                font-size: 1.3rem;
                 white-space: nowrap;
               }
+
               .add-value-compare-in {
                 cursor: pointer;
               }
             }
+
             .item-input-between {
               width: 100%;
               display: flex;
               align-items: center;
-              justify-content: space-between;
+              gap: 0.8rem;
+
               .base-input {
-                margin-top: 0px;
+                margin-top: 0;
+                flex: 1;
+              }
+
+              &::before {
+                content: "→";
+                flex-shrink: 0;
+                color: var(--text-secondary-color, #888);
+                font-size: 1.4rem;
+                order: 1; // appears between the two inputs
+              }
+
+              > :first-child {
+                order: 0;
+              }
+              > :last-child {
+                order: 2;
               }
             }
           }
         }
       }
-      .list-decision {
-        .item-name-decision {
-          width: 48%;
-          white-space: nowrap; /* Không cho phép xuống dòng */
-          overflow: hidden; /* Ẩn phần văn bản vượt quá chiều rộng */
-          text-overflow: ellipsis; /* Hiển thị dấu "..." khi văn bản bị cắt */
-          border-right: 1px solid #d9d9d9;
-        }
 
-        .item-input-decision {
-          width: 48%;
-          .component-compare-in {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            max-width: 40rem;
-            // flex-wrap: wrap;
-            overflow: scroll;
-            .value-compare-in {
-              padding: 2px 5px;
-              border: 1px solid var(--border-color);
-              background: linear-gradient(to bottom, var(--white-color), var(--extra-color-5));
-              border-radius: 2px;
-              white-space: nowrap;
-            }
-            .add-value-compare-in {
-              cursor: pointer;
-            }
+      // ---- Result rows (2-column: name | value) ----
+      .list-decision {
+        .item {
+          width: 100%;
+          background: var(--white-color, #fff);
+          border: 1px solid var(--border-color, #e5e7eb);
+          border-radius: 0.5rem;
+          overflow: visible; // KHÔNG overflow:hidden — sẽ clip dropdown nếu có
+          display: grid;
+          grid-template-columns: 36% 64%;
+          align-items: stretch;
+          min-height: 4.8rem;
+
+          > * + * {
+            border-left: 1px solid var(--border-color, #e5e7eb);
           }
-          .item-input-between {
-            width: 100%;
+
+          .item-name-decision {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            .base-input {
-              margin-top: 0px;
+            padding: 0.8rem 1.2rem;
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--text-primary-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: var(--extra-color-2, #f5f6f7);
+            border-radius: 0.5rem 0 0 0.5rem;
+          }
+
+          .item-input-decision {
+            display: flex;
+            align-items: center;
+            border-radius: 0 0.5rem 0.5rem 0;
+            padding: 0.6rem 1rem;
+
+            > * {
+              width: 100%;
+              margin-bottom: 0 !important;
+            }
+
+            .component-compare-in {
+              width: 100%;
+              display: flex;
+              align-items: center;
+              gap: 0.6rem;
+              overflow-x: auto;
+              flex-wrap: nowrap;
+
+              .value-compare-in {
+                padding: 0.3rem 0.8rem;
+                border: 1px solid var(--border-color);
+                background: linear-gradient(to bottom, var(--white-color), var(--extra-color-5));
+                border-radius: 0.3rem;
+                font-size: 1.3rem;
+                white-space: nowrap;
+              }
+
+              .add-value-compare-in {
+                cursor: pointer;
+              }
+            }
+
+            .item-input-between {
+              width: 100%;
+              display: flex;
+              align-items: center;
+              gap: 0.8rem;
+
+              .base-input {
+                margin-top: 0;
+                flex: 1;
+              }
             }
           }
         }

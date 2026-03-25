@@ -249,6 +249,7 @@ export default function BusinessRuleConfig(props: any) {
             {
               icon: <Icon name="Plus" style={{ width: 13, height: 13 }} />,
               title: "Luật nghiệp vụ",
+              color: "primary",
               callback: () => {
                 setShowModalDecision(true);
               },
@@ -258,6 +259,8 @@ export default function BusinessRuleConfig(props: any) {
       {
         icon: <Icon name="ListData" style={{ width: 22, height: 22 }} />,
         title: "Cột điều kiện",
+        color: "secondary",
+        variant: "outline",
         callback: () => {
           setShowModalColumnInput(true);
         },
@@ -265,6 +268,8 @@ export default function BusinessRuleConfig(props: any) {
       {
         icon: <Icon name="ListData" style={{ width: 22, height: 22 }} />,
         title: "Cột kết quả",
+        color: "success",
+        variant: "outline",
         callback: () => {
           setShowModalColumnOutput(true);
         },

@@ -9,6 +9,13 @@ import AddWorkInprogressModal from "../../../AddWorkInprogressModal/AddWorkInpro
 import UpdateLevelWorkModal from "../UpdateLevelWork";
 import "./index.scss";
 
+const getInitials = (name: string) => {
+  if (!name) return "?";
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+
 interface ITaskItemProps {
   type: "status" | "employee" | "mine";
   takeDescWork: (id: number) => void;
@@ -16,6 +23,27 @@ interface ITaskItemProps {
   item: any;
   index: number;
   totalTask: number;
+}
+
+
+// Avatar component với fallback initials — React state driven
+function AvatarEmployee({ name, src }: { name: string; src?: string }) {
+  const [imgError, setImgError] = useState(false);
+  const initials = getInitials(name);
+
+  return (
+    <div className="avatar-implementer">
+      {src && !imgError ? (
+        <img
+          src={src}
+          alt={name}
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <span className="avatar-initials">{initials}</span>
+      )}
+    </div>
+  );
 }
 
 export default function TaskItem(props: any) {
@@ -115,9 +143,7 @@ export default function TaskItem(props: any) {
 
               <div className="employee_task">
                 <div className="implementer">
-                  <div className="avatar-implementer">
-                    <img src={item.employeeAvatar || OtherGenders} alt={item.employeeName} />
-                  </div>
+                  <AvatarEmployee name={item.employeeName} src={item.employeeAvatar} />
                   <h4 className="name-implementer">{item.employeeName}</h4>
                 </div>
               </div>

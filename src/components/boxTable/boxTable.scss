@@ -49,8 +49,11 @@
           }
 
           &.actions {
-            width: 1%;
+            // Cố định width — không bị kéo giãn theo bảng
+            width: 1px;
             white-space: nowrap;
+            padding-left: 0.8rem;
+            padding-right: 1.6rem;
 
             &-dropdown {
               padding: 0.8rem 0;
@@ -114,48 +117,76 @@
           }
 
           &.actions {
+            padding-left: 0.8rem;
+            padding-right: 1.6rem;
+
             &>div {
               display: flex;
               align-items: center;
               justify-content: flex-end;
-              gap: 0.8rem;
+              // Gap cố định — không thay đổi theo độ rộng bảng
+              gap: 0.2rem;
 
               .base-button {
                 border: none;
+                // Hit area cố định 3.2rem × 3.2rem
+                width: 3.2rem;
+                height: 3.2rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 0.5rem;
+                flex-shrink: 0;
+                transition: background 0.15s ease;
 
-                &:hover,
+                &:hover {
+                  background: #f3f4f6;
+                  box-shadow: none;
+                }
                 &:focus,
                 &:active {
-                  background: none;
+                  background: #e9eaec;
                   box-shadow: none;
                 }
 
                 svg {
-                  width: 2rem;
-                  height: 2rem;
+                  width: 1.7rem;
+                  height: 1.7rem;
+                  flex-shrink: 0;
 
-                  &.icon-error {
-                    fill: var(--error-darker-color);
+                  // Settings icon — gray trung tính
+                  &.icon-settings {
+                    fill: #6b7280;
                   }
 
-                  &.icon-success {
-                    fill: var(--success-color);
+                  // Edit — xanh dương
+                  &.icon-edit-active {
+                    fill: none;
+                    path { stroke: #3b82f6; }
+                  }
+                  &.icon-edit-inactive {
+                    fill: none;
+                    opacity: 0.3;
+                    path { stroke: #6b7280; }
                   }
 
-                  &.icon-warning {
-                    fill: var(--warning-color);
+                  // Delete — đỏ
+                  &.icon-delete-active {
+                    fill: none;
+                    path { stroke: #ef4444; }
+                  }
+                  &.icon-delete-inactive {
+                    fill: none;
+                    opacity: 0.3;
+                    path { stroke: #6b7280; }
                   }
 
-                  &.icon-disabled {
-                    fill: var(--text-extra-color);
-                    opacity: 0.5;
-                  }
-
-                  &.icon-extra {
-                    fill: var(--extra-color-50);
-                  }
-
-                  &.icon-invoice {
+                  &.icon-error    { fill: var(--error-darker-color); }
+                  &.icon-success  { fill: var(--success-color); }
+                  &.icon-warning  { fill: var(--warning-color); }
+                  &.icon-disabled { fill: var(--text-extra-color); opacity: 0.5; }
+                  &.icon-extra    { fill: var(--extra-color-50); }
+                  &.icon-invoice  {
                     width: 1.6rem;
                     height: 1.6rem;
                     fill: var(--primary-text-color);
