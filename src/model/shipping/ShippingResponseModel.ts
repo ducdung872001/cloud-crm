@@ -47,7 +47,8 @@ export interface IShippingOrderResponse {
   codTransferredAt?: string | null;
 
   // Trạng thái
-  statusCode: string;              // "SUBMITTED" | "PENDING" | "IN_TRANSIT" | "DELIVERED" | "RETURNED" | "CANCELLED"
+  status: string;                 // "SUBMITTED" | "PENDING" | "IN_TRANSIT" | "DELIVERED" | "RETURNED" | "CANCELLED"
+  statusCode: string;
 
   failedAttemptCount?: number;
   failedReason?: string | null;

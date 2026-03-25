@@ -162,7 +162,7 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
     <div className="order-info-grid">
       <div className="info-row">
         <span className="info-label">Mã vận đơn</span>
-        <span className="info-value">
+        <span className="info-value tracking-bold">
           {trackingResult?.carrierTrackingCode || data.carrierTrackingCode || data.shipmentOrder}
         </span>
       </div>

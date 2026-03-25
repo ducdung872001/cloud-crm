@@ -321,106 +321,104 @@
 // Modal: Chi tiết & tracking timeline
 // =============================================
 .modal-shipping-detail {
-  .tracking-timeline {
-    position: relative;
-    padding: 0.8rem 0;
 
-    .timeline-item {
+  // ---- Header: tracking code ----
+  .detail-tracking-code {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #9ca3af;
+    margin-left: 0.6rem;
+    letter-spacing: 0.3px;
+  }
+
+  // ---- Tab switcher ----
+  .detail-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2.4rem;
+    border-bottom: 1.5px solid #e5e7eb;
+
+    .detail-tab-btn {
       display: flex;
-      gap: 1.6rem;
-      position: relative;
-      padding-bottom: 2rem;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem 2rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 1.4rem;
+      color: #9ca3af;
+      border-bottom: 2.5px solid transparent;
+      margin-bottom: -1.5px;
+      transition: color 0.18s, border-color 0.18s;
+      font-weight: 500;
 
-      &:last-child {
-        padding-bottom: 0;
-      }
-
-      // Vertical line
-      &:not(:last-child)::before {
-        content: "";
-        position: absolute;
-        left: 0.9rem;
-        top: 2rem;
-        bottom: 0;
-        width: 2px;
-        background: #e5e7eb;
-      }
-
-      // Dotted for future steps
-      &.future::before {
-        border-left: 2px dashed #d1d5db;
-        background: transparent;
-      }
-
-      .timeline-dot {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 50%;
+      svg {
+        width: 1.5rem;
+        height: 1.5rem;
         flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid #e5e7eb;
-        background: #fff;
-        z-index: 1;
-
-        &.active {
-          background: var(--primary-color);
-          border-color: var(--primary-color);
-        }
-
-        &.future {
-          background: #f9fafb;
-          border-color: #d1d5db;
-        }
       }
 
-      .timeline-content {
-        flex: 1;
+      &.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+        font-weight: 600;
+      }
 
-        .status-label {
-          font-size: 1.4rem;
-          font-weight: 600;
-          color: #111827;
-
-          &.active {
-            color: var(--primary-color);
-          }
-        }
-
-        .timestamp {
-          font-size: 1.2rem;
-          color: #6b7280;
-          margin-top: 2px;
-        }
-
-        .location {
-          font-size: 1.2rem;
-          color: #6b7280;
-        }
+      &:hover:not(.active) {
+        color: #374151;
       }
     }
   }
 
-  // Shipper info
-  .shipper-info {
+  // ---- Loading ----
+  .tracking-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 4rem 0;
+    color: #9ca3af;
+    font-size: 1.4rem;
+
+    &::before {
+      content: "";
+      width: 2.4rem;
+      height: 2.4rem;
+      border: 2.5px solid #e5e7eb;
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  // ---- Tracking carrier header ----
+  .tracking-header {
     display: flex;
     align-items: center;
-    gap: 1.2rem;
-    background: #f9fafb;
-    border-radius: 0.8rem;
-    padding: 1rem 14px;
-    margin-top: 0.8rem;
+    gap: 1rem;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    padding: 1.2rem 1.6rem;
+    margin-bottom: 2.4rem;
 
-    .shipper-avatar {
+    .carrier-logo-wrap {
       width: 3.6rem;
       height: 3.6rem;
-      border-radius: 50%;
-      background: #e5e7eb;
+      border-radius: 0.8rem;
+      background: #fff;
+      border: 1px solid #e5e7eb;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #9ca3af;
+      flex-shrink: 0;
+      color: var(--primary-color);
 
       svg {
         width: 1.8rem;
@@ -428,10 +426,183 @@
       }
     }
 
+    .carrier-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      flex: 1;
+      min-width: 0;
+
+      .carrier-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #374151;
+        line-height: 1.3;
+      }
+
+      .carrier-tracking-code {
+        font-size: 1.2rem;
+        color: #9ca3af;
+        letter-spacing: 0.5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    .current-status-badge {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.4rem 1rem;
+      border-radius: 9.9rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: #eff6ff;
+      color: var(--primary-color);
+      border: 1px solid #bfdbfe;
+      white-space: nowrap;
+    }
+  }
+
+  // ---- Timeline ----
+  .tracking-timeline {
+    position: relative;
+    padding: 0.4rem 0 0.8rem;
+
+    .timeline-item {
+      display: flex;
+      gap: 1.6rem;
+      position: relative;
+      padding-bottom: 2.4rem;
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+
+      // Vertical connector line
+      &:not(:last-child)::before {
+        content: "";
+        position: absolute;
+        left: 1.15rem;
+        top: 2.2rem;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, #d1d5db, #e5e7eb);
+      }
+
+      &.future::before {
+        background: none;
+        border-left: 2px dashed #e5e7eb;
+      }
+
+      // Dot
+      .timeline-dot {
+        position: relative;
+        width: 2.4rem;
+        height: 2.4rem;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        transition: all 0.2s;
+
+        &.past {
+          background: #ecfdf5;
+          border: 2px solid #6ee7b7;
+
+          svg circle { fill: #10b981; }
+        }
+
+        &.active {
+          background: var(--primary-color);
+          border: 2.5px solid var(--primary-color);
+          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+
+          svg circle { fill: white; }
+        }
+
+        &.future {
+          background: #f9fafb;
+          border: 2px dashed #d1d5db;
+
+          svg { display: none; }
+        }
+      }
+
+      // Content
+      .timeline-content {
+        flex: 1;
+        padding-top: 0.2rem;
+
+        .status-label {
+          font-size: 1.4rem;
+          font-weight: 500;
+          color: #374151;
+          line-height: 1.4;
+
+          &.active {
+            color: var(--primary-color);
+            font-weight: 700;
+          }
+        }
+
+        .timestamp {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 1.2rem;
+          color: #9ca3af;
+          margin-top: 0.3rem;
+          line-height: 1.4;
+
+          &::before {
+            content: "•";
+            color: #d1d5db;
+          }
+        }
+      }
+
+      // Future item dimmed
+      &.future .timeline-content {
+        .status-label { color: #d1d5db; font-weight: 400; }
+        .timestamp { color: #e5e7eb; &::before { display: none; } }
+      }
+    }
+  }
+
+  // ---- Shipper info card ----
+  .shipper-info {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+    border: 1px solid #bfdbfe;
+    border-radius: 1rem;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1.6rem;
+
+    .shipper-avatar {
+      width: 3.8rem;
+      height: 3.8rem;
+      border-radius: 50%;
+      background: #dbeafe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-color);
+      flex-shrink: 0;
+
+      svg { width: 1.8rem; height: 1.8rem; }
+    }
+
     .shipper-name {
       font-size: 1.4rem;
       font-weight: 500;
-      color: #111827;
+      color: #1e40af;
+      flex: 1;
     }
 
     .btn-call {
@@ -439,83 +610,26 @@
       width: 3.6rem;
       height: 3.6rem;
       border-radius: 50%;
-      background: var(--success-darker-color);
+      background: #10b981;
       color: #fff;
       border: none;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
 
       &:hover {
         background: #059669;
+        transform: scale(1.05);
       }
 
-      svg {
-        width: 1.6rem;
-        height: 1.6rem;
-      }
-    }
-  }
-}
-
-// =============================================
-// Modal: Chi tiết - Tab switcher & Info grid
-// =============================================
-.modal-shipping-detail {
-  .detail-tracking-code {
-    font-size: 1.4rem;
-    font-weight: 400;
-    color: #6b7280;
-    margin-left: 0.6rem;
-  }
-
-  .detail-tabs {
-    display: flex;
-    gap: 0.4rem;
-    margin-bottom: 2rem;
-    border-bottom: 1.5px solid #e5e7eb;
-
-    .detail-tab-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.8rem 16px;
-      border: none;
-      background: none !important;     // override bất kỳ style nào từ Modal component
-      border-radius: 0 !important;     // bỏ bo góc
-      cursor: pointer;
-      font-size: 1.4rem;
-      color: #6b7280;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1.5px;
-      transition: color 0.15s, border-color 0.15s;
-      box-shadow: none !important;
-
-      svg { width: 1.5rem; height: 1.5rem; }
-
-      &.active {
-        color: var(--primary-color) !important;
-        background: none !important;   // không tô màu nền khi active
-        border-radius: 0 !important;
-        border: none !important;
-        border-bottom-color: var(--primary-color);
-        font-weight: 600;
-      }
-
-      &:hover:not(.active) { color: #374151; background: none !important; }
+      svg { width: 1.6rem; height: 1.6rem; }
     }
   }
 
-  .tracking-loading {
-    text-align: center;
-    color: #9ca3af;
-    padding: 3.2rem 0;
-    font-size: 1.4rem;
-  }
-
-  // Info grid
+  // ---- Info grid (tab Thông tin) ----
   .order-info-grid {
     display: flex;
     flex-direction: column;
@@ -523,25 +637,32 @@
 
     .info-row {
       display: flex;
-      padding: 1rem 0;
+      align-items: baseline;
+      padding: 1.1rem 0;
       border-bottom: 1px solid #f3f4f6;
       font-size: 1.4rem;
+      gap: 1.2rem;
 
       &:last-child { border-bottom: none; }
 
       .info-label {
-        min-width: 16rem;
-        color: #6b7280;
+        min-width: 15rem;
+        color: #9ca3af;
         flex-shrink: 0;
+        font-size: 1.3rem;
       }
 
       .info-value {
         color: #111827;
         font-weight: 400;
         flex: 1;
+        line-height: 1.5;
 
-        &.tracking-bold { font-weight: 700; font-size: 1.5rem; }
-        &.cod-highlight  { font-weight: 600; color: #d97706; }
+        &.cod-highlight {
+          font-weight: 700;
+          color: #d97706;
+          font-size: 1.5rem;
+        }
       }
     }
   }

@@ -9,14 +9,7 @@ import {
 export default {
   // Danh sách / lọc đơn vận chuyển
   filter: (params: IShippingOrderFilterRequest, signal?: AbortSignal) => {
-    const apiParams = {
-      ...params,
-      statusCode: params.status && params.status !== "all"
-        ? STATUS_MAP[params.status] ?? params.status
-        : undefined,
-      status: undefined,
-    };
-    return fetch(`${urlsApi.shipping.list}${convertParamsToString(apiParams)}`, {
+      return fetch(`${urlsApi.shipping.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());

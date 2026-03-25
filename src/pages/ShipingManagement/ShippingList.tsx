@@ -16,7 +16,7 @@ import { getPageOffset } from "reborn-util";
 import { formatCurrency, isDifferenceObj } from "reborn-util";
 import Badge from "components/badge/badge";
 
-import ShippingService, { STATUS_CODE_TO_UI } from "services/ShippingService";
+import ShippingService from "services/ShippingService";
 
 import { IShippingOrderFilterRequest } from "model/shipping/ShippingRequestModel";
 import { IShippingOrderResponse } from "model/shipping/ShippingResponseModel";
@@ -29,11 +29,13 @@ import "./ShippingList.scss";
 // ─── Hằng số ──────────────────────────────────────────────────────────────────
 
 const STATUS_TABS = [
-  { label: "Tất cả",       status: "all" },
-  { label: "Chờ lấy hàng", status: "pending" },
-  { label: "Đang giao",    status: "in_transit" },
-  { label: "Đã giao",      status: "delivered" },
-  { label: "Hoàn hàng",    status: "returned" },
+  { label: "Tất cả",       status: "ALL" },
+  { label: "Chờ duyệt",    status: "PENDING" },
+  { label: "Chờ lấy hàng", status: "SUBMITTED" },
+  { label: "Đang giao",    status: "IN_TRANSIT" },
+  { label: "Đã giao",      status: "DELIVERED" },
+  { label: "Hoàn hàng",    status: "RETURNED" },
+  { label: "Đã hủy",       status: "CANCELLED" },
 ];
 
 const ROUTES = {
@@ -43,12 +45,20 @@ const ROUTES = {
   shippingFeeConfig:    "/shipping/fee-config",
 };
 
-/**
- * Lấy UI-status từ statusCode API.
- * API trả về UPPERCASE (SUBMITTED, IN_TRANSIT, …), UI dùng lowercase (pending, in_transit, …).
- */
-const normalizeStatus = (statusCode: string): string =>
-  STATUS_CODE_TO_UI[statusCode?.toUpperCase()] ?? statusCode?.toLowerCase() ?? "";
+// Map statusCode API → key nội bộ (dùng cho badge và điều kiện action)
+const STATUS_MAP: Record<string, string> = {
+  PENDING:    "pending",
+  SUBMITTED:  "submitted",
+  IN_TRANSIT: "in_transit",
+  DELIVERED:  "delivered",
+  RETURNED:   "returned",
+  CANCELLED:  "cancelled",
+};
+
+const normalizeStatus = (status: string): string => {
+  if (!status) return "";
+  return STATUS_MAP[status.toUpperCase()] ?? status.toLowerCase().replace(/-/g, "_");
+};
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -59,9 +69,9 @@ export default function ShippingOrderList() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [permissions]  = useState(getPermissions());
-  const [activeTab, setActiveTab]   = useState<string>("all");
+  const [activeTab, setActiveTab]   = useState<string>("ALL");
   const [tabCounts, setTabCounts]   = useState<Record<string, number>>({
-    all: 0, pending: 0, in_transit: 0, delivered: 0, returned: 0,
+    ALL: 0, PENDING: 0, SUBMITTED: 0, IN_TRANSIT: 0, DELIVERED: 0, RETURNED: 0, CANCELLED: 0,
   });
 
   const [listOrder, setListOrder]         = useState<IShippingOrderResponse[]>([]);
@@ -78,7 +88,7 @@ export default function ShippingOrderList() {
   const abortRef     = useRef<AbortController | null>(null);
 
   const [params, setParams] = useState<IShippingOrderFilterRequest>({
-    keyword: "", status: "all", page: 1, limit: 10,
+    shipmentOrder: "", status: "", page: 1, limit: 10,
   });
 
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -102,7 +112,7 @@ export default function ShippingOrderList() {
       if (response.code === 0) {
         const result = response.result;
 
-        // API trả về items với các field thực tế (carrierTrackingCode, statusCode, …)
+        // API trả về items với các field thực tế (carrierTrackingCode, status, …)
         setListOrder(result.items as IShippingOrderResponse[]);
 
         // Tính tabCounts từ dữ liệu API
@@ -110,14 +120,16 @@ export default function ShippingOrderList() {
         if (result.tabCounts) {
           setTabCounts({
             ...result.tabCounts,
-            all: (result.tabCounts.pending    ?? 0)
-               + (result.tabCounts.in_transit ?? 0)
-               + (result.tabCounts.delivered  ?? 0)
-               + (result.tabCounts.returned   ?? 0),
+            ALL: (result.tabCounts.PENDING    ?? 0)
+               + (result.tabCounts.SUBMITTED  ?? 0)
+               + (result.tabCounts.IN_TRANSIT ?? 0)
+               + (result.tabCounts.DELIVERED  ?? 0)
+               + (result.tabCounts.RETURNED   ?? 0)
+               + (result.tabCounts.CANCELLED  ?? 0),
           });
         } else {
           // Tự đếm từ items nếu API chưa có tabCounts
-          setTabCounts((prev) => ({ ...prev, all: result.total ?? 0 }));
+          setTabCounts((prev) => ({ ...prev, ALL: result.total ?? 0 }));
         }
 
         setPagination((prev) => ({
@@ -125,10 +137,11 @@ export default function ShippingOrderList() {
           page:      result.page,
           sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
           totalItem: result.total,
-          totalPage: result.totalPage,
+          // API không trả về totalPage, tính từ total và limit
+          totalPage: Math.ceil((result.total ?? 0) / (paramsSearch.limit ?? 10)),
         }));
 
-        setIsNoItem(result.total === 0 && !paramsSearch.keyword);
+        setIsNoItem(result.total === 0 && !paramsSearch.shipmentOrder);
       } else {
         showToast(response.message ?? "Lỗi tải danh sách vận chuyển", "error");
       }
@@ -141,6 +154,7 @@ export default function ShippingOrderList() {
     }
   };
 
+  console.log("Params search:", params);
   useEffect(() => { getListOrder(params); }, []); // eslint-disable-line
 
   useEffect(() => {
@@ -162,7 +176,8 @@ export default function ShippingOrderList() {
   const handleTabChange = (status: string) => {
     setActiveTab(status);
     setListIdChecked([]);
-    setParams((prev) => ({ ...prev, status, page: 1 }));
+    // "ALL" → gửi status="" lên API (không filter theo status)
+    setParams((prev) => ({ ...prev, status: status === "ALL" ? "" : status, page: 1 }));
   };
 
   // ── Đẩy đơn đơn lẻ ───────────────────────────────────────────────────────────
@@ -317,40 +332,60 @@ export default function ShippingOrderList() {
   /**
    * Map một item từ API response sang mảng cell cho BoxTable.
    *
-   * Các field thực tế từ API:
-   *   - item.carrierTrackingCode  → Mã vận đơn hãng
-   *   - item.shipmentOrder        → Mã đơn nội bộ (fallback)
+   * Các field thực tế từ API (theo response /logistics/shipment/list):
+   *   - item.id                   → ID nội bộ
+   *   - item.shipmentOrder        → Mã đơn nội bộ (VD: SHIP249101-002)
+   *   - item.orderId / orderCode  → Mã đơn gốc
+   *   - item.carrierCode          → Mã hãng vận chuyển (VD: GHN)
    *   - item.carrierName          → Tên hãng vận chuyển
+   *   - item.carrierTrackingCode  → Mã vận đơn hãng
+   *   - item.carrierServiceCode   → Loại dịch vụ hãng
+   *   - item.senderName           → Tên người gửi
+   *   - item.senderPhone          → SĐT người gửi
+   *   - item.senderAddress        → Địa chỉ người gửi
    *   - item.receiverName         → Tên người nhận
    *   - item.receiverPhone        → SĐT người nhận
+   *   - item.receiverAddress      → Địa chỉ người nhận
+   *   - item.weightGram           → Khối lượng (gram)
+   *   - item.lengthCm/widthCm/heightCm → Kích thước
+   *   - item.noteForShipper       → Ghi chú cho shipper
+   *   - item.carrierFee           → Phí hãng VC
+   *   - item.shippingFee          → Phí vận chuyển (sau giảm giá)
+   *   - item.totalAmount          → Tổng tiền đơn hàng (dùng làm COD)
+   *   - item.statusCode       → SUBMITTED | PENDING | IN_TRANSIT | DELIVERED | RETURNED | CANCELLED
    *   - item.createdAt            → Ngày tạo (ISO string)
-   *   - item.codAmount / totalAmount → COD
-   *   - item.statusCode           → SUBMITTED | PENDING | IN_TRANSIT | DELIVERED | RETURNED | CANCELLED
+   *   - item.expectedPickupDate   → Ngày dự kiến lấy hàng
+   *   - item.expectedDeliveryDate → Ngày dự kiến giao
    */
   const dataMappingArray = (item: IShippingOrderResponse, index: number) => {
-    const uiStatus = normalizeStatus(item.statusCode);
+    // Lấy statusCode gốc (chữ hoa) từ API, fallback về chuỗi rỗng
+    const rawStatus = (item.statusCode ?? "").toUpperCase();
+    const uiStatus  = normalizeStatus(rawStatus);
 
+    // Map TRỰC TIẾP từ statusCode chữ hoa → label (không qua normalizeStatus)
     const badgeText: Record<string, string> = {
-      pending:    "Chờ lấy hàng",
-      in_transit: "Đang giao",
-      delivered:  "Đã giao",
-      returned:   "Hoàn hàng",
-      cancelled:  "Đã hủy",
+      PENDING:    "Chờ duyệt",
+      SUBMITTED:  "Chờ lấy hàng",
+      IN_TRANSIT: "Đang giao",
+      DELIVERED:  "Đã giao",
+      RETURNED:   "Hoàn hàng",
+      CANCELLED:  "Đã hủy",
     };
 
     const badgeVariant: Record<string, string> = {
-      pending:    "secondary",
-      in_transit: "primary",
-      delivered:  "success",
-      returned:   "warning",
-      cancelled:  "error",
+      PENDING:    "warning",
+      SUBMITTED:  "secondary",
+      IN_TRANSIT: "primary",
+      DELIVERED:  "success",
+      RETURNED:   "warning",
+      CANCELLED:  "error",
     };
 
     // Mã vận đơn hiển thị: ưu tiên mã hãng, fallback mã nội bộ
     const displayTrackingCode = item.carrierTrackingCode || item.shipmentOrder;
 
-    // COD: lấy codAmount nếu có, không thì 0
-    const codValue = item.codAmount ?? 0;
+    // COD: API không trả về codAmount, dùng totalAmount làm giá trị COD
+    const codValue = (item as any).codAmount ?? item.totalAmount ?? 0;
 
     return [
       getPageOffset(params) + index + 1,
@@ -375,13 +410,13 @@ export default function ShippingOrderList() {
       // Ngày tạo: API trả về ISO string (createdAt)
       item.createdAt ? moment(item.createdAt).format("DD/MM/YYYY") : "",
 
-      // COD
-      codValue > 0 ? `${formatCurrency(codValue)}đ` : "0",
+      // COD: totalAmount từ API
+      codValue > 0 ? `${formatCurrency(codValue)}đ` : "0đ",
 
       <Badge
         key={`badge-${item.id}`}
-        text={badgeText[uiStatus] ?? item.statusCode}
-        variant={badgeVariant[uiStatus] ?? "secondary"}
+        text={badgeText[rawStatus] ?? item.statusCode}
+        variant={(badgeVariant[rawStatus] ?? "secondary") as "warning" | "secondary" | "primary" | "success" | "error" | "transparent" | "done" | "wait-collect"}
       />,
 
       <div key={`action-${item.id}`} className="lst__action--cell">
@@ -395,7 +430,7 @@ export default function ShippingOrderList() {
         </Tippy>
 
         {/* Chỉ hiển thị "Đẩy đơn" khi trạng thái là PENDING hoặc SUBMITTED */}
-        {(uiStatus === "pending") && (
+        {(uiStatus === "pending" || uiStatus === "submitted") && (
           <Tippy content="Đẩy sang hãng vận chuyển">
             <span className="item__action" onClick={() => handlePushSingle(item.id)}>
               <Icon name="Send" />
@@ -419,7 +454,7 @@ export default function ShippingOrderList() {
         </Tippy>
 
         {/* Chỉ cho hủy khi đơn đang ở trạng thái PENDING / SUBMITTED */}
-        {(uiStatus === "pending") && (
+        {(uiStatus === "pending" || uiStatus === "submitted") && (
           <Tippy content="Hủy đơn">
             <span
               className="item__action icon__delete"
@@ -468,7 +503,7 @@ export default function ShippingOrderList() {
             listSaveSearch={[]}
             listFilterItem={[]}
             updateParams={(paramsNew) =>
-              setParams((prev) => ({ ...prev, ...paramsNew, page: 1 }))
+              setParams((prev) => ({ ...prev, ...paramsNew, shipmentOrder: (paramsNew as any).keyword ?? (paramsNew as any).shipmentOrder ?? prev.shipmentOrder, page: 1 }))
             }
           />
 
