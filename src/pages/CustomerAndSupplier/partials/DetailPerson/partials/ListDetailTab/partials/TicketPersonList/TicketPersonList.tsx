@@ -155,7 +155,7 @@ export default function TicketPersonList(props: ITicketPersonListProps) {
         <div className="action-header">
           <div className="title__actions">
             <ul className="menu-list">
-              <li className="active">Danh sách hỗ trợ</li>
+              <li className="active">Danh sách phiếu hỗ trợ</li>
             </ul>
             <Tippy content="Thêm mới hỗ trợ" delay={[100, 0]} animation="scale-extreme">
               <div className="add-ticket">

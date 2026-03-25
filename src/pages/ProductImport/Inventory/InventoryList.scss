@@ -1,153 +1,150 @@
-// WarehouseBookList.scss
+// ─────────────────────────────────────────────────────────────────────────────
+// Sổ kho — WarehouseBookList
+// ─────────────────────────────────────────────────────────────────────────────
+
 .page-warehouse-book {
-  .warehouse__tabs {
+
+  // ── Tabs ─────────────────────────────────────────────────────────────────
+  .wbl-tabs {
     display: flex;
-    gap: 4px;
-    padding: 1.6rem 1.6rem 0;
+    gap: 0;
+    padding: 0 1.6rem;
     border-bottom: 1px solid var(--border-color);
     overflow-x: auto;
+    &::-webkit-scrollbar { display: none; }
+  }
 
-    .warehouse__tab-item {
-      padding: 8px 16px;
-      font-size: 1.4rem;
-      cursor: pointer;
-      white-space: nowrap;
-      color: var(--extra-color-50);
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
+  .wbl-tab {
+    padding: 1rem 1.6rem;
+    font-size: 1.35rem;
+    cursor: pointer;
+    white-space: nowrap;
+    color: var(--extra-color-50);
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
 
-      &:hover { color: var(--primary-color); }
+    &:hover { color: var(--primary-color); }
 
-      &.active {
-        color: var(--primary-color);
-        border-bottom-color: var(--primary-color);
-        font-weight: 600;
-      }
+    &--active {
+      color: var(--primary-color);
+      border-bottom-color: var(--primary-color);
+      font-weight: 600;
     }
   }
 
-  .warehouse__code {
+  // ── Shared cell helpers ───────────────────────────────────────────────────
+  .wbl-cell-center { display: flex; justify-content: center; }
+  .wbl-dash { color: var(--extra-color-30); }
+
+  // ── Mã chứng từ ───────────────────────────────────────────────────────────
+  .wbl-code {
     font-weight: 600;
     color: var(--primary-color);
     font-size: 1.3rem;
+    white-space: nowrap;
   }
 
-  .warehouse__product-name {
-    font-size: 1.4rem;
+  // ── Sản phẩm ─────────────────────────────────────────────────────────────
+  .wbl-prod-name {
+    font-size: 1.35rem;
     font-weight: 500;
+    color: var(--text-primary-color);
+    line-height: 1.4;
   }
-
-  .warehouse__product-code {
+  .wbl-prod-sku {
     font-size: 1.2rem;
     color: var(--extra-color-50);
     margin-top: 2px;
+    font-family: monospace;
   }
 
-  .warehouse__transfer {
-    font-size: 1.3rem;
-    color: var(--primary-color);
-  }
-
-  .warehouse__qty--positive { color: var(--success-color); font-weight: 600; }
-  .warehouse__qty--negative { color: var(--error-color);   font-weight: 600; }
-
-  .card-box {
-    .status__item--signature {
-      height: 2.4rem;
-      border-radius: 1.2rem;
-      background: var(--primary-color);
-      display: inline-block;
-      text-align: center;
-      padding: 0 1.2rem;
-      color: #fff;
-      font-size: 1.2rem;
-      white-space: nowrap;
-      line-height: 2.4rem;
+  // ── Đối tác ───────────────────────────────────────────────────────────────
+  .wbl-partner {
+    &__name {
+      font-size: 1.35rem;
       font-weight: 500;
-      min-width: 9rem;
-
-      &-success  { background: var(--success-color); }
-      &-error    { background: var(--error-color); }
-      &-warning  { background: var(--warning-color); }
-      &-secondary{ background: var(--extra-color-50); }
-      &-primary  { background: var(--primary-color); }
+      color: var(--text-primary-color);
+    }
+    &__type {
+      font-size: 1.2rem;
+      color: var(--extra-color-50);
+      margin-top: 2px;
     }
   }
-}
-
-// AddWarehouseBookModal.scss
-.modal-add-warehouse-book {
-  .form-warehouse-book {
-    .list-form-group {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.2rem 3.2rem;
-
-      .form-group { width: 100%; }
-
-      .input-note {
-        grid-column: span 2;
-      }
-    }
+  .wbl-unknown {
+    font-size: 1.2rem;
+    color: var(--extra-color-40);
+    font-style: italic;
   }
 
-  // View mode
-  .warehouse__detail {
+  // ── Kho — Chuyển kho ─────────────────────────────────────────────────────
+  .wbl-transfer {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    font-size: 1.3rem;
 
-    .warehouse__detail-row {
-      display: flex;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border-color);
-
-      &:last-child { border-bottom: none; }
-
-      .label {
-        width: 160px;
-        font-size: 1.3rem;
-        color: var(--extra-color-50);
-        flex-shrink: 0;
-      }
-
-      .value {
-        font-size: 1.4rem;
-        color: var(--text-primary-color);
-
-        &.highlight {
-          font-weight: 700;
-          color: var(--primary-color);
-        }
-      }
-    }
+    &__from { color: var(--text-primary-color); font-weight: 500; }
+    &__arrow { color: var(--extra-color-40); font-size: 1.1rem; flex-shrink: 0; }
+    &__to   { color: var(--primary-color); font-weight: 500; }
   }
-}
 
-.input-partner,
-.input-ref,
-.input-reason {
-  grid-column: span 1;
-}
+  // ── Biến động số lượng ────────────────────────────────────────────────────
+  .wbl-qty {
+    font-weight: 700;
+    font-size: 1.35rem;
+    white-space: nowrap;
 
-.warehouse__partner-name {
-  font-size: 1.4rem;
-  font-weight: 500;
-}
+    &--pos  { color: #27ae60; }  // nhập / tăng
+    &--neg  { color: #e74c3c; }  // xuất / giảm
+    &--zero { color: var(--extra-color-40); }
+  }
 
-.warehouse__partner-type {
-  font-size: 1.2rem;
-  margin-top: 2px;
+  // ── Ghi chú ───────────────────────────────────────────────────────────────
+  .wbl-batchno {
+    font-size: 1.25rem;
+    color: var(--text-extra-color);
+    background: var(--bg-extra-color, #f0f2f5);
+    border-radius: 0.4rem;
+    padding: 0.2rem 0.6rem;
+    font-family: monospace;
+  }
+  .wbl-reason {
+    font-size: 1.25rem;
+    color: var(--text-extra-color);
+    font-style: italic;
+    max-width: 15rem;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-  &--supplier { color: var(--primary-color); }
-  &--customer { color: var(--warning-color); }
-}
+  // ── Số phiếu/HĐ ──────────────────────────────────────────────────────────
+  .wbl-reffinance {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-extra-color);
+    font-family: monospace;
+  }
 
-.warehouse__ref-code {
-  font-size: 1.3rem;
-  color: var(--extra-color-50);
-  text-decoration: underline;
-  cursor: pointer;
+  // ── Status badges ─────────────────────────────────────────────────────────
+  .card-box .status__item--signature {
+    height: 2.4rem;
+    border-radius: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    white-space: nowrap;
 
-  &:hover { color: var(--primary-color); }
+    // colour map
+    &-success   { background: rgba(39,174,96,.12);  color: #27ae60; }
+    &-error     { background: rgba(231,76,60,.12);  color: #e74c3c; }
+    &-warning   { background: rgba(243,156,18,.12); color: #d68910; }
+    &-primary   { background: rgba(52,152,219,.12); color: #2980b9; }
+    &-secondary { background: var(--bg-extra-color, #f0f2f5); color: var(--extra-color-50); }
+  }
 }

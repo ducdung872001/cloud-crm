@@ -340,21 +340,16 @@ export default function Kanban(props: any) {
                         className="task-list"
                       >
                         <div
-                          className="wrapper__title"
-                          style={{
-                            // backgroundColor: column.id === 'done' || column.id === 'fail' ? column.color : '',
-                            backgroundColor: column.color,
-                          }}
+                          className={`wrapper__title wrapper__title--${
+                            column.id === 0 ? "start"
+                            : column.id === "done" ? "done"
+                            : "step"
+                          }`}
                         >
-                          <span
-                            className="title-task"
-                            style={{
-                              color: "white",
-                            }}
-                          >
-                            {column.title}
-                          </span>
-                      
+                          <div className="col-header-content">
+                            <span className="title-task">{column.title}</span>
+                            <span className="col-count">{column.items?.length ?? 0}</span>
+                          </div>
                         </div>
 
                         {/* {!column.id && (
@@ -368,8 +363,7 @@ export default function Kanban(props: any) {
                         )} */}
 
                         <div
-                          className="lst__item"
-                          style={{ backgroundColor: snapshot.isDraggingOver ? "#D1FAE5" : "#f4f5f7" }}
+                          className={`lst__item${snapshot.isDraggingOver ? " lst__item--dragging" : ""}`}
                           onScroll={(e) => {
                             if (column.id === 0) {
                               handleScrollSpecial(e, column, 0);
@@ -380,6 +374,11 @@ export default function Kanban(props: any) {
                             }
                           }}
                         >
+                          {column.items?.length === 0 && (
+                            <div className="col-empty-state">
+                              <span>Không có đối tượng</span>
+                            </div>
+                          )}
                           {column.items?.map((item, idx) => {
                             return (
                               <TaskItem

@@ -18,4 +18,5 @@ export interface ICashBookResponse {
   projectName?: string;
   contractId?: number;
   contractName?: string;
+  billCode?: string;
 }

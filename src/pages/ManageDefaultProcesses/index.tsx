@@ -156,7 +156,7 @@ export default function ManageDefaultProcesses(props: any) {
     { value: "/order_request/", label: "Xác nhận đơn hàng" },
     { value: "/treatmentHistory/", label: "Lịch sử thực hiện dịch vụ" },
     { value: "/warranty/", label: "Tiếp nhận bảo hành" },
-    { value: "/ticket/", label: "Tiếp nhận hỗ trợ" },
+    { value: "/ticket/", label: "Phiếu hỗ trợ" },
     { value: "/invoice/", label: "Nhập kho" },
   ];
 

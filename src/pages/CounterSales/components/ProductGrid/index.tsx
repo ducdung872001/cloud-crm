@@ -1,30 +1,17 @@
-import React, { useState } from "react";
-import { Product, CartItem } from "../../types";
-import Loading from "@/components/loading";
+import React, { useEffect, useState } from "react";
+import { CartItem } from "../../types";
 import "./index.scss";
 import { useProductCategory } from "./useProductCategory";
 import { IProductListParams, useProductList } from "./useProductList";
-import { IProductFilterRequest } from "@/model/product/ProductRequestModel";
-import { formatCurrency } from "reborn-util";
-import VariantModal, { MOCK_IPHONE } from "../modals/VariantModal";
-
-const PRODUCTS: Product[] = [
-  // { id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫", price: 32000, stock: 142, unit: "hộp" },
-  // { id: "2", icon: "🥤", name: "Pepsi 330ml", priceLabel: "12,000 ₫", price: 12000, stock: 320, unit: "lon" },
-  // { id: "3", icon: "🍜", name: "Mì Hảo Hảo Tôm Chua Cay", priceLabel: "4,500 ₫", price: 4500, stock: 8, unit: "gói", lowStock: true },
-  // { id: "4", icon: "🍵", name: "Trà xanh 0 độ 500ml", priceLabel: "10,000 ₫", price: 10000, stock: 96, unit: "chai" },
-  // { id: "5", icon: "🧻", name: "Giấy VS Bless You 10 cuộn", priceLabel: "42,000 ₫", price: 42000, stock: 85, unit: "gói" },
-  // { id: "6", icon: "🍫", name: "KitKat 4 thanh", priceLabel: "25,000 ₫", price: 25000, stock: 44, unit: "cái" },
-  // { id: "7", icon: "🧃", name: "Nước ép cam VinaFruta", priceLabel: "22,000 ₫", price: 22000, stock: 55, unit: "hộp" },
-  // { id: "8", icon: "🧴", name: "Dầu gội Clear Men 380ml", priceLabel: "89,000 ₫", price: 89000, stock: 28, unit: "chai" },
-];
+import VariantModal from "../modals/VariantModal";
 
 interface ProductGridProps {
   onAddToCart: (item: Omit<CartItem, "qty">) => void;
   onQrScan: () => void;
+  warehouseId?: number;
 }
 
-const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
+const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, warehouseId }) => {
   const [variantModalOpen, setVariantModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [activeCategory, setActiveCategory] = useState("");
@@ -33,28 +20,31 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
     name: "",
     limit: 10,
     page: 1,
+    ...(warehouseId ? { warehouseId } : {}),
   });
 
+  useEffect(() => {
+    setParams((prev) => {
+      if (warehouseId) {
+        return {
+          ...prev,
+          page: 1,
+          warehouseId,
+        };
+      }
+
+      const next = { ...prev, page: 1 };
+      delete next.warehouseId;
+      return next;
+    });
+  }, [warehouseId]);
+
   // ── Hook tách riêng ──
-  const { categoryFiltered, isLoadingCategory, isPermissions } = useProductCategory();
-  const { listProduct, isLoading, isNoItem, pagination } = useProductList({
+  const { categoryFiltered, isPermissions } = useProductCategory();
+  const { listProduct, isLoading, pagination } = useProductList({
     categoryId: activeCategory,
     params: params,
   });
-
-  // const filtered = PRODUCTS.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
-
-  // const handleAddToCart = (prod: Product) => {
-  //   onAddToCart({
-  //     id: prod.id,
-  //     icon: prod.icon,
-  //     avatar: prod.avatar,
-  //     name: prod.name,
-  //     priceLabel: String(formatCurrency(prod.price, ".", "₫")),
-  //     price: prod.price,
-  //     unitName: prod.unitName || prod.unit,
-  //   });
-  // };
 
   // ── Permission guard ──
   if (isPermissions) {
@@ -149,8 +139,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan }) => {
       </button>
       <button
         className="btn btn--outline btn--sm pg-loadmore"
+        disabled={isLoading || listProduct.length >= pagination.totalItem}
         onClick={() => {
-          setParams((prev) => ({ ...prev, page: prev.page + 1 }));
+          setParams((prev) => ({ ...prev, page: Number(prev.page ?? 1) + 1 }));
         }}
       >
         {isLoading ? <div>Đang tải...</div> : <>Hiển thị thêm</>}

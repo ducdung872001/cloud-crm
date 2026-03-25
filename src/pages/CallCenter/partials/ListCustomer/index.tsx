@@ -52,7 +52,6 @@ export default function CustomerList(props: ICustomerListProps) {
   const [showModalCallIncome, setShowModalCallIncome] = useState<boolean>(true);
   const [listCustomer, setListCustomer] = useState<ICustomerResponse[]>([]);
   const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
-  const [showModalAddManagementOpportunity, setShowModalAddManagementOpportunity] = useState<boolean>(false);
   const [idCustomer, setIdCustomer] = useState<number>(null);
   const [showModalAddConsultationScheduleModal, setShowModalAddConsultationScheduleModal] = useState<boolean>(false);
 
@@ -202,7 +201,7 @@ export default function CustomerList(props: ICustomerListProps) {
     "Địa chỉ",
     "Người phụ trách",
     "Tạo lịch hẹn",
-    "Tạo cơ hội",
+    "Ghi chú",
   ];
 
   const dataFormat = ["text-center", "text-center", "", "text-center", "text-center", "", "", "", "text-center", "text-center"];
@@ -228,13 +227,12 @@ export default function CustomerList(props: ICustomerListProps) {
     </span>,
     <span
       key={item.id}
-      style={{ color: "var(--primary-color-90)", fontWeight: "500", cursor: "pointer" }}
+      style={{ color: "#6B7280", fontWeight: "400", cursor: "pointer", fontSize: "12px" }}
       onClick={() => {
         setIdCustomer(item.id);
-        setShowModalAddManagementOpportunity(true);
       }}
     >
-      Tạo
+      Ghi chú
     </span>,
   ];
 

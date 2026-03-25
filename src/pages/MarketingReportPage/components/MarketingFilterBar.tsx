@@ -1,6 +1,7 @@
 import React from "react";
 import SelectCustom from "components/selectCustom/selectCustom";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
+import ReportFilterShell from "components/reportShared/ReportFilterShell";
 import { CHANNEL_OPTIONS, VIEW_OPTIONS } from "../mockData";
 
 interface Props {
@@ -16,7 +17,7 @@ export default function MarketingFilterBar(props: Props) {
   const { channel, setChannel, viewMode, setViewMode, dateRange, setDateRange } = props;
 
   return (
-    <div className="report-toolbar">
+    <ReportFilterShell className="report-toolbar">
       <div className="report-toolbar__item">
         <label>Kênh</label>
         <SelectCustom id="marketingChannel" name="marketingChannel" options={CHANNEL_OPTIONS} fill value={channel} onChange={(option) => setChannel(option.value)} />
@@ -31,6 +32,6 @@ export default function MarketingFilterBar(props: Props) {
         <label>Khoảng thời gian</label>
         <DatePickerCustom value={dateRange} onChange={(range) => setDateRange(range)} placeholder="Chọn khoảng ngày..." />
       </div>
-    </div>
+    </ReportFilterShell>
   );
 }

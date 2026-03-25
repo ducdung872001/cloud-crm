@@ -23,6 +23,8 @@ import SaleInvoiceList from "../Sell/SaleInvoiceList/SaleInvoiceList";
 import { urlsApi } from "configs/urls";
 import PromotionModal, { EligiblePromotion, IneligiblePromotion } from "./components/modals/PromotionModal";
 import { ContextType, UserContext } from "contexts/userContext";
+import WarehouseService from "@/services/WarehouseService";
+import { IOption } from "@/model/OtherModel";
 
 const INITIAL_CART: CartItem[] = [];
 
@@ -41,6 +43,8 @@ const CounterSales: React.FC = () => {
   // ── Tab badge counts ────────────────────────────────────────────────────────
   const [draftCount, setDraftCount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
+  const [warehouseId, setWarehouseId] = useState<number | undefined>(undefined);
+  const [warehouseOptions, setWarehouseOptions] = useState<IOption[]>([]);
 
   const fetchTabCounts = useCallback(async () => {
     try {
@@ -58,6 +62,40 @@ const CounterSales: React.FC = () => {
 
   // Gọi khi mount + khi đổi branch
   useEffect(() => { fetchTabCounts(); }, [fetchTabCounts]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchWarehouses = async () => {
+      try {
+        const res = await WarehouseService.list({
+          page: 1,
+          limit: 200,
+          ...(dataBranch?.value ? { branchId: Number(dataBranch.value) } : {}),
+        });
+        if (!isMounted || res.code !== 0) return;
+
+        const items = Array.isArray(res.result)
+          ? res.result
+          : Array.isArray(res.result?.items)
+            ? res.result.items
+            : [];
+
+        setWarehouseOptions(items.map((item: any) => ({
+          value: Number(item.id),
+          label: item.name ?? item.warehouseName ?? `Kho #${item.id}`,
+        })));
+      } catch {
+        setWarehouseOptions([]);
+      }
+    };
+
+    fetchWarehouses();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [dataBranch]);
 
   // Refresh badge khi chuyển tab (để cập nhật sau khi tạo/xóa đơn)
   const handleTabChange = (tab: TabType) => {
@@ -273,6 +311,7 @@ const CounterSales: React.FC = () => {
           name: item.name,
           avatar: item.avatar,
           unitName: item.unitName,
+          ...(warehouseId ? { inventoryId: warehouseId } : {}),
         }));
         const totalDiscount = promoDiscount + moneyFromPoints;
         const paidInvoice = await BoughtProductService.insert(body, {
@@ -314,7 +353,7 @@ const CounterSales: React.FC = () => {
                   point: -pointsToUse,
                   description: `Tiêu điểm đơn hàng #${invoiceId}`,
                 }),
-              }).catch(() => { });
+              }).catch(() => undefined);
               setLoyaltyWallet(null); setPointsToUse(0); setMoneyFromPoints(0);
               setAppliedPromo(null); setPromoDiscount(0); setEligiblePromos([]);
             }
@@ -330,8 +369,6 @@ const CounterSales: React.FC = () => {
     }
   };
 
-  const handleViewReceipt = useCallback(() => setReceiptModalOpen(true), []);
-  const handleViewDetail = useCallback(() => setOrderDetailModalOpen(true), []);
   const handleConfirmOrder = useCallback(() => setOrderDetailModalOpen(false), []);
 
   const handleQrAddToCart = useCallback(() => {
@@ -353,12 +390,19 @@ const CounterSales: React.FC = () => {
           onSync={() => setSyncModalOpen(true)}
           draftCount={draftCount}
           orderCount={orderCount}
+          warehouses={warehouseOptions}
+          warehouseId={warehouseId}
+          onWarehouseChange={setWarehouseId}
         />
 
         <div className="counter-sales__content">
           {activeTab === "pos" && (
             <div className="counter-sales__screen counter-sales__screen--pos">
-              <ProductGrid onAddToCart={handleAddToCart} onQrScan={() => setQrScanModalOpen(true)} />
+              <ProductGrid
+                onAddToCart={handleAddToCart}
+                onQrScan={() => setQrScanModalOpen(true)}
+                warehouseId={warehouseId}
+              />
               <Cart
                 items={cartItems}
                 onChangeQty={handleChangeQty}

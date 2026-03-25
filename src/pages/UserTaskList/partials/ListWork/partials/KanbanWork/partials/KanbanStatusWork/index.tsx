@@ -333,11 +333,11 @@ export default function KanbanStatusWork(props: any) {
                     className="task-list"
                   >
                     <div className="wrapper__title">
-                      <div style={{display:'flex', alignItems:'center'}}>
+                      <div className="col-header-left">
                         <Icon name={column.icon}/>
                         <span className="title-task">{column.title}</span>
                       </div>
-                      <span className="total-task">{column.total}</span>
+                      <span className="total-task">{column.total ?? 0}</span>
                     </div>
                     <div className="lst__task--item">
                       {/* {column.id !== 2 && column.id !== 3 && (

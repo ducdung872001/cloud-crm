@@ -985,47 +985,47 @@ const DetailTask = (props: any) => {
                   {/* <CustomScrollbar width="100%" height='65rem'> */}
                   <div className="wrapper__work--left">
                     <div className="info__basic">
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.2rem" }}>
+                      <div className="detail-header-row">
                         <h3 className="title-basic">Thông tin chi tiết</h3>
                         <div className="show-status">
                           {data.status === 0 ? (
                             new Date() > new Date(data?.endTime) ? (
                               <div className="__expire">
                                 <Icon name="ExpireWork" />
-                                <span style={{ fontSize: 12, fontWeight: "500" }}>Quá hạn {handleUnfulfilled(data?.endTime)}</span>
+                                <span>Quá hạn {handleUnfulfilled(data?.endTime)}</span>
                               </div>
                             ) : (
                               <div className="__unfulfilled">
                                 <Icon name="NewWork" />
-                                <span style={{ fontSize: 12, fontWeight: "500" }}>Chưa tiếp nhận</span>
+                                <span>Chưa tiếp nhận</span>
                               </div>
                             )
                           ) : data.status === 1 ? (
                             new Date() > new Date(data?.endTime) ? (
                               <div className="__expire">
                                 <Icon name="ExpireWork" />
-                                <span style={{ fontSize: 12, fontWeight: "500" }}>Quá hạn {handleUnfulfilled(data?.endTime)}</span>
+                                <span>Quá hạn {handleUnfulfilled(data?.endTime)}</span>
                               </div>
                             ) : (
                               <div className="__unfulfilled">
                                 <Icon name="NewWork" />
-                                <span style={{ fontSize: 12, fontWeight: "500" }}>Mới tiếp nhận</span>
+                                <span>Mới tiếp nhận</span>
                               </div>
                             )
                           ) : data.status === 2 ? (
                             <div className="__success">
                               <Icon name="CompleteWork" />
-                              <span style={{ fontSize: 12, fontWeight: "500" }}>Hoàn thành</span>
+                              <span>Hoàn thành</span>
                             </div>
                           ) : data.status === 3 ? (
                             <div className="__cancelled">
                               <Icon name="CancelWork" />
-                              <span style={{ fontSize: 12, fontWeight: "500" }}>Đã hủy</span>
+                              <span>Đã hủy</span>
                             </div>
                           ) : (
                             <div className="__pause">
                               <Icon name="PauseWork" />
-                              <span style={{ fontSize: 12, fontWeight: "500" }}>Tạm dừng</span>
+                              <span>Tạm dừng</span>
                             </div>
                           )}
                         </div>
@@ -1311,18 +1311,12 @@ const DetailTask = (props: any) => {
               <div className={listStepProcess && listStepProcess?.length > 0 ? "info__work--right" : "info__work--right_height"}>
                 <div className="container_tab">
                   <div
-                    style={{
-                      borderBottom: tabHistoryWork === 1 ? "1px solid #CE182D" : "1px solid #EEEEEF",
-                      paddingLeft: 12,
-                      paddingRight: 12,
-                      cursor: "pointer",
-                      paddingBottom: 3,
-                    }}
+                    className={`tab-item${tabHistoryWork === 1 ? " tab-item--active" : ""}`}
                     onClick={() => {
                       setTabHistoryWork(1);
                     }}
                   >
-                    <span style={{ fontSize: 16, fontWeight: 400, color: tabHistoryWork === 1 ? "#ED1B34" : "#2C2C2C" }}>Ghi chú dự án</span>
+                    <span>Ghi chú dự án</span>
                   </div>
                   {/* <div 
                       style={{borderBottom: tabHistoryWork === 2 ? '1px solid #CE182D' : '1px solid #EEEEEF', paddingLeft: 12, paddingRight: 12, cursor: 'pointer', paddingBottom: 3}}
@@ -1333,18 +1327,12 @@ const DetailTask = (props: any) => {
 
                   {data?.scope === "external" ? (
                     <div
-                      style={{
-                        borderBottom: tabHistoryWork === 3 ? "1px solid #CE182D" : "1px solid #EEEEEF",
-                        paddingLeft: 12,
-                        paddingRight: 12,
-                        cursor: "pointer",
-                        paddingBottom: 3,
-                      }}
+                      className={`tab-item${tabHistoryWork === 3 ? " tab-item--active" : ""}`}
                       onClick={() => {
                         setTabHistoryWork(3);
                       }}
                     >
-                      <span style={{ fontSize: 16, fontWeight: 400, color: tabHistoryWork === 3 ? "#ED1B34" : "#2C2C2C" }}>Bình luận</span>
+                      <span>Bình luận</span>
                     </div>
                   ) : null}
 
@@ -1353,9 +1341,9 @@ const DetailTask = (props: any) => {
                   data?.taskType === "assigned_task" ||
                   data?.taskType === "portal" ||
                   data?.taskType === "open_portal" ? (
-                    <div style={{ display: "flex", gap: "0 1rem", flex: 1, justifyContent: "flex-end" }}>
+                    <div className="tab-actions">
                       <div
-                        style={{ border: "0.5px solid", padding: "0 0.5rem 0 0.5rem", cursor: "pointer", borderRadius: 5 }}
+                        className="btn-export-ola"
                         onClick={() => {
                           if (data?.taskType === "assigned_task") {
                             exportExternal(data, "excel", "ola");
@@ -1364,8 +1352,8 @@ const DetailTask = (props: any) => {
                           }
                         }}
                       >
-                        <Icon name="Download" style={{ width: "1.6rem", heigth: "1.6rem" }} />
-                        <span style={{ fontSize: 12, fontWeight: "400" }}>OLA</span>
+                        <Icon name="Download" style={{ width: "1.4rem", height: "1.4rem" }} />
+                        <span>OLA</span>
                       </div>
                       {/* <div style={{border: '0.5px solid', padding: '0 0.5rem 0 0.5rem', cursor: 'pointer', borderRadius: 5}}
                           onClick={() => {

@@ -1,9 +1,6 @@
-import React, { Fragment, useEffect, useState } from "react";
-import _ from "lodash";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Icon from "components/icon";
-import Image from "components/image";
-import Loading from "components/loading";
-import Input from "components/input/input";
 import Button from "components/button/button";
 import TextArea from "components/textarea/textarea";
 import NummericInput from "components/input/numericInput";
@@ -12,442 +9,402 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { showToast } from "utils/common";
 import InventoryService from "services/InventoryService";
-import ChooseProduct from "./ChooseProduct/ChooseProduct";
-
+import ChooseProductVariant from "pages/ProductImport/common/ChooseProductVariant/ChooseProductVariant";
 import "./AddTransferOrderForm.scss";
 
+interface ITransferProduct {
+  detailId?: number;
+  productId: number;
+  variantId?: number;
+  unitId?: number;
+  inventoryId: number;
+  productAvatar: string;
+  productName: string;
+  inventoryName: string;
+  unitName: string;
+  quanlityBefor: number;
+  quanlityAffter: number | string;
+  note: string;
+}
+
 export default function AddTransferOrderForm(props) {
-  const { onShow, onHide, id } = props;
+  const { onHide, id } = props;
 
-  const [lstProducts, setLstProducts] = useState([]);
+  const [transferId, setTransferId]               = useState<number | null>(id ?? null);
+  const [lstProducts, setLstProducts]             = useState<ITransferProduct[]>([]);
   const [lstBatchNoProduct, setLstBatchNoProduct] = useState<string[]>([]);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
-  const [dataInventoryOrg, setDataInventoryOrg] = useState(null);
-  const [dataInventoryArrive, setDataInventoryArrive] = useState(null);
-  const [dataOrgProducts, setDataOrgProducts] = useState([]);
-  const [isLoadingAddItem, setIsLoadingAddItem] = useState<boolean>(false);
+  const [showDialog, setShowDialog]               = useState(false);
+  const [contentDialog, setContentDialog]         = useState<IContentDialog>(null);
+  const [showModalAdd, setShowModalAdd]           = useState(false);
+  const [dataInventoryOrg, setDataInventoryOrg]       = useState<any>(null);
+  const [dataInventoryArrive, setDataInventoryArrive] = useState<any>(null);
+  const [isSubmit, setIsSubmit]   = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [note, setNote]           = useState("");
+  const [listInventory, setListInventory]           = useState<any[]>([]);
+  const [isLoadingInventory, setIsLoadingInventory] = useState(false);
 
-  const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const isDirty      = !!(dataInventoryOrg || dataInventoryArrive || lstProducts.length > 0);
+  const isReadyToAdd = !!dataInventoryOrg;
+  const totalQty     = lstProducts.reduce((s, i) => s + (Number(i.quanlityAffter) || 0), 0);
+  const optionsOrg    = listInventory.filter(i => i.value !== dataInventoryArrive?.value);
+  const optionsArrive = listInventory.filter(i => i.value !== dataInventoryOrg?.value);
 
-  const [formData, setFormData] = useState(null);
-
-  // đoạn này xử lý kho hàng
-  const loadedOptionInventoryOrg = async (search, loadedOptions, { page }) => {
-    const param = {
-      name: search,
-      page: page,
-      limit: 10,
-    };
-
-    const response = await InventoryService.list(param);
-
-    if (response.code === 0) {
-      const dataOption = response.result;
-
-      let changeDataOption = [];
-
-      if (dataInventoryArrive) {
-        changeDataOption = dataOption.filter((item) => item.id !== dataInventoryArrive.value);
-      } else {
-        changeDataOption = dataOption;
-      }
-
-      return {
-        options: [
-          ...(changeDataOption.length > 0
-            ? changeDataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
-            : []),
-        ],
-        hasMore: response.result.loadMoreAble,
-        additional: {
-          page: page + 1,
-        },
-      };
+  // Load kho 1 lần khi mở dropdown
+  const getListInventory = useCallback(async () => {
+    if (listInventory.length > 0) return;
+    setIsLoadingInventory(true);
+    const res = await InventoryService.list({ page: 1, limit: 100 });
+    if (res.code === 0) {
+      const data = Array.isArray(res.result)
+        ? res.result
+        : Array.isArray(res.result?.items) ? res.result.items : [];
+      setListInventory(data.map((i: any) => ({ value: i.id, label: i.name })));
+    } else {
+      showToast("Không lấy được danh sách kho", "error");
     }
+    setIsLoadingInventory(false);
+  }, [listInventory.length]);
 
-    return { options: [], hasMore: false };
+  // Load phiếu khi edit
+  useEffect(() => {
+    if (!id) return;
+    (async () => {
+      setIsLoading(true);
+      try {
+        const headerRes = await InventoryService.stockTransferGet(id);
+        if (headerRes.code !== 0) { showToast("Không tải được phiếu", "error"); return; }
+        const t = headerRes.result;
+        setTransferId(t.id);
+        setNote(t.note ?? "");
+        const invRes = await InventoryService.list({ page: 1, limit: 100 });
+        if (invRes.code === 0) {
+          const data = Array.isArray(invRes.result) ? invRes.result
+            : Array.isArray(invRes.result?.items) ? invRes.result.items : [];
+          const opts = data.map((i: any) => ({ value: i.id, label: i.name }));
+          setListInventory(opts);
+          const orgOpt = opts.find((o: any) => o.value === t.fromWarehouseId);
+          const arrOpt = opts.find((o: any) => o.value === t.toWarehouseId);
+          if (orgOpt) setDataInventoryOrg(orgOpt);
+          if (arrOpt) setDataInventoryArrive(arrOpt);
+        }
+        const detailRes = await InventoryService.stockTransferDetailList({ transferId: t.id, limit: 200 });
+        if (detailRes.code === 0) {
+          setLstProducts((detailRes.result?.items ?? []).map((d: any) => ({
+            detailId: d.id, productId: d.productId, variantId: d.variantId, unitId: d.unitId,
+            inventoryId: t.fromWarehouseId,
+            productAvatar: d.productAvatar ?? "", productName: d.productName ?? "",
+            inventoryName: d.inventoryName ?? "", unitName: d.unitName ?? "",
+            quanlityBefor: d.availQty ?? 0, quanlityAffter: d.quantity, note: d.note ?? "",
+          })));
+        }
+      } finally { setIsLoading(false); }
+    })();
+  }, [id]);
+
+  useEffect(() => {
+    setLstBatchNoProduct(lstProducts.map(p => String(p.productId)));
+  }, [lstProducts]);
+
+  // Product handlers
+  const handChangeDataProps = (data: any[]) => {
+    const newItems: ITransferProduct[] = data.map(item => ({
+      detailId: undefined, productId: item.productId, variantId: item.variantId, unitId: item.unitId,
+      inventoryId: item.inventoryId ?? dataInventoryOrg?.value,
+      productAvatar: item.productAvatar ?? "", productName: item.productName ?? "",
+      inventoryName: item.inventoryName ?? dataInventoryOrg?.label ?? "",
+      unitName: item.unitName ?? "", quanlityBefor: item.quantity ?? 0, quanlityAffter: "", note: "",
+    }));
+    setLstProducts(prev => {
+      const keys = new Set(prev.map(p => `${p.productId}_${p.variantId ?? 0}`));
+      return [...prev, ...newItems.filter(n => !keys.has(`${n.productId}_${n.variantId ?? 0}`))];
+    });
   };
 
-  const loadedOptionInventoryArrive = async (search, loadedOptions, { page }) => {
-    const param = {
-      name: search,
-      page: page,
-      limit: 10,
-    };
+  const handleChangeQty = (val: number | undefined, idx: number) =>
+    setLstProducts(prev => prev.map((item, i) => i === idx ? { ...item, quanlityAffter: val ?? "" } : item));
 
-    const response = await InventoryService.list(param);
+  const handleChangeNote = (val: string, idx: number) =>
+    setLstProducts(prev => prev.map((item, i) => i === idx ? { ...item, note: val } : item));
 
-    if (response.code === 0) {
-      const dataOption = response.result;
-
-      let changeDataOption = [];
-
-      if (dataInventoryOrg) {
-        changeDataOption = dataOption.filter((item) => item.id !== dataInventoryOrg.value);
-      } else {
-        changeDataOption = dataOption;
-      }
-
-      return {
-        options: [
-          ...(changeDataOption.length > 0
-            ? changeDataOption.map((item) => {
-                return {
-                  value: item.id,
-                  label: item.name,
-                };
-              })
-            : []),
-        ],
-        hasMore: response.result.loadMoreAble,
-        additional: {
-          page: page + 1,
-        },
-      };
+  const handleRemove = async (idx: number) => {
+    const item = lstProducts[idx];
+    if (item.detailId) {
+      const res = await InventoryService.stockTransferDetailDelete(item.detailId);
+      if (res.code !== 0) { showToast("Xóa sản phẩm thất bại", "error"); return; }
     }
-
-    return { options: [], hasMore: false };
+    setLstProducts(prev => prev.filter((_, i) => i !== idx));
   };
 
-  const handleChangeValueInventoryOrg = (e) => {
-    setDataInventoryOrg(e);
-  };
-
-  const handleChangeValueInventoryArrive = (e) => {
-    setDataInventoryArrive(e);
-  };
-
-  const handAdjustmentSlipTemp = async (inventoryId) => {
-    if (!inventoryId) return;
-  };
-
-  // Gửi dữ liệu đi
-  const onSubmitForm = async (e) => {
-    e.preventDefault();
+  // Submit
+  const onSubmitForm = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!dataInventoryOrg)    { showToast("Vui lòng chọn kho nguồn", "warning"); return; }
+    if (!dataInventoryArrive) { showToast("Vui lòng chọn kho đích",  "warning"); return; }
+    if (lstProducts.length === 0) { showToast("Vui lòng thêm ít nhất 1 sản phẩm", "warning"); return; }
+    if (lstProducts.some(p => !p.quanlityAffter || Number(p.quanlityAffter) <= 0)) {
+      showToast("Vui lòng nhập số lượng chuyển cho tất cả sản phẩm", "warning"); return;
+    }
     setIsSubmit(true);
+    try {
+      const headerRes = await InventoryService.stockTransferUpdate({
+        id: transferId ?? undefined,
+        fromWarehouseId: dataInventoryOrg.value,
+        toWarehouseId:   dataInventoryArrive.value,
+        note, status: 0,
+      });
+      if (headerRes.code !== 0) { showToast(headerRes.message ?? "Tạo phiếu thất bại", "error"); return; }
+      const savedId: number = headerRes.result.id;
+      setTransferId(savedId);
+      const results = await Promise.all(lstProducts.map(item =>
+        InventoryService.stockTransferDetailUpdate({
+          id: item.detailId ?? undefined, transferId: savedId,
+          productId: item.productId, variantId: item.variantId, unitId: item.unitId,
+          quantity: Number(item.quanlityAffter), note: item.note,
+        })
+      ));
+      const failed = results.filter(r => r.code !== 0);
+      if (failed.length > 0) {
+        showToast(`${failed.length} sản phẩm lưu thất bại`, "warning");
+      } else {
+        showToast(id ? "Cập nhật phiếu thành công" : "Tạo phiếu chuyển kho thành công", "success");
+        onHide(true);
+      }
+    } catch { showToast("Có lỗi xảy ra. Vui lòng thử lại", "error"); }
+    finally  { setIsSubmit(false); }
   };
 
-  const showDialogConfirmConfirm = () => {
-    const contentDialog: IContentDialog = {
-      color: "warning",
-      className: "dialog-warning",
-      isCentered: true,
-      isLoading: true,
-      title: <Fragment>Quay lại...</Fragment>,
-      message: (
-        <Fragment>
-          Hiện tại phiếu của bạn đang có sự thay đổi. Bạn có muốn <strong>quay lại</strong>? Thao tác này không thể khôi phục.
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Xác nhận",
-      defaultAction: () => {
-        onHide(false);
-        // xóa hết dữ liệu đi
-      },
-    };
-    setContentDialog(contentDialog);
+  // ── Confirm back ──────────────────────────────────────────────────────────
+  const showDialogConfirmBack = () => {
+    if (!isDirty) { onHide(false); return; }
+    setContentDialog({
+      color: "warning", isCentered: true, isLoading: true,
+      title: <Fragment>Quay lại</Fragment>,
+      message: <Fragment>Phiếu đang có thay đổi chưa lưu. Bạn có chắc muốn <strong>quay lại</strong>?</Fragment>,
+      cancelText: "Hủy", cancelAction: () => { setShowDialog(false); setContentDialog(null); },
+      defaultText: "Quay lại", defaultAction: () => { setShowDialog(false); onHide(false); },
+    });
     setShowDialog(true);
   };
 
-  const handleChangeValueReason = (e, idx) => {
-    const value = e.target.value;
-
-    setLstProducts((preState) =>
-      preState.map((item, index) => {
-        if (index === idx) {
-          return { ...item, reason: value };
-        }
-
-        return item;
-      })
-    );
-  };
-
-  const handleChangeValueQuanlityAffter = (e, idx) => {
-    const value = e.floatValue;
-
-    setLstProducts((preState) =>
-      preState.map((item, index) => {
-        if (index === idx) {
-          return { ...item, quanlityAffter: value };
-        }
-
-        return item;
-      })
-    );
-  };
-
-  const handRemoveProItem = (idx) => {
-    const newData = [...lstProducts];
-    newData.splice(idx, 1);
-
-    setLstProducts(newData);
-  };
-
-  const handleAddItemPro = (e) => {
-    e.preventDefault();
-    setShowModalAdd(true);
-  };
-
-  const handChangeDataProps = (data) => {
-    const converData = data.map((item) => {
-      return {
-        id: item.productId,
-        inventoryId: item.inventoryId,
-        productAvatar: item.productAvatar,
-        productName: item.productName,
-        inventoryName: item.inventoryName,
-        unitName: item.unitName,
-        reason: "",
-        quanlityBefor: item.quantity,
-        quanlityAffter: "",
-      };
-    });
-
-    setLstProducts(converData);
-  };
-
-  const handClearForm = () => {
-    setLstProducts([]);
-    setDataInventoryOrg(null);
-    setDataOrgProducts([]);
-    setFormData(null);
-  };
-
   return (
-    <div className="wrapper__add-transfer--order">
-      <div className="action-navigation">
-        <div className="action-backup">
-          <h1
-            onClick={() => {
-              dataInventoryOrg || dataInventoryArrive || lstProducts.length > 0 ? showDialogConfirmConfirm() : !isSubmit && onHide(false);
-            }}
-            className="title-first"
-            title="Quay lại"
-          >
+    <div className="tf-page">
+      {/* ── Breadcrumb header ──────────────────────────────────────── */}
+      <div className="tf-page-header">
+        <div className="tf-title-breadcrumb">
+          <span className="tf-title-breadcrumb__parent" onClick={showDialogConfirmBack}>
             Phiếu điều chuyển kho
-          </h1>
-          <Icon
-            name="ChevronRight"
-            onClick={() => {
-              dataInventoryOrg || dataInventoryArrive || lstProducts.length > 0 ? showDialogConfirmConfirm() : onHide(false);
-            }}
-          />
-          <h1 className="title-last">{`${id ? "Chỉnh sửa" : "Thêm mới"} phiếu`}</h1>
+          </span>
+          <Icon name="ArrowRight" style={{ width: 14, opacity: 0.4 }} />
+          <span className="tf-title-breadcrumb__current">
+            {id ? "Chỉnh sửa phiếu" : "Thêm mới phiếu"}
+          </span>
         </div>
-        <Button
-          type="button"
-          disabled={isSubmit}
-          onClick={() => (dataInventoryOrg || dataInventoryArrive || lstProducts.length > 0 ? showDialogConfirmConfirm() : onHide(false))}
-        >
-          Quay lại
-        </Button>
       </div>
 
-      <form className="box__transfer--order" onSubmit={(e) => onSubmitForm(e)}>
-        <div className="card-box d-flex flex-column info__top">
-          <label className="title--info">Kho hàng</label>
+      {/* ── 2-column layout ──────────────────────────────────────────── */}
+      <div className="tf-layout">
 
-          <div className="dept__inventory">
-            <div className="form-group">
-              <SelectCustom
-                key={dataInventoryArrive?.value?.toString()}
-                id="inventoryOrg"
-                name="inventoryOrg"
-                label="Từ kho"
-                fill={true}
-                options={[]}
-                required={true}
-                value={dataInventoryOrg}
-                onChange={(e) => handleChangeValueInventoryOrg(e)}
-                isAsyncPaginate={true}
-                loadOptionsPaginate={loadedOptionInventoryOrg}
-                placeholder="Chọn từ kho hàng"
-                additional={{
-                  page: 1,
-                }}
-              />
+        {/* ── LEFT: danh sách sản phẩm ─────────────────────────────── */}
+        <div className="tf-layout__main">
+          <div className="card-box tf-product-card">
+
+            {/* Header — block độc lập, không nằm trong flex container */}
+            <div className="tf-product-card__header">
+              <span className="tf-product-card__title">
+                <Icon name="Bill" style={{ width: 16, opacity: 0.7 }} />
+                Danh sách hàng hóa cần chuyển kho
+                {lstProducts.length > 0 && (
+                  <span className="tf-badge">{lstProducts.length}</span>
+                )}
+              </span>
+              <Button
+                variant="outline"
+                disabled={isSubmit || !isReadyToAdd}
+                onClick={(e) => { e.preventDefault(); setShowModalAdd(true); }}
+              >
+                <Icon name="Plus" style={{ width: 14, marginRight: 5 }} />
+                Thêm sản phẩm
+              </Button>
             </div>
 
-            <div className="form-group">
+            {/* Content area */}
+            <div className={`tf-product-card__body${lstProducts.length > 0 ? " tf-product-card__body--has-data" : ""}`}>
+              {lstProducts.length > 0 ? (
+                <div className="tf-product-table-wrapper">
+                  <table className="tf-product-table">
+                    <thead>
+                      <tr>
+                        <th className="tf-col-stt">STT</th>
+                        <th>Sản phẩm</th>
+                        <th>Kho nguồn</th>
+                        <th className="tf-col-center tf-th-center">Đơn vị</th>
+                        <th className="tf-col-num tf-th-right">Tồn kho</th>
+                        <th className="tf-col-num tf-col-input">SL chuyển</th>
+                        <th>Ghi chú</th>
+                        <th className="tf-col-action"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lstProducts.map((item, idx) => (
+                        <tr key={idx} className="tf-product-row">
+                          <td className="tf-col-stt">{idx + 1}</td>
+                          <td>
+                            <div className="tf-product-name">{item.productName}</div>
+                          </td>
+                          <td className="tf-col-center">
+                            <span className="tf-tag">{item.inventoryName}</span>
+                          </td>
+                          <td className="tf-col-center">{item.unitName || "—"}</td>
+                          <td className="tf-col-num">
+                            <span className="tf-qty-current">{item.quanlityBefor ?? "—"}</span>
+                          </td>
+                          <td className="tf-col-num tf-col-input">
+                            <NummericInput
+                              name={`qty-${idx}`} id={`qty-${idx}`}
+                              fill={true} value={item.quanlityAffter} placeholder="0"
+                              onValueChange={(e) => handleChangeQty(e.floatValue, idx)}
+                              className="tf-qty-input"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              className="tf-reason-input"
+                              placeholder="Ghi chú..."
+                              value={item.note}
+                              onChange={(e) => handleChangeNote(e.target.value, idx)}
+                            />
+                          </td>
+                          <td className="tf-col-action">
+                            <button type="button" className="tf-remove-btn" onClick={() => handleRemove(idx)} title="Xóa">
+                              <Icon name="Times" style={{ width: 14 }} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <SystemNotification
+                  description={
+                    <span>
+                      {isReadyToAdd
+                        ? <>Chưa có sản phẩm nào. Nhấn <strong>Thêm sản phẩm</strong> để bắt đầu.</>
+                        : <>Vui lòng chọn <strong>kho nguồn</strong> ở bên phải trước.</>}
+                    </span>
+                  }
+                  type="no-item"
+                  titleButton={isReadyToAdd ? "Thêm sản phẩm cần chuyển kho" : undefined}
+                  action={isReadyToAdd ? () => setShowModalAdd(true) : undefined}
+                />
+              )}
+            </div>
+
+          </div>
+        </div>
+
+        {/* ── RIGHT: sidebar thông tin phiếu (sticky) ──────────────── */}
+        <div className="tf-layout__sidebar">
+          <div className="card-box tf-sidebar-card">
+
+            {/* Header */}
+            <div className="tf-sidebar-card__header">
+              <div className="tf-sidebar-card__icon">
+                <Icon name="WarehouseManagement" />
+              </div>
+              <span className="tf-sidebar-card__title">Thông tin phiếu chuyển kho</span>
+            </div>
+
+            <form className="tf-sidebar-card__body" onSubmit={onSubmitForm}>
+
+              {/* Từ kho */}
               <SelectCustom
-                key={dataInventoryOrg?.value?.toString()}
-                id="inventoryArrive"
-                name="inventoryArrive"
-                label="Đến kho"
-                fill={true}
-                options={[]}
+                id="inventoryOrg" name="inventoryOrg"
+                label="Từ kho" fill={true}
+                options={optionsOrg}
                 required={true}
-                value={dataInventoryArrive}
-                onChange={(e) => handleChangeValueInventoryArrive(e)}
-                isAsyncPaginate={true}
-                loadOptionsPaginate={loadedOptionInventoryArrive}
-                placeholder="Chọn đến kho hàng"
-                additional={{
-                  page: 1,
-                }}
+                value={dataInventoryOrg?.value ?? null}
+                onMenuOpen={getListInventory}
+                onChange={(e) => setDataInventoryOrg(e)}
+                isLoading={isLoadingInventory}
+                placeholder="Chọn kho nguồn"
+              />
+
+              {/* Arrow indicator */}
+              <div className="tf-sidebar-arrow">
+                <Icon name="ArrowSmallUp" style={{ width: 18, opacity: 0.4, transform: "rotate(180deg)" }} />
+                <span className="tf-sidebar-arrow__label">Chuyển đến</span>
+                <Icon name="ArrowSmallUp" style={{ width: 18, opacity: 0.4, transform: "rotate(180deg)" }} />
+              </div>
+
+              {/* Đến kho */}
+              <SelectCustom
+                id="inventoryArrive" name="inventoryArrive"
+                label="Đến kho" fill={true}
+                options={optionsArrive}
+                required={true}
+                value={dataInventoryArrive?.value ?? null}
+                onMenuOpen={getListInventory}
+                onChange={(e) => setDataInventoryArrive(e)}
+                isLoading={isLoadingInventory}
+                placeholder="Chọn kho đích"
                 disabled={!dataInventoryOrg}
               />
-            </div>
-          </div>
-        </div>
 
-        <div className="card-box d-flex flex-column info__body">
-          <div className="header__action">
-            <ul className="header__action--title">
-              <li className="item-title">Danh sách hàng hóa cần chuyển kho</li>
-            </ul>
-          </div>
-
-          <div className="box__product">
-            {!isLoading && lstProducts && lstProducts.length > 0 ? (
-              <div className="lst__product--item">
-                {lstProducts.map((item, idx) => {
-                  return (
-                    <div key={idx} className="product-item">
-                      <div className="avtar-pro">
-                        <label className="name-ava">Ảnh sản phẩm</label>
-                        <div className="ava">
-                          <Image src={item.productAvatar} alt={item.productName} />
-                        </div>
-                      </div>
-
-                      <div className="dept__content">
-                        <div className="form-group">
-                          <Input id="inventory" name="inventory" label="Kho hàng" fill={true} value={item.inventoryName} disabled />
-                        </div>
-
-                        <div className="form-group">
-                          <Input name="name" id="name" label="Tên sản phẩm" fill={true} value={item.productName} disabled />
-                        </div>
-                        <div className="form-group">
-                          <Input name="unit" id="unit" label="Đơn vị tính" fill={true} value={item.unitName} disabled />
-                        </div>
-                        <div className="form-group">
-                          <NummericInput
-                            name="quanlityBefor"
-                            id="quanlityBefor"
-                            label="Số lượng thực tế"
-                            fill={true}
-                            value={item.quanlityBefor}
-                            disabled
-                          />
-                        </div>
-                        <div className="form-group">
-                          <NummericInput
-                            name="quanlityAffter"
-                            id="quanlityAffter"
-                            label="Số lượng chuyển kho"
-                            placeholder="Nhập số lượng chuyển kho"
-                            fill={true}
-                            value={item.quanlityAffter}
-                            onValueChange={(e) => handleChangeValueQuanlityAffter(e, idx)}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <Input
-                            name="reason"
-                            id="reason"
-                            label="Lý do điều chỉnh"
-                            fill={true}
-                            value={item.reason}
-                            placeholder="Nhập lý do điều chỉnh"
-                            onChange={(e) => handleChangeValueReason(e, idx)}
-                          />
-                        </div>
-                      </div>
-                      <div className="action__delete--item" onClick={() => handRemoveProItem(idx)}>
-                        <div className="icon-remove">
-                          <Icon name="Times" />
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                <div className="action__add--item--large">
-                  <Button variant="outline" disabled={isSubmit} onClick={(e) => handleAddItemPro(e)}>
-                    <Icon name="PlusCircleFill" />
-                    Thêm sản phẩm
-                  </Button>
+              {/* Summary */}
+              <div className="tf-sidebar-summary">
+                <div className="tf-sidebar-summary__row">
+                  <span className="tf-sidebar-summary__label">Số loại SP</span>
+                  <span className="tf-sidebar-summary__value">{lstProducts.length} loại</span>
+                </div>
+                <div className="tf-sidebar-summary__row tf-sidebar-summary__row--total">
+                  <span className="tf-sidebar-summary__label">Tổng SL chuyển</span>
+                  <span className="tf-sidebar-summary__value tf-sidebar-summary__value--hl">
+                    {totalQty.toLocaleString()}
+                  </span>
                 </div>
               </div>
-            ) : isLoading ? (
-              <Loading />
-            ) : (
-              <SystemNotification
-                description={
-                  <span>
-                    Hiện tại chưa có sản phẩm cần chuyển kho nào. <br />
-                    Hãy thêm mới sản phẩm cần chuyển kho đầu tiên nhé!
-                  </span>
-                }
-                type="no-item"
-                titleButton="Thêm mới sản phẩm cần chuyển kho"
-                disabled={!dataInventoryOrg && !dataInventoryArrive}
-                action={() => {
-                  setShowModalAdd(true);
-                }}
-              />
-            )}
-          </div>
-        </div>
 
-        <div className="card-box d-flex flex-column info__bottom">
-          <label className="title--info">Nội dung điều chuyển kho</label>
+              {/* Ghi chú */}
+              <div className="tf-sidebar-note">
+                <label className="tf-sidebar-note__label">Ghi chú</label>
+                <TextArea
+                  name="note" value={note} fillColor={true}
+                  placeholder="Nhập nội dung điều chuyển kho..."
+                  onChange={(e) => setNote(e.target.value)}
+                />
+              </div>
 
-          <div className="content-adjust">
-            <div className="form-group">
-              <TextArea
-                name="adjust"
-                value={formData?.note}
-                onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                fillColor={true}
-                placeholder="Nhập nội dung cần điều chuyển kho"
-              />
+            </form>
+
+            {/* Actions */}
+            <div className="tf-sidebar-card__actions">
+              <Button
+                type="submit"
+                color="primary"
+                disabled={lstProducts.length === 0 || isSubmit || !dataInventoryOrg || !dataInventoryArrive}
+                onClick={onSubmitForm}
+              >
+                {id ? "Cập nhật phiếu" : "Tạo phiếu chuyển kho"}
+                {isSubmit && <Icon name="Loading" />}
+              </Button>
+              <Button type="button" variant="outline" disabled={isSubmit} onClick={showDialogConfirmBack}>
+                Quay lại
+              </Button>
             </div>
-          </div>
 
-          <div className="action__submit--form">
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isSubmit}
-              onClick={() => (dataInventoryOrg || dataInventoryArrive || lstProducts.length > 0 ? showDialogConfirmConfirm() : onHide(false))}
-            >
-              Quay lại
-            </Button>
-
-            <Button type="submit" disabled={lstProducts.length === 0 || isSubmit}>
-              {id ? "Chỉnh sửa" : "Thêm mới"}
-              {isSubmit && <Icon name="Loading" />}
-            </Button>
           </div>
         </div>
-      </form>
-      <ChooseProduct
+
+      </div>
+
+      <ChooseProductVariant
         onShow={showModalAdd}
-        onHide={(reload) => {
-          if (reload) {
-            handAdjustmentSlipTemp(dataInventoryOrg.value);
-          }
-          setShowModalAdd(false);
-        }}
-        lstBatchNoProduct={lstBatchNoProduct}
+        onHide={() => setShowModalAdd(false)}
+        excludeKeys={lstBatchNoProduct}
         inventory={dataInventoryOrg}
+        title="Chọn sản phẩm cần chuyển kho"
         takeData={(data) => handChangeDataProps(data)}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />

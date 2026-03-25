@@ -313,7 +313,9 @@ export default function BusinessProcessList() {
     //   <a>Xem thêm</a>
     // </div>,
     item.employeeName,
-    <Badge key={index} variant={item.status === 1 ? "success" : "secondary"} text={item.status === 1 ? "Đã phê duyệt" : "Chưa phê duyệt"} />,
+    <span key={index} className={`process-status-badge${item.status === 1 ? " process-status-badge--approved" : " process-status-badge--pending"}`}>
+      {item.status === 1 ? "✓ Đã phê duyệt" : "○ Chưa phê duyệt"}
+    </span>,
   ];
 
   const onApprove = async (id, status) => {
@@ -1057,20 +1059,19 @@ export default function BusinessProcessList() {
       <div className="container-header">
         <TitleAction title={isRegimeKanban ? "Danh sách đối tượng" : "Danh sách quy trình"} />
         <div className="container-left">
-          <div className="container-button-header">
+          <div className="view-switcher">
             <div
-              className={isRegimeKanban ? "style-list-button-inactive" : "style-list-button-active"}
+              className={`view-switcher__btn${!isRegimeKanban ? " view-switcher__btn--active" : ""}`}
               onClick={() => {
                 setIsRegimeKanban(false);
                 setHasHistorySignature(false);
               }}
             >
               <Icon name="ListData" />
-              <span className="title">Danh sách</span>
+              <span>Danh sách</span>
             </div>
-
             <div
-              className={isRegimeKanban ? "style-list-button-active" : "style-list-button-inactive"}
+              className={`view-switcher__btn${isRegimeKanban ? " view-switcher__btn--active" : ""}`}
               onClick={() => {
                 setIsRegimeKanban(true);
                 if (processId == -1) {
@@ -1082,7 +1083,7 @@ export default function BusinessProcessList() {
               }}
             >
               <Icon name="Kanban" />
-              <span className="title">Kanban</span>
+              <span>Kanban</span>
             </div>
           </div>
           {isRegimeKanban ? null : (

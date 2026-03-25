@@ -11,7 +11,6 @@ import BoxTable from "components/boxTable/boxTable";
 import { IAction } from "model/OtherModel";
 import Icon from "components/icon";
 import ModalAddData from "./partials/ModalAddData";
-import NetLoanService from "services/fintech/NetLoanService";
 
 import "./index.scss";
 
@@ -42,7 +41,7 @@ export default function NetLoan({ data, onShow, callBack }) {
 
   const getListNetLoan = async (paramsSearch: any) => {
     setIsLoading(true);
-    const response = await NetLoanService.list(paramsSearch);
+    const response = null;
 
     if (response.code === 0) {
       const result = response.result;
@@ -130,7 +129,7 @@ export default function NetLoan({ data, onShow, callBack }) {
   const [contentDialog, setContentDialog] = useState<any>(null);
 
   const onDelete = async (id: number) => {
-    const response = await NetLoanService.delete(id);
+    const response = null;
 
     if (response.code === 0) {
       showToast("Xóa thông tin thu phí tiền vay", "success");

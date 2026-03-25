@@ -1,0 +1,131 @@
+/* ─── Reuse shared patterns from CampaignManagementPage.scss ─── */
+/* (cm-btn, cm-field, cm-filter-btn, cm-search-wrap defined there)   */
+
+.ct-form-card {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  &__title { font-size: 15px; font-weight: 700; color: #065F46; margin-bottom: 14px; }
+}
+
+.ct-form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.ct-placeholder-hint {
+  font-size: 12px;
+  color: #6B7280;
+  margin: 8px 0 14px;
+  code { background: #F3F4F6; padding: 1px 5px; border-radius: 4px; font-family: monospace; color: #374151; margin: 0 2px; }
+}
+
+.ct-form-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+.ct-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ct-filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.ct-cat-btn {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  &:hover { background: #F9FAFB; }
+  &--active { background: #F97316; color: #fff; border-color: #F97316; }
+}
+
+.ct-template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.ct-template-card {
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 16px;
+
+  &__header { display: flex; gap: 6px; margin-bottom: 8px; }
+  &__name   { font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 8px; }
+  &__content {
+    font-size: 12px; color: #6B7280; line-height: 1.5;
+    background: #F9FAFB; border-radius: 6px; padding: 10px;
+    margin-bottom: 10px; min-height: 56px; font-family: monospace;
+  }
+  &__footer { display: flex; justify-content: space-between; font-size: 11px; color: #9CA3AF; margin-bottom: 10px; }
+  &__actions { display: flex; gap: 6px; }
+}
+
+.ct-channel-pill { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; }
+.ct-cat-pill     { font-size: 11px; background: #F3F4F6; color: #374151; padding: 2px 8px; border-radius: 12px; }
+
+/* ─── Preview overlay ─── */
+.ct-preview-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.ct-preview-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 320px;
+  &__title { font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 18px; }
+}
+
+.ct-preview-phone { background: #1F2937; border-radius: 20px; padding: 18px 12px; margin-bottom: 16px; }
+.ct-preview-phone__screen { background: #fff; border-radius: 10px; padding: 10px; }
+.ct-preview-bubble { background: #E5E7EB; border-radius: 10px 10px 10px 0; padding: 10px 12px; font-size: 13px; color: #111827; line-height: 1.5; }
+
+/* ─── Shared (duplicate from CampaignManagementPage for self-containment) ─── */
+.cm-search-wrap {
+  display: flex; align-items: center;
+  border: 1px solid var(--border-color); border-radius: 8px; padding: 0 10px; background: #fff; max-width: 360px;
+  svg { width: 16px; height: 16px; color: #9CA3AF; flex-shrink: 0; }
+  input { flex: 1; padding: 8px 8px; border: none; outline: none; font-size: 13px; }
+}
+
+.cm-filter-btn {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1px solid var(--border-color); background: #fff; font-size: 13px; cursor: pointer; transition: all 0.15s;
+  &:hover { background: #F3F4F6; }
+  &--active { background: var(--primary-bg-color); color: #fff; border-color: var(--primary-bg-color); }
+}
+
+.cm-field {
+  display: flex; flex-direction: column; gap: 5px;
+  label { font-size: 12px; font-weight: 500; color: #374151; }
+  input, select, textarea {
+    padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 6px;
+    font-size: 13px; outline: none; font-family: inherit; resize: vertical;
+    &:focus { border-color: var(--primary-bg-color); }
+  }
+}
+
+.cm-btn {
+  padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none; transition: opacity 0.15s;
+  &:hover { opacity: 0.88; }
+  &--primary  { background: var(--primary-bg-color); color: #fff; }
+  &--secondary { background: #fff; color: #374151; border: 1px solid var(--border-color); }
+  &--sm { padding: 5px 12px; font-size: 12px; }
+}

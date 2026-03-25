@@ -1,5 +1,6 @@
 import React from "react";
 import Icon from "components/icon";
+import ReportKpiGrid from "components/reportShared/ReportKpiGrid";
 
 interface KpiItem {
   label: string;
@@ -16,23 +17,20 @@ interface Props {
 
 export default function MarketingKpiGrid({ items }: Props) {
   return (
-    <div className="report-kpi-grid">
-      {items.map((item) => (
-        <div
-          key={item.label}
-          className="report-kpi-card"
-          style={{ "--report-color": item.color, "--report-bg": item.bg } as React.CSSProperties}
-        >
-          <div className="report-kpi-card__icon">
-            <Icon name={item.icon} />
-          </div>
-          <div className="report-kpi-card__body">
-            <div className="report-kpi-card__label">{item.label}</div>
-            <div className="report-kpi-card__value">{item.value}</div>
-            <div className="report-kpi-card__note">{item.note}</div>
-          </div>
-        </div>
-      ))}
-    </div>
+    <ReportKpiGrid
+      items={items.map((item) => ({
+        label: item.label,
+        value: item.value,
+        note: item.note,
+        icon: <Icon name={item.icon} />,
+        style: { "--report-color": item.color, "--report-bg": item.bg } as React.CSSProperties,
+        cardClassName: "report-kpi-card",
+        iconClassName: "report-kpi-card__icon",
+        labelClassName: "report-kpi-card__label",
+        valueClassName: "report-kpi-card__value",
+        noteClassName: "report-kpi-card__note",
+      }))}
+      className="report-kpi-grid"
+    />
   );
 }

@@ -11,7 +11,6 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useActiveElement, useOnClickOutside } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
-import BriefFinancialReportService from "services/fintech/BriefFinancialReportService";
 import { showToast } from "utils/common";
 
 import "./ModalAddData.scss";
@@ -247,7 +246,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       customerId
     };
 
-    const response = await BriefFinancialReportService.update(body);
+    const response = null;
 
     if (response.code === 0) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} báo cáo tài chính rút gọn thành công`, "success");

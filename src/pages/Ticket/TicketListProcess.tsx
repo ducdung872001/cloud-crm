@@ -30,7 +30,7 @@ import "tippy.js/animations/scale.css";
 import "./TicketList.scss";
 
 export default function TicketListProcess() {
-  document.title = "Tiếp nhận hỗ trợ";
+  document.title = "Phiếu hỗ trợ";
 
   const isMounted = useRef(false);
 
@@ -61,7 +61,7 @@ export default function TicketListProcess() {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách hỗ trợ",
+      name: "Danh sách phiếu hỗ trợ",
       is_active: true,
     },
   ]);
@@ -822,7 +822,7 @@ export default function TicketListProcess() {
 
   return (
     <div className={`page-content page-ticket${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Tiếp nhận hỗ trợ" titleActions={titleActions} />
+      <TitleAction title="Phiếu hỗ trợ" titleActions={titleActions} />
       <div className="card-box d-flex flex-column">
         <div className={`${isRegimeKanban ? "d-none" : ""}`}>
           <div className="option-improve">
