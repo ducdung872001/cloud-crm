@@ -9,6 +9,7 @@ import MembershipClass from "../MembershipClass/MembershipClass";
 import LoyaltyPointLedger from "../LoyaltyPointLedger";
 import ExchangePoints from "../ExchangePoints";
 import SettingLoyaltyList from "../SettingLoyaltyList";
+import RewardsExchangePage from "@/pages/RewardsExchangePage";
 
 type TabKey =
   | "member_list"
@@ -98,127 +99,6 @@ export default function MemberCustomersPage() {
       {isDetail && tab === "loyalty_rules"    && <SettingLoyaltyList  onBackProps={handleBack} />}
       {isDetail && tab === "rewards_exchange" && <RewardsExchangePage onBackProps={handleBack} />}
       {isDetail && tab === "loyalty_report"   && <LoyaltyReportPage   onBackProps={handleBack} />}
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════
-   PHẦN THƯỞNG & ĐỔI ĐIỂM
-═══════════════════════════════════════════════════ */
-
-const MOCK_REWARDS = [
-  { id: 1, type: "Voucher",   name: "Voucher 50.000đ",      points: 500,  used: 45,  total: 100, expiry: "31/03/2026" },
-  { id: 2, type: "Voucher",   name: "Voucher 100.000đ",     points: 900,  used: 23,  total: 50,  expiry: "30/04/2026" },
-  { id: 3, type: "Dịch vụ",  name: "Freeship 1 đơn",       points: 200,  used: 312, total: 999, expiry: ""           },
-  { id: 4, type: "Voucher",   name: "Giảm 10% đơn hàng",   points: 300,  used: 89,  total: 200, expiry: "30/04/2026" },
-  { id: 5, type: "Quà tặng", name: "Quà tặng bí ẩn",       points: 2000, used: 5,   total: 20,  expiry: "15/04/2026" },
-  { id: 6, type: "Hạng TV",  name: "Tháng Gold miễn phí",  points: 5000, used: 2,   total: 10,  expiry: "15/04/2026" },
-];
-
-const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
-  Voucher:    { bg: "#FEF3C7", color: "#92400E" },
-  "Dịch vụ": { bg: "#E6F1FB", color: "#1D4ED8" },
-  "Quà tặng": { bg: "#FCE7F3", color: "#9D174D" },
-  "Hạng TV":  { bg: "#EDE9FE", color: "#5B21B6" },
-};
-
-function RewardsExchangePage({ onBackProps }: { onBackProps: (v: boolean) => void }) {
-  document.title = "Phần thưởng & Đổi điểm";
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: "", type: "Voucher", points: "", total_limit: "", expiry: "" });
-
-  const titleActions: ITitleActions = {
-    actions: [{ title: "+ Thêm phần thưởng", color: "primary", callback: () => setShowForm(true) }],
-  };
-
-  return (
-    <div className="page-content">
-      <HeaderTabMenu
-        title="Phần thưởng & Đổi điểm"
-        titleBack="Khách hàng thành viên"
-        titleActions={showForm ? undefined : titleActions}
-        onBackProps={onBackProps}
-      />
-
-      <div className="promo-stats-grid">
-        {[
-          { label: "Phần thưởng",      value: String(MOCK_REWARDS.length), color: "purple" },
-          { label: "Đã đổi tháng này", value: "476",                       color: "green"  },
-          { label: "Điểm đã tiêu",     value: "98.200",                    color: "orange" },
-          { label: "Tỷ lệ đổi điểm",  value: "68%",                       color: "blue"   },
-        ].map(s => (
-          <div key={s.label} className={`promo-stat-card promo-stat-card--${s.color}`}>
-            <div className="promo-stat-card__body">
-              <div className="promo-stat-card__content">
-                <p className="promo-stat-card__label">{s.label}</p>
-                <p className="promo-stat-card__value">{s.value}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {showForm && (
-        <div className="mcp-form-card">
-          <div className="mcp-form-card__title">Thêm phần thưởng mới</div>
-          <div className="mcp-form-row">
-            {[
-              { label: "Tên phần thưởng *", key: "name",        type: "text",   placeholder: "VD: Voucher 50.000đ" },
-              { label: "Điểm cần đổi *",    key: "points",      type: "number", placeholder: "VD: 500" },
-              { label: "Giới hạn tổng",     key: "total_limit", type: "number", placeholder: "Để trống = không giới hạn" },
-              { label: "Ngày hết hạn",      key: "expiry",      type: "date",   placeholder: "" },
-            ].map(f => (
-              <div key={f.key} className="mcp-field">
-                <label>{f.label}</label>
-                <input type={f.type} value={(form as any)[f.key]}
-                  onChange={e => setForm({ ...form, [f.key]: e.target.value })}
-                  placeholder={f.placeholder} />
-              </div>
-            ))}
-            <div className="mcp-field">
-              <label>Loại</label>
-              <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
-                <option>Voucher</option><option>Dịch vụ</option>
-                <option>Quà tặng</option><option>Hạng TV</option>
-              </select>
-            </div>
-          </div>
-          <div className="mcp-form-actions">
-            <button className="mcp-btn mcp-btn--secondary" onClick={() => setShowForm(false)}>Hủy</button>
-            <button className="mcp-btn mcp-btn--primary"
-              onClick={() => { alert("Đã lưu (demo)"); setShowForm(false); }}>
-              Lưu phần thưởng
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div className="mcp-rewards-grid">
-        {MOCK_REWARDS.map(r => {
-          const cfg = TYPE_COLORS[r.type] || { bg: "#F3F4F6", color: "#374151" };
-          const pct = Math.round((r.used / (r.total || 1)) * 100);
-          return (
-            <div className="mcp-reward-card" key={r.id}>
-              <div className="mcp-reward-card__header">
-                <span className="mcp-reward-type" style={{ background: cfg.bg, color: cfg.color }}>{r.type}</span>
-                <span className="mcp-reward-points">{r.points.toLocaleString()} <span>điểm</span></span>
-              </div>
-              <div className="mcp-reward-name">{r.name}</div>
-              <div className="mcp-progress-wrap">
-                <div className="mcp-progress-bar">
-                  <div className="mcp-progress-fill" style={{ width: `${pct}%` }} />
-                </div>
-                <span className="mcp-progress-text">Đã đổi: {r.used}/{r.total || "∞"} ({pct}%)</span>
-              </div>
-              {r.expiry && <div className="mcp-reward-expiry">HSD: {r.expiry}</div>}
-              <div className="mcp-reward-actions">
-                <button className="mcp-btn mcp-btn--secondary mcp-btn--sm">Chỉnh sửa</button>
-                <button className="mcp-btn mcp-btn--primary mcp-btn--sm">Xem chi tiết</button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 }

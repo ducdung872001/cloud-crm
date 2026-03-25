@@ -9,6 +9,11 @@
   align-items: center;
   padding: 60px 0;
   color: #94a3b8;
+
+  svg, img {
+    width: 32px !important;
+    height: 32px !important;
+  }
 }
 
 .membership-empty {

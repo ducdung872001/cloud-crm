@@ -88,18 +88,32 @@ export default function LoyaltyPointLedger(props) {
   // };
 
   // Cột: STT | Khách hàng | Ví điểm | Số điểm | Chương trình thân thiết khách hàng | Đổi thưởng | Nhân viên | Ngày tạo
-  const titles = ["STT", "Khách hàng", "Số điểm", "Chương trình thân thiết khách hàng", "Đổi thưởng", "Người phụ trách", "Ngày tạo"];
-  const dataFormat = ["text-center", "", "text-center", "", "", "", "text-center"];
+  const titles = ["STT", "Khách hàng", "Số điểm", "Chương trình thân thiết", "Đổi thưởng", "Người phụ trách", "Ngày tạo"];
+  const dataFormat = ["text-center", "", "text-right", "", "", "", "text-center"];
   const dataMappingArray = (item: ILoyaltyPointLedgerResposne, index: number) => [
     getPageOffset(params) + index + 1,
     item.customerName ?? "—",
-    <span style={{ color: (item.point ?? 0) > 0 ? "green" : (item.point ?? 0) < 0 ? "red" : "inherit" }}>
-      {item.point ?? 0}
-    </span>,
-    item.loyaltyProgramName ?? "—",
-    item.loyaltyRewardName ?? "—",
+    (() => {
+      const p = item.point ?? 0;
+      const cls = p > 0 ? "ledger-point ledger-point--plus" : p < 0 ? "ledger-point ledger-point--minus" : "ledger-point ledger-point--zero";
+      const prefix = p > 0 ? "+" : "";
+      return (
+        <span className={cls}>
+          {prefix}{p.toLocaleString("vi-VN")}
+          <span className="ledger-point__unit"></span>
+        </span>
+      );
+    })(),
+    item.loyaltyProgramName
+      ? <span className="ledger-program">{item.loyaltyProgramName}</span>
+      : <span className="ledger-dash">—</span>,
+    item.loyaltyRewardName
+      ? <span className="ledger-reward">{item.loyaltyRewardName}</span>
+      : <span className="ledger-dash">—</span>,
     item.employeeName ?? "—",
-    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY") : "—",
+    item.createdTime
+      ? <span className="ledger-date">{moment(item.createdTime).format("DD/MM/YYYY")}</span>
+      : <span className="ledger-dash">—</span>,
   ];
 
   return (

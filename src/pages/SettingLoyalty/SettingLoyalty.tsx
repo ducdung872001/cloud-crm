@@ -18,9 +18,9 @@ export default function SettingLoyalty() {
 
   const listTab = [
     {
-      title: "Cài đặt chương trình khách hàng thân thiết",
+      title: "Cài đặt tên quy tắc tích điểm",
       is_tab: "tab_one",
-      des: "Thiết lập quy tắc tích điểm và ưu đãi cho chương trình loyalty"
+      des: "Thiết lập quy tắc tích điểm và ưu đãi cho chương trình khách hàng thân thiết"
     },
     {
       title: "Danh sách phần thưởng",

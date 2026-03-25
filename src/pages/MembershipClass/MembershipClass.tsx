@@ -47,7 +47,7 @@ function parseBenefits(jsonStr?: string): string[] {
   try {
     const arr = JSON.parse(jsonStr);
     if (Array.isArray(arr)) return arr.map(String).filter(Boolean);
-  } catch {}
+  } catch { }
   return [];
 }
 
@@ -56,13 +56,13 @@ export default function MembershipClass(props) {
   const { onBackProps } = props;
   const isMounted = useRef(false);
 
-  const [listData, setListData]     = useState<ILoyaltySegmentResposne[]>([]);
-  const [params, setParams]         = useState<IRoyaltyFilterRequest>({ name: "", limit: 20 });
-  const [isLoading, setIsLoading]   = useState(true);
-  const [isNoItem, setIsNoItem]     = useState(false);
-  const [showModalAdd, setShowModalAdd]   = useState(false);
-  const [selectedItem, setSelectedItem]   = useState<ILoyaltySegmentResposne>(null);
-  const [showDialog, setShowDialog]       = useState(false);
+  const [listData, setListData] = useState<ILoyaltySegmentResposne[]>([]);
+  const [params, setParams] = useState<IRoyaltyFilterRequest>({ name: "", limit: 20 });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isNoItem, setIsNoItem] = useState(false);
+  const [showModalAdd, setShowModalAdd] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<ILoyaltySegmentResposne>(null);
+  const [showDialog, setShowDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
   const [pagination, setPagination] = useState<PaginationProps>({
@@ -163,7 +163,7 @@ export default function MembershipClass(props) {
 
         {isLoading && (
           <div className="membership-loading">
-            <Icon name="Loading" />
+            <Icon name="Loading" style={{ width: 32, height: 32 }} />
           </div>
         )}
 

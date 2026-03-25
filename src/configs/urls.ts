@@ -2426,6 +2426,7 @@ export const urlsApi = {
     deleteLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/delete",
     //Danh sách đổi thưởng
     listLoyaltyReward: prefixBiz + "/market/loyaltyReward/list",
+    getLoyaltyReward: prefixBiz + "/market/loyaltyReward/get",
     updateLoyaltyReward: prefixBiz + "/market/loyaltyReward/update",
     deleteLoyaltyReward: prefixBiz + "/market/loyaltyReward/delete",
     //phân hạng hội viên

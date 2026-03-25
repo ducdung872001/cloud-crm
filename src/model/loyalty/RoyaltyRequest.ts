@@ -1,27 +1,42 @@
 export interface IRoyaltyFilterRequest {
   name?: string;
-  limit?: number;
   page?: number;
+  limit?: number;
 }
 
-export interface ILoyaltySegmentRequest {
+export interface IProgramRoyaltyRequest {
   id?: number;
-  point?: number;
   name?: string;
-  /** Tỷ lệ tích điểm, vd: "1%", "3%" */
-  rate?: string;
-  /**
-   * Quyền lợi – JSON array string
-   * vd: '["Tích 1% điểm thưởng","Giảm 5% sinh nhật"]'
-   */
-  benefits?: string;
+  processCode?: string;
+  employeeId?: number;
+  employeeName?: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+  priorityLevel?: number;
+  active?: boolean;
+  branchIds?: number[] | string;
+  processId?: number;
+  processName?: string;
+  startNodeId?: string;
+  createdAt?: string;
 }
 
-export interface ILoyaltyWalletRequest {
+export interface ILoyaltyPointLedgerRequest {
   id?: number;
-  status?: number;
+  name?: string;
+  walletId?: number;
   customerId?: number;
   customerName?: string;
+  point?: number;
+  description?: string;
+  createdTime?: string;
+  employeeId?: number;
+  employeeName?: string;
+  loyaltyProgramId?: number;
+  loyaltyProgramName?: string;
+  loyaltyRewardId?: number;
+  loyaltyRewardName?: string;
 }
 
 export interface ILoyaltyRewardRequest {
@@ -30,5 +45,38 @@ export interface ILoyaltyRewardRequest {
   description?: string;
   pointsRequired?: number;
   status?: number;
+  createdAt?: string;
+  updatedAt?: string;
   rewardItems?: string;
+  // Các trường mới sau migration
+  rewardType?: string;   // "Voucher" | "Dịch vụ" | "Quà tặng" | "Hạng TV"
+  totalLimit?: number;   // null = không giới hạn
+  usedCount?: number;    // readonly
+  expiryDate?: string;   // "YYYY-MM-DD"
+  // filter params
+  keyword?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface ILoyaltySegmentRequest {
+  id?: number;
+  point?: number;
+  name?: string;
+  rate?: string;
+  benefits?: string;
+}
+
+export interface ILoyaltyWalletRequest {
+  id?: number;
+  status?: number;
+  customerId?: number;
+  customerName?: string;
+  totalEarn?: number;
+  currentBalance?: number;
+  segmentId?: number;
+  segmentName?: string;
+  createdTime?: string;
+  page?: number;
+  limit?: number;
 }
