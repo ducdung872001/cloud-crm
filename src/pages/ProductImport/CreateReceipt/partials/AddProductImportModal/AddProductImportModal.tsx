@@ -28,7 +28,9 @@ import moment from "moment";
 
 interface IVariantOption {
   value: number;          // variantId
-  label: string;          // "Intel i7 · 16GB · 512GB SSD"
+  label: string;
+  optionName?: string;
+  productName?: string;
   sku: string;
   unitId: number;
   unitName: string;
@@ -47,6 +49,15 @@ interface IProductOption {
 const buildVariantLabel = (selectedOptions: Array<{ optionName?: string; value?: string }> = []): string => {
   const parts = selectedOptions.map((o) => o.value).filter(Boolean);
   return parts.length > 0 ? parts.join(" · ") : "Mặc định";
+};
+
+const buildVariantDisplayLabel = (variant: any): string => {
+  const optionName = variant?.optionName?.trim?.();
+  if (optionName) return optionName;
+
+  const fallbackProductName = variant?.productName?.trim?.();
+  const fallbackSku = variant?.sku?.trim?.();
+  return [fallbackProductName, fallbackSku].filter(Boolean).join(" - ") || buildVariantLabel(variant?.selectedOptions ?? variant?.optionValues ?? []);
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -122,7 +133,9 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
 
         const opts: IVariantOption[] = items.map((v) => ({
           value: v.id,
-          label: buildVariantLabel(v.selectedOptions ?? v.optionValues ?? []),
+          label: buildVariantDisplayLabel(v),
+          optionName: v.optionName ?? "",
+          productName: v.productName ?? selectedProduct?.label ?? "",
           sku: v.sku ?? "",
           unitId: v.baseUnit?? v.unitId ?? 0,
           unitName: v.baseUnitName ?? v.unitName ?? "",
@@ -291,6 +304,8 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
             options={variantOptions.map((v) => ({
               value: v.value,
               label: v.label,
+              optionName: v.optionName,
+              productName: v.productName,
               sku: v.sku,
               quantity: v.quantity,
               unitName: v.unitName,
@@ -300,7 +315,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
               <div className="selected--item variant-option-item">
                 <div className="variant-option-main">
                   <span>{opt.label}</span>
-                  {opt.sku && (
+                  {!opt.optionName && opt.sku && (
                     <span className="variant-option-sku">{opt.sku}</span>
                   )}
                 </div>

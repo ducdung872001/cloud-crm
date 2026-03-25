@@ -15,6 +15,10 @@ export interface IProductRequest {
   otherUnits?: string;
   type?: string;
   description?: string;
+  trackStock?: boolean;
+  stock?: number;
+  minStock?: number;
+  maxStock?: number;
   variantGroups?: {
     id?: number | null;
     name: string;

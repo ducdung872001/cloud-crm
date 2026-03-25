@@ -208,6 +208,7 @@ export default function WarehouseListPage() {
     getPageOffset(params) + index + 1,
     <span key={`name-${index}`} className="warehouse__product-name">
       {item.name ?? "—"}
+      {(item.isSelling === 1 || item.is_selling === 1) && " (Kho chính)"}
     </span>,
     <span key={`code-${index}`} className="warehouse__code">
       {item.code ?? "—"}

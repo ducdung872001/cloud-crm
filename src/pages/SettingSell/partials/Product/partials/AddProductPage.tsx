@@ -43,7 +43,8 @@ const DEFAULT_FORM = {
   avatar: "",
   trackStock: true,
   stock: 0,
-  stockWarning: 20,
+  minStock: 20,
+  maxStock: 0,
   showOnWeb: true,
   showImage: true,
   showUnit: true,
@@ -430,7 +431,8 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       description: p.description || "",
       trackStock: p.trackStock ?? true,
       stock: p.stock ?? 0,
-      stockWarning: p.stockWarning ?? 20,
+      minStock: p.minStock ?? p.stockWarning ?? 20,
+      maxStock: p.maxStock ?? 0,
       showOnWeb: p.showOnWeb ?? true,
       showImage: p.showImage ?? true,
       showUnit: p.showUnit ?? true,
@@ -647,6 +649,10 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       position: detailProduct?.position ?? 0,
       status: formData.status,
       categoryId: selectedCategory?.value ?? null,
+      trackStock: formData.trackStock,
+      stock: +(formData.stock ?? 0) || 0,
+      minStock: +(formData.minStock ?? 0) || 0,
+      maxStock: +(formData.maxStock ?? 0) || 0,
       exchange: 1,
       otherUnits: detailProduct?.otherUnits ?? "",
       type: detailProduct?.type ? String(detailProduct.type) : "1",
@@ -974,14 +980,14 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                   </label>
                 </div>
                 {formData.trackStock && (
-                  <div className="add-prod-form-grid" style={{ marginTop: 12 }}>
-                    <div className="add-prod-field">
-                      <label>Tồn kho hiện tại</label>
-                      <input type="number" value={formData.stock} onChange={(e) => setField("stock", +e.target.value)} />
-                    </div>
+                  <div className="add-prod-form-grid" style={{ marginTop: 12, gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
                     <div className="add-prod-field">
                       <label>Ngưỡng cảnh báo sắp hết</label>
-                      <input type="number" value={formData.stockWarning} onChange={(e) => setField("stockWarning", +e.target.value)} />
+                      <input type="number" value={formData.minStock} onChange={(e) => setField("minStock", +e.target.value)} />
+                    </div>
+                    <div className="add-prod-field">
+                      <label>Ngưỡng cảnh báo quá hàng</label>
+                      <input type="number" value={formData.maxStock} onChange={(e) => setField("maxStock", +e.target.value)} />
                     </div>
                   </div>
                 )}
