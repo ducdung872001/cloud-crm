@@ -120,6 +120,7 @@ const CounterSales: React.FC = () => {
   const [eligiblePromos, setEligiblePromos] = useState<EligiblePromotion[]>([]);
   const [ineligiblePromos, setIneligiblePromos] = useState<IneligiblePromotion[]>([]);
   const [appliedPromo, setAppliedPromo] = useState<EligiblePromotion | null>(null);
+  const [couponDiscount, setCouponDiscount] = useState(0);    // ← THÊM
   const [promoDiscount, setPromoDiscount] = useState(0);
   const checkPromoRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const [exchangeRate, setExchangeRate] = useState<number>(1000);
@@ -420,6 +421,7 @@ const CounterSales: React.FC = () => {
                 promoDiscount={promoDiscount}
                 onViewPromos={() => setPromoModalOpen(true)}
                 onRemovePromo={() => { setAppliedPromo(null); setPromoDiscount(0); }}
+                onCouponDiscountChange={setCouponDiscount}
                 onSavedDraft={() => {
                   // Xóa giỏ hàng + refresh badge sau khi lưu tạm
                   setCartItems([]);
@@ -472,6 +474,8 @@ const CounterSales: React.FC = () => {
       <PayModal
         open={payModalOpen} cartItems={cartItems} invoiceId={invoiceId}
         method={method} setMethod={setMethod}
+        couponDiscount={couponDiscount}
+        promoDiscount={promoDiscount}
         onClose={() => { setInvoiceId(null); setPayModalOpen(false); }}
         onConfirm={(id) => handlePayConfirm(id)}
       />
@@ -480,6 +484,8 @@ const CounterSales: React.FC = () => {
         open={receiptModalOpen} cartItems={cartItems}
         customerId={customer?.id ?? -1} invoiceId={invoiceId ?? -1}
         invoiceDraft={invoiceDraftToPaid} method={method} qrCodePro={qrCodePro}
+        couponDiscount={couponDiscount}
+        promoDiscount={promoDiscount}
         onClose={() => {
           setCartItems([]); setCustomer(null); setInvoiceId(null);
           setReceiptModalOpen(false); setInvoiceDraftToPaid(null);

@@ -28,6 +28,7 @@ interface CartProps {
   promoDiscount?:      number;
   onViewPromos?:       () => void;
   onRemovePromo?:      () => void;
+  onCouponDiscountChange?: (discount: number) => void;  // ← THÊM
 }
 
 const Cart: React.FC<CartProps> = ({
@@ -37,7 +38,7 @@ const Cart: React.FC<CartProps> = ({
   onSavedDraft,
   loyaltyWallet, exchangeRate = 1000, pointsToUse = 0, onPointsChange,
   eligiblePromoCount = 0, appliedPromo, promoDiscount = 0,
-  onViewPromos, onRemovePromo,
+  onViewPromos, onRemovePromo, onCouponDiscountChange,
 }) => {
   const [orderType, setOrderType] = useState<OrderType>("retail");
   const [voucher, setVoucher]     = useState("");
@@ -48,6 +49,12 @@ const Cart: React.FC<CartProps> = ({
   const [couponDiscount, setCouponDiscount]     = useState(0);
   const [couponMessage, setCouponMessage]       = useState("");
   const [couponError, setCouponError]           = useState("");
+
+  // Helper: set coupon discount và notify parent
+  const handleCouponDiscountChange = (discount: number) => {
+    setCouponDiscount(discount);
+    onCouponDiscountChange?.(discount);
+  };
 
   const subtotal  = items.reduce((sum, item) => sum + item.price * item.qty, 0);
   const itemCount = items.length;
@@ -86,9 +93,10 @@ const Cart: React.FC<CartProps> = ({
       const res = await CouponService.apply(code, subtotal);
 
       // ── Trích discountAmount từ response ──────────────────────────────────
-      // Hỗ trợ cả 2 format:
-      //   1. Flat:    { code, orderAmount, discountAmount?, finalAmount? }
-      //   2. Wrapped: { success, data: { discountAmount, finalAmount, ... } }
+      // Hỗ trợ cả 3 format:
+      //   1. Flat:      { code, orderAmount, discountAmount?, finalAmount? }
+      //   2. Data wrap: { success, data: { discountAmount, finalAmount, ... } }
+      //   3. Result:    { code: 0, message, result: { code, discountAmount, ... } }
       const payload = (res as any)?.result ?? (res as any)?.data ?? res;
 
       // discountAmount: lấy trực tiếp nếu có, nếu không tính từ finalAmount
@@ -109,11 +117,11 @@ const Cart: React.FC<CartProps> = ({
                     || (res as any)?.success === false;
 
       if (hasError) {
-        setCouponDiscount(0);
+        handleCouponDiscountChange(0);
         setCouponError(payload?.message ?? payload?.error ?? "Mã không hợp lệ hoặc đã hết hạn");
       } else if (payload?.code || (res as any)?.success === true) {
         // Response hợp lệ — có thể không có discountAmount nếu API chưa implement
-        setCouponDiscount(calcDiscount);
+        handleCouponDiscountChange(calcDiscount);
         if (calcDiscount > 0) {
           setCouponMessage(
             payload?.message ?? `Áp dụng thành công − ${calcDiscount.toLocaleString("vi")} đ`
@@ -121,15 +129,15 @@ const Cart: React.FC<CartProps> = ({
         } else {
           // API confirm mã hợp lệ nhưng chưa trả discountAmount
           // Hiển thị thông báo xác nhận, không trừ tiền (chờ backend cập nhật)
-          setCouponDiscount(0);
+          handleCouponDiscountChange(0);
           setCouponMessage(payload?.message ?? "Mã hợp lệ ✓ (giá trị giảm sẽ áp dụng khi tạo đơn)");
         }
       } else {
-        setCouponDiscount(0);
+        handleCouponDiscountChange(0);
         setCouponError("Mã không hợp lệ hoặc đã hết hạn");
       }
     } catch {
-      setCouponDiscount(0);
+      handleCouponDiscountChange(0);
       setCouponError("Lỗi kết nối khi áp dụng mã");
     } finally {
       setIsApplyingCoupon(false);
@@ -261,7 +269,7 @@ const Cart: React.FC<CartProps> = ({
             onChange={(e) => {
               setVoucher(e.target.value);
               // Reset khi người dùng chỉnh mã
-              setCouponDiscount(0);
+              handleCouponDiscountChange(0);
               setCouponMessage("");
               setCouponError("");
             }}

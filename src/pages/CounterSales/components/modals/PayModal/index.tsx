@@ -14,6 +14,8 @@ interface PayModalProps {
   invoiceId: number | null;
   method: PayMethod;
   setMethod: (method: PayMethod) => void;
+  couponDiscount?: number;      // ← THÊM
+  promoDiscount?: number;       // ← THÊM
 }
 
 export const PAY_METHODS: { id: PayMethod; icon: string; label: string; image?: string }[] = [
@@ -25,11 +27,11 @@ export const PAY_METHODS: { id: PayMethod; icon: string; label: string; image?: 
   { id: "credit_card", icon: "💳", label: "Thẻ tín dụng" },
 ];
 
-export default function PayModal({ open, cartItems, onClose, onConfirm, invoiceId, method, setMethod }: PayModalProps) {
+export default function PayModal({ open, cartItems, onClose, onConfirm, invoiceId, method, setMethod, couponDiscount = 0, promoDiscount = 0 }: PayModalProps) {
   const [customerPaid, setCustomerPaid] = useState(150000);
 
   const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
-  const discount = 0;
+  const discount = couponDiscount + promoDiscount;  // ← DÙNG DISCOUNT TỪ PROPS
   const total = subtotal - discount;
   const change = Math.max(0, customerPaid - total);
   const fmt = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");

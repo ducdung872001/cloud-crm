@@ -16,12 +16,16 @@ interface ReceiptModalProps {
   invoiceDraft: any;
   method: string;
   qrCodePro: string | null;
+  couponDiscount?: number;
+  promoDiscount?: number;
 }
 
-export default function ReceiptModal({ open, cartItems, onClose, customerId, invoiceId, invoiceDraft, method, qrCodePro }: ReceiptModalProps) {
+export default function ReceiptModal({ open, cartItems, onClose, customerId, invoiceId, invoiceDraft, method, qrCodePro, couponDiscount = 0, promoDiscount = 0 }: ReceiptModalProps) {
   const qrRef = useRef<HTMLDivElement>(null);
   const [isPaymentProcessing, setIsPaymentProcessing] = React.useState(false);
-  const total = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
+  const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
+  const totalDiscount = couponDiscount + promoDiscount;
+  const total = subtotal - totalDiscount;
   const paid = total;
   const change = Math.max(0, paid - total);
   const fmt = (n: number) => n.toLocaleString("vi") + " ₫";
@@ -34,9 +38,9 @@ export default function ReceiptModal({ open, cartItems, onClose, customerId, inv
       const body: any = {
         id: invoiceId,
         amount: total,
-        discount: 0,
+        discount: totalDiscount,
         fee: total,
-        paid: 0,
+        paid: total,
         debt: 0,
         paymentType: 1,
         vatAmount: 0,
@@ -149,11 +153,11 @@ export default function ReceiptModal({ open, cartItems, onClose, customerId, inv
           <div className="receipt__totals">
             <div className="receipt__totals-row">
               <span>Tạm tính</span>
-              <span>{fmt(total)}</span>
+              <span>{fmt(subtotal)}</span>
             </div>
             <div className="receipt__totals-row">
               <span>Giảm giá</span>
-              <span className="receipt__discount">−0 ₫</span>
+              <span className="receipt__discount">{totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "−0 ₫"}</span>
             </div>
             <div className="receipt__totals-row receipt__totals-row--grand">
               <span>TỔNG CỘNG</span>
