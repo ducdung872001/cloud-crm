@@ -212,9 +212,9 @@ export default function ShippingOrderList() {
   }, []);
 
   // ── Hủy đơn ──────────────────────────────────────────────────────────────────
-  const handleCancelOrder = useCallback(async (id: number) => {
+  const handleCancelOrder = useCallback(async (item: IShippingOrderResponse) => {
     try {
-      const res = await ShippingService.cancel(id);
+      const res = await ShippingService.cancel(item.shipmentOrder);
       if (res.code === 0) {
         showToast("Đã hủy đơn hàng thành công", "success");
       } else {
@@ -243,7 +243,7 @@ export default function ShippingOrderList() {
       cancelText:     "Không",
       cancelAction:   () => { setShowDialog(false); setContentDialog(null); },
       defaultText:    "Hủy đơn",
-      defaultAction:  () => handleCancelOrder(item.id),
+      defaultAction:  () => handleCancelOrder(item),
     });
     setShowDialog(true);
   };

@@ -17,7 +17,7 @@ export default {
 
   // Chi tiết đơn vận chuyển
   tracking: (id: string) => {
-    return fetch(`${urlsApi.shipping.tracking}/${id}/tracking`, {
+    return fetch(`${urlsApi.shipping.shipment}/${id}/tracking`, {
       method: "GET",
     }).then((res) => res.json());
   },
@@ -39,11 +39,11 @@ export default {
   // },
 
   // Hủy đơn vận chuyển
-  // cancel: (id: number) => {
-  //   return fetch(`${urlsApi.shipping.cancel}?id=${id}`, {
-  //     method: "DELETE",
-  //   }).then((res) => res.json());
-  // },
+  cancel: (id: string) => {
+    return fetch(`${urlsApi.shipping.shipment}/${id}/cancel`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
 
   // Đẩy đơn sang hãng vận chuyển
   // push: (id: number) => {
