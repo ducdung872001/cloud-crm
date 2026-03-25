@@ -3,6 +3,7 @@ import { CartItem, Customer, OrderType } from "../../types";
 import "./index.scss";
 import InvoiceService from "@/services/InvoiceService";
 import BoughtProductService from "@/services/BoughtProductService";
+import CouponService from "@/services/CouponService";
 import { showToast } from "utils/common";
 import { urlsApi } from "configs/urls";
 
@@ -39,8 +40,14 @@ const Cart: React.FC<CartProps> = ({
   onViewPromos, onRemovePromo,
 }) => {
   const [orderType, setOrderType] = useState<OrderType>("retail");
-  const [voucher, setVoucher] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
+  const [voucher, setVoucher]     = useState("");
+  const [isSaving, setIsSaving]   = useState(false);
+
+  // ── Coupon state ──────────────────────────────────────────────────────────
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [couponDiscount, setCouponDiscount]     = useState(0);
+  const [couponMessage, setCouponMessage]       = useState("");
+  const [couponError, setCouponError]           = useState("");
 
   const subtotal  = items.reduce((sum, item) => sum + item.price * item.qty, 0);
   const itemCount = items.length;
@@ -53,13 +60,45 @@ const Cart: React.FC<CartProps> = ({
     : 0;
   const discount        = 0;
   const moneyFromPoints = (pointsToUse ?? 0) * exchangeRate;
-  const finalTotal      = Math.max(0, subtotal - discount - moneyFromPoints - promoDiscount);
+  const finalTotal      = Math.max(
+    0,
+    subtotal - discount - moneyFromPoints - promoDiscount - couponDiscount,
+  );
 
   const ORDER_TYPES: { id: OrderType; label: string }[] = [
     { id: "retail",    label: "Lẻ"   },
     { id: "wholesale", label: "Buôn" },
     { id: "ship",      label: "Ship" },
   ];
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
+
+  /** Áp dụng mã coupon — gọi POST /bizapi/market/coupon/apply */
+  const handleApplyCoupon = async () => {
+    const code = voucher.trim();
+    if (!code) return;
+
+    setIsApplyingCoupon(true);
+    setCouponError("");
+    setCouponMessage("");
+
+    try {
+      const res = await CouponService.apply(code, subtotal);
+
+      if (res?.success && res.data) {
+        setCouponDiscount(res.data.discountAmount);
+        setCouponMessage(res.data.message ?? "Áp dụng thành công");
+      } else {
+        setCouponDiscount(0);
+        setCouponError(res?.message ?? res?.data?.message ?? "Mã không hợp lệ");
+      }
+    } catch {
+      setCouponDiscount(0);
+      setCouponError("Lỗi kết nối khi áp dụng mã");
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
 
   const onCreateInvoice = async () => {
     try {
@@ -135,7 +174,6 @@ const Cart: React.FC<CartProps> = ({
               <div className="cust-info">
                 <div className="cust-name">{customer.name}</div>
                 {customer.id === "-1" ? (
-                  // Khách vãng lai — không hiện điểm/hạng
                   <div className="cust-pts" style={{ color: "var(--muted)" }}>
                     Không lưu thông tin
                   </div>
@@ -178,21 +216,53 @@ const Cart: React.FC<CartProps> = ({
       </div>
 
       <div className="cart__footer">
+        {/* ── Voucher ── */}
         <div className="voucher-row">
-          <input type="text" placeholder="🏷️ Nhập mã voucher..." value={voucher}
-            onChange={(e) => setVoucher(e.target.value)} />
-          <button className="btn btn--outline btn--sm">Áp dụng</button>
+          <input
+            type="text"
+            placeholder="🏷️ Nhập mã voucher..."
+            value={voucher}
+            onChange={(e) => {
+              setVoucher(e.target.value);
+              // Reset khi người dùng chỉnh mã
+              setCouponDiscount(0);
+              setCouponMessage("");
+              setCouponError("");
+            }}
+            onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
+          />
+          <button
+            className="btn btn--outline btn--sm"
+            onClick={handleApplyCoupon}
+            disabled={isApplyingCoupon || !voucher.trim()}
+          >
+            {isApplyingCoupon ? "..." : "Áp dụng"}
+          </button>
         </div>
+
+        {/* Feedback áp dụng coupon */}
+        {couponMessage && (
+          <div style={{ fontSize: 11, color: "#3B6D11", marginTop: 4, marginBottom: 2, paddingLeft: 2 }}>
+            ✓ {couponMessage}
+          </div>
+        )}
+        {couponError && (
+          <div style={{ fontSize: 11, color: "var(--red, #e53e3e)", marginTop: 4, marginBottom: 2, paddingLeft: 2 }}>
+            ✕ {couponError}
+          </div>
+        )}
 
         <div className="summary">
           <div className="sr">
             <span className="sr__k">Tạm tính ({itemCount} sản phẩm)</span>
             <span className="sr__v">{formatVND(subtotal)}</span>
           </div>
+
+          {/* Giảm giá voucher — hiển thị couponDiscount từ API */}
           <div className="sr">
             <span className="sr__k">Giảm giá voucher</span>
             <span className="sr__v sr__v--red">
-              {discount > 0 ? `−${discount.toLocaleString("vi")} ₫` : "0 ₫"}
+              {couponDiscount > 0 ? `−${couponDiscount.toLocaleString("vi")} ₫` : "0 ₫"}
             </span>
           </div>
 
@@ -243,7 +313,7 @@ const Cart: React.FC<CartProps> = ({
             </span>
           </div>
 
-          {/* Điểm tích lũy — 3 trạng thái theo tầng KH */}
+          {/* Điểm tích lũy */}
           {isLoyaltyMember ? (
             <div className="sr" style={{ alignItems: "flex-start", gap: 4 }}>
               <span className="sr__k" style={{ paddingTop: 2 }}>

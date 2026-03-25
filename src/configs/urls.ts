@@ -12,7 +12,7 @@ const prefixCs = "/cs";
 const prefixApplication = "/application";
 const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
-const prefixOperation = "https://reborn.vn/operation";
+const prefixOperation = "https://reborn.vn/operation"; 
 const prefixNotification = prefixBiz + "/notification";
 const prefixFinance = prefixBiz + "/finance";
 const prefixInventory = prefixBiz + "/inventory";
@@ -2377,6 +2377,7 @@ export const urlsApi = {
     updateStatus:  prefixMarket + "/coupon/update/status",
     countByStatus: prefixMarket + "/coupon/count-by-status",
     sumUsed:       prefixMarket + "/coupon/sum-used",
+    apply:         prefixMarket + "/coupon/apply",
   },
   email: {
     list: prefixAdmin + "/outlookMail/list",

@@ -67,6 +67,12 @@ export default function ShiftTabsPage() {
                 setPendingConfigId(configId);
                 setTab("open");
               }}
+              // Nếu đang có ca active (vừa mở từ tab khác hoặc reload trang)
+              // → tự động nhảy sang tab Đang ca và set shiftId
+              onActiveShiftFound={(shiftId) => {
+                setActiveShiftId(shiftId);
+                setTab("onshift");
+              }}
             />
           )}
 
