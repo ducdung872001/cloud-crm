@@ -48,9 +48,8 @@ const CouponService = {
    * Áp dụng mã coupon vào đơn hàng.
    * POST /bizapi/market/coupon/apply
    *
-   * API trả về flat object (không wrap trong data/success):
-   *   { code, orderAmount, discountAmount?, finalAmount?, discountType?, discountValue?, message? }
-   * Nếu mã không hợp lệ API trả về lỗi HTTP (4xx) hoặc có field error/message.
+   * API trả về wrapped response:
+   *   { code: 0, message: "OK", result: { code, discountType, discountValue, orderAmount, discountAmount, finalAmount, message } }
    */
   apply: (code: string, orderAmount: number, signal?: AbortSignal) =>
     fetch(urlsApi.couponProgram.apply, {
@@ -59,25 +58,16 @@ const CouponService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code, orderAmount }),
     }).then(r => r.json()) as Promise<{
-      // Flat response thực tế từ API
-      code?: string;
-      orderAmount?: number;
-      discountAmount?: number;   // Số tiền được giảm (nếu API trả về)
-      finalAmount?: number;      // Số tiền sau giảm (nếu API trả về)
-      discountType?: number;     // 1 = %, 2 = fixed
-      discountValue?: number;
-      message?: string;
-      error?: string;
-      // Wrapper response (nếu API đổi format về sau)
-      success?: boolean;
-      data?: {
-        code: string;
-        discountAmount: number;
-        finalAmount: number;
-        orderAmount: number;
-        discountType?: number;
-        discountValue?: number;
-        message?: string;
+      code: number;             // 0 = success, khác 0 = error
+      message: string;          // "OK", "Áp dụng thành công", etc.
+      result: {
+        code: string;           // Mã coupon (ví dụ: "REBORN_SPA")
+        discountType: number;   // 1 = %, 2 = fixed VNĐ
+        discountValue: number;  // Giá trị giảm (%)
+        orderAmount: number;    // Tổng đơn hàng
+        discountAmount: number; // Số tiền được giảm (VNĐ)
+        finalAmount: number;    // Tổng cộng sau giảm
+        message: string;        // Thông báo kết quả
       };
     }>,
 };

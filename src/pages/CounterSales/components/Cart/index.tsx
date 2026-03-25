@@ -89,7 +89,7 @@ const Cart: React.FC<CartProps> = ({
       // Hỗ trợ cả 2 format:
       //   1. Flat:    { code, orderAmount, discountAmount?, finalAmount? }
       //   2. Wrapped: { success, data: { discountAmount, finalAmount, ... } }
-      const payload = (res as any)?.data ?? res;
+      const payload = (res as any)?.result ?? (res as any)?.data ?? res;
 
       // discountAmount: lấy trực tiếp nếu có, nếu không tính từ finalAmount
       let calcDiscount: number = 0;
