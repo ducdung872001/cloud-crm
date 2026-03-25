@@ -41,8 +41,8 @@ const STATUS_TABS = [
 const ROUTES = {
   shippingCreate:       "/add_shipping",
   shippingEdit:         (id: number) => `/add_shipping/id=${id}`,
-  shippingPartnerSetup: "/shipping/partner-setup",
-  shippingFeeConfig:    "/shipping/fee-config",
+  shippingPartnerSetup: "/shipping_parther",
+  shippingFeeConfig:    "/shipping_fee_config",
 };
 
 // Map statusCode API → key nội bộ (dùng cho badge và điều kiện action)
