@@ -64,6 +64,7 @@ export function useDashBoard({
     setIsTopProductLoading(true);
     try {
       const response = await ProductService.topProductV2(sort);
+      console.log("[TopProduct] sort=" + sort + " response=", JSON.stringify(response?.result?.slice(0,2)));
       if (response.code === 0) {
         setDataTopProduct(mapToTopProduct(response.result));
       } else if (response.code === 400) {

@@ -271,19 +271,22 @@ export default function DashboardRetail() {
               <div className="low-stock-loading">Đang tải...</div>
             ) : (
               dataTopProduct.map((p, i) => {
-                const barPct     = topTab === "qty" ? (p.pctQty ?? 0) : (p.pctRevenue ?? 0);
-                const hasRevenue = p.revenue !== null && (p.revenue ?? 0) > 0;
+                const barPct = topTab === "qty" ? (p.pctQty ?? 0) : (p.pctRevenue ?? 0);
+                const revenueValue = p.revenue ?? 0;
                 return (
                   <div key={i} className="top-product-item">
                     <div className="top-product-item-header">
                       <span className="top-product-item-name">{p.name}</span>
                       <div className="top-product-item-stats">
-                        {topTab === "revenue" && hasRevenue && (
+                        {topTab === "revenue" ? (
                           <span className="top-product-item-revenue">
-                            {formatCurrency(p.revenue, ".", "")} đ
+                            {revenueValue > 0
+                              ? formatCurrency(revenueValue, ".", "") + " đ"
+                              : "—"}
                           </span>
+                        ) : (
+                          <span className="top-product-item-pct">{p.qty ?? 0} SP</span>
                         )}
-                        <span className="top-product-item-pct">{p.qty ?? 0} SP</span>
                       </div>
                     </div>
                     <div className="top-product-item-bar-bg">
