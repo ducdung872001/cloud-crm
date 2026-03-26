@@ -20,12 +20,13 @@ export default function ShiftTabsPage() {
   const branchId: number = dataBranch?.value ?? 0;
 
   const [tab, setTab] = useState<TabKey>("preopen");
-
-  // ID ca đang active (sau khi mở ca thành công)
   const [activeShiftId, setActiveShiftId] = useState<number | null>(null);
 
-  // Config ID ca đang được chọn ở màn "Chưa vào ca" → truyền sang "Vào ca"
-  const [pendingConfigId, setPendingConfigId] = useState<number>(0);
+  // Thông tin ca chờ mở — từ NotOpenShiftTab truyền sang OpenShiftTab
+  const [pendingConfigId,   setPendingConfigId]   = useState<number>(0);
+  const [pendingShiftName,  setPendingShiftName]   = useState<string>("");
+  const [pendingShiftTime,  setPendingShiftTime]   = useState<string>("");
+  const [pendingDefaultCash, setPendingDefaultCash] = useState<number>(0);
 
   return (
     <div className="page-content page-shift-tabs">
@@ -35,27 +36,13 @@ export default function ShiftTabsPage() {
         <div className="action-header">
           <div className="title__actions">
             <ul className="menu-list">
-              <li className={tab === "preopen" ? "active" : ""} onClick={() => setTab("preopen")}>
-                Chưa vào ca
-              </li>
-              <li className={tab === "open" ? "active" : ""} onClick={() => setTab("open")}>
-                Vào ca
-              </li>
-              <li className={tab === "onshift" ? "active" : ""} onClick={() => setTab("onshift")}>
-                Đang ca
-              </li>
-              <li className={tab === "orders" ? "active" : ""} onClick={() => setTab("orders")}>
-                Đơn trong ca
-              </li>
-              <li className={tab === "close" ? "active" : ""} onClick={() => setTab("close")}>
-                Đóng ca
-              </li>
-              <li className={tab === "report" ? "active" : ""} onClick={() => setTab("report")}>
-                Báo cáo kết ca
-              </li>
-              <li className={tab === "overview" ? "active" : ""} onClick={() => setTab("overview")}>
-                Báo cáo tổng quan
-              </li>
+              <li className={tab === "preopen" ? "active" : ""} onClick={() => setTab("preopen")}>Chưa vào ca</li>
+              <li className={tab === "open"    ? "active" : ""} onClick={() => setTab("open")}>Vào ca</li>
+              <li className={tab === "onshift" ? "active" : ""} onClick={() => setTab("onshift")}>Đang ca</li>
+              <li className={tab === "orders"  ? "active" : ""} onClick={() => setTab("orders")}>Đơn trong ca</li>
+              <li className={tab === "close"   ? "active" : ""} onClick={() => setTab("close")}>Đóng ca</li>
+              <li className={tab === "report"  ? "active" : ""} onClick={() => setTab("report")}>Báo cáo kết ca</li>
+              <li className={tab === "overview"? "active" : ""} onClick={() => setTab("overview")}>Báo cáo tổng quan</li>
             </ul>
           </div>
         </div>
@@ -63,12 +50,13 @@ export default function ShiftTabsPage() {
         <div className="tab-body">
           {tab === "preopen" && (
             <NotOpenShiftTab
-              onOpenShiftClick={(configId) => {
+              onOpenShiftClick={(configId, shiftName, shiftTime, defaultCash) => {
                 setPendingConfigId(configId);
+                setPendingShiftName(shiftName ?? "");
+                setPendingShiftTime(shiftTime ?? "");
+                setPendingDefaultCash(defaultCash ?? 0);
                 setTab("open");
               }}
-              // Nếu đang có ca active (vừa mở từ tab khác hoặc reload trang)
-              // → tự động nhảy sang tab Đang ca và set shiftId
               onActiveShiftFound={(shiftId) => {
                 setActiveShiftId(shiftId);
                 setTab("onshift");
@@ -80,6 +68,9 @@ export default function ShiftTabsPage() {
             <OpenShiftTab
               shiftConfigId={pendingConfigId}
               branchId={branchId}
+              shiftName={pendingShiftName}
+              shiftTime={pendingShiftTime}
+              defaultCash={pendingDefaultCash}
               onShiftOpened={(shiftId) => {
                 setActiveShiftId(shiftId);
                 setTab("onshift");
@@ -92,6 +83,7 @@ export default function ShiftTabsPage() {
               shiftId={activeShiftId}
               branchId={branchId}
               onEndShift={() => setTab("close")}
+              onViewOrders={() => setTab("orders")}
             />
           )}
 
@@ -100,20 +92,11 @@ export default function ShiftTabsPage() {
           )}
 
           {tab === "close" && (
-            <CloseShiftTab
-              shiftId={activeShiftId}
-              branchId={branchId}
-              onShiftClosed={() => {
-                setTab("report");
-              }}
-            />
+            <CloseShiftTab shiftId={activeShiftId} branchId={branchId} onShiftClosed={() => setTab("report")} />
           )}
 
           {tab === "report" && (
-            <ShiftReportTab
-              shiftId={activeShiftId}
-              branchId={branchId}
-            />
+            <ShiftReportTab shiftId={activeShiftId} branchId={branchId} />
           )}
 
           {tab === "overview" && (
