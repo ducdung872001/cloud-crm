@@ -129,7 +129,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
 
       if (res.code === 0) {
         const items: any[] = res.result?.items ?? res.result ?? [];
-        console.log("variant sample:", items[0]); 
+        console.log("variant sample:", items[0]);
 
         const opts: IVariantOption[] = items.map((v) => ({
           value: v.id,
@@ -137,7 +137,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
           optionName: v.optionName ?? "",
           productName: v.productName ?? selectedProduct?.label ?? "",
           sku: v.sku ?? "",
-          unitId: v.baseUnit?? v.unitId ?? 0,
+          unitId: v.baseUnit ?? v.unitId ?? 0,
           unitName: v.baseUnitName ?? v.unitName ?? "",
           quantity: v.quantity ?? 0,
         }));
@@ -319,9 +319,9 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
                     <span className="variant-option-sku">{opt.sku}</span>
                   )}
                 </div>
-                <span className="variant-option-stock">
+                {/* <span className="variant-option-stock">
                   Tồn: {opt.quantity ?? 0} {opt.unitName}
-                </span>
+                </span> */}
               </div>
             )}
             value={selectedVariant?.value ?? null}
@@ -363,7 +363,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
             fill={true}
             id="unitId"
             name="unitId"
-            label="Đơn vị tính"            
+            label="Đơn vị tính"
             options={
               selectedVariant
                 ? [{ value: selectedVariant.unitId, label: selectedVariant.unitName }]

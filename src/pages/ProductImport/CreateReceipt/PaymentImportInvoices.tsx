@@ -66,7 +66,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       ...data,
       id: data?.id ?? 0,
       invoiceType: data?.invoiceType ?? "IV4",
-      receiptDate: data?.receiptDate ?? "",
+      receiptDate: data?.receiptDate ? new Date(data.receiptDate) : "",
       inventoryId: data?.inventoryId ?? null,
     }));
   }, [data]);
