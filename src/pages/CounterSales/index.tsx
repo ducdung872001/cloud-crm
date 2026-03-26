@@ -37,6 +37,8 @@ const CounterSales: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
   const [invoiceId, setInvoiceId] = useState<number | null>(null);
   const [invoiceDraftToPaid, setInvoiceDraftToPaid] = useState<any>(null);
+  /** invoiceId (string) của đơn tạm đang được xử lý — xóa sau khi thanh toán thành công */
+  const [activeDraftId, setActiveDraftId] = useState<string | null>(null);
   const [method, setMethod] = useState<PayMethod>("cash");
   const [qrCodePro, setQrCodePro] = useState<string | null>(null);
 
@@ -437,11 +439,13 @@ const CounterSales: React.FC = () => {
           {activeTab === "draft" && (
             <div className="counter-sales__screen">
               <DraftOrders
-                onContinue={(cartItemsFromDraft, draftLabel) => {
+                onContinue={(cartItemsFromDraft, draftLabel, draftId) => {
                   // Load thẳng cartItems vào giỏ, chuyển tab POS
                   // (không dùng navigate vì đang ở cùng route /create_sale_add)
                   if (cartItemsFromDraft.length > 0) {
                     setCartItems(cartItemsFromDraft);
+                    // Lưu lại draftId để xóa đơn tạm sau khi thanh toán thành công
+                    setActiveDraftId(draftId ?? null);
                     showToast(
                       `Đã tải ${cartItemsFromDraft.length} sản phẩm từ ${draftLabel}`,
                       "success"
@@ -493,6 +497,18 @@ const CounterSales: React.FC = () => {
           setPromoDiscount(0);
           setAppliedPromo(null);
           setPaymentSuccessCount(prev => prev + 1);
+          // Tự động xóa đơn tạm nếu đơn này được tải từ tab Đơn tạm
+          if (activeDraftId) {
+            fetch(`${urlsApi.invoice.draftDelete}?id=${activeDraftId}`, { method: "DELETE" })
+              .then((r) => r.json())
+              .then((json) => {
+                if (json.code === 0) {
+                  setActiveDraftId(null);
+                  fetchTabCounts(); // Refresh badge số đơn tạm trên Topbar
+                }
+              })
+              .catch(() => {});
+          }
         }}
         onClose={() => {
           setCartItems([]); setCustomer(null); setInvoiceId(null);
