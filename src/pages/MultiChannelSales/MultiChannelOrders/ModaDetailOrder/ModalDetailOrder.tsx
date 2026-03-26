@@ -12,6 +12,7 @@ export default function ModalDetailOrder(props: any) {
   const { onShow, onHide, dataOrder } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const [localStatus, setLocalStatus] = useState<string>("");
   const [listProduct, setListProduct] = useState([]);
   const [dataTotal, setDataTotal] = useState([]);
   const [infoUser, setInfoUser] = useState([
@@ -36,6 +37,7 @@ export default function ModalDetailOrder(props: any) {
   useEffect(() => {
     if (onShow && dataOrder) {
       setIsSubmit(false);
+      setLocalStatus(dataOrder.status ?? "");
       let listProduct = [];
       try {
         listProduct = JSON.parse(dataOrder.orderInfo).items.map((item) => ({
@@ -153,7 +155,7 @@ export default function ModalDetailOrder(props: any) {
 
   const onSubmit = async (e?) => {
     e?.preventDefault();
-    handleConfirm(dataOrder);
+    await handleConfirm(dataOrder);
     handleClear(true);
   };
 
@@ -172,13 +174,13 @@ export default function ModalDetailOrder(props: any) {
           color: "primary",
           variant: "outline",
           disabled: isSubmit,
-          callback: () => {},
+          callback: () => { },
         },
         {
           title: "Xác nhận đơn",
           type: "submit",
           color: "primary",
-          disabled: isSubmit,
+          disabled: isSubmit || localStatus === "CONFIRMED",
           is_loading: isSubmit,
           callback: () => {
             onSubmit();
@@ -218,9 +220,21 @@ export default function ModalDetailOrder(props: any) {
             <div className="status">
               <Badge
                 text={
-                  dataOrder?.status === 1 ? "Chờ xử lý" : dataOrder?.status === 2 ? "Đang giao" : dataOrder?.status === 3 ? "Hoàn thành" : "Đã hủy"
+                  localStatus === "PENDING" ? "Chờ xử lý"
+                  : localStatus === "CONFIRMED" ? "Đã xác nhận"
+                  : localStatus === "SHIPPING" ? "Đang giao"
+                  : localStatus === "COMPLETED" ? "Hoàn thành"
+                  : localStatus === "CANCELED" ? "Đã hủy"
+                  : "Chờ xử lý"
                 }
-                variant={dataOrder?.status === 1 ? "warning" : dataOrder?.status === 2 ? "primary" : dataOrder?.status === 3 ? "success" : "error"}
+                variant={
+                  localStatus === "PENDING" ? "warning"
+                  : localStatus === "CONFIRMED" ? "primary"
+                  : localStatus === "SHIPPING" ? "primary"
+                  : localStatus === "COMPLETED" ? "success"
+                  : localStatus === "CANCELED" ? "error"
+                  : "warning"
+                }
               />
             </div>
             <Button onClick={() => !isSubmit && handleClear(false)} type="button" className="btn-close" color="transparent" onlyIcon={true}>
