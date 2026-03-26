@@ -196,6 +196,13 @@ body {
   background: #fff;
   ${cfg.bodyCSS}
 }
+/* Hướng dẫn chọn máy in — chỉ hiện trên màn hình, ẩn khi in thật */
+.print-guide {
+  background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px;
+  padding: 8px 12px; margin-bottom: 12px; font-size: 11px; color: #614700; line-height: 1.6;
+}
+.print-guide b { color: #ad4e00; }
+@media print { .print-guide { display: none !important; } }
 .rcpt-header { text-align: center; padding-bottom: 10px; border-bottom: 1px dashed #999; margin-bottom: 10px; }
 .rcpt-store  { font-size: 1.4em; font-weight: 900; margin-bottom: 3px; }
 .rcpt-sub    { font-size: .9em; color: #555; line-height: 1.5; }
@@ -223,15 +230,18 @@ body {
 .rcpt-row--pay { color: #555; font-size: .9em; }
 .rcpt-footer { text-align: center; margin-top: 14px; padding-top: 10px;
                border-top: 1px dashed #999; font-size: .85em; color: #666; line-height: 1.7; }
-/* ── @page: khổ giấy và margin cho máy in ── */
 ${cfg.pageCSS}
-/* Ẩn header/footer mặc định của trình duyệt khi in */
 @media print {
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 </style></head><body>
+<div class="print-guide">
+  ⚠️ <b>Lưu ý:</b> Tại mục <b>Destination</b>, chọn đúng <b>máy in nhiệt</b> của bạn
+  (Xprinter / Epson TM / Bixolon...) thay vì "Microsoft Print to PDF".<br>
+  Khổ giấy <b>${paperSize}</b> sẽ được áp dụng tự động khi máy in nhiệt được chọn.
+</div>
 ${html}
-<script>window.onload = () => { window.print(); window.close(); }<\/script>
+<script>window.onload = () => { window.print(); }<\/script>
 </body></html>`);
     win.document.close();
   };
