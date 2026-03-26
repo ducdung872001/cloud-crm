@@ -123,8 +123,9 @@ const DEFAULT_CUSTOMER: ICustomerInfo = {
 };
 
 export function useCustomerEnrich(): UseCustomerEnrichReturn {
+  // ── customerMap là STATE – thay đổi nó sẽ trigger re-render đúng cách ──────
   const [customerMap, setCustomerMap] = useState<CustomerMap>({});
-  // Dùng ref để tránh fetchCustomerMap gọi lại không cần thiết
+  // mapRef là cache nội bộ để enrichList có thể đọc mà không cần deps
   const mapRef = useRef<CustomerMap>({});
 
   const enrichList = useCallback(
@@ -139,12 +140,18 @@ export function useCustomerEnrich(): UseCustomerEnrichReturn {
       const fetched = await fetchCustomerMap(missing, signal);
       if (Object.keys(fetched).length === 0) return;
 
+      // Cập nhật cả ref lẫn state
+      // ref  → enrichList đọc được ngay (sync, không cần render)
+      // state → trigger re-render để component bên ngoài cập nhật UI
       mapRef.current = { ...mapRef.current, ...fetched };
-      setCustomerMap({ ...mapRef.current });
+      setCustomerMap({ ...mapRef.current }); // object mới → React nhận ra thay đổi
     },
     []
   );
 
+  // ── getCustomer đọc từ mapRef (luôn mới nhất, không cần deps) ───────────
+  // KHÔNG dùng useCallback với deps rỗng để giữ reference bất biến –
+  // thay vào đó component nên dùng customerMap state làm dep cho useEffect re-map
   const getCustomer = useCallback(
     (id: number | null | undefined, fallbackName = "Khách vãng lai"): ICustomerInfo => {
       if (!id || id <= 0) return { ...DEFAULT_CUSTOMER, name: fallbackName };
@@ -156,7 +163,7 @@ export function useCustomerEnrich(): UseCustomerEnrichReturn {
         }
       );
     },
-    []
+    [] // intentionally stable – component phải depend vào customerMap state, không phải hàm này
   );
 
   const reset = useCallback(() => {

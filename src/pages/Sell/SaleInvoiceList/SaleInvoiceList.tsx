@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef, useContext, useCallback } from "react";
-import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
-import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { IInvoiceFilterRequest } from "model/invoice/InvoiceRequestModel";
 import { showToast, toApiDateFormat, formatDisplayDate } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
@@ -10,20 +8,69 @@ import "./SaleInvoiceList.scss";
 import OrderList, { StatusCounts } from "@/pages/CounterSales/components/OrderList";
 import { Order } from "@/pages/CounterSales/types";
 import Button from "@/components/button/button";
-import moment from "moment";
 import OrderDetailModal from "@/pages/CounterSales/components/modals/OrderDetailModal";
-import ReceiptModal from "@/pages/CounterSales/components/modals/ReceiptModal";
-// ── [FIX] Import hook enrich thông tin khách hàng từ /adminapi ────────────────
-import { useCustomerEnrich } from "@/hooks/useCustomerEnrich";
+import { useCustomerEnrich, CustomerMap } from "@/hooks/useCustomerEnrich";
 
-// Map frontend status string → backend integer
+// ── Constants ─────────────────────────────────────────────────────────────────
+
 const STATUS_TO_INT: Record<string, number> = {
-  all: -1,
-  pending: 2,
-  success: 1,
-  cancelled: 3,
-  shipping: 2,
+  all: -1, pending: 2, success: 1, cancelled: 3, shipping: 2,
 };
+
+type ActiveFilter = "all" | "pending" | "shipping" | "success" | "cancelled";
+
+// ── Helper: map 1 invoice item → Order ────────────────────────────────────────
+// customerId nằm trong item.invoice.customerId (không phải item.customerId root)
+
+function mapItemToOrder(item: any, customerMap: CustomerMap): Order {
+  const customerId: number = item?.invoice?.customerId ?? item?.customerId ?? 0;
+  const enriched = customerId > 0 ? customerMap[customerId] : null;
+
+  const name =
+    (enriched?.name && enriched.name !== "Khách vãng lai" ? enriched.name : null)
+    ?? item?.invoice?.customerName
+    ?? "Khách vãng lai";
+
+  const phone =
+    enriched?.phone || enriched?.phoneMasked
+    || item?.invoice?.customerPhone || item?.customerPhone || "";
+
+  const inv = item.invoice;
+  const status = inv.status === 1 ? "success" : inv.status === 2 ? "pending" : "cancelled";
+  const statusLabel = inv.status === 1 ? "Hoàn thành" : inv.status === 2 ? "Chờ xử lý" : "Đã hủy";
+
+  const itemNames = [...(item.products || []), ...(item.services || [])]
+    .map((p: any) => {
+      const base = p.productName || p.name || "";
+      const variant = p.name && p.name !== p.productName ? p.name : "";
+      return variant ? `${base} (${variant})` : base;
+    })
+    .filter(Boolean)
+    .join(", ") || "—";
+
+  return {
+    id: item.invoiceId,
+    code: inv.invoiceCode,
+    source: "offline",
+    sourceLabel: "Bán hàng tại quầy",
+    status,
+    statusLabel,
+    time: formatDisplayDate(inv.createdTime, true),
+    customer: {
+      id: customerId,
+      name,
+      phone,
+      initial: name.charAt(0).toUpperCase(),
+      points: item.customerPoints ?? 0,
+      tier: item.customerTier ?? "",
+      color: "#2563eb",
+    },
+    items: itemNames,
+    total: inv.fee,
+  };
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export default function SaleInvoiceList() {
   document.title = "Danh sách đơn hàng";
@@ -31,115 +78,51 @@ export default function SaleInvoiceList() {
   const { dataBranch } = useContext(UserContext) as ContextType;
   const isMounted = useRef(false);
 
-  // ── [FIX] Khởi tạo hook enrich – sẽ batch-fetch tên KH sau mỗi lần load ──
-  const { enrichList, getCustomer } = useCustomerEnrich();
+  // customerMap: STATE từ hook – thay đổi sau enrichList → trigger re-map
+  const { customerMap, enrichList } = useCustomerEnrich();
 
-  // ── Modal state ────────────────────────────────────────────────────────────
-  const [invoiceId, setInvoiceId] = useState<number | null>(null);
-  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
-  const [orderDetailModalOpen, setOrderDetailModalOpen] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  // ── List + loading state ───────────────────────────────────────────────────
-  const [listSaleInvoice, setListSaleInvoice] = useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isNoItem, setIsNoItem] = useState(false);
-  const [totalItem, setTotalItem] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(1);
-
-  // ── Export state ───────────────────────────────────────────────────────────
-  const [isExporting, setIsExporting] = useState(false);
-
-  // ── Status counts from API response ───────────────────────────────────────
-  const [statusCounts, setStatusCounts] = useState<StatusCounts>({
+  // ── State ──────────────────────────────────────────────────────────────────
+  const [invoiceId, setInvoiceId]                   = useState<number | null>(null);
+  const [orderDetailModalOpen, setOrderDetailOpen]  = useState(false);
+  const [searchParams]                              = useSearchParams();
+  const [listSaleInvoice, setListSaleInvoice]       = useState<Order[]>([]);
+  const [isLoading, setIsLoading]                   = useState(true);
+  const [isNoItem, setIsNoItem]                     = useState(false);
+  const [totalItem, setTotalItem]                   = useState(0);
+  const [currentPage, setCurrentPage]               = useState(1);
+  const [totalPage, setTotalPage]                   = useState(1);
+  const [isExporting, setIsExporting]               = useState(false);
+  const [statusCounts, setStatusCounts]             = useState<StatusCounts>({
     all: 0, pending: 0, success: 0, cancelled: 0,
   });
-
-  // ── Filter state (owned here, passed down to OrderList) ───────────────────
-  const [activeFilter, setActiveFilter] = useState<"all" | "pending" | "shipping" | "success" | "cancelled">("all");
-  const [searchText, setSearchText] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-
-  const [params, setParams] = useState<IInvoiceFilterRequest>({
+  const [activeFilter, setActiveFilter] = useState<ActiveFilter>("all");
+  const [searchText, setSearchText]     = useState("");
+  const [fromDate, setFromDate]         = useState("");
+  const [toDate, setToDate]             = useState("");
+  const [params, setParams]             = useState<IInvoiceFilterRequest>({
     invoiceTypes: JSON.stringify(["IV1", "IV3"]),
     limit: 10,
     page: 1,
   });
 
+  // ── Refs ───────────────────────────────────────────────────────────────────
+  const rawItemsRef    = useRef<any[]>([]);
+  const abortRef       = useRef<AbortController | null>(null);
+  const enrichAbortRef = useRef<AbortController | null>(null);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ── Sync branchId vào params ───────────────────────────────────────────────
   useEffect(() => {
-    if (dataBranch) {
-      setParams(p => ({ ...p, branchId: dataBranch.value }));
-    }
+    if (dataBranch) setParams(p => ({ ...p, branchId: dataBranch.value }));
   }, [dataBranch]);
 
-  // ── [FIX] Map API item → Order, nhận thêm customerMap để enrich tên KH ────
-  //
-  //  Logic ưu tiên tên khách hàng (theo thứ tự):
-  //    1. Tên lấy từ /adminapi/customer/list_by_id  (đầy đủ, chính xác nhất)
-  //    2. invoice.customerName                      (nếu API sales có trả về)
-  //    3. "Khách vãng lai"                          (fallback cuối)
-  //
-  const mapToOrder = useCallback(
-    (item: any): Order => {
-      // Tên KH từ adminapi (ưu tiên cao nhất)
-      const enriched = item.customerId ? getCustomer(item.customerId) : null;
-      const customerName =
-        (enriched && enriched.name !== "Khách vãng lai" ? enriched.name : null)
-        ?? item?.invoice?.customerName
-        ?? null;
+  // ── Re-map list khi customerMap cập nhật (sau enrichList hoàn tất) ─────────
+  useEffect(() => {
+    if (rawItemsRef.current.length === 0) return;
+    setListSaleInvoice(rawItemsRef.current.map(i => mapItemToOrder(i, customerMap)));
+  }, [customerMap]); // eslint-disable-line react-hooks/exhaustive-deps
 
-      const displayName = customerName || "Khách vãng lai";
-      const displayPhone =
-        enriched?.phone || enriched?.phoneMasked || item.customerPhone || "";
-
-      return {
-        id: item.invoiceId,
-        code: item.invoice.invoiceCode,
-        source: "offline",
-        sourceLabel: "Bán hàng tại quầy",
-        status:
-          item.invoice.status === 1 ? "success"
-          : item.invoice.status === 2 ? "pending"
-          : "cancelled",
-        statusLabel:
-          item.invoice.status === 1 ? "Hoàn thành"
-          : item.invoice.status === 2 ? "Chờ xử lý"
-          : "Đã hủy",
-        time: formatDisplayDate(item?.invoice?.createdTime, true),
-        customer: {
-          id: item.customerId,
-          name: displayName,
-          phone: displayPhone,
-          initial: displayName.charAt(0).toUpperCase(),
-          points: item.customerPoints ?? 0,
-          tier: item.customerTier ?? "",
-          color: "#2563eb",
-        },
-        items: [...(item.products || []), ...(item.services || [])]
-          .map((i: any) => {
-            const productName = i.productName || i.name || "";
-            const variantName = i.name && i.name !== i.productName ? i.name : "";
-            return variantName ? `${productName} (${variantName})` : productName;
-          })
-          .filter(Boolean)
-          .join(", ") || "—",
-        total: item.invoice.fee,
-      };
-    },
-    [getCustomer]
-  );
-
-  // ── Ref lưu raw items để re-map sau khi enrichList cập nhật customerMap ──
-  const rawItemsRef = useRef<any[]>([]);
-  const appendModeRef = useRef(false);
-
-  // ── Fetch list ─────────────────────────────────────────────────────────────
-  const abortRef = useRef<AbortController | null>(null);
-  // AbortController riêng cho việc enrich KH
-  const enrichAbortRef = useRef<AbortController | null>(null);
-
+  // ── Fetch ──────────────────────────────────────────────────────────────────
   const fetchList = async (p: IInvoiceFilterRequest, append = false) => {
     abortRef.current?.abort();
     abortRef.current = new AbortController();
@@ -147,157 +130,102 @@ export default function SaleInvoiceList() {
 
     try {
       const response = await InvoiceService.list(p, abortRef.current.signal);
-
-      if (response.code === 0) {
-        const result = response.result;
-        const rawItems: any[] = result.pagedLst.items ?? [];
-
-        // Lưu raw items để re-map sau khi enrich xong
-        if (append) {
-          rawItemsRef.current = [...rawItemsRef.current, ...rawItems];
-        } else {
-          rawItemsRef.current = rawItems;
-        }
-        appendModeRef.current = append;
-
-        // Map ngay với dữ liệu hiện có (có thể tên vẫn là "Khách vãng lai" tạm thời)
-        const mapped: Order[] = rawItems.map(mapToOrder);
-        setListSaleInvoice(append ? prev => [...prev, ...mapped] : mapped);
-
-        setTotalItem(+result.pagedLst.total);
-        setCurrentPage(+result.pagedLst.page);
-        setTotalPage(Math.ceil(+result.pagedLst.total / +(p.limit ?? 10)));
-
-        if (+result.pagedLst.total === 0 && +result.pagedLst.page === 1) {
-          setIsNoItem(true);
-        } else {
-          setIsNoItem(false);
-        }
-
-        if (result.statusCounts) {
-          const sc = result.statusCounts;
-          const done = Number(sc[1] ?? 0);
-          const pending = Number(sc[2] ?? 0);
-          const cancel = Number(sc[3] ?? 0);
-          setStatusCounts({
-            all: done + pending + cancel,
-            success: done,
-            pending: pending,
-            cancelled: cancel,
-          });
-        }
-
-        // ── [FIX] Batch-enrich tên khách hàng từ adminapi ──────────────────
-        // Chỉ enrich những item có customerId (>0) mà invoice.customerName trống
-        const idsToEnrich = rawItems
-          .filter(i => i.customerId > 0 && !i?.invoice?.customerName)
-          .map(i => i.customerId);
-
-        if (idsToEnrich.length > 0) {
-          enrichAbortRef.current?.abort();
-          enrichAbortRef.current = new AbortController();
-
-          // enrichList tự dedup + cache – chỉ gọi API cho ID chưa có
-          enrichList(idsToEnrich, enrichAbortRef.current.signal);
-          // Re-map sẽ được trigger bởi useEffect bên dưới khi customerMap thay đổi
-        }
-      } else {
+      if (response.code !== 0) {
         showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+        return;
+      }
+
+      const { pagedLst, statusCounts: sc } = response.result;
+      const rawItems: any[] = pagedLst.items ?? [];
+
+      // Lưu raw để re-map sau khi enrich xong
+      rawItemsRef.current = append ? [...rawItemsRef.current, ...rawItems] : rawItems;
+
+      // Render ngay (tên KH có thể tạm là "Khách vãng lai" trước khi enrich)
+      const mapped = rawItems.map(i => mapItemToOrder(i, customerMap));
+      setListSaleInvoice(append ? prev => [...prev, ...mapped] : mapped);
+
+      setTotalItem(+pagedLst.total);
+      setCurrentPage(+pagedLst.page);
+      setTotalPage(Math.ceil(+pagedLst.total / +(p.limit ?? 10)));
+      setIsNoItem(+pagedLst.total === 0 && +pagedLst.page === 1);
+
+      if (sc) {
+        const done    = Number(sc[1] ?? 0);
+        const pending = Number(sc[2] ?? 0);
+        const cancel  = Number(sc[3] ?? 0);
+        setStatusCounts({ all: done + pending + cancel, success: done, pending, cancelled: cancel });
+      }
+
+      // Batch-enrich tên KH từ /adminapi/customer/list_by_id
+      const ids = rawItems
+        .map(i => i?.invoice?.customerId ?? i?.customerId ?? 0)
+        .filter(id => id > 0);
+
+      if (ids.length > 0) {
+        enrichAbortRef.current?.abort();
+        enrichAbortRef.current = new AbortController();
+        enrichList(ids, enrichAbortRef.current.signal);
       }
     } catch (e: any) {
-      if (e?.name !== "AbortError") {
-        showToast("Lỗi tải danh sách đơn hàng", "error");
-      }
+      if (e?.name !== "AbortError") showToast("Lỗi tải danh sách đơn hàng", "error");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ── [FIX] Re-map toàn bộ list khi customerMap được cập nhật ──────────────
-  // getCustomer thay đổi reference sau mỗi lần enrichList hoàn tất
-  // → trigger lại mapToOrder với dữ liệu mới nhất
-  useEffect(() => {
-    if (rawItemsRef.current.length === 0) return;
-    setListSaleInvoice(rawItemsRef.current.map(mapToOrder));
-  }, [mapToOrder]); // mapToOrder phụ thuộc getCustomer → cập nhật khi customerMap thay đổi
-
-  // ── Build params from filters and call fetch ───────────────────────────────
+  // ── Filter builder ─────────────────────────────────────────────────────────
   const applyFilters = useCallback((
-    filter: typeof activeFilter,
-    keyword: string,
-    from: string,
-    to: string,
-    page: number,
-    append = false
+    filter: ActiveFilter, keyword: string,
+    from: string, to: string, page: number, append = false,
   ) => {
     const statusInt = STATUS_TO_INT[filter] ?? -1;
-    const newParams: IInvoiceFilterRequest = { ...params, page };
+    const p: IInvoiceFilterRequest = { ...params, page };
 
-    if (keyword?.trim()) newParams.invoiceCode = keyword.trim();
-    else delete newParams.invoiceCode;
+    if (keyword?.trim()) p.invoiceCode = keyword.trim(); else delete p.invoiceCode;
+    if (from?.trim())    p.fromDate    = toApiDateFormat(from.trim()); else delete p.fromDate;
+    if (to?.trim())      p.toDate      = toApiDateFormat(to.trim());   else delete p.toDate;
+    if (statusInt > 0)   p.status      = statusInt;                    else delete p.status;
+    delete p.keyword;
 
-    // Convert sang format dd/MM/yyyy mà backend expect
-    if (from?.trim()) newParams.fromDate = toApiDateFormat(from.trim());
-    else delete newParams.fromDate;
+    setParams(p);
+    fetchList(p, append);
+  }, [params]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    if (to?.trim()) newParams.toDate = toApiDateFormat(to.trim());
-    else delete newParams.toDate;
-
-    if (statusInt > 0) newParams.status = statusInt;
-    else delete newParams.status;
-
-    delete newParams.keyword;
-
-    setParams(newParams);
-    fetchList(newParams, append);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params]);
-
-  // Initial load when branch loaded
+  // ── Effects: initial load ──────────────────────────────────────────────────
   useEffect(() => {
     if (!isMounted.current) { isMounted.current = true; return; }
     applyFilters(activeFilter, searchText, fromDate, toDate, 1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataBranch]);
+  }, [dataBranch]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // First mount with URL params
   useEffect(() => {
-    const urlFromDate = searchParams.get("fromDate") || "";
-    const urlToDate = searchParams.get("toDate") || "";
-    if (urlFromDate) setFromDate(urlFromDate);
-    if (urlToDate) setToDate(urlToDate);
-    const initParams: IInvoiceFilterRequest = { ...params };
-    if (urlFromDate) initParams.fromDate = toApiDateFormat(urlFromDate);
-    if (urlToDate) initParams.toDate = toApiDateFormat(urlToDate);
-    fetchList(initParams);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const fd = searchParams.get("fromDate") || "";
+    const td = searchParams.get("toDate")   || "";
+    if (fd) setFromDate(fd);
+    if (td) setToDate(td);
+    const init: IInvoiceFilterRequest = { ...params };
+    if (fd) init.fromDate = toApiDateFormat(fd);
+    if (td) init.toDate   = toApiDateFormat(td);
+    fetchList(init);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Filter change handlers ─────────────────────────────────────────────────
-  const handleFilterChange = (f: typeof activeFilter) => {
+  // ── Handlers ──────────────────────────────────────────────────────────────
+  const handleFilterChange = (f: ActiveFilter) => {
     setActiveFilter(f);
     applyFilters(f, searchText, fromDate, toDate, 1);
   };
 
-  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const handleSearchTextChange = (v: string) => {
     setSearchText(v);
     if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-    searchTimerRef.current = setTimeout(() => {
-      applyFilters(activeFilter, v, fromDate, toDate, 1);
-    }, 400);
+    searchTimerRef.current = setTimeout(
+      () => applyFilters(activeFilter, v, fromDate, toDate, 1), 400
+    );
   };
 
-  const handleSearch = () => {
-    applyFilters(activeFilter, searchText, fromDate, toDate, 1);
-  };
+  const handleLoadMore = () =>
+    applyFilters(activeFilter, searchText, fromDate, toDate, currentPage + 1, true);
 
-  const handleLoadMore = () => {
-    const nextPage = currentPage + 1;
-    applyFilters(activeFilter, searchText, fromDate, toDate, nextPage, true);
-  };
-
-  // ── Export Excel ───────────────────────────────────────────────────────────
   const handleExportExcel = async () => {
     if (isExporting) return;
     setIsExporting(true);
@@ -311,20 +239,13 @@ export default function SaleInvoiceList() {
     }
   };
 
-  // ── Modal handlers ─────────────────────────────────────────────────────────
-  const handleViewReceipt = useCallback(() => setReceiptModalOpen(true), []);
-  const handleViewDetail = useCallback((id: number | null) => {
-    setInvoiceId(id);
-    setOrderDetailModalOpen(true);
-  }, []);
-  const handleConfirmOrder = useCallback(() => setOrderDetailModalOpen(false), []);
+  const handleViewDetail  = useCallback((id: number | null) => { setInvoiceId(id); setOrderDetailOpen(true); }, []);
+  const handleConfirmOrder = useCallback(() => setOrderDetailOpen(false), []);
 
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="sale-invoice-list">
       <OrderList
-        onViewDetail={handleViewDetail}
-        onViewReceipt={handleViewReceipt}
-        onConfirm={handleConfirmOrder}
         listOrder={listSaleInvoice}
         activeFilter={activeFilter}
         onFilterChange={handleFilterChange}
@@ -334,11 +255,14 @@ export default function SaleInvoiceList() {
         toDate={toDate}
         onFromDateChange={setFromDate}
         onToDateChange={setToDate}
-        onSearch={handleSearch}
+        onSearch={() => applyFilters(activeFilter, searchText, fromDate, toDate, 1)}
         statusCounts={statusCounts}
         totalItem={totalItem}
         onExport={handleExportExcel}
         isExporting={isExporting}
+        onViewDetail={handleViewDetail}
+        onViewReceipt={() => {}}
+        onConfirm={handleConfirmOrder}
       />
 
       {isLoading && (
@@ -357,8 +281,8 @@ export default function SaleInvoiceList() {
 
       <OrderDetailModal
         open={orderDetailModalOpen}
-        onClose={() => { setInvoiceId(null); setOrderDetailModalOpen(false); }}
-        onPrint={() => { setOrderDetailModalOpen(false); setReceiptModalOpen(true); }}
+        onClose={() => { setInvoiceId(null); setOrderDetailOpen(false); }}
+        onPrint={() => setOrderDetailOpen(false)}
         invoiceId={invoiceId ?? -1}
         onConfirm={handleConfirmOrder}
       />
