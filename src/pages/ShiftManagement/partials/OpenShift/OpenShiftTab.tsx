@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import Icon from "components/icon";
 import Button from "components/button/button";
 import ShiftService from "services/ShiftService";
+import { saveActiveShiftId } from "utils/ShiftStorage";
 import "./OpenShift.scss";
 
 type Props = {
@@ -73,6 +74,9 @@ export default function OpenShiftTab({
 
       const res = await ShiftService.openShift(branchId, body);
       const shiftId = res?.result?.id ?? res?.data?.id;
+      if (shiftId) {
+        saveActiveShiftId(shiftId); // Lưu vào localStorage để dùng khi tạo đơn
+      }
       onShiftOpened?.(shiftId ?? 0);
     } catch (e) {
       console.error("Lỗi mở ca:", e);

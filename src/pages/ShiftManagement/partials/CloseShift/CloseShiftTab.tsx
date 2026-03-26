@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import Icon from "components/icon";
 import Button from "components/button/button";
 import ShiftService from "services/ShiftService";
+import { clearActiveShiftId } from "utils/ShiftStorage";
 import "./CloseShift.scss";
 
 type Props = {
@@ -48,12 +49,14 @@ export default function CloseShiftTab({ shiftId, branchId, onShiftClosed }: Prop
               };
 
         const res = await ShiftService.closeShift(branchId, body);
-        if (res?.result?.status === "CLOSED" || res?.result?.id) {
+        if (res?.result?.status === "CLOSED" || res?.result?.id || res?.data?.id) {
+          clearActiveShiftId(); // Xóa shiftId khỏi localStorage khi đóng ca
           onShiftClosed?.();
           return;
         }
       }
-      // Không có shiftId thực (mock mode) hoặc API lỗi → vẫn chuyển màn
+      // Không có shiftId thực hoặc API lỗi → vẫn chuyển màn và clear storage
+      clearActiveShiftId();
       onShiftClosed?.();
     } catch (e) {
       console.error("Lỗi đóng ca:", e);

@@ -6,6 +6,7 @@ import InvoiceService from "@/services/InvoiceService";
 import { showToast } from "@/utils/common";
 import { PAY_METHODS } from "../PayModal";
 import { QRCodeCanvas } from "qrcode.react";
+import { getActiveShiftId } from "utils/ShiftStorage";
 
 interface ReceiptModalProps {
   open: boolean;
@@ -53,6 +54,7 @@ export default function ReceiptModal({ open, cartItems, onClose, customerId, inv
         invoiceType: "IV1",
         customerId: customerId,
         campaignId: 0,
+        ...(getActiveShiftId() ? { shiftId: getActiveShiftId() } : {}),
       };
       const res = await InvoiceService.create(body);
       if (res.code === 0) {

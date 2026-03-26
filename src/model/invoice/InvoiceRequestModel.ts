@@ -53,6 +53,7 @@ export interface IInvoiceDetailRequest {
 
 export interface IInvoiceCreateRequest {
   id: number;
+  shiftId?: number;          // Ca làm việc (lấy từ localStorage khi đang ca)
   paymentType?: string | number;
   invoiceType?: string;
   amount?: number;
