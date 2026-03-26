@@ -550,3 +550,10 @@
     border-color: #9ca3af;
   }
 }
+// Lazada sync icon spin animation
+.icon-spin {
+  animation: lazadaSpin 1s linear infinite;
+}
+@keyframes lazadaSpin {
+  to { transform: rotate(360deg); }
+}

@@ -28,6 +28,7 @@ import { ProductLabel } from "@/assets/mock/Product";
 import ConfigDisplayModal from "./DetailProduct/ConfigDisplayModal";
 import CategoryModal from "./partials/CategoryModal";
 import AddProductPage from "./partials/AddProductPage";
+import { syncProductToLazada } from "services/LazadaSyncService";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 
 // ---- Tab filter type ----
@@ -67,6 +68,7 @@ export default function ProductList(props: IProductListProps) {
   const [searchValue, setSearchValue] = useState("");
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showProductPage, setShowProductPage] = useState(false);
+  const [syncingIds, setSyncingIds] = useState<Set<number>>(new Set());
 
   const [targetBsnId, setTargetBsnId] = useState(targetBsnId_product ? +targetBsnId_product : null);
   useEffect(() => {
@@ -408,6 +410,38 @@ export default function ProductList(props: IProductListProps) {
     ];
   };
 
+  const handleSyncLazada = async (item: IProductResponse) => {
+    if (syncingIds.has(item.id)) return;
+    setSyncingIds(prev => new Set(prev).add(item.id));
+    try {
+      // Load chi tiết sản phẩm với variants
+      const detailRes = await ProductService.detail(item.id);
+      const detail = detailRes?.result ?? detailRes?.data ?? item;
+      const result = await syncProductToLazada({
+        id:           item.id,
+        name:         item.name,
+        description:  detail.description ?? "",
+        price:        item.price,
+        avatar:       item.avatar,
+        code:         item.code,
+        productLine:  item.productLine,
+        categoryId:   item.categoryId,
+        categoryName: item.categoryName,
+        stock:        item.stock,
+        variants:     detail.variants ?? [],
+      });
+      if (result.success) {
+        showToast(result.message, "success");
+      } else {
+        showToast(`Lazada: ${result.message}`, "error");
+      }
+    } catch (e: any) {
+      showToast(e?.message ?? "Lỗi đồng bộ Lazada", "error");
+    } finally {
+      setSyncingIds(prev => { const s = new Set(prev); s.delete(item.id); return s; });
+    }
+  };
+
   // Keep actionsTable for BoxTable inline actions (hidden/redundant with new layout but kept for compatibility)
   const actionsTable = (item: IProductResponse): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
@@ -434,6 +468,16 @@ export default function ProductList(props: IProductListProps) {
       //     }
       //   },
       // },
+      {
+        title: syncingIds.has(item.id) ? "Đang đồng bộ..." : "Đồng bộ Lazada",
+        icon: <Icon
+          name="Sync"
+          className={syncingIds.has(item.id) ? "icon-disabled icon-spin" : ""}
+          style={{ width: 17 }}
+        />,
+        disabled: syncingIds.has(item.id),
+        callback: () => { handleSyncLazada(item); },
+      },
       {
         title: "Nhân bản sản phẩm",
         icon: <Icon name="Copy" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 17 }} />,
