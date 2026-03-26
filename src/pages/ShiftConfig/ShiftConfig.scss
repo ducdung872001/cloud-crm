@@ -424,3 +424,98 @@
     }
   }
 }
+
+// ── Staff assign tab header ───────────────────────────────────────────
+.staff-assign-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.6rem;
+  margin-bottom: 1.6rem;
+  flex-wrap: wrap;
+
+  .staff-assign-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+
+    .summary-count {
+      font-size: 1.4rem;
+      color: var(--text-extra-color);
+      margin-right: 0.4rem;
+
+      strong { color: var(--text-primary-color); }
+    }
+
+    .summary-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid;
+      font-size: 1.25rem;
+      font-weight: 600;
+
+      .badge-dot {
+        width: 0.7rem;
+        height: 0.7rem;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  .staff-assign-search {
+    width: 22rem;
+    flex-shrink: 0;
+
+    .sc-field__input-wrap { width: 100%; }
+  }
+}
+
+// ── Staff avatar with image support ──────────────────────────────────
+.staff-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  .staff-avatar-sm {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}
+
+// ── Role select dropdown ──────────────────────────────────────────────
+.sc-role-select {
+  height: 3.2rem;
+  padding: 0 2.4rem 0 0.8rem;
+  font-size: 1.3rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background: #fff;
+  color: var(--text-primary-color);
+  cursor: pointer;
+  outline: none;
+  appearance: auto;
+  transition: border-color 0.15s;
+
+  &:focus { border-color: var(--primary-color); }
+}

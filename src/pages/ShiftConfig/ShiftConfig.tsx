@@ -11,6 +11,7 @@ import Button from "components/button/button";
 import NummericInput from "components/input/numericInput";
 import { UserContext, ContextType } from "contexts/userContext";
 import ShiftService from "services/ShiftService";
+import EmployeeService from "services/EmployeeService";
 import { RulesSettings } from "./partials/ShiftRulesNotify/ShiftRulesNotifyTab";
 import ShiftRulesNotifyTab from "./partials/ShiftRulesNotify/ShiftRulesNotifyTab";
 import "./ShiftConfig.scss";
@@ -28,14 +29,18 @@ type ShiftConfigModel = {
   color: string;
 };
 
+// StaffRow: mỗi nhân viên + map assignments theo shiftConfigId
 type StaffRow = {
   employeeId: number;
   name: string;
-  role: string;
-  assignments: Record<number, boolean>;
+  role: string;        // "Thu ngân" | "Quản lý"
+  avatar?: string;
+  assignments: Record<number, boolean>; // key = shiftConfigId
 };
 
 const COLOR_LIST = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444", "#06b6d4"];
+
+const ROLE_OPTIONS = ["Thu ngân", "Quản lý", "Hỗ trợ"];
 
 const CHANNEL_MAP: Record<string, string> = {
   zalo_email: "ZALO+EMAIL",
@@ -72,20 +77,26 @@ export default function ShiftConfigTabs() {
   const [saving, setSaving]           = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // ── Tab 1: Cấu hình ca ──────────────────────────────────────────────
   const [shiftConfigs, setShiftConfigs]           = useState<ShiftConfigModel[]>([]);
   const [savedShiftConfigs, setSavedShiftConfigs] = useState<ShiftConfigModel[]>([]);
 
-  const [staffRows, setStaffRows]           = useState<StaffRow[]>([]);
-  const [savedStaffRows, setSavedStaffRows] = useState<StaffRow[]>([]);
-  const [checkedStaff, setCheckedStaff]     = useState<number[]>([]);
+  // ── Tab 2: Phân công nhân viên ──────────────────────────────────────
+  const [staffRows, setStaffRows]             = useState<StaffRow[]>([]);
+  const [savedStaffRows, setSavedStaffRows]   = useState<StaffRow[]>([]);
+  const [checkedStaff, setCheckedStaff]       = useState<number[]>([]);
+  const [loadingStaff, setLoadingStaff]       = useState(false);
+  // searchKeyword để lọc nhân viên phía client
+  const [staffSearch, setStaffSearch]         = useState("");
 
+  // ── Tab 3: Quy tắc ──────────────────────────────────────────────────
   const [rulesSettings, setRulesSettings]           = useState<RulesSettings>(DEFAULT_RULES);
   const [savedRulesSettings, setSavedRulesSettings] = useState<RulesSettings>(DEFAULT_RULES);
 
   const [dialogContent, setDialogContent] = useState<IContentDialog | null>(null);
   const [showDialog, setShowDialog]       = useState(false);
 
-  // ── Fetch ────────────────────────────────────────────────────────────
+  // ── Fetch shift config + assignments ────────────────────────────────
   const fetchConfig = useCallback(() => {
     if (!branchId) return;
     setLoading(true);
@@ -108,19 +119,33 @@ export default function ShiftConfigTabs() {
           setShiftConfigs(mapped);
           setSavedShiftConfigs(mapped);
 
+          // Lưu assignments hiện tại để merge sau khi load employee list
+          const existingAssignments: Record<number, Record<number, boolean>> = {}; // employeeId → {configId → bool}
+          const existingRoles: Record<number, string> = {};
           const assignments: any[] = d.staffAssignments ?? [];
-          if (assignments.length > 0) {
-            const byEmp = new Map<number, StaffRow>();
-            assignments.forEach((a: any) => {
-              if (!byEmp.has(a.employeeId)) {
-                byEmp.set(a.employeeId, { employeeId: a.employeeId, name: `Nhân viên #${a.employeeId}`, role: a.role ?? "Thu ngân", assignments: {} });
-              }
-              if (a.shiftConfigId) byEmp.get(a.employeeId)!.assignments[a.shiftConfigId] = true;
-            });
-            const rows = Array.from(byEmp.values());
-            setStaffRows(rows);
-            setSavedStaffRows(rows);
-          }
+          assignments.forEach((a: any) => {
+            if (!existingAssignments[a.employeeId]) existingAssignments[a.employeeId] = {};
+            if (a.shiftConfigId) existingAssignments[a.employeeId][a.shiftConfigId] = true;
+            if (a.role) existingRoles[a.employeeId] = a.role;
+          });
+
+          // Load danh sách nhân viên thực từ API
+          setLoadingStaff(true);
+          EmployeeService.list({ branchId, limit: 500 })
+            .then((empRes: any) => {
+              const items: any[] = empRes?.result?.items ?? empRes?.result ?? [];
+              const rows: StaffRow[] = items.map((emp: any) => ({
+                employeeId:  emp.id,
+                name:        emp.name ?? `NV #${emp.id}`,
+                role:        existingRoles[emp.id] ?? "Thu ngân",
+                avatar:      emp.avatar,
+                assignments: existingAssignments[emp.id] ?? {},
+              }));
+              setStaffRows(rows);
+              setSavedStaffRows(rows);
+            })
+            .catch(() => {})
+            .finally(() => setLoadingStaff(false));
         }
 
         if (d.rules?.id) {
@@ -178,17 +203,29 @@ export default function ShiftConfigTabs() {
         fetchConfig();
         return;
       }
+
       if (tab === "staff_assign") {
+        // Build payload: chỉ gửi các row có ít nhất 1 assignment
         const assignments: any[] = [];
         staffRows.forEach((row) => {
           Object.entries(row.assignments).forEach(([cid, on]) => {
-            if (on) assignments.push({ shiftConfigId: Number(cid), employeeId: row.employeeId, role: row.role });
+            if (on) {
+              assignments.push({
+                shiftConfigId: Number(cid),
+                employeeId:    row.employeeId,
+                role:          row.role,
+              });
+            }
           });
         });
         await ShiftService.saveStaff(assignments);
-        setSavedStaffRows(staffRows); setCheckedStaff([]); setSaveSuccess(true);
+        setSavedStaffRows(staffRows);
+        setCheckedStaff([]);
+        setSaveSuccess(true);
         return;
       }
+
+      // rules_notify
       const rulesPayload = {
         cashDiffThreshold: rulesSettings.warningDiff, requireDiffReason: rulesSettings.requireReason ? 1 : 0,
         allowDenomination: rulesSettings.allowDenomination ? 1 : 0, maxShiftHours: rulesSettings.maxOpenHours,
@@ -198,7 +235,8 @@ export default function ShiftConfigTabs() {
         notifyRecipient: rulesSettings.receiver, notifyChannel: CHANNEL_MAP[rulesSettings.channel] ?? "ZALO+EMAIL",
       };
       await ShiftService.saveRules(branchId, rulesPayload);
-      setSavedRulesSettings(rulesSettings); setSaveSuccess(true);
+      setSavedRulesSettings(rulesSettings);
+      setSaveSuccess(true);
     } catch (e) { console.error("Lỗi lưu:", e); }
     finally {
       setSaving(false);
@@ -206,7 +244,7 @@ export default function ShiftConfigTabs() {
     }
   };
 
-  // ── Helpers ───────────────────────────────────────────────────────────
+  // ── Helpers ShiftConfig ──────────────────────────────────────────────
   const updateShift = (id: number, patch: Partial<ShiftConfigModel>) =>
     setShiftConfigs((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
 
@@ -233,32 +271,52 @@ export default function ShiftConfigTabs() {
     setShowDialog(true);
   };
 
+  // ── Helpers Staff ────────────────────────────────────────────────────
   const toggleAssign = (empId: number, cfgId: number, val: boolean) =>
     setStaffRows((prev) => prev.map((r) =>
       r.employeeId === empId ? { ...r, assignments: { ...r.assignments, [cfgId]: val } } : r
     ));
 
+  const updateRole = (empId: number, role: string) =>
+    setStaffRows((prev) => prev.map((r) => r.employeeId === empId ? { ...r, role } : r));
+
+  // Gán tất cả ca cho nhân viên đã check
+  const assignAllShifts = (cfgId: number) => {
+    setStaffRows((prev) => prev.map((r) =>
+      checkedStaff.includes(r.employeeId) ? { ...r, assignments: { ...r.assignments, [cfgId]: true } } : r
+    ));
+    setCheckedStaff([]);
+  };
+
+  const clearAllAssignments = () => {
+    setStaffRows((prev) => prev.map((r) =>
+      checkedStaff.includes(r.employeeId) ? { ...r, assignments: {} } : r
+    ));
+    setCheckedStaff([]);
+  };
+
   const bulkStaffItems: BulkActionItemModel[] = useMemo(() => [
     ...shiftConfigs.map((cfg) => ({
       title: `Gán ${cfg.shiftName}`,
-      callback: () => {
-        setStaffRows((prev) => prev.map((r) =>
-          checkedStaff.includes(r.employeeId) ? { ...r, assignments: { ...r.assignments, [cfg.id]: true } } : r
-        ));
-        setCheckedStaff([]);
-      },
+      callback: () => assignAllShifts(cfg.id),
     })),
-    {
-      title: "Bỏ tất cả phân ca",
-      callback: () => {
-        setStaffRows((prev) => prev.map((r) =>
-          checkedStaff.includes(r.employeeId) ? { ...r, assignments: {} } : r
-        ));
-        setCheckedStaff([]);
-      },
-    },
+    { title: "Bỏ tất cả phân ca", callback: clearAllAssignments },
   ], [shiftConfigs, checkedStaff]);
 
+  // Filter nhân viên theo search
+  const filteredStaff = useMemo(() => {
+    if (!staffSearch.trim()) return staffRows;
+    const kw = staffSearch.toLowerCase();
+    return staffRows.filter((r) => r.name.toLowerCase().includes(kw));
+  }, [staffRows, staffSearch]);
+
+  // Số nhân viên đã được phân ít nhất 1 ca
+  const assignedCount = useMemo(
+    () => staffRows.filter((r) => Object.values(r.assignments).some(Boolean)).length,
+    [staffRows]
+  );
+
+  // Table definitions
   const staffTitles  = ["", "Nhân viên", "Vai trò", ...shiftConfigs.map((c) => c.shiftName)];
   const staffDataFmt = ["text-center", "", "", ...shiftConfigs.map(() => "text-center")];
 
@@ -292,11 +350,8 @@ export default function ShiftConfigTabs() {
             {/* ── Tab 1: Cấu hình ca ── */}
             {tab === "shift_config" && (
               <div className="shift-card-grid">
-
                 {shiftConfigs.map((cfg) => (
                   <div key={cfg.id} className="shift-card-editable">
-
-                    {/* Header */}
                     <div className="shift-card-editable__top" style={{ borderTopColor: cfg.color }}>
                       <input
                         className="name-input"
@@ -308,143 +363,132 @@ export default function ShiftConfigTabs() {
                         <Icon name="Trash" />
                       </button>
                     </div>
-
-                    {/* Body */}
                     <div className="shift-card-editable__body">
-
-                      {/* Màu */}
                       <div className="sc-block">
                         <div className="sc-label">Màu hiển thị</div>
                         <div className="color-row">
                           {COLOR_LIST.map((c) => (
-                            <button
-                              key={c}
-                              className={`color-dot${cfg.color === c ? " active" : ""}`}
-                              style={{ background: c }}
-                              onClick={() => updateShift(cfg.id, { color: c })}
-                            />
+                            <button key={c} className={`color-dot${cfg.color === c ? " active" : ""}`}
+                              style={{ background: c }} onClick={() => updateShift(cfg.id, { color: c })} />
                           ))}
                         </div>
                       </div>
-
-                      {/* Khung giờ */}
                       <div className="sc-block">
                         <div className="sc-label">Khung giờ</div>
                         <div className="sc-grid-2">
                           <div className="sc-field">
                             <label className="sc-field__label">Bắt đầu</label>
                             <div className="sc-field__input-wrap">
-                              <input
-                                type="time"
-                                className="sc-input"
-                                value={cfg.startTime}
-                                onChange={(e) => updateShift(cfg.id, { startTime: e.target.value })}
-                              />
+                              <input type="time" className="sc-input" value={cfg.startTime}
+                                onChange={(e) => updateShift(cfg.id, { startTime: e.target.value })} />
                               <span className="sc-ic"><Icon name="Clock" /></span>
                             </div>
                           </div>
                           <div className="sc-field">
                             <label className="sc-field__label">Kết thúc</label>
                             <div className="sc-field__input-wrap">
-                              <input
-                                type="time"
-                                className="sc-input"
-                                value={cfg.endTime}
-                                onChange={(e) => updateShift(cfg.id, { endTime: e.target.value })}
-                              />
+                              <input type="time" className="sc-input" value={cfg.endTime}
+                                onChange={(e) => updateShift(cfg.id, { endTime: e.target.value })} />
                               <span className="sc-ic"><Icon name="Clock" /></span>
                             </div>
                           </div>
                         </div>
                       </div>
-
-                      {/* POS + NV tối thiểu */}
                       <div className="sc-block sc-grid-2">
                         <div className="sc-field">
                           <label className="sc-field__label">Thiết bị POS</label>
                           <div className="sc-field__input-wrap">
-                            <input
-                              type="text"
-                              className="sc-input"
-                              placeholder="VD: POS Quầy 1"
+                            <input type="text" className="sc-input" placeholder="VD: POS Quầy 1"
                               value={cfg.posDeviceName}
-                              onChange={(e) => updateShift(cfg.id, { posDeviceName: e.target.value })}
-                            />
+                              onChange={(e) => updateShift(cfg.id, { posDeviceName: e.target.value })} />
                             <span className="sc-ic"><Icon name="Monitor" /></span>
                           </div>
                         </div>
                         <div className="sc-field">
                           <label className="sc-field__label">NV tối thiểu</label>
                           <div className="sc-field__input-wrap">
-                            <input
-                              type="number"
-                              className="sc-input"
-                              min={1}
-                              value={cfg.minStaff}
-                              onChange={(e) => updateShift(cfg.id, { minStaff: Number(e.target.value) || 1 })}
-                            />
+                            <input type="number" className="sc-input" min={1} value={cfg.minStaff}
+                              onChange={(e) => updateShift(cfg.id, { minStaff: Number(e.target.value) || 1 })} />
                             <span className="sc-ic"><Icon name="People" /></span>
                           </div>
                         </div>
                       </div>
-
-                      {/* Tiền lẻ đầu ca — NummericInput cần className riêng để override */}
                       <div className="sc-block">
                         <div className="sc-field">
                           <label className="sc-field__label">Tiền lẻ đầu ca (VNĐ)</label>
-                          {/*
-                            NummericInput renders: div.base-input > label > div.base-input__input > NumberFormat(input)
-                            Class "sc-numeric" dùng để override style từ bên ngoài.
-                          */}
                           <NummericInput
                             className="sc-numeric"
                             value={cfg.defaultCash}
                             thousandSeparator
                             placeholder="0"
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                              updateShift(cfg.id, {
-                                defaultCash: Number(String(e.target.value).replace(/,/g, "")) || 0,
-                              })
+                              updateShift(cfg.id, { defaultCash: Number(String(e.target.value).replace(/,/g, "")) || 0 })
                             }
                           />
                         </div>
                       </div>
-
                     </div>
                   </div>
                 ))}
-
-                {/* Card thêm ca */}
                 <button className="shift-card-add" onClick={addShift}>
                   <div className="add-inner">
                     <div className="plus">+</div>
                     <div className="add-text">Thêm ca mới</div>
                   </div>
                 </button>
-
               </div>
             )}
 
             {/* ── Tab 2: Phân công nhân viên ── */}
             {tab === "staff_assign" && (
               <Fragment>
-                {staffRows.length === 0 ? (
+                {/* Header: tóm tắt + search */}
+                <div className="staff-assign-header">
+                  <div className="staff-assign-summary">
+                    <span className="summary-count">
+                      <strong>{assignedCount}</strong>/{staffRows.length} nhân viên được phân ca
+                    </span>
+                    {shiftConfigs.map((cfg) => {
+                      const count = staffRows.filter((r) => r.assignments[cfg.id]).length;
+                      return (
+                        <span key={cfg.id} className="summary-badge" style={{ background: cfg.color + "18", color: cfg.color, borderColor: cfg.color + "40" }}>
+                          <span className="badge-dot" style={{ background: cfg.color }} />
+                          {cfg.shiftName}: {count} NV
+                        </span>
+                      );
+                    })}
+                  </div>
+                  <div className="staff-assign-search">
+                    <div className="sc-field__input-wrap">
+                      <input
+                        type="text"
+                        className="sc-input"
+                        placeholder="Tìm nhân viên..."
+                        value={staffSearch}
+                        onChange={(e) => setStaffSearch(e.target.value)}
+                      />
+                      <span className="sc-ic"><Icon name="Search" /></span>
+                    </div>
+                  </div>
+                </div>
+
+                {loadingStaff ? (
+                  <div className="shift-config-loading" style={{ minHeight: "16rem" }}><Loading /></div>
+                ) : filteredStaff.length === 0 ? (
                   <div className="shift-config-empty">
                     <Icon name="People" />
-                    <p>Chưa có nhân viên nào được phân công.</p>
-                    <p className="text-muted" style={{ fontSize: "1.3rem" }}>
-                      Dữ liệu hiển thị sau khi lưu phân công từ hệ thống nhân sự.
-                    </p>
+                    <p>{staffSearch ? "Không tìm thấy nhân viên phù hợp." : "Chi nhánh này chưa có nhân viên nào."}</p>
                   </div>
                 ) : (
                   <BoxTable
                     name="nhân viên"
                     titles={staffTitles}
-                    items={staffRows}
+                    items={filteredStaff}
                     isBulkAction={checkedStaff.length > 0}
                     bulkActionItems={bulkStaffItems}
                     dataFormat={staffDataFmt}
                     dataMappingArray={(row: StaffRow) => [
+                      // Checkbox chọn
                       <Checkbox
                         key={`chk-${row.employeeId}`}
                         checked={checkedStaff.includes(row.employeeId)}
@@ -452,11 +496,28 @@ export default function ShiftConfigTabs() {
                           setCheckedStaff((p) => v ? [...p, row.employeeId] : p.filter((x) => x !== row.employeeId))
                         }
                       />,
+                      // Tên nhân viên + avatar
                       <div key={`nm-${row.employeeId}`} className="staff-name-cell">
-                        <span className="staff-avatar-sm">{getInitials(row.name)}</span>
-                        {row.name}
+                        <div className="staff-avatar-sm">
+                          {row.avatar
+                            ? <img src={row.avatar} alt={row.name} />
+                            : getInitials(row.name)
+                          }
+                        </div>
+                        <span>{row.name}</span>
                       </div>,
-                      row.role,
+                      // Dropdown vai trò
+                      <select
+                        key={`role-${row.employeeId}`}
+                        className="sc-role-select"
+                        value={row.role}
+                        onChange={(e) => updateRole(row.employeeId, e.target.value)}
+                      >
+                        {ROLE_OPTIONS.map((r) => (
+                          <option key={r} value={r}>{r}</option>
+                        ))}
+                      </select>,
+                      // Checkbox per ca
                       ...shiftConfigs.map((cfg) => (
                         <Checkbox
                           key={`${row.employeeId}-${cfg.id}`}
