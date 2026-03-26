@@ -136,7 +136,7 @@ export default function OnShiftTab({ shiftId, branchId, onEndShift, onViewOrders
   };
 
   const handleGoToPOS = () => {
-    window.location.href = "/sell";
+    window.location.href = "/crm/create_sale_add";
   };
 
   if (loading) {
@@ -214,7 +214,7 @@ export default function OnShiftTab({ shiftId, branchId, onEndShift, onViewOrders
           onClick={handleGoToPOS}
           onKeyDown={(e) => e.key === "Enter" && handleGoToPOS()}
         >
-          <div className="qa-icon qa-icon--pos"><Icon name="Monitor" /></div>
+          <div className="qa-icon qa-icon--pos"><Icon name="Sell" /></div>
           <div className="qa-content">
             <div className="qa-title">Bán hàng tại POS</div>
             <div className="qa-sub">Tạo đơn hàng mới nhanh chóng</div>
