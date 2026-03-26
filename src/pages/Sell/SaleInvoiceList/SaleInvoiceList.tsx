@@ -9,6 +9,7 @@ import OrderList, { StatusCounts } from "@/pages/CounterSales/components/OrderLi
 import { Order } from "@/pages/CounterSales/types";
 import Button from "@/components/button/button";
 import OrderDetailModal from "@/pages/CounterSales/components/modals/OrderDetailModal";
+import InvoiceReceiptModal from "@/pages/CounterSales/components/modals/InvoiceReceiptModal/InvoiceReceiptModal";
 import { useCustomerEnrich, CustomerMap } from "@/hooks/useCustomerEnrich";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -84,6 +85,8 @@ export default function SaleInvoiceList() {
   // ── State ──────────────────────────────────────────────────────────────────
   const [invoiceId, setInvoiceId]                   = useState<number | null>(null);
   const [orderDetailModalOpen, setOrderDetailOpen]  = useState(false);
+  const [receiptInvoiceId, setReceiptInvoiceId]     = useState<number | null>(null);
+  const [receiptModalOpen, setReceiptModalOpen]     = useState(false);
   const [searchParams]                              = useSearchParams();
   const [listSaleInvoice, setListSaleInvoice]       = useState<Order[]>([]);
   const [isLoading, setIsLoading]                   = useState(true);
@@ -239,8 +242,9 @@ export default function SaleInvoiceList() {
     }
   };
 
-  const handleViewDetail  = useCallback((id: number | null) => { setInvoiceId(id); setOrderDetailOpen(true); }, []);
+  const handleViewDetail   = useCallback((id: number | null) => { setInvoiceId(id); setOrderDetailOpen(true); }, []);
   const handleConfirmOrder = useCallback(() => setOrderDetailOpen(false), []);
+  const handleViewReceipt  = useCallback((id: number | null) => { setReceiptInvoiceId(id); setReceiptModalOpen(true); }, []);
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
@@ -261,7 +265,7 @@ export default function SaleInvoiceList() {
         onExport={handleExportExcel}
         isExporting={isExporting}
         onViewDetail={handleViewDetail}
-        onViewReceipt={() => {}}
+        onViewReceipt={handleViewReceipt}
         onConfirm={handleConfirmOrder}
       />
 
@@ -282,9 +286,19 @@ export default function SaleInvoiceList() {
       <OrderDetailModal
         open={orderDetailModalOpen}
         onClose={() => { setInvoiceId(null); setOrderDetailOpen(false); }}
-        onPrint={() => setOrderDetailOpen(false)}
+        onPrint={() => {
+          setOrderDetailOpen(false);
+          setReceiptInvoiceId(invoiceId);
+          setReceiptModalOpen(true);
+        }}
         invoiceId={invoiceId ?? -1}
         onConfirm={handleConfirmOrder}
+      />
+
+      <InvoiceReceiptModal
+        open={receiptModalOpen}
+        invoiceId={receiptInvoiceId}
+        onClose={() => { setReceiptInvoiceId(null); setReceiptModalOpen(false); }}
       />
     </div>
   );
