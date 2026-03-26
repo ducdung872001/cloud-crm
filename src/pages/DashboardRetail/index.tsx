@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "reborn-util";
@@ -9,6 +9,7 @@ import Icon from "@/components/icon";
 import { useDashBoard } from "@/hooks/useDashBoard";
 import { useShortcut } from "@/hooks/useShortcut";
 import { SHORTCUT_OPTIONS, ShortcutKey } from "model/dashboard/DashboardModel";
+import InventoryService from "services/InventoryService";
 
 // Map key → metadata để render quick access items (ngoài component để tránh re-create)
 const SHORTCUT_KEY_META: Record<ShortcutKey, { label: string; icon: React.ReactElement; path: string }> = {
@@ -45,30 +46,61 @@ export default function DashboardRetail() {
   const handleCancel    = () => { resetDraft(); setShowShortcutModal(false); };
   const handleSave      = async () => { await saveShortcuts(); setShowShortcutModal(false); };
 
-  const lowStockData = [
-    { id: 1, name: "Modern Viettel 350", code: "GH-123456789", status: "sắp hết", qty: 20, statusColor: "#f59e0b" },
-    { id: 2, name: "Modern Viettel 350", code: "GH-123456789", status: "sắp hết", qty: 20, statusColor: "#f59e0b" },
-    { id: 3, name: "Modern Viettel 350", code: "GH-123456789", status: "hết hàng", qty: 0, statusColor: "#ef4444" },
-    { id: 4, name: "Modern Viettel 350", code: "GH-123456789", status: "sắp hết", qty: 15, statusColor: "#f59e0b" },
-    { id: 5, name: "Modern Viettel 350", code: "GH-123456789", status: "sắp hết", qty: 18, statusColor: "#f59e0b" },
-  ];
+  // ── Low stock API ─────────────────────────────────────────────────────────
+  interface ILowStockItem {
+    productId: number;
+    variantId: number;
+    productName: string;
+    sku?: string;
+    quantity: number;
+    stockStatus: number; // 0: hết hàng, 1: sắp hết
+  }
+
+  const [lowStockData, setLowStockData] = useState<ILowStockItem[]>([]);
+  const [isLowStockLoading, setIsLowStockLoading] = useState(false);
+
+  const fetchLowStock = useCallback(async () => {
+    setIsLowStockLoading(true);
+    try {
+      // Lấy cả sắp hết (stockStatus=1) và hết hàng (stockStatus=0)
+      // Dùng stockStatus=-1 (all) rồi filter client, hoặc gọi 2 lần.
+      // API hỗ trợ stockStatus: 0 = hết, 1 = sắp hết, 2 = còn hàng, -1 = tất cả
+      const [nearlyOut, outOfStock] = await Promise.all([
+        InventoryService.variantStockList({ stockStatus: 1, size: 10, sortBy: "quantity", sortDir: "asc" }),
+        InventoryService.variantStockList({ stockStatus: 0, size: 5, sortBy: "quantity", sortDir: "asc" }),
+      ]);
+
+      const nearlyItems: ILowStockItem[] = (nearlyOut?.code === 0 ? nearlyOut.result?.data ?? nearlyOut.result ?? [] : [])
+        .map((item: any) => ({ ...item, stockStatus: 1 }));
+      const outItems: ILowStockItem[] = (outOfStock?.code === 0 ? outOfStock.result?.data ?? outOfStock.result ?? [] : [])
+        .map((item: any) => ({ ...item, stockStatus: 0 }));
+
+      // Hết hàng ưu tiên hiển thị trước, sau đó sắp hết
+      setLowStockData([...outItems, ...nearlyItems].slice(0, 10));
+    } catch {
+      // silent — giữ rỗng
+    } finally {
+      setIsLowStockLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchLowStock();
+  }, [fetchLowStock]);
 
   // BoxTable config
   const lowStockTitles = ["Tên sản phẩm", "Mã sản phẩm", "Trạng thái", "Số lượng"];
-  const lowStockMappingArray = (item, index) => {
+  const lowStockMappingArray = (item: ILowStockItem) => {
+    const isOut    = item.stockStatus === 0;
+    const label    = isOut ? "Hết hàng" : "Sắp hết";
+    const color    = isOut ? "#ef4444"  : "#f59e0b";
     return [
-      item.name,
-      item.code,
-      <span
-        className="status-badge"
-        style={{
-          color: item.statusColor,
-          background: item.statusColor + "18",
-        }}
-      >
-        {item.status}
+      item.productName ?? "—",
+      item.sku ?? "—",
+      <span className="status-badge" style={{ color, background: color + "18" }}>
+        {label}
       </span>,
-      item.qty,
+      item.quantity ?? 0,
     ];
   };
 
@@ -202,7 +234,19 @@ export default function DashboardRetail() {
             </div>
           </div>
 
-          <BoxTable name="low-stock" titles={lowStockTitles} items={lowStockData} dataMappingArray={lowStockMappingArray} striped={false} />
+          {isLowStockLoading ? (
+            <div className="low-stock-loading">Đang tải...</div>
+          ) : lowStockData.length === 0 ? (
+            <div className="low-stock-empty">✅ Không có sản phẩm sắp hết hàng</div>
+          ) : (
+            <BoxTable
+              name="low-stock"
+              titles={lowStockTitles}
+              items={lowStockData}
+              dataMappingArray={lowStockMappingArray}
+              striped={false}
+            />
+          )}
 
           <div className="reminder-box">
             <span>🔔</span>
@@ -219,24 +263,37 @@ export default function DashboardRetail() {
             <span className="section-title">Top sản phẩm</span>
           </div>
           <div className="top-product-list">
-            {dataTopProduct.map((p, i) => (
-              <div key={i} className="top-product-item">
-                <div className="top-product-item-header">
-                  <span className="top-product-item-name">{p.name}</span>
-                  <div className="top-product-item-stats">
-                    <span className="top-product-item-revenue">{formatCurrency(p.revenue)}</span>
-                    <span className="top-product-item-pct">{p.pct} SP</span>
+            {dataTopProduct.map((p, i) => {
+              const isQtyTab   = topTab === "Theo số lượng";
+              const barPct     = isQtyTab ? (p.pctQty ?? 0) : (p.pctRevenue ?? 0);
+              const hasRevenue = p.revenue !== null && p.revenue > 0;
+              return (
+                <div key={i} className="top-product-item">
+                  <div className="top-product-item-header">
+                    <span className="top-product-item-name">{p.name}</span>
+                    <div className="top-product-item-stats">
+                      {!isQtyTab && hasRevenue && (
+                        <span className="top-product-item-revenue">
+                          {formatCurrency(p.revenue, ".", "")} đ
+                        </span>
+                      )}
+                      <span className="top-product-item-pct">{p.qty ?? 0} SP</span>
+                    </div>
+                  </div>
+                  <div className="top-product-item-bar-bg">
+                    <div className="top-product-item-bar-fill" style={{ width: `${barPct}%` }} />
                   </div>
                 </div>
-                <div className="top-product-item-bar-bg">
-                  <div className="top-product-item-bar-fill" style={{ width: `${p.pct}%` }} />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="tabs">
             {["Theo số lượng", "Theo doanh thu"].map((tab) => (
-              <button key={tab} onClick={() => setTopTab(tab)} className={`tabs-btn ${topTab === tab ? "active" : "inactive"}`}>
+              <button
+                key={tab}
+                onClick={() => setTopTab(tab)}
+                className={`tabs-btn ${topTab === tab ? "active" : "inactive"}`}
+              >
                 {tab}
               </button>
             ))}

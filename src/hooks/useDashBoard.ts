@@ -266,11 +266,18 @@ const topProducts = [
 // Đây là hàm để nhận đầu vào là dữ liệu giống như sampleProductDetail và trả về dữ liệu đã được map sang đúng format của topProducts để dễ đổ ra UI
 function mapToTopProduct(detail): any {
   if (!detail || detail.length === 0) return [];
+
+  // Tính max để vẽ thanh bar tương đối (tránh bar vượt 100%)
+  const maxQty     = Math.max(...detail.map((i) => i.totalQty     ?? 0), 1);
+  const maxRevenue = Math.max(...detail.map((i) => i.totalRevenue ?? 0), 1);
+
   return detail.map((item) => ({
-    name: item.productName + " (" + item.variantName + ")" || "Sản phẩm không tên",
-    revenue: item.totalRevenue ? item.totalRevenue : 0,
-    pct: item.totalQty ? item.totalQty : 0, // API chưa trả về phần trăm, nên tạm set 0
-    color: "#47B5AC", // màu cố định cho demo, bạn có thể thay đổi logic để set màu khác nhau nếu muốn
+    name:       (item.productName ?? "Sản phẩm không tên") + (item.variantName ? ` (${item.variantName})` : ""),
+    revenue:    item.totalRevenue ?? null,
+    qty:        item.totalQty    ?? 0,
+    pctQty:     Math.round(((item.totalQty     ?? 0) / maxQty)     * 100),
+    pctRevenue: Math.round(((item.totalRevenue ?? 0) / maxRevenue) * 100),
+    color:      "#47B5AC",
   }));
 }
 
