@@ -52,12 +52,45 @@ const PAY_LABEL: Record<number, string> = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+type PaperSize = "58mm" | "80mm" | "A4";
+
+// CSS @page cho từng khổ giấy
+// - 58mm / 80mm: size = WIDTHmm auto (auto height = cuộn giấy liên tục, không cắt trang)
+//   margin nhỏ nhất có thể để tận dụng diện tích in
+// - A4: size = A4, margin bình thường cho văn phòng
+const PAPER_CONFIGS: Record<PaperSize, {
+  pageCSS: string;   // @page rule
+  bodyCSS: string;   // body rule
+  fontSize: string;  // base font size
+  priceWidth: string;
+}> = {
+  "58mm": {
+    pageCSS:    "@page { size: 58mm auto; margin: 1mm 2mm; }",
+    bodyCSS:    "width:100%; padding: 2mm 3mm; margin: 0;",
+    fontSize:   "10px",
+    priceWidth: "62px",
+  },
+  "80mm": {
+    pageCSS:    "@page { size: 80mm auto; margin: 2mm 3mm; }",
+    bodyCSS:    "width:100%; padding: 3mm 4mm; margin: 0;",
+    fontSize:   "12px",
+    priceWidth: "82px",
+  },
+  "A4": {
+    pageCSS:    "@page { size: A4; margin: 18mm 20mm; }",
+    bodyCSS:    "max-width: 160mm; padding: 0; margin: 0 auto;",
+    fontSize:   "13px",
+    priceWidth: "90px",
+  },
+};
+
 export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props) {
   const [receipt, setReceipt]       = useState<ReceiptData | null>(null);
   const [isLoading, setIsLoading]   = useState(false);
   const [emailInput, setEmailInput] = useState("");
   const [showEmail, setShowEmail]   = useState(false);
   const [isSending, setIsSending]   = useState(false);
+  const [paperSize, setPaperSize]   = useState<PaperSize>("80mm");
   const printRef                    = useRef<HTMLDivElement>(null);
   const abortRef                    = useRef<AbortController | null>(null);
 
@@ -143,47 +176,63 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
   const handlePrint = () => {
     if (!printRef.current) return;
     const html = printRef.current.innerHTML;
-    const win  = window.open("", "_blank", "width=420,height=700");
+    const cfg  = PAPER_CONFIGS[paperSize];
+
+    // Mở popup nhỏ – Chrome sẽ render đúng khổ giấy theo @page size
+    // Với máy in nhiệt (thermal): chọn đúng máy trong hộp thoại Print,
+    // driver tự cuộn giấy theo chiều cao nội dung (auto height)
+    const win = window.open("", "_blank", "width=500,height=650");
     if (!win) { window.print(); return; }
 
-    win.document.write(`
-      <!DOCTYPE html><html><head>
-      <meta charset="utf-8">
-      <title>Biên lai ${receipt?.invoiceCode ?? ""}</title>
-      <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px;
-               color: #1a1a1a; background: #fff; padding: 20px; max-width: 380px; margin: 0 auto; }
-        .rcpt-header { text-align: center; padding-bottom: 14px; border-bottom: 2px dashed #ccc; margin-bottom: 14px; }
-        .rcpt-store  { font-size: 17px; font-weight: 900; margin-bottom: 4px; }
-        .rcpt-sub    { font-size: 11px; color: #666; line-height: 1.6; }
-        .rcpt-meta   { font-size: 11px; color: #555; margin-top: 8px; line-height: 1.6; }
-        .rcpt-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase;
-                              letter-spacing: .5px; color: #888; margin: 12px 0 6px; }
-        .rcpt-customer { background: #f8f8f8; border-radius: 6px; padding: 8px 10px;
-                         font-size: 12px; line-height: 1.7; margin-bottom: 12px; }
-        .rcpt-table  { width: 100%; border-collapse: collapse; margin-bottom: 2px; }
-        .rcpt-table th { font-size: 10px; font-weight: 700; text-transform: uppercase;
-                         letter-spacing: .4px; color: #888; padding: 4px 0; border-bottom: 1px solid #eee; }
-        .rcpt-table td { padding: 5px 0; font-size: 12px; vertical-align: top; }
-        .rcpt-table .name  { flex: 1; }
-        .rcpt-table .qty   { text-align: center; width: 30px; }
-        .rcpt-table .price { text-align: right; width: 85px; white-space: nowrap; }
-        .rcpt-sep    { border: none; border-top: 1px dashed #ddd; margin: 10px 0; }
-        .rcpt-totals { font-size: 12px; }
-        .rcpt-row    { display: flex; justify-content: space-between; padding: 3px 0; }
-        .rcpt-row.grand { border-top: 1.5px solid #222; margin-top: 6px; padding-top: 6px;
-                          font-size: 15px; font-weight: 900; }
-        .rcpt-footer { text-align: center; margin-top: 18px; font-size: 11px; color: #888; line-height: 1.8; }
-        @media print {
-          body { padding: 0; }
-          @page { margin: 10mm; size: 80mm auto; }
-        }
-      </style></head><body>
-      ${html}
-      <script>window.onload = () => { window.print(); window.close(); }</script>
-      </body></html>
-    `);
+    win.document.write(`<!DOCTYPE html><html><head>
+<meta charset="utf-8">
+<title>Biên lai ${receipt?.invoiceCode ?? ""}</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: ${cfg.fontSize};
+  color: #000;
+  background: #fff;
+  ${cfg.bodyCSS}
+}
+.rcpt-header { text-align: center; padding-bottom: 10px; border-bottom: 1px dashed #999; margin-bottom: 10px; }
+.rcpt-store  { font-size: 1.4em; font-weight: 900; margin-bottom: 3px; }
+.rcpt-sub    { font-size: .9em; color: #555; line-height: 1.5; }
+.rcpt-meta   { font-size: .9em; color: #444; margin-top: 6px; line-height: 1.5; }
+.rcpt-customer { border: 1px dashed #bbb; padding: 5px 7px; font-size: .95em;
+                  line-height: 1.6; margin-bottom: 8px; }
+.rcpt-customer__name  { font-weight: 700; }
+.rcpt-customer__phone { color: #555; }
+.rcpt-section-title { font-size: .8em; font-weight: 700; text-transform: uppercase;
+                       letter-spacing: .4px; color: #777; margin: 8px 0 4px; }
+.rcpt-table { width: 100%; border-collapse: collapse; margin-bottom: 2px; }
+.rcpt-table th { font-size: .8em; font-weight: 700; text-transform: uppercase;
+                  padding: 3px 0; border-bottom: 1px solid #bbb; }
+.rcpt-table td { padding: 4px 0; vertical-align: top; }
+.rcpt-table .name  { text-align: left; }
+.rcpt-table .qty   { text-align: center; width: 24px; }
+.rcpt-table .price { text-align: right; width: ${cfg.priceWidth}; white-space: nowrap; }
+.rcpt-sep  { border: none; border-top: 1px dashed #bbb; margin: 8px 0; }
+.rcpt-totals { font-size: .95em; }
+.rcpt-row  { display: flex; justify-content: space-between; padding: 2px 0; color: #444; }
+.rcpt-row--grand {
+  border-top: 1.5px solid #000; margin-top: 5px; padding-top: 5px;
+  font-size: 1.25em; font-weight: 900; color: #000;
+}
+.rcpt-row--pay { color: #555; font-size: .9em; }
+.rcpt-footer { text-align: center; margin-top: 14px; padding-top: 10px;
+               border-top: 1px dashed #999; font-size: .85em; color: #666; line-height: 1.7; }
+/* ── @page: khổ giấy và margin cho máy in ── */
+${cfg.pageCSS}
+/* Ẩn header/footer mặc định của trình duyệt khi in */
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style></head><body>
+${html}
+<script>window.onload = () => { window.print(); window.close(); }<\/script>
+</body></html>`);
     win.document.close();
   };
 
@@ -273,6 +322,21 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
           <div className="ircpt-loading">Không có dữ liệu.</div>
         ) : (
           <>
+            {/* ── Paper size selector ─────────────────────────────────────── */}
+            <div className="ircpt-paper-selector">
+              <span className="ircpt-paper-selector__label">Khổ giấy in:</span>
+              {(["58mm", "80mm", "A4"] as PaperSize[]).map(s => (
+                <button
+                  key={s}
+                  className={`ircpt-paper-btn${paperSize === s ? " ircpt-paper-btn--active" : ""}`}
+                  onClick={() => setPaperSize(s)}
+                >
+                  {s}
+                  {s === "80mm" && <span className="ircpt-paper-btn__hint"> phổ biến</span>}
+                </button>
+              ))}
+            </div>
+
             {/* ── Printable area ──────────────────────────────────────────── */}
             <div ref={printRef} className="ircpt">
 

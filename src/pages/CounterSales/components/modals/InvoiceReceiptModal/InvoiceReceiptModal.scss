@@ -2,6 +2,54 @@
   // Modal nhỏ gọn như biên lai thật
 }
 
+// ── Paper size selector ───────────────────────────────────────────────────────
+
+.ircpt-paper-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.6rem;
+  flex-wrap: wrap;
+
+  &__label {
+    font-size: 1.2rem;
+    color: var(--muted);
+    font-weight: 600;
+    margin-right: 0.2rem;
+    white-space: nowrap;
+  }
+}
+
+.ircpt-paper-btn {
+  padding: 4px 12px;
+  border-radius: 2rem;
+  border: 1.5px solid var(--border);
+  background: var(--paper);
+  color: var(--muted);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-base);
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: var(--primary-color);
+    color: var(--ink);
+  }
+
+  &--active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+  }
+
+  &__hint {
+    font-size: 1rem;
+    font-weight: 400;
+    opacity: 0.85;
+  }
+}
+
 // ── Loading ────────────────────────────────────────────────────────────────────
 
 .ircpt-loading {
