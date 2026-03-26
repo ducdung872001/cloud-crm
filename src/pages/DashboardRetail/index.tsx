@@ -7,6 +7,19 @@ import BoxTable from "components/boxTable/boxTable";
 import { UserContext, ContextType } from "contexts/userContext";
 import Icon from "@/components/icon";
 import { useDashBoard } from "@/hooks/useDashBoard";
+import { useShortcut } from "@/hooks/useShortcut";
+import { SHORTCUT_OPTIONS, ShortcutKey } from "model/dashboard/DashboardModel";
+
+// Map key → metadata để render quick access items (ngoài component để tránh re-create)
+const SHORTCUT_KEY_META: Record<ShortcutKey, { label: string; icon: React.ReactElement; path: string }> = {
+  POS:          { label: "Tạo đơn",    icon: <Icon name="PlusCircleFill" />,  path: urls.create_sale_add },
+  CUSTOMER:     { label: "Khách hàng", icon: <Icon name="Customer" />,        path: urls.customer_list },
+  WAREHOUSE:    { label: "Kho hàng",   icon: <Icon name="ImportGoods" />,     path: urls.inventory },
+  FINANCE:      { label: "Tài chính",  icon: <Icon name="CashBook" />,        path: urls.finance_management_cashbook },
+  INVOICE:      { label: "Hóa đơn",   icon: <Icon name="Invoice" />,         path: urls.sale_invoice },
+  TASK:         { label: "Công việc",  icon: <Icon name="ManageWork" />,      path: urls.middle_work },
+  PROMO_REPORT: { label: "KM",         icon: <Icon name="Promotion" />,       path: urls.promotional_program },
+};
 
 export default function DashboardRetail() {
   document.title = "Bảng điều khiển";
@@ -17,6 +30,20 @@ export default function DashboardRetail() {
   const [masked, setMasked] = useState(true);
   const [topTab, setTopTab] = useState("qty");
   const [showShortcutModal, setShowShortcutModal] = useState(false);
+
+  const {
+    activeKeys,
+    isLoading: isShortcutLoading,
+    isSaving,
+    draftKeys,
+    toggleDraftKey,
+    saveShortcuts,
+    resetDraft,
+  } = useShortcut();
+
+  const handleOpenModal = () => { resetDraft(); setShowShortcutModal(true); };
+  const handleCancel    = () => { resetDraft(); setShowShortcutModal(false); };
+  const handleSave      = async () => { await saveShortcuts(); setShowShortcutModal(false); };
 
   const lowStockData = [
     { id: 1, name: "Modern Viettel 350", code: "GH-123456789", status: "sắp hết", qty: 20, statusColor: "#f59e0b" },
@@ -146,18 +173,20 @@ export default function DashboardRetail() {
         <div className="retail-card quick-access">
           <div className="quick-access-title">Truy cập nhanh</div>
           <div className="quick-access-grid">
-            {[
-              { icon: <Icon name="PlusCircleFill" />, label: "Tạo đơn", action: () => navTo(urls.create_sale_add) },
-              { icon: <Icon name="Customer" />, label: "Khách hàng", action: () => navTo(urls.customer_list) },
-              { icon: <Icon name="ImportGoods" />, label: "Kho hàng", action: () => navTo(urls.inventory) },
-              { icon: <Icon name="Report" />, label: "Báo cáo", action: () => navTo(urls.sale_invoice || urls.report_common) },
-              { icon: <Icon name="Settings" />, label: "Tùy chỉnh\nlối tắt", action: () => setShowShortcutModal(true) },
-            ].map((q, i) => (
-              <div key={i} className="quick-access-item" onClick={q.action}>
-                <div className="quick-access-item-icon">{q.icon}</div>
-                <span className="quick-access-item-label">{q.label}</span>
-              </div>
-            ))}
+            {activeKeys.map((key) => {
+              const meta = SHORTCUT_KEY_META[key];
+              if (!meta) return null;
+              return (
+                <div key={key} className="quick-access-item" onClick={() => navTo(meta.path)}>
+                  <div className="quick-access-item-icon">{meta.icon}</div>
+                  <span className="quick-access-item-label">{meta.label}</span>
+                </div>
+              );
+            })}
+            <div className="quick-access-item" onClick={handleOpenModal}>
+              <div className="quick-access-item-icon"><Icon name="Settings" /></div>
+              <span className="quick-access-item-label">{"Tùy chỉnh\nlối tắt"}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -217,13 +246,11 @@ export default function DashboardRetail() {
 
       {/* Tùy chỉnh lối tắt Modal */}
       {showShortcutModal && (
-        <div className="shortcut-modal">
-          <div className="shortcut-modal-content">
+        <div className="shortcut-modal" onClick={handleCancel}>
+          <div className="shortcut-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="shortcut-modal-header">
               <h3>Tùy chỉnh truy cập nhanh</h3>
-              <button onClick={() => setShowShortcutModal(false)} className="close-btn">
-                ✕
-              </button>
+              <button onClick={handleCancel} className="close-btn">✕</button>
             </div>
 
             <p className="shortcut-modal-desc">
@@ -231,28 +258,32 @@ export default function DashboardRetail() {
             </p>
 
             <div className="shortcut-modal-options">
-              {[
-                { label: "Bán hàng tại quầy (Tạo đơn)", checked: true },
-                { label: "Khách hàng", checked: true },
-                { label: "Sổ kho", checked: true },
-                { label: "Thông tin tài chính", checked: true },
-                { label: "Danh sách hóa đơn", checked: false },
-                { label: "Quản lý công việc", checked: false },
-                { label: "Báo cáo khuyến mãi", checked: false },
-              ].map((opt, idx) => (
-                <label key={idx} className="shortcut-modal-option">
-                  <input type="checkbox" defaultChecked={opt.checked} />
-                  <span>{opt.label}</span>
-                </label>
-              ))}
+              {SHORTCUT_OPTIONS.map((opt) => {
+                const isChecked = draftKeys.includes(opt.key);
+                const isDisabled = !isChecked && draftKeys.length >= 5;
+                return (
+                  <label
+                    key={opt.key}
+                    className={`shortcut-modal-option${isChecked ? " checked" : ""}${isDisabled ? " disabled" : ""}`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      disabled={isDisabled}
+                      onChange={() => toggleDraftKey(opt.key)}
+                    />
+                    <span>{opt.label}</span>
+                  </label>
+                );
+              })}
             </div>
 
             <div className="shortcut-modal-footer">
-              <button onClick={() => setShowShortcutModal(false)} className="btn-cancel">
+              <button onClick={handleCancel} className="btn-cancel" disabled={isSaving}>
                 Hủy
               </button>
-              <button onClick={() => setShowShortcutModal(false)} className="btn-save">
-                Lưu thay đổi
+              <button onClick={handleSave} className="btn-save" disabled={isSaving || draftKeys.length === 0}>
+                {isSaving ? "Đang lưu..." : "Lưu thay đổi"}
               </button>
             </div>
           </div>

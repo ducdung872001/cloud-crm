@@ -12,7 +12,7 @@ const prefixCs = "/cs";
 const prefixApplication = "/application";
 const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
-const prefixOperation = "https://reborn.vn/operation"; 
+const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = prefixBiz + "/notification";
 const prefixFinance = prefixBiz + "/finance";
 const prefixInventory = prefixBiz + "/inventory";
@@ -27,6 +27,10 @@ export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
   dashboard: {
     detail: prefixSales + "/invoice/dashboard",
+  },
+  shortcut: {
+    get: prefixSales + "/user-shortcut/get",
+    update: prefixSales + "/user-shortcut/update",
   },
   beautySalon: {
     list: prefixRebornVn + "/beautySalon/list",
@@ -2366,18 +2370,18 @@ export const urlsApi = {
     update: prefixMarket + "/promotion/update",
     delete: prefixMarket + "/promotion/delete",
     countByStatus: prefixMarket + "/promotion/count-by-status",
-    updateStatus:  prefixMarket + "/promotion/update/status",
+    updateStatus: prefixMarket + "/promotion/update/status",
     updateDmnSetting: prefixMarket + "/promotion/update/dmn-setting",
   },
   couponProgram: {
-    list:          prefixMarket + "/coupon/list",
-    get:           prefixMarket + "/coupon/get",
-    update:        prefixMarket + "/coupon/update",
-    delete:        prefixMarket + "/coupon/delete",
-    updateStatus:  prefixMarket + "/coupon/update/status",
+    list: prefixMarket + "/coupon/list",
+    get: prefixMarket + "/coupon/get",
+    update: prefixMarket + "/coupon/update",
+    delete: prefixMarket + "/coupon/delete",
+    updateStatus: prefixMarket + "/coupon/update/status",
     countByStatus: prefixMarket + "/coupon/count-by-status",
-    sumUsed:       prefixMarket + "/coupon/sum-used",
-    apply:         prefixMarket + "/coupon/apply",
+    sumUsed: prefixMarket + "/coupon/sum-used",
+    apply: prefixMarket + "/coupon/apply",
   },
   email: {
     list: prefixAdmin + "/outlookMail/list",
@@ -3418,7 +3422,7 @@ export const urls = {
   setting_call: "/setting_call",
   setting_email: "/setting_email",
   setting_zalo: "/setting_zalo",
-  setting_channels: "/setting_channels",   // Landing page: Kênh liên lạc (SMS/Email/Zalo/Tổng đài)
+  setting_channels: "/setting_channels", // Landing page: Kênh liên lạc (SMS/Email/Zalo/Tổng đài)
   setting_integrations: "/setting_integrations", // Landing page: Tích hợp & kết nối
   sms_marketting: "/sms_marketting",
   email_marketting: "/email_marketting",
@@ -3429,7 +3433,7 @@ export const urls = {
   setting_common: "/setting_common",
   setting_rose: "/setting_rose",
   setting_basis: "/setting_basis",
-  setting_org: "/setting_org",        // Tổ chức & phân quyền
+  setting_org: "/setting_org", // Tổ chức & phân quyền
   setting_payment_method: "/setting_payment_method",
   setting_operate: "/setting_operate",
   setting_timekeeping: "/setting_timekeeping",
