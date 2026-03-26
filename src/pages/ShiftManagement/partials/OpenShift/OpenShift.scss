@@ -85,7 +85,6 @@
   // ── Total mode ───────────────────────────────────────────────────────────
   .os-total-mode {
     max-width: 44rem;
-    margin: 0 auto;
 
     .os-total-field {
       display: flex;
@@ -165,7 +164,6 @@
   .os-denom-mode {
     // Giới hạn width vừa đủ, căn giữa
     max-width: 64rem;
-    margin: 0 auto;
 
     .os-denom-table {
       border: 1px solid var(--border-color);
@@ -176,7 +174,7 @@
       // Header
       .os-denom-head {
         display: grid;
-        grid-template-columns: 14rem 1fr 14rem;
+        grid-template-columns: 16rem 1fr 16rem;
         padding: 1rem 1.6rem;
         background: var(--extra-color-5);
         border-bottom: 1px solid var(--border-color);
@@ -193,7 +191,7 @@
       // Row
       .os-denom-row {
         display: grid;
-        grid-template-columns: 14rem 1fr 14rem;
+        grid-template-columns: 16rem 1fr 16rem;
         align-items: center;
         padding: 0.85rem 1.6rem;
         border-bottom: 1px solid #f1f5f9;
@@ -221,8 +219,8 @@
         .os-stepper {
           display: flex;
           align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
+          justify-content: flex-start;
+          gap: 0.5rem; // Đảm bảo stepper luôn đủ rộng dù grid 1fr stretch
 
           button {
             width: 3rem;
