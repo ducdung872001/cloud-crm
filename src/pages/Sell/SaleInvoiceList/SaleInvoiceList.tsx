@@ -13,6 +13,8 @@ import Button from "@/components/button/button";
 import moment from "moment";
 import OrderDetailModal from "@/pages/CounterSales/components/modals/OrderDetailModal";
 import ReceiptModal from "@/pages/CounterSales/components/modals/ReceiptModal";
+// ── [FIX] Import hook enrich thông tin khách hàng từ /adminapi ────────────────
+import { useCustomerEnrich } from "@/hooks/useCustomerEnrich";
 
 // Map frontend status string → backend integer
 const STATUS_TO_INT: Record<string, number> = {
@@ -28,6 +30,9 @@ export default function SaleInvoiceList() {
 
   const { dataBranch } = useContext(UserContext) as ContextType;
   const isMounted = useRef(false);
+
+  // ── [FIX] Khởi tạo hook enrich – sẽ batch-fetch tên KH sau mỗi lần load ──
+  const { enrichList, getCustomer } = useCustomerEnrich();
 
   // ── Modal state ────────────────────────────────────────────────────────────
   const [invoiceId, setInvoiceId] = useState<number | null>(null);
@@ -69,43 +74,71 @@ export default function SaleInvoiceList() {
     }
   }, [dataBranch]);
 
-  // ── Map API item → Order ───────────────────────────────────────────────────
-  const mapToOrder = (item: any): Order => ({
-    id: item.invoiceId,
-    code: item.invoice.invoiceCode,
-    source: "offline",
-    sourceLabel: "Bán hàng tại quầy",
-    status: item.invoice.status === 1 ? "success"
-      : item.invoice.status === 2 ? "pending"
-        : "cancelled",
-    statusLabel: item.invoice.status === 1 ? "Hoàn thành"
-      : item.invoice.status === 2 ? "Chờ xử lý"
-        : "Đã hủy",
-    time: formatDisplayDate(item?.invoice?.createdTime, true),
-    customer: {
-      id: item.customerId,
-      name: item?.invoice?.customerName || "Khách vãng lai",
-      phone: item.customerPhone || "",
-      initial: item?.invoice?.customerName
-        ? item.invoice.customerName.charAt(0).toUpperCase()
-        : "K",
-      points: item.customerPoints ?? 0,
-      tier: item.customerTier ?? "",
-      color: "#2563eb",
+  // ── [FIX] Map API item → Order, nhận thêm customerMap để enrich tên KH ────
+  //
+  //  Logic ưu tiên tên khách hàng (theo thứ tự):
+  //    1. Tên lấy từ /adminapi/customer/list_by_id  (đầy đủ, chính xác nhất)
+  //    2. invoice.customerName                      (nếu API sales có trả về)
+  //    3. "Khách vãng lai"                          (fallback cuối)
+  //
+  const mapToOrder = useCallback(
+    (item: any): Order => {
+      // Tên KH từ adminapi (ưu tiên cao nhất)
+      const enriched = item.customerId ? getCustomer(item.customerId) : null;
+      const customerName =
+        (enriched && enriched.name !== "Khách vãng lai" ? enriched.name : null)
+        ?? item?.invoice?.customerName
+        ?? null;
+
+      const displayName = customerName || "Khách vãng lai";
+      const displayPhone =
+        enriched?.phone || enriched?.phoneMasked || item.customerPhone || "";
+
+      return {
+        id: item.invoiceId,
+        code: item.invoice.invoiceCode,
+        source: "offline",
+        sourceLabel: "Bán hàng tại quầy",
+        status:
+          item.invoice.status === 1 ? "success"
+          : item.invoice.status === 2 ? "pending"
+          : "cancelled",
+        statusLabel:
+          item.invoice.status === 1 ? "Hoàn thành"
+          : item.invoice.status === 2 ? "Chờ xử lý"
+          : "Đã hủy",
+        time: formatDisplayDate(item?.invoice?.createdTime, true),
+        customer: {
+          id: item.customerId,
+          name: displayName,
+          phone: displayPhone,
+          initial: displayName.charAt(0).toUpperCase(),
+          points: item.customerPoints ?? 0,
+          tier: item.customerTier ?? "",
+          color: "#2563eb",
+        },
+        items: [...(item.products || []), ...(item.services || [])]
+          .map((i: any) => {
+            const productName = i.productName || i.name || "";
+            const variantName = i.name && i.name !== i.productName ? i.name : "";
+            return variantName ? `${productName} (${variantName})` : productName;
+          })
+          .filter(Boolean)
+          .join(", ") || "—",
+        total: item.invoice.fee,
+      };
     },
-    items: [...(item.products || []), ...(item.services || [])]
-      .map((i: any) => {
-        const productName = i.productName || i.name || "";
-        const variantName = i.name && i.name !== i.productName ? i.name : "";
-        return variantName ? `${productName} (${variantName})` : productName;
-      })
-      .filter(Boolean)
-      .join(", ") || "—",
-    total: item.invoice.fee,
-  });
+    [getCustomer]
+  );
+
+  // ── Ref lưu raw items để re-map sau khi enrichList cập nhật customerMap ──
+  const rawItemsRef = useRef<any[]>([]);
+  const appendModeRef = useRef(false);
 
   // ── Fetch list ─────────────────────────────────────────────────────────────
   const abortRef = useRef<AbortController | null>(null);
+  // AbortController riêng cho việc enrich KH
+  const enrichAbortRef = useRef<AbortController | null>(null);
 
   const fetchList = async (p: IInvoiceFilterRequest, append = false) => {
     abortRef.current?.abort();
@@ -117,9 +150,20 @@ export default function SaleInvoiceList() {
 
       if (response.code === 0) {
         const result = response.result;
-        const mapped: Order[] = result.pagedLst.items.map(mapToOrder);
+        const rawItems: any[] = result.pagedLst.items ?? [];
 
+        // Lưu raw items để re-map sau khi enrich xong
+        if (append) {
+          rawItemsRef.current = [...rawItemsRef.current, ...rawItems];
+        } else {
+          rawItemsRef.current = rawItems;
+        }
+        appendModeRef.current = append;
+
+        // Map ngay với dữ liệu hiện có (có thể tên vẫn là "Khách vãng lai" tạm thời)
+        const mapped: Order[] = rawItems.map(mapToOrder);
         setListSaleInvoice(append ? prev => [...prev, ...mapped] : mapped);
+
         setTotalItem(+result.pagedLst.total);
         setCurrentPage(+result.pagedLst.page);
         setTotalPage(Math.ceil(+result.pagedLst.total / +(p.limit ?? 10)));
@@ -142,6 +186,21 @@ export default function SaleInvoiceList() {
             cancelled: cancel,
           });
         }
+
+        // ── [FIX] Batch-enrich tên khách hàng từ adminapi ──────────────────
+        // Chỉ enrich những item có customerId (>0) mà invoice.customerName trống
+        const idsToEnrich = rawItems
+          .filter(i => i.customerId > 0 && !i?.invoice?.customerName)
+          .map(i => i.customerId);
+
+        if (idsToEnrich.length > 0) {
+          enrichAbortRef.current?.abort();
+          enrichAbortRef.current = new AbortController();
+
+          // enrichList tự dedup + cache – chỉ gọi API cho ID chưa có
+          enrichList(idsToEnrich, enrichAbortRef.current.signal);
+          // Re-map sẽ được trigger bởi useEffect bên dưới khi customerMap thay đổi
+        }
       } else {
         showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
@@ -153,6 +212,14 @@ export default function SaleInvoiceList() {
       setIsLoading(false);
     }
   };
+
+  // ── [FIX] Re-map toàn bộ list khi customerMap được cập nhật ──────────────
+  // getCustomer thay đổi reference sau mỗi lần enrichList hoàn tất
+  // → trigger lại mapToOrder với dữ liệu mới nhất
+  useEffect(() => {
+    if (rawItemsRef.current.length === 0) return;
+    setListSaleInvoice(rawItemsRef.current.map(mapToOrder));
+  }, [mapToOrder]); // mapToOrder phụ thuộc getCustomer → cập nhật khi customerMap thay đổi
 
   // ── Build params from filters and call fetch ───────────────────────────────
   const applyFilters = useCallback((
@@ -230,7 +297,7 @@ export default function SaleInvoiceList() {
     applyFilters(activeFilter, searchText, fromDate, toDate, nextPage, true);
   };
 
-  // ── Export Excel ───────────────────────────────────────────────────────────  
+  // ── Export Excel ───────────────────────────────────────────────────────────
   const handleExportExcel = async () => {
     if (isExporting) return;
     setIsExporting(true);
