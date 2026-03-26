@@ -5,6 +5,7 @@ import DashBoardService from "@/services/DashBoardService";
 
 interface UseGetDashBoardParams {
   enabled?: boolean; // ✅ mặc định true, truyền false để tắt
+  sortBy?: "qty" | "revenue"; // tab đang active ở UI
 }
 interface TopProduct {
   name: string;
@@ -20,6 +21,7 @@ interface IDataRevenue {
 
 interface UseGetDashBoardReturn {
   isLoading: boolean;
+  isTopProductLoading: boolean;
   isNoItem: boolean;
   isPermissions: boolean;
   dataTopProduct: TopProduct[] | [];
@@ -46,9 +48,11 @@ const defaultRevenueData: IDataRevenue = {
 };
 
 export function useDashBoard({
-  enabled = true, // ✅ mặc định true, truyền false để tắt
+  enabled = true,
+  sortBy = "qty",
 }: UseGetDashBoardParams): UseGetDashBoardReturn {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isTopProductLoading, setIsTopProductLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [dataTopProduct, setDataTopProduct] = useState<TopProduct[]>([]);
@@ -56,30 +60,21 @@ export function useDashBoard({
 
   // ── Core fetch ──────────────────────────────────────────────────────────────
 
-  const fetchTopProducts = useCallback(async () => {
-    setIsNoItem(false);
-
+  const fetchTopProducts = useCallback(async (sort: "qty" | "revenue" = "qty") => {
+    setIsTopProductLoading(true);
     try {
-      const response = await ProductService.topProduct();
-
+      const response = await ProductService.topProductV2(sort);
       if (response.code === 0) {
-        const result = response.result;
-        setDataTopProduct(mapToTopProduct(result)); // map API về đúng format rồi set vào state
-        setIsNoItem(false);
+        setDataTopProduct(mapToTopProduct(response.result));
       } else if (response.code === 400) {
         setIsPermissions(true);
-      } else {
-        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
-      setIsLoading(false);
     } catch (error) {
-      if (error?.name === "AbortError") {
-        console.log("Request was aborted");
-      } else {
+      if (error?.name !== "AbortError") {
         showToast(error?.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
     } finally {
-      setIsLoading(false);
+      setIsTopProductLoading(false);
     }
   }, []);
 
@@ -118,22 +113,25 @@ export function useDashBoard({
 
   // ── Auto fetch khi categoryId thay đổi ─────────────────────────────────────
 
+  // Fetch revenue chỉ 1 lần khi enabled
   useEffect(() => {
-    if (!enabled) return; // ✅ guard: nếu không enabled thì không fetch
+    if (!enabled) return;
     setIsLoading(true);
-    fetchTopProducts();
     fetchRevenue();
-
-    // return () => {
-    //   abortControllerRef.current?.abort();
-    // };
   }, [enabled]);
+
+  // Re-fetch topProduct mỗi khi sortBy thay đổi
+  useEffect(() => {
+    if (!enabled) return;
+    fetchTopProducts(sortBy);
+  }, [enabled, sortBy]);
   //  ^^^^^^^^^^^
   //  Chỉ theo dõi params và enabled — giá trị primitive (string/boolean)
   //  string/boolean so sánh bằng value, không bị lặp như object
 
   return {
     isLoading,
+    isTopProductLoading,
     isNoItem,
     isPermissions,
     dataTopProduct,

@@ -507,6 +507,7 @@ export const urlsApi = {
     filterWarehouse: prefixWarehouse + "/product/in_warehouse",
     list: prefixInventory + "/product/list",
     topProduct: prefixSales + "/invoice/topProduct",
+    topProductV2: prefixSales + "/invoice/topProduct/v2",
     detail: prefixInventory + "/product/get",
     update: prefixInventory + "/product/update",
     updateContent: prefixInventory + "/product/update/content",

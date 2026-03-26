@@ -10,6 +10,17 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+
+  /**
+   * Top sản phẩm v2 — hỗ trợ sortBy: "qty" | "revenue"
+   * cloud-sales tự gọi sang cloud-inventory để lấy tên variant
+   */
+  topProductV2: (sortBy: "qty" | "revenue" = "qty", signal?: AbortSignal) => {
+    return fetch(`${urlsApi.product.topProductV2}?sortBy=${sortBy}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
   filterWarehouse: (params: any, signal?: AbortSignal) => {
     return fetch(`${urlsApi.product.filterWarehouse}${convertParamsToString(params)}`, {
       signal,

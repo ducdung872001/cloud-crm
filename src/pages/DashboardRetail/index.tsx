@@ -26,11 +26,15 @@ export default function DashboardRetail() {
   document.title = "Bảng điều khiển";
   const navigate = useNavigate();
   const { dataBranch } = useContext(UserContext) as ContextType;
-  const { dataTopProduct, dataRevenue } = useDashBoard({ enabled: !!dataBranch }); // fetch top products khi đã có dataBranch, nếu chưa có thì không fetch để tránh lỗi
 
   const [masked, setMasked] = useState(true);
-  const [topTab, setTopTab] = useState("qty");
+  const [topTab, setTopTab] = useState<"qty" | "revenue">("qty");
   const [showShortcutModal, setShowShortcutModal] = useState(false);
+
+  const { dataTopProduct, isTopProductLoading, dataRevenue } = useDashBoard({
+    enabled: !!dataBranch,
+    sortBy: topTab,
+  });
 
   const {
     activeKeys,
@@ -263,38 +267,41 @@ export default function DashboardRetail() {
             <span className="section-title">Top sản phẩm</span>
           </div>
           <div className="top-product-list">
-            {dataTopProduct.map((p, i) => {
-              const isQtyTab   = topTab === "Theo số lượng";
-              const barPct     = isQtyTab ? (p.pctQty ?? 0) : (p.pctRevenue ?? 0);
-              const hasRevenue = p.revenue !== null && p.revenue > 0;
-              return (
-                <div key={i} className="top-product-item">
-                  <div className="top-product-item-header">
-                    <span className="top-product-item-name">{p.name}</span>
-                    <div className="top-product-item-stats">
-                      {!isQtyTab && hasRevenue && (
-                        <span className="top-product-item-revenue">
-                          {formatCurrency(p.revenue, ".", "")} đ
-                        </span>
-                      )}
-                      <span className="top-product-item-pct">{p.qty ?? 0} SP</span>
+            {isTopProductLoading ? (
+              <div className="low-stock-loading">Đang tải...</div>
+            ) : (
+              dataTopProduct.map((p, i) => {
+                const barPct     = topTab === "qty" ? (p.pctQty ?? 0) : (p.pctRevenue ?? 0);
+                const hasRevenue = p.revenue !== null && (p.revenue ?? 0) > 0;
+                return (
+                  <div key={i} className="top-product-item">
+                    <div className="top-product-item-header">
+                      <span className="top-product-item-name">{p.name}</span>
+                      <div className="top-product-item-stats">
+                        {topTab === "revenue" && hasRevenue && (
+                          <span className="top-product-item-revenue">
+                            {formatCurrency(p.revenue, ".", "")} đ
+                          </span>
+                        )}
+                        <span className="top-product-item-pct">{p.qty ?? 0} SP</span>
+                      </div>
+                    </div>
+                    <div className="top-product-item-bar-bg">
+                      <div className="top-product-item-bar-fill" style={{ width: `${barPct}%` }} />
                     </div>
                   </div>
-                  <div className="top-product-item-bar-bg">
-                    <div className="top-product-item-bar-fill" style={{ width: `${barPct}%` }} />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
           <div className="tabs">
-            {["Theo số lượng", "Theo doanh thu"].map((tab) => (
+            {([["qty", "Theo số lượng"], ["revenue", "Theo doanh thu"]] as const).map(([key, label]) => (
               <button
-                key={tab}
-                onClick={() => setTopTab(tab)}
-                className={`tabs-btn ${topTab === tab ? "active" : "inactive"}`}
+                key={key}
+                onClick={() => setTopTab(key)}
+                className={`tabs-btn ${topTab === key ? "active" : "inactive"}`}
               >
-                {tab}
+                {label}
               </button>
             ))}
           </div>
