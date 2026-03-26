@@ -449,11 +449,26 @@
       .text-Read {
         font-size: 12px;
         font-weight: var(--fw-regular);
-        color: #939394;
+        color: #015aa4;
         cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+        transition: opacity 0.15s ease;
 
-        &:hover {
+        &:hover:not(:disabled) {
           text-decoration: underline;
+        }
+
+        &--loading {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        &--disabled {
+          color: #c0c0c0;
+          cursor: default;
+          pointer-events: none;
         }
       }
     }

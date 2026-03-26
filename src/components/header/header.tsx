@@ -175,6 +175,7 @@ export default function Header(props: any) {
 
   const [listNotification, setListNotification] = useState([]);
   const [isLoadingNotify, setLoadingNotify] = useState(false);
+  const [isReadingAll, setIsReadingAll] = useState(false);
 
   const [detailNotification, setDetailNotification] = useState<INotificationItem>(null);
   const [showModalDetailNotification, setShowModalDetailNotification] = useState<boolean>(false);
@@ -256,18 +257,24 @@ export default function Header(props: any) {
   };
 
   const onReadAll = async () => {
-    const body = {};
-    const response = await NotificationService.updateReadAll(body);
-    if (response.code === 0) {
-      console.log("Đã đọc hết");
-      // showToast("Đánh dấu đã đọc thành công", "success");
-      getListNotify({
-        limit: 10,
-        page: 1,
-      });
-      getCountUnread();
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    if (isReadingAll) return;
+    setIsReadingAll(true);
+    try {
+      const response = await NotificationService.updateReadAll({});
+      if (response.code === 0) {
+        showToast("Đã đánh dấu tất cả là đã đọc", "success");
+        // Cập nhật UI ngay
+        setListNotification((prev) =>
+          (prev as any[]).map((item) => ({ ...item, unread: 1 }))
+        );
+        setCountUnread(0);
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      }
+    } catch {
+      showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    } finally {
+      setIsReadingAll(false);
     }
   };
 
@@ -721,13 +728,13 @@ export default function Header(props: any) {
                       <div>
                         <span className="text-unRead">{countUnread ? `Có ${countUnread} thông báo chưa đọc` : ""}</span>
                       </div>
-                      <div
-                        onClick={() => {
-                          onReadAll();
-                        }}
+                      <button
+                        className={`text-Read${isReadingAll ? " text-Read--loading" : ""}${!countUnread || countUnread <= 0 ? " text-Read--disabled" : ""}`}
+                        onClick={onReadAll}
+                        disabled={isReadingAll || !countUnread || countUnread <= 0}
                       >
-                        <span className="text-Read">Đánh dấu là đã đọc</span>
-                      </div>
+                        {isReadingAll ? "Đang xử lý..." : "Đánh dấu là đã đọc"}
+                      </button>
                     </div>
 
                     <div className="list-notification">
