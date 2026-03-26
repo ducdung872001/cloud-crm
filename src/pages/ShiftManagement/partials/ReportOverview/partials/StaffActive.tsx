@@ -26,14 +26,14 @@ const MOCK_STAFF: StaffItem[] = [
 type Props = { branchId: number };
 
 export default function StaffActive({ branchId }: Props) {
-  const [activeStaff, setActiveStaff] = useState<StaffItem[]>(MOCK_STAFF);
+  const [activeStaff, setActiveStaff] = useState<StaffItem[]>([]);
 
   useEffect(() => {
     if (!branchId) return;
     ShiftService.getGeneralReport(branchId)
       .then((res) => {
         const d = res?.result;
-        if (!d || !d.activeStaff || d.activeStaff.length === 0) return; // giữ mock
+        if (!d || !d.activeStaff || d.activeStaff.length === 0) return;
 
         const mapped: StaffItem[] = d.activeStaff.map((s: any, idx: number) => ({
           id: s.employeeId ?? idx + 1,
