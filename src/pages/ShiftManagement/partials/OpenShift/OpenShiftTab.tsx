@@ -8,23 +8,16 @@ import "./OpenShift.scss";
 type Props = {
   shiftConfigId: number;
   branchId: number;
-  shiftName?: string;     // tên ca từ NotOpenShiftTab
-  shiftTime?: string;     // khung giờ từ NotOpenShiftTab
-  defaultCash?: number;   // tiền lẻ mặc định để pre-fill
+  shiftName?: string;
+  shiftTime?: string;
+  defaultCash?: number;
   onShiftOpened?: (shiftId: number) => void;
 };
 
 const DENOMS = [500000, 200000, 100000, 50000, 20000, 10000, 5000, 2000, 1000];
 
-// Format số có dấu phân cách hàng nghìn
-function formatVND(n: number): string {
-  if (!n) return "0";
-  return n.toLocaleString("vi-VN");
-}
-
-// Parse chuỗi có dấu phân cách → số
-function parseAmount(s: string): number {
-  return Number(s.replace(/\./g, "").replace(/,/g, "")) || 0;
+function fmtVND(n: number): string {
+  return n ? n.toLocaleString("vi-VN") : "0";
 }
 
 export default function OpenShiftTab({
@@ -32,31 +25,23 @@ export default function OpenShiftTab({
   shiftName = "", shiftTime = "", defaultCash = 0,
   onShiftOpened,
 }: Props) {
-  const [mode, setMode]           = useState<"total" | "denom">("total");
-  const [totalRaw, setTotalRaw]   = useState<string>(defaultCash > 0 ? String(defaultCash) : "");
-  const [counts, setCounts]       = useState<Record<number, number>>({});
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState("");
+  const [mode, setMode]         = useState<"total" | "denom">("total");
+  const [totalRaw, setTotalRaw] = useState<string>(defaultCash > 0 ? String(defaultCash) : "");
+  const [counts, setCounts]     = useState<Record<number, number>>({});
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState("");
 
-  // Tổng tiền theo mode
   const totalAmount = mode === "total"
-    ? parseAmount(totalRaw)
+    ? (Number(totalRaw.replace(/\D/g, "")) || 0)
     : Object.entries(counts).reduce((s, [v, q]) => s + Number(v) * q, 0);
 
-  const denomSubtotals = useMemo(() =>
-    Object.fromEntries(DENOMS.map((v) => [v, (counts[v] || 0) * v])),
-    [counts]
-  );
+  const subtotals = useMemo(() =>
+    Object.fromEntries(DENOMS.map(v => [v, (counts[v] || 0) * v])), [counts]);
 
-  const handleTotalInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Chỉ giữ chữ số
-    const raw = e.target.value.replace(/\D/g, "");
-    setTotalRaw(raw);
-    setError("");
-  };
+  const displayTotal = totalRaw ? Number(totalRaw.replace(/\D/g, "")).toLocaleString("vi-VN") : "";
 
-  // Hiển thị có dấu phân cách trong input
-  const displayTotal = totalRaw ? Number(totalRaw).toLocaleString("vi-VN") : "";
+  const adjust = (val: number, delta: number) =>
+    setCounts(p => ({ ...p, [val]: Math.max(0, (p[val] || 0) + delta) }));
 
   const handleConfirm = async () => {
     if (loading) return;
@@ -64,145 +49,120 @@ export default function OpenShiftTab({
     setLoading(true); setError("");
     try {
       const body = mode === "denom"
-        ? {
-            shiftConfigId,
-            denominations: Object.entries(counts)
-              .filter(([, q]) => q > 0)
-              .map(([v, q]) => ({ denomination: Number(v), quantity: q })),
-          }
+        ? { shiftConfigId, denominations: Object.entries(counts).filter(([, q]) => q > 0).map(([v, q]) => ({ denomination: Number(v), quantity: q })) }
         : { shiftConfigId, openingCash: totalAmount };
-
       const res = await ShiftService.openShift(branchId, body);
       const shiftId = res?.result?.id ?? res?.data?.id;
-      if (shiftId) {
-        saveActiveShiftId(shiftId); // Lưu vào localStorage để dùng khi tạo đơn
-      }
+      if (shiftId) saveActiveShiftId(shiftId);
       onShiftOpened?.(shiftId ?? 0);
-    } catch (e) {
-      console.error("Lỗi mở ca:", e);
-      onShiftOpened?.(0);
-    } finally {
-      setLoading(false);
-    }
+    } catch { onShiftOpened?.(0); }
+    finally { setLoading(false); }
   };
 
   return (
     <div className="page-open-shift">
 
-      {/* Context banner — tên ca + khung giờ */}
+      {/* Banner */}
       {(shiftName || shiftTime) && (
-        <div className="open-shift-context">
-          <div className="ctx-left">
-            <span className="ctx-icon"><Icon name="Clock" /></span>
+        <div className="os-banner">
+          <div className="os-banner-left">
+            <div className="os-banner-icon"><Icon name="Clock" /></div>
             <div>
-              <div className="ctx-name">{shiftName || "Ca làm việc"}</div>
-              {shiftTime && <div className="ctx-time">{shiftTime}</div>}
+              <div className="os-banner-name">{shiftName || "Ca làm việc"}</div>
+              {shiftTime && <div className="os-banner-time">{shiftTime}</div>}
             </div>
           </div>
-          <div className="ctx-right">
-            <span className="ctx-date">{new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" })}</span>
+          <div className="os-banner-date">
+            {new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" })}
           </div>
         </div>
       )}
 
-      {/* Mode switcher */}
-      <div className="open-shift-modes">
-        <button className={`mode-btn${mode === "total" ? " active" : ""}`} onClick={() => setMode("total")}>
-          <Icon name="Banknote" />
-          <span>Nhập tổng tiền</span>
+      {/* Mode tabs */}
+      <div className="os-modes">
+        <button className={`os-mode-btn${mode === "total" ? " active" : ""}`} onClick={() => setMode("total")}>
+          <Icon name="Banknote" /><span>Nhập tổng tiền</span>
         </button>
-        <button className={`mode-btn${mode === "denom" ? " active" : ""}`} onClick={() => setMode("denom")}>
-          <Icon name="ListBullets" />
-          <span>Nhập theo mệnh giá</span>
+        <button className={`os-mode-btn${mode === "denom" ? " active" : ""}`} onClick={() => setMode("denom")}>
+          <Icon name="ListBullets" /><span>Nhập theo mệnh giá</span>
         </button>
       </div>
 
-      <div className="open-shift-content">
+      {/* Content */}
+      <div className="os-body">
 
-        {/* Mode 1: Nhập tổng */}
         {mode === "total" && (
-          <div className="total-mode">
-            <p className="hint-text">Nhập tổng số tiền mặt thực tế có trong két để bắt đầu ca.</p>
-
-            <div className="amount-input-group">
+          <div className="os-total-mode">
+            <p className="os-hint">Nhập tổng tiền mặt thực tế trong két để bắt đầu ca.</p>
+            <div className="os-total-field">
               <label>Tiền mặt đầu ca</label>
-              <div className={`amount-input-wrap${error ? " has-error" : ""}`}>
+              <div className={`os-total-input${error ? " error" : ""}`}>
                 <input
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="0"
-                  value={displayTotal}
-                  onChange={handleTotalInput}
-                  autoFocus
+                  type="text" inputMode="numeric" placeholder="0" value={displayTotal} autoFocus
+                  onChange={e => { setTotalRaw(e.target.value.replace(/\D/g, "")); setError(""); }}
                 />
-                <span className="currency-badge">VNĐ</span>
+                <span className="os-currency">VNĐ</span>
               </div>
-              {error && <p className="error-msg">{error}</p>}
+              {error && <p className="os-error">{error}</p>}
               {defaultCash > 0 && (
-                <button
-                  className="preset-btn"
-                  onClick={() => { setTotalRaw(String(defaultCash)); setError(""); }}
-                >
-                  Dùng mặc định: {formatVND(defaultCash)} VNĐ
+                <button className="os-preset" onClick={() => { setTotalRaw(String(defaultCash)); setError(""); }}>
+                  Dùng mặc định: {fmtVND(defaultCash)} VNĐ
                 </button>
               )}
             </div>
           </div>
         )}
 
-        {/* Mode 2: Nhập mệnh giá */}
         {mode === "denom" && (
-          <div className="denom-mode">
-            <p className="hint-text">Đếm và nhập số tờ theo từng mệnh giá.</p>
-            <div className="denom-table">
-              <div className="denom-header">
+          <div className="os-denom-mode">
+            <p className="os-hint">Đếm và nhập số tờ theo từng mệnh giá.</p>
+            <div className="os-denom-table">
+              <div className="os-denom-head">
                 <span>Mệnh giá</span>
                 <span>Số tờ</span>
                 <span>Thành tiền</span>
               </div>
-              {DENOMS.map((val) => (
-                <div key={val} className={`denom-row${(counts[val] || 0) > 0 ? " has-value" : ""}`}>
-                  <span className="denom-val">{formatVND(val)} đ</span>
-                  <div className="denom-stepper">
-                    <button onClick={() => setCounts((p) => ({ ...p, [val]: Math.max(0, (p[val] || 0) - 1) }))}>−</button>
-                    <input
-                      type="number"
-                      min={0}
-                      value={counts[val] || ""}
-                      placeholder="0"
-                      onChange={(e) => setCounts((p) => ({ ...p, [val]: Math.max(0, parseInt(e.target.value) || 0) }))}
-                    />
-                    <button onClick={() => setCounts((p) => ({ ...p, [val]: (p[val] || 0) + 1 }))}>+</button>
+              {DENOMS.map(val => {
+                const qty = counts[val] || 0;
+                const sub = subtotals[val] || 0;
+                return (
+                  <div key={val} className={`os-denom-row${qty > 0 ? " active" : ""}`}>
+                    <div className="os-denom-label">
+                      <span className="val">{fmtVND(val)}</span>
+                      <span className="unit">đ</span>
+                    </div>
+                    <div className="os-stepper">
+                      <button onClick={() => adjust(val, -1)}>−</button>
+                      <input
+                        type="number" min={0} value={qty || ""} placeholder="0"
+                        onChange={e => setCounts(p => ({ ...p, [val]: Math.max(0, parseInt(e.target.value) || 0) }))}
+                      />
+                      <button onClick={() => adjust(val, 1)}>+</button>
+                    </div>
+                    <div className={`os-denom-sub${sub > 0 ? " active" : ""}`}>
+                      {sub > 0 ? fmtVND(sub) + " đ" : "—"}
+                    </div>
                   </div>
-                  <span className={`denom-subtotal${denomSubtotals[val] > 0 ? " active" : ""}`}>
-                    {denomSubtotals[val] > 0 ? `= ${formatVND(denomSubtotals[val])} đ` : "—"}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
 
       </div>
 
-      {/* Footer sticky */}
-      <div className="open-shift-footer">
-        <div className="footer-total">
-          <span className="footer-label">TỔNG TIỀN ĐẦU CA</span>
-          <span className={`footer-amount${totalAmount > 0 ? " has-value" : ""}`}>
-            {formatVND(totalAmount)} <span className="unit">VNĐ</span>
+      {/* Footer */}
+      <div className="os-footer">
+        <div className="os-footer-total">
+          <span className="os-footer-label">TỔNG TIỀN ĐẦU CA</span>
+          <span className={`os-footer-amount${totalAmount > 0 ? " active" : ""}`}>
+            {fmtVND(totalAmount)}<span className="u"> VNĐ</span>
           </span>
         </div>
-        <Button
-          color="primary"
-          className="btn-confirm"
-          disabled={loading || totalAmount <= 0}
-          onClick={handleConfirm}
-        >
+        <Button color="primary" className="os-confirm-btn" disabled={loading || totalAmount <= 0} onClick={handleConfirm}>
           {loading
             ? <><Icon name="Spinner" className="mr-8 spin" />Đang xử lý...</>
-            : <><Icon name="CheckCircle" className="mr-8" />Xác nhận vào ca</>
-          }
+            : <><Icon name="CheckCircle" className="mr-8" />Xác nhận vào ca</>}
         </Button>
       </div>
 
