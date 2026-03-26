@@ -271,3 +271,119 @@
     .btn-sent { background: #16a34a !important; border-color: #16a34a !important; }
   }
 }
+
+// ── Print styles ─────────────────────────────────────────────────────────────
+@media print {
+  // Ẩn toàn bộ UI thông thường
+  .page-shift-report .rsr-layout { display: none !important; }
+
+  // Ẩn sidebar, header, tabs của app
+  aside, nav, header,
+  .sidebar, .nav-sidebar,
+  .action-header, .tab-header,
+  .page-content > *:not(.page-shift-report),
+  .page-shift-report .rsr-layout { display: none !important; }
+
+  // Chỉ hiện print section
+  .rsr-print-only { display: block !important; }
+
+  body { background: #fff !important; margin: 0; padding: 0; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+// Print section — ẩn trên màn hình, hiện khi in
+.rsr-print-only {
+  display: none;
+  font-family: "Arial", sans-serif;
+  max-width: 38rem;
+  margin: 0 auto;
+  padding: 2.4rem;
+  color: #000;
+
+  .rsr-print-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.6rem;
+    border-bottom: 2px solid #000;
+
+    .rsr-print-branch {
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.8rem;
+    }
+
+    .rsr-print-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .rsr-print-sub {
+      font-size: 1.3rem;
+      color: #555;
+    }
+  }
+
+  .rsr-print-info {
+    margin-bottom: 1.2rem;
+  }
+
+  .rsr-print-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-size: 1.3rem;
+    border-bottom: 1px dashed #ddd;
+
+    span:first-child { color: #555; }
+    span:last-child  { font-weight: 600; }
+
+    &.rsr-print-total {
+      border-top: 2px solid #000;
+      border-bottom: 2px solid #000;
+      padding: 0.8rem 0;
+      margin-top: 0.4rem;
+      font-weight: 800;
+      font-size: 1.5rem;
+
+      span:first-child { color: #000; }
+    }
+
+    &.rsr-print-diff {
+      border-bottom: none;
+      font-weight: 700;
+      font-size: 1.4rem;
+
+      &.minus { span { color: #c00 !important; } }
+      &.plus  { span { color: #080 !important; } }
+    }
+  }
+
+  .rsr-print-divider {
+    border: none;
+    border-top: 1px solid #000;
+    margin: 1.2rem 0;
+  }
+
+  .rsr-print-note {
+    font-size: 1.2rem;
+    color: #555;
+    font-style: italic;
+    padding: 0.6rem 0;
+  }
+
+  .rsr-print-footer {
+    margin-top: 3.2rem;
+    padding-top: 1.6rem;
+    border-top: 1px dashed #999;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    color: #555;
+  }
+}

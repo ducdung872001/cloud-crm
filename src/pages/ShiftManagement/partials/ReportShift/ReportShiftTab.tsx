@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Icon from "components/icon";
 import Button from "components/button/button";
 import Loading from "components/loading";
 import ShiftService from "services/ShiftService";
+import { UserContext, ContextType } from "contexts/userContext";
 import "./ReportShift.scss";
 
 type ReportData = {
@@ -41,6 +42,9 @@ function fmtCompact(v: number): string {
 }
 
 export default function ShiftReportTab({ shiftId, branchId }: Props) {
+  const { dataBranch } = useContext(UserContext) as ContextType;
+  const branchName = dataBranch?.label ?? "";
+
   const [data, setData]       = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -73,6 +77,70 @@ export default function ShiftReportTab({ shiftId, branchId }: Props) {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [shiftId]);
+
+  const handlePrint = () => {
+    if (!data) return;
+    const win = window.open("", "_blank", "width=640,height=900");
+    if (!win) return;
+
+    const f = (n: number) => n.toLocaleString("vi-VN");
+    const diffClass = diff < 0 ? "minus" : diff > 0 ? "plus" : "";
+    const diffSign  = diff > 0 ? "+" : "";
+
+    const rows = (label: string, val: string, cls = "") =>
+      `<div class="row ${cls}"><span class="lbl">${label}</span><span class="val">${val}</span></div>`;
+
+    const html = [
+      "<!DOCTYPE html><html lang='vi'><head><meta charset='UTF-8'/>",
+      "<title>Báo cáo kết ca</title><style>",
+      "* { margin:0; padding:0; box-sizing:border-box; }",
+      "body { font-family:Arial,sans-serif; font-size:13px; color:#000; padding:24px; max-width:400px; margin:0 auto; }",
+      ".branch { font-size:15px; font-weight:900; text-align:center; text-transform:uppercase; margin-bottom:4px; }",
+      ".title  { font-size:17px; font-weight:900; text-align:center; letter-spacing:2px; text-transform:uppercase; }",
+      ".sub    { text-align:center; color:#555; margin-top:4px; margin-bottom:16px; font-size:12px; }",
+      "hr      { border:none; border-top:1px solid #000; margin:14px 0; }",
+      ".row    { display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px dashed #ddd; font-size:13px; }",
+      ".lbl    { color:#555; }",
+      ".val    { font-weight:600; }",
+      ".total  { border-top:2px solid #000; border-bottom:2px solid #000; padding:8px 0; margin-top:4px; font-weight:800; font-size:14px; }",
+      ".diff   { font-weight:700; font-size:14px; border-bottom:none; }",
+      ".minus .val { color:#c00; }",
+      ".plus  .val { color:#080; }",
+      ".note   { font-style:italic; color:#555; font-size:12px; padding:4px 0; }",
+      ".footer { display:flex; justify-content:space-between; margin-top:32px; padding-top:14px; border-top:1px dashed #999; font-size:11px; color:#555; }",
+      "</style></head><body>",
+      branchName ? `<div class="branch">${branchName}</div>` : "",
+      `<div class="title">BÁO CÁO KẾT CA</div>`,
+      `<div class="sub">${data.shiftName} · ${data.date}</div>`,
+      "<hr/>",
+      rows("Nhân viên",  data.employeeName),
+      rows("Ca làm",     data.shiftName),
+      rows("Thời gian",  data.timeRange),
+      rows("Ngày",       data.date),
+      "<hr/>",
+      rows("Tiền lẻ đầu ca",  f(data.openingCash)       + " VNĐ"),
+      rows("Tiền mặt",         f(data.totalCash)          + " VNĐ"),
+      rows("Thẻ ngân hàng",    f(data.totalCard)          + " VNĐ"),
+      rows("QR / Momo",        f(data.totalQrMomo)        + " VNĐ"),
+      rows("Chuyển khoản",     f(data.totalTransfer)      + " VNĐ"),
+      rows("Tổng doanh thu",   f(data.totalRevenue)       + " VNĐ", "total"),
+      "<hr/>",
+      rows("Tiền mặt thực đếm", `<span style="color:#1a56db">${f(data.actualCashCounted)} VNĐ</span>`),
+      rows("Chênh lệch",       diffSign + f(diff) + " VNĐ", `diff ${diffClass}`),
+      data.diffNote ? `<div class="note">Lý do: ${data.diffNote}</div>` : "",
+      `<div class="footer">`,
+      `  <span>Ngày in: ${new Date().toLocaleString("vi-VN")}</span>`,
+      `  <span>Chữ ký: ___________</span>`,
+      `</div>`,
+      "</body></html>",
+    ].join("\n");
+
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(() => { win.print(); }, 300);
+  };
+
 
   const handleSendReport = async () => {
     if (!shiftId || shiftId <= 0) return;
@@ -222,7 +290,7 @@ export default function ShiftReportTab({ shiftId, branchId }: Props) {
             </div>
 
             <div className="rsr-paper-actions">
-              <Button variant="outline" color="primary" onClick={() => window.print()}>
+              <Button variant="outline" color="primary" onClick={handlePrint}>
                 <Icon name="Print" className="mr-8" />In báo cáo
               </Button>
               <Button
