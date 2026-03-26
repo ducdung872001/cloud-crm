@@ -238,8 +238,8 @@ export default function WarehouseBookList() {
     ...DataPaginationDefault,
     name: "giao dịch",
     isChooseSizeLimit: true,
-    setPage:       (page)  => setParams(p => ({ ...p, page })),
-    chooseSizeLimit:(limit) => setParams(p => ({ ...p, limit })),
+    setPage:        (page)  => setParams(p => ({ ...p, page })),
+    chooseSizeLimit:(limit) => setParams(p => ({ ...p, limit, page: 1 })),
   });
 
   const abortController = new AbortController();
@@ -252,15 +252,16 @@ export default function WarehouseBookList() {
     if (p.warehouseId) req.warehouseId = +p.warehouseId;
     if (p.fromTime)    req.fromTime    = p.fromTime;
     if (p.toTime)      req.toTime      = p.toTime;
-    req.page = Math.max((p.page ?? 1) - 1, 0);
-    req.size = p.limit ?? 10;
+    req.page  = p.page ?? 1;
+    req.size  = p.limit ?? DataPaginationDefault.sizeLimit;
+    req.limit = p.limit ?? DataPaginationDefault.sizeLimit;
 
     const res = await InventoryService.ledgerList(req, abortController.signal);
     if (res.code === 0 || res.status === 1) {
       const result = res.result ?? res.data ?? {};
       const items  = result.items ?? result.content ?? result.data ?? [];
       const total  = +(result.total ?? result.totalElements ?? items.length ?? 0);
-      const curPage = +(result.page ?? req.page ?? 0) + 1;
+      const curPage = +(result.page ?? req.page ?? 1);
       setListData(items);
       setPagination(prev => ({
         ...prev,
