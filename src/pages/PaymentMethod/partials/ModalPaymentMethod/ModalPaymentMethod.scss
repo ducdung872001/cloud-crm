@@ -1,0 +1,163 @@
+/* src/pages/PaymentMethod/partials/ModalPaymentMethod/ModalPaymentMethod.scss */
+.modal-payment-method .modal-dialog {
+  max-width: 56rem;
+  @media (max-width: 768px) {
+    max-width: 95%;
+  }
+}
+
+.mpm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.mpm-field {
+  &--err {
+    .mpm-input {
+      border-color: var(--red, #e53e3e) !important;
+      box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1) !important;
+    }
+  }
+}
+
+.mpm-label {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ink, #1e293b);
+  margin-bottom: 0.6rem;
+}
+.mpm-req {
+  color: var(--red, #e53e3e);
+  margin-left: 2px;
+}
+.mpm-hint-inline {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--muted, #64748b);
+  margin-left: 4px;
+  font-style: italic;
+}
+.mpm-error {
+  display: block;
+  font-size: 1.15rem;
+  color: var(--red, #e53e3e);
+  margin-top: 0.4rem;
+  font-weight: 600;
+}
+.mpm-loading,
+.mpm-empty {
+  font-size: 1.3rem;
+  color: var(--muted, #64748b);
+  padding: 1rem 0;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.mpm-input {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  border: 1.5px solid var(--border, #e2e8f0);
+  border-radius: 0.5rem;
+  font-family: var(--font-base);
+  font-size: 1.4rem;
+  color: var(--ink, #1e293b);
+  background: var(--white, #fff);
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  &:focus {
+    border-color: var(--lime-d, #65a30d);
+    box-shadow: 0 0 0 3px rgba(132, 204, 22, 0.12);
+  }
+  &::placeholder {
+    color: var(--muted2, #94a3b8);
+  }
+  &--mono {
+    font-family: "Courier New", monospace;
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* Template info banner (edit mode) */
+.mpm-template-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  padding: 1.2rem 1.4rem;
+  background: var(--paper, #f8fafc);
+  border-radius: 0.8rem;
+  border-left: 4px solid var(--lime-d, #65a30d);
+}
+.mpm-template-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--ink, #1e293b);
+  margin-bottom: 0.2rem;
+}
+.mpm-template-type {
+  font-size: 1.2rem;
+  color: var(--muted, #64748b);
+  margin-bottom: 0.4rem;
+}
+.mpm-template-desc {
+  font-size: 1.2rem;
+  color: var(--muted, #64748b);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* 3-col row */
+.mpm-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.2rem;
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mpm-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0;
+}
+.mpm-toggle-label {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--ink, #1e293b);
+}
+
+/* base-switch (reuse) */
+.base-switch {
+  appearance: none;
+  width: 4rem;
+  height: 2rem;
+  background: #cbd5e0;
+  border-radius: 2rem;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s;
+  flex-shrink: 0;
+  &:checked {
+    background: var(--primary-color, #84cc16);
+    &::before {
+      transform: translateX(2rem);
+    }
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    width: 1.6rem;
+    height: 1.6rem;
+    background: white;
+    border-radius: 50%;
+    top: 0.2rem;
+    left: 0.2rem;
+    transition: transform 0.3s;
+  }
+}
