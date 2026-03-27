@@ -626,6 +626,8 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     if (res.code === 0) showToast("Đã lưu tags", "success");
     else showToast(res.message ?? "Lỗi lưu tags", "error");
   };
+
+  const handleSubmit = async () => {
     if (!formData.name.trim()) {
       showToast("Vui lòng nhập tên sản phẩm", "error");
       return;

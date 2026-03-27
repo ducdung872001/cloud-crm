@@ -1470,7 +1470,10 @@
 // Card title action button (Lưu mô tả / Lưu tags)
 .add-prod-card__title-action {
   margin-left: auto;
-  padding: 4px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
   background: var(--primary-color, #015aa4);
   color: #fff;
   border: none;
@@ -1478,85 +1481,230 @@
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.15s;
   white-space: nowrap;
   flex-shrink: 0;
+  letter-spacing: 0.01em;
 
-  &:hover { opacity: 0.88; }
+  &:hover { background: color-mix(in srgb, var(--primary-color, #015aa4) 85%, #000); }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
-// Editor section
+// ── Editor section ─────────────────────────────────
 .add-prod-editor-hint {
   font-size: 12px;
   color: #6b7280;
-  margin: 0 0 10px;
-  line-height: 1.5;
+  margin: 0 0 12px;
+  line-height: 1.6;
 }
 
 .add-prod-editor-note {
   font-size: 12px;
   color: #9ca3af;
-  margin: 8px 0 0;
+  margin: 10px 0 0;
   font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .add-prod-editor-wrap {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
   overflow: hidden;
-  min-height: 220px;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
 
-  // Override slate editor styling inside the card
-  & > div {
-    min-height: 200px;
+  &:focus-within {
+    border-color: var(--primary-color, #015aa4);
+    box-shadow: 0 0 0 3px rgba(1, 90, 164, 0.08);
+  }
+
+  // ── Toolbar (data-test-id="menu") ──────────────
+  .base-editor-fill .wrapper__editor [data-test-id="menu"],
+  [data-test-id="menu"] {
+    background: #f8f9fc !important;
+    border-bottom: 1.5px solid #e5e7eb !important;
+    padding: 8px 12px !important;
+    position: relative !important;
+    top: unset !important;
+    left: unset !important;
+    right: unset !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    align-items: center;
+    z-index: 1 !important;
+  }
+
+  // Toolbar buttons — material icons
+  .base-editor-fill .wrapper__editor [data-test-id="menu"] > *,
+  [data-test-id="menu"] > * {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    color: #374151;
+    transition: background 0.12s, color 0.12s;
+    cursor: pointer;
+    font-size: 1.6rem !important;
+
+    &:hover {
+      background: #e5e7eb;
+      color: var(--primary-color, #015aa4);
+    }
+  }
+
+  // Active toolbar button
+  [data-test-id="menu"] > [style*="color: black"],
+  [data-test-id="menu"] > [style*="color:black"] {
+    background: #dbeafe;
+    color: var(--primary-color, #015aa4) !important;
+    border-radius: 6px;
+  }
+
+  // Divider between toolbar groups
+  .delimiter {
+    width: 1px !important;
+    height: 20px !important;
+    background: #e5e7eb !important;
+    margin: 0 4px !important;
+    color: transparent !important;
+  }
+
+  // ── Editor content area ────────────────────────
+  .base-editor-fill .wrapper__editor .editor,
+  .editor {
+    min-height: 200px !important;
+    max-height: 480px !important;
+    padding: 14px 16px !important;
+    font-size: 13.5px !important;
+    line-height: 1.7 !important;
+    color: #1f2937 !important;
+    overflow-y: auto !important;
+    margin-top: 0 !important;
+
+    // Scrollbar
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+
+    // Placeholder
+    [data-slate-placeholder] {
+      color: #9ca3af !important;
+      font-style: italic;
+      pointer-events: none;
+    }
+
+    p { margin-bottom: 6px; }
+    h1 { font-size: 1.6em; font-weight: 700; margin: 12px 0 6px; color: #111827; }
+    h2 { font-size: 1.3em; font-weight: 700; margin: 10px 0 4px; color: #1f2937; }
+    blockquote {
+      border-left: 3px solid var(--primary-color, #015aa4);
+      padding: 6px 12px;
+      margin: 8px 0;
+      background: #eff6ff;
+      border-radius: 0 6px 6px 0;
+      color: #374151;
+      font-style: italic;
+    }
+    code {
+      background: #f3f4f6;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 0.88em;
+      color: #dc2626;
+    }
+    ul, ol { padding-left: 22px; margin: 6px 0; }
+    li { margin-bottom: 2px; }
+    a { color: var(--primary-color, #015aa4); text-decoration: underline; }
+    img { max-width: 100%; border-radius: 6px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 13px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+
+      th {
+        background: #f8f9fc;
+        font-weight: 600;
+        padding: 8px 12px;
+        border: 1px solid #e5e7eb;
+        text-align: left;
+      }
+      td {
+        padding: 8px 12px;
+        border: 1px solid #e5e7eb;
+      }
+    }
+  }
+
+  // Remove default border from base-editor-fill
+  &.base-editor-fill .wrapper__editor,
+  .wrapper__editor {
+    border: none !important;
+    border-radius: 0 !important;
   }
 }
 
-// Tags section
+// ── Tags section ────────────────────────────────────
 .add-prod-tags {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .add-prod-tags__selected {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  min-height: 0;
 }
 
 .add-prod-tag-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 10px 4px 12px;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  gap: 4px;
+  padding: 5px 8px 5px 12px;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1px solid #93c5fd;
   color: #1d4ed8;
   border-radius: 20px;
   font-size: 12.5px;
   font-weight: 500;
   line-height: 1;
+  transition: all 0.15s;
+
+  &:hover {
+    background: #dbeafe;
+    border-color: #60a5fa;
+  }
 
   button {
     background: none;
     border: none;
     cursor: pointer;
-    color: #6b7280;
-    font-size: 14px;
+    color: #93c5fd;
+    font-size: 15px;
     line-height: 1;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     transition: all 0.15s;
+    margin-left: 1px;
 
     &:hover {
-      background: #dbeafe;
+      background: rgba(220, 38, 38, 0.12);
       color: #dc2626;
     }
   }
@@ -1570,15 +1718,16 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  border: 1px solid #e5e7eb;
+  padding: 9px 13px;
+  border: 1.5px solid #e5e7eb;
   border-radius: 8px;
   background: #f9fafb;
-  transition: border-color 0.15s;
+  transition: all 0.15s;
 
   &:focus-within {
     border-color: var(--primary-color, #015aa4);
     background: #fff;
+    box-shadow: 0 0 0 3px rgba(1, 90, 164, 0.08);
   }
 
   svg { flex-shrink: 0; }
@@ -1597,40 +1746,55 @@
 
 .add-prod-tags__dropdown {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + 5px);
   left: 0;
   right: 0;
   background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  z-index: 200;
-  max-height: 220px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  z-index: 300;
+  max-height: 240px;
   overflow-y: auto;
-  padding: 4px;
+  padding: 6px;
+  animation: tag-dropdown-in 0.12s ease;
+
+  // Scrollbar
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 4px; }
+
+  @keyframes tag-dropdown-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: none; }
+  }
 }
 
 .add-prod-tags__option {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 8px 10px;
+  border-radius: 7px;
   font-size: 13px;
   color: #374151;
   cursor: pointer;
   transition: background 0.1s;
 
-  svg { flex-shrink: 0; color: var(--primary-color, #015aa4); }
+  svg {
+    flex-shrink: 0;
+    color: #22c55e;
+  }
 
   span { flex: 1; }
 
   &:hover { background: #f3f4f6; }
 
   &--selected {
-    background: #eff6ff;
     color: #1d4ed8;
     font-weight: 500;
+    background: #f0f7ff;
+
+    &:hover { background: #e0f0ff; }
   }
 
   &--create {
@@ -1640,13 +1804,15 @@
     margin-top: 4px;
     padding-top: 10px;
 
+    svg { color: var(--primary-color, #015aa4); }
     &:hover { background: #eff6ff; }
   }
 }
 
 .add-prod-tags__empty {
-  padding: 12px;
+  padding: 14px 12px;
   font-size: 12.5px;
   color: #9ca3af;
   text-align: center;
+  line-height: 1.5;
 }
