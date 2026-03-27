@@ -30,9 +30,9 @@ interface CartProps {
   onRemovePromo?:      () => void;
   onCouponDiscountChange?: (discount: number) => void;
   onResetVoucher?: () => void;
-  // ── Giảm giá thủ công tại quầy ───────────────────────────────────────────
-  manualDiscount?: number;
-  onManualDiscountChange?: (discount: number) => void;
+  // ── Ghi chú ──────────────────────────────────────────────────────────────
+  note?: string;
+  onNoteChange?: (note: string) => void;
 }
 
 const Cart: React.FC<CartProps> = ({
@@ -43,18 +43,11 @@ const Cart: React.FC<CartProps> = ({
   loyaltyWallet, exchangeRate = 1000, pointsToUse = 0, onPointsChange,
   eligiblePromoCount = 0, appliedPromo, promoDiscount = 0,
   onViewPromos, onRemovePromo, onCouponDiscountChange, onResetVoucher,
-  manualDiscount = 0, onManualDiscountChange,
+  note = "", onNoteChange,
 }) => {
   const [orderType, setOrderType] = useState<OrderType>("retail");
   const [voucher, setVoucher]     = useState("");
   const [isSaving, setIsSaving]   = useState(false);
-
-  // ── Ship address (chỉ dùng khi orderType === "ship") ─────────────────────
-  const [shipAddress, setShipAddress] = useState("");
-
-  // ── Giảm giá thủ công ────────────────────────────────────────────────────
-  const [discountInput, setDiscountInput] = useState("");   // giá trị người dùng gõ
-  const [discountMode, setDiscountMode]   = useState<"amount" | "percent">("amount");
 
   // ── Coupon state ──────────────────────────────────────────────────────────
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
@@ -95,7 +88,7 @@ const Cart: React.FC<CartProps> = ({
   const moneyFromPoints = (pointsToUse ?? 0) * exchangeRate;
   const finalTotal      = Math.max(
     0,
-    subtotal - discount - moneyFromPoints - promoDiscount - couponDiscount - manualDiscount,
+    subtotal - discount - moneyFromPoints - promoDiscount - couponDiscount,
   );
 
   const ORDER_TYPES: { id: OrderType; label: string }[] = [
@@ -170,37 +163,12 @@ const Cart: React.FC<CartProps> = ({
     }
   };
 
-  // ── Xử lý giảm giá thủ công ──────────────────────────────────────────────
-  const handleDiscountInput = (raw: string) => {
-    // Chỉ cho phép số và dấu chấm/phẩy
-    const cleaned = raw.replace(/[^0-9.,]/g, "").replace(",", ".");
-    setDiscountInput(cleaned);
-    const num = parseFloat(cleaned) || 0;
-    const computed = discountMode === "percent"
-      ? Math.round(subtotal * Math.min(num, 100) / 100)
-      : Math.min(num, subtotal);
-    onManualDiscountChange?.(computed);
-  };
-
-  const handleDiscountModeToggle = () => {
-    const nextMode = discountMode === "amount" ? "percent" : "amount";
-    setDiscountMode(nextMode);
-    // Recompute khi đổi mode
-    const num = parseFloat(discountInput) || 0;
-    const computed = nextMode === "percent"
-      ? Math.round(subtotal * Math.min(num, 100) / 100)
-      : Math.min(num, subtotal);
-    onManualDiscountChange?.(computed);
-  };
-
-  const handleDiscountClear = () => {
-    setDiscountInput("");
-    onManualDiscountChange?.(0);
-  };
-
   const onCreateInvoice = async () => {
     try {
-      const invoice = await InvoiceService.createInvoice({ customerId: customer?.id ?? -1 });
+      const invoice = await InvoiceService.createInvoice({
+        customerId: customer?.id ?? -1,
+        ...(note?.trim() ? { note: note.trim() } : {}),
+      });
       if (invoice.code === 0 && invoice?.result?.invoiceId) {
         setInvoiceDraftToPaid(invoice.result.invoice);
         onPay(invoice.result.invoiceId);
@@ -219,7 +187,10 @@ const Cart: React.FC<CartProps> = ({
     }
     setIsSaving(true);
     try {
-      const draftRes = await InvoiceService.createInvoice({ customerId: Number(customer?.id ?? -1) });
+      const draftRes = await InvoiceService.createInvoice({
+        customerId: Number(customer?.id ?? -1),
+        ...(note?.trim() ? { note: note.trim() } : {}),
+      });
       if (draftRes.code !== 0 || !draftRes?.result?.invoiceId) {
         showToast(draftRes.message ?? "Không thể tạo đơn tạm", "error");
         return;
@@ -350,41 +321,6 @@ const Cart: React.FC<CartProps> = ({
           </div>
         )}
 
-        {/* ── Giảm giá thủ công ── */}
-        <div className="manual-discount">
-          <div className="manual-discount__label">
-            <span>🏷️ Giảm giá trực tiếp</span>
-            {manualDiscount > 0 && (
-              <button className="manual-discount__clear" onClick={handleDiscountClear}>✕ Bỏ</button>
-            )}
-          </div>
-          <div className="manual-discount__row">
-            <input
-              className="manual-discount__input"
-              type="text"
-              inputMode="decimal"
-              placeholder={discountMode === "amount" ? "Nhập số tiền..." : "Nhập %..."}
-              value={discountInput}
-              onChange={(e) => handleDiscountInput(e.target.value)}
-            />
-            <button
-              className={`manual-discount__mode${discountMode === "percent" ? " active" : ""}`}
-              onClick={handleDiscountModeToggle}
-              title="Chuyển đổi giữa số tiền và %"
-            >
-              {discountMode === "amount" ? "₫" : "%"}
-            </button>
-          </div>
-          {manualDiscount > 0 && (
-            <div className="manual-discount__preview">
-              Giảm: <strong>−{manualDiscount.toLocaleString("vi")} ₫</strong>
-              {discountMode === "percent" && discountInput && (
-                <span className="manual-discount__pct"> ({discountInput}%)</span>
-              )}
-            </div>
-          )}
-        </div>
-
         <div className="summary">
           <div className="sr">
             <span className="sr__k">Tạm tính ({itemCount} sản phẩm)</span>
@@ -398,14 +334,6 @@ const Cart: React.FC<CartProps> = ({
               {couponDiscount > 0 ? `−${couponDiscount.toLocaleString("vi")} ₫` : "0 ₫"}
             </span>
           </div>
-
-          {/* Giảm giá trực tiếp tại quầy */}
-          {manualDiscount > 0 && (
-            <div className="sr">
-              <span className="sr__k">Giảm trực tiếp</span>
-              <span className="sr__v sr__v--red">−{manualDiscount.toLocaleString("vi")} ₫</span>
-            </div>
-          )}
 
           {/* ── Banner khuyến mãi ── */}
           {!appliedPromo && eligiblePromoCount > 0 && (
@@ -508,6 +436,35 @@ const Cart: React.FC<CartProps> = ({
         >
           {isSaving ? "⏳ Đang lưu..." : "💾 Lưu tạm"}
         </button>
+
+        {/* ── Ghi chú đơn hàng — collapsible ── */}
+        <div className="cart-note">
+          <button
+            className={`cart-note__toggle${note?.trim() ? " has-value" : ""}`}
+            onClick={() => {
+              const el = document.getElementById("cart-note-textarea");
+              if (el) {
+                el.style.display = el.style.display === "none" ? "block" : "none";
+                if (el.style.display !== "none") (el as HTMLTextAreaElement).focus();
+              }
+            }}
+          >
+            <span>📝 Ghi chú đơn hàng</span>
+            {note?.trim()
+              ? <span className="cart-note__preview">{note.trim().slice(0, 30)}{note.trim().length > 30 ? "…" : ""}</span>
+              : <span className="cart-note__hint">Nhấn để thêm ghi chú</span>
+            }
+          </button>
+          <textarea
+            id="cart-note-textarea"
+            className="cart-note__textarea"
+            style={{ display: note?.trim() ? "block" : "none" }}
+            placeholder="VD: Giao buổi chiều, không lấy túi nilon, gói quà..."
+            rows={3}
+            value={note}
+            onChange={(e) => onNoteChange?.(e.target.value)}
+          />
+        </div>
 
         <button className="pay-btn" onClick={onCreateInvoice} disabled={items.length === 0}>
           💳 Tạo đơn hàng

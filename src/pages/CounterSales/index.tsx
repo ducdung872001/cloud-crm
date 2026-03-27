@@ -136,6 +136,7 @@ const CounterSales: React.FC = () => {
   const [appliedPromo, setAppliedPromo] = useState<EligiblePromotion | null>(null);
   const [couponDiscount, setCouponDiscount] = useState(0);    // ← THÊM
   const [manualDiscount, setManualDiscount] = useState(0);    // ← giảm giá thủ công
+  const [orderNote, setOrderNote]           = useState("");    // ← ghi chú đơn hàng
   const [promoDiscount, setPromoDiscount] = useState(0);
   const checkPromoRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const [exchangeRate, setExchangeRate] = useState<number>(1000);
@@ -453,6 +454,8 @@ const CounterSales: React.FC = () => {
                 onRemovePromo={() => { setAppliedPromo(null); setPromoDiscount(0); }}
                 onCouponDiscountChange={setCouponDiscount}
                 onManualDiscountChange={setManualDiscount}
+                note={orderNote}
+                onNoteChange={setOrderNote}
                 onResetVoucher={paymentSuccessCount > 0 ? () => {} : undefined}
                 onSavedDraft={() => {
                   // Xóa giỏ hàng + refresh badge sau khi lưu tạm
@@ -526,6 +529,7 @@ const CounterSales: React.FC = () => {
           setPromoDiscount(0);
           setAppliedPromo(null);
           setManualDiscount(0);
+          setOrderNote("");
           setPaymentSuccessCount(prev => prev + 1);
           // Tự động xóa đơn tạm nếu đơn này được tải từ tab Đơn tạm
           if (activeDraftId) {
@@ -545,6 +549,7 @@ const CounterSales: React.FC = () => {
           setReceiptModalOpen(false); setInvoiceDraftToPaid(null);
           setQrCodePro(null); setMethod("cash");
           setManualDiscount(0);
+          setOrderNote("");
         }}
       />
 
