@@ -422,7 +422,11 @@ export default function Header(props: any) {
         ]);
         const results: SearchResult[] = [];
         if (custRes.status === "fulfilled" && custRes.value?.code === 0) {
-          (custRes.value.result?.items ?? custRes.value.result ?? []).slice(0, 5).forEach((c: any) => {
+          const custItems = custRes.value.result?.items
+            ?? custRes.value.result?.pagedLst?.items
+            ?? custRes.value.result
+            ?? [];
+          (custItems as any[]).slice(0, 3).forEach((c: any) => {
             results.push({
               id:       c.id,
               group:    "customer",
@@ -432,29 +436,48 @@ export default function Header(props: any) {
               meta:     c.code ?? "",
             });
           });
+          const custTotal = custRes.value.result?.total ?? custRes.value.result?.pagedLst?.total ?? 0;
+          if (custTotal > 3) results.push({ id: -1, group: "customer", title: `__more__${custTotal}`, subtitle: "", meta: "" });
         }
+
         if (prodRes.status === "fulfilled" && prodRes.value?.code === 0) {
-          (prodRes.value.result?.items ?? prodRes.value.result ?? []).slice(0, 5).forEach((p: any) => {
+          const prodItems = prodRes.value.result?.items
+            ?? prodRes.value.result?.pagedLst?.items
+            ?? [];
+          (prodItems as any[]).slice(0, 3).forEach((p: any) => {
             results.push({
               id:       p.id,
               group:    "product",
               title:    p.name,
-              subtitle: p.sku ?? p.code ?? "",
-              avatar:   p.avatar ?? p.image,
-              meta:     p.price ? fmt(p.price) : "",
+              subtitle: `Tồn: ${p.stockQuantity ?? 0}`,
+              avatar:   p.image ?? p.avatar,
+              meta:     p.salePrice ? fmt(p.salePrice) : "",
             });
           });
+          const prodTotal = prodRes.value.result?.total ?? 0;
+          if (prodTotal > 3) results.push({ id: -1, group: "product", title: `__more__${prodTotal}`, subtitle: "", meta: "" });
         }
+
         if (invRes.status === "fulfilled" && invRes.value?.code === 0) {
-          (invRes.value.result?.items ?? invRes.value.result ?? []).slice(0, 5).forEach((inv: any) => {
+          const invItems = invRes.value.result?.pagedLst?.items
+            ?? invRes.value.result?.items
+            ?? [];
+          (invItems as any[]).slice(0, 3).forEach((row: any) => {
+            const inv = row.invoice ?? row;
+            const prodNames = (row.products ?? [])
+              .map((p: any) => p.productName)
+              .filter(Boolean)
+              .join(", ");
             results.push({
-              id:       inv.id ?? inv.invoice_id,
+              id:       inv.id ?? row.invoiceId,
               group:    "invoice",
-              title:    inv.invoice_code ?? inv.invoiceCode ?? `#${inv.id}`,
-              subtitle: inv.customer_name ?? inv.customerName ?? "Khách vãng lai",
-              meta:     inv.fee ? fmt(inv.fee) : (inv.amount ? fmt(inv.amount) : ""),
+              title:    inv.invoiceCode ?? `#${inv.id ?? row.invoiceId}`,
+              subtitle: prodNames || "—",
+              meta:     inv.fee ? fmt(inv.fee) : inv.amount ? fmt(inv.amount) : "",
             });
           });
+          const invTotal = invRes.value.result?.pagedLst?.total ?? invRes.value.result?.total ?? 0;
+          if (invTotal > 3) results.push({ id: -1, group: "invoice", title: `__more__${invTotal}`, subtitle: "", meta: "" });
         }
         setSearchResults(results);
       } catch { /* aborted */ }
@@ -473,11 +496,11 @@ export default function Header(props: any) {
     setSearchQuery("");
     setSearchOpen(false);
     if (item.group === "customer")
-      navigate(`/crm/customer_list?customerId=${item.id}`);
+      navigate(`/customer_list?customerId=${item.id}`);
     else if (item.group === "product")
-      navigate(`/crm/product_list?productId=${item.id}`);
+      navigate(`/product_list?productId=${item.id}`);
     else
-      navigate(`/crm/order_invoice_list?invoiceId=${item.id}`);
+      navigate(`/order_invoice_list?invoiceId=${item.id}`);
   };
 
   const GROUP_LABEL: Record<SearchGroup, string> = {
@@ -649,42 +672,57 @@ export default function Header(props: any) {
               <div className="gs-empty">
                 <span className="gs-spin">⏳</span> Đang tìm kiếm...
               </div>
-            ) : searchResults.length === 0 ? (
+            ) : searchResults.filter(r => !r.title.startsWith("__more__")).length === 0 ? (
               <div className="gs-empty">Không tìm thấy kết quả cho "<b>{searchQuery}</b>"</div>
             ) : (
-              GROUP_ORDER.map((group) => {
-                const items = searchResults.filter((r) => r.group === group);
-                if (!items.length) return null;
-                return (
-                  <div key={group} className="gs-group">
-                    <div className="gs-group__label">{GROUP_LABEL[group]}</div>
-                    {items.map((item) => (
-                      <div
-                        key={`${group}-${item.id}`}
-                        className="gs-item"
-                        onClick={() => handleSearchSelect(item)}
-                      >
-                        <div className="gs-item__avatar">
-                          {item.avatar
-                            ? <img src={item.avatar} alt="" />
-                            : <span className="gs-item__avatar-fallback">
-                                {group === "customer" ? "👤" : group === "product" ? "📦" : "🧾"}
-                              </span>
-                          }
+              <div className="gs-scroll">
+                {GROUP_ORDER.map((group) => {
+                  const all   = searchResults.filter((r) => r.group === group);
+                  const items = all.filter(r => !r.title.startsWith("__more__"));
+                  const more  = all.find(r => r.title.startsWith("__more__"));
+                  if (!items.length) return null;
+                  const moreCount = more ? parseInt(more.title.replace("__more__", "")) : 0;
+                  return (
+                    <div key={group} className="gs-group">
+                      <div className="gs-group__label">{GROUP_LABEL[group]}</div>
+                      {items.map((item) => (
+                        <div
+                          key={`${group}-${item.id}`}
+                          className="gs-item"
+                          onClick={() => handleSearchSelect(item)}
+                        >
+                          <div className="gs-item__avatar">
+                            {item.avatar
+                              ? <img src={item.avatar} alt="" />
+                              : <span className="gs-item__avatar-fallback">
+                                  {group === "customer" ? "👤" : group === "product" ? "📦" : "🧾"}
+                                </span>
+                            }
+                          </div>
+                          <div className="gs-item__info">
+                            <div className="gs-item__title">{item.title}</div>
+                            {item.subtitle && <div className="gs-item__sub">{item.subtitle}</div>}
+                          </div>
+                          {item.meta && <div className="gs-item__meta">{item.meta}</div>}
                         </div>
-                        <div className="gs-item__info">
-                          <div className="gs-item__title">{item.title}</div>
-                          {item.subtitle && <div className="gs-item__sub">{item.subtitle}</div>}
+                      ))}
+                      {moreCount > 0 && (
+                        <div className="gs-more" onClick={() => {
+                          setSearchOpen(false);
+                          if (group === "customer") navigate(`/crm/customer_list?keyword=${encodeURIComponent(searchQuery)}`);
+                          else if (group === "product") navigate(`/crm/product_list?keyword=${encodeURIComponent(searchQuery)}`);
+                          else navigate(`/crm/order_invoice_list?keyword=${encodeURIComponent(searchQuery)}`);
+                        }}>
+                          Xem tất cả {moreCount} kết quả →
                         </div>
-                        {item.meta && <div className="gs-item__meta">{item.meta}</div>}
-                      </div>
-                    ))}
-                  </div>
-                );
-              })
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             )}
             <div className="gs-footer">
-              Nhấn <kbd>Enter</kbd> để xem tất cả · <kbd>Esc</kbd> đóng
+              Nhấn <kbd>Esc</kbd> để đóng
             </div>
           </div>
         )}

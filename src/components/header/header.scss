@@ -837,10 +837,26 @@
   border: 1px solid var(--border, #e2e8f0);
   overflow: hidden;
   animation: gs-fadein 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  /* Giới hạn chiều cao = khoảng 70vh để không tràn màn hình */
+  max-height: 70vh;
 
   @media (max-width: 992px) {
     min-width: 28rem;
   }
+}
+
+/* Vùng scroll — chứa tất cả nhóm kết quả */
+.gs-scroll {
+  overflow-y: auto;
+  flex: 1;
+  overscroll-behavior: contain;
+
+  /* Scrollbar gọn */
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: var(--border, #cbd5e0); border-radius: 4px; }
 }
 
 @keyframes gs-fadein {
@@ -956,6 +972,7 @@
   border-top: 1px solid var(--border, #f1f5f9);
   background: var(--paper, #f8fafc);
   text-align: center;
+  flex-shrink: 0;   /* footer luôn hiển thị, không bị cuộn mất */
 
   kbd {
     background: var(--border, #e2e8f0);
@@ -964,5 +981,21 @@
     font-size: 1rem;
     font-family: monospace;
     color: var(--ink, #475569);
+  }
+}
+
+/* Link "Xem tất cả N kết quả" cuối mỗi nhóm */
+.gs-more {
+  padding: 0.6rem 1.4rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2563eb;
+  cursor: pointer;
+  background: #eff6ff;
+  transition: background 0.12s;
+  border-top: 1px solid #dbeafe;
+
+  &:hover {
+    background: #dbeafe;
   }
 }
