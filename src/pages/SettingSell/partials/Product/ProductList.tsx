@@ -31,6 +31,7 @@ import CategoryModal from "./partials/CategoryModal";
 import AddProductPage from "./partials/AddProductPage";
 import { syncProductToLazada } from "services/LazadaSyncService";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
+import ShareLinkModal from "./partials/ShareLinkModal";
 
 // ---- Tab filter type ----
 type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
@@ -70,6 +71,9 @@ export default function ProductList(props: IProductListProps) {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showProductPage, setShowProductPage] = useState(false);
   const [syncingIds, setSyncingIds] = useState<Set<number>>(new Set());
+
+  // ── Share Link Modal ──
+  const [shareProduct, setShareProduct] = useState<IProductResponse | null>(null);
 
   // Đọc ?productId từ URL (từ Global Search) → tự mở trang chi tiết sản phẩm
   const [searchParams] = useSearchParams();
@@ -373,9 +377,20 @@ export default function ProductList(props: IProductListProps) {
       // SẢN PHẨM
       <div className="product-cell" key={item.id}>
         <div className="product-cell__img">
-          <a data-fancybox="gallery" href={item.avatar}>
-            <Image src={item.avatar} alt={item.name} width={"48px"} />
-          </a>
+          {item.avatar ? (
+            <a data-fancybox="gallery" href={item.avatar}>
+              <Image src={item.avatar} alt={item.name} width={"48px"} />
+            </a>
+          ) : (
+            // ✅ Placeholder ảnh đẹp thay vì ảnh lỗi xấu
+            <div className="product-cell__img-placeholder">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c4c9d4" strokeWidth="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+            </div>
+          )}
         </div>
         <div className="product-cell__info">
           <p className="product-cell__name">{item.name}</p>
@@ -482,6 +497,23 @@ export default function ProductList(props: IProductListProps) {
       //     }
       //   },
       // },
+      // ── Chia sẻ link sản phẩm ──
+      {
+        title: "Chia sẻ link sản phẩm",
+        icon: (
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+        ),
+        disabled: isCheckedItem,
+        callback: () => {
+          if (!isCheckedItem) setShareProduct(item);
+        },
+      },
       {
         title: syncingIds.has(item.id) ? "Đang đồng bộ..." : "Đồng bộ Lazada",
         icon: <Icon
@@ -763,6 +795,16 @@ export default function ProductList(props: IProductListProps) {
 
       <CategoryModal onShow={showCategoryModal} onHide={() => setShowCategoryModal(false)} listProduct={listProduct} />
       <Dialog content={contentDialog} isOpen={showDialog} />
+
+      {/* ── Share Link Modal ── */}
+      {shareProduct && (
+        <ShareLinkModal
+          productId={shareProduct.id}
+          productName={shareProduct.name}
+          productAvatar={shareProduct.avatar}
+          onClose={() => setShareProduct(null)}
+        />
+      )}
     </div>
   );
 }

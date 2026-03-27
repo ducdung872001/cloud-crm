@@ -12,6 +12,7 @@ import { IProductResponse } from "model/product/ProductResponseModel";
 import { IOption } from "model/OtherModel";
 import "./AddProductPage.scss";
 import Tippy from "@tippyjs/react";
+import ShareLinkModal from "./ShareLinkModal";
 
 type PageTab = "info" | "variants";
 
@@ -400,6 +401,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const isEdit = !!idProduct;
   const [activeTab, setActiveTab] = useState<PageTab>("info");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [detailProduct, setDetailProduct] = useState<IProductResponse>(null);
   const [listUnit, setListUnit] = useState<IOption[]>([]);
   const [listCategory, setListCategory] = useState<IOption[]>([]);
@@ -895,6 +897,23 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           <span className="add-prod-page__title">{isEdit ? `Chỉnh sửa: ${formData.name || "Sản phẩm"}` : "Thêm sản phẩm mới"}</span>
         </div>
         <div className="add-prod-page__toolbar-right">
+          {/* Nút Chia sẻ — chỉ hiện khi đang edit sản phẩm đã có id */}
+          {isEdit && (
+            <button
+              className="add-prod-page__btn add-prod-page__btn--share"
+              onClick={() => setShowShareModal(true)}
+              title="Chia sẻ link sản phẩm"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              Chia sẻ
+            </button>
+          )}
           <button className="add-prod-page__btn add-prod-page__btn--outline">Xem trước Web</button>
           <button className="add-prod-page__btn add-prod-page__btn--outline">In mã vạch</button>
           <button className="add-prod-page__btn add-prod-page__btn--primary" onClick={handleSubmit} disabled={isSubmitting}>
@@ -1347,6 +1366,16 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
             setScanningComboKey(null);
           }}
           onClose={() => setScanningComboKey(null)}
+        />
+      )}
+
+      {/* Share Link Modal — chỉ hiện khi edit sản phẩm đã có id */}
+      {showShareModal && isEdit && (
+        <ShareLinkModal
+          productId={idProduct}
+          productName={formData.name}
+          productAvatar={formData.avatar}
+          onClose={() => setShowShareModal(false)}
         />
       )}
     </div>
