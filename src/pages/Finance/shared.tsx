@@ -1,5 +1,6 @@
 import React from "react";
 import Icon from "components/icon";
+import { toApiDateFormat } from "utils/common";
 
 export function formatCurrency(value: number) {
   return new Intl.NumberFormat("vi-VN").format(value) + " VND";
@@ -162,18 +163,18 @@ export function useFinanceProgressiveList<T>(items: T[], pageSize = 10, enabled 
 
 // ── Type cho chart data ──────────────────────────────────────────────────────
 export interface IChartPoint {
-  date:   string;
+  date: string;
   amount: number;
-  time?:  number;
+  time?: number;
 }
 
 // ── 1. Slide-over panel ──────────────────────────────────────────────────────
 
 export function FinanceSlideOver(props: {
-  open:     boolean;
-  title:    string;
-  onClose:  () => void;
-  footer?:  React.ReactNode;
+  open: boolean;
+  title: string;
+  onClose: () => void;
+  footer?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const { open, title, onClose, footer, children } = props;
@@ -203,25 +204,25 @@ export function FinanceSlideOver(props: {
 // ── 2. Mini bar chart (SVG thuần, không cần lib) ─────────────────────────────
 
 export function FinanceMiniBarChart({ incomeData, expenseData }: {
-  incomeData:  IChartPoint[];
+  incomeData: IChartPoint[];
   expenseData: IChartPoint[];
 }) {
   const inc = incomeData.slice(-30);
   const exp = expenseData.slice(-30);
-  const n   = Math.max(inc.length, exp.length, 1);
+  const n = Math.max(inc.length, exp.length, 1);
 
   const maxVal = Math.max(...inc.map(d => d.amount), ...exp.map(d => d.amount), 1);
 
   const W = 680, H = 140, PAD_X = 10, PAD_TOP = 20, PAD_BOT = 24;
   const chartH = H - PAD_TOP - PAD_BOT;
-  const slotW  = (W - PAD_X * 2) / n;
-  const barW   = Math.max(4, Math.floor(slotW * 0.38));
-  const gap    = 2;
+  const slotW = (W - PAD_X * 2) / n;
+  const barW = Math.max(4, Math.floor(slotW * 0.38));
+  const gap = 2;
 
-  const bh  = (v: number) => Math.max(3, Math.round((v / maxVal) * chartH));
-  const xL  = (i: number) => PAD_X + i * slotW + (slotW - barW * 2 - gap) / 2;
-  const xR  = (i: number) => xL(i) + barW + gap;
-  const yB  = (v: number) => PAD_TOP + chartH - bh(v);
+  const bh = (v: number) => Math.max(3, Math.round((v / maxVal) * chartH));
+  const xL = (i: number) => PAD_X + i * slotW + (slotW - barW * 2 - gap) / 2;
+  const xR = (i: number) => xL(i) + barW + gap;
+  const yB = (v: number) => PAD_TOP + chartH - bh(v);
 
   const gridLines = [0.25, 0.5, 0.75].map(p => PAD_TOP + chartH - Math.round(p * chartH));
 
@@ -237,7 +238,7 @@ export function FinanceMiniBarChart({ incomeData, expenseData }: {
         <rect key={`e${i}`} x={xR(i)} y={yB(d.amount)} width={barW} height={bh(d.amount)} rx="2" fill="#c54a37" opacity="0.75" />
       ))}
       {[0, 0.25, 0.5, 0.75, 1].map((pct, idx) => {
-        const i    = Math.min(Math.round(pct * (n - 1)), n - 1);
+        const i = Math.min(Math.round(pct * (n - 1)), n - 1);
         const item = inc[i] ?? exp[i];
         if (!item) return null;
         return (
@@ -287,24 +288,24 @@ import { urlsApi } from "configs/urls";
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface CashbookFormState {
-  type:          1 | 2;
-  categoryId:    string;
-  fundId:        string;
-  amount:        string;
+  type: 1 | 2;
+  categoryId: string;
+  fundId: string;
+  amount: string;
   relatedEntity: string;
-  transDate:     string;
-  note:          string;
+  transDate: string;
+  note: string;
 }
 
 interface CashbookCategoryItem {
-  id:   number;
+  id: number;
   name: string;
   type: number; // 1=thu, 2=chi
 }
 
 interface CashbookFundItem {
-  id:      number;
-  name:    string;
+  id: number;
+  name: string;
   balance: number;
 }
 
@@ -317,6 +318,92 @@ const CASHBOOK_FORM_INIT: CashbookFormState = {
 
 const fundOverviewUrl = () =>
   (urlsApi.financeDashboard as any).full.replace("/finance/dashboard", "/fund/overview");
+
+// ── QuickCreateCategory — mini inline form tạo nhanh khoản mục ───────────────
+
+interface QuickCreateCategoryProps {
+  type: 1 | 2;
+  onCreated: (cat: CashbookCategoryItem) => void;
+  onCancel: () => void;
+}
+
+function QuickCreateCategory({ type, onCreated, onCancel }: QuickCreateCategoryProps) {
+  const [name, setName] = React.useState("");
+  const [saving, setSaving] = React.useState(false);
+  const [error, setError] = React.useState("");
+
+  const handleSave = async () => {
+    const trimmed = name.trim();
+    if (!trimmed) { setError("Vui lòng nhập tên khoản mục"); return; }
+    setSaving(true);
+    setError("");
+    try {
+      const res = await CategoryService.update({
+        id: 0,        // 0 = tạo mới
+        name: trimmed,
+        type,
+        position: 0,
+        bsnId: 0,        // backend tự lấy từ JWT
+      });
+      // Response DfResponse: code 0/200 = OK, result là object category vừa tạo
+      const ok = res?.code === 0 || res?.code === 200;
+      if (ok) {
+        const created = res?.result ?? res?.data ?? {};
+        onCreated({
+          id: Number(created.id ?? 0),
+          name: trimmed,
+          type,
+        });
+      } else {
+        setError(res?.message ?? "Tạo khoản mục thất bại");
+      }
+    } catch {
+      setError("Lỗi kết nối");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="finance-quick-create">
+      <div className="finance-quick-create__title">
+        + Tạo khoản mục mới ({type === 1 ? "thu" : "chi"})
+      </div>
+      <div className="finance-quick-create__row">
+        <input
+          type="text"
+          className="finance-quick-create__input"
+          placeholder="Tên khoản mục..."
+          value={name}
+          autoFocus
+          onChange={e => { setName(e.target.value); setError(""); }}
+          onKeyDown={e => {
+            if (e.key === "Enter") { e.preventDefault(); handleSave(); }
+            if (e.key === "Escape") onCancel();
+          }}
+          disabled={saving}
+        />
+        <button
+          type="button"
+          className="finance-quick-create__btn finance-quick-create__btn--save"
+          onClick={handleSave}
+          disabled={saving || !name.trim()}
+        >
+          {saving ? <span className="finance-spinner finance-spinner--sm" /> : "Lưu"}
+        </button>
+        <button
+          type="button"
+          className="finance-quick-create__btn finance-quick-create__btn--cancel"
+          onClick={onCancel}
+          disabled={saving}
+        >
+          Hủy
+        </button>
+      </div>
+      {error && <div className="finance-quick-create__error">⚠ {error}</div>}
+    </div>
+  );
+}
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -336,12 +423,13 @@ export interface CashbookSlideOverProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOverProps) {
-  const [form, setForm]                       = React.useState<CashbookFormState>(CASHBOOK_FORM_INIT);
-  const [submitting, setSubmitting]           = React.useState(false);
-  const [formError, setFormError]             = React.useState("");
-  const [categories, setCategories]           = React.useState<CashbookCategoryItem[]>([]);
-  const [funds, setFunds]                     = React.useState<CashbookFundItem[]>([]);
+  const [form, setForm] = React.useState<CashbookFormState>(CASHBOOK_FORM_INIT);
+  const [submitting, setSubmitting] = React.useState(false);
+  const [formError, setFormError] = React.useState("");
+  const [categories, setCategories] = React.useState<CashbookCategoryItem[]>([]);
+  const [funds, setFunds] = React.useState<CashbookFundItem[]>([]);
   const [dropdownLoading, setDropdownLoading] = React.useState(false);
+  const [showQuickCreate, setShowQuickCreate] = React.useState(false);
 
   const { toast, ToastNode } = useFinanceToast();
 
@@ -355,21 +443,29 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
       fetch(fundOverviewUrl()).then(r => r.json()),
     ]).then(([catRes, fundRes]) => {
       if (catRes.status === "fulfilled") {
-        const raw = catRes.value?.data?.content ?? catRes.value?.data ?? [];
+        // DfResponse: result là array hoặc object có content
+        const raw = catRes.value?.result?.content
+          ?? catRes.value?.result
+          ?? catRes.value?.data?.content
+          ?? catRes.value?.data
+          ?? [];
         setCategories(
           (Array.isArray(raw) ? raw : []).map((c: any) => ({
-            id:   Number(c.id),
+            id: Number(c.id),
             name: String(c.name ?? ""),
             type: Number(c.type ?? 1),
           }))
         );
       }
       if (fundRes.status === "fulfilled") {
-        const rawFunds = fundRes.value?.data?.funds ?? [];
+        // FundOverview: res.result.funds
+        const rawFunds = fundRes.value?.result?.funds
+          ?? fundRes.value?.data?.funds
+          ?? [];
         setFunds(
           (Array.isArray(rawFunds) ? rawFunds : []).map((f: any) => ({
-            id:      Number(f.id),
-            name:    String(f.name ?? ""),
+            id: Number(f.id),
+            name: String(f.name ?? ""),
             balance: Number(f.balance ?? 0),
           }))
         );
@@ -381,16 +477,25 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
   const handleClose = React.useCallback(() => {
     setForm(CASHBOOK_FORM_INIT);
     setFormError("");
+    setShowQuickCreate(false);
     onClose();
   }, [onClose]);
+
+  // ── Thêm khoản mục vừa tạo vào list + tự chọn luôn ────────────────────────
+  const handleCategoryCreated = React.useCallback((cat: CashbookCategoryItem) => {
+    setCategories(prev => [...prev, cat]);
+    setForm(f => ({ ...f, categoryId: String(cat.id) }));
+    setShowQuickCreate(false);
+    toast(`✓ Đã tạo khoản mục "${cat.name}"`);
+  }, [toast]);
 
   // ── Submit ─────────────────────────────────────────────────────────────────
   const handleSubmit = React.useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
 
-    if (!form.categoryId) { setFormError("Vui lòng chọn khoản mục");  return; }
-    if (!form.fundId)     { setFormError("Vui lòng chọn quỹ tiền");   return; }
+    if (!form.categoryId) { setFormError("Vui lòng chọn khoản mục"); return; }
+    if (!form.fundId) { setFormError("Vui lòng chọn quỹ tiền"); return; }
     const amountNum = parseInt(form.amount.replace(/\D/g, ""), 10);
     if (!amountNum || amountNum <= 0) { setFormError("Số tiền phải lớn hơn 0"); return; }
 
@@ -398,16 +503,17 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
     try {
       const catName = categories.find(c => c.id === Number(form.categoryId))?.name ?? "";
       const res = await CashbookService.update({
-        type:          form.type,
-        categoryId:    Number(form.categoryId),
-        categoryName:  catName,
-        fundId:        Number(form.fundId),
-        amount:        amountNum,
-        note:          form.note,
-        transDate:     form.transDate,
+        type: form.type,
+        categoryId: Number(form.categoryId),
+        categoryName: catName,
+        fundId: Number(form.fundId),
+        amount: amountNum,
+        note: form.note,
+        transDate: `${form.transDate}T00:00:00`,
+        fmtTransDate: `${toApiDateFormat(form.transDate)} 00:00`,
         relatedEntity: form.relatedEntity,
-        empName:       "",  // backend tự lấy từ JWT
-        branchId:      0,   // backend tự lấy từ JWT
+        empName: "",  // backend tự lấy từ JWT
+        branchId: 0,   // backend tự lấy từ JWT
       });
 
       if (res?.code === 0 || res?.code === 200) {
@@ -426,7 +532,7 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
 
   // ── Derived ────────────────────────────────────────────────────────────────
   const filteredCats = categories.filter(c => c.type === form.type);
-  const today        = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0];
   const displayAmount = form.amount
     ? new Intl.NumberFormat("vi-VN").format(parseInt(form.amount, 10))
     : "";
@@ -484,7 +590,10 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
                       type="radio"
                       name="cashbook-slide-type"
                       checked={form.type === t}
-                      onChange={() => setForm(f => ({ ...f, type: t, categoryId: "" }))}
+                      onChange={() => {
+                        setForm(f => ({ ...f, type: t, categoryId: "" }));
+                        setShowQuickCreate(false);
+                      }}
                     />
                     {t === 1 ? "Thu tiền" : "Chi tiền"}
                   </label>
@@ -494,19 +603,37 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
 
             {/* Khoản mục */}
             <div className="finance-field">
-              <label>Khoản mục *</label>
+              <div className="finance-field__label-row">
+                <label>Khoản mục *</label>
+                {!showQuickCreate && (
+                  <button
+                    type="button"
+                    className="finance-field__add-link"
+                    onClick={() => setShowQuickCreate(true)}
+                  >
+                    + Tạo mới
+                  </button>
+                )}
+              </div>
               <select
                 value={form.categoryId}
                 onChange={e => setForm(f => ({ ...f, categoryId: e.target.value }))}
-                disabled={dropdownLoading}
+                disabled={dropdownLoading || showQuickCreate}
               >
                 <option value="">
-                  {dropdownLoading ? "Đang tải..." : "-- Chọn khoản mục --"}
+                  {dropdownLoading ? "Đang tải..." : filteredCats.length === 0 ? "Chưa có khoản mục — tạo mới bên dưới" : "-- Chọn khoản mục --"}
                 </option>
                 {filteredCats.map(c => (
                   <option key={c.id} value={String(c.id)}>{c.name}</option>
                 ))}
               </select>
+              {showQuickCreate && (
+                <QuickCreateCategory
+                  type={form.type}
+                  onCreated={handleCategoryCreated}
+                  onCancel={() => setShowQuickCreate(false)}
+                />
+              )}
             </div>
 
             {/* Quỹ tiền */}

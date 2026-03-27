@@ -191,6 +191,7 @@ import FinanceContent from "@/pages/PaymentReconciliation";
 import ReturnProductPage from "@/pages/ReturnProduct";
 import Reconcile from "@/pages/Reconcile";
 import TaskProcessPage from "@/pages/TaskProcessPage/TaskProcessPage";
+import FinanceCategoryManagement from "pages/Finance/CategoryManagement";
 
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
@@ -488,6 +489,12 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
+        title: "categoryManagement",
+        path: urls.finance_management_category_management,
+        icon: <Icon name="CashbookMenu" />,
+        code: "",
+      },
+      {
         title: "debtManagement", // Quản lý công nợ
         path: urls.finance_management_debt_management,
         icon: <Icon name="DebtMenu" />,
@@ -751,7 +758,7 @@ export const menu: IMenuItem[] = [
         code: "BPM",
         icon: <Icon name="DefaultProcessSetting" />,
       },
-      
+
     ],
   },
   {
@@ -956,6 +963,10 @@ export const routes: IRouter[] = [
   {
     path: urls.finance_management_fund_management,
     component: <FinanceFundManagement />,
+  },
+  {
+    path: urls.finance_management_category_management,
+    component: <FinanceCategoryManagement />,
   },
   {
     path: urls.finance_management_debt_management,

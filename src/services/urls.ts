@@ -1,6 +1,7 @@
 const prefixAdmin = "/adminapi";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";
+const prefixBilling = "/billing";
 
 export const urlsApi = {
   // logout: prefixAuthenticator + "/user/logout",
@@ -478,14 +479,6 @@ export const urlsApi = {
     list: prefixAdmin + "/schedule/list",
     listRelatedToCustomer: prefixAdmin + "/schedule/list/by_customer",
   },
-  // phòng điều trị
-  treatmentRoom: {
-    list: prefixAdmin + "/treatmentRoom/list",
-    update: prefixAdmin + "/treatmentRoom/update",
-    detail: prefixAdmin + "/treatmentRoom/get",
-    delete: prefixAdmin + "/treatmentRoom/delete",
-    checkTreatmentRoom: prefixAdmin + "/treatmentRoom/check",
-  },
   crmCareHistory: {
     list: prefixAdmin + "/crmCareHistory/list",
     update: prefixAdmin + "/crmCareHistory/update",
@@ -497,11 +490,11 @@ export const urlsApi = {
     delete: prefixAdmin + "/timekeeping/delete",
   },
   cashbook: {
-    list: prefixAdmin + "/cashbook/list",
-    update: prefixAdmin + "/cashbook/update",
-    delete: prefixAdmin + "/cashbook/delete",
-    export: prefixAdmin + "/cashbook/export",
-    detail: prefixAdmin + "/cashbook/get",
+    list: prefixBilling + "/cashbook/list",
+    update: prefixBilling + "/cashbook/update",
+    delete: prefixBilling + "/cashbook/delete",
+    export: prefixBilling + "/cashbook/export",
+    detail: prefixBilling + "/cashbook/get",
   },
   //khu vực trải nghiệm khách hàng
   cxmSurvey: {

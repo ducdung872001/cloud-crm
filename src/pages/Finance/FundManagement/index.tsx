@@ -18,7 +18,6 @@ import "./index.scss";
 
 function formatDisplayTime(value?: string | null): string {
   if (!value) return "—";
-  // backend trả dạng "1/3/2026 08:15" → hiển thị thẳng
   return value;
 }
 
@@ -141,8 +140,10 @@ function FundForm({ editData, onClose, onSaved }: FundFormProps) {
 
   const [name, setName] = useState(editData?.name ?? "");
   const [type, setType] = useState<string>(editData?.type ?? "bank");
-  const [initialBalance, setInitialBalance] = useState(
-    editData ? "" : ""
+  const [initialBalance, setInitialBalance] = useState("");
+  // Khi edit: pre-fill số dư hiện tại để user thấy và có thể sửa
+  const [balanceOverride, setBalanceOverride] = useState(
+    editData ? String(Math.round(editData.balance ?? 0)) : ""
   );
   const [description, setDescription] = useState(editData?.description ?? "");
   const [allowReceipt, setAllowReceipt] = useState(editData?.allowReceipt ?? 1);
@@ -166,7 +167,9 @@ function FundForm({ editData, onClose, onSaved }: FundFormProps) {
         name: name.trim(),
         type,
         description: description.trim() || undefined,
-        initialBalance: isEdit ? undefined : parseVnd(initialBalance) || 0,
+        // Khi edit: gửi balanceOverride để backend cập nhật số dư
+        // Khi tạo mới: gửi initialBalance
+        initialBalance: isEdit ? parseVnd(balanceOverride) : parseVnd(initialBalance) || 0,
         allowReceipt,
         allowDebtLink,
         supportShift: isCashType ? supportShift : 0,
@@ -224,25 +227,24 @@ function FundForm({ editData, onClose, onSaved }: FundFormProps) {
             </select>
           </div>
 
-          {/* Số dư ban đầu — chỉ hiện khi TẠO MỚI */}
-          {!isEdit && (
-            <div className="fund-form-field">
-              <label>Số dư ban đầu</label>
-              <div className="fund-form-input-suffix">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={formatVndInput(initialBalance)}
-                  onChange={(e) =>
-                    setInitialBalance(e.target.value.replace(/\D/g, ""))
-                  }
-                  placeholder="0"
-                  className="fund-form-input"
-                />
-                <span className="fund-form-suffix">VND</span>
-              </div>
+          {/* Số dư — hiện cả khi tạo mới lẫn chỉnh sửa */}
+          <div className="fund-form-field">
+            <label>{isEdit ? "Số dư hiện tại" : "Số dư ban đầu"}</label>
+            <div className="fund-form-input-suffix">
+              <input
+                type="text"
+                inputMode="numeric"
+                value={isEdit ? formatVndInput(balanceOverride) : formatVndInput(initialBalance)}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/\D/g, "");
+                  isEdit ? setBalanceOverride(raw) : setInitialBalance(raw);
+                }}
+                placeholder="0"
+                className="fund-form-input"
+              />
+              <span className="fund-form-suffix">VND</span>
             </div>
-          )}
+          </div>
 
           {/* Mô tả */}
           <div className="fund-form-field">
@@ -454,7 +456,6 @@ export default function FinanceFundManagement() {
     try {
       const data = await FundManagementService.getOverview(0);
       setOverview(data);
-      // Tự chọn quỹ đầu tiên nếu chưa có selection
       if (!selectedId && data.funds.length > 0) {
         loadFundDetail(data.funds[0].id);
       }
@@ -501,7 +502,6 @@ export default function FinanceFundManagement() {
   function handleFormSaved() {
     setShowForm(false);
     setEditData(null);
-    // Reload overview + detail
     loadOverview();
     if (selectedId) loadFundDetail(selectedId);
   }
