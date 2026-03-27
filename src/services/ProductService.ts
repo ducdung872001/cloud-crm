@@ -239,4 +239,36 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+
+  // ── Content/Mô tả chi tiết (editor) ──
+  wDescriptionGet: (productId: number) => {
+    return fetch(`${urlsApi.product.wDescriptionGet}?productId=${productId}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  wDescriptionUpdate: (body: { productId: number; content: string; contentDelta: string }) => {
+    return fetch(urlsApi.product.wDescriptionUpdate, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+
+  // ── Tags ──
+  wTagList: (keyword = "") => {
+    return fetch(`${urlsApi.product.wTagList}?keyword=${encodeURIComponent(keyword)}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  wTagUpdate: (body: { productId: number; tagIds: number[] }) => {
+    return fetch(urlsApi.product.wTagUpdate, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  wTagCreate: (body: { name: string; status?: number }) => {
+    return fetch(urlsApi.product.wTagCreate, {
+      method: "POST",
+      body: JSON.stringify({ ...body, status: body.status ?? 1 }),
+    }).then((res) => res.json());
+  },
 };

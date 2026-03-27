@@ -530,6 +530,13 @@ export const urlsApi = {
     wWebsiteToggle: prefixInventory + "/product/update/website-toggle",
     wInventoryCurrent: prefixInventory + "/product/inventory/current",
     wScan: prefixInventory + "/product/scan",
+    // ── Content (mô tả chi tiết dạng editor) ──
+    wDescriptionGet: prefixInventory + "/product-description/get",
+    wDescriptionUpdate: prefixInventory + "/product-description/update",
+    // ── Tags ──
+    wTagList: prefixInventory + "/product/tags/list",
+    wTagUpdate: prefixInventory + "/product/tags/update",
+    wTagCreate: prefixInventory + "/product-tag/update",  // dùng lại endpoint tag CRUD
     listById: prefixAdmin + "/product/list_by_id",
     publicList: prefixInventory + "/public/product/list",
 

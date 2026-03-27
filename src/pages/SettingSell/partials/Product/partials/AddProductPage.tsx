@@ -13,6 +13,8 @@ import { IOption } from "model/OtherModel";
 import "./AddProductPage.scss";
 import Tippy from "@tippyjs/react";
 import ShareLinkModal from "./ShareLinkModal";
+import RebornEditor from "components/editor/reborn";
+import { serialize } from "utils/editor";
 
 type PageTab = "info" | "variants";
 
@@ -403,6 +405,18 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [detailProduct, setDetailProduct] = useState<IProductResponse>(null);
+
+  // ── Content (editor) ──
+  const [contentHtml, setContentHtml] = useState<string>("");        // HTML → lưu vào content
+  const [contentDelta, setContentDelta] = useState<string>("");      // JSON → lưu vào contentDelta
+  const [isSavingContent, setIsSavingContent] = useState(false);
+
+  // ── Tags ──
+  const [availableTags, setAvailableTags] = useState<{ id: number; name: string }[]>([]);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [tagDropdownOpen, setTagDropdownOpen] = useState(false);
+  const [isCreatingTag, setIsCreatingTag] = useState(false);
   const [listUnit, setListUnit] = useState<IOption[]>([]);
   const [listCategory, setListCategory] = useState<IOption[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<{ value: number; label: string } | null>(null);
@@ -418,6 +432,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   useEffect(() => {
     loadUnits();
     loadCategories();
+    loadAvailableTags();
     if (isEdit) loadDetail();
     else if (data) preFill(data);
   }, [idProduct]);
@@ -447,6 +462,13 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       hideWhenOutOfStock: p.hideWhenOutOfStock ?? true,
     }));
     if (p.categoryId) setSelectedCategory({ value: p.categoryId, label: p.categoryName });
+
+    // ── Content editor ──
+    if (p.description) setContentHtml(p.description);
+    if (p.contentDelta) setContentDelta(p.contentDelta);
+
+    // ── Tags ──
+    if (p.tagIds?.length) setSelectedTagIds(p.tagIds);
 
     // ── Load biến thể từ API ──
     if (p.variantGroups?.length) {
@@ -546,7 +568,64 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     }
   };
 
-  const handleSubmit = async () => {
+  const loadAvailableTags = async () => {
+    const res = await ProductService.wTagList("");
+    if (res.code === 0) {
+      const items = Array.isArray(res.result) ? res.result : res.result?.items || [];
+      setAvailableTags(items.map((i: any) => ({ id: i.id, name: i.name })));
+    }
+  };
+
+  // ── Content editor handlers ──
+  const handleSaveContent = async () => {
+    if (!idProduct) return;
+    setIsSavingContent(true);
+    try {
+      const res = await ProductService.wDescriptionUpdate({
+        productId: idProduct,
+        content: contentHtml,
+        contentDelta,
+      });
+      if (res.code === 0) showToast("Đã lưu mô tả chi tiết", "success");
+      else showToast(res.message ?? "Lỗi lưu mô tả", "error");
+    } finally {
+      setIsSavingContent(false);
+    }
+  };
+
+  // ── Tag handlers ──
+  const toggleTag = (id: number) => {
+    setSelectedTagIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleCreateTag = async () => {
+    const name = tagInput.trim();
+    if (!name) return;
+    setIsCreatingTag(true);
+    try {
+      const res = await ProductService.wTagCreate({ name });
+      if (res.code === 0) {
+        const newId = res.result;
+        setAvailableTags(prev => [...prev, { id: newId, name }]);
+        setSelectedTagIds(prev => [...prev, newId]);
+        setTagInput("");
+        showToast(`Đã tạo tag "${name}"`, "success");
+      } else {
+        showToast(res.message ?? "Lỗi tạo tag", "error");
+      }
+    } finally {
+      setIsCreatingTag(false);
+    }
+  };
+
+  const handleSaveTags = async () => {
+    if (!idProduct) return;
+    const res = await ProductService.wTagUpdate({ productId: idProduct, tagIds: selectedTagIds });
+    if (res.code === 0) showToast("Đã lưu tags", "success");
+    else showToast(res.message ?? "Lỗi lưu tags", "error");
+  };
     if (!formData.name.trim()) {
       showToast("Vui lòng nhập tên sản phẩm", "error");
       return;
@@ -668,6 +747,22 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     try {
       const res = await ProductService.wUpdate(body as any);
       if (res.code === 0) {
+        // Lưu content và tags song song sau khi lưu sản phẩm thành công
+        const savedId = idProduct || res.result?.id || res.result;
+        if (savedId) {
+          const sideEffects: Promise<any>[] = [];
+          if (contentHtml || contentDelta) {
+            sideEffects.push(
+              ProductService.wDescriptionUpdate({ productId: savedId, content: contentHtml, contentDelta })
+            );
+          }
+          if (selectedTagIds.length > 0) {
+            sideEffects.push(
+              ProductService.wTagUpdate({ productId: savedId, tagIds: selectedTagIds })
+            );
+          }
+          if (sideEffects.length) await Promise.allSettled(sideEffects);
+        }
         showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
         onBack(true);
       } else {
@@ -971,18 +1066,134 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                 </div>
               </div>
 
-              {/* Mô tả */}
+              {/* Mô tả ngắn */}
               <div className="add-prod-card">
-                <div className="add-prod-card__title">Mô tả sản phẩm</div>
+                <div className="add-prod-card__title">Mô tả ngắn</div>
                 <TextArea
-                  label="Mô tả chi tiết (hiển thị trên Website)"
+                  label="Mô tả ngắn (hiển thị trên Website)"
                   name="description"
                   value={formData.description}
                   onChange={(e) => setField("description", e.target.value)}
-                  placeholder="Nhập mô tả sản phẩm cho trang web bán hàng..."
+                  placeholder="Nhập mô tả ngắn cho trang web bán hàng..."
                   fill={true}
-                  row={4}
+                  row={3}
                 />
+              </div>
+
+              {/* Mô tả chi tiết — Editor */}
+              <div className="add-prod-card">
+                <div className="add-prod-card__title">
+                  Mô tả chi tiết
+                  {isEdit && (
+                    <button
+                      className="add-prod-card__title-action"
+                      onClick={handleSaveContent}
+                      disabled={isSavingContent}
+                    >
+                      {isSavingContent ? "Đang lưu..." : "Lưu mô tả"}
+                    </button>
+                  )}
+                </div>
+                <p className="add-prod-editor-hint">Soạn thảo nội dung chi tiết hiển thị trên trang sản phẩm (website bán hàng). Hỗ trợ định dạng văn bản, chèn ảnh, bảng biểu...</p>
+                <div className="add-prod-editor-wrap">
+                  <RebornEditor
+                    name="contentDetail"
+                    fill={true}
+                    initialValue={contentHtml || ""}
+                    onChangeContent={(value: any) => {
+                      setContentHtml(serialize({ children: value }));
+                      setContentDelta(JSON.stringify(value));
+                    }}
+                    placeholder="Nhập mô tả chi tiết sản phẩm..."
+                  />
+                </div>
+                {!isEdit && (
+                  <p className="add-prod-editor-note">💡 Mô tả chi tiết sẽ được lưu tự động khi bạn nhấn "Lưu sản phẩm".</p>
+                )}
+              </div>
+
+              {/* Tags sản phẩm */}
+              <div className="add-prod-card">
+                <div className="add-prod-card__title">
+                  Tags sản phẩm
+                  {isEdit && selectedTagIds.length > 0 && (
+                    <button className="add-prod-card__title-action" onClick={handleSaveTags}>
+                      Lưu tags
+                    </button>
+                  )}
+                </div>
+                <p className="add-prod-editor-hint">Gắn nhãn để dễ tìm kiếm và lọc sản phẩm. Có thể tạo tag mới ngay tại đây.</p>
+                <div className="add-prod-tags">
+                  {/* Chips đã chọn */}
+                  {selectedTagIds.length > 0 && (
+                    <div className="add-prod-tags__selected">
+                      {selectedTagIds.map(id => {
+                        const tag = availableTags.find(t => t.id === id);
+                        if (!tag) return null;
+                        return (
+                          <span key={id} className="add-prod-tag-chip">
+                            {tag.name}
+                            <button type="button" onClick={() => toggleTag(id)} title="Xóa tag">×</button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {/* Input tìm/tạo tag */}
+                  <div className="add-prod-tags__input-wrap">
+                    <div className="add-prod-tags__input-row">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                      <input
+                        type="text"
+                        className="add-prod-tags__input"
+                        placeholder="Tìm hoặc tạo tag mới..."
+                        value={tagInput}
+                        onChange={e => setTagInput(e.target.value)}
+                        onFocus={() => setTagDropdownOpen(true)}
+                        onBlur={() => setTimeout(() => setTagDropdownOpen(false), 180)}
+                        onKeyDown={e => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            const match = availableTags.find(t => t.name.toLowerCase() === tagInput.trim().toLowerCase());
+                            if (match) toggleTag(match.id);
+                            else if (tagInput.trim()) handleCreateTag();
+                          }
+                        }}
+                      />
+                    </div>
+                    {tagDropdownOpen && (
+                      <div className="add-prod-tags__dropdown">
+                        {availableTags
+                          .filter(t => t.name.toLowerCase().includes(tagInput.toLowerCase()))
+                          .slice(0, 12)
+                          .map(t => (
+                            <div
+                              key={t.id}
+                              className={`add-prod-tags__option${selectedTagIds.includes(t.id) ? " add-prod-tags__option--selected" : ""}`}
+                              onMouseDown={e => { e.preventDefault(); toggleTag(t.id); }}
+                            >
+                              {selectedTagIds.includes(t.id) && (
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                              )}
+                              <span>{t.name}</span>
+                            </div>
+                          ))}
+                        {tagInput.trim() && !availableTags.find(t => t.name.toLowerCase() === tagInput.trim().toLowerCase()) && (
+                          <div
+                            className="add-prod-tags__option add-prod-tags__option--create"
+                            onMouseDown={e => { e.preventDefault(); handleCreateTag(); }}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span>{isCreatingTag ? "Đang tạo..." : `Tạo tag "${tagInput.trim()}"`}</span>
+                          </div>
+                        )}
+                        {availableTags.filter(t => t.name.toLowerCase().includes(tagInput.toLowerCase())).length === 0 && !tagInput.trim() && (
+                          <div className="add-prod-tags__empty">Chưa có tag nào. Nhập tên để tạo mới.</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Tồn kho */}
