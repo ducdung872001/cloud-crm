@@ -141,8 +141,9 @@ function FundForm({ editData, onClose, onSaved }: FundFormProps) {
 
   const [name, setName] = useState(editData?.name ?? "");
   const [type, setType] = useState<string>(editData?.type ?? "bank");
-  const [initialBalance, setInitialBalance] = useState(
-    editData ? "" : ""
+  const [initialBalance, setInitialBalance] = useState("");
+  const [balanceOverride, setBalanceOverride] = useState(
+    editData ? String(Math.round(editData.balance ?? 0)) : ""
   );
   const [description, setDescription] = useState(editData?.description ?? "");
   const [allowReceipt, setAllowReceipt] = useState(editData?.allowReceipt ?? 1);
@@ -166,7 +167,7 @@ function FundForm({ editData, onClose, onSaved }: FundFormProps) {
         name: name.trim(),
         type,
         description: description.trim() || undefined,
-        initialBalance: isEdit ? undefined : parseVnd(initialBalance) || 0,
+        initialBalance: isEdit ? parseVnd(balanceOverride) : parseVnd(initialBalance) || 0,
         allowReceipt,
         allowDebtLink,
         supportShift: isCashType ? supportShift : 0,
@@ -224,25 +225,24 @@ function FundForm({ editData, onClose, onSaved }: FundFormProps) {
             </select>
           </div>
 
-          {/* Số dư ban đầu — chỉ hiện khi TẠO MỚI */}
-          {!isEdit && (
-            <div className="fund-form-field">
-              <label>Số dư ban đầu</label>
-              <div className="fund-form-input-suffix">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={formatVndInput(initialBalance)}
-                  onChange={(e) =>
-                    setInitialBalance(e.target.value.replace(/\D/g, ""))
-                  }
-                  placeholder="0"
-                  className="fund-form-input"
-                />
-                <span className="fund-form-suffix">VND</span>
-              </div>
+          {/* Số dư — hiện cả khi tạo mới lẫn chỉnh sửa */}
+          <div className="fund-form-field">
+            <label>{isEdit ? "Số dư hiện tại" : "Số dư ban đầu"}</label>
+            <div className="fund-form-input-suffix">
+              <input
+                type="text"
+                inputMode="numeric"
+                value={isEdit ? formatVndInput(balanceOverride) : formatVndInput(initialBalance)}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/\D/g, "");
+                  isEdit ? setBalanceOverride(raw) : setInitialBalance(raw);
+                }}
+                placeholder="0"
+                className="fund-form-input"
+              />
+              <span className="fund-form-suffix">VND</span>
             </div>
-          )}
+          </div>
 
           {/* Mô tả */}
           <div className="fund-form-field">
