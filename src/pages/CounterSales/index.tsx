@@ -18,6 +18,7 @@ import BoughtProductService from "@/services/BoughtProductService";
 import { showToast } from "@/utils/common";
 import AddCustomerPersonModal from "../CustomerPerson/partials/AddCustomerPersonModal";
 import QrCodeProService from "@/services/QrCodeProService";
+import { IStorePaymentConfigResponse } from "model/paymentMethod/PaymentMethodModel";
 import DraftOrders from "./components/DraftOrders";
 import SaleInvoiceList from "../Sell/SaleInvoiceList/SaleInvoiceList";
 import { urlsApi } from "configs/urls";
@@ -41,6 +42,7 @@ const CounterSales: React.FC = () => {
   const [activeDraftId, setActiveDraftId] = useState<string | null>(null);
   const [method, setMethod] = useState<PayMethod>("cash");
   const [qrCodePro, setQrCodePro] = useState<string | null>(null);
+  const [activePayConfig, setActivePayConfig] = useState<IStorePaymentConfigResponse | null>(null);
 
   // ── Tab badge counts ────────────────────────────────────────────────────────
   const [draftCount, setDraftCount] = useState(0);
@@ -484,6 +486,7 @@ const CounterSales: React.FC = () => {
         promoDiscount={promoDiscount}
         onClose={() => { setInvoiceId(null); setPayModalOpen(false); }}
         onConfirm={(id) => handlePayConfirm(id)}
+        onConfigChange={setActivePayConfig}
       />
 
       <ReceiptModal
@@ -525,15 +528,7 @@ const CounterSales: React.FC = () => {
       />
 
       <QrScanModal open={qrScanModalOpen} onClose={() => setQrScanModalOpen(false)} onAdd={handleQrAddToCart} />
-      <SyncModal
-        open={syncModalOpen}
-        onClose={() => setSyncModalOpen(false)}
-        onSynced={() => {
-          setSyncModalOpen(false);
-          handleTabChange("orders");
-          fetchTabCounts();
-        }}
-      />
+      <SyncModal open={syncModalOpen} onClose={() => setSyncModalOpen(false)} />
 
       {/* Khuyến mãi */}
       <PromotionModal
