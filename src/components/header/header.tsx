@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext } from "react";
+import React, { useEffect, useRef, useState, useContext, useCallback } from "react";
 import _ from "lodash";
 import moment from "moment";
 import { useCookies } from "react-cookie";
@@ -28,6 +28,9 @@ import "swiper/css/pagination";
 import Loading from "../loading";
 import NotificationService from "@/services/NotificationService";
 import { requestPermission } from "@/firebase-config";
+import CustomerService from "services/CustomerService";
+import ProductService from "services/ProductService";
+import InvoiceService from "services/InvoiceService";
 
 export default function Header(props: any) {
   const [cookies, setCookie, removeCookie] = useCookies();
@@ -377,6 +380,113 @@ export default function Header(props: any) {
   };
 
   const [showModalChangeRole, setShowModalChangeRole] = useState<boolean>(false);
+
+  // ── Global Search ──────────────────────────────────────────────────────────
+  type SearchGroup = "product" | "customer" | "invoice";
+  interface SearchResult {
+    id:       number;
+    group:    SearchGroup;
+    title:    string;
+    subtitle: string;
+    avatar?:  string;
+    meta?:    string;
+  }
+  const searchRef         = useRef<HTMLDivElement>(null);
+  const searchInputRef    = useRef<HTMLInputElement>(null);
+  const [searchQuery,     setSearchQuery]     = useState("");
+  const [searchOpen,      setSearchOpen]      = useState(false);
+  const [searchResults,   setSearchResults]   = useState<SearchResult[]>([]);
+  const [searchLoading,   setSearchLoading]   = useState(false);
+  const [searchAbort,     setSearchAbort]     = useState<AbortController | null>(null);
+
+  useOnClickOutside(searchRef, () => setSearchOpen(false), ["gs-dropdown"]);
+
+  const fmt = (n: number) => n?.toLocaleString("vi") + " ₫";
+
+  const doSearch = useCallback(
+    _.debounce(async (q: string) => {
+      if (!q.trim()) { setSearchResults([]); setSearchLoading(false); return; }
+      searchAbort?.abort();
+      const ctrl = new AbortController();
+      setSearchAbort(ctrl);
+      setSearchLoading(true);
+      try {
+        const [custRes, prodRes, invRes] = await Promise.allSettled([
+          CustomerService.filter({ keyword: q, page: 1, limit: 5 }, ctrl.signal),
+          ProductService.publicList({ name: q, page: 1, limit: 5 } as any, ctrl.signal),
+          // Nếu query trông giống mã đơn (HD, DH + số) → dùng invoiceCode, ngược lại keyword
+          InvoiceService.list({
+            ...(q.match(/^(HD|DH|INV|dh|hd)/i) ? { invoiceCode: q } : { keyword: q }),
+            page: 1, limit: 5,
+          } as any, ctrl.signal),
+        ]);
+        const results: SearchResult[] = [];
+        if (custRes.status === "fulfilled" && custRes.value?.code === 0) {
+          (custRes.value.result?.items ?? custRes.value.result ?? []).slice(0, 5).forEach((c: any) => {
+            results.push({
+              id:       c.id,
+              group:    "customer",
+              title:    c.name,
+              subtitle: c.phone ?? c.number_phone ?? "",
+              avatar:   c.avatar,
+              meta:     c.code ?? "",
+            });
+          });
+        }
+        if (prodRes.status === "fulfilled" && prodRes.value?.code === 0) {
+          (prodRes.value.result?.items ?? prodRes.value.result ?? []).slice(0, 5).forEach((p: any) => {
+            results.push({
+              id:       p.id,
+              group:    "product",
+              title:    p.name,
+              subtitle: p.sku ?? p.code ?? "",
+              avatar:   p.avatar ?? p.image,
+              meta:     p.price ? fmt(p.price) : "",
+            });
+          });
+        }
+        if (invRes.status === "fulfilled" && invRes.value?.code === 0) {
+          (invRes.value.result?.items ?? invRes.value.result ?? []).slice(0, 5).forEach((inv: any) => {
+            results.push({
+              id:       inv.id ?? inv.invoice_id,
+              group:    "invoice",
+              title:    inv.invoice_code ?? inv.invoiceCode ?? `#${inv.id}`,
+              subtitle: inv.customer_name ?? inv.customerName ?? "Khách vãng lai",
+              meta:     inv.fee ? fmt(inv.fee) : (inv.amount ? fmt(inv.amount) : ""),
+            });
+          });
+        }
+        setSearchResults(results);
+      } catch { /* aborted */ }
+      finally { setSearchLoading(false); }
+    }, 320),
+    []
+  );
+
+  useEffect(() => {
+    doSearch(searchQuery);
+    if (searchQuery.trim()) setSearchOpen(true);
+    else setSearchOpen(false);
+  }, [searchQuery]);
+
+  const handleSearchSelect = (item: SearchResult) => {
+    setSearchQuery("");
+    setSearchOpen(false);
+    if (item.group === "customer")
+      navigate(`/crm/customer_list?customerId=${item.id}`);
+    else if (item.group === "product")
+      navigate(`/crm/product_list?productId=${item.id}`);
+    else
+      navigate(`/crm/order_invoice_list?invoiceId=${item.id}`);
+  };
+
+  const GROUP_LABEL: Record<SearchGroup, string> = {
+    customer: "👤 Khách hàng",
+    product:  "📦 Sản phẩm",
+    invoice:  "🧾 Đơn hàng",
+  };
+  const GROUP_ORDER: SearchGroup[] = ["customer", "product", "invoice"];
+
   const getCountUnread = async () => {
     const response = await NotificationService.countUnread();
     if (response.code === 0) {
@@ -513,6 +623,73 @@ export default function Header(props: any) {
           </SwiperSlide>
         </Swiper>
       </div>
+
+      {/* ── Global Search ── */}
+      <div className="gs-wrapper" ref={searchRef}>
+        <div className={`gs-input-wrap${searchOpen ? " is-open" : ""}`}>
+          <span className="gs-icon">🔍</span>
+          <input
+            ref={searchInputRef}
+            className="gs-input"
+            type="text"
+            placeholder="Tìm khách hàng, sản phẩm, đơn hàng..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => { if (searchQuery.trim()) setSearchOpen(true); }}
+            onKeyDown={(e) => { if (e.key === "Escape") { setSearchOpen(false); setSearchQuery(""); } }}
+          />
+          {searchQuery && (
+            <button className="gs-clear" onClick={() => { setSearchQuery(""); setSearchOpen(false); searchInputRef.current?.focus(); }}>✕</button>
+          )}
+        </div>
+
+        {searchOpen && (
+          <div className="gs-dropdown">
+            {searchLoading ? (
+              <div className="gs-empty">
+                <span className="gs-spin">⏳</span> Đang tìm kiếm...
+              </div>
+            ) : searchResults.length === 0 ? (
+              <div className="gs-empty">Không tìm thấy kết quả cho "<b>{searchQuery}</b>"</div>
+            ) : (
+              GROUP_ORDER.map((group) => {
+                const items = searchResults.filter((r) => r.group === group);
+                if (!items.length) return null;
+                return (
+                  <div key={group} className="gs-group">
+                    <div className="gs-group__label">{GROUP_LABEL[group]}</div>
+                    {items.map((item) => (
+                      <div
+                        key={`${group}-${item.id}`}
+                        className="gs-item"
+                        onClick={() => handleSearchSelect(item)}
+                      >
+                        <div className="gs-item__avatar">
+                          {item.avatar
+                            ? <img src={item.avatar} alt="" />
+                            : <span className="gs-item__avatar-fallback">
+                                {group === "customer" ? "👤" : group === "product" ? "📦" : "🧾"}
+                              </span>
+                          }
+                        </div>
+                        <div className="gs-item__info">
+                          <div className="gs-item__title">{item.title}</div>
+                          {item.subtitle && <div className="gs-item__sub">{item.subtitle}</div>}
+                        </div>
+                        {item.meta && <div className="gs-item__meta">{item.meta}</div>}
+                      </div>
+                    ))}
+                  </div>
+                );
+              })
+            )}
+            <div className="gs-footer">
+              Nhấn <kbd>Enter</kbd> để xem tất cả · <kbd>Esc</kbd> đóng
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="header-actions d-flex align-items-center">
         {checkUserRoot == "1" ? (
           <div className={`container-branch ${showPopoverBranch ? "action__container--branch" : ""}`} ref={refBranchContainer}>
