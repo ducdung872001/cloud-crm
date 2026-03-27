@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import _ from "lodash";
 import Icon from "components/icon";
 import Image from "components/image";
@@ -69,6 +70,19 @@ export default function ProductList(props: IProductListProps) {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showProductPage, setShowProductPage] = useState(false);
   const [syncingIds, setSyncingIds] = useState<Set<number>>(new Set());
+
+  // Đọc ?productId từ URL (từ Global Search) → tự mở trang chi tiết sản phẩm
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const pid = searchParams.get("productId");
+    if (pid) {
+      const numId = parseInt(pid, 10);
+      if (!isNaN(numId)) {
+        setIdProduct(numId);
+        setShowProductPage(true);
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [targetBsnId, setTargetBsnId] = useState(targetBsnId_product ? +targetBsnId_product : null);
   useEffect(() => {

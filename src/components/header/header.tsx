@@ -495,12 +495,16 @@ export default function Header(props: any) {
   const handleSearchSelect = (item: SearchResult) => {
     setSearchQuery("");
     setSearchOpen(false);
-    if (item.group === "customer")
-      navigate(`/customer_list?customerId=${item.id}`);
-    else if (item.group === "product")
-      navigate(`/product_list?productId=${item.id}`);
-    else
-      navigate(`/order_invoice_list?invoiceId=${item.id}`);
+    if (item.group === "customer") {
+      // Mở hồ sơ KH → tab "Lịch sử mua hàng"
+      navigate(`/detail_person/customerId/${item.id}/purchase_invoice`);
+    } else if (item.group === "product") {
+      // Mở danh sách SP với tab sản phẩm và highlight SP đó
+      navigate(`/setting_sell?tab=product_tab_one&productId=${item.id}`);
+    } else {
+      // Mở danh sách đơn hàng + tự động bật popup chi tiết đơn
+      navigate(`/sale_invoice?openInvoice=${item.id}`);
+    }
   };
 
   const GROUP_LABEL: Record<SearchGroup, string> = {
@@ -709,9 +713,12 @@ export default function Header(props: any) {
                       {moreCount > 0 && (
                         <div className="gs-more" onClick={() => {
                           setSearchOpen(false);
-                          if (group === "customer") navigate(`/crm/customer_list?keyword=${encodeURIComponent(searchQuery)}`);
-                          else if (group === "product") navigate(`/crm/product_list?keyword=${encodeURIComponent(searchQuery)}`);
-                          else navigate(`/crm/order_invoice_list?keyword=${encodeURIComponent(searchQuery)}`);
+                          if (group === "customer")
+                            navigate(`/crm/customer_list?keyword=${encodeURIComponent(searchQuery)}`);
+                          else if (group === "product")
+                            navigate(`/crm/setting_sell?tab=product_tab_one&keyword=${encodeURIComponent(searchQuery)}`);
+                          else
+                            navigate(`/crm/sale_invoice?keyword=${encodeURIComponent(searchQuery)}`);
                         }}>
                           Xem tất cả {moreCount} kết quả →
                         </div>

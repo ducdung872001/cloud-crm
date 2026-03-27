@@ -210,6 +210,17 @@ export default function SaleInvoiceList() {
     if (fd) init.fromDate = toApiDateFormat(fd);
     if (td) init.toDate   = toApiDateFormat(td);
     fetchList(init);
+
+    // Hỗ trợ mở trực tiếp chi tiết đơn từ Global Search:
+    // navigate(`/crm/sale_invoice?openInvoice=3384`)
+    const openId = searchParams.get("openInvoice");
+    if (openId) {
+      const numId = parseInt(openId, 10);
+      if (!isNaN(numId)) {
+        setInvoiceId(numId);
+        setOrderDetailOpen(true);
+      }
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Handlers ──────────────────────────────────────────────────────────────
