@@ -463,8 +463,11 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     }));
     if (p.categoryId) setSelectedCategory({ value: p.categoryId, label: p.categoryName });
 
-    // ── Content editor ──
-    if (p.description) setContentHtml(p.description);
+    // ── Content editor (mô tả chi tiết) ──
+    // p.description = mô tả ngắn (textarea) — KHÔNG set vào editor
+    // p.content = mô tả chi tiết HTML → khởi tạo editor
+    // p.contentDelta = Slate delta JSON → restore editor state chính xác hơn
+    if (p.content) setContentHtml(p.content);
     if (p.contentDelta) setContentDelta(p.contentDelta);
 
     // ── Tags ──
@@ -572,7 +575,12 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     const res = await ProductService.wTagList("");
     if (res.code === 0) {
       const items = Array.isArray(res.result) ? res.result : res.result?.items || [];
-      setAvailableTags(items.map((i: any) => ({ id: i.id, name: i.name })));
+      // Lọc bỏ tag không có name (null/undefined) để tránh crash .toLowerCase()
+      setAvailableTags(
+        items
+          .filter((i: any) => i.name != null)
+          .map((i: any) => ({ id: i.id, name: i.name }))
+      );
     }
   };
 
@@ -1156,7 +1164,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                         onKeyDown={e => {
                           if (e.key === "Enter") {
                             e.preventDefault();
-                            const match = availableTags.find(t => t.name.toLowerCase() === tagInput.trim().toLowerCase());
+                            const match = availableTags.find(t => t.name?.toLowerCase() === tagInput.trim().toLowerCase());
                             if (match) toggleTag(match.id);
                             else if (tagInput.trim()) handleCreateTag();
                           }
@@ -1166,7 +1174,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                     {tagDropdownOpen && (
                       <div className="add-prod-tags__dropdown">
                         {availableTags
-                          .filter(t => t.name.toLowerCase().includes(tagInput.toLowerCase()))
+                          .filter(t => t.name?.toLowerCase().includes(tagInput.toLowerCase()))
                           .slice(0, 12)
                           .map(t => (
                             <div
@@ -1180,7 +1188,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                               <span>{t.name}</span>
                             </div>
                           ))}
-                        {tagInput.trim() && !availableTags.find(t => t.name.toLowerCase() === tagInput.trim().toLowerCase()) && (
+                        {tagInput.trim() && !availableTags.find(t => t.name?.toLowerCase() === tagInput.trim().toLowerCase()) && (
                           <div
                             className="add-prod-tags__option add-prod-tags__option--create"
                             onMouseDown={e => { e.preventDefault(); handleCreateTag(); }}
@@ -1189,7 +1197,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
                             <span>{isCreatingTag ? "Đang tạo..." : `Tạo tag "${tagInput.trim()}"`}</span>
                           </div>
                         )}
-                        {availableTags.filter(t => t.name.toLowerCase().includes(tagInput.toLowerCase())).length === 0 && !tagInput.trim() && (
+                        {availableTags.filter(t => t.name?.toLowerCase().includes(tagInput.toLowerCase())).length === 0 && !tagInput.trim() && (
                           <div className="add-prod-tags__empty">Chưa có tag nào. Nhập tên để tạo mới.</div>
                         )}
                       </div>
