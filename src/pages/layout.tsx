@@ -18,10 +18,13 @@ import ChatFeedback from "./ChatFeedback";
 import EmployeeService from "services/EmployeeService";
 import Chatbot from "./ChatBot";
 import { getDomain } from "reborn-util";
+import { useOnboarding, resetAllTours } from "hooks/useOnboarding";
+import TourOverlay from "components/tourOverlay/TourOverlay";
 // import { SystemNotification } from "components/systemNotification/systemNotification";
 
 export default function Layout() {
   const {
+    id: userId,
     isCollapsedSidebar,
     setDataBranch,
     isShowFeedback,
@@ -31,6 +34,13 @@ export default function Layout() {
     setLastShowModalPayment,
     isShowChatBot,
   } = useContext(UserContext) as ContextType;
+
+  // ── Onboarding tour "login" — chỉ chạy lần đầu vào app ─────────────────
+  const loginTour = useOnboarding({
+    userId:    userId ?? "guest",
+    tourId:    "login",
+    autoStart: true,
+  });
 
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));
   const checkSubdomainTNEX = sourceDomain.includes("tnex");
@@ -265,6 +275,20 @@ export default function Layout() {
 
   return (
     <div id="container">
+      {/* ── Onboarding Tour Overlay ── */}
+      <TourOverlay
+        active={loginTour.active}
+        step={loginTour.currentStep}
+        stepIdx={loginTour.stepIdx}
+        totalSteps={loginTour.totalSteps}
+        target={loginTour.target}
+        isFirst={loginTour.isFirst}
+        isLast={loginTour.isLast}
+        onNext={loginTour.next}
+        onPrev={loginTour.prev}
+        onSkip={loginTour.skip}
+      />
+
       <div className={`page-wrapper${isCollapsedSidebar ? " page-wrapper--collapsed-sidebar" : ""} d-flex align-items-start justify-content-between`}>
         {checkPathUrl !== "/crm/link_survey" && <Sidebar />}
         <div className="main-content">

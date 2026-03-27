@@ -19,6 +19,8 @@ import { showToast } from "@/utils/common";
 import AddCustomerPersonModal from "../CustomerPerson/partials/AddCustomerPersonModal";
 import QrCodeProService from "@/services/QrCodeProService";
 import { IStorePaymentConfigResponse } from "model/paymentMethod/PaymentMethodModel";
+import { useOnboarding } from "hooks/useOnboarding";
+import TourOverlay from "components/tourOverlay/TourOverlay";
 import DraftOrders from "./components/DraftOrders";
 import SaleInvoiceList from "../Sell/SaleInvoiceList/SaleInvoiceList";
 import { urlsApi } from "configs/urls";
@@ -32,7 +34,14 @@ const INITIAL_CART: CartItem[] = [];
 const CounterSales: React.FC = () => {
   document.title = "Bán hàng tại quầy";
   const location = useLocation();
-  const { dataBranch } = React.useContext(UserContext) as ContextType;
+  const { dataBranch, id: userId } = React.useContext(UserContext) as ContextType;
+
+  // ── Tour hướng dẫn POS ───────────────────────────────────────────────────
+  const posTour = useOnboarding({
+    userId:    userId ?? "guest",
+    tourId:    "pos",
+    autoStart: true,
+  });
 
   const [activeTab, setActiveTab] = useState<TabType>("pos");
   const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
@@ -388,6 +397,20 @@ const CounterSales: React.FC = () => {
 
   return (
     <div className="counter-sales">
+      {/* ── Tour hướng dẫn POS ── */}
+      <TourOverlay
+        active={posTour.active}
+        step={posTour.currentStep}
+        stepIdx={posTour.stepIdx}
+        totalSteps={posTour.totalSteps}
+        target={posTour.target}
+        isFirst={posTour.isFirst}
+        isLast={posTour.isLast}
+        onNext={posTour.next}
+        onPrev={posTour.prev}
+        onSkip={posTour.skip}
+      />
+
       <Sidebar />
 
       <div className="counter-sales__main">
@@ -400,6 +423,7 @@ const CounterSales: React.FC = () => {
           warehouses={warehouseOptions}
           warehouseId={warehouseId}
           onWarehouseChange={setWarehouseId}
+          onStartTour={posTour.start}
         />
 
         <div className="counter-sales__content">

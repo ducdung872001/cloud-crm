@@ -1,6 +1,8 @@
 import React, { useContext, useState } from "react";
 import TitleAction from "components/titleAction/titleAction";
 import { UserContext, ContextType } from "contexts/userContext";
+import { useOnboarding } from "hooks/useOnboarding";
+import TourOverlay from "components/tourOverlay/TourOverlay";
 import "./ShiftTabsPage.scss";
 
 import NotOpenShiftTab from "./partials/NotOpenShift/NotOpenShiftTab";
@@ -16,21 +18,48 @@ type TabKey = "preopen" | "open" | "orders" | "onshift" | "close" | "report" | "
 export default function ShiftTabsPage() {
   document.title = "Quản lý ca";
 
-  const { dataBranch } = useContext(UserContext) as ContextType;
+  const { dataBranch, id: userId } = useContext(UserContext) as ContextType;
   const branchId: number = dataBranch?.value ?? 0;
 
   const [tab, setTab] = useState<TabKey>("preopen");
   const [activeShiftId, setActiveShiftId] = useState<number | null>(null);
 
-  // Thông tin ca chờ mở — từ NotOpenShiftTab truyền sang OpenShiftTab
-  const [pendingConfigId,   setPendingConfigId]   = useState<number>(0);
-  const [pendingShiftName,  setPendingShiftName]   = useState<string>("");
-  const [pendingShiftTime,  setPendingShiftTime]   = useState<string>("");
+  const [pendingConfigId,    setPendingConfigId]    = useState<number>(0);
+  const [pendingShiftName,   setPendingShiftName]   = useState<string>("");
+  const [pendingShiftTime,   setPendingShiftTime]   = useState<string>("");
   const [pendingDefaultCash, setPendingDefaultCash] = useState<number>(0);
+
+  // ── Tour hướng dẫn ca ────────────────────────────────────────────────────
+  const shiftTour = useOnboarding({
+    userId:    userId ?? "guest",
+    tourId:    "shift",
+    autoStart: true,
+  });
 
   return (
     <div className="page-content page-shift-tabs">
-      <TitleAction title="Quản lý ca" />
+      {/* ── Tour hướng dẫn ca ── */}
+      <TourOverlay
+        active={shiftTour.active}
+        step={shiftTour.currentStep}
+        stepIdx={shiftTour.stepIdx}
+        totalSteps={shiftTour.totalSteps}
+        target={shiftTour.target}
+        isFirst={shiftTour.isFirst}
+        isLast={shiftTour.isLast}
+        onNext={shiftTour.next}
+        onPrev={shiftTour.prev}
+        onSkip={shiftTour.skip}
+      />
+      <TitleAction
+        title="Quản lý ca"
+        actions={[{
+          title: "❓ Hướng dẫn",
+          callback: shiftTour.start,
+          color: "default",
+          variant: "outline",
+        }]}
+      />
 
       <div className="card-box d-flex flex-column">
         <div className="action-header">
