@@ -1511,7 +1511,7 @@
 .add-prod-editor-wrap {
   border: 1.5px solid #e5e7eb;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible; // cho phép table-option toolbar hiện bên ngoài
   background: #fff;
   transition: border-color 0.15s, box-shadow 0.15s;
 
