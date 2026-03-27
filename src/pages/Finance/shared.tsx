@@ -1,6 +1,7 @@
 import React from "react";
 import Icon from "components/icon";
 import { toApiDateFormat } from "utils/common";
+import { ContextType, UserContext } from "contexts/userContext";
 
 export function formatCurrency(value: number) {
   return new Intl.NumberFormat("vi-VN").format(value) + " VND";
@@ -423,6 +424,7 @@ export interface CashbookSlideOverProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOverProps) {
+  const { dataInfoEmployee, dataBranch } = React.useContext(UserContext) as ContextType;
   const [form, setForm] = React.useState<CashbookFormState>(CASHBOOK_FORM_INIT);
   const [submitting, setSubmitting] = React.useState(false);
   const [formError, setFormError] = React.useState("");
@@ -500,6 +502,9 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
     if (!amountNum || amountNum <= 0) { setFormError("Số tiền phải lớn hơn 0"); return; }
 
     setSubmitting(true);
+    console.log("idEmployee:", dataInfoEmployee, "transDate:", form.transDate);
+
+
     try {
       const catName = categories.find(c => c.id === Number(form.categoryId))?.name ?? "";
       const res = await CashbookService.update({
@@ -508,12 +513,12 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
         categoryName: catName,
         fundId: Number(form.fundId),
         amount: amountNum,
-        note: form.note,
-        transDate: `${form.transDate}T00:00:00`,
+        note: form.note,        
         fmtTransDate: `${toApiDateFormat(form.transDate)} 00:00`,
-        relatedEntity: form.relatedEntity,
+        relatedEntity: form.relatedEntity,        
+        employeeId:    dataInfoEmployee?.id,
         empName: "",  // backend tự lấy từ JWT
-        branchId: 0,   // backend tự lấy từ JWT
+        branchId: dataBranch.value,   // truyền từ FE xuống
       });
 
       if (res?.code === 0 || res?.code === 200) {

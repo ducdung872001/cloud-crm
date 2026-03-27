@@ -527,3 +527,186 @@
     margin: 0;
   }
 }
+// ─── Fund History — card list (replaces table) ─────────────────────────────
+
+.fund-modal__title {
+  margin: 0 0 0.2rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #17384a;
+}
+
+.fund-modal__sub {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0;
+}
+
+.fund-modal__fund-name {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #3b5468;
+}
+
+.fund-modal__balance {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #138a4b;
+  background: #edfaf3;
+  border-radius: 2rem;
+  padding: 0.1rem 0.8rem;
+}
+
+// ── list container ──────────────────────────────────────────────────────────
+
+.fund-history-list {
+  display: flex;
+  flex-direction: column;
+}
+
+// ── single item ─────────────────────────────────────────────────────────────
+
+.fund-history-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding: 1.2rem 1.6rem;
+  border-bottom: 1px solid #f0f5f8;
+  transition: background 0.1s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #f8fbfd; }
+}
+
+.fund-history-item__left {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.fund-history-item__dot {
+  flex-shrink: 0;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  margin-top: 0.6rem;
+
+  &--income  { background: #138a4b; }
+  &--expense { background: #c54a37; }
+}
+
+.fund-history-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.fund-history-item__note {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #17384a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.4rem;
+}
+
+.fund-history-item__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.fund-history-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 2rem;
+
+  &--income  { background: #edfaf3; color: #138a4b; }
+  &--expense { background: #fef0ee; color: #c54a37; }
+}
+
+.fund-history-item__category {
+  font-size: 1.2rem;
+  color: #5c7282;
+  background: #edf2f5;
+  padding: 0.1rem 0.6rem;
+  border-radius: 0.4rem;
+}
+
+.fund-history-item__sep {
+  color: #b0bec8;
+  font-size: 1.2rem;
+}
+
+.fund-history-item__emp {
+  font-size: 1.2rem;
+  color: #7c9ab0;
+}
+
+// ── right side ──────────────────────────────────────────────────────────────
+
+.fund-history-item__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.fund-history-item__amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  white-space: nowrap;
+
+  &--income  { color: #138a4b; }
+  &--expense { color: #c54a37; }
+}
+
+.fund-history-item__date {
+  font-size: 1.2rem;
+  color: #8a9eb0;
+  white-space: nowrap;
+}
+
+// ── spinner ──────────────────────────────────────────────────────────────────
+
+.fund-history-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.fund-history-spinner {
+  display: inline-block;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 2px solid #d6e2ea;
+  border-top-color: #3a8fb5;
+  border-radius: 50%;
+  animation: fund-spin 0.7s linear infinite;
+}
+
+@keyframes fund-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── empty state ──────────────────────────────────────────────────────────────
+
+.fund-history-empty {
+  padding: 4rem 2rem;
+  text-align: center;
+  color: #8a9eb0;
+
+  &__icon { font-size: 3rem; margin-bottom: 1rem; }
+  p { font-size: 1.5rem; font-weight: 500; color: #3b5468; margin: 0 0 0.4rem; }
+  span { font-size: 1.3rem; }
+}
