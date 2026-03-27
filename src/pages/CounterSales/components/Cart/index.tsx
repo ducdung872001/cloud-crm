@@ -45,6 +45,9 @@ const Cart: React.FC<CartProps> = ({
   const [voucher, setVoucher]     = useState("");
   const [isSaving, setIsSaving]   = useState(false);
 
+  // ── Ship address — chỉ dùng khi orderType === "ship" ─────────────────────
+  const [shipAddress, setShipAddress] = useState("");
+
   // ── Coupon state ──────────────────────────────────────────────────────────
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [couponDiscount, setCouponDiscount]     = useState(0);
@@ -107,14 +110,8 @@ const Cart: React.FC<CartProps> = ({
     try {
       const res = await CouponService.apply(code, subtotal);
 
-      // ── Trích discountAmount từ response ──────────────────────────────────
-      // Hỗ trợ cả 3 format:
-      //   1. Flat:      { code, orderAmount, discountAmount?, finalAmount? }
-      //   2. Data wrap: { success, data: { discountAmount, finalAmount, ... } }
-      //   3. Result:    { code: 0, message, result: { code, discountAmount, ... } }
       const payload = (res as any)?.result ?? (res as any)?.data ?? res;
 
-      // discountAmount: lấy trực tiếp nếu có, nếu không tính từ finalAmount
       let calcDiscount: number = 0;
       if (typeof payload?.discountAmount === "number" && payload.discountAmount > 0) {
         calcDiscount = payload.discountAmount;
@@ -125,7 +122,6 @@ const Cart: React.FC<CartProps> = ({
         calcDiscount = Math.max(0, payload.orderAmount - payload.finalAmount);
       }
 
-      // Kiểm tra response hợp lệ: phải có code khớp hoặc không có lỗi
       const hasError = payload?.error || payload?.message?.toLowerCase().includes("không hợp lệ")
                     || payload?.message?.toLowerCase().includes("invalid")
                     || payload?.message?.toLowerCase().includes("expired")
@@ -135,15 +131,12 @@ const Cart: React.FC<CartProps> = ({
         handleCouponDiscountChange(0);
         setCouponError(payload?.message ?? payload?.error ?? "Mã không hợp lệ hoặc đã hết hạn");
       } else if (payload?.code || (res as any)?.success === true) {
-        // Response hợp lệ — có thể không có discountAmount nếu API chưa implement
         handleCouponDiscountChange(calcDiscount);
         if (calcDiscount > 0) {
           setCouponMessage(
             payload?.message ?? `Áp dụng thành công − ${calcDiscount.toLocaleString("vi")} đ`
           );
         } else {
-          // API confirm mã hợp lệ nhưng chưa trả discountAmount
-          // Hiển thị thông báo xác nhận, không trừ tiền (chờ backend cập nhật)
           handleCouponDiscountChange(0);
           setCouponMessage(payload?.message ?? "Mã hợp lệ ✓ (giá trị giảm sẽ áp dụng khi tạo đơn)");
         }
@@ -159,9 +152,16 @@ const Cart: React.FC<CartProps> = ({
     }
   };
 
+  /** Tạo đơn hàng — truyền orderType + shipAddress vào API */
   const onCreateInvoice = async () => {
     try {
-      const invoice = await InvoiceService.createInvoice({ customerId: customer?.id ?? -1 });
+      const invoice = await InvoiceService.createInvoice({
+        customerId: customer?.id ?? -1,
+        orderType,
+        ...(orderType === "ship" && shipAddress.trim()
+          ? { shipAddress: shipAddress.trim() }
+          : {}),
+      });
       if (invoice.code === 0 && invoice?.result?.invoiceId) {
         setInvoiceDraftToPaid(invoice.result.invoice);
         onPay(invoice.result.invoiceId);
@@ -180,7 +180,10 @@ const Cart: React.FC<CartProps> = ({
     }
     setIsSaving(true);
     try {
-      const draftRes = await InvoiceService.createInvoice({ customerId: Number(customer?.id ?? -1) });
+      const draftRes = await InvoiceService.createInvoice({
+        customerId: Number(customer?.id ?? -1),
+        orderType,
+      });
       if (draftRes.code !== 0 || !draftRes?.result?.invoiceId) {
         showToast(draftRes.message ?? "Không thể tạo đơn tạm", "error");
         return;
@@ -224,6 +227,21 @@ const Cart: React.FC<CartProps> = ({
             ))}
           </div>
         </div>
+
+        {/* ── Địa chỉ giao hàng — chỉ hiện khi chọn Ship ─────────────────── */}
+        {orderType === "ship" && (
+          <div className="ship-address">
+            <label className="ship-address__label">🚚 Địa chỉ giao hàng</label>
+            <input
+              className="ship-address__input"
+              type="text"
+              placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/TP..."
+              value={shipAddress}
+              onChange={(e) => setShipAddress(e.target.value)}
+            />
+          </div>
+        )}
+
         <div className="cust-box cust-box--filled" onClick={onSelectCustomer}>
           {customer ? (
             <>
@@ -283,7 +301,6 @@ const Cart: React.FC<CartProps> = ({
             value={voucher}
             onChange={(e) => {
               setVoucher(e.target.value);
-              // Reset khi người dùng chỉnh mã
               handleCouponDiscountChange(0);
               setCouponMessage("");
               setCouponError("");
@@ -317,7 +334,7 @@ const Cart: React.FC<CartProps> = ({
             <span className="sr__v">{formatVND(subtotal)}</span>
           </div>
 
-          {/* Giảm giá voucher — hiển thị couponDiscount từ API */}
+          {/* Giảm giá voucher */}
           <div className="sr">
             <span className="sr__k">Giảm giá voucher</span>
             <span className="sr__v sr__v--red">

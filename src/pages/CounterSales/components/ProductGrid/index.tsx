@@ -4,6 +4,7 @@ import "./index.scss";
 import { useProductCategory } from "./useProductCategory";
 import { IProductListParams, useProductList } from "./useProductList";
 import VariantModal from "../modals/VariantModal";
+import QuickAddModal from "../modals/QuickAddModal";
 
 interface ProductGridProps {
   onAddToCart: (item: Omit<CartItem, "qty">) => void;
@@ -13,9 +14,10 @@ interface ProductGridProps {
 
 const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, warehouseId }) => {
   const [variantModalOpen, setVariantModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [activeCategory, setActiveCategory] = useState("");
-  const [search, setSearch] = useState("");
+  const [quickAddOpen, setQuickAddOpen]         = useState(false);
+  const [selectedProduct, setSelectedProduct]   = useState(null);
+  const [activeCategory, setActiveCategory]     = useState("");
+  const [search, setSearch]                     = useState("");
   const [params, setParams] = useState<IProductListParams>({
     name: "",
     limit: 10,
@@ -26,13 +28,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
   useEffect(() => {
     setParams((prev) => {
       if (warehouseId) {
-        return {
-          ...prev,
-          page: 1,
-          warehouseId,
-        };
+        return { ...prev, page: 1, warehouseId };
       }
-
       const next = { ...prev, page: 1 };
       delete next.warehouseId;
       return next;
@@ -56,9 +53,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
     );
   }
 
-  // Khi bấm vào sản phẩm có biến thể
   const handleOpenVariant = (prod) => {
-    setSelectedProduct(prod); // thay bằng data thực từ API
+    setSelectedProduct(prod);
     setVariantModalOpen(true);
   };
 
@@ -68,17 +64,29 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
       <div className="pg-searchbar">
         <div className="pg-search-input-wrap">
           <span className="pg-search-icon">🔍</span>
-          <input type="text" placeholder="Tìm sản phẩm theo tên, mã vạch, SKU..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input
+            type="text"
+            placeholder="Tìm sản phẩm theo tên, mã vạch, SKU..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
         <button className="qr-pill" onClick={onQrScan}>
           📷 Quét QR
-        </button>        
+        </button>
+        <button className="quick-add-pill" onClick={() => setQuickAddOpen(true)}>
+          ⚡ Thêm nhanh SP
+        </button>
       </div>
 
       {/* Category tabs */}
       <div className="pg-cattabs">
         {categoryFiltered.map((cat) => (
-          <button key={cat.id} className={`ct${activeCategory === cat.id ? " active" : ""}`} onClick={() => setActiveCategory(cat.id)}>
+          <button
+            key={cat.id}
+            className={`ct${activeCategory === cat.id ? " active" : ""}`}
+            onClick={() => setActiveCategory(cat.id)}
+          >
             {cat.label}
           </button>
         ))}
@@ -90,10 +98,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
           <div
             key={prod.id}
             className={`pg-card${prod.lowStock ? " pg-card--low" : ""}`}
-            onClick={() => {
-              // handleAddToCart(prod)
-              handleOpenVariant(prod);
-            }}
+            onClick={() => handleOpenVariant(prod)}
           >
             <div className="pg-card__icon">
               {prod.avatar ? (
@@ -125,7 +130,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
               className="pg-card__add"
               onClick={(e) => {
                 e.stopPropagation();
-                // handleAddToCart(prod);
                 handleOpenVariant(prod);
               }}
             >
@@ -134,6 +138,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
           </div>
         ))}
       </div>
+
       <button className="btn btn--outline btn--sm pg-loadmore">
         {listProduct.length}/{pagination.totalItem} sản phẩm
       </button>
@@ -146,6 +151,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
       >
         {isLoading ? <div>Đang tải...</div> : <>Hiển thị thêm</>}
       </button>
+
       <VariantModal
         open={variantModalOpen}
         productData={selectedProduct}
@@ -154,6 +160,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
           onAddToCart(item);
           setVariantModalOpen(false);
         }}
+      />
+
+      <QuickAddModal
+        open={quickAddOpen}
+        onClose={() => setQuickAddOpen(false)}
+        onAddToCart={onAddToCart}
       />
     </div>
   );

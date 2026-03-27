@@ -81,6 +81,47 @@
   }
 }
 
+// ── Ship address — hiện khi chọn tab "Ship" ────────────────────────────────
+.ship-address {
+  margin-bottom: 1rem;
+  padding: 0.8rem 0 0;
+  animation: shipFadeIn 0.18s ease;
+
+  &__label {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1.5px solid #fbbf24;
+    border-radius: 0.4rem;
+    font-family: var(--font-base);
+    font-size: 1.3rem;
+    color: var(--ink);
+    background: #fffbeb;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.18);
+      background: #fff;
+    }
+
+    &::placeholder { color: var(--muted2); }
+  }
+}
+
+@keyframes shipFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .cust-box {
   display: flex;
   align-items: center;

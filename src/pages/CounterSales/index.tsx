@@ -525,7 +525,15 @@ const CounterSales: React.FC = () => {
       />
 
       <QrScanModal open={qrScanModalOpen} onClose={() => setQrScanModalOpen(false)} onAdd={handleQrAddToCart} />
-      <SyncModal open={syncModalOpen} onClose={() => setSyncModalOpen(false)} />
+      <SyncModal
+        open={syncModalOpen}
+        onClose={() => setSyncModalOpen(false)}
+        onSynced={() => {
+          setSyncModalOpen(false);
+          handleTabChange("orders");
+          fetchTabCounts();
+        }}
+      />
 
       {/* Khuyến mãi */}
       <PromotionModal
