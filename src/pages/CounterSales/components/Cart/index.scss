@@ -81,47 +81,6 @@
   }
 }
 
-// ── Ship address — hiện khi chọn tab "Ship" ────────────────────────────────
-.ship-address {
-  margin-bottom: 1rem;
-  padding: 0.8rem 0 0;
-  animation: shipFadeIn 0.18s ease;
-
-  &__label {
-    display: block;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--ink);
-    margin-bottom: 0.5rem;
-  }
-
-  &__input {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1.5px solid #fbbf24;
-    border-radius: 0.4rem;
-    font-family: var(--font-base);
-    font-size: 1.3rem;
-    color: var(--ink);
-    background: #fffbeb;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-
-    &:focus {
-      border-color: #f59e0b;
-      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.18);
-      background: #fff;
-    }
-
-    &::placeholder { color: var(--muted2); }
-  }
-}
-
-@keyframes shipFadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 .cust-box {
   display: flex;
   align-items: center;
@@ -404,5 +363,102 @@
     transform: translateX(100%);
     transition: transform 0.3s ease;
     &.cart-open { transform: translateX(0); }
+  }
+}
+/* ── Giảm giá thủ công tại quầy ──────────────────────────────────────────── */
+.manual-discount {
+  margin-bottom: 1rem;
+  padding: 1rem 1.2rem;
+  background: #fffbeb;
+  border: 1.5px dashed #fbbf24;
+  border-radius: 0.6rem;
+
+  &__label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.7rem;
+  }
+
+  &__clear {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--red, #e53e3e);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 0.3rem;
+    transition: background 0.15s;
+    font-family: var(--font-base);
+    &:hover { background: var(--red-l, #fef2f2); }
+  }
+
+  &__row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  &__input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid #fbbf24;
+    border-radius: 0.4rem;
+    font-family: var(--font-base);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.18);
+    }
+    &::placeholder { color: var(--muted2); font-weight: 400; }
+  }
+
+  &__mode {
+    width: 3.6rem;
+    height: 3.6rem;
+    border: 1.5px solid #fbbf24;
+    border-radius: 0.4rem;
+    background: var(--white);
+    font-family: var(--font-base);
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #92400e;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &.active {
+      background: #f59e0b;
+      color: #fff;
+      border-color: #f59e0b;
+    }
+    &:hover:not(.active) { background: #fef3c7; }
+  }
+
+  &__preview {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    color: #92400e;
+
+    strong { color: var(--red, #e53e3e); }
+  }
+
+  &__pct {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-left: 4px;
   }
 }

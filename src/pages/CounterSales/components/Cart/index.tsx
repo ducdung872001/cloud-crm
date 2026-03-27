@@ -30,6 +30,9 @@ interface CartProps {
   onRemovePromo?:      () => void;
   onCouponDiscountChange?: (discount: number) => void;
   onResetVoucher?: () => void;
+  // ── Giảm giá thủ công tại quầy ───────────────────────────────────────────
+  manualDiscount?: number;
+  onManualDiscountChange?: (discount: number) => void;
 }
 
 const Cart: React.FC<CartProps> = ({
@@ -40,13 +43,18 @@ const Cart: React.FC<CartProps> = ({
   loyaltyWallet, exchangeRate = 1000, pointsToUse = 0, onPointsChange,
   eligiblePromoCount = 0, appliedPromo, promoDiscount = 0,
   onViewPromos, onRemovePromo, onCouponDiscountChange, onResetVoucher,
+  manualDiscount = 0, onManualDiscountChange,
 }) => {
   const [orderType, setOrderType] = useState<OrderType>("retail");
   const [voucher, setVoucher]     = useState("");
   const [isSaving, setIsSaving]   = useState(false);
 
-  // ── Ship address — chỉ dùng khi orderType === "ship" ─────────────────────
+  // ── Ship address (chỉ dùng khi orderType === "ship") ─────────────────────
   const [shipAddress, setShipAddress] = useState("");
+
+  // ── Giảm giá thủ công ────────────────────────────────────────────────────
+  const [discountInput, setDiscountInput] = useState("");   // giá trị người dùng gõ
+  const [discountMode, setDiscountMode]   = useState<"amount" | "percent">("amount");
 
   // ── Coupon state ──────────────────────────────────────────────────────────
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
@@ -87,7 +95,7 @@ const Cart: React.FC<CartProps> = ({
   const moneyFromPoints = (pointsToUse ?? 0) * exchangeRate;
   const finalTotal      = Math.max(
     0,
-    subtotal - discount - moneyFromPoints - promoDiscount - couponDiscount,
+    subtotal - discount - moneyFromPoints - promoDiscount - couponDiscount - manualDiscount,
   );
 
   const ORDER_TYPES: { id: OrderType; label: string }[] = [
@@ -110,8 +118,14 @@ const Cart: React.FC<CartProps> = ({
     try {
       const res = await CouponService.apply(code, subtotal);
 
+      // ── Trích discountAmount từ response ──────────────────────────────────
+      // Hỗ trợ cả 3 format:
+      //   1. Flat:      { code, orderAmount, discountAmount?, finalAmount? }
+      //   2. Data wrap: { success, data: { discountAmount, finalAmount, ... } }
+      //   3. Result:    { code: 0, message, result: { code, discountAmount, ... } }
       const payload = (res as any)?.result ?? (res as any)?.data ?? res;
 
+      // discountAmount: lấy trực tiếp nếu có, nếu không tính từ finalAmount
       let calcDiscount: number = 0;
       if (typeof payload?.discountAmount === "number" && payload.discountAmount > 0) {
         calcDiscount = payload.discountAmount;
@@ -122,6 +136,7 @@ const Cart: React.FC<CartProps> = ({
         calcDiscount = Math.max(0, payload.orderAmount - payload.finalAmount);
       }
 
+      // Kiểm tra response hợp lệ: phải có code khớp hoặc không có lỗi
       const hasError = payload?.error || payload?.message?.toLowerCase().includes("không hợp lệ")
                     || payload?.message?.toLowerCase().includes("invalid")
                     || payload?.message?.toLowerCase().includes("expired")
@@ -131,12 +146,15 @@ const Cart: React.FC<CartProps> = ({
         handleCouponDiscountChange(0);
         setCouponError(payload?.message ?? payload?.error ?? "Mã không hợp lệ hoặc đã hết hạn");
       } else if (payload?.code || (res as any)?.success === true) {
+        // Response hợp lệ — có thể không có discountAmount nếu API chưa implement
         handleCouponDiscountChange(calcDiscount);
         if (calcDiscount > 0) {
           setCouponMessage(
             payload?.message ?? `Áp dụng thành công − ${calcDiscount.toLocaleString("vi")} đ`
           );
         } else {
+          // API confirm mã hợp lệ nhưng chưa trả discountAmount
+          // Hiển thị thông báo xác nhận, không trừ tiền (chờ backend cập nhật)
           handleCouponDiscountChange(0);
           setCouponMessage(payload?.message ?? "Mã hợp lệ ✓ (giá trị giảm sẽ áp dụng khi tạo đơn)");
         }
@@ -152,16 +170,37 @@ const Cart: React.FC<CartProps> = ({
     }
   };
 
-  /** Tạo đơn hàng — truyền orderType + shipAddress vào API */
+  // ── Xử lý giảm giá thủ công ──────────────────────────────────────────────
+  const handleDiscountInput = (raw: string) => {
+    // Chỉ cho phép số và dấu chấm/phẩy
+    const cleaned = raw.replace(/[^0-9.,]/g, "").replace(",", ".");
+    setDiscountInput(cleaned);
+    const num = parseFloat(cleaned) || 0;
+    const computed = discountMode === "percent"
+      ? Math.round(subtotal * Math.min(num, 100) / 100)
+      : Math.min(num, subtotal);
+    onManualDiscountChange?.(computed);
+  };
+
+  const handleDiscountModeToggle = () => {
+    const nextMode = discountMode === "amount" ? "percent" : "amount";
+    setDiscountMode(nextMode);
+    // Recompute khi đổi mode
+    const num = parseFloat(discountInput) || 0;
+    const computed = nextMode === "percent"
+      ? Math.round(subtotal * Math.min(num, 100) / 100)
+      : Math.min(num, subtotal);
+    onManualDiscountChange?.(computed);
+  };
+
+  const handleDiscountClear = () => {
+    setDiscountInput("");
+    onManualDiscountChange?.(0);
+  };
+
   const onCreateInvoice = async () => {
     try {
-      const invoice = await InvoiceService.createInvoice({
-        customerId: customer?.id ?? -1,
-        orderType,
-        ...(orderType === "ship" && shipAddress.trim()
-          ? { shipAddress: shipAddress.trim() }
-          : {}),
-      });
+      const invoice = await InvoiceService.createInvoice({ customerId: customer?.id ?? -1 });
       if (invoice.code === 0 && invoice?.result?.invoiceId) {
         setInvoiceDraftToPaid(invoice.result.invoice);
         onPay(invoice.result.invoiceId);
@@ -180,10 +219,7 @@ const Cart: React.FC<CartProps> = ({
     }
     setIsSaving(true);
     try {
-      const draftRes = await InvoiceService.createInvoice({
-        customerId: Number(customer?.id ?? -1),
-        orderType,
-      });
+      const draftRes = await InvoiceService.createInvoice({ customerId: Number(customer?.id ?? -1) });
       if (draftRes.code !== 0 || !draftRes?.result?.invoiceId) {
         showToast(draftRes.message ?? "Không thể tạo đơn tạm", "error");
         return;
@@ -227,21 +263,6 @@ const Cart: React.FC<CartProps> = ({
             ))}
           </div>
         </div>
-
-        {/* ── Địa chỉ giao hàng — chỉ hiện khi chọn Ship ─────────────────── */}
-        {orderType === "ship" && (
-          <div className="ship-address">
-            <label className="ship-address__label">🚚 Địa chỉ giao hàng</label>
-            <input
-              className="ship-address__input"
-              type="text"
-              placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/TP..."
-              value={shipAddress}
-              onChange={(e) => setShipAddress(e.target.value)}
-            />
-          </div>
-        )}
-
         <div className="cust-box cust-box--filled" onClick={onSelectCustomer}>
           {customer ? (
             <>
@@ -301,6 +322,7 @@ const Cart: React.FC<CartProps> = ({
             value={voucher}
             onChange={(e) => {
               setVoucher(e.target.value);
+              // Reset khi người dùng chỉnh mã
               handleCouponDiscountChange(0);
               setCouponMessage("");
               setCouponError("");
@@ -328,19 +350,62 @@ const Cart: React.FC<CartProps> = ({
           </div>
         )}
 
+        {/* ── Giảm giá thủ công ── */}
+        <div className="manual-discount">
+          <div className="manual-discount__label">
+            <span>🏷️ Giảm giá trực tiếp</span>
+            {manualDiscount > 0 && (
+              <button className="manual-discount__clear" onClick={handleDiscountClear}>✕ Bỏ</button>
+            )}
+          </div>
+          <div className="manual-discount__row">
+            <input
+              className="manual-discount__input"
+              type="text"
+              inputMode="decimal"
+              placeholder={discountMode === "amount" ? "Nhập số tiền..." : "Nhập %..."}
+              value={discountInput}
+              onChange={(e) => handleDiscountInput(e.target.value)}
+            />
+            <button
+              className={`manual-discount__mode${discountMode === "percent" ? " active" : ""}`}
+              onClick={handleDiscountModeToggle}
+              title="Chuyển đổi giữa số tiền và %"
+            >
+              {discountMode === "amount" ? "₫" : "%"}
+            </button>
+          </div>
+          {manualDiscount > 0 && (
+            <div className="manual-discount__preview">
+              Giảm: <strong>−{manualDiscount.toLocaleString("vi")} ₫</strong>
+              {discountMode === "percent" && discountInput && (
+                <span className="manual-discount__pct"> ({discountInput}%)</span>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="summary">
           <div className="sr">
             <span className="sr__k">Tạm tính ({itemCount} sản phẩm)</span>
             <span className="sr__v">{formatVND(subtotal)}</span>
           </div>
 
-          {/* Giảm giá voucher */}
+          {/* Giảm giá voucher — hiển thị couponDiscount từ API */}
           <div className="sr">
             <span className="sr__k">Giảm giá voucher</span>
             <span className="sr__v sr__v--red">
               {couponDiscount > 0 ? `−${couponDiscount.toLocaleString("vi")} ₫` : "0 ₫"}
             </span>
           </div>
+
+          {/* Giảm giá trực tiếp tại quầy */}
+          {manualDiscount > 0 && (
+            <div className="sr">
+              <span className="sr__k">Giảm trực tiếp</span>
+              <span className="sr__v sr__v--red">−{manualDiscount.toLocaleString("vi")} ₫</span>
+            </div>
+          )}
 
           {/* ── Banner khuyến mãi ── */}
           {!appliedPromo && eligiblePromoCount > 0 && (
