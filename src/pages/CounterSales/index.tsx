@@ -524,6 +524,7 @@ const CounterSales: React.FC = () => {
         invoiceDraft={invoiceDraftToPaid} method={method} qrCodePro={qrCodePro}
         couponDiscount={couponDiscount}
         promoDiscount={promoDiscount + manualDiscount}
+        note={orderNote}
         onPaymentSuccess={() => {
           setCouponDiscount(0);
           setPromoDiscount(0);

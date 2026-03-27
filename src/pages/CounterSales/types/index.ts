@@ -48,6 +48,7 @@ export interface Order {
   items: string;
   total: number;
   cancellationReason?: string;
+  note?: string;
 }
 
 export type TabType = "pos" | "draft" | "orders" | "report";

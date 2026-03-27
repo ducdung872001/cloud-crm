@@ -68,6 +68,7 @@ function mapItemToOrder(item: any, customerMap: CustomerMap): Order {
     },
     items: itemNames,
     total: inv.fee,
+    note:  inv.note ?? "",
   };
 }
 
@@ -211,8 +212,7 @@ export default function SaleInvoiceList() {
     if (td) init.toDate   = toApiDateFormat(td);
     fetchList(init);
 
-    // Hỗ trợ mở trực tiếp chi tiết đơn từ Global Search:
-    // navigate(`/crm/sale_invoice?openInvoice=3384`)
+    // Hỗ trợ mở trực tiếp chi tiết đơn từ Global Search
     const openId = searchParams.get("openInvoice");
     if (openId) {
       const numId = parseInt(openId, 10);

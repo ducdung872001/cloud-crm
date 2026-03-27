@@ -270,6 +270,11 @@ const OrderList: React.FC<OrderListProps> = ({
                 <div className={`oc-items${order.status === "cancelled" ? " oc-items--cancelled" : ""}`}>
                   {order.items}
                 </div>
+                {order.note && (
+                  <div className="oc-note">
+                    📝 {order.note}
+                  </div>
+                )}
               </div>
             </div>
             <div className="order-card__bot" onClick={e => e.stopPropagation()}>

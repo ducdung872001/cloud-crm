@@ -53,6 +53,7 @@ interface ReceiptModalProps {
   couponDiscount?: number;
   promoDiscount?: number;
   onPaymentSuccess?: () => void;
+  note?: string;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -61,6 +62,7 @@ export default function ReceiptModal({
   open, cartItems, onClose, customerId, invoiceId,
   invoiceDraft, method, qrCodePro,
   couponDiscount = 0, promoDiscount = 0, onPaymentSuccess,
+  note = "",
 }: ReceiptModalProps) {
   const printRef = useRef<HTMLDivElement>(null);
   const qrRef    = useRef<HTMLDivElement>(null);
@@ -159,6 +161,10 @@ body { font-family: 'Segoe UI', Arial, sans-serif; font-size: ${cfg.fontSize};
 .receipt__totals-row--grand span { font-weight:900; color:#000; }
 .receipt__discount { color:#cc0000; }
 .receipt__pay-badge { font-size:.85em; color:#555; }
+.receipt__note { margin-top:8px; padding:6px 8px; background:#f8f9fa; border-left:3px solid #84cc16;
+                 border-radius:0 4px 4px 0; font-size:.85em; }
+.receipt__note-label { font-weight:700; color:#3d6b0b; margin-right:4px; }
+.receipt__note-text { color:#444; }
 .receipt__footer { text-align:center; margin-top:12px; padding-top:10px;
                    border-top:1px dashed #999; font-size:.85em; color:#666; line-height:1.7; }
 ${cfg.pageCSS}
@@ -344,6 +350,14 @@ ${html}
               <div ref={qrRef} style={{ display: "inline-block", padding: "16px", border: "1px solid #eee", borderRadius: "12px" }}>
                 <QRCodeCanvas value={qrCodePro} size={200} level="M" includeMargin={true} bgColor="#ffffff" fgColor="#000000" />
               </div>
+            </div>
+          )}
+
+          {/* Ghi chú đơn hàng */}
+          {note?.trim() && (
+            <div className="receipt__note">
+              <span className="receipt__note-label">📝 Ghi chú:</span>
+              <span className="receipt__note-text">{note.trim()}</span>
             </div>
           )}
 
