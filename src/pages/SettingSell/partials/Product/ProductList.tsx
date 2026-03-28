@@ -58,6 +58,14 @@ export default function ProductList(props: IProductListProps) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showModalConfig, setShowModalConfig] = useState<boolean>(false);
+  // Scan QR modal
+  const [showScanModal, setShowScanModal]         = useState(false);
+  const [scanInput, setScanInput]                 = useState("");
+  const [scanSearching, setScanSearching]         = useState(false);
+  const [scanFound, setScanFound]                 = useState<any>(null);
+  const [scanNotFound, setScanNotFound]           = useState(false);
+  const [scanCode, setScanCode]                   = useState("");
+  const [preFillBarcode, setPreFillBarcode]       = useState<string | null>(null);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -271,7 +279,34 @@ export default function ProductList(props: IProductListProps) {
 
   // TODO: Implement QR scan handler
   const handleScanQR = () => {
-    showToast("Chức năng quét mã QR đang được phát triển", "info");
+    setScanInput(""); setScanFound(null); setScanNotFound(false); setScanCode("");
+    setShowScanModal(true);
+  };
+
+  const handleScanSearch = async (code?: string) => {
+    const q = (code ?? scanInput).trim();
+    if (!q) return;
+    setScanSearching(true); setScanFound(null); setScanNotFound(false); setScanCode(q);
+    try {
+      const res = await ProductService.wScan(q);
+      if (res.code === 0 && res.result?.id) {
+        setScanFound(res.result);
+      } else {
+        setScanNotFound(true);
+      }
+    } catch {
+      setScanNotFound(true);
+    } finally {
+      setScanSearching(false);
+    }
+  };
+
+  const handleScanGoToProduct = () => {
+    // Mở trang thêm SP mới với barcode điền sẵn
+    setPreFillBarcode(scanCode);
+    setIdProduct(null);
+    setShowScanModal(false);
+    setShowModalAdd(true);
   };
 
   // TODO: Implement category management handler
@@ -848,11 +883,13 @@ export default function ProductList(props: IProductListProps) {
       <AddProductPage
         idProduct={idProduct}
         data={dataProduct}
+        preFillBarcode={preFillBarcode}
         onBack={(reload) => {
           if (reload) getListProduct(params);
           setShowProductPage(false);
           setIdProduct(null);
           setDataProduct(null);
+          setPreFillBarcode(null);
         }}
       />
     );
@@ -1158,6 +1195,77 @@ export default function ProductList(props: IProductListProps) {
           productName={barcodePrintProduct.name}
           variants={barcodePrintProduct.variants}
         />
+      )}
+
+      {/* ── Scan QR Modal (Danh sách SP) ── */}
+      {showScanModal && (
+        <div className="scan-overlay" onClick={(e) => e.target === e.currentTarget && setShowScanModal(false)}>
+          <div className="scan-modal">
+            <div className="scan-modal__header">
+              <span>📷 Quét mã sản phẩm</span>
+              <button className="scan-modal__close" onClick={() => setShowScanModal(false)}>✕</button>
+            </div>
+
+            {/* Input nhập mã */}
+            <div className="scan-modal__input-row">
+              <input
+                autoFocus
+                type="text"
+                value={scanInput}
+                onChange={(e) => setScanInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleScanSearch()}
+                placeholder="Nhập hoặc quét mã vạch rồi Enter..."
+                disabled={scanSearching}
+              />
+              <button
+                className="btn btn--primary btn--sm"
+                onClick={() => handleScanSearch()}
+                disabled={scanSearching || !scanInput.trim()}
+              >
+                {scanSearching ? "..." : "Tìm"}
+              </button>
+            </div>
+
+            {/* Tìm thấy */}
+            {scanFound && (
+              <div className="scan-modal__found">
+                <span>✅</span>
+                <div>
+                  <div className="scan-modal__found-name">{scanFound.name}</div>
+                  <div className="scan-modal__found-meta">
+                    SKU: {scanFound.sku || "—"} · Tồn: {scanFound.onHandQty ?? 0}
+                  </div>
+                </div>
+                <button
+                  className="btn btn--primary btn--sm"
+                  onClick={() => {
+                    setIdProduct(scanFound.id);
+                    setShowScanModal(false);
+                    setShowProductPage(true);
+                  }}
+                >
+                  Xem SP
+                </button>
+              </div>
+            )}
+
+            {/* Không tìm thấy */}
+            {scanNotFound && (
+              <div className="scan-modal__not-found">
+                <div className="scan-modal__nf-icon">🔍</div>
+                <p>Không tìm thấy sản phẩm với mã <code>{scanCode}</code></p>
+                <div className="scan-modal__nf-actions">
+                  <button className="btn btn--primary btn--sm" onClick={handleScanGoToProduct}>
+                    ➕ Tạo sản phẩm mới với mã này
+                  </button>
+                  <button className="btn btn--outline btn--sm" onClick={() => { setScanNotFound(false); setScanInput(""); }}>
+                    Quét lại
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

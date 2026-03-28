@@ -388,10 +388,15 @@ const CounterSales: React.FC = () => {
 
   const handleConfirmOrder = useCallback(() => setOrderDetailModalOpen(false), []);
 
-  const handleQrAddToCart = useCallback(() => {
+  const handleQrAddToCart = useCallback((item: {
+    id: string; variantId: string; name: string;
+    price: number; priceLabel: string; unit: string;
+    unitName: string; icon: string; qty: number;
+  }) => {
     handleAddToCart({
-      id: "1", icon: "🥛", name: "Sữa TH True Milk 1L", priceLabel: "32,000 ₫",
-      price: 32000, unit: "hộp", qty: 1, variantId: "1",
+      id: item.id, variantId: item.variantId, name: item.name,
+      price: item.price, priceLabel: item.priceLabel,
+      unit: item.unit, unitName: item.unitName, icon: item.icon, qty: 1,
     });
     setQrScanModalOpen(false);
   }, [handleAddToCart]);
@@ -561,7 +566,7 @@ const CounterSales: React.FC = () => {
         onConfirm={handleConfirmOrder}
       />
 
-      <QrScanModal open={qrScanModalOpen} onClose={() => setQrScanModalOpen(false)} onAdd={handleQrAddToCart} />
+      <QrScanModal open={qrScanModalOpen} onClose={() => setQrScanModalOpen(false)} onAddToCart={handleQrAddToCart} />
       <SyncModal open={syncModalOpen} onClose={() => setSyncModalOpen(false)} />
 
       {/* Khuyến mãi */}

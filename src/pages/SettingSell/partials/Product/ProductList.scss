@@ -675,3 +675,89 @@
 @keyframes lazadaSpin {
   to { transform: rotate(360deg); }
 }
+// ── Scan QR Modal (ProductList) ──────────────────────────────────────────────
+.scan-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scan-modal {
+  background: #fff;
+  border-radius: 1.2rem;
+  padding: 2rem;
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1.4rem;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.6rem;
+    color: #9ca3af;
+    &:hover { color: #374151; }
+  }
+
+  &__input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1.2rem;
+
+    input {
+      flex: 1;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 1.35rem;
+      outline: none;
+      &:focus { border-color: var(--primary-color, #015aa4); }
+    }
+  }
+
+  &__found {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1.2rem;
+    background: #f0fdf4;
+    border: 1.5px solid #86efac;
+    border-radius: 1rem;
+
+    &-name { font-size: 1.4rem; font-weight: 600; }
+    &-meta { font-size: 1.2rem; color: #6b7280; margin-top: 2px; }
+    > button { margin-left: auto; flex-shrink: 0; }
+  }
+
+  &__not-found {
+    padding: 1.6rem;
+    background: #fef9f0;
+    border: 1.5px solid #fbbf24;
+    border-radius: 1rem;
+    text-align: center;
+
+    .scan-modal__nf-icon { font-size: 2.4rem; margin-bottom: 8px; }
+    p { font-size: 1.35rem; color: #374151; margin-bottom: 1.2rem; }
+    code { background: #fff; border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 6px; font-family: monospace; }
+  }
+
+  &__nf-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+}

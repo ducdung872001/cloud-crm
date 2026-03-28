@@ -27,6 +27,7 @@ interface AddProductPageProps {
   idProduct: number | null;
   data?: any;
   onBack: (reload: boolean) => void;
+  preFillBarcode?: string | null;
 }
 
 const DISPLAY_TOGGLES = [
@@ -404,7 +405,7 @@ function VariantImagePicker({ images, onChange }: { images: string[]; onChange: 
   );
 }
 
-export default function AddProductPage({ idProduct, data, onBack }: AddProductPageProps) {
+export default function AddProductPage({ idProduct, data, onBack, preFillBarcode }: AddProductPageProps) {
   const isEdit = !!idProduct;
   const { id: userId } = useContext(UserContext) as ContextType;
 
@@ -469,6 +470,22 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     };
     init();
   }, [idProduct]);
+
+  // Khi được mở từ scan QR → điền sẵn barcode vào biến thể đầu tiên
+  useEffect(() => {
+    if (!preFillBarcode) return;
+    setCombinations((prev) => {
+      if (prev.length === 0) {
+        // Chưa có biến thể → tạo 1 biến thể mặc định với barcode
+        return [{ id: null, variantName: "Mặc định", barcode: preFillBarcode, sku: "", priceRetail: 0, priceWholesale: 0, onHandQty: 0 }];
+      }
+      // Đã có biến thể → điền vào cái đầu tiên nếu chưa có barcode
+      return prev.map((v, i) => i === 0 && !v.barcode ? { ...v, barcode: preFillBarcode } : v);
+    });
+    // Scroll xuống tab biến thể để người dùng thấy
+    setActiveTab("variants");
+    showToast(`Mã vạch "${preFillBarcode}" đã được điền vào biến thể đầu tiên`, "info");
+  }, [preFillBarcode]);
 
   // Tự động bắt đầu tour in mã vạch lần đầu — khi SP đã có biến thể
   useEffect(() => {
