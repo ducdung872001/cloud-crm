@@ -653,11 +653,14 @@ export default function InventoryManagement() {
         title: "Tạo phiếu nhập",
         callback: () => navigate(urls.create_inventory),
       },
-      activeTab === "import" && permissions["WAREHOUSE_ADD"] == 1 && {
+      activeTab === "import" && {
         title: "Import tồn kho",
-        type: "secondary",
+        color: "secondary" as const,
         icon: <Icon name="Upload" style={{ width: 15 }} />,
-        callback: () => setShowStockInitModal(true),
+        callback: () => {
+          console.log("[DEBUG] Import tồn kho clicked, setShowStockInitModal(true)");
+          setShowStockInitModal(true);
+        },
       },
       activeTab === "transfer" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu chuyển kho",
