@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Portal } from "react-overlays";
 import Icon from "components/icon";
 import { showToast } from "utils/common";
 import { formatCurrency } from "reborn-util";
@@ -160,9 +161,7 @@ export default function ModalStockInitImport({ isOpen, onClose, onSuccess }: Pro
     onClose();
   };
 
-  if (!isOpen) return null;
-
-  return (
+  const body = (
     <div className="modal-overlay" onClick={handleClose}>
       <div className="modal-stock-init" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
@@ -391,6 +390,14 @@ export default function ModalStockInitImport({ isOpen, onClose, onSuccess }: Pro
         </div>
       </div>
     </div>
+  );
+
+  if (!isOpen) return null;
+
+  return (
+    <Portal container={document.getElementsByTagName("body")[0]}>
+      {body}
+    </Portal>
   );
 
   function isStepDone(s: Step): boolean {
