@@ -209,7 +209,18 @@ export default function ProductList(props: IProductListProps) {
   // TODO: Implement tab filter (API integration needed)
   const handleTabChange = (tab: StatusTab) => {
     setActiveTab(tab);
-    // TODO: call getListProduct with corresponding status filter
+    switch (tab) {
+      case "active":
+        setParams((prev) => ({ ...prev, status: 1, page: 1 }));
+        break;
+      case "paused":
+        setParams((prev) => ({ ...prev, status: 0, page: 1 }));
+        break;
+      case "all":
+      default:
+        setParams((prev) => { const { status, ...rest } = prev; return { ...rest, page: 1 }; });
+        break;
+    }
   };
 
   const handleToggleWebDisplay = async (item: IProductResponse, newValue: boolean) => {
@@ -531,9 +542,16 @@ export default function ProductList(props: IProductListProps) {
   const dataFormat = ["", "", "text-right", "text-center", "text-center", "text-center"];
 
   const getStatusBadge = (item: IProductResponse) => {
-    // TODO: use real status field from API when available
-    // Mocked: derive from price/stock for demo
-    return <span className="product-status-badge product-status-badge--active">Đang bán</span>;
+    switch (item.status) {
+      case 1:
+        return <span className="product-status-badge product-status-badge--active">Đang bán</span>;
+      case 0:
+        return <span className="product-status-badge product-status-badge--paused">Tạm dừng</span>;
+      case 2:
+        return <span className="product-status-badge product-status-badge--stopped">Ngừng KD</span>;
+      default:
+        return <span className="product-status-badge product-status-badge--active">Đang bán</span>;
+    }
   };
 
   const dataMappingArray = (item: IProductResponse, index: number) => {

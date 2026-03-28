@@ -471,16 +471,9 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       stock: p.stock ?? 0,
       minStock: p.minStock ?? p.stockWarning ?? 20,
       maxStock: p.maxStock ?? 0,
-      showOnWeb: p.showOnWeb ?? true,
-      showImage: p.showImage ?? true,
-      showUnit: p.showUnit ?? true,
-      showDesc: p.showDesc ?? true,
-      showPromoPrice: p.showPromoPrice ?? false,
-      showWholesalePrice: p.showWholesalePrice ?? false,
-      showStock: p.showStock ?? true,
-      showBarcode: p.showBarcode ?? false,
-      showCategory: p.showCategory ?? true,
-      hideWhenOutOfStock: p.hideWhenOutOfStock ?? true,
+      // ⚠️ Không set website display settings ở đây —
+      // chúng được load riêng từ /product/website-setting/get
+      // để tránh overwrite bằng undefined defaults
     }));
     if (p.categoryId) setSelectedCategory({ value: p.categoryId, label: p.categoryName });
 

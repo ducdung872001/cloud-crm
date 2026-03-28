@@ -3,6 +3,8 @@ export interface IProductFilterRequest {
   page?: number;
   limit?: number;
   warehouseId?: number;
+  status?: number;     // 1=Đang bán, 0=Tạm dừng, 2=Ngừng KD, undefined=Tất cả
+  categoryId?: number;
 }
 
 export interface IProductRequest {

@@ -70,7 +70,11 @@ export default {
 
   // ── Warehouse API (tài liệu mới) ──
   wList: (params?: IProductFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.product.wList}${convertParamsToString(params)}`, {
+    // convertParamsToString có thể drop status=0 vì falsy — build query string thủ công cho status
+    const base = convertParamsToString(params);
+    const hasStatus = params?.status !== undefined && params?.status !== null;
+    const statusSuffix = hasStatus && !base.includes("status=") ? `${base.includes("?") ? "&" : "?"}status=${params.status}` : "";
+    return fetch(`${urlsApi.product.wList}${base}${statusSuffix}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
