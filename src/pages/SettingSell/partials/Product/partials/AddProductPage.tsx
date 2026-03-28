@@ -14,6 +14,10 @@ import "./AddProductPage.scss";
 import Tippy from "@tippyjs/react";
 import ShareLinkModal from "./ShareLinkModal";
 import BarcodePrintModal from "./BarcodePrintModal";
+import { useContext } from "react";
+import { UserContext, ContextType } from "contexts/userContext";
+import { useOnboarding, isTourDone } from "hooks/useOnboarding";
+import TourOverlay from "components/tourOverlay/TourOverlay";
 import RebornEditor from "components/editor/reborn";
 import { serialize } from "utils/editor";
 
@@ -402,6 +406,14 @@ function VariantImagePicker({ images, onChange }: { images: string[]; onChange: 
 
 export default function AddProductPage({ idProduct, data, onBack }: AddProductPageProps) {
   const isEdit = !!idProduct;
+  const { id: userId } = useContext(UserContext) as ContextType;
+
+  // ── Tour hướng dẫn in mã vạch ──
+  const barcodeTour = useOnboarding({
+    userId: userId ?? "guest",
+    tourId: "barcode_print",
+    autoStart: false, // chỉ tự khởi động lần đầu khi SP đã có biến thể (xem useEffect bên dưới)
+  });
   const [activeTab, setActiveTab] = useState<PageTab>("info");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -457,6 +469,15 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     };
     init();
   }, [idProduct]);
+
+  // Tự động bắt đầu tour in mã vạch lần đầu — khi SP đã có biến thể
+  useEffect(() => {
+    if (combinations.length > 0 && !isTourDone(userId ?? "guest", "barcode_print")) {
+      // Delay nhỏ để UI render xong
+      const t = setTimeout(() => barcodeTour.start(), 600);
+      return () => clearTimeout(t);
+    }
+  }, [combinations.length > 0]);
 
   const preFill = (p: any) => {
     setFormData((prev) => ({
@@ -1191,14 +1212,24 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
               </>
             )}
           </div>
-          <button
-            className="add-prod-page__btn add-prod-page__btn--outline"
-            onClick={() => setShowBarcodePrintModal(true)}
-            disabled={combinations.length === 0}
-            title={combinations.length === 0 ? "Cần có ít nhất 1 biến thể" : "In mã vạch"}
-          >
-            In mã vạch
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <button
+              className="add-prod-page__btn add-prod-page__btn--outline"
+              onClick={() => setShowBarcodePrintModal(true)}
+              disabled={combinations.length === 0}
+              title={combinations.length === 0 ? "Cần có ít nhất 1 biến thể" : "In mã vạch"}
+            >
+              In mã vạch
+            </button>
+            <button
+              className="add-prod-page__btn add-prod-page__btn--outline"
+              style={{ padding: "0 8px", minWidth: 28, fontWeight: 700, color: "#6b7280" }}
+              onClick={() => barcodeTour.start()}
+              title="Xem hướng dẫn in mã vạch"
+            >
+              ?
+            </button>
+          </div>
           <button className="add-prod-page__btn add-prod-page__btn--primary" onClick={handleSubmit} disabled={isSubmitting}>
             {isSubmitting ? "Đang lưu..." : "Lưu sản phẩm"}
           </button>
@@ -1904,6 +1935,20 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           </div>
         </div>
       )}
+
+      {/* Tour hướng dẫn in mã vạch */}
+      <TourOverlay
+        active={barcodeTour.active}
+        step={barcodeTour.currentStep}
+        stepIdx={barcodeTour.stepIdx}
+        totalSteps={barcodeTour.totalSteps}
+        target={barcodeTour.target}
+        isFirst={barcodeTour.isFirst}
+        isLast={barcodeTour.isLast}
+        onNext={barcodeTour.next}
+        onPrev={barcodeTour.prev}
+        onSkip={barcodeTour.skip}
+      />
     </div>
   );
 }

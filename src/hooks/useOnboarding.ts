@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
-export type TourId = "login" | "shift" | "pos";
+export type TourId = "login" | "shift" | "pos" | "barcode_print";
 
 export interface TourStep {
   /** CSS selector của element cần highlight (null → modal centered) */
@@ -151,6 +151,52 @@ export const TOURS: Record<TourId, TourStep[]> = {
       scrollIntoView: true,
     },
   ],
+
+  // ── Tour 4: Hướng dẫn in tem mã vạch ─────────────────────────────────────
+  barcode_print: [
+    {
+      selector: null,
+      position: "center",
+      title:    "🏷️ In tem mã vạch sản phẩm",
+      content:  "Tính năng in tem giúp bạn tạo nhãn dán mã vạch để dán lên sản phẩm — thu ngân quét khi bán, nhân viên kho quét khi kiểm kê. Hướng dẫn sẽ chỉ bạn cách thực hiện trong vài bước.",
+    },
+    {
+      selector: ".add-prod-page__btn--outline",
+      position: "bottom",
+      title:    "📍 Bước 1 — Mở từ trang sản phẩm",
+      content:  "Khi đang chỉnh sửa sản phẩm, nhấn nút \"In mã vạch\" trên thanh tiêu đề. Nút sẽ sáng lên khi sản phẩm đã có ít nhất 1 biến thể với mã vạch.",
+    },
+    {
+      selector: ".bpm-paper-options",
+      position: "right",
+      title:    "📄 Bước 2 — Chọn khổ giấy / máy in",
+      content:  "Chọn đúng khổ phù hợp với máy in của bạn:\n• A4 — máy in thông thường, in nhiều nhãn/trang\n• Thermal 58mm — máy in nhiệt khổ nhỏ\n• Thermal 80mm — máy in nhiệt khổ rộng hơn",
+    },
+    {
+      selector: ".bpm-config .bpm-section:nth-child(2)",
+      position: "right",
+      title:    "✏️ Bước 3 — Tùy chỉnh nội dung nhãn",
+      content:  "Bật/tắt từng thành phần trên nhãn theo nhu cầu:\n• Tên SP + Biến thể: nhân viên nhận diện hàng\n• Barcode: để quét tại POS\n• Giá bán: khách xem giá trực tiếp\n• SKU: tra cứu nội bộ",
+    },
+    {
+      selector: ".bpm-variant-list",
+      position: "right",
+      title:    "🔢 Bước 4 — Nhập số lượng cần in",
+      content:  "Mỗi biến thể có ô nhập số lượng riêng. Ví dụ: nhập hàng 50 áo Đen-XL → nhập 50 → hệ thống sẽ in đúng 50 tờ nhãn cho biến thể đó.",
+    },
+    {
+      selector: ".bpm-preview__labels",
+      position: "left",
+      title:    "👁️ Bước 5 — Xem trước nhãn",
+      content:  "Khu vực bên phải hiển thị preview layout nhãn thực tế. Kiểm tra thông tin và căn chỉnh trước khi in để tránh in thừa.",
+    },
+    {
+      selector: null,
+      position: "center",
+      title:    "🖨️ Bước 6 — Nhấn In",
+      content:  "Nhấn nút \"In N nhãn\" ở cuối modal. Trình duyệt sẽ mở hộp thoại in — chọn đúng máy in của bạn và xác nhận.\n\n💡 Tip: Bạn cũng có thể in hàng loạt từ danh sách sản phẩm bằng cách chọn nhiều sản phẩm → Bulk action \"In mã vạch\".",
+    },
+  ],
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -171,7 +217,7 @@ export const resetTour    = (uid: number | string, tid: TourId) => {
 };
 
 export const resetAllTours = (uid: number | string) =>
-  (["login", "shift", "pos"] as TourId[]).forEach((t) => resetTour(uid, t));
+  (["login", "shift", "pos", "barcode_print"] as TourId[]).forEach((t) => resetTour(uid, t));
 
 // ─────────────────────────────────────────────────────────────────────────────
 // useOnboarding hook
