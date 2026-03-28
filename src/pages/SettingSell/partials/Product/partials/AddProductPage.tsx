@@ -13,6 +13,7 @@ import { IOption } from "model/OtherModel";
 import "./AddProductPage.scss";
 import Tippy from "@tippyjs/react";
 import ShareLinkModal from "./ShareLinkModal";
+import BarcodePrintModal from "./BarcodePrintModal";
 import RebornEditor from "components/editor/reborn";
 import { serialize } from "utils/editor";
 
@@ -404,6 +405,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const [activeTab, setActiveTab] = useState<PageTab>("info");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showBarcodePrintModal, setShowBarcodePrintModal] = useState(false);
   const [detailProduct, setDetailProduct] = useState<IProductResponse>(null);
 
   // ── Content (editor) ──
@@ -1058,7 +1060,14 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
             </button>
           )}
           <button className="add-prod-page__btn add-prod-page__btn--outline">Xem trước Web</button>
-          <button className="add-prod-page__btn add-prod-page__btn--outline">In mã vạch</button>
+          <button
+            className="add-prod-page__btn add-prod-page__btn--outline"
+            onClick={() => setShowBarcodePrintModal(true)}
+            disabled={combinations.length === 0}
+            title={combinations.length === 0 ? "Cần có ít nhất 1 biến thể" : "In mã vạch"}
+          >
+            In mã vạch
+          </button>
           <button className="add-prod-page__btn add-prod-page__btn--primary" onClick={handleSubmit} disabled={isSubmitting}>
             {isSubmitting ? "Đang lưu..." : "Lưu sản phẩm"}
           </button>
@@ -1635,6 +1644,22 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           productName={formData.name}
           productAvatar={formData.avatar}
           onClose={() => setShowShareModal(false)}
+        />
+      )}
+
+      {/* Barcode Print Modal */}
+      {showBarcodePrintModal && (
+        <BarcodePrintModal
+          onShow={showBarcodePrintModal}
+          onHide={() => setShowBarcodePrintModal(false)}
+          productName={formData.name}
+          variants={combinations.map((c) => ({
+            id: c.id ?? Math.random(),
+            label: c.label,
+            sku: c.sku || "",
+            barcode: c.barcode || "",
+            price: c.price ?? 0,
+          }))}
         />
       )}
     </div>

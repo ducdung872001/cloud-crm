@@ -32,6 +32,7 @@ import AddProductPage from "./partials/AddProductPage";
 import { syncProductToLazada } from "services/LazadaSyncService";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import ShareLinkModal from "./partials/ShareLinkModal";
+import BarcodePrintModal from "./partials/BarcodePrintModal";
 
 // ---- Tab filter type ----
 type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
@@ -74,6 +75,11 @@ export default function ProductList(props: IProductListProps) {
 
   // ── Share Link Modal ──
   const [shareProduct, setShareProduct] = useState<IProductResponse | null>(null);
+
+  // ── Barcode Print Modal ──
+  const [showBarcodePrint, setShowBarcodePrint] = useState(false);
+  const [barcodePrintProduct, setBarcodePrintProduct] = useState<{ name: string; variants: any[] } | null>(null);
+  const [isFetchingBarcode, setIsFetchingBarcode] = useState(false);
 
   // Đọc ?productId từ URL (từ Global Search) → tự mở trang chi tiết sản phẩm
   const [searchParams] = useSearchParams();
@@ -262,6 +268,63 @@ export default function ProductList(props: IProductListProps) {
       });
   };
 
+  // ── Barcode Print handler ──
+  // Dùng cho cả single item (từ action menu) và bulk (từ listIdChecked)
+  const handleOpenBarcodePrint = async (productIds: number[]) => {
+    if (!productIds.length) return;
+    setIsFetchingBarcode(true);
+    try {
+      // Fetch detail song song tất cả SP đã chọn
+      const results = await Promise.all(productIds.map((id) => ProductService.wDetail(id)));
+      const allVariants: any[] = [];
+      let productName = "";
+
+      results.forEach((res) => {
+        if (res.code !== 0) return;
+        const p = res.result;
+        if (!productName) productName = p.name; // tên SP đầu tiên
+        const realVariants = (p.variants || []).filter((v: any) => v.label !== "Mac dinh");
+        realVariants.forEach((v: any) => {
+          allVariants.push({
+            id: v.id,
+            label: productIds.length > 1 ? `${p.name} — ${v.label}` : v.label,
+            sku: v.sku || "",
+            barcode: v.barcode || "",
+            price: v.price ?? 0,
+            unitName: v.unitName || "",
+          });
+        });
+        // Nếu không có biến thể thực → dùng "Mặc định"
+        if (realVariants.length === 0 && p.variants?.length > 0) {
+          const def = p.variants[0];
+          allVariants.push({
+            id: def.id,
+            label: productIds.length > 1 ? `${p.name}` : "Mặc định",
+            sku: def.sku || "",
+            barcode: def.barcode || "",
+            price: def.price ?? 0,
+            unitName: def.unitName || "",
+          });
+        }
+      });
+
+      if (!allVariants.length) {
+        showToast("Các sản phẩm đã chọn chưa có mã vạch", "error");
+        return;
+      }
+
+      setBarcodePrintProduct({
+        name: productIds.length === 1 ? productName : `${productIds.length} sản phẩm`,
+        variants: allVariants,
+      });
+      setShowBarcodePrint(true);
+    } catch {
+      showToast("Không thể tải thông tin sản phẩm", "error");
+    } finally {
+      setIsFetchingBarcode(false);
+    }
+  };
+
   const handleDuplicateProd = async (item: IProductResponse) => {
     // Dùng syncingIds để hiện loading trên icon nút nhân bản
     setSyncingIds(prev => new Set(prev).add(item.id));
@@ -424,6 +487,10 @@ export default function ProductList(props: IProductListProps) {
   };
 
   const bulkActionList: BulkActionItemModel[] = [
+    {
+      title: isFetchingBarcode ? "Đang tải..." : "In mã vạch",
+      callback: () => handleOpenBarcodePrint(listIdChecked),
+    },
     permissions["PRODUCT_DELETE"] == 1 && {
       title: "Xóa sản phẩm",
       callback: () => showDialogConfirmDelete(),
@@ -627,6 +694,20 @@ export default function ProductList(props: IProductListProps) {
         icon: <Icon name="Copy" className={isCheckedItem ? "icon-disabled" : ""} style={{ width: 17 }} />,
         callback: () => {
           handleDuplicateProd(item);
+        },
+      },
+      {
+        title: "In mã vạch",
+        icon: (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 9H4a2 2 0 00-2 2v7a2 2 0 002 2h16a2 2 0 002-2v-7a2 2 0 00-2-2h-2"/>
+            <rect x="6" y="2" width="12" height="9" rx="2"/>
+            <path d="M6 17H4M18 17h2M8 13v4M12 13v4M16 13v4"/>
+          </svg>
+        ),
+        disabled: isCheckedItem,
+        callback: () => {
+          if (!isCheckedItem) handleOpenBarcodePrint([item.id]);
         },
       },
       permissions["PRODUCT_UPDATE"] == 1 && {
@@ -901,6 +982,16 @@ export default function ProductList(props: IProductListProps) {
           productName={shareProduct.name}
           productAvatar={shareProduct.avatar}
           onClose={() => setShareProduct(null)}
+        />
+      )}
+
+      {/* ── Barcode Print Modal ── */}
+      {showBarcodePrint && barcodePrintProduct && (
+        <BarcodePrintModal
+          onShow={showBarcodePrint}
+          onHide={() => { setShowBarcodePrint(false); setBarcodePrintProduct(null); }}
+          productName={barcodePrintProduct.name}
+          variants={barcodePrintProduct.variants}
         />
       )}
     </div>
