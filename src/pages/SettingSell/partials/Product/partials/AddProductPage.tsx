@@ -912,10 +912,19 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     if (!idProduct) return;
     setIsDuplicating(true);
     try {
-      // Copy variants — sinh SKU mới (thêm suffix "-C") để tránh trùng
+      const activeAttrs = variantAttrs.filter((a) => a.name.trim() && a.values.length > 0);
+      const dupVariantGroups = activeAttrs.map((attr) => ({
+        name: attr.name,
+        options: attr.values.map((val) => ({ label: val })),
+      }));
+
       const dupVariants = combinations.map((c) => {
-        const variantSku = safeSku((c.sku?.trim() || generateSku(formData.name, c.label)) + "-C");
-        const activeAttrs = variantAttrs.filter((a) => a.name.trim() && a.values.length > 0);
+        // Sinh SKU mới: thêm suffix "-C" + timestamp + random để tránh trùng
+        const base = (c.sku?.trim() || generateSku(formData.name, c.label)).replace(/-C$/, "").slice(0, 14);
+        const ts = Date.now().toString(36).toUpperCase().slice(-3);
+        const rnd = Math.random().toString(36).slice(2, 4).toUpperCase();
+        const variantSku = safeSku(`${base}-C${ts}${rnd}`.slice(0, 19));
+
         const keyParts = c.key.split("|").map((k) => {
           const idx = k.indexOf(":");
           return { name: k.slice(0, idx), value: k.slice(idx + 1) };
@@ -923,13 +932,13 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         return {
           label: c.label,
           sku: variantSku,
-          code: c.barcode || "",
+          barcode: generateEAN13(),   // sinh barcode mới hoàn toàn để tránh unique constraint
+          unitId: c.unitId ?? null,
           price: +(c.price ?? 0) || 0,
           costPrice: +(c.costPrice ?? 0) || 0,
           priceWholesale: +(c.priceWholesale ?? 0) || 0,
           pricePromo: +(c.pricePromo ?? 0) || 0,
           pricePromotion: +(c.pricePromo ?? 0) || 0,
-          image: c.images?.[0] || "",
           images: c.images || [],
           selectedOptions: activeAttrs.map((attr) => ({
             groupName: attr.name,
@@ -944,47 +953,63 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
         };
       });
 
-      const activeAttrs = variantAttrs.filter((a) => a.name.trim() && a.values.length > 0);
-      const dupVariantGroups = activeAttrs.map((attr) => ({
-        name: attr.name,
-        options: attr.values.map((val) => ({ label: val })),
-      }));
-
       const body = {
         id: 0,
         name: `${formData.name} (Copy)`,
         position: 0,
         status: formData.status,
-        avatar: formData.avatar,
         categoryId: selectedCategory?.value ?? null,
         exchange: 1,
         otherUnits: detailProduct?.otherUnits ?? "",
         type: detailProduct?.type ? String(detailProduct.type) : "1",
         description: formData.description,
-        supplierId: null,
+        minStock: formData.minStock ?? null,
+        maxStock: formData.maxStock ?? null,
         variantGroups: dupVariantGroups,
         variants:
           dupVariants.length > 0
             ? dupVariants
-            : [
-                {
-                  label: "Mac dinh",
-                  sku: safeSku(`${toSkuPart(formData.name) || "SP"}-C`),
-                  price: 0,
-                  costPrice: 0,
-                  priceWholesale: 0,
-                  pricePromo: 0,
-                },
-              ],
+            : [{
+                label: "Mac dinh",
+                sku: safeSku(`${toSkuPart(formData.name) || "SP"}-C`),
+                barcode: generateEAN13(),
+                price: 0,
+                costPrice: 0,
+                priceWholesale: 0,
+                pricePromo: 0,
+              }],
       };
 
       const res = await ProductService.wUpdate(body as any);
-      if (res.code === 0) {
-        showToast("Nhân bản sản phẩm thành công", "success");
-        onBack(true);
-      } else {
+      if (res.code !== 0) {
         showToast(res.error ?? res.message ?? "Có lỗi xảy ra", "error");
+        return;
       }
+
+      // Lấy id sản phẩm vừa tạo
+      const newId = res.result?.id ?? res.result;
+      if (newId) {
+        const sideEffects: Promise<any>[] = [];
+
+        // Copy mô tả chi tiết
+        if (contentHtml || contentDelta) {
+          sideEffects.push(
+            ProductService.wDescriptionUpdate({ productId: newId, content: contentHtml, contentDelta })
+          );
+        }
+
+        // Copy tags
+        if (selectedTagIds.length > 0) {
+          sideEffects.push(
+            ProductService.wTagUpdate({ productId: newId, tagIds: selectedTagIds })
+          );
+        }
+
+        if (sideEffects.length) await Promise.allSettled(sideEffects);
+      }
+
+      showToast("Nhân bản sản phẩm thành công", "success");
+      onBack(true);
     } finally {
       setIsDuplicating(false);
     }

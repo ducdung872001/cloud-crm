@@ -263,31 +263,129 @@ export default function ProductList(props: IProductListProps) {
   };
 
   const handleDuplicateProd = async (item: IProductResponse) => {
-    const body: any = {
-      id: 0,
-      name: `${item.name} (Copy)`,
-      code: "",
-      productLine: item.productLine ?? "",
-      price: item.price ?? 0,
-      position: 0,
-      bsnId: item.bsnId ?? 0,
-      unitId: item.unitId ?? null,
-      unitName: item.unitName ?? "",
-      status: item.status,
-      avatar: "",
-      categoryId: null,
-      categoryName: "",
-      exchange: 1,
-      otherUnits: item.otherUnits ?? "",
-      type: item.type ? String(item.type) : "0",
-    };
+    // Dùng syncingIds để hiện loading trên icon nút nhân bản
+    setSyncingIds(prev => new Set(prev).add(item.id));
+    try {
+      // 1. Lấy đầy đủ thông tin sản phẩm gốc (variants, variantGroups, tags, content...)
+      const detailRes = await ProductService.wDetail(item.id);
+      if (detailRes.code !== 0) {
+        showToast(detailRes.message ?? "Không thể lấy thông tin sản phẩm", "error");
+        return;
+      }
+      const src = detailRes.result;
 
-    const res = await ProductService.wUpdate(body);
-    if (res.code === 0) {
+      // 2. Helper: sinh EAN-13 hợp lệ (prefix 893 = Việt Nam)
+      const genEAN13 = (): string => {
+        const prefix = "893";
+        const rand = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10)).join("");
+        const partial = prefix + rand;
+        let sum = 0;
+        for (let i = 0; i < 12; i++) sum += parseInt(partial[i]) * (i % 2 === 0 ? 1 : 3);
+        return partial + ((10 - (sum % 10)) % 10);
+      };
+
+      // Helper: sinh SKU an toàn (tránh SKU rỗng, thêm suffix "-C" + random)
+      const genDupSku = (original: string): string => {
+        const base = (original || "SP").replace(/-C$/, "").slice(0, 14);
+        const ts = Date.now().toString(36).toUpperCase().slice(-3);
+        const rnd = Math.random().toString(36).slice(2, 4).toUpperCase();
+        return `${base}-C${ts}${rnd}`.slice(0, 19); // max 19 ký tự (< 20)
+      };
+
+      // 3. Build variantGroups (bỏ id → tạo mới)
+      const dupVariantGroups = (src.variantGroups || []).map((g: any) => ({
+        name: g.name,
+        options: (g.options || []).map((o: any) => ({ label: o.label })),
+      }));
+
+      // 4. Build variants — sinh SKU + barcode mới, giữ giá/ảnh/đơn vị
+      const realVariants = (src.variants || []).filter((v: any) => v.label !== "Mac dinh");
+      const dupVariants = realVariants.length > 0
+        ? realVariants.map((v: any) => ({
+            label: v.label,
+            sku: genDupSku(v.sku || ""),
+            barcode: genEAN13(),                // sinh mới để tránh unique constraint
+            unitId: v.unitId ?? null,
+            price: v.price ?? 0,
+            costPrice: v.costPrice ?? 0,
+            priceWholesale: v.priceWholesale ?? 0,
+            pricePromo: v.pricePromo ?? v.pricePromotion ?? 0,
+            pricePromotion: v.pricePromo ?? v.pricePromotion ?? 0,
+            images: v.images || [],
+            selectedOptions: (v.selectedOptions || []).map((o: any) => ({
+              groupName: o.groupName,
+              label: o.label,
+            })),
+            attributes: (v.attributes || []).map((a: any) => ({ name: a.name, value: a.value })),
+            variantPrices: (v.variantPrices || []).map((u: any) => ({
+              unitId: u.unitId ?? null,
+              unitName: u.unitName ?? "",
+              price: u.price ?? 0,
+            })),
+          }))
+        : [{
+            label: "Mac dinh",
+            sku: genDupSku("SP"),
+            barcode: genEAN13(),
+            price: 0,
+            costPrice: 0,
+            priceWholesale: 0,
+            pricePromo: 0,
+          }];
+
+      const body: any = {
+        id: 0,
+        name: `${src.name} (Copy)`,
+        position: 0,
+        status: src.status ?? 1,
+        categoryId: src.categoryId ?? null,
+        exchange: src.exchange ?? 1,
+        otherUnits: src.otherUnits ?? "",
+        type: src.type ? String(src.type) : "1",
+        description: src.description ?? "",
+        minStock: src.minStock ?? null,
+        maxStock: src.maxStock ?? null,
+        variantGroups: dupVariantGroups,
+        variants: dupVariants,
+      };
+
+      const res = await ProductService.wUpdate(body);
+      if (res.code !== 0) {
+        showToast(res.error ?? res.message ?? "Có lỗi xảy ra", "error");
+        return;
+      }
+
+      // 5. Lấy id sản phẩm mới vừa tạo
+      const newId = res.result?.id ?? res.result;
+
+      if (newId) {
+        const sideEffects: Promise<any>[] = [];
+
+        // Copy mô tả chi tiết (content HTML + delta)
+        if (src.content || src.contentDelta) {
+          sideEffects.push(
+            ProductService.wDescriptionUpdate({
+              productId: newId,
+              content: src.content ?? "",
+              contentDelta: src.contentDelta ?? "",
+            })
+          );
+        }
+
+        // Copy tags
+        if (src.tagIds?.length > 0) {
+          sideEffects.push(
+            ProductService.wTagUpdate({ productId: newId, tagIds: src.tagIds })
+          );
+        }
+
+        if (sideEffects.length) await Promise.allSettled(sideEffects);
+      }
+
       showToast("Nhân bản sản phẩm thành công", "success");
-      getListProduct(params); // reload lại list
-    } else {
-      showToast(res.message ?? "Có lỗi xảy ra", "error");
+      getListProduct(params);
+    } finally {
+      setSyncingIds(prev => { const s = new Set(prev); s.delete(item.id); return s; });
     }
   };
 
