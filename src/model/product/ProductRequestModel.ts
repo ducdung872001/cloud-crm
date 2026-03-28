@@ -3,10 +3,12 @@ export interface IProductFilterRequest {
   page?: number;
   limit?: number;
   warehouseId?: number;
-  status?: number;       // 1=Đang bán, 0=Tạm dừng, 2=Ngừng KD, undefined=Tất cả
+  status?: number;
   categoryId?: number;
-  isLowStock?: number;   // 1=lọc sắp hết hàng
-  isWebsiteVisible?: number; // 1=lọc đang hiển thị web
+  tagId?: number;
+  isLowStock?: number;
+  isWebsiteVisible?: number;
+  isOutOfStock?: number;
 }
 
 export interface IProductRequest {

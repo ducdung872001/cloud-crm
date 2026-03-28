@@ -80,8 +80,10 @@ export default {
       if (params.warehouseId !== undefined) base.warehouseId = params.warehouseId;
       if (params.status !== undefined && params.status !== null) base.status = params.status;
       if (params.categoryId !== undefined) base.categoryId = params.categoryId;
+      if (params.tagId !== undefined) base.tagId = params.tagId;
       if (params.isLowStock !== undefined) base.isLowStock = params.isLowStock;
       if (params.isWebsiteVisible !== undefined) base.isWebsiteVisible = params.isWebsiteVisible;
+      if (params.isOutOfStock !== undefined) base.isOutOfStock = params.isOutOfStock;
     }
     const qs = Object.keys(base).length
       ? "?" + Object.entries(base).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join("&")

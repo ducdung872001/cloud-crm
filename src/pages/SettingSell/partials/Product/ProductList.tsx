@@ -33,6 +33,7 @@ import { syncProductToLazada } from "services/LazadaSyncService";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import ShareLinkModal from "./partials/ShareLinkModal";
 import BarcodePrintModal from "./partials/BarcodePrintModal";
+import CategoryServiceService from "services/CategoryServiceService";
 
 // ---- Tab filter type ----
 type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
@@ -76,6 +77,19 @@ export default function ProductList(props: IProductListProps) {
     totalProduct: 0, sellingProduct: 0, pausedProduct: 0,
     lowStockProduct: 0, websiteVisibleProduct: 0, outOfStockProduct: 0,
   });
+
+  // ── Category filter dropdown ──
+  const [categoryList, setCategoryList]         = useState<{id: number; name: string}[]>([]);
+  const [showCategoryDrop, setShowCategoryDrop] = useState(false);
+  const [filterCategory, setFilterCategory]     = useState<{id: number; name: string} | null>(null);
+  const categoryDropRef = useRef<HTMLDivElement>(null);
+
+  // ── Tag filter ──
+  const [tagSearch, setTagSearch]             = useState("");
+  const [tagList, setTagList]                 = useState<{id: number; name: string}[]>([]);
+  const [showTagDrop, setShowTagDrop]         = useState(false);
+  const [filterTag, setFilterTag]             = useState<{id: number; name: string} | null>(null);
+  const tagDropRef = useRef<HTMLDivElement>(null);
 
   // ── Share Link Modal ──
   const [shareProduct, setShareProduct] = useState<IProductResponse | null>(null);
@@ -175,6 +189,45 @@ export default function ProductList(props: IProductListProps) {
     fetchSummary();
   }, []);
 
+  // Load danh sách danh mục khi mở dropdown
+  const loadCategories = async () => {
+    if (categoryList.length > 0) return; // cache
+    const res = await CategoryServiceService.list({ type: 1, page: 1, limit: 200 });
+    if (res.code === 0) {
+      setCategoryList((res.result?.items || []).map((i: any) => ({ id: i.id, name: i.name })));
+    }
+  };
+
+  // Tìm tags theo keyword
+  const searchTags = async (kw: string) => {
+    const res = await ProductService.wTagList(kw);
+    if (res.code === 0) {
+      setTagList((res.result?.items || res.result || []).map((i: any) => ({ id: i.id, name: i.name })));
+    }
+  };
+
+  // Debounced tag search
+  const tagSearchTimer = useRef<ReturnType<typeof setTimeout>>(null);
+  const handleTagInput = (kw: string) => {
+    setTagSearch(kw);
+    clearTimeout(tagSearchTimer.current);
+    tagSearchTimer.current = setTimeout(() => searchTags(kw), 300);
+  };
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (categoryDropRef.current && !categoryDropRef.current.contains(e.target as Node)) {
+        setShowCategoryDrop(false);
+      }
+      if (tagDropRef.current && !tagDropRef.current.contains(e.target as Node)) {
+        setShowTagDrop(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   const colorData = [
     "#E98E4C",
     "#ED6665",
@@ -232,9 +285,31 @@ export default function ProductList(props: IProductListProps) {
   };
 
   // TODO: Implement tab filter (API integration needed)
+  const applyCategory = (cat: {id: number; name: string} | null) => {
+    setFilterCategory(cat);
+    setShowCategoryDrop(false);
+    setParams((prev) => {
+      const next = { ...prev, page: 1 };
+      if (cat) next.categoryId = cat.id;
+      else delete next.categoryId;
+      return next;
+    });
+  };
+
+  const applyTag = (tag: {id: number; name: string} | null) => {
+    setFilterTag(tag);
+    setShowTagDrop(false);
+    setTagSearch(tag?.name || "");
+    setParams((prev) => {
+      const next = { ...prev, page: 1 };
+      if (tag) next.tagId = tag.id;
+      else delete next.tagId;
+      return next;
+    });
+  };
+
   const handleTabChange = (tab: StatusTab) => {
     setActiveTab(tab);
-    // Reset về page 1, xóa hết filter cũ, rồi áp filter mới
     setParams((prev) => {
       const base = { name: prev.name, limit: prev.limit, page: 1 };
       switch (tab) {
@@ -242,6 +317,7 @@ export default function ProductList(props: IProductListProps) {
         case "paused":      return { ...base, status: 0 };
         case "low_stock":   return { ...base, isLowStock: 1 };
         case "on_web":      return { ...base, isWebsiteVisible: 1 };
+        case "out_stock":   return { ...base, isOutOfStock: 1 };
         case "all":
         default:            return base;
       }
@@ -825,9 +901,8 @@ export default function ProductList(props: IProductListProps) {
         </button>
       </div>
 
-      {/* ── TOOLBAR ── */}
+      {/* ── ROW 1: Search + QR ── */}
       <div className="prod-list-toolbar">
-        {/* Search */}
         <div className="prod-list-search">
           <Icon name="Search" />
           <input
@@ -843,30 +918,109 @@ export default function ProductList(props: IProductListProps) {
               }, 400);
             }}
           />
+          {searchValue && (
+            <button className="prod-list-search__clear" onClick={() => {
+              setSearchValue("");
+              setParams((prev) => ({ ...prev, name: "", page: 1 }));
+            }}>✕</button>
+          )}
         </div>
 
-        {/* QR button */}
         <button className="prod-list-btn prod-list-btn--qr" onClick={handleScanQR}>
           Quét mã QR
         </button>
-
       </div>
 
-      {/* ── UNIFIED FILTER + STATS ── Click để lọc, hiện số lượng thực từ API */}
-      <div className="prod-list-stats">
-        {FILTER_STATS.map((stat) => (
-          <button
-            key={stat.key}
-            className={`prod-list-stat${activeTab === stat.key ? " prod-list-stat--active" : ""}`}
-            onClick={() => handleTabChange(stat.key)}
-          >
-            <span className="prod-list-stat__dot" style={{ background: stat.dotColor }} />
-            <div>
-              <p className="prod-list-stat__value">{stat.value.toLocaleString("vi-VN")}</p>
-              <p className="prod-list-stat__label">{stat.label}</p>
+      {/* ── ROW 2: Filter chips + Stats ── */}
+      <div className="prod-list-filter-row">
+        {/* Left: filter by Danh mục + Tags */}
+        <div className="prod-list-filters">
+
+          {/* Danh mục dropdown */}
+          <div className="prod-filter-drop" ref={categoryDropRef}>
+            <button
+              className={`prod-filter-btn${filterCategory ? " prod-filter-btn--active" : ""}`}
+              onClick={() => { setShowCategoryDrop((v) => !v); loadCategories(); }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 6h16M4 12h8M4 18h4"/></svg>
+              {filterCategory ? filterCategory.name : "Danh mục"}
+              {filterCategory
+                ? <span className="prod-filter-btn__clear" onClick={(e) => { e.stopPropagation(); applyCategory(null); }}>✕</span>
+                : <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              }
+            </button>
+            {showCategoryDrop && (
+              <div className="prod-filter-drop__menu">
+                {categoryList.length === 0
+                  ? <p className="prod-filter-drop__empty">Chưa có danh mục</p>
+                  : categoryList.map((cat) => (
+                    <button
+                      key={cat.id}
+                      className={`prod-filter-drop__item${filterCategory?.id === cat.id ? " prod-filter-drop__item--active" : ""}`}
+                      onClick={() => applyCategory(cat)}
+                    >
+                      {cat.name}
+                    </button>
+                  ))
+                }
+              </div>
+            )}
+          </div>
+
+          {/* Tags dropdown */}
+          <div className="prod-filter-drop" ref={tagDropRef}>
+            <div
+              className={`prod-filter-tag-input${filterTag ? " prod-filter-tag-input--active" : ""}`}
+              onClick={() => { setShowTagDrop(true); if (!tagSearch) searchTags(""); }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              <input
+                placeholder={filterTag ? "" : "Tags sản phẩm"}
+                value={filterTag ? filterTag.name : tagSearch}
+                readOnly={!!filterTag}
+                onChange={(e) => { handleTagInput(e.target.value); setShowTagDrop(true); }}
+                onFocus={() => { setShowTagDrop(true); if (!tagSearch && !filterTag) searchTags(""); }}
+              />
+              {filterTag && (
+                <button className="prod-filter-btn__clear" onClick={(e) => { e.stopPropagation(); applyTag(null); setTagSearch(""); setTagList([]); }}>✕</button>
+              )}
             </div>
-          </button>
-        ))}
+            {showTagDrop && !filterTag && (
+              <div className="prod-filter-drop__menu">
+                {tagList.length === 0
+                  ? <p className="prod-filter-drop__empty">{tagSearch ? "Không tìm thấy tag" : "Nhập để tìm tag..."}</p>
+                  : tagList.map((tag) => (
+                    <button
+                      key={tag.id}
+                      className="prod-filter-drop__item"
+                      onClick={() => applyTag(tag)}
+                    >
+                      # {tag.name}
+                    </button>
+                  ))
+                }
+              </div>
+            )}
+          </div>
+
+        </div>
+
+        {/* Right: Stats filter */}
+        <div className="prod-list-stats">
+          {FILTER_STATS.map((stat) => (
+            <button
+              key={stat.key}
+              className={`prod-list-stat${activeTab === stat.key ? " prod-list-stat--active" : ""}`}
+              onClick={() => handleTabChange(stat.key)}
+            >
+              <span className="prod-list-stat__dot" style={{ background: stat.dotColor }} />
+              <div>
+                <p className="prod-list-stat__value">{stat.value.toLocaleString("vi-VN")}</p>
+                <p className="prod-list-stat__label">{stat.label}</p>
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ── TABLE ── */}
