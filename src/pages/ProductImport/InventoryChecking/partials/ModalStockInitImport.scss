@@ -1,4 +1,3 @@
-// ── Overlay ─────────────────────────────────────────────────────────────────
 .modal-stock-init-overlay {
   position: fixed;
   inset: 0;
@@ -7,202 +6,188 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
-  animation: overlayIn 0.15s ease;
+  padding: 1.6rem;
 }
 
-@keyframes overlayIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-// ── Modal container ──────────────────────────────────────────────────────────
 .modal-stock-init {
   background: var(--white-color);
   border-radius: 1.2rem;
-  width: 580px;
+  width: 600px;
   max-width: 100%;
   max-height: 88vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.22);
   overflow: hidden;
-  animation: modalIn 0.2s ease;
 }
 
-@keyframes modalIn {
-  from { opacity: 0; transform: translateY(-12px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-// ── Header ───────────────────────────────────────────────────────────────────
-.modal-stock-init__header {
+// ── Header ───────────────────────────────────────────────────────────────
+.msii-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.8rem 2rem 1.6rem;
+  padding: 1.6rem 2rem;
   border-bottom: 1px solid var(--border-color);
 
-  &-left {
+  &__left {
     display: flex;
     align-items: center;
-    gap: 1rem;
-
-    .header-icon {
-      width: 3.6rem;
-      height: 3.6rem;
-      background: var(--primary-color-10);
-      border-radius: 0.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      svg { color: var(--primary-color); }
-    }
-
-    .header-text {
-      h2 {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: var(--text-primary-color);
-        margin: 0 0 0.1rem;
-      }
-      p {
-        font-size: 1.2rem;
-        color: var(--extra-color-50);
-        margin: 0;
-      }
-    }
+    gap: 1.2rem;
   }
-}
 
-.modal-stock-init__close {
-  width: 3.2rem;
-  height: 3.2rem;
-  border-radius: 50%;
-  border: 1.5px solid var(--border-color);
-  background: var(--white-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--extra-color-50);
-  flex-shrink: 0;
-  transition: all 0.15s;
+  &__icon {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 0.8rem;
+    background: var(--primary-color-10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    svg { color: var(--primary-color); width: 20px; }
+  }
 
-  &:hover {
-    background: var(--extra-color-10);
-    border-color: var(--extra-color-30);
+  &__title {
+    font-size: 1.55rem;
+    font-weight: 700;
     color: var(--text-primary-color);
+    margin: 0 0 0.2rem;
   }
-}
 
-// ── Stepper ───────────────────────────────────────────────────────────────────
-.modal-stock-init__stepper {
-  display: flex;
-  align-items: center;
-  padding: 1.2rem 2rem;
-  background: var(--primary-color-5);
-  border-bottom: 1px solid var(--border-color);
-  gap: 0;
+  &__sub {
+    font-size: 1.2rem;
+    color: var(--extra-color-50);
+    margin: 0;
+  }
 
-  .stepper__item {
+  &__close {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-color);
+    background: var(--white-color);
+    color: var(--extra-color-50);
     display: flex;
     align-items: center;
-    gap: 0.7rem;
-    flex: 1;
-    font-size: 1.25rem;
-    color: var(--extra-color-30);
-    position: relative;
-
-    &:not(:last-child) {
-      &::after {
-        content: "";
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 1px;
-        height: 60%;
-        background: var(--border-color);
-      }
-    }
-
-    .stepper__dot {
-      width: 2rem;
-      height: 2rem;
-      border-radius: 50%;
-      background: var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--extra-color-30);
-      flex-shrink: 0;
-      transition: all 0.2s;
-    }
-
-    span { font-weight: 500; }
-
-    &.active {
-      color: var(--primary-color);
-      .stepper__dot {
-        background: var(--primary-color);
-        color: #fff;
-      }
-      span { font-weight: 700; }
-    }
-
-    &.done {
-      color: var(--success-color);
-      .stepper__dot {
-        background: var(--success-color);
-        color: #fff;
-      }
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    svg { width: 15px; }
+    &:hover {
+      border-color: var(--extra-color-30);
+      background: var(--extra-color-10);
+      color: var(--text-primary-color);
     }
   }
 }
 
-// ── Body ─────────────────────────────────────────────────────────────────────
-.modal-stock-init__body {
+// ── Stepper ───────────────────────────────────────────────────────────────
+.msii-stepper {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--primary-color-5);
+}
+
+.msii-step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.1rem 1.6rem;
+  position: relative;
+
+  &:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0; top: 20%; bottom: 20%;
+    width: 1px;
+    background: var(--border-color);
+  }
+
+  &__dot {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background: var(--white-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--extra-color-30);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  &__label {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--extra-color-30);
+    transition: color 0.2s;
+  }
+
+  &--active {
+    .msii-step__dot {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+      color: #fff;
+    }
+    .msii-step__label {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+  }
+
+  &--done {
+    .msii-step__dot {
+      background: var(--success-color);
+      border-color: var(--success-color);
+      color: #fff;
+    }
+    .msii-step__label { color: var(--success-color); }
+  }
+}
+
+// ── Body ─────────────────────────────────────────────────────────────────
+.msii-body {
   flex: 1;
   overflow-y: auto;
   padding: 2rem;
   background: var(--white-color);
 }
 
-// ── Footer ────────────────────────────────────────────────────────────────────
-.modal-stock-init__footer {
+// ── Footer ────────────────────────────────────────────────────────────────
+.msii-footer {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
   gap: 1rem;
   padding: 1.4rem 2rem;
   border-top: 1px solid var(--border-color);
   background: var(--white-color);
 }
 
-// ══════════════════════════════════════════════════════════════════
-// STEP 1 — UPLOAD
-// ══════════════════════════════════════════════════════════════════
-.step-upload {
+// ══ STEP 1: UPLOAD ═══════════════════════════════════════════════════════
+.msii-upload {
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
 }
 
-.step-upload__hint {
+.msii-upload__hint {
   font-size: 1.35rem;
   color: var(--extra-color-50);
-  margin: 0;
   line-height: 1.7;
+  margin: 0;
 }
 
-.btn-download-template {
+.msii-template-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
-  padding: 1rem 1.8rem;
+  padding: 0.9rem 1.6rem;
   background: var(--primary-color-5);
   border: 1.5px dashed var(--primary-color-50);
   border-radius: 0.6rem;
@@ -210,59 +195,52 @@
   font-size: 1.3rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
   width: fit-content;
-
-  &:hover {
-    background: var(--primary-color-10);
-    border-color: var(--primary-color);
-    border-style: solid;
-  }
+  transition: all 0.15s;
+  svg { width: 16px; }
+  &:hover { background: var(--primary-color-10); border-style: solid; border-color: var(--primary-color); }
 }
 
-.drop-zone {
+.msii-dropzone {
   border: 2px dashed var(--border-color);
   border-radius: 1rem;
-  min-height: 15rem;
+  min-height: 16rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.18s;
   background: var(--extra-color-5);
-  position: relative;
 
-  &:hover {
-    border-color: var(--primary-color-50);
-    background: var(--primary-color-5);
-  }
+  &:hover { border-color: var(--primary-color-50); background: var(--primary-color-5); }
 
-  &.dragging {
+  &--dragging {
     border-color: var(--primary-color);
+    border-style: solid;
     background: var(--primary-color-5);
     box-shadow: 0 0 0 4px var(--primary-color-10);
   }
 
-  &.has-file {
+  &--filled {
     border-color: var(--success-color);
-    background: #f0faf5;
     border-style: solid;
+    background: #f2fbf6;
   }
 
   &__empty {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.8rem;
-    padding: 2rem;
+    gap: 0.7rem;
+    padding: 2.5rem;
     text-align: center;
     font-size: 1.35rem;
     color: var(--extra-color-50);
-    strong { color: var(--primary-color); }
+    strong { color: var(--primary-color); font-weight: 600; }
   }
 
   &__sub {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     color: var(--extra-color-30);
     margin-top: -0.2rem;
   }
@@ -271,12 +249,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     padding: 2rem;
     width: 100%;
   }
 
-  &__filename {
+  &__name {
     font-size: 1.4rem;
     font-weight: 600;
     color: var(--text-primary-color);
@@ -289,55 +267,50 @@
   }
 
   &__remove {
-    margin-top: 0.4rem;
-    background: none;
-    border: 1.5px solid var(--error-color);
-    border-radius: 2rem;
-    padding: 0.3rem 1rem;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    cursor: pointer;
+    margin-top: 0.4rem;
+    padding: 0.4rem 1.2rem;
+    border: 1.5px solid var(--error-color);
+    border-radius: 2rem;
+    background: none;
     color: var(--error-color);
     font-size: 1.2rem;
     font-weight: 600;
+    cursor: pointer;
     transition: all 0.15s;
+    svg { width: 12px; }
     &:hover { background: var(--error-color); color: #fff; }
   }
 }
 
-// ══════════════════════════════════════════════════════════════════
-// STEP 2 — PREVIEW
-// ══════════════════════════════════════════════════════════════════
-.step-preview {
-  display: flex;
-  flex-direction: column;
-  gap: 1.8rem;
-}
+// ══ STEP 2: PREVIEW ══════════════════════════════════════════════════════
+.msii-preview { display: flex; flex-direction: column; gap: 1.8rem; }
 
-.preview__cards {
+.msii-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.2rem;
 }
 
-.preview__card {
+.msii-stat {
   border-radius: 0.8rem;
   padding: 1.6rem;
+  border: 1.5px solid var(--border-color);
+  background: var(--white-color);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  border: 1.5px solid var(--border-color);
-  background: var(--white-color);
 
-  &-label {
+  &__label {
     font-size: 1.2rem;
     color: var(--extra-color-50);
     font-weight: 500;
   }
 
-  &-value {
-    font-size: 2.4rem;
+  &__value {
+    font-size: 2.6rem;
     font-weight: 800;
     color: var(--text-primary-color);
     line-height: 1;
@@ -346,23 +319,23 @@
   &--total {
     border-color: var(--primary-color-30);
     background: var(--primary-color-5);
-    .preview__card-value { color: var(--primary-color); }
+    .msii-stat__value { color: var(--primary-color); }
   }
 
-  &--valid {
-    border-color: rgba(27, 193, 13, 0.3);
-    background: #f0faf5;
-    .preview__card-value { color: #0e9e06; }
+  &--ok {
+    border-color: rgba(27,193,13,0.3);
+    background: #f2fbf6;
+    .msii-stat__value { color: #0e9e06; }
   }
 
-  &--error {
-    border-color: rgba(237, 15, 15, 0.25);
+  &--err {
+    border-color: rgba(237,15,15,0.25);
     background: #fff5f5;
-    .preview__card-value { color: var(--error-color); }
+    .msii-stat__value { color: var(--error-color); }
   }
 }
 
-.preview__error-banner {
+.msii-warn {
   display: flex;
   align-items: center;
   gap: 0.8rem;
@@ -372,34 +345,34 @@
   border-radius: 0.7rem;
   font-size: 1.3rem;
   color: #92400e;
-
-  .banner-icon { color: #d97706; flex-shrink: 0; }
+  svg { width: 16px; color: #d97706; flex-shrink: 0; }
 }
 
-.preview__no-valid {
+.msii-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.2rem;
-  padding: 3rem 2rem;
+  padding: 3rem;
   color: var(--extra-color-50);
   font-size: 1.4rem;
   text-align: center;
+  svg { width: 40px; }
 }
 
-.preview__warehouse {
+.msii-warehouse {
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
 
-  &-label {
+  &__label {
     font-size: 1.35rem;
     font-weight: 600;
     color: var(--text-primary-color);
-    .required { color: var(--error-color); margin-left: 2px; }
+    .req { color: var(--error-color); margin-left: 2px; }
   }
 
-  &-select {
+  &__select {
     height: 4rem;
     border: 1.5px solid var(--border-color);
     border-radius: 0.6rem;
@@ -407,16 +380,15 @@
     font-size: 1.35rem;
     background: var(--white-color);
     color: var(--text-primary-color);
+    width: 100%;
     cursor: pointer;
     outline: none;
-    width: 100%;
-    transition: border-color 0.15s;
-
+    transition: all 0.15s;
     &:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px var(--primary-color-10); }
   }
 }
 
-.preview__note {
+.msii-note {
   display: flex;
   gap: 0.8rem;
   align-items: flex-start;
@@ -426,13 +398,11 @@
   font-size: 1.28rem;
   color: var(--extra-color-50);
   line-height: 1.7;
-  svg { color: var(--primary-color); flex-shrink: 0; margin-top: 0.15rem; }
+  svg { color: var(--primary-color); flex-shrink: 0; margin-top: 0.15rem; width: 15px; }
 }
 
-// ══════════════════════════════════════════════════════════════════
-// STEP 3 — DONE
-// ══════════════════════════════════════════════════════════════════
-.step-done {
+// ══ STEP 3: DONE ═════════════════════════════════════════════════════════
+.msii-done {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -440,7 +410,7 @@
   padding: 2.5rem 1rem;
   text-align: center;
 
-  &__icon {
+  &__circle {
     width: 7rem;
     height: 7rem;
     border-radius: 50%;
@@ -448,23 +418,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 0.5rem;
+    svg { width: 36px; color: #0e9e06; }
   }
 
-  h3 {
+  &__title {
     font-size: 2rem;
     font-weight: 800;
     color: var(--text-primary-color);
     margin: 0;
   }
 
-  p {
+  &__sub {
     font-size: 1.4rem;
     color: var(--extra-color-50);
     margin: 0;
   }
 
-  &__invoice {
+  &__badge {
     display: inline-flex;
     align-items: center;
     gap: 0.8rem;
@@ -478,74 +448,43 @@
   }
 }
 
-// ══════════════════════════════════════════════════════════════════
-// SHARED BUTTONS & UTILS
-// ══════════════════════════════════════════════════════════════════
-.btn-link {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--primary-color);
-  font-size: 1.3rem;
-  font-weight: 600;
-  text-decoration: underline;
-  padding: 0;
+// ══ SHARED BUTTONS ════════════════════════════════════════════════════════
+.msii-btn-link {
+  background: none; border: none; cursor: pointer;
+  color: var(--primary-color); font-size: 1.3rem;
+  font-weight: 600; text-decoration: underline; padding: 0;
 }
 
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0 2rem;
-  height: 3.8rem;
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
-  border-radius: 0.6rem;
-  font-size: 1.35rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.15s, box-shadow 0.15s;
-  white-space: nowrap;
-
-  &:hover:not(:disabled) {
-    opacity: 0.9;
-    box-shadow: 0 4px 12px var(--primary-color-30);
-  }
-
-  &:disabled { opacity: 0.45; cursor: not-allowed; }
+.msii-btn-primary {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0 2rem; height: 3.8rem;
+  background: var(--primary-color); color: #fff;
+  border: none; border-radius: 0.6rem;
+  font-size: 1.35rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity 0.15s;
+  svg { width: 15px; }
+  &:hover:not(:disabled) { opacity: 0.88; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-.btn-cancel {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0 1.6rem;
-  height: 3.8rem;
+.msii-btn-cancel {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0 1.6rem; height: 3.8rem;
   background: transparent;
   color: var(--extra-color-50);
   border: 1.5px solid var(--border-color);
   border-radius: 0.6rem;
-  font-size: 1.35rem;
-  cursor: pointer;
+  font-size: 1.35rem; cursor: pointer; white-space: nowrap;
   transition: all 0.15s;
-  white-space: nowrap;
-
-  &:hover {
-    background: var(--extra-color-5);
-    border-color: var(--extra-color-30);
-    color: var(--text-primary-color);
-  }
+  svg { width: 15px; }
+  &:hover { background: var(--extra-color-5); border-color: var(--extra-color-30); color: var(--text-primary-color); }
 }
 
-.spinner {
-  display: inline-block;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 2.5px solid rgba(255, 255, 255, 0.35);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+.msii-spinner {
+  display: inline-block; width: 1.4rem; height: 1.4rem;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff; border-radius: 50%;
+  animation: msii-spin 0.7s linear infinite;
 }
-
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes msii-spin { to { transform: rotate(360deg); } }

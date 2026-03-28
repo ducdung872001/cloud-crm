@@ -24,10 +24,10 @@ export interface IStockInitConfirmResponse {
 }
 
 const BASE = (urlsApi as any).stockInitImport ?? {
-  template: "/biz/inventory/stock-init/import/template",
-  upload:   "/biz/inventory/stock-init/import/upload",
-  confirm:  "/biz/inventory/stock-init/import/confirm",
-  cancel:   "/biz/inventory/stock-init/import/cancel",
+  template: "/bizapi/inventory/stock-init/import/template",
+  upload:   "/bizapi/inventory/stock-init/import/upload",
+  confirm:  "/bizapi/inventory/stock-init/import/confirm",
+  cancel:   "/bizapi/inventory/stock-init/import/cancel",
 };
 
 const StockInitImportService = {
