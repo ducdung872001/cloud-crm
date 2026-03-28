@@ -1005,11 +1005,9 @@ export const urlsApi = {
   },
 
   categoryService: {
-    // Đoạn này là category của ông dịch vụ
-    // list: prefixWarehouse + "/categoryItem/list",
-    // list: prefixWarehouse + "/public/categoryItem/list",
     list: prefixInventory + "/category/list",
     update: prefixInventory + "/category/update",
+    updatePositions: prefixInventory + "/category/update-positions",
     detail: prefixInventory + "/category/get",
     delete: prefixInventory + "/category/delete",
   },

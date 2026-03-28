@@ -6,31 +6,59 @@
   }
 
   &__tab {
-    padding: 8px 18px;
+    padding: 7px 18px;
     border: 1.5px solid #e0e0e0;
     border-radius: 20px;
     background: #fff;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 1.35rem;
     color: #555;
-    transition: all 0.2s;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 
     &--active {
-      background: var(--primary-color);
-      border-color: #3b82f6;
+      background: var(--primary-color, #015aa4);
+      border-color: var(--primary-color, #015aa4);
       color: #fff;
       font-weight: 600;
     }
 
-    &:hover:not(&--active) {
-      background: #f5f5f5;
+    &:hover:not(&--active) { background: #f5f5f5; }
+  }
+
+  &__tab-count {
+    background: rgba(255,255,255,0.25);
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 1.2rem;
+    font-weight: 700;
+
+    .cat-modal__tab:not(.cat-modal__tab--active) & {
+      background: #f0f0f0;
+      color: #888;
     }
   }
 
   &__add-row {
     display: flex;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
+  }
+
+  &__drag-hint {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 1.2rem;
+    color: #aaa;
+    margin-bottom: 8px;
+    padding-left: 2px;
+  }
+
+  &__saving {
+    color: var(--primary-color, #015aa4);
   }
 
   &__input {
@@ -38,36 +66,36 @@
     padding: 8px 12px;
     border: 1.5px solid #e0e0e0;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 1.35rem;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.15s;
 
-    &:focus {
-      border-color: #3b82f6;
-    }
+    &:focus { border-color: var(--primary-color, #015aa4); }
   }
 
   &__list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    max-height: 340px;
+    gap: 6px;
+    max-height: 380px;
     overflow-y: auto;
+    padding-right: 2px;
   }
 
   &__item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
+    gap: 8px;
+    padding: 9px 10px;
     border: 1.5px solid #f0f0f0;
     border-radius: 8px;
     background: #fafafa;
-    transition: background 0.15s;
+    transition: background 0.12s, border-color 0.12s;
+    cursor: grab;
+    user-select: none;
 
-    &:hover {
-      background: #f4f8ff;
-    }
+    &:active { cursor: grabbing; }
+    &:hover  { background: #f4f8ff; border-color: #dce8f8; }
 
     &-edit {
       display: flex;
@@ -77,69 +105,71 @@
     }
 
     &-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    &-icon {
-      font-size: 22px;
-      line-height: 1;
+      flex: 1;
+      min-width: 0;
     }
 
     &-name {
-      font-size: 14px;
+      font-size: 1.35rem;
       font-weight: 600;
       color: #1a1a1a;
       margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &-count {
-      font-size: 12px;
+      font-size: 1.2rem;
       color: #888;
       margin: 2px 0 0;
     }
 
     &-actions {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-shrink: 0;
     }
   }
 
+  &__drag-handle {
+    color: #ccc;
+    flex-shrink: 0;
+    cursor: grab;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+
+    &:hover { color: #999; }
+  }
+
   &__btn {
-    padding: 6px 14px;
+    padding: 5px 13px;
     border: 1.5px solid #e0e0e0;
     border-radius: 6px;
     background: #fff;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 1.3rem;
     color: #333;
-    transition: all 0.15s;
+    transition: all 0.12s;
     white-space: nowrap;
 
-    &:hover {
-      background: #f5f5f5;
-    }
+    &:hover    { background: #f5f5f5; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
 
     &--primary {
-      background: var(--primary-color);
-      border-color: #3b82f6;
+      background: var(--primary-color, #015aa4);
+      border-color: var(--primary-color, #015aa4);
       color: #fff;
 
-      &:hover {
-        background: var(--primary-color);
-      color: var(--white-color);
-      }
+      &:hover:not(:disabled) { opacity: 0.9; }
     }
 
     &--danger {
       border-color: #ef4444;
       color: #ef4444;
 
-      &:hover {
-        background: #fef2f2;
-      }
+      &:hover { background: #fef2f2; }
     }
   }
 
@@ -147,20 +177,20 @@
     text-align: center;
     color: #aaa;
     padding: 32px 0;
-    font-size: 14px;
+    font-size: 1.35rem;
   }
 
   &__loading-more {
     text-align: center;
     padding: 10px 0 4px;
-    font-size: 13px;
+    font-size: 1.2rem;
     color: #888;
   }
 
   &__end {
     text-align: center;
     padding: 10px 0 4px;
-    font-size: 12px;
+    font-size: 1.2rem;
     color: #bbb;
     margin: 0;
   }
