@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import InventoryService from "services/InventoryService";
 import InvoiceService from "services/InvoiceService";
 import AdjustmentSlipService from "services/AdjustmentSlipService";
+import ModalStockInitImport from "pages/ProductImport/InventoryChecking/partials/ModalStockInitImport";
 import urls from "@/configs/urls";
 import "./styles.scss";
 
@@ -190,6 +191,7 @@ export default function InventoryManagement() {
   });
   // Flag để biết summary đã load chưa (load 1 lần, không theo page)
   const importSummaryLoaded = useRef(false);
+  const [showStockInitModal, setShowStockInitModal] = useState(false);
   const [transferSummary, setTransferSummary] = useState({
     total: 0, pending: 0, completed: 0, cancelled: 0,
   });
@@ -650,6 +652,12 @@ export default function InventoryManagement() {
       activeTab === "import" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu nhập",
         callback: () => navigate(urls.create_inventory),
+      },
+      activeTab === "import" && permissions["WAREHOUSE_ADD"] == 1 && {
+        title: "Import tồn kho",
+        type: "secondary",               // nút outline, không fill
+        icon: <Icon name="Upload" style={{ width: 15 }} />,
+        callback: () => setShowStockInitModal(true),
       },
       activeTab === "transfer" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu chuyển kho",
@@ -1171,6 +1179,15 @@ export default function InventoryManagement() {
       </div>
 
       <Dialog content={contentDialog} isOpen={showDialog} />
+      <ModalStockInitImport
+        isOpen={showStockInitModal}
+        onClose={() => setShowStockInitModal(false)}
+        onSuccess={(invoiceCode) => {
+          showToast(`Import tồn kho thành công! Phiếu: ${invoiceCode}`, "success");
+          importSummaryLoaded.current = false; // force reload summary
+          loadData(params);
+        }}
+      />
     </div>
   );
 }

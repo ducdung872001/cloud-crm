@@ -470,6 +470,12 @@ export const urlsApi = {
     approve: prefixInventory + "/invoice/import/approve",
     cancel: prefixInventory + "/invoice/import/cancel",
   },
+  stockInitImport: {
+    template: prefixInventory + "/stock-init/import/template",
+    upload:   prefixInventory + "/stock-init/import/upload",
+    confirm:  prefixInventory + "/stock-init/import/confirm",
+    cancel:   prefixInventory + "/stock-init/import/cancel",
+  },
   shipping: {
     create: prefixLogistics + "/shipment/create",
     list: prefixLogistics + "/shipment/list",
