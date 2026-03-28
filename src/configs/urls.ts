@@ -537,6 +537,12 @@ export const urlsApi = {
     wTagList: prefixInventory + "/product/tags/list",
     wTagUpdate: prefixInventory + "/product/tags/update",
     wTagCreate: prefixInventory + "/product-tag/update",  // dùng lại endpoint tag CRUD
+    // ── Import Excel Product ──
+    wImportTemplate: prefixInventory + "/product/import/template",
+    wImportUpload: prefixInventory + "/product/import/uploadFile",
+    wImportErrorFile: prefixInventory + "/product/import/error-file",
+    wImportConfirm: prefixInventory + "/product/import/confirm",
+    wImportCancel: prefixInventory + "/product/import/cancel",
     listById: prefixAdmin + "/product/list_by_id",
     publicList: prefixInventory + "/public/product/list",
 

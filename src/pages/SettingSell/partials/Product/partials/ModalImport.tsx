@@ -1,179 +1,415 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, useCallback } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
-import AddFile from "./partials/AddFile";
 import { showToast } from "utils/common";
-import * as XLSX from "xlsx";
+import ProductService from "services/ProductService";
+import ExcelIcon from "assets/images/img-excel.png";
 import "./index.scss";
-
-interface IProduct {
-  name: string;
-  code: string;
-  avatar: string;
-  unitId: number;
-  price: number;
-  categoryId: number;
-}
 
 interface IModalImportProductProps {
   onShow: boolean;
   onHide: (isSuccess: boolean) => void;
-  onImportSuccess: (products: IProduct[]) => void;
 }
 
-const PRODUCT_COLUMNS = ["name", "code", "avatar", "unitId", "price", "categoryId"];
+type Step = "upload" | "validating" | "result" | "confirm" | "done";
 
-export default function ModalImportProduct({ onShow, onHide, onImportSuccess }: IModalImportProductProps) {
-  const [step, setStep] = useState<1 | 2>(1);
-  const [lstProducts, setLstProducts] = useState<IProduct[]>([]);
-  const [lstErrors, setLstErrors] = useState<{ row: number; field: string; message: string }[]>([]);
-  const [isReading, setIsReading] = useState(false);
+interface ValidateResult {
+  importSessionId: string;
+  totalRows: number;
+  validRows: number;
+  invalidRows: number;
+  hasErrors: boolean;
+  errorDownloadToken: string | null;
+}
 
-  const readExcelFile = (file: Blob) => {
-    if (!(file instanceof Blob)) return;
+interface ConfirmResult {
+  insertedRows: number;
+  skippedRows: number;
+  errors: string[];
+}
 
-    setIsReading(true);
-    const reader = new FileReader();
+export default function ModalImportProduct({ onShow, onHide }: IModalImportProductProps) {
+  const [step, setStep] = useState<Step>("upload");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDownloadingTemplate, setIsDownloadingTemplate] = useState(false);
+  const [isDownloadingError, setIsDownloadingError] = useState(false);
+  const [validateResult, setValidateResult] = useState<ValidateResult | null>(null);
+  const [confirmResult, setConfirmResult] = useState<ConfirmResult | null>(null);
 
-    reader.onload = (evt) => {
-      const workbook = XLSX.read(evt.target.result, { type: "binary" });
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-      // Validate header
-      const headerRow = jsonData[0]
-        ?.filter((item) => item !== null && item !== undefined)
-        ?.map((item) => item.toString().trim().replace(/^\uFEFF/, "")); // xử lý BOM
-
-      const isValidHeader =
-        headerRow.length === PRODUCT_COLUMNS.length &&
-        headerRow.every((col, i) => col === PRODUCT_COLUMNS[i]);
-
-      if (!isValidHeader) {
-        showToast("File Excel không hợp lệ. Vui lòng kiểm tra lại tên và thứ tự cột.", "error");
-        setIsReading(false);
-        return;
-      }
-
-      const errors: typeof lstErrors = [];
-      const products: IProduct[] = [];
-
-      for (let i = 1; i < jsonData.length; i++) {
-        const row = jsonData[i];
-        if (!row || row.length === 0) continue;
-
-        const [name, code, avatar, unitId, price, categoryId] = row;
-
-        // Validate
-        if (!name)
-          errors.push({ row: i + 1, field: "name", message: "Tên sản phẩm không được trống" });
-        if (!code)
-          errors.push({ row: i + 1, field: "code", message: "Mã sản phẩm không được trống" });
-        if (avatar && !/^https?:\/\/.+/.test(avatar.toString().trim()))
-          errors.push({ row: i + 1, field: "avatar", message: "Avatar phải là đường dẫn URL hợp lệ" });
-        if (!unitId || isNaN(Number(unitId)))
-          errors.push({ row: i + 1, field: "unitId", message: "Đơn vị tính không hợp lệ (phải là số)" });
-        if (!price || isNaN(Number(price)))
-          errors.push({ row: i + 1, field: "price", message: "Giá không hợp lệ" });
-        if (!categoryId || isNaN(Number(categoryId)))
-          errors.push({ row: i + 1, field: "categoryId", message: "Danh mục không hợp lệ (phải là số)" });
-
-        products.push({
-          name: name?.toString().trim() ?? "",
-          code: code?.toString().trim() ?? "",
-          avatar: avatar?.toString().trim() ?? "",
-          unitId: Number(unitId) || 0,
-          price: Number(price) || 0,
-          categoryId: Number(categoryId) || 0,
-        });
-      }
-
-      setLstErrors(errors);
-      setLstProducts(products);
-      setIsReading(false);
-    };
-
-    reader.readAsBinaryString(file);
-  };
-
-  const handleFileAdded = (file: Blob) => {
-    setLstErrors([]);
-    setLstProducts([]);
-    if (file) readExcelFile(file);
+  const resetState = () => {
+    setStep("upload");
+    setSelectedFile(null);
+    setValidateResult(null);
+    setConfirmResult(null);
+    setIsDragging(false);
   };
 
   const handleClose = () => {
-    setStep(1);
-    setLstProducts([]);
-    setLstErrors([]);
-    onHide(false);
+    if (validateResult?.importSessionId && step === "result") {
+      ProductService.wImportCancel(validateResult.importSessionId).catch(() => {});
+    }
+    resetState();
+    onHide(step === "done");
   };
 
-  const handleContinue = () => {
-    if (step === 1) {
-      setStep(2);
-    } else {
-      onImportSuccess(lstProducts);
-      handleClose();
+  // ── Tải file mẫu ──
+  const handleDownloadTemplate = async () => {
+    setIsDownloadingTemplate(true);
+    try {
+      const res = await ProductService.wImportDownloadTemplate();
+      if (!res.ok) { showToast("Không thể tải file mẫu", "error"); return; }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "mau-import-san-pham.xlsx";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      showToast("Lỗi kết nối khi tải file mẫu", "error");
+    } finally {
+      setIsDownloadingTemplate(false);
     }
   };
 
-  const actions = {
+  // ── Chọn file ──
+  const handleFileSelect = (file: File) => {
+    if (!file.name.match(/\.(xlsx|xls)$/i)) {
+      showToast("Chỉ chấp nhận file Excel (.xlsx, .xls)", "error");
+      return;
+    }
+    setSelectedFile(file);
+    setValidateResult(null);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFileSelect(file);
+    e.target.value = "";
+  };
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault(); setIsDragging(true);
+  }, []);
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault(); setIsDragging(false);
+  }, []);
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault(); setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFileSelect(file);
+  }, []);
+
+  // ── Upload & Validate ──
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+    setStep("validating");
+    try {
+      const res = await ProductService.wImportUpload(selectedFile);
+      if (res.code !== 0) {
+        showToast(res.message ?? "Lỗi khi xử lý file", "error");
+        setStep("upload");
+        return;
+      }
+      setValidateResult(res.result);
+      setStep("result");
+    } catch {
+      showToast("Lỗi kết nối khi upload file", "error");
+      setStep("upload");
+    }
+  };
+
+  // ── Tải file lỗi ──
+  const handleDownloadErrorFile = async () => {
+    if (!validateResult?.errorDownloadToken) return;
+    setIsDownloadingError(true);
+    try {
+      const res = await ProductService.wImportDownloadErrorFile(validateResult.errorDownloadToken);
+      if (!res.ok) { showToast("Không thể tải file lỗi", "error"); return; }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "loi-import-san-pham.xlsx";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      showToast("Lỗi kết nối khi tải file lỗi", "error");
+    } finally {
+      setIsDownloadingError(false);
+    }
+  };
+
+  // ── Confirm import ──
+  const handleConfirm = async () => {
+    if (!validateResult?.importSessionId) return;
+    setStep("confirm");
+    try {
+      const res = await ProductService.wImportConfirm({ importSessionId: validateResult.importSessionId });
+      if (res.code !== 0) {
+        showToast(res.message ?? "Lỗi khi import", "error");
+        setStep("result");
+        return;
+      }
+      setConfirmResult(res.result);
+      setStep("done");
+    } catch {
+      showToast("Lỗi kết nối khi import", "error");
+      setStep("result");
+    }
+  };
+
+  // ── Footer buttons ──
+  const footerActions = {
     actions_right: {
       buttons: [
-        {
-          title: step === 2 ? "Quay lại" : "Đóng",
+        // Nút trái (Đóng / Quay lại)
+        (step !== "done" && step !== "validating" && step !== "confirm") ? {
+          title: step === "result" ? "← Chọn file khác" : "Đóng",
           color: "primary",
           variant: "outline",
-          callback: () => (step === 1 ? handleClose() : setStep(1)),
-        },
-        {
-          title: step === 1 ? "Tiếp tục" : "Xác nhận import",
-          disabled: lstProducts.length === 0 || isReading || (step === 2 && lstErrors.length > 0),
-          callback: handleContinue,
-        },
-      ],
+          callback: () => {
+            if (step === "result") {
+              if (validateResult?.importSessionId)
+                ProductService.wImportCancel(validateResult.importSessionId).catch(() => {});
+              setValidateResult(null);
+              setSelectedFile(null);
+              setStep("upload");
+            } else {
+              handleClose();
+            }
+          },
+        } : null,
+        // Nút phải (action chính)
+        step === "upload" ? {
+          title: "Kiểm tra dữ liệu →",
+          color: "primary",
+          disabled: !selectedFile,
+          callback: handleUpload,
+        } : null,
+        step === "result" ? {
+          title: `Xác nhận import ${validateResult?.validRows ?? 0} sản phẩm`,
+          color: "primary",
+          disabled: (validateResult?.validRows ?? 0) === 0,
+          callback: handleConfirm,
+        } : null,
+        step === "done" ? {
+          title: "Hoàn tất",
+          color: "primary",
+          callback: handleClose,
+        } : null,
+      ].filter(Boolean),
     },
   };
 
   return (
-    <Fragment>
-      <Modal isOpen={onShow} isCentered staticBackdrop toggle={handleClose} size={step === 2 ? "xl" : "md"}>
-        <ModalHeader title="Import sản phẩm" toggle={handleClose} />
+    <Modal
+      isOpen={onShow}
+      isCentered
+      staticBackdrop
+      toggle={step === "validating" || step === "confirm" ? undefined : handleClose}
+      size={step === "result" ? "lg" : "md"}
+    >
+      <ModalHeader
+        title="Import sản phẩm"
+        toggle={step === "validating" || step === "confirm" ? undefined : handleClose}
+      />
 
-        <ModalBody>
-          {step === 1 ? (
-            <div className="wrapper__step--one">
-              <AddFile takeFileAdd={handleFileAdded} />
-              <div className="file__hint">
-                File Excel cần có các cột theo thứ tự: <strong>{PRODUCT_COLUMNS.join(", ")}</strong>
+      <ModalBody>
+
+        {/* ══════════════════════════════
+            STEP: Upload
+        ══════════════════════════════ */}
+        {step === "upload" && (
+          <div className="pimport-step">
+
+            {/* Hướng dẫn + tải template */}
+            <div className="pimport-guide">
+              <div className="pimport-guide__left">
+                <div className="pimport-guide__step-badge">Bước 1</div>
+                <div className="pimport-guide__content">
+                  <div className="pimport-guide__title">Tải file mẫu về điền dữ liệu</div>
+                  <div className="pimport-guide__sub">
+                    File Excel mẫu có sẵn cột hướng dẫn. Cột có dấu <strong>(*)</strong> là bắt buộc nhập.
+                  </div>
+                </div>
               </div>
+              <button
+                className="pimport-btn pimport-btn--outline"
+                onClick={handleDownloadTemplate}
+                disabled={isDownloadingTemplate}
+              >
+                {isDownloadingTemplate
+                  ? <span className="pimport-spinner" />
+                  : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                }
+                Tải file mẫu (.xlsx)
+              </button>
             </div>
-          ) : (
-            <div className="wrapper__step--two">
-              <div className="summary__validate">
-                Tổng: <strong>{lstProducts.length}</strong> sản phẩm —{" "}
-                <strong className="count__error">{lstErrors.length}</strong> lỗi
-              </div>
 
-              {lstErrors.length > 0 ? (
-                <div className="list__error">
-                  <ul>
-                    {lstErrors.map((err, i) => (
-                      <li key={i}>
-                        Dòng {err.row} - <strong>{err.field}</strong>: {err.message}
-                      </li>
-                    ))}
-                  </ul>
+            {/* Divider */}
+            <div className="pimport-divider">
+              <span>Bước 2 — Chọn file đã điền và upload</span>
+            </div>
+
+            {/* Drop zone */}
+            <div
+              className={`pimport-dropzone${isDragging ? " pimport-dropzone--active" : ""}${selectedFile ? " pimport-dropzone--has-file" : ""}`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              {selectedFile ? (
+                <div className="pimport-dropzone__file">
+                  <img src={ExcelIcon} alt="excel" className="pimport-dropzone__icon" />
+                  <div className="pimport-dropzone__info">
+                    <div className="pimport-dropzone__name">{selectedFile.name}</div>
+                    <div className="pimport-dropzone__size">{(selectedFile.size / 1024).toFixed(1)} KB</div>
+                  </div>
+                  <button
+                    className="pimport-btn pimport-btn--ghost pimport-btn--sm"
+                    onClick={() => setSelectedFile(null)}
+                  >
+                    Đổi file
+                  </button>
                 </div>
               ) : (
-                <div className="success__message">✅ Không có lỗi, sẵn sàng import!</div>
+                <div className="pimport-dropzone__empty">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round">
+                    <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+                    <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
+                  </svg>
+                  <div className="pimport-dropzone__title">Kéo & thả file vào đây</div>
+                  <div className="pimport-dropzone__or">hoặc</div>
+                  <label className="pimport-btn pimport-btn--primary pimport-btn--sm">
+                    Chọn file Excel
+                    <input type="file" accept=".xlsx,.xls" style={{ display: "none" }} onChange={handleInputChange} />
+                  </label>
+                  <div className="pimport-dropzone__hint">Chấp nhận .xlsx, .xls</div>
+                </div>
               )}
             </div>
-          )}
-        </ModalBody>
+          </div>
+        )}
 
-        <ModalFooter actions={actions} />
-      </Modal>
-    </Fragment>
+        {/* ══════════════════════════════
+            STEP: Đang xử lý
+        ══════════════════════════════ */}
+        {(step === "validating" || step === "confirm") && (
+          <div className="pimport-loading">
+            <div className="pimport-loading__spinner" />
+            <div className="pimport-loading__text">
+              {step === "validating" ? "Đang kiểm tra dữ liệu..." : "Đang import sản phẩm..."}
+            </div>
+            <div className="pimport-loading__sub">Vui lòng không đóng cửa sổ này</div>
+          </div>
+        )}
+
+        {/* ══════════════════════════════
+            STEP: Kết quả validate
+        ══════════════════════════════ */}
+        {step === "result" && validateResult && (
+          <div className="pimport-result">
+
+            {/* Summary */}
+            <div className="pimport-summary">
+              <div className="pimport-summary__card">
+                <div className="pimport-summary__num">{validateResult.totalRows}</div>
+                <div className="pimport-summary__label">Tổng dòng</div>
+              </div>
+              <div className="pimport-summary__card pimport-summary__card--ok">
+                <div className="pimport-summary__num">{validateResult.validRows}</div>
+                <div className="pimport-summary__label">Hợp lệ ✓</div>
+              </div>
+              <div className={`pimport-summary__card${validateResult.invalidRows > 0 ? " pimport-summary__card--err" : ""}`}>
+                <div className="pimport-summary__num">{validateResult.invalidRows}</div>
+                <div className="pimport-summary__label">Lỗi ✗</div>
+              </div>
+            </div>
+
+            {/* Tất cả OK */}
+            {validateResult.invalidRows === 0 && (
+              <div className="pimport-banner pimport-banner--ok">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Tất cả <strong>{validateResult.validRows} dòng</strong> hợp lệ — sẵn sàng import!
+              </div>
+            )}
+
+            {/* Có lỗi */}
+            {validateResult.invalidRows > 0 && (
+              <div className="pimport-banner pimport-banner--err">
+                <div className="pimport-banner__row">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <span><strong>{validateResult.invalidRows} dòng có lỗi</strong> — tải file lỗi về để xem chi tiết và sửa lại</span>
+                  <button
+                    className="pimport-btn pimport-btn--outline pimport-btn--sm"
+                    onClick={handleDownloadErrorFile}
+                    disabled={isDownloadingError}
+                  >
+                    {isDownloadingError
+                      ? <span className="pimport-spinner pimport-spinner--sm" />
+                      : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    }
+                    Tải file lỗi
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Vừa có hợp lệ vừa có lỗi */}
+            {validateResult.validRows > 0 && validateResult.invalidRows > 0 && (
+              <div className="pimport-banner pimport-banner--warn">
+                ⚠️ Sẽ import <strong>{validateResult.validRows} dòng hợp lệ</strong>. {validateResult.invalidRows} dòng lỗi sẽ bị bỏ qua.
+              </div>
+            )}
+
+            {/* Không có dòng hợp lệ nào */}
+            {validateResult.validRows === 0 && (
+              <div className="pimport-banner pimport-banner--block">
+                ❌ Không có dòng nào hợp lệ để import. Vui lòng sửa file theo hướng dẫn và thử lại.
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ══════════════════════════════
+            STEP: Done
+        ══════════════════════════════ */}
+        {step === "done" && confirmResult && (
+          <div className="pimport-done">
+            <div className="pimport-done__icon">
+              <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.8" strokeLinecap="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/>
+              </svg>
+            </div>
+            <div className="pimport-done__title">Import thành công!</div>
+            <div className="pimport-done__stats">
+              <div className="pimport-done__stat pimport-done__stat--ok">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                {confirmResult.insertedRows} sản phẩm đã được thêm
+              </div>
+              {(confirmResult.skippedRows ?? 0) > 0 && (
+                <div className="pimport-done__stat pimport-done__stat--skip">
+                  ⊘ {confirmResult.skippedRows} dòng bỏ qua
+                </div>
+              )}
+            </div>
+            {confirmResult.errors?.length > 0 && (
+              <div className="pimport-done__errors">
+                {confirmResult.errors.slice(0, 5).map((e, i) => (
+                  <div key={i} className="pimport-done__error-item">{e}</div>
+                ))}
+                {confirmResult.errors.length > 5 && (
+                  <div className="pimport-done__error-more">...và {confirmResult.errors.length - 5} lỗi khác</div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+      </ModalBody>
+
+      <ModalFooter actions={footerActions as any} />
+    </Modal>
   );
 }

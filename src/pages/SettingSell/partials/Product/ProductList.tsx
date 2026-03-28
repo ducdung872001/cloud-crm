@@ -848,9 +848,9 @@ export default function ProductList(props: IProductListProps) {
 
       <ModalImportProduct
         onShow={showModalImport}
-        onHide={() => setShowModalImport(false)}
-        onImportSuccess={(products) => {
-          setListProduct((prev) => [...prev, ...products]);
+        onHide={(isSuccess) => {
+          setShowModalImport(false);
+          if (isSuccess) getListProduct(params);
         }}
       />
 

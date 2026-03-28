@@ -271,4 +271,35 @@ export default {
       body: JSON.stringify({ ...body, status: body.status ?? 1 }),
     }).then((res) => res.json());
   },
+
+  // ── Import ──
+  wImportDownloadTemplate: () => {
+    return fetch(urlsApi.product.wImportTemplate, { method: "GET" });
+    // caller dùng .blob() → URL.createObjectURL để download
+  },
+  wImportUpload: (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return fetch(urlsApi.product.wImportUpload, {
+      method: "POST",
+      body: form,
+      // KHÔNG set Content-Type — browser tự set boundary cho multipart
+    }).then((res) => res.json());
+  },
+  wImportDownloadErrorFile: (sessionId: string) => {
+    return fetch(`${urlsApi.product.wImportErrorFile}?sessionId=${encodeURIComponent(sessionId)}`, {
+      method: "GET",
+    });
+  },
+  wImportConfirm: (body: { importSessionId: string }) => {
+    return fetch(urlsApi.product.wImportConfirm, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  wImportCancel: (sessionId: string) => {
+    return fetch(`${urlsApi.product.wImportCancel}?sessionId=${encodeURIComponent(sessionId)}`, {
+      method: "POST",
+    }).then((res) => res.json());
+  },
 };
