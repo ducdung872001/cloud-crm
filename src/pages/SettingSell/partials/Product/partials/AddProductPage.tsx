@@ -406,6 +406,8 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showBarcodePrintModal, setShowBarcodePrintModal] = useState(false);
+  const [showWebPreviewDropdown, setShowWebPreviewDropdown] = useState(false);
+  const [showWebPreviewModal, setShowWebPreviewModal] = useState(false);
   const [detailProduct, setDetailProduct] = useState<IProductResponse>(null);
 
   // ── Content (editor) ──
@@ -430,6 +432,15 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const [scanningComboKey, setScanningComboKey] = useState<string | null>(null);
 
   const setField = (key: string, value: any) => setFormData((prev) => ({ ...prev, [key]: value }));
+
+  const buildProductWebUrl = () => {
+    const slug = formData.name
+      .toLowerCase().normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "").replace(/đ/gi, "d")
+      .replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")
+      .replace(/-+/g, "-").replace(/^-|-$/g, "");
+    return `${window.location.origin}/shop/san-pham/${idProduct}${slug ? `-${slug}` : ""}`;
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -1059,7 +1070,83 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
               Chia sẻ
             </button>
           )}
-          <button className="add-prod-page__btn add-prod-page__btn--outline">Xem trước Web</button>
+          {/* Xem trước Web — split button với dropdown 2 lựa chọn */}
+          <div className="add-prod-page__preview-wrap" style={{ position: "relative" }}>
+            <div className={`add-prod-page__preview-btn-group${!isEdit ? " add-prod-page__preview-btn-group--disabled" : ""}`}>
+              {/* Main label */}
+              <button
+                className="add-prod-page__btn add-prod-page__btn--outline add-prod-page__preview-main"
+                disabled={!isEdit}
+                onClick={() => setShowWebPreviewDropdown((v) => !v)}
+                title={!isEdit ? "Lưu sản phẩm trước để xem trước" : ""}
+              >
+                Xem trước Web
+                <svg
+                  width="12" height="12" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                  style={{ marginLeft: 4, transition: "transform 0.15s", transform: showWebPreviewDropdown ? "rotate(180deg)" : "none" }}
+                >
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </button>
+            </div>
+
+            {/* Dropdown */}
+            {showWebPreviewDropdown && isEdit && (
+              <>
+                {/* Overlay trong suốt để đóng dropdown */}
+                <div
+                  style={{ position: "fixed", inset: 0, zIndex: 999 }}
+                  onClick={() => setShowWebPreviewDropdown(false)}
+                />
+                <div className="add-prod-preview-dropdown">
+                  {/* Cách 1: Mở tab website thật */}
+                  <button
+                    className="add-prod-preview-dropdown__item"
+                    onClick={() => {
+                      setShowWebPreviewDropdown(false);
+                      window.open(buildProductWebUrl(), "_blank", "noopener,noreferrer");
+                    }}
+                  >
+                    <div className="add-prod-preview-dropdown__icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                        <polyline points="15 3 21 3 21 9"/>
+                        <line x1="10" y1="14" x2="21" y2="3"/>
+                      </svg>
+                    </div>
+                    <div className="add-prod-preview-dropdown__content">
+                      <div className="add-prod-preview-dropdown__title">Mở trang web thật</div>
+                      <div className="add-prod-preview-dropdown__sub">Mở tab mới — xem đúng trang khách hàng thấy</div>
+                    </div>
+                  </button>
+
+                  <div className="add-prod-preview-dropdown__divider" />
+
+                  {/* Cách 2: Preview trong CRM */}
+                  <button
+                    className="add-prod-preview-dropdown__item"
+                    onClick={() => {
+                      setShowWebPreviewDropdown(false);
+                      setShowWebPreviewModal(true);
+                    }}
+                  >
+                    <div className="add-prod-preview-dropdown__icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                      </svg>
+                    </div>
+                    <div className="add-prod-preview-dropdown__content">
+                      <div className="add-prod-preview-dropdown__title">Preview trong CRM</div>
+                      <div className="add-prod-preview-dropdown__sub">Xem mock-up ngay tại đây — không cần mở tab</div>
+                    </div>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
           <button
             className="add-prod-page__btn add-prod-page__btn--outline"
             onClick={() => setShowBarcodePrintModal(true)}
@@ -1661,6 +1748,117 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
             price: c.price ?? 0,
           }))}
         />
+      )}
+
+      {/* Web Preview Modal (Cách 2 — mock UI trong CRM) */}
+      {showWebPreviewModal && (
+        <div className="web-preview-overlay" onClick={() => setShowWebPreviewModal(false)}>
+          <div className="web-preview-modal" onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="web-preview-modal__header">
+              <div className="web-preview-modal__header-left">
+                <div className="web-preview-modal__dots">
+                  <span style={{ background: "#ff5f56" }} />
+                  <span style={{ background: "#ffbd2e" }} />
+                  <span style={{ background: "#27c93f" }} />
+                </div>
+                <div className="web-preview-modal__url-bar">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <span>{buildProductWebUrl()}</span>
+                </div>
+              </div>
+              <button className="web-preview-modal__close" onClick={() => setShowWebPreviewModal(false)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+
+            {/* Product page mock */}
+            <div className="web-preview-modal__body">
+              {/* Ảnh sản phẩm */}
+              <div className="wp-product">
+                <div className="wp-product__gallery">
+                  {combinations[0]?.images?.[0] || detailProduct?.avatar ? (
+                    <img
+                      src={combinations[0]?.images?.[0] || (detailProduct as any)?.avatar}
+                      alt={formData.name}
+                      className="wp-product__main-img"
+                    />
+                  ) : (
+                    <div className="wp-product__img-placeholder">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="3"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <path d="M21 15l-5-5L5 21"/>
+                      </svg>
+                      <span>Chưa có ảnh</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Info */}
+                <div className="wp-product__info">
+                  <h1 className="wp-product__name">{formData.name || "Tên sản phẩm"}</h1>
+
+                  {selectedCategory && (
+                    <div className="wp-product__category">{selectedCategory.label}</div>
+                  )}
+
+                  {/* Giá */}
+                  {combinations.length > 0 && (
+                    <div className="wp-product__price-block">
+                      <span className="wp-product__price">
+                        {(+(combinations[0]?.price ?? 0)).toLocaleString("vi-VN")}đ
+                      </span>
+                      {combinations[0]?.pricePromo && +combinations[0].pricePromo > 0 && (
+                        <span className="wp-product__price-promo">
+                          {(+combinations[0].pricePromo).toLocaleString("vi-VN")}đ
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Biến thể */}
+                  {variantAttrs.filter((a) => a.name && a.values.length > 0).map((attr) => (
+                    <div key={attr.tempId} className="wp-product__attr">
+                      <div className="wp-product__attr-name">{attr.name}</div>
+                      <div className="wp-product__attr-values">
+                        {attr.values.map((val) => (
+                          <button key={val} className="wp-product__attr-btn">{val}</button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Mô tả ngắn */}
+                  {formData.description && (
+                    <p className="wp-product__desc">{formData.description}</p>
+                  )}
+
+                  {/* Tồn kho */}
+                  {formData.trackStock && (
+                    <div className="wp-product__stock">
+                      Còn lại: <strong>{formData.stock ?? 0}</strong>
+                    </div>
+                  )}
+
+                  {/* Nút mua */}
+                  <div className="wp-product__actions">
+                    <button className="wp-product__btn-cart">Thêm vào giỏ</button>
+                    <button className="wp-product__btn-buy">Mua ngay</button>
+                  </div>
+
+                  <div className="wp-preview-note">
+                    👁 Đây là bản preview — giao diện thực tế tuỳ theo theme website của cửa hàng
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
