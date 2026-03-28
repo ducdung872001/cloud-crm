@@ -20,7 +20,7 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { IAction } from "model/OtherModel";
 import { showToast, getPermissions } from "utils/common";
 import { getPageOffset, formatCurrency } from "reborn-util";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import InventoryService from "services/InventoryService";
 import InvoiceService from "services/InvoiceService";
 import AdjustmentSlipService from "services/AdjustmentSlipService";
@@ -148,8 +148,14 @@ export default function InventoryManagement() {
   document.title = "Quản lý kho";
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const isMounted = useRef(false);
-  const [activeTab, setActiveTab] = useState<TabType>("stock");
+  const tabFromUrl = searchParams.get("tab") as TabType;
+  const [activeTab, setActiveTab] = useState<TabType>(
+    tabFromUrl && ["stock","import","export","transfer","destroy","check","cost"].includes(tabFromUrl)
+      ? tabFromUrl
+      : "stock"
+  );
   const [permissions] = useState(getPermissions());
 
   const [showDialog, setShowDialog] = useState(false);
@@ -809,11 +815,19 @@ export default function InventoryManagement() {
             renderBadge(item.status ?? 0, IMPORT_STATUS_MAP),
           ],
           actions: (item: IImportInvoiceItem): IAction[] => [
-            {
-              title: "Chi tiết",
-              icon: <Icon name="CollectInfo" style={{ width: 17 }} />,
-              callback: () => navigate(`${urls.create_inventory}?invoiceId=${item.id}`),
-            },
+            // STATUS_DONE=1, STATUS_CANCEL=3 → Xem (readonly)
+            // STATUS_PENDING=2 → Chỉnh sửa
+            item.status === 2
+              ? {
+                  title: "Chỉnh sửa",
+                  icon: <Icon name="Edit" style={{ width: 16 }} />,
+                  callback: () => navigate(`${urls.create_inventory}?invoiceId=${item.id}`),
+                }
+              : {
+                  title: "Xem chi tiết",
+                  icon: <Icon name="Eye" style={{ width: 16 }} />,
+                  callback: () => navigate(`${urls.create_inventory}?invoiceId=${item.id}&mode=view`),
+                },
             ...(item.status === 2 ? [  // 2 = STATUS_PENDING (chờ duyệt)
               {
                 title: "Xác nhận nhập",
