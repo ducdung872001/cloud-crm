@@ -446,10 +446,14 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     const init = async () => {
       // Chạy song song các load không phụ thuộc nhau
       // loadAvailableTags phải hoàn thành TRƯỚC loadDetail để tránh race condition
-      // (preFill set selectedTagIds, nhưng chips render cần availableTags đã có data)
       await Promise.all([loadUnits(), loadCategories(), loadAvailableTags()]);
-      if (isEdit) await loadDetail();
-      else if (data) preFill(data);
+      if (isEdit) {
+        await loadDetail();
+        await loadWebsiteSetting(); // load cài đặt hiển thị sau khi có idProduct
+      } else {
+        if (data) preFill(data);
+        await loadDefaultWebsiteSetting(); // load defaults khi tạo SP mới
+      }
     };
     init();
   }, [idProduct]);
@@ -599,6 +603,37 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
           .map((i: any) => ({ id: i.id, name: i.name }))
       );
     }
+  };
+
+  // ── Helper: map backend response (0/1) → formData fields (boolean) ──
+  const applyWebsiteSettingToForm = (r: any) => {
+    if (!r) return;
+    setFormData((prev) => ({
+      ...prev,
+      showOnWeb:           r.showOnWebsite === 1,
+      showImage:           r.showImage === 1,
+      showUnit:            r.showUnit === 1,
+      showDesc:            r.showDescription === 1,
+      showPromoPrice:      r.showPromotionPrice === 1,
+      showWholesalePrice:  r.showWholesalePrice === 1,
+      showStock:           r.showInventory === 1,
+      showBarcode:         r.showBarcode === 1,
+      showCategory:        r.showVariant === 1,
+      hideWhenOutOfStock:  r.hideWhenOutOfStock === 1,
+    }));
+  };
+
+  // Load cài đặt hiển thị của SP cụ thể (khi edit)
+  const loadWebsiteSetting = async () => {
+    if (!idProduct) return;
+    const res = await ProductService.wWebsiteSettingGet(idProduct);
+    if (res.code === 0) applyWebsiteSettingToForm(res.result);
+  };
+
+  // Load cài đặt mặc định toàn hệ thống (khi tạo SP mới)
+  const loadDefaultWebsiteSetting = async () => {
+    const res = await ProductService.wWebsiteSettingDefaultGet();
+    if (res.code === 0) applyWebsiteSettingToForm(res.result);
   };
 
   // ── Content editor handlers ──
@@ -783,7 +818,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     try {
       const res = await ProductService.wUpdate(body as any);
       if (res.code === 0) {
-        // Lưu content và tags song song sau khi lưu sản phẩm thành công
+        // Lưu content, tags và website settings song song sau khi lưu SP thành công
         const savedId = idProduct || res.result?.id || res.result;
         if (savedId) {
           const sideEffects: Promise<any>[] = [];
@@ -797,6 +832,22 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
               ProductService.wTagUpdate({ productId: savedId, tagIds: selectedTagIds })
             );
           }
+          // Luôn lưu website settings (kể cả khi tạo mới — ghi đè default)
+          sideEffects.push(
+            ProductService.wWebsiteSettingUpdate({
+              productId: savedId,
+              showOnWebsite:     formData.showOnWeb          ? 1 : 0,
+              showImage:         formData.showImage          ? 1 : 0,
+              showUnit:          formData.showUnit           ? 1 : 0,
+              showDescription:   formData.showDesc           ? 1 : 0,
+              showPromotionPrice:formData.showPromoPrice     ? 1 : 0,
+              showWholesalePrice:formData.showWholesalePrice ? 1 : 0,
+              showInventory:     formData.showStock          ? 1 : 0,
+              showBarcode:       formData.showBarcode        ? 1 : 0,
+              showVariant:       formData.showCategory       ? 1 : 0,
+              hideWhenOutOfStock:formData.hideWhenOutOfStock ? 1 : 0,
+            })
+          );
           if (sideEffects.length) await Promise.allSettled(sideEffects);
         }
         showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");

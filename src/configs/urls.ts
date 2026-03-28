@@ -527,6 +527,8 @@ export const urlsApi = {
     wUpdateInventory: prefixInventory + "/product/update/inventory-setting",
     wWebsiteSettingGet: prefixInventory + "/product/website-setting/get",
     wWebsiteSettingUpdate: prefixInventory + "/product/website-setting/update",
+    wWebsiteSettingDefaultGet: prefixInventory + "/product/website-setting/default",
+    wWebsiteSettingDefaultUpdate: prefixInventory + "/product/website-setting/default/update",
     wWebsiteToggle: prefixInventory + "/product/update/website-toggle",
     wInventoryCurrent: prefixInventory + "/product/inventory/current",
     wScan: prefixInventory + "/product/scan",
@@ -537,7 +539,7 @@ export const urlsApi = {
     wTagList: prefixInventory + "/product/tags/list",
     wTagUpdate: prefixInventory + "/product/tags/update",
     wTagCreate: prefixInventory + "/product-tag/update",  // dùng lại endpoint tag CRUD
-    // ── Import Excel Product ──
+    // ── Import ──
     wImportTemplate: prefixInventory + "/product/import/template",
     wImportUpload: prefixInventory + "/product/import/uploadFile",
     wImportErrorFile: prefixInventory + "/product/import/error-file",

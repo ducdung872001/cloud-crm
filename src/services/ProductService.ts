@@ -223,6 +223,18 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  // ── Cài đặt mặc định toàn hệ thống ──
+  wWebsiteSettingDefaultGet: () => {
+    return fetch(urlsApi.product.wWebsiteSettingDefaultGet, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  wWebsiteSettingDefaultUpdate: (body: Record<string, any>) => {
+    return fetch(urlsApi.product.wWebsiteSettingDefaultUpdate, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   wWebsiteToggle: (body: { productId: number; showOnWebsite: number }) => {
     return fetch(urlsApi.product.wWebsiteToggle, {
       method: "POST",
