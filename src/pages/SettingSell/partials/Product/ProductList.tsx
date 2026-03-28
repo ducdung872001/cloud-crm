@@ -302,11 +302,11 @@ export default function ProductList(props: IProductListProps) {
   };
 
   const handleScanGoToProduct = () => {
-    // Mở trang thêm SP mới với barcode điền sẵn
     setPreFillBarcode(scanCode);
     setIdProduct(null);
+    setDataProduct(null);
     setShowScanModal(false);
-    setShowModalAdd(true);
+    setShowProductPage(true);
   };
 
   // TODO: Implement category management handler

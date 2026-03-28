@@ -476,15 +476,27 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
     if (!preFillBarcode) return;
     setCombinations((prev) => {
       if (prev.length === 0) {
-        // Chưa có biến thể → tạo 1 biến thể mặc định với barcode
-        return [{ id: null, variantName: "Mặc định", barcode: preFillBarcode, sku: "", priceRetail: 0, priceWholesale: 0, onHandQty: 0 }];
+        // Chưa có biến thể → tạo 1 biến thể mặc định với barcode điền sẵn
+        return [{
+          key: genId(),
+          id: null,
+          label: "Mặc định",
+          sku: "",
+          barcode: preFillBarcode,
+          images: [],
+          unitId: null,
+          price: 0,
+          costPrice: 0,
+          priceWholesale: 0,
+          pricePromo: 0,
+          variantPrices: [],
+        }];
       }
       // Đã có biến thể → điền vào cái đầu tiên nếu chưa có barcode
       return prev.map((v, i) => i === 0 && !v.barcode ? { ...v, barcode: preFillBarcode } : v);
     });
-    // Scroll xuống tab biến thể để người dùng thấy
     setActiveTab("variants");
-    showToast(`Mã vạch "${preFillBarcode}" đã được điền vào biến thể đầu tiên`, "info");
+    showToast(`Mã vạch "${preFillBarcode}" đã được điền vào biến thể — vui lòng nhập tên và giá sản phẩm`, "info");
   }, [preFillBarcode]);
 
   // Tự động bắt đầu tour in mã vạch lần đầu — khi SP đã có biến thể
