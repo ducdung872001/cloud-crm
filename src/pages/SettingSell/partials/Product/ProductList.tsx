@@ -72,6 +72,10 @@ export default function ProductList(props: IProductListProps) {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showProductPage, setShowProductPage] = useState(false);
   const [syncingIds, setSyncingIds] = useState<Set<number>>(new Set());
+  const [summaryData, setSummaryData] = useState({
+    totalProduct: 0, sellingProduct: 0, pausedProduct: 0,
+    lowStockProduct: 0, websiteVisibleProduct: 0, outOfStockProduct: 0,
+  });
 
   // ── Share Link Modal ──
   const [shareProduct, setShareProduct] = useState<IProductResponse | null>(null);
@@ -143,12 +147,33 @@ export default function ProductList(props: IProductListProps) {
     setIsLoading(false);
   };
 
+  const fetchSummary = async () => {
+    try {
+      const res = await ProductService.wDashboard();
+      if (res.code === 0 && res.result) {
+        setSummaryData({
+          totalProduct:          +res.result.totalProduct          || 0,
+          sellingProduct:        +res.result.sellingProduct        || 0,
+          pausedProduct:         +res.result.pausedProduct         || 0,
+          lowStockProduct:       +res.result.lowStockProduct       || 0,
+          websiteVisibleProduct: +res.result.websiteVisibleProduct || 0,
+          outOfStockProduct:     +res.result.outOfStockProduct     || 0,
+        });
+      }
+    } catch { /* silent */ }
+  };
+
   useEffect(() => {
     getListProduct(params);
     return () => {
       abortController.abort();
     };
   }, [params]);
+
+  // Load summary một lần khi mount và sau mỗi mutation
+  useEffect(() => {
+    fetchSummary();
+  }, []);
 
   const colorData = [
     "#E98E4C",
@@ -209,18 +234,18 @@ export default function ProductList(props: IProductListProps) {
   // TODO: Implement tab filter (API integration needed)
   const handleTabChange = (tab: StatusTab) => {
     setActiveTab(tab);
-    switch (tab) {
-      case "active":
-        setParams((prev) => ({ ...prev, status: 1, page: 1 }));
-        break;
-      case "paused":
-        setParams((prev) => ({ ...prev, status: 0, page: 1 }));
-        break;
-      case "all":
-      default:
-        setParams((prev) => { const { status, ...rest } = prev; return { ...rest, page: 1 }; });
-        break;
-    }
+    // Reset về page 1, xóa hết filter cũ, rồi áp filter mới
+    setParams((prev) => {
+      const base = { name: prev.name, limit: prev.limit, page: 1 };
+      switch (tab) {
+        case "active":      return { ...base, status: 1 };
+        case "paused":      return { ...base, status: 0 };
+        case "low_stock":   return { ...base, isLowStock: 1 };
+        case "on_web":      return { ...base, isWebsiteVisible: 1 };
+        case "all":
+        default:            return base;
+      }
+    });
   };
 
   const handleToggleWebDisplay = async (item: IProductResponse, newValue: boolean) => {
@@ -248,6 +273,7 @@ export default function ProductList(props: IProductListProps) {
     if (response.code === 0) {
       showToast("Xóa sản phẩm thành công", "success");
       getListProduct(params);
+      fetchSummary();
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -268,6 +294,7 @@ export default function ProductList(props: IProductListProps) {
         if (count > 0) {
           showToast(`Xóa thành công ${count} sản phẩm`, "success");
           getListProduct(params);
+          fetchSummary();
           setListIdChecked([]);
         } else {
           showToast("Không có sản phẩm nào được xóa", "error");
@@ -514,26 +541,14 @@ export default function ProductList(props: IProductListProps) {
     return ProductLabel[randomKey];
   };
 
-  // Stats (TODO: replace with real API data)
-  const stats = [
-    { label: "Tổng sản phẩm", value: pagination.totalItem ?? 0, color: "#3b82f6" },
-    { label: "Đang bán", value: 0, color: "#22c55e" }, // TODO: get from API
-    { label: "Sắp hết hàng", value: 0, color: "#ef4444" }, // TODO: get from API
-    { label: "Hiển thị trên Web", value: 0, color: "#8b5cf6" }, // TODO: get from API
-    { label: "Hết hàng", value: 0, color: "#f97316" }, // TODO: get from API
-  ];
-
-  const filterTabs: { key: StatusTab; label: string; count?: number }[] = [
-    { key: "all", label: "Tất cả", count: pagination.totalItem },
-    { key: "active", label: "Đang bán", count: 0 }, // TODO: real counts
-    { key: "paused", label: "Tạm dừng", count: 0 }, // TODO: real counts
-  ];
-
-  const filterChips: { key: StatusTab; label: string; icon?: string }[] = [
-    { key: "category", label: "Danh mục" },
-    { key: "label", label: "Nhãn" },
-    { key: "low_stock", label: "Sắp hết hàng" },
-    { key: "on_web", label: "Trên Web" },
+  // ── Unified filter + stats (click để lọc, hiện số từ API) ──
+  const FILTER_STATS: { key: StatusTab; label: string; value: number; color: string; dotColor: string }[] = [
+    { key: "all",      label: "Tất cả",           value: summaryData.totalProduct,          color: "#3b82f6", dotColor: "#3b82f6" },
+    { key: "active",   label: "Đang bán",          value: summaryData.sellingProduct,        color: "#22c55e", dotColor: "#22c55e" },
+    { key: "paused",   label: "Tạm dừng",          value: summaryData.pausedProduct,         color: "#6b7280", dotColor: "#6b7280" },
+    { key: "low_stock",label: "Sắp hết hàng",      value: summaryData.lowStockProduct,       color: "#ef4444", dotColor: "#ef4444" },
+    { key: "on_web",   label: "Hiển thị trên Web", value: summaryData.websiteVisibleProduct, color: "#8b5cf6", dotColor: "#8b5cf6" },
+    { key: "out_stock",label: "Hết hàng",          value: summaryData.outOfStockProduct,     color: "#f97316", dotColor: "#f97316" },
   ];
 
   // --- Table columns ---
@@ -835,44 +850,22 @@ export default function ProductList(props: IProductListProps) {
           Quét mã QR
         </button>
 
-        {/* Status tabs */}
-        <div className="prod-list-tabs">
-          {filterTabs.map((tab) => (
-            <button
-              key={tab.key}
-              className={`prod-list-tab${activeTab === tab.key ? " prod-list-tab--active" : ""}`}
-              onClick={() => handleTabChange(tab.key)}
-            >
-              {tab.label}
-              {tab.count !== undefined && <span className="prod-list-tab__count">({tab.count})</span>}
-            </button>
-          ))}
-        </div>
-
-        {/* Filter chips */}
-        <div className="prod-list-chips">
-          {filterChips.map((chip) => (
-            <button
-              key={chip.key}
-              className={`prod-list-chip${activeTab === chip.key ? " prod-list-chip--active" : ""}`}
-              onClick={() => handleTabChange(chip.key)}
-            >
-              {chip.label}
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* ── STATS ── */}
+      {/* ── UNIFIED FILTER + STATS ── Click để lọc, hiện số lượng thực từ API */}
       <div className="prod-list-stats">
-        {stats.map((stat, idx) => (
-          <div className="prod-list-stat" key={idx}>
-            <span className="prod-list-stat__dot" style={{ background: stat.color }} />
+        {FILTER_STATS.map((stat) => (
+          <button
+            key={stat.key}
+            className={`prod-list-stat${activeTab === stat.key ? " prod-list-stat--active" : ""}`}
+            onClick={() => handleTabChange(stat.key)}
+          >
+            <span className="prod-list-stat__dot" style={{ background: stat.dotColor }} />
             <div>
-              <p className="prod-list-stat__value">{stat.value}</p>
+              <p className="prod-list-stat__value">{stat.value.toLocaleString("vi-VN")}</p>
               <p className="prod-list-stat__label">{stat.label}</p>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 

@@ -70,11 +70,23 @@ export default {
 
   // ── Warehouse API (tài liệu mới) ──
   wList: (params?: IProductFilterRequest, signal?: AbortSignal) => {
-    // convertParamsToString có thể drop status=0 vì falsy — build query string thủ công cho status
-    const base = convertParamsToString(params);
-    const hasStatus = params?.status !== undefined && params?.status !== null;
-    const statusSuffix = hasStatus && !base.includes("status=") ? `${base.includes("?") ? "&" : "?"}status=${params.status}` : "";
-    return fetch(`${urlsApi.product.wList}${base}${statusSuffix}`, {
+    // convertParamsToString có thể drop các giá trị số 0 vì falsy
+    // Build query string thủ công để đảm bảo các numeric filter được serialize đúng
+    const base: Record<string, any> = {};
+    if (params) {
+      if (params.name !== undefined && params.name !== "") base.name = params.name;
+      if (params.page !== undefined) base.page = params.page;
+      if (params.limit !== undefined) base.limit = params.limit;
+      if (params.warehouseId !== undefined) base.warehouseId = params.warehouseId;
+      if (params.status !== undefined && params.status !== null) base.status = params.status;
+      if (params.categoryId !== undefined) base.categoryId = params.categoryId;
+      if (params.isLowStock !== undefined) base.isLowStock = params.isLowStock;
+      if (params.isWebsiteVisible !== undefined) base.isWebsiteVisible = params.isWebsiteVisible;
+    }
+    const qs = Object.keys(base).length
+      ? "?" + Object.entries(base).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join("&")
+      : "";
+    return fetch(`${urlsApi.product.wList}${qs}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
