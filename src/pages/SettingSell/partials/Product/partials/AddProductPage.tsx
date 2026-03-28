@@ -475,7 +475,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
     if (p.contentDelta) setContentDelta(p.contentDelta);
 
     // ── Tags ──
-    if (p.tagIds?.length) setSelectedTagIds(p.tagIds);
+    if (p.tagIds?.length) setSelectedTagIds([...new Set<number>(p.tagIds)]);
 
     // ── Load biến thể từ API ──
     if (p.variantGroups?.length) {
@@ -640,9 +640,12 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
 
   const handleSaveTags = async () => {
     if (!idProduct) return;
-    const res = await ProductService.wTagUpdate({ productId: idProduct, tagIds: selectedTagIds });
-    if (res.code === 0) showToast("Đã lưu tags", "success");
-    else showToast(res.message ?? "Lỗi lưu tags", "error");
+    const uniqueTagIds = [...new Set(selectedTagIds)];
+    const res = await ProductService.wTagUpdate({ productId: idProduct, tagIds: uniqueTagIds });
+    if (res.code === 0) {
+      setSelectedTagIds(uniqueTagIds); // cập nhật state luôn với list đã dedupe
+      showToast("Đã lưu tags", "success");
+    } else showToast(res.message ?? "Lỗi lưu tags", "error");
   };
 
   const handleSubmit = async () => {
