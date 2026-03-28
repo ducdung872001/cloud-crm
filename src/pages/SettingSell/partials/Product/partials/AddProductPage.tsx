@@ -430,11 +430,15 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
   const setField = (key: string, value: any) => setFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
-    loadUnits();
-    loadCategories();
-    loadAvailableTags();
-    if (isEdit) loadDetail();
-    else if (data) preFill(data);
+    const init = async () => {
+      // Chạy song song các load không phụ thuộc nhau
+      // loadAvailableTags phải hoàn thành TRƯỚC loadDetail để tránh race condition
+      // (preFill set selectedTagIds, nhưng chips render cần availableTags đã có data)
+      await Promise.all([loadUnits(), loadCategories(), loadAvailableTags()]);
+      if (isEdit) await loadDetail();
+      else if (data) preFill(data);
+    };
+    init();
   }, [idProduct]);
 
   const preFill = (p: any) => {
@@ -617,9 +621,15 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
       if (res.code === 0) {
         const newId = res.result;
         setAvailableTags(prev => [...prev, { id: newId, name }]);
-        setSelectedTagIds(prev => [...prev, newId]);
+        // Tính newTagIds trực tiếp để tránh stale closure khi gọi save ngay sau
+        const newTagIds = [...selectedTagIds, newId];
+        setSelectedTagIds(newTagIds);
         setTagInput("");
         showToast(`Đã tạo tag "${name}"`, "success");
+        // Auto-save tags ngay sau khi tạo (không bắt user phải ấn "Lưu tags" thêm lần nữa)
+        if (idProduct) {
+          await ProductService.wTagUpdate({ productId: idProduct, tagIds: newTagIds });
+        }
       } else {
         showToast(res.message ?? "Lỗi tạo tag", "error");
       }
@@ -1126,7 +1136,7 @@ export default function AddProductPage({ idProduct, data, onBack }: AddProductPa
               <div className="add-prod-card">
                 <div className="add-prod-card__title">
                   Tags sản phẩm
-                  {isEdit && selectedTagIds.length > 0 && (
+                  {isEdit && (
                     <button className="add-prod-card__title-action" onClick={handleSaveTags}>
                       Lưu tags
                     </button>
