@@ -179,95 +179,94 @@ const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
   }));
 };
 
-// ── Barcode Scanner Modal (dùng BarcodeDetector API native) ──
+// ── Barcode Scanner Modal — dùng ZXing UMD (hỗ trợ mọi trình duyệt) ──
+// ZXing được load qua <script> tag động, không cần cài npm
+const ZXING_CDN = "https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/umd/index.min.js";
+
+function loadZXingScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if ((window as any).ZXingBrowser) { resolve(); return; }
+    const existing = document.querySelector(`script[src="${ZXING_CDN}"]`);
+    if (existing) {
+      existing.addEventListener("load", () => resolve());
+      existing.addEventListener("error", reject);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = ZXING_CDN;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Không tải được thư viện quét mã vạch. Vui lòng kiểm tra kết nối mạng."));
+    document.head.appendChild(script);
+  });
+}
+
 function BarcodeScannerModal({ onScan, onClose }: { onScan: (barcode: string) => void; onClose: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const detectorRef = useRef<any>(null);
-  const rafRef = useRef<number | null>(null);
+  const readerRef = useRef<any>(null);
   const [error, setError] = useState<string>("");
-  const [isReady, setIsReady] = useState(false);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
 
   useEffect(() => {
-    startCamera();
-    return () => stopCamera();
+    let cancelled = false;
+
+    const start = async () => {
+      try {
+        setStatus("loading");
+        await loadZXingScript();
+        if (cancelled) return;
+
+        const ZXing = (window as any).ZXingBrowser;
+        if (!ZXing?.BrowserMultiFormatReader) {
+          throw new Error("Thư viện ZXing chưa sẵn sàng, vui lòng thử lại.");
+        }
+
+        const reader = new ZXing.BrowserMultiFormatReader();
+        readerRef.current = reader;
+        if (cancelled) return;
+
+        setStatus("ready");
+        await reader.decodeFromVideoDevice(
+          undefined,
+          videoRef.current,
+          (result: any, err: any) => {
+            if (cancelled || !result) return;
+            reader.reset();
+            onScan(result.getText());
+          }
+        );
+      } catch (err: any) {
+        if (cancelled) return;
+        const msg = err?.message || String(err);
+        if (msg.includes("NotAllowed") || msg.includes("Permission")) {
+          setError("Bạn chưa cấp quyền camera. Vui lòng cho phép trong cài đặt trình duyệt rồi thử lại.");
+        } else if (msg.includes("NotFound") || msg.includes("No camera")) {
+          setError("Không tìm thấy camera. Vui lòng kết nối camera và thử lại.");
+        } else {
+          setError(msg);
+        }
+        setStatus("error");
+      }
+    };
+
+    start();
+    return () => {
+      cancelled = true;
+      try { readerRef.current?.reset(); } catch (_) {}
+    };
   }, []);
-
-  const stopCamera = () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((t) => t.stop());
-      streamRef.current = null;
-    }
-  };
-
-  const startCamera = async () => {
-    if (!("BarcodeDetector" in window)) {
-      setError("Trình duyệt chưa hỗ trợ BarcodeDetector. Vui lòng dùng Chrome / Edge phiên bản mới.");
-      return;
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
-      detectorRef.current = new (window as any).BarcodeDetector({
-        formats: ["ean_13", "ean_8", "code_128", "code_39", "qr_code", "upc_a", "upc_e", "itf", "codabar"],
-      });
-      setIsReady(true);
-      scanLoop();
-    } catch (err: any) {
-      if (err.name === "NotAllowedError") {
-        setError("Bạn chưa cấp quyền truy cập camera. Vui lòng cho phép trong cài đặt trình duyệt.");
-      } else {
-        setError("Không thể mở camera: " + (err.message || err));
-      }
-    }
-  };
-
-  const scanLoop = async () => {
-    if (!videoRef.current || !detectorRef.current) return;
-    if (videoRef.current.readyState < 2) {
-      rafRef.current = requestAnimationFrame(scanLoop);
-      return;
-    }
-    try {
-      const barcodes = await detectorRef.current.detect(videoRef.current);
-      if (barcodes.length > 0) {
-        stopCamera();
-        onScan(barcodes[0].rawValue);
-        return;
-      }
-    } catch (_) {}
-    rafRef.current = requestAnimationFrame(scanLoop);
-  };
 
   return (
     <div className="bs-overlay" onClick={onClose}>
       <div className="bs-modal" onClick={(e) => e.stopPropagation()}>
         <div className="bs-modal__header">
           <span className="bs-modal__title">Quét mã vạch</span>
-          <button type="button" className="bs-modal__close" onClick={onClose}>
-            ✕
-          </button>
+          <button type="button" className="bs-modal__close" onClick={onClose}>✕</button>
         </div>
         <div className="bs-modal__body">
-          {error ? (
+          {status === "error" ? (
             <div className="bs-modal__error">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="8" x2="12" y2="12" />
                 <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -277,7 +276,6 @@ function BarcodeScannerModal({ onScan, onClose }: { onScan: (barcode: string) =>
           ) : (
             <div className="bs-modal__video-wrap">
               <video ref={videoRef} className="bs-modal__video" playsInline muted />
-              {/* Khung ngắm */}
               <div className="bs-modal__reticle">
                 <span className="bs-modal__reticle-corner bs-modal__reticle-corner--tl" />
                 <span className="bs-modal__reticle-corner bs-modal__reticle-corner--tr" />
@@ -285,7 +283,9 @@ function BarcodeScannerModal({ onScan, onClose }: { onScan: (barcode: string) =>
                 <span className="bs-modal__reticle-corner bs-modal__reticle-corner--br" />
                 <div className="bs-modal__scan-line" />
               </div>
-              <p className="bs-modal__hint">{isReady ? "Đưa mã vạch vào khung để quét tự động" : "Đang khởi động camera..."}</p>
+              <p className="bs-modal__hint">
+                {status === "loading" ? "Đang tải thư viện quét..." : "Đưa mã vạch vào khung để quét tự động"}
+              </p>
             </div>
           )}
         </div>
@@ -1062,25 +1062,28 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
       })
     );
 
+  // Fields được sync từ biến thể gốc sang các biến thể còn lại
+  // Barcode KHÔNG sync — mỗi biến thể có barcode riêng
+  const SYNC_UNIT_FIELDS: (keyof UnitPrice)[] = ["unitId", "unitName", "price", "priceWholesale"];
+
   const updateUnitPrice = (comboKey: string, tempId: string, field: keyof UnitPrice, value: any) =>
     setCombinations((prev) => {
       const isFirst = prev[0]?.key === comboKey;
-      if (isFirst) {
+      if (isFirst && SYNC_UNIT_FIELDS.includes(field)) {
         // Tìm index của row trong variant 1
         const rowIndex = prev[0].variantPrices.findIndex((u) => u.tempId === tempId);
         return prev.map((c) => {
           if (c.key === comboKey) {
-            // Cập nhật variant 1 theo tempId
             return { ...c, variantPrices: c.variantPrices.map((u) => (u.tempId === tempId ? { ...u, [field]: value } : u)) };
           }
-          // Áp dụng cùng field/value vào row cùng vị trí ở variants còn lại
+          // Sync field (trừ barcode) vào row cùng vị trí ở variants còn lại
           return {
             ...c,
             variantPrices: c.variantPrices.map((u, ui) => (ui === rowIndex ? { ...u, [field]: value } : u)),
           };
         });
       }
-      // Biến thể 2+: chỉ cập nhật biến thể đó
+      // Không sync (barcode hoặc biến thể 2+): chỉ cập nhật biến thể đó
       return prev.map((c) =>
         c.key === comboKey ? { ...c, variantPrices: c.variantPrices.map((u) => (u.tempId === tempId ? { ...u, [field]: value } : u)) } : c
       );
