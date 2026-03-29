@@ -82,7 +82,9 @@ interface UnitPrice {
   id?: number | null;
   unitId: number | null;
   unitName: string;
-  price: string | number;
+  price: string | number;        // Giá lẻ theo đơn vị này
+  priceWholesale: string | number; // Giá sỉ theo đơn vị này
+  barcode: string;               // Barcode riêng cho đơn vị này
 }
 
 interface VariantCombination {
@@ -90,11 +92,12 @@ interface VariantCombination {
   id?: number | null;
   label: string;
   sku: string;
-  barcode: string;
+  barcode: string;               // Barcode mặc định của biến thể (đơn vị cơ bản)
   images: string[];
   unitId: number | null;
-  price: string | number;
-  costPrice: string | number;
+  price: string | number;        // Giá lẻ đơn vị cơ bản (dự phòng backward compat)
+  taxRate: number;               // Thuế suất bán: 0 / 5 / 8 / 10
+  costPrice: string | number;    // Giữ ẩn — dùng cho API compat
   priceWholesale: string | number;
   pricePromo: string | number;
   variantPrices: UnitPrice[];
@@ -148,6 +151,8 @@ const makeEmptyUnitPrice = (): UnitPrice => ({
   unitId: null,
   unitName: "",
   price: "",
+  priceWholesale: "",
+  barcode: "",
 });
 
 const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
@@ -166,6 +171,7 @@ const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
     images: [],
     unitId: null,
     price: "" as string | number,
+    taxRate: 0,
     costPrice: "" as string | number,
     priceWholesale: "" as string | number,
     pricePromo: "" as string | number,
@@ -448,7 +454,8 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   // Variants
   const [variantAttrs, setVariantAttrs] = useState<VariantAttribute[]>([]);
   const [combinations, setCombinations] = useState<VariantCombination[]>([]);
-  const [scanningComboKey, setScanningComboKey] = useState<string | null>(null);
+  // Scanner cho barcode theo từng đơn vị tính
+  const [scanningUnitKey, setScanningUnitKey] = useState<{ comboKey: string; tempId: string } | null>(null);
 
   const setField = (key: string, value: any) => setFormData((prev) => ({ ...prev, [key]: value }));
 
@@ -492,6 +499,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
           images: [],
           unitId: null,
           price: 0,
+          taxRate: 0,
           costPrice: 0,
           priceWholesale: 0,
           pricePromo: 0,
@@ -572,6 +580,8 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                   unitId: u.unitId ?? u.unit_id ?? null,
                   unitName: u.unitName ?? u.unit_name ?? "",
                   price: u.price ?? u.priceRetail ?? "",
+                  priceWholesale: u.priceWholesale ?? u.price_wholesale ?? "",
+                  barcode: u.barcode ?? u.barcodeCode ?? "",
                 }))
               : [
                   {
@@ -579,6 +589,8 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                     unitId: v.unitId ?? null,
                     unitName: v.unitName ?? "",
                     price: v.price ?? "",
+                    priceWholesale: v.priceWholesale ?? "",
+                    barcode: v.code || v.barcode || "",
                   },
                 ];
 
@@ -606,6 +618,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
             images: v.images?.length ? v.images : [v.avatar, v.image].filter(Boolean) as string[],
             unitId: v.unitId ?? null,
             price: v.price ?? v.priceRetail ?? "",
+            taxRate: v.taxRate ?? v.tax_rate ?? 0,
             costPrice: v.costPrice ?? v.cost_price ?? "",
             priceWholesale: v.priceWholesale ?? v.price_wholesale ?? v.wholesale ?? "",
             pricePromo: v.pricePromo ?? v.pricePromotion ?? v.price_promo ?? "",
@@ -861,6 +874,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         barcode: c.barcode || "",
         unitId: c.unitId ?? null,
         price: +(c.price ?? 0) || 0,
+        taxRate: c.taxRate ?? 0,
         costPrice: +(c.costPrice ?? 0) || 0,
         priceWholesale: +(c.priceWholesale ?? 0) || 0,
         pricePromo: +(c.pricePromo ?? 0) || 0,
@@ -874,6 +888,8 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
           unitId: u.unitId,
           unitName: u.unitName,
           price: +(u.price ?? 0) || 0,
+          priceWholesale: +(u.priceWholesale ?? 0) || 0,
+          barcode: u.barcode || "",
         })),
       };
     });
@@ -970,6 +986,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
           images: existing?.images || [],
           unitId: existing?.unitId ?? null,
           price: existing?.price ?? "",
+          taxRate: existing?.taxRate ?? 0,
           costPrice: existing?.costPrice ?? "",
           priceWholesale: existing?.priceWholesale ?? "",
           pricePromo: existing?.pricePromo ?? "",
@@ -1096,6 +1113,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
           barcode: generateEAN13(),   // sinh barcode mới hoàn toàn để tránh unique constraint
           unitId: c.unitId ?? null,
           price: +(c.price ?? 0) || 0,
+          taxRate: c.taxRate ?? 0,
           costPrice: +(c.costPrice ?? 0) || 0,
           priceWholesale: +(c.priceWholesale ?? 0) || 0,
           pricePromo: +(c.pricePromo ?? 0) || 0,
@@ -1110,6 +1128,8 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
             unitId: u.unitId,
             unitName: u.unitName,
             price: +(u.price ?? 0) || 0,
+            priceWholesale: +(u.priceWholesale ?? 0) || 0,
+            barcode: generateEAN13(),  // sinh barcode mới cho từng unit khi duplicate
           })),
         };
       });
@@ -1785,124 +1805,71 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                           onChange={(e) => updateComboSku(c.key, e.target.value)}
                           placeholder="Mã SKU..."
                         />
-
-                        {/* Barcode */}
-                        <div className="add-prod-vt-combo-card__barcode-wrap">
-                          <input
-                            className="add-prod-vt-combo-card__barcode"
-                            type="text"
-                            value={c.barcode}
-                            onChange={(e) => updateComboField(c.key, "barcode", e.target.value)}
-                            placeholder="Mã vạch..."
-                          />
-                          <Tippy content="Quét mã vạch bằng camera" placement="top">
-                            <button type="button" className="add-prod-scan-btn add-prod-scan-btn--icon" onClick={() => setScanningComboKey(c.key)}>
-                              <svg
-                                width="15"
-                                height="15"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M3 7V5a2 2 0 0 1 2-2h2" />
-                                <path d="M17 3h2a2 2 0 0 1 2 2v2" />
-                                <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
-                                <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
-                                <line x1="7" y1="12" x2="17" y2="12" />
-                              </svg>
-                            </button>
-                          </Tippy>
-                          <Tippy content="Tự sinh mã EAN-13" placement="top">
-                            <button
-                              type="button"
-                              className="add-prod-scan-btn add-prod-scan-btn--gen"
-                              onClick={() => updateComboField(c.key, "barcode", generateEAN13())}
-                            >
-                              <svg
-                                width="15"
-                                height="15"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M15 4V2" />
-                                <path d="M15 16v-2" />
-                                <path d="M8 9h2" />
-                                <path d="M20 9h2" />
-                                <path d="M17.8 11.8L19 13" />
-                                <path d="M15 9h.01" />
-                                <path d="M17.8 6.2L19 5" />
-                                <path d="M3 21l9-9" />
-                                <path d="M12.2 6.2L11 5" />
-                              </svg>
-                            </button>
-                          </Tippy>
-                        </div>
                       </div>
 
                       {/* Ảnh biến thể */}
                       <VariantImagePicker images={c.images} onChange={(urls) => updateComboImages(c.key, urls)} />
 
-                      {/* Đơn vị cơ bản */}
-                      <div className="add-prod-vt-unit-row">
-                        <Tippy
-                          content="Đơn vị tính mặc định của biến thể này (VD: Chiếc, Cái, Hộp...). Dùng làm đơn vị gốc khi bán lẻ."
-                          placement="top"
-                        >
-                          <label className="add-prod-vt-unit-row__label" style={{ cursor: "help" }}>
-                            Đơn vị cơ bản
-                          </label>
-                        </Tippy>
-                        <div className="add-prod-vt-unit-row__select">
-                          <SelectCustom
-                            id={`unitId-${c.key}`}
-                            name="unitId"
-                            value={c.unitId}
-                            options={listUnit}
-                            onChange={(e) => updateComboField(c.key, "unitId", e?.value ?? null)}
-                            onMenuOpen={loadUnits}
-                            placeholder="Chọn đơn vị..."
-                            isSearchable
-                            isClearable
-                          />
+                      {/* Đơn vị cơ bản + Thuế suất bán */}
+                      <div className="add-prod-vt-meta-row">
+                        <div className="add-prod-vt-unit-row">
+                          <Tippy
+                            content="Đơn vị tính mặc định của biến thể này (VD: Chiếc, Cái, Hộp...). Dùng làm đơn vị gốc khi bán lẻ."
+                            placement="top"
+                          >
+                            <label className="add-prod-vt-unit-row__label" style={{ cursor: "help" }}>
+                              Đơn vị cơ bản
+                            </label>
+                          </Tippy>
+                          <div className="add-prod-vt-unit-row__select">
+                            <SelectCustom
+                              id={`unitId-${c.key}`}
+                              name="unitId"
+                              value={c.unitId}
+                              options={listUnit}
+                              onChange={(e) => updateComboField(c.key, "unitId", e?.value ?? null)}
+                              onMenuOpen={loadUnits}
+                              placeholder="Chọn đơn vị..."
+                              isSearchable
+                              isClearable
+                            />
+                          </div>
+                        </div>
+
+                        <div className="add-prod-vt-tax-row">
+                          <Tippy content="Thuế VAT áp dụng khi bán hàng hóa này. Dùng để xuất hóa đơn VAT đúng thuế suất." placement="top">
+                            <label className="add-prod-vt-unit-row__label" style={{ cursor: "help" }}>
+                              Thuế suất bán
+                            </label>
+                          </Tippy>
+                          <select
+                            className="add-prod-vt-tax-select"
+                            value={c.taxRate ?? 0}
+                            onChange={(e) => updateComboField(c.key, "taxRate", Number(e.target.value))}
+                          >
+                            <option value={0}>0% — Không chịu thuế</option>
+                            <option value={5}>5% — Thuế suất ưu đãi</option>
+                            <option value={8}>8% — Thuế suất giảm</option>
+                            <option value={10}>10% — Thuế suất tiêu chuẩn</option>
+                          </select>
                         </div>
                       </div>
 
-                      {/* Giá biến thể */}
-                      <div className="add-prod-vt-combo-card__price-grid">
-                        {[
-                          { field: "price", label: "Giá bán" },
-                          { field: "costPrice", label: "Giá nhập" },
-                          { field: "priceWholesale", label: "Giá sỉ" },
-                          { field: "pricePromo", label: "Giá KM" },
-                        ].map(({ field, label }) => (
-                          <div className="add-prod-vt-price-col" key={field}>
-                            <label className="add-prod-vt-price-col__label">{label}</label>
-                            <div className="add-prod-vt-price">
-                              <span className="add-prod-vt-price__icon">₫</span>
-                              <NummericInput
-                                value={c[field as keyof VariantCombination] as string | number}
-                                onValueChange={(vals: any) => updateComboField(c.key, field as keyof VariantCombination, vals.floatValue ?? 0)}
-                                placeholder="0"
-                                thousandSeparator={true}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Danh sách đơn vị-giá */}
+                      {/* Bảng đơn vị bán — cột: Đơn vị | Barcode | Giá lẻ | Giá sỉ | Xóa */}
                       <div className="add-prod-vt-combo-card__prices">
+                        {/* Header bảng */}
+                        <div className="add-prod-vt-price-table-head">
+                          <span className="add-prod-vt-price-th add-prod-vt-price-th--unit">Đơn vị bán</span>
+                          <span className="add-prod-vt-price-th add-prod-vt-price-th--barcode">Mã vạch (Barcode)</span>
+                          <span className="add-prod-vt-price-th add-prod-vt-price-th--price">Giá lẻ</span>
+                          <span className="add-prod-vt-price-th add-prod-vt-price-th--wholesale">Giá sỉ</span>
+                          <span className="add-prod-vt-price-th add-prod-vt-price-th--action" />
+                        </div>
+
                         {c.variantPrices.map((up) => (
-                          <div className="add-prod-vt-unit-row" key={up.tempId}>
-                            {/* Chọn đơn vị */}
-                            <div className="add-prod-vt-unit-select">
+                          <div className="add-prod-vt-price-row" key={up.tempId}>
+                            {/* Đơn vị */}
+                            <div className="add-prod-vt-price-td add-prod-vt-price-td--unit">
                               <SelectCustom
                                 id={`unit-${up.tempId}`}
                                 name={`unit-${up.tempId}`}
@@ -1920,28 +1887,87 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                               />
                             </div>
 
-                            {/* Nhập giá */}
-                            <div className="add-prod-vt-price">
-                              <span className="add-prod-vt-price__icon">₫</span>
-                              <NummericInput
-                                value={up.price}
-                                onValueChange={(vals: any) => updateUnitPrice(c.key, up.tempId, "price", vals.floatValue ?? 0)}
-                                placeholder="0"
-                                thousandSeparator={true}
-                              />
+                            {/* Barcode theo đơn vị */}
+                            <div className="add-prod-vt-price-td add-prod-vt-price-td--barcode">
+                              <div className="add-prod-vt-barcode-cell">
+                                <input
+                                  type="text"
+                                  className="add-prod-vt-barcode-input"
+                                  value={up.barcode}
+                                  onChange={(e) => updateUnitPrice(c.key, up.tempId, "barcode", e.target.value)}
+                                  placeholder="Mã vạch..."
+                                />
+                                <Tippy content="Quét camera" placement="top">
+                                  <button
+                                    type="button"
+                                    className="add-prod-scan-btn add-prod-scan-btn--icon add-prod-scan-btn--xs"
+                                    onClick={() => {
+                                      // Mở scanner và map kết quả vào unit barcode
+                                      setScanningUnitKey({ comboKey: c.key, tempId: up.tempId });
+                                    }}
+                                  >
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                                      <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                                      <line x1="7" y1="12" x2="17" y2="12"/>
+                                    </svg>
+                                  </button>
+                                </Tippy>
+                                <Tippy content="Tự sinh EAN-13" placement="top">
+                                  <button
+                                    type="button"
+                                    className="add-prod-scan-btn add-prod-scan-btn--gen add-prod-scan-btn--xs"
+                                    onClick={() => updateUnitPrice(c.key, up.tempId, "barcode", generateEAN13())}
+                                  >
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/>
+                                      <path d="M17.8 11.8L19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2L19 5"/>
+                                      <path d="M3 21l9-9"/><path d="M12.2 6.2L11 5"/>
+                                    </svg>
+                                  </button>
+                                </Tippy>
+                              </div>
                             </div>
 
-                            {/* Nút xóa */}
-                            <Tippy content="Xóa đơn vị này" placement="top">
-                              <button
-                                type="button"
-                                className="add-prod-vt-unit-del"
-                                disabled={c.variantPrices.length === 1}
-                                onClick={() => removeUnitPrice(c.key, up.tempId)}
-                              >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-                              </button>
-                            </Tippy>
+                            {/* Giá lẻ */}
+                            <div className="add-prod-vt-price-td add-prod-vt-price-td--price">
+                              <div className="add-prod-vt-price">
+                                <span className="add-prod-vt-price__icon">₫</span>
+                                <NummericInput
+                                  value={up.price}
+                                  onValueChange={(vals: any) => updateUnitPrice(c.key, up.tempId, "price", vals.floatValue ?? 0)}
+                                  placeholder="0"
+                                  thousandSeparator={true}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Giá sỉ */}
+                            <div className="add-prod-vt-price-td add-prod-vt-price-td--wholesale">
+                              <div className="add-prod-vt-price">
+                                <span className="add-prod-vt-price__icon">₫</span>
+                                <NummericInput
+                                  value={up.priceWholesale}
+                                  onValueChange={(vals: any) => updateUnitPrice(c.key, up.tempId, "priceWholesale", vals.floatValue ?? 0)}
+                                  placeholder="0"
+                                  thousandSeparator={true}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Xóa */}
+                            <div className="add-prod-vt-price-td add-prod-vt-price-td--action">
+                              <Tippy content="Xóa đơn vị này" placement="top">
+                                <button
+                                  type="button"
+                                  className="add-prod-vt-unit-del"
+                                  disabled={c.variantPrices.length === 1}
+                                  onClick={() => removeUnitPrice(c.key, up.tempId)}
+                                >
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                                </button>
+                              </Tippy>
+                            </div>
                           </div>
                         ))}
 
@@ -1977,14 +2003,14 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         )}
       </div>
 
-      {/* Barcode Scanner Modal */}
-      {scanningComboKey && (
+      {/* Barcode Scanner Modal — cho barcode theo từng đơn vị bán */}
+      {scanningUnitKey && (
         <BarcodeScannerModal
           onScan={(barcode) => {
-            updateComboField(scanningComboKey, "barcode", barcode);
-            setScanningComboKey(null);
+            updateUnitPrice(scanningUnitKey.comboKey, scanningUnitKey.tempId, "barcode", barcode);
+            setScanningUnitKey(null);
           }}
-          onClose={() => setScanningComboKey(null)}
+          onClose={() => setScanningUnitKey(null)}
         />
       )}
 
