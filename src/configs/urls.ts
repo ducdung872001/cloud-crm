@@ -1074,6 +1074,12 @@ export const urlsApi = {
     update: prefixAdmin + "/unit/update",
     delete: prefixAdmin + "/unit/delete",
   },
+
+  unitExchange: {
+    listByProduct: prefixInventory + "/unitExchange/listByProduct",
+    update: prefixInventory + "/unitExchange/update",
+    delete: prefixInventory + "/unitExchange/delete",
+  },
   reportTemplate: {
     list: prefixAdmin + "/reportTemplate/list",
     update: prefixAdmin + "/reportTemplate/update",

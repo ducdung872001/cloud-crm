@@ -20,6 +20,7 @@ import { useOnboarding, isTourDone } from "hooks/useOnboarding";
 import TourOverlay from "components/tourOverlay/TourOverlay";
 import RebornEditor from "components/editor/reborn";
 import { serialize } from "utils/editor";
+import urls from "@/configs/urls";
 
 type PageTab = "info" | "variants";
 
@@ -436,6 +437,12 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   const [isCreatingTag, setIsCreatingTag] = useState(false);
   const [listUnit, setListUnit] = useState<IOption[]>([]);
   const [listCategory, setListCategory] = useState<IOption[]>([]);
+
+  // ── Đơn vị quy đổi (product_unit) ──
+  interface IUnitExchange { id?: number; productId?: number; unitId: number | null; unitName: string; isBasis: number; exchange: number; }
+  const makeEmptyUE = (): IUnitExchange => ({ unitId: null, unitName: "", isBasis: 0, exchange: 1 });
+  const [unitExchangeList, setUnitExchangeList] = useState<IUnitExchange[]>([makeEmptyUE()]);
+  const [isSavingUE, setIsSavingUE] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<{ value: number; label: string } | null>(null);
   const [formData, setFormData] = useState({ ...DEFAULT_FORM });
   const [isDuplicating, setIsDuplicating] = useState(false);
@@ -462,7 +469,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
       await Promise.all([loadUnits(), loadCategories(), loadAvailableTags()]);
       if (isEdit) {
         await loadDetail();
-        await loadWebsiteSetting(); // load cài đặt hiển thị sau khi có idProduct
+        await Promise.all([loadWebsiteSetting(), loadUnitExchange()]); // load cài đặt hiển thị sau khi có idProduct
       } else {
         if (data) preFill(data);
         await loadDefaultWebsiteSetting(); // load defaults khi tạo SP mới
@@ -621,6 +628,58 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   };
 
   const loadUnits = async () => setListUnit((await SelectOptionData("unit")) || []);
+
+  // ── Load / Save đơn vị quy đổi ──
+  const loadUnitExchange = async () => {
+    if (!idProduct) return;
+    try {
+      const res = await fetch(`${urls.unitExchange.listByProduct}?productId=${idProduct}`).then(r => r.json());
+      const items = res?.result ?? res?.data ?? [];
+      setUnitExchangeList(items.length ? items.map((i: any) => ({
+        id: i.id,
+        productId: i.productId,
+        unitId: i.unitId ?? null,
+        unitName: i.unitName ?? "",
+        isBasis: i.isBasis ?? 0,
+        exchange: i.exchange ?? 1,
+      })) : [makeEmptyUE()]);
+    } catch { /* giữ default nếu lỗi */ }
+  };
+
+  const handleSaveUnitExchange = async () => {
+    if (!idProduct) return;
+    const valid = unitExchangeList.filter(u => u.unitId);
+    if (!valid.length) { showToast("Vui lòng chọn ít nhất 1 đơn vị", "error"); return; }
+    const basisCount = valid.filter(u => u.isBasis === 1).length;
+    if (basisCount === 0) { showToast("Vui lòng chọn 1 đơn vị làm đơn vị cơ bản", "error"); return; }
+    if (basisCount > 1) { showToast("Chỉ được chọn 1 đơn vị cơ bản", "error"); return; }
+    setIsSavingUE(true);
+    try {
+      const results = await Promise.all(valid.map(u =>
+        fetch(urls.unitExchange.update, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...u, productId: idProduct, isBasis: u.isBasis }),
+        }).then(r => r.json())
+      ));
+      const failed = results.find(r => r.code !== 0 && r.status !== 1);
+      if (failed) showToast(failed.message ?? "Lỗi lưu đơn vị quy đổi", "error");
+      else { showToast("Đã lưu đơn vị quy đổi", "success"); await loadUnitExchange(); }
+    } catch { showToast("Lỗi kết nối", "error"); }
+    finally { setIsSavingUE(false); }
+  };
+
+  const handleDeleteUE = async (index: number) => {
+    const item = unitExchangeList[index];
+    if (item.id) {
+      const res = await fetch(`${urls.unitExchange.delete}?id=${item.id}`, { method: "DELETE" }).then(r => r.json());
+      if (res.code !== 0 && res.status !== 1) { showToast(res.message ?? "Lỗi xóa", "error"); return; }
+    }
+    setUnitExchangeList(prev => {
+      const next = prev.filter((_, i) => i !== index);
+      return next.length ? next : [makeEmptyUE()];
+    });
+  };
 
   const loadCategories = async () => {
     const res = await CategoryServiceService.list({ page: 1, limit: 100 });
@@ -1468,6 +1527,112 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                       <input type="number" value={formData.maxStock} onChange={(e) => setField("maxStock", +e.target.value)} />
                     </div>
                   </div>
+                )}
+              </div>
+
+              {/* ── Đơn vị quy đổi ── */}
+              <div className="add-prod-card">
+                <div className="add-prod-card__title" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span>Đơn vị quy đổi</span>
+                  {isEdit && (
+                    <button className="add-prod-card__title-action" onClick={handleSaveUnitExchange} disabled={isSavingUE}>
+                      {isSavingUE ? "Đang lưu..." : "Lưu đơn vị"}
+                    </button>
+                  )}
+                </div>
+                <div className="add-prod-ue-hint">Định nghĩa tỷ lệ quy đổi giữa các đơn vị tính (VD: 1 Thùng = 24 Chai). Chọn 1 đơn vị làm cơ bản.</div>
+
+                {/* Header bảng */}
+                <div className="add-prod-ue-table-head">
+                  <span className="add-prod-ue-col add-prod-ue-col--unit">Đơn vị</span>
+                  <span className="add-prod-ue-col add-prod-ue-col--exchange">Tỷ lệ quy đổi</span>
+                  <span className="add-prod-ue-col add-prod-ue-col--basis">Đơn vị cơ bản</span>
+                  <span className="add-prod-ue-col add-prod-ue-col--action" />
+                </div>
+
+                {unitExchangeList.map((ue, idx) => (
+                  <div className="add-prod-ue-row" key={idx}>
+                    {/* Chọn đơn vị */}
+                    <div className="add-prod-ue-col add-prod-ue-col--unit">
+                      <SelectCustom
+                        id={`ue-unit-${idx}`}
+                        name={`ue-unit-${idx}`}
+                        value={ue.unitId}
+                        options={listUnit}
+                        onChange={(e: IOption | null) => {
+                          const next = [...unitExchangeList];
+                          next[idx] = { ...next[idx], unitId: e?.value ?? null, unitName: e?.label ?? "" };
+                          setUnitExchangeList(next);
+                        }}
+                        onMenuOpen={async () => { if (!listUnit.length) await loadUnits(); }}
+                        placeholder="Chọn đơn vị..."
+                        isClearable
+                        isSearchable
+                      />
+                    </div>
+
+                    {/* Tỷ lệ quy đổi */}
+                    <div className="add-prod-ue-col add-prod-ue-col--exchange">
+                      <input
+                        type="number"
+                        min={1}
+                        value={ue.exchange}
+                        onChange={(e) => {
+                          const next = [...unitExchangeList];
+                          next[idx] = { ...next[idx], exchange: Math.max(1, +e.target.value || 1) };
+                          setUnitExchangeList(next);
+                        }}
+                        className="add-prod-ue-exchange-input"
+                        disabled={ue.isBasis === 1}
+                      />
+                    </div>
+
+                    {/* Radio đơn vị cơ bản */}
+                    <div className="add-prod-ue-col add-prod-ue-col--basis">
+                      <label className="add-prod-ue-basis-label">
+                        <input
+                          type="radio"
+                          name="ue-basis"
+                          checked={ue.isBasis === 1}
+                          onChange={() => {
+                            setUnitExchangeList(prev => prev.map((u, i) => ({
+                              ...u,
+                              isBasis: i === idx ? 1 : 0,
+                              exchange: i === idx ? 1 : u.exchange, // đơn vị cơ bản exchange = 1
+                            })));
+                          }}
+                        />
+                        <span>{ue.isBasis === 1 ? "Cơ bản" : "Đặt làm cơ bản"}</span>
+                      </label>
+                    </div>
+
+                    {/* Xóa */}
+                    <div className="add-prod-ue-col add-prod-ue-col--action">
+                      <button
+                        type="button"
+                        className="add-prod-vt-unit-del"
+                        onClick={() => handleDeleteUE(idx)}
+                        title="Xóa dòng này"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Thêm dòng */}
+                <button
+                  type="button"
+                  className="add-prod-vt-unit-add-btn"
+                  style={{ marginTop: 10 }}
+                  onClick={() => setUnitExchangeList(prev => [...prev, makeEmptyUE()])}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Thêm đơn vị quy đổi
+                </button>
+
+                {!isEdit && (
+                  <div className="add-prod-ue-notice">Lưu sản phẩm trước, sau đó mới có thể cấu hình đơn vị quy đổi.</div>
                 )}
               </div>
             </div>
