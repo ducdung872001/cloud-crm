@@ -4,6 +4,13 @@ import { IProgramRoyaltyRequest } from "@/model/loyalty/RoyaltyRequest";
 import { ILoyaltyPointLedgerRequest } from "@/model/loyalty/RoyaltyRequest";
 import { ILoyaltyRewardRequest, ILoyaltySegmentRequest, ILoyaltyWalletRequest } from "@/model/loyalty/RoyaltyRequest";
 
+/** Loại bỏ các field undefined / null / "" trước khi build query string */
+function cleanParams<T extends Record<string, any>>(p: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(p).filter(([, v]) => v !== undefined && v !== null && v !== "")
+  ) as Partial<T>;
+}
+
 export default {
   // ── Chương trình khách hàng thân thiết ─────────────────────────────────
   list: (params: IProgramRoyaltyRequest, signal?: AbortSignal) => {
@@ -26,7 +33,7 @@ export default {
 
   // ── Lịch sử điểm ────────────────────────────────────────────────────────
   listLoyaltyPointLedger: (params: ILoyaltyPointLedgerRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.ma.listLoyaltyPointLedger}${convertParamsToString(params)}`, {
+    return fetch(`${urlsApi.ma.listLoyaltyPointLedger}${convertParamsToString(cleanParams(params))}`, {
       signal, method: "GET",
     }).then((res) => res.json());
   },

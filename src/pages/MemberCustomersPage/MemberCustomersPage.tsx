@@ -49,10 +49,19 @@ const SECTIONS = [
 export default function MemberCustomersPage() {
   document.title = "Khách hàng thành viên";
 
-  const [tab, setTab]           = useState<TabKey>(null);
-  const [isDetail, setIsDetail] = useState(false);
+  const [tab, setTab]                         = useState<TabKey>(null);
+  const [isDetail, setIsDetail]               = useState(false);
+  const [initialCustomerId, setInitialCustomerId] = useState<number | null>(null);
 
   const handleBack = (v: boolean) => v && setIsDetail(false);
+
+  // Gọi từ LoyaltyWallet khi user bấm vào điểm của một thành viên
+  // → chuyển sang tab "Lịch sử điểm" và pre-filter theo customerId đó
+  const handleViewHistory = (customerId: number) => {
+    setInitialCustomerId(customerId);
+    setTab("points_history");
+    setIsDetail(true);
+  };
 
   return (
     <div className="page-content">
@@ -94,9 +103,9 @@ export default function MemberCustomersPage() {
       )}
 
       {/* ── Detail pages ── */}
-      {isDetail && tab === "member_list"      && <LoyaltyWallet      onBackProps={handleBack} />}
+      {isDetail && tab === "member_list"      && <LoyaltyWallet      onBackProps={handleBack} onViewHistory={handleViewHistory} />}
       {isDetail && tab === "membership_class" && <MembershipClass     onBackProps={handleBack} />}
-      {isDetail && tab === "points_history"   && <LoyaltyPointLedger  onBackProps={handleBack} />}
+      {isDetail && tab === "points_history"   && <LoyaltyPointLedger  onBackProps={(v) => { setInitialCustomerId(null); handleBack(v); }} initialCustomerId={initialCustomerId} />}
       {isDetail && tab === "loyalty_rules"    && <SettingLoyaltyList  onBackProps={handleBack} />}
       {isDetail && tab === "rewards_exchange" && <RewardsExchangePage onBackProps={handleBack} />}
       {isDetail && tab === "loyalty_report"   && <LoyaltyReportPage   onBackProps={handleBack} />}

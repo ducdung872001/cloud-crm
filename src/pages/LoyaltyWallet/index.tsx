@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import AdjustPointModal from "./AdjustPointModal";
 import _ from "lodash";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -20,14 +19,12 @@ export default function LoyaltyWallet(props) {
   document.title = "Danh sách thành viên";
 
   const isMounted = useRef(false);
-  const { onBackProps } = props;
+  const { onBackProps, onViewHistory } = props;
   const [listData, setListData] = useState<ILoyaltyWalletResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [params, setParams] = useState<IRoyaltyFilterRequest>({ name: "", limit: 10 });
-  const [showAdjust, setShowAdjust]           = useState(false);
-  const [selectedWallet, setSelectedWallet]   = useState<ILoyaltyWalletResponse | null>(null);
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     { key: "all", name: "Danh sách thành viên", is_active: true },
@@ -75,32 +72,33 @@ export default function LoyaltyWallet(props) {
 
   // Ví điểm là read-only, không có thao tác thêm/sửa/xóa từ UI
   // Cột: STT | Khách hàng | Tổng điểm tích lũy | Điểm hiện tại | Hạng hội viên | Trạng thái
-  const titles = ["STT", "Khách hàng", "Tổng điểm tích lũy", "Điểm hiện tại", "Hạng hội viên", "Trạng thái", ""];
-  const dataFormat = ["text-center", "", "text-right", "text-right", "", "text-center", "text-center"];
+  const titles = ["STT", "Khách hàng", "Tổng điểm tích lũy", "Điểm hiện tại", "Hạng hội viên", "Trạng thái"];
+  const dataFormat = ["text-center", "", "text-right", "text-right", "", "text-center"];
   const dataMappingArray = (item: ILoyaltyWalletResponse, index: number) => [
     getPageOffset(params) + index + 1,
     item.customerName ?? "—",
-    <span className="loyalty-points loyalty-points--total">
+    // Tổng điểm tích lũy — click để xem lịch sử điểm của thành viên này
+    <span
+      className="loyalty-points loyalty-points--total loyalty-points--link"
+      title="Xem lịch sử điểm"
+      onClick={() => onViewHistory?.(item.customerId)}
+    >
       {(item.totalEarn ?? 0).toLocaleString("vi-VN")}
-      <span className="loyalty-points__unit"> </span>
     </span>,
-    <span className={`loyalty-points${
-      (item.currentBalance ?? 0) === 0 ? " loyalty-points--zero" : " loyalty-points--current"
-    }`}>
+    // Điểm hiện tại — click để xem lịch sử điểm của thành viên này
+    <span
+      className={`loyalty-points loyalty-points--link${
+        (item.currentBalance ?? 0) === 0 ? " loyalty-points--zero" : " loyalty-points--current"
+      }`}
+      title="Xem lịch sử điểm"
+      onClick={() => onViewHistory?.(item.customerId)}
+    >
       {(item.currentBalance ?? 0).toLocaleString("vi-VN")}
-      <span className="loyalty-points__unit"> </span>
     </span>,
     item.segmentName ?? "—",
     item.status === 1
       ? <span className="loyalty-status loyalty-status--active">Kích hoạt</span>
       : <span className="loyalty-status loyalty-status--inactive">Không kích hoạt</span>,
-    <button
-      className="btn btn-sm btn-outline-primary"
-      style={{ fontSize: 12, padding: "3px 10px", whiteSpace: "nowrap" }}
-      onClick={() => { setSelectedWallet(item); setShowAdjust(true); }}
-    >
-      Điều chỉnh điểm
-    </button>,
   ];
 
   return (
@@ -151,17 +149,6 @@ export default function LoyaltyWallet(props) {
           </Fragment>
         )}
       </div>
-
-      {/* ── Modal điều chỉnh điểm ── */}
-      <AdjustPointModal
-        onShow={showAdjust}
-        onHide={(reload) => {
-          setShowAdjust(false);
-          setSelectedWallet(null);
-          if (reload) fetchList(params);
-        }}
-        wallet={selectedWallet}
-      />
     </div>
   );
 }
