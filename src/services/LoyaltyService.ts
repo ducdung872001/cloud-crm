@@ -92,4 +92,15 @@ export default {
       signal, method: "GET",
     }).then((res) => res.json());
   },
+
+  // ── Điều chỉnh điểm thủ công (tăng/giảm) ───────────────────────────────
+  // point: số dương = tăng, số âm = giảm
+  // description sẽ được ghi nhận vào loyalty_point_ledger
+  adjustPoint: (body: { customerId: number; point: number; description: string }) => {
+    return fetch(urlsApi.ma.fluctuatePoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
 };

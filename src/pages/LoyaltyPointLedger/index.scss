@@ -74,3 +74,15 @@ td.text-right {
   color: #cbd5e1;
   font-size: 14px;
 }
+// ── Lý do điều chỉnh ─────────────────────────────────────────────────────
+.ledger-description {
+  display: inline-block;
+  font-size: 13px;
+  color: #374151;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: default; // title tooltip hiện ra khi hover
+}

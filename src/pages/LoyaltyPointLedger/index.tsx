@@ -87,9 +87,9 @@ export default function LoyaltyPointLedger(props) {
   //   ],
   // };
 
-  // Cột: STT | Khách hàng | Ví điểm | Số điểm | Chương trình thân thiết khách hàng | Đổi thưởng | Nhân viên | Ngày tạo
-  const titles = ["STT", "Khách hàng", "Số điểm", "Chương trình thân thiết", "Đổi thưởng", "Người phụ trách", "Ngày tạo"];
-  const dataFormat = ["text-center", "", "text-right", "", "", "", "text-center"];
+  // Cột: STT | Khách hàng | Số điểm | Lý do | Chương trình thân thiết | Đổi thưởng | Người phụ trách | Ngày tạo
+  const titles = ["STT", "Khách hàng", "Số điểm", "Lý do", "Chương trình thân thiết", "Đổi thưởng", "Người phụ trách", "Ngày tạo"];
+  const dataFormat = ["text-center", "", "text-right", "", "", "", "", "text-center"];
   const dataMappingArray = (item: ILoyaltyPointLedgerResposne, index: number) => [
     getPageOffset(params) + index + 1,
     item.customerName ?? "—",
@@ -104,6 +104,9 @@ export default function LoyaltyPointLedger(props) {
         </span>
       );
     })(),
+    item.description
+      ? <span className="ledger-description" title={item.description}>{item.description}</span>
+      : <span className="ledger-dash">—</span>,
     item.loyaltyProgramName
       ? <span className="ledger-program">{item.loyaltyProgramName}</span>
       : <span className="ledger-dash">—</span>,
