@@ -20,7 +20,7 @@ import { useOnboarding, isTourDone } from "hooks/useOnboarding";
 import TourOverlay from "components/tourOverlay/TourOverlay";
 import RebornEditor from "components/editor/reborn";
 import { serialize } from "utils/editor";
-import urls from "@/configs/urls";
+import ProductUnitService, { IProductUnit } from "services/ProductUnitService";
 
 type PageTab = "info" | "variants";
 
@@ -439,9 +439,8 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   const [listCategory, setListCategory] = useState<IOption[]>([]);
 
   // ── Đơn vị quy đổi (product_unit) ──
-  interface IUnitExchange { id?: number; productId?: number; unitId: number | null; unitName: string; isBasis: number; exchange: number; }
-  const makeEmptyUE = (): IUnitExchange => ({ unitId: null, unitName: "", isBasis: 0, exchange: 1 });
-  const [unitExchangeList, setUnitExchangeList] = useState<IUnitExchange[]>([makeEmptyUE()]);
+  const makeEmptyUE = (): IProductUnit => ({ unitId: null, unitName: "", isBasis: 0, exchange: 1 });
+  const [unitExchangeList, setUnitExchangeList] = useState<IProductUnit[]>([makeEmptyUE()]);
   const [isSavingUE, setIsSavingUE] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<{ value: number; label: string } | null>(null);
   const [formData, setFormData] = useState({ ...DEFAULT_FORM });
@@ -633,9 +632,9 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   const loadUnitExchange = async () => {
     if (!idProduct) return;
     try {
-      const res = await fetch(`${urls.unitExchange.listByProduct}?productId=${idProduct}`).then(r => r.json());
-      const items = res?.result ?? res?.data ?? [];
-      setUnitExchangeList(items.length ? items.map((i: any) => ({
+      const res = await ProductUnitService.listByProduct(idProduct);
+      const items: IProductUnit[] = res?.result ?? res?.data ?? [];
+      setUnitExchangeList(items.length ? items.map((i) => ({
         id: i.id,
         productId: i.productId,
         unitId: i.unitId ?? null,
@@ -655,13 +654,9 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
     if (basisCount > 1) { showToast("Chỉ được chọn 1 đơn vị cơ bản", "error"); return; }
     setIsSavingUE(true);
     try {
-      const results = await Promise.all(valid.map(u =>
-        fetch(urls.unitExchange.update, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...u, productId: idProduct, isBasis: u.isBasis }),
-        }).then(r => r.json())
-      ));
+      const results = await Promise.all(
+        valid.map(u => ProductUnitService.update({ ...u, productId: idProduct }))
+      );
       const failed = results.find(r => r.code !== 0 && r.status !== 1);
       if (failed) showToast(failed.message ?? "Lỗi lưu đơn vị quy đổi", "error");
       else { showToast("Đã lưu đơn vị quy đổi", "success"); await loadUnitExchange(); }
@@ -672,7 +667,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   const handleDeleteUE = async (index: number) => {
     const item = unitExchangeList[index];
     if (item.id) {
-      const res = await fetch(`${urls.unitExchange.delete}?id=${item.id}`, { method: "DELETE" }).then(r => r.json());
+      const res = await ProductUnitService.delete(item.id);
       if (res.code !== 0 && res.status !== 1) { showToast(res.message ?? "Lỗi xóa", "error"); return; }
     }
     setUnitExchangeList(prev => {
@@ -1501,34 +1496,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                     )}
                   </div>
                 </div>
-              </div>
-
-              {/* Tồn kho */}
-              <div className="add-prod-card">
-                <div className="add-prod-card__title">Quản lý tồn kho</div>
-                <div className="add-prod-stock-header">
-                  <div>
-                    <div className="add-prod-stock-header__label">Theo dõi tồn kho</div>
-                    <div className="add-prod-stock-header__sub">Hệ thống sẽ tự động trừ khi có đơn hàng</div>
-                  </div>
-                  <label className="add-prod-toggle">
-                    <input type="checkbox" checked={formData.trackStock} onChange={(e) => setField("trackStock", e.target.checked)} />
-                    <span className="add-prod-toggle__slider" />
-                  </label>
-                </div>
-                {formData.trackStock && (
-                  <div className="add-prod-form-grid" style={{ marginTop: 12, gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
-                    <div className="add-prod-field">
-                      <label>Ngưỡng cảnh báo sắp hết</label>
-                      <input type="number" value={formData.minStock} onChange={(e) => setField("minStock", +e.target.value)} />
-                    </div>
-                    <div className="add-prod-field">
-                      <label>Ngưỡng cảnh báo quá hàng</label>
-                      <input type="number" value={formData.maxStock} onChange={(e) => setField("maxStock", +e.target.value)} />
-                    </div>
-                  </div>
-                )}
-              </div>
+              </div>              
 
               {/* ── Đơn vị quy đổi ── */}
               <div className="add-prod-card">
@@ -1633,6 +1601,33 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
 
                 {!isEdit && (
                   <div className="add-prod-ue-notice">Lưu sản phẩm trước, sau đó mới có thể cấu hình đơn vị quy đổi.</div>
+                )}
+              </div>
+
+              {/* Tồn kho */}
+              <div className="add-prod-card">
+                <div className="add-prod-card__title">Quản lý tồn kho</div>
+                <div className="add-prod-stock-header">
+                  <div>
+                    <div className="add-prod-stock-header__label">Theo dõi tồn kho</div>
+                    <div className="add-prod-stock-header__sub">Hệ thống sẽ tự động trừ khi có đơn hàng</div>
+                  </div>
+                  <label className="add-prod-toggle">
+                    <input type="checkbox" checked={formData.trackStock} onChange={(e) => setField("trackStock", e.target.checked)} />
+                    <span className="add-prod-toggle__slider" />
+                  </label>
+                </div>
+                {formData.trackStock && (
+                  <div className="add-prod-form-grid" style={{ marginTop: 12, gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
+                    <div className="add-prod-field">
+                      <label>Ngưỡng cảnh báo hàng tồn tối thiểu</label>
+                      <input type="number" value={formData.minStock} onChange={(e) => setField("minStock", +e.target.value)} />
+                    </div>
+                    <div className="add-prod-field">
+                      <label>Ngưỡng cảnh báo hàng tồn tối đa</label>
+                      <input type="number" value={formData.maxStock} onChange={(e) => setField("maxStock", +e.target.value)} />
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
