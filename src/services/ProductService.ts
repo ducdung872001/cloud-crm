@@ -199,6 +199,11 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
+  wDeleteVariant: (productId: number, variantId: number) => {
+    return fetch(`${urlsApi.product.variantDelete}?productId=${productId}&variantId=${variantId}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
   wDashboard: (signal?: AbortSignal) => {
     return fetch(urlsApi.product.wDashboard, {
       signal,

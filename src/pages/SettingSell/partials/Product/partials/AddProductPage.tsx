@@ -451,6 +451,9 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   const [selectedCategory, setSelectedCategory] = useState<{ value: number; label: string } | null>(null);
   const [formData, setFormData] = useState({ ...DEFAULT_FORM });
   const [isDuplicating, setIsDuplicating] = useState(false);
+  // Xóa biến thể
+  const [deletingVariantKey, setDeletingVariantKey] = useState<string | null>(null);
+  const [confirmDeleteVariant, setConfirmDeleteVariant] = useState<{ key: string; label: string; id?: number | null } | null>(null);
   // Variants
   const [variantAttrs, setVariantAttrs] = useState<VariantAttribute[]>([]);
   const [combinations, setCombinations] = useState<VariantCombination[]>([]);
@@ -822,7 +825,11 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
       setActiveTab("variants");
       return;
     }
-    const missingPrice = combinations.find((c) => !c.price || +c.price === 0);
+    const missingPrice = combinations.find((c) => {
+      // Giá nằm trong variantPrices list (theo từng đơn vị)
+      const hasPrice = c.variantPrices.some((vp) => vp.price && +vp.price > 0);
+      return !hasPrice;
+    });
     if (missingPrice) {
       showToast(`Biến thể "${missingPrice.label}" chưa có giá bán`, "error");
       setActiveTab("variants");
@@ -1088,6 +1095,39 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         c.key === comboKey ? { ...c, variantPrices: c.variantPrices.map((u) => (u.tempId === tempId ? { ...u, [field]: value } : u)) } : c
       );
     });
+
+  const handleDeleteVariant = async (combo: { key: string; label: string; id?: number | null }) => {
+    // Biến thể chưa lưu (chưa có id) → xóa thẳng khỏi state, không gọi API
+    if (!combo.id || !idProduct) {
+      setCombinations((prev) => prev.filter((c) => c.key !== combo.key));
+      setConfirmDeleteVariant(null);
+      showToast(`Đã xóa biến thể "${combo.label}"`, "success");
+      return;
+    }
+
+    setDeletingVariantKey(combo.key);
+    try {
+      const res = await ProductService.wDeleteVariant(idProduct, combo.id);
+      if (res.code === 0) {
+        // Reload lại toàn bộ product detail từ API để đồng bộ
+        const detailRes = await ProductService.wDetail(idProduct);
+        if (detailRes.code === 0) {
+          preFill(detailRes.result);
+        } else {
+          setCombinations((prev) => prev.filter((c) => c.key !== combo.key));
+        }
+        showToast(`Đã xóa biến thể "${combo.label}"`, "success");
+      } else {
+        // Hiển thị lỗi từ BE (bao gồm cả trường hợp có giao dịch)
+        showToast(res.error ?? res.message ?? "Không thể xóa biến thể", "error");
+      }
+    } catch {
+      showToast("Lỗi kết nối, vui lòng thử lại", "error");
+    } finally {
+      setDeletingVariantKey(null);
+      setConfirmDeleteVariant(null);
+    }
+  };
 
   const handleDuplicate = async () => {
     if (!idProduct) return;
@@ -1799,6 +1839,27 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                             </Tippy>
                           )}
                         </div>
+
+                        {/* Nút xóa biến thể */}
+                        {combinations.length > 1 && (
+                          <Tippy content={c.id ? "Xóa biến thể này" : "Xóa biến thể (chưa lưu)"} placement="top">
+                            <button
+                              type="button"
+                              className="add-prod-vt-combo-card__delete-btn"
+                              disabled={deletingVariantKey === c.key}
+                              onClick={() => setConfirmDeleteVariant({ key: c.key, label: c.label, id: c.id })}
+                            >
+                              {deletingVariantKey === c.key ? (
+                                <span style={{ fontSize: 11 }}>...</span>
+                              ) : (
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                                  <path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                </svg>
+                              )}
+                            </button>
+                          </Tippy>
+                        )}
                       </div>
 
                       {/* Ảnh biến thể */}
@@ -2210,6 +2271,53 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         onPrev={barcodeTour.prev}
         onSkip={barcodeTour.skip}
       />
+
+      {/* Confirm xóa biến thể */}
+      {confirmDeleteVariant && (
+        <div className="vt-delete-overlay" onClick={() => !deletingVariantKey && setConfirmDeleteVariant(null)}>
+          <div className="vt-delete-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="vt-delete-modal__icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <div className="vt-delete-modal__title">Xóa biến thể</div>
+            <div className="vt-delete-modal__body">
+              Bạn có chắc muốn xóa biến thể{" "}
+              <strong>"{confirmDeleteVariant.label}"</strong>?
+              {confirmDeleteVariant.id && (
+                <div className="vt-delete-modal__warn">
+                  ⚠️ Nếu biến thể này đã có giao dịch nhập/xuất/bán, hệ thống sẽ từ chối và giữ nguyên dữ liệu.
+                </div>
+              )}
+              {!confirmDeleteVariant.id && (
+                <div className="vt-delete-modal__info">
+                  Biến thể chưa được lưu — sẽ xóa ngay mà không cần gọi API.
+                </div>
+              )}
+            </div>
+            <div className="vt-delete-modal__actions">
+              <button
+                type="button"
+                className="vt-delete-modal__btn vt-delete-modal__btn--cancel"
+                onClick={() => setConfirmDeleteVariant(null)}
+                disabled={!!deletingVariantKey}
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                className="vt-delete-modal__btn vt-delete-modal__btn--confirm"
+                onClick={() => handleDeleteVariant(confirmDeleteVariant)}
+                disabled={!!deletingVariantKey}
+              >
+                {deletingVariantKey ? "Đang xóa..." : "Xóa biến thể"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

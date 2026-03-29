@@ -733,6 +733,34 @@
     cursor: default;
   }
 
+  // Nút xóa biến thể — góc phải header card
+  &__delete-btn {
+    margin-left: auto;
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1.5px solid transparent;
+    border-radius: 7px;
+    color: #9ca3af;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #dc2626;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
   // Vùng chứa danh sách dòng đơn vị-giá
   &__prices {
     display: flex;
@@ -2422,5 +2450,108 @@
   &--action {
     display: flex;
     justify-content: center;
+  }
+}
+// ── Confirm xóa biến thể ────────────────────────────────────
+.vt-delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vt-delete-modal {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px 28px 24px;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  &__icon {
+    width: 52px;
+    height: 52px;
+    background: #fef2f2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  &__body {
+    font-size: 13.5px;
+    color: #475569;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  &__warn {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    color: #92400e;
+    font-size: 12.5px;
+    text-align: left;
+  }
+
+  &__info {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 8px;
+    color: #166534;
+    font-size: 12.5px;
+    text-align: left;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  &__btn {
+    flex: 1;
+    padding: 9px 16px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+
+    &--cancel {
+      background: #f1f5f9;
+      color: #475569;
+      &:hover { background: #e2e8f0; }
+    }
+
+    &--confirm {
+      background: #dc2626;
+      color: #fff;
+      &:hover { background: #b91c1c; }
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
   }
 }

@@ -572,6 +572,7 @@ export const urlsApi = {
     // ── Variant Groups ──
     variantGroupsUpdate: prefixInventory + "/product/variant-groups/update",
     variantGroupsDelete: prefixInventory + "/product/variant-groups/delete",
+    variantDelete: prefixInventory + "/product/variant/delete",
 
     // ── Specifications ──
     specificationsUpdate: prefixInventory + "/product/specifications/update",
