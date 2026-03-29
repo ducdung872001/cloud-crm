@@ -733,26 +733,6 @@
     cursor: default;
   }
 
-  &__sku {
-    flex: 0 0 220px;       // rộng hơn trước (160 → 220) sau khi bỏ barcode
-    padding: 6px 10px;
-    border: 1.5px solid #e5e7ef;
-    border-radius: 8px;
-    font-size: 13px;
-    font-family: "Inter", sans-serif;
-    background: #fff;
-    color: #0f172a;
-    transition: border-color 0.15s, box-shadow 0.15s;
-
-    &:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-
-    &::placeholder { color: #c4c9d8; }
-  }
-
   // Vùng chứa danh sách dòng đơn vị-giá
   &__prices {
     display: flex;
@@ -936,9 +916,20 @@
       border-color: #1d4ed8;
     }
   }
-}
+  // Disabled — đã đủ unit
+  &--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    border-color: #e5e7ef;
+    background: #f7f8fc;
+    color: #94a3b8;
 
-// Nút xóa — giống __del của attribute (đỏ nhạt)
+    &:hover {
+      background: #f7f8fc;
+      border-color: #e5e7ef;
+    }
+  }
+}
 .add-prod-vt-unit-del {
   flex-shrink: 0;
   width: 32px;
@@ -964,23 +955,43 @@
   }
 }
 
-// ── Hàng meta: Đơn vị cơ bản + Thuế suất bán (cùng dòng) ──
+// ── Hàng meta: Đơn vị cơ bản + Thuế suất bán + SKU (full width) ──
 .add-prod-vt-meta-row {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 6px 0 8px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  padding: 8px 0 10px;
 }
 
-// Dropdown chọn thuế suất bán
-.add-prod-vt-tax-row {
+// Mỗi field trong meta-row
+.add-prod-vt-meta-field {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
+  flex-direction: column;
+  gap: 5px;
+
+  // SKU chiếm thêm space nếu cần
+  &--sku {
+    // giữ nguyên 1fr
+  }
 }
 
+// Đơn vị cơ bản dạng readonly
+.add-prod-vt-unit-readonly {
+  height: 3.6rem;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 1.5px solid #e5e7ef;
+  border-radius: 8px;
+  background: #f7f8fc;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  cursor: default;
+  user-select: none;
+}
+
+// Tax select full width trong meta-field
 .add-prod-vt-tax-select {
   height: 3.6rem;
   padding: 0 10px;
@@ -990,7 +1001,7 @@
   color: #0f172a;
   background: #fff;
   cursor: pointer;
-  min-width: 200px;
+  width: 100%;
   transition: border-color 0.15s;
 
   &:focus {
@@ -998,6 +1009,44 @@
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
   }
+}
+
+// Các block con cũ không còn dùng (giữ lại để tránh lỗi nếu có chỗ nào còn reference)
+.add-prod-vt-tax-row,
+.add-prod-vt-sku-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+// SKU field trong meta-row
+.add-prod-vt-sku-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.add-prod-vt-sku-input {
+  height: 3.6rem;
+  padding: 0 10px;
+  border: 1.5px solid #e5e7ef;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: "Courier New", monospace;
+  background: #fff;
+  color: #0f172a;
+  width: 100%;          // full width trong meta-field
+  transition: border-color 0.15s;
+
+  &:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  &::placeholder { color: #c4c9d8; font-family: "Inter", sans-serif; }
 }
 
 // ── Bảng đơn vị bán: header + rows ──────────────────────────

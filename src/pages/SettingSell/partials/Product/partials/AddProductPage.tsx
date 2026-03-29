@@ -1796,47 +1796,50 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                             </Tippy>
                           )}
                         </div>
-
-                        {/* SKU */}
-                        <input
-                          className="add-prod-vt-combo-card__sku"
-                          type="text"
-                          value={c.sku}
-                          onChange={(e) => updateComboSku(c.key, e.target.value)}
-                          placeholder="Mã SKU..."
-                        />
                       </div>
 
                       {/* Ảnh biến thể */}
                       <VariantImagePicker images={c.images} onChange={(urls) => updateComboImages(c.key, urls)} />
 
-                      {/* Đơn vị cơ bản + Thuế suất bán */}
+                      {/* Đơn vị cơ bản + Thuế suất bán + SKU — full width */}
                       <div className="add-prod-vt-meta-row">
-                        <div className="add-prod-vt-unit-row">
+                        {/* Đơn vị cơ bản: readonly nếu product_unit đã khai báo */}
+                        <div className="add-prod-vt-meta-field">
                           <Tippy
-                            content="Đơn vị tính mặc định của biến thể này (VD: Chiếc, Cái, Hộp...). Dùng làm đơn vị gốc khi bán lẻ."
+                            content={unitExchangeList.some(u => u.unitId && u.isBasis === 1)
+                              ? "Đơn vị cơ bản được lấy từ cấu hình Đơn vị quy đổi của sản phẩm"
+                              : "Đơn vị tính mặc định của biến thể này"}
                             placement="top"
                           >
                             <label className="add-prod-vt-unit-row__label" style={{ cursor: "help" }}>
                               Đơn vị cơ bản
                             </label>
                           </Tippy>
-                          <div className="add-prod-vt-unit-row__select">
-                            <SelectCustom
-                              id={`unitId-${c.key}`}
-                              name="unitId"
-                              value={c.unitId}
-                              options={listUnit}
-                              onChange={(e) => updateComboField(c.key, "unitId", e?.value ?? null)}
-                              onMenuOpen={loadUnits}
-                              placeholder="Chọn đơn vị..."
-                              isSearchable
-                              isClearable
-                            />
-                          </div>
+                          {unitExchangeList.some(u => u.unitId && u.isBasis === 1) ? (
+                            // Readonly — lấy từ product_unit
+                            <div className="add-prod-vt-unit-readonly">
+                              {unitExchangeList.find(u => u.isBasis === 1)?.unitName || "—"}
+                            </div>
+                          ) : (
+                            // Chưa khai báo product_unit → cho chọn thủ công
+                            <div className="add-prod-vt-unit-row__select">
+                              <SelectCustom
+                                id={`unitId-${c.key}`}
+                                name="unitId"
+                                value={c.unitId}
+                                options={listUnit}
+                                onChange={(e) => updateComboField(c.key, "unitId", e?.value ?? null)}
+                                onMenuOpen={loadUnits}
+                                placeholder="Chọn đơn vị..."
+                                isSearchable
+                                isClearable
+                              />
+                            </div>
+                          )}
                         </div>
 
-                        <div className="add-prod-vt-tax-row">
+                        {/* Thuế suất bán */}
+                        <div className="add-prod-vt-meta-field">
                           <Tippy content="Thuế VAT áp dụng khi bán hàng hóa này. Dùng để xuất hóa đơn VAT đúng thuế suất." placement="top">
                             <label className="add-prod-vt-unit-row__label" style={{ cursor: "help" }}>
                               Thuế suất bán
@@ -1853,6 +1856,18 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                             <option value={10}>10% — Thuế suất tiêu chuẩn</option>
                           </select>
                         </div>
+
+                        {/* SKU */}
+                        <div className="add-prod-vt-meta-field add-prod-vt-meta-field--sku">
+                          <label className="add-prod-vt-unit-row__label">Mã SKU</label>
+                          <input
+                            className="add-prod-vt-sku-input"
+                            type="text"
+                            value={c.sku}
+                            onChange={(e) => updateComboSku(c.key, e.target.value)}
+                            placeholder="VD: MOCC-LON-W7FVR7"
+                          />
+                        </div>
                       </div>
 
                       {/* Bảng đơn vị bán — cột: Đơn vị | Barcode | Giá lẻ | Giá sỉ | Xóa */}
@@ -1866,7 +1881,20 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                           <span className="add-prod-vt-price-th add-prod-vt-price-th--action" />
                         </div>
 
-                        {c.variantPrices.map((up) => (
+                        {c.variantPrices.map((up) => {
+                          // Options đơn vị bán = product_unit của SP, lọc bỏ các unit đã chọn ở dòng khác
+                          const usedUnitIds = c.variantPrices
+                            .filter(u => u.tempId !== up.tempId && u.unitId)
+                            .map(u => u.unitId);
+                          const unitOptions: IOption[] = unitExchangeList
+                            .filter(u => u.unitId)
+                            .map(u => ({
+                              value: u.unitId as number,
+                              label: u.unitName || String(u.unitId),
+                              disabled: usedUnitIds.includes(u.unitId),
+                            }));
+
+                          return (
                           <div className="add-prod-vt-price-row" key={up.tempId}>
                             {/* Đơn vị */}
                             <div className="add-prod-vt-price-td add-prod-vt-price-td--unit">
@@ -1874,13 +1902,10 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                                 id={`unit-${up.tempId}`}
                                 name={`unit-${up.tempId}`}
                                 value={up.unitId}
-                                options={listUnit}
+                                options={unitOptions}
                                 onChange={(e: IOption | null) => {
                                   updateUnitPrice(c.key, up.tempId, "unitId", e?.value ?? null);
                                   updateUnitPrice(c.key, up.tempId, "unitName", e?.label ?? "");
-                                }}
-                                onMenuOpen={async () => {
-                                  if (!listUnit.length) setListUnit((await SelectOptionData("unit")) || []);
                                 }}
                                 placeholder="Chọn đơn vị..."
                                 isClearable
@@ -1969,22 +1994,40 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                               </Tippy>
                             </div>
                           </div>
-                        ))}
+                          );
+                        })}
 
-                        {/* Nút thêm đơn vị */}
-                        <Tippy
-                          content={isFirst ? "Sẽ tự động thêm hàng mới vào tất cả biến thể còn lại" : "Chỉ thêm vào biến thể này"}
-                          placement="top"
-                        >
-                          <button
-                            type="button"
-                            className={`add-prod-vt-unit-add-btn${isFirst ? " add-prod-vt-unit-add-btn--sync" : ""}`}
-                            onClick={() => addUnitPrice(c.key)}
-                          >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            {isFirst ? "Thêm đơn vị bán (áp dụng tất cả)" : "Thêm đơn vị bán"}
-                          </button>
-                        </Tippy>
+                        {/* Nút thêm đơn vị — disabled khi đã chọn hết các unit trong product_unit */}
+                        {(() => {
+                          const totalProductUnits = unitExchangeList.filter(u => u.unitId).length;
+                          const usedCount = c.variantPrices.filter(u => u.unitId).length;
+                          const allUsed = totalProductUnits > 0 && usedCount >= totalProductUnits;
+                          return (
+                            <Tippy
+                              content={
+                                allUsed
+                                  ? `Đã khai báo đủ ${totalProductUnits} đơn vị của sản phẩm`
+                                  : isFirst ? "Sẽ tự động thêm hàng mới vào tất cả biến thể còn lại" : "Chỉ thêm vào biến thể này"
+                              }
+                              placement="top"
+                            >
+                              <span style={{ display: "block" }}>
+                                <button
+                                  type="button"
+                                  className={`add-prod-vt-unit-add-btn${isFirst ? " add-prod-vt-unit-add-btn--sync" : ""}${allUsed ? " add-prod-vt-unit-add-btn--disabled" : ""}`}
+                                  onClick={() => !allUsed && addUnitPrice(c.key)}
+                                  disabled={allUsed}
+                                >
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                  {allUsed
+                                    ? `Đã đủ ${totalProductUnits} đơn vị`
+                                    : isFirst ? "Thêm đơn vị bán (áp dụng tất cả)" : "Thêm đơn vị bán"
+                                  }
+                                </button>
+                              </span>
+                            </Tippy>
+                          );
+                        })()}
                       </div>
                     </div>
                   );
