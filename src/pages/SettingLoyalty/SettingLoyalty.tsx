@@ -6,6 +6,7 @@ import SettingLoyaltyList from "@/pages/SettingLoyaltyList";
 import LoyaltySegment from "@/pages/LoyaltySegment";
 import LoyaltyReward from "@/pages/LoyaltyReward";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
+import ExchangeRatePanel from "./ExchangeRatePanel";
 
 export default function SettingLoyalty() {
   document.title = "Cài đặt hệ thống tích điểm";
@@ -26,6 +27,11 @@ export default function SettingLoyalty() {
       title: "Danh sách phần thưởng",
       is_tab: "tab_two",
       des: "Quản lý các phần thưởng, quà tặng và voucher dùng để đổi điểm cho hội viên"
+    },
+    {
+      title: "Tỷ lệ quy đổi điểm",
+      is_tab: "tab_exchange",
+      des: "Cấu hình 1 điểm tích lũy tương đương bao nhiêu VND khi khách thanh toán bằng điểm"
     },
     // {
     //   title: "Cài đặt hạng hội viên",
@@ -62,6 +68,12 @@ export default function SettingLoyalty() {
             if (isBack) {
               setIsDetail(false);
             }
+          }}
+        />
+      ) : isDetail && tab === "tab_exchange" ? (
+        <ExchangeRatePanel
+          onBackProps={(isBack) => {
+            if (isBack) setIsDetail(false);
           }}
         />
       ) : isDetail && tab === "tab_three" ? (

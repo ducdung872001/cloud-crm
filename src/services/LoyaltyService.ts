@@ -110,4 +110,17 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+
+  // ── Cấu hình tỷ lệ quy đổi điểm ────────────────────────────────────────
+  getConfig: (signal?: AbortSignal) => {
+    return fetch(urlsApi.ma.getLoyaltyConfig, { signal, method: "GET" })
+      .then((res) => res.json());
+  },
+  saveConfig: (body: { exchangeRate: number }) => {
+    return fetch(urlsApi.ma.updateLoyaltyConfig, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
 };

@@ -472,9 +472,9 @@ export const urlsApi = {
   },
   stockInitImport: {
     template: prefixInventory + "/stock-init/import/template",
-    upload:   prefixInventory + "/stock-init/import/upload",
-    confirm:  prefixInventory + "/stock-init/import/confirm",
-    cancel:   prefixInventory + "/stock-init/import/cancel",
+    upload: prefixInventory + "/stock-init/import/upload",
+    confirm: prefixInventory + "/stock-init/import/confirm",
+    cancel: prefixInventory + "/stock-init/import/cancel",
   },
   shipping: {
     create: prefixLogistics + "/shipment/create",
@@ -544,7 +544,7 @@ export const urlsApi = {
     // ── Tags ──
     wTagList: prefixInventory + "/product/tags/list",
     wTagUpdate: prefixInventory + "/product/tags/update",
-    wTagCreate: prefixInventory + "/product-tag/update",  // dùng lại endpoint tag CRUD
+    wTagCreate: prefixInventory + "/product-tag/update", // dùng lại endpoint tag CRUD
     // ── Import ──
     wImportTemplate: prefixInventory + "/product/import/template",
     wImportUpload: prefixInventory + "/product/import/uploadFile",
@@ -2472,6 +2472,8 @@ export const urlsApi = {
     promotionCheckEligible: prefixBiz + "/market/promotion/check-eligible",
     createLoyaltyWallet: prefixBiz + "/market/loyaltyWallet/update",
     fluctuatePoint: prefixBiz + "/market/loyaltyPointLedger/fluctuatePoint",
+    getLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/get",
+    updateLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/update",
   },
 
   //TODO: Start quy trình bpm
