@@ -51,6 +51,7 @@ export default function Header(props: any) {
     countUnread,
     setCountUnread,
     newNotificationPayload,
+    setIsShowChatBot
   } = useContext(UserContext) as ContextType;
 
   const checkUserRoot = localStorage.getItem("user.root");
@@ -1001,7 +1002,7 @@ export default function Header(props: any) {
                   <span>Tài khoản</span>
                 </li>
                 <li onClick={() => setShowPopoverUser(false)}>
-                  <Icon name="CustomerCare" />
+                  <Icon name="Phone" />
                   <span>{phone}</span>
                 </li>
                 <li
@@ -1021,6 +1022,15 @@ export default function Header(props: any) {
                 >
                   <Icon name="SwitchAccount" />
                   <span>Chuyển vai trò</span>
+                </li>
+                <li
+                  onClick={() => {
+                    setIsShowChatBot(true);
+                    setShowPopoverUser(false);
+                  }}
+                >
+                  <Icon name="CustomerSupport" />
+                  <span>Hỗ trợ</span>
                 </li>
                 <li onClick={() => (!isLogoutLoading ? handleLogout() : undefined)}>
                   <Icon name="Logout" />
