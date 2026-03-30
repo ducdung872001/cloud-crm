@@ -438,7 +438,7 @@ export default function ChatBot() {
                                     </div>
                                 );
                             })}
-                            <div ref={messageEndRef} />
+                            {/* <div ref={messageEndRef} /> */}
                         </div>
                     )}
 
@@ -484,21 +484,22 @@ export default function ChatBot() {
                 </div>
             </div>
             :
-            <div style={{border: '1px solid', bottom: 0}}>
-              <div 
-                id= {isShowChatBot ? '' : "mydiv" }
-                className="notify-chatbot-icon"
-                onDoubleClick={() => {
-                  setIsShowChatBot(true)
-                }}
-              >
-                <Tippy content='Trợ lý ảo Reborn (F2 để ẩn)'>
-                  <div className="image-chatbot-icon">
-                      <img src={NoImageChatBot} alt="" />
-                  </div>
-                </Tippy>
-              </div>
-            </div>
+            null
+            // <div style={{border: '1px solid', bottom: 0}}>
+            //   <div 
+            //     id= {isShowChatBot ? '' : "mydiv" }
+            //     className="notify-chatbot-icon"
+            //     onDoubleClick={() => {
+            //       setIsShowChatBot(true)
+            //     }}
+            //   >
+            //     <Tippy content='Trợ lý ảo Reborn (F2 để ẩn)'>
+            //       <div className="image-chatbot-icon">
+            //           <img src={NoImageChatBot} alt="" />
+            //       </div>
+            //     </Tippy>
+            //   </div>
+            // </div>
         }
     </div>
   );
