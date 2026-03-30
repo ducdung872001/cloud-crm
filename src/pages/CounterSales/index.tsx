@@ -315,6 +315,28 @@ const CounterSales: React.FC = () => {
     setPointsToUse(0); setMoneyFromPoints(0);
   }, []);
 
+  // ── Trừ điểm sau khi đơn hàng hoàn thành ───────────────────────────────────
+  // Gọi sau khi invoiceId đã có (cash và qr đều dùng chung)
+  const redeemLoyaltyPoints = (invoiceId: number | null) => {
+    if (!(moneyFromPoints > 0 && customer?.id && loyaltyWallet && invoiceId)) return;
+    fetch(urlsApi.ma.fluctuatePoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customerId: Number(customer.id),
+        point: -pointsToUse,
+        description: `Tiêu điểm đơn hàng #${invoiceId}`,
+      }),
+    }).catch(() => undefined);
+    // Reset loyalty state
+    setLoyaltyWallet(null);
+    setPointsToUse(0);
+    setMoneyFromPoints(0);
+    setAppliedPromo(null);
+    setPromoDiscount(0);
+    setEligiblePromos([]);
+  };
+
   // Payment flow
   const handlePayConfirm = async (invoiceId: number | null) => {
     if (invoiceId) {
@@ -348,6 +370,8 @@ const CounterSales: React.FC = () => {
                 setReceiptModalOpen(true);
                 showToast("Tạo hoá đơn thành công.", "success");
                 setQrCodePro(qrCodeRes.result.qrCode);
+                // Trừ điểm nếu khách dùng điểm thanh toán
+                redeemLoyaltyPoints(invoiceId);
               } else {
                 showToast(qrCodeRes.message || "Có lỗi xảy ra khi tạo QR Code Pro.", "error");
               }
@@ -360,20 +384,8 @@ const CounterSales: React.FC = () => {
             showToast("Tạo hoá đơn thành công.", "success");
             setQrCodePro(null);
             setMethod("cash");
-            // Ghi nhận tiêu điểm nếu có
-            if (moneyFromPoints > 0 && customer?.id && loyaltyWallet) {
-              fetch(urlsApi.ma.fluctuatePoint, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  customerId: Number(customer.id),
-                  point: -pointsToUse,
-                  description: `Tiêu điểm đơn hàng #${invoiceId}`,
-                }),
-              }).catch(() => undefined);
-              setLoyaltyWallet(null); setPointsToUse(0); setMoneyFromPoints(0);
-              setAppliedPromo(null); setPromoDiscount(0); setEligiblePromos([]);
-            }
+            // Trừ điểm nếu khách đã dùng điểm để thanh toán
+            redeemLoyaltyPoints(invoiceId);
           }
           // Refresh badge sau khi tạo đơn thành công
           fetchTabCounts();

@@ -26,8 +26,7 @@
     font-weight: 600;
     cursor: pointer;
     svg { width: 15px; height: 15px; }
-    &:hover { background: var(--primary-color);
-      color: var(--white-color); }
+    &:hover { background: var(--primary-color); color: var(--white-color); }
   }
 
   // ---- Notice ----
@@ -182,7 +181,7 @@
     background: var(--primary-color);
   }
 
-  // ---- API Config ----
+  // ---- API Config sidebar ----
   .ncc__api-config {
     background: #fff;
     border: 1px solid #e5e7eb;
@@ -252,14 +251,42 @@
     &.loading { color: #6b7280; }
   }
 
+  // Nút Lưu & Kết nối nằm trong sidebar (primary style)
+  .btn-save-connect-inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 0.3rem;
+    background: var(--primary-color);
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    svg { width: 14px; height: 14px; }
+
+    &:hover:not(:disabled) { opacity: 0.9; }
+    &:disabled { opacity: 0.6; cursor: default; }
+    &.loading { opacity: 0.75; }
+  }
+
   .spinner {
     width: 14px;
     height: 14px;
-    border: 2px solid #d1d5db;
-    border-top-color: #374151;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
     display: inline-block;
+
+    // Variant nhạt cho btn-test-conn
+    .btn-test-conn & {
+      border-color: #d1d5db;
+      border-top-color: #374151;
+    }
   }
 
   @keyframes spin {
@@ -274,6 +301,11 @@
     padding: 10px 12px;
     svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }
     p  { font-size: 12px; margin: 0; line-height: 1.5; }
+
+    .conn-time {
+      font-size: 11px;
+      opacity: 0.75;
+    }
 
     &.success {
       background: #f0fdf4;
