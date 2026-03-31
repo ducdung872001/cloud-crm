@@ -4,7 +4,7 @@ import Image from "components/image";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
-import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
+import TitleAction from "components/titleAction/titleAction";
 import Badge from "components/badge/badge";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
@@ -23,6 +23,7 @@ import { IMaterialFilterRequest } from "@/model/material/MaterialRequestModel";
 import { CATEGORY_BADGE_VARIANT, MOCK_MATERIAL_LIST } from "@/assets/mock/Material";
 import { IBomResponse } from "@/model/material/BomModel";
 import MaterialService from "@/services/MaterialService";
+import ModalImportMaterial from "./partials/ModalImportMaterial";
 
 type SegmentFilter = "all" | "in_stock" | "low" | "out";
 
@@ -108,6 +109,7 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
   const [contentDialog, setContentDialog]           = useState<IContentDialog>(null);
   const [isLoading, setIsLoading]                   = useState(false);
   const [isExporting, setIsExporting]               = useState(false);   // ← NEW
+  const [showImportModal, setShowImportModal]       = useState(false);   // ← NEW
   const [isNoItem, setIsNoItem]                     = useState(false);
   const [segmentFilter, setSegmentFilter]           = useState<SegmentFilter>("all");
   const [params, setParams]                         = useState<IMaterialFilterRequest>({
@@ -207,24 +209,6 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
       return true;
     });
   }, [listMaterial, segmentFilter]);
-
-  // ── Title actions ─────────────────────────────────────────────
-  const titleActions: ITitleActions = {
-    actions_extra: [
-      {
-        title:    isExporting ? "Đang xuất..." : "Xuất Excel",
-        disabled: isExporting,
-        callback: handleExportExcel,
-      },
-    ],
-    actions: [
-      {
-        title:    "Thêm nguyên liệu",
-        color:    "primary",
-        callback: () => { setDataMaterial(null); setShowModalAdd(true); },
-      },
-    ],
-  };
 
   // ── Table config ──────────────────────────────────────────────
   const titles = [
@@ -380,7 +364,50 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
             </h1>
           )}
         </div>
-        <TitleAction title="" titleActions={titleActions} />
+
+        {/* ── Action buttons ── */}
+        <div className="mat-header-actions">
+          <button
+            type="button"
+            className="mat-btn mat-btn--outline"
+            onClick={() => setShowImportModal(true)}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <polyline points="16 16 12 12 8 16"/>
+              <line x1="12" y1="12" x2="12" y2="21"/>
+              <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
+            </svg>
+            Import Excel
+          </button>
+
+          <button
+            type="button"
+            className={`mat-btn mat-btn--outline${isExporting ? " mat-btn--loading" : ""}`}
+            onClick={handleExportExcel}
+            disabled={isExporting}
+          >
+            {isExporting ? (
+              <span className="mat-btn-spinner" />
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+            )}
+            {isExporting ? "Đang xuất..." : "Xuất Excel"}
+          </button>
+
+          <button
+            type="button"
+            className="mat-btn mat-btn--primary"
+            onClick={() => { setDataMaterial(null); setShowModalAdd(true); }}
+          >
+            Thêm nguyên liệu
+          </button>
+        </div>
       </div>
 
       {/* ── STAT CARDS ── */}
@@ -533,6 +560,17 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
       />
 
       <Dialog content={contentDialog} isOpen={showDialog} />
+
+      <ModalImportMaterial
+        onShow={showImportModal}
+        onHide={(isSuccess) => {
+          setShowImportModal(false);
+          if (isSuccess) {
+            getListMaterial(params);
+            fetchSummary();
+          }
+        }}
+      />
     </div>
   );
 }
