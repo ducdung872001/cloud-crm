@@ -207,6 +207,13 @@ export default {
     }).then((res) => res.json());
   },
 
+  destroyDetail: (id: number, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.inventory.destroyDetail}?id=${id}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
   // GET /inventoryTransaction/destroy/summary
   // Response: { totalDestroy, totalQty, totalCost, totalProduct }
   destroySummary: (signal?: AbortSignal) => {

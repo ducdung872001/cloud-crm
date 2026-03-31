@@ -24,6 +24,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import InventoryService from "services/InventoryService";
 import InvoiceService from "services/InvoiceService";
 import AdjustmentSlipService from "services/AdjustmentSlipService";
+import DestroySlipService from "services/DestroySlipService";
 import urls from "@/configs/urls";
 import ModalStockInitImport from "./partials/ModalStockInitImport";
 import "./styles.scss";
@@ -130,17 +131,17 @@ interface ISaleExportItem {
 // Aggregate từ inventory_transaction WHERE ref_type='DESTROY' GROUP BY ref_id
 interface IDestroyItem {
   refId: number;
-  destroyCode?: string;        // "PXH-{refId}"
+  destroyCode?: string;
   warehouseId?: number;
   warehouseName?: string;
-  productCount?: number;       // số loại SP
+  productCount?: number;
   lineCount?: number;
   totalQty?: number;
   totalCost?: number;
   employeeId?: number;
   employeeName?: string;
+  status?: number;
   destroyTime?: string;
-  status?: number;             // 1 = Hoàn thành
   statusName?: string;
 }
 
@@ -209,7 +210,7 @@ export default function InventoryManagement() {
   });
   const exportSummaryLoaded = useRef(false);
   const [destroySummary, setDestroySummary] = useState({
-    totalDestroy: 0, totalQty: 0, totalCost: 0, totalProduct: 0,
+    total: 0, pending: 0, approved: 0, completed: 0, cancelled: 0,
   });
   const destroySummaryLoaded = useRef(false);
   const [costSummary, setCostSummary] = useState({
@@ -413,39 +414,29 @@ export default function InventoryManagement() {
           break;
         }
 
-        // ── Phiếu xuất hủy → /inventoryTransaction/destroy/list + /destroy/summary ──
+        // ── Phiếu xuất hủy → /inventoryTransaction/destroy/list ────────────
         case "destroy": {
           const destroyParams: Record<string, any> = { page: pageIdx, size };
           if (p.keyword) destroyParams.keyword = p.keyword;
-          if (p.warehouseId) destroyParams.warehouseId = +p.warehouseId;
+          if (p.status !== "") destroyParams.status = +p.status;
+          const res = await InventoryService.destroyList(destroyParams);
 
-          const [res, summaryRes] = await Promise.all([
-            InventoryService.destroyList(destroyParams),
-            destroySummaryLoaded.current
-              ? Promise.resolve(null)
-              : InventoryService.destroySummary(abortCtrl.signal),
-          ]);
-
-          if (res.code === 0 || res.status === 1) {
+          if (res.code === 0 || res.status === 1 || res.success === true) {
             const result = res.result ?? res.data ?? {};
             const items: IDestroyItem[] = result.items ?? result.content ?? result.data ?? [];
             const total = +(result.total ?? result.totalElements ?? items.length ?? 0);
             setListDestroy(items);
+            setDestroySummary({
+              total,
+              pending: items.filter((i) => i.status === 0).length,
+              approved: items.filter((i) => i.status === 2).length,
+              completed: items.filter((i) => i.status === 1).length,
+              cancelled: items.filter((i) => i.status === 3).length,
+            });
             setPaginationMeta(total, p.page, size);
             setIsNoItem(total === 0 && p.page === 1);
           } else {
-            showToast(res.message ?? "Không tải được danh sách phiếu xuất hủy", "error");
-          }
-
-          if (summaryRes && (summaryRes.code === 0 || summaryRes.status === 1)) {
-            const s = summaryRes.result ?? summaryRes.data ?? {};
-            setDestroySummary({
-              totalDestroy: +(s.totalDestroy ?? 0),
-              totalQty:     +(s.totalQty ?? 0),
-              totalCost:    +(s.totalCost ?? 0),
-              totalProduct: +(s.totalProduct ?? 0),
-            });
-            destroySummaryLoaded.current = true;
+            showToast(res.message ?? "Không tải được danh sách phiếu hủy", "error");
           }
           break;
         }
@@ -545,6 +536,13 @@ export default function InventoryManagement() {
     2: { label: "Từ chối", color: "error" },
   };
 
+  const DESTROY_STATUS_MAP = {
+    0: { label: "Chờ duyệt", color: "warning" },
+    2: { label: "Đã duyệt", color: "secondary" },
+    1: { label: "Hoàn thành", color: "success" },
+    3: { label: "Đã hủy", color: "error" },
+  };
+
   const renderStockStatus = (qty: number) => {
     const { label, color } =
       qty === 0 ? { label: "Hết hàng", color: "error" }
@@ -623,10 +621,11 @@ export default function InventoryManagement() {
       case "destroy":
         return (
           <div className="inventory__summary">
-            {card("Tổng phiếu hủy", destroySummary.totalDestroy)}
-            {card("Tổng giá vốn hủy", <span className="summary__value--primary">{formatCurrency(destroySummary.totalCost)}</span>)}
-            {card("Tổng SL hủy", <span className="summary__value--warning">{destroySummary.totalQty.toLocaleString()} SP</span>)}
-            {card("Loại sản phẩm", <span className="summary__value--error">{destroySummary.totalProduct} loại</span>)}
+            {card("Tổng phiếu hủy", destroySummary.total)}
+            {card("Chờ duyệt", <span className="summary__value--warning">{destroySummary.pending} phiếu</span>)}
+            {card("Đã duyệt", <span className="summary__value--primary">{destroySummary.approved} phiếu</span>)}
+            {card("Hoàn thành", <span className="summary__value--success">{destroySummary.completed} phiếu</span>)}
+            {card("Đã hủy", <span className="summary__value--error">{destroySummary.cancelled} phiếu</span>)}
           </div>
         );
       case "check":
@@ -880,8 +879,8 @@ export default function InventoryManagement() {
           ],
           actions: (item: IStockTransferItem): IAction[] => [
             {
-              title: "Chi tiết",
-              icon: <Icon name="CollectInfo" style={{ width: 17 }} />,
+              title: "Xem chi tiết",
+              icon: <Icon name="Eye" style={{ width: 16 }} />,
               callback: () => navigate(`${urls.inventory_transfer_document}?id=${item.id}`),
             },
             ...(item.status === 0 ? [
@@ -921,39 +920,28 @@ export default function InventoryManagement() {
       // ── Phiếu xuất hủy ───────────────────────────────────────────────────
       case "destroy":
         return {
-          titles: ["STT", "Mã phiếu hủy", "Kho hủy", "Số loại SP", "Tổng SL", "Tổng giá vốn", "Người thực hiện", "Thời gian hủy", "Trạng thái"],
-          dataFormat: ["text-center", "", "", "text-center", "text-center", "text-right", "", "text-center", "text-center"],
+          titles: ["STT", "Mã phiếu", "Kho", "Số loại SP", "Tổng SL", "Người thao tác", "Thời gian", "Trạng thái"],
+          dataFormat: ["text-center", "", "", "text-center", "text-center", "", "text-center", "text-center"],
           items: listDestroy,
           dataMappingArray: (item: IDestroyItem, index: number) => [
             getPageOffset(params) + index + 1,
-            <div key={item.refId}>
-              <div className="inventory__code">{item.destroyCode ?? `PXH-${item.refId}`}</div>
-              <div style={{ fontSize: "1.1rem", color: "var(--extra-color-40)" }}>
-                Ref: #{item.refId}
-              </div>
-            </div>,
+            <span key={item.refId} className="inventory__code">
+              {item.destroyCode ?? `PXH-${item.refId}`}
+            </span>,
             item.warehouseName ?? "—",
             item.productCount != null ? `${item.productCount} loại` : "—",
-            item.totalQty != null
-              ? <span style={{ fontWeight: 600 }}>{item.totalQty.toLocaleString()}</span>
-              : "—",
-            item.totalCost != null && item.totalCost > 0
-              ? formatCurrency(item.totalCost)
-              : "—",
+            item.totalQty != null ? item.totalQty.toLocaleString() : "—",
             item.employeeName ?? "—",
-            item.destroyTime
-              ? moment(item.destroyTime).format("DD/MM/YYYY HH:mm")
-              : "—",
-            <span key={`ds-${item.refId}`}
-              style={{
-                background: "#e74c3c", color: "#fff",
-                padding: "2px 10px", borderRadius: 20,
-                fontSize: "1.2rem", fontWeight: 600
-              }}>
-              Hoàn thành
-            </span>,
+            item.destroyTime ? moment(item.destroyTime).format("DD/MM/YYYY HH:mm") : "—",
+            renderBadge(item.status ?? 0, DESTROY_STATUS_MAP),
           ],
-          actions: (_: IDestroyItem): IAction[] => [],
+          actions: (item: IDestroyItem): IAction[] => [
+            {
+              title: "Xem chi tiết",
+              icon: <Icon name="Eye" style={{ width: 16 }} />,
+              callback: () => navigate(`${urls.destroy_slip}?id=${item.refId}&mode=view`),
+            },
+          ],
         };
 
       // ── Giá vốn — tái sử dụng IVariantStockItem, thêm cột Giá trị tồn ────
@@ -1090,6 +1078,14 @@ export default function InventoryManagement() {
           { label: "Hoàn thành", value: "1" },
           { label: "Từ chối", value: "2" },
         ];
+      case "destroy":
+        return [
+          { label: "Tất cả", value: "" },
+          { label: "Chờ duyệt", value: "0" },
+          { label: "Đã duyệt", value: "2" },
+          { label: "Hoàn thành", value: "1" },
+          { label: "Đã hủy", value: "3" },
+        ];
       default:
         return null;
     }
@@ -1152,7 +1148,7 @@ export default function InventoryManagement() {
             name={
               activeTab === "import" ? "Mã phiếu / Nhà cung cấp" :
                 activeTab === "export" ? "Tên sản phẩm" :
-                  activeTab === "destroy" ? "Tên sản phẩm" :
+                  activeTab === "destroy" ? "Mã phiếu xuất hủy" :
                     activeTab === "transfer" ? "Mã phiếu chuyển kho" :
                       activeTab === "check" ? "Mã phiếu kiểm" :
                         activeTab === "cost" ? "Tên sản phẩm / SKU" :
