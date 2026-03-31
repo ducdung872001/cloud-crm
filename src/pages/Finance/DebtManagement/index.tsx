@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import urls from "configs/urls";
-import financeDebtQrImage from "../shhhh/qr.jpg";
+import { QRCodeCanvas } from "qrcode.react";
+import QrCodeProService from "@/services/QrCodeProService";
 import {
   FinanceBadge,
   FinancePageShell,
@@ -79,8 +80,35 @@ interface QRModalProps {
 }
 
 function QRModal({ debt, onClose, onPaid }: QRModalProps) {
-  const [paying, setPaying] = useState(false);
-  const [paid, setPaid] = useState(false);
+  const [paying, setPaying]     = useState(false);
+  const [paid, setPaid]         = useState(false);
+  const [qrCode, setQrCode]     = useState<string | null>(null);
+  const [qrLoading, setQrLoading] = useState(true);
+  const [qrError, setQrError]   = useState(false);
+
+  // Gọi VietQR giống POS khi modal mở
+  useEffect(() => {
+    let cancelled = false;
+    setQrLoading(true);
+    setQrError(false);
+    QrCodeProService.generate({
+      content: "THU NO " + debt.id,
+      orderId: debt.id,
+      amount:  debt.amount,
+    }).then((res) => {
+      if (cancelled) return;
+      if (res.code === 0 && res?.result?.qrCode) {
+        setQrCode(res.result.qrCode);
+      } else {
+        setQrError(true);
+      }
+    }).catch(() => {
+      if (!cancelled) setQrError(true);
+    }).finally(() => {
+      if (!cancelled) setQrLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [debt.id, debt.amount]);
 
   async function handleMarkPaid() {
     setPaying(true);
@@ -128,11 +156,30 @@ function QRModal({ debt, onClose, onPaid }: QRModalProps) {
 
         <div className="debt-qr-box">
           <p className="debt-qr-label">Quét mã QR để thanh toán</p>
-          <img
-            src={financeDebtQrImage}
-            alt={`QR thu nợ của ${debt.name}`}
-            className="debt-qr-img"
-          />
+
+          {qrLoading && (
+            <div className="debt-qr-loading">Đang tạo mã QR...</div>
+          )}
+
+          {!qrLoading && qrError && (
+            <div className="debt-qr-error">
+              Không tạo được mã QR.<br />Vui lòng thử lại.
+            </div>
+          )}
+
+          {!qrLoading && !qrError && qrCode && (
+            <div className="debt-qr-canvas">
+              <QRCodeCanvas
+                value={qrCode}
+                size={200}
+                level="M"
+                includeMargin={true}
+                bgColor="#ffffff"
+                fgColor="#000000"
+              />
+            </div>
+          )}
+
           <p className="debt-qr-amount">{formatCurrency(debt.amount)}</p>
         </div>
 

@@ -236,3 +236,35 @@
     margin: 0;
   }
 }
+// ─── QR Canvas (VietQR thật) ──────────────────────────────────────────────────
+
+.debt-qr-canvas {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 1rem;
+
+  canvas {
+    border-radius: 0.8rem;
+    border: 1px solid #e4ebf1;
+  }
+}
+
+.debt-qr-loading {
+  height: 20rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: #8a9eb0;
+}
+
+.debt-qr-error {
+  height: 20rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1.3rem;
+  color: #c62828;
+  line-height: 1.6;
+}
