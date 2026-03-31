@@ -85,7 +85,7 @@ function parseVnd(s: string): number {
 }
 
 interface QuickPayModalProps {
-  debtInfo: { debtId: number; amount: number; name: string };
+  debtInfo: { invoiceId: number; amount: number; name: string };
   funds: IFundListItem[];
   onClose: () => void;
   onSuccess: () => void;
@@ -110,7 +110,7 @@ function QuickPayModal({ debtInfo, funds, onClose, onSuccess }: QuickPayModalPro
     setSubmitting(true);
     try {
       const res = await DebtManagementService.pay({
-        debtId: debtInfo.debtId,
+        invoiceId: debtInfo.invoiceId,  // lookup debt bằng invoiceId ở backend
         amount,
         fundId,
         note: note.trim() || undefined,
@@ -275,7 +275,7 @@ export default function SaleInvoiceList() {
   const [orderDetailModalOpen, setOrderDetailOpen]  = useState(false);
   const [receiptInvoiceId, setReceiptInvoiceId]     = useState<number | null>(null);
   const [receiptModalOpen, setReceiptModalOpen]     = useState(false);
-  const [quickPayDebt, setQuickPayDebt]             = useState<{ debtId: number; amount: number; name: string } | null>(null);
+  const [quickPayDebt, setQuickPayDebt]             = useState<{ invoiceId: number; amount: number; name: string } | null>(null);
   const [funds, setFunds]                           = useState<IFundListItem[]>([]);
   const [searchParams]                              = useSearchParams();
   const [listSaleInvoice, setListSaleInvoice]       = useState<Order[]>([]);
@@ -455,7 +455,7 @@ export default function SaleInvoiceList() {
   const handleViewReceipt  = useCallback((id: number | null) => { setReceiptInvoiceId(id); setReceiptModalOpen(true); }, []);
   const handleCollectDebt  = useCallback((order: Order) => {
     if (!order.debt || order.debt <= 0) return;
-    setQuickPayDebt({ debtId: Number(order.id), amount: order.debt, name: order.customer.name });
+    setQuickPayDebt({ invoiceId: Number(order.id), amount: order.debt, name: order.customer.name });
   }, []);
 
   // ── Render ─────────────────────────────────────────────────────────────────
