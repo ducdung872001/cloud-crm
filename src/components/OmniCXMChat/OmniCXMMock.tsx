@@ -70,7 +70,7 @@ const MOCK_ROOMS: MockRoom[] = [
   },
   {
     id: "room_002", customer: "Trần Thị Bình", phone: "0987654321",
-    source: "messenger", status: "active", avatar: "B",
+    source: "zalo", status: "active", avatar: "B",
     messages: [
       { id: "m3", text: "Đơn hàng #4521 của tôi đã giao chưa?", sender: "customer", time: "09:30", source: "messenger" },
       { id: "m4", text: "Đơn hàng của bạn đang được vận chuyển, dự kiến 2-3 ngày", sender: "agent", time: "09:32", source: "messenger" },
@@ -184,7 +184,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
           width: 52,
           height: 52,
           borderRadius: "50%",
-          background: "linear-gradient(135deg, #0068FF, #00C48C)",
+          background: "var(--primary-bg-color)",
           boxShadow: "0 4px 20px rgba(0,104,255,0.4)",
           cursor: "pointer",
           display: "flex",
@@ -197,7 +197,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
         onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
         onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
       >
-        {isOpen ? "✕" : "💬"}
+        {isOpen ? <div style={{color: "#FFFFFF"}}>✕</div> : "💬"}
         {unread > 0 && !isOpen && (
           <div style={{
             position: "absolute",
@@ -239,7 +239,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
 
           {/* Header */}
           <div style={{
-            background: "linear-gradient(135deg, #0068FF, #0099FF)",
+            background: "var(--primary-bg-color)",
             padding: "14px 16px",
             color: "#fff",
           }}>
@@ -265,10 +265,10 @@ export default function OmniCXMMock({ onEvent }: Props) {
                     </div>
                   </div>
                   <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
-                    <button onClick={handleSpam} style={{
+                    {/* <button onClick={handleSpam} style={{
                       background: "rgba(255,255,255,0.2)", border: "none", color: "#fff",
                       borderRadius: 6, padding: "4px 8px", fontSize: 11, cursor: "pointer",
-                    }}>Spam</button>
+                    }}>Spam</button> */}
                     <button onClick={handleSolved} style={{
                       background: "rgba(255,255,255,0.25)", border: "none", color: "#fff",
                       borderRadius: 6, padding: "4px 8px", fontSize: 11, cursor: "pointer",
@@ -280,7 +280,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
                 <>
                   <div style={{ fontSize: 20 }}>💬</div>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: 15 }}>OmniCXM</div>
+                    <div style={{ fontWeight: 700, fontSize: 15 }}>Reborn CRM</div>
                     <div style={{ fontSize: 11, opacity: 0.8 }}>Service Chat · Mock</div>
                   </div>
                   <div style={{
@@ -312,7 +312,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
                       maxWidth: "75%",
                       padding: "8px 12px",
                       borderRadius: msg.sender === "agent" ? "14px 4px 14px 14px" : "4px 14px 14px 14px",
-                      background: msg.sender === "agent" ? "#0068FF" : "#fff",
+                      background: msg.sender === "agent" ? "var(--primary-bg-color)" : "#fff",
                       color: msg.sender === "agent" ? "#fff" : "#1a1a2e",
                       fontSize: 13,
                       lineHeight: 1.5,
@@ -367,7 +367,8 @@ export default function OmniCXMMock({ onEvent }: Props) {
             <>
               {/* Tabs */}
               <div style={{
-                display: "flex", borderBottom: "1px solid #e8edf5",
+                display: "flex", 
+                // borderBottom: "1px solid #e8edf5",
                 background: "#fff",
               }}>
                 {(["queue", "active"] as const).map((t) => (
@@ -378,8 +379,8 @@ export default function OmniCXMMock({ onEvent }: Props) {
                       flex: 1, padding: "10px 0", border: "none",
                       background: "none", cursor: "pointer", fontSize: 13,
                       fontWeight: tab === t ? 600 : 400,
-                      color: tab === t ? "#0068FF" : "#6b7280",
-                      borderBottom: tab === t ? "2px solid #0068FF" : "2px solid transparent",
+                      color: tab === t ? "var(--primary-bg-color)" : "#6b7280",
+                      borderBottom: tab === t ? "2px solid var(--primary-bg-color)" : "2px solid transparent",
                       transition: "all 0.2s",
                     }}
                   >
