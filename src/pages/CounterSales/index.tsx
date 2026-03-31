@@ -349,8 +349,10 @@ const CounterSales: React.FC = () => {
       const paidInvoice = await BoughtProductService.insert(body, {
         invoiceId,
         ...(loyaltyDiscount > 0 ? { loyaltyDiscount } : {}),
-        paid,   // ← tiền thực thu (có thể nhỏ hơn total nếu ghi nợ)
-        debt,   // ← tiền còn nợ (0 nếu thanh toán đủ)
+        paid,    // ← tiền thực thu (có thể nhỏ hơn total nếu ghi nợ)
+        debt,    // ← tiền còn nợ (0 nếu thanh toán đủ)
+        // fundId từ PTTT KH đã chọn → billing ghi cashbook vào đúng quỹ
+        ...(activePayConfig?.fundId ? { fundId: activePayConfig.fundId } : {}),
       });
 
       if (paidInvoice.code == 0) {
