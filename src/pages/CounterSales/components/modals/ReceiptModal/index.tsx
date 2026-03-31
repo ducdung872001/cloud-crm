@@ -54,6 +54,12 @@ interface ReceiptModalProps {
   promoDiscount?: number;
   onPaymentSuccess?: () => void;
   note?: string;
+  /** Số tiền khách thực trả (từ PayModal) — ghi vào invoice khi xác nhận */
+  paidAmount?: number;
+  /** Số tiền còn nợ (từ PayModal) — ghi vào invoice khi xác nhận */
+  debtAmount?: number;
+  /** Tên khách hàng — truyền vào body để billing dùng khi tạo debt record */
+  customerName?: string;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -63,6 +69,9 @@ export default function ReceiptModal({
   invoiceDraft, method, qrCodePro,
   couponDiscount = 0, promoDiscount = 0, onPaymentSuccess,
   note = "",
+  paidAmount,
+  debtAmount = 0,
+  customerName = "",
 }: ReceiptModalProps) {
   const printRef = useRef<HTMLDivElement>(null);
   const qrRef    = useRef<HTMLDivElement>(null);
@@ -79,30 +88,40 @@ export default function ReceiptModal({
   const total         = subtotal - totalDiscount;
   const fmt           = (n: number) => n.toLocaleString("vi") + " đ";
 
+  // Tiền thực thu và nợ — dùng giá trị từ PayModal nếu có, fallback total/0
+  const effectivePaid = paidAmount !== undefined ? paidAmount : total;
+  const effectiveDebt = debtAmount ?? 0;
+
   const now     = new Date();
   const dateStr = `${now.getDate().toString().padStart(2,"0")}/${(now.getMonth()+1).toString().padStart(2,"0")}/${now.getFullYear()}`;
   const timeStr = `${now.getHours().toString().padStart(2,"0")}:${now.getMinutes().toString().padStart(2,"0")}`;
 
   // ── Xác nhận thanh toán ─────────────────────────────────────────────────────
+  // Đây là BƯỚC 2 — gọi POST /invoice/create để chính thức hoàn thành hóa đơn.
+  // Backend sẽ set status = STATUS_DONE = 1, invoiceType = IV1
+  // và bắn Kafka INVENTORY_SALE_DONE với đầy đủ paid/debt/customerName.
   const handleConfirmPay = async () => {
     try {
       const body: any = {
-        id: invoiceId,
-        amount: total,
-        discount: totalDiscount,
-        fee: total,
-        paid: total,
-        debt: 0,
-        paymentType: 1,
-        vatAmount: 0,
-        receiptDate: new Date().toISOString(),
-        account: "[]",
-        amountCard: 0,
-        branchId: invoiceDraft?.branchId || -1,
-        bsnId: invoiceDraft?.bsnId || -1,
-        invoiceType: "IV1",
-        customerId: customerId,
-        campaignId: 0,
+        id:          invoiceId,
+        amount:      total,
+        discount:    totalDiscount,
+        fee:         total,
+        // Dùng giá trị thực từ PayModal thay vì hardcode total/0
+        paid:        effectivePaid,
+        debt:        effectiveDebt,
+        // Truyền customerName để billing có thể dùng khi tạo debt record
+        customerName: customerName || "",
+        paymentType:  1,
+        vatAmount:    0,
+        receiptDate:  new Date().toISOString(),
+        account:      "[]",
+        amountCard:   0,
+        branchId:     invoiceDraft?.branchId || -1,
+        bsnId:        invoiceDraft?.bsnId    || -1,
+        invoiceType:  "IV1",   // Hóa đơn bán hàng thường — bắt buộc để Kafka bắn
+        customerId:   customerId,
+        campaignId:   0,
         ...(getActiveShiftId() ? { shiftId: getActiveShiftId() } : {}),
       };
       const res = await InvoiceService.create(body);
@@ -327,12 +346,18 @@ ${html}
               <>
                 <div className="receipt__totals-row">
                   <span>Tiền khách đưa</span>
-                  <span>{fmt(total)}</span>
+                  <span>{fmt(effectivePaid)}</span>
                 </div>
                 <div className="receipt__totals-row">
                   <span>Tiền thối</span>
-                  <span className="receipt__change">{fmt(0)}</span>
+                  <span className="receipt__change">{fmt(Math.max(0, effectivePaid - total))}</span>
                 </div>
+                {effectiveDebt > 0 && (
+                  <div className="receipt__totals-row" style={{ color: "#c2410c", fontWeight: 700 }}>
+                    <span>⚠️ Còn nợ</span>
+                    <span>{fmt(effectiveDebt)}</span>
+                  </div>
+                )}
               </>
             )}
             <div className="receipt__totals-row">

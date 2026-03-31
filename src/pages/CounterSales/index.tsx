@@ -56,6 +56,9 @@ const CounterSales: React.FC = () => {
   const [invoiceId, setInvoiceId] = useState<number | null>(null);
   const [invoiceDraftToPaid, setInvoiceDraftToPaid] = useState<any>(null);
   const [activeDraftId, setActiveDraftId] = useState<string | null>(null);
+  /** Lưu paid/debt từ PayModal để truyền vào ReceiptModal → POST /invoice/create */
+  const [paidAmount, setPaidAmount] = useState<number>(0);
+  const [debtAmount, setDebtAmount] = useState<number>(0);
   const [method, setMethod] = useState<PayMethod>("cash");
   const [qrCodePro, setQrCodePro] = useState<string | null>(null);
   const [activePayConfig, setActivePayConfig] = useState<IStorePaymentConfigResponse | null>(null);
@@ -321,6 +324,9 @@ const CounterSales: React.FC = () => {
   // debt  = số tiền còn nợ = total - paid (0 nếu thanh toán đủ)
   const handlePayConfirm = async (invoiceId: number | null, paid: number, debt: number) => {
     if (!invoiceId) return;
+    // Lưu lại paid/debt để ReceiptModal truyền vào POST /invoice/create
+    setPaidAmount(paid);
+    setDebtAmount(debt);
     try {
       const body = cartItems.map((item: CartItem) => ({
         productId: Number(item.id),
@@ -551,6 +557,9 @@ const CounterSales: React.FC = () => {
         couponDiscount={couponDiscount}
         promoDiscount={promoDiscount + manualDiscount}
         note={orderNote}
+        paidAmount={paidAmount}
+        debtAmount={debtAmount}
+        customerName={customer?.name ?? ""}
         onPaymentSuccess={() => {
           setCouponDiscount(0);
           setPromoDiscount(0);
