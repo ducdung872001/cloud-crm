@@ -60,6 +60,8 @@ interface ReceiptModalProps {
   debtAmount?: number;
   /** Tên khách hàng — truyền vào body để billing dùng khi tạo debt record */
   customerName?: string;
+  /** Kho bán hàng (warehouseId) — truyền vào inventoryId để backend lưu */
+  warehouseId?: number;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -72,6 +74,7 @@ export default function ReceiptModal({
   paidAmount,
   debtAmount = 0,
   customerName = "",
+  warehouseId,
 }: ReceiptModalProps) {
   const printRef = useRef<HTMLDivElement>(null);
   const qrRef    = useRef<HTMLDivElement>(null);
@@ -97,31 +100,52 @@ export default function ReceiptModal({
   const timeStr = `${now.getHours().toString().padStart(2,"0")}:${now.getMinutes().toString().padStart(2,"0")}`;
 
   // ── Xác nhận thanh toán ─────────────────────────────────────────────────────
-  // Đây là BƯỚC 2 — gọi POST /invoice/create để chính thức hoàn thành hóa đơn.
-  // Backend sẽ set status = STATUS_DONE = 1, invoiceType = IV1
-  // và bắn Kafka INVENTORY_SALE_DONE với đầy đủ paid/debt/customerName.
+  // BƯỚC 2 — "Xác nhận thanh toán": UPDATE invoice từ DRAFT → DONE
+  // Backend dùng invoice.getId() làm WHERE → id PHẢI là invoiceId từ draft
+  // Tất cả field phải đầy đủ để InvoiceRepository.createInvoice() UPDATE đúng
+  // Sau đó publishSaleInventoryEvent() kiểm tra status=1 + invoiceType=IV1 → bắn Kafka
   const handleConfirmPay = async () => {
+    // Guard: phải có invoiceId hợp lệ từ bước tạo nháp
+    const realInvoiceId = invoiceDraft?.id ?? invoiceId;
+    if (!realInvoiceId || Number(realInvoiceId) <= 0) {
+      showToast("Không tìm thấy mã hóa đơn. Vui lòng thử lại.", "error");
+      return;
+    }
+
     try {
       const body: any = {
-        id:          invoiceId,
-        amount:      total,
-        discount:    totalDiscount,
-        fee:         total,
-        // Dùng giá trị thực từ PayModal thay vì hardcode total/0
-        paid:        effectivePaid,
-        debt:        effectiveDebt,
-        // Truyền customerName để billing có thể dùng khi tạo debt record
-        customerName: customerName || "",
-        paymentType:  1,
+        // ── Định danh — QUAN TRỌNG: phải là id từ draft, không được là -1 ──
+        id:           Number(realInvoiceId),
+
+        // ── Tài chính ────────────────────────────────────────────────────────
+        fee:          total,           // tổng phải trả
+        paid:         effectivePaid,   // thực thu (từ PayModal)
+        debt:         effectiveDebt,   // còn nợ (từ PayModal)
+        amount:       total,           // tổng trước giảm giá (dùng subtotal nếu cần)
+        discount:     totalDiscount,
         vatAmount:    0,
-        receiptDate:  new Date().toISOString(),
-        account:      "[]",
         amountCard:   0,
-        branchId:     invoiceDraft?.branchId || -1,
-        bsnId:        invoiceDraft?.bsnId    || -1,
-        invoiceType:  "IV1",   // Hóa đơn bán hàng thường — bắt buộc để Kafka bắn
-        customerId:   customerId,
-        campaignId:   0,
+        paymentType:  1,               // 1 = tiền mặt/mặc định
+
+        // ── Loại hóa đơn — QUAN TRỌNG: IV1 để publishSaleInventoryEvent bắn Kafka ──
+        invoiceType:  invoiceDraft?.invoiceType ?? "IV1",
+
+        // ── Thông tin liên kết — lấy từ invoiceDraft để đúng branchId/bsnId ──
+        customerId:   Number(customerId),
+        branchId:     Number(invoiceDraft?.branchId ?? -1),
+        bsnId:        Number(invoiceDraft?.bsnId    ?? -1),
+        employeeId:   invoiceDraft?.employeeId ?? undefined,
+        campaignId:   invoiceDraft?.campaignId ?? 0,
+
+        // ── Kho bán hàng ─────────────────────────────────────────────────────
+        ...(warehouseId ? { inventoryId: warehouseId } : {}),
+
+        // ── Thời gian ────────────────────────────────────────────────────────
+        receiptDate:  new Date().toISOString(),
+
+        // ── Khác ─────────────────────────────────────────────────────────────
+        account:      "[]",
+        customerName: customerName || "",
         ...(getActiveShiftId() ? { shiftId: getActiveShiftId() } : {}),
       };
       const res = await InvoiceService.create(body);

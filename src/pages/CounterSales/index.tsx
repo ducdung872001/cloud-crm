@@ -59,6 +59,8 @@ const CounterSales: React.FC = () => {
   /** Lưu paid/debt từ PayModal để truyền vào ReceiptModal → POST /invoice/create */
   const [paidAmount, setPaidAmount] = useState<number>(0);
   const [debtAmount, setDebtAmount] = useState<number>(0);
+  /** Ref đánh dấu đang chuyển từ PayModal sang ReceiptModal — tránh reset invoiceId sớm */
+  const transitioningToReceiptRef = React.useRef(false);
   const [method, setMethod] = useState<PayMethod>("cash");
   const [qrCodePro, setQrCodePro] = useState<string | null>(null);
   const [activePayConfig, setActivePayConfig] = useState<IStorePaymentConfigResponse | null>(null);
@@ -327,6 +329,8 @@ const CounterSales: React.FC = () => {
     // Lưu lại paid/debt để ReceiptModal truyền vào POST /invoice/create
     setPaidAmount(paid);
     setDebtAmount(debt);
+    // Đánh dấu đang chuyển sang ReceiptModal — không để onClose reset invoiceId
+    transitioningToReceiptRef.current = true;
     try {
       const body = cartItems.map((item: CartItem) => ({
         productId: Number(item.id),
@@ -545,7 +549,14 @@ const CounterSales: React.FC = () => {
         loyaltyDiscount={moneyFromPoints}
         shippingFee={orderType === "ship" ? shippingInfo.shippingFee : 0}
         shippingFeeBearer={shippingInfo.shippingFeeBearer}
-        onClose={() => { setInvoiceId(null); setPayModalOpen(false); }}
+        onClose={() => {
+          setPayModalOpen(false);
+          // Chỉ reset invoiceId nếu không đang chuyển sang ReceiptModal
+          if (!transitioningToReceiptRef.current) {
+            setInvoiceId(null);
+          }
+          transitioningToReceiptRef.current = false;
+        }}
         onConfirm={(id, paid, debt) => handlePayConfirm(id, paid, debt)}
         onConfigChange={setActivePayConfig}
       />
@@ -560,6 +571,7 @@ const CounterSales: React.FC = () => {
         paidAmount={paidAmount}
         debtAmount={debtAmount}
         customerName={customer?.name ?? ""}
+        warehouseId={warehouseId}
         onPaymentSuccess={() => {
           setCouponDiscount(0);
           setPromoDiscount(0);
