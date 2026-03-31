@@ -226,6 +226,29 @@
     }
   }
 
+  // ── Export loading indicator ─────────────────────────────────
+  .mat-export-indicator {
+    display:     flex;
+    align-items: center;
+    gap:         0.6rem;
+    padding:     0.4rem 1rem;
+    border-radius: 0.6rem;
+    background:  var(--primary-bg-color, #f0f7ff);
+    border:      1px solid var(--primary-color, #015aa4);
+    font-size:   1.2rem;
+    color:       var(--primary-color, #015aa4);
+    font-weight: 500;
+    white-space: nowrap;
+
+    // Override loading spinner size để vừa inline
+    .loading-wrapper,
+    > div[class*="loading"] {
+      width:      1.6rem !important;
+      height:     1.6rem !important;
+      min-height: unset !important;
+    }
+  }
+
   .card-box .box-table .box-table__wrapper table tbody tr td {
     .outstanding, .not-outstanding, .status-pause, .status-play {
       padding: 0.2rem 0.6rem; border-radius: 0.3rem;
@@ -407,27 +430,5 @@
     &__qty  { display: flex; flex-direction: column; align-items: flex-end; white-space: nowrap; }
     &__qty-val  { font-size: 1.4rem; font-weight: 700; color: var(--primary-color); }
     &__qty-unit { font-size: 1.1rem; color: var(--extra-color-50); }
-  }
-
-   // ── Export loading indicator ─────────────────────────────────
-  .mat-export-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.4rem 1rem;
-    border-radius: 0.6rem;
-    background: var(--primary-bg-color, #f0f7ff);
-    border: 1px solid var(--primary-color, #015aa4);
-    font-size: 1.2rem;
-    color: var(--primary-color, #015aa4);
-    font-weight: 500;
-
-    // Override loading spinner size
-    .loading-wrapper,
-    > div[class*="loading"] {
-      width: 1.6rem !important;
-      height: 1.6rem !important;
-      min-height: unset !important;
-    }
   }
 }
