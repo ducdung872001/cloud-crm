@@ -2449,6 +2449,7 @@ export const urlsApi = {
     countByStatus: prefixMarket + "/promotion/count-by-status",
     updateStatus: prefixMarket + "/promotion/update/status",
     updateDmnSetting: prefixMarket + "/promotion/update/dmn-setting",
+    share: prefixMarket + "/promotion/share",
   },
   couponProgram: {
     list: prefixMarket + "/coupon/list",
@@ -2459,6 +2460,7 @@ export const urlsApi = {
     countByStatus: prefixMarket + "/coupon/count-by-status",
     sumUsed: prefixMarket + "/coupon/sum-used",
     apply: prefixMarket + "/coupon/apply",
+    share: prefixMarket + "/coupon/share",
   },
   email: {
     list: prefixAdmin + "/outlookMail/list",
@@ -3431,6 +3433,8 @@ export const urls = {
   sell: "/sell",
   promotional_program: "/promotional_program",
   promotional_report: "/promotional_report",
+  share_promo: "/share_promo",
+  share_coupon: "/share_coupon",
 
   contract: "/contract",
   offer: "/offer",

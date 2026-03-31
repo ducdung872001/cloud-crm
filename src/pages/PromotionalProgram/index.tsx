@@ -19,6 +19,21 @@ import {
   PROMOTION_STATUS_MAP,
 } from "model/promotion/PromotionModel";
 
+// ── Tạo share link từ slug ────────────────────────────────────────
+const buildShareUrl = (slug?: string) =>
+  `${window.location.origin}/share_promo?slug=${encodeURIComponent(slug ?? "")}`;
+
+const copyShareLink = (slug?: string) => {
+  if (!slug) {
+    showToast("Chương trình chưa có link chia sẻ — thử lưu lại", "warning");
+    return;
+  }
+  navigator.clipboard
+    .writeText(buildShareUrl(slug))
+    .then(() => showToast("✅ Đã copy link chia sẻ!", "success"))
+    .catch(() => showToast("Không thể copy, vui lòng thử lại", "error"));
+};
+
 // Badge variant tương ứng với từng status
 const STATUS_BADGE_VARIANT: Record<number, "success"|"warning"|"error"|"secondary"> = {
   0: "warning",    // Chờ duyệt
@@ -332,6 +347,14 @@ export default function PromotionalProgram(props: any) {
         disabled: isChecked,
         callback: () => {
           if (!isChecked) { setSelectedItem(item); setShowModalAdd(true); }
+        },
+      },
+      {
+        title: "Share",
+        icon: <Icon name="Share" className={isChecked ? "icon-disabled" : ""} />,
+        disabled: isChecked,
+        callback: () => {
+          if (!isChecked) copyShareLink(item.slug);
         },
       },
     ];
