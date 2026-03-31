@@ -303,6 +303,14 @@
   text-overflow: ellipsis;
 }
 
+.tp-variant {
+  font-size: 1.1rem;
+  color: var(--muted2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .tp-qty {
   font-size: 1.1rem;
   color: var(--muted2);
