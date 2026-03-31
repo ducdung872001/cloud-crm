@@ -46,6 +46,8 @@ interface PayModalProps {
   setMethod:       (method: PayMethod) => void;
   couponDiscount?: number;
   promoDiscount?:  number;
+  /** Tiền giảm từ điểm tích lũy loyalty */
+  loyaltyDiscount?: number;
   /** Phí ship thu khách (chỉ có khi orderType === "ship") */
   shippingFee?:    number;
   /** Ai trả phí ship — nếu SENDER thì không tính vào tổng khách trả */
@@ -57,6 +59,7 @@ interface PayModalProps {
 export default function PayModal({
   open, cartItems, onClose, onConfirm, invoiceId,
   method, setMethod, couponDiscount = 0, promoDiscount = 0,
+  loyaltyDiscount = 0,
   shippingFee = 0, shippingFeeBearer = "RECEIVER",
   onConfigChange,
 }: PayModalProps) {
@@ -93,7 +96,8 @@ export default function PayModal({
   const subtotal    = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
   const discount    = couponDiscount + promoDiscount;
   const shipCharge  = shippingFeeBearer === "RECEIVER" ? shippingFee : 0;
-  const total       = subtotal - discount + shipCharge;
+  // ── FIX: trừ loyaltyDiscount vào tổng thanh toán ─────────────────────────
+  const total       = Math.max(0, subtotal - discount - loyaltyDiscount + shipCharge);
   const change      = Math.max(0, customerPaid - total);
   const fmt      = (n: number) => n.toLocaleString("vi") + " ₫";
 
@@ -206,8 +210,6 @@ export default function PayModal({
           </div>
         );
 
-      // QR Pro: generate QR được xử lý ở CounterSales/index.tsx sau khi tạo invoice
-      // activeConfig được truyền ra ngoài qua onConfigChange để CounterSales dùng
       case "qr":
         return (
           <div className="pay-modal__transfer" style={{ background: "#f0fdf4", borderColor: "#86efac" }}>
@@ -225,7 +227,6 @@ export default function PayModal({
           </div>
         );
 
-      // Momo / ZaloPay: chưa tích hợp API, nhân viên xác nhận thủ công
       case "momo":
       case "zalo_pay":
         return (
@@ -246,7 +247,6 @@ export default function PayModal({
           </div>
         );
 
-      // Thẻ tín dụng: POS vật lý xử lý, hệ thống chỉ ghi nhận
       case "credit_card":
         return (
           <div className="pay-modal__transfer" style={{ background: "#fffbeb", borderColor: "#fde68a" }}>
@@ -296,12 +296,24 @@ export default function PayModal({
             <span>Tổng tiền hàng</span>
             <span>{fmt(subtotal)}</span>
           </div>
+
           {discount > 0 && (
             <div className="pay-modal__summary-row">
               <span>Giảm giá</span>
               <span className="pay-modal__discount">−{fmt(discount)}</span>
             </div>
           )}
+
+          {/* FIX: Hiển thị dòng giảm từ điểm tích lũy */}
+          {loyaltyDiscount > 0 && (
+            <div className="pay-modal__summary-row">
+              <span>Điểm tích lũy</span>
+              <span className="pay-modal__discount" style={{ color: "#6c5ce7" }}>
+                −{fmt(loyaltyDiscount)}
+              </span>
+            </div>
+          )}
+
           {shippingFee > 0 && (
             <div className="pay-modal__summary-row">
               <span>Phí vận chuyển{shippingFeeBearer === "SENDER" ? " (cửa hàng trả)" : ""}</span>
@@ -310,6 +322,7 @@ export default function PayModal({
               </span>
             </div>
           )}
+
           <div className="pay-modal__summary-row pay-modal__summary-row--total">
             <span>TỔNG THANH TOÁN</span>
             <span className="pay-modal__total-val">{fmt(total)}</span>

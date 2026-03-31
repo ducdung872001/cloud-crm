@@ -26,6 +26,20 @@ const STATUS_VARIANT: Record<number, "success" | "warning" | "secondary"> = {
 };
 
 // ── BOM Detail Panel ──────────────────────────────────────────
+function formatDateTime(raw?: string): string {
+  if (!raw) return "";
+  try {
+    const d = new Date(raw);
+    if (isNaN(d.getTime())) return raw;
+    const dd   = String(d.getDate()).padStart(2, "0");
+    const mm   = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    const hh   = String(d.getHours()).padStart(2, "0");
+    const min  = String(d.getMinutes()).padStart(2, "0");
+    return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
+  } catch { return raw; }
+}
+
 function BomDetailPanel({ bom, onClose, onEdit }: {
   bom: IBomResponse; onClose: () => void;
   onEdit: (b: IBomResponse) => void;
@@ -43,75 +57,136 @@ function BomDetailPanel({ bom, onClose, onEdit }: {
 
   const data = fullData ?? bom;
 
+  const C = {
+    white:      "#ffffff",
+    border:     "#e2e8f0",
+    bgLight:    "#f8fafc",
+    text:       "#1e293b",
+    textMuted:  "#94a3b8",
+    textSub:    "#64748b",
+    primary:    "#015aa4",
+    primaryBg:  "#eff6ff",
+    primaryBdr: "#bfdbfe",
+  } as const;
+
   return (
-    <div className="bom-detail-panel">
-      <div className="bom-detail-panel__header">
-        <button type="button" className="bom-detail-panel__close" onClick={onClose}>✕</button>
-        <div className="bom-detail-panel__code">{data.code}</div>
-        <div className="bom-detail-panel__name">{data.productName}</div>
-        <div className="bom-detail-panel__meta">
+    <div style={{ height:"100%", overflowY:"auto", background:C.white,
+      display:"flex", flexDirection:"column", borderLeft:`1px solid ${C.border}` }}>
+
+      {/* Header */}
+      <div style={{ padding:"1.6rem 1.8rem 1.2rem", position:"relative",
+        borderBottom:`1px solid ${C.border}`, background:C.white }}>
+        <button type="button" onClick={onClose} style={{
+          position:"absolute", top:"1.2rem", right:"1.2rem",
+          background:C.bgLight, border:`1px solid ${C.border}`,
+          color:C.textSub, width:"2.8rem", height:"2.8rem",
+          borderRadius:"50%", cursor:"pointer", fontSize:"1.4rem",
+          display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
+
+        <div style={{ fontFamily:"monospace", fontSize:"1.2rem",
+          color:C.primary, fontWeight:700, marginBottom:"0.4rem" }}>{data.code}</div>
+        <div style={{ fontSize:"1.5rem", fontWeight:700, color:C.text,
+          marginBottom:"0.8rem", lineHeight:1.3, paddingRight:"3.5rem" }}>{data.productName}</div>
+        <div style={{ display:"flex", alignItems:"center", gap:"0.8rem" }}>
           <Badge text={STATUS_LABEL[data.status] ?? "—"} variant={STATUS_VARIANT[data.status] ?? "secondary"} />
-          <span className="bom-detail-panel__ver">{data.version}</span>
+          <span style={{ fontFamily:"monospace", fontSize:"1.1rem",
+            background:C.bgLight, border:`1px solid ${C.border}`,
+            padding:"0.2rem 0.7rem", borderRadius:"0.3rem",
+            color:C.textSub, fontWeight:600 }}>{data.version}</span>
         </div>
       </div>
 
-      <div className="bom-detail-panel__qs">
-        <div className="bom-detail-panel__qs-i">
-          <div className="bom-detail-panel__qs-v">
-            {(data.outputQty ?? 0).toLocaleString("vi")}
+      {/* Stats */}
+      <div style={{ display:"flex", borderBottom:`1px solid ${C.border}`, background:C.bgLight }}>
+        {[
+          { val:(data.outputQty ?? 0).toLocaleString("vi"), lbl:"Sản lượng/mẻ", color:C.text },
+          { val:data.outputUnit || "—",                     lbl:"Đơn vị",       color:C.text },
+          { val:String(data.ingredientCount ?? data.ingredients?.length ?? 0),
+            lbl:"Nguyên liệu", color:C.primary },
+        ].map((s, i, arr) => (
+          <div key={i} style={{ flex:1, padding:"1.2rem 0.8rem", textAlign:"center",
+            borderRight: i < arr.length-1 ? `1px solid ${C.border}` : "none" }}>
+            <div style={{ fontSize:"1.8rem", fontWeight:800, color:s.color,
+              lineHeight:1, marginBottom:"0.3rem" }}>{s.val}</div>
+            <div style={{ fontSize:"1.05rem", color:C.textMuted, fontWeight:500 }}>{s.lbl}</div>
           </div>
-          <div className="bom-detail-panel__qs-l">Sản lượng/mẻ</div>
-        </div>
-        <div className="bom-detail-panel__qs-i">
-          <div className="bom-detail-panel__qs-v">{data.outputUnit ?? "—"}</div>
-          <div className="bom-detail-panel__qs-l">Đơn vị</div>
-        </div>
-        <div className="bom-detail-panel__qs-i">
-          <div className="bom-detail-panel__qs-v" style={{ color: "var(--primary-color)" }}>
-            {data.ingredientCount ?? data.ingredients?.length ?? 0}
-          </div>
-          <div className="bom-detail-panel__qs-l">Nguyên liệu</div>
-        </div>
+        ))}
       </div>
 
-      <div className="bom-detail-panel__section-title">Danh sách nguyên liệu</div>
+      {/* Section label */}
+      <div style={{ fontSize:"1.05rem", fontWeight:700, color:C.textMuted,
+        textTransform:"uppercase", letterSpacing:"0.08em",
+        padding:"1.2rem 1.6rem 0.6rem" }}>Danh sách nguyên liệu</div>
 
-      {isLoading ? (
-        <Loading />
-      ) : (data.ingredients?.length ?? 0) > 0 ? (
-        <div className="bom-detail-panel__ingredients">
-          {data.ingredients!.map((ing, i) => (
-            <div key={ing.materialId ?? i} className="bom-ing-row">
-              <div className="bom-ing-row__idx">{i + 1}</div>
-              <div className="bom-ing-row__body">
-                <div className="bom-ing-row__name">{ing.materialName}</div>
-                <div className="bom-ing-row__code">{ing.materialCode ?? ""}</div>
+      {/* Ingredients */}
+      <div style={{ flex:1, overflowY:"auto", padding:"0 1.2rem 0.8rem" }}>
+        {isLoading ? <Loading /> : (data.ingredients?.length ?? 0) > 0 ? (
+          data.ingredients!.map((ing, i) => (
+            <div key={ing.materialId ?? i} style={{ display:"flex", alignItems:"center",
+              gap:"1rem", padding:"0.9rem 0.4rem",
+              borderBottom:`1px solid ${C.border}` }}>
+              <div style={{ width:"2.4rem", height:"2.4rem", borderRadius:"50%",
+                background:C.primaryBg, border:`1px solid ${C.primaryBdr}`,
+                display:"flex", alignItems:"center", justifyContent:"center",
+                fontSize:"1.1rem", fontWeight:700, color:C.primary, flexShrink:0 }}>{i+1}</div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:"1.3rem", fontWeight:600, color:C.text,
+                  overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                  {ing.materialName}</div>
+                {ing.materialCode && (
+                  <div style={{ fontSize:"1.1rem", color:C.textMuted,
+                    fontFamily:"monospace" }}>{ing.materialCode}</div>
+                )}
               </div>
-              <div className="bom-ing-row__qty">
-                <span className="bom-ing-row__qty-val">{ing.quantity}</span>
-                <span className="bom-ing-row__qty-unit">{ing.unitName}</span>
+              <div style={{ textAlign:"right", flexShrink:0 }}>
+                <div style={{ fontSize:"1.4rem", fontWeight:700, color:C.primary }}>{ing.quantity}</div>
+                <div style={{ fontSize:"1.1rem", color:C.textMuted }}>{ing.unitName}</div>
               </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="bom-detail-panel__empty">Chưa có nguyên liệu nào</div>
-      )}
-
-      {data.note && (
-        <div className="bom-detail-panel__note">
-          <Icon name="Info" /><span>{data.note}</span>
-        </div>
-      )}
-
-      <div className="bom-detail-panel__dates">
-        {data.createdTime && <span>Tạo: {data.createdTime}</span>}
-        {data.updatedTime && <span>Cập nhật: {data.updatedTime}</span>}
+          ))
+        ) : (
+          <div style={{ textAlign:"center", color:C.textMuted,
+            padding:"2.4rem", fontSize:"1.3rem" }}>Chưa có nguyên liệu nào</div>
+        )}
       </div>
 
-      <div className="bom-detail-panel__actions">
-        <button className="bom-detail-panel__btn bom-detail-panel__btn--outline" onClick={() => onEdit(data)}>
-          <Icon name="Edit" /> Chỉnh sửa
+      {/* Note */}
+      {data.note && (
+        <div style={{ display:"flex", alignItems:"flex-start", gap:"0.6rem",
+          margin:"0 1.6rem 0.8rem", padding:"0.8rem 1rem",
+          background:C.bgLight, border:`1px solid ${C.border}`,
+          borderRadius:"0.6rem", fontSize:"1.2rem", color:C.textSub }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke={C.textMuted} strokeWidth="2" strokeLinecap="round"
+            style={{ flexShrink:0, marginTop:"0.1rem" }}>
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>{data.note}</span>
+        </div>
+      )}
+
+      {/* Dates */}
+      <div style={{ display:"flex", gap:"1.2rem", flexWrap:"wrap",
+        padding:"0 1.6rem 0.8rem", fontSize:"1.1rem", color:C.textMuted }}>
+        {data.createdTime  && <span>Tạo: {formatDateTime(String(data.createdTime))}</span>}
+        {data.updatedTime  && <span>Cập nhật: {formatDateTime(String(data.updatedTime))}</span>}
+      </div>
+
+      {/* Action */}
+      <div style={{ padding:"1.2rem 1.6rem", borderTop:`1px solid ${C.border}`, marginTop:"auto" }}>
+        <button onClick={() => onEdit(data)} style={{
+          width:"100%", padding:"0.9rem", borderRadius:"0.6rem",
+          border:`1.5px solid ${C.primary}`, background:C.white,
+          color:C.primary, fontSize:"1.3rem", fontWeight:600, cursor:"pointer",
+          display:"flex", alignItems:"center", justifyContent:"center", gap:"0.6rem" }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Chỉnh sửa
         </button>
       </div>
     </div>

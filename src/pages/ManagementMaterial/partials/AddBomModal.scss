@@ -49,6 +49,9 @@
   transform: translateY(-50%);
   color: var(--extra-color-50);
   pointer-events: none;
+  width: 1.6rem; height: 1.6rem;
+  display: flex; align-items: center;
+  svg { width: 1.6rem !important; height: 1.6rem !important; flex-shrink: 0; }
 }
 
 .bom-mat-search-input {
@@ -128,6 +131,8 @@
   background: none; border: none;
   cursor: pointer; color: var(--extra-color-50);
   padding: .4rem; border-radius: .4rem;
+  display: flex; align-items: center; justify-content: center;
+  svg { width: 1.6rem !important; height: 1.6rem !important; }
   &:hover { color: var(--error-color); background: var(--error-light, #fef2f2); }
 }
 
@@ -139,4 +144,5 @@
   color: var(--extra-color-50);
   font-size: 1.3rem;
   margin-top: .8rem;
+  svg { width: 2rem !important; height: 2rem !important; flex-shrink: 0; }
 }

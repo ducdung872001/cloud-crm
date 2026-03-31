@@ -11,38 +11,37 @@
 export interface IPromotion {
   id?: number;
   name?: string;
-  startTime?: string;       // ISO datetime "YYYY-MM-DDTHH:mm:ss"
+  startTime?: string;
   endTime?: string;
-  applyType?: number;       // 1=đạt tối thiểu, 2=đạt trên mỗi khoảng
-  minAmount?: number;       // Giá trị đơn hàng tối thiểu
+  applyType?: number;
+  minAmount?: number;
   perAmount?: number;
-  promotionType?: number;   // 1=Giảm giá, 2=Flash Sale, 3=Sự kiện, 4=Sinh nhật, 5=Theo mùa
-  discount?: number;        // Giá trị giảm (% hoặc VND)
-  discountType?: number;    // 1=%, 2=VND cố định
-  status?: number;          // 0=Chờ duyệt, 1=Đang chạy, 2=Hết hạn, 3=Tạm dừng
+  promotionType?: number;
+  discount?: number;
+  discountType?: number;
+  status?: number;
   employeeId?: number;
   branchId?: number;
   bsnId?: number;
   input?: string;
   output?: string;
   businessRuleId?: number;
-  // ---- 3 trường đề xuất thêm vào DB ----
-  mode?: number;            // 1=Direction(trực tiếp), 2=DMN Rule
-  budget?: number;          // Ngân sách tối đa (VND)
-  usedCount?: number;       // Số lượt đã dùng (read-only từ BE)
+  mode?: number;
+  budget?: number;
+  usedCount?: number;
+  slug?: string;
+  /** Giá đồng giá (VND) — chỉ dùng khi promotionType = 7 */
+  fixedPrice?: number;
 }
 
-/**
- * Request tạo/cập nhật chương trình khuyến mãi
- */
 export interface IPromotionRequest {
   id?: number;
   name: string;
   startTime: string;
   endTime: string;
   promotionType: number;
-  discount: number;
-  discountType: number;
+  discount?: number;
+  discountType?: number;
   applyType?: number;
   minAmount?: number;
   perAmount?: number;
@@ -52,6 +51,30 @@ export interface IPromotionRequest {
   input?: string;
   output?: string;
   status?: number;
+  /** Giá đồng giá (VND) — chỉ required khi promotionType = 7 */
+  fixedPrice?: number;
+}
+
+/** Sản phẩm tham gia CT đồng giá */
+export interface IFixedPriceProduct {
+  id?: number;
+  promotionId?: number;
+  productId: number;
+  variantId?: number;
+  productName?: string;
+  avatar?: string;
+  originalPrice?: number;
+}
+
+/** Entry đồng giá active — POS dùng để build lookup map */
+export interface IFixedPriceEntry {
+  productId: number;
+  variantId?: number;
+  productName?: string;
+  avatar?: string;
+  fixedPrice: number;
+  promotionName?: string;
+  promotionId?: number;
 }
 
 /**
@@ -62,6 +85,7 @@ export interface IPromotionListParams {
   fmtStartDate?: string;    // "dd/MM/yyyy" hoặc "yyyy-MM-dd"
   fmtEndDate?: string;
   status?: number;          // -1 = tất cả
+  promotionType?: number;   // 0 = tất cả, 7 = đồng giá...
   page?: number;
   sizeLimit?: number;
 }
@@ -74,6 +98,7 @@ export const PROMOTION_TYPE_LABELS: Record<number, string> = {
   4: "Sinh nhật",
   5: "Theo mùa",
   6: "Combo",
+  7: "Đồng giá",
 };
 
 /** Map status number → label + className badge */

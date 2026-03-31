@@ -222,7 +222,10 @@ export default function AddBomModal({ isOpen, data, onClose, onSuccess }: Props)
             <div className="bom-modal-field">
               <label className="bom-modal-label">Thêm nguyên vật liệu</label>
               <div className="bom-mat-search-wrap">
-                <Icon name="Search" className="bom-mat-search-icon" />
+                <svg className="bom-mat-search-icon" width="16" height="16" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
                 <input className="bom-mat-search-input" type="text"
                   placeholder="Tìm tên hoặc mã NVL..."
                   value={matSearch} onChange={(e) => setMatSearch(e.target.value)} />
@@ -279,7 +282,12 @@ export default function AddBomModal({ isOpen, data, onClose, onSuccess }: Props)
               </table>
             ) : (
               <div className="bom-ing-empty">
-                <Icon name="Layers" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                  <polyline points="2 17 12 22 22 17"/>
+                  <polyline points="2 12 12 17 22 12"/>
+                </svg>
                 <span>Chưa có nguyên liệu nào. Tìm kiếm và thêm ở trên.</span>
               </div>
             )}
