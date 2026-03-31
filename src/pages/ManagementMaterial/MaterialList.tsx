@@ -5,6 +5,7 @@ import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
 import TitleAction from "components/titleAction/titleAction";
+import Button from "components/button/button";
 import Badge from "components/badge/badge";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
@@ -366,47 +367,37 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
         </div>
 
         {/* ── Action buttons ── */}
-        <div className="mat-header-actions">
-          <button
+        <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", flexShrink: 0 }}>
+          <Button
             type="button"
-            className="mat-btn mat-btn--outline"
+            color="secondary"
+            variant="outline"
+            hasIcon={true}
             onClick={() => setShowImportModal(true)}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-              <polyline points="16 16 12 12 8 16"/>
-              <line x1="12" y1="12" x2="12" y2="21"/>
-              <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
-            </svg>
+            <Icon name="Upload" />
             Import Excel
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
-            className={`mat-btn mat-btn--outline${isExporting ? " mat-btn--loading" : ""}`}
-            onClick={handleExportExcel}
+            color="secondary"
+            variant="outline"
+            hasIcon={true}
             disabled={isExporting}
+            onClick={handleExportExcel}
           >
-            {isExporting ? (
-              <span className="mat-btn-spinner" />
-            ) : (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-            )}
+            <Icon name="Download" />
             {isExporting ? "Đang xuất..." : "Xuất Excel"}
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
-            className="mat-btn mat-btn--primary"
+            color="primary"
             onClick={() => { setDataMaterial(null); setShowModalAdd(true); }}
           >
             Thêm nguyên liệu
-          </button>
+          </Button>
         </div>
       </div>
 
