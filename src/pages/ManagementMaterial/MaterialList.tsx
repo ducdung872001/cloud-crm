@@ -87,27 +87,32 @@ interface MaterialListProps {
 export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
   document.title = "Nguyên vật liệu";
 
-  const abortRef = useRef<AbortController | null>(null);
-  const [listMaterial, setListMaterial] = useState<IMaterialResponse[]>(MOCK_MATERIAL_LIST);
-  const [summary, setSummary] = useState<IMaterialSummaryResponse>({
-    total: MOCK_MATERIAL_LIST.length,
-    inStock: MOCK_MATERIAL_LIST.filter((m) => m.stockStatus === "ok").length,
-    low: MOCK_MATERIAL_LIST.filter((m) => m.stockStatus === "low").length,
-    out: MOCK_MATERIAL_LIST.filter((m) => m.stockStatus === "out").length,
+  const abortRef        = useRef<AbortController | null>(null);
+  const exportAbortRef  = useRef<AbortController | null>(null);
+
+  const [listMaterial, setListMaterial]       = useState<IMaterialResponse[]>(MOCK_MATERIAL_LIST);
+  const [summary, setSummary]                 = useState<IMaterialSummaryResponse>({
+    total:         MOCK_MATERIAL_LIST.length,
+    inStock:       MOCK_MATERIAL_LIST.filter((m) => m.stockStatus === "ok").length,
+    low:           MOCK_MATERIAL_LIST.filter((m) => m.stockStatus === "low").length,
+    out:           MOCK_MATERIAL_LIST.filter((m) => m.stockStatus === "out").length,
     categoryCount: new Set(MOCK_MATERIAL_LIST.map((m) => m.categoryName).filter(Boolean)).size,
   });
-  const [dataMaterial, setDataMaterial] = useState<IMaterialResponse | null>(null);
-  const [detailMaterial, setDetailMaterial] = useState<IMaterialResponse | null>(null);
-  const [listIdChecked, setListIdChecked] = useState<number[]>([]);
-  const [showModalAdd, setShowModalAdd] = useState(false);
-  const [showQuickStockIn, setShowQuickStockIn] = useState(false);
+  const [dataMaterial, setDataMaterial]             = useState<IMaterialResponse | null>(null);
+  const [detailMaterial, setDetailMaterial]         = useState<IMaterialResponse | null>(null);
+  const [listIdChecked, setListIdChecked]           = useState<number[]>([]);
+  const [showModalAdd, setShowModalAdd]             = useState(false);
+  const [showQuickStockIn, setShowQuickStockIn]     = useState(false);
   const [quickStockInMaterial, setQuickStockInMaterial] = useState<IMaterialResponse | null>(null);
-  const [showDialog, setShowDialog] = useState(false);
-  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isNoItem, setIsNoItem] = useState(false);
-  const [segmentFilter, setSegmentFilter] = useState<SegmentFilter>("all");
-  const [params, setParams] = useState<IMaterialFilterRequest>({ keyword: "", limit: 10, page: 1 });
+  const [showDialog, setShowDialog]                 = useState(false);
+  const [contentDialog, setContentDialog]           = useState<IContentDialog>(null);
+  const [isLoading, setIsLoading]                   = useState(false);
+  const [isExporting, setIsExporting]               = useState(false);   // ← NEW
+  const [isNoItem, setIsNoItem]                     = useState(false);
+  const [segmentFilter, setSegmentFilter]           = useState<SegmentFilter>("all");
+  const [params, setParams]                         = useState<IMaterialFilterRequest>({
+    keyword: "", limit: 10, page: 1,
+  });
   const [listSaveSearch] = useState<ISaveSearch[]>([
     { key: "all", name: "Nguyên vật liệu", is_active: true },
   ]);
@@ -119,12 +124,14 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
     chooseSizeLimit: (limit) => setParams((prev) => ({ ...prev, limit })),
   });
 
+  // ── Fetch summary ────────────────────────────────────────────
   const fetchSummary = useCallback(() => {
     MaterialService.summary()
       .then((res) => { if (res?.code === 0 && res.result) setSummary(res.result); })
       .catch(() => {});
   }, []);
 
+  // ── Fetch list ────────────────────────────────────────────────
   const getListMaterial = useCallback((p: IMaterialFilterRequest) => {
     abortRef.current?.abort();
     abortRef.current = new AbortController();
@@ -138,37 +145,59 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
           setIsNoItem(!items?.length && !p.keyword);
           setPagination((prev) => ({
             ...prev,
-            page: page ?? p.page,
-            sizeLimit: size ?? p.limit,
+            page:      page  ?? p.page,
+            sizeLimit: size  ?? p.limit,
             totalItem: total ?? 0,
             totalPage: Math.ceil((total ?? 0) / (size ?? p.limit ?? 10)),
           }));
         } else {
-          // Fallback to mock for dev
-          const mock = MOCK_MATERIAL_LIST;
-          setListMaterial(mock);
-          setPagination((prev) => ({ ...prev, totalItem: mock.length, totalPage: 1 }));
+          setListMaterial(MOCK_MATERIAL_LIST);
+          setPagination((prev) => ({ ...prev, totalItem: MOCK_MATERIAL_LIST.length, totalPage: 1 }));
         }
       })
       .catch((err) => {
         if (err?.name !== "AbortError") {
-          const mock = MOCK_MATERIAL_LIST;
-          setListMaterial(mock);
-          setPagination((prev) => ({ ...prev, totalItem: mock.length, totalPage: 1 }));
+          setListMaterial(MOCK_MATERIAL_LIST);
+          setPagination((prev) => ({ ...prev, totalItem: MOCK_MATERIAL_LIST.length, totalPage: 1 }));
         }
       })
       .finally(() => setIsLoading(false));
   }, []);
 
-  useEffect(() => {
-    fetchSummary();
-    getListMaterial(params);
-  }, []);
+  useEffect(() => { fetchSummary(); getListMaterial(params); }, []);
+  useEffect(() => { getListMaterial(params); }, [params]);
 
-  useEffect(() => {
-    getListMaterial(params);
-  }, [params]);
+  // ── Export Excel ──────────────────────────────────────────────
+  const handleExportExcel = useCallback(async () => {
+    if (isExporting) return;
 
+    exportAbortRef.current?.abort();
+    exportAbortRef.current = new AbortController();
+    setIsExporting(true);
+
+    try {
+      await MaterialService.exportExcel(
+        {
+          keyword:    params.keyword,
+          categoryId: params.categoryId,
+          status:     params.status,
+        },
+        exportAbortRef.current.signal
+      );
+      showToast("Xuất Excel thành công!", "success");
+    } catch (e: any) {
+      if (e?.name !== "AbortError") {
+        showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
+      }
+    } finally {
+      setIsExporting(false);
+    }
+  }, [isExporting, params.keyword, params.categoryId, params.status]);
+
+  // Cleanup export abort on unmount
+  useEffect(() => () => { exportAbortRef.current?.abort(); }, []);
+
+  // ── Filtered list ─────────────────────────────────────────────
   const filteredList = useMemo(() => {
     if (segmentFilter === "all") return listMaterial;
     return listMaterial.filter((m) => {
@@ -179,39 +208,49 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
     });
   }, [listMaterial, segmentFilter]);
 
+  // ── Title actions ─────────────────────────────────────────────
   const titleActions: ITitleActions = {
     actions_extra: [
-      { title: "Xuất Excel", callback: () => showToast("Tính năng xuất Excel đang được phát triển", "info") },
+      {
+        title:    isExporting ? "Đang xuất..." : "Xuất Excel",
+        disabled: isExporting,
+        callback: handleExportExcel,
+      },
     ],
     actions: [
       {
-        title: "Thêm nguyên liệu",
-        color: "primary",
+        title:    "Thêm nguyên liệu",
+        color:    "primary",
         callback: () => { setDataMaterial(null); setShowModalAdd(true); },
       },
     ],
   };
 
-  const titles = ["STT", "Mã NVL", "Tên NVL", "Danh mục", "Đơn vị", "Nhà cung cấp",
-    "Đơn giá (VNĐ)", "Tồn kho", "Min / Max", "Mức tồn", "Trạng thái", ""];
-  const dataFormat = ["text-center", "", "", "", "text-center", "", "text-right",
-    "text-center", "text-center", "", "text-center", "text-center"];
+  // ── Table config ──────────────────────────────────────────────
+  const titles = [
+    "STT", "Mã NVL", "Tên NVL", "Danh mục", "Đơn vị",
+    "Nhà cung cấp", "Đơn giá (VNĐ)", "Tồn kho", "Min / Max", "Mức tồn", "Trạng thái", "",
+  ];
+  const dataFormat = [
+    "text-center", "", "", "", "text-center",
+    "", "text-right", "text-center", "text-center", "", "text-center", "text-center",
+  ];
 
   const dataMappingArray = (item: IMaterialResponse, index: number) => {
-    const stt         = getPageOffset(params) + index + 1;
-    const unit        = item.unitName ?? "—";
-    const catVariant  = CATEGORY_BADGE_VARIANT[item.categoryName ?? ""] ?? "secondary";
+    const stt          = getPageOffset(params) + index + 1;
+    const unit         = item.unitName ?? "—";
+    const catVariant   = CATEGORY_BADGE_VARIANT[item.categoryName ?? ""] ?? "secondary";
     const stockCurrent = item.stockCurrent ?? 0;
-    const maxQty      = item.maxQuantity  ?? 0;
-    const minQty      = item.minQuantity  ?? 0;
-    const pct         = maxQty > 0 ? Math.min(100, Math.round((stockCurrent / maxQty) * 100)) : 0;
-    const barColor    = item.stockStatus === "ok" ? "var(--success-color)"
-                      : item.stockStatus === "low" ? "var(--warning-color)" : "var(--error-color)";
-    const stockClass  = item.stockStatus === "ok" ? "sn-ok"
-                      : item.stockStatus === "low" ? "sn-warn" : "sn-low";
-    const statusLabel = item.stockStatus === "ok" ? "Đủ hàng"
-                      : item.stockStatus === "low" ? "Sắp hết" : "Hết hàng";
-    const statusVariant = item.stockStatus === "ok" ? "success"
+    const maxQty       = item.maxQuantity  ?? 0;
+    const minQty       = item.minQuantity  ?? 0;
+    const pct          = maxQty > 0 ? Math.min(100, Math.round((stockCurrent / maxQty) * 100)) : 0;
+    const barColor     = item.stockStatus === "ok"  ? "var(--success-color)"
+                       : item.stockStatus === "low" ? "var(--warning-color)" : "var(--error-color)";
+    const stockClass   = item.stockStatus === "ok"  ? "sn-ok"
+                       : item.stockStatus === "low" ? "sn-warn" : "sn-low";
+    const statusLabel  = item.stockStatus === "ok"  ? "Đủ hàng"
+                       : item.stockStatus === "low" ? "Sắp hết" : "Hết hàng";
+    const statusVariant = item.stockStatus === "ok"  ? "success"
                         : item.stockStatus === "low" ? "warning" : "error";
 
     return [
@@ -227,7 +266,9 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
       </div>,
       <Badge key="cat" text={item.categoryName ?? "—"} variant={catVariant} />,
       unit,
-      <span key="sup" className="mat-cell__supplier">{item.supplierName ?? item.supplier ?? "—"}</span>,
+      <span key="sup" className="mat-cell__supplier">
+        {item.supplierName ?? item.supplier ?? "—"}
+      </span>,
       <span key="price" style={{ fontWeight: 700 }}>
         {item.price != null ? Number(item.price).toLocaleString("vi") : "—"}
       </span>,
@@ -252,24 +293,24 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
     const isChecked = listIdChecked?.length > 0;
     return [
       {
-        title: "Nhập tồn",
-        icon: <Icon name="Download" className={isChecked ? "icon-disabled" : ""} />,
+        title:    "Nhập tồn",
+        icon:     <Icon name="Download" className={isChecked ? "icon-disabled" : ""} />,
         disabled: isChecked,
         callback: () => {
           if (!isChecked) { setQuickStockInMaterial(item); setShowQuickStockIn(true); }
         },
       },
       {
-        title: "Sửa",
-        icon: <Icon name="Edit" className={isChecked ? "icon-disabled" : ""} />,
+        title:    "Sửa",
+        icon:     <Icon name="Edit" className={isChecked ? "icon-disabled" : ""} />,
         disabled: isChecked,
         callback: () => {
           if (!isChecked) { setDataMaterial(item); setShowModalAdd(true); }
         },
       },
       {
-        title: "Xóa",
-        icon: <Icon name="Trash" className={isChecked ? "icon-disabled" : ""} />,
+        title:    "Xóa",
+        icon:     <Icon name="Trash" className={isChecked ? "icon-disabled" : ""} />,
         disabled: isChecked,
         callback: () => { if (!isChecked) showDialogConfirmDelete(item); },
       },
@@ -292,21 +333,23 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
 
   const showDialogConfirmDelete = (item?: IMaterialResponse) => {
     setContentDialog({
-      color: "error",
+      color:     "error",
       className: "dialog-delete",
       isCentered: true,
-      isLoading: true,
-      title: "Xóa nguyên vật liệu",
+      isLoading:  true,
+      title:      "Xóa nguyên vật liệu",
       message: (
         <Fragment>
           Bạn có chắc chắn muốn xóa{" "}
-          {item ? "nguyên vật liệu " : `${listIdChecked?.length ?? 0} nguyên vật liệu đã chọn`}
+          {item
+            ? "nguyên vật liệu "
+            : `${listIdChecked?.length ?? 0} nguyên vật liệu đã chọn`}
           {item ? <strong> {item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
-      cancelText: "Hủy",
-      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
-      defaultText: "Xóa",
+      cancelText:    "Hủy",
+      cancelAction:  () => { setShowDialog(false); setContentDialog(null); },
+      defaultText:   "Xóa",
       defaultAction: () => { if (item?.id) onDelete(item.id); },
     });
     setShowDialog(true);
@@ -316,14 +359,18 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
     { title: "Xóa nguyên vật liệu", callback: () => showDialogConfirmDelete() },
   ];
 
+  // ── Render ────────────────────────────────────────────────────
   return (
     <div className={`page-content page-material-list${isNoItem ? " bg-white" : ""}`}>
+
       {/* ── HEADER ── */}
       <div className="action-navigation">
         <div className="action-backup">
           {onBackProps ? (
             <>
-              <h1 className="title-first" onClick={() => onBackProps(true)}>Nguyên vật liệu</h1>
+              <h1 className="title-first" onClick={() => onBackProps(true)}>
+                Nguyên vật liệu
+              </h1>
               <Icon name="ChevronRight" onClick={() => onBackProps(true)} />
               <h1 className="title-last">Danh sách nguyên vật liệu</h1>
             </>
@@ -339,15 +386,23 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
       {/* ── STAT CARDS ── */}
       <div className="mat-stat-row">
         {[
-          { icon: "📦", val: summary.total,         lbl: "Tổng NVL",   cls: "blue" },
-          { icon: "✅", val: summary.inStock,        lbl: "Đủ hàng",    cls: "green" },
-          { icon: "⚠️", val: summary.low,            lbl: "Sắp hết",    cls: "amber" },
-          { icon: "🗂️", val: summary.categoryCount,  lbl: "Danh mục",   cls: "teal" },
+          { icon: "📦", val: summary.total,        lbl: "Tổng NVL",  cls: "blue"  },
+          { icon: "✅", val: summary.inStock,       lbl: "Đủ hàng",   cls: "green" },
+          { icon: "⚠️", val: summary.low,           lbl: "Sắp hết",   cls: "amber" },
+          { icon: "🗂️", val: summary.categoryCount, lbl: "Danh mục",  cls: "teal"  },
         ].map((card, i) => (
           <div key={i} className="mat-stat-card">
-            <div className={`mat-stat-card__icon mat-stat-card__icon--${card.cls}`}>{card.icon}</div>
+            <div className={`mat-stat-card__icon mat-stat-card__icon--${card.cls}`}>
+              {card.icon}
+            </div>
             <div>
-              <div className={`mat-stat-card__val${card.cls !== "blue" && card.cls !== "teal" ? ` mat-stat-card__val--${card.cls}` : ""}`}>
+              <div
+                className={`mat-stat-card__val${
+                  card.cls !== "blue" && card.cls !== "teal"
+                    ? ` mat-stat-card__val--${card.cls}`
+                    : ""
+                }`}
+              >
                 {card.val}
               </div>
               <div className="mat-stat-card__lbl">{card.lbl}</div>
@@ -369,10 +424,10 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
         <div className="material-list-toolbar">
           <div className="material-list-seg">
             {([
-              { key: "all",      label: "Tất cả",   count: summary.total },
+              { key: "all",      label: "Tất cả",   count: summary.total   },
               { key: "in_stock", label: "Đủ hàng",  count: summary.inStock },
-              { key: "low",      label: "Sắp hết",  count: summary.low },
-              { key: "out",      label: "Hết hàng", count: summary.out },
+              { key: "low",      label: "Sắp hết",  count: summary.low     },
+              { key: "out",      label: "Hết hàng", count: summary.out     },
             ] as { key: SegmentFilter; label: string; count: number }[]).map((tab) => (
               <button
                 key={tab.key}
@@ -384,6 +439,14 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
               </button>
             ))}
           </div>
+
+          {/* ── Xuất Excel inline button (hiện khi đang export) ── */}
+          {isExporting && (
+            <div className="mat-export-indicator">
+              <Loading />
+              <span>Đang xuất Excel...</span>
+            </div>
+          )}
         </div>
 
         <div className="material-list-body">
@@ -412,14 +475,26 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
               <Fragment>
                 {isNoItem ? (
                   <SystemNotification
-                    description={<span>Hiện tại chưa có nguyên vật liệu nào.<br />Hãy thêm mới nguyên vật liệu đầu tiên nhé!</span>}
+                    description={
+                      <span>
+                        Hiện tại chưa có nguyên vật liệu nào.
+                        <br />
+                        Hãy thêm mới nguyên vật liệu đầu tiên nhé!
+                      </span>
+                    }
                     type="no-item"
                     titleButton="Thêm mới nguyên vật liệu"
                     action={() => { setDataMaterial(null); setShowModalAdd(true); }}
                   />
                 ) : (
                   <SystemNotification
-                    description={<span>Không có dữ liệu trùng khớp.<br />Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!</span>}
+                    description={
+                      <span>
+                        Không có dữ liệu trùng khớp.
+                        <br />
+                        Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
+                      </span>
+                    }
                     type="no-result"
                   />
                 )}
