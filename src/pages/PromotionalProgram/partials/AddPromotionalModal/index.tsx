@@ -77,16 +77,6 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
     { name: "discount",      rules: "required|number" },
   ];
 
-  // Nếu là đồng giá thì không cần validate discount — override lại
-  const isFixedPrice = Number((formData?.values as any)?.promotionType) === 7;
-
-  const effectiveValidations: IValidation[] = isFixedPrice
-    ? [
-        { name: "name",       rules: "required" },
-        { name: "fixedPrice", rules: "required|number" },
-      ]
-    : validations;
-
   // Load danh sách SP khi mở modal edit CT đồng giá
   useEffect(() => {
     if (onShow && data?.id && data?.promotionType === 7) {
@@ -102,7 +92,19 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
     }
   }, [onShow, data?.id]);
 
-  // ─── Form fields ───────────────────────────────────────────────────
+  const [formData, setFormData] = useState<IFormData>({ values });
+
+  // isFixedPrice + effectiveValidations phải nằm SAU useState(formData)
+  const isFixedPrice = Number((formData?.values as any)?.promotionType) === 7;
+
+  const effectiveValidations: IValidation[] = isFixedPrice
+    ? [
+        { name: "name",       rules: "required" },
+        { name: "fixedPrice", rules: "required|number" },
+      ]
+    : validations;
+
+  // ─── Form fields — phải nằm sau isFixedPrice ───────────────────────
   const typeOptions = Object.entries(PROMOTION_TYPE_LABELS).map(([k, v]) => ({
     label: v,
     value: k,
@@ -127,8 +129,8 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
     {
       label:         "Thời gian bắt đầu",
       name:          "startTime",
-      type:          "date",          // ← dùng "date" (fieldCustomize hỗ trợ)
-      hasSelectTime: true,            // ← hiện thêm giờ:phút
+      type:          "date",
+      hasSelectTime: true,
       fill:          true,
       required:      true,
     },
@@ -140,23 +142,26 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
       fill:          true,
       required:      true,
     },
-    {
-      label:    "Giá trị giảm",
-      name:     "discount",
-      type:     "number",
-      fill:     true,
-      required: true,
-    },
-    {
-      label:   "Đơn vị giảm",
-      name:    "discountType",
-      type:    "select",
-      fill:    true,
-      options: [
-        { label: "Phần trăm (%)", value: "1" },
-        { label: "VND cố định",   value: "2" },
-      ],
-    },
+    // Ẩn discount khi là đồng giá
+    ...(!isFixedPrice ? [
+      {
+        label:    "Giá trị giảm",
+        name:     "discount",
+        type:     "number" as const,
+        fill:     true,
+        required: true,
+      },
+      {
+        label:   "Đơn vị giảm",
+        name:    "discountType",
+        type:    "select" as const,
+        fill:    true,
+        options: [
+          { label: "Phần trăm (%)", value: "1" },
+          { label: "VND cố định",   value: "2" },
+        ],
+      },
+    ] : []),
     {
       label: "Ngân sách tối đa (VND)",
       name:  "budget",
@@ -188,8 +193,6 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
       required: true,
     }] : []),
   ];
-
-  const [formData, setFormData] = useState<IFormData>({ values });
 
   useEffect(() => {
     setFormData({ values, errors: {} });
