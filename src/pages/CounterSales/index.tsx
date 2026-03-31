@@ -7,7 +7,13 @@ import Topbar from "./components/Topbar";
 import ProductGrid from "./components/ProductGrid";
 import Cart from "./components/Cart";
 import Report from "./components/Report";
-import { CartItem, Customer, PayMethod, TabType } from "./types";
+import { CartItem, Customer, PayMethod, TabType, ShippingInfo } from "./types";
+
+const DEFAULT_SHIPPING_INFO: ShippingInfo = {
+  receiverName: "", receiverPhone: "", receiverAddress: "",
+  receiverProvince: "", shippingFee: 0,
+  shippingFeeBearer: "RECEIVER", codAmount: 0,
+};
 import OrderDetailModal from "./components/modals/OrderDetailModal";
 import PayModal from "./components/modals/PayModal";
 import ReceiptModal from "./components/modals/ReceiptModal";
@@ -138,6 +144,10 @@ const CounterSales: React.FC = () => {
   const [manualDiscount, setManualDiscount] = useState(0);    // ← giảm giá thủ công
   const [orderNote, setOrderNote]           = useState("");    // ← ghi chú đơn hàng
   const [promoDiscount, setPromoDiscount] = useState(0);
+
+  // ── Loại đơn & thông tin giao hàng ────────────────────────────────────────
+  const [orderType, setOrderType] = useState<import("./types").OrderType>("retail");
+  const [shippingInfo, setShippingInfo] = useState<ShippingInfo>(DEFAULT_SHIPPING_INFO);
   const checkPromoRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const [exchangeRate, setExchangeRate] = useState<number>(1000);
   const [pointsToUse, setPointsToUse] = useState<number>(0);
@@ -358,6 +368,30 @@ const CounterSales: React.FC = () => {
           ...(totalDiscount > 0 ? { moneyUsed: totalDiscount } : {}),
         });
         if (paidInvoice.code == 0) {
+          // ── Nếu là đơn ship → tạo shipment sau khi invoice thành công ──────
+          if (orderType === "ship" && shippingInfo.receiverName) {
+            try {
+              await fetch(urlsApi.shipping.create, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  orderId:    invoiceId,
+                  orderCode:  String(invoiceId),
+                  receiverName:    shippingInfo.receiverName,
+                  receiverPhone:   shippingInfo.receiverPhone,
+                  receiverAddress: shippingInfo.receiverAddress,
+                  shippingFee:     shippingInfo.shippingFeeBearer === "RECEIVER" ? shippingInfo.shippingFee : 0,
+                  codAmount:       shippingInfo.codAmount,
+                  noteForShipper:  shippingInfo.noteForShipper ?? "",
+                  shippingFeeBearer: shippingInfo.shippingFeeBearer,
+                  // Tổng tiền hàng để tham chiếu
+                  totalAmount: cartItems.reduce((s, c) => s + c.price * c.qty, 0),
+                }),
+              });
+              // Không block UI nếu tạo shipment lỗi — log lặng
+            } catch { /* shipment tạo sau cũng được */ }
+          }
+
           if (method === "qr") {
             try {
               const qrCodeRes = await QrCodeProService.generate({
@@ -370,7 +404,6 @@ const CounterSales: React.FC = () => {
                 setReceiptModalOpen(true);
                 showToast("Tạo hoá đơn thành công.", "success");
                 setQrCodePro(qrCodeRes.result.qrCode);
-                // Trừ điểm nếu khách dùng điểm thanh toán
                 redeemLoyaltyPoints(invoiceId);
               } else {
                 showToast(qrCodeRes.message || "Có lỗi xảy ra khi tạo QR Code Pro.", "error");
@@ -381,13 +414,11 @@ const CounterSales: React.FC = () => {
           } else {
             setPayModalOpen(false);
             setReceiptModalOpen(true);
-            showToast("Tạo hoá đơn thành công.", "success");
+            showToast(orderType === "ship" ? "Tạo đơn giao hàng thành công." : "Tạo hoá đơn thành công.", "success");
             setQrCodePro(null);
             setMethod("cash");
-            // Trừ điểm nếu khách đã dùng điểm để thanh toán
             redeemLoyaltyPoints(invoiceId);
           }
-          // Refresh badge sau khi tạo đơn thành công
           fetchTabCounts();
         } else {
           showToast(paidInvoice.message || "Có lỗi xảy ra khi xử lý thanh toán.", "error");
@@ -460,6 +491,13 @@ const CounterSales: React.FC = () => {
                 onPay={(invoiceId) => { setInvoiceId(invoiceId); setPayModalOpen(true); }}
                 onSelectCustomer={() => setCustomerModalOpen(true)}
                 customer={customer || undefined}
+                orderType={orderType}
+                onOrderTypeChange={(t) => {
+                  setOrderType(t);
+                  if (t !== "ship") setShippingInfo(DEFAULT_SHIPPING_INFO);
+                }}
+                shippingInfo={shippingInfo}
+                onShippingInfoChange={setShippingInfo}
                 loyaltyWallet={loyaltyWallet}
                 exchangeRate={exchangeRate}
                 pointsToUse={pointsToUse}
@@ -475,9 +513,10 @@ const CounterSales: React.FC = () => {
                 onNoteChange={setOrderNote}
                 onResetVoucher={paymentSuccessCount > 0 ? () => {} : undefined}
                 onSavedDraft={() => {
-                  // Xóa giỏ hàng + refresh badge sau khi lưu tạm
                   setCartItems([]);
                   setCustomer(null);
+                  setShippingInfo(DEFAULT_SHIPPING_INFO);
+                  setOrderType("retail");
                   fetchTabCounts();
                 }}
               />
@@ -530,6 +569,8 @@ const CounterSales: React.FC = () => {
         method={method} setMethod={setMethod}
         couponDiscount={couponDiscount}
         promoDiscount={promoDiscount + manualDiscount}
+        shippingFee={orderType === "ship" ? shippingInfo.shippingFee : 0}
+        shippingFeeBearer={shippingInfo.shippingFeeBearer}
         onClose={() => { setInvoiceId(null); setPayModalOpen(false); }}
         onConfirm={(id) => handlePayConfirm(id)}
         onConfigChange={setActivePayConfig}
@@ -548,6 +589,8 @@ const CounterSales: React.FC = () => {
           setAppliedPromo(null);
           setManualDiscount(0);
           setOrderNote("");
+          setShippingInfo(DEFAULT_SHIPPING_INFO);
+          setOrderType("retail");
           setPaymentSuccessCount(prev => prev + 1);
           // Tự động xóa đơn tạm nếu đơn này được tải từ tab Đơn tạm
           if (activeDraftId) {
@@ -568,6 +611,8 @@ const CounterSales: React.FC = () => {
           setQrCodePro(null); setMethod("cash");
           setManualDiscount(0);
           setOrderNote("");
+          setShippingInfo(DEFAULT_SHIPPING_INFO);
+          setOrderType("retail");
         }}
       />
 

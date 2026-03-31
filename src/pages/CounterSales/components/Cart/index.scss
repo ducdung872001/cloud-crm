@@ -452,3 +452,143 @@
     }
   }
 }
+// ── Ship section (khi chọn loại đơn "Ship") ───────────────────────────────────
+.ship-section {
+  padding: 1rem 1.4rem;
+  background: #f0f9ff;
+  border: 1.5px solid #bae6fd;
+  border-radius: 0.8rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+
+  &__title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0369a1;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  &__label {
+    font-size: 1.1rem;
+    color: #374151;
+    font-weight: 500;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 0.5rem;
+    font-size: 1.3rem;
+    font-family: var(--font-base);
+    background: #fff;
+    color: var(--text);
+    box-sizing: border-box;
+    transition: border-color 0.15s;
+
+    &:focus {
+      outline: none;
+      border-color: #0369a1;
+    }
+
+    &::placeholder { color: #9ca3af; }
+  }
+
+  &__fee-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  &__fee-input {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 0.5rem;
+    font-size: 1.3rem;
+    font-family: var(--font-base);
+    background: #fff;
+    color: var(--text);
+    text-align: right;
+    transition: border-color 0.15s;
+    &:focus { outline: none; border-color: #0369a1; }
+  }
+
+  &__fee-unit {
+    font-size: 1.2rem;
+    color: #6b7280;
+    white-space: nowrap;
+  }
+
+  &__suggest-btn {
+    padding: 0.4rem 0.8rem;
+    background: #0369a1;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+    &:hover { background: #0284c7; }
+    &:disabled { opacity: 0.5; cursor: default; }
+  }
+
+  &__bearer {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  &__bearer-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: #fff;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &.active {
+      border-color: #0369a1;
+      background: #0369a1;
+      color: #fff;
+    }
+  }
+
+  &__cod-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.2rem;
+    color: #374151;
+    cursor: pointer;
+    user-select: none;
+
+    input[type="checkbox"] {
+      width: 1.6rem;
+      height: 1.6rem;
+      cursor: pointer;
+      accent-color: #0369a1;
+    }
+  }
+}
+
+// Phí ship trong dòng tổng tiền
+.sr__v--ship {
+  color: #0369a1;
+  font-weight: 600;
+}
