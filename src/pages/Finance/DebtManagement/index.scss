@@ -368,3 +368,150 @@
   &:focus { border-color: var(--primary-color, #015aa4); }
   &::placeholder { color: #9bb5c8; }
 }
+
+// ─── Share Sheet ──────────────────────────────────────────────────────────────
+
+.share-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1100;          // trên QRModal (1000)
+  display: flex;
+  align-items: flex-end;  // slide up từ dưới (mobile feel)
+  justify-content: center;
+
+  @media (min-width: 600px) {
+    align-items: center;  // desktop: canh giữa
+  }
+}
+
+.share-sheet {
+  background: #fff;
+  border-radius: 1.6rem 1.6rem 0 0;
+  padding: 2rem 2rem 3rem;
+  width: 100%;
+  max-width: 48rem;
+  box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.18);
+  animation: shareSheetSlideUp 0.22s ease-out;
+
+  @media (min-width: 600px) {
+    border-radius: 1.6rem;
+    padding: 2rem;
+  }
+
+  @keyframes shareSheetSlideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.6rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #133042;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.6rem;
+    color: #8a9eb0;
+    padding: 0.2rem 0.6rem;
+    border-radius: 50%;
+    line-height: 1;
+
+    &:hover { background: #f0f4f7; }
+  }
+
+  &__preview {
+    text-align: center;
+    margin-bottom: 1.6rem;
+    padding-bottom: 1.6rem;
+    border-bottom: 1px solid #e4ebf1;
+  }
+
+  &__qr-img {
+    width: 12rem;
+    height: 12rem;
+    border-radius: 0.8rem;
+    border: 1px solid #e4ebf1;
+    margin-bottom: 0.8rem;
+  }
+
+  &__amount {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #2e7d32;
+    line-height: 1.2;
+  }
+
+  &__name {
+    font-size: 1.25rem;
+    color: #5c7282;
+    margin-top: 0.2rem;
+  }
+
+  &__hint {
+    font-size: 1.25rem;
+    color: #5c7282;
+    margin: 0 0 1.2rem;
+  }
+
+  &__channels {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.6rem;
+
+    @media (max-width: 400px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  &__channel-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 0.4rem;
+    border: 1.5px solid #e4ebf1;
+    border-radius: 1rem;
+    background: #fff;
+    cursor: pointer;
+    font-family: var(--font-base);
+    transition: border-color 0.15s, background 0.15s;
+
+    &:hover {
+      border-color: var(--ch-color, #015aa4);
+      background: #f8fbfd;
+    }
+  }
+
+  &__channel-icon {
+    font-size: 2.4rem;
+    line-height: 1;
+  }
+
+  &__channel-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #133042;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  &__tip {
+    font-size: 1.2rem;
+    color: #8a9eb0;
+    margin: 0;
+    text-align: center;
+    line-height: 1.6;
+    background: #f8fbfd;
+    padding: 1rem;
+    border-radius: 0.8rem;
+  }
+}

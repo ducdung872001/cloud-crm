@@ -65,39 +65,168 @@ function fmtVndInput(n: number): string {
 
 // ─── Share QR ─────────────────────────────────────────────────────────────────
 
-async function shareQrCanvas(
-  canvasEl: HTMLCanvasElement | null,
-  debtName: string,
-  amount: number
-) {
-  if (!canvasEl) { showToast("Không lấy được ảnh QR", "error"); return; }
-  const dataUrl = canvasEl.toDataURL("image/png");
+/** Lấy dataUrl từ canvas QR */
+function getQrDataUrl(canvasEl: HTMLCanvasElement | null): string | null {
+  if (!canvasEl) return null;
+  return canvasEl.toDataURL("image/png");
+}
 
-  // Web Share API — hoạt động trên mobile Chrome/Safari + Zalo in-app browser
-  if (navigator.share) {
+/** Download ảnh QR về máy */
+function downloadQr(dataUrl: string, name: string) {
+  const a = document.createElement("a");
+  a.href = dataUrl;
+  a.download = `qr-thu-no-${name}.png`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// ─── ShareSheet ───────────────────────────────────────────────────────────────
+
+interface ShareSheetProps {
+  dataUrl: string;
+  debtName: string;
+  amount: number;
+  onClose: () => void;
+}
+
+function ShareSheet({ dataUrl, debtName, amount, onClose }: ShareSheetProps) {
+  const text = encodeURIComponent(
+    `Vui lòng quét mã QR để thanh toán ${amount.toLocaleString("vi")} VND cho ${debtName}`
+  );
+
+  const channels = [
+    {
+      id: "zalo",
+      label: "Zalo",
+      icon: "💬",
+      color: "#0068ff",
+      // Zalo deep link share: mở app Zalo với message, user tự chọn contact
+      onClick: () => {
+        // Thử mở Zalo share URL (hoạt động trong Zalo browser)
+        const zaloUrl = `https://zalo.me/share?text=${text}`;
+        window.open(zaloUrl, "_blank", "noopener");
+      },
+    },
+    {
+      id: "messenger",
+      label: "Messenger",
+      icon: "📨",
+      color: "#0084ff",
+      onClick: () => {
+        // Facebook Messenger share dialog (cần app_id nếu trên web)
+        const fbUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(window.location.href)}&app_id=&redirect_uri=${encodeURIComponent(window.location.href)}`;
+        window.open(`fb-messenger://share?text=${text}`, "_blank");
+        // Fallback nếu không có app
+        setTimeout(() => {
+          window.open(`https://m.me/`, "_blank", "noopener");
+        }, 1500);
+      },
+    },
+    {
+      id: "facebook",
+      label: "Facebook",
+      icon: "📘",
+      color: "#1877f2",
+      onClick: () => {
+        window.open(
+          `https://www.facebook.com/sharer/sharer.php?quote=${text}`,
+          "_blank",
+          "width=600,height=400,noopener"
+        );
+      },
+    },
+    {
+      id: "copy",
+      label: "Sao chép link",
+      icon: "🔗",
+      color: "#5c7282",
+      onClick: async () => {
+        try {
+          await navigator.clipboard.writeText(
+            `QR Thu nợ - ${debtName}: ${amount.toLocaleString("vi")} VND
+(Ảnh QR đã được tải về máy)`
+          );
+          showToast("Đã sao chép nội dung", "success");
+        } catch {
+          showToast("Trình duyệt không hỗ trợ copy", "error");
+        }
+      },
+    },
+    {
+      id: "download",
+      label: "Tải ảnh QR",
+      icon: "⬇️",
+      color: "#133042",
+      onClick: () => {
+        downloadQr(dataUrl, debtName);
+        showToast("Đã tải ảnh QR — gửi cho khách qua Zalo hoặc Messenger", "success");
+      },
+    },
+  ];
+
+  // Native share nếu available (mobile)
+  async function handleNativeShare() {
+    if (!navigator.share) return false;
     try {
       const blob = await (await fetch(dataUrl)).blob();
       const file = new File([blob], "qr-thu-no.png", { type: "image/png" });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           title: `QR Thu nợ — ${debtName}`,
           text: `Vui lòng quét mã QR để thanh toán ${amount.toLocaleString("vi")} VND`,
           files: [file],
         });
-        return;
+        return true;
       }
     } catch (err: any) {
-      if (err?.name === "AbortError") return; // user huỷ → không cần báo lỗi
+      if (err?.name === "AbortError") return true;
     }
+    return false;
   }
-  // Fallback: download ảnh về máy
-  const a = document.createElement("a");
-  a.href = dataUrl;
-  a.download = `qr-thu-no-${debtName}.png`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  showToast("Đã tải ảnh QR về máy. Gửi cho khách qua Zalo/Messenger.", "success");
+
+  return (
+    <div
+      className="share-sheet-overlay"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="share-sheet">
+        <div className="share-sheet__header">
+          <span>Chia sẻ mã QR thu nợ</span>
+          <button type="button" onClick={onClose} className="share-sheet__close">✕</button>
+        </div>
+
+        {/* Preview ảnh QR */}
+        <div className="share-sheet__preview">
+          <img src={dataUrl} alt="QR thu nợ" className="share-sheet__qr-img" />
+          <div className="share-sheet__amount">{amount.toLocaleString("vi")} VND</div>
+          <div className="share-sheet__name">{debtName}</div>
+        </div>
+
+        <p className="share-sheet__hint">Chọn kênh để chia sẻ cho khách hàng:</p>
+
+        {/* Channel buttons */}
+        <div className="share-sheet__channels">
+          {channels.map((ch) => (
+            <button
+              key={ch.id}
+              type="button"
+              className="share-sheet__channel-btn"
+              onClick={() => { ch.onClick(); }}
+              style={{ "--ch-color": ch.color } as React.CSSProperties}
+            >
+              <span className="share-sheet__channel-icon">{ch.icon}</span>
+              <span className="share-sheet__channel-label">{ch.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <p className="share-sheet__tip">
+          💡 Gợi ý: Tải ảnh QR xuống → mở Zalo → gửi ảnh cho khách
+        </p>
+      </div>
+    </div>
+  );
 }
 
 // ─── PayModal — Thu nợ (chọn quỹ + số tiền) ──────────────────────────────────
@@ -267,12 +396,13 @@ interface QRModalProps {
 }
 
 function QRModal({ debt, funds, onClose, onPaid }: QRModalProps) {
-  const [qrCode, setQrCode]           = useState<string | null>(null);
-  const [qrLoading, setQrLoading]     = useState(true);
-  const [qrError, setQrError]         = useState(false);
-  const [sharing, setSharing]         = useState(false);
-  const [showPayModal, setShowPayModal] = useState(false);
-  const canvasRef                     = useRef<HTMLCanvasElement | null>(null);
+  const [qrCode, setQrCode]             = useState<string | null>(null);
+  const [qrLoading, setQrLoading]       = useState(true);
+  const [qrError, setQrError]           = useState(false);
+  const [showPayModal, setShowPayModal]  = useState(false);
+  const [showShareSheet, setShowShareSheet] = useState(false);
+  const [qrDataUrl, setQrDataUrl]       = useState<string | null>(null);
+  const canvasRef                       = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -293,22 +423,28 @@ function QRModal({ debt, funds, onClose, onPaid }: QRModalProps) {
     return () => { cancelled = true; };
   }, [debt.id, debt.amount]);
 
-  // Lấy canvas element thực sau khi QRCodeCanvas render
+  // Lấy canvas element và extract dataUrl ngay sau khi render
   const handleQrRef = useCallback((node: any) => {
-    if (node) canvasRef.current = node?.canvas ?? node;
+    const el: HTMLCanvasElement | null = node?.canvas ?? node ?? null;
+    if (el) {
+      canvasRef.current = el;
+      // Lấy dataUrl ngay để dùng cho ShareSheet
+      try { setQrDataUrl(el.toDataURL("image/png")); } catch {}
+    }
   }, []);
 
-  async function handleShare() {
-    setSharing(true);
-    try {
-      // Tìm canvas trong DOM nếu ref chưa capture được
-      const canvas =
+  function handleShare() {
+    // Thử lấy dataUrl từ canvas (fallback DOM query)
+    let url = qrDataUrl;
+    if (!url) {
+      const el =
         canvasRef.current ??
         (document.querySelector(".debt-qr-canvas canvas") as HTMLCanvasElement | null);
-      await shareQrCanvas(canvas, debt.name, debt.amount);
-    } finally {
-      setSharing(false);
+      url = getQrDataUrl(el);
+      if (url) setQrDataUrl(url);
     }
+    if (!url) { showToast("Không lấy được ảnh QR", "error"); return; }
+    setShowShareSheet(true);
   }
 
   if (showPayModal) {
@@ -388,9 +524,9 @@ function QRModal({ debt, funds, onClose, onPaid }: QRModalProps) {
             type="button"
             className="finance-action-btn finance-action-btn--primary"
             onClick={handleShare}
-            disabled={sharing || qrLoading || qrError}
+            disabled={qrLoading || qrError}
           >
-            {sharing ? "Đang chia sẻ..." : "📤 Chia sẻ mã QR"}
+            📤 Chia sẻ mã QR
           </button>
           <button
             type="button"
@@ -401,6 +537,16 @@ function QRModal({ debt, funds, onClose, onPaid }: QRModalProps) {
           </button>
         </div>
       </div>
+
+      {/* Share sheet — hiện khi bấm "Chia sẻ mã QR" trên desktop */}
+      {showShareSheet && qrDataUrl && (
+        <ShareSheet
+          dataUrl={qrDataUrl}
+          debtName={debt.name}
+          amount={debt.amount}
+          onClose={() => setShowShareSheet(false)}
+        />
+      )}
     </div>
   );
 }
