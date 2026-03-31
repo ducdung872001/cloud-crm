@@ -362,10 +362,10 @@ const CounterSales: React.FC = () => {
           unitName: item.unitName,
           ...(warehouseId ? { inventoryId: warehouseId } : {}),
         }));
-        const totalDiscount = promoDiscount + moneyFromPoints;
+        const totalDiscount = couponDiscount + promoDiscount + moneyFromPoints;
         const paidInvoice = await BoughtProductService.insert(body, {
           invoiceId,
-          ...(totalDiscount > 0 ? { moneyUsed: totalDiscount } : {}),
+          ...(moneyFromPoints > 0 ? { loyaltyDiscount: moneyFromPoints } : {}),
         });
         if (paidInvoice.code == 0) {
           // ── Nếu là đơn ship → tạo shipment sau khi invoice thành công ──────
@@ -397,7 +397,7 @@ const CounterSales: React.FC = () => {
               const qrCodeRes = await QrCodeProService.generate({
                 content: "DON HANG " + invoiceId,
                 orderId: invoiceId,
-                amount: cartItems.reduce((s, c) => s + c.price * c.qty, 0) - couponDiscount - promoDiscount - manualDiscount,
+                amount: cartItems.reduce((s, c) => s + c.price * c.qty, 0) - couponDiscount - promoDiscount - manualDiscount - moneyFromPoints,
               });
               if (qrCodeRes.code === 0 && qrCodeRes?.result?.qrCode) {
                 setPayModalOpen(false);
@@ -569,6 +569,7 @@ const CounterSales: React.FC = () => {
         method={method} setMethod={setMethod}
         couponDiscount={couponDiscount}
         promoDiscount={promoDiscount + manualDiscount}
+        loyaltyDiscount={moneyFromPoints}
         shippingFee={orderType === "ship" ? shippingInfo.shippingFee : 0}
         shippingFeeBearer={shippingInfo.shippingFeeBearer}
         onClose={() => { setInvoiceId(null); setPayModalOpen(false); }}
