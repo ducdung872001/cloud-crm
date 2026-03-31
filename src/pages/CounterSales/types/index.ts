@@ -18,7 +18,7 @@ export interface Product {
   avatar?: string;
   unitName?: string;
   name: string;
-  s;
+  s: any;
   priceLabel: string;
   price: number;
   stock: number;
@@ -49,6 +49,18 @@ export interface Order {
   total: number;
   cancellationReason?: string;
   note?: string;
+}
+
+/** Thông tin giao hàng kèm phí ship — dùng khi orderType === "ship" */
+export interface ShippingInfo {
+  receiverName: string;
+  receiverPhone: string;
+  receiverAddress: string;
+  receiverProvince: string;   // Tên tỉnh — dùng để tra cứu phí ship
+  shippingFee: number;        // Phí ship thu khách (VND, có thể sửa tay)
+  shippingFeeBearer: "RECEIVER" | "SENDER";
+  codAmount: number;          // Tiền thu hộ (COD), 0 = không COD
+  noteForShipper?: string;
 }
 
 export type TabType = "pos" | "draft" | "orders" | "report";

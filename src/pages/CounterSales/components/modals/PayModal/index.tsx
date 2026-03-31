@@ -46,6 +46,10 @@ interface PayModalProps {
   setMethod:       (method: PayMethod) => void;
   couponDiscount?: number;
   promoDiscount?:  number;
+  /** Phí ship thu khách (chỉ có khi orderType === "ship") */
+  shippingFee?:    number;
+  /** Ai trả phí ship — nếu SENDER thì không tính vào tổng khách trả */
+  shippingFeeBearer?: "RECEIVER" | "SENDER";
   /** Truyền activeConfig ra ngoài để CounterSales/index.tsx dùng khi generate QR */
   onConfigChange?: (cfg: IStorePaymentConfigResponse | null) => void;
 }
@@ -53,6 +57,7 @@ interface PayModalProps {
 export default function PayModal({
   open, cartItems, onClose, onConfirm, invoiceId,
   method, setMethod, couponDiscount = 0, promoDiscount = 0,
+  shippingFee = 0, shippingFeeBearer = "RECEIVER",
   onConfigChange,
 }: PayModalProps) {
   const [customerPaid, setCustomerPaid]     = useState(0);
@@ -85,10 +90,11 @@ export default function PayModal({
 
   useEffect(() => { onConfigChange?.(activeConfig); }, [activeConfig]);
 
-  const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
-  const discount = couponDiscount + promoDiscount;
-  const total    = subtotal - discount;
-  const change   = Math.max(0, customerPaid - total);
+  const subtotal    = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
+  const discount    = couponDiscount + promoDiscount;
+  const shipCharge  = shippingFeeBearer === "RECEIVER" ? shippingFee : 0;
+  const total       = subtotal - discount + shipCharge;
+  const change      = Math.max(0, customerPaid - total);
   const fmt      = (n: number) => n.toLocaleString("vi") + " ₫";
 
   // ── Khi mở modal ─────────────────────────────────────────────────────────
@@ -294,6 +300,14 @@ export default function PayModal({
             <div className="pay-modal__summary-row">
               <span>Giảm giá</span>
               <span className="pay-modal__discount">−{fmt(discount)}</span>
+            </div>
+          )}
+          {shippingFee > 0 && (
+            <div className="pay-modal__summary-row">
+              <span>Phí vận chuyển{shippingFeeBearer === "SENDER" ? " (cửa hàng trả)" : ""}</span>
+              <span style={{ color: shippingFeeBearer === "SENDER" ? "#6b7280" : "#0369a1", fontWeight: 600 }}>
+                {shippingFeeBearer === "SENDER" ? "Miễn phí" : `+${fmt(shippingFee)}`}
+              </span>
             </div>
           )}
           <div className="pay-modal__summary-row pay-modal__summary-row--total">
