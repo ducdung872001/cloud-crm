@@ -435,6 +435,8 @@ export const urlsApi = {
     historyUseCard: prefixSales + "/invoice/using/card",
     // lấy mã hoá đơn
     invoiceCode: prefixSales + "/invoice/code",
+    // Gửi biên lai qua email
+    sendEmail: prefixSales + "/invoice/sendEmail",
     salesReport: {
       posSummary: prefixSales + "/report/pos-summary",
       summary: prefixSales + "/report/summary",
