@@ -2127,6 +2127,14 @@ export const urlsApi = {
     bomUpdateStatus: prefixInventory + "/material/bom/update/status",
     bomDelete: prefixInventory + "/material/bom/delete",
     export: prefixInventory + "/material/export",
+    // ── Lệnh sản xuất ────────────────────────────────────────────
+    productionList:    prefixInventory + "/material/production/list",
+    productionSummary: prefixInventory + "/material/production/summary",
+    productionGet:     prefixInventory + "/material/production/get",
+    productionCreate:  prefixInventory + "/material/production/create",
+    productionStart:   prefixInventory + "/material/production/start",
+    productionConfirm: prefixInventory + "/material/production/confirm",
+    productionCancel:  prefixInventory + "/material/production/cancel",
   },
   businessCategory: {
     list: prefixApplication + "/businessCategory/list",
