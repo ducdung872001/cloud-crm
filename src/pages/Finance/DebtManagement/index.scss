@@ -27,6 +27,12 @@
     border-bottom: 2px solid #e4ebf1;
   }
 
+  // Số nợ (cột 3) → căn phải, Hạn thanh toán (cột 4) → căn giữa
+  th:nth-child(3) { text-align: right; }
+  th:nth-child(4) { text-align: center; }
+  td:nth-child(3) { text-align: right; }
+  td:nth-child(4) { text-align: center; }
+
   td {
     padding: 1.1rem 1.2rem;
     border-bottom: 1px solid rgba(15, 23, 42, 0.05);
@@ -60,11 +66,13 @@
   font-weight: 600;
   color: #133042;
   white-space: nowrap;
+  text-align: right;
 }
 
 .debt-due {
   color: #5c7282;
   white-space: nowrap;
+  text-align: center;
 }
 
 // ─── Days remaining label ─────────────────────────────────────────────────────
