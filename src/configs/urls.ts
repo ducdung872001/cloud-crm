@@ -484,6 +484,18 @@ export const urlsApi = {
     districts: prefixIntegration + "/address/districts",
     provinces: prefixIntegration + "/address/provinces",
   },
+
+  // --- Quản lý đơn vị vận chuyển (Shipping Partner Setup) ---
+  shippingPartner: {
+    // Danh sách hãng VC + stats hôm nay — từ logistics service
+    carrierList: prefixLogistics + "/carrier/list",
+    // Trạng thái kết nối (isConnected, apiKeyMasked) — từ integration service
+    carrierConfigs: prefixIntegration + "/carrier/configs",
+    // Lưu API key/token kết nối hãng VC
+    connect: prefixIntegration + "/carrier/connect",
+    // Ngắt kết nối hãng VC
+    disconnect: prefixIntegration + "/carrier/disconnect",
+  },
   boughtService: {
     addToInvoice: prefixAdmin + "/boughtService/update",
     delete: prefixAdmin + "/boughtService/delete",
