@@ -231,6 +231,15 @@ export const urlsApi = {
     customerAssign: prefixAdmin + "/customer/assign",
   },
 
+  careScenario: {
+    list: prefixBiz + "/market/careScenario/list",
+    stats: prefixBiz + "/market/careScenario/stats",
+    get: prefixBiz + "/market/careScenario/get",
+    update: prefixBiz + "/market/careScenario/update",
+    toggleActive: prefixBiz + "/market/careScenario/toggle-active",
+    delete: prefixBiz + "/market/careScenario/delete",
+  },
+
   // GHD api chống chế =))))))))))))
   payroll: {
     export: prefixAdmin + "/payroll/export",
@@ -2128,13 +2137,13 @@ export const urlsApi = {
     bomDelete: prefixInventory + "/material/bom/delete",
     export: prefixInventory + "/material/export",
     // ── Lệnh sản xuất ────────────────────────────────────────────
-    productionList:    prefixInventory + "/material/production/list",
+    productionList: prefixInventory + "/material/production/list",
     productionSummary: prefixInventory + "/material/production/summary",
-    productionGet:     prefixInventory + "/material/production/get",
-    productionCreate:  prefixInventory + "/material/production/create",
-    productionStart:   prefixInventory + "/material/production/start",
+    productionGet: prefixInventory + "/material/production/get",
+    productionCreate: prefixInventory + "/material/production/create",
+    productionStart: prefixInventory + "/material/production/start",
     productionConfirm: prefixInventory + "/material/production/confirm",
-    productionCancel:  prefixInventory + "/material/production/cancel",
+    productionCancel: prefixInventory + "/material/production/cancel",
   },
   businessCategory: {
     list: prefixApplication + "/businessCategory/list",
@@ -2452,10 +2461,10 @@ export const urlsApi = {
     share: prefixMarket + "/promotion/share",
   },
   fixedPricePromotion: {
-    getProducts:    prefixMarket + "/fixedPrice/products",
-    saveProducts:   prefixMarket + "/fixedPrice/products/save",
-    activeEntries:  prefixMarket + "/fixedPrice/active-entries",
-    deleteProduct:  prefixMarket + "/fixedPrice/product/delete",
+    getProducts: prefixMarket + "/fixedPrice/products",
+    saveProducts: prefixMarket + "/fixedPrice/products/save",
+    activeEntries: prefixMarket + "/fixedPrice/active-entries",
+    deleteProduct: prefixMarket + "/fixedPrice/product/delete",
   },
   couponProgram: {
     list: prefixMarket + "/coupon/list",
