@@ -1,9 +1,9 @@
 import React, { Fragment, useState, useMemo, useEffect, useRef, useCallback } from "react";
 import Icon from "components/icon";
+import Button from "components/button/button";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
-import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import Badge from "components/badge/badge";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
@@ -12,7 +12,6 @@ import { IAction, ISaveSearch } from "model/OtherModel";
 import { showToast } from "utils/common";
 import { IBomResponse, IBomSummaryResponse } from "@/model/material/BomModel";
 import { BomService } from "@/services/MaterialService";
-import { MOCK_BOM_LIST } from "@/assets/mock/Material";
 import AddBomModal from "./AddBomModal";
 import "./MaterialBomPage.scss";
 
@@ -126,7 +125,7 @@ export default function MaterialBomPage({ onBackProps }: Props) {
   document.title = "Công thức (BOM)";
 
   const abortRef = useRef<AbortController | null>(null);
-  const [list, setList]             = useState<IBomResponse[]>(MOCK_BOM_LIST);
+  const [list, setList]             = useState<IBomResponse[]>([]);
   const [detailBom, setDetailBom]   = useState<IBomResponse | null>(null);
   const [editBom, setEditBom]       = useState<IBomResponse | null>(null);
   const [showAdd, setShowAdd]       = useState(false);
@@ -167,10 +166,10 @@ export default function MaterialBomPage({ onBackProps }: Props) {
             totalItem: total ?? 0, totalPage: Math.ceil((total ?? 0) / (size ?? p.limit)),
           }));
         } else {
-          setList(MOCK_BOM_LIST);
+          setList([]);
         }
       })
-      .catch((err) => { if (err?.name !== "AbortError") setList(MOCK_BOM_LIST); })
+      .catch((err) => { if (err?.name !== "AbortError") setList([]); })
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -201,14 +200,6 @@ export default function MaterialBomPage({ onBackProps }: Props) {
       },
     });
     setShowDialog(true);
-  };
-
-  const titleActions: ITitleActions = {
-    actions: [{
-      title: "Thêm công thức",
-      color: "primary",
-      callback: () => { setEditBom(null); setShowAdd(true); },
-    }],
   };
 
   const titles = ["STT", "Mã CT", "Tên thành phẩm", "Số NVL", "Sản lượng / mẻ", "Phiên bản", "Trạng thái", ""];
@@ -280,7 +271,10 @@ export default function MaterialBomPage({ onBackProps }: Props) {
             <h1 className="title-last">Công thức (BOM)</h1>
           )}
         </div>
-        <TitleAction title="" titleActions={titleActions} />
+        <Button type="button" color="primary"
+          onClick={() => { setEditBom(null); setShowAdd(true); }}>
+          Thêm công thức
+        </Button>
       </div>
 
       {/* STAT CARDS */}

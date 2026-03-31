@@ -208,7 +208,10 @@ export default function CreateImportModal({ isOpen, onClose, onSuccess }: Props)
               <div className="cim-field">
                 <label className="cim-label">Thêm nguyên vật liệu</label>
                 <div className="cim-mat-search-wrap">
-                  <Icon name="Search" className="cim-mat-search-icon" />
+                  <svg className="cim-mat-search-icon" width="16" height="16" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
                   <input
                     type="text" className="cim-mat-search-input"
                     placeholder="Tìm tên hoặc mã NVL..."
@@ -303,9 +306,13 @@ export default function CreateImportModal({ isOpen, onClose, onSuccess }: Props)
 
               {lines.length === 0 && (
                 <div className="cim-empty-lines">
-                  <Icon name="Package" />
-                  <span>Chưa có nguyên vật liệu nào. Tìm kiếm và thêm ở trên.</span>
-                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+                <span>Chưa có nguyên vật liệu nào. Tìm kiếm và thêm ở trên.</span>
+              </div>
               )}
             </div>
           </div>

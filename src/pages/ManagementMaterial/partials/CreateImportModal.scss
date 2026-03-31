@@ -47,6 +47,16 @@
   transform: translateY(-50%);
   color: var(--extra-color-50);
   pointer-events: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: flex;
+  align-items: center;
+
+  svg {
+    width: 1.6rem !important;
+    height: 1.6rem !important;
+    flex-shrink: 0;
+  }
 }
 
 .cim-mat-search-input {
@@ -180,4 +190,10 @@
   color: var(--extra-color-50);
   font-size: 1.3rem;
   margin-top: .8rem;
+
+  svg {
+    width: 2rem !important;
+    height: 2rem !important;
+    flex-shrink: 0;
+  }
 }
