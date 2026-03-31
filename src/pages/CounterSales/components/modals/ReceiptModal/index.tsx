@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { IActionModal } from "model/OtherModel";
 import { CartItem } from "../../../types";
@@ -104,7 +104,7 @@ export default function ReceiptModal({
   // Backend dùng invoice.getId() làm WHERE → id PHẢI là invoiceId từ draft
   // Tất cả field phải đầy đủ để InvoiceRepository.createInvoice() UPDATE đúng
   // Sau đó publishSaleInventoryEvent() kiểm tra status=1 + invoiceType=IV1 → bắn Kafka
-  const handleConfirmPay = async () => {
+  const handleConfirmPay = useCallback(async () => {
     // Guard: phải có invoiceId hợp lệ từ bước tạo nháp
     const realInvoiceId = invoiceDraft?.id ?? invoiceId;
     if (!realInvoiceId || Number(realInvoiceId) <= 0) {
@@ -157,7 +157,9 @@ export default function ReceiptModal({
         showToast(res.message || "Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại sau.", "error");
       }
     } catch {}
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invoiceDraft, invoiceId, effectivePaid, effectiveDebt, total, totalDiscount,
+      customerId, warehouseId, customerName]);
 
   const handleClose = () => {
     if (isPaymentProcessing) onPaymentSuccess?.();
@@ -300,7 +302,7 @@ ${html}
         ] : []),
       ],
     },
-  }), [isPaymentProcessing, showEmail, paperSize, cartItems]);
+  }), [isPaymentProcessing, showEmail, paperSize, cartItems, handleConfirmPay]);
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -338,54 +340,68 @@ ${html}
 
           {/* Items */}
           <div className="receipt__table">
-            <div className="receipt__row receipt__row--header">
-              <span className="receipt__col-name">Sản phẩm</span>
-              <span className="receipt__col-qty">SL</span>
-              <span className="receipt__col-total">Thành tiền</span>
+            <div className="receipt__row receipt__row--header"
+              style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
+                       fontWeight:700, borderBottom:"1px solid #ddd", paddingBottom:"6px", marginBottom:"2px" }}>
+              <span className="receipt__col-name" style={{ flex:1 }}>Sản phẩm</span>
+              <span className="receipt__col-qty" style={{ width:"2.8rem", textAlign:"center" }}>SL</span>
+              <span className="receipt__col-total" style={{ width:"8rem", textAlign:"right" }}>Thành tiền</span>
             </div>
             {cartItems.map((item) => (
-              <div key={item.id} className="receipt__row">
-                <span className="receipt__col-name">{item.name}</span>
-                <span className="receipt__col-qty">{item.qty}</span>
-                <span className="receipt__col-total">{fmt(item.price * item.qty)}</span>
+              <div key={item.id} className="receipt__row"
+                style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"5px 0" }}>
+                <span className="receipt__col-name" style={{ flex:1 }}>{item.name}</span>
+                <span className="receipt__col-qty" style={{ width:"2.8rem", textAlign:"center" }}>{item.qty}</span>
+                <span className="receipt__col-total" style={{ width:"8rem", textAlign:"right", fontWeight:600 }}>{fmt(item.price * item.qty)}</span>
               </div>
             ))}
           </div>
 
           {/* Totals */}
-          <div className="receipt__totals">
-            <div className="receipt__totals-row">
-              <span>Tạm tính</span>
-              <span>{fmt(subtotal)}</span>
+          <div className="receipt__totals" style={{ borderTop:"1px solid #ddd", paddingTop:"0.8rem", marginBottom:"1rem" }}>
+            <div className="receipt__totals-row"
+              style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+              <span style={{ color:"var(--muted)" }}>Tạm tính</span>
+              <span style={{ fontWeight:700 }}>{fmt(subtotal)}</span>
             </div>
-            <div className="receipt__totals-row">
-              <span>Giảm giá</span>
-              <span className="receipt__discount">{totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "−0 đ"}</span>
+            <div className="receipt__totals-row"
+              style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+              <span style={{ color:"var(--muted)" }}>Giảm giá</span>
+              <span className="receipt__discount" style={{ fontWeight:700, color:"var(--red,#e53e3e)" }}>{totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "−0 đ"}</span>
             </div>
-            <div className="receipt__totals-row receipt__totals-row--grand">
+            <div className="receipt__totals-row receipt__totals-row--grand"
+              style={{ display:"flex", justifyContent:"space-between", padding:"8px 0",
+                       fontSize:"1.5rem", fontWeight:900,
+                       borderTop:"2px solid var(--ink,#111)", borderBottom:"2px solid var(--ink,#111)",
+                       margin:"4px 0" }}>
               <span>TỔNG CỘNG</span>
-              <span className="receipt__grand-val">{fmt(total)}</span>
+              <span className="receipt__grand-val" style={{ color:"var(--lime-d,#3a7c11)" }}>{fmt(total)}</span>
             </div>
             {method === "cash" && (
               <>
-                <div className="receipt__totals-row">
-                  <span>Tiền khách đưa</span>
-                  <span>{fmt(effectivePaid)}</span>
+                <div className="receipt__totals-row"
+                  style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+                  <span style={{ color:"var(--muted)" }}>Tiền khách đưa</span>
+                  <span style={{ fontWeight:700 }}>{fmt(effectivePaid)}</span>
                 </div>
-                <div className="receipt__totals-row">
-                  <span>Tiền thối</span>
-                  <span className="receipt__change">{fmt(Math.max(0, effectivePaid - total))}</span>
+                <div className="receipt__totals-row"
+                  style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+                  <span style={{ color:"var(--muted)" }}>Tiền thối</span>
+                  <span className="receipt__change" style={{ fontWeight:800, color:"var(--blue,#3182ce)" }}>{fmt(Math.max(0, effectivePaid - total))}</span>
                 </div>
                 {effectiveDebt > 0 && (
-                  <div className="receipt__totals-row" style={{ color: "#c2410c", fontWeight: 700 }}>
+                  <div className="receipt__totals-row"
+                    style={{ display:"flex", justifyContent:"space-between", padding:"3px 0",
+                             fontSize:"1.3rem", color:"#c2410c", fontWeight:700 }}>
                     <span>⚠️ Còn nợ</span>
                     <span>{fmt(effectiveDebt)}</span>
                   </div>
                 )}
               </>
             )}
-            <div className="receipt__totals-row">
-              <span>Thanh toán</span>
+            <div className="receipt__totals-row"
+              style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+              <span style={{ color:"var(--muted)" }}>Thanh toán</span>
               <span className="receipt__pay-badge">
                 {PAY_METHODS.find((m) => m.id === method)?.icon}{" "}
                 {PAY_METHODS.find((m) => m.id === method)?.label}

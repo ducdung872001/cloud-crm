@@ -559,6 +559,13 @@ const CounterSales: React.FC = () => {
         }}
         onConfirm={(id, paid, debt) => handlePayConfirm(id, paid, debt)}
         onConfigChange={setActivePayConfig}
+        customerId={customer?.id}
+        onRequestSelectCustomer={() => {
+          // Đóng PayModal, mở CustomerModal để chọn KH, sau đó mở lại PayModal
+          setPayModalOpen(false);
+          transitioningToReceiptRef.current = false;
+          setCustomerModalOpen(true);
+        }}
       />
 
       <ReceiptModal

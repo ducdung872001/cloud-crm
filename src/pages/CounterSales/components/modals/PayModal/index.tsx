@@ -55,6 +55,15 @@ interface PayModalProps {
   shippingFeeBearer?: "RECEIVER" | "SENDER";
   /** Truyền activeConfig ra ngoài để CounterSales/index.tsx dùng khi generate QR */
   onConfigChange?: (cfg: IStorePaymentConfigResponse | null) => void;
+  /**
+   * customerId của khách đang chọn.
+   * -1 hoặc undefined = khách vãng lai → không cho ghi nợ.
+   */
+  customerId?: number | string;
+  /**
+   * Callback mở CustomerModal khi cần chọn khách để ghi nợ.
+   */
+  onRequestSelectCustomer?: () => void;
 }
 
 export default function PayModal({
@@ -63,6 +72,8 @@ export default function PayModal({
   loyaltyDiscount = 0,
   shippingFee = 0, shippingFeeBearer = "RECEIVER",
   onConfigChange,
+  customerId,
+  onRequestSelectCustomer,
 }: PayModalProps) {
   const [customerPaid, setCustomerPaid]         = useState(0);
   const [configs, setConfigs]                   = useState<IStorePaymentConfigResponse[]>([]);
@@ -107,6 +118,12 @@ export default function PayModal({
   const change        = method === "cash" ? Math.max(0, customerPaid - total) : 0;
   const debt          = method === "cash" ? Math.max(0, total - customerPaid) : 0;
 
+  // ── Kiểm tra khách vãng lai ───────────────────────────────────────────────
+  // customerId = -1/undefined/null = vãng lai → không cho ghi nợ
+  const isWalkIn  = !customerId || Number(customerId) <= 0;
+  // Có nợ VÀ là vãng lai → chặn confirm, yêu cầu chọn khách
+  const needCustomerForDebt = debt > 0 && isWalkIn;
+
   // ── Khi mở modal ─────────────────────────────────────────────────────────
   useEffect(() => {
     if (!open) return;
@@ -148,6 +165,8 @@ export default function PayModal({
 
   // ── Nút xác nhận ─────────────────────────────────────────────────────────
   const handleConfirm = () => {
+    // Không cho hoàn thành nếu có nợ mà chưa chọn khách hàng
+    if (needCustomerForDebt) return;
     onConfirm(invoiceId, effectivePaid, debt);
   };
 
@@ -156,13 +175,15 @@ export default function PayModal({
       buttons: [
         { title: "Hủy", color: "primary", variant: "outline", callback: onClose },
         {
-          title: "✅ Tạo hoá đơn",
+          title: needCustomerForDebt ? "⚠️ Chọn khách để ghi nợ" : "✅ Tạo hoá đơn",
           color: "primary",
+          variant: needCustomerForDebt ? ("outline" as const) : undefined,
+          disabled: needCustomerForDebt,
           callback: handleConfirm,
         },
       ],
     },
-  }), [invoiceId, onClose, effectivePaid, debt]);
+  }), [invoiceId, onClose, effectivePaid, debt, needCustomerForDebt, handleConfirm]);
 
   // ── Render section chi tiết theo method ─────────────────────────────────
   const renderSection = () => {
@@ -199,7 +220,7 @@ export default function PayModal({
 
             {/* Ghi nợ — chỉ hiện khi khách đưa thiếu */}
             {debt > 0 && (
-              <div className="pay-modal__debt">
+              <div className={`pay-modal__debt${needCustomerForDebt ? " pay-modal__debt--blocked" : ""}`}>
                 <span>⚠️ Ghi nợ khách hàng</span>
                 <span className="pay-modal__debt-val">{fmt(debt)}</span>
               </div>
@@ -210,6 +231,25 @@ export default function PayModal({
               <div className="pay-modal__paid-row">
                 <span>Tiền thực thu</span>
                 <span>{fmt(effectivePaid)}</span>
+              </div>
+            )}
+
+            {/* Banner chặn khi vãng lai muốn ghi nợ */}
+            {needCustomerForDebt && (
+              <div className="pay-modal__debt-warning">
+                <div className="pay-modal__debt-warning-text">
+                  <strong>Không thể ghi nợ cho khách vãng lai.</strong><br />
+                  Vui lòng chọn khách hàng hoặc thu đủ tiền để hoàn thành đơn.
+                </div>
+                {onRequestSelectCustomer && (
+                  <button
+                    type="button"
+                    className="pay-modal__select-customer-btn"
+                    onClick={onRequestSelectCustomer}
+                  >
+                    👤 Chọn khách hàng
+                  </button>
+                )}
               </div>
             )}
           </>
