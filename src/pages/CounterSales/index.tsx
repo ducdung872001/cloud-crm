@@ -34,6 +34,8 @@ import PromotionModal, { EligiblePromotion, IneligiblePromotion } from "./compon
 import { ContextType, UserContext } from "contexts/userContext";
 import WarehouseService from "@/services/WarehouseService";
 import { IOption } from "@/model/OtherModel";
+import FixedPriceService from "@/services/FixedPriceService";
+import { IFixedPriceEntry } from "model/promotion/PromotionModel";
 
 const INITIAL_CART: CartItem[] = [];
 
@@ -116,6 +118,30 @@ const CounterSales: React.FC = () => {
     };
   }, [dataBranch]);
 
+  // ── Load fixed price map khi chi nhánh thay đổi ──────────────────────────
+  // Build Map<"productId" | "productId-variantId", IFixedPriceEntry>
+  // POS dùng để override giá khi thêm SP vào giỏ
+  useEffect(() => {
+    if (!dataBranch?.value) return;
+    FixedPriceService.getActiveEntries()
+      .then((res) => {
+        if (res.code !== 0 || !res.result) return;
+        const map = new Map<string, IFixedPriceEntry>();
+        res.result.forEach((entry) => {
+          // Key theo variantId nếu có, fallback theo productId
+          if (entry.variantId) {
+            map.set(`${entry.productId}-${entry.variantId}`, entry);
+          }
+          // Luôn đặt key theo productId (variantId = null = tất cả variant)
+          if (!map.has(String(entry.productId))) {
+            map.set(String(entry.productId), entry);
+          }
+        });
+        setFixedPriceMap(map);
+      })
+      .catch(() => setFixedPriceMap(new Map()));
+  }, [dataBranch]);
+
   // Refresh badge khi chuyển tab (để cập nhật sau khi tạo/xóa đơn)
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
@@ -140,6 +166,10 @@ const CounterSales: React.FC = () => {
   const [eligiblePromos, setEligiblePromos] = useState<EligiblePromotion[]>([]);
   const [ineligiblePromos, setIneligiblePromos] = useState<IneligiblePromotion[]>([]);
   const [appliedPromo, setAppliedPromo] = useState<EligiblePromotion | null>(null);
+
+  // ── Fixed price lookup map ────────────────────────────────────────────────
+  // key: "productId" hoặc "productId-variantId" → fixedPrice (VND)
+  const [fixedPriceMap, setFixedPriceMap] = useState<Map<string, IFixedPriceEntry>>(new Map());
   const [couponDiscount, setCouponDiscount] = useState(0);    // ← THÊM
   const [manualDiscount, setManualDiscount] = useState(0);    // ← giảm giá thủ công
   const [orderNote, setOrderNote]           = useState("");    // ← ghi chú đơn hàng
@@ -280,15 +310,34 @@ const CounterSales: React.FC = () => {
 
   // Cart actions
   const handleAddToCart = useCallback((item: Omit<CartItem, "qty"> & { qty: number }) => {
+    // Kiểm tra đồng giá: ưu tiên variantId, fallback productId
+    const fpEntry =
+      fixedPriceMap.get(`${item.id}-${item.variantId}`) ??
+      fixedPriceMap.get(String(item.id));
+
+    const effectiveItem = fpEntry
+      ? {
+          ...item,
+          price:      fpEntry.fixedPrice,
+          // Gắn badge để Cart hiển thị nhãn "Đồng giá"
+          fixedPrice: fpEntry.fixedPrice,
+          promoName:  fpEntry.promotionName,
+        }
+      : item;
+
     setCartItems((prev) => {
-      const existing = prev.find((c) => c.variantId === item.variantId);
+      const existing = prev.find((c) => c.variantId === effectiveItem.variantId);
       const next = existing
-        ? prev.map((c) => (c.variantId === item.variantId ? { ...c, qty: c.qty + item.qty } : c))
-        : [...prev, { ...item, qty: item.qty }];
+        ? prev.map((c) =>
+            c.variantId === effectiveItem.variantId
+              ? { ...c, qty: c.qty + effectiveItem.qty }
+              : c
+          )
+        : [...prev, { ...effectiveItem, qty: effectiveItem.qty }];
       checkEligiblePromos(next, customer);
       return next;
     });
-  }, [customer, checkEligiblePromos]);
+  }, [customer, checkEligiblePromos, fixedPriceMap]);
 
   const handleChangeQty = useCallback((id: string, delta: number) => {
     setCartItems((prev) => {
@@ -362,10 +411,10 @@ const CounterSales: React.FC = () => {
           unitName: item.unitName,
           ...(warehouseId ? { inventoryId: warehouseId } : {}),
         }));
-        const totalDiscount = couponDiscount + promoDiscount + moneyFromPoints;
+        const totalDiscount = promoDiscount + moneyFromPoints;
         const paidInvoice = await BoughtProductService.insert(body, {
           invoiceId,
-          ...(moneyFromPoints > 0 ? { loyaltyDiscount: moneyFromPoints } : {}),
+          ...(totalDiscount > 0 ? { moneyUsed: totalDiscount } : {}),
         });
         if (paidInvoice.code == 0) {
           // ── Nếu là đơn ship → tạo shipment sau khi invoice thành công ──────
@@ -397,7 +446,7 @@ const CounterSales: React.FC = () => {
               const qrCodeRes = await QrCodeProService.generate({
                 content: "DON HANG " + invoiceId,
                 orderId: invoiceId,
-                amount: cartItems.reduce((s, c) => s + c.price * c.qty, 0) - couponDiscount - promoDiscount - manualDiscount - moneyFromPoints,
+                amount: cartItems.reduce((s, c) => s + c.price * c.qty, 0) - couponDiscount - promoDiscount - manualDiscount,
               });
               if (qrCodeRes.code === 0 && qrCodeRes?.result?.qrCode) {
                 setPayModalOpen(false);
@@ -569,7 +618,6 @@ const CounterSales: React.FC = () => {
         method={method} setMethod={setMethod}
         couponDiscount={couponDiscount}
         promoDiscount={promoDiscount + manualDiscount}
-        loyaltyDiscount={moneyFromPoints}
         shippingFee={orderType === "ship" ? shippingInfo.shippingFee : 0}
         shippingFeeBearer={shippingInfo.shippingFeeBearer}
         onClose={() => { setInvoiceId(null); setPayModalOpen(false); }}

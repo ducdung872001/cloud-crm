@@ -2451,6 +2451,12 @@ export const urlsApi = {
     updateDmnSetting: prefixMarket + "/promotion/update/dmn-setting",
     share: prefixMarket + "/promotion/share",
   },
+  fixedPricePromotion: {
+    getProducts:    prefixMarket + "/fixedPrice/products",
+    saveProducts:   prefixMarket + "/fixedPrice/products/save",
+    activeEntries:  prefixMarket + "/fixedPrice/active-entries",
+    deleteProduct:  prefixMarket + "/fixedPrice/product/delete",
+  },
   couponProgram: {
     list: prefixMarket + "/coupon/list",
     get: prefixMarket + "/coupon/get",

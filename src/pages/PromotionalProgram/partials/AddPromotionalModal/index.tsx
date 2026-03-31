@@ -10,9 +10,11 @@ import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import PromotionService from "services/PromotionService";
+import FixedPriceService from "services/FixedPriceService";
 import {
   IPromotion,
   IPromotionRequest,
+  IFixedPriceProduct,
   PROMOTION_TYPE_LABELS,
 } from "model/promotion/PromotionModel";
 
@@ -41,11 +43,18 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
   const [showDialog, setShowDialog]       = useState(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
+  // ─── Fixed price product list state ───────────────────────────────
+  const [fpProducts, setFpProducts]       = useState<IFixedPriceProduct[]>([]);
+  const [fpLoading, setFpLoading]         = useState(false);
+  const [fpNewProductId, setFpNewProductId]   = useState("");
+  const [fpNewVariantId, setFpNewVariantId]   = useState("");
+  const [fpNewProductName, setFpNewProductName] = useState("");
+  const [fpNewOriginalPrice, setFpNewOriginalPrice] = useState("");
+
   // ─── Initial values ────────────────────────────────────────────────
   const values = useMemo(
     () => ({
       name:          data?.name                             ?? "",
-      // Với date field: truyền string ISO, DatePickerCustom sẽ parse được
       startTime:     data?.startTime ? moment(data.startTime) : "",
       endTime:       data?.endTime   ? moment(data.endTime)   : "",
       promotionType: String(data?.promotionType ?? 1),
@@ -55,6 +64,7 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
       minAmount:     String(data?.minAmount      ?? ""),
       budget:        String(data?.budget         ?? ""),
       mode:          String(data?.mode           ?? 1),
+      fixedPrice:    String(data?.fixedPrice     ?? ""),
     }),
     [data, onShow]
   );
@@ -66,6 +76,31 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
     { name: "name",          rules: "required" },
     { name: "discount",      rules: "required|number" },
   ];
+
+  // Nếu là đồng giá thì không cần validate discount — override lại
+  const isFixedPrice = Number((formData?.values as any)?.promotionType) === 7;
+
+  const effectiveValidations: IValidation[] = isFixedPrice
+    ? [
+        { name: "name",       rules: "required" },
+        { name: "fixedPrice", rules: "required|number" },
+      ]
+    : validations;
+
+  // Load danh sách SP khi mở modal edit CT đồng giá
+  useEffect(() => {
+    if (onShow && data?.id && data?.promotionType === 7) {
+      setFpLoading(true);
+      FixedPriceService.getProducts(data.id)
+        .then((res) => {
+          if (res.code === 0) setFpProducts(res.result ?? []);
+        })
+        .catch(() => {})
+        .finally(() => setFpLoading(false));
+    } else if (onShow && !data?.id) {
+      setFpProducts([]);
+    }
+  }, [onShow, data?.id]);
 
   // ─── Form fields ───────────────────────────────────────────────────
   const typeOptions = Object.entries(PROMOTION_TYPE_LABELS).map(([k, v]) => ({
@@ -144,6 +179,14 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
         { label: "DMN Rule",  value: "2" },
       ],
     },
+    // Chỉ hiển thị khi promotionType = 7
+    ...(isFixedPrice ? [{
+      label:    "Giá đồng giá (VND)",
+      name:     "fixedPrice",
+      type:     "number" as const,
+      fill:     true,
+      required: true,
+    }] : []),
   ];
 
   const [formData, setFormData] = useState<IFormData>({ values });
@@ -191,17 +234,27 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
       startTime:     startISO,
       endTime:       endISO,
       promotionType: Number(v.promotionType),
-      discount:      Number(v.discount),
-      discountType:  Number(v.discountType) || 1,
-      applyType:     Number(v.applyType)    || 1,
-      minAmount:     v.minAmount ? Number(v.minAmount) : undefined,
-      budget:        v.budget    ? Number(v.budget)    : undefined,
-      mode:          Number(v.mode) || 1,
+      // Đồng giá: không cần discount/discountType
+      ...(Number(v.promotionType) === 7
+        ? { fixedPrice: Number(v.fixedPrice) }
+        : {
+            discount:     Number(v.discount),
+            discountType: Number(v.discountType) || 1,
+          }),
+      applyType:  Number(v.applyType)  || 1,
+      minAmount:  v.minAmount  ? Number(v.minAmount)  : undefined,
+      budget:     v.budget     ? Number(v.budget)     : undefined,
+      mode:       Number(v.mode) || 1,
     };
 
     const res = await PromotionService.update(body);
 
     if (res?.code === 0) {
+      const savedId = res.result?.id ?? data?.id;
+      // Nếu là đồng giá → lưu luôn danh sách sản phẩm
+      if (Number(v.promotionType) === 7 && savedId && fpProducts.length > 0) {
+        await FixedPriceService.saveProducts(savedId, fpProducts).catch(() => {});
+      }
       showToast(
         `${data ? "Cập nhật" : "Thêm mới"} chương trình khuyến mãi thành công`,
         "success"
@@ -312,7 +365,7 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
                       value,
                       field,
                       formData,
-                      validations,
+                      effectiveValidations,
                       listField,
                       setFormData
                     )
@@ -321,6 +374,91 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
                 />
               ))}
             </div>
+
+            {/* ── Section sản phẩm đồng giá — chỉ hiện khi type = 7 ── */}
+            {isFixedPrice && (
+              <div className="fp-section">
+                <div className="fp-section__header">
+                  <span className="fp-section__title">🏷️ Sản phẩm tham gia đồng giá</span>
+                  <span className="fp-section__count">{fpProducts.length} sản phẩm</span>
+                </div>
+
+                {/* Form thêm SP */}
+                <div className="fp-add-row">
+                  <input className="fp-input" placeholder="Product ID *" type="number"
+                    value={fpNewProductId} onChange={(e) => setFpNewProductId(e.target.value)} />
+                  <input className="fp-input" placeholder="Variant ID (bỏ trống = tất cả)" type="number"
+                    value={fpNewVariantId} onChange={(e) => setFpNewVariantId(e.target.value)} />
+                  <input className="fp-input fp-input--name" placeholder="Tên sản phẩm"
+                    value={fpNewProductName} onChange={(e) => setFpNewProductName(e.target.value)} />
+                  <input className="fp-input" placeholder="Giá gốc (VND)" type="number"
+                    value={fpNewOriginalPrice} onChange={(e) => setFpNewOriginalPrice(e.target.value)} />
+                  <button type="button" className="fp-btn fp-btn--add"
+                    disabled={!fpNewProductId.trim()}
+                    onClick={() => {
+                      const pid = Number(fpNewProductId.trim());
+                      if (!pid) return;
+                      const vid = fpNewVariantId ? Number(fpNewVariantId) : undefined;
+                      const dup = fpProducts.some(
+                        (p) => p.productId === pid && p.variantId === vid
+                      );
+                      if (dup) { showToast("Sản phẩm này đã có trong danh sách", "warning"); return; }
+                      setFpProducts((prev) => [...prev, {
+                        productId:     pid,
+                        variantId:     vid,
+                        productName:   fpNewProductName.trim() || undefined,
+                        originalPrice: fpNewOriginalPrice ? Number(fpNewOriginalPrice) : undefined,
+                      }]);
+                      setFpNewProductId(""); setFpNewVariantId("");
+                      setFpNewProductName(""); setFpNewOriginalPrice("");
+                    }}>
+                    + Thêm
+                  </button>
+                </div>
+
+                {/* Danh sách */}
+                {fpLoading ? (
+                  <div className="fp-empty">Đang tải...</div>
+                ) : fpProducts.length === 0 ? (
+                  <div className="fp-empty">Chưa có sản phẩm — nhập Product ID để bắt đầu</div>
+                ) : (
+                  <div className="fp-list">
+                    <div className="fp-list__head">
+                      <span>Product ID</span><span>Variant ID</span>
+                      <span>Tên SP</span><span>Giá gốc</span><span></span>
+                    </div>
+                    {fpProducts.map((p, idx) => (
+                      <div key={idx} className="fp-list__row">
+                        <span className="fp-list__id">{p.productId}</span>
+                        <span className="fp-list__id">{p.variantId ?? "—"}</span>
+                        <span className="fp-list__name">
+                          {p.productName || <em style={{ color: "#9ca3af" }}>—</em>}
+                        </span>
+                        <span className="fp-list__price">
+                          {p.originalPrice
+                            ? new Intl.NumberFormat("vi-VN").format(p.originalPrice) + "đ"
+                            : "—"}
+                        </span>
+                        <button type="button" className="fp-btn fp-btn--del"
+                          onClick={() => setFpProducts((prev) => prev.filter((_, i) => i !== idx))}>
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <p className="fp-hint">
+                  💡 Khi CT đang chạy, các sản phẩm trên sẽ được bán với giá{" "}
+                  <strong>
+                    {(formData?.values as any)?.fixedPrice
+                      ? new Intl.NumberFormat("vi-VN").format(
+                          Number((formData?.values as any).fixedPrice)) + "đ"
+                      : "..."}
+                  </strong> tại POS.
+                </p>
+              </div>
+            )}
           </ModalBody>
           <ModalFooter actions={actions} />
         </form>
