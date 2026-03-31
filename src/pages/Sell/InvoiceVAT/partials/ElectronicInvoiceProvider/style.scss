@@ -4,32 +4,6 @@
   flex-direction: column;
   gap: 20px;
 
-  // ---- Header ----
-  .ncc__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    h2 { font-size: 22px; font-weight: 700; color: #111827; margin: 0 0 4px; }
-    p  { font-size: 13px; color: #6b7280; margin: 0; }
-  }
-
-  .btn-save-connect {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 9px 20px;
-    background: var(--primary-color);
-    color: #fff;
-    border: none;
-    border-radius: 0.3rem;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    svg { width: 15px; height: 15px; }
-    &:hover { background: var(--primary-color); color: var(--white-color); }
-  }
-
-  // ---- Notice ----
   .ncc__notice {
     display: flex;
     gap: 10px;
@@ -42,7 +16,6 @@
     p { font-size: 13px; color: #1d4ed8; margin: 0; line-height: 1.6; }
   }
 
-  // ---- Body ----
   .ncc__body {
     display: grid;
     grid-template-columns: 1fr 300px;
@@ -51,7 +24,8 @@
     @media (max-width: 1024px) { grid-template-columns: 1fr; }
   }
 
-  // ---- Provider list ----
+  // ── Provider list ──────────────────────────────────────────────────────────
+
   .ncc__provider-list {
     display: flex;
     flex-direction: column;
@@ -76,248 +50,136 @@
     border-radius: 0.3rem;
     background: #fff;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: border-color 0.15s, background 0.15s;
 
     &:hover { border-color: #9ca3af; background: #fafafa; }
-
-    &.selected {
-      border: 2px solid #1e3a5f;
-      background: #f8faff;
-    }
+    &.selected { border: 2px solid #1e3a5f; background: #f8faff; }
 
     &__logo {
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       border-radius: 0.3rem;
       flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: -0.5px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #fff; letter-spacing: -0.5px;
     }
-
-    &__info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    &__title-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    &__name {
-      font-size: 15px;
-      font-weight: 600;
-      color: #111827;
-    }
-
-    &__desc {
-      font-size: 13px;
-      color: #6b7280;
-      margin: 0;
-      line-height: 1.5;
-    }
-
-    &__tags {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    &__radio {
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
+    &__info { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    &__title-row { display: flex; align-items: center; gap: 10px; }
+    &__name { font-size: 15px; font-weight: 600; color: #111827; }
+    &__desc { font-size: 13px; color: #6b7280; margin: 0; line-height: 1.5; }
+    &__tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    &__radio { flex-shrink: 0; margin-top: 2px; }
   }
 
-  .badge-connected {
-    font-size: 12px;
-    color: #16a34a;
-    font-weight: 500;
-  }
-
+  .badge-connected { font-size: 12px; color: #16a34a; font-weight: 500; }
   .badge-using {
-    font-size: 11px;
-    background: var(--primary-color);
-    color: #fff;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-weight: 600;
+    font-size: 11px; background: var(--primary-color); color: #fff;
+    padding: 2px 8px; border-radius: 4px; font-weight: 600;
   }
-
   .tag {
-    font-size: 11px;
-    background: #f3f4f6;
-    color: #374151;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-weight: 500;
+    font-size: 11px; background: #f3f4f6; color: #374151;
+    padding: 2px 8px; border-radius: 4px; font-weight: 500;
   }
 
   .radio-circle {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid #d1d5db;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 50%; border: 2px solid #d1d5db;
+    display: flex; align-items: center; justify-content: center;
     transition: border-color 0.15s;
-
     &.checked { border-color: var(--primary-color); }
   }
-
   .radio-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--primary-color);
+    width: 10px; height: 10px;
+    border-radius: 50%; background: var(--primary-color);
   }
 
-  // ---- API Config sidebar ----
+  // ── Sidebar cấu hình ───────────────────────────────────────────────────────
+
   .ncc__api-config {
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 0.3rem;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-
-    h4 {
-      font-size: 14px;
-      font-weight: 600;
-      color: #111827;
-      margin: 0;
-    }
+    display: flex; flex-direction: column; gap: 14px;
+    h4 { font-size: 14px; font-weight: 600; color: #111827; margin: 0; }
   }
 
-  .api-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+  .api-form { display: flex; flex-direction: column; gap: 12px; }
 
   .api-field {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-
+    display: flex; flex-direction: column; gap: 5px;
     label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      font-size: 11px; font-weight: 600; color: #6b7280;
+      text-transform: uppercase; letter-spacing: 0.04em;
     }
-
     input {
       padding: 8px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 0.3rem;
-      font-size: 13px;
-      color: #111827;
-      background: #fff;
-      outline: none;
+      border: 1px solid #d1d5db; border-radius: 0.3rem;
+      font-size: 13px; color: #111827; background: #fff; outline: none;
       &:focus { border-color: var(--primary-color); }
+      &::placeholder { color: #9ca3af; }
     }
   }
 
+  // Nút kiểm tra (outline)
   .btn-test-conn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 9px;
-    border: 1px solid #d1d5db;
-    border-radius: 0.3rem;
-    background: #fff;
-    font-size: 13px;
-    font-weight: 500;
-    color: #374151;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 9px;
+    border: 1px solid #d1d5db; border-radius: 0.3rem;
+    background: #fff; font-size: 13px; font-weight: 500; color: #374151;
     cursor: pointer;
     svg { width: 14px; height: 14px; }
-
     &:hover:not(:disabled) { background: #f9fafb; }
     &:disabled { opacity: 0.6; cursor: default; }
     &.loading { color: #6b7280; }
   }
 
-  // Nút Lưu & Kết nối nằm trong sidebar (primary style)
+  // Nút Lưu & Kết nối (primary)
   .btn-save-connect-inline {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 0.3rem;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 10px;
+    border: none; border-radius: 0.3rem;
     background: var(--primary-color);
-    font-size: 13px;
-    font-weight: 600;
-    color: #fff;
+    font-size: 13px; font-weight: 600; color: #fff;
     cursor: pointer;
     svg { width: 14px; height: 14px; }
-
-    &:hover:not(:disabled) { opacity: 0.9; }
+    &:hover:not(:disabled) { opacity: 0.88; }
     &:disabled { opacity: 0.6; cursor: default; }
     &.loading { opacity: 0.75; }
   }
 
+  // Spinner: màu trắng (dùng trong btn primary)
   .spinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(255, 255, 255, 0.4);
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
     border-top-color: #fff;
     border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: inline-block;
+    animation: ncc-spin 0.7s linear infinite;
 
-    // Variant nhạt cho btn-test-conn
-    .btn-test-conn & {
+    // Variant xám cho btn-test-conn (outline)
+    &.btn-test-conn__spinner {
       border-color: #d1d5db;
-      border-top-color: #374151;
+      border-top-color: #6b7280;
     }
   }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
+  @keyframes ncc-spin { to { transform: rotate(360deg); } }
 
+  // Kết quả test kết nối
   .conn-result {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    border-radius: 0.3rem;
-    padding: 10px 12px;
+    display: flex; gap: 8px; align-items: flex-start;
+    border-radius: 0.3rem; padding: 10px 12px;
     svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }
-    p  { font-size: 12px; margin: 0; line-height: 1.5; }
-
-    .conn-time {
-      font-size: 11px;
-      opacity: 0.75;
-    }
+    p { font-size: 12px; margin: 0; line-height: 1.5; }
+    .conn-time { font-size: 11px; opacity: 0.72; }
 
     &.success {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      svg { color: #16a34a; }
-      p  { color: #15803d; }
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      svg { color: #16a34a; } p { color: #15803d; }
     }
     &.error {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      svg { color: #dc2626; }
-      p  { color: #b91c1c; }
+      background: #fef2f2; border: 1px solid #fecaca;
+      svg { color: #dc2626; } p { color: #b91c1c; }
     }
   }
 }

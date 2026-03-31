@@ -7,7 +7,13 @@ import Topbar from "./components/Topbar";
 import ProductGrid from "./components/ProductGrid";
 import Cart from "./components/Cart";
 import Report from "./components/Report";
-import { CartItem, Customer, PayMethod, TabType } from "./types";
+import { CartItem, Customer, PayMethod, TabType, ShippingInfo } from "./types";
+
+const DEFAULT_SHIPPING_INFO: ShippingInfo = {
+  receiverName: "", receiverPhone: "", receiverAddress: "",
+  receiverProvince: "", shippingFee: 0,
+  shippingFeeBearer: "RECEIVER", codAmount: 0,
+};
 import OrderDetailModal from "./components/modals/OrderDetailModal";
 import PayModal from "./components/modals/PayModal";
 import ReceiptModal from "./components/modals/ReceiptModal";
@@ -28,6 +34,8 @@ import PromotionModal, { EligiblePromotion, IneligiblePromotion } from "./compon
 import { ContextType, UserContext } from "contexts/userContext";
 import WarehouseService from "@/services/WarehouseService";
 import { IOption } from "@/model/OtherModel";
+import FixedPriceService from "@/services/FixedPriceService";
+import { IFixedPriceEntry } from "model/promotion/PromotionModel";
 
 const INITIAL_CART: CartItem[] = [];
 
@@ -110,6 +118,30 @@ const CounterSales: React.FC = () => {
     };
   }, [dataBranch]);
 
+  // ── Load fixed price map khi chi nhánh thay đổi ──────────────────────────
+  // Build Map<"productId" | "productId-variantId", IFixedPriceEntry>
+  // POS dùng để override giá khi thêm SP vào giỏ
+  useEffect(() => {
+    if (!dataBranch?.value) return;
+    FixedPriceService.getActiveEntries()
+      .then((res) => {
+        if (res.code !== 0 || !res.result) return;
+        const map = new Map<string, IFixedPriceEntry>();
+        res.result.forEach((entry) => {
+          // Key theo variantId nếu có, fallback theo productId
+          if (entry.variantId) {
+            map.set(`${entry.productId}-${entry.variantId}`, entry);
+          }
+          // Luôn đặt key theo productId (variantId = null = tất cả variant)
+          if (!map.has(String(entry.productId))) {
+            map.set(String(entry.productId), entry);
+          }
+        });
+        setFixedPriceMap(map);
+      })
+      .catch(() => setFixedPriceMap(new Map()));
+  }, [dataBranch]);
+
   // Refresh badge khi chuyển tab (để cập nhật sau khi tạo/xóa đơn)
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
@@ -134,10 +166,18 @@ const CounterSales: React.FC = () => {
   const [eligiblePromos, setEligiblePromos] = useState<EligiblePromotion[]>([]);
   const [ineligiblePromos, setIneligiblePromos] = useState<IneligiblePromotion[]>([]);
   const [appliedPromo, setAppliedPromo] = useState<EligiblePromotion | null>(null);
+
+  // ── Fixed price lookup map ────────────────────────────────────────────────
+  // key: "productId" hoặc "productId-variantId" → fixedPrice (VND)
+  const [fixedPriceMap, setFixedPriceMap] = useState<Map<string, IFixedPriceEntry>>(new Map());
   const [couponDiscount, setCouponDiscount] = useState(0);    // ← THÊM
   const [manualDiscount, setManualDiscount] = useState(0);    // ← giảm giá thủ công
   const [orderNote, setOrderNote]           = useState("");    // ← ghi chú đơn hàng
   const [promoDiscount, setPromoDiscount] = useState(0);
+
+  // ── Loại đơn & thông tin giao hàng ────────────────────────────────────────
+  const [orderType, setOrderType] = useState<import("./types").OrderType>("retail");
+  const [shippingInfo, setShippingInfo] = useState<ShippingInfo>(DEFAULT_SHIPPING_INFO);
   const checkPromoRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const [exchangeRate, setExchangeRate] = useState<number>(1000);
   const [pointsToUse, setPointsToUse] = useState<number>(0);
@@ -270,15 +310,34 @@ const CounterSales: React.FC = () => {
 
   // Cart actions
   const handleAddToCart = useCallback((item: Omit<CartItem, "qty"> & { qty: number }) => {
+    // Kiểm tra đồng giá: ưu tiên variantId, fallback productId
+    const fpEntry =
+      fixedPriceMap.get(`${item.id}-${item.variantId}`) ??
+      fixedPriceMap.get(String(item.id));
+
+    const effectiveItem = fpEntry
+      ? {
+          ...item,
+          price:      fpEntry.fixedPrice,
+          // Gắn badge để Cart hiển thị nhãn "Đồng giá"
+          fixedPrice: fpEntry.fixedPrice,
+          promoName:  fpEntry.promotionName,
+        }
+      : item;
+
     setCartItems((prev) => {
-      const existing = prev.find((c) => c.variantId === item.variantId);
+      const existing = prev.find((c) => c.variantId === effectiveItem.variantId);
       const next = existing
-        ? prev.map((c) => (c.variantId === item.variantId ? { ...c, qty: c.qty + item.qty } : c))
-        : [...prev, { ...item, qty: item.qty }];
+        ? prev.map((c) =>
+            c.variantId === effectiveItem.variantId
+              ? { ...c, qty: c.qty + effectiveItem.qty }
+              : c
+          )
+        : [...prev, { ...effectiveItem, qty: effectiveItem.qty }];
       checkEligiblePromos(next, customer);
       return next;
     });
-  }, [customer, checkEligiblePromos]);
+  }, [customer, checkEligiblePromos, fixedPriceMap]);
 
   const handleChangeQty = useCallback((id: string, delta: number) => {
     setCartItems((prev) => {
@@ -358,6 +417,30 @@ const CounterSales: React.FC = () => {
           ...(totalDiscount > 0 ? { moneyUsed: totalDiscount } : {}),
         });
         if (paidInvoice.code == 0) {
+          // ── Nếu là đơn ship → tạo shipment sau khi invoice thành công ──────
+          if (orderType === "ship" && shippingInfo.receiverName) {
+            try {
+              await fetch(urlsApi.shipping.create, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  orderId:    invoiceId,
+                  orderCode:  String(invoiceId),
+                  receiverName:    shippingInfo.receiverName,
+                  receiverPhone:   shippingInfo.receiverPhone,
+                  receiverAddress: shippingInfo.receiverAddress,
+                  shippingFee:     shippingInfo.shippingFeeBearer === "RECEIVER" ? shippingInfo.shippingFee : 0,
+                  codAmount:       shippingInfo.codAmount,
+                  noteForShipper:  shippingInfo.noteForShipper ?? "",
+                  shippingFeeBearer: shippingInfo.shippingFeeBearer,
+                  // Tổng tiền hàng để tham chiếu
+                  totalAmount: cartItems.reduce((s, c) => s + c.price * c.qty, 0),
+                }),
+              });
+              // Không block UI nếu tạo shipment lỗi — log lặng
+            } catch { /* shipment tạo sau cũng được */ }
+          }
+
           if (method === "qr") {
             try {
               const qrCodeRes = await QrCodeProService.generate({
@@ -370,7 +453,6 @@ const CounterSales: React.FC = () => {
                 setReceiptModalOpen(true);
                 showToast("Tạo hoá đơn thành công.", "success");
                 setQrCodePro(qrCodeRes.result.qrCode);
-                // Trừ điểm nếu khách dùng điểm thanh toán
                 redeemLoyaltyPoints(invoiceId);
               } else {
                 showToast(qrCodeRes.message || "Có lỗi xảy ra khi tạo QR Code Pro.", "error");
@@ -381,13 +463,11 @@ const CounterSales: React.FC = () => {
           } else {
             setPayModalOpen(false);
             setReceiptModalOpen(true);
-            showToast("Tạo hoá đơn thành công.", "success");
+            showToast(orderType === "ship" ? "Tạo đơn giao hàng thành công." : "Tạo hoá đơn thành công.", "success");
             setQrCodePro(null);
             setMethod("cash");
-            // Trừ điểm nếu khách đã dùng điểm để thanh toán
             redeemLoyaltyPoints(invoiceId);
           }
-          // Refresh badge sau khi tạo đơn thành công
           fetchTabCounts();
         } else {
           showToast(paidInvoice.message || "Có lỗi xảy ra khi xử lý thanh toán.", "error");
@@ -460,6 +540,13 @@ const CounterSales: React.FC = () => {
                 onPay={(invoiceId) => { setInvoiceId(invoiceId); setPayModalOpen(true); }}
                 onSelectCustomer={() => setCustomerModalOpen(true)}
                 customer={customer || undefined}
+                orderType={orderType}
+                onOrderTypeChange={(t) => {
+                  setOrderType(t);
+                  if (t !== "ship") setShippingInfo(DEFAULT_SHIPPING_INFO);
+                }}
+                shippingInfo={shippingInfo}
+                onShippingInfoChange={setShippingInfo}
                 loyaltyWallet={loyaltyWallet}
                 exchangeRate={exchangeRate}
                 pointsToUse={pointsToUse}
@@ -475,9 +562,10 @@ const CounterSales: React.FC = () => {
                 onNoteChange={setOrderNote}
                 onResetVoucher={paymentSuccessCount > 0 ? () => {} : undefined}
                 onSavedDraft={() => {
-                  // Xóa giỏ hàng + refresh badge sau khi lưu tạm
                   setCartItems([]);
                   setCustomer(null);
+                  setShippingInfo(DEFAULT_SHIPPING_INFO);
+                  setOrderType("retail");
                   fetchTabCounts();
                 }}
               />
@@ -530,6 +618,8 @@ const CounterSales: React.FC = () => {
         method={method} setMethod={setMethod}
         couponDiscount={couponDiscount}
         promoDiscount={promoDiscount + manualDiscount}
+        shippingFee={orderType === "ship" ? shippingInfo.shippingFee : 0}
+        shippingFeeBearer={shippingInfo.shippingFeeBearer}
         onClose={() => { setInvoiceId(null); setPayModalOpen(false); }}
         onConfirm={(id) => handlePayConfirm(id)}
         onConfigChange={setActivePayConfig}
@@ -548,6 +638,8 @@ const CounterSales: React.FC = () => {
           setAppliedPromo(null);
           setManualDiscount(0);
           setOrderNote("");
+          setShippingInfo(DEFAULT_SHIPPING_INFO);
+          setOrderType("retail");
           setPaymentSuccessCount(prev => prev + 1);
           // Tự động xóa đơn tạm nếu đơn này được tải từ tab Đơn tạm
           if (activeDraftId) {
@@ -568,6 +660,8 @@ const CounterSales: React.FC = () => {
           setQrCodePro(null); setMethod("cash");
           setManualDiscount(0);
           setOrderNote("");
+          setShippingInfo(DEFAULT_SHIPPING_INFO);
+          setOrderType("retail");
         }}
       />
 

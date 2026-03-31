@@ -1,55 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Icon from "components/icon";
 import { showToast } from "utils/common";
+import EinvoiceProviderService, { ProviderItem } from "services/EinvoiceProviderService";
 import "./style.scss";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-export interface ProviderItem {
-  id: number;
-  code: string;
-  name: string;
-  logoText: string;
-  logoColor: string;
-  description: string;
-  tags: string | string[];
-  baseUrl: string;
-  authType: string;
-  isActive: number;
-  sortOrder: number;
-  // config hiện tại của bsnId (null nếu chưa cấu hình)
-  configId: number | null;
-  username: string | null;
-  taxCode: string | null;
-  endpointUrl: string | null;
-  serialNo: string | null;
-  templateCode: string | null;
-  configActive: number | null;
-  lastTestAt: string | null;
-  lastTestStatus: "success" | "error" | "pending" | null;
-  lastTestMessage: string | null;
-}
-
-interface ApiForm {
-  username: string;
-  password: string;
-  taxCode: string;
-  endpointUrl: string;
-  serialNo: string;
-  templateCode: string;
-}
-
-// Props: parent (index.tsx tab_four) truyền ref để trigger save từ header button
-export interface ElectronicInvoiceProviderRef {
-  save: () => void;
-}
-
-interface Props {
-  onRegisterSave?: (fn: () => void) => void;
-}
-
-// ── Static mock data (render ngay, không cần API) ─────────────────────────────
-
+// ── Static fallback (render ngay, không chờ API) ──────────────────────────────
 const PROVIDERS_MOCK: ProviderItem[] = [
   {
     id: 1, code: "vnpt", name: "VNPT Invoice",
@@ -104,9 +59,15 @@ const PROVIDERS_MOCK: ProviderItem[] = [
 ];
 
 const MASK = "············";
-const EMPTY_FORM: ApiForm = {
-  username: "", password: "", taxCode: "", endpointUrl: "", serialNo: "", templateCode: "",
-};
+
+interface ApiForm {
+  username: string;
+  password: string;
+  taxCode: string;
+  endpointUrl: string;
+  serialNo: string;
+  templateCode: string;
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -123,150 +84,154 @@ function formatTestTime(ts: string | null): string {
   } catch { return ts; }
 }
 
-// Gọi API qua same-origin proxy prefix (không bị CORS)
-async function apiPost(path: string, body: object): Promise<any> {
-  const res = await fetch(`/bizapi${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  return res.json();
-}
-
-async function apiGet(path: string): Promise<any> {
-  const res = await fetch(`/bizapi${path}`);
-  return res.json();
-}
-
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function ElectronicInvoiceProvider({ onRegisterSave }: Props) {
-  const [providers, setProviders]       = useState<ProviderItem[]>(PROVIDERS_MOCK);
-  const [apiLoaded, setApiLoaded]       = useState(false);
+export default function ElectronicInvoiceProvider() {
+  const [providers, setProviders] = useState<ProviderItem[]>(PROVIDERS_MOCK);
 
-  const [selectedCode, setSelectedCode] = useState<string>("viettel");
-  const [selectedProvider, setSelectedProvider] = useState<ProviderItem>(PROVIDERS_MOCK[1]);
+  // Ref để tránh stale closure trong handleSave / handleTest
+  const selectedProviderRef = useRef<ProviderItem>(PROVIDERS_MOCK[1]);
+  const formRef             = useRef<ApiForm>({
+    username: "", password: "", taxCode: "",
+    endpointUrl: PROVIDERS_MOCK[1].baseUrl, serialNo: "", templateCode: "",
+  });
 
-  const [form, setForm]     = useState<ApiForm>({ ...EMPTY_FORM, endpointUrl: PROVIDERS_MOCK[1].baseUrl });
-  const [isSaving, setIsSaving]   = useState(false);
+  const [selectedCode, setSelectedCode] = useState("viettel");
+  const [form, _setForm]                = useState<ApiForm>(formRef.current);
+
+  const [isSaving,  setIsSaving]  = useState(false);
   const [isTesting, setIsTesting] = useState(false);
 
   const [testStatus,  setTestStatus]  = useState<"success" | "error" | null>(null);
   const [testMessage, setTestMessage] = useState("");
   const [testTime,    setTestTime]    = useState("");
 
-  // ── Load từ API (không block render) ────────────────────────────────────────
-
-  useEffect(() => {
-    apiGet("/integration/einvoice/providers")
-      .then((json) => {
-        if (json?.code === 0 && Array.isArray(json.result) && json.result.length > 0) {
-          setProviders(json.result);
-          const active = json.result.find((p: ProviderItem) => p.configActive === 1);
-          if (active) applySelection(active);
-          setApiLoaded(true);
-        }
-      })
-      .catch(() => {
-        /* giữ mock, không làm gì */
-      });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Wrapper: luôn sync state → ref cùng lúc
+  const setForm = useCallback((updater: ((prev: ApiForm) => ApiForm) | ApiForm) => {
+    _setForm((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      formRef.current = next;
+      return next;
+    });
   }, []);
 
-  // ── Đăng ký hàm save cho parent header button ────────────────────────────────
+  // ── Áp dụng selection → sidebar ───────────────────────────────────────────
 
-  const handleSave = useCallback(async () => {
-    if (!selectedProvider) return;
-    if (!form.taxCode.trim()) {
-      showToast("Vui lòng nhập mã số thuế doanh nghiệp", "warning");
-      return;
-    }
-    setIsSaving(true);
-    try {
-      const body = {
-        configId:     selectedProvider.configId,
-        providerId:   selectedProvider.id,
-        providerCode: selectedProvider.code,
-        username:     form.username,
-        password:     form.password === MASK ? "" : form.password,
-        taxCode:      form.taxCode,
-        endpointUrl:  form.endpointUrl,
-        serialNo:     form.serialNo,
-        templateCode: form.templateCode,
-      };
-      const json = await apiPost("/integration/einvoice/config/save", body);
-      if (json?.code === 0) {
-        showToast("Lưu & Kết nối thành công!", "success");
-        // Reload providers để cập nhật badge
-        const refreshed = await apiGet("/integration/einvoice/providers");
-        if (refreshed?.code === 0 && Array.isArray(refreshed.result)) {
-          setProviders(refreshed.result);
-        }
-      } else {
-        showToast(json?.message ?? "Lưu thất bại, vui lòng thử lại", "error");
-      }
-    } catch {
-      showToast("Lỗi khi lưu cấu hình!", "error");
-    } finally {
-      setIsSaving(false);
-    }
-  }, [selectedProvider, form]);
-
-  // Đăng ký lên parent để header button gọi được
-  useEffect(() => {
-    onRegisterSave?.(handleSave);
-  }, [handleSave, onRegisterSave]);
-
-  // ── Chọn NCC ────────────────────────────────────────────────────────────────
-
-  function applySelection(p: ProviderItem) {
+  const applyProvider = useCallback((p: ProviderItem) => {
+    selectedProviderRef.current = p;
     setSelectedCode(p.code);
-    setSelectedProvider(p);
+
     setTestStatus(
       p.lastTestStatus === "success" ? "success" :
       p.lastTestStatus === "error"   ? "error"   : null
     );
     setTestMessage(p.lastTestMessage ?? "");
     setTestTime(formatTestTime(p.lastTestAt));
-    setForm({
-      username:     p.username    ?? "",
-      password:     p.configId   ? MASK : "",
-      taxCode:      p.taxCode     ?? "",
-      endpointUrl:  p.endpointUrl ?? p.baseUrl ?? "",
-      serialNo:     p.serialNo    ?? "",
+
+    const next: ApiForm = {
+      username:     p.username     ?? "",
+      // Nếu đã có config → hiển thị mask, chưa có → trống để user nhập
+      password:     p.configId ? MASK : "",
+      taxCode:      p.taxCode      ?? "",
+      endpointUrl:  p.endpointUrl  ?? p.baseUrl ?? "",
+      serialNo:     p.serialNo     ?? "",
       templateCode: p.templateCode ?? "",
-    });
-  }
+    };
+    formRef.current = next;
+    _setForm(next);
+  }, []);
 
-  function setField(key: keyof ApiForm, value: string) {
-    setForm((f) => ({ ...f, [key]: value }));
-  }
+  // ── Load providers từ API ──────────────────────────────────────────────────
+  // Tách hàm để gọi lại sau save (keepCode = giữ NCC đang chọn)
 
-  // ── Test kết nối ─────────────────────────────────────────────────────────────
+  const loadProviders = useCallback(async (keepCode?: string) => {
+    const list = await EinvoiceProviderService.listProviders();
+    if (list.length === 0) return; // giữ mock
+
+    setProviders(list);
+
+    // Sau reload: tìm đúng NCC đang chọn để sidebar cập nhật configId + badge
+    const codeToSelect = keepCode ?? selectedProviderRef.current.code;
+    const target =
+      list.find((p) => p.code === codeToSelect) ??
+      list.find((p) => p.configActive === 1) ??
+      list[0];
+
+    if (target) applyProvider(target);
+  }, [applyProvider]);
+
+  // Load lần đầu khi mount
+  useEffect(() => { loadProviders(); }, [loadProviders]);
+
+  // ── Lưu & Kết nối ────────────────────────────────────────────────────────
+
+  const handleSave = async () => {
+    // Đọc từ ref → không bị stale closure
+    const p = selectedProviderRef.current;
+    const f = formRef.current;
+
+    if (!f.taxCode.trim()) {
+      showToast("Vui lòng nhập mã số thuế doanh nghiệp", "warning");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const res = await EinvoiceProviderService.saveConfig({
+        configId:     p.configId ?? null,
+        providerId:   p.id,
+        providerCode: p.code,
+        username:     f.username,
+        password:     f.password === MASK ? "" : f.password, // không gửi mask
+        taxCode:      f.taxCode,
+        endpointUrl:  f.endpointUrl,
+        serialNo:     f.serialNo,
+        templateCode: f.templateCode,
+      });
+
+      if (res.ok) {
+        showToast("Lưu & Kết nối thành công!", "success");
+        // Reload để cập nhật configId + badge "Đang sử dụng", giữ NCC đang chọn
+        await loadProviders(p.code);
+      } else {
+        showToast(res.message ?? "Lưu thất bại, vui lòng thử lại", "error");
+      }
+    } catch {
+      showToast("Lỗi khi lưu cấu hình!", "error");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // ── Kiểm tra kết nối ─────────────────────────────────────────────────────
 
   const handleTest = async () => {
-    if (!selectedProvider) return;
+    const p = selectedProviderRef.current;
+    const f = formRef.current;
+
     setIsTesting(true);
     setTestStatus(null);
     try {
-      const body = {
-        configId:     selectedProvider.configId,
-        providerId:   selectedProvider.id,
-        providerCode: selectedProvider.code,
-        username:     form.username,
-        password:     form.password === MASK ? "" : form.password,
-        taxCode:      form.taxCode,
-        endpointUrl:  form.endpointUrl,
-      };
-      const json = await apiPost("/integration/einvoice/config/test", body);
-      if (json?.code === 0 && json.result?.success) {
+      const res = await EinvoiceProviderService.testConnection({
+        configId:     p.configId ?? null,
+        providerId:   p.id,
+        providerCode: p.code,
+        username:     f.username,
+        password:     f.password === MASK ? "" : f.password,
+        taxCode:      f.taxCode,
+        endpointUrl:  f.endpointUrl,
+        serialNo:     f.serialNo,
+        templateCode: f.templateCode,
+      });
+
+      if (res.success) {
         setTestStatus("success");
-        setTestMessage(json.result.message ?? "Kết nối thành công. Cổng CQT phản hồi bình thường.");
+        setTestMessage(res.message);
         setTestTime(formatTestTime(new Date().toISOString()));
         showToast("Kiểm tra kết nối thành công!", "success");
       } else {
         setTestStatus("error");
-        setTestMessage(json?.result?.message ?? json?.message ?? "Kết nối thất bại.");
+        setTestMessage(res.message);
         showToast("Kiểm tra kết nối thất bại!", "error");
       }
     } catch {
@@ -278,11 +243,10 @@ export default function ElectronicInvoiceProvider({ onRegisterSave }: Props) {
     }
   };
 
-  // ── Render ────────────────────────────────────────────────────────────────────
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="tab-nha-cung-cap">
-      {/* Notice */}
       <div className="ncc__notice">
         <Icon name="Info" />
         <p>
@@ -293,7 +257,7 @@ export default function ElectronicInvoiceProvider({ onRegisterSave }: Props) {
       </div>
 
       <div className="ncc__body">
-        {/* ── Danh sách NCC ── */}
+        {/* Danh sách NCC */}
         <div className="ncc__provider-list">
           <p className="list-label">CHỌN NHÀ CUNG CẤP HĐDT</p>
 
@@ -307,12 +271,11 @@ export default function ElectronicInvoiceProvider({ onRegisterSave }: Props) {
               <div
                 key={p.id}
                 className={`provider-card${isSelected ? " selected" : ""}`}
-                onClick={() => applySelection(p)}
+                onClick={() => applyProvider(p)}
               >
                 <div className="provider-card__logo" style={{ background: p.logoColor }}>
                   {p.logoText}
                 </div>
-
                 <div className="provider-card__info">
                   <div className="provider-card__title-row">
                     <span className="provider-card__name">{p.name}</span>
@@ -324,7 +287,6 @@ export default function ElectronicInvoiceProvider({ onRegisterSave }: Props) {
                     {tags.map((t) => <span key={t} className="tag">✓ {t}</span>)}
                   </div>
                 </div>
-
                 <div className="provider-card__radio">
                   <div className={`radio-circle${isSelected ? " checked" : ""}`}>
                     {isSelected && <div className="radio-dot" />}
@@ -335,7 +297,7 @@ export default function ElectronicInvoiceProvider({ onRegisterSave }: Props) {
           })}
         </div>
 
-        {/* ── Sidebar cấu hình API ── */}
+        {/* Sidebar cấu hình API */}
         <div className="ncc__api-config">
           <h4>Thông tin kết nối API</h4>
 
@@ -345,70 +307,63 @@ export default function ElectronicInvoiceProvider({ onRegisterSave }: Props) {
               <input
                 value={form.username}
                 placeholder="Nhập username API"
-                onChange={(e) => setField("username", e.target.value)}
+                onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
               />
             </div>
-
             <div className="api-field">
               <label>MẬT KHẨU / PASSWORD</label>
               <input
                 type="password"
                 value={form.password}
                 placeholder="Nhập password"
-                onChange={(e) => setField("password", e.target.value)}
+                onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
               />
             </div>
-
             <div className="api-field">
               <label>MÃ SỐ THUẾ DOANH NGHIỆP</label>
               <input
                 value={form.taxCode}
                 placeholder="VD: 0311987654"
-                onChange={(e) => setField("taxCode", e.target.value)}
+                onChange={(e) => setForm((f) => ({ ...f, taxCode: e.target.value }))}
               />
             </div>
-
             <div className="api-field">
               <label>ENDPOINT API</label>
               <input
                 value={form.endpointUrl}
-                placeholder={selectedProvider?.baseUrl ?? "https://..."}
-                onChange={(e) => setField("endpointUrl", e.target.value)}
+                placeholder="https://..."
+                onChange={(e) => setForm((f) => ({ ...f, endpointUrl: e.target.value }))}
               />
             </div>
-
             <div className="api-field">
               <label>SỐ SERIAL MẪU HÓA ĐƠN</label>
               <input
                 value={form.serialNo}
                 placeholder="VD: C23TAA"
-                onChange={(e) => setField("serialNo", e.target.value)}
+                onChange={(e) => setForm((f) => ({ ...f, serialNo: e.target.value }))}
               />
             </div>
-
             <div className="api-field">
               <label>MÃ MẪU HÓA ĐƠN</label>
               <input
                 value={form.templateCode}
                 placeholder="VD: 01GTKT0/001"
-                onChange={(e) => setField("templateCode", e.target.value)}
+                onChange={(e) => setForm((f) => ({ ...f, templateCode: e.target.value }))}
               />
             </div>
           </div>
 
-          {/* Kiểm tra kết nối */}
           <button
             className={`btn-test-conn${isTesting ? " loading" : ""}`}
             onClick={handleTest}
             disabled={isTesting}
           >
             {isTesting
-              ? <><span className="spinner" /> Đang kiểm tra...</>
+              ? <><span className="spinner btn-test-conn__spinner" /> Đang kiểm tra...</>
               : <><Icon name="RefreshCw" /> Kiểm tra kết nối</>
             }
           </button>
 
-          {/* Lưu & Kết nối nội tuyến (trong sidebar) */}
           <button
             className={`btn-save-connect-inline${isSaving ? " loading" : ""}`}
             onClick={handleSave}
@@ -420,7 +375,6 @@ export default function ElectronicInvoiceProvider({ onRegisterSave }: Props) {
             }
           </button>
 
-          {/* Kết quả test */}
           {testStatus === "success" && (
             <div className="conn-result success">
               <Icon name="CheckCircle" />

@@ -13,6 +13,18 @@ import {
   COUPON_STATUS_MAP,
   COUPON_STATUS_TRANSITIONS,
 } from "model/coupon/CouponModel";
+
+// ── Share link helper ────────────────────────────────────────────
+const buildCouponShareUrl = (code?: string) =>
+  `${window.location.origin}/share_coupon?code=${encodeURIComponent(code ?? "")}`;
+
+const copyCouponShareLink = (code?: string) => {
+  if (!code) { showToast("Mã coupon không hợp lệ", "warning"); return; }
+  navigator.clipboard
+    .writeText(buildCouponShareUrl(code))
+    .then(() => showToast("✅ Đã copy link chia sẻ mã giảm giá!", "success"))
+    .catch(() => showToast("Không thể copy, vui lòng thử lại", "error"));
+};
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import "./index.scss";
 
@@ -297,6 +309,11 @@ export default function PromoCode(props: any) {
                   <div className="c-card-footer">
                     <span className="c-card-footer__hsd">HSD: {formatDate(c.expiryDate)}</span>
                     <div className="c-card-footer__actions">
+                      <button className="c-card-footer__btn c-card-footer__btn--share"
+                        title="Copy link chia sẻ"
+                        onClick={() => copyCouponShareLink(c.code)}>
+                        🔗
+                      </button>
                       <button className="c-card-footer__btn c-card-footer__btn--edit"
                         onClick={() => { setSelectedItem(c); setShowModalAdd(true); }}>
                         Sửa

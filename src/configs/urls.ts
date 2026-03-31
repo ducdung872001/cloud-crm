@@ -484,6 +484,28 @@ export const urlsApi = {
     districts: prefixIntegration + "/address/districts",
     provinces: prefixIntegration + "/address/provinces",
   },
+
+  // --- Quản lý đơn vị vận chuyển (Shipping Partner Setup) ---
+  shippingPartner: {
+    // Danh sách hãng VC + stats hôm nay — từ logistics service
+    carrierList: prefixLogistics + "/carrier/list",
+    // Trạng thái kết nối (isConnected, apiKeyMasked) — từ integration service
+    carrierConfigs: prefixIntegration + "/carrier/configs",
+    // Lưu API key/token kết nối hãng VC
+    connect: prefixIntegration + "/carrier/connect",
+    // Ngắt kết nối hãng VC
+    disconnect: prefixIntegration + "/carrier/disconnect",
+  },
+
+  // --- Cấu hình phí vận chuyển nội bộ (ShippingFeeConfig) ---
+  shippingFeeConfig: {
+    // GET — lấy cấu hình hiện tại (regionFees + orderValueFees)
+    get: prefixLogistics + "/fee-config",
+    // POST — lưu toàn bộ cấu hình (replace all)
+    save: prefixLogistics + "/fee-config/save",
+    // GET — gợi ý phí ship khi tạo đơn: ?provinceName=...&orderValue=...
+    suggest: prefixLogistics + "/fee-config/suggest",
+  },
   boughtService: {
     addToInvoice: prefixAdmin + "/boughtService/update",
     delete: prefixAdmin + "/boughtService/delete",
@@ -2086,6 +2108,34 @@ export const urlsApi = {
     detail: prefixApplication + "/material/get",
     upload: prefixApplication + "/material/upload",
   },
+  materialNvl: {
+    list: prefixInventory + "/material/list",
+    summary: prefixInventory + "/material/summary",
+    get: prefixInventory + "/material/get",
+    update: prefixInventory + "/material/update",
+    delete: prefixInventory + "/material/delete",
+    updateStatus: prefixInventory + "/material/update/status",
+    importList: prefixInventory + "/material/import/list",
+    importGet: prefixInventory + "/material/import/get",
+    importCreate: prefixInventory + "/material/import/create",
+    importConfirm: prefixInventory + "/material/import/confirm",
+    importCancel: prefixInventory + "/material/import/cancel",
+    bomList: prefixInventory + "/material/bom/list",
+    bomSummary: prefixInventory + "/material/bom/summary",
+    bomGet: prefixInventory + "/material/bom/get",
+    bomUpdate: prefixInventory + "/material/bom/update",
+    bomUpdateStatus: prefixInventory + "/material/bom/update/status",
+    bomDelete: prefixInventory + "/material/bom/delete",
+    export: prefixInventory + "/material/export",
+    // ── Lệnh sản xuất ────────────────────────────────────────────
+    productionList:    prefixInventory + "/material/production/list",
+    productionSummary: prefixInventory + "/material/production/summary",
+    productionGet:     prefixInventory + "/material/production/get",
+    productionCreate:  prefixInventory + "/material/production/create",
+    productionStart:   prefixInventory + "/material/production/start",
+    productionConfirm: prefixInventory + "/material/production/confirm",
+    productionCancel:  prefixInventory + "/material/production/cancel",
+  },
   businessCategory: {
     list: prefixApplication + "/businessCategory/list",
     update: prefixApplication + "/businessCategory/update",
@@ -2399,6 +2449,13 @@ export const urlsApi = {
     countByStatus: prefixMarket + "/promotion/count-by-status",
     updateStatus: prefixMarket + "/promotion/update/status",
     updateDmnSetting: prefixMarket + "/promotion/update/dmn-setting",
+    share: prefixMarket + "/promotion/share",
+  },
+  fixedPricePromotion: {
+    getProducts:    prefixMarket + "/fixedPrice/products",
+    saveProducts:   prefixMarket + "/fixedPrice/products/save",
+    activeEntries:  prefixMarket + "/fixedPrice/active-entries",
+    deleteProduct:  prefixMarket + "/fixedPrice/product/delete",
   },
   couponProgram: {
     list: prefixMarket + "/coupon/list",
@@ -2409,6 +2466,7 @@ export const urlsApi = {
     countByStatus: prefixMarket + "/coupon/count-by-status",
     sumUsed: prefixMarket + "/coupon/sum-used",
     apply: prefixMarket + "/coupon/apply",
+    share: prefixMarket + "/coupon/share",
   },
   email: {
     list: prefixAdmin + "/outlookMail/list",
@@ -3381,6 +3439,8 @@ export const urls = {
   sell: "/sell",
   promotional_program: "/promotional_program",
   promotional_report: "/promotional_report",
+  share_promo: "/share_promo",
+  share_coupon: "/share_coupon",
 
   contract: "/contract",
   offer: "/offer",

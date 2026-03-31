@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { CartItem, Customer, OrderType } from "../../types";
+import React, { useState, useEffect, useRef } from "react";
+import { CartItem, Customer, OrderType, ShippingInfo } from "../../types";
 import "./index.scss";
 import InvoiceService from "@/services/InvoiceService";
 import BoughtProductService from "@/services/BoughtProductService";
 import CouponService from "@/services/CouponService";
+import ShippingFeeConfigService from "@/services/ShippingFeeConfigService";
 import { showToast } from "utils/common";
 import { urlsApi } from "configs/urls";
 
@@ -15,8 +16,12 @@ interface CartProps {
   onSelectCustomer: () => void;
   customer?: Customer;
   setInvoiceDraftToPaid: (invoice: any) => void;
-  /** Callback sau khi lưu tạm thành công */
   onSavedDraft?: () => void;
+  // ── Loại đơn & ship ──────────────────────────────────────────────────────
+  orderType: OrderType;
+  onOrderTypeChange: (t: OrderType) => void;
+  shippingInfo: ShippingInfo;
+  onShippingInfoChange: (info: ShippingInfo) => void;
   // ── Loyalty ──────────────────────────────────────────────────────────────
   loyaltyWallet?: { currentBalance: number; segmentName?: string } | null;
   exchangeRate?: number;
@@ -24,11 +29,12 @@ interface CartProps {
   onPointsChange?: (points: number, moneyValue: number) => void;
   // ── Khuyến mãi ───────────────────────────────────────────────────────────
   eligiblePromoCount?: number;
-  appliedPromo?:       { id: number; name: string; discountAmount: number; promotionType: number; gifts?: any[] } | null;
-  promoDiscount?:      number;
-  onViewPromos?:       () => void;
-  onRemovePromo?:      () => void;
+  appliedPromo?: { id: number; name: string; discountAmount: number; promotionType: number; gifts?: any[] } | null;
+  promoDiscount?: number;
+  onViewPromos?: () => void;
+  onRemovePromo?: () => void;
   onCouponDiscountChange?: (discount: number) => void;
+  onManualDiscountChange?: (discount: number) => void;
   onResetVoucher?: () => void;
   // ── Ghi chú ──────────────────────────────────────────────────────────────
   note?: string;
@@ -38,119 +44,118 @@ interface CartProps {
 const Cart: React.FC<CartProps> = ({
   items, onChangeQty, onRemove, onPay,
   onSelectCustomer, customer,
-  setInvoiceDraftToPaid,
-  onSavedDraft,
+  setInvoiceDraftToPaid, onSavedDraft,
+  orderType, onOrderTypeChange, shippingInfo, onShippingInfoChange,
   loyaltyWallet, exchangeRate = 1000, pointsToUse = 0, onPointsChange,
   eligiblePromoCount = 0, appliedPromo, promoDiscount = 0,
-  onViewPromos, onRemovePromo, onCouponDiscountChange, onResetVoucher,
+  onViewPromos, onRemovePromo, onCouponDiscountChange, onManualDiscountChange, onResetVoucher,
   note = "", onNoteChange,
 }) => {
-  const [orderType, setOrderType] = useState<OrderType>("retail");
-  const [voucher, setVoucher]     = useState("");
-  const [isSaving, setIsSaving]   = useState(false);
+  const [voucher, setVoucher]   = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSuggestingFee, setIsSuggestingFee] = useState(false);
 
-  // ── Coupon state ──────────────────────────────────────────────────────────
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [couponDiscount, setCouponDiscount]     = useState(0);
   const [couponMessage, setCouponMessage]       = useState("");
   const [couponError, setCouponError]           = useState("");
 
-  // Helper: set coupon discount và notify parent
+  const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleCouponDiscountChange = (discount: number) => {
     setCouponDiscount(discount);
     onCouponDiscountChange?.(discount);
   };
 
-  const subtotal  = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const subtotal  = items.reduce((sum, i) => sum + i.price * i.qty, 0);
   const itemCount = items.length;
-  const formatVND = (n: number) => (n ? n.toLocaleString("vi") + " ₫" : "");
+  const formatVND = (n: number) => n ? n.toLocaleString("vi") + " ₫" : "0 ₫";
 
-  // Reset voucher khi thanh toán thành công
-  React.useEffect(() => {
-    const handleReset = () => {
-      setVoucher("");
-      setCouponDiscount(0);
-      setCouponMessage("");
-      setCouponError("");
-    };
-    
-    if (onResetVoucher) {
-      handleReset();
-    }
-  }, [onResetVoucher]);
+  const isShipOrder = orderType === "ship";
 
-  // ── Loyalty ───────────────────────────────────────────────────────────────
+  // ── Tính tổng ─────────────────────────────────────────────────────────────
   const isLoyaltyMember = !!loyaltyWallet;
-  const maxPoints = isLoyaltyMember
+  const maxPoints       = isLoyaltyMember
     ? Math.min(loyaltyWallet!.currentBalance, Math.floor(subtotal / exchangeRate))
     : 0;
-  const discount        = 0;
   const moneyFromPoints = (pointsToUse ?? 0) * exchangeRate;
-  const finalTotal      = Math.max(
+  const shippingFee     = isShipOrder ? (shippingInfo.shippingFee ?? 0) : 0;
+
+  const finalTotal = Math.max(
     0,
-    subtotal - discount - moneyFromPoints - promoDiscount - couponDiscount,
+    subtotal
+    - moneyFromPoints
+    - promoDiscount
+    - couponDiscount
+    + shippingFee,   // phí ship CỘNG vào (thu của khách)
   );
 
-  const ORDER_TYPES: { id: OrderType; label: string }[] = [
-    { id: "retail",    label: "Lẻ"   },
-    { id: "wholesale", label: "Buôn" },
-    { id: "ship",      label: "Ship" },
-  ];
+  // ── Gợi ý phí ship khi province thay đổi ─────────────────────────────────
+  const suggestShippingFee = async (province: string) => {
+    if (!province.trim()) return;
+    setIsSuggestingFee(true);
+    try {
+      const res = await ShippingFeeConfigService.suggest({
+        provinceName: province,
+        orderValue: subtotal,
+      });
+      if (res?.code === 0 && res?.result != null) {
+        onShippingInfoChange({ ...shippingInfo, receiverProvince: province, shippingFee: res.result });
+      }
+    } catch {
+      // gợi ý thất bại → không thay đổi giá trị
+    } finally {
+      setIsSuggestingFee(false);
+    }
+  };
 
-  // ── Handlers ──────────────────────────────────────────────────────────────
+  // Debounce suggest khi gõ tỉnh
+  const handleProvinceChange = (province: string) => {
+    onShippingInfoChange({ ...shippingInfo, receiverProvince: province });
+    if (suggestTimer.current) clearTimeout(suggestTimer.current);
+    suggestTimer.current = setTimeout(() => suggestShippingFee(province), 600);
+  };
 
-  /** Áp dụng mã coupon — gọi POST /bizapi/market/coupon/apply */
+  // Gợi ý lại khi subtotal thay đổi (nếu đã có tỉnh)
+  useEffect(() => {
+    if (isShipOrder && shippingInfo.receiverProvince?.trim()) {
+      if (suggestTimer.current) clearTimeout(suggestTimer.current);
+      suggestTimer.current = setTimeout(() => suggestShippingFee(shippingInfo.receiverProvince), 400);
+    }
+    return () => { if (suggestTimer.current) clearTimeout(suggestTimer.current); };
+  }, [subtotal, isShipOrder]);
+
+  useEffect(() => {
+    const handleReset = () => {
+      setVoucher(""); setCouponDiscount(0); setCouponMessage(""); setCouponError("");
+    };
+    if (onResetVoucher) handleReset();
+  }, [onResetVoucher]);
+
+  // ── Coupon ────────────────────────────────────────────────────────────────
   const handleApplyCoupon = async () => {
     const code = voucher.trim();
     if (!code) return;
-
     setIsApplyingCoupon(true);
-    setCouponError("");
-    setCouponMessage("");
-
+    setCouponError(""); setCouponMessage("");
     try {
       const res = await CouponService.apply(code, subtotal);
-
-      // ── Trích discountAmount từ response ──────────────────────────────────
-      // Hỗ trợ cả 3 format:
-      //   1. Flat:      { code, orderAmount, discountAmount?, finalAmount? }
-      //   2. Data wrap: { success, data: { discountAmount, finalAmount, ... } }
-      //   3. Result:    { code: 0, message, result: { code, discountAmount, ... } }
       const payload = (res as any)?.result ?? (res as any)?.data ?? res;
-
-      // discountAmount: lấy trực tiếp nếu có, nếu không tính từ finalAmount
-      let calcDiscount: number = 0;
+      let calcDiscount = 0;
       if (typeof payload?.discountAmount === "number" && payload.discountAmount > 0) {
         calcDiscount = payload.discountAmount;
-      } else if (
-        typeof payload?.finalAmount === "number" &&
-        typeof payload?.orderAmount === "number"
-      ) {
+      } else if (typeof payload?.finalAmount === "number" && typeof payload?.orderAmount === "number") {
         calcDiscount = Math.max(0, payload.orderAmount - payload.finalAmount);
       }
-
-      // Kiểm tra response hợp lệ: phải có code khớp hoặc không có lỗi
-      const hasError = payload?.error || payload?.message?.toLowerCase().includes("không hợp lệ")
-                    || payload?.message?.toLowerCase().includes("invalid")
-                    || payload?.message?.toLowerCase().includes("expired")
-                    || (res as any)?.success === false;
-
+      const hasError = payload?.error || (res as any)?.success === false;
       if (hasError) {
         handleCouponDiscountChange(0);
-        setCouponError(payload?.message ?? payload?.error ?? "Mã không hợp lệ hoặc đã hết hạn");
+        setCouponError(payload?.message ?? "Mã không hợp lệ hoặc đã hết hạn");
       } else if (payload?.code || (res as any)?.success === true) {
-        // Response hợp lệ — có thể không có discountAmount nếu API chưa implement
         handleCouponDiscountChange(calcDiscount);
-        if (calcDiscount > 0) {
-          setCouponMessage(
-            payload?.message ?? `Áp dụng thành công − ${calcDiscount.toLocaleString("vi")} đ`
-          );
-        } else {
-          // API confirm mã hợp lệ nhưng chưa trả discountAmount
-          // Hiển thị thông báo xác nhận, không trừ tiền (chờ backend cập nhật)
-          handleCouponDiscountChange(0);
-          setCouponMessage(payload?.message ?? "Mã hợp lệ ✓ (giá trị giảm sẽ áp dụng khi tạo đơn)");
-        }
+        setCouponMessage(calcDiscount > 0
+          ? (payload?.message ?? `Áp dụng thành công − ${calcDiscount.toLocaleString("vi")} đ`)
+          : (payload?.message ?? "Mã hợp lệ ✓"));
       } else {
         handleCouponDiscountChange(0);
         setCouponError("Mã không hợp lệ hoặc đã hết hạn");
@@ -163,7 +168,13 @@ const Cart: React.FC<CartProps> = ({
     }
   };
 
+  // ── Tạo đơn ──────────────────────────────────────────────────────────────
   const onCreateInvoice = async () => {
+    if (isShipOrder) {
+      if (!shippingInfo.receiverName?.trim()) { showToast("Vui lòng nhập tên người nhận", "warning"); return; }
+      if (!shippingInfo.receiverPhone?.trim()) { showToast("Vui lòng nhập số điện thoại người nhận", "warning"); return; }
+      if (!shippingInfo.receiverAddress?.trim()) { showToast("Vui lòng nhập địa chỉ giao hàng", "warning"); return; }
+    }
     try {
       const invoice = await InvoiceService.createInvoice({
         customerId: customer?.id ?? -1,
@@ -173,18 +184,15 @@ const Cart: React.FC<CartProps> = ({
         setInvoiceDraftToPaid(invoice.result.invoice);
         onPay(invoice.result.invoiceId);
       } else {
-        console.error("Tạo hóa đơn thất bại", invoice);
+        showToast(invoice.message ?? "Tạo đơn thất bại", "error");
       }
-    } catch (error) {
-      console.error("Có lỗi khi tạo hóa đơn", error);
+    } catch {
+      showToast("Có lỗi khi tạo đơn hàng", "error");
     }
   };
 
   const onSaveDraft = async () => {
-    if (items.length === 0) {
-      showToast("Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi lưu tạm.", "error");
-      return;
-    }
+    if (items.length === 0) { showToast("Giỏ hàng trống", "error"); return; }
     setIsSaving(true);
     try {
       const draftRes = await InvoiceService.createInvoice({
@@ -197,15 +205,10 @@ const Cart: React.FC<CartProps> = ({
       }
       const invoiceId: number = draftRes.result.invoiceId;
       const body = items.map((item) => ({
-        productId: Number(item.id),
-        variantId: Number(item.variantId),
-        price:     item.price,
-        customerId: Number(customer?.id ?? -1),
-        qty:       item.qty,
-        name:      item.name,
-        avatar:    item.avatar ?? "",
-        unitName:  item.unitName ?? item.unit ?? "",
-        fee:       item.price * item.qty,
+        productId: Number(item.id), variantId: Number(item.variantId),
+        price: item.price, customerId: Number(customer?.id ?? -1),
+        qty: item.qty, name: item.name, avatar: item.avatar ?? "",
+        unitName: item.unitName ?? item.unit ?? "", fee: item.price * item.qty,
       }));
       const insertRes = await BoughtProductService.insert(body, { invoiceId });
       if (insertRes.code !== 0) {
@@ -222,6 +225,12 @@ const Cart: React.FC<CartProps> = ({
     }
   };
 
+  const ORDER_TYPES: { id: OrderType; label: string }[] = [
+    { id: "retail", label: "Lẻ" },
+    { id: "wholesale", label: "Buôn" },
+    { id: "ship", label: "Ship" },
+  ];
+
   return (
     <div className="cart">
       <div className="cart__header">
@@ -230,7 +239,7 @@ const Cart: React.FC<CartProps> = ({
           <div className="order-type">
             {ORDER_TYPES.map((ot) => (
               <button key={ot.id} className={`ot${orderType === ot.id ? " active" : ""}`}
-                onClick={() => setOrderType(ot.id)}>{ot.label}</button>
+                onClick={() => onOrderTypeChange(ot.id)}>{ot.label}</button>
             ))}
           </div>
         </div>
@@ -243,9 +252,7 @@ const Cart: React.FC<CartProps> = ({
               <div className="cust-info">
                 <div className="cust-name">{customer.name}</div>
                 {customer.id === "-1" ? (
-                  <div className="cust-pts" style={{ color: "var(--muted)" }}>
-                    Không lưu thông tin
-                  </div>
+                  <div className="cust-pts" style={{ color: "var(--muted)" }}>Không lưu thông tin</div>
                 ) : (
                   <div className="cust-pts">
                     ⭐ {(customer.points || 0).toLocaleString("vi")} điểm · Hạng {customer.tier}
@@ -270,7 +277,19 @@ const Cart: React.FC<CartProps> = ({
               {item.image ? <img src={item.image} alt={item.name} /> : <span style={{ fontSize: "30px" }}>{item.icon}</span>}
             </div>
             <div className="ci__info">
-              <div className="ci__name">{item.name}</div>
+              <div className="ci__name">
+                {item.name}
+                {item.fixedPrice && (
+                  <span style={{
+                    marginLeft: 6, fontSize: 10, fontWeight: 700,
+                    background: "#6366f1", color: "#fff",
+                    padding: "1px 6px", borderRadius: 99,
+                    verticalAlign: "middle",
+                  }}>
+                    Đồng giá
+                  </span>
+                )}
+              </div>
               <div className="ci__price">{formatVND(item.price)}/{item.unitName || item.unit}</div>
             </div>
             <div className="ci__qty">
@@ -285,49 +304,157 @@ const Cart: React.FC<CartProps> = ({
       </div>
 
       <div className="cart__footer">
-        {/* ── Voucher ── */}
+
+        {/* ══ Ship section ══════════════════════════════════════════════════ */}
+        {isShipOrder && (
+          <div className="ship-section">
+            <div className="ship-section__title">🚚 Thông tin giao hàng</div>
+
+            {/* Tên người nhận */}
+            <div className="ship-section__row">
+              <div className="ship-section__label">Người nhận *</div>
+              <input className="ship-section__input"
+                placeholder="Họ tên người nhận"
+                value={shippingInfo.receiverName}
+                onChange={e => onShippingInfoChange({ ...shippingInfo, receiverName: e.target.value })}
+              />
+            </div>
+
+            {/* SĐT */}
+            <div className="ship-section__row">
+              <div className="ship-section__label">Số điện thoại *</div>
+              <input className="ship-section__input"
+                placeholder="0912 345 678"
+                value={shippingInfo.receiverPhone}
+                onChange={e => onShippingInfoChange({ ...shippingInfo, receiverPhone: e.target.value })}
+              />
+            </div>
+
+            {/* Tỉnh/Thành → gợi ý phí ship */}
+            <div className="ship-section__row">
+              <div className="ship-section__label">Tỉnh/Thành</div>
+              <input className="ship-section__input"
+                placeholder="VD: TP. Hồ Chí Minh, Hà Nội..."
+                value={shippingInfo.receiverProvince}
+                onChange={e => handleProvinceChange(e.target.value)}
+              />
+            </div>
+
+            {/* Địa chỉ chi tiết */}
+            <div className="ship-section__row">
+              <div className="ship-section__label">Địa chỉ giao *</div>
+              <input className="ship-section__input"
+                placeholder="Số nhà, đường, phường/xã, quận/huyện"
+                value={shippingInfo.receiverAddress}
+                onChange={e => onShippingInfoChange({ ...shippingInfo, receiverAddress: e.target.value })}
+              />
+            </div>
+
+            {/* Phí ship + nút gợi ý */}
+            <div className="ship-section__row">
+              <div className="ship-section__label">
+                Phí ship thu khách
+                {isSuggestingFee && <span style={{ fontSize: "1rem", color: "#0369a1", marginLeft: 6 }}>⏳ đang tính...</span>}
+              </div>
+              <div className="ship-section__fee-row">
+                <input
+                  className="ship-section__fee-input"
+                  type="number" min={0} step={1000}
+                  value={shippingInfo.shippingFee}
+                  onChange={e => onShippingInfoChange({ ...shippingInfo, shippingFee: Number(e.target.value) || 0 })}
+                />
+                <span className="ship-section__fee-unit">đ</span>
+                <button
+                  className="ship-section__suggest-btn"
+                  disabled={isSuggestingFee || !shippingInfo.receiverProvince?.trim()}
+                  onClick={() => suggestShippingFee(shippingInfo.receiverProvince)}
+                  title="Tính lại phí dựa trên cấu hình phí vận chuyển"
+                >
+                  Tính lại
+                </button>
+              </div>
+            </div>
+
+            {/* Bên trả phí ship */}
+            <div className="ship-section__row">
+              <div className="ship-section__label">Ai trả phí ship?</div>
+              <div className="ship-section__bearer">
+                <button
+                  className={`ship-section__bearer-btn${shippingInfo.shippingFeeBearer === "RECEIVER" ? " active" : ""}`}
+                  onClick={() => onShippingInfoChange({ ...shippingInfo, shippingFeeBearer: "RECEIVER" })}
+                >
+                  Người nhận
+                </button>
+                <button
+                  className={`ship-section__bearer-btn${shippingInfo.shippingFeeBearer === "SENDER" ? " active" : ""}`}
+                  onClick={() => onShippingInfoChange({ ...shippingInfo, shippingFeeBearer: "SENDER" })}
+                >
+                  Cửa hàng
+                </button>
+              </div>
+            </div>
+
+            {/* COD */}
+            <label className="ship-section__cod-toggle">
+              <input
+                type="checkbox"
+                checked={shippingInfo.codAmount > 0}
+                onChange={e => onShippingInfoChange({
+                  ...shippingInfo,
+                  codAmount: e.target.checked ? finalTotal : 0,
+                })}
+              />
+              Thu hộ COD ({formatVND(finalTotal)})
+            </label>
+            {shippingInfo.codAmount > 0 && (
+              <div className="ship-section__row">
+                <div className="ship-section__label">Số tiền COD</div>
+                <div className="ship-section__fee-row">
+                  <input
+                    className="ship-section__fee-input"
+                    type="number" min={0} step={1000}
+                    value={shippingInfo.codAmount}
+                    onChange={e => onShippingInfoChange({ ...shippingInfo, codAmount: Number(e.target.value) || 0 })}
+                  />
+                  <span className="ship-section__fee-unit">đ</span>
+                </div>
+              </div>
+            )}
+
+            {/* Ghi chú giao hàng */}
+            <div className="ship-section__row">
+              <div className="ship-section__label">Ghi chú cho người ship</div>
+              <input className="ship-section__input"
+                placeholder="VD: Gọi trước khi giao, để trước cửa..."
+                value={shippingInfo.noteForShipper ?? ""}
+                onChange={e => onShippingInfoChange({ ...shippingInfo, noteForShipper: e.target.value })}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Voucher */}
         <div className="voucher-row">
-          <input
-            type="text"
-            placeholder="🏷️ Nhập mã voucher..."
+          <input type="text" placeholder="🏷️ Nhập mã voucher..."
             value={voucher}
-            onChange={(e) => {
-              setVoucher(e.target.value);
-              // Reset khi người dùng chỉnh mã
-              handleCouponDiscountChange(0);
-              setCouponMessage("");
-              setCouponError("");
-            }}
-            onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
+            onChange={e => { setVoucher(e.target.value); handleCouponDiscountChange(0); setCouponMessage(""); setCouponError(""); }}
+            onKeyDown={e => e.key === "Enter" && handleApplyCoupon()}
           />
-          <button
-            className="btn btn--outline btn--sm"
-            onClick={handleApplyCoupon}
-            disabled={isApplyingCoupon || !voucher.trim()}
-          >
+          <button className="btn btn--outline btn--sm"
+            onClick={handleApplyCoupon} disabled={isApplyingCoupon || !voucher.trim()}>
             {isApplyingCoupon ? "..." : "Áp dụng"}
           </button>
         </div>
+        {couponMessage && <div style={{ fontSize: 11, color: "#3B6D11", marginTop: 4, paddingLeft: 2 }}>✓ {couponMessage}</div>}
+        {couponError   && <div style={{ fontSize: 11, color: "var(--red,#e53e3e)", marginTop: 4, paddingLeft: 2 }}>✕ {couponError}</div>}
 
-        {/* Feedback áp dụng coupon */}
-        {couponMessage && (
-          <div style={{ fontSize: 11, color: "#3B6D11", marginTop: 4, marginBottom: 2, paddingLeft: 2 }}>
-            ✓ {couponMessage}
-          </div>
-        )}
-        {couponError && (
-          <div style={{ fontSize: 11, color: "var(--red, #e53e3e)", marginTop: 4, marginBottom: 2, paddingLeft: 2 }}>
-            ✕ {couponError}
-          </div>
-        )}
-
+        {/* Summary */}
         <div className="summary">
           <div className="sr">
             <span className="sr__k">Tạm tính ({itemCount} sản phẩm)</span>
             <span className="sr__v">{formatVND(subtotal)}</span>
           </div>
 
-          {/* Giảm giá voucher — hiển thị couponDiscount từ API */}
           <div className="sr">
             <span className="sr__k">Giảm giá voucher</span>
             <span className="sr__v sr__v--red">
@@ -335,52 +462,55 @@ const Cart: React.FC<CartProps> = ({
             </span>
           </div>
 
-          {/* ── Banner khuyến mãi ── */}
+          {/* Banner KM */}
           {!appliedPromo && eligiblePromoCount > 0 && (
-            <div
-              onClick={onViewPromos}
-              style={{
-                display: "flex", alignItems: "center", gap: 8,
-                padding: "8px 10px", background: "#EAF3DE",
-                borderRadius: "0.6rem", cursor: "pointer",
-                marginBottom: 6, marginTop: 2,
-              }}
-            >
+            <div onClick={onViewPromos} style={{
+              display: "flex", alignItems: "center", gap: 8, padding: "8px 10px",
+              background: "#EAF3DE", borderRadius: "0.6rem", cursor: "pointer",
+              marginBottom: 6, marginTop: 2,
+            }}>
               <span style={{ fontSize: 12, color: "#3B6D11", fontWeight: 600, flex: 1 }}>
                 Có {eligiblePromoCount} khuyến mãi phù hợp
               </span>
-              <span style={{
-                fontSize: 11, background: "#3B6D11", color: "#fff",
-                padding: "2px 8px", borderRadius: "0.4rem",
-              }}>Xem ngay</span>
+              <span style={{ fontSize: 11, background: "#3B6D11", color: "#fff", padding: "2px 8px", borderRadius: "0.4rem" }}>
+                Xem ngay
+              </span>
             </div>
           )}
 
-          {/* ── Khuyến mãi đã chọn ── */}
           {appliedPromo && (
             <div style={{
-              display: "flex", alignItems: "center", gap: 6,
-              padding: "7px 10px", background: "#EAF3DE",
-              borderRadius: "0.6rem", marginBottom: 6, marginTop: 2,
+              display: "flex", alignItems: "center", gap: 6, padding: "7px 10px",
+              background: "#EAF3DE", borderRadius: "0.6rem", marginBottom: 6, marginTop: 2,
             }}>
-              <span style={{ flex: 1, fontSize: 12, color: "#3B6D11", fontWeight: 600 }}>
-                {appliedPromo.name}
-              </span>
-              <button
-                onClick={onRemovePromo}
-                style={{ background: "none", border: "none", color: "#3B6D11",
-                         cursor: "pointer", fontSize: 14, lineHeight: 1, padding: 0 }}
-              >✕</button>
+              <span style={{ flex: 1, fontSize: 12, color: "#3B6D11", fontWeight: 600 }}>{appliedPromo.name}</span>
+              <button onClick={onRemovePromo} style={{ background: "none", border: "none", color: "#3B6D11", cursor: "pointer", fontSize: 14, padding: 0 }}>✕</button>
             </div>
           )}
 
-          {/* ── Dòng giảm giá KM ── */}
           <div className="sr">
             <span className="sr__k">Khuyến mãi</span>
             <span className="sr__v" style={{ color: promoDiscount > 0 ? "#3B6D11" : undefined }}>
               {promoDiscount > 0 ? `−${promoDiscount.toLocaleString("vi")} ₫` : "0 ₫"}
             </span>
           </div>
+
+          {/* Phí ship — chỉ hiện khi orderType === ship */}
+          {isShipOrder && (
+            <div className="sr">
+              <span className="sr__k">
+                Phí ship
+                {shippingInfo.shippingFeeBearer === "SENDER"
+                  ? <span style={{ fontSize: "1rem", color: "#6b7280", marginLeft: 4 }}>(cửa hàng trả)</span>
+                  : null}
+              </span>
+              <span className="sr__v sr__v--ship">
+                {shippingInfo.shippingFeeBearer === "SENDER"
+                  ? "Miễn phí cho khách"
+                  : `+${shippingFee.toLocaleString("vi")} ₫`}
+              </span>
+            </div>
+          )}
 
           {/* Điểm tích lũy */}
           {isLoyaltyMember ? (
@@ -393,17 +523,9 @@ const Cart: React.FC<CartProps> = ({
               </span>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <input
-                    type="number" min={0} max={maxPoints} value={pointsToUse}
-                    onChange={(e) => {
-                      const v = Math.max(0, Math.min(Number(e.target.value), maxPoints));
-                      onPointsChange?.(v, v * exchangeRate);
-                    }}
-                    style={{
-                      width: 72, fontSize: 12, textAlign: "right",
-                      border: "1.5px solid var(--border)", borderRadius: "0.4rem",
-                      padding: "3px 6px", fontFamily: "var(--font-base)", background: "var(--paper)",
-                    }}
+                  <input type="number" min={0} max={maxPoints} value={pointsToUse}
+                    onChange={e => { const v = Math.max(0, Math.min(Number(e.target.value), maxPoints)); onPointsChange?.(v, v * exchangeRate); }}
+                    style={{ width: 72, fontSize: 12, textAlign: "right", border: "1.5px solid var(--border)", borderRadius: "0.4rem", padding: "3px 6px", fontFamily: "var(--font-base)", background: "var(--paper)" }}
                   />
                   <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>điểm</span>
                 </div>
@@ -414,9 +536,7 @@ const Cart: React.FC<CartProps> = ({
             </div>
           ) : customer ? (
             <div className="sr">
-              <span className="sr__k" style={{ color: "var(--muted)", fontSize: 11 }}>
-                💡 Khách chưa đăng ký hội viên
-              </span>
+              <span className="sr__k" style={{ color: "var(--muted)", fontSize: 11 }}>💡 Khách chưa đăng ký hội viên</span>
             </div>
           ) : null}
 
@@ -426,48 +546,31 @@ const Cart: React.FC<CartProps> = ({
           </div>
         </div>
 
-        <button
-          className="btn btn--outline"
-          style={{ width: "100%", padding: "1rem", marginBottom: "0.8rem",
-                   fontWeight: 700, fontSize: "1.4rem", borderRadius: "0.3rem",
-                   display: "flex", alignItems: "center", justifyContent: "center", gap: "0.6rem" }}
-          onClick={onSaveDraft}
-          disabled={isSaving || items.length === 0}
-        >
+        <button className="btn btn--outline"
+          style={{ width: "100%", padding: "1rem", marginBottom: "0.8rem", fontWeight: 700, fontSize: "1.4rem", borderRadius: "0.3rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.6rem" }}
+          onClick={onSaveDraft} disabled={isSaving || items.length === 0}>
           {isSaving ? "⏳ Đang lưu..." : "💾 Lưu tạm"}
         </button>
 
-        {/* ── Ghi chú đơn hàng — collapsible ── */}
+        {/* Ghi chú đơn */}
         <div className="cart-note">
-          <button
-            className={`cart-note__toggle${note?.trim() ? " has-value" : ""}`}
-            onClick={() => {
-              const el = document.getElementById("cart-note-textarea");
-              if (el) {
-                el.style.display = el.style.display === "none" ? "block" : "none";
-                if (el.style.display !== "none") (el as HTMLTextAreaElement).focus();
-              }
-            }}
+          <button className={`cart-note__toggle${note?.trim() ? " has-value" : ""}`}
+            onClick={() => { const el = document.getElementById("cart-note-textarea"); if (el) { el.style.display = el.style.display === "none" ? "block" : "none"; if (el.style.display !== "none") (el as HTMLTextAreaElement).focus(); } }}
           >
             <span>📝 Ghi chú đơn hàng</span>
             {note?.trim()
               ? <span className="cart-note__preview">{note.trim().slice(0, 30)}{note.trim().length > 30 ? "…" : ""}</span>
-              : <span className="cart-note__hint">Nhấn để thêm ghi chú</span>
-            }
+              : <span className="cart-note__hint">Nhấn để thêm ghi chú</span>}
           </button>
-          <textarea
-            id="cart-note-textarea"
-            className="cart-note__textarea"
+          <textarea id="cart-note-textarea" className="cart-note__textarea"
             style={{ display: note?.trim() ? "block" : "none" }}
             placeholder="VD: Giao buổi chiều, không lấy túi nilon, gói quà..."
-            rows={3}
-            value={note}
-            onChange={(e) => onNoteChange?.(e.target.value)}
+            rows={3} value={note} onChange={e => onNoteChange?.(e.target.value)}
           />
         </div>
 
         <button className="pay-btn" onClick={onCreateInvoice} disabled={items.length === 0}>
-          💳 Tạo đơn hàng
+          {isShipOrder ? "📦 Tạo đơn giao hàng" : "💳 Tạo đơn hàng"}
         </button>
       </div>
     </div>
