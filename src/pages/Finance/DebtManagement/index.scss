@@ -236,6 +236,30 @@
     margin: 0;
   }
 }
+
+// ─── Modal action buttons — căn giữa ─────────────────────────────────────────
+
+.debt-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+// ─── QR share hint ────────────────────────────────────────────────────────────
+
+.debt-qr-share-hint {
+  text-align: center;
+  font-size: 1.25rem;
+  color: #5c7282;
+  line-height: 1.6;
+  margin: 0 0 0.4rem;
+  padding: 0 1.6rem;
+
+  b { color: #133042; }
+}
+
 // ─── QR Canvas (VietQR thật) ──────────────────────────────────────────────────
 
 .debt-qr-canvas {
@@ -246,11 +270,12 @@
   canvas {
     border-radius: 0.8rem;
     border: 1px solid #e4ebf1;
+    max-width: 100%;
   }
 }
 
 .debt-qr-loading {
-  height: 20rem;
+  height: 18rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -259,12 +284,87 @@
 }
 
 .debt-qr-error {
-  height: 20rem;
+  height: 18rem;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   font-size: 1.3rem;
   color: #c62828;
-  line-height: 1.6;
+  line-height: 1.7;
+}
+
+// ─── PayModal ─────────────────────────────────────────────────────────────────
+
+.debt-pay-modal {
+  width: min(44rem, 100%);
+}
+
+.debt-pay-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  margin-top: 1.6rem;
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #5c7282;
+    }
+  }
+
+  &__input-row {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  &__full-btn {
+    white-space: nowrap;
+    padding: 0.7rem 1.2rem;
+    border-radius: 0.7rem;
+    border: 1.5px solid #c9d9e4;
+    background: #f0f6fa;
+    color: #133042;
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font-base);
+    transition: background 0.12s;
+
+    &:hover { background: #e2edf5; }
+  }
+
+  &__select {
+    width: 100%;
+    font-size: 1.3rem;
+  }
+
+  &__no-fund {
+    font-size: 1.25rem;
+    color: #c62828;
+    margin: 0;
+  }
+}
+
+.finance-input {
+  flex: 1;
+  padding: 0.8rem 1.2rem;
+  border: 1.5px solid #c9d9e4;
+  border-radius: 0.7rem;
+  font-size: 1.35rem;
+  font-family: var(--font-base);
+  color: #133042;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+
+  &:focus { border-color: var(--primary-color, #015aa4); }
+  &::placeholder { color: #9bb5c8; }
 }

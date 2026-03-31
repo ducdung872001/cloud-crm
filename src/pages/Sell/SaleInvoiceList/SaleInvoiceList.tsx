@@ -4,6 +4,9 @@ import { IInvoiceFilterRequest } from "model/invoice/InvoiceRequestModel";
 import { showToast, toApiDateFormat, formatDisplayDate } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
 import InvoiceService from "services/InvoiceService";
+import DebtManagementService from "services/DebtManagementService";
+import { IFundListItem } from "services/FundManagementService";
+import { urlsApi } from "configs/urls";
 import "./SaleInvoiceList.scss";
 import OrderList, { StatusCounts } from "@/pages/CounterSales/components/OrderList";
 import { Order } from "@/pages/CounterSales/types";
@@ -69,7 +72,191 @@ function mapItemToOrder(item: any, customerMap: CustomerMap): Order {
     items: itemNames,
     total: inv.fee,
     note:  inv.note ?? "",
+    debt:  inv.debt  ?? 0,
+    paid:  inv.paid  ?? 0,
   };
+}
+
+
+// ─── QuickPayModal — Thu nợ nhanh từ danh sách đơn ───────────────────────────
+
+function parseVnd(s: string): number {
+  return parseInt(s.replace(/[^0-9]/g, ""), 10) || 0;
+}
+
+interface QuickPayModalProps {
+  debtInfo: { debtId: number; amount: number; name: string };
+  funds: IFundListItem[];
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+function QuickPayModal({ debtInfo, funds, onClose, onSuccess }: QuickPayModalProps) {
+  const [amountStr, setAmountStr]   = useState(debtInfo.amount.toLocaleString("vi"));
+  const [amount, setAmount]         = useState(debtInfo.amount);
+  const [fundId, setFundId]         = useState<number>(funds[0]?.id ?? 0);
+  const [note, setNote]             = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const fmtCurrency = (n: number) => n.toLocaleString("vi") + " VND";
+
+  async function handlePay() {
+    if (!fundId)     { showToast("Vui lòng chọn quỹ nhận tiền", "error"); return; }
+    if (amount <= 0) { showToast("Số tiền phải lớn hơn 0", "error"); return; }
+    if (amount > debtInfo.amount + 0.01) {
+      showToast(`Số tiền vượt quá nợ còn lại (${fmtCurrency(debtInfo.amount)})`, "error");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await DebtManagementService.pay({
+        debtId: debtInfo.debtId,
+        amount,
+        fundId,
+        note: note.trim() || undefined,
+      });
+      const remaining = typeof res === "number" ? res : 0;
+      showToast(
+        remaining <= 0
+          ? "✓ Thu nợ thành công! Hóa đơn đã được gạch nợ."
+          : `✓ Đã thu ${fmtCurrency(amount)}. Còn lại: ${fmtCurrency(remaining)}`,
+        "success"
+      );
+      onSuccess();
+    } catch (e: any) {
+      showToast(e?.message ?? "Có lỗi xảy ra khi thu tiền", "error");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div
+      style={{
+        position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)",
+        zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center",
+      }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div style={{
+        background: "#fff", borderRadius: "1.2rem", padding: "2.4rem",
+        width: "min(42rem, 95vw)", boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.6rem" }}>
+          <h3 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 700, color: "#133042" }}>Thu nợ</h3>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.8rem", color: "#8a9eb0" }}>×</button>
+        </div>
+
+        {/* Info */}
+        <div style={{ background: "#f8fbfd", borderRadius: "0.8rem", padding: "1.2rem 1.4rem", marginBottom: "1.6rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "0.4rem 0", fontSize: "1.3rem" }}>
+            <span style={{ color: "#5c7282" }}>Khách hàng</span>
+            <strong style={{ color: "#133042" }}>{debtInfo.name}</strong>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "0.4rem 0", fontSize: "1.3rem" }}>
+            <span style={{ color: "#5c7282" }}>Còn nợ</span>
+            <strong style={{ color: "#c62828" }}>{fmtCurrency(debtInfo.amount)}</strong>
+          </div>
+        </div>
+
+        {/* Fields */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem", marginBottom: "2rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <label style={{ fontSize: "1.2rem", fontWeight: 600, color: "#5c7282" }}>Số tiền thu</label>
+            <div style={{ display: "flex", gap: "0.8rem" }}>
+              <input
+                type="text"
+                value={amountStr}
+                onChange={(e) => {
+                  const raw = parseVnd(e.target.value);
+                  setAmount(raw);
+                  setAmountStr(raw > 0 ? raw.toLocaleString("vi") : "");
+                }}
+                style={{
+                  flex: 1, padding: "0.8rem 1.2rem", border: "1.5px solid #c9d9e4",
+                  borderRadius: "0.7rem", fontSize: "1.35rem", fontFamily: "inherit",
+                  color: "#133042", outline: "none",
+                }}
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => { setAmount(debtInfo.amount); setAmountStr(debtInfo.amount.toLocaleString("vi")); }}
+                style={{
+                  padding: "0.7rem 1.2rem", border: "1.5px solid #c9d9e4", borderRadius: "0.7rem",
+                  background: "#f0f6fa", color: "#133042", fontSize: "1.25rem", fontWeight: 600,
+                  cursor: "pointer", whiteSpace: "nowrap", fontFamily: "inherit",
+                }}
+              >
+                Thu đủ
+              </button>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <label style={{ fontSize: "1.2rem", fontWeight: 600, color: "#5c7282" }}>Quỹ nhận tiền</label>
+            {funds.length === 0 ? (
+              <p style={{ margin: 0, fontSize: "1.25rem", color: "#c62828" }}>Chưa có quỹ nào.</p>
+            ) : (
+              <select
+                value={fundId}
+                onChange={(e) => setFundId(Number(e.target.value))}
+                style={{
+                  padding: "0.8rem 1.2rem", border: "1.5px solid #c9d9e4",
+                  borderRadius: "0.7rem", fontSize: "1.3rem", fontFamily: "inherit",
+                  color: "#133042", background: "#fff",
+                }}
+              >
+                {funds.map(f => (
+                  <option key={f.id} value={f.id}>{f.name} — {fmtCurrency(f.balance)}</option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <label style={{ fontSize: "1.2rem", fontWeight: 600, color: "#5c7282" }}>Ghi chú (tuỳ chọn)</label>
+            <input
+              type="text"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="VD: Khách chuyển khoản ngân hàng..."
+              style={{
+                padding: "0.8rem 1.2rem", border: "1.5px solid #c9d9e4",
+                borderRadius: "0.7rem", fontSize: "1.3rem", fontFamily: "inherit",
+                color: "#133042", outline: "none",
+              }}
+            />
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+          <button
+            onClick={onClose}
+            style={{
+              padding: "0.9rem 2rem", border: "1.5px solid #c9d9e4", borderRadius: "0.8rem",
+              background: "#fff", color: "#133042", fontSize: "1.3rem", fontWeight: 600,
+              cursor: "pointer", fontFamily: "inherit",
+            }}
+          >
+            Huỷ
+          </button>
+          <button
+            onClick={handlePay}
+            disabled={submitting || funds.length === 0}
+            style={{
+              padding: "0.9rem 2rem", border: "none", borderRadius: "0.8rem",
+              background: submitting ? "#9ca3af" : "#2e7d32", color: "#fff",
+              fontSize: "1.3rem", fontWeight: 700, cursor: submitting ? "not-allowed" : "pointer",
+              fontFamily: "inherit",
+            }}
+          >
+            {submitting ? "Đang xử lý..." : "✓ Xác nhận thu tiền"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -88,6 +275,8 @@ export default function SaleInvoiceList() {
   const [orderDetailModalOpen, setOrderDetailOpen]  = useState(false);
   const [receiptInvoiceId, setReceiptInvoiceId]     = useState<number | null>(null);
   const [receiptModalOpen, setReceiptModalOpen]     = useState(false);
+  const [quickPayDebt, setQuickPayDebt]             = useState<{ debtId: number; amount: number; name: string } | null>(null);
+  const [funds, setFunds]                           = useState<IFundListItem[]>([]);
   const [searchParams]                              = useSearchParams();
   const [listSaleInvoice, setListSaleInvoice]       = useState<Order[]>([]);
   const [isLoading, setIsLoading]                   = useState(true);
@@ -114,6 +303,14 @@ export default function SaleInvoiceList() {
   const abortRef       = useRef<AbortController | null>(null);
   const enrichAbortRef = useRef<AbortController | null>(null);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ── Load quỹ cho quick-pay ────────────────────────────────────────────────
+  useEffect(() => {
+    fetch(urlsApi.fund.overview, { method: "GET" })
+      .then(r => r.json())
+      .then(res => { if (res.code === 0) setFunds(res.result?.funds ?? []); })
+      .catch(() => {});
+  }, []);
 
   // ── Sync branchId vào params ───────────────────────────────────────────────
   useEffect(() => {
@@ -256,6 +453,10 @@ export default function SaleInvoiceList() {
   const handleViewDetail   = useCallback((id: number | null) => { setInvoiceId(id); setOrderDetailOpen(true); }, []);
   const handleConfirmOrder = useCallback(() => setOrderDetailOpen(false), []);
   const handleViewReceipt  = useCallback((id: number | null) => { setReceiptInvoiceId(id); setReceiptModalOpen(true); }, []);
+  const handleCollectDebt  = useCallback((order: Order) => {
+    if (!order.debt || order.debt <= 0) return;
+    setQuickPayDebt({ debtId: Number(order.id), amount: order.debt, name: order.customer.name });
+  }, []);
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
@@ -278,6 +479,7 @@ export default function SaleInvoiceList() {
         onViewDetail={handleViewDetail}
         onViewReceipt={handleViewReceipt}
         onConfirm={handleConfirmOrder}
+        onCollectDebt={handleCollectDebt}
       />
 
       {isLoading && (
@@ -311,6 +513,20 @@ export default function SaleInvoiceList() {
         invoiceId={receiptInvoiceId}
         onClose={() => { setReceiptInvoiceId(null); setReceiptModalOpen(false); }}
       />
+
+      {/* Quick Pay Modal — Thu nợ từ danh sách đơn hàng */}
+      {quickPayDebt && (
+        <QuickPayModal
+          debtInfo={quickPayDebt}
+          funds={funds}
+          onClose={() => setQuickPayDebt(null)}
+          onSuccess={() => {
+            setQuickPayDebt(null);
+            // Reload list để cập nhật badge nợ
+            fetchList(params);
+          }}
+        />
+      )}
     </div>
   );
 }
