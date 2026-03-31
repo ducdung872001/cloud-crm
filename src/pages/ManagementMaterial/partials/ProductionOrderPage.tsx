@@ -64,12 +64,15 @@ export default function ProductionOrderDetailPanel({ order, onClose, onRefresh }
   const [confirmQty, setConfirmQty] = useState<string>("");
 
   useEffect(() => {
+    if (!order?.id) return;
     setIsLoading(true);
     ProductionOrderService.get(order.id)
       .then((res) => { if (res?.code === 0) setDetail(res.result); })
       .catch(() => {})
       .finally(() => setIsLoading(false));
-  }, [order.id]);
+  }, [order?.id]);
+
+  if (!order) return null;
 
   const data = detail ?? order as IProductionOrderDetail;
   const status = data.status;
