@@ -257,21 +257,21 @@
   flex-direction: column;
 
   &__header {
-    background: linear-gradient(135deg, #0f172a 0%, #0d9488 100%);
-    padding: 2rem 1.8rem 1.6rem;
+    background: var(--white-color, #fff);
+    padding: 1.6rem 1.8rem 1.2rem;
     position: relative;
-    color: #fff;
+    border-bottom: 1px solid var(--border-color);
   }
 
   &__close {
     position: absolute;
     top: 1.2rem;
     right: 1.2rem;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--extra-color-10, #f1f5f9);
     border: none;
-    color: #fff;
-    width: 2.7rem;
-    height: 2.7rem;
+    color: var(--extra-color-50);
+    width: 2.8rem;
+    height: 2.8rem;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -280,24 +280,29 @@
     padding: 0;
     font-size: 1.4rem;
     line-height: 1;
+    transition: all 0.15s;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.35);
+      background: var(--border-color);
+      color: var(--text-primary-color);
     }
   }
 
   &__code {
     font-family: var(--font-mono, monospace);
     font-size: 1.15rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--primary-color, #015aa4);
+    font-weight: 700;
     margin-bottom: 0.4rem;
   }
 
   &__name {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 700;
+    color: var(--text-primary-color);
     margin-bottom: 0.8rem;
     line-height: 1.3;
+    padding-right: 3rem; // tránh chồng nút close
   }
 
   &__meta {
@@ -308,10 +313,12 @@
 
   &__ver {
     font-size: 1.15rem;
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--extra-color-10, #f1f5f9);
     padding: 0.2rem 0.7rem;
     border-radius: 0.3rem;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--extra-color-50);
+    font-family: var(--font-mono, monospace);
+    font-weight: 600;
   }
 
   &__qs {
@@ -343,11 +350,11 @@
   }
 
   &__section-title {
-    font-size: 1.15rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 600;
     color: var(--extra-color-50);
-    text-transform: none; // ✅ standardized
-    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     padding: 1.2rem 1.6rem 0.6rem;
   }
 
@@ -363,8 +370,9 @@
     gap: 0.6rem;
     margin: 0.8rem 1.6rem;
     padding: 0.8rem 1rem;
-    background: var(--bg-color, #f8fafc);
-    border-radius: 0.8rem;
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 0.6rem;
     font-size: 1.2rem;
     color: var(--extra-color-50);
 

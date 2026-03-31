@@ -26,6 +26,20 @@ const STATUS_VARIANT: Record<number, "success" | "warning" | "secondary"> = {
 };
 
 // ── BOM Detail Panel ──────────────────────────────────────────
+function formatDateTime(raw?: string): string {
+  if (!raw) return "";
+  try {
+    const d = new Date(raw);
+    if (isNaN(d.getTime())) return raw;
+    const dd   = String(d.getDate()).padStart(2, "0");
+    const mm   = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    const hh   = String(d.getHours()).padStart(2, "0");
+    const min  = String(d.getMinutes()).padStart(2, "0");
+    return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
+  } catch { return raw; }
+}
+
 function BomDetailPanel({ bom, onClose, onEdit }: {
   bom: IBomResponse; onClose: () => void;
   onEdit: (b: IBomResponse) => void;
@@ -105,8 +119,8 @@ function BomDetailPanel({ bom, onClose, onEdit }: {
       )}
 
       <div className="bom-detail-panel__dates">
-        {data.createdTime && <span>Tạo: {data.createdTime}</span>}
-        {data.updatedTime && <span>Cập nhật: {data.updatedTime}</span>}
+        {data.createdTime  && <span>Tạo: {formatDateTime(String(data.createdTime))}</span>}
+        {data.updatedTime  && <span>Cập nhật: {formatDateTime(String(data.updatedTime))}</span>}
       </div>
 
       <div className="bom-detail-panel__actions">

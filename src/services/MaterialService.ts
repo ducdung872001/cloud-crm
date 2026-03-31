@@ -98,11 +98,14 @@ export const MaterialImportService = {
   list: (
     params: { status?: number; keyword?: string; page?: number; limit?: number },
     signal?: AbortSignal
-  ) =>
-    fetch(`${urlsApi.materialNvl.importList}${convertParamsToString(params)}`, {
+  ) => {
+    const p: Record<string, any> = { keyword: params.keyword ?? "", page: params.page ?? 1, limit: params.limit ?? 10 };
+    if (params.status !== undefined && params.status !== null) p.status = params.status;
+    return fetch(`${urlsApi.materialNvl.importList}${convertParamsToString(p)}`, {
       signal,
       method: "GET",
-    }).then((r) => r.json()),
+    }).then((r) => r.json());
+  },
 
   get: (id: number) =>
     fetch(`${urlsApi.materialNvl.importGet}?id=${id}`, { method: "GET" }).then((r) => r.json()),
@@ -129,11 +132,14 @@ export const BomService = {
   list: (
     params: { status?: number; keyword?: string; page?: number; limit?: number },
     signal?: AbortSignal
-  ) =>
-    fetch(`${urlsApi.materialNvl.bomList}${convertParamsToString(params)}`, {
+  ) => {
+    const p: Record<string, any> = { keyword: params.keyword ?? "", page: params.page ?? 1, limit: params.limit ?? 10 };
+    if (params.status !== undefined && params.status !== null) p.status = params.status;
+    return fetch(`${urlsApi.materialNvl.bomList}${convertParamsToString(p)}`, {
       signal,
       method: "GET",
-    }).then((r) => r.json()),
+    }).then((r) => r.json());
+  },
 
   summary: (signal?: AbortSignal) =>
     fetch(urlsApi.materialNvl.bomSummary, { signal, method: "GET" }).then((r) => r.json()),
