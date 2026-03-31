@@ -16,6 +16,8 @@ import {
   VIETNAM_BANKS,
 } from "model/paymentMethod/PaymentMethodModel";
 import { StorePaymentConfigService } from "services/PaymentMethodService";
+import { IFundListItem } from "services/FundManagementService";
+import { urlsApi } from "configs/urls";
 import "./ModalPaymentMethod.scss";
 
 interface Props {
@@ -29,6 +31,7 @@ const empty = (templateId = 0): IStorePaymentConfigRequest => ({
   templateId, displayName: "", bankName: "", accountNumber: "",
   accountHolderName: "", partnerCode: "", apiKey: "", clientSecret: "",
   paymentTimeout: undefined, isDefault: false, isActive: true, position: 0,
+  fundId: undefined,
 });
 
 export default function ModalPaymentMethod({ open, data, branchId = 0, onClose }: Props) {
@@ -42,6 +45,7 @@ export default function ModalPaymentMethod({ open, data, branchId = 0, onClose }
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [templates, setTemplates] = useState<IPaymentMethodTemplate[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [funds, setFunds]                     = useState<IFundListItem[]>([]);
 
   // Template đang được chọn/edit → biết partner → show đúng fields
   const selectedTemplate: IPaymentMethodTemplate | undefined =
@@ -65,6 +69,7 @@ export default function ModalPaymentMethod({ open, data, branchId = 0, onClose }
       isDefault: data.isDefault,
       isActive: data.isActive,
       position: data.position,
+      fundId: data.fundId,
     };
   }, [data, open]);
 
@@ -79,6 +84,15 @@ export default function ModalPaymentMethod({ open, data, branchId = 0, onClose }
       .catch(() => { })
       .finally(() => setLoadingTemplates(false));
   }, [open, isEdit, branchId]);
+
+  // Fetch fund list cho dropdown liên kết quỹ
+  useEffect(() => {
+    if (!open) return;
+    fetch(urlsApi.fund.overview, { method: "GET" })
+      .then(r => r.json())
+      .then(res => { if (res.code === 0) setFunds(res.result?.funds ?? []); })
+      .catch(() => {});
+  }, [open]);
 
   const templateOptions = templates.map((t) => {
     const meta = PARTNER_META[t.partner] ?? PARTNER_META.OTHER;
@@ -335,6 +349,29 @@ export default function ModalPaymentMethod({ open, data, branchId = 0, onClose }
                     onChange={(e) => set("paymentTimeout", e.target.value ? Number(e.target.value) : undefined)} />
                 </div>
               )}
+
+              {/* Liên kết quỹ nhận tiền */}
+              <div className="mpm-field">
+                <label className="mpm-label">
+                  Quỹ nhận tiền
+                  <span className="mpm-hint-inline"> (tiền vào quỹ nào khi KH thanh toán bằng PTTT này)</span>
+                </label>
+                {funds.length === 0 ? (
+                  <p className="mpm-hint">Chưa có quỹ nào. Tạo quỹ trong <b>Quản lý quỹ</b> trước.</p>
+                ) : (
+                  <SelectCustom
+                    id="pm-fund" name="pm-fund"
+                    options={[
+                      { value: null, label: "— Chưa liên kết quỹ —" },
+                      ...funds.map(f => ({ value: f.id, label: `${f.name} (${f.balance.toLocaleString("vi")} VND)` }))
+                    ]}
+                    placeholder="Chọn quỹ nhận tiền..."
+                    value={form.fundId ?? null}
+                    fill
+                    onChange={(opt: any) => set("fundId", opt?.value ?? undefined)}
+                  />
+                )}
+              </div>
 
               {/* Thứ tự + Mặc định + Trạng thái */}
               <div className="mpm-row-3">
