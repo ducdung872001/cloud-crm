@@ -496,6 +496,16 @@ export const urlsApi = {
     // Ngắt kết nối hãng VC
     disconnect: prefixIntegration + "/carrier/disconnect",
   },
+
+  // --- Cấu hình phí vận chuyển nội bộ (ShippingFeeConfig) ---
+  shippingFeeConfig: {
+    // GET — lấy cấu hình hiện tại (regionFees + orderValueFees)
+    get: prefixLogistics + "/fee-config",
+    // POST — lưu toàn bộ cấu hình (replace all)
+    save: prefixLogistics + "/fee-config/save",
+    // GET — gợi ý phí ship khi tạo đơn: ?provinceName=...&orderValue=...
+    suggest: prefixLogistics + "/fee-config/suggest",
+  },
   boughtService: {
     addToInvoice: prefixAdmin + "/boughtService/update",
     delete: prefixAdmin + "/boughtService/delete",
