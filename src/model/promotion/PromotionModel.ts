@@ -85,6 +85,7 @@ export interface IPromotionListParams {
   fmtStartDate?: string;    // "dd/MM/yyyy" hoặc "yyyy-MM-dd"
   fmtEndDate?: string;
   status?: number;          // -1 = tất cả
+  promotionType?: number;   // 0 = tất cả, 7 = đồng giá...
   page?: number;
   sizeLimit?: number;
 }

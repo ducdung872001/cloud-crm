@@ -118,18 +118,23 @@ export default function FixedPricePage(props: any) {
     }
   }, [search, statusFilter, page, sizeLimit]);
 
-  // ── Load stats ───────────────────────────────────────────────────
+  // ── Load stats — đếm chỉ promotionType=7 ────────────────────────
   const loadStats = useCallback(async () => {
     setStatsLoading(true);
     try {
-      // Reuse countByStatus — filter promotionType=7 phía FE từ list
+      // Lấy tất cả CT đồng giá (không phân trang, limit lớn) rồi đếm phía FE
       const [active, pending, expired, total] = await Promise.all([
-        PromotionService.countByStatus(1),
-        PromotionService.countByStatus(0),
-        PromotionService.countByStatus(2),
-        PromotionService.countByStatus(-1),
+        PromotionService.list({ promotionType: 7, status: 1,  page: 1, sizeLimit: 1 }),
+        PromotionService.list({ promotionType: 7, status: 0,  page: 1, sizeLimit: 1 }),
+        PromotionService.list({ promotionType: 7, status: 2,  page: 1, sizeLimit: 1 }),
+        PromotionService.list({ promotionType: 7, status: -1, page: 1, sizeLimit: 1 }),
       ]);
-      setStats({ active, pending, expired, total });
+      setStats({
+        active:  active?.result?.total  ?? 0,
+        pending: pending?.result?.total ?? 0,
+        expired: expired?.result?.total ?? 0,
+        total:   total?.result?.total   ?? 0,
+      });
     } catch { /* silent */ }
     finally { setStatsLoading(false); }
   }, []);
