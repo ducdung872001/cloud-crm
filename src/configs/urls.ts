@@ -836,6 +836,7 @@ export const urlsApi = {
   },
   qrCodePro: {
     generate: prefixBilling + "/vietqr/api/generate_qr",
+    reconciliation: prefixBilling + "/reconciliation/list",
   },
   orderRequest: {
     list: prefixSales + "/order-request/list",

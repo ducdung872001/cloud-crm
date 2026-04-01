@@ -398,4 +398,53 @@
     svg { width: 1.4rem; height: 1.4rem; }
     &:hover { color: #374151; }
   }
+
+  .edit-mode-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    color: #0369a1;
+    font-size: 1.3rem;
+    line-height: 1.5;
+
+    svg {
+      width: 1.6rem;
+      height: 1.6rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: #0ea5e9;
+    }
+  }
+
+  // ---- Disabled / read-only field styling ----
+  input:disabled,
+  textarea:disabled {
+    background: #f9fafb !important;
+    color: #374151 !important;
+    border-color: #e5e7eb !important;
+    cursor: default !important;
+    opacity: 1 !important;
+  }
+
+  .select-custom--is-disabled,
+  [class*="-container"][class*="--is-disabled"] {
+    .select-custom__control--is-disabled,
+    [class*="-control"] {
+      background: #f9fafb !important;
+      border-color: #e5e7eb !important;
+      cursor: default !important;
+
+      [class*="-singleValue"] {
+        color: #374151 !important;
+      }
+
+      [class*="-indicatorContainer"] svg {
+        display: none;
+      }
+    }
+  }
 }
