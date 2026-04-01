@@ -15,8 +15,8 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import Input from "components/input/input";
-import { showToast, formatCurrency } from "utils/common";
-import { getPageOffset } from "reborn-util";
+import { showToast } from "utils/common";
+import { formatCurrency, getPageOffset } from "reborn-util";
 import InventorySupplierService, {
   ISupplierItem,
   ISupplierSummary,
@@ -24,23 +24,21 @@ import InventorySupplierService, {
 import AddSupplierModal from "./partials/AddSupplierModal";
 import "./SupplierPage.scss";
 
-// ── Màu avatar theo ký tự đầu ──────────────────────────────────
-const AVATAR_COLORS: Record<string, string> = {
-  A: "#ef4444", B: "#f97316", C: "#f59e0b", D: "#eab308",
-  E: "#84cc16", F: "#22c55e", G: "#10b981", H: "#14b8a6",
-  I: "#06b6d4", J: "#0ea5e9", K: "#3b82f6", L: "#6366f1",
-  M: "#8b5cf6", N: "#a855f7", O: "#ec4899", P: "#f43f5e",
-  Q: "#ef4444", R: "#f97316", S: "#f59e0b", T: "#22c55e",
-  U: "#10b981", V: "#3b82f6", W: "#6366f1", X: "#8b5cf6",
-  Y: "#a855f7", Z: "#ec4899",
+// ── Avatar color map theo ký tự đầu ────────────────────────────
+const AVATAR_BG: Record<string, string> = {
+  A:"#ef4444",B:"#f97316",C:"#f59e0b",D:"#eab308",
+  E:"#84cc16",F:"#22c55e",G:"#10b981",H:"#14b8a6",
+  I:"#06b6d4",J:"#0ea5e9",K:"#3b82f6",L:"#6366f1",
+  M:"#8b5cf6",N:"#a855f7",O:"#ec4899",P:"#f43f5e",
+  Q:"#ef4444",R:"#f97316",S:"#f59e0b",T:"#22c55e",
+  U:"#10b981",V:"#3b82f6",W:"#6366f1",X:"#8b5cf6",
+  Y:"#a855f7",Z:"#ec4899",
 };
 
-function getAvatarColor(name: string) {
-  const ch = (name ?? "").charAt(0).toUpperCase();
-  return AVATAR_COLORS[ch] ?? "#6b7280";
+function avatarColor(name: string) {
+  return AVATAR_BG[(name ?? "").charAt(0).toUpperCase()] ?? "#6b7280";
 }
 
-// ── Mock fallback để tránh màn hình trắng khi API chưa live ────
 const MOCK_SUMMARY: ISupplierSummary = {
   total: 0, active: 0, hasDebt: 0, overdueDebt: 0, totalDebt: 0,
 };
@@ -61,19 +59,19 @@ export default function SupplierPage() {
   const [isNoItem, setIsNoItem]           = useState(false);
 
   const [params, setParams] = useState({
-    keyword: "",
-    groupId: 0,
+    keyword:  "",
+    groupId:  0,
     isActive: -1,
-    page: 1,
-    limit: 10,
+    page:     1,
+    limit:    10,
   });
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Nhà cung cấp",
+    name:              "Nhà cung cấp",
     isChooseSizeLimit: true,
-    setPage: (page) => setParams((p) => ({ ...p, page })),
-    chooseSizeLimit: (limit) => setParams((p) => ({ ...p, limit, page: 1 })),
+    setPage:           (page) => setParams((p) => ({ ...p, page })),
+    chooseSizeLimit:   (limit) => setParams((p) => ({ ...p, limit, page: 1 })),
   });
 
   // ── Fetch summary ──────────────────────────────────────────────
@@ -118,14 +116,8 @@ export default function SupplierPage() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  useEffect(() => {
-    fetchSummary();
-    fetchList(params);
-  }, []);
-
-  useEffect(() => {
-    fetchList(params);
-  }, [params]);
+  useEffect(() => { fetchSummary(); fetchList(params); }, []);
+  useEffect(() => { fetchList(params); }, [params]);
 
   // ── Delete ─────────────────────────────────────────────────────
   const onDelete = async (id: number) => {
@@ -141,7 +133,7 @@ export default function SupplierPage() {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: ISupplierItem) => {
+  const showDeleteDialog = (item?: ISupplierItem) => {
     setContentDialog({
       color:      "error",
       className:  "dialog-delete",
@@ -151,8 +143,9 @@ export default function SupplierPage() {
       message: (
         <Fragment>
           Bạn có chắc chắn muốn xóa nhà cung cấp{" "}
-          {item ? <strong>{item.name}</strong>
-               : <strong>{listIdChecked.length} nhà cung cấp đã chọn</strong>}?{" "}
+          {item
+            ? <strong>{item.name}</strong>
+            : <strong>{listIdChecked.length} nhà cung cấp đã chọn</strong>}?{" "}
           Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -164,66 +157,88 @@ export default function SupplierPage() {
     setShowDialog(true);
   };
 
-  // ── Table ──────────────────────────────────────────────────────
-  const titles = ["STT", "Nhà cung cấp", "Liên hệ", "Nhóm", "Công nợ", "Tổng nhập", "Trạng thái", ""];
-  const dataFormat = ["text-center", "", "", "", "text-right", "text-right", "text-center", "text-center"];
+  // ── Toggle active ──────────────────────────────────────────────
+  const handleToggleActive = async (item: ISupplierItem) => {
+    const res = await InventorySupplierService.updateActive(item.id, !item.isActive);
+    if (res?.code === 0) {
+      showToast(
+        item.isActive ? "Đã ngừng hợp tác với nhà cung cấp" : "Đã kích hoạt nhà cung cấp",
+        "success"
+      );
+      fetchList(params);
+      fetchSummary();
+    } else {
+      showToast(res?.message ?? "Có lỗi xảy ra", "error");
+    }
+  };
+
+  // ── Table config ───────────────────────────────────────────────
+  const titles = [
+    "STT", "Nhà cung cấp", "Liên hệ", "Nhóm / Nhãn",
+    "Công nợ", "Tổng nhập", "Trạng thái", "",
+  ];
+  const dataFormat = [
+    "text-center", "", "", "",
+    "text-right", "text-right", "text-center", "text-center",
+  ];
 
   const dataMappingArray = (item: ISupplierItem, index: number) => {
-    const stt       = getPageOffset(params) + index + 1;
-    const initial   = (item.name ?? "?").charAt(0).toUpperCase();
-    const bgColor   = getAvatarColor(item.name);
+    const stt      = getPageOffset(params) + index + 1;
+    const initial  = (item.name ?? "?").charAt(0).toUpperCase();
+    const bg       = avatarColor(item.name);
     const tags: string[] = (() => {
-      try { return item.tags ? JSON.parse(item.tags) : []; }
-      catch { return []; }
+      try { return item.tags ? JSON.parse(item.tags) : []; } catch { return []; }
     })();
 
     return [
+      // STT
       stt,
 
-      // Cột nhà cung cấp: avatar + tên + mã
+      // Nhà cung cấp
       <div key="name" className="sup-name-cell">
         {item.avatar
           ? <img src={item.avatar} alt="" className="sup-avatar sup-avatar--img" />
-          : <div className="sup-avatar" style={{ background: bgColor }}>{initial}</div>
+          : <div className="sup-avatar" style={{ background: bg }}>{initial}</div>
         }
         <div className="sup-name-cell__info">
           <span className="sup-name-cell__name">{item.name}</span>
-          {item.code && <span className="sup-name-cell__code">{item.code}</span>}
+          {item.code && <span className="sup-name-cell__code">#{item.code}</span>}
         </div>
       </div>,
 
-      // Cột liên hệ: sđt + email
+      // Liên hệ
       <div key="contact" className="sup-contact-cell">
         {item.phone && (
           <span className="sup-contact-cell__row">
-            <Icon name="Phone" /> {item.phone}
+            <Icon name="Phone" />{item.phone}
           </span>
         )}
         {item.email && (
           <span className="sup-contact-cell__row sup-contact-cell__row--muted">
-            <Icon name="Mail" /> {item.email}
+            <Icon name="Mail" />{item.email}
           </span>
         )}
         {!item.phone && !item.email && <span className="sup-muted">—</span>}
       </div>,
 
-      // Cột nhóm + nhãn
+      // Nhóm / Nhãn
       <div key="group" className="sup-group-cell">
-        {item.groupName && (
-          <Badge text={item.groupName} variant="primary" />
-        )}
-        {tags.map((tag, i) => (
-          <Badge key={i} text={tag} variant="secondary" />
-        ))}
+        {item.groupName && <Badge text={item.groupName} variant="primary" />}
+        {tags.map((t, i) => <Badge key={i} text={t} variant="secondary" />)}
         {!item.groupName && tags.length === 0 && <span className="sup-muted">—</span>}
       </div>,
 
       // Công nợ
       <span
         key="debt"
-        className={`sup-debt-cell${item.debt > 0 ? " sup-debt-cell--red" : item.debt < 0 ? " sup-debt-cell--green" : ""}`}
+        className={[
+          "sup-debt-cell",
+          item.debt > 0 ? "sup-debt-cell--red" : item.debt < 0 ? "sup-debt-cell--green" : "",
+        ].join(" ").trim()}
       >
-        {item.debt !== 0 ? formatCurrency(item.debt) : <span className="sup-muted">0</span>}
+        {item.debt !== 0
+          ? formatCurrency(item.debt)
+          : <span className="sup-muted">0</span>}
       </span>,
 
       // Tổng nhập
@@ -245,58 +260,48 @@ export default function SupplierPage() {
   };
 
   const actionsTable = (item: ISupplierItem) => {
-    const isChecked = listIdChecked.length > 0;
+    const busy = listIdChecked.length > 0;
     return [
       {
         title:    "Sửa",
         icon:     <Icon name="Edit" />,
-        disabled: isChecked,
-        callback: () => { if (!isChecked) { setDataItem(item); setShowModalAdd(true); } },
+        disabled: busy,
+        callback: () => { if (!busy) { setDataItem(item); setShowModalAdd(true); } },
       },
       {
-        title:    item.isActive ? "Ngừng hợp tác" : "Kích hoạt",
+        title:    item.isActive ? "Ngừng hợp tác" : "Kích hoạt lại",
         icon:     <Icon name={item.isActive ? "EyeOff" : "Eye"} />,
-        disabled: isChecked,
-        callback: async () => {
-          if (isChecked) return;
-          const res = await InventorySupplierService.updateActive(item.id, !item.isActive);
-          if (res?.code === 0) {
-            showToast(item.isActive ? "Đã ngừng hợp tác" : "Đã kích hoạt", "success");
-            fetchList(params);
-            fetchSummary();
-          } else {
-            showToast(res?.message ?? "Có lỗi xảy ra", "error");
-          }
-        },
+        disabled: busy,
+        callback: () => { if (!busy) handleToggleActive(item); },
       },
       {
         title:    "Xóa",
         icon:     <Icon name="Trash" />,
-        disabled: isChecked,
-        callback: () => { if (!isChecked) showDialogConfirmDelete(item); },
+        disabled: busy,
+        callback: () => { if (!busy) showDeleteDialog(item); },
       },
     ];
   };
 
   const bulkActionList: BulkActionItemModel[] = [
-    { title: "Xóa nhà cung cấp", callback: () => showDialogConfirmDelete() },
+    { title: "Xóa nhà cung cấp", callback: () => showDeleteDialog() },
   ];
 
   const titleActions: ITitleActions = {
     actions: [
       {
-        title: "Thêm mới",
+        title:    "Thêm mới",
         callback: () => { setDataItem(null); setShowModalAdd(true); },
       },
     ],
     actions_extra: [],
   };
 
-  // ── KPI cards ──────────────────────────────────────────────────
-  const statCards = [
-    { dot: "#5b6af0", num: summary.total,    lbl: "Tổng NCC" },
-    { dot: "#10b981", num: summary.active,   lbl: "Đang hợp tác" },
-    { dot: "#8b5cf6", num: summary.hasDebt,  lbl: "Có công nợ" },
+  // ── KPI pills ──────────────────────────────────────────────────
+  const pills = [
+    { dot: "#5b6af0", num: summary.total,                              lbl: "Tổng NCC"      },
+    { dot: "#10b981", num: summary.active,                             lbl: "Đang hợp tác"  },
+    { dot: "#8b5cf6", num: summary.hasDebt,                            lbl: "Có công nợ"    },
     {
       dot: "#ef4444",
       num: summary.totalDebt > 0 ? formatCurrency(summary.totalDebt) : "0",
@@ -309,10 +314,12 @@ export default function SupplierPage() {
   return (
     <Fragment>
       <div className={`page-content page-supplier${isNoItem ? " bg-white" : ""}`}>
+
         <TitleAction title="Quản lý nhà cung cấp" titleActions={titleActions} />
 
         <div className="card-box d-flex flex-column">
-          {/* ── Search + filter chips ── */}
+
+          {/* Search + filter chips */}
           <div className="quick__search">
             <div className="quick__search--start">
               <Input
@@ -339,7 +346,7 @@ export default function SupplierPage() {
                   }))
                 }
               >
-                ✅ Đang hợp tác
+                Đang hợp tác
               </button>
               <button
                 className={`filter-chip${params.isActive === 0 ? " filter-chip--active" : ""}`}
@@ -351,18 +358,18 @@ export default function SupplierPage() {
                   }))
                 }
               >
-                ⏸ Ngừng hợp tác
+                Ngừng hợp tác
               </button>
             </div>
           </div>
 
-          {/* ── KPI stats ── */}
+          {/* KPI stats */}
           <div className="stats-row">
-            {statCards.map((c, i) => (
+            {pills.map((c, i) => (
               <div key={i} className="stat-pill">
                 <div className="dot" style={{ background: c.dot }} />
                 <div>
-                  <div className="num" style={c.red ? { color: "#ef4444" } : undefined}>
+                  <div className="num" style={(c as any).red ? { color: "#ef4444" } : undefined}>
                     {c.num}
                   </div>
                   <div className="lbl">{c.lbl}</div>
@@ -371,7 +378,7 @@ export default function SupplierPage() {
             ))}
           </div>
 
-          {/* ── Table ── */}
+          {/* Table / empty states */}
           {!isLoading && list.length > 0 ? (
             <BoxTable
               name="Nhà cung cấp"
@@ -422,7 +429,7 @@ export default function SupplierPage() {
           )}
         </div>
 
-        {/* ── Modals ── */}
+        {/* Modals */}
         <AddSupplierModal
           onShow={showModalAdd}
           data={dataItem}
