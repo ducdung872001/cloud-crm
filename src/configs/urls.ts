@@ -3740,3 +3740,102 @@ export const urls = {
 };
 
 export default urls;
+
+// ─── TNPM Property Management URLs ───────────────────────────────────────────
+export const tnpmUrls = {
+  portfolio: {
+    list: prefixAdmin + "/portfolio/list",
+    detail: prefixAdmin + "/portfolio/get",
+    create: prefixAdmin + "/portfolio/create",
+    update: prefixAdmin + "/portfolio/update",
+    delete: prefixAdmin + "/portfolio/delete",
+  },
+  project: {
+    list: prefixAdmin + "/property-project/list",
+    detail: prefixAdmin + "/property-project/get",
+    create: prefixAdmin + "/property-project/create",
+    update: prefixAdmin + "/property-project/update",
+    delete: prefixAdmin + "/property-project/delete",
+  },
+  unit: {
+    list: prefixAdmin + "/property-unit/list",
+    detail: prefixAdmin + "/property-unit/get",
+    create: prefixAdmin + "/property-unit/create",
+    update: prefixAdmin + "/property-unit/update",
+    delete: prefixAdmin + "/property-unit/delete",
+  },
+  leaseContract: {
+    list: prefixAdmin + "/lease-contract/list",
+    detail: prefixAdmin + "/lease-contract/get",
+    create: prefixAdmin + "/lease-contract/create",
+    update: prefixAdmin + "/lease-contract/update",
+    delete: prefixAdmin + "/lease-contract/delete",
+    expiringSoon: prefixAdmin + "/lease-contract/expiring-soon",
+  },
+  serviceContract: {
+    list: prefixAdmin + "/service-contract/list",
+    create: prefixAdmin + "/service-contract/create",
+    update: prefixAdmin + "/service-contract/update",
+    delete: prefixAdmin + "/service-contract/delete",
+  },
+  billing: {
+    list: prefixAdmin + "/property-invoice/list",
+    detail: prefixAdmin + "/property-invoice/get",
+    create: prefixAdmin + "/property-invoice/create",
+    update: prefixAdmin + "/property-invoice/update",
+    delete: prefixAdmin + "/property-invoice/delete",
+    generateBulk: prefixAdmin + "/property-invoice/generate-bulk",
+    recordPayment: prefixAdmin + "/property-invoice/record-payment",
+  },
+  turnoverRent: {
+    list: prefixAdmin + "/turnover-rent/list",
+    submit: prefixAdmin + "/turnover-rent/submit",
+    verify: prefixAdmin + "/turnover-rent/verify",
+    create: prefixAdmin + "/turnover-rent/create",
+    update: prefixAdmin + "/turnover-rent/update",
+  },
+  vendor: {
+    list: prefixAdmin + "/vendor/list",
+    detail: prefixAdmin + "/vendor/get",
+    create: prefixAdmin + "/vendor/create",
+    update: prefixAdmin + "/vendor/update",
+    delete: prefixAdmin + "/vendor/delete",
+    kpiSummary: prefixAdmin + "/vendor/kpi-summary",
+  },
+  vendorContract: {
+    list: prefixAdmin + "/vendor-contract/list",
+    create: prefixAdmin + "/vendor-contract/create",
+    update: prefixAdmin + "/vendor-contract/update",
+    delete: prefixAdmin + "/vendor-contract/delete",
+  },
+  vendorInvoice: {
+    list: prefixAdmin + "/vendor-invoice/list",
+    create: prefixAdmin + "/vendor-invoice/create",
+    update: prefixAdmin + "/vendor-invoice/update",
+    approve: prefixAdmin + "/vendor-invoice/approve",
+    reject: prefixAdmin + "/vendor-invoice/reject",
+  },
+  serviceRequest: {
+    list: prefixAdmin + "/service-request/list",
+    detail: prefixAdmin + "/service-request/get",
+    create: prefixAdmin + "/service-request/create",
+    update: prefixAdmin + "/service-request/update",
+    delete: prefixAdmin + "/service-request/delete",
+    assign: prefixAdmin + "/service-request/assign",
+    resolve: prefixAdmin + "/service-request/resolve",
+  },
+  maintenancePlan: {
+    list: prefixAdmin + "/maintenance-plan/list",
+    detail: prefixAdmin + "/maintenance-plan/get",
+    create: prefixAdmin + "/maintenance-plan/create",
+    update: prefixAdmin + "/maintenance-plan/update",
+    delete: prefixAdmin + "/maintenance-plan/delete",
+  },
+  report: {
+    financialSummary: prefixAdmin + "/tnpm-report/financial-summary",
+    occupancy: prefixAdmin + "/tnpm-report/occupancy",
+    operationalKpi: prefixAdmin + "/tnpm-report/operational-kpi",
+    vendorPerformance: prefixAdmin + "/tnpm-report/vendor-performance",
+    portfolioPnl: prefixAdmin + "/tnpm-report/portfolio-pnl",
+  },
+};

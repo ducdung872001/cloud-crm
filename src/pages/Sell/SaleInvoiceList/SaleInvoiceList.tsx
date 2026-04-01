@@ -8,11 +8,13 @@ import DebtManagementService from "services/DebtManagementService";
 import { IFundListItem } from "services/FundManagementService";
 import { urlsApi } from "configs/urls";
 import "./SaleInvoiceList.scss";
-import OrderList, { StatusCounts } from "@/pages/CounterSales/components/OrderList";
-import { Order } from "@/pages/CounterSales/types";
+// TNPM: CounterSales removed
+const OrderList = () => null;
+type StatusCounts = Record<string, number>;
+type Order = any;
 import Button from "@/components/button/button";
-import OrderDetailModal from "@/pages/CounterSales/components/modals/OrderDetailModal";
-import InvoiceReceiptModal from "@/pages/CounterSales/components/modals/InvoiceReceiptModal/InvoiceReceiptModal";
+const OrderDetailModal = () => null;
+const InvoiceReceiptModal = () => null;
 import { useCustomerEnrich, CustomerMap } from "@/hooks/useCustomerEnrich";
 
 // ── Constants ─────────────────────────────────────────────────────────────────

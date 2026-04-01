@@ -1,0 +1,1 @@
+const CampaignMarketingService = { list: async () => ({ code: 0, result: [] }) }; export default CampaignMarketingService;

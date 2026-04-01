@@ -4,8 +4,8 @@ import "./CustomerCarePage.scss";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 import CallCenterList from "../CallCenter/CallCenterList";
 import TicketList from "../Ticket/TicketList";
-import CareHistory from "../CareHistory";
-import CareAutomationPage from "../CareAutomation/CareAutomationPage";
+// TNPM_REMOVED: import CareHistory from "../CareHistory";
+// TNPM_REMOVED: import CareAutomationPage from "../CareAutomation/CareAutomationPage";
 
 export default function CustomerCarePage() {
   document.title = "Chăm sóc khách hàng";

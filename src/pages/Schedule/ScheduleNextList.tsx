@@ -20,7 +20,8 @@ import TreamentService from "services/TreamentService";
 import { ITreamentResponse, ITreamentSchedulerResponse } from "model/treatment/TreamentResponseModel";
 import AddHistoryCallModal from "./partials/AddHistoryCallModal";
 import ExtendTimeSchedule from "./partials/ExtendTimeScheduleModal";
-import AddSchedulerModal from "pages/TreatmentSchedule/partials/AddSchedulerModal";
+// TNPM: TreatmentSchedule removed
+const AddSchedulerModal = () => null;
 import AddCaringEmployee from "./partials/AddCaringEmployee";
 import ShowCallHistory from "./partials/ShowCallHistory";
 import "./ScheduleNextList.scss";

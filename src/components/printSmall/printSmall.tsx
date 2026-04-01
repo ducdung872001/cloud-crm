@@ -1,8 +1,8 @@
 import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
 import moment from "moment";
 import { useReactToPrint } from "react-to-print";
-import ImgQrBill from "assets/images/qr-bill.png";
-import ImgBill from "assets/images/logo-print.png";
+const ImgQrBill = ""; // TNPM stub
+const ImgBill = ""; // TNPM stub
 import { UserContext, ContextType } from "contexts/userContext";
 // import PrintingSettingsService from "services/PrintingSettingsService";
 import { formatCurrency } from "utils/common";

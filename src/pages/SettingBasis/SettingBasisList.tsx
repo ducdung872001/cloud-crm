@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ManagementStore from "./partials/ManagementStore/ManagementStore";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
-import ShiftConfigTabs from "@/pages/ShiftConfig/ShiftConfig";
+// TNPM_REMOVED: import ShiftConfigTabs from "@/pages/ShiftConfig/ShiftConfig";
 import PaymentMethodPage from "@/pages/PaymentMethodPage/PaymentMethodPage";
 import SettingList from "pages/Setting/SettingList";
 import "./SettingBasisList.scss";

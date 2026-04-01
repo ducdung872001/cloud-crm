@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TitleAction from "components/titleAction/titleAction";
 import "./CustomerAnalysisPage.scss";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
-import CustomerChurn from "@/pages/CustomerChurn/index";
+// TNPM_REMOVED: import CustomerChurn from "@/pages/CustomerChurn/index";
 import CustomerSegment from "../customerSegment";
 import CustomerValue from "../CustomerValue";
 import CustomerReview from "../CustomerReview";
