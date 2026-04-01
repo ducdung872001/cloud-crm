@@ -1,12 +1,14 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo } from "react";
 import _ from "lodash";
+import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
-import { IFilterItem, ISaveSearch } from "model/OtherModel";
+import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
+import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { showToast } from "utils/common";
 import { getPageOffset } from "reborn-util";
 import "./index.scss";
@@ -29,13 +31,13 @@ export default function LoyaltyPointLedger(props: Props) {
   const isMounted = useRef(false);
   const { onBackProps, initialCustomerId } = props;
 
-  const [listData, setListData]           = useState<ILoyaltyPointLedgerResposne[]>([]);
-  const [selectedItem, setSelectedItem]   = useState<ILoyaltyPointLedgerResposne>(null);
-  const [showModalAdd, setShowModalAdd]   = useState<boolean>(false);
-  const [showDialog, setShowDialog]       = useState<boolean>(false);
+  const [listData, setListData] = useState<ILoyaltyPointLedgerResposne[]>([]);
+  const [selectedItem, setSelectedItem] = useState<ILoyaltyPointLedgerResposne>(null);
+  const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
+  const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [isLoading, setIsLoading]         = useState<boolean>(true);
-  const [isNoItem, setIsNoItem]           = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
 
   // Nếu có initialCustomerId (bấm từ Danh sách thành viên) thì pre-set vào params
@@ -101,6 +103,12 @@ export default function LoyaltyPointLedger(props: Props) {
     return () => { abortController.abort(); };
   }, [params]);
 
+  const titleActions: ITitleActions = {
+    actions: [
+      { title: "Thêm mới", callback: () => { setSelectedItem(null); setShowModalAdd(true); } },
+    ],
+  };
+
   // ── Table columns ─────────────────────────────────────────────────────────
   const titles = [
     "STT", "Khách hàng", "Số điểm", "Lý do",
@@ -160,6 +168,7 @@ export default function LoyaltyPointLedger(props: Props) {
         title={filteredCustomerName ? `Lịch sử điểm — ${filteredCustomerName}` : "Lịch sử điểm"}
         titleBack="Khách hàng thành viên"
         onBackProps={onBackProps}
+        titleActions={titleActions}
       />
 
       <div className="card-box d-flex flex-column">
