@@ -2544,6 +2544,7 @@ export const urlsApi = {
     fluctuatePoint: prefixBiz + "/market/loyaltyPointLedger/fluctuatePoint",
     getLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/get",
     updateLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/update",
+    consumePoint: prefixBiz + "/market/loyaltyPointLedger/consumePoint",
   },
 
   //TODO: Start quy trình bpm
