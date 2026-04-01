@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import Button from "components/button/button";
 import "./index.scss";
+import { useReconciliationList } from "@/hooks/useReconciliationList";
 
 type BankStmt = {
   date: string;
@@ -26,6 +27,8 @@ const Reconcile: React.FC = () => {
   const [date, setDate] = useState("2026-03-16");
   const [running, setRunning] = useState(false);
   const [doneMsg, setDoneMsg] = useState<string | null>(null);
+
+  const {} = useReconciliationList({ enabled: true }); // ví dụ nếu muốn fetch data từ API thì bật flag enabled, còn không thì cứ để false
 
   const matched = useMemo(() => MOCK_BANK_STMTS.filter((b) => b.matched).length, []);
   const totalThu = useMemo(() => MOCK_BANK_STMTS.filter((b) => b.type === "thu").reduce((a, b) => a + b.amount, 0), []);
