@@ -65,34 +65,39 @@ const PAPER_CONFIGS: Record<PaperSize, {
   priceWidth: string;
 }> = {
   "58mm": {
-    pageCSS:    "@page { size: 58mm auto; margin: 1mm 2mm; }",
-    bodyCSS:    "width:100%; padding: 2mm 3mm; margin: 0;",
-    fontSize:   "10px",
+    pageCSS: "@page { size: 58mm auto; margin: 1mm 2mm; }",
+    bodyCSS: "width:100%; padding: 2mm 3mm; margin: 0;",
+    fontSize: "10px",
     priceWidth: "62px",
   },
   "80mm": {
-    pageCSS:    "@page { size: 80mm auto; margin: 2mm 3mm; }",
-    bodyCSS:    "width:100%; padding: 3mm 4mm; margin: 0;",
-    fontSize:   "12px",
+    pageCSS: "@page { size: 80mm auto; margin: 2mm 3mm; }",
+    bodyCSS: "width:100%; padding: 3mm 4mm; margin: 0;",
+    fontSize: "12px",
     priceWidth: "82px",
   },
   "A4": {
-    pageCSS:    "@page { size: A4; margin: 18mm 20mm; }",
-    bodyCSS:    "max-width: 160mm; padding: 0; margin: 0 auto;",
-    fontSize:   "13px",
+    pageCSS: "@page { size: A4; margin: 18mm 20mm; }",
+    bodyCSS: "max-width: 160mm; padding: 0; margin: 0 auto;",
+    fontSize: "13px",
     priceWidth: "90px",
   },
 };
 
 export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props) {
-  const [receipt, setReceipt]       = useState<ReceiptData | null>(null);
-  const [isLoading, setIsLoading]   = useState(false);
+  const [receipt, setReceipt] = useState<ReceiptData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [emailInput, setEmailInput] = useState("");
-  const [showEmail, setShowEmail]   = useState(false);
-  const [isSending, setIsSending]   = useState(false);
-  const [paperSize, setPaperSize]   = useState<PaperSize>("80mm");
-  const printRef                    = useRef<HTMLDivElement>(null);
-  const abortRef                    = useRef<AbortController | null>(null);
+  const [emailMasked, setEmailMasked] = useState("");   // bản masked để restore
+  const [emailReadonly, setEmailReadonly] = useState(false);
+  const [emailRevealed, setEmailRevealed] = useState(false);
+  const [isRevealingEmail, setIsRevealingEmail] = useState(false);
+  const [customerId, setCustomerId] = useState(0);
+  const [showEmail, setShowEmail] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [paperSize, setPaperSize] = useState<PaperSize>("80mm");
+  const printRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   // ── Fetch receipt data ──────────────────────────────────────────────────────
 
@@ -103,6 +108,10 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
     setReceipt(null);
     setShowEmail(false);
     setEmailInput("");
+    setEmailMasked("");
+    setEmailReadonly(false);
+    setEmailRevealed(false);
+    setCustomerId(0);
 
     try {
       const res = await InvoiceService.invoiceDetail({ id }, abortRef.current.signal);
@@ -116,11 +125,11 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
 
       // Fetch thêm thông tin email khách hàng nếu có customerId
       let customerEmail = inv.customerEmail ?? "";
-      const customerId  = inv.customerId ?? 0;
+      const cid: number = inv.customerId ?? 0;
 
-      if (customerId > 0 && !customerEmail) {
+      if (cid > 0 && !customerEmail) {
         try {
-          const custRes = await CustomerService.detail(customerId);
+          const custRes = await CustomerService.detail(cid);
           if (custRes.code === 0) {
             customerEmail = custRes.result?.email ?? custRes.result?.emailMasked ?? "";
           }
@@ -141,22 +150,33 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
       }));
 
       setReceipt({
-        invoiceCode:  inv.invoiceCode ?? "",
-        createdTime:  inv.createdTime ?? inv.receiptDate ?? "",
+        invoiceCode: inv.invoiceCode ?? "",
+        createdTime: inv.createdTime ?? inv.receiptDate ?? "",
         employeeName: inv.employeeName ?? "",
         customerName: inv.customerName ?? "Khách vãng lai",
         customerPhone: inv.customerPhone ?? "",
         customerEmail,
         products,
         services,
-        amount:      inv.amount   ?? 0,
-        discount:    inv.discount ?? 0,
-        fee:         inv.fee      ?? 0,
+        amount: inv.amount ?? 0,
+        discount: inv.discount ?? 0,
+        fee: inv.fee ?? 0,
         paymentType: inv.paymentType ?? 1,
       });
 
-      // Pre-fill email if available
-      if (customerEmail) setEmailInput(customerEmail);
+      // Lưu customerId để quyết định readonly hay không
+      setCustomerId(cid);
+
+      // Nếu khách có sẵn (cid > 0) và đã biết email → pre-fill + readonly
+      if (cid > 0 && customerEmail) {
+        setEmailInput(customerEmail);
+        setEmailMasked(customerEmail); // giữ bản masked để restore
+        setEmailReadonly(true);
+      } else {
+        setEmailInput("");
+        setEmailMasked("");
+        setEmailReadonly(false);
+      }
     } catch (e: any) {
       if (e?.name !== "AbortError") showToast("Lỗi tải biên lai", "error");
     } finally {
@@ -176,7 +196,7 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
   const handlePrint = () => {
     if (!printRef.current) return;
     const html = printRef.current.innerHTML;
-    const cfg  = PAPER_CONFIGS[paperSize];
+    const cfg = PAPER_CONFIGS[paperSize];
 
     // Mở popup nhỏ – Chrome sẽ render đúng khổ giấy theo @page size
     // Với máy in nhiệt (thermal): chọn đúng máy trong hộp thoại Print,
@@ -246,10 +266,67 @@ ${html}
     win.document.close();
   };
 
+  // ── Reveal email (unmask) ─────────────────────────────────────────────────
+
+  const handleToggleRevealEmail = async () => {
+    if (isRevealingEmail) return;
+
+    if (emailRevealed) {
+      // Đóng lại → restore về masked
+      setEmailInput(emailMasked);
+      setEmailRevealed(false);
+      return;
+    }
+
+    // Mở mắt → gọi API lấy email thật
+    setIsRevealingEmail(true);
+    try {
+      const res = await CustomerService.viewEmail(customerId);
+      if (res.code === 0) {
+        setEmailInput(res.result ?? emailMasked);
+        setEmailRevealed(true);
+      } else if (res.code === 400) {
+        showToast("Bạn không có quyền xem email!", "error");
+      } else {
+        showToast(res.message ?? "Không lấy được email", "error");
+      }
+    } catch {
+      showToast("Lỗi khi tải email", "error");
+    } finally {
+      setIsRevealingEmail(false);
+    }
+  };
+
   // ── Send email ──────────────────────────────────────────────────────────────
 
   const handleSendEmail = async () => {
-    const email = emailInput.trim();
+    let email = emailInput.trim();
+
+    // Nếu email đang bị masked (chứa *) và chưa reveal → tự động reveal trước
+    if (customerId > 0 && !emailRevealed && email.includes("*")) {
+      setIsRevealingEmail(true);
+      try {
+        const res = await CustomerService.viewEmail(customerId);
+        if (res.code === 0) {
+          const realEmail = res.result ?? "";
+          setEmailInput(realEmail);
+          setEmailRevealed(true);
+          email = realEmail.trim(); // dùng email thật để gửi
+        } else if (res.code === 400) {
+          showToast("Bạn không có quyền xem email khách hàng!", "error");
+          return;
+        } else {
+          showToast(res.message ?? "Không lấy được email", "error");
+          return;
+        }
+      } catch {
+        showToast("Lỗi khi tải email. Vui lòng thử lại.", "error");
+        return;
+      } finally {
+        setIsRevealingEmail(false);
+      }
+    }
+
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       showToast("Email không hợp lệ", "error");
       return;
@@ -258,32 +335,10 @@ ${html}
 
     setIsSending(true);
     try {
-      // Gửi biên lai qua email – gọi endpoint gửi biên lai
-      const res = await fetch("/bizapi/sales/invoice/send-receipt-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          invoiceId,
-          email,
-          invoiceCode: receipt.invoiceCode,
-        }),
-      });
-
-      // Fallback nếu endpoint chưa có: dùng outlookMail
-      if (!res.ok || (await res.clone().json().catch(() => null))?.code !== 0) {
-        const fallback = await fetch("/adminapi/outlookMail/sendEmail", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            toEmail: email,
-            subject: `Biên lai đơn hàng ${receipt.invoiceCode}`,
-            body: buildEmailHtml(receipt),
-          }),
-        });
-        const fj = await fallback.json().catch(() => ({}));
-        if (fj.code !== 0) throw new Error(fj.message ?? "Gửi thất bại");
+      const res = await InvoiceService.sendEmail(invoiceId, email);
+      if (res?.code !== 0) {
+        throw new Error(res?.message ?? "Gửi thất bại");
       }
-
       showToast(`Đã gửi biên lai tới ${email}`, "success");
       setShowEmail(false);
     } catch (err: any) {
@@ -427,18 +482,53 @@ ${html}
             {showEmail && (
               <div className="ircpt-email-form">
                 <div className="ircpt-email-form__label">
-                  Địa chỉ email nhận biên lai
+                  {customerId > 0
+                    ? "Gửi biên lai tới email khách hàng"
+                    : "Nhập email nhận biên lai"}
                 </div>
                 <div className="ircpt-email-form__row">
-                  <input
-                    type="email"
-                    className="ircpt-email-form__input"
-                    placeholder="example@email.com"
-                    value={emailInput}
-                    onChange={e => setEmailInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && handleSendEmail()}
-                    autoFocus
-                  />
+                  <div className="ircpt-email-form__input-wrap">
+                    <input
+                      type="email"
+                      className={`ircpt-email-form__input${emailReadonly ? " ircpt-email-form__input--readonly" : ""}`}
+                      placeholder={emailReadonly ? "" : "example@email.com"}
+                      value={emailInput}
+                      onChange={e => !emailReadonly && setEmailInput(e.target.value)}
+                      onKeyDown={e => !emailReadonly && e.key === "Enter" && handleSendEmail()}
+                      readOnly={emailReadonly}
+                      autoFocus={!emailReadonly}
+                    />
+                    {customerId > 0 && (
+                      <button
+                        type="button"
+                        className={`ircpt-email-form__eye${isRevealingEmail ? " ircpt-email-form__eye--loading" : ""}`}
+                        onClick={handleToggleRevealEmail}
+                        title={emailRevealed ? "Ẩn email" : "Xem email thật"}
+                        disabled={isRevealingEmail}
+                      >
+                        {isRevealingEmail ? (
+                          <span className="ircpt-eye-spinner" />
+                        ) : emailRevealed ? (
+                          // Mắt mở  ✦
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                            width="16" height="16">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                        ) : (
+                          // Mắt gạch (EyeSlash)
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                            width="16" height="16">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                            <line x1="1" y1="1" x2="23" y2="23" />
+                          </svg>
+                        )}
+                      </button>
+                    )}
+                  </div>
                   <button
                     className="btn btn--primary btn--sm ircpt-email-form__btn"
                     onClick={handleSendEmail}
@@ -453,6 +543,7 @@ ${html}
                     Huỷ
                   </button>
                 </div>
+
               </div>
             )}
           </>
@@ -471,18 +562,18 @@ ${html}
               },
               ...(receipt && !showEmail
                 ? [
-                    {
-                      title: "Gửi email",
-                      color: "primary",
-                      variant: "outline",
-                      callback: () => setShowEmail(true),
-                    },
-                    {
-                      title: "In biên lai",
-                      color: "primary",
-                      callback: handlePrint,
-                    },
-                  ]
+                  {
+                    title: "Gửi email",
+                    color: "primary",
+                    variant: "outline",
+                    callback: () => setShowEmail(true),
+                  },
+                  {
+                    title: "In biên lai",
+                    color: "primary",
+                    callback: handlePrint,
+                  },
+                ]
                 : []),
             ],
           },

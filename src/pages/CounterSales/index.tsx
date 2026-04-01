@@ -46,8 +46,8 @@ const CounterSales: React.FC = () => {
 
   // ── Tour hướng dẫn POS ───────────────────────────────────────────────────
   const posTour = useOnboarding({
-    userId:    userId ?? "guest",
-    tourId:    "pos",
+    userId: userId ?? "guest",
+    tourId: "pos",
     autoStart: true,
   });
 
@@ -153,8 +153,8 @@ const CounterSales: React.FC = () => {
   const [fixedPriceMap, setFixedPriceMap] = useState<Map<string, IFixedPriceEntry>>(new Map());
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [manualDiscount, setManualDiscount] = useState(0);
-  const [orderNote, setOrderNote]           = useState("");
-  const [promoDiscount, setPromoDiscount]   = useState(0);
+  const [orderNote, setOrderNote] = useState("");
+  const [promoDiscount, setPromoDiscount] = useState(0);
 
   // ── Loại đơn & thông tin giao hàng ────────────────────────────────────────
   const [orderType, setOrderType] = useState<import("./types").OrderType>("retail");
@@ -304,7 +304,7 @@ const CounterSales: React.FC = () => {
   // ── Trừ điểm sau khi đơn hàng hoàn thành ────────────────────────────────
   const redeemLoyaltyPoints = (invoiceId: number | null) => {
     if (!(moneyFromPoints > 0 && customer?.id && loyaltyWallet && invoiceId)) return;
-    fetch(urlsApi.ma.fluctuatePoint, {
+    fetch(urlsApi.ma.consumePoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -335,12 +335,12 @@ const CounterSales: React.FC = () => {
       const body = cartItems.map((item: CartItem) => ({
         productId: Number(item.id),
         variantId: Number(item.variantId),
-        price:     item.price,
+        price: item.price,
         customerId: customer?.id ?? -1,
-        qty:       item.qty,
-        name:      item.name,
-        avatar:    item.avatar,
-        unitName:  item.unitName,
+        qty: item.qty,
+        name: item.name,
+        avatar: item.avatar,
+        unitName: item.unitName,
         ...(warehouseId ? { inventoryId: warehouseId } : {}),
       }));
 
@@ -363,14 +363,14 @@ const CounterSales: React.FC = () => {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                orderId:    invoiceId,
-                orderCode:  String(invoiceId),
-                receiverName:    shippingInfo.receiverName,
-                receiverPhone:   shippingInfo.receiverPhone,
+                orderId: invoiceId,
+                orderCode: String(invoiceId),
+                receiverName: shippingInfo.receiverName,
+                receiverPhone: shippingInfo.receiverPhone,
                 receiverAddress: shippingInfo.receiverAddress,
                 shippingFee: shippingInfo.shippingFeeBearer === "RECEIVER" ? shippingInfo.shippingFee : 0,
-                codAmount:       shippingInfo.codAmount,
-                noteForShipper:  shippingInfo.noteForShipper ?? "",
+                codAmount: shippingInfo.codAmount,
+                noteForShipper: shippingInfo.noteForShipper ?? "",
                 shippingFeeBearer: shippingInfo.shippingFeeBearer,
                 totalAmount: cartItems.reduce((s, c) => s + c.price * c.qty, 0),
               }),
@@ -383,7 +383,7 @@ const CounterSales: React.FC = () => {
             const qrCodeRes = await QrCodeProService.generate({
               content: "DON HANG " + invoiceId,
               orderId: invoiceId,
-              amount:  cartItems.reduce((s, c) => s + c.price * c.qty, 0) - couponDiscount - promoDiscount - manualDiscount,
+              amount: cartItems.reduce((s, c) => s + c.price * c.qty, 0) - couponDiscount - promoDiscount - manualDiscount,
             });
             if (qrCodeRes.code === 0 && qrCodeRes?.result?.qrCode) {
               setPayModalOpen(false);
@@ -496,7 +496,7 @@ const CounterSales: React.FC = () => {
                 onManualDiscountChange={setManualDiscount}
                 note={orderNote}
                 onNoteChange={setOrderNote}
-                onResetVoucher={paymentSuccessCount > 0 ? () => {} : undefined}
+                onResetVoucher={paymentSuccessCount > 0 ? () => { } : undefined}
                 onSavedDraft={() => {
                   setCartItems([]);
                   setCustomer(null);
@@ -599,7 +599,7 @@ const CounterSales: React.FC = () => {
                   fetchTabCounts();
                 }
               })
-              .catch(() => {});
+              .catch(() => { });
           }
         }}
         onClose={() => {
