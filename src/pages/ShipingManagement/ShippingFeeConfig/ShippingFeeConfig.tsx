@@ -160,7 +160,6 @@ export default function ShippingFeeConfig() {
                   <tr>
                     <th>KHU VỰC GIAO HÀNG</th>
                     <th>PHÍ VẬN CHUYỂN (đ)</th>
-                    <th>THỜI GIAN GIAO (NGÀY)</th>
                     <th>MIỄN SHIP KHI ĐƠN ≥</th>
                     <th></th>
                   </tr>
@@ -183,15 +182,6 @@ export default function ShippingFeeConfig() {
                           value={row.fee}
                           onChange={e => updateRegionRow(row.id, "fee", numVal(e.target.value))}
                           placeholder="0"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          className="fee-cell-input"
-                          type="number"
-                          value={row.deliveryDays}
-                          onChange={e => updateRegionRow(row.id, "deliveryDays", numVal(e.target.value))}
-                          placeholder="1"
                         />
                       </td>
                       <td>

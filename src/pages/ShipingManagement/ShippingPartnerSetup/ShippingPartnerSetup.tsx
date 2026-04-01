@@ -307,7 +307,6 @@ export default function ShippingPartnerSetup() {
                 <th>MÃ ĐV</th>
                 <th>TÊN ĐƠN VỊ</th>
                 <th>PHÍ CƠ BẢN (NỘI THÀNH)</th>
-                <th>THỜI GIAN TB</th>
                 <th>ĐÁNH GIÁ</th>
                 <th>ĐƠN ĐANG XỬ LÝ</th>
                 <th>TRẠNG THÁI</th>
@@ -323,7 +322,6 @@ export default function ShippingPartnerSetup() {
                     <td className="ps-table__code">{meta.code}</td>
                     <td>{meta.fullName}</td>
                     <td>{meta.baseFee}</td>
-                    <td>{meta.avgTime}</td>
                     <td>{meta.rating} ★</td>
                     <td>{meta.activeOrders}</td>
                     <td>{statusLabel(partner.status)}</td>

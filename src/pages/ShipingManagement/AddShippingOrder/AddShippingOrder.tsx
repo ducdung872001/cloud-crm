@@ -23,13 +23,16 @@ function useAddressOptions() {
   const [provinces, setProvinces] = useState<IProvince[]>([]);
   const [districts, setDistricts] = useState<IDistrict[]>([]);
   const [wards, setWards] = useState<IWard[]>([]);
-  const [loadingProvinces, setLoadingProvinces] = useState(false);
+  const [loadingProvinces, setLoadingProvinces] = useState(true); // bắt đầu là true vì sẽ load ngay
   const [loadingDistricts, setLoadingDistricts] = useState(false);
   const [loadingWards, setLoadingWards] = useState(false);
 
   const [selectedProvince, setSelectedProvince] = useState<{ value: number; label: string } | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<{ value: number; label: string } | null>(null);
   const [selectedWard, setSelectedWard] = useState<{ value: string; label: string } | null>(null);
+
+  // Dùng STATE thay vì ref để useEffect có thể detect thay đổi và trigger đúng
+  const [pendingFill, setPendingFill] = useState<{ provinceName: string; districtName: string; wardName: string } | null>(null);
 
   // Load tỉnh khi mount
   useEffect(() => {
@@ -40,6 +43,48 @@ function useAddressOptions() {
       })
       .finally(() => setLoadingProvinces(false));
   }, []);
+
+  // Khi provinces load xong VÀ có pending fill → apply
+  // Dùng cả 2 dependencies để đảm bảo trigger dù thứ tự nào xảy ra trước
+  useEffect(() => {
+    if (provinces.length === 0 || !pendingFill) return;
+    const { provinceName, districtName, wardName } = pendingFill;
+    setPendingFill(null); // clear trước để tránh loop
+    applyFill(provinces, provinceName, districtName, wardName);
+  }, [provinces, pendingFill]); // eslint-disable-line
+
+  // Tách logic fill ra hàm riêng để dùng lại
+  const applyFill = (
+    provList: IProvince[],
+    provinceName: string,
+    districtName: string,
+    wardName: string
+  ) => {
+    const foundProv = provList.find((p) =>
+      p.ProvinceName?.toLowerCase().includes(provinceName?.toLowerCase())
+    );
+    if (!foundProv) return;
+    setSelectedProvince({ value: foundProv.ProvinceID, label: foundProv.ProvinceName });
+    ShippingService.districts(foundProv.ProvinceID).then((data) => {
+      const list: IDistrict[] = data.result ?? [];
+      setDistricts(list);
+      const foundDist = list.find((d) =>
+        d.DistrictName?.toLowerCase().includes(districtName?.toLowerCase())
+      );
+      if (!foundDist) return;
+      setSelectedDistrict({ value: foundDist.DistrictID, label: foundDist.DistrictName });
+      ShippingService.wards(foundDist.DistrictID).then((data2) => {
+        const wardList: IWard[] = data2.result ?? [];
+        setWards(wardList);
+        const foundWard = wardList.find((w) =>
+          w.WardName?.toLowerCase().includes(wardName?.toLowerCase())
+        );
+        if (foundWard) {
+          setSelectedWard({ value: foundWard.WardCode, label: foundWard.WardName });
+        }
+      });
+    });
+  };
 
   // Load quận khi chọn tỉnh
   const onProvinceChange = (opt: { value: number; label: string } | null) => {
@@ -79,34 +124,14 @@ function useAddressOptions() {
   const districtOptions = districts.map((d) => ({ value: d.DistrictID, label: d.DistrictName }));
   const wardOptions = wards.map((w) => ({ value: w.WardCode, label: w.WardName }));
 
-  // Set giá trị từ ngoài vào (khi edit hoặc autofill từ hóa đơn / chi nhánh)
+  // Nếu provinces chưa có → queue (dùng setState để trigger useEffect)
+  // Nếu đã có → apply ngay
   const setValuesByName = (provinceName: string, districtName: string, wardName: string) => {
-    const foundProv = provinces.find((p) =>
-      p.ProvinceName?.toLowerCase().includes(provinceName?.toLowerCase())
-    );
-    if (!foundProv) return;
-    setSelectedProvince({ value: foundProv.ProvinceID, label: foundProv.ProvinceName });
-    ShippingService.districts(foundProv.ProvinceID)
-      .then((data) => {
-        const list: IDistrict[] = data.result ?? [];
-        setDistricts(list);
-        const foundDist = list.find((d) =>
-          d.DistrictName?.toLowerCase().includes(districtName?.toLowerCase())
-        );
-        if (!foundDist) return;
-        setSelectedDistrict({ value: foundDist.DistrictID, label: foundDist.DistrictName });
-        ShippingService.wards(foundDist.DistrictID)
-          .then((data2) => {
-            const wardList: IWard[] = data2.result ?? [];
-            setWards(wardList);
-            const foundWard = wardList.find((w) =>
-              w.WardName?.toLowerCase().includes(wardName?.toLowerCase())
-            );
-            if (foundWard) {
-              setSelectedWard({ value: foundWard.WardCode, label: foundWard.WardName });
-            }
-          })
-      })
+    if (provinces.length === 0) {
+      setPendingFill({ provinceName, districtName, wardName });
+      return;
+    }
+    applyFill(provinces, provinceName, districtName, wardName);
   };
 
   const reset = () => {
@@ -115,6 +140,7 @@ function useAddressOptions() {
     setSelectedWard(null);
     setDistricts([]);
     setWards([]);
+    setPendingFill(null);
   };
 
   return {
@@ -137,6 +163,15 @@ const CARRIER_CODE_MAP: Record<number, string> = {
   2: "VTP",
   3: "GHN",
 };
+
+const STATUS_OPTIONS = [
+  { value: "SUBMITTED", label: "Chờ duyệt" },
+  { value: "WAITING_PICKUP", label: "Chờ lấy hàng" },
+  { value: "IN_TRANSIT", label: "Đang giao" },
+  { value: "DELIVERED", label: "Đã giao" },
+  { value: "RETURNED", label: "Hoàn hàng" },
+  { value: "CANCELLED", label: "Đã hủy" },
+];
 
 // IShippingFormState được import từ model/shipping/ShippingRequestModel
 
@@ -178,7 +213,8 @@ export default function AddShippingOrder() {
   const [searchParams] = useSearchParams();
 
   const invoiceIdFromParam = searchParams.get("invoiceId");
-  const isEdit = !!id;
+  const shipmentOrderFromParam = searchParams.get("shipmentOrder");
+  const isEdit = !!shipmentOrderFromParam;
   document.title = isEdit ? "Chỉnh sửa đơn vận chuyển" : "Tạo đơn vận chuyển mới";
 
   const [form, setForm] = useState<IShippingFormState>(DEFAULT_FORM);
@@ -190,6 +226,7 @@ export default function AddShippingOrder() {
   const [selectedSender, setSelectedSender] = useState<IEmployeeResponse | null>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<ISelectedInvoice | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<{ value: string; label: string } | null>(null);
 
   // ---- Address hooks ----
   const senderAddr = useAddressOptions();
@@ -309,12 +346,12 @@ export default function AddShippingOrder() {
 
   // ---- Khởi tạo ----
   useEffect(() => {
-    if (isEdit && id) {
-      loadShippingDetail(+id);
+    if (isEdit && shipmentOrderFromParam) {
+      loadShippingDetail(shipmentOrderFromParam);
     } else if (invoiceIdFromParam) {
       loadInvoiceDetailAndApply(+invoiceIdFromParam);
     }
-  }, [id, invoiceIdFromParam]); // eslint-disable-line
+  }, [shipmentOrderFromParam, invoiceIdFromParam]); // eslint-disable-line
 
   const loadInvoiceDetailAndApply = async (invoiceId: number, invoiceBasic?: IInvoiceResponse) => {
     if (invoiceBasic) {
@@ -387,37 +424,103 @@ export default function AddShippingOrder() {
     receiverAddr.reset();
   };
 
-  const loadShippingDetail = async (_orderId: number) => {
-    // setIsLoadingPage(true);
-    // try {
-    //   const res = await ShippingService.detail(orderId);
-    //   if (res.code === 0) {
-    //     const found: IShippingOrderResponse = res.result;
-    //     setOriginData(found);
-    //     setForm({
-    //       id:               found.id,
-    //       partnerId:        found.partnerId,
-    //       invoiceId:        found.salesOrderId,
-    //       receiverName:     found.receiverName,
-    //       receiverPhone:    found.receiverPhone?.replace(/\*/g, "0"),
-    //       receiverStreet:   found.receiverAddress ?? "",
-    //       receiverDistrict: (found as any).receiverDistrict ?? "",
-    //       receiverWard:     (found as any).receiverWard     ?? "",
-    //       weight:           found.weightGram    ?? null,
-    //       width:            found.widthCm       ?? null,
-    //       height:           found.heightCm      ?? null,
-    //       length:           found.lengthCm      ?? null,
-    //       codAmount:        found.codAmount      ?? null,
-    //       note:             found.noteForShipper ?? "",
-    //     });
-    //   } else {
-    //     showToast(res.message ?? "Không thể tải thông tin đơn vận chuyển", "error");
-    //   }
-    // } catch {
-    //   showToast("Lỗi kết nối khi tải đơn vận chuyển", "error");
-    // } finally {
-    //   setIsLoadingPage(false);
-    // }
+  const loadShippingDetail = async (shipmentOrder: string) => {
+    setIsLoadingPage(true);
+    try {
+      const res = await ShippingService.filter({ shipmentOrder, page: 1, limit: 1 });
+      if (res.code === 0) {
+        const items: IShippingOrderResponse[] = res.result?.items ?? [];
+        const found: IShippingOrderResponse | undefined = items[0];
+        if (!found) {
+          showToast("Không tìm thấy đơn vận chuyển", "error");
+          return;
+        }
+        setOriginData(found);
+
+        // Set trạng thái hiện tại
+        const currentStatus = (found as any).status ?? (found as any).statusCode ?? null;
+        if (currentStatus) {
+          const statusOpt = STATUS_OPTIONS.find((s) => s.value === currentStatus) ?? null;
+          setSelectedStatus(statusOpt);
+        }
+        // API trả về carrierCode: "GHTK" | "VTP" | "GHN"
+        const CARRIER_TO_PARTNER_ID: Record<string, number> = { GHTK: 1, VTP: 2, GHN: 3 };
+        const resolvedPartnerId = (found as any).partnerId
+          ?? CARRIER_TO_PARTNER_ID[(found as any).carrierCode ?? ""]
+          ?? null;
+
+        // API trả về receiverAddress dạng full string "18 Nguyễn Thị Minh Khai, Q.3, TP.HCM"
+        // Tách lấy phần street (trước dấu phẩy đầu tiên) để hiển thị vào input địa chỉ chi tiết
+        const parseStreet = (fullAddress: string): string => {
+          if (!fullAddress) return "";
+          const parts = fullAddress.split(",");
+          return parts[0]?.trim() ?? fullAddress;
+        };
+
+        // codAmount: API trả về codAmount (COD thực thu = codAmount - orderSubtotalAmount)
+        // Nếu có codAmount riêng dùng luôn, không thì fallback về codAmount
+        const resolvedCod =
+          (found as any).totalAmount != null
+            ? (found as any).totalAmount
+            : (found as any).totalAmount ?? null;
+
+        setForm({
+          ...DEFAULT_FORM,
+          id:               found.id,
+          partnerId:        resolvedPartnerId,
+          invoiceId:        (found as any).salesOrderId ?? (found as any).orderId ?? null,
+
+          // Người nhận — field names khớp API response
+          receiverName:     found.receiverName     ?? "",
+          receiverPhone:    found.receiverPhone?.replace(/\*/g, "0") ?? "",
+          receiverStreet:   parseStreet(found.receiverAddress ?? ""),
+
+          // Người gửi — field names khớp API response
+          senderName:       found.senderName       ?? "",
+          senderPhone:      found.senderPhone       ?? "",
+          senderEmail:      (found as any).senderEmail ?? "",
+          senderStreet:     parseStreet(found.senderAddress ?? ""),
+
+          // Kích thước & trọng lượng — khớp API
+          weight:           found.weightGram  ?? null,
+          length:           found.lengthCm    ?? null,
+          width:            found.widthCm     ?? null,
+          height:           found.heightCm    ?? null,
+
+          codAmount:        resolvedCod,
+          note:             found.noteForShipper ?? "",
+        });
+
+        // Auto-fill địa chỉ người nhận
+        // API không trả về province/district/ward riêng → parse từ receiverAddress
+        // VD: "18 Nguyễn Thị Minh Khai, Q.3, TP.HCM" → district="Q.3", province="TP.HCM"
+        const parseAddressParts = (fullAddress: string) => {
+          const parts = (fullAddress ?? "").split(",").map((s) => s.trim());
+          return {
+            street:   parts[0] ?? "",
+            district: parts[1] ?? "",
+            ward:     parts.length > 3 ? parts[2] ?? "" : "",
+            province: parts[parts.length - 1] ?? "",
+          };
+        };
+
+        const recParsed = parseAddressParts(found.receiverAddress ?? "");
+        if (recParsed.province || recParsed.district) {
+          receiverAddr.setValuesByName(recParsed.province, recParsed.district, recParsed.ward);
+        }
+
+        const sndParsed = parseAddressParts(found.senderAddress ?? "");
+        if (sndParsed.province || sndParsed.district) {
+          senderAddr.setValuesByName(sndParsed.province, sndParsed.district, sndParsed.ward);
+        }
+      } else {
+        showToast(res.message ?? "Không thể tải thông tin đơn vận chuyển", "error");
+      }
+    } catch {
+      showToast("Lỗi kết nối khi tải đơn vận chuyển", "error");
+    } finally {
+      setIsLoadingPage(false);
+    }
   };
 
   const setField = (field: string) => (e: any) => {
@@ -428,13 +531,17 @@ export default function AddShippingOrder() {
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
-    if (!form.partnerId) errs.partnerId = "Vui lòng chọn hãng vận chuyển";
-    if (!form.receiverName?.trim()) errs.receiverName = "Vui lòng nhập tên người nhận";
-    if (!form.receiverPhone?.trim()) errs.receiverPhone = "Vui lòng nhập số điện thoại";
-    if (!form.receiverStreet?.trim()) errs.receiverStreet = "Vui lòng nhập địa chỉ (số nhà, đường)";
-    if (!form.receiverDistrict?.trim()) errs.receiverDistrict = "Vui lòng chọn quận / huyện";
-    if (!form.receiverWard?.trim()) errs.receiverWard = "Vui lòng chọn phường / xã";
-    if (!form.weight || +form.weight <= 0) errs.weight = "Vui lòng nhập trọng lượng";
+    if (isEdit) {
+      if (!selectedStatus) errs.status = "Vui lòng chọn trạng thái";
+    } else {
+      if (!form.partnerId) errs.partnerId = "Vui lòng chọn hãng vận chuyển";
+      if (!form.receiverName?.trim()) errs.receiverName = "Vui lòng nhập tên người nhận";
+      if (!form.receiverPhone?.trim()) errs.receiverPhone = "Vui lòng nhập số điện thoại";
+      if (!form.receiverStreet?.trim()) errs.receiverStreet = "Vui lòng nhập địa chỉ (số nhà, đường)";
+      if (!form.receiverDistrict?.trim()) errs.receiverDistrict = "Vui lòng chọn quận / huyện";
+      if (!form.receiverWard?.trim()) errs.receiverWard = "Vui lòng chọn phường / xã";
+      if (!form.weight || +form.weight <= 0) errs.weight = "Vui lòng nhập trọng lượng";
+    }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -444,12 +551,12 @@ export default function AddShippingOrder() {
     setIsLoading(true);
     try {
       if (isEdit) {
-        const res = await ShippingService.create({ ...form as any });
+        const res = await ShippingService.updateStatus(shipmentOrderFromParam, selectedStatus?.value);
         if (res.code === 0) {
-          showToast("Cập nhật đơn vận chuyển thành công", "success");
+          showToast("Cập nhật trạng thái đơn thành công", "success");
           navigate("/shipping");
         } else {
-          showToast(res.message ?? "Cập nhật đơn thất bại", "error");
+          showToast(res.message ?? "Cập nhật trạng thái thất bại", "error");
         }
         return;
       }
@@ -503,14 +610,15 @@ export default function AddShippingOrder() {
         shippingFeeBearer: "RECEIVER",
         items,
         note: form.note ?? "",
+        status: selectedStatus?.value ?? "SUBMITTED",
       };
 
       const response = await ShippingService.create(payload as any);
       if (response.code === 0) {
-        showToast("Tạo đơn vận chuyển thành công", "success");
+        showToast("Cập nhật đơn vận chuyển thành công", "success");
         navigate("/shipping");
       } else {
-        showToast(response.message ?? "Tạo đơn thất bại", "error");
+        showToast(response.message ?? "Cập nhật đơn thất bại", "error");
       }
     } catch (err) {
       showToast("Có lỗi xảy ra, vui lòng thử lại", "error");
@@ -538,6 +646,40 @@ export default function AddShippingOrder() {
 
           {/* ========== CỘT TRÁI ========== */}
           <div className="add-shipping-main">
+
+            {/* Card: Trạng thái — chỉ hiện khi chỉnh sửa */}
+            {isEdit && (
+              <div className="form-card">
+                <div className="form-card__title">
+                  <Icon name="Activity" />
+                  Cập nhật trạng thái đơn
+                </div>
+                <div className="form-card__body">
+                  <div>
+                    <SelectCustom
+                      label="Trạng thái"
+                      required
+                      fill
+                      options={STATUS_OPTIONS}
+                      value={selectedStatus?.value ?? null}
+                      onChange={(opt: any) => {
+                        const val = opt === null || opt === undefined
+                          ? null
+                          : typeof opt === "object" ? opt : STATUS_OPTIONS.find((s) => s.value === opt) ?? null;
+                        setSelectedStatus(val ? { value: val.value ?? val, label: val.label ?? val } : null);
+                        setErrors((prev) => ({ ...prev, status: "" }));
+                      }}
+                      placeholder="Chọn trạng thái..."
+                    />
+                    {errors.status && <span className="field-error">{errors.status}</span>}
+                  </div>
+                  <div className="edit-mode-notice">
+                    <Icon name="Info" />
+                    <span>Ở chế độ chỉnh sửa, chỉ có thể cập nhật trạng thái đơn vận chuyển.</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Card: Liên kết hóa đơn */}
             {!isEdit && (
@@ -609,12 +751,12 @@ export default function AddShippingOrder() {
                       <div className="invoice-info-card__footer">
                         <div className="invoice-info-card__amount">
                           <span>Giá trị đơn</span>
-                          <strong>{formatCurrency(selectedInvoice.amount ?? 0)} đ</strong>
+                          <strong>{formatCurrency(selectedInvoice.amount ?? 0)}</strong>
                         </div>
                         {(selectedInvoice.amountCard ?? 0) > 0 && (
                           <div className="invoice-info-card__cod">
                             <Icon name="CreditCard" />
-                            COD: <strong>{formatCurrency(selectedInvoice.amountCard)} đ</strong>
+                            COD: <strong>{formatCurrency(selectedInvoice.amountCard)}</strong>
                           </div>
                         )}
                       </div>
@@ -641,6 +783,7 @@ export default function AddShippingOrder() {
                     className="select-custom select__custom-label"
                     isSearchable
                     isClearable
+                    isDisabled={isEdit}
                     debounceTimeout={350}
                     defaultOptions
                     menuPortalTarget={document.body}
@@ -662,6 +805,7 @@ export default function AddShippingOrder() {
                       name="senderName"
                       label="Tên người gửi"
                       fill
+                      disabled={isEdit}
                       value={form.senderName}
                       onChange={setField("senderName")}
                       placeholder="Nguyễn Văn A"
@@ -672,6 +816,7 @@ export default function AddShippingOrder() {
                       name="senderPhone"
                       label="Số điện thoại"
                       fill
+                      disabled={isEdit}
                       value={form.senderPhone}
                       onChange={setField("senderPhone")}
                       placeholder="09xxxxxxxx"
@@ -683,6 +828,7 @@ export default function AddShippingOrder() {
                   name="senderEmail"
                   label="Email người gửi"
                   fill
+                  disabled={isEdit}
                   type="email"
                   value={form.senderEmail}
                   onChange={setField("senderEmail")}
@@ -693,6 +839,7 @@ export default function AddShippingOrder() {
                   name="senderStreet"
                   label="Số nhà, tên đường"
                   fill
+                  disabled={isEdit}
                   value={form.senderStreet}
                   onChange={setField("senderStreet")}
                   placeholder="VD: 123 Nguyễn Trãi"
@@ -708,7 +855,7 @@ export default function AddShippingOrder() {
                       className="select-custom select__custom-label"
                       isSearchable
                       isClearable
-                      isDisabled={senderAddr.loadingProvinces}
+                      isDisabled={senderAddr.loadingProvinces || isEdit}
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                       styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
@@ -736,7 +883,7 @@ export default function AddShippingOrder() {
                       className="select-custom select__custom-label"
                       isSearchable
                       isClearable
-                      isDisabled={!senderAddr.selectedProvince || senderAddr.loadingDistricts}
+                      isDisabled={!senderAddr.selectedProvince || senderAddr.loadingDistricts || isEdit}
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                       styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
@@ -765,7 +912,7 @@ export default function AddShippingOrder() {
                       className="select-custom select__custom-label"
                       isSearchable
                       isClearable
-                      isDisabled={!senderAddr.selectedDistrict || senderAddr.loadingWards}
+                      isDisabled={!senderAddr.selectedDistrict || senderAddr.loadingWards || isEdit}
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                       styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
@@ -797,6 +944,7 @@ export default function AddShippingOrder() {
                     label="Hãng vận chuyển"
                     required
                     fill
+                    disabled={isEdit}
                     options={PARTNER_OPTIONS}
                     value={form.partnerId ?? null}
                     onChange={(opt: any) => {
@@ -835,6 +983,7 @@ export default function AddShippingOrder() {
                       label="Tên người nhận"
                       required
                       fill
+                      disabled={isEdit}
                       value={form.receiverName}
                       onChange={setField("receiverName")}
                       placeholder="Nguyễn Văn A"
@@ -848,6 +997,7 @@ export default function AddShippingOrder() {
                         label="Số điện thoại"
                         required
                         fill
+                        disabled={isEdit}
                         value={form.receiverPhone}
                         onChange={setField("receiverPhone")}
                         placeholder="09xxxxxxxx"
@@ -866,6 +1016,7 @@ export default function AddShippingOrder() {
                     label="Số nhà, tên đường"
                     required
                     fill
+                    disabled={isEdit}
                     value={form.receiverStreet}
                     onChange={setField("receiverStreet")}
                     placeholder="VD: 123 Nguyễn Trãi"
@@ -877,6 +1028,7 @@ export default function AddShippingOrder() {
                   name="receiverEmail"
                   label="Email người nhận"
                   fill
+                  disabled={isEdit}
                   type="email"
                   value={(form as any).receiverEmail ?? ""}
                   onChange={setField("receiverEmail")}
@@ -893,7 +1045,7 @@ export default function AddShippingOrder() {
                       className="select-custom select__custom-label"
                       isSearchable
                       isClearable
-                      isDisabled={receiverAddr.loadingProvinces}
+                      isDisabled={receiverAddr.loadingProvinces || isEdit}
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                       styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
@@ -921,7 +1073,7 @@ export default function AddShippingOrder() {
                       className="select-custom select__custom-label"
                       isSearchable
                       isClearable
-                      isDisabled={!receiverAddr.selectedProvince || receiverAddr.loadingDistricts}
+                      isDisabled={!receiverAddr.selectedProvince || receiverAddr.loadingDistricts || isEdit}
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                       styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
@@ -951,7 +1103,7 @@ export default function AddShippingOrder() {
                       className="select-custom select__custom-label"
                       isSearchable
                       isClearable
-                      isDisabled={!receiverAddr.selectedDistrict || receiverAddr.loadingWards}
+                      isDisabled={!receiverAddr.selectedDistrict || receiverAddr.loadingWards || isEdit}
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                       styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
@@ -986,6 +1138,7 @@ export default function AddShippingOrder() {
                       label="Trọng lượng (gram)"
                       required
                       fill
+                      disabled={isEdit}
                       type="number"
                       value={form.weight ?? ""}
                       onChange={setField("weight")}
@@ -997,6 +1150,7 @@ export default function AddShippingOrder() {
                     name="dimensions"
                     label="Kích thước - D × R × C (cm)"
                     fill
+                    disabled={isEdit}
                     value={
                       form.length || form.width || form.height
                         ? `${form.length ?? 0} x ${form.width ?? 0} x ${form.height ?? 0}`
@@ -1018,6 +1172,7 @@ export default function AddShippingOrder() {
                   name="note"
                   label="Ghi chú cho shipper"
                   fill
+                  disabled={isEdit}
                   value={form.note}
                   onChange={setField("note")}
                   placeholder="Gọi trước khi giao, hàng dễ vỡ..."
@@ -1028,6 +1183,30 @@ export default function AddShippingOrder() {
 
           {/* ========== CỘT PHẢI ========== */}
           <div className="add-shipping-side">
+            {/* Card: Trạng thái — chỉ hiện khi tạo mới */}
+            {!isEdit && (
+              <div className="form-card">
+                <div className="form-card__title">
+                  <Icon name="Activity" />
+                  Trạng thái đơn
+                </div>
+                <div className="form-card__body">
+                  <SelectCustom
+                    label="Trạng thái"
+                    fill
+                    options={STATUS_OPTIONS}
+                    value={selectedStatus?.value ?? null}
+                    onChange={(opt: any) => {
+                      const val = opt === null || opt === undefined
+                        ? null
+                        : typeof opt === "object" ? opt : STATUS_OPTIONS.find((s) => s.value === opt) ?? null;
+                      setSelectedStatus(val ? { value: val.value ?? val, label: val.label ?? val } : null);
+                    }}
+                    placeholder="Mặc định: Chờ duyệt"
+                  />
+                </div>
+              </div>
+            )}
             {/* Card: COD */}
             <div className="form-card">
               <div className="form-card__title">
@@ -1039,6 +1218,7 @@ export default function AddShippingOrder() {
                   name="codAmount"
                   label="Số tiền thu hộ"
                   fill
+                  disabled={isEdit}
                   type="number"
                   value={form.codAmount ?? ""}
                   onChange={setField("codAmount")}
@@ -1056,14 +1236,18 @@ export default function AddShippingOrder() {
             {/* Card: Action */}
             <div className="form-card action-card">
               <div className={`readiness-indicator ${
-                form.partnerId && form.receiverName && form.receiverPhone && form.receiverStreet && form.receiverDistrict && form.receiverWard && form.weight
-                  ? "ready" : "not-ready"
+                isEdit
+                  ? (selectedStatus ? "ready" : "not-ready")
+                  : (form.partnerId && form.receiverName && form.receiverPhone && form.receiverStreet && form.receiverDistrict && form.receiverWard && form.weight
+                    ? "ready" : "not-ready")
               }`}>
                 <span className="readiness-dot" />
                 <span className="readiness-label">
-                  {form.partnerId && form.receiverName && form.receiverPhone && form.receiverStreet && form.receiverDistrict && form.receiverWard && form.weight
-                    ? "Đã điền đủ thông tin, sẵn sàng đẩy đơn"
-                    : "Vui lòng điền đủ thông tin bắt buộc (*)"}
+                  {isEdit
+                    ? (selectedStatus ? "Đã chọn trạng thái, sẵn sàng cập nhật" : "Vui lòng chọn trạng thái đơn")
+                    : (form.partnerId && form.receiverName && form.receiverPhone && form.receiverStreet && form.receiverDistrict && form.receiverWard && form.weight
+                      ? "Đã điền đủ thông tin, sẵn sàng đẩy đơn"
+                      : "Vui lòng điền đủ thông tin bắt buộc (*)")}
                 </span>
               </div>
 
