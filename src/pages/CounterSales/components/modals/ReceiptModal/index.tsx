@@ -1,9 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { IActionModal } from "model/OtherModel";
 import { CartItem } from "../../../types";
 import "./index.scss";
 import InvoiceService from "@/services/InvoiceService";
+import CustomerService from "@/services/CustomerService";
 import { showToast } from "@/utils/common";
 import { PAY_METHODS } from "../PayModal";
 import { QRCodeCanvas } from "qrcode.react";
@@ -83,6 +84,10 @@ export default function ReceiptModal({
   const [paperSize, setPaperSize]                     = useState<PaperSize>("80mm");
   const [showEmail, setShowEmail]                     = useState(false);
   const [emailInput, setEmailInput]                   = useState("");
+  const [emailMasked, setEmailMasked]                 = useState("");
+  const [emailReadonly, setEmailReadonly]             = useState(false);
+  const [emailRevealed, setEmailRevealed]             = useState(false);
+  const [isRevealingEmail, setIsRevealingEmail]       = useState(false);
   const [isSending, setIsSending]                     = useState(false);
 
   // ── Tính tiền ───────────────────────────────────────────────────────────────
@@ -161,12 +166,40 @@ export default function ReceiptModal({
   }, [invoiceDraft, invoiceId, effectivePaid, effectiveDebt, total, totalDiscount,
       customerId, warehouseId, customerName]);
 
+  // ── Auto-fill email khách hàng ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!open) return;
+    // Reset email states mỗi lần mở modal
+    setEmailInput("");
+    setEmailMasked("");
+    setEmailReadonly(false);
+    setEmailRevealed(false);
+
+    const cid = Number(customerId);
+    if (cid > 0) {
+      CustomerService.detail(cid).then(res => {
+        if (res?.code === 0) {
+          const email = res.result?.email ?? res.result?.emailMasked ?? "";
+          if (email) {
+            setEmailInput(email);
+            setEmailMasked(email);
+            setEmailReadonly(true);
+          }
+        }
+      }).catch(() => {});
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, customerId]);
+
   const handleClose = () => {
     if (isPaymentProcessing) onPaymentSuccess?.();
     onClose();
     setIsPaymentProcessing(false);
     setShowEmail(false);
     setEmailInput("");
+    setEmailMasked("");
+    setEmailReadonly(false);
+    setEmailRevealed(false);
   };
 
   // ── In biên lai (popup đúng khổ giấy) ──────────────────────────────────────
@@ -226,32 +259,79 @@ ${html}
   };
 
   // ── Gửi email biên lai ──────────────────────────────────────────────────────
+
+  const handleToggleRevealEmail = async () => {
+    if (isRevealingEmail) return;
+
+    if (emailRevealed) {
+      // Ẩn lại → restore về masked
+      setEmailInput(emailMasked);
+      setEmailRevealed(false);
+      return;
+    }
+
+    // Mở mắt → gọi API lấy email thật
+    setIsRevealingEmail(true);
+    try {
+      const res = await CustomerService.viewEmail(Number(customerId));
+      if (res.code === 0) {
+        setEmailInput(res.result ?? emailMasked);
+        setEmailRevealed(true);
+      } else if (res.code === 400) {
+        showToast("Bạn không có quyền xem email!", "error");
+      } else {
+        showToast(res.message ?? "Không lấy được email", "error");
+      }
+    } catch {
+      showToast("Lỗi khi tải email", "error");
+    } finally {
+      setIsRevealingEmail(false);
+    }
+  };
+
   const handleSendEmail = async () => {
-    const email = emailInput.trim();
+    let email = emailInput.trim();
+
+    // Nếu email đang masked (chứa *) và chưa reveal → tự động reveal trước khi gửi
+    if (Number(customerId) > 0 && !emailRevealed && email.includes("*")) {
+      setIsRevealingEmail(true);
+      try {
+        const res = await CustomerService.viewEmail(Number(customerId));
+        if (res.code === 0) {
+          const realEmail = res.result ?? "";
+          setEmailInput(realEmail);
+          setEmailRevealed(true);
+          email = realEmail.trim();
+        } else if (res.code === 400) {
+          showToast("Bạn không có quyền xem email khách hàng!", "error");
+          return;
+        } else {
+          showToast(res.message ?? "Không lấy được email", "error");
+          return;
+        }
+      } catch {
+        showToast("Lỗi khi tải email. Vui lòng thử lại.", "error");
+        return;
+      } finally {
+        setIsRevealingEmail(false);
+      }
+    }
+
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       showToast("Email không hợp lệ", "error");
       return;
     }
+
+    const realInvoiceId = invoiceDraft?.id ?? invoiceId;
+    if (!realInvoiceId || Number(realInvoiceId) <= 0) {
+      showToast("Không tìm thấy mã hóa đơn để gửi email.", "error");
+      return;
+    }
+
     setIsSending(true);
     try {
-      const emailBody = buildEmailHtml({
-        items: cartItems.map(c => ({ name: c.name, qty: c.qty, price: c.price })),
-        subtotal, totalDiscount, total, method,
-        dateStr, timeStr,
-      });
-
-      const res = await fetch("/adminapi/outlookMail/sendEmail", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          toEmail: email,
-          subject: `Biên lai thanh toán`,
-          body: emailBody,
-        }),
-      });
-      const rj = await res.json().catch(() => ({}));
-      if (rj.code !== 0) throw new Error(rj.message ?? "Gửi thất bại");
-
+      const res = await InvoiceService.sendEmail(Number(realInvoiceId), email);
+      if (res?.code !== 0) throw new Error(res?.message ?? "Gửi thất bại");
       showToast(`Đã gửi biên lai tới ${email}`, "success");
       setShowEmail(false);
     } catch (err: any) {
@@ -435,18 +515,53 @@ ${html}
         {/* Email form */}
         {showEmail && (
           <div className="receipt-email-form">
-            <div className="receipt-email-form__label">Địa chỉ email nhận biên lai</div>
+            <div className="receipt-email-form__label">
+              {Number(customerId) > 0
+                ? "Gửi biên lai tới email khách hàng"
+                : "Nhập email nhận biên lai"}
+            </div>
             <div className="receipt-email-form__row">
-              <input
-                type="email"
-                className="receipt-email-form__input"
-                placeholder="example@email.com"
-                value={emailInput}
-                onChange={e => setEmailInput(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && handleSendEmail()}
-                autoFocus
-              />
-              <button className="btn btn--primary btn--sm" onClick={handleSendEmail} disabled={isSending}>
+              <div className="receipt-email-form__input-wrap">
+                <input
+                  type="email"
+                  className={`receipt-email-form__input${emailReadonly ? " receipt-email-form__input--readonly" : ""}`}
+                  placeholder={emailReadonly ? "" : "example@email.com"}
+                  value={emailInput}
+                  onChange={e => !emailReadonly && setEmailInput(e.target.value)}
+                  onKeyDown={e => !emailReadonly && e.key === "Enter" && handleSendEmail()}
+                  readOnly={emailReadonly}
+                  autoFocus={!emailReadonly}
+                />
+                {Number(customerId) > 0 && (
+                  <button
+                    type="button"
+                    className={`receipt-email-form__eye${isRevealingEmail ? " receipt-email-form__eye--loading" : ""}`}
+                    onClick={handleToggleRevealEmail}
+                    title={emailRevealed ? "Ẩn email" : "Xem email thật"}
+                    disabled={isRevealingEmail}
+                  >
+                    {isRevealingEmail ? (
+                      <span className="receipt-eye-spinner" />
+                    ) : emailRevealed ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                        width="16" height="16">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                        width="16" height="16">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                        <line x1="1" y1="1" x2="23" y2="23" />
+                      </svg>
+                    )}
+                  </button>
+                )}
+              </div>
+              <button className="btn btn--primary btn--sm receipt-email-form__btn" onClick={handleSendEmail} disabled={isSending || isRevealingEmail}>
                 {isSending ? "Đang gửi..." : "Gửi"}
               </button>
               <button className="btn btn--outline btn--sm" onClick={() => setShowEmail(false)}>Huỷ</button>

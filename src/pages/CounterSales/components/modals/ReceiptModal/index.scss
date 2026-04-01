@@ -230,9 +230,17 @@
     align-items: center;
   }
 
+  &__input-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
   &__input {
     flex: 1;
-    padding: 0.7rem 1.2rem;
+    width: 100%;
+    padding: 0.7rem 3.4rem 0.7rem 1.2rem;
     border: 1.5px solid var(--border);
     border-radius: 0.8rem;
     font-family: var(--font-base);
@@ -244,5 +252,50 @@
 
     &:focus { border-color: var(--primary-color); }
     &::placeholder { color: var(--muted2); }
+
+    &--readonly {
+      background: var(--paper);
+      color: var(--muted);
+      cursor: default;
+    }
   }
+
+  &__eye {
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0.3rem;
+    cursor: pointer;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+
+    &:hover:not(:disabled) { color: var(--primary-color); }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    &--loading { cursor: wait; }
+  }
+
+  &__btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+.receipt-eye-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: receipt-spin 0.6s linear infinite;
+}
+
+@keyframes receipt-spin {
+  to { transform: rotate(360deg); }
 }
