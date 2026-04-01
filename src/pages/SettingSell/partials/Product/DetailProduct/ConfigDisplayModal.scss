@@ -42,3 +42,25 @@
     font-weight: 450;
   }
 }
+.cfg-display__loading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 2.4rem 0;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 1.3rem;
+}
+
+.cfg-display__spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid #e5e7eb;
+  border-top-color: var(--primary-color, #015aa4);
+  border-radius: 50%;
+  animation: cfg-spin 0.7s linear infinite;
+}
+
+@keyframes cfg-spin {
+  to { transform: rotate(360deg); }
+}

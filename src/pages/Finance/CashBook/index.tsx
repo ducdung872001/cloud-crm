@@ -15,6 +15,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { urlsApi } from "configs/urls";
 import CashbookService from "services/CashbookService";
+import { toApiDateFormat } from "utils/common";
 import {
   CashbookSlideOver,
   FinanceBadge,
@@ -104,6 +105,7 @@ export default function FinanceCashBook() {
 
   // ── Slide-over tạo phiếu ─────────────────────────────────────────────────
   const [showCreate, setShowCreate] = useState(false);
+  const [exporting, setExporting]   = useState(false);
 
   const { toast, ToastNode } = useFinanceToast();
   const abortRef = useRef<AbortController | null>(null);
@@ -119,20 +121,20 @@ export default function FinanceCashBook() {
     const params: Record<string, any> = { page: 1, limit: 200 };
 
     if (monthFilter === "this_month") {
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, "0");
-      params.fromTime = `${y}-${m}-01`;
-      params.toTime   = `${y}-${m}-${new Date(y, now.getMonth() + 1, 0).getDate()}`;
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastDay  = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      params.fromTime = toApiDateFormat(firstDay.toISOString());
+      params.toTime   = toApiDateFormat(lastDay.toISOString());
     }
 
     if (kindFilter !== "all") params.type = Number(kindFilter);
 
     CashbookService.list(params, ctrl.signal)
       .then((res: any) => {
-        const raw: TxItem[] = res?.data?.content ?? res?.data ?? [];
+        const raw: TxItem[] = res?.result?.cashbookResponse?.items ?? [];
         const filteredByFund = fundFilter === "all"
           ? raw
-          : raw.filter((t: any) => String(t.fundId) === fundFilter);
+          : raw.filter((t: any) => String(t.fundName) === fundFilter);
 
         setAllTxns(filteredByFund);
 
@@ -191,6 +193,38 @@ export default function FinanceCashBook() {
     setFundFilter("all");
   };
 
+  // ── Xuất Excel ───────────────────────────────────────────────────────────
+  const handleExportExcel = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const now = new Date();
+      // Tính fromTime/toTime theo filter hiện tại (đúng format dd/MM/yyyy backend yêu cầu)
+      const pad = (n: number) => String(n).padStart(2, "0");
+      const fmt = (d: Date) =>
+        `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+
+      let fromTime: string | undefined;
+      let toTime: string | undefined;
+      if (monthFilter === "this_month") {
+        fromTime = fmt(new Date(now.getFullYear(), now.getMonth(), 1));
+        toTime   = fmt(new Date(now.getFullYear(), now.getMonth() + 1, 0));
+      }
+
+      await CashbookService.exportFile({
+        fromTime,
+        toTime,
+        // type: kindFilter !== "all" ? Number(kindFilter) : undefined,
+      });
+    } catch (e: any) {
+      if (e?.name !== "AbortError") {
+        toast("Xuất Excel thất bại. Vui lòng thử lại.");
+      }
+    } finally {
+      setExporting(false);
+    }
+  };
+
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <FinancePageShell title="Sổ thu chi">
@@ -199,12 +233,22 @@ export default function FinanceCashBook() {
       {/* ── Screen header ── */}
       <div className="finance-screen-header">
         <h1>Sổ thu chi</h1>
-        <button
-          className="finance-action-btn finance-action-btn--primary"
-          onClick={() => setShowCreate(true)}
-        >
-          + Tạo phiếu thu/chi
-        </button>
+        <div style={{ display: "flex", gap: "0.8rem" }}>
+          <button
+            className="finance-action-btn finance-action-btn--outline"
+            onClick={handleExportExcel}
+            disabled={exporting || allTxns.length === 0}
+            title={allTxns.length === 0 ? "Không có dữ liệu để xuất" : "Xuất sổ thu chi ra Excel"}
+          >
+            {exporting ? "Đang xuất..." : "⬇ Xuất Excel"}
+          </button>
+          <button
+            className="finance-action-btn finance-action-btn--primary"
+            onClick={() => setShowCreate(true)}
+          >
+            + Tạo phiếu thu/chi
+          </button>
+        </div>
       </div>
 
       {/* ── KPI Cards ── */}
@@ -272,7 +316,7 @@ export default function FinanceCashBook() {
             >
               <option value="all">Tất cả quỹ</option>
               {filterFunds.map(f => (
-                <option key={f.id} value={String(f.id)}>{f.name}</option>
+                <option key={f.id} value={f.name}>{f.name}</option>
               ))}
             </select>
           </div>

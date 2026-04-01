@@ -19,7 +19,7 @@ export default function LoyaltyWallet(props) {
   document.title = "Danh sách thành viên";
 
   const isMounted = useRef(false);
-  const { onBackProps } = props;
+  const { onBackProps, onViewHistory } = props;
   const [listData, setListData] = useState<ILoyaltyWalletResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
@@ -77,15 +77,23 @@ export default function LoyaltyWallet(props) {
   const dataMappingArray = (item: ILoyaltyWalletResponse, index: number) => [
     getPageOffset(params) + index + 1,
     item.customerName ?? "—",
-    <span className="loyalty-points loyalty-points--total">
+    // Tổng điểm tích lũy — click để xem lịch sử điểm của thành viên này
+    <span
+      className="loyalty-points loyalty-points--total loyalty-points--link"
+      title="Xem lịch sử điểm"
+      onClick={() => onViewHistory?.(item.customerId)}
+    >
       {(item.totalEarn ?? 0).toLocaleString("vi-VN")}
-      <span className="loyalty-points__unit"> </span>
     </span>,
-    <span className={`loyalty-points${
-      (item.currentBalance ?? 0) === 0 ? " loyalty-points--zero" : " loyalty-points--current"
-    }`}>
+    // Điểm hiện tại — click để xem lịch sử điểm của thành viên này
+    <span
+      className={`loyalty-points loyalty-points--link${
+        (item.currentBalance ?? 0) === 0 ? " loyalty-points--zero" : " loyalty-points--current"
+      }`}
+      title="Xem lịch sử điểm"
+      onClick={() => onViewHistory?.(item.customerId)}
+    >
       {(item.currentBalance ?? 0).toLocaleString("vi-VN")}
-      <span className="loyalty-points__unit"> </span>
     </span>,
     item.segmentName ?? "—",
     item.status === 1

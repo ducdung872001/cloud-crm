@@ -10,6 +10,10 @@ export interface CartItem {
   price: number;
   unit?: string;
   qty: number;
+  /** Giá đồng giá — nếu có, Cart hiển thị badge "Đồng giá Xđ" */
+  fixedPrice?: number;
+  /** Tên CT đồng giá để hiển thị tooltip */
+  promoName?: string;
 }
 
 export interface Product {
@@ -18,7 +22,7 @@ export interface Product {
   avatar?: string;
   unitName?: string;
   name: string;
-  s;
+  s: any;
   priceLabel: string;
   price: number;
   stock: number;
@@ -48,6 +52,23 @@ export interface Order {
   items: string;
   total: number;
   cancellationReason?: string;
+  note?: string;
+  /** Số tiền khách còn nợ (debt > 0 = có nợ) */
+  debt?: number;
+  /** Số tiền khách đã trả */
+  paid?: number;
+}
+
+/** Thông tin giao hàng kèm phí ship — dùng khi orderType === "ship" */
+export interface ShippingInfo {
+  receiverName: string;
+  receiverPhone: string;
+  receiverAddress: string;
+  receiverProvince: string;   // Tên tỉnh — dùng để tra cứu phí ship
+  shippingFee: number;        // Phí ship thu khách (VND, có thể sửa tay)
+  shippingFeeBearer: "RECEIVER" | "SENDER";
+  codAmount: number;          // Tiền thu hộ (COD), 0 = không COD
+  noteForShipper?: string;
 }
 
 export type TabType = "pos" | "draft" | "orders" | "report";

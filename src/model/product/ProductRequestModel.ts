@@ -3,6 +3,12 @@ export interface IProductFilterRequest {
   page?: number;
   limit?: number;
   warehouseId?: number;
+  status?: number;
+  categoryId?: number;
+  tagId?: number;
+  isLowStock?: number;
+  isWebsiteVisible?: number;
+  isOutOfStock?: number;
 }
 
 export interface IProductRequest {
@@ -15,6 +21,10 @@ export interface IProductRequest {
   otherUnits?: string;
   type?: string;
   description?: string;
+  trackStock?: boolean;
+  stock?: number;
+  minStock?: number;
+  maxStock?: number;
   variantGroups?: {
     id?: number | null;
     name: string;

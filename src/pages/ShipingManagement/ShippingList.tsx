@@ -292,7 +292,15 @@ export default function ShippingOrderList() {
   ];
 
   const dataFormat = [
-    "text-center", "text-left", "text-left", "", "text-center", "text-center", "text-center", "text-center", "text-center"
+    "text-center",  // STT
+    "text-left",    // Mã vận đơn
+    "text-left",    // Hãng VC — căn trái (label + data)
+    "",             // Khách hàng
+    "text-center",  // SĐT
+    "text-center",  // Ngày tạo
+    "text-right",   // COD — căn phải (label + data)
+    "text-center",  // Trạng thái
+    "text-center",  // Hành động
   ];
 
   const dataSize = Array(9).fill("auto");

@@ -13,6 +13,7 @@ interface TopbarProps {
   warehouses?: IOption[];
   warehouseId?: number;
   onWarehouseChange?: (warehouseId?: number) => void;
+  onStartTour?: () => void;
 }
 
 const Topbar: React.FC<TopbarProps> = ({
@@ -22,6 +23,7 @@ const Topbar: React.FC<TopbarProps> = ({
   warehouses = [],
   warehouseId,
   onWarehouseChange,
+  onStartTour,
 }) => {
   const [isWarehouseOpen, setIsWarehouseOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -64,6 +66,15 @@ const Topbar: React.FC<TopbarProps> = ({
         <button className="btn btn--outline btn--sm" onClick={onSync}>
           🔄 Đồng bộ Online
         </button>
+        {onStartTour && (
+          <button
+            className="topbar__help-btn"
+            onClick={onStartTour}
+            title="Xem lại hướng dẫn sử dụng"
+          >
+            ❓
+          </button>
+        )}
         <div ref={wrapperRef} className={`topbar__warehouse${isWarehouseOpen ? " is-open" : ""}`}>
           <button type="button" className="topbar__avatar" onClick={() => setIsWarehouseOpen((prev) => !prev)}>
             M

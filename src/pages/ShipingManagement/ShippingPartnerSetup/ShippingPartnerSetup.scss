@@ -1,3 +1,5 @@
+/* ShippingPartnerSetup.scss — full file (replace existing) */
+
 .page-partner-setup {
   padding-bottom: 4.8rem;
 }
@@ -56,27 +58,16 @@
   text-align: center;
   transition: box-shadow 0.18s, border-color 0.18s;
 
-  &:hover {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
-  }
+  &:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07); }
 
-  &.is-connected {
-    border-color: #10b981;
-  }
+  &.is-connected { border-color: #10b981; }
 
-  &.is-maintenance {
-    border-color: #f59e0b;
-    background: #fffbeb;
-  }
-
-  // Logo area
   &__logo {
     width: 6rem;
     height: 4rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
 
     img {
       max-width: 100%;
@@ -105,7 +96,6 @@
     align-items: center;
   }
 
-  // Action buttons
   &__btn {
     width: 100%;
     padding: 0.7rem 0;
@@ -119,20 +109,8 @@
     &:hover:not(:disabled) { filter: brightness(0.92); }
     &:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    &--config {
-      background: #16a34a;
-      color: #fff;
-    }
-
-    &--connect {
-      background: var(--primary-color);
-      color: #fff;
-    }
-
-    &--activate {
-      background: #374151;
-      color: #fff;
-    }
+    &--config  { background: #16a34a; color: #fff; }
+    &--connect { background: var(--primary-color); color: #fff; }
   }
 }
 
@@ -142,22 +120,8 @@
   font-weight: 600;
   padding: 2px 0;
 
-  &--connected {
-    color: #16a34a;
-  }
-
-  &--maintenance {
-    display: inline-block;
-    background: #fce7f3;
-    color: #9d174d;
-    padding: 2px 10px;
-    border-radius: 2rem;
-    font-size: 1.1rem;
-  }
-
-  &--none {
-    color: #f59e0b;
-  }
+  &--connected { color: #16a34a; }
+  &--none      { color: #f59e0b; }
 }
 
 // Expand config form inside card
@@ -169,6 +133,35 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  // Masked API key display (khi đã kết nối)
+  &__masked {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.8rem 1rem;
+    background: #f0fdf4;
+    border-radius: 0.6rem;
+    border: 1px solid #bbf7d0;
+  }
+
+  &__masked-label {
+    font-size: 1.1rem;
+    color: #6b7280;
+  }
+
+  &__masked-value {
+    font-size: 1.3rem;
+    font-family: monospace;
+    color: #065f46;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  &__masked-token {
+    font-size: 1.1rem;
+    color: #059669;
+  }
 
   &__field {
     display: flex;
@@ -190,6 +183,7 @@
     gap: 0.6rem;
     justify-content: flex-end;
     padding-top: 2px;
+    flex-wrap: wrap;
   }
 }
 
@@ -234,8 +228,6 @@
   font-weight: 600;
   cursor: pointer;
   &:disabled { opacity: 0.6; cursor: not-allowed; }
-  &:hover:not(:disabled) { background: var(--primary-color);
-      color: var(--white-color); }
 }
 
 .ps-btn-disconnect {
@@ -286,21 +278,12 @@
     vertical-align: middle;
   }
 
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #fafafa; }
 
-  tbody tr:hover td {
-    background: #fafafa;
-  }
-
-  &__code {
-    font-weight: 600;
-    color: #374151;
-  }
+  &__code { font-weight: 600; color: #374151; }
 }
 
-// Table status badges
 .ps-status {
   display: inline-block;
   padding: 0.4rem 12px;
@@ -308,23 +291,10 @@
   font-size: 1.2rem;
   font-weight: 600;
 
-  &--active {
-    background: #d1fae5;
-    color: #065f46;
-  }
-
-  &--maintenance {
-    background: #fef3c7;
-    color: #92400e;
-  }
-
-  &--inactive {
-    background: #f3f4f6;
-    color: #6b7280;
-  }
+  &--active   { background: #d1fae5; color: #065f46; }
+  &--inactive { background: #f3f4f6; color: #6b7280; }
 }
 
-// Detail button in table
 .ps-btn-detail {
   padding: 0.6rem 18px;
   background: var(--primary-color);
@@ -334,8 +304,19 @@
   font-size: 1.3rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: filter 0.15s;
+  &:hover { filter: brightness(0.92); }
+}
 
-  &:hover { background: var(--primary-color);
-      color: var(--white-color); }
+// Empty state
+.ps-empty-table {
+  margin-top: 1.6rem;
+  padding: 3.2rem;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1.2rem;
+  color: #6b7280;
+  font-size: 1.4rem;
+  line-height: 2;
 }

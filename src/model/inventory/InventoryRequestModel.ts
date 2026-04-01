@@ -14,13 +14,14 @@ export interface IInventoryLedgerFilterRequest {
 }
 
 export interface IInventoryRequest {
-  id: number;
+  id?: number;
   name: string;
   address: string;
   position: string;
   branchId: number;
-  bsnId: number;
+  bsnId?: number;
   code: string;
   status: number;
   employeeId: number;
+  isSelling?: number | string;
 }

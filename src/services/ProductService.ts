@@ -10,6 +10,17 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+
+  /**
+   * Top sản phẩm v2 — hỗ trợ sortBy: "qty" | "revenue"
+   * cloud-sales tự gọi sang cloud-inventory để lấy tên variant
+   */
+  topProductV2: (sortBy: "qty" | "revenue" = "qty", signal?: AbortSignal) => {
+    return fetch(`${urlsApi.product.topProductV2}?sortBy=${sortBy}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
   filterWarehouse: (params: any, signal?: AbortSignal) => {
     return fetch(`${urlsApi.product.filterWarehouse}${convertParamsToString(params)}`, {
       signal,
@@ -59,7 +70,25 @@ export default {
 
   // ── Warehouse API (tài liệu mới) ──
   wList: (params?: IProductFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.product.wList}${convertParamsToString(params)}`, {
+    // convertParamsToString có thể drop các giá trị số 0 vì falsy
+    // Build query string thủ công để đảm bảo các numeric filter được serialize đúng
+    const base: Record<string, any> = {};
+    if (params) {
+      if (params.name !== undefined && params.name !== "") base.name = params.name;
+      if (params.page !== undefined) base.page = params.page;
+      if (params.limit !== undefined) base.limit = params.limit;
+      if (params.warehouseId !== undefined) base.warehouseId = params.warehouseId;
+      if (params.status !== undefined && params.status !== null) base.status = params.status;
+      if (params.categoryId !== undefined) base.categoryId = params.categoryId;
+      if (params.tagId !== undefined) base.tagId = params.tagId;
+      if (params.isLowStock !== undefined) base.isLowStock = params.isLowStock;
+      if (params.isWebsiteVisible !== undefined) base.isWebsiteVisible = params.isWebsiteVisible;
+      if (params.isOutOfStock !== undefined) base.isOutOfStock = params.isOutOfStock;
+    }
+    const qs = Object.keys(base).length
+      ? "?" + Object.entries(base).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join("&")
+      : "";
+    return fetch(`${urlsApi.product.wList}${qs}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
@@ -170,6 +199,11 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
+  wDeleteVariant: (productId: number, variantId: number) => {
+    return fetch(`${urlsApi.product.variantDelete}?productId=${productId}&variantId=${variantId}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
   wDashboard: (signal?: AbortSignal) => {
     return fetch(urlsApi.product.wDashboard, {
       signal,
@@ -212,6 +246,18 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  // ── Cài đặt mặc định toàn hệ thống ──
+  wWebsiteSettingDefaultGet: () => {
+    return fetch(urlsApi.product.wWebsiteSettingDefaultGet, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  wWebsiteSettingDefaultUpdate: (body: Record<string, any>) => {
+    return fetch(urlsApi.product.wWebsiteSettingDefaultUpdate, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
   wWebsiteToggle: (body: { productId: number; showOnWebsite: number }) => {
     return fetch(urlsApi.product.wWebsiteToggle, {
       method: "POST",
@@ -226,6 +272,69 @@ export default {
   wScan: (code: string) => {
     return fetch(`${urlsApi.product.wScan}?code=${encodeURIComponent(code)}`, {
       method: "GET",
+    }).then((res) => res.json());
+  },
+
+  // ── Content/Mô tả chi tiết (editor) ──
+  wDescriptionGet: (productId: number) => {
+    return fetch(`${urlsApi.product.wDescriptionGet}?productId=${productId}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  wDescriptionUpdate: (body: { productId: number; content: string; contentDelta: string }) => {
+    return fetch(urlsApi.product.wDescriptionUpdate, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+
+  // ── Tags ──
+  wTagList: (keyword = "") => {
+    return fetch(`${urlsApi.product.wTagList}?keyword=${encodeURIComponent(keyword)}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+  wTagUpdate: (body: { productId: number; tagIds: number[] }) => {
+    return fetch(urlsApi.product.wTagUpdate, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  wTagCreate: (body: { name: string; status?: number }) => {
+    return fetch(urlsApi.product.wTagCreate, {
+      method: "POST",
+      body: JSON.stringify({ ...body, status: body.status ?? 1 }),
+    }).then((res) => res.json());
+  },
+
+  // ── Import ──
+  wImportDownloadTemplate: () => {
+    return fetch(urlsApi.product.wImportTemplate, { method: "GET" });
+    // caller dùng .blob() → URL.createObjectURL để download
+  },
+  wImportUpload: (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return fetch(urlsApi.product.wImportUpload, {
+      method: "POST",
+      body: form,
+      // KHÔNG set Content-Type — browser tự set boundary cho multipart
+    }).then((res) => res.json());
+  },
+  wImportDownloadErrorFile: (sessionId: string) => {
+    return fetch(`${urlsApi.product.wImportErrorFile}?sessionId=${encodeURIComponent(sessionId)}`, {
+      method: "GET",
+    });
+  },
+  wImportConfirm: (body: { importSessionId: string }) => {
+    return fetch(urlsApi.product.wImportConfirm, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+  wImportCancel: (sessionId: string) => {
+    return fetch(`${urlsApi.product.wImportCancel}?sessionId=${encodeURIComponent(sessionId)}`, {
+      method: "POST",
     }).then((res) => res.json());
   },
 };

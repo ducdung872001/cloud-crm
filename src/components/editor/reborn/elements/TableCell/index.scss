@@ -1,45 +1,106 @@
+// =====================================================
+// Editor TableCell — redesigned
+// =====================================================
+
+// Caret icon trigger
 .icon-caret {
-    position: absolute;
-    right: 2px;
-    top: 1px;
-    width: 20px;
-    background: #ddd;
-    cursor: pointer;
-    border-radius: 2px;
+  position: absolute !important;
+  right: 3px;
+  top: 3px;
+  width: 18px !important;
+  height: 18px !important;
+  background: var(--primary-color, #015aa4) !important;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+
+  td:hover &,
+  td:focus-within & {
+    opacity: 1;
+  }
+
+  svg {
+    width: 10px !important;
+    height: 10px !important;
+    color: #fff;
+  }
 }
 
+// Cell context menu
 .cell-option {
-    position: absolute;
-    right: -200px;
-    top: -16px;
-    z-index: 1000;
-    padding-inline-start: 0 !important;
+  position: absolute;
+  right: -1px;
+  top: 24px;
+  z-index: 1000;
+  padding: 5px !important;
+  margin: 0;
+  list-style: none;
 
-    color: var(--ds-text, #091e42);
-    background-color: var(--ds-surface-overlay, #ffffff);
-    border-radius: 3px;
-    box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.31) 0px 0px 1px;
-    box-sizing: border-box;
-    overflow: auto;
-    padding: 4px 0px;
-    max-height: 90vh;
-    width: 200px;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  width: 190px;
+  animation: cell-menu-in 0.13s ease;
 
-    li {
-        cursor: pointer;
-        padding: 10px;
-        list-style: none;
+  @keyframes cell-menu-in {
+    from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+    to   { opacity: 1; transform: none; }
+  }
 
-        &:hover {
-            background-color: #ddd;
-        }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 11px;
+    font-size: 12.5px;
+    color: #374151;
+    border-radius: 7px;
+    font-weight: 500;
+    list-style: none !important;
+    transition: background 0.1s;
+
+    &:hover { background: #f3f4f6; }
+
+    // Nhóm hành động nguy hiểm (Xóa) — màu đỏ
+    &:nth-child(4),
+    &:nth-child(5) {
+      color: #dc2626;
+      &:hover { background: #fee2e2; }
     }
+
+    // Separator trước nhóm nguy hiểm
+    &:nth-child(4) {
+      margin-top: 4px;
+      border-top: 1px solid #f0f0f4;
+      padding-top: 10px;
+    }
+
+    // Item disabled (chưa có feature)
+    &:nth-child(1),
+    &:nth-child(6),
+    &:nth-child(7),
+    &:nth-child(8) {
+      color: #9ca3af;
+      cursor: default;
+      pointer-events: none;
+      &:hover { background: none; }
+    }
+  }
 }
 
-td {
-    &:last-child {
-        .cell-option {
-            right: 24px;
-        }
-    }
+// Khi cell ở cột cuối thì menu hiện sang trái
+td:last-child {
+  .cell-option {
+    right: 0;
+    left: auto;
+  }
 }

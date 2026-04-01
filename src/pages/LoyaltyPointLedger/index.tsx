@@ -1,45 +1,66 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
+import React, { Fragment, useState, useEffect, useRef, useMemo } from "react";
 import _ from "lodash";
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
-import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
-import { BulkActionItemModel } from "components/bulkAction/bulkAction";
-import { IAction, ISaveSearch } from "model/OtherModel";
+import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
+import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { showToast } from "utils/common";
-import { getPermissions } from "utils/common";
 import { getPageOffset } from "reborn-util";
 import "./index.scss";
 import AddLoyaltyPointLedgerModal from "./partials/AddLoyaltyPointLedgerModal";
-import { IRoyaltyFilterRequest } from "@/model/loyalty/RoyaltyRequest";
+import { ILoyaltyPointLedgerRequest } from "@/model/loyalty/RoyaltyRequest";
 import { ILoyaltyPointLedgerResposne } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
 import moment from "moment";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
-export default function LoyaltyPointLedger(props) {
+interface Props {
+  onBackProps: (v: boolean) => void;
+  /** Nếu được truyền vào, trang sẽ tự filter theo hội viên này ngay khi mở */
+  initialCustomerId?: number | null;
+}
+
+export default function LoyaltyPointLedger(props: Props) {
   document.title = "Lịch sử điểm";
 
   const isMounted = useRef(false);
-  const { onBackProps } = props;
+  const { onBackProps, initialCustomerId } = props;
+
   const [listData, setListData] = useState<ILoyaltyPointLedgerResposne[]>([]);
   const [selectedItem, setSelectedItem] = useState<ILoyaltyPointLedgerResposne>(null);
-  const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
-  const [params, setParams] = useState<IRoyaltyFilterRequest>({ name: "", limit: 10 });
+
+  // Nếu có initialCustomerId (bấm từ Danh sách thành viên) thì pre-set vào params
+  const [params, setParams] = useState<ILoyaltyPointLedgerRequest>({
+    limit: 10,
+    ...(initialCustomerId ? { customerId: initialCustomerId } : {}),
+  });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     { key: "all", name: "Lịch sử điểm", is_active: true },
   ]);
+
+  // ── Filter: Thành viên (customerId) ──────────────────────────────────────
+  // key "customerId" đã được SelectOptionData hỗ trợ sẵn trong filter component
+  const filterList = useMemo<IFilterItem[]>(() => [
+    {
+      key: "customerId",
+      name: "Thành viên",
+      type: "select",
+      is_featured: true,
+      value: params.customerId ?? "",
+    },
+  ], [params.customerId]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
@@ -51,8 +72,9 @@ export default function LoyaltyPointLedger(props) {
 
   const abortController = new AbortController();
 
-  const fetchList = async (paramsSearch: IRoyaltyFilterRequest) => {
+  const fetchList = async (paramsSearch: ILoyaltyPointLedgerRequest) => {
     setIsLoading(true);
+    setIsNoItem(false);
     const response = await LoyaltyService.listLoyaltyPointLedger(paramsSearch, abortController.signal);
     if (response.code === 0) {
       const result = response.result;
@@ -81,47 +103,72 @@ export default function LoyaltyPointLedger(props) {
     return () => { abortController.abort(); };
   }, [params]);
 
-  // const titleActions: ITitleActions = {
-  //   actions: [
-  //     { title: "Thêm mới", callback: () => { setSelectedItem(null); setShowModalAdd(true); } },
-  //   ],
-  // };
+  const titleActions: ITitleActions = {
+    actions: [
+      { title: "Thêm mới", callback: () => { setSelectedItem(null); setShowModalAdd(true); } },
+    ],
+  };
 
-  // Cột: STT | Khách hàng | Ví điểm | Số điểm | Chương trình thân thiết khách hàng | Đổi thưởng | Nhân viên | Ngày tạo
-  const titles = ["STT", "Khách hàng", "Số điểm", "Chương trình thân thiết", "Đổi thưởng", "Người phụ trách", "Ngày tạo"];
-  const dataFormat = ["text-center", "", "text-right", "", "", "", "text-center"];
+  // ── Table columns ─────────────────────────────────────────────────────────
+  const titles = [
+    "STT", "Khách hàng", "Số điểm", "Lý do",
+    "Chương trình thân thiết", "Đổi thưởng", "Người phụ trách", "Ngày tạo",
+  ];
+  const dataFormat = ["text-center", "", "text-right", "", "", "", "", "text-center"];
+
   const dataMappingArray = (item: ILoyaltyPointLedgerResposne, index: number) => [
     getPageOffset(params) + index + 1,
     item.customerName ?? "—",
+    // Số điểm
     (() => {
       const p = item.point ?? 0;
-      const cls = p > 0 ? "ledger-point ledger-point--plus" : p < 0 ? "ledger-point ledger-point--minus" : "ledger-point ledger-point--zero";
-      const prefix = p > 0 ? "+" : "";
+      const cls = p > 0
+        ? "ledger-point ledger-point--plus"
+        : p < 0
+          ? "ledger-point ledger-point--minus"
+          : "ledger-point ledger-point--zero";
       return (
         <span className={cls}>
-          {prefix}{p.toLocaleString("vi-VN")}
-          <span className="ledger-point__unit"></span>
+          {p > 0 ? "+" : ""}{p.toLocaleString("vi-VN")}
         </span>
       );
     })(),
+    // Lý do (description)
+    item.description
+      ? <span className="ledger-description" title={item.description}>{item.description}</span>
+      : <span className="ledger-dash">—</span>,
+    // Chương trình thân thiết
     item.loyaltyProgramName
       ? <span className="ledger-program">{item.loyaltyProgramName}</span>
       : <span className="ledger-dash">—</span>,
+    // Đổi thưởng
     item.loyaltyRewardName
       ? <span className="ledger-reward">{item.loyaltyRewardName}</span>
       : <span className="ledger-dash">—</span>,
-    item.employeeName ?? "—",
+    // Người phụ trách
+    item.employeeName
+      ? <span className="ledger-employee">{item.employeeName}</span>
+      : <span className="ledger-dash">—</span>,
+    // Ngày tạo
     item.createdTime
       ? <span className="ledger-date">{moment(item.createdTime).format("DD/MM/YYYY")}</span>
       : <span className="ledger-dash">—</span>,
   ];
 
+  // Tiêu đề động khi đang filter theo 1 thành viên cụ thể
+  const filteredCustomerName = useMemo(() => {
+    if (!params.customerId) return null;
+    const first = listData.find((i) => i.customerId === params.customerId);
+    return first?.customerName ?? null;
+  }, [params.customerId, listData]);
+
   return (
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
       <HeaderTabMenu
-        title="Lịch sử điểm"
+        title={filteredCustomerName ? `Lịch sử điểm — ${filteredCustomerName}` : "Lịch sử điểm"}
         titleBack="Khách hàng thành viên"
         onBackProps={onBackProps}
+        titleActions={titleActions}
       />
 
       <div className="card-box d-flex flex-column">
@@ -130,8 +177,21 @@ export default function LoyaltyPointLedger(props) {
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
-          updateParams={(paramsNew) => setParams(paramsNew)}
+          isFilter={true}
+          listFilterItem={filterList}
+          isShowFilterList={true}
+          updateParams={(paramsNew) => {
+            setParams((prev) => ({
+              ...prev,
+              ...paramsNew,
+              // đảm bảo customerId là number hoặc undefined (không phải string "")
+              customerId: paramsNew.customerId ? Number(paramsNew.customerId) : undefined,
+              // giữ lại limit hiện tại nếu SearchBox không truyền (tránh limit=undefined)
+              limit: paramsNew.limit || prev.limit || 10,
+            }));
+          }}
         />
+
         {!isLoading && listData && listData.length > 0 ? (
           <BoxTable
             name="lịch sử điểm"
@@ -152,10 +212,15 @@ export default function LoyaltyPointLedger(props) {
               <SystemNotification type="no-permission" />
             ) : isNoItem ? (
               <SystemNotification
-                description={<span>Hiện tại chưa có nhật ký điểm hội viên nào.<br />Hãy thêm mới bản ghi đầu tiên nhé!</span>}
+                description={
+                  <span>
+                    {params.customerId
+                      ? <>Thành viên này chưa có lịch sử điểm nào.</>
+                      : <>Hiện tại chưa có nhật ký điểm hội viên nào.</>
+                    }
+                  </span>
+                }
                 type="no-item"
-                titleButton="Thêm mới nhật ký điểm hội viên"
-                action={() => { setSelectedItem(null); setShowModalAdd(true); }}
               />
             ) : (
               <SystemNotification
@@ -166,6 +231,7 @@ export default function LoyaltyPointLedger(props) {
           </Fragment>
         )}
       </div>
+
       <AddLoyaltyPointLedgerModal
         onShow={showModalAdd}
         data={selectedItem}

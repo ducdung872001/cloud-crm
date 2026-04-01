@@ -257,21 +257,21 @@
   flex-direction: column;
 
   &__header {
-    background: linear-gradient(135deg, #0f172a 0%, #0d9488 100%);
-    padding: 2rem 1.8rem 1.6rem;
+    background: var(--white-color, #fff);
+    padding: 1.6rem 1.8rem 1.2rem;
     position: relative;
-    color: #fff;
+    border-bottom: 1px solid var(--border-color);
   }
 
   &__close {
     position: absolute;
     top: 1.2rem;
     right: 1.2rem;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--extra-color-10, #f1f5f9);
     border: none;
-    color: #fff;
-    width: 2.7rem;
-    height: 2.7rem;
+    color: var(--extra-color-50);
+    width: 2.8rem;
+    height: 2.8rem;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -280,24 +280,29 @@
     padding: 0;
     font-size: 1.4rem;
     line-height: 1;
+    transition: all 0.15s;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.35);
+      background: var(--border-color);
+      color: var(--text-primary-color);
     }
   }
 
   &__code {
     font-family: var(--font-mono, monospace);
     font-size: 1.15rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--primary-color, #015aa4);
+    font-weight: 700;
     margin-bottom: 0.4rem;
   }
 
   &__name {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 700;
+    color: var(--text-primary-color);
     margin-bottom: 0.8rem;
     line-height: 1.3;
+    padding-right: 3rem; // tránh chồng nút close
   }
 
   &__meta {
@@ -308,53 +313,57 @@
 
   &__ver {
     font-size: 1.15rem;
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--extra-color-10, #f1f5f9);
     padding: 0.2rem 0.7rem;
     border-radius: 0.3rem;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--extra-color-50);
+    font-family: var(--font-mono, monospace);
+    font-weight: 600;
   }
 
   &__qs {
     display: flex;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
   }
 
   &__qs-i {
     flex: 1;
-    padding: 1.2rem 1.4rem;
+    padding: 1.4rem 1rem;
     text-align: center;
 
     &:not(:last-child) {
-      border-right: 1px solid var(--border-color);
+      border-right: 1px solid #e2e8f0;
     }
   }
 
   &__qs-v {
-    font-size: 1.7rem;
+    font-size: 1.8rem;
     font-weight: 800;
     color: var(--text-primary-color);
     line-height: 1;
+    margin-bottom: 0.3rem;
   }
 
   &__qs-l {
     font-size: 1.05rem;
-    color: var(--extra-color-50);
-    margin-top: 0.3rem;
+    color: #94a3b8;
+    font-weight: 500;
   }
 
   &__section-title {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: var(--extra-color-50);
-    text-transform: none; // ✅ standardized
-    letter-spacing: 0.05em;
-    padding: 1.2rem 1.6rem 0.6rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 1.4rem 1.6rem 0.6rem;
   }
 
   &__ingredients {
     flex: 1;
     overflow-y: auto;
-    padding: 0 1.2rem;
+    padding: 0 1.2rem 0.8rem;
   }
 
   &__note {
@@ -363,20 +372,28 @@
     gap: 0.6rem;
     margin: 0.8rem 1.6rem;
     padding: 0.8rem 1rem;
-    background: var(--bg-color, #f8fafc);
-    border-radius: 0.8rem;
+    background: #f8fafc;          // hardcode — tránh --bg-color bị override
+    border: 1px solid #e2e8f0;    // hardcode — tránh --border-color bị override
+    border-radius: 0.6rem;
     font-size: 1.2rem;
-    color: var(--extra-color-50);
+    color: #64748b;               // hardcode slate-500
 
-    svg { width: 1.4rem; height: 1.4rem; flex-shrink: 0; margin-top: 0.1rem; }
+    svg { width: 1.4rem; height: 1.4rem; flex-shrink: 0; margin-top: 0.1rem; color: #94a3b8; }
+  }
+
+  &__empty {
+    text-align: center;
+    color: #94a3b8;
+    padding: 2.4rem 1.6rem;
+    font-size: 1.3rem;
   }
 
   &__dates {
     display: flex;
     gap: 1.2rem;
-    padding: 0 1.6rem 0.4rem;
+    padding: 0.4rem 1.6rem 0.8rem;
     font-size: 1.1rem;
-    color: var(--extra-color-50);
+    color: #94a3b8;
     flex-wrap: wrap;
   }
 

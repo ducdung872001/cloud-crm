@@ -1,417 +1,521 @@
 .page-shift-config {
-  .shift-time-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2.4rem;
-    margin-bottom: 2.4rem;
 
-    @media (max-width: 992px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
+  // ── Card box ─────────────────────────────────────────────────────────
   .card-box {
-    padding: 2.4rem;
+    padding: 0;
     margin-bottom: 2.4rem;
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
-    .action-header {
+
+    .action-header .title__actions .menu-list {
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 2.4rem;
+      height: 5rem;
+      font-size: 1.4rem;
+      color: var(--text-extra-color);
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 2.4rem;
+      width: 100%;
 
-      .title__actions {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
+      li {
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        padding: 1.5rem 0 1.2rem;
+        transition: color 0.2s;
+        white-space: nowrap;
 
-        .menu-list {
-          border-radius: 0.8rem 0.8rem 0 0;
-          border-bottom: 1px solid var(--border-color);
-          padding: 0 2rem;
-          height: 5rem;
-          letter-spacing: 0.25px;
-          font-size: 1.4rem;
-          line-height: 2rem;
-          color: var(--text-extra-color);
-          display: flex;
-          align-items: center;
-          gap: 2.3rem;
-          width: 100%;
+        &:hover { color: var(--text-primary-color); }
 
-          li {
-            display: flex;
-            align-items: center;
-            gap: 0 0.2rem;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            padding: 1.5rem 0 1.2rem;
-            transition: color 0.2s ease-in-out;
-
-            svg {
-              width: 1.8rem;
-              height: 1.8rem;
-              fill: var(--text-extra-color);
-            }
-
-            &:hover,
-            &.active {
-              border-bottom-color: var(--primary-color);
-              color: var(--text-primary-color);
-
-              svg {
-                fill: var(--text-primary-color);
-              }
-            }
-            &.active {
-              cursor: default;
-              pointer-events: none;
-            }
-          }
-        }
-      }
-
-      .search-container {
-        padding: 2.4rem 2rem 0;
-      }
-    }
-  }
-
-  .time-picker-group {
-    display: flex;
-    align-items: flex-end;
-    gap: 4.2rem;
-
-    .time-input {
-      flex: 1;
-      label {
-        font-size: 1.2rem;
-        color: var(--text-extra-color);
-        margin-bottom: 0.6rem;
-        display: block;
-      }
-      .input-with-icon {
-        position: relative;
-        input {
-          width: 100%;
-          padding: 1rem 3.6rem 1rem 1.2rem;
-          border: 1px solid var(--border-color);
-          border-radius: 0.6rem;
+        &.active {
+          border-bottom-color: var(--primary-color);
+          color: var(--text-primary-color);
           font-weight: 600;
-        }
-        svg {
-          position: absolute;
-          right: 1.2rem;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 1.8rem;
-          fill: var(--text-extra-color);
+          cursor: default;
+          pointer-events: none;
         }
       }
     }
-
-    .separator {
-      margin-bottom: 1.2rem;
-      fill: var(--text-extra-color);
-    }
   }
 
-  .base-select {
-    width: 100%;
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.6rem;
-  }
+  // ── Tab body ──────────────────────────────────────────────────────────
+  .tab-body { padding: 2.4rem; }
 
-  .staff-info-cell {
+  // ── Loading ───────────────────────────────────────────────────────────
+  .shift-config-loading {
     display: flex;
     align-items: center;
-    gap: 1.2rem;
-    .name,
-    .role {
-      color: var(--text-primary-color);
-    }
+    justify-content: center;
+    min-height: 28rem;
   }
 
-  .base-checkbox {
-    width: 1.8rem;
-    height: 1.8rem;
-    cursor: pointer;
-  }
-
-  .text-center {
+  // ── Empty state ───────────────────────────────────────────────────────
+  .shift-config-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 22rem;
     text-align: center;
+    color: var(--text-extra-color);
+
+    svg { width: 4rem !important; height: 4rem !important; opacity: 0.22; }
+    p { margin: 0; font-size: 1.4rem; }
   }
 
+  // ── Footer ───────────────────────────────────────────────────────────
   .settings-footer {
-    margin-top: 2.4rem;
-    padding: 1.6rem 2rem;
+    padding: 1.6rem 2.4rem;
     border-top: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1.6rem;
-    flex-wrap: wrap;
 
     .left-note {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 0.8rem;
       color: var(--text-extra-color);
-      font-weight: 600;
+      font-size: 1.3rem;
 
       .dot {
         width: 0.6rem;
         height: 0.6rem;
-        border-radius: 999px;
+        border-radius: 50%;
         background: var(--primary-color);
         flex-shrink: 0;
       }
     }
 
-    .right-actions {
-      display: inline-flex;
-      align-items: center;
-      gap: 1.2rem;
-    }
+    .right-actions { display: flex; align-items: center; gap: 1.2rem; }
   }
 
+  // ── Save success badge ────────────────────────────────────────────────
+  .save-success-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 1rem;
+    border-radius: 999px;
+    background: #ecfdf5;
+    color: #10b981;
+    font-size: 1.2rem;
+    font-weight: 600;
+    animation: scFadeIn 0.25s ease;
+
+    svg { width: 1.4rem !important; height: 1.4rem !important; }
+  }
+
+  @keyframes scFadeIn {
+    from { opacity: 0; transform: translateY(-3px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  // ── Card grid ─────────────────────────────────────────────────────────
   .shift-card-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    gap: 1.6rem;
+    align-items: stretch; // tất cả card trong cùng row đều cao bằng nhau
 
-    @media (max-width: 1200px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
+    @media (max-width: 1280px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 768px)  { grid-template-columns: 1fr; }
   }
 
+  // ── Ca editable card ──────────────────────────────────────────────────
   .shift-card-editable {
     background: #fff;
     border: 1px solid var(--border-color);
     border-radius: 1.2rem;
     overflow: hidden;
+    transition: box-shadow 0.2s;
 
+    &:hover { box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08); }
+
+    // Header — thanh màu + tên ca
     &__top {
-      border-top: 4px solid var(--primary-color);
-      padding: 1.4rem 1.6rem;
+      border-top: 4px solid #3b82f6;
+      padding: 1.2rem 1.4rem 1.2rem 1.6rem;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 1.2rem;
+      gap: 1rem;
+      background: #fafafa;
 
-      .left {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        min-width: 0;
+      .name-input {
         flex: 1;
+        min-width: 0;
+        border: none;
+        outline: none;
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: var(--text-primary-color);
+        background: transparent;
+        padding: 0;
 
-        .dot {
-          width: 1rem;
-          height: 1rem;
-          border-radius: 999px;
-          flex-shrink: 0;
-        }
-
-        .name-input {
-          width: 100%;
-          border: 0;
-          outline: none;
-          font-size: 1.7rem;
-          font-weight: 900;
-          color: var(--text-primary-color);
-          min-width: 0;
-          padding: 0.2rem 0;
-          background: transparent;
-
-          &::placeholder {
-            color: var(--text-extra-color);
-            font-weight: 700;
-          }
-        }
+        &::placeholder { color: var(--text-extra-color); font-weight: 500; }
       }
 
       .btn-delete {
-        border: 1px solid rgba(239, 68, 68, 0.35);
-        background: rgba(239, 68, 68, 0.08);
-        color: var(--error-color);
-        font-weight: 800;
-        padding: 0.6rem 1.2rem;
-        border-radius: 0.3rem;
-        cursor: pointer;
         flex-shrink: 0;
+        width: 3.2rem;
+        height: 3.2rem;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        background: rgba(239, 68, 68, 0.06);
+        color: #ef4444;
+        border-radius: 0.6rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s;
 
-        &:hover {
-          background: rgba(239, 68, 68, 0.12);
-        }
+        svg { width: 1.5rem !important; height: 1.5rem !important; }
+        &:hover { background: rgba(239, 68, 68, 0.14); }
       }
     }
 
+    // Body
     &__body {
       padding: 1.6rem;
       display: flex;
       flex-direction: column;
       gap: 1.4rem;
     }
+  }
 
-    .block {
-      .block-label {
-        font-size: 1.2rem;
-        font-weight: 800;
-        color: var(--text-extra-color);
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-        margin-bottom: 0.6rem;
-      }
+  // ── sc- prefixed components (inside card body) ────────────────────────
+
+  .sc-block { display: flex; flex-direction: column; gap: 0.8rem; }
+
+  .sc-label {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-extra-color);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  .sc-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .sc-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &__label {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-extra-color);
     }
 
-    .color-row {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      flex-wrap: wrap;
+    &__input-wrap {
+      position: relative;
 
-      .color-dot {
-        width: 2.4rem;
-        height: 2.4rem;
-        border-radius: 999px;
-        border: 2px solid transparent;
-        cursor: pointer;
-        padding: 0;
-        outline: none;
-
-        &.active {
-          border-color: var(--text-primary-color);
-          box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
-        }
-      }
-    }
-
-    .time-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.2rem;
-
-      @media (max-width: 576px) {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .inline-field {
-      label {
-        font-size: 1.2rem;
-        color: var(--text-extra-color);
-        margin-bottom: 0.6rem;
+      .sc-input {
         display: block;
-        font-weight: 700;
-      }
+        width: 100%;
+        height: 3.8rem;
+        padding: 0 3.4rem 0 1.2rem; // padding-right untuk icon
+        font-size: 1.4rem;
+        font-weight: 500;
+        border: 1px solid var(--border-color);
+        border-radius: 0.6rem;
+        background: #fff;
+        color: var(--text-primary-color);
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.15s;
 
-      .input-with-icon {
-        position: relative;
+        &:focus { border-color: var(--primary-color); }
+        &::placeholder { color: #b0b8c1; font-weight: 400; }
 
-        input {
-          width: 100%;
-          height: 4rem;
-          border: 1px solid var(--border-color);
-          border-radius: 0.6rem;
-          padding: 0 3.6rem 0 1.2rem;
-          font-weight: 600;
-          outline: none;
+        // Ẩn spinner number
+        &[type="number"]::-webkit-inner-spin-button,
+        &[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
-          &:focus {
-            border-color: var(--primary-color);
-          }
-        }
-
-        .ic {
+        // Ẩn icon native clock của browser, giữ vùng click mở picker
+        &[type="time"]::-webkit-calendar-picker-indicator {
+          opacity: 0;
           position: absolute;
-          right: 1rem;
-          top: 50%;
-          transform: translateY(-50%);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-
-          svg {
-            width: 1.8rem;
-            height: 1.8rem;
-            fill: var(--text-extra-color);
-          }
+          right: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          cursor: pointer;
         }
       }
-    }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.2rem;
+      .sc-ic {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        pointer-events: none; // click xuyên qua vào input
 
-      @media (max-width: 576px) {
-        grid-template-columns: 1fr;
+        svg {
+          width: 1.5rem !important;
+          height: 1.5rem !important;
+          opacity: 0.4;
+        }
       }
-
-      .hint {
-        margin-top: 0.4rem;
-        font-size: 1.2rem;
-        color: var(--text-extra-color);
-      }
-    }
-
-    .field-customize,
-    .base-input,
-    input {
-      font-size: 1.4rem;
     }
   }
 
+  // ── NummericInput override ────────────────────────────────────────────
+  // NummericInput renders: div.base-input.sc-numeric > label > div.base-input__input > input
+  // Cần override toàn bộ chain vì base-input dùng border-bottom mặc định
+  .sc-numeric {
+    // Reset wrapper
+    &.base-input {
+      width: 100%;
+      user-select: auto;
+
+      // Bỏ margin mặc định giữa các base-input
+      & + .base-input { margin-top: 0; }
+    }
+
+    // label wrapper
+    label {
+      display: block;
+      margin: 0;
+    }
+
+    // div.base-input__input
+    .base-input__input {
+      width: 100%;
+      position: relative;
+    }
+
+    // Actual input từ NumberFormat
+    input {
+      display: block !important;
+      width: 100% !important;
+      height: 3.8rem !important;
+      padding: 0 1.2rem !important;
+      font-size: 1.4rem !important;
+      font-weight: 500 !important;
+      border: 1px solid var(--border-color) !important;
+      border-bottom: 1px solid var(--border-color) !important; // override border-bottom-only default
+      border-radius: 0.6rem !important;
+      background: #fff !important;
+      color: var(--text-primary-color) !important;
+      outline: none !important;
+      box-sizing: border-box !important;
+      box-shadow: none !important;
+      transition: border-color 0.15s !important;
+      line-height: normal !important;
+      min-height: unset !important;
+
+      &:focus {
+        border-color: var(--primary-color) !important;
+        box-shadow: none !important;
+      }
+
+      &::placeholder { color: #b0b8c1 !important; font-weight: 400 !important; }
+    }
+
+    // Ẩn error/warning messages nếu không cần
+    .has-error, .has-warning { display: none; }
+  }
+
+  // ── Color picker ─────────────────────────────────────────────────────
+  .color-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    .color-dot {
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      border: 2.5px solid transparent;
+      cursor: pointer;
+      padding: 0;
+      outline: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+
+      &:hover { transform: scale(1.18); }
+
+      &.active {
+        border-color: #fff;
+        box-shadow: 0 0 0 2.5px var(--text-primary-color);
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  // ── Card "Thêm ca mới" ────────────────────────────────────────────────
   .shift-card-add {
-    border: 2px dashed var(--extra-color-30);
+    // Bỏ min-height cứng — để grid stretch tự căn bằng card bên cạnh
+    min-height: unset;
+    height: 100%;
+    width: 100%;
+    border: 2px dashed var(--border-color);
     border-radius: 1.2rem;
     background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 420px;
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
-
-    @media (max-width: 768px) {
-      min-height: 260px;
-    }
+    transition: background 0.18s, border-color 0.18s;
 
     .add-inner {
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
       color: var(--text-extra-color);
-      font-weight: 700;
+      pointer-events: none;
     }
 
     .plus {
-      width: 4.8rem;
-      height: 4.8rem;
-      border-radius: 999px;
-      border: 1px solid var(--border-color);
+      width: 4.4rem;
+      height: 4.4rem;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-color);
+      background: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.6rem;
-      font-weight: 900;
-      margin: 0 auto 1.2rem;
-      background: #fff;
-      color: var(--text-primary-color);
+      font-size: 2.4rem;
+      font-weight: 300;
+      color: var(--text-extra-color);
+      line-height: 1;
+      transition: border-color 0.18s, color 0.18s;
     }
 
-    .add-text {
-      font-size: 1.5rem;
-      font-weight: 800;
-    }
+    .add-text { font-size: 1.35rem; font-weight: 700; }
 
     &:hover {
-      background: var(--primary-color-5);
-      border-color: var(--primary-color-10);
+      background: var(--primary-color-5, #eff6ff);
+      border-color: var(--primary-color);
+
+      .plus { border-color: var(--primary-color); color: var(--primary-color); }
+      .add-inner { color: var(--primary-color); }
     }
   }
+
+  // ── Staff tab ─────────────────────────────────────────────────────────
+  .staff-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
+    .staff-avatar-sm {
+      flex-shrink: 0;
+      width: 2.8rem;
+      height: 2.8rem;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+// ── Staff assign tab header ───────────────────────────────────────────
+.staff-assign-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.6rem;
+  margin-bottom: 1.6rem;
+  flex-wrap: wrap;
+
+  .staff-assign-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+
+    .summary-count {
+      font-size: 1.4rem;
+      color: var(--text-extra-color);
+      margin-right: 0.4rem;
+
+      strong { color: var(--text-primary-color); }
+    }
+
+    .summary-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid;
+      font-size: 1.25rem;
+      font-weight: 600;
+
+      .badge-dot {
+        width: 0.7rem;
+        height: 0.7rem;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  .staff-assign-search {
+    width: 22rem;
+    flex-shrink: 0;
+
+    .sc-field__input-wrap { width: 100%; }
+  }
+}
+
+// ── Staff avatar with image support ──────────────────────────────────
+.staff-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  .staff-avatar-sm {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}
+
+// ── Role select dropdown ──────────────────────────────────────────────
+.sc-role-select {
+  height: 3.2rem;
+  padding: 0 2.4rem 0 0.8rem;
+  font-size: 1.3rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background: #fff;
+  color: var(--text-primary-color);
+  cursor: pointer;
+  outline: none;
+  appearance: auto;
+  transition: border-color 0.15s;
+
+  &:focus { border-color: var(--primary-color); }
 }

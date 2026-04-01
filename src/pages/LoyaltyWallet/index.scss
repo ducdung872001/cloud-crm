@@ -63,3 +63,15 @@ td.text-right {
     color: #64748b;
   }
 }
+// ── Điểm clickable — dẫn sang Lịch sử điểm ──────────────────────────────
+.loyalty-points--link {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.75;
+  }
+}

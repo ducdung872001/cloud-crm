@@ -471,6 +471,21 @@
     }
   }
 
+  .low-stock-loading {
+    padding: 2.4rem;
+    text-align: center;
+    color: #8c8c8c;
+    font-size: var(--text-sm);
+  }
+
+  .low-stock-empty {
+    padding: 2.4rem;
+    text-align: center;
+    color: #52c41a;
+    font-size: var(--text-sm);
+    font-weight: var(--fw-medium);
+  }
+
   .top-product-list {
     display: flex;
     flex-direction: column;

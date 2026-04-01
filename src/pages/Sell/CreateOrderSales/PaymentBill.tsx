@@ -29,6 +29,7 @@ import "./PaymentBill.scss";
 import { ContextType, UserContext } from "contexts/userContext";
 import Input from "components/input/input";
 import CampaignService from "services/CampaignService";
+import { getActiveShiftId } from "utils/ShiftStorage";
 
 export default function PaymentBill(props: IPaymentBillProps) {
   const { dataPaymentBill, tab, idCustomer, listIdCardService, listIdProduct, listIdService, productIdGetCode, invoiceCode, setInvoiceCode } = props;
@@ -412,6 +413,7 @@ export default function PaymentBill(props: IPaymentBillProps) {
       ...(formData as IInvoiceCreateRequest),
       ...(invoiceCode ? {invoiceCode: invoiceCode} : {} ),
       ...(dataPaymentBill ? { id: dataPaymentBill.id } : {}),
+      ...(getActiveShiftId() ? { shiftId: getActiveShiftId() } : {}),
     };
 
     const response = await InvoiceService.create(body);

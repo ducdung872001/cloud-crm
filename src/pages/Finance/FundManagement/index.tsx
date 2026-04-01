@@ -141,8 +141,9 @@ function FundForm({ editData, onClose, onSaved }: FundFormProps) {
 
   const [name, setName] = useState(editData?.name ?? "");
   const [type, setType] = useState<string>(editData?.type ?? "bank");
-  const [initialBalance, setInitialBalance] = useState(
-    editData ? "" : ""
+  const [initialBalance, setInitialBalance] = useState("");
+  const [balanceOverride, setBalanceOverride] = useState(
+    editData ? String(Math.round(editData.balance ?? 0)) : ""
   );
   const [description, setDescription] = useState(editData?.description ?? "");
   const [allowReceipt, setAllowReceipt] = useState(editData?.allowReceipt ?? 1);
@@ -166,7 +167,7 @@ function FundForm({ editData, onClose, onSaved }: FundFormProps) {
         name: name.trim(),
         type,
         description: description.trim() || undefined,
-        initialBalance: isEdit ? undefined : parseVnd(initialBalance) || 0,
+        initialBalance: isEdit ? parseVnd(balanceOverride) : parseVnd(initialBalance) || 0,
         allowReceipt,
         allowDebtLink,
         supportShift: isCashType ? supportShift : 0,
@@ -224,25 +225,24 @@ function FundForm({ editData, onClose, onSaved }: FundFormProps) {
             </select>
           </div>
 
-          {/* Số dư ban đầu — chỉ hiện khi TẠO MỚI */}
-          {!isEdit && (
-            <div className="fund-form-field">
-              <label>Số dư ban đầu</label>
-              <div className="fund-form-input-suffix">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={formatVndInput(initialBalance)}
-                  onChange={(e) =>
-                    setInitialBalance(e.target.value.replace(/\D/g, ""))
-                  }
-                  placeholder="0"
-                  className="fund-form-input"
-                />
-                <span className="fund-form-suffix">VND</span>
-              </div>
+          {/* Số dư — hiện cả khi tạo mới lẫn chỉnh sửa */}
+          <div className="fund-form-field">
+            <label>{isEdit ? "Số dư hiện tại" : "Số dư ban đầu"}</label>
+            <div className="fund-form-input-suffix">
+              <input
+                type="text"
+                inputMode="numeric"
+                value={isEdit ? formatVndInput(balanceOverride) : formatVndInput(initialBalance)}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/\D/g, "");
+                  isEdit ? setBalanceOverride(raw) : setInitialBalance(raw);
+                }}
+                placeholder="0"
+                className="fund-form-input"
+              />
+              <span className="fund-form-suffix">VND</span>
             </div>
-          )}
+          </div>
 
           {/* Mô tả */}
           <div className="fund-form-field">
@@ -366,56 +366,73 @@ function FundHistoryModal({ fund, onClose }: FundHistoryModalProps) {
   return (
     <div className="fund-modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="fund-modal">
+
+        {/* Header */}
         <div className="fund-modal__header">
           <div>
-            <h3>Lịch sử giao dịch</h3>
-            <p className="fund-modal__sub">{fund.name} · {formatCurrency(fund.balance)}</p>
+            <h3 className="fund-modal__title">Lịch sử giao dịch</h3>
+            <p className="fund-modal__sub">
+              <span className="fund-modal__fund-name">{fund.name}</span>
+              <span className="fund-modal__balance">{formatCurrency(fund.balance)}</span>
+            </p>
           </div>
-          <button type="button" className="fund-form-close" onClick={onClose}>
-            ✕
-          </button>
+          <button type="button" className="fund-form-close" onClick={onClose}>✕</button>
         </div>
 
+        {/* Body */}
         <div className="fund-modal__body" onScroll={handleScroll}>
           {loading ? (
-            <div className="fund-history-loading">Đang tải dữ liệu...</div>
+            <div className="fund-history-loading">
+              <span className="fund-history-spinner" />
+              Đang tải dữ liệu...
+            </div>
           ) : items.length === 0 ? (
             <div className="fund-history-empty">
-              <p>Chưa có giao dịch nào được ghi nhận cho quỹ này.</p>
+              <div className="fund-history-empty__icon">📋</div>
+              <p>Chưa có giao dịch nào</p>
+              <span>Các phiếu thu/chi ghi nhận vào quỹ này sẽ hiển thị ở đây.</span>
             </div>
           ) : (
-            <table className="fund-history-table">
-              <thead>
-                <tr>
-                  <th>Thời gian</th>
-                  <th>Nội dung</th>
-                  <th>Danh mục</th>
-                  <th>Người tạo</th>
-                  <th className="text-right">Số tiền</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item) => (
-                  <tr key={item.id}>
-                    <td className="fund-history-date">{item.transDate}</td>
-                    <td className="fund-history-note">{item.note || "—"}</td>
-                    <td>{item.categoryName || "—"}</td>
-                    <td>{item.empName || "—"}</td>
-                    <td
-                      className={`text-right fund-history-amount ${
-                        item.type === 1 ? "is-income" : "is-expense"
-                      }`}
-                    >
-                      {item.type === 2 ? "-" : "+"}
-                      {formatCurrency(item.amount)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="fund-history-list">
+              {items.map((item) => (
+                <div key={item.id} className={`fund-history-item fund-history-item--${item.type === 1 ? "income" : "expense"}`}>
+                  {/* Left: type indicator + info */}
+                  <div className="fund-history-item__left">
+                    <div className={`fund-history-item__dot fund-history-item__dot--${item.type === 1 ? "income" : "expense"}`} />
+                    <div className="fund-history-item__info">
+                      <div className="fund-history-item__note">{item.note || "(Không có nội dung)"}</div>
+                      <div className="fund-history-item__meta">
+                        <span className={`fund-history-badge fund-history-badge--${item.type === 1 ? "income" : "expense"}`}>
+                          {item.type === 1 ? "Thu" : "Chi"}
+                        </span>
+                        {item.categoryName && (
+                          <span className="fund-history-item__category">{item.categoryName}</span>
+                        )}
+                        {item.empName && (
+                          <>
+                            <span className="fund-history-item__sep">·</span>
+                            <span className="fund-history-item__emp">👤 {item.empName}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Right: amount + date */}
+                  <div className="fund-history-item__right">
+                    <div className={`fund-history-item__amount fund-history-item__amount--${item.type === 1 ? "income" : "expense"}`}>
+                      {item.type === 2 ? "−" : "+"}{formatCurrency(item.amount)}
+                    </div>
+                    <div className="fund-history-item__date">{item.transDate}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
           {loadingMore && (
-            <div className="fund-history-loading">Đang tải thêm...</div>
+            <div className="fund-history-loading">
+              <span className="fund-history-spinner" />
+              Đang tải thêm...
+            </div>
           )}
         </div>
       </div>

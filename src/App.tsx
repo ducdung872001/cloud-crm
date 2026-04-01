@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "./contexts/userContext";
@@ -23,7 +23,6 @@ import { routes } from "./configs/routes";
 import { ToastContainer } from "react-toastify";
 import LayoutPage from "pages/layout";
 import moment from "moment";
-// import { fetchToken, onMessageListener } from "configs/firebaseConfig";
 import { getAppSSOLink, showToast } from "utils/common";
 import EmployeeService from "services/EmployeeService";
 import { getDomain } from "reborn-util";
@@ -36,6 +35,8 @@ import { msalConfig } from "./configs/authConfig";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import CollectWarranty from "pages/Warranty/partials/CollectWarranty";
+import SharePromoPage from "pages/SharePromoPage";
+import ShareCouponPage from "pages/ShareCouponPage";
 import GridFormNew from "pages/BPM/GridForm";
 import { onMessage } from "firebase/messaging";
 import NotificationService from "services/NotificationService";
@@ -43,6 +44,14 @@ import WebRtcCallIncomeModal from "pages/CallCenter/partials/WebRtcCallIncomeMod
 import ringtone from "assets/sounds/call_in_sound.wav";
 import { useSTWebRTC } from "./webrtc/useSTWebRTC";
 import { messaging, requestPermission } from "./firebase-config";
+import OmniCXMMock from "./components/OmniCXMChat/OmniCXMMock";
+
+// ─── OmniCXM config ───────────────────────────────────────────────────────────
+const OMNICXM_CSS_URL = "https://omni-api.worldfone.cloud/embed_app/application/public/css/embed.css";
+const OMNICXM_JS_URL  = "https://omni-api.worldfone.cloud/embed_app/application/embed.js";
+const OMNICXM_KEY     = process.env.REACT_APP_OMNICXM_KEY || "";
+const OMNICXM_ENV     = process.env.REACT_APP_OMNICXM_ENV || ""; // "dev" | "uat" | bỏ trống = production
+// ─────────────────────────────────────────────────────────────────────────────
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -63,12 +72,117 @@ export default function App() {
   const [countUnread, setCountUnread] = useState(0);
   const [newNotificationPayload, setNewNotificationPayload] = useState<any>(null);
 
+  // ─── OmniCXM state ──────────────────────────────────────────────────────────
+  const omniInitialized = useRef(false);
+
+  /** Dữ liệu room chat mới nhất từ OmniCXM (Zalo / Messenger / LiveChat) */
+  const [omniChatEvent, setOmniChatEvent] = useState<{
+    event: "pick" | "reassigned" | "solved" | "spam" | "linkobject" | null;
+    source: string;
+    room_id: string;
+    customernumber?: string;
+    people_id?: string;
+  } | null>(null);
+  // ────────────────────────────────────────────────────────────────────────────
+
   fetchConfig();
 
   const [lstRole, setLstRole] = useState([]);
 
   const takeSelectedRole = localStorage.getItem("SelectedRole");
   const defaultRedirectRef = useRef<string>("/create_sale_add");
+
+  // ─── OmniCXM: Load CSS ──────────────────────────────────────────────────────
+  const loadOmniCSS = useCallback(() => {
+    if (document.querySelector(`link[href="${OMNICXM_CSS_URL}"]`)) return;
+    const link = document.createElement("link");
+    link.rel  = "stylesheet";
+    link.href = OMNICXM_CSS_URL;
+    document.head.appendChild(link);
+  }, []);
+
+  // ─── OmniCXM: Load JS ───────────────────────────────────────────────────────
+  const loadOmniScript = useCallback((): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`script[src="${OMNICXM_JS_URL}"]`)) {
+        resolve();
+        return;
+      }
+      const script = document.createElement("script");
+      script.src   = OMNICXM_JS_URL;
+      script.async = true;
+      script.onload  = () => resolve();
+      script.onerror = () => reject(new Error("[OmniCXM] Không tải được embed.js"));
+      document.body.appendChild(script);
+    });
+  }, []);
+
+  // ─── OmniCXM: Init widget ───────────────────────────────────────────────────
+  const initOmni = useCallback(() => {
+    if (!(window as any).STOmniCXMEmbedApp) {
+      console.error("[OmniCXM] STOmniCXMEmbedApp chưa sẵn sàng");
+      return;
+    }
+    const opts: Record<string, string> = { key: OMNICXM_KEY };
+    if (OMNICXM_ENV) opts.environment = OMNICXM_ENV;
+    (window as any).STOmniCXMEmbedApp.init(opts);
+    omniInitialized.current = true;
+    console.log("[OmniCXM] Đã khởi tạo widget chat");
+  }, []);
+
+  // ─── OmniCXM: Bootstrap (load → init) khi đã đăng nhập ─────────────────────
+  useEffect(() => {
+    if (!isLogin || omniInitialized.current || !OMNICXM_KEY) return;
+
+    loadOmniCSS();
+    loadOmniScript()
+      .then(initOmni)
+      .catch((err) => console.error(err.message));
+  }, [isLogin, loadOmniCSS, loadOmniScript, initOmni]);
+
+  // ─── OmniCXM: Lắng nghe Event Chat ─────────────────────────────────────────
+  useEffect(() => {
+    const handleOmniMessage = (event: MessageEvent) => {
+      if (event?.data?.from !== "OmniCXM_EmbedServiceChat") return;
+
+      const { event: evtName, from, ...payload } = event.data;
+
+      // Lưu event mới nhất vào state (UserContext có thể dùng ở bất kỳ page nào)
+      setOmniChatEvent({ event: evtName, ...payload });
+
+      // Xử lý theo từng loại event
+      switch (evtName) {
+        case "pick":
+          console.log(`[OmniCXM] Agent tiếp nhận – kênh: ${payload.source}`, payload);
+          // TODO: cập nhật CRM, mở tab room, v.v.
+          break;
+
+        case "reassigned":
+          console.log(`[OmniCXM] Phân công lại – kênh: ${payload.source}`, payload);
+          break;
+
+        case "solved":
+          console.log(`[OmniCXM] Kết thúc hội thoại – kênh: ${payload.source}`, payload);
+          // TODO: đóng ticket, gửi khảo sát, v.v.
+          break;
+
+        case "spam":
+          console.log(`[OmniCXM] Đánh dấu spam – kênh: ${payload.source}`, payload);
+          break;
+
+        case "linkobject":
+          console.log(`[OmniCXM] Liên kết contact – people_id: ${payload.people_id}`, payload);
+          break;
+
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener("message", handleOmniMessage);
+    return () => window.removeEventListener("message", handleOmniMessage);
+  }, []);
+  // ────────────────────────────────────────────────────────────────────────────
 
   const handleGetRoles = async (token: string) => {
     if (!token) return;
@@ -96,7 +210,6 @@ export default function App() {
   useEffect(() => {
     const checkEmployeeStatus = async () => {
       if (cookies.token && location.pathname !== "/link_survey") {
-        // Chờ lấy thông tin nhân viên
         const isEmployee = await getDetailEmployeeInfo();
 
         if (isEmployee) {
@@ -126,7 +239,6 @@ export default function App() {
             }
           }
 
-          //Nếu là nhân viên thì mới lấy vai trò
           handleGetRoles(cookies.token);
         }
       } else if (location.pathname !== "/login") {
@@ -138,30 +250,10 @@ export default function App() {
       }
     };
 
-    //Gọi thực thi
-    // checkEmployeeStatus();
     if (location.pathname !== "/send_email_confirm" && location.pathname !== "/voucher_confirm") {
-      // if (
-      //   location.pathname !== "/send_voucher"
-      // )
       checkEmployeeStatus();
     }
   }, [cookies.user, location]);
-
-  // useEffect(() => {
-  //   fetchToken().then((token) => {
-  //     //cookies.user chỉ để kiểm tra người dùng đăng nhập hay chưa
-  //     if (cookies.user) {
-  //       //Gọi API Lưu thông tin token xuống dưới server
-  //     }
-
-  //     onMessageListener()
-  //       .then((payload: any) => {
-  //         //Làm gì đó với dữ liệu nhận được
-  //       })
-  //       .catch((err) => console.log("failed: ", err));
-  //   });
-  // }, []);
 
   const [dataExpired, setDataExpired] = useState({
     numDay: null,
@@ -177,10 +269,6 @@ export default function App() {
 
   const [lastShowModalPayment, setLastShowModalPayment] = useState<boolean>(false);
 
-  /**
-   * Trả về thông tin
-   * @returns
-   */
   const getDetailEmployeeInfo = async () => {
     if (isChecking) {
       return false;
@@ -200,16 +288,9 @@ export default function App() {
           const defaultRedirect = result?.defaultRedirect;
           defaultRedirectRef.current = defaultRedirect || "/create_sale_add";
 
-          // Chuyển đổi startDate và endDate thành đối tượng Date
           const endDate: any = new Date(changeResult?.endDate);
-
-          // Lấy thời gian hiện tại
           const currentDate: any = new Date();
-
-          // Tính số mili giây còn lại giữa ngày hiện tại và ngày kết thúc
           const remainingTimeInMilliseconds = endDate - currentDate;
-
-          // Chuyển đổi từ mili giây sang ngày
           const remainingDays = Math.ceil((remainingTimeInMilliseconds || 0) / (1000 * 60 * 60 * 24));
 
           setDataExpired({
@@ -233,8 +314,6 @@ export default function App() {
     showToast("Bạn không phải là nhân viên của tổ chức này!", "warning");
     setTimeout(() => {
       let sourceDomain = getDomain(decodeURIComponent(document.location.href));
-
-      //Chuyển hướng về trang đăng nhập sso (để chọn tài khoản khác)
       let rootDomain = getRootDomain(sourceDomain);
       let env = process.env.APP_ENV;
       let crmLink;
@@ -248,7 +327,6 @@ export default function App() {
       document.location.href = `${appSSOLink}?redirect_uri=${crmLink}&domain=${rootDomain}&env=${env}`;
     }, 5000);
 
-    //Trả về thất bại
     setIsChecking(false);
     return false;
   };
@@ -276,9 +354,6 @@ export default function App() {
     }
   };
 
-  /**
-   * Chỉ request khi tồn tại cookies.token
-   */
   useEffect(() => {
     requestPermission(cookies.token);
 
@@ -293,11 +368,11 @@ export default function App() {
   // Khởi tạo tổng đài
   const [showModalCallIncome, setShowModalCallIncome] = useState<boolean>(false);
   const pbxCustomerCode = "d9cf985baac44238b3d930ae569d9f0912";
-  const employeeSip470 = "101"; // Test với tài khoản Nguyễn Ngọc Trung trên rebornjsc sdt 0962829352 có id là 81
-  const employeeSip471 = "471"; // Test với tài khoản Hoàng Văn Lợi trên rebornjsc sdt 0862999272 có id là 703
+  const employeeSip470 = "101";
+  const employeeSip471 = "471";
 
   const { callState, incomingNumber, makeCall, answer, hangup, transfer } = useSTWebRTC({
-    extension: parseInt(dataInfoEmployee?.id) == 4699513 ? employeeSip470 : parseInt(dataInfoEmployee?.id) == 703 ? employeeSip471 : null, //test tạm thời, sau này lấy theo dataInfoEmployee?.sip
+    extension: parseInt(dataInfoEmployee?.id) == 4699513 ? employeeSip470 : parseInt(dataInfoEmployee?.id) == 703 ? employeeSip471 : null,
     pbxCustomerCode: pbxCustomerCode,
   });
 
@@ -305,7 +380,6 @@ export default function App() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const unlockedRef = useRef<boolean>(false);
 
-  // Khởi tạo audio và cố gắng unlock bằng user gesture (click/touch)
   useEffect(() => {
     const audio = new Audio(RINGTONE_SRC);
     audio.loop = true;
@@ -315,16 +389,13 @@ export default function App() {
     const tryUnlock = async () => {
       if (unlockedRef.current) return;
       try {
-        // Thử play rồi pause ngay để unlock audio trên 1 số trình duyệt khi có gesture
         await audioRef.current?.play();
         audioRef.current?.pause();
         audioRef.current!.currentTime = 0;
         unlockedRef.current = true;
-        // không cần thông báo
       } catch (err) {
         // vẫn bị chặn
       } finally {
-        // chỉ cần thử 1 lần, gỡ listener
         document.removeEventListener("click", tryUnlock, true);
         document.removeEventListener("touchstart", tryUnlock, true);
       }
@@ -354,10 +425,8 @@ export default function App() {
       (async () => {
         try {
           await audio.play();
-          // Nếu play thành công, mark unlocked
           unlockedRef.current = true;
         } catch (err) {
-          // Nếu bị chặn bởi autoplay policy, thông báo cho user bấm vào trang để unlock
           console.warn("Ringtone play blocked by browser autoplay policy:", err);
           showToast("Trình duyệt chặn phát âm thanh tự động. Vui lòng click/đụng vào trang để bật chuông.", "warning");
         }
@@ -406,9 +475,18 @@ export default function App() {
         answer: answer,
         hangup: hangup,
         transfer: transfer,
+        // ── OmniCXM ──────────────────────────────────────────────────────────
+        omniChatEvent: omniChatEvent,   // event mới nhất từ widget chat
+        // ─────────────────────────────────────────────────────────────────────
       }}
     >
       <MsalProvider instance={msalInstance}>
+        <OmniCXMMock
+          onEvent={(data) => {
+            setOmniChatEvent(data);
+            console.log("[Mock Event]", data);
+          }}
+        />
         <ToastContainer
           position="top-right"
           autoClose={5000}
@@ -424,23 +502,22 @@ export default function App() {
         <Routes>
           {isLogin && <Route path="*" element={<LayoutPage />} />}
           {location.pathname == "/grid_form" && <Route path="/grid_form" element={<GridFormNew />} />}
-          {/* {location.pathname == "/grid_form_new" && <Route path="/grid_form_new" element={<GridAg />} />} */}
           {location.pathname == "/link_survey" && <Route path="/link_survey" element={<LinkSurvey />} />}
           {location.pathname == "/upload_document" && <Route path="/upload_document" element={<UploadDocument />} />}
           {location.pathname == "/collect_ticket" && <Route path="/collect_ticket" element={<CollectTicket />} />}
           {location.pathname == "/collect_warranty" && <Route path="/collect_warranty" element={<CollectWarranty />} />}
+          {location.pathname == "/share_promo" && <Route path="/share_promo" element={<SharePromoPage />} />}
+          {location.pathname == "/share_coupon" && <Route path="/share_coupon" element={<ShareCouponPage />} />}
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />
         <WebRtcCallIncomeModal
-          // onShow={true}
           onShow={showModalCallIncome}
           makeCall={makeCall}
           hangup={hangup}
           answer={answer}
           transfer={transfer}
           callState={callState}
-          // callState={"oncall"}
           incomingNumber={incomingNumber}
           onHide={() => setShowModalCallIncome(false)}
         />

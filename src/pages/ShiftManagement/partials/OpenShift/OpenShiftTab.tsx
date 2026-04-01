@@ -2,143 +2,170 @@ import React, { useMemo, useState } from "react";
 import Icon from "components/icon";
 import Button from "components/button/button";
 import ShiftService from "services/ShiftService";
+import { saveActiveShiftId } from "utils/ShiftStorage";
 import "./OpenShift.scss";
 
 type Props = {
   shiftConfigId: number;
   branchId: number;
+  shiftName?: string;
+  shiftTime?: string;
+  defaultCash?: number;
   onShiftOpened?: (shiftId: number) => void;
 };
 
-export default function OpenShiftTab({ shiftConfigId, branchId, onShiftOpened }: Props) {
-  const [tab, setTab] = useState<string>("total");
-  const [totalAmount, setTotalAmount] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
+const DENOMS = [500000, 200000, 100000, 50000, 20000, 10000, 5000, 2000, 1000];
 
-  const denominations = [500000, 200000, 100000, 50000, 20000, 10000, 5000, 2000, 1000];
-  const [counts, setCounts] = useState<{ [key: number]: number }>({});
+function fmtVND(n: number): string {
+  return n ? n.toLocaleString("vi-VN") : "0";
+}
 
-  const calcDenomTotal = useMemo(() => {
-    return Object.entries(counts).reduce((sum, [val, count]) => sum + Number(val) * count, 0);
-  }, [counts]);
+export default function OpenShiftTab({
+  shiftConfigId, branchId,
+  shiftName = "", shiftTime = "", defaultCash = 0,
+  onShiftOpened,
+}: Props) {
+  const [mode, setMode]         = useState<"total" | "denom">("total");
+  const [totalRaw, setTotalRaw] = useState<string>(defaultCash > 0 ? String(defaultCash) : "");
+  const [counts, setCounts]     = useState<Record<number, number>>({});
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState("");
 
-  const handleCountChange = (val: number, count: string) => {
-    const numCount = parseInt(count) || 0;
-    setCounts({ ...counts, [val]: numCount });
-  };
+  const totalAmount = mode === "total"
+    ? (Number(totalRaw.replace(/\D/g, "")) || 0)
+    : Object.entries(counts).reduce((s, [v, q]) => s + Number(v) * q, 0);
 
-  const finalAmount = tab === "total" ? totalAmount : calcDenomTotal;
+  const subtotals = useMemo(() =>
+    Object.fromEntries(DENOMS.map(v => [v, (counts[v] || 0) * v])), [counts]);
+
+  const displayTotal = totalRaw ? Number(totalRaw.replace(/\D/g, "")).toLocaleString("vi-VN") : "";
+
+  const adjust = (val: number, delta: number) =>
+    setCounts(p => ({ ...p, [val]: Math.max(0, (p[val] || 0) + delta) }));
 
   const handleConfirm = async () => {
     if (loading) return;
-    setLoading(true);
+    if (totalAmount <= 0) { setError("Vui lòng nhập số tiền đầu ca."); return; }
+    setLoading(true); setError("");
     try {
-      const body =
-        tab === "denom"
-          ? {
-              shiftConfigId,
-              denominations: Object.entries(counts)
-                .filter(([, qty]) => qty > 0)
-                .map(([val, qty]) => ({ denomination: Number(val), quantity: qty })),
-            }
-          : {
-              shiftConfigId,
-              openingCash: totalAmount,
-            };
-
+      const body = mode === "denom"
+        ? { shiftConfigId, denominations: Object.entries(counts).filter(([, q]) => q > 0).map(([v, q]) => ({ denomination: Number(v), quantity: q })) }
+        : { shiftConfigId, openingCash: totalAmount };
       const res = await ShiftService.openShift(branchId, body);
-      const shiftId = res?.data?.id;
-
-      if (shiftId) {
-        // API thành công → chuyển sang tab "Đang ca"
-        onShiftOpened?.(shiftId);
-      } else {
-        // API lỗi hoặc rỗng → vẫn chuyển tab nhưng không có shiftId thực
-        console.warn("Mở ca: API không trả về shiftId, dùng mock flow");
-        onShiftOpened?.(0);
-      }
-    } catch (e) {
-      console.error("Lỗi mở ca:", e);
-      // Lỗi mạng → vẫn cho tiếp tục với mock data
-      onShiftOpened?.(0);
-    } finally {
-      setLoading(false);
-    }
+      const shiftId = res?.result?.id ?? res?.data?.id;
+      if (shiftId) saveActiveShiftId(shiftId);
+      onShiftOpened?.(shiftId ?? 0);
+    } catch { onShiftOpened?.(0); }
+    finally { setLoading(false); }
   };
 
   return (
     <div className="page-open-shift">
-      <div className="action-header">
-        <div className="title__actions">
-          <ul className="menu-list">
-            <li className={tab === "total" ? "active" : ""} onClick={() => setTab("total")}>
-              Nhập tổng tiền
-            </li>
-            <li className={tab === "denom" ? "active" : ""} onClick={() => setTab("denom")}>
-              Nhập theo mệnh giá
-            </li>
-          </ul>
-        </div>
-      </div>
 
-      <div className="p-24 open-shift-body">
-        <div className="instruction-text mb-24">
-          <p className="text-muted">Nhập số tiền mặt thực tế có trong két để bắt đầu phiên làm việc.</p>
-        </div>
-
-        {tab === "total" ? (
-          <div className="input-total-wrapper">
-            <div className="base-form-group">
-              <label className="fw-700 mb-12 d-block">Tổng tiền mặt (VNĐ)</label>
-              <div className="big-input-container">
-                <input
-                  type="number"
-                  placeholder="0"
-                  value={totalAmount || ""}
-                  onChange={(e) => setTotalAmount(Number(e.target.value))}
-                />
-                <Icon name="Banknote" />
-              </div>
+      {/* Banner */}
+      {(shiftName || shiftTime) && (
+        <div className="os-banner">
+          <div className="os-banner-left">
+            <div className="os-banner-icon"><Icon name="Clock" /></div>
+            <div>
+              <div className="os-banner-name">{shiftName || "Ca làm việc"}</div>
+              {shiftTime && <div className="os-banner-time">{shiftTime}</div>}
             </div>
           </div>
-        ) : (
-          <div className="denom-grid-layout">
-            {denominations.map((val) => (
-              <div key={val} className="denom-item-card">
-                <div className="denom-label">{val.toLocaleString()} đ</div>
-                <div className="denom-input-box">
-                  <input
-                    type="number"
-                    placeholder="0"
-                    value={counts[val] || ""}
-                    onChange={(e) => handleCountChange(val, e.target.value)}
-                  />
-                  <span className="unit">tờ</span>
-                </div>
-                <div className="denom-subtotal">= {((counts[val] || 0) * val).toLocaleString()} đ</div>
+          <div className="os-banner-date">
+            {new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" })}
+          </div>
+        </div>
+      )}
+
+      {/* Mode tabs */}
+      <div className="os-modes">
+        <button className={`os-mode-btn${mode === "total" ? " active" : ""}`} onClick={() => setMode("total")}>
+          <Icon name="Banknote" /><span>Nhập tổng tiền</span>
+        </button>
+        <button className={`os-mode-btn${mode === "denom" ? " active" : ""}`} onClick={() => setMode("denom")}>
+          <Icon name="ListBullets" /><span>Nhập theo mệnh giá</span>
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="os-body">
+
+        {mode === "total" && (
+          <div className="os-total-mode">
+            <p className="os-hint">Nhập tổng tiền mặt thực tế trong két để bắt đầu ca.</p>
+            <div className="os-total-field">
+              <label>Tiền mặt đầu ca</label>
+              <div className={`os-total-input${error ? " error" : ""}`}>
+                <input
+                  type="text" inputMode="numeric" placeholder="0" value={displayTotal} autoFocus
+                  onChange={e => { setTotalRaw(e.target.value.replace(/\D/g, "")); setError(""); }}
+                />
+                <span className="os-currency">VNĐ</span>
               </div>
-            ))}
+              {error && <p className="os-error">{error}</p>}
+              {defaultCash > 0 && (
+                <button className="os-preset" onClick={() => { setTotalRaw(String(defaultCash)); setError(""); }}>
+                  Dùng mặc định: {fmtVND(defaultCash)} VNĐ
+                </button>
+              )}
+            </div>
           </div>
         )}
 
-        <div className="open-shift-footer mt-32">
-          <div className="total-display">
-            <span className="label">TỔNG TIỀN ĐẦU CA:</span>
-            <span className="value text-primary">{finalAmount.toLocaleString()} VNĐ</span>
+        {mode === "denom" && (
+          <div className="os-denom-mode">
+            <p className="os-hint">Đếm và nhập số tờ theo từng mệnh giá.</p>
+            <div className="os-denom-table">
+              <div className="os-denom-head">
+                <span>Mệnh giá</span>
+                <span>Số tờ</span>
+                <span>Thành tiền</span>
+              </div>
+              {DENOMS.map(val => {
+                const qty = counts[val] || 0;
+                const sub = subtotals[val] || 0;
+                return (
+                  <div key={val} className={`os-denom-row${qty > 0 ? " active" : ""}`}>
+                    <div className="os-denom-label">
+                      <span className="val">{fmtVND(val)}</span>
+                      <span className="unit">đ</span>
+                    </div>
+                    <div className="os-stepper">
+                      <button onClick={() => adjust(val, -1)}>−</button>
+                      <input
+                        type="number" min={0} value={qty || ""} placeholder="0"
+                        onChange={e => setCounts(p => ({ ...p, [val]: Math.max(0, parseInt(e.target.value) || 0) }))}
+                      />
+                      <button onClick={() => adjust(val, 1)}>+</button>
+                    </div>
+                    <div className={`os-denom-sub${sub > 0 ? " active" : ""}`}>
+                      {sub > 0 ? fmtVND(sub) + " đ" : "—"}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <div className="actions">
-            <Button
-              color="primary"
-              className="btn-confirm-shift"
-              disabled={loading}
-              onClick={handleConfirm}
-            >
-              <Icon name="Checked" className="mr-8" />
-              {loading ? "Đang xử lý..." : "XÁC NHẬN VÀO CA"}
-            </Button>
-          </div>
-        </div>
+        )}
+
       </div>
+
+      {/* Footer */}
+      <div className="os-footer">
+        <div className="os-footer-total">
+          <span className="os-footer-label">TỔNG TIỀN ĐẦU CA</span>
+          <span className={`os-footer-amount${totalAmount > 0 ? " active" : ""}`}>
+            {fmtVND(totalAmount)}<span className="u"> VNĐ</span>
+          </span>
+        </div>
+        <Button color="primary" className="os-confirm-btn" disabled={loading || totalAmount <= 0} onClick={handleConfirm}>
+          {loading
+            ? <><Icon name="Spinner" className="mr-8 spin" />Đang xử lý...</>
+            : <><Icon name="CheckCircle" className="mr-8" />Xác nhận vào ca</>}
+        </Button>
+      </div>
+
     </div>
   );
 }

@@ -1,361 +1,166 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
-import Icon from "components/icon";
+// Đặt tại: src/pages/SettingPaymentMethod/index.tsx
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Loading from "components/loading";
-import SearchBox from "components/searchBox/searchBox";
-import BoxTable from "components/boxTable/boxTable";
-import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
-import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
-import { SystemNotification } from "components/systemNotification/systemNotification";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
-import { BulkActionItemModel } from "components/bulkAction/bulkAction";
-import { IAction, ISaveSearch } from "model/OtherModel";
-import { ICategoryServiceFilterRequest } from "model/categoryService/CategoryServiceRequestModel";
-import { ICategoryServiceResponseModel } from "model/categoryService/CategoryServiceResponseModel";
+import { SystemNotification } from "components/systemNotification/systemNotification";
 import { showToast } from "utils/common";
 import { getPermissions } from "utils/common";
-import CategoryServiceService from "services/CategoryServiceService";
-import { getPageOffset } from "reborn-util";
-
-import "./index.scss";
-import AddQrProModal from "./partials/AddQrProModal";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
+import { IPaymentMethodTemplate, PARTNER_META } from "model/paymentMethod/PaymentMethodModel";
+import { PaymentTemplateService } from "services/PaymentMethodService";
+import PaymentTemplateModal from "./partials/PaymentMethodModal";
+import "./index.scss";
 
-export default function SettingPaymentMethod(props) {
-  document.title = "Danh mục phương thức thanh toán";
-
-  const { onBackProps } = props;
+export default function SettingPaymentMethod({ onBackProps }: { onBackProps?: any }) {
+  document.title = "Cài đặt phương thức thanh toán";
+  const [permissions] = useState(getPermissions());
   const isMounted = useRef(false);
-  const [listCategoryService, setListCategoryService] = useState<ICategoryServiceResponseModel[]>([]);
-  const [dataCategoryService, setDataCategoryService] = useState<ICategoryServiceResponseModel>(null);
-  const [listIdChecked, setListIdChecked] = useState<number[]>([]);
-  const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isNoItem, setIsNoItem] = useState<boolean>(false);
-  const [isPermissions, setIsPermissions] = useState<boolean>(false);
-  const [permissions, setPermissions] = useState(getPermissions());
-  const [params, setParams] = useState<ICategoryServiceFilterRequest>({
-    keyword: "",
-    limit: 10,
-    type: 1,
-  });
+  const abort     = useRef(new AbortController());
+  const [list, setList]         = useState<IPaymentMethodTemplate[]>([]);
+  const [isLoading, setLoading] = useState(true);
+  const [keyword, setKeyword]   = useState("");
+  const [editData, setEditData] = useState<IPaymentMethodTemplate | null>(null);
+  const [showModal, setShowModal]         = useState(false);
+  const [showDialog, setShowDialog]       = useState(false);
+  const [contentDialog, setContentDialog] = useState<IContentDialog | null>(null);
 
-  const [listSaveSearch] = useState<ISaveSearch[]>([
-    {
-      key: "all",
-      name: "Danh mục phương thức thanh toán",
-      is_active: true,
-    },
-  ]);
+  const fetchList = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await PaymentTemplateService.list({ keyword: keyword || undefined }, abort.current.signal);
+      if (res.code === 0) setList(res.result ?? []);
+      else if (res.code !== 400) showToast(res.message ?? "Có lỗi xảy ra", "error");
+    } catch { /* aborted */ }
+    finally { setLoading(false); }
+  }, [keyword]);
 
-  const [pagination, setPagination] = useState<PaginationProps>({
-    ...DataPaginationDefault,
-    name: "Danh mục phương thức thanh toán",
-    isChooseSizeLimit: true,
-    setPage: (page) => {
-      setParams((prevParams) => ({ ...prevParams, page: page }));
-    },
-    chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, limit: limit }));
-    },
-  });
+  useEffect(() => {
+    if (!isMounted.current) { isMounted.current = true; return; }
+    abort.current.abort();
+    abort.current = new AbortController();
+    fetchList();
+  }, [fetchList]);
 
-  const abortController = new AbortController();
+  useEffect(() => { fetchList(); }, []);
 
-  const getListCategoryService = async (paramsSearch: ICategoryServiceFilterRequest) => {
-    setIsLoading(true);
-
-    const response = await CategoryServiceService.list(paramsSearch, abortController.signal);
-
-    if (response.code === 0) {
-      const result = [
-        {
-          id: 67,
-          avatar: "",
-          name: "Chuyển khoản Vietcombank",
-          position: 0,
-        },
-        {
-          id: 260,
-          avatar: "https://cloud-cdn.reborn.vn/reborn/2025/11/06/6f4dfaeb-afc9-4f65-beec-0d4fd7772b8a-1762447058.jpg",
-          name: "Tiền mặt",
-          position: 1,
-        },
-        {
-          id: 265,
-          avatar: "",
-          name: "Momo",
-          position: 2,
-        },
-        {
-          id: 269,
-          avatar: "https://cloud-cdn.reborn.vn/reborn/2025/12/04/59ec89d1-dc69-4603-b69d-8bfb254b344c-1764837048.jpg",
-          name: "ZaloPay",
-          position: 3,
-        },
-        {
-          id: 270,
-          avatar: "https://cloud-cdn.reborn.vn/reborn/2025/12/04/711edd22-114b-4264-9ff9-951806c25ac3-1764840922.jpg",
-          name: "Thẻ tín dụng",
-          position: 4,
-        },
-      ];
-      setListCategoryService(result);
-
-      setPagination({
-        ...pagination,
-        page: +result.page,
-        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
-        totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
-      });
-      if (+result.total === 0 && !params?.keyword && +result.page === 1) {
-        setIsNoItem(true);
-      }
-    } else if (response.code == 400) {
-      setIsPermissions(true);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+  const handleToggle = async (item: IPaymentMethodTemplate) => {
+    const next = !item.isActive;
+    setList((p) => p.map((x) => x.id === item.id ? { ...x, isActive: next } : x));
+    const res = await PaymentTemplateService.toggle(item.id, next);
+    if (res.code !== 0) {
+      setList((p) => p.map((x) => x.id === item.id ? { ...x, isActive: item.isActive } : x));
+      showToast(res.message ?? "Không thể thay đổi trạng thái", "error");
     }
-    setIsLoading(false);
   };
 
-  useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
-    setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
-  }, []);
+  const confirmDelete = (item: IPaymentMethodTemplate) => {
+    setContentDialog({
+      color: "error", isCentered: true, isLoading: true,
+      title: <>Xóa phương thức thanh toán</>,
+      message: <>Xóa template <strong>{item.systemName}</strong>? Các cửa hàng đang dùng sẽ bị ảnh hưởng.</>,
+      cancelText: "Hủy", cancelAction: () => { setShowDialog(false); setContentDialog(null); },
+      defaultText: "Xóa",
+      defaultAction: async () => {
+        const res = await PaymentTemplateService.delete(item.id);
+        if (res.code === 0) { showToast("Đã xóa", "success"); fetchList(); }
+        else showToast(res.message ?? "Có lỗi", "error");
+        setShowDialog(false); setContentDialog(null);
+      },
+    });
+    setShowDialog(true);
+  };
 
-  useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
-
-    if (isMounted.current === true) {
-      getListCategoryService(params);
-      const paramsTemp = _.cloneDeep(params);
-      if (paramsTemp.limit === 10) {
-        delete paramsTemp["limit"];
-      }
-      Object.keys(paramsTemp).map(function (key) {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-    }
-
-    return () => {
-      abortController.abort();
-    };
-  }, [params]);
-
-  const titleActions: ITitleActions = {
+  const titleActions = {
     actions: [
       permissions["CATEGORY_SERVICE_ADD"] == 1 && {
-        title: "Thêm mới",
-        callback: () => {
-          setDataCategoryService(null);
-          setShowModalAdd(true);
-        },
+        title: "Thêm mới", callback: () => { setEditData(null); setShowModal(true); },
       },
     ],
   };
 
-  const titles = ["STT", "Tên phương thức thanh toán", "Thứ tự hiển thị"];
-
-  const dataFormat = ["text-center", "", "text-center"];
-
-  const dataMappingArray = (item: ICategoryServiceResponseModel, index: number) => [getPageOffset(params) + index + 1, item.name, item.position];
-
-  const actionsTable = (item: ICategoryServiceResponseModel): IAction[] => {
-    const isCheckedItem = listIdChecked?.length > 0;
-    return [
-      permissions["CATEGORY_SERVICE_UPDATE"] == 1 && {
-        title: "Sửa",
-        icon: <Icon name="Pencil" className={isCheckedItem ? "icon-disabled" : ""} />,
-        disabled: isCheckedItem,
-        callback: () => {
-          if (!isCheckedItem) {
-            setDataCategoryService(item);
-            setShowModalAdd(true);
-          }
-        },
-      },
-      permissions["CATEGORY_SERVICE_DELETE"] == 1 && {
-        title: "Xóa",
-        icon: <Icon name="Trash" className={isCheckedItem ? "icon-disabled" : "icon-error"} />,
-        disabled: isCheckedItem,
-        callback: () => {
-          if (!isCheckedItem) {
-            showDialogConfirmDelete(item);
-          }
-        },
-      },
-    ];
-  };
-
-  const onDelete = async (id: number) => {
-    const response = await CategoryServiceService.delete(id);
-
-    if (response.code === 0) {
-      showToast("Xóa danh mục phương thức thanh toán thành công", "success");
-      getListCategoryService(params);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    }
-    setShowDialog(false);
-    setContentDialog(null);
-  };
-
-  const onDeleteAll = () => {
-    const selectedIds = listIdChecked || [];
-    if (!selectedIds.length) return;
-
-    const arrPromises = selectedIds.map((selectedId) => {
-      const found = listCategoryService.find((item) => item.id === selectedId);
-      if (found?.id) {
-        return CategoryServiceService.delete(found.id);
-      } else {
-        return Promise.resolve(null);
-      }
-    });
-    Promise.all(arrPromises)
-      .then((results) => {
-        const checkbox = results.filter(Boolean)?.length || 0;
-        if (checkbox > 0) {
-          showToast(`Xóa thành công ${checkbox} danh mục phương thức thanh toán`, "success");
-          getListCategoryService(params);
-          setListIdChecked([]);
-        } else {
-          showToast("Không có danh mục phương thức thanh toán nào được xóa", "error");
-        }
-      })
-      .finally(() => {
-        setShowDialog(false);
-        setContentDialog(null);
-      });
-  };
-
-  const showDialogConfirmDelete = (item?: ICategoryServiceResponseModel) => {
-    const contentDialog: IContentDialog = {
-      color: "error",
-      className: "dialog-delete",
-      isCentered: true,
-      isLoading: true,
-      title: <Fragment>Xóa...</Fragment>,
-      message: (
-        <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "danh mục phương thức thanh toán " : `${listIdChecked.length} danh mục phương thức thanh toán đã chọn`}
-          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Xóa",
-      defaultAction: () => {
-        if (item?.id) {
-          onDelete(item.id);
-          return;
-        }
-        if (listIdChecked.length > 0) {
-          onDeleteAll();
-          return;
-        }
-      },
-    };
-    setContentDialog(contentDialog);
-    setShowDialog(true);
-  };
-
-  const bulkActionList: BulkActionItemModel[] = [
-    permissions["CATEGORY_SERVICE_DELETE"] == 1 && {
-      title: "Xóa danh mục phương thức thanh toán",
-      callback: () => showDialogConfirmDelete(),
-    },
-  ];
+  const filtered = list.filter((p) =>
+    !keyword || p.systemName.toLowerCase().includes(keyword.toLowerCase())
+  );
 
   return (
-    <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
+    <div className="page-content spm-page">
       <HeaderTabMenu
-        title="Cài đặt"
-        titleBack="Phương thức thanh toán"
-        onBackProps={onBackProps}
-        titleActions={titleActions}
+        title="Cài đặt" titleBack="Phương thức thanh toán"
+        onBackProps={onBackProps} titleActions={titleActions}
       />
 
-      <div className="card-box d-flex flex-column">
-        <SearchBox
-          name="Tên phương thức thanh toán"
-          params={params}
-          isSaveSearch={true}
-          listSaveSearch={listSaveSearch}
-          updateParams={(paramsNew) => setParams(paramsNew)}
-        />
-        {!isLoading && listCategoryService && listCategoryService.length > 0 ? (
-          <BoxTable
-            name="phương thức thanh toán"
-            titles={titles}
-            items={listCategoryService}
-            isPagination={true}
-            dataPagination={pagination}
-            dataMappingArray={(item, index) => dataMappingArray(item, index)}
-            dataFormat={dataFormat}
-            isBulkAction={true}
-            listIdChecked={listIdChecked}
-            bulkActionItems={bulkActionList}
-            striped={true}
-            setListIdChecked={(listId) => setListIdChecked(listId)}
-            actions={actionsTable}
-            actionType="inline"
-          />
-        ) : isLoading ? (
-          <Loading />
-        ) : (
-          <Fragment>
-            {isPermissions ? (
-              <SystemNotification type="no-permission" />
-            ) : isNoItem ? (
-              <SystemNotification
-                description={
-                  <span>
-                    Hiện tại chưa có danh mục phương thức thanh toán nào. <br />
-                    Hãy thêm mới danh mục phương thức thanh toán đầu tiên nhé!
-                  </span>
-                }
-                type="no-item"
-                titleButton="Thêm mới danh mục phương thức thanh toán"
-                action={() => {
-                  setDataCategoryService(null);
-                  setShowModalAdd(true);
-                }}
-              />
-            ) : (
-              <SystemNotification
-                description={
-                  <span>
-                    Không có dữ liệu trùng khớp.
-                    <br />
-                    Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
-                  </span>
-                }
-                type="no-result"
-              />
-            )}
-          </Fragment>
-        )}
+      <div className="spm-role-notice">
+        <span className="spm-role-notice__icon">🔑</span>
+        <span>
+          Trang này dành cho <strong>Admin hệ thống</strong> — định nghĩa danh sách PTTT
+          khả dụng cho tất cả cửa hàng.
+        </span>
       </div>
-      <AddQrProModal
-        onShow={showModalAdd}
-        data={dataCategoryService}
-        onHide={(reload) => {
-          if (reload) {
-            getListCategoryService(params);
-          }
-          setShowModalAdd(false);
-        }}
+
+      <div className="spm-search-bar">
+        <span className="spm-search-icon">🔍</span>
+        <input className="spm-search-input" type="text" placeholder="Tìm kiếm..."
+          value={keyword} onChange={(e) => setKeyword(e.target.value)} />
+      </div>
+
+      {isLoading ? <Loading /> : filtered.length === 0 ? (
+        <SystemNotification
+          type={list.length === 0 ? "no-item" : "no-result"}
+          description={list.length === 0
+            ? <span>Chưa có phương thức thanh toán nào. Thêm mới để bắt đầu!</span>
+            : <span>Không có kết quả trùng khớp.</span>}
+          titleButton={list.length === 0 ? "Thêm phương thức thanh toán" : undefined}
+          action={list.length === 0 ? () => { setEditData(null); setShowModal(true); } : undefined}
+        />
+      ) : (
+        <div className="spm-grid">
+          {filtered.sort((a, b) => a.position - b.position).map((item) => {
+            const meta = PARTNER_META[item.partner] ?? PARTNER_META.OTHER;
+            return (
+              <div key={item.id} className={`spm-card${item.isActive ? "" : " spm-card--off"}`}>
+                <div className="spm-card__head">
+                  <div className="spm-card__icon" style={{ background: meta.color + "18" }}>
+                    <span>{meta.icon}</span>
+                  </div>
+                  <div className="spm-card__info">
+                    <div className="spm-card__name">{item.systemName}</div>
+                    <div className="spm-card__badges">
+                      <span className="spm-badge" style={{ background: meta.color + "18", color: meta.color }}>
+                        {meta.label}
+                      </span>
+                      <span className={`spm-badge spm-badge--type ${item.processType === "AUTO" ? "auto" : "manual"}`}>
+                        {item.processType === "AUTO" ? "⚡ Tự động" : "👆 Thủ công"}
+                      </span>
+                      {item.requiresKey && <span className="spm-badge spm-badge--key">🔑 Cần API key</span>}
+                    </div>
+                  </div>
+                  <label className="spm-toggle">
+                    <input type="checkbox" checked={item.isActive} onChange={() => handleToggle(item)} />
+                    <span className="spm-toggle__track" />
+                  </label>
+                </div>
+                {item.description && <div className="spm-card__desc">{item.description}</div>}
+                <div className="spm-card__foot">
+                  <span className="spm-card__order">Thứ tự #{item.position}</span>
+                  <div className="spm-card__actions">
+                    {permissions["CATEGORY_SERVICE_UPDATE"] == 1 && (
+                      <button className="spm-btn spm-btn--edit"
+                        onClick={() => { setEditData(item); setShowModal(true); }}>✏️ Sửa</button>
+                    )}
+                    {permissions["CATEGORY_SERVICE_DELETE"] == 1 && (
+                      <button className="spm-btn spm-btn--del" onClick={() => confirmDelete(item)}>🗑️</button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <PaymentTemplateModal
+        open={showModal} data={editData}
+        onClose={(reload) => { setShowModal(false); if (reload) fetchList(); }}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>

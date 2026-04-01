@@ -152,7 +152,11 @@
   border: 1px solid #cfe0eb;
   color: #16384a;
   background: #ffffff;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .finance-link-button:hover {
@@ -254,7 +258,12 @@
   font-size: 1.25rem;
   font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .finance-filter-chip:hover {
@@ -312,7 +321,11 @@
   color: #17384a;
   background: #ffffff;
   box-shadow: inset 0 0.1rem 0.2rem rgba(15, 37, 53, 0.02);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .finance-filter-select:hover {
@@ -347,7 +360,10 @@
   padding: 0.55rem 0.8rem;
   border-radius: 0.8rem;
   white-space: nowrap;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .finance-filter-reset:hover {
@@ -395,7 +411,11 @@
   font-size: 1.35rem;
   color: #17384a;
   background: #ffffff;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .finance-field input:hover,
@@ -451,7 +471,9 @@
   color: #294a5f;
   font-size: 1.35rem;
   font-weight: 500;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   user-select: none;
 }
 
@@ -572,10 +594,8 @@
   flex-direction: column;
   gap: 0.8rem;
   background:
-    linear-gradient(45deg, #f4f9fc 25%, transparent 25%),
-    linear-gradient(-45deg, #f4f9fc 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #f4f9fc 75%),
-    linear-gradient(-45deg, transparent 75%, #f4f9fc 75%);
+    linear-gradient(45deg, #f4f9fc 25%, transparent 25%), linear-gradient(-45deg, #f4f9fc 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f4f9fc 75%), linear-gradient(-45deg, transparent 75%, #f4f9fc 75%);
   background-size: 2rem 2rem;
   background-position:
     0 0,
@@ -746,13 +766,21 @@
 
 /* ── Keyframes ───────────────────────────────────────────────────────────── */
 @keyframes finance-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes finance-slide-in {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 /* ── Bar chart ───────────────────────────────────────────────────────────── */
@@ -781,7 +809,9 @@
 }
 
 @keyframes finance-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .finance-loading-center {
@@ -810,8 +840,14 @@
 }
 
 @keyframes finance-toast-in {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── Action buttons ──────────────────────────────────────────────────────── */
@@ -855,7 +891,6 @@
   background: #e2eaf2;
 }
 
-
 .finance-action-btn--outline {
   background: transparent;
   color: #133042;
@@ -882,7 +917,10 @@
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
 }
 
 .finance-panel-link:hover {
@@ -904,4 +942,64 @@
   font-size: 1.8rem;
   font-weight: 700;
   color: #133042;
+}
+
+.finance-field__label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.finance-field__add-link {
+  font-size: 12px;
+  color: var(--color-primary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.finance-quick-create {
+  margin-top: 8px;
+  padding: 12px;
+  background: var(--color-bg-subtle);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+.finance-quick-create__title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--color-text-secondary);
+}
+.finance-quick-create__row {
+  display: flex;
+  gap: 6px;
+}
+.finance-quick-create__input {
+  flex: 1;
+}
+.finance-quick-create__btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+}
+.finance-quick-create__btn--save {
+  background: var(--color-primary);
+  color: white;
+}
+.finance-quick-create__btn--cancel {
+  background: var(--color-bg-muted);
+  color: var(--color-text);
+}
+.finance-quick-create__error {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--color-danger);
+}
+.finance-spinner--sm {
+  width: 14px;
+  height: 14px;
 }

@@ -8,8 +8,7 @@ import LoyaltyWallet from "../LoyaltyWallet";
 import MembershipClass from "../MembershipClass/MembershipClass";
 import LoyaltyPointLedger from "../LoyaltyPointLedger";
 import ExchangePoints from "../ExchangePoints";
-import SettingLoyaltyList from "../SettingLoyaltyList";
-import RewardsExchangePage from "@/pages/RewardsExchangePage";
+import SettingLoyalty from "../SettingLoyalty/SettingLoyalty";
 import LoyaltyReportPage from "@/pages/LoyaltyReportPage";
 
 type TabKey =
@@ -17,7 +16,6 @@ type TabKey =
   | "membership_class"
   | "points_history"
   | "loyalty_rules"
-  | "rewards_exchange"
   | "loyalty_report"
   | null;
 
@@ -34,8 +32,7 @@ const SECTIONS = [
   {
     label: "CẤU HÌNH CHƯƠNG TRÌNH",
     cards: [
-      { tab: "loyalty_rules",    icon: "AccumulatePoints",   title: "Quy tắc tích điểm",      bg: "#E1F5EE", des: "Cấu hình quy tắc tích điểm theo đơn hàng, sản phẩm hoặc hành vi mua sắm" },
-      { tab: "rewards_exchange", icon: "ExchangePoints",     title: "Phần thưởng & Đổi điểm", bg: "#FAECE7", des: "Quản lý phần thưởng và thiết lập chương trình đổi điểm lấy quà, voucher cho hội viên" },
+      { tab: "loyalty_rules", icon: "AccumulatePoints", title: "Quy tắc tích điểm", bg: "#E1F5EE", des: "Cấu hình quy tắc, phần thưởng và tỷ lệ quy đổi điểm cho chương trình hội viên" },
     ],
   },
   {
@@ -49,10 +46,19 @@ const SECTIONS = [
 export default function MemberCustomersPage() {
   document.title = "Khách hàng thành viên";
 
-  const [tab, setTab]           = useState<TabKey>(null);
-  const [isDetail, setIsDetail] = useState(false);
+  const [tab, setTab]                         = useState<TabKey>(null);
+  const [isDetail, setIsDetail]               = useState(false);
+  const [initialCustomerId, setInitialCustomerId] = useState<number | null>(null);
 
   const handleBack = (v: boolean) => v && setIsDetail(false);
+
+  // Gọi từ LoyaltyWallet khi user bấm vào điểm của một thành viên
+  // → chuyển sang tab "Lịch sử điểm" và pre-filter theo customerId đó
+  const handleViewHistory = (customerId: number) => {
+    setInitialCustomerId(customerId);
+    setTab("points_history");
+    setIsDetail(true);
+  };
 
   return (
     <div className="page-content">
@@ -94,11 +100,10 @@ export default function MemberCustomersPage() {
       )}
 
       {/* ── Detail pages ── */}
-      {isDetail && tab === "member_list"      && <LoyaltyWallet      onBackProps={handleBack} />}
+      {isDetail && tab === "member_list"      && <LoyaltyWallet      onBackProps={handleBack} onViewHistory={handleViewHistory} />}
       {isDetail && tab === "membership_class" && <MembershipClass     onBackProps={handleBack} />}
-      {isDetail && tab === "points_history"   && <LoyaltyPointLedger  onBackProps={handleBack} />}
-      {isDetail && tab === "loyalty_rules"    && <SettingLoyaltyList  onBackProps={handleBack} />}
-      {isDetail && tab === "rewards_exchange" && <RewardsExchangePage onBackProps={handleBack} />}
+      {isDetail && tab === "points_history"   && <LoyaltyPointLedger  onBackProps={(v) => { setInitialCustomerId(null); handleBack(v); }} initialCustomerId={initialCustomerId} />}
+      {isDetail && tab === "loyalty_rules"    && <SettingLoyalty      onBackProps={handleBack} />}
       {isDetail && tab === "loyalty_report"   && <LoyaltyReportPage   onBackProps={handleBack} />}
     </div>
   );

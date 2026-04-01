@@ -28,6 +28,10 @@ export const urlsApi = {
   dashboard: {
     detail: prefixSales + "/invoice/dashboard",
   },
+  shortcut: {
+    get: prefixSales + "/user-shortcut/get",
+    update: prefixSales + "/user-shortcut/update",
+  },
   beautySalon: {
     list: prefixRebornVn + "/beautySalon/list",
     approve: prefixRebornVn + "/beautySalon/approve",
@@ -225,6 +229,15 @@ export const urlsApi = {
 
     // chia data khách hàng Tnex
     customerAssign: prefixAdmin + "/customer/assign",
+  },
+
+  careScenario: {
+    list: prefixBiz + "/market/careScenario/list",
+    stats: prefixBiz + "/market/careScenario/stats",
+    get: prefixBiz + "/market/careScenario/get",
+    update: prefixBiz + "/market/careScenario/update",
+    toggleActive: prefixBiz + "/market/careScenario/toggle-active",
+    delete: prefixBiz + "/market/careScenario/delete",
   },
 
   // GHD api chống chế =))))))))))))
@@ -431,12 +444,15 @@ export const urlsApi = {
     historyUseCard: prefixSales + "/invoice/using/card",
     // lấy mã hoá đơn
     invoiceCode: prefixSales + "/invoice/code",
+    // Gửi biên lai qua email
+    sendEmail: prefixSales + "/invoice/sendEmail",
     salesReport: {
       posSummary: prefixSales + "/report/pos-summary",
       summary: prefixSales + "/report/summary",
       dailySeries: prefixSales + "/report/daily-series",
       channelBreakdown: prefixSales + "/report/channel-breakdown",
       full: prefixSales + "/report/sales",
+      debtSummary: prefixSales + "/report/debt-summary",
     },
   },
   // Hóa đơn VAT điện tử – tích hợp Viettel S-Invoice qua cloud-integration
@@ -466,6 +482,12 @@ export const urlsApi = {
     approve: prefixInventory + "/invoice/import/approve",
     cancel: prefixInventory + "/invoice/import/cancel",
   },
+  stockInitImport: {
+    template: prefixInventory + "/stock-init/import/template",
+    upload: prefixInventory + "/stock-init/import/upload",
+    confirm: prefixInventory + "/stock-init/import/confirm",
+    cancel: prefixInventory + "/stock-init/import/cancel",
+  },
   shipping: {
     create: prefixLogistics + "/shipment/create",
     list: prefixLogistics + "/shipment/list",
@@ -473,6 +495,28 @@ export const urlsApi = {
     wards: prefixIntegration + "/address/wards",
     districts: prefixIntegration + "/address/districts",
     provinces: prefixIntegration + "/address/provinces",
+  },
+
+  // --- Quản lý đơn vị vận chuyển (Shipping Partner Setup) ---
+  shippingPartner: {
+    // Danh sách hãng VC + stats hôm nay — từ logistics service
+    carrierList: prefixLogistics + "/carrier/list",
+    // Trạng thái kết nối (isConnected, apiKeyMasked) — từ integration service
+    carrierConfigs: prefixIntegration + "/carrier/configs",
+    // Lưu API key/token kết nối hãng VC
+    connect: prefixIntegration + "/carrier/connect",
+    // Ngắt kết nối hãng VC
+    disconnect: prefixIntegration + "/carrier/disconnect",
+  },
+
+  // --- Cấu hình phí vận chuyển nội bộ (ShippingFeeConfig) ---
+  shippingFeeConfig: {
+    // GET — lấy cấu hình hiện tại (regionFees + orderValueFees)
+    get: prefixLogistics + "/fee-config",
+    // POST — lưu toàn bộ cấu hình (replace all)
+    save: prefixLogistics + "/fee-config/save",
+    // GET — gợi ý phí ship khi tạo đơn: ?provinceName=...&orderValue=...
+    suggest: prefixLogistics + "/fee-config/suggest",
   },
   boughtService: {
     addToInvoice: prefixAdmin + "/boughtService/update",
@@ -503,6 +547,7 @@ export const urlsApi = {
     filterWarehouse: prefixWarehouse + "/product/in_warehouse",
     list: prefixInventory + "/product/list",
     topProduct: prefixSales + "/invoice/topProduct",
+    topProductV2: prefixSales + "/invoice/topProduct/v2",
     detail: prefixInventory + "/product/get",
     update: prefixInventory + "/product/update",
     updateContent: prefixInventory + "/product/update/content",
@@ -522,9 +567,24 @@ export const urlsApi = {
     wUpdateInventory: prefixInventory + "/product/update/inventory-setting",
     wWebsiteSettingGet: prefixInventory + "/product/website-setting/get",
     wWebsiteSettingUpdate: prefixInventory + "/product/website-setting/update",
+    wWebsiteSettingDefaultGet: prefixInventory + "/product/website-setting/default",
+    wWebsiteSettingDefaultUpdate: prefixInventory + "/product/website-setting/default/update",
     wWebsiteToggle: prefixInventory + "/product/update/website-toggle",
     wInventoryCurrent: prefixInventory + "/product/inventory/current",
     wScan: prefixInventory + "/product/scan",
+    // ── Content (mô tả chi tiết dạng editor) ──
+    wDescriptionGet: prefixInventory + "/product-description/get",
+    wDescriptionUpdate: prefixInventory + "/product-description/update",
+    // ── Tags ──
+    wTagList: prefixInventory + "/product/tags/list",
+    wTagUpdate: prefixInventory + "/product/tags/update",
+    wTagCreate: prefixInventory + "/product-tag/update", // dùng lại endpoint tag CRUD
+    // ── Import ──
+    wImportTemplate: prefixInventory + "/product/import/template",
+    wImportUpload: prefixInventory + "/product/import/uploadFile",
+    wImportErrorFile: prefixInventory + "/product/import/error-file",
+    wImportConfirm: prefixInventory + "/product/import/confirm",
+    wImportCancel: prefixInventory + "/product/import/cancel",
     listById: prefixAdmin + "/product/list_by_id",
     publicList: prefixInventory + "/public/product/list",
 
@@ -546,6 +606,7 @@ export const urlsApi = {
     // ── Variant Groups ──
     variantGroupsUpdate: prefixInventory + "/product/variant-groups/update",
     variantGroupsDelete: prefixInventory + "/product/variant-groups/delete",
+    variantDelete: prefixInventory + "/product/variant/delete",
 
     // ── Specifications ──
     specificationsUpdate: prefixInventory + "/product/specifications/update",
@@ -764,11 +825,12 @@ export const urlsApi = {
     qr: prefixBilling + "/debt/qr",
   },
   cashbook: {
-    list: prefixAdmin + "/cashbook/list",
-    update: prefixAdmin + "/cashbook/update",
-    delete: prefixAdmin + "/cashbook/delete",
-    export: prefixAdmin + "/cashbook/export",
-    detail: prefixAdmin + "/cashbook/get",
+    list: prefixBilling + "/cashbook/list",
+    update: prefixBilling + "/cashbook/update",
+    delete: prefixBilling + "/cashbook/delete",
+    export: prefixBilling + "/cashbook/export",
+    exportFile: prefixBilling + "/cashbook/export-file",
+    detail: prefixBilling + "/cashbook/get"
   },
   qrCodePro: {
     generate: prefixBilling + "/vietqr/api/generate_qr",
@@ -985,11 +1047,9 @@ export const urlsApi = {
   },
 
   categoryService: {
-    // Đoạn này là category của ông dịch vụ
-    // list: prefixWarehouse + "/categoryItem/list",
-    // list: prefixWarehouse + "/public/categoryItem/list",
     list: prefixInventory + "/category/list",
     update: prefixInventory + "/category/update",
+    updatePositions: prefixInventory + "/category/update-positions",
     detail: prefixInventory + "/category/get",
     delete: prefixInventory + "/category/delete",
   },
@@ -1049,6 +1109,12 @@ export const urlsApi = {
     list: prefixAdmin + "/unit/list",
     update: prefixAdmin + "/unit/update",
     delete: prefixAdmin + "/unit/delete",
+  },
+
+  unitExchange: {
+    listByProduct: prefixInventory + "/unitExchange/listByProduct",
+    update: prefixInventory + "/unitExchange/update",
+    delete: prefixInventory + "/unitExchange/delete",
   },
   reportTemplate: {
     list: prefixAdmin + "/reportTemplate/list",
@@ -2055,6 +2121,34 @@ export const urlsApi = {
     detail: prefixApplication + "/material/get",
     upload: prefixApplication + "/material/upload",
   },
+  materialNvl: {
+    list: prefixInventory + "/material/list",
+    summary: prefixInventory + "/material/summary",
+    get: prefixInventory + "/material/get",
+    update: prefixInventory + "/material/update",
+    delete: prefixInventory + "/material/delete",
+    updateStatus: prefixInventory + "/material/update/status",
+    importList: prefixInventory + "/material/import/list",
+    importGet: prefixInventory + "/material/import/get",
+    importCreate: prefixInventory + "/material/import/create",
+    importConfirm: prefixInventory + "/material/import/confirm",
+    importCancel: prefixInventory + "/material/import/cancel",
+    bomList: prefixInventory + "/material/bom/list",
+    bomSummary: prefixInventory + "/material/bom/summary",
+    bomGet: prefixInventory + "/material/bom/get",
+    bomUpdate: prefixInventory + "/material/bom/update",
+    bomUpdateStatus: prefixInventory + "/material/bom/update/status",
+    bomDelete: prefixInventory + "/material/bom/delete",
+    export: prefixInventory + "/material/export",
+    // ── Lệnh sản xuất ────────────────────────────────────────────
+    productionList: prefixInventory + "/material/production/list",
+    productionSummary: prefixInventory + "/material/production/summary",
+    productionGet: prefixInventory + "/material/production/get",
+    productionCreate: prefixInventory + "/material/production/create",
+    productionStart: prefixInventory + "/material/production/start",
+    productionConfirm: prefixInventory + "/material/production/confirm",
+    productionCancel: prefixInventory + "/material/production/cancel",
+  },
   businessCategory: {
     list: prefixApplication + "/businessCategory/list",
     update: prefixApplication + "/businessCategory/update",
@@ -2222,8 +2316,8 @@ export const urlsApi = {
   salesReport: {
     full: prefixSales + "/report/sales", // API 4 — gộp 1 lần (khuyến nghị)
     summary: prefixSales + "/report/summary", // API 1 — chỉ 4 KPI card
-    dailySeries: prefixSales + "/report/daily-series", // API 2 — biểu đồ cột
-    channelBreakdown: prefixSales + "/report/channel-breakdown", // API 3 — bảng kênh bán
+    dailySeries: prefixSales + "/report/daily-series", // API 2 — biểu đồ cột    
+    channelBreakdown: prefixSales + "/report/channel-breakdown", // API 3 — bảng kênh bán    
   },
   // Báo cáo
   report: {
@@ -2366,17 +2460,26 @@ export const urlsApi = {
     update: prefixMarket + "/promotion/update",
     delete: prefixMarket + "/promotion/delete",
     countByStatus: prefixMarket + "/promotion/count-by-status",
-    updateStatus:  prefixMarket + "/promotion/update/status",
+    updateStatus: prefixMarket + "/promotion/update/status",
     updateDmnSetting: prefixMarket + "/promotion/update/dmn-setting",
+    share: prefixMarket + "/promotion/share",
+  },
+  fixedPricePromotion: {
+    getProducts: prefixMarket + "/fixedPrice/products",
+    saveProducts: prefixMarket + "/fixedPrice/products/save",
+    activeEntries: prefixMarket + "/fixedPrice/active-entries",
+    deleteProduct: prefixMarket + "/fixedPrice/product/delete",
   },
   couponProgram: {
-    list:          prefixMarket + "/coupon/list",
-    get:           prefixMarket + "/coupon/get",
-    update:        prefixMarket + "/coupon/update",
-    delete:        prefixMarket + "/coupon/delete",
-    updateStatus:  prefixMarket + "/coupon/update/status",
+    list: prefixMarket + "/coupon/list",
+    get: prefixMarket + "/coupon/get",
+    update: prefixMarket + "/coupon/update",
+    delete: prefixMarket + "/coupon/delete",
+    updateStatus: prefixMarket + "/coupon/update/status",
     countByStatus: prefixMarket + "/coupon/count-by-status",
-    sumUsed:       prefixMarket + "/coupon/sum-used",
+    sumUsed: prefixMarket + "/coupon/sum-used",
+    apply: prefixMarket + "/coupon/apply",
+    share: prefixMarket + "/coupon/share",
   },
   email: {
     list: prefixAdmin + "/outlookMail/list",
@@ -2440,6 +2543,9 @@ export const urlsApi = {
     promotionCheckEligible: prefixBiz + "/market/promotion/check-eligible",
     createLoyaltyWallet: prefixBiz + "/market/loyaltyWallet/update",
     fluctuatePoint: prefixBiz + "/market/loyaltyPointLedger/fluctuatePoint",
+    getLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/get",
+    updateLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/update",
+    consumePoint: prefixBiz + "/market/loyaltyPointLedger/consumePoint",
   },
 
   //TODO: Start quy trình bpm
@@ -3347,6 +3453,8 @@ export const urls = {
   sell: "/sell",
   promotional_program: "/promotional_program",
   promotional_report: "/promotional_report",
+  share_promo: "/share_promo",
+  share_coupon: "/share_coupon",
 
   contract: "/contract",
   offer: "/offer",
@@ -3387,6 +3495,7 @@ export const urls = {
   finance_management_cashbook_template: "/finance_management/cashbook_template",
   finance_management_fund_management: "/finance_management/fund_management",
   finance_management_debt_management: "/finance_management/debt_management",
+  finance_management_category_management: "/finance_management/category_management",
   finance_management_debt_transaction: "/finance_management/debt_transaction",
   finance_management_shift_inventory: "/finance_management/shift_inventory",
   payment_control: "/payment_control",
@@ -3417,7 +3526,7 @@ export const urls = {
   setting_call: "/setting_call",
   setting_email: "/setting_email",
   setting_zalo: "/setting_zalo",
-  setting_channels: "/setting_channels",   // Landing page: Kênh liên lạc (SMS/Email/Zalo/Tổng đài)
+  setting_channels: "/setting_channels", // Landing page: Kênh liên lạc (SMS/Email/Zalo/Tổng đài)
   setting_integrations: "/setting_integrations", // Landing page: Tích hợp & kết nối
   sms_marketting: "/sms_marketting",
   email_marketting: "/email_marketting",
@@ -3428,7 +3537,7 @@ export const urls = {
   setting_common: "/setting_common",
   setting_rose: "/setting_rose",
   setting_basis: "/setting_basis",
-  setting_org: "/setting_org",        // Tổ chức & phân quyền
+  setting_org: "/setting_org", // Tổ chức & phân quyền
   setting_payment_method: "/setting_payment_method",
   setting_operate: "/setting_operate",
   setting_timekeeping: "/setting_timekeeping",

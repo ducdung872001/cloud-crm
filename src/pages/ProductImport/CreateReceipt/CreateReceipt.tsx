@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import moment from "moment";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -47,8 +47,10 @@ const getImportedProductsFromResponse = (response: any): IInvoiceDetailResponse[
 };
 
 export default function CreateReceipt() {
-  document.title = "Tạo phiếu nhập kho";
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isViewMode = searchParams.get("mode") === "view";
+  document.title = isViewMode ? "Xem phiếu nhập kho" : "Tạo phiếu nhập kho";
 
   const [invoiceId, setInvoiceId] = useState<number>(null);
   const [invoiceInfo, setInvoiceInfo] = useState<IInvoiceCreateResponse>({ ...DEFAULT_INVOICE });
@@ -130,6 +132,14 @@ export default function CreateReceipt() {
   };
 
   useEffect(() => { loadInvoiceOptions(); }, [invoiceStatusFilter, invoiceInfo?.inventoryId]);
+
+  // Auto-load phiếu từ URL param ?invoiceId=xxx (từ màn danh sách)
+  useEffect(() => {
+    const idFromUrl = searchParams.get("invoiceId");
+    if (idFromUrl && +idFromUrl > 0) {
+      reloadInvoiceContext(+idFromUrl);
+    }
+  }, []);
 
   const handleInvoiceCreated = async (invoice: IInvoiceCreateResponse) => {
     const nextId = invoice?.id ?? 0; if (!nextId) return;
@@ -236,7 +246,7 @@ export default function CreateReceipt() {
           Quản lý kho
         </span>
         <Icon name="ArrowRight" style={{ width: 14, opacity: 0.4 }} />
-        <span className="cr-breadcrumb__current">Tạo phiếu nhập kho</span>
+        <span className="cr-breadcrumb__current">{isViewMode ? "Xem phiếu nhập kho" : "Tạo phiếu nhập kho"}</span>
       </div>
 
       <div className="cr-layout">

@@ -14,7 +14,7 @@ export interface ICashbookFilterRequest {
 export interface ICashbookRequest {
   id?: number;
   fmtTransDate?: string;
-  transDate: string;
+  transDate?: string;
   type?: number;
   categoryId?: number;
   categoryName: string;
