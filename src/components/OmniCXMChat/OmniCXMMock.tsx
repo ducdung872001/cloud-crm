@@ -269,11 +269,17 @@ export default function OmniCXMMock({ onEvent }: Props) {
                       background: "rgba(255,255,255,0.2)", border: "none", color: "#fff",
                       borderRadius: 6, padding: "4px 8px", fontSize: 11, cursor: "pointer",
                     }}>Spam</button> */}
+                    
+                    {/* <button onClick={handleSolved} style={{
+                      background: "rgba(255,255,255,0.25)", border: "none", color: "#fff",
+                      borderRadius: 6, padding: "4px 8px", fontSize: 11, cursor: "pointer",
+                      fontWeight: 600,
+                    }}>Kết thúc</button> */}
                     <button onClick={handleSolved} style={{
                       background: "rgba(255,255,255,0.25)", border: "none", color: "#fff",
                       borderRadius: 6, padding: "4px 8px", fontSize: 11, cursor: "pointer",
                       fontWeight: 600,
-                    }}>Kết thúc</button>
+                    }}>Tạo đơn hàng</button>
                   </div>
                 </>
               ) : (

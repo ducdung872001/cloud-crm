@@ -16,8 +16,8 @@ export default {
   },
 
   // Chi tiết đơn vận chuyển
-  tracking: (id: string) => {
-    return fetch(`${urlsApi.shipping.shipment}/${id}/tracking`, {
+  tracking: (shipmentOrder: string) => {
+    return fetch(`${urlsApi.shipping.shipment}/${shipmentOrder}/tracking`, {
       method: "GET",
     }).then((res) => res.json());
   },
@@ -31,12 +31,11 @@ export default {
   },
 
   // Cập nhật đơn vận chuyển
-  // update: (body: IShippingOrderCreateRequest) => {
-  //   return fetch(urlsApi.shipping.update, {
-  //     method: "PUT",
-  //     body: JSON.stringify(body),
-  //   }).then((res) => res.json());
-  // },
+  updateStatus: (shipmentOrder: string, status: string) => {
+    return fetch(`${urlsApi.shipping.shipment}/${shipmentOrder}/update?status=${status}`, {
+      method: "post",
+    }).then((res) => res.json());
+  },
 
   // Hủy đơn vận chuyển
   cancel: (id: string) => {

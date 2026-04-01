@@ -3,17 +3,22 @@ import { QRCodeCanvas } from "qrcode.react";
 import Button from "components/button/button";
 import QrCodeProService from "services/QrCodeProService";
 import "./index.scss";
+import { useReconciliationList } from "@/hooks/useReconciliationList";
 
 type BankStmt = {
-  date: string; ref: string; desc: string;
-  amount: number; type: "thu" | "chi"; matched: boolean;
+  date: string;
+  ref: string;
+  desc: string;
+  amount: number;
+  type: "thu" | "chi";
+  matched: boolean;
 };
 
 const MOCK_BANK_STMTS: BankStmt[] = [
-  { date: "16/03", ref: "FT26075123", desc: "TT don hang SO2318",         amount: 31200000, type: "thu", matched: true  },
-  { date: "16/03", ref: "FT26075234", desc: "KH Nguyen Lan chuyen khoan", amount: 8750000,  type: "thu", matched: true  },
-  { date: "15/03", ref: "FT26074345", desc: "CHUYEN TIEN LUONG T3/2026",  amount: 28000000, type: "chi", matched: false },
-  { date: "15/03", ref: "FT26074456", desc: "VNPAY QR giao dich online",  amount: 3500000,  type: "thu", matched: true  },
+  { date: "16/03", ref: "FT26075123", desc: "TT don hang SO2318", amount: 31200000, type: "thu", matched: true },
+  { date: "16/03", ref: "FT26075234", desc: "KH Nguyen Lan chuyen khoan", amount: 8750000, type: "thu", matched: true },
+  { date: "15/03", ref: "FT26074345", desc: "CHUYEN TIEN LUONG T3/2026", amount: 28000000, type: "chi", matched: false },
+  { date: "15/03", ref: "FT26074456", desc: "VNPAY QR giao dich online", amount: 3500000, type: "thu", matched: true },
   { date: "14/03", ref: "FT26073567", desc: "TT nha cung cap Minh Hoang", amount: 12500000, type: "chi", matched: false },
 ];
 
@@ -21,20 +26,22 @@ const formatVnd = (v: number) => new Intl.NumberFormat("vi-VN").format(v) + " VN
 
 const Reconcile: React.FC = () => {
   const [bankAccount, setBankAccount] = useState("Vietcombank ****1234");
-  const [date, setDate]               = useState("2026-03-16");
-  const [running, setRunning]         = useState(false);
-  const [doneMsg, setDoneMsg]         = useState<string | null>(null);
+  const [date, setDate] = useState("2026-03-16");
+  const [running, setRunning] = useState(false);
+  const [doneMsg, setDoneMsg] = useState<string | null>(null);
 
-  const matched  = useMemo(() => MOCK_BANK_STMTS.filter((b) => b.matched).length, []);
+  const {} = useReconciliationList({ enabled: true }); // ví dụ nếu muốn fetch data từ API thì bật flag enabled, còn không thì cứ để false
+
+  const matched = useMemo(() => MOCK_BANK_STMTS.filter((b) => b.matched).length, []);
   const totalThu = useMemo(() => MOCK_BANK_STMTS.filter((b) => b.type === "thu").reduce((a, b) => a + b.amount, 0), []);
-  const totalTx  = MOCK_BANK_STMTS.length;
+  const totalTx = MOCK_BANK_STMTS.length;
 
   // ── QR Drawer ──────────────────────────────────────────────────────────────
-  const [showQR,      setShowQR]      = useState(false);
-  const [qrTarget,    setQrTarget]    = useState("");
-  const [qrAmount,    setQrAmount]    = useState("");
-  const [qrCode,      setQrCode]      = useState<string | null>(null);
-  const [qrLoading,   setQrLoading]   = useState(false);
+  const [showQR, setShowQR] = useState(false);
+  const [qrTarget, setQrTarget] = useState("");
+  const [qrAmount, setQrAmount] = useState("");
+  const [qrCode, setQrCode] = useState<string | null>(null);
+  const [qrLoading, setQrLoading] = useState(false);
   const [qrConfirmed, setQrConfirmed] = useState(false);
 
   const handleOpenQR = () => {
@@ -81,7 +88,7 @@ const Reconcile: React.FC = () => {
     }
   };
 
-  const amtNumber   = Number(qrAmount.replace(/\D/g, "") || 0);
+  const amtNumber = Number(qrAmount.replace(/\D/g, "") || 0);
   const canGenerate = qrTarget.trim().length > 0 && amtNumber > 0;
 
   const run = async () => {
@@ -121,7 +128,9 @@ const Reconcile: React.FC = () => {
       <div className="grid3 mb16">
         <div className="stat">
           <div className="stat-lbl">Đã khớp tự động</div>
-          <div className="stat-val c-gr">{matched}/{totalTx} GD</div>
+          <div className="stat-val c-gr">
+            {matched}/{totalTx} GD
+          </div>
           <div className="stat-chg c-gr">Tỷ lệ khớp {Math.round((matched / totalTx) * 100)}%</div>
           <div className="stat-bar stat-bar--gr" />
         </div>
@@ -142,13 +151,19 @@ const Reconcile: React.FC = () => {
       {doneMsg && <div className="alert alert--success mb16">{doneMsg}</div>}
 
       <div className="card mb16">
-        <div className="card-title mb12">Bảng đối soát · {bankAccount} · {date}</div>
+        <div className="card-title mb12">
+          Bảng đối soát · {bankAccount} · {date}
+        </div>
         <div className="table-wrap">
           <table className="fin-table">
             <thead>
               <tr>
-                <th>Ngày</th><th>Mã tham chiếu</th><th>Nội dung ngân hàng</th>
-                <th className="tr">Số tiền</th><th>Kết quả</th><th className="hide-m"></th>
+                <th>Ngày</th>
+                <th>Mã tham chiếu</th>
+                <th>Nội dung ngân hàng</th>
+                <th className="tr">Số tiền</th>
+                <th>Kết quả</th>
+                <th className="hide-m"></th>
               </tr>
             </thead>
             <tbody>
@@ -158,15 +173,16 @@ const Reconcile: React.FC = () => {
                   <td className="mono blue">{b.ref}</td>
                   <td className="fw">{b.desc}</td>
                   <td className={`tr mono fw ${b.type === "thu" ? "c-gr" : "c-rd"}`}>
-                    {b.type === "thu" ? "+ " : "- "}{formatVnd(b.amount)}
+                    {b.type === "thu" ? "+ " : "- "}
+                    {formatVnd(b.amount)}
                   </td>
-                  <td>
-                    {b.matched
-                      ? <span className="badge bg">Đã khớp</span>
-                      : <span className="badge ba">Chưa khớp</span>}
-                  </td>
+                  <td>{b.matched ? <span className="badge bg">Đã khớp</span> : <span className="badge ba">Chưa khớp</span>}</td>
                   <td className="hide-m">
-                    {!b.matched && <Button color="secondary" variant="outline">Khớp thủ công</Button>}
+                    {!b.matched && (
+                      <Button color="secondary" variant="outline">
+                        Khớp thủ công
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -195,14 +211,13 @@ const Reconcile: React.FC = () => {
       </div>
 
       {showQR && (
-        <div
-          className="reconcile-qr-overlay"
-          onClick={(e) => e.target === e.currentTarget && handleCloseQR()}
-        >
+        <div className="reconcile-qr-overlay" onClick={(e) => e.target === e.currentTarget && handleCloseQR()}>
           <div className="reconcile-qr-drawer">
             <div className="reconcile-qr-drawer__header">
               <h3>QR Thu nợ</h3>
-              <button type="button" className="reconcile-qr-drawer__close" onClick={handleCloseQR}>✕</button>
+              <button type="button" className="reconcile-qr-drawer__close" onClick={handleCloseQR}>
+                ✕
+              </button>
             </div>
             <div className="reconcile-qr-drawer__body">
               <div className="reconcile-qr-field">
@@ -210,7 +225,11 @@ const Reconcile: React.FC = () => {
                 <input
                   type="text"
                   value={qrTarget}
-                  onChange={(e) => { setQrTarget(e.target.value); setQrCode(null); setQrConfirmed(false); }}
+                  onChange={(e) => {
+                    setQrTarget(e.target.value);
+                    setQrCode(null);
+                    setQrConfirmed(false);
+                  }}
                   placeholder="Tên khách hàng / NCC..."
                   className="reconcile-qr-input"
                 />
@@ -222,7 +241,11 @@ const Reconcile: React.FC = () => {
                     type="text"
                     inputMode="numeric"
                     value={amtNumber > 0 ? new Intl.NumberFormat("vi-VN").format(amtNumber) : ""}
-                    onChange={(e) => { setQrAmount(e.target.value.replace(/\D/g, "")); setQrCode(null); setQrConfirmed(false); }}
+                    onChange={(e) => {
+                      setQrAmount(e.target.value.replace(/\D/g, ""));
+                      setQrCode(null);
+                      setQrConfirmed(false);
+                    }}
                     placeholder="0"
                     className="reconcile-qr-input"
                   />
@@ -243,11 +266,7 @@ const Reconcile: React.FC = () => {
                 )}
               </div>
               {!qrCode ? (
-                <button
-                  className="reconcile-qr-btn reconcile-qr-btn--primary"
-                  onClick={handleGenerateQR}
-                  disabled={qrLoading || !canGenerate}
-                >
+                <button className="reconcile-qr-btn reconcile-qr-btn--primary" onClick={handleGenerateQR} disabled={qrLoading || !canGenerate}>
                   {qrLoading ? "Đang tạo..." : "Tạo mã QR"}
                 </button>
               ) : qrConfirmed ? (

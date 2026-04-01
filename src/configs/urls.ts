@@ -831,10 +831,12 @@ export const urlsApi = {
     delete: prefixBilling + "/cashbook/delete",
     export: prefixBilling + "/cashbook/export",
     exportFile: prefixBilling + "/cashbook/export-file",
+    exportSimple: prefixBilling + "/cashbook/export-simple",
     detail: prefixBilling + "/cashbook/get"
   },
   qrCodePro: {
     generate: prefixBilling + "/vietqr/api/generate_qr",
+    reconciliation: prefixBilling + "/reconciliation/list",
   },
   orderRequest: {
     list: prefixSales + "/order-request/list",
