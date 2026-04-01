@@ -108,6 +108,7 @@ export interface IShipmentCreatePayload {
   shippingFeeBearer: "RECEIVER" | "SENDER";
   items: { name: string; quantity: number; weightGram: number; price: number }[];
   note: string;
+  status?: string;
 }
 
 export interface ITemporarilyInvoiceRequest {

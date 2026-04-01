@@ -5,7 +5,28 @@ import moment from "moment";
 import { formatCurrency } from "reborn-util";
 import { showToast } from "utils/common";
 import ShippingService from "services/ShippingService";
-import { IShippingOrderResponse, ITrackingTimelineItem, ITrackingResult } from "model/shipping/ShippingResponseModel";
+import { IShippingOrderResponse } from "model/shipping/ShippingResponseModel";
+
+// ─── Interface mới theo cấu trúc API ────────────────────────────────────────
+
+interface ITrackingTimelineItem {
+  statusCode: string;       // "DRAFT", "SUBMITTED", "IN_TRANSIT", ...
+  statusLabel: string;      // "Đơn vừa được tạo trên hệ thống"
+  description?: string;     // "Đơn vừa được tạo trên hệ thống"
+  location?: string;        // "Bưu cục Q.Tân Bình, TP.HCM"
+  eventTime?: string;       // "2026-02-26T04:01:07" — đổi từ timestamp
+  rawCarrierStatus?: string;
+}
+
+interface ITrackingResult {
+  shipmentOrder: string;
+  carrierName: string;
+  carrierTrackingCode: string;
+  currentStatus: string;          // "DELIVERED"
+  currentStatusLabel: string;     // "Giao thành công"
+  colorHex?: string;              // "#4CAF50"
+  timeline: ITrackingTimelineItem[];
+}
 
 interface Props {
   onShow: boolean;
@@ -14,28 +35,59 @@ interface Props {
   onReload: () => void;
 }
 
-// ---- Tất cả bước có thể có trong hành trình ----
-const ALL_STEPS = [
-  { status: "pending",    label: "Đơn hàng được tạo" },
-  { status: "picked_up",  label: "Đã lấy hàng" },
-  { status: "in_transit", label: "Đơn hàng đang được giao" },
-  { status: "delivered",  label: "Giao hàng thành công" },
+// ─── Thứ tự hiển thị timeline chuẩn ─────────────────────────────────────────
+// Các status này khớp với statusCode trả về từ API (uppercase)
+const NORMAL_STEPS = [
+  { code: "DRAFT",            label: "Đơn hàng được tạo" },
+  { code: "SUBMITTED",        label: "Đã gửi lên hãng vận chuyển" },
+  { code: "WAITING_PICKUP",   label: "Chờ lấy hàng" },
+  { code: "PICKED_UP",        label: "Đã lấy hàng" },
+  { code: "IN_TRANSIT",       label: "Đang vận chuyển" },
+  { code: "OUT_FOR_DELIVERY", label: "Đang giao hàng" },
+  { code: "DELIVERED",        label: "Giao hàng thành công" },
 ];
 
-const RETURNED_STEPS = [
-  { status: "pending",    label: "Đơn hàng được tạo" },
-  { status: "picked_up",  label: "Đã lấy hàng" },
-  { status: "in_transit", label: "Đang giao" },
-  { status: "failed",     label: "Giao hàng thất bại" },
-  { status: "returned",   label: "Hoàn hàng" },
+const RETURN_STEPS = [
+  { code: "DRAFT",            label: "Đơn hàng được tạo" },
+  { code: "SUBMITTED",        label: "Đã gửi lên hãng vận chuyển" },
+  { code: "WAITING_PICKUP",   label: "Chờ lấy hàng" },
+  { code: "PICKED_UP",        label: "Đã lấy hàng" },
+  { code: "IN_TRANSIT",       label: "Đang vận chuyển" },
+  { code: "OUT_FOR_DELIVERY", label: "Đang giao hàng" },
+  { code: "FAILED_DELIVERY",  label: "Giao hàng thất bại" },
+  { code: "WAITING_RETURN",   label: "Chờ hoàn hàng" },
+  { code: "RETURNING",        label: "Đang hoàn hàng" },
+  { code: "RETURNED",         label: "Hoàn hàng thành công" },
 ];
 
-// ---- Thứ tự status để xác định step hiện tại ----
-const STATUS_ORDER = ["pending", "picked_up", "in_transit", "delivered", "failed", "returned"];
+// Các status cuối luồng hoàn
+const RETURN_STATUSES = new Set([
+  "FAILED_DELIVERY", "WAITING_RETURN", "RETURNING", "RETURNED",
+]);
 
-function getStepIndex(status: string): number {
-  return STATUS_ORDER.indexOf(status);
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+/** Badge màu dựa trên colorHex từ API, fallback theo status */
+function getStatusBadgeStyle(currentStatus: string, colorHex?: string): React.CSSProperties {
+  if (colorHex) {
+    return {
+      background: `${colorHex}22`,
+      color: colorHex,
+      border: `1px solid ${colorHex}55`,
+    };
+  }
+  // Fallback
+  const map: Record<string, React.CSSProperties> = {
+    DELIVERED:   { background: "#d1fae5", color: "#065f46" },
+    RETURNED:    { background: "#fee2e2", color: "#b91c1c" },
+    CANCELLED:   { background: "#f3f4f6", color: "#6b7280" },
+    IN_TRANSIT:  { background: "#dbeafe", color: "#1d4ed8" },
+    OUT_FOR_DELIVERY: { background: "#ede9fe", color: "#6d28d9" },
+  };
+  return map[currentStatus] ?? { background: "#f3f4f6", color: "#374151" };
 }
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function ShippingOrderDetailModal({ onShow, data, onHide, onReload }: Props) {
   const [trackingResult, setTrackingResult] = useState<ITrackingResult | null>(null);
@@ -44,6 +96,7 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
 
   useEffect(() => {
     if (onShow && data) {
+      setTrackingResult(null);
       loadTracking(data.shipmentOrder);
       setActiveTab("tracking");
     }
@@ -65,99 +118,124 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
     }
   };
 
-  const handleCallShipper = () => {
-    showToast("Chưa có thông tin shipper", "warning");
-  };
-
   if (!data) return null;
 
-  // Ưu tiên dùng currentStatus từ API tracking, fallback về statusCode từ danh sách
-  const currentStatus = trackingResult?.currentStatus
-    ? trackingResult.currentStatus.toLowerCase()
-    : data.statusCode?.toLowerCase() ?? "";
+  const currentStatus = (
+    trackingResult?.currentStatus ?? data.statusCode ?? ""
+  ).toUpperCase();
 
-  const isReturned = currentStatus === "returned" || currentStatus === "failed";
-  const steps = isReturned ? RETURNED_STEPS : ALL_STEPS;
-  const currentStepIdx = getStepIndex(currentStatus);
+  const isReturnFlow = RETURN_STATUSES.has(currentStatus);
+  const steps = isReturnFlow ? RETURN_STEPS : NORMAL_STEPS;
 
-  // ---- Render tracking timeline ----
-  const renderTimeline = () => {
-    // Map timeline API theo status để tra cứu nhanh
-    const timelineMap: Record<string, ITrackingTimelineItem> = {};
-    (trackingResult?.timeline ?? []).forEach((item) => {
-      timelineMap[item.status.toLowerCase()] = item;
-    });
+  // Build map: statusCode → timeline item (đã xảy ra)
+  const timelineMap: Record<string, ITrackingTimelineItem> = {};
+  (trackingResult?.timeline ?? []).forEach((item) => {
+    timelineMap[item.statusCode.toUpperCase()] = item;
+  });
 
-    return (
-      <div className="tracking-timeline">
+  // Tìm index của step hiện tại trong danh sách steps
+  const currentStepIdx = steps.findIndex((s) => s.code === currentStatus);
 
-        {/* Header: tên hãng + mã vận đơn hãng từ API */}
-        {trackingResult && (
-          <div className="tracking-header">
-            <div className="carrier-logo-wrap">
-              <Icon name="Truck" />
-            </div>
-            <div className="carrier-info">
-              <span className="carrier-name">{trackingResult.carrierName}</span>
-              <span className="carrier-tracking-code">{trackingResult.carrierTrackingCode}</span>
-            </div>
-            <span className="current-status-badge">
-              {trackingResult.currentStatusLabel}
-            </span>
+  // ── Render timeline ──────────────────────────────────────────────────────────
+  const renderTimeline = () => (
+    <div className="tracking-timeline">
+
+      {/* Carrier header */}
+      {trackingResult && (
+        <div className="tracking-header">
+          <div className="carrier-logo-wrap">
+            <Icon name="Truck" />
           </div>
-        )}
+          <div className="carrier-info">
+            <span className="carrier-name">{trackingResult.carrierName}</span>
+            <span className="carrier-tracking-code">{trackingResult.carrierTrackingCode}</span>
+          </div>
+          <span
+            className="current-status-badge"
+            style={getStatusBadgeStyle(currentStatus, trackingResult.colorHex)}
+          >
+            {trackingResult.currentStatusLabel}
+          </span>
+        </div>
+      )}
 
-        {steps.map((step, idx) => {
-          const isPast = idx < currentStepIdx;
-          const isActive = step.status === currentStatus || idx === currentStepIdx;
-          const isFuture = idx > currentStepIdx;
-          const timelineItem = timelineMap[step.status];
+      {steps.map((step, idx) => {
+        const timelineItem = timelineMap[step.code];
+        const isCompleted = idx < currentStepIdx;
+        const isActive    = idx === currentStepIdx;
+        const isFuture    = idx > currentStepIdx;
 
-          return (
-            <div
-              key={step.status}
-              className={`timeline-item ${isFuture ? "future" : ""}`}
-            >
-              <div className={`timeline-dot ${isActive ? "active" : isFuture ? "future" : "past"}`}>
-                {(isPast || isActive) && !isFuture && (
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                    <circle cx="5" cy="5" r="5" fill="white" />
-                  </svg>
-                )}
+        return (
+          <div
+            key={step.code}
+            className={`timeline-item ${isFuture ? "future" : ""}`}
+          >
+            {/* Dot */}
+            <div className={`timeline-dot ${isActive ? "active" : isFuture ? "future" : "past"}`}>
+              {!isFuture && (
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                  <circle cx="5" cy="5" r="5" fill="white" />
+                </svg>
+              )}
+            </div>
+
+            {/* Content */}
+            <div className="timeline-content">
+              <div className={`status-label ${isActive ? "active" : ""}`}>
+                {/* Luôn dùng label tiếng Việt cố định — tránh hiện raw status code từ API */}
+                {step.label}
               </div>
 
-              <div className="timeline-content">
-                <div className={`status-label ${isActive ? "active" : ""}`}>
-                  {timelineItem?.statusName || step.label}
+              {/* Mô tả chi tiết (mới từ API) */}
+              {timelineItem?.description && (
+                <div className="timeline-description">
+                  {timelineItem.description.replace(
+                    /DRAFT|SUBMITTED|WAITING_PICKUP|PICKED_UP|IN_TRANSIT|OUT_FOR_DELIVERY|DELIVERED|FAILED_DELIVERY|WAITING_RETURN|RETURNING|RETURNED|CANCELLED/g,
+                    (code: string) => ({
+                      DRAFT:            "Nháp",
+                      SUBMITTED:        "Chờ duyệt",
+                      WAITING_PICKUP:   "Chờ lấy hàng",
+                      PICKED_UP:        "Đã lấy hàng",
+                      IN_TRANSIT:       "Đang vận chuyển",
+                      OUT_FOR_DELIVERY: "Đang giao hàng",
+                      DELIVERED:        "Giao thành công",
+                      FAILED_DELIVERY:  "Giao thất bại",
+                      WAITING_RETURN:   "Chờ hoàn hàng",
+                      RETURNING:        "Đang hoàn hàng",
+                      RETURNED:         "Đã hoàn hàng",
+                      CANCELLED:        "Đã hủy",
+                    } as Record<string, string>)[code] ?? code
+                  )}
                 </div>
-                {timelineItem?.timestamp && (
-                  <div className="timestamp">
-                    {moment(timelineItem.timestamp).format("HH:mm - DD/MM/YYYY")}
-                    {timelineItem.location ? `, ${timelineItem.location}` : ""}
-                  </div>
-                )}
-                {isFuture && <div className="timestamp">—</div>}
-              </div>
-            </div>
-          );
-        })}
+              )}
 
-        {/* Shipper info (chỉ hiện khi đang giao) */}
-        {currentStatus === "in_transit" && (
-          <div className="shipper-info">
-            <div className="shipper-avatar">
-              <Icon name="User" />
-            </div>
-            <div className="shipper-name">
-              Tài xế: Đang phân công
+              {/* Thời gian + địa điểm — dùng eventTime thay vì timestamp */}
+              {timelineItem?.eventTime ? (
+                <div className="timestamp">
+                  {moment(timelineItem.eventTime).format("HH:mm - DD/MM/YYYY")}
+                  {timelineItem.location ? ` · ${timelineItem.location}` : ""}
+                </div>
+              ) : isFuture ? (
+                <div className="timestamp">—</div>
+              ) : null}
             </div>
           </div>
-        )}
-      </div>
-    );
-  };
+        );
+      })}
 
-  // ---- Render thông tin đơn hàng ----
+      {/* Shipper card khi đang giao */}
+      {(currentStatus === "IN_TRANSIT" || currentStatus === "OUT_FOR_DELIVERY") && (
+        <div className="shipper-info">
+          <div className="shipper-avatar">
+            <Icon name="User" />
+          </div>
+          <div className="shipper-name">Tài xế: Đang phân công</div>
+        </div>
+      )}
+    </div>
+  );
+
+  // ── Render thông tin đơn ─────────────────────────────────────────────────────
   const renderInfo = () => (
     <div className="order-info-grid">
       <div className="info-row">
@@ -195,13 +273,17 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
       {(data.widthCm || data.heightCm || data.lengthCm) && (
         <div className="info-row">
           <span className="info-label">Kích thước</span>
-          <span className="info-value">{data.lengthCm} x {data.widthCm} x {data.heightCm} cm</span>
+          <span className="info-value">
+            {data.lengthCm} × {data.widthCm} × {data.heightCm} cm
+          </span>
         </div>
       )}
       <div className="info-row">
         <span className="info-label">Tiền thu hộ (COD)</span>
         <span className="info-value cod-highlight">
-          {(data.codAmount ?? 0) > 0 ? `${formatCurrency(+data.codAmount)} đ` : "Không thu hộ"}
+          {(data.codAmount ?? 0) > 0
+            ? `${formatCurrency(+data.codAmount)} đ`
+            : "Không thu hộ"}
         </span>
       </div>
       {data.shippingFee > 0 && (
@@ -225,6 +307,7 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
     </div>
   );
 
+  // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <Modal
       isOpen={onShow}
@@ -238,14 +321,16 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
         title={
           <Fragment>
             Chi tiết đơn vận chuyển
-            <span className="detail-tracking-code"> #{data.carrierTrackingCode || data.shipmentOrder}</span>
+            <span className="detail-tracking-code">
+              #{data.carrierTrackingCode || data.shipmentOrder}
+            </span>
           </Fragment>
         }
         toggle={onHide}
       />
-      <ModalBody>
 
-        {/* Tab switcher: Lộ trình | Thông tin */}
+      <ModalBody>
+        {/* Tab switcher */}
         <div className="detail-tabs">
           <button
             className={`detail-tab-btn ${activeTab === "tracking" ? "active" : ""}`}
@@ -263,14 +348,13 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
 
         {activeTab === "tracking" ? (
           isLoadingHistory ? (
-            <div className="tracking-loading">Đang tải lịch sử...</div>
+            <div className="tracking-loading">Đang tải lộ trình...</div>
           ) : (
             renderTimeline()
           )
         ) : (
           renderInfo()
         )}
-
       </ModalBody>
     </Modal>
   );
