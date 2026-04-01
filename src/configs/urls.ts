@@ -444,6 +444,8 @@ export const urlsApi = {
     historyUseCard: prefixSales + "/invoice/using/card",
     // lấy mã hoá đơn
     invoiceCode: prefixSales + "/invoice/code",
+    // Gửi biên lai qua email
+    sendEmail: prefixSales + "/invoice/sendEmail",
     salesReport: {
       posSummary: prefixSales + "/report/pos-summary",
       summary: prefixSales + "/report/summary",
@@ -2542,6 +2544,7 @@ export const urlsApi = {
     fluctuatePoint: prefixBiz + "/market/loyaltyPointLedger/fluctuatePoint",
     getLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/get",
     updateLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/update",
+    consumePoint: prefixBiz + "/market/loyaltyPointLedger/consumePoint",
   },
 
   //TODO: Start quy trình bpm
