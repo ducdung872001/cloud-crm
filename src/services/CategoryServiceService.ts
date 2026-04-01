@@ -15,6 +15,12 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
+  updatePositions: (items: { id: number; position: number }[]) => {
+    return fetch(urlsApi.categoryService.updatePositions, {
+      method: "POST",
+      body: JSON.stringify(items),
+    }).then((res) => res.json());
+  },
   detail: (id: number) => {
     return fetch(`${urlsApi.categoryService.detail}?id=${id}`, {
       method: "GET",

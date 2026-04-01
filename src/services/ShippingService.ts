@@ -9,14 +9,7 @@ import {
 export default {
   // Danh sách / lọc đơn vận chuyển
   filter: (params: IShippingOrderFilterRequest, signal?: AbortSignal) => {
-    const apiParams = {
-      ...params,
-      statusCode: params.status && params.status !== "all"
-        ? STATUS_MAP[params.status] ?? params.status
-        : undefined,
-      status: undefined,
-    };
-    return fetch(`${urlsApi.shipping.list}${convertParamsToString(apiParams)}`, {
+      return fetch(`${urlsApi.shipping.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
@@ -24,7 +17,7 @@ export default {
 
   // Chi tiết đơn vận chuyển
   tracking: (id: string) => {
-    return fetch(`${urlsApi.shipping.tracking}/${id}/tracking`, {
+    return fetch(`${urlsApi.shipping.shipment}/${id}/tracking`, {
       method: "GET",
     }).then((res) => res.json());
   },
@@ -46,11 +39,11 @@ export default {
   // },
 
   // Hủy đơn vận chuyển
-  // cancel: (id: number) => {
-  //   return fetch(`${urlsApi.shipping.cancel}?id=${id}`, {
-  //     method: "DELETE",
-  //   }).then((res) => res.json());
-  // },
+  cancel: (id: string) => {
+    return fetch(`${urlsApi.shipping.shipment}/${id}/cancel`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
 
   // Đẩy đơn sang hãng vận chuyển
   // push: (id: number) => {

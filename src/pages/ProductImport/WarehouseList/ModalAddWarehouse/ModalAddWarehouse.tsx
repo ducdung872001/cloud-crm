@@ -66,6 +66,7 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
         employeeId: data?.employeeId ?? null,
         status: data?.status ?? 1,
         code: data?.code ?? "",
+        isSelling: data?.is_selling === 1 || data?.isSelling === 1 ? "1" : "",
       } as IInventoryRequest),
     [data, onShow, branchId, dataBranch]
   );
@@ -175,6 +176,14 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       options: listStatus,
       className: "input-status",
     },
+    {
+      label: "Kho hàng chính",
+      name: "isSelling",
+      type: "checkbox",
+      fill: true,
+      options: [{ label: "Kho hàng chính", value: 1 }],
+      className: "input-is-selling",
+    },
   ];
 
   // Chỉ xuất hiện đối với tài khoản tổng (Thuật ngữ: leader - quản lý | mod)
@@ -222,6 +231,7 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
     const body: IInventoryRequest = {
       ...(formData.values as IInventoryRequest),
       ...(data ? { id: data.id } : {}),
+      isSelling: formData?.values?.isSelling === "1" ? 1 : 0,
     };
 
     const response = await InventoryService.update(body);

@@ -281,3 +281,15 @@
       color: var(--white-color);
   }
 }
+
+/* Ghi chú đơn hàng trên card */
+.oc-note {
+  font-size: 1.15rem;
+  color: var(--muted, #64748b);
+  font-style: italic;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}

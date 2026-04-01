@@ -7,7 +7,7 @@ import "./SettingTicketList.scss";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
 export default function SettingTicketList() {
-  document.title = "Cài đặt hỗ trợ";
+  document.title = "Hỗ trợ khách hàng";
 
   const [tab, setTab] = useState<string>("");
   const [isDetail, setIsDetail] = useState<boolean>(false);
@@ -35,7 +35,7 @@ export default function SettingTicketList() {
 
   return (
     <div className="page-setting-ticket">
-      {!isDetail && <TitleAction title="Cài đặt hỗ trợ" />}
+      {!isDetail && <TitleAction title="Hỗ trợ khách hàng" />}
         <div className="d-flex flex-column">
           {!isDetail && (
             <TabMenuList

@@ -64,9 +64,34 @@
   transition: all 0.2s;
   border: none;
   font-family: var(--font-base);
+  white-space: nowrap;
 
   &:hover {
     background: var(--ink2);
+  }
+}
+
+// ── Nút Thêm nhanh SP ─────────────────────────────────────────────────────
+.quick-add-pill {
+  padding: 0.8rem 14px;
+  background: var(--white);
+  color: var(--ink);
+  border-radius: 0.3rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  border: 1.5px solid var(--border);
+  font-family: var(--font-base);
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--lime-d);
+    color: var(--lime-d);
+    background: #f0fdf4;
   }
 }
 
@@ -117,7 +142,6 @@
   gap: 1rem;
   align-content: start;
 
-  // ✅ Responsive breakpoints for product grid
   @media (min-width: 1440px) {
     grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
     padding: 1.6rem;
@@ -168,21 +192,19 @@
   &__icon {
     width: 100%;
     aspect-ratio: 1;
-    background: var(--paper);
+    background: var(--extra-color-5);
     border-radius: 0.9rem;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 3.2rem;
     margin-bottom: 0.9rem;
-    // Fallback when image fails
-    background: var(--extra-color-5);
+
     img {
       max-width: 80%;
       max-height: 80%;
       object-fit: contain;
     }
-    // Hide broken image icon, show placeholder bg
     img[src=""], img:not([src]), img.error {
       display: none;
     }

@@ -15,6 +15,15 @@
     color: var(--ink);
     line-height: 1.5;
   }
+
+  &__loading,
+  &__empty {
+    padding: 2.4rem 0;
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
 }
 
 .sync-channel {
@@ -68,6 +77,12 @@
       background: var(--primary-color);
       box-shadow: 0 0 0 2px var(--lime-l);
     }
+
+    &--syncing {
+      background: #3b82f6;
+      box-shadow: 0 0 0 2px #dbeafe;
+      animation: pulseDot 1s ease-in-out infinite;
+    }
   }
 
   &__action {
@@ -96,4 +111,23 @@
     background: #f1f5f9;
     color: #475569;
   }
+  &--blue {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+  &--syncing {
+    background: #eff6ff;
+    color: #3b82f6;
+    animation: pulseFade 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes pulseFade {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
 }

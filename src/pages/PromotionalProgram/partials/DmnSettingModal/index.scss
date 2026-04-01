@@ -1,0 +1,180 @@
+// =============================================================================
+// DmnSettingModal styles
+// =============================================================================
+
+.dmn-setting-modal {
+  padding: 0 2px;
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+}
+
+// ── Mapping section ──────────────────────────────────────────────────────────
+.dmn-mapping-section {
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fafbfd;
+
+  &__title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 14px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+.dmn-mapping-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 16px;
+}
+
+.dmn-mapping-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 7px 14px 9px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+
+  &:hover {
+    color: #334155;
+  }
+
+  &--active {
+    color: #1d4ed8;
+    border-bottom-color: #1d4ed8;
+  }
+}
+
+// ── Add row ──────────────────────────────────────────────────────────────────
+.dmn-mapping-add-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 36px;
+  gap: 10px;
+  align-items: flex-end;
+  margin-bottom: 14px;
+
+  &__field {
+    min-width: 0;
+
+    &--mapping {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+
+      > div:first-child {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+  }
+}
+
+.dmn-mapping-toggle-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  color: #64748b;
+  transition: background 0.15s, color 0.15s;
+  margin-bottom: 2px;
+
+  &:hover {
+    background: #f1f5f9;
+    color: #1d4ed8;
+  }
+}
+
+.dmn-mapping-add-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #3b82f6;
+  border-radius: 6px;
+  background: #3b82f6;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+
+  &:hover {
+    background: #2563eb;
+  }
+
+  &--disabled {
+    border-color: #cbd5e1;
+    background: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+
+    &:hover {
+      background: #e2e8f0;
+    }
+  }
+}
+
+// ── List of mapped rows ───────────────────────────────────────────────────────
+.dmn-mapping-list {
+  margin-top: 4px;
+
+  &__empty {
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: center;
+    padding: 10px 0;
+    font-style: italic;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 36px;
+    gap: 10px;
+    align-items: flex-end;
+    margin-bottom: 8px;
+
+    &-field {
+      min-width: 0;
+    }
+
+    &-delete {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #fca5a5;
+      border-radius: 6px;
+      background: #fff;
+      color: #ef4444;
+      cursor: pointer;
+      transition: background 0.15s;
+      flex-shrink: 0;
+      margin-bottom: 2px;
+
+      &:hover {
+        background: #fee2e2;
+      }
+    }
+  }
+}

@@ -13,7 +13,6 @@ import BoxTable from "components/boxTable/boxTable";
 import { IAction } from "model/OtherModel";
 import Icon from "components/icon";
 import ModalAddData from "./partials/ModalAddData";
-import TransactionInformationService from "services/fintech/TransactionInformationService";
 
 import "./index.scss";
 
@@ -46,7 +45,7 @@ export default function TransactionInformation({ data }) {
   const getListTransactionInformation = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await TransactionInformationService.list(paramsSearch);
+    const response = null;
 
     if (response.code === 0) {
       const result = response.result;
@@ -143,7 +142,7 @@ export default function TransactionInformation({ data }) {
   const [contentDialog, setContentDialog] = useState<any>(null);
 
   const onDelete = async (id: number) => {
-    const response = await TransactionInformationService.delete(id);
+    const response = null;
 
     if (response.code === 0) {
       showToast("Xóa thông tin giao dịch thành công", "success");

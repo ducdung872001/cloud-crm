@@ -19,9 +19,10 @@ import HeaderFilter from "components/HeaderFilter/HeaderFilter";
 import { ContextType, UserContext } from "contexts/userContext";
 import BusinessRuleService from "services/BusinessRuleService";
 import { useNavigate } from "react-router-dom";
+import SearchBox from "@/components/searchBox/searchBox";
 
 export default function BusinessRule(props: any) {
-  document.title = "Loại luật nghiệp vụ";
+  document.title = "Quy tắc nghiệp vụ";
 
   const navigate = useNavigate();
 
@@ -146,7 +147,11 @@ export default function BusinessRule(props: any) {
 
   const dataFormat = ["text-center", "", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.code];
+  const dataMappingArray = (item: any, index: number) => [
+    getPageOffset(params) + index + 1,
+    item.name,
+    <span className="code-badge" title={item.code}>{item.code}</span>,
+  ];
 
   const actionsTable = (item: any): IAction[] => {
     return [
@@ -256,25 +261,32 @@ export default function BusinessRule(props: any) {
 
   const bulkActionList: BulkActionItemModel[] = [
     {
-      title: "Xóa luật nghiệp vụ",
+      title: "Xóa quy tắc nghiệp vụ",
       callback: () => showDialogConfirmDelete(),
     },
   ];
 
   return (
-    <div className="page-content page-business-rule-list card-box">
-      <TitleAction title="Loại luật nghiệp vụ" />
-      <div className="d-flex flex-column">
-        <HeaderFilter
+    <div className="page-content page-business-rule-list">
+      <TitleAction title="Quy tắc nghiệp vụ" titleActions={titleActions} />
+      <div className="card-box d-flex flex-column">
+        <SearchBox
+          name="Quy tắc nghiệp vụ"
+          params={params}
+          isSaveSearch={true}
+          listSaveSearch={listSaveSearch}
+          updateParams={(paramsNew) => setParams(paramsNew)}
+        />
+        {/* <HeaderFilter
           params={params}
           setParams={setParams}
           listIdChecked={listIdChecked}
           showDialogConfirmDelete={showDialogConfirmDelete}
-          titleActions={titleActions}
-          titleSearch="Loại luật nghiệp vụ"
+          // titleActions={titleActions}
+          titleSearch="Quy tắc nghiệp vụ"
           disableDeleteAll={permissions["LIST_CAUSE_TYPE_DELETE"] == 1 ? false : true}
           listSaveSearch={listSaveSearch}
-        />
+        /> */}
         {!isLoading && listReason && listReason.length > 0 ? (
           <BoxTable
             name="Danh mục luật nghiệp vụ"

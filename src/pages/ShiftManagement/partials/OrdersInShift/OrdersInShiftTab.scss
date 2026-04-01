@@ -123,3 +123,188 @@
     color: var(--error-color) !important;
   }
 }
+
+// ── Invoice detail modal ──────────────────────────────────────────────────────
+.shift-invoice-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.6rem;
+}
+
+.shift-invoice-modal {
+  background: #fff;
+  border-radius: 1.6rem;
+  width: 100%;
+  max-width: 56rem;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+
+  .sim-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.8rem 2.4rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+
+    .sim-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--text-primary-color);
+
+      .sim-code {
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+    }
+
+    .sim-close {
+      width: 3.2rem;
+      height: 3.2rem;
+      border: none;
+      background: var(--extra-color-5);
+      border-radius: 50%;
+      font-size: 1.6rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-extra-color);
+      transition: background 0.15s;
+      flex-shrink: 0;
+
+      &:hover { background: var(--border-color); }
+    }
+  }
+
+  .sim-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 20rem;
+  }
+
+  .sim-empty {
+    padding: 4rem 2.4rem;
+    text-align: center;
+    color: var(--text-extra-color);
+    font-size: 1.4rem;
+  }
+
+  .sim-body {
+    overflow-y: auto;
+    flex: 1;
+    padding: 2rem 2.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  // Info grid: khách hàng / thanh toán / ngày
+  .sim-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+
+    @media (max-width: 480px) { grid-template-columns: 1fr 1fr; }
+
+    .sim-info-block {
+      background: var(--extra-color-5);
+      border-radius: 0.8rem;
+      padding: 1.2rem 1.4rem;
+
+      .sim-info-label {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-extra-color);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 0.4rem;
+      }
+
+      .sim-info-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-primary-color);
+      }
+
+      .sim-info-sub {
+        font-size: 1.2rem;
+        color: var(--text-extra-color);
+        margin-top: 0.2rem;
+      }
+    }
+  }
+
+  // Danh sách mặt hàng
+  .sim-items {
+    border: 1px solid var(--border-color);
+    border-radius: 0.8rem;
+    overflow: hidden;
+
+    .sim-items-header {
+      display: grid;
+      grid-template-columns: 1fr 5rem 10rem;
+      padding: 0.9rem 1.4rem;
+      background: var(--extra-color-5);
+      border-bottom: 1px solid var(--border-color);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-extra-color);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .sim-item-row {
+      display: grid;
+      grid-template-columns: 1fr 5rem 10rem;
+      padding: 1rem 1.4rem;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 1.4rem;
+      align-items: center;
+
+      &:last-child { border-bottom: none; }
+      &:hover { background: var(--extra-color-2); }
+
+      .sim-item-name { font-weight: 500; }
+      .sim-item-qty  { color: var(--text-extra-color); text-align: center; }
+      .sim-item-total { font-weight: 700; }
+    }
+  }
+
+  // Summary tổng kết
+  .sim-summary {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+
+    .sim-summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.4rem;
+      color: var(--text-primary-color);
+
+      span:first-child { color: var(--text-extra-color); }
+    }
+
+    .sim-summary-total {
+      font-size: 1.6rem;
+      font-weight: 800;
+      padding-top: 0.8rem;
+      border-top: 1px dashed var(--border-color);
+      margin-top: 0.4rem;
+
+      span:first-child { color: var(--text-primary-color) !important; }
+    }
+  }
+}

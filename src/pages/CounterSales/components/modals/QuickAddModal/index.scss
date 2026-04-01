@@ -1,0 +1,153 @@
+.quick-add-modal {
+  .modal-dialog { max-width: 48rem; }
+}
+
+.qam-hint {
+  font-size: 1.3rem;
+  color: var(--muted);
+  background: var(--paper);
+  border-left: 3px solid var(--lime-d);
+  padding: 0.8rem 1.2rem;
+  border-radius: 0 0.3rem 0.3rem 0;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.qam-field {
+  margin-bottom: 1.6rem;
+
+  &--error {
+    .qam-input,
+    .qam-select {
+      border-color: var(--red, #e53e3e) !important;
+      box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.12) !important;
+    }
+  }
+}
+
+.qam-label {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.6rem;
+}
+
+.qam-required {
+  color: var(--red, #e53e3e);
+  margin-left: 2px;
+}
+
+.qam-input {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 1.5px solid var(--border);
+  border-radius: 0.3rem;
+  font-family: var(--font-base);
+  font-size: 1.4rem;
+  color: var(--ink);
+  outline: none;
+  transition: all 0.2s;
+  background: var(--white);
+
+  &:focus {
+    border-color: var(--lime-d);
+    box-shadow: 0 0 0 3px rgba(132, 204, 22, 0.15);
+  }
+
+  &::placeholder { color: var(--muted2); }
+}
+
+.qam-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.2rem;
+  align-items: start;
+}
+
+.qam-field--unit { width: 13rem; }
+.qam-field--price { flex: 1; }
+
+.qam-price-wrap {
+  position: relative;
+
+  .qam-input {
+    padding-right: 3rem;
+    text-align: right;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+  }
+}
+
+.qam-currency {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.qam-select {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 1.5px solid var(--border);
+  border-radius: 0.3rem;
+  font-family: var(--font-base);
+  font-size: 1.4rem;
+  color: var(--ink);
+  background: var(--white);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: var(--lime-d);
+    box-shadow: 0 0 0 3px rgba(132, 204, 22, 0.15);
+  }
+}
+
+.qam-error {
+  display: block;
+  font-size: 1.15rem;
+  color: var(--red, #e53e3e);
+  margin-top: 0.4rem;
+  font-weight: 600;
+}
+
+// Preview card — hiện khi đã nhập đủ tên + giá hợp lệ
+.qam-preview {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border: 1.5px dashed var(--lime-d);
+  border-radius: 0.5rem;
+  padding: 1rem 1.4rem;
+  margin-top: 0.4rem;
+  animation: qamFadeIn 0.2s ease;
+
+  &__icon { font-size: 2rem; }
+
+  &__name {
+    flex: 1;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  &__price {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--lime-d);
+    white-space: nowrap;
+  }
+}
+
+@keyframes qamFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

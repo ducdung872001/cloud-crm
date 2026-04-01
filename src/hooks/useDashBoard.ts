@@ -5,6 +5,7 @@ import DashBoardService from "@/services/DashBoardService";
 
 interface UseGetDashBoardParams {
   enabled?: boolean; // ✅ mặc định true, truyền false để tắt
+  sortBy?: "qty" | "revenue"; // tab đang active ở UI
 }
 interface TopProduct {
   name: string;
@@ -20,6 +21,7 @@ interface IDataRevenue {
 
 interface UseGetDashBoardReturn {
   isLoading: boolean;
+  isTopProductLoading: boolean;
   isNoItem: boolean;
   isPermissions: boolean;
   dataTopProduct: TopProduct[] | [];
@@ -46,9 +48,11 @@ const defaultRevenueData: IDataRevenue = {
 };
 
 export function useDashBoard({
-  enabled = true, // ✅ mặc định true, truyền false để tắt
+  enabled = true,
+  sortBy = "qty",
 }: UseGetDashBoardParams): UseGetDashBoardReturn {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isTopProductLoading, setIsTopProductLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [dataTopProduct, setDataTopProduct] = useState<TopProduct[]>([]);
@@ -56,30 +60,22 @@ export function useDashBoard({
 
   // ── Core fetch ──────────────────────────────────────────────────────────────
 
-  const fetchTopProducts = useCallback(async () => {
-    setIsNoItem(false);
-
+  const fetchTopProducts = useCallback(async (sort: "qty" | "revenue" = "qty") => {
+    setIsTopProductLoading(true);
     try {
-      const response = await ProductService.topProduct();
-
+      const response = await ProductService.topProductV2(sort);
+      console.log("[TopProduct] sort=" + sort + " response=", JSON.stringify(response?.result?.slice(0,2)));
       if (response.code === 0) {
-        const result = response.result;
-        setDataTopProduct(mapToTopProduct(result)); // map API về đúng format rồi set vào state
-        setIsNoItem(false);
+        setDataTopProduct(mapToTopProduct(response.result));
       } else if (response.code === 400) {
         setIsPermissions(true);
-      } else {
-        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
-      setIsLoading(false);
     } catch (error) {
-      if (error?.name === "AbortError") {
-        console.log("Request was aborted");
-      } else {
+      if (error?.name !== "AbortError") {
         showToast(error?.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
     } finally {
-      setIsLoading(false);
+      setIsTopProductLoading(false);
     }
   }, []);
 
@@ -118,22 +114,25 @@ export function useDashBoard({
 
   // ── Auto fetch khi categoryId thay đổi ─────────────────────────────────────
 
+  // Fetch revenue chỉ 1 lần khi enabled
   useEffect(() => {
-    if (!enabled) return; // ✅ guard: nếu không enabled thì không fetch
+    if (!enabled) return;
     setIsLoading(true);
-    fetchTopProducts();
     fetchRevenue();
-
-    // return () => {
-    //   abortControllerRef.current?.abort();
-    // };
   }, [enabled]);
+
+  // Re-fetch topProduct mỗi khi sortBy thay đổi
+  useEffect(() => {
+    if (!enabled) return;
+    fetchTopProducts(sortBy);
+  }, [enabled, sortBy]);
   //  ^^^^^^^^^^^
   //  Chỉ theo dõi params và enabled — giá trị primitive (string/boolean)
   //  string/boolean so sánh bằng value, không bị lặp như object
 
   return {
     isLoading,
+    isTopProductLoading,
     isNoItem,
     isPermissions,
     dataTopProduct,
@@ -266,11 +265,18 @@ const topProducts = [
 // Đây là hàm để nhận đầu vào là dữ liệu giống như sampleProductDetail và trả về dữ liệu đã được map sang đúng format của topProducts để dễ đổ ra UI
 function mapToTopProduct(detail): any {
   if (!detail || detail.length === 0) return [];
+
+  // Tính max để vẽ thanh bar tương đối (tránh bar vượt 100%)
+  const maxQty     = Math.max(...detail.map((i) => i.totalQty     ?? 0), 1);
+  const maxRevenue = Math.max(...detail.map((i) => i.totalRevenue ?? 0), 1);
+
   return detail.map((item) => ({
-    name: item.productName + " (" + item.variantName + ")" || "Sản phẩm không tên",
-    revenue: item.totalRevenue ? item.totalRevenue : 0,
-    pct: item.totalQty ? item.totalQty : 0, // API chưa trả về phần trăm, nên tạm set 0
-    color: "#47B5AC", // màu cố định cho demo, bạn có thể thay đổi logic để set màu khác nhau nếu muốn
+    name:       (item.productName ?? "Sản phẩm không tên") + (item.variantName ? ` (${item.variantName})` : ""),
+    revenue:    item.totalRevenue ?? null,
+    qty:        item.totalQty    ?? 0,
+    pctQty:     Math.round(((item.totalQty     ?? 0) / maxQty)     * 100),
+    pctRevenue: Math.round(((item.totalRevenue ?? 0) / maxRevenue) * 100),
+    color:      "#47B5AC",
   }));
 }
 

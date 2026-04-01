@@ -1,195 +1,347 @@
-import React, { Fragment, useState, useEffect, useCallback, useMemo } from "react";
-import { IAddCategoryServiceModelProps } from "model/categoryService/PropsModel";
-import { ICategoryServiceRequestModel } from "model/categoryService/CategoryServiceRequestModel";
+import React, { Fragment, useState, useEffect, useMemo, useCallback } from "react";
+import moment from "moment";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
-import FileUpload from "components/fileUpload/fileUpload";
 import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
-import CategoryServiceService from "services/CategoryServiceService";
+import PromotionService from "services/PromotionService";
+import FixedPriceService from "services/FixedPriceService";
+import {
+  IPromotion,
+  IPromotionRequest,
+  IFixedPriceProduct,
+  PROMOTION_TYPE_LABELS,
+} from "model/promotion/PromotionModel";
+
 import "./index.scss";
 
-export default function AddPromotionalModal(props: IAddCategoryServiceModelProps) {
-  const { onShow, onHide, data } = props;
+interface Props {
+  onShow: boolean;
+  data:   IPromotion | null;
+  onHide: (refresh?: boolean) => void;
+}
 
-  const [isSubmit, setIsSubmit] = useState<boolean>(false);
+/**
+ * Convert bất kỳ giá trị date (moment object / ISO string / Date) → "YYYY-MM-DDTHH:mm:ss"
+ * Trả về "" nếu không hợp lệ.
+ */
+function toISOStr(val: any): string {
+  if (!val) return "";
+  const m = moment.isMoment(val) ? val : moment(val);
+  return m.isValid() ? m.format("YYYY-MM-DDTHH:mm:ss") : "";
+}
 
-  const focusedElement = useActiveElement();
-  const [showDialog, setShowDialog] = useState<boolean>(false);
+export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
+  const [isSubmit, setIsSubmit]           = useState(false);
+  const [hasSubmitOnce, setHasSubmitOnce] = useState(false);
+  const focusedElement                    = useActiveElement();
+  const [showDialog, setShowDialog]       = useState(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  7;
 
+  // ─── Fixed price product list state ───────────────────────────────
+  const [fpProducts, setFpProducts]       = useState<IFixedPriceProduct[]>([]);
+  const [fpLoading, setFpLoading]         = useState(false);
+  const [fpNewProductId, setFpNewProductId]   = useState("");
+  const [fpNewVariantId, setFpNewVariantId]   = useState("");
+  const [fpNewProductName, setFpNewProductName] = useState("");
+  const [fpNewOriginalPrice, setFpNewOriginalPrice] = useState("");
+
+  // ─── Initial values ────────────────────────────────────────────────
   const values = useMemo(
-    () =>
-      ({
-        name: data?.name ?? "",
-        position: data?.position?.toString() ?? "0",
-        avatar: data?.avatar ?? "",
-        parentId: 0,
-        active: 1,
-        featured: 0,
-        type: 1,
-      } as ICategoryServiceRequestModel),
+    () => ({
+      name:          data?.name                             ?? "",
+      startTime:     data?.startTime ? moment(data.startTime) : "",
+      endTime:       data?.endTime   ? moment(data.endTime)   : "",
+      promotionType: String(data?.promotionType ?? 1),
+      discount:      String(data?.discount      ?? ""),
+      discountType:  String(data?.discountType  ?? 1),
+      applyType:     String(data?.applyType     ?? 1),
+      minAmount:     String(data?.minAmount      ?? ""),
+      budget:        String(data?.budget         ?? ""),
+      mode:          String(data?.mode           ?? 1),
+      fixedPrice:    String(data?.fixedPrice     ?? ""),
+    }),
     [data, onShow]
   );
 
+  // ─── Validation rules ──────────────────────────────────────────────
+  // Không dùng "required" cho date field vì fieldCustomize type="date"
+  // trả về moment object – validate thủ công trong onSubmit
   const validations: IValidation[] = [
-    {
-      name: "name",
-      rules: "required",
-    },
-    {
-      name: "position",
-      rules: "required",
-    },
+    { name: "name",          rules: "required" },
+    { name: "discount",      rules: "required|number" },
   ];
+
+  // Load danh sách SP khi mở modal edit CT đồng giá
+  useEffect(() => {
+    if (onShow && data?.id && data?.promotionType === 7) {
+      setFpLoading(true);
+      FixedPriceService.getProducts(data.id)
+        .then((res) => {
+          if (res.code === 0) setFpProducts(res.result ?? []);
+        })
+        .catch(() => {})
+        .finally(() => setFpLoading(false));
+    } else if (onShow && !data?.id) {
+      setFpProducts([]);
+    }
+  }, [onShow, data?.id]);
+
+  const [formData, setFormData] = useState<IFormData>({ values });
+
+  // isFixedPrice + effectiveValidations phải nằm SAU useState(formData)
+  const isFixedPrice = Number((formData?.values as any)?.promotionType) === 7;
+
+  const effectiveValidations: IValidation[] = isFixedPrice
+    ? [
+        { name: "name",       rules: "required" },
+        { name: "fixedPrice", rules: "required|number" },
+      ]
+    : validations;
+
+  // ─── Form fields — phải nằm sau isFixedPrice ───────────────────────
+  const typeOptions = Object.entries(PROMOTION_TYPE_LABELS).map(([k, v]) => ({
+    label: v,
+    value: k,
+  }));
 
   const listField: IFieldCustomize[] = [
     {
-      label: "Tên chương trình khuyến mãi",
-      name: "name",
-      type: "text",
-      fill: true,
+      label:    "Tên chương trình khuyến mãi",
+      name:     "name",
+      type:     "text",
+      fill:     true,
       required: true,
     },
     {
-      label: "Quy trình thực hiện",
-      name: "process",
-      type: "select",
-      fill: true,
-      placeholder: "Chọn quy trình thực hiện",
-      options: [
-        { label: "Quy trình khuyến mãi thông thường", value: "process1" },
-        { label: "Quy trình khuyến mãi đặc biệt", value: "process2" },
-      ],
-      required: false,
+      label:    "Loại chương trình",
+      name:     "promotionType",
+      type:     "select",
+      fill:     true,
+      required: true,
+      options:  typeOptions,
     },
     {
-      label: "Thời gian diễn ra",
-      name: "duration",
-      type: "text",
-      fill: true,
-      required: false,
+      label:         "Thời gian bắt đầu",
+      name:          "startTime",
+      type:          "date",
+      hasSelectTime: true,
+      fill:          true,
+      required:      true,
     },
+    {
+      label:         "Thời gian kết thúc",
+      name:          "endTime",
+      type:          "date",
+      hasSelectTime: true,
+      fill:          true,
+      required:      true,
+    },
+    // Ẩn discount khi là đồng giá
+    ...(!isFixedPrice ? [
+      {
+        label:    "Giá trị giảm",
+        name:     "discount",
+        type:     "number" as const,
+        fill:     true,
+        required: true,
+      },
+      {
+        label:   "Đơn vị giảm",
+        name:    "discountType",
+        type:    "select" as const,
+        fill:    true,
+        options: [
+          { label: "Phần trăm (%)", value: "1" },
+          { label: "VND cố định",   value: "2" },
+        ],
+      },
+    ] : []),
+    {
+      label: "Ngân sách tối đa (VND)",
+      name:  "budget",
+      type:  "number",
+      fill:  true,
+    },
+    {
+      label: "Đơn hàng tối thiểu (VND)",
+      name:  "minAmount",
+      type:  "number",
+      fill:  true,
+    },
+    {
+      label:   "Phương thức xử lý",
+      name:    "mode",
+      type:    "select",
+      fill:    true,
+      options: [
+        { label: "Trực tiếp", value: "1" },
+        { label: "DMN Rule",  value: "2" },
+      ],
+    },
+    // Chỉ hiển thị khi promotionType = 7
+    ...(isFixedPrice ? [{
+      label:    "Giá đồng giá (VND)",
+      name:     "fixedPrice",
+      type:     "number" as const,
+      fill:     true,
+      required: true,
+    }] : []),
   ];
 
-  const [formData, setFormData] = useState<IFormData>({ values: values });
-
   useEffect(() => {
-    setFormData({ ...formData, values: values, errors: {} });
+    setFormData({ values, errors: {} });
     setIsSubmit(false);
-
-    return () => {
-      setIsSubmit(false);
-    };
+    setHasSubmitOnce(false);
+    return () => setIsSubmit(false);
   }, [values]);
 
-  const onSubmit = async (e) => {
+  // ─── Submit ────────────────────────────────────────────────────────
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setHasSubmitOnce(true);
 
-    const errors = Validate(validations, formData, listField);
+    // 1. Validate các trường text/number bằng Validate()
+    const errors: Record<string, string> = Validate(validations, formData, listField);
+
+    // 2. Validate date fields thủ công (vì value là moment object)
+    const v = formData.values as any;
+    const startISO = toISOStr(v.startTime);
+    const endISO   = toISOStr(v.endTime);
+
+    if (!startISO) {
+      errors["startTime"] = "Vui lòng chọn thời gian bắt đầu";
+    }
+    if (!endISO) {
+      errors["endTime"] = "Vui lòng chọn thời gian kết thúc";
+    }
+    if (startISO && endISO && startISO >= endISO) {
+      errors["endTime"] = "Thời gian kết thúc phải sau thời gian bắt đầu";
+    }
+
     if (Object.keys(errors).length > 0) {
-      setFormData((prevState) => ({ ...prevState, errors: errors }));
+      setFormData((prev) => ({ ...prev, errors }));
       return;
     }
 
     setIsSubmit(true);
-    const body: ICategoryServiceRequestModel = {
-      ...(formData.values as ICategoryServiceRequestModel),
-      ...(data ? { id: data.id } : {}),
+
+    const body: IPromotionRequest = {
+      ...(data?.id ? { id: data.id } : {}),
+      name:          v.name,
+      startTime:     startISO,
+      endTime:       endISO,
+      promotionType: Number(v.promotionType),
+      // Đồng giá: không cần discount/discountType
+      ...(Number(v.promotionType) === 7
+        ? { fixedPrice: Number(v.fixedPrice) }
+        : {
+            discount:     Number(v.discount),
+            discountType: Number(v.discountType) || 1,
+          }),
+      applyType:  Number(v.applyType)  || 1,
+      minAmount:  v.minAmount  ? Number(v.minAmount)  : undefined,
+      budget:     v.budget     ? Number(v.budget)     : undefined,
+      mode:       Number(v.mode) || 1,
     };
 
-    const response = await CategoryServiceService.update(body);
+    const res = await PromotionService.update(body);
 
-    if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} chương trình khuyến mãi thành công`, "success");
+    if (res?.code === 0) {
+      const savedId = res.result?.id ?? data?.id;
+      // Nếu là đồng giá → lưu luôn danh sách sản phẩm
+      if (Number(v.promotionType) === 7 && savedId && fpProducts.length > 0) {
+        await FixedPriceService.saveProducts(savedId, fpProducts).catch(() => {});
+      }
+      showToast(
+        `${data ? "Cập nhật" : "Thêm mới"} chương trình khuyến mãi thành công`,
+        "success"
+      );
       onHide(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(res?.message ?? "Có lỗi xảy ra. Vui lòng thử lại", "error");
       setIsSubmit(false);
     }
   };
 
+  // ─── Confirm cancel ────────────────────────────────────────────────
+  const showDialogConfirmCancel = () => {
+    setContentDialog({
+      color:     "warning",
+      isCentered: true,
+      isLoading: false,
+      title:   <Fragment>{`Hủy bỏ ${data ? "chỉnh sửa" : "thêm mới"} chương trình`}</Fragment>,
+      message: <Fragment>Bạn có chắc muốn hủy bỏ? Dữ liệu đang nhập sẽ không được lưu.</Fragment>,
+      cancelText:    "Quay lại",
+      cancelAction:  () => { setShowDialog(false); setContentDialog(null); },
+      defaultText:   "Xác nhận hủy",
+      defaultAction: () => { onHide(false); setShowDialog(false); setContentDialog(null); },
+    });
+    setShowDialog(true);
+  };
+
+  // ─── Footer actions ────────────────────────────────────────────────
   const actions = useMemo<IActionModal>(
     () => ({
       actions_right: {
         buttons: [
           {
-            title: "Hủy",
-            color: "primary",
-            variant: "outline",
+            title:    "Hủy",
+            color:    "primary",
+            variant:  "outline",
             disabled: isSubmit,
             callback: () => {
-              !isDifferenceObj(formData.values, values) ? onHide(false) : showDialogConfirmCancel();
+              !isDifferenceObj(formData.values, values)
+                ? onHide(false)
+                : showDialogConfirmCancel();
             },
           },
           {
-            title: data ? "Cập nhật" : "Tạo mới",
-            type: "submit",
-            color: "primary",
-            disabled: isSubmit || !isDifferenceObj(formData.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
+            title:  data ? "Cập nhật" : "Tạo mới",
+            type:   "submit",
+            color:  "primary",
+            // Disabled khi:
+            // - Đang gửi request (isSubmit)
+            // - Đang EDIT và chưa có thay đổi gì so với dữ liệu gốc
+            // - Đã submit ít nhất 1 lần VÀ vẫn còn lỗi
+            disabled:
+              isSubmit ||
+              (!!data && !isDifferenceObj(formData.values, values)) ||
+              (hasSubmitOnce && !!formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },
         ],
       },
     }),
-    [formData, values, isSubmit]
+    [formData, values, isSubmit, hasSubmitOnce, data]
   );
 
-  const showDialogConfirmCancel = () => {
-    const contentDialog: IContentDialog = {
-      color: "warning",
-      className: "dialog-cancel",
-      isCentered: true,
-      isLoading: false,
-      title: <Fragment>{`Hủy bỏ thao tác ${data ? "chỉnh sửa" : "thêm mới"}`}</Fragment>,
-      message: <Fragment>Bạn có chắc chắn muốn hủy bỏ? Thao tác này không thể khôi phục.</Fragment>,
-      cancelText: "Quay lại",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-      defaultText: "Xác nhận",
-      defaultAction: () => {
-        onHide(false);
-        setShowDialog(false);
-        setContentDialog(null);
-      },
-    };
-    setContentDialog(contentDialog);
-    setShowDialog(true);
-  };
-
+  // ─── ESC key handler ──────────────────────────────────────────────
   const checkKeyDown = useCallback(
-    (e) => {
-      const { keyCode } = e;
-      if (keyCode === 27 && !showDialog) {
+    (e: KeyboardEvent) => {
+      if (e.keyCode === 27 && !showDialog) {
         if (isDifferenceObj(formData.values, values)) {
           showDialogConfirmCancel();
-          if (focusedElement instanceof HTMLElement) {
-            focusedElement.blur();
-          }
+          if (focusedElement instanceof HTMLElement) focusedElement.blur();
         } else {
           onHide(false);
         }
       }
     },
-    [formData]
+    [formData, showDialog]
   );
 
   useEffect(() => {
     window.addEventListener("keydown", checkKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", checkKeyDown);
-    };
+    return () => window.removeEventListener("keydown", checkKeyDown);
   }, [checkKeyDown]);
 
+  // ─── Render ───────────────────────────────────────────────────────
   return (
     <Fragment>
       <Modal
@@ -198,26 +350,124 @@ export default function AddPromotionalModal(props: IAddCategoryServiceModelProps
         isCentered={true}
         staticBackdrop={true}
         toggle={() => !isSubmit && onHide(false)}
-        className="modal-add-payment-method"
+        className="modal-add-promotional"
       >
-        <form className="form-payment-method" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} chương trình khuyến mãi`} toggle={() => !isSubmit && onHide(false)} />
+        <form onSubmit={onSubmit}>
+          <ModalHeader
+            title={`${data ? "Chỉnh sửa" : "Thêm mới"} chương trình khuyến mãi`}
+            toggle={() => !isSubmit && onHide(false)}
+          />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
                   key={index}
                   field={field}
-                  handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
+                  handleUpdate={(value) =>
+                    handleChangeValidate(
+                      value,
+                      field,
+                      formData,
+                      effectiveValidations,
+                      listField,
+                      setFormData
+                    )
+                  }
                   formData={formData}
                 />
               ))}
             </div>
+
+            {/* ── Section sản phẩm đồng giá — chỉ hiện khi type = 7 ── */}
+            {isFixedPrice && (
+              <div className="fp-section">
+                <div className="fp-section__header">
+                  <span className="fp-section__title">🏷️ Sản phẩm tham gia đồng giá</span>
+                  <span className="fp-section__count">{fpProducts.length} sản phẩm</span>
+                </div>
+
+                {/* Form thêm SP */}
+                <div className="fp-add-row">
+                  <input className="fp-input" placeholder="Product ID *" type="number"
+                    value={fpNewProductId} onChange={(e) => setFpNewProductId(e.target.value)} />
+                  <input className="fp-input" placeholder="Variant ID (bỏ trống = tất cả)" type="number"
+                    value={fpNewVariantId} onChange={(e) => setFpNewVariantId(e.target.value)} />
+                  <input className="fp-input fp-input--name" placeholder="Tên sản phẩm"
+                    value={fpNewProductName} onChange={(e) => setFpNewProductName(e.target.value)} />
+                  <input className="fp-input" placeholder="Giá gốc (VND)" type="number"
+                    value={fpNewOriginalPrice} onChange={(e) => setFpNewOriginalPrice(e.target.value)} />
+                  <button type="button" className="fp-btn fp-btn--add"
+                    disabled={!fpNewProductId.trim()}
+                    onClick={() => {
+                      const pid = Number(fpNewProductId.trim());
+                      if (!pid) return;
+                      const vid = fpNewVariantId ? Number(fpNewVariantId) : undefined;
+                      const dup = fpProducts.some(
+                        (p) => p.productId === pid && p.variantId === vid
+                      );
+                      if (dup) { showToast("Sản phẩm này đã có trong danh sách", "warning"); return; }
+                      setFpProducts((prev) => [...prev, {
+                        productId:     pid,
+                        variantId:     vid,
+                        productName:   fpNewProductName.trim() || undefined,
+                        originalPrice: fpNewOriginalPrice ? Number(fpNewOriginalPrice) : undefined,
+                      }]);
+                      setFpNewProductId(""); setFpNewVariantId("");
+                      setFpNewProductName(""); setFpNewOriginalPrice("");
+                    }}>
+                    + Thêm
+                  </button>
+                </div>
+
+                {/* Danh sách */}
+                {fpLoading ? (
+                  <div className="fp-empty">Đang tải...</div>
+                ) : fpProducts.length === 0 ? (
+                  <div className="fp-empty">Chưa có sản phẩm — nhập Product ID để bắt đầu</div>
+                ) : (
+                  <div className="fp-list">
+                    <div className="fp-list__head">
+                      <span>Product ID</span><span>Variant ID</span>
+                      <span>Tên SP</span><span>Giá gốc</span><span></span>
+                    </div>
+                    {fpProducts.map((p, idx) => (
+                      <div key={idx} className="fp-list__row">
+                        <span className="fp-list__id">{p.productId}</span>
+                        <span className="fp-list__id">{p.variantId ?? "—"}</span>
+                        <span className="fp-list__name">
+                          {p.productName || <em style={{ color: "#9ca3af" }}>—</em>}
+                        </span>
+                        <span className="fp-list__price">
+                          {p.originalPrice
+                            ? new Intl.NumberFormat("vi-VN").format(p.originalPrice) + "đ"
+                            : "—"}
+                        </span>
+                        <button type="button" className="fp-btn fp-btn--del"
+                          onClick={() => setFpProducts((prev) => prev.filter((_, i) => i !== idx))}>
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <p className="fp-hint">
+                  💡 Khi CT đang chạy, các sản phẩm trên sẽ được bán với giá{" "}
+                  <strong>
+                    {(formData?.values as any)?.fixedPrice
+                      ? new Intl.NumberFormat("vi-VN").format(
+                          Number((formData?.values as any).fixedPrice)) + "đ"
+                      : "..."}
+                  </strong> tại POS.
+                </p>
+              </div>
+            )}
           </ModalBody>
           <ModalFooter actions={actions} />
         </form>
       </Modal>
-      <Dialog content={contentDialog} isOpen={showDialog} />{" "}
+
+      <Dialog content={contentDialog} isOpen={showDialog} />
     </Fragment>
   );
 }

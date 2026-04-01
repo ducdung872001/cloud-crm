@@ -126,7 +126,7 @@ export default function AddConfigDefaultProcesses(props: any) {
   // Lịch sử thực hiện dịch vụ	/treatmentHistory/
   // Chăm sóc khách hàng
   // Tiếp nhận bảo hành	/warranty/
-  // Tiếp nhận hỗ trợ	/ticket/
+  // Phiếu hỗ trợ	/ticket/
   // Xuất kho
   // Nhập kho	/invoice/
   // Chuyển kho
@@ -159,7 +159,7 @@ export default function AddConfigDefaultProcesses(props: any) {
             { value: "/order_request/", label: "Xác nhận đơn hàng" },
             { value: "/treatmentHistory/", label: "Lịch sử thực hiện dịch vụ" },
             { value: "/warranty/", label: "Tiếp nhận bảo hành" },
-            { value: "/ticket/", label: "Tiếp nhận hỗ trợ" },
+            { value: "/ticket/", label: "Phiếu hỗ trợ" },
             { value: "/invoice/", label: "Nhập kho" },
           ],
           fill: true,

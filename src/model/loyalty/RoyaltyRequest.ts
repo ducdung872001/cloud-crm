@@ -15,7 +15,7 @@ export interface IProgramRoyaltyRequest {
   description?: string;
   priorityLevel?: number;
   active?: boolean;
-  branchIds?: number[] | string; // [1,2,3,4]
+  branchIds?: number[] | string;
   processId?: number;
   processName?: string;
   startNodeId?: string;
@@ -48,12 +48,23 @@ export interface ILoyaltyRewardRequest {
   createdAt?: string;
   updatedAt?: string;
   rewardItems?: string;
+  // Các trường mới sau migration
+  rewardType?: string;   // "Voucher" | "Dịch vụ" | "Quà tặng" | "Hạng TV"
+  totalLimit?: number;   // null = không giới hạn
+  usedCount?: number;    // readonly
+  expiryDate?: string;   // "YYYY-MM-DD"
+  // filter params
+  keyword?: string;
+  page?: number;
+  limit?: number;
 }
 
 export interface ILoyaltySegmentRequest {
   id?: number;
   point?: number;
   name?: string;
+  rate?: string;
+  benefits?: string;
 }
 
 export interface ILoyaltyWalletRequest {

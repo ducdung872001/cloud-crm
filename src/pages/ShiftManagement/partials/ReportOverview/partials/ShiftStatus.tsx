@@ -42,7 +42,7 @@ const MOCK_SHIFTS: ShiftStatusItem[] = [
 type Props = { branchId: number };
 
 export default function ShiftStatus({ branchId }: Props) {
-  const [shifts, setShifts] = useState<ShiftStatusItem[]>(MOCK_SHIFTS);
+  const [shifts, setShifts] = useState<ShiftStatusItem[]>([]);
   // Đồng hồ đếm giây cho ca đang active
   const [tick, setTick] = useState(0);
 
@@ -55,8 +55,12 @@ export default function ShiftStatus({ branchId }: Props) {
     if (!branchId) return;
     ShiftService.getGeneralReport(branchId)
       .then((res) => {
-        const d = res?.data;
-        if (!d || !d.shiftStatuses || d.shiftStatuses.length === 0) return; // giữ mock
+        console.log("[ShiftStatus] API response:", res);
+        const d = res?.result;
+        if (!d || !d.shiftStatuses || d.shiftStatuses.length === 0) {
+          console.warn("[ShiftStatus] No data:", d);
+          return;
+        }
         setShifts(
           d.shiftStatuses.map((s: any) => ({
             shiftId: s.shiftId ?? 0,

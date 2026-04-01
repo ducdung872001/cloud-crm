@@ -40,12 +40,12 @@ export default function SettingLoyaltyList(props: ICustomerRoyaltyListProps) {
   const [params, setParams] = useState<IRoyaltyFilterRequest>({ name: "", limit: 10 });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
-    { key: "all", name: "Chương trình khách hàng thân thiết", is_active: true },
+    { key: "all", name: "Quy tắc tích điểm", is_active: true },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Chương trình khách hàng thân thiết",
+    name: "Quy tắc tích điểm",
     isChooseSizeLimit: true,
     setPage: (page) => setParams((prev) => ({ ...prev, page })),
     chooseSizeLimit: (limit) => setParams((prev) => ({ ...prev, limit })),
@@ -95,7 +95,7 @@ export default function SettingLoyaltyList(props: ICustomerRoyaltyListProps) {
   };
 
   // Cột: STT | Tên chương trình | Người phụ trách | Ngày bắt đầu | Ngày kết thúc | Trạng thái
-  const titles = ["STT", "Tên chương trình khách hàng thân thiết", "Mã quy trình", "Người phụ trách", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"];
+  const titles = ["STT", "Tên quy tắc tích điểm", "Mã quy trình", "Người phụ trách", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"];
   const dataFormat = ["text-center", "","", "", "text-center", "text-center", "text-center"];
   const dataMappingArray = (item: IProgramRoyaltyResposne, index: number) => [
     getPageOffset(params) + index + 1,
@@ -190,7 +190,7 @@ export default function SettingLoyaltyList(props: ICustomerRoyaltyListProps) {
   return (
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
       <HeaderTabMenu
-        title="Chương trình khách hàng thân thiết"
+        title="Quy tắc tích điểm"
         titleBack="Khách hàng thành viên"
         onBackProps={onBackProps}
         titleActions={titleActions}
@@ -198,7 +198,7 @@ export default function SettingLoyaltyList(props: ICustomerRoyaltyListProps) {
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên chương trình khách hàng thân thiết"
+          name="Tên quy tắc tích điểm"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}

@@ -24,6 +24,8 @@ export default function CustomerModal({
 }: CustomerModalProps) {
   const [search,     setSearch]     = useState("");
   const [selectedId, setSelectedId] = useState("");
+  // Map customerId → { currentBalance, segmentName } — fetch sau khi list load xong
+  const [walletMap, setWalletMap] = useState<Record<string, { currentBalance: number; segmentName?: string }>>({});
   const listRef = useRef<HTMLDivElement>(null);
 
   const [params, setParams] = useState<ICustomerListParams>({
@@ -71,6 +73,7 @@ export default function CustomerModal({
     if (open) {
       setSearch(""); setNewName(""); setNewPhone("");
       setRegisterMode(false);
+      setWalletMap({});
       setParams({ keyword: "", limit: 10, page: 1 });
     }
   }, [open]);
@@ -78,10 +81,17 @@ export default function CustomerModal({
   // ── Chọn khách ───────────────────────────────────────────────────────────
   const handleSelect = useCallback((c: Customer) => {
     setSelectedId(c.id);
-    onSelect?.(c);
+    // Merge wallet info vào customer object trước khi truyền lên
+    const wallet = walletMap[String(c.id)];
+    const enriched: Customer = {
+      ...c,
+      points:      wallet?.currentBalance ?? (c as any).points ?? 0,
+      tier:        wallet?.segmentName ?? (c as any).tier ?? undefined,
+    };
+    onSelect?.(enriched);
     onClose();
     setParams({ keyword: "", limit: 10, page: 1 });
-  }, [onClose, onSelect]);
+  }, [onClose, onSelect, walletMap]);
 
   // ── Đăng ký hội viên nhanh ────────────────────────────────────────────────
   const handleQuickRegister = async () => {
@@ -129,15 +139,61 @@ export default function CustomerModal({
     }
   };
 
+  // ── Batch-fetch loyalty wallet khi danh sách thay đổi ───────────────────
+  useEffect(() => {
+    if (!listCustomer || listCustomer.length === 0) return;
+
+    // Chỉ fetch những ID chưa có trong walletMap
+    const ids = listCustomer
+      .map((c) => String(c.id))
+      .filter((id) => id && Number(id) > 0 && !(id in walletMap));
+
+    if (ids.length === 0) return;
+
+    Promise.allSettled(
+      ids.map((id) =>
+        fetch(`${urlsApi.ma.getWalletByCustomer}?customerId=${id}`)
+          .then((r) => r.json())
+          .then((json) => ({ id, json }))
+          .catch(() => null)
+      )
+    ).then((results) => {
+      const newEntries: Record<string, { currentBalance: number; segmentName?: string }> = {};
+      results.forEach((r) => {
+        if (r.status === "fulfilled" && r.value) {
+          const { id, json } = r.value;
+          if (json.code === 0 && json.result?.isMember && json.result?.wallet) {
+            newEntries[id] = {
+              currentBalance: json.result.wallet.currentBalance ?? 0,
+              segmentName:    json.result.wallet.segmentName ?? undefined,
+            };
+          } else {
+            // Không phải hội viên — vẫn lưu để không fetch lại lần sau
+            newEntries[id] = { currentBalance: 0, segmentName: undefined };
+          }
+        }
+      });
+      if (Object.keys(newEntries).length > 0) {
+        setWalletMap((prev) => ({ ...prev, ...newEntries }));
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listCustomer]);
+
   // Map listCustomer → có thêm các field UI cần (initial, color, phone)
-  const displayList = useMemo(() => listCustomer.map((item) => ({
-    ...item,
-    initial: item.name ? item.name.charAt(0).toUpperCase() : "?",
-    points:  item.totalPoint ?? item.points ?? 0,
-    tier:    item.segmentName ?? "—",
-    color:   item.color ?? ["#059669", "#d97706", "#dc2626"][item.id % 3],
-    phone:   item.phoneMasked || item.phone || "—",
-  })), [listCustomer]);
+  const displayList = useMemo(() => listCustomer.map((item) => {
+    const wallet = walletMap[String(item.id)];
+    return {
+      ...item,
+      initial: item.name ? item.name.charAt(0).toUpperCase() : "?",
+      // Ưu tiên wallet đã fetch, fallback về field có sẵn trong item
+      points:  wallet?.currentBalance ?? item.totalPoint ?? item.points ?? 0,
+      tier:    wallet?.segmentName ?? item.segmentName ?? null,
+      color:   item.color ?? ["#059669", "#d97706", "#dc2626"][item.id % 3],
+      phone:   item.phoneMasked || item.phone || "—",
+      isMember: wallet !== undefined,
+    };
+  }), [listCustomer, walletMap]);
 
   const actions = useMemo<IActionModal>(() => ({
     actions_right: {
@@ -272,8 +328,30 @@ export default function CustomerModal({
                 <div className="cust-item__info">
                   <div className="cust-item__name">{c.name}</div>
                   <div className="cust-item__sub">
-                    {c.phone} · {Number(c.points ?? 0).toLocaleString("vi-VN")} điểm
-                    {c.tier && c.tier !== "—" ? ` · Hạng ${c.tier}` : ""}
+                    <span>{c.phone}</span>
+                    {walletMap[String(c.id)] === undefined ? (
+                      // Chưa load xong wallet — hiện placeholder
+                      <span style={{ color: "var(--muted)", marginLeft: 4 }}>· đang tải điểm...</span>
+                    ) : walletMap[String(c.id)]?.currentBalance > 0 || walletMap[String(c.id)]?.segmentName ? (
+                      // Là hội viên
+                      <>
+                        <span style={{ color: "var(--lime-d)", fontWeight: 600, marginLeft: 4 }}>
+                          · {(walletMap[String(c.id)]?.currentBalance ?? 0).toLocaleString("vi-VN")} điểm
+                        </span>
+                        {walletMap[String(c.id)]?.segmentName && (
+                          <span style={{
+                            marginLeft: 6, fontSize: 11, fontWeight: 600,
+                            background: "var(--lime-l)", color: "var(--lime-d)",
+                            padding: "1px 7px", borderRadius: 20,
+                          }}>
+                            {walletMap[String(c.id)]?.segmentName}
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      // Không phải hội viên
+                      <span style={{ color: "var(--muted)", marginLeft: 4 }}>· 0 điểm</span>
+                    )}
                   </div>
                 </div>
                 {isSelected && <span className="cust-item__check">✓</span>}

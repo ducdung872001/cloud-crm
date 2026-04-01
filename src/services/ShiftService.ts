@@ -1,13 +1,14 @@
 import { convertParamsToString } from "reborn-util";
 
 // Base URL khớp với prefixSales = "/sales" trong urls.ts
-const prefixSales = "/sales";
+const prefixBiz = "/bizapi";
+const prefixSales = prefixBiz + "/sales";
 
 const SHIFT_URLS = {
   overview:        prefixSales + "/shift/overview",
   open:            prefixSales + "/shift/open",
   activeDashboard: prefixSales + "/shift/active-dashboard",
-  summary:         prefixSales + "/shift/summary",
+  summary:         prefixSales + "/shift/summary", 
   orders:          prefixSales + "/shift/orders",
   close:           prefixSales + "/shift/close",
   closeReport:     prefixSales + "/shift/close-report",
@@ -65,7 +66,12 @@ export default {
     page?: number;
     size?: number;
   }) => {
-    return fetch(`${SHIFT_URLS.orders}${convertParamsToString(params)}`, {
+    // Lọc bỏ các giá trị undefined/null trước khi build query string
+    // vì convertParamsToString serialize undefined thành chuỗi "undefined"
+    const cleanParams = Object.fromEntries(
+      Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== "")
+    );
+    return fetch(`${SHIFT_URLS.orders}${convertParamsToString(cleanParams)}`, {
       method: "GET",
     }).then((res) => res.json());
   },

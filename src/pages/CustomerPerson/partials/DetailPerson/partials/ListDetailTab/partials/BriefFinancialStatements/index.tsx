@@ -13,7 +13,6 @@ import BoxTable from "components/boxTable/boxTable";
 import { IAction } from "model/OtherModel";
 import Icon from "components/icon";
 import ModalAddData from "./partials/ModalAddData";
-import BriefFinancialReportService from "services/fintech/BriefFinancialReportService";
 
 import "./index.scss";
 
@@ -46,7 +45,7 @@ export default function BriefFinancialStatements({ data }) {
   const getListBriefFinancialStatements = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await BriefFinancialReportService.list(paramsSearch);
+    const response = null;
 
     if (response.code === 0) {
       const result = response.result;
@@ -152,7 +151,7 @@ export default function BriefFinancialStatements({ data }) {
   const [contentDialog, setContentDialog] = useState<any>(null);
 
   const onDelete = async (id: number) => {
-    const response = await BriefFinancialReportService.delete(id);
+    const response = null;
 
     if (response.code === 0) {
       showToast("Xóa báo cáo tài chính rút gọn thành công", "success");

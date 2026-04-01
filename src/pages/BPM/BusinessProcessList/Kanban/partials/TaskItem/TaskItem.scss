@@ -1,148 +1,130 @@
 .task__item--bpm {
-    border-radius: 0.3rem;
-    // overflow: hidden;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  
-    & + .task__item--bpm {
-      margin-top: 1.2rem;
-    }
-  
-    .task-infomation {
+  border-radius: 0.8rem;
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: box-shadow 0.15s ease, transform 0.12s ease;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+  }
+
+  & + .task__item--bpm { margin-top: 0.7rem; }
+
+  .task-infomation {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.1rem;
+    gap: 0.6rem;
+    cursor: pointer;
+
+    // ── Title ────────────────────────────────────────────────────────────────
+    .task-title-row {
       display: flex;
       align-items: flex-start;
-      flex-direction: column;
-      padding: 0.8rem;
-      cursor: pointer;
-      .title--job {
-        // max-width: 20.6rem;
-        // min-height: 3.2rem;
-        // padding-bottom: 0.4rem;
-        word-wrap: break-word;
-        // border: 1px solid;
-        font-size: 15px;
-        font-weight: 500;
-      }
-  
-      &:hover {
-        background-color: var(--extra-color-5);
-      }
-  
-      .task-footer {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-  
-        .time-task,
-        .task-success,
-        .task-faild,
-        .task-item {
-          display: flex;
-          align-items: center;
-          gap: 0 0.3rem;
-          font-size: 1.1rem;
-          font-weight: 600;
-          padding: 0 0.5rem;
-          border-radius: 0.3rem;
-  
-          svg {
-            width: 1.5rem;
-            height: 1.5rem;
-          }
-        }
-  
-        .time-task {
-          padding: 0;
-  
-          .status-unfulfilled,
-          .status-processing,
-          .status-cancelled,
-          .status-processing--waring {
-            color: var(--white-color);
-            padding: 0 0.8rem;
-            border-radius: 0.3rem;
-            font-size: 1rem;
-          }
-  
-          .status-unfulfilled {
-            background-color: var(--extra-color-50);
-          }
-  
-          .status-processing {
-            background-color: var(--primary-color);
-          }
-  
-          .status-processing--waring {
-            background-color: var(--warning-color);
-          }
-  
-          .status-cancelled {
-            background-color: var(--error-color);
-          }
-        }
-  
-        .task-success {
-          color: var(--success-darker-color);
-  
-          svg {
-            fill: var(--success-darker-color);
-          }
-        }
-  
-        .task-faild {
-          color: var(--error-darker-color);
-  
-          svg {
-            fill: var(--error-darker-color);
-          }
-        }
-  
-        .task-item {
-          background-color: #ffebe6;
-          svg {
-            fill: var(--warning-color);
-          }
-        }
-  
-        .avatar {
-          width: 2.8rem;
-          height: 2.8rem;
-          overflow: hidden;
-          border-radius: 50rem;
-  
-          img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
+      gap: 0.6rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid #f1f5f9;
+
+      .task-icon {
+        flex-shrink: 0;
+        margin-top: 0.1rem;
+        svg {
+          width: 1.4rem;
+          height: 1.4rem;
+          fill: #3b82f6;
         }
       }
 
-      .container-action{
-        // border: 1px solid;
-        margin-right: 3px;
-        width: 25px;
-        height: 25px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      .task-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #1e293b;
+        line-height: 1.4;
+        word-break: break-word;
+
+        &:hover { color: #3b82f6; }
       }
     }
-  
-    .disabled__task--item {
-      background-color: var(--extra-color-10);
-      cursor: pointer;
-  
-      .task-footer {
-        .task-success,
-        .task-faild {
-          background-color: var(--extra-color-5);
-        }
+
+    // ── Meta rows ─────────────────────────────────────────────────────────────
+    .task-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+
+      &__row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.2rem;
       }
-  
-      &:hover {
-        background-color: var(--extra-color-10);
+
+      &__label {
+        color: #94a3b8;
+        font-weight: 500;
+        white-space: nowrap;
+        flex-shrink: 0;
+
+        &::after { content: ":"; }
+      }
+
+      &__value {
+        color: #475569;
+        font-weight: 400;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    // ── Status badge ─────────────────────────────────────────────────────────
+    .task-status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.15rem 0.7rem;
+      border-radius: 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+
+      &--pending   { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+      &--done      { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+      &--cancelled { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    }
+
+    // ── Footer actions ───────────────────────────────────────────────────────
+    .task-footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 0.2rem;
+
+      .task-btn-delete {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.8rem;
+        height: 2.8rem;
+        border: none;
+        background: transparent;
+        border-radius: 0.4rem;
+        cursor: pointer;
+        transition: background 0.15s;
+
+        &:hover {
+          background: #fef2f2;
+          svg { fill: #dc2626; }
+        }
+
+        svg {
+          width: 1.4rem;
+          height: 1.4rem;
+          fill: #cbd5e1;
+          transition: fill 0.15s;
+        }
       }
     }
   }
-  
+}

@@ -1,0 +1,225 @@
+/* src/components/tourOverlay/TourOverlay.scss */
+
+// ── Overlay container ──────────────────────────────────────────────────────
+.tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;   // các mask sẽ bật lại pointer-events riêng
+}
+
+// ── Backdrop masks — 4 mảnh tạo spotlight ────────────────────────────────
+.tour-overlay__mask {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.58);
+  pointer-events: auto;   // chặn click ra ngoài
+  transition: all 0.25s ease;
+
+  &--full {
+    inset: 0;
+  }
+}
+
+// ── Spotlight border ──────────────────────────────────────────────────────
+.tour-overlay__spotlight {
+  position: fixed;
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 3px #84cc16,           // lime border
+    0 0 0 6px rgba(132, 204, 22, 0.25);
+  pointer-events: none;
+  animation: tour-pulse 2s ease-in-out infinite;
+  transition: all 0.25s ease;
+}
+
+@keyframes tour-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px #84cc16, 0 0 0 6px rgba(132, 204, 22, 0.25); }
+  50%       { box-shadow: 0 0 0 3px #84cc16, 0 0 0 12px rgba(132, 204, 22, 0.1); }
+}
+
+// ── Tooltip bubble ────────────────────────────────────────────────────────
+.tour-tooltip {
+  position: fixed;
+  width: 320px;
+  max-width: calc(100vw - 16px);
+  background: #fff;
+  border-radius: 14px;
+  padding: 2rem;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.22),
+    0 4px 16px rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
+  z-index: 10000;
+  animation: tour-fadein 0.22s ease;
+
+  &--center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+  }
+
+  @media (max-width: 768px) {
+    width: calc(100vw - 32px);
+    left: 16px !important;
+    right: 16px !important;
+    bottom: 80px !important;
+    top: auto !important;
+    transform: none !important;
+    position: fixed !important;
+  }
+}
+
+@keyframes tour-fadein {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+.tour-tooltip--center {
+  @keyframes tour-fadein-center {
+    from { opacity: 0; transform: translate(-50%, -48%) scale(0.95); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1);    }
+  }
+  animation: tour-fadein-center 0.25s ease;
+}
+
+// ── Arrow ─────────────────────────────────────────────────────────────────
+.tour-tooltip__arrow {
+  position: absolute;
+  width: 0; height: 0;
+
+  &--bottom {
+    top: -8px; left: 50%; transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #fff;
+  }
+  &--top {
+    bottom: -8px; left: 50%; transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #fff;
+  }
+  &--right {
+    left: -8px; top: 20px;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 8px solid #fff;
+  }
+  &--left {
+    right: -8px; top: 20px;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 8px solid #fff;
+  }
+}
+
+// ── Header ────────────────────────────────────────────────────────────────
+.tour-tooltip__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.tour-tooltip__progress {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--muted, #64748b);
+  background: var(--paper, #f8fafc);
+  padding: 2px 8px;
+  border-radius: 2rem;
+}
+
+.tour-tooltip__skip {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--muted, #94a3b8);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-base);
+  line-height: 1;
+  transition: all 0.15s;
+
+  &:hover {
+    background: var(--paper, #f1f5f9);
+    color: var(--ink, #1e293b);
+  }
+}
+
+// ── Content ───────────────────────────────────────────────────────────────
+.tour-tooltip__title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ink, #1e293b);
+  margin-bottom: 0.7rem;
+  line-height: 1.4;
+}
+
+.tour-tooltip__body {
+  font-size: 1.3rem;
+  color: var(--muted, #475569);
+  line-height: 1.6;
+  margin-bottom: 1.4rem;
+}
+
+// ── Step dots ─────────────────────────────────────────────────────────────
+.tour-tooltip__dots {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-bottom: 1.4rem;
+}
+
+.tour-tooltip__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #cbd5e0;
+  transition: all 0.2s;
+
+  &.active {
+    width: 18px;
+    border-radius: 3px;
+    background: #84cc16;
+  }
+}
+
+// ── Footer buttons ────────────────────────────────────────────────────────
+.tour-tooltip__footer {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.tour-btn {
+  flex: 1;
+  padding: 0.85rem 1.4rem;
+  border-radius: 0.7rem;
+  font-family: var(--font-base);
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+  white-space: nowrap;
+
+  &--primary {
+    background: #84cc16;
+    color: #fff;
+    flex: 1.5;
+    &:hover { background: #65a30d; }
+    &:active { transform: scale(0.98); }
+  }
+
+  &--ghost {
+    background: var(--paper, #f8fafc);
+    color: var(--muted, #64748b);
+    border: 1.5px solid var(--border, #e2e8f0);
+    flex: 1;
+    &:hover { background: var(--border, #e2e8f0); color: var(--ink, #1e293b); }
+  }
+}

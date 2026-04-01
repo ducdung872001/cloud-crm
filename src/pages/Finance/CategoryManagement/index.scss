@@ -1,0 +1,438 @@
+// ─── Category Management page styles ─────────────────────────────────────────
+
+.catmgmt-subtitle {
+    margin: 0.2rem 0 0;
+    font-size: 1.3rem;
+    color: #5c7282;
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+
+.catmgmt-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid #e4ebf1;
+}
+
+.catmgmt-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 2rem;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #7c9ab0;
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    border-radius: 0;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        color 0.15s,
+        border-bottom-color 0.15s,
+        background 0.15s;
+
+    &:hover {
+        color: #17384a;
+        background: #f4f8fb;
+    }
+}
+
+.catmgmt-tab:focus,
+.catmgmt-tab:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.catmgmt-tab--active.catmgmt-tab--income {
+    color: #138a4b;
+    border-bottom-color: #138a4b;
+    font-weight: 600;
+    box-shadow: none;
+    outline: none;
+}
+
+.catmgmt-tab--active.catmgmt-tab--expense {
+    color: #c54a37;
+    border-bottom-color: #c54a37;
+    font-weight: 600;
+    box-shadow: none;
+    outline: none;
+}
+
+.catmgmt-tab__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.8rem;
+    height: 1.8rem;
+    padding: 0 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: #edf2f5;
+    border-radius: 2rem;
+    color: #7c9ab0;
+    transition:
+        background 0.15s,
+        color 0.15s;
+}
+
+.catmgmt-tab--active.catmgmt-tab--income .catmgmt-tab__count {
+    background: #138a4b;
+    color: #fff;
+}
+
+.catmgmt-tab--active.catmgmt-tab--expense .catmgmt-tab__count {
+    background: #c54a37;
+    color: #fff;
+}
+
+// ── Panel & list ──────────────────────────────────────────────────────────────
+
+.catmgmt-panel {
+    padding: 0 !important; // override finance-panel padding, use row padding instead
+}
+
+.catmgmt-loading {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem;
+    color: #5c7282;
+    font-size: 1.4rem;
+}
+
+.catmgmt-list {
+    display: flex;
+    flex-direction: column;
+}
+
+// ── Row ───────────────────────────────────────────────────────────────────────
+
+.catmgmt-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+    padding: 1.2rem 1.6rem;
+    border-bottom: 1px solid #f0f4f7;
+    transition: background 0.1s;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &:hover {
+        background: #f8fbfd;
+    }
+}
+
+.catmgmt-row--editing,
+.catmgmt-row--new {
+    background: #f4f9ff;
+    border-left: 3px solid #7cb2d1;
+    padding-left: calc(1.6rem - 3px);
+
+    &:hover {
+        background: #f4f9ff;
+    }
+}
+
+.catmgmt-row--new {
+    border-left-color: #138a4b;
+    background: #f4fbf7;
+
+    &:hover {
+        background: #f4fbf7;
+    }
+}
+
+.catmgmt-row__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.catmgmt-row__label {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #17384a;
+}
+
+.catmgmt-row__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.catmgmt-row__code {
+    font-size: 1.15rem;
+    color: #7c9ab0;
+    background: #edf2f5;
+    border-radius: 0.4rem;
+    padding: 0.1rem 0.6rem;
+    font-family: monospace;
+    letter-spacing: 0.03em;
+}
+
+.catmgmt-row__position {
+    font-size: 1.2rem;
+    color: #9ab0be;
+}
+
+.catmgmt-row__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+// ── Edit input ────────────────────────────────────────────────────────────────
+
+.catmgmt-edit-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.6rem 1rem;
+    font-size: 1.4rem;
+    border: 1.5px solid #7cb2d1;
+    border-radius: 0.7rem;
+    background: #fff;
+    color: #17384a;
+    outline: none;
+
+    &:focus {
+        border-color: #3a8fb5;
+        box-shadow: 0 0 0 3px rgba(58, 143, 181, 0.15);
+    }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+
+.catmgmt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.1rem;
+    font-size: 1.3rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    transition:
+        background 0.15s,
+        opacity 0.15s;
+    white-space: nowrap;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.catmgmt-btn--edit {
+    background: #edf2f5;
+    color: #17384a;
+
+    &:hover:not(:disabled) {
+        background: #dce7ef;
+    }
+}
+
+.catmgmt-btn--save {
+    background: #138a4b;
+    color: #fff;
+    min-width: 5rem;
+
+    &:hover:not(:disabled) {
+        background: #0f7340;
+    }
+}
+
+.catmgmt-btn--cancel {
+    background: #edf2f5;
+    color: #5c7282;
+
+    &:hover:not(:disabled) {
+        background: #dce7ef;
+    }
+}
+
+.catmgmt-btn--delete {
+    background: #fef0ee;
+    color: #c54a37;
+
+    &:hover:not(:disabled) {
+        background: #fde0dc;
+    }
+}
+
+// ── Delete modal ──────────────────────────────────────────────────────────────
+
+.catmgmt-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 37, 53, 0.4);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.catmgmt-modal {
+    background: #fff;
+    border-radius: 1.2rem;
+    padding: 2.4rem;
+    width: 100%;
+    max-width: 42rem;
+    box-shadow: 0 1.6rem 4rem rgba(15, 37, 53, 0.16);
+}
+
+.catmgmt-modal__title {
+    margin: 0 0 1.2rem;
+    font-size: 1.8rem;
+    color: #17384a;
+}
+
+.catmgmt-modal__body {
+    font-size: 1.4rem;
+    color: #3b5468;
+    line-height: 1.6;
+    margin: 0 0 1.6rem;
+}
+
+.catmgmt-modal__warn {
+    display: block;
+    margin-top: 0.8rem;
+    font-size: 1.2rem;
+    color: #7c9ab0;
+}
+
+.catmgmt-modal__error {
+    font-size: 1.3rem;
+    color: #c54a37;
+    margin-bottom: 1.2rem;
+}
+
+.catmgmt-modal__footer {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: flex-end;
+}
+
+// ── Quick-create inline trong SlideOver ───────────────────────────────────────
+
+.finance-field__label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.finance-field__add-link {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #3a8fb5;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+        color: #2a6f8f;
+    }
+}
+
+.finance-quick-create {
+    margin-top: 0.8rem;
+    padding: 1.2rem;
+    background: #f4f9ff;
+    border: 1px solid #c2d9ea;
+    border-radius: 0.8rem;
+}
+
+.finance-quick-create__title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #5c7282;
+    margin-bottom: 0.8rem;
+}
+
+.finance-quick-create__row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+}
+
+.finance-quick-create__input {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    font-size: 1.3rem;
+    border: 1.5px solid #7cb2d1;
+    border-radius: 0.7rem;
+    background: #fff;
+    outline: none;
+
+    &:focus {
+        border-color: #3a8fb5;
+        box-shadow: 0 0 0 3px rgba(58, 143, 181, 0.15);
+    }
+}
+
+.finance-quick-create__btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 1.1rem;
+    font-size: 1.3rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.finance-quick-create__btn--save {
+    background: #138a4b;
+    color: #fff;
+    min-width: 5rem;
+
+    &:hover:not(:disabled) {
+        background: #0f7340;
+    }
+}
+
+.finance-quick-create__btn--cancel {
+    background: #edf2f5;
+    color: #5c7282;
+
+    &:hover:not(:disabled) {
+        background: #dce7ef;
+    }
+}
+
+.finance-quick-create__error {
+    margin-top: 0.6rem;
+    font-size: 1.2rem;
+    color: #c54a37;
+}
+
+// ── Spinner sm ────────────────────────────────────────────────────────────────
+
+.finance-spinner--sm {
+    width: 1.4rem;
+    height: 1.4rem;
+}

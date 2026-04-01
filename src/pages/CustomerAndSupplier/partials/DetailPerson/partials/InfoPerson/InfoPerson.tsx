@@ -4,7 +4,6 @@ import { IOption } from "model/OtherModel";
 import { IInfoPersonProps } from "model/customer/PropsModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IUpdateOneRelationshipRequest } from "model/customer/CustomerRequestModel";
-import ThirdGender from "assets/images/third-gender.png";
 import Icon from "components/icon";
 import Button from "components/button/button";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
@@ -146,7 +145,26 @@ export default function InfoPerson(props: IInfoPersonProps) {
           {data?.employeeName ? (
             <div className="info-person-charge">
               <div className="avatar-person-charge">
-                <img src={data.employeeAvatar ? data.employeeAvatar : ThirdGender} alt={data.employeeName} />
+                {data.employeeAvatar ? (
+                  <img
+                    src={data.employeeAvatar}
+                    alt={data.employeeName}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                      const parent = (e.target as HTMLImageElement).parentElement;
+                      if (parent && !parent.querySelector(".avatar-initials")) {
+                        const span = document.createElement("span");
+                        span.className = "avatar-initials";
+                        span.textContent = data.employeeName?.charAt(0)?.toUpperCase() || "?";
+                        parent.appendChild(span);
+                      }
+                    }}
+                  />
+                ) : (
+                  <span className="avatar-initials">
+                    {data.employeeName?.charAt(0)?.toUpperCase() || "?"}
+                  </span>
+                )}
               </div>
               <div className="detail-person-charge">
                 <span className="name">{data.employeeName}</span>

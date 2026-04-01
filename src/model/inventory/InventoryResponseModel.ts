@@ -11,6 +11,8 @@ export interface IInventoryResponse {
   code: string;
   status: number;
   employeeId: number;
+  isSelling: number | string;
+  is_selling: number | string;
 }
 
 export interface IInventoryLedgerResponse {

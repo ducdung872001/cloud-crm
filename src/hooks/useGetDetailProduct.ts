@@ -36,6 +36,11 @@ export interface VariantProduct {
   variants: ProductVariant[];
 }
 
+const toSafeNumber = (value: unknown, fallback = 0): number => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
 interface UseGetVariantParams {
   productId: number;
   enabled?: boolean; // ✅ mặc định true, truyền false để tắt
@@ -519,11 +524,16 @@ const MOCK_IPHONE: VariantProduct = {
 
 // Đây là hàm để nhận đầu vào là dữ liệu giống như sampleProductDetail và trả về dữ liệu đã được map sang đúng format của VariantProduct để dễ đổ ra UI
 function mapToVariantProduct(detail): VariantProduct {
+  const basePrice = toSafeNumber(
+    detail?.promotionPrice ?? detail?.salePrice ?? detail?.price ?? detail?.originalPrice,
+    0
+  );
+
   return {
     id: String(detail.id),
     name: detail.name,
     icon: detail?.icon || "📦",
-    unit: detail.unitName,
+    unit: detail.unitName ?? detail.unit ?? "",
     image: detail.image,
     avatar: detail.avatar, // tạm map image sang avatar để dùng chung component với product list
     variantGroups: detail?.variantGroups
@@ -539,11 +549,10 @@ function mapToVariantProduct(detail): VariantProduct {
     variants: detail?.variants
       ? detail.variants.map((v) => ({
           id: String(v.id),
-          sku: v.sku,
-          price: v.price,
+          sku: v.sku ?? "",
+          price: toSafeNumber(v.promotionPrice ?? v.price ?? v.priceRetail ?? v.salePrice, basePrice),
           images: v?.images ? v.images.map((img) => img) : [], // giả sử API mới có thêm trường images là array để chứa nhiều ảnh của biến thể
-          // stock: v?.quantity ?? 0, // giả sử API mới có thêm trường quantity để biết chính xác tồn kho từng biến thể
-          stock: 100, // giả sử API mới có thêm trường quantity để biết chính xác tồn kho từng biến thể
+          stock: toSafeNumber(v?.quantity, 0),
           combination: v.selectedOptions
             ? v.selectedOptions.reduce((acc, opt) => {
                 acc[String(opt.groupId)] = String(opt.optionValueId);

@@ -31,7 +31,7 @@ export default {
     }).then((res) => res.json());
   },
   warehouse: (params: IWarehouseProFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.adjustmentSlip.warehouse}${convertParamsToString(params)}`, {
+    return fetch(`${urlsApi.product.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());

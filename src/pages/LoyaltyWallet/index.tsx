@@ -19,7 +19,7 @@ export default function LoyaltyWallet(props) {
   document.title = "Danh sách thành viên";
 
   const isMounted = useRef(false);
-  const { onBackProps } = props;
+  const { onBackProps, onViewHistory } = props;
   const [listData, setListData] = useState<ILoyaltyWalletResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
@@ -27,12 +27,12 @@ export default function LoyaltyWallet(props) {
   const [params, setParams] = useState<IRoyaltyFilterRequest>({ name: "", limit: 10 });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
-    { key: "all", name: "Danh sách hội viên", is_active: true },
+    { key: "all", name: "Danh sách thành viên", is_active: true },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Danh sách hội viên",
+    name: "Danh sách thành viên",
     isChooseSizeLimit: true,
     setPage: (page) => setParams((prev) => ({ ...prev, page })),
     chooseSizeLimit: (limit) => setParams((prev) => ({ ...prev, limit })),
@@ -73,14 +73,32 @@ export default function LoyaltyWallet(props) {
   // Ví điểm là read-only, không có thao tác thêm/sửa/xóa từ UI
   // Cột: STT | Khách hàng | Tổng điểm tích lũy | Điểm hiện tại | Hạng hội viên | Trạng thái
   const titles = ["STT", "Khách hàng", "Tổng điểm tích lũy", "Điểm hiện tại", "Hạng hội viên", "Trạng thái"];
-  const dataFormat = ["text-center", "", "text-center", "text-center", "", "text-center"];
+  const dataFormat = ["text-center", "", "text-right", "text-right", "", "text-center"];
   const dataMappingArray = (item: ILoyaltyWalletResponse, index: number) => [
     getPageOffset(params) + index + 1,
     item.customerName ?? "—",
-    item.totalEarn ?? 0,
-    item.currentBalance ?? 0,
+    // Tổng điểm tích lũy — click để xem lịch sử điểm của thành viên này
+    <span
+      className="loyalty-points loyalty-points--total loyalty-points--link"
+      title="Xem lịch sử điểm"
+      onClick={() => onViewHistory?.(item.customerId)}
+    >
+      {(item.totalEarn ?? 0).toLocaleString("vi-VN")}
+    </span>,
+    // Điểm hiện tại — click để xem lịch sử điểm của thành viên này
+    <span
+      className={`loyalty-points loyalty-points--link${
+        (item.currentBalance ?? 0) === 0 ? " loyalty-points--zero" : " loyalty-points--current"
+      }`}
+      title="Xem lịch sử điểm"
+      onClick={() => onViewHistory?.(item.customerId)}
+    >
+      {(item.currentBalance ?? 0).toLocaleString("vi-VN")}
+    </span>,
     item.segmentName ?? "—",
-    item.status === 1 ? "Kích hoạt" : "Không kích hoạt",
+    item.status === 1
+      ? <span className="loyalty-status loyalty-status--active">Kích hoạt</span>
+      : <span className="loyalty-status loyalty-status--inactive">Không kích hoạt</span>,
   ];
 
   return (

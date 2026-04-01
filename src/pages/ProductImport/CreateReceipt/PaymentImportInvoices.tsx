@@ -11,6 +11,7 @@ import Button from "components/button/button";
 import SelectCustom from "components/selectCustom/selectCustom";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import { showToast } from "utils/common";
+import urls from "@/configs/urls";
 import "./PaymentImportInvoices.scss";
 
 interface IOptionInventory {
@@ -66,7 +67,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       ...data,
       id: data?.id ?? 0,
       invoiceType: data?.invoiceType ?? "IV4",
-      receiptDate: data?.receiptDate ?? "",
+      receiptDate: data?.receiptDate ? new Date(data.receiptDate) : "",
       inventoryId: data?.inventoryId ?? null,
     }));
   }, [data]);
@@ -80,7 +81,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
     if (listInventory.length > 0) return;
 
     setIsLoadingInventory(true);
-    const response = await InventoryService.import();
+    const response = await InventoryService.list();
 
     if (response.code === 0) {
       const dataOption = Array.isArray(response.result)
@@ -333,7 +334,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
                 <Button
                   color="primary"
                   variant="outline"
-                  onClick={(e) => { e.preventDefault(); navigate("/invoice_order"); }}
+                  onClick={(e) => { e.preventDefault(); navigate(`${urls.inventory_checking}?tab=import`); }}
                 >
                   Quay lại
                 </Button>
@@ -354,7 +355,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
               <Button
                 color="primary"
                 variant="outline"
-                onClick={(e) => { e.preventDefault(); navigate("/invoice_order"); }}
+                onClick={(e) => { e.preventDefault(); navigate(`${urls.inventory_checking}?tab=import`); }}
               >
                 Quay lại
               </Button>

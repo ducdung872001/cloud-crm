@@ -30,6 +30,7 @@ import { ContextType, UserContext } from "contexts/userContext";
 import Input from "components/input/input";
 import CampaignService from "services/CampaignService";
 import SaleFlowService from "services/SaleFlowService";
+import { getActiveShiftId } from "utils/ShiftStorage";
 
 export default function PaymentBill(props: any) {
   const { 
@@ -481,7 +482,8 @@ export default function PaymentBill(props: any) {
       ...(formData as IInvoiceCreateRequest),
       ...(invoiceCode ? {invoiceCode: invoiceCode} : {} ),
       ...(dataPaymentBill ? { id: dataPaymentBill.id } : {}),
-      ...(saleflowId !== -1 ? {saleflowId: saleflowId} : {})
+      ...(saleflowId !== -1 ? {saleflowId: saleflowId} : {}),
+      ...(getActiveShiftId() ? { shiftId: getActiveShiftId() } : {}),
     };
 
     const response = await InvoiceService.create(body);

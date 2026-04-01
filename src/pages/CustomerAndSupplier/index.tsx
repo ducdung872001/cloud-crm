@@ -1441,12 +1441,12 @@ export default function CustomerAndSupplier(props: any) {
               <Input
                 name="sourceData"
                 className="input-search"
-                value={""}
+                value={params.keyword ?? ""}
                 fill={true}
                 required={true}
                 icon={<Icon name="Search" />}
                 placeholder="Tìm kiếm theo tên, SĐT, email..."
-                // onChange={(e) =>() }
+                onChange={(e) => setParams((prev) => ({ ...prev, keyword: e.target.value, page: 1 }))}
               />
             </div>
             {/* <ul className="quick__search--left">

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import CardServiceList from "./partials/CardService/CardServiceList";
 import ProductUnitList from "./partials/ProductUnit/ProductUnitList";
 import ProductList from "./partials/Product/ProductList";
@@ -17,8 +18,18 @@ import TabMenuList from "@/components/TabMenuList/TabMenuList";
 export default function SettingSellList() {
   document.title = "Cài đặt bán hàng";
 
+  const [searchParams] = useSearchParams();
   const [tab, setTab] = useState<string>("");
   const [isDetail, setIsDetail] = useState<boolean>(false);
+
+  // Khi navigate từ Global Search với ?tab=product_tab_one → tự mở đúng tab
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam) {
+      setTab(tabParam);
+      setIsDetail(true);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const listTab = [
     {

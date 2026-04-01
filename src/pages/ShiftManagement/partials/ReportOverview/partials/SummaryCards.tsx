@@ -20,14 +20,18 @@ const MOCK_CARDS: CardData[] = [
 type Props = { branchId: number };
 
 export default function SummaryCards({ branchId }: Props) {
-  const [cards, setCards] = useState<CardData[]>(MOCK_CARDS);
+  const [cards, setCards] = useState<CardData[]>([]);
 
   useEffect(() => {
     if (!branchId) return;
     ShiftService.getGeneralReport(branchId)
       .then((res) => {
-        const d = res?.data;
-        if (!d) return; // API rỗng → giữ mock
+        console.log("[SummaryCards] API response:", res);
+        const d = res?.result;
+        if (!d) {
+          console.warn("[SummaryCards] No result:", res);
+          return;
+        }
 
         const growthSign = (d.revenueGrowthPct ?? 0) >= 0 ? "↑" : "↓";
         const growthAbs = Math.abs(d.revenueGrowthPct ?? 0).toFixed(1);
@@ -35,17 +39,17 @@ export default function SummaryCards({ branchId }: Props) {
         // Tổng đơn sub — ghép tên ca
         const orderSub = (d.shiftStatuses ?? [])
           .map((s: any) => `${s.orderCount ?? 0} đơn ${s.shiftName ?? ""}`)
-          .join(" · ") || MOCK_CARDS[1].sub;
+          .join(" · ") || "";
 
         // Card 3: nhân viên đang ca
         const activeShift = (d.shiftStatuses ?? []).find((s: any) => s.status === "OPEN");
         const staffSub = activeShift
           ? `${activeShift.shiftName ?? ""} · ${activeShift.timeRange ?? ""}`
-          : MOCK_CARDS[2].sub;
+          : "";
 
         // Card 4: chênh lệch
         const diffShift = (d.shiftStatuses ?? []).find((s: any) => (s.cashDifference ?? 0) !== 0);
-        const diffSub = d.diffShiftInfo ?? MOCK_CARDS[3].sub;
+        const diffSub = d.diffShiftInfo ?? "";
 
         setCards([
           {

@@ -13,7 +13,6 @@ import BoxTable from "components/boxTable/boxTable";
 import { IAction } from "model/OtherModel";
 import Icon from "components/icon";
 import ModalAddData from "./partials/ModalAddData";
-import ProductDemandService from "services/fintech/ProductDemandService";
 
 import "./index.scss";
 
@@ -46,7 +45,7 @@ export default function ProductNeeds({ data }) {
   const getListProductNeeds = async (paramsSearch: any) => {
     setIsLoading(true);
 
-    const response = await ProductDemandService.list(paramsSearch);
+    const response = null;
 
     if (response.code === 0) {
       const result = response.result;
@@ -136,7 +135,7 @@ export default function ProductNeeds({ data }) {
   const [contentDialog, setContentDialog] = useState<any>(null);
 
   const onDelete = async (id: number) => {
-    const response = await ProductDemandService.delete(id);
+    const response = null;
 
     if (response.code === 0) {
       showToast("Xóa nhu cầu sản phẩm thành công", "success");

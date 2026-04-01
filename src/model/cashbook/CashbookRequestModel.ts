@@ -14,7 +14,7 @@ export interface ICashbookFilterRequest {
 export interface ICashbookRequest {
   id?: number;
   fmtTransDate?: string;
-  transDate: string;
+  transDate?: string;
   type?: number;
   categoryId?: number;
   categoryName: string;
@@ -30,4 +30,6 @@ export interface ICashbookRequest {
   actionType?: number;
   projectId?: number;
   contractId?: number;
+  fundId?: number;         // Quỹ tiền (thêm mới)
+  relatedEntity?: string;  // Đối tượng liên quan KH/NCC (thêm mới)
 }

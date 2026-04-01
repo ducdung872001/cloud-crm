@@ -1,174 +1,172 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import Input from "components/input/input";
-import Button from "components/button/button";
 import Loading from "components/loading";
 import Icon from "components/icon";
 import { showToast } from "utils/common";
-import { IShippingPartnerResponse } from "model/shipping/ShippingResponseModel";
-import { MOCK_PARTNERS } from "../ShippingMockData";
-// import ShippingService from "services/ShippingService"; // TODO: bật khi có API
+import ShippingPartnerService, {
+  ICarrierPartnerMerged,
+} from "services/ShippingPartnerService";
 import "./ShippingPartnerSetup.scss";
 
-// ---- Extended partner data (mock) ----
-const PARTNER_META: Record<string, {
-  code: string;
-  fullName: string;
-  logo: string;
-  baseFee: string;
-  avgTime: string;
-  rating: number;
-  activeOrders: number;
-  statusLabel: string;   // "connected" | "disconnected" | "maintenance"
-}> = {
-  GHN: {
-    code: "GHN",
-    fullName: "Giao Hàng Nhanh",
-    logo: "GHN",
-    baseFee: "20.000 - 25.000đ",
-    avgTime: "1-2 ngày",
-    rating: 4.7,
-    activeOrders: 812,
-    statusLabel: "connected",
-  },
-  GHTK: {
-    code: "GHTK",
-    fullName: "Giao Hàng Tiết Kiệm",
-    logo: "GHTK",
-    baseFee: "18.000 - 22.000đ",
-    avgTime: "1-3 ngày",
-    rating: 4.5,
-    activeOrders: 645,
-    statusLabel: "connected",
-  },
-  "Viettel Post": {
-    code: "VTP",
-    fullName: "Viettel Post",
-    logo: "Viettel Post",
-    baseFee: "19.000 - 24.000đ",
-    avgTime: "1-3 ngày",
-    rating: 4.6,
-    activeOrders: 278,
-    statusLabel: "connected",
-  },
-  "J&T": {
-    code: "J&T",
-    fullName: "J&T Express",
-    logo: "J&T",
-    baseFee: "20.000 - 26.000đ",
-    avgTime: "1-2 ngày",
-    rating: 4.4,
-    activeOrders: 157,
-    statusLabel: "maintenance",
-  },
-  SPX: {
-    code: "SPX",
-    fullName: "SPX Express",
-    logo: "SPX",
-    baseFee: "15.000 - 20.000đ",
-    avgTime: "2-3 ngày",
-    rating: 4.2,
-    activeOrders: 0,
-    statusLabel: "disconnected",
-  },
-  "Ninja Van": {
-    code: "NJV",
-    fullName: "Ninja Van",
-    logo: "Ninja Van",
-    baseFee: "22.000 - 28.000đ",
-    avgTime: "2-4 ngày",
-    rating: 4.0,
-    activeOrders: 0,
-    statusLabel: "maintenance",
-  },
+// ---- Cấu hình hiển thị cứng theo carrier_code ----
+// Chỉ dùng để hiển thị UI, không ảnh hưởng logic nghiệp vụ
+const CARRIER_UI_META: Record<string, { avgTime: string; baseFee: string }> = {
+  GHN:  { baseFee: "20.000 - 25.000đ", avgTime: "1-2 ngày" },
+  GHTK: { baseFee: "18.000 - 22.000đ", avgTime: "1-3 ngày" },
+  VTP:  { baseFee: "19.000 - 24.000đ", avgTime: "1-3 ngày" },
+  JT:   { baseFee: "20.000 - 26.000đ", avgTime: "1-2 ngày" },
+  SPX:  { baseFee: "15.000 - 20.000đ", avgTime: "2-3 ngày" },
+  NJV:  { baseFee: "22.000 - 28.000đ", avgTime: "2-4 ngày" },
 };
 
-// Extended partner list (more than mock)
-const ALL_PARTNERS = [
-  { id: 1,  name: "GHN",          status: 1, webhookUrl: "https://webhook.example.com/ghn",    connectedAt: "2024-01-15T10:00:00" },
-  { id: 2,  name: "GHTK",         status: 1, webhookUrl: "https://webhook.example.com/ghtk",   connectedAt: "2024-02-10T10:00:00" },
-  { id: 3,  name: "Viettel Post",  status: 1, webhookUrl: "https://webhook.example.com/vtp",    connectedAt: "2024-03-01T10:00:00" },
-  { id: 4,  name: "J&T",          status: 2, webhookUrl: "",                                    connectedAt: "" },
-  { id: 5,  name: "SPX",          status: 0, webhookUrl: "",                                    connectedAt: "" },
-  { id: 6,  name: "Ninja Van",    status: 2, webhookUrl: "",                                    connectedAt: "" },
-];
-
-interface ConfigForm {
-  apiKey:     string;
-  token:      string;
+interface IConfigForm {
+  apiKey: string;
+  token: string;
   showApiKey: boolean;
-  showToken:  boolean;
+  showToken: boolean;
 }
+
+const DEFAULT_FORM: IConfigForm = { apiKey: "", token: "", showApiKey: false, showToken: false };
 
 export default function ShippingPartnerSetup() {
   document.title = "Quản lý Đơn vị Vận chuyển";
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
 
-  const [partners, setPartners]   = useState(ALL_PARTNERS);
-  const [openCard, setOpenCard]   = useState<number | null>(null);
-  const [forms, setForms]         = useState<Record<number, ConfigForm>>({});
-  const [savingId, setSavingId]   = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // ---- State ----
+  const [carriers, setCarriers]   = useState<ICarrierPartnerMerged[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [openCard, setOpenCard]   = useState<string | null>(null); // carrierCode
+  const [forms, setForms]         = useState<Record<string, IConfigForm>>({});
+  const [savingCode, setSavingCode] = useState<string | null>(null);
 
-  useEffect(() => {
-    const initForms: Record<number, ConfigForm> = {};
-    ALL_PARTNERS.forEach((p) => {
-      initForms[p.id] = { apiKey: "", token: "", showApiKey: false, showToken: false };
-    });
-    setForms(initForms);
+  const abortRef = useRef<AbortController | null>(null);
+
+  // ---- Load data ----
+  const loadData = useCallback(async () => {
+    abortRef.current?.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+
+    setIsLoading(true);
+    try {
+      // Gọi song song 2 API từ 2 service khác nhau
+      const [carrierRes, configRes] = await Promise.all([
+        ShippingPartnerService.getCarrierList(ctrl.signal),
+        ShippingPartnerService.getCarrierConfigs(ctrl.signal),
+      ]);
+
+      if (ctrl.signal.aborted) return;
+
+      const carrierList = carrierRes?.result ?? [];
+      const configList  = configRes?.result  ?? [];
+
+      const merged = ShippingPartnerService.mergeCarrierData(carrierList, configList);
+      setCarriers(merged);
+
+      // Khởi tạo form trống cho mỗi hãng
+      const initForms: Record<string, IConfigForm> = {};
+      merged.forEach((c) => { initForms[c.code] = { ...DEFAULT_FORM }; });
+      setForms(initForms);
+    } catch (err: any) {
+      if (err?.name === "AbortError") return;
+      showToast("Không thể tải danh sách đơn vị vận chuyển", "error");
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const setFormField = (partnerId: number, field: keyof ConfigForm) => (e: any) => {
+  useEffect(() => {
+    loadData();
+    return () => abortRef.current?.abort();
+  }, [loadData]);
+
+  // ---- Helpers ----
+  const setFormField = (code: string, field: keyof IConfigForm) => (e: any) => {
     const value = typeof e === "boolean" ? e : e.target.value;
-    setForms((prev) => ({ ...prev, [partnerId]: { ...prev[partnerId], [field]: value } }));
+    setForms((prev) => ({ ...prev, [code]: { ...prev[code], [field]: value } }));
   };
 
-  const togglePasswordField = (partnerId: number, field: "showApiKey" | "showToken") => {
-    setForms((prev) => ({ ...prev, [partnerId]: { ...prev[partnerId], [field]: !prev[partnerId]?.[field] } }));
+  const togglePwField = (code: string, field: "showApiKey" | "showToken") => {
+    setForms((prev) => ({
+      ...prev,
+      [code]: { ...prev[code], [field]: !prev[code]?.[field] },
+    }));
   };
 
-  const handleConnect = async (partner: typeof ALL_PARTNERS[0]) => {
-    const form = forms[partner.id];
-    if (!form?.apiKey?.trim()) { showToast("Vui lòng nhập API Key", "warning"); return; }
-    setSavingId(partner.id);
-    await new Promise((r) => setTimeout(r, 600));
-    showToast(`Kết nối ${partner.name} thành công! (demo)`, "success");
-    setPartners((prev) => prev.map((p) => p.id === partner.id
-      ? { ...p, status: 1, connectedAt: new Date().toISOString(), webhookUrl: "https://webhook.example.com/" + p.id }
-      : p));
-    setOpenCard(null);
-    setSavingId(null);
+  // ---- Connect ----
+  const handleConnect = async (carrier: ICarrierPartnerMerged) => {
+    const form = forms[carrier.code];
+    if (!form?.apiKey?.trim()) {
+      showToast("Vui lòng nhập API Key", "warning");
+      return;
+    }
+    setSavingCode(carrier.code);
+    try {
+      const res = await ShippingPartnerService.connectCarrier({
+        carrierCode: carrier.code,
+        apiKey: form.apiKey.trim(),
+        token: form.token?.trim() || undefined,
+      });
+
+      if (res?.code !== 0) {
+        showToast(res?.message || "Kết nối thất bại, vui lòng thử lại", "error");
+        return;
+      }
+
+      showToast(`Kết nối ${carrier.name} thành công!`, "success");
+      setOpenCard(null);
+      // Refresh để lấy trạng thái mới nhất
+      await loadData();
+    } catch {
+      showToast("Có lỗi xảy ra khi kết nối", "error");
+    } finally {
+      setSavingCode(null);
+    }
   };
 
-  const handleDisconnect = async (partner: typeof ALL_PARTNERS[0]) => {
-    setSavingId(partner.id);
-    await new Promise((r) => setTimeout(r, 400));
-    showToast(`Đã ngắt kết nối ${partner.name} (demo)`, "success");
-    setPartners((prev) => prev.map((p) => p.id === partner.id ? { ...p, status: 0, connectedAt: "", webhookUrl: "" } : p));
-    setSavingId(null);
+  // ---- Disconnect ----
+  const handleDisconnect = async (carrier: ICarrierPartnerMerged) => {
+    setSavingCode(carrier.code);
+    try {
+      const res = await ShippingPartnerService.disconnectCarrier(carrier.code);
+
+      if (res?.code !== 0) {
+        showToast(res?.message || "Ngắt kết nối thất bại", "error");
+        return;
+      }
+
+      showToast(`Đã ngắt kết nối ${carrier.name}`, "success");
+      setOpenCard(null);
+      await loadData();
+    } catch {
+      showToast("Có lỗi xảy ra khi ngắt kết nối", "error");
+    } finally {
+      setSavingCode(null);
+    }
   };
 
+  // ---- Stats computed ----
+  const connectedCount    = carriers.filter((c) => c.isConnected).length;
+  const totalTodayOrders  = carriers.reduce((s, c) => s + (c.todayNewOrders ?? 0), 0);
+  const avgRating         = carriers.length
+    ? (carriers.reduce((s, c) => s + (c.rating ?? 0), 0) / carriers.length).toFixed(1)
+    : "—";
+
+  // Table: chỉ hiển thị hãng đang kết nối
+  const tableRows = carriers.filter((c) => c.isConnected);
+
+  // ---- Status label cho table ----
+  const statusLabel = (c: ICarrierPartnerMerged) => {
+    if (c.isConnected) return <span className="ps-status ps-status--active">Hoạt động</span>;
+    return <span className="ps-status ps-status--inactive">Chưa kết nối</span>;
+  };
+
+  // ---- TitleAction ----
   const titleActions: ITitleActions = {
-    actions: [
-      { title: "Quay lại", callback: () => navigate("/shipping") },
-    ],
+    actions: [{ title: "Quay lại", callback: () => navigate("/shipping") }],
     actions_extra: [],
-  };
-
-  // ---- Stats ----
-  const connectedCount    = partners.filter((p) => p.status === 1).length;
-  const maintenanceCount  = partners.filter((p) => p.status === 2).length;
-  const totalActiveOrders = Object.values(PARTNER_META).reduce((s, m) => s + m.activeOrders, 0);
-  const avgRating         = (Object.values(PARTNER_META).reduce((s, m) => s + m.rating, 0) / Object.keys(PARTNER_META).length).toFixed(2);
-
-  // ---- Table rows: only connected or maintenance ----
-  const tableRows = partners.filter((p) => p.status === 1 || p.status === 2);
-
-  const statusLabel = (status: number) => {
-    if (status === 1) return <span className="ps-status ps-status--active">Hoạt động</span>;
-    if (status === 2) return <span className="ps-status ps-status--maintenance">Bảo trì nhẹ</span>;
-    return <span className="ps-status ps-status--inactive">Ngừng hoạt động</span>;
   };
 
   if (isLoading) return <div className="page-content"><Loading /></div>;
@@ -176,7 +174,6 @@ export default function ShippingPartnerSetup() {
   return (
     <Fragment>
       <div className="page-content page-partner-setup">
-
         <TitleAction title="Quản lý Đơn vị Vận chuyển" titleActions={titleActions} />
 
         {/* ===== Stats bar ===== */}
@@ -187,107 +184,159 @@ export default function ShippingPartnerSetup() {
           </div>
           <div className="ps-stat-card">
             <div className="ps-stat-card__label">Tổng đơn xử lý hôm nay</div>
-            <div className="ps-stat-card__value">{totalActiveOrders.toLocaleString("vi-VN")}</div>
+            <div className="ps-stat-card__value">{totalTodayOrders.toLocaleString("vi-VN")}</div>
           </div>
           <div className="ps-stat-card">
             <div className="ps-stat-card__label">Đánh giá trung bình</div>
             <div className="ps-stat-card__value">{avgRating} ★</div>
           </div>
           <div className="ps-stat-card">
-            <div className="ps-stat-card__label">Đơn vị bảo trì</div>
-            <div className="ps-stat-card__value">{maintenanceCount}</div>
+            <div className="ps-stat-card__label">Tổng đơn vị</div>
+            <div className="ps-stat-card__value">{carriers.length}</div>
           </div>
         </div>
 
-        {/* ===== Partner cards row ===== */}
+        {/* ===== Partner cards ===== */}
         <div className="ps-partner-cards">
-          {partners.map((partner) => {
-            const meta     = PARTNER_META[partner.name];
-            const isSaving = savingId === partner.id;
-            const isOpen   = openCard === partner.id;
-            const form     = forms[partner.id] || { apiKey: "", token: "", showApiKey: false, showToken: false };
-            const isConnected   = partner.status === 1;
-            const isMaintenance = partner.status === 2;
+          {carriers.map((carrier) => {
+            const isSaving     = savingCode === carrier.code;
+            const isOpen       = openCard === carrier.code;
+            const form         = forms[carrier.code] ?? DEFAULT_FORM;
+            const isConnected  = carrier.isConnected;
 
             return (
-              <div key={partner.id} className={`ps-partner-card ${isConnected ? "is-connected" : ""} ${isMaintenance ? "is-maintenance" : ""}`}>
-                {/* Logo placeholder */}
+              <div
+                key={carrier.code}
+                className={`ps-partner-card${isConnected ? " is-connected" : ""}`}
+              >
+                {/* Logo */}
                 <div className="ps-partner-card__logo">
-                  <img src={`/assets/images/shipping/${meta?.logo}.png`} alt={partner.name}
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                  />
-                  <span className="ps-partner-card__logo-fallback">{meta?.code || partner.name}</span>
+                  {carrier.avatar ? (
+                    <img
+                      src={carrier.avatar}
+                      alt={carrier.name}
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                  ) : null}
+                  <span className="ps-partner-card__logo-fallback">{carrier.code}</span>
                 </div>
 
-                <div className="ps-partner-card__name">{meta?.fullName || partner.name}</div>
+                <div className="ps-partner-card__name">{carrier.name}</div>
 
-                {/* Status */}
+                {/* Trạng thái kết nối */}
                 <div className="ps-partner-card__status">
-                  {isConnected   && <span className="ps-conn-badge ps-conn-badge--connected">Đã kết nối ✓</span>}
-                  {isMaintenance && <span className="ps-conn-badge ps-conn-badge--maintenance">Tạm ngưng</span>}
-                  {!isConnected && !isMaintenance && <span className="ps-conn-badge ps-conn-badge--none">Chưa kết nối</span>}
+                  {isConnected
+                    ? <span className="ps-conn-badge ps-conn-badge--connected">Đã kết nối ✓</span>
+                    : <span className="ps-conn-badge ps-conn-badge--none">Chưa kết nối</span>
+                  }
                 </div>
 
                 {/* Action button */}
                 {isConnected ? (
-                  <button className="ps-partner-card__btn ps-partner-card__btn--config"
-                    onClick={() => setOpenCard(isOpen ? null : partner.id)}>
+                  <button
+                    className="ps-partner-card__btn ps-partner-card__btn--config"
+                    onClick={() => setOpenCard(isOpen ? null : carrier.code)}
+                  >
                     Cấu hình API
                   </button>
-                ) : isMaintenance ? (
-                  <button className="ps-partner-card__btn ps-partner-card__btn--activate"
-                    onClick={() => showToast("Tính năng này đang phát triển (demo)", "warning")}>
-                    Kích hoạt
-                  </button>
                 ) : (
-                  <button className="ps-partner-card__btn ps-partner-card__btn--connect"
+                  <button
+                    className="ps-partner-card__btn ps-partner-card__btn--connect"
                     disabled={isSaving}
-                    onClick={() => setOpenCard(isOpen ? null : partner.id)}>
+                    onClick={() => setOpenCard(isOpen ? null : carrier.code)}
+                  >
                     {isSaving ? "Đang kết nối..." : "Kết nối ngay"}
                   </button>
                 )}
 
-                {/* Expand config form */}
+                {/* Expand: form nhập API key ---- */}
                 {isOpen && (
                   <div className="ps-config-form">
+                    {/* Hiển thị API key đã mask nếu đã kết nối */}
+                    {isConnected && carrier.apiKeyMasked && (
+                      <div className="ps-config-form__masked">
+                        <span className="ps-config-form__masked-label">API Key hiện tại:</span>
+                        <span className="ps-config-form__masked-value">{carrier.apiKeyMasked}</span>
+                        {carrier.hasToken && (
+                          <span className="ps-config-form__masked-token">+ Token ✓</span>
+                        )}
+                      </div>
+                    )}
+
                     <div className="ps-config-form__field">
-                      <label>API Key <span className="required">*</span></label>
+                      <label>
+                        {isConnected ? "API Key mới" : "API Key"}
+                        <span className="required"> *</span>
+                      </label>
                       <div className="ps-pw-wrap">
-                        <Input name={`apiKey_${partner.id}`} fill
+                        <Input
+                          name={`apiKey_${carrier.code}`}
+                          fill
                           type={form.showApiKey ? "text" : "password"}
                           value={form.apiKey}
-                          onChange={setFormField(partner.id, "apiKey")}
-                          placeholder="Nhập API Key..." />
-                        <button type="button" className="ps-pw-toggle"
-                          onClick={() => togglePasswordField(partner.id, "showApiKey")}>
+                          onChange={setFormField(carrier.code, "apiKey")}
+                          placeholder="Nhập API Key..."
+                        />
+                        <button
+                          type="button"
+                          className="ps-pw-toggle"
+                          onClick={() => togglePwField(carrier.code, "showApiKey")}
+                        >
                           <Icon name={form.showApiKey ? "EyeSlash" : "Eye"} />
                         </button>
                       </div>
                     </div>
+
                     <div className="ps-config-form__field">
-                      <label>Token <span className="optional">(nếu có)</span></label>
+                      <label>
+                        Token <span className="optional">(nếu có)</span>
+                      </label>
                       <div className="ps-pw-wrap">
-                        <Input name={`token_${partner.id}`} fill
+                        <Input
+                          name={`token_${carrier.code}`}
+                          fill
                           type={form.showToken ? "text" : "password"}
                           value={form.token}
-                          onChange={setFormField(partner.id, "token")}
-                          placeholder="Nhập Token..." />
-                        <button type="button" className="ps-pw-toggle"
-                          onClick={() => togglePasswordField(partner.id, "showToken")}>
+                          onChange={setFormField(carrier.code, "token")}
+                          placeholder="Nhập Token..."
+                        />
+                        <button
+                          type="button"
+                          className="ps-pw-toggle"
+                          onClick={() => togglePwField(carrier.code, "showToken")}
+                        >
                           <Icon name={form.showToken ? "EyeSlash" : "Eye"} />
                         </button>
                       </div>
                     </div>
+
                     <div className="ps-config-form__actions">
-                      <button className="ps-btn-cancel" onClick={() => setOpenCard(null)}>Hủy</button>
+                      <button className="ps-btn-cancel" onClick={() => setOpenCard(null)}>
+                        Hủy
+                      </button>
                       {isConnected ? (
-                        <button className="ps-btn-disconnect" disabled={isSaving}
-                          onClick={() => handleDisconnect(partner)}>
-                          {isSaving ? "Đang ngắt..." : "Ngắt kết nối"}
-                        </button>
+                        <>
+                          <button
+                            className="ps-btn-save"
+                            disabled={isSaving}
+                            onClick={() => handleConnect(carrier)}
+                          >
+                            {isSaving ? "Đang lưu..." : "Cập nhật"}
+                          </button>
+                          <button
+                            className="ps-btn-disconnect"
+                            disabled={isSaving}
+                            onClick={() => handleDisconnect(carrier)}
+                          >
+                            {isSaving ? "Đang ngắt..." : "Ngắt kết nối"}
+                          </button>
+                        </>
                       ) : (
-                        <button className="ps-btn-save" disabled={isSaving}
-                          onClick={() => handleConnect(partner)}>
+                        <button
+                          className="ps-btn-save"
+                          disabled={isSaving}
+                          onClick={() => handleConnect(carrier)}
+                        >
                           {isSaving ? "Đang lưu..." : "Lưu & Kết nối"}
                         </button>
                       )}
@@ -299,47 +348,63 @@ export default function ShippingPartnerSetup() {
           })}
         </div>
 
-        {/* ===== Table ===== */}
-        <div className="ps-table-wrap">
-          <table className="ps-table">
-            <thead>
-              <tr>
-                <th>MÃ ĐV</th>
-                <th>TÊN ĐƠN VỊ</th>
-                <th>PHÍ CƠ BẢN (NỘI THÀNH)</th>
-                <th>THỜI GIAN TB</th>
-                <th>ĐÁNH GIÁ</th>
-                <th>ĐƠN ĐANG XỬ LÝ</th>
-                <th>TRẠNG THÁI</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableRows.map((partner) => {
-                const meta = PARTNER_META[partner.name];
-                if (!meta) return null;
-                return (
-                  <tr key={partner.id}>
-                    <td className="ps-table__code">{meta.code}</td>
-                    <td>{meta.fullName}</td>
-                    <td>{meta.baseFee}</td>
-                    <td>{meta.avgTime}</td>
-                    <td>{meta.rating} ★</td>
-                    <td>{meta.activeOrders}</td>
-                    <td>{statusLabel(partner.status)}</td>
-                    <td>
-                      <button className="ps-btn-detail"
-                        onClick={() => setOpenCard(openCard === partner.id ? null : partner.id)}>
-                        Chi tiết
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        {/* ===== Table — chỉ hiển thị hãng đang kết nối ===== */}
+        {tableRows.length > 0 && (
+          <div className="ps-table-wrap">
+            <table className="ps-table">
+              <thead>
+                <tr>
+                  <th>MÃ ĐV</th>
+                  <th>TÊN ĐƠN VỊ</th>
+                  <th>PHÍ CƠ BẢN (NỘI THÀNH)</th>
+                  <th>THỜI GIAN TB</th>
+                  <th>ĐÁNH GIÁ</th>
+                  <th>ĐƠN HÔM NAY</th>
+                  <th>TRẠNG THÁI</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableRows.map((carrier) => {
+                  const uiMeta = CARRIER_UI_META[carrier.code] ?? {};
+                  return (
+                    <tr key={carrier.code}>
+                      <td className="ps-table__code">{carrier.code}</td>
+                      <td>{carrier.name}</td>
+                      <td>{carrier.baseFeeLabel || uiMeta.baseFee || "—"}</td>
+                      <td>{carrier.avgTimeLabel || uiMeta.avgTime || "—"}</td>
+                      <td>{carrier.rating ? `${carrier.rating} ★` : "—"}</td>
+                      <td>
+                        {carrier.todayNewOrders != null
+                          ? carrier.todayNewOrders.toLocaleString("vi-VN")
+                          : "—"}
+                      </td>
+                      <td>{statusLabel(carrier)}</td>
+                      <td>
+                        <button
+                          className="ps-btn-detail"
+                          onClick={() =>
+                            setOpenCard(openCard === carrier.code ? null : carrier.code)
+                          }
+                        >
+                          Chi tiết
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
 
+        {/* Empty state khi chưa kết nối hãng nào */}
+        {tableRows.length === 0 && !isLoading && (
+          <div className="ps-empty-table">
+            <p>Chưa có đơn vị vận chuyển nào được kết nối.</p>
+            <p>Nhấn <strong>Kết nối ngay</strong> trên các thẻ bên trên để bắt đầu.</p>
+          </div>
+        )}
       </div>
     </Fragment>
   );

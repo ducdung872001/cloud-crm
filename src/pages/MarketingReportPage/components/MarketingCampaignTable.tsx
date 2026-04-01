@@ -1,5 +1,6 @@
 import React from "react";
 import { formatCurrency } from "reborn-util";
+import ReportPanel from "components/reportShared/ReportPanel";
 import { STATUS_COLORS, STATUS_LABELS } from "../mockData";
 import type { CampaignReport } from "../mockData";
 
@@ -9,15 +10,15 @@ interface Props {
 
 export default function MarketingCampaignTable({ campaigns }: Props) {
   return (
-    <div className="report-table-card">
-      <div className="report-table-card__header">
-        <div>
-          <div className="report-panel__title">Bảng chiến dịch marketing</div>
-          <div className="report-panel__sub">Theo dõi ngân sách, lead và doanh thu từng chiến dịch</div>
-        </div>
-      </div>
-
-      <div className="report-table-wrap">
+    <ReportPanel
+      className="report-table-card"
+      headerClassName="report-table-card__header"
+      bodyClassName="report-table-wrap"
+      titleClassName="report-panel__title"
+      subtitleClassName="report-panel__sub"
+      title="Bảng chiến dịch marketing"
+      subtitle="Theo dõi ngân sách, lead và doanh thu từng chiến dịch"
+    >
         <table className="report-table">
           <thead>
             <tr>
@@ -58,7 +59,6 @@ export default function MarketingCampaignTable({ campaigns }: Props) {
             })}
           </tbody>
         </table>
-      </div>
-    </div>
+    </ReportPanel>
   );
 }

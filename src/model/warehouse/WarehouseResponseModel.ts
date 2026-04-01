@@ -10,6 +10,8 @@ export interface IWarehouseResponse {
   position: number;
   employeeId: number;
   employeeName: string | null;
+  isSelling?: number;
+  is_selling?: number;
   createdTime: string;
 }
 

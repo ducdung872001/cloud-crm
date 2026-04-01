@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext } from "react";
+import React, { useEffect, useRef, useState, useContext, useCallback } from "react";
 import _ from "lodash";
 import moment from "moment";
 import { useCookies } from "react-cookie";
@@ -28,6 +28,9 @@ import "swiper/css/pagination";
 import Loading from "../loading";
 import NotificationService from "@/services/NotificationService";
 import { requestPermission } from "@/firebase-config";
+import CustomerService from "services/CustomerService";
+import ProductService from "services/ProductService";
+import InvoiceService from "services/InvoiceService";
 
 export default function Header(props: any) {
   const [cookies, setCookie, removeCookie] = useCookies();
@@ -48,6 +51,7 @@ export default function Header(props: any) {
     countUnread,
     setCountUnread,
     newNotificationPayload,
+    setIsShowChatBot
   } = useContext(UserContext) as ContextType;
 
   const checkUserRoot = localStorage.getItem("user.root");
@@ -175,6 +179,7 @@ export default function Header(props: any) {
 
   const [listNotification, setListNotification] = useState([]);
   const [isLoadingNotify, setLoadingNotify] = useState(false);
+  const [isReadingAll, setIsReadingAll] = useState(false);
 
   const [detailNotification, setDetailNotification] = useState<INotificationItem>(null);
   const [showModalDetailNotification, setShowModalDetailNotification] = useState<boolean>(false);
@@ -256,18 +261,24 @@ export default function Header(props: any) {
   };
 
   const onReadAll = async () => {
-    const body = {};
-    const response = await NotificationService.updateReadAll(body);
-    if (response.code === 0) {
-      console.log("Đã đọc hết");
-      // showToast("Đánh dấu đã đọc thành công", "success");
-      getListNotify({
-        limit: 10,
-        page: 1,
-      });
-      getCountUnread();
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    if (isReadingAll) return;
+    setIsReadingAll(true);
+    try {
+      const response = await NotificationService.updateReadAll({});
+      if (response.code === 0) {
+        showToast("Đã đánh dấu tất cả là đã đọc", "success");
+        // Cập nhật UI ngay
+        setListNotification((prev) =>
+          (prev as any[]).map((item) => ({ ...item, unread: 1 }))
+        );
+        setCountUnread(0);
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      }
+    } catch {
+      showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    } finally {
+      setIsReadingAll(false);
     }
   };
 
@@ -370,6 +381,140 @@ export default function Header(props: any) {
   };
 
   const [showModalChangeRole, setShowModalChangeRole] = useState<boolean>(false);
+
+  // ── Global Search ──────────────────────────────────────────────────────────
+  type SearchGroup = "product" | "customer" | "invoice";
+  interface SearchResult {
+    id:       number;
+    group:    SearchGroup;
+    title:    string;
+    subtitle: string;
+    avatar?:  string;
+    meta?:    string;
+  }
+  const searchRef         = useRef<HTMLDivElement>(null);
+  const searchInputRef    = useRef<HTMLInputElement>(null);
+  const [searchQuery,     setSearchQuery]     = useState("");
+  const [searchOpen,      setSearchOpen]      = useState(false);
+  const [searchResults,   setSearchResults]   = useState<SearchResult[]>([]);
+  const [searchLoading,   setSearchLoading]   = useState(false);
+  const [searchAbort,     setSearchAbort]     = useState<AbortController | null>(null);
+
+  useOnClickOutside(searchRef, () => setSearchOpen(false), ["gs-dropdown"]);
+
+  const fmt = (n: number) => n?.toLocaleString("vi") + " ₫";
+
+  const doSearch = useCallback(
+    _.debounce(async (q: string) => {
+      if (!q.trim()) { setSearchResults([]); setSearchLoading(false); return; }
+      searchAbort?.abort();
+      const ctrl = new AbortController();
+      setSearchAbort(ctrl);
+      setSearchLoading(true);
+      try {
+        const [custRes, prodRes, invRes] = await Promise.allSettled([
+          CustomerService.filter({ keyword: q, page: 1, limit: 5 }, ctrl.signal),
+          ProductService.publicList({ name: q, page: 1, limit: 5 } as any, ctrl.signal),
+          // Nếu query trông giống mã đơn (HD, DH + số) → dùng invoiceCode, ngược lại keyword
+          InvoiceService.list({
+            ...(q.match(/^(HD|DH|INV|dh|hd)/i) ? { invoiceCode: q } : { keyword: q }),
+            page: 1, limit: 5,
+          } as any, ctrl.signal),
+        ]);
+        const results: SearchResult[] = [];
+        if (custRes.status === "fulfilled" && custRes.value?.code === 0) {
+          const custItems = custRes.value.result?.items
+            ?? custRes.value.result?.pagedLst?.items
+            ?? custRes.value.result
+            ?? [];
+          (custItems as any[]).slice(0, 3).forEach((c: any) => {
+            results.push({
+              id:       c.id,
+              group:    "customer",
+              title:    c.name,
+              subtitle: c.phone ?? c.number_phone ?? "",
+              avatar:   c.avatar,
+              meta:     c.code ?? "",
+            });
+          });
+          const custTotal = custRes.value.result?.total ?? custRes.value.result?.pagedLst?.total ?? 0;
+          if (custTotal > 3) results.push({ id: -1, group: "customer", title: `__more__${custTotal}`, subtitle: "", meta: "" });
+        }
+
+        if (prodRes.status === "fulfilled" && prodRes.value?.code === 0) {
+          const prodItems = prodRes.value.result?.items
+            ?? prodRes.value.result?.pagedLst?.items
+            ?? [];
+          (prodItems as any[]).slice(0, 3).forEach((p: any) => {
+            results.push({
+              id:       p.id,
+              group:    "product",
+              title:    p.name,
+              subtitle: `Tồn: ${p.stockQuantity ?? 0}`,
+              avatar:   p.image ?? p.avatar,
+              meta:     p.salePrice ? fmt(p.salePrice) : "",
+            });
+          });
+          const prodTotal = prodRes.value.result?.total ?? 0;
+          if (prodTotal > 3) results.push({ id: -1, group: "product", title: `__more__${prodTotal}`, subtitle: "", meta: "" });
+        }
+
+        if (invRes.status === "fulfilled" && invRes.value?.code === 0) {
+          const invItems = invRes.value.result?.pagedLst?.items
+            ?? invRes.value.result?.items
+            ?? [];
+          (invItems as any[]).slice(0, 3).forEach((row: any) => {
+            const inv = row.invoice ?? row;
+            const prodNames = (row.products ?? [])
+              .map((p: any) => p.productName)
+              .filter(Boolean)
+              .join(", ");
+            results.push({
+              id:       inv.id ?? row.invoiceId,
+              group:    "invoice",
+              title:    inv.invoiceCode ?? `#${inv.id ?? row.invoiceId}`,
+              subtitle: prodNames || "—",
+              meta:     inv.fee ? fmt(inv.fee) : inv.amount ? fmt(inv.amount) : "",
+            });
+          });
+          const invTotal = invRes.value.result?.pagedLst?.total ?? invRes.value.result?.total ?? 0;
+          if (invTotal > 3) results.push({ id: -1, group: "invoice", title: `__more__${invTotal}`, subtitle: "", meta: "" });
+        }
+        setSearchResults(results);
+      } catch { /* aborted */ }
+      finally { setSearchLoading(false); }
+    }, 320),
+    []
+  );
+
+  useEffect(() => {
+    doSearch(searchQuery);
+    if (searchQuery.trim()) setSearchOpen(true);
+    else setSearchOpen(false);
+  }, [searchQuery]);
+
+  const handleSearchSelect = (item: SearchResult) => {
+    setSearchQuery("");
+    setSearchOpen(false);
+    if (item.group === "customer") {
+      // Mở hồ sơ KH → tab "Lịch sử mua hàng"
+      navigate(`/detail_person/customerId/${item.id}/purchase_invoice`);
+    } else if (item.group === "product") {
+      // Mở danh sách SP với tab sản phẩm và highlight SP đó
+      navigate(`/setting_sell?tab=product_tab_one&productId=${item.id}`);
+    } else {
+      // Mở danh sách đơn hàng + tự động bật popup chi tiết đơn
+      navigate(`/sale_invoice?openInvoice=${item.id}`);
+    }
+  };
+
+  const GROUP_LABEL: Record<SearchGroup, string> = {
+    customer: "👤 Khách hàng",
+    product:  "📦 Sản phẩm",
+    invoice:  "🧾 Đơn hàng",
+  };
+  const GROUP_ORDER: SearchGroup[] = ["customer", "product", "invoice"];
+
   const getCountUnread = async () => {
     const response = await NotificationService.countUnread();
     if (response.code === 0) {
@@ -506,6 +651,91 @@ export default function Header(props: any) {
           </SwiperSlide>
         </Swiper>
       </div>
+
+      {/* ── Global Search ── */}
+      <div className="gs-wrapper" ref={searchRef}>
+        <div className={`gs-input-wrap${searchOpen ? " is-open" : ""}`}>
+          <span className="gs-icon">🔍</span>
+          <input
+            ref={searchInputRef}
+            className="gs-input"
+            type="text"
+            placeholder="Tìm khách hàng, sản phẩm, đơn hàng..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => { if (searchQuery.trim()) setSearchOpen(true); }}
+            onKeyDown={(e) => { if (e.key === "Escape") { setSearchOpen(false); setSearchQuery(""); } }}
+          />
+          {searchQuery && (
+            <button className="gs-clear" onClick={() => { setSearchQuery(""); setSearchOpen(false); searchInputRef.current?.focus(); }}>✕</button>
+          )}
+        </div>
+
+        {searchOpen && (
+          <div className="gs-dropdown">
+            {searchLoading ? (
+              <div className="gs-empty">
+                <span className="gs-spin">⏳</span> Đang tìm kiếm...
+              </div>
+            ) : searchResults.filter(r => !r.title.startsWith("__more__")).length === 0 ? (
+              <div className="gs-empty">Không tìm thấy kết quả cho "<b>{searchQuery}</b>"</div>
+            ) : (
+              <div className="gs-scroll">
+                {GROUP_ORDER.map((group) => {
+                  const all   = searchResults.filter((r) => r.group === group);
+                  const items = all.filter(r => !r.title.startsWith("__more__"));
+                  const more  = all.find(r => r.title.startsWith("__more__"));
+                  if (!items.length) return null;
+                  const moreCount = more ? parseInt(more.title.replace("__more__", "")) : 0;
+                  return (
+                    <div key={group} className="gs-group">
+                      <div className="gs-group__label">{GROUP_LABEL[group]}</div>
+                      {items.map((item) => (
+                        <div
+                          key={`${group}-${item.id}`}
+                          className="gs-item"
+                          onClick={() => handleSearchSelect(item)}
+                        >
+                          <div className="gs-item__avatar">
+                            {item.avatar
+                              ? <img src={item.avatar} alt="" />
+                              : <span className="gs-item__avatar-fallback">
+                                  {group === "customer" ? "👤" : group === "product" ? "📦" : "🧾"}
+                                </span>
+                            }
+                          </div>
+                          <div className="gs-item__info">
+                            <div className="gs-item__title">{item.title}</div>
+                            {item.subtitle && <div className="gs-item__sub">{item.subtitle}</div>}
+                          </div>
+                          {item.meta && <div className="gs-item__meta">{item.meta}</div>}
+                        </div>
+                      ))}
+                      {moreCount > 0 && (
+                        <div className="gs-more" onClick={() => {
+                          setSearchOpen(false);
+                          if (group === "customer")
+                            navigate(`/crm/customer_list?keyword=${encodeURIComponent(searchQuery)}`);
+                          else if (group === "product")
+                            navigate(`/crm/setting_sell?tab=product_tab_one&keyword=${encodeURIComponent(searchQuery)}`);
+                          else
+                            navigate(`/crm/sale_invoice?keyword=${encodeURIComponent(searchQuery)}`);
+                        }}>
+                          Xem tất cả {moreCount} kết quả →
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            <div className="gs-footer">
+              Nhấn <kbd>Esc</kbd> để đóng
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="header-actions d-flex align-items-center">
         {checkUserRoot == "1" ? (
           <div className={`container-branch ${showPopoverBranch ? "action__container--branch" : ""}`} ref={refBranchContainer}>
@@ -721,13 +951,13 @@ export default function Header(props: any) {
                       <div>
                         <span className="text-unRead">{countUnread ? `Có ${countUnread} thông báo chưa đọc` : ""}</span>
                       </div>
-                      <div
-                        onClick={() => {
-                          onReadAll();
-                        }}
+                      <button
+                        className={`text-Read${isReadingAll ? " text-Read--loading" : ""}${!countUnread || countUnread <= 0 ? " text-Read--disabled" : ""}`}
+                        onClick={onReadAll}
+                        disabled={isReadingAll || !countUnread || countUnread <= 0}
                       >
-                        <span className="text-Read">Đánh dấu là đã đọc</span>
-                      </div>
+                        {isReadingAll ? "Đang xử lý..." : "Đánh dấu là đã đọc"}
+                      </button>
                     </div>
 
                     <div className="list-notification">
@@ -772,7 +1002,7 @@ export default function Header(props: any) {
                   <span>Tài khoản</span>
                 </li>
                 <li onClick={() => setShowPopoverUser(false)}>
-                  <Icon name="CustomerCare" />
+                  <Icon name="Phone" />
                   <span>{phone}</span>
                 </li>
                 <li
@@ -792,6 +1022,15 @@ export default function Header(props: any) {
                 >
                   <Icon name="SwitchAccount" />
                   <span>Chuyển vai trò</span>
+                </li>
+                <li
+                  onClick={() => {
+                    setIsShowChatBot(true);
+                    setShowPopoverUser(false);
+                  }}
+                >
+                  <Icon name="CustomerSupport" />
+                  <span>Hỗ trợ</span>
                 </li>
                 <li onClick={() => (!isLogoutLoading ? handleLogout() : undefined)}>
                   <Icon name="Logout" />

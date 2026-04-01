@@ -60,6 +60,42 @@ export default function ShowCustomerInvoice(props: IShowCustomerInvoiceProps) {
     content: () => componentRef.current,
   });
 
+  // ── Gửi email biên lai ──────────────────────────────────────────────────────
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [emailInput, setEmailInput]         = useState("");
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  const handleSendEmail = async () => {
+    const email = emailInput.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showToast("Email không hợp lệ", "error");
+      return;
+    }
+    setIsSendingEmail(true);
+    try {
+      const res = await fetch("/adminapi/outlookMail/sendEmail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          toEmail: email,
+          subject: `Biên lai hóa đơn ${detailInvoice?.invoiceCode ?? ""}`,
+          body: `<p>Kính gửi quý khách,</p>
+                 <p>Đây là biên lai hóa đơn <b>${detailInvoice?.invoiceCode ?? ""}</b> ngày <b>${moment(detailInvoice?.receiptDate).format("DD/MM/YYYY")}</b>.</p>
+                 <p>Tổng thanh toán: <b>${formatCurrency(detailInvoice?.fee ?? 0)}</b></p>
+                 <p>Cảm ơn quý khách!</p>`,
+        }),
+      });
+      const rj = await res.json().catch(() => ({}));
+      if (rj.code !== 0) throw new Error(rj.message ?? "Gửi thất bại");
+      showToast(`Đã gửi biên lai tới ${email}`, "success");
+      setShowEmailInput(false);
+    } catch (err: any) {
+      showToast(err?.message ?? "Gửi email thất bại. Vui lòng thử lại.", "error");
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
   const actions = useMemo<IActionModal>(
     () => ({
       actions_right: {
@@ -69,8 +105,20 @@ export default function ShowCustomerInvoice(props: IShowCustomerInvoiceProps) {
             color: "primary",
             variant: "outline",
             disabled: isSubmit,
+            callback: () => { onHide(false); },
+          },
+          {
+            title: showEmailInput ? "Huỷ email" : "Gửi email",
+            color: "primary",
+            variant: "outline",
             callback: () => {
-              onHide(false);
+              if (showEmailInput) {
+                setShowEmailInput(false);
+              } else {
+                // Pre-fill email nếu có
+                setEmailInput(detailInvoice?.customerEmail ?? "");
+                setShowEmailInput(true);
+              }
             },
           },
           {
@@ -78,14 +126,12 @@ export default function ShowCustomerInvoice(props: IShowCustomerInvoiceProps) {
             type: "button",
             color: "primary",
             is_loading: isSubmit,
-            callback: () => {
-              handlePrint();
-            },
+            callback: () => { handlePrint(); },
           },
         ],
       },
     }),
-    [isSubmit]
+    [isSubmit, showEmailInput, detailInvoice]
   );
 
   return (
@@ -133,6 +179,47 @@ export default function ShowCustomerInvoice(props: IShowCustomerInvoiceProps) {
                   striped={true}
                 />
               </ModalBodyReceipt>
+
+              {/* Email input form — hiện khi bấm "Gửi email" */}
+              {showEmailInput && (
+                <div style={{
+                  padding: "1.2rem 1.6rem",
+                  borderTop: "1px solid var(--border)",
+                  background: "var(--paper)",
+                }}>
+                  <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.8rem" }}>
+                    Địa chỉ email nhận biên lai
+                  </div>
+                  <div style={{ display: "flex", gap: "0.8rem", alignItems: "center" }}>
+                    <input
+                      type="email"
+                      placeholder="example@email.com"
+                      value={emailInput}
+                      onChange={e => setEmailInput(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && handleSendEmail()}
+                      autoFocus
+                      style={{
+                        flex: 1,
+                        padding: "0.7rem 1.2rem",
+                        border: "1.5px solid var(--border)",
+                        borderRadius: "0.8rem",
+                        fontFamily: "var(--font-base)",
+                        fontSize: "1.3rem",
+                        color: "var(--ink)",
+                        background: "var(--white)",
+                        outline: "none",
+                      }}
+                    />
+                    <button
+                      className="btn btn--primary btn--sm"
+                      onClick={handleSendEmail}
+                      disabled={isSendingEmail}
+                    >
+                      {isSendingEmail ? "Đang gửi..." : "Gửi"}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <ModalFooterReceipt actions={actions} />
           </Fragment>

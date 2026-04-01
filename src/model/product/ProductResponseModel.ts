@@ -22,6 +22,8 @@ export interface IProductResponse {
   trackStock?: boolean;
   stock?: number;
   stockWarning?: number;
+  minStock?: number;
+  maxStock?: number;
   showOnWeb?: boolean;
   showOnWebsite?: boolean | number;
   showImage?: boolean;

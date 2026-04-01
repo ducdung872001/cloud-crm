@@ -100,11 +100,24 @@ export default function ListColumnInput(props: any) {
     setIsLoading(false);
   };
 
+  const renderDatatypeBadge = (dataType: string) => {
+    const map: Record<string, { label: string; cls: string }> = {
+      String:  { label: "String",  cls: "string" },
+      Long:    { label: "Long",    cls: "long" },
+      Number:  { label: "Number",  cls: "number" },
+      Date:    { label: "Date",    cls: "date" },
+      Array:   { label: "Array",   cls: "array" },
+      Boolean: { label: "Boolean", cls: "boolean" },
+    };
+    const m = map[dataType] ?? { label: dataType ?? "—", cls: "default" };
+    return <span className={`datatype-badge datatype-badge--${m.cls}`}>{m.label}</span>;
+  };
+
   const titles = ["STT", "Tên cột", "Mã cột", "Kiểu dữ liệu", ""];
 
   const dataFormat = ["text-center", "", "", "", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [index + 1, item.name, item.code, item.dataType, ""];
+  const dataMappingArray = (item: any, index: number) => [index + 1, item.name, item.code, renderDatatypeBadge(item.dataType), ""];
 
   const actionsTable = (item: any): IAction[] => {
     return [
@@ -150,8 +163,11 @@ export default function ListColumnInput(props: any) {
           <ModalBody>
             {!isLoading && listDecisionInput && listDecisionInput.length > 0 ? (
               <>
-                <div className="button-add-column">
-                  <div>Có tổng {listDecisionInput.length} cột điều kiện</div>
+                <div className="column-toolbar">
+                  <div className="column-count">
+                    <span className="count-badge">{listDecisionInput.length}</span>
+                    <span className="count-label">cột điều kiện</span>
+                  </div>
                   <Button type="button" color="primary" size="large" onlyIcon={false} onClick={() => setShowModalAddInputColumn(true)}>
                     Thêm mới cột điều kiện
                   </Button>

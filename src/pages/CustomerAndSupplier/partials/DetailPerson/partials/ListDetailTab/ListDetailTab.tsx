@@ -7,102 +7,34 @@ import WarrantyPersonList from "./partials/WarrantyPersonList/WarrantyPersonList
 import TicketPersonList from "./partials/TicketPersonList/TicketPersonList";
 import ExchangePersonList from "./partials/ExchangePersonList/ExchangePersonList";
 import FeedbackPersonList from "./partials/FeedbackPersonList/FeedbackPersonList";
-import CustomerSMSList from "./partials/CustomerSMSList/CustomerSMSList";
-import CustomerEmailList from "./partials/CustomerEmailList/CustomerEmailList";
 import OrderList from "./partials/OrderList/OrderList";
 import AttachmentsList from "./partials/AttachmentsList/AttachmentsList";
 import "./ListDetailTab.scss";
-import InteractList from "./partials/InteractList";
 import CustomerJob from "./partials/CustomerJob/CustomerJob";
 import CustomerContact from "./partials/CustomerContact/CustomerContact";
 import CustomerSchedule from "./partials/CustomerSchedule/CustomerSchedule";
-import BriefFinancialStatements from "./partials/BriefFinancialStatements";
-import FullFinancialReports from "./partials/FullFinancialReports";
-import InfoCIC from "./partials/InfoCIC";
-import TransactionInformation from "./partials/TransactionInformation";
-import CustomerRevenue from "./partials/CustomerRevenue";
-import ProductNeeds from "./partials/ProductNeeds";
 
 export default function ListDetailTab(props: IListTabDetailProps) {
   const { data } = props;
-
   const { type } = useParams();
   const swiperRelationshipRef = useRef(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-  const [tab, setTab] = useState<string>(() => {
-    return type == "purchase_invoice" ? "tab_three" : "tab_one";
-  });
-
-  const [tabChildren, setTabChildren] = useState<string>(() => {
-    return type == "purchase_invoice" ? "tab_children_two" : "";
-  });
-
+  // Tabs phù hợp với bán lẻ retail - bỏ CIC, Tài chính, Cơ hội
   const listTabItems = [
+    {
+      title: "Lịch sử mua hàng",
+      is_active: "tab_two",
+      is_tab_children: 0,
+    },
     {
       title: "Trao đổi",
       is_active: "tab_one",
       is_tab_children: 1,
       children: [
-        {
-          title: "Trao đổi nội bộ",
-          tab_children: "tab_children_one",
-        },
-        {
-          title: "Ý kiến khách hàng",
-          tab_children: "tab_children_two",
-        },
+        { title: "Trao đổi nội bộ",   tab_children: "tab_children_one" },
+        { title: "Ý kiến khách hàng", tab_children: "tab_children_two" },
       ],
-    },
-    {
-      title: "Lịch sử",
-      is_active: "tab_two",
-      is_tab_children: 1,
-      children: [
-        {
-          title: "Giao dịch",
-          tab_children: "tab_children_one",
-        },
-        {
-          title: "Tương tác",
-          tab_children: "tab_children_two",
-        },
-      ],
-    },
-    {
-      title: "Tài chính",
-      is_active: "tab_three",
-      is_tab_children: 1,
-      children: [
-        {
-          title: "Báo cáo tài chính rút gọn",
-          tab_children: "tab_children_one",
-        },
-        {
-          title: "Báo cáo tài chính đầy đủ",
-          tab_children: "tab_children_two",
-        },
-        {
-          title: "Thông tin CIC",
-          tab_children: "tab_children_three",
-        },
-        {
-          title: "Thông tin giao dịch",
-          tab_children: "tab_children_four",
-        },
-        {
-          title: "Thu thuần từ khách hàng",
-          tab_children: "tab_children_five",
-        },
-        {
-          title: "Nhu cầu sản phẩm",
-          tab_children: "tab_children_six",
-        },
-      ],
-    },
-    {
-      title: "Cơ hội",
-      is_active: "tab_four",
-      is_tab_children: 0,
     },
     {
       title: "Công việc",
@@ -136,69 +68,55 @@ export default function ListDetailTab(props: IListTabDetailProps) {
     },
   ];
 
-  const lstTabLocalStorage = JSON.parse(localStorage.getItem("lstTabDetailCustomer") || "[]");
+  // Reset localStorage nếu chứa tabs cũ không còn dùng
+  const lstTabLocalStorage = (() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("lstTabDetailCustomer") || "[]");
+      const validKeys = new Set(listTabItems.map((t) => t.is_active));
+      if (saved.length > 0 && saved.every((t: any) => validKeys.has(t.is_active))) {
+        return saved;
+      }
+      localStorage.removeItem("lstTabDetailCustomer");
+      return [];
+    } catch {
+      return [];
+    }
+  })();
+
+  const [tab, setTab] = useState<string>("tab_two"); // mặc định: Lịch sử mua hàng
+  const [tabChildren, setTabChildren] = useState<string>("");
 
   const [listTabs, setListTabs] = useState(() => {
-    return lstTabLocalStorage && lstTabLocalStorage.length > 0 ? lstTabLocalStorage : listTabItems;
+    return lstTabLocalStorage.length > 0 ? lstTabLocalStorage : listTabItems;
   });
 
   const handleOnDragEnd = (result) => {
-    // Nếu không có đích đến, thoát ra
     if (!result.destination) return;
-
-    // Sao chép lại danh sách ban đầu
     const items = Array.from(listTabs);
-
-    // Lấy phần tử bị kéo ra khỏi danh sách
     const [reorderedItem] = items.splice(result.source.index, 1);
-
-    // Chèn lại phần tử bị kéo vào vị trí mới
     items.splice(result.destination.index, 0, reorderedItem);
-
-    // Cập nhật lại trạng thái danh sách
     setListTabs(items);
     localStorage.setItem("lstTabDetailCustomer", JSON.stringify(_.cloneDeep(items)));
   };
 
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-
-  // State cho tooltip: null = ẩn; nếu có thì chứa toạ độ (px)
   const [menuPos, setMenuPos] = useState<{ left: number; top: number } | null>(null);
-
-  // State lưu item.children hiện tại (được hover)
-  // const [hoveredChildren, setHoveredChildren] = useState<TabChild[] | null>(null);
   const [hoveredItem, setHoveredItem] = useState(null);
 
   function handleMouseEnter(e: React.MouseEvent<HTMLLIElement>, item?: any) {
-    const li = e.currentTarget; // thẻ li đang hover
+    if (!item?.children?.length) return;
+    const li = e.currentTarget;
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
-
     const liRect = li.getBoundingClientRect();
     const wrapperRect = wrapper.getBoundingClientRect();
-
-    // Toạ độ li so với wrapper (bao gồm scroll offset của wrapper)
-    const relative = {
-      left: liRect.left - wrapperRect.left + wrapper.scrollLeft,
-      top: liRect.top - wrapperRect.top + wrapper.scrollTop,
-      right: liRect.right - wrapperRect.left + wrapper.scrollLeft,
-      bottom: liRect.bottom - wrapperRect.top + wrapper.scrollTop,
-      width: liRect.width,
-      height: liRect.height,
-    };
-    // hoặc lưu vào state để dùng vị trí này (ví dụ show menu)
-    // Hiển thị tooltip ngay bên dưới li (sử dụng relative.left và relative.bottom)
     setMenuPos({
-      left: Math.max(0, relative.left),
-      top: Math.max(0, relative.bottom),
+      left: Math.max(0, liRect.left - wrapperRect.left + wrapper.scrollLeft),
+      top: Math.max(0, liRect.bottom - wrapperRect.top + wrapper.scrollTop),
     });
-
-    // Lưu children để hiển thị trong tooltip
     setHoveredItem(item);
   }
 
   function handleMouseLeave() {
-    // Ân tooltip
     setMenuPos(null);
     setHoveredItem(null);
   }
@@ -216,6 +134,7 @@ export default function ListDetailTab(props: IListTabDetailProps) {
                       <li
                         key={idx}
                         onMouseEnter={(e) => handleMouseEnter(e, item)}
+                        onMouseLeave={item.is_tab_children ? handleMouseLeave : undefined}
                         className={`${item.is_active === tab ? "active" : ""} ${item.is_tab_children ? "confirm-children" : ""}`}
                         onClick={(e) => {
                           e.preventDefault();
@@ -224,9 +143,7 @@ export default function ListDetailTab(props: IListTabDetailProps) {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        style={{
-                          ...provided.draggableProps.style,
-                        }}
+                        style={{ ...provided.draggableProps.style }}
                       >
                         {item.title}
                       </li>
@@ -239,20 +156,12 @@ export default function ListDetailTab(props: IListTabDetailProps) {
           </Droppable>
         </DragDropContext>
       </div>
-      {/* Tooltip / popup hiển thị tại toạ độ tính được và dùng hoveredChildren */}
-      {menuPos && hoveredItem && hoveredItem?.children && hoveredItem?.children?.length && (
+
+      {menuPos && hoveredItem?.children?.length && (
         <div
           className="hover-tooltip"
-          style={{
-            position: "absolute",
-            left: `${menuPos.left}px`,
-            top: `${menuPos.top}px`,
-            zIndex: 2147483647,
-          }}
-          onMouseLeave={() => {
-            // ẩn khi rời tooltip
-            handleMouseLeave();
-          }}
+          style={{ position: "absolute", left: `${menuPos.left}px`, top: `${menuPos.top}px`, zIndex: 2147483647 }}
+          onMouseLeave={handleMouseLeave}
         >
           <ul className="hover-children-list">
             {hoveredItem.children.map((c, i) => (
@@ -263,7 +172,6 @@ export default function ListDetailTab(props: IListTabDetailProps) {
                   ev.stopPropagation();
                   setTab(hoveredItem.is_active);
                   setTabChildren(c.tab_children);
-                  // ẩn tooltip sau khi chọn
                   setMenuPos(null);
                   setHoveredItem(null);
                 }}
@@ -274,32 +182,15 @@ export default function ListDetailTab(props: IListTabDetailProps) {
           </ul>
         </div>
       )}
+
       <div className="details-tab">
-        {tab === "tab_one" ? (
+        {tab === "tab_two" ? (
+          <OrderList />
+        ) : tab === "tab_one" ? (
           tabChildren === "tab_children_one" ? (
             <ExchangePersonList idCustomer={data.id} />
           ) : (
             <FeedbackPersonList idCustomer={data.id} />
-          )
-        ) : tab === "tab_two" ? (
-          tabChildren === "tab_children_one" ? (
-            <OrderList />
-          ) : (
-            <InteractList data={data} />
-          )
-        ) : tab === "tab_three" ? (
-          tabChildren === "tab_children_one" ? (
-            <BriefFinancialStatements data={data} />
-          ) : tabChildren === "tab_children_two" ? (
-            <FullFinancialReports data={data} />
-          ) : tabChildren === "tab_children_three" ? (
-            <InfoCIC data={data} />
-          ) : tabChildren === "tab_children_four" ? (
-            <TransactionInformation data={data} />
-          ) : tabChildren === "tab_children_five" ? (
-            <CustomerRevenue data={data} />
-          ) : (
-            <ProductNeeds data={data} />
           )
         ) : tab === "tab_five" ? (
           <CustomerJob dataCustomer={data} />

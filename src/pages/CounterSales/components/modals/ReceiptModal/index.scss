@@ -162,3 +162,87 @@
     border-top: 2px dashed var(--border);
   }
 }
+
+// ── Paper size selector ────────────────────────────────────────────────────────
+
+.receipt-paper-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.4rem;
+  flex-wrap: wrap;
+
+  &__label {
+    font-size: 1.2rem;
+    color: var(--muted);
+    font-weight: 600;
+    white-space: nowrap;
+    margin-right: 0.2rem;
+  }
+}
+
+.receipt-paper-btn {
+  padding: 4px 12px;
+  border-radius: 2rem;
+  border: 1.5px solid var(--border);
+  background: var(--paper);
+  color: var(--muted);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-base);
+  transition: all 0.15s;
+
+  &:hover { border-color: var(--primary-color); color: var(--ink); }
+
+  &--active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+  }
+
+  &__hint {
+    font-size: 1rem;
+    font-weight: 400;
+    opacity: 0.85;
+  }
+}
+
+// ── Email form ────────────────────────────────────────────────────────────────
+
+.receipt-email-form {
+  margin-top: 1.6rem;
+  padding: 1.4rem 1.6rem;
+  background: var(--paper);
+  border-radius: 1rem;
+  border: 1.5px solid var(--border);
+
+  &__label {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.8rem;
+  }
+
+  &__row {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  &__input {
+    flex: 1;
+    padding: 0.7rem 1.2rem;
+    border: 1.5px solid var(--border);
+    border-radius: 0.8rem;
+    font-family: var(--font-base);
+    font-size: 1.3rem;
+    color: var(--ink);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.15s;
+
+    &:focus { border-color: var(--primary-color); }
+    &::placeholder { color: var(--muted2); }
+  }
+}

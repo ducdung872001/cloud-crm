@@ -1,5 +1,6 @@
 import React, { Fragment, useMemo, useState } from "react";
 import TitleAction from "components/titleAction/titleAction";
+import ReportPanel from "components/reportShared/ReportPanel";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import moment from "moment";
@@ -91,19 +92,11 @@ export default function MarketingReportPage() {
         <MarketingKpiGrid items={kpiCards} />
 
         <div className="report-grid">
-          <div className="report-panel report-panel--wide">
-            <div className="report-panel__header">
-              <div className="report-panel__title">Xu hướng marketing</div>
-              <div className="report-panel__sub">Reach, lead và chuyển đổi theo kỳ báo cáo</div>
-            </div>
+          <ReportPanel className="report-panel report-panel--wide" headerClassName="report-panel__header" titleClassName="report-panel__title" subtitleClassName="report-panel__sub" title="Xu hướng marketing" subtitle="Reach, lead và chuyển đổi theo kỳ báo cáo">
             <HighchartsReact highcharts={Highcharts} options={trendChartOptions} />
-          </div>
+          </ReportPanel>
 
-          <div className="report-panel">
-            <div className="report-panel__header">
-              <div className="report-panel__title">Cơ cấu lead theo kênh</div>
-              <div className="report-panel__sub">Phân bổ lead đầu vào</div>
-            </div>
+          <ReportPanel className="report-panel" headerClassName="report-panel__header" titleClassName="report-panel__title" subtitleClassName="report-panel__sub" title="Cơ cấu lead theo kênh" subtitle="Phân bổ lead đầu vào">
             <HighchartsReact highcharts={Highcharts} options={channelMixOptions} />
             <div className="report-legend">
               {channels.map((item, index) => (
@@ -114,15 +107,11 @@ export default function MarketingReportPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </ReportPanel>
 
-          <div className="report-panel report-panel--wide">
-            <div className="report-panel__header">
-              <div className="report-panel__title">Hiệu suất theo kênh</div>
-              <div className="report-panel__sub">So sánh lead và chuyển đổi giữa các kênh</div>
-            </div>
+          <ReportPanel className="report-panel report-panel--wide" headerClassName="report-panel__header" titleClassName="report-panel__title" subtitleClassName="report-panel__sub" title="Hiệu suất theo kênh" subtitle="So sánh lead và chuyển đổi giữa các kênh">
             <HighchartsReact highcharts={Highcharts} options={channelPerformanceOptions} />
-          </div>
+          </ReportPanel>
 
           <MarketingBudgetSummary channels={channels} totalSpend={summary.totalSpend} />
         </div>

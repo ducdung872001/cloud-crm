@@ -55,12 +55,6 @@ export default {
     }).then((res) => res.json());
   },
 
-  import: () => {
-    return fetch(urlsApi.inventory.import, {
-      method: "GET",
-    }).then((res) => res.json());
-  },
-
   // ── Sổ kho (Ledger) ──────────────────────────────────────────────────────
   // GET /inventoryTransaction/ledger/list
   // refType: "" | "IMPORT" | "SALE" | "RETURN" | "TRANSFER" | "ADJUSTMENT" | "DESTROY"
@@ -108,6 +102,27 @@ export default {
     }).then((res) => res.json());
   },
 
+  // POST /stockTransfer/update — tạo mới (id=null) hoặc cập nhật (id!=null)
+  stockTransferUpdate: (body: {
+    id?: number;
+    fromWarehouseId: number;
+    toWarehouseId: number;
+    note?: string;
+    status?: number;
+  }) => {
+    return fetch(urlsApi.stockTransfer.update, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+
+  // DELETE /stockTransfer/delete?id=:id
+  stockTransferDelete: (id: number) => {
+    return fetch(`${urlsApi.stockTransfer.delete}?id=${id}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
+
   // GET /stockTransfer/approve?id=:id
   stockTransferApprove: (id: number) => {
     return fetch(`${urlsApi.stockTransfer.approve}?id=${id}`, {
@@ -118,6 +133,37 @@ export default {
   // GET /stockTransfer/cancel?id=:id
   stockTransferCancel: (id: number) => {
     return fetch(`${urlsApi.stockTransfer.cancel}?id=${id}`, {
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
+  // ── Chi tiết chuyển kho ──────────────────────────────────────────────────
+  // POST /stockTransferDetail/update — thêm/sửa 1 dòng hàng
+  stockTransferDetailUpdate: (body: {
+    id?: number;
+    transferId: number;
+    productId: number;
+    variantId?: number;
+    unitId?: number;
+    quantity: number;
+    note?: string;
+  }) => {
+    return fetch(urlsApi.stockTransferDetail.update, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+
+  // DELETE /stockTransferDetail/delete?id=:id
+  stockTransferDetailDelete: (id: number) => {
+    return fetch(`${urlsApi.stockTransferDetail.delete}?id=${id}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
+
+  // GET /stockTransferDetail/list?transferId=:id
+  stockTransferDetailList: (params: { transferId: number; limit?: number }) => {
+    return fetch(`${urlsApi.stockTransferDetail.list}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },

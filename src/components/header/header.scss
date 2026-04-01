@@ -12,6 +12,8 @@
   z-index: 99;
   transition: padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   // ✅ Đã xóa margin-top: 1.5rem — gây lệch layout
+  /* Đảm bảo các children căn giữa dọc — cần thiết cho search box */
+  align-items: center;
 
   &-actions {
     .base-button {
@@ -58,9 +60,9 @@
   .notification-hot {
     padding: 1.6rem 0;
     // max-width: calc(100% - 24rem);
-    width: 32rem;
-    max-width: 45rem;
-    flex: 1;
+    width: 22rem;       /* width cố định thay vì flex:1 để nhường chỗ cho search */
+    max-width: 22rem;
+    flex-shrink: 0;
     overflow: hidden;
 
     .swiper {
@@ -449,11 +451,26 @@
       .text-Read {
         font-size: 12px;
         font-weight: var(--fw-regular);
-        color: #939394;
+        color: #015aa4;
         cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+        transition: opacity 0.15s ease;
 
-        &:hover {
+        &:hover:not(:disabled) {
           text-decoration: underline;
+        }
+
+        &--loading {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        &--disabled {
+          color: #c0c0c0;
+          cursor: default;
+          pointer-events: none;
         }
       }
     }
@@ -721,5 +738,264 @@
     .triangle {
       right: 0.8rem;
     }
+  }
+}
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLOBAL SEARCH — thanh tìm kiếm nhanh trên header
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gs-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 46rem;
+  margin: 0 2rem;
+  z-index: 200;
+  /* Căn giữa theo chiều dọc trong header (height = 5.7rem) */
+  align-self: center;
+
+  @media (max-width: 992px) {
+    max-width: 28rem;
+    margin: 0 1rem;
+  }
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+/* Input wrapper */
+.gs-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: var(--bg-input, #f1f5f9);
+  border: 1.5px solid transparent;
+  border-radius: 2.4rem;
+  padding: 0 1.2rem;
+  height: 3.8rem;
+  transition: all 0.2s;
+
+  &.is-open,
+  &:focus-within {
+    background: #fff;
+    border-color: #84cc16;
+    box-shadow: 0 0 0 3px rgba(132, 204, 22, 0.12);
+  }
+}
+
+.gs-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.gs-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-base);
+  font-size: 1.35rem;
+  color: var(--ink, #1e293b);
+  outline: none;
+  min-width: 0;
+
+  &::placeholder {
+    color: var(--muted2, #94a3b8);
+    font-size: 1.3rem;
+  }
+}
+
+.gs-clear {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--muted, #94a3b8);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 50%;
+  line-height: 1;
+  transition: all 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: var(--border, #e2e8f0);
+    color: var(--ink, #1e293b);
+  }
+}
+
+/* Dropdown kết quả */
+.gs-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  min-width: 40rem;
+  background: #fff;
+  border-radius: 1.2rem;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border, #e2e8f0);
+  overflow: hidden;
+  animation: gs-fadein 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  /* Giới hạn chiều cao = khoảng 70vh để không tràn màn hình */
+  max-height: 70vh;
+
+  @media (max-width: 992px) {
+    min-width: 28rem;
+  }
+}
+
+/* Vùng scroll — chứa tất cả nhóm kết quả */
+.gs-scroll {
+  overflow-y: auto;
+  flex: 1;
+  overscroll-behavior: contain;
+
+  /* Scrollbar gọn */
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: var(--border, #cbd5e0); border-radius: 4px; }
+}
+
+@keyframes gs-fadein {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Nhóm kết quả */
+.gs-group {
+  & + .gs-group {
+    border-top: 1px solid var(--border, #f1f5f9);
+  }
+}
+
+.gs-group__label {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 0.8rem 1.4rem 0.4rem;
+  background: var(--paper, #f8fafc);
+}
+
+/* Item kết quả */
+.gs-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1.4rem;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover {
+    background: #f0fdf4;
+  }
+
+  &__avatar {
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 0.6rem;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--paper, #f1f5f9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__avatar-fallback {
+    font-size: 1.6rem;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ink, #1e293b);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__sub {
+    font-size: 1.15rem;
+    color: var(--muted, #64748b);
+    margin-top: 1px;
+  }
+
+  &__meta {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #16a34a;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+}
+
+/* Empty / loading */
+.gs-empty {
+  padding: 1.6rem 1.4rem;
+  font-size: 1.3rem;
+  color: var(--muted, #64748b);
+  text-align: center;
+
+  b { color: var(--ink, #1e293b); }
+}
+
+.gs-spin {
+  display: inline-block;
+  animation: gs-spin 1s linear infinite;
+}
+
+@keyframes gs-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Footer hint */
+.gs-footer {
+  padding: 0.7rem 1.4rem;
+  font-size: 1.1rem;
+  color: var(--muted2, #94a3b8);
+  border-top: 1px solid var(--border, #f1f5f9);
+  background: var(--paper, #f8fafc);
+  text-align: center;
+  flex-shrink: 0;   /* footer luôn hiển thị, không bị cuộn mất */
+
+  kbd {
+    background: var(--border, #e2e8f0);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 1rem;
+    font-family: monospace;
+    color: var(--ink, #475569);
+  }
+}
+
+/* Link "Xem tất cả N kết quả" cuối mỗi nhóm */
+.gs-more {
+  padding: 0.6rem 1.4rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2563eb;
+  cursor: pointer;
+  background: #eff6ff;
+  transition: background 0.12s;
+  border-top: 1px solid #dbeafe;
+
+  &:hover {
+    background: #dbeafe;
   }
 }

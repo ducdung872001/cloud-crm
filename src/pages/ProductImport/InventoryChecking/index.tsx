@@ -20,11 +20,12 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { IAction } from "model/OtherModel";
 import { showToast, getPermissions } from "utils/common";
 import { getPageOffset, formatCurrency } from "reborn-util";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import InventoryService from "services/InventoryService";
 import InvoiceService from "services/InvoiceService";
 import AdjustmentSlipService from "services/AdjustmentSlipService";
 import urls from "@/configs/urls";
+import ModalStockInitImport from "./partials/ModalStockInitImport";
 import "./styles.scss";
 
 type TabType = "stock" | "import" | "export" | "transfer" | "destroy" | "check" | "cost";
@@ -147,8 +148,14 @@ export default function InventoryManagement() {
   document.title = "Quản lý kho";
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const isMounted = useRef(false);
-  const [activeTab, setActiveTab] = useState<TabType>("stock");
+  const tabFromUrl = searchParams.get("tab") as TabType;
+  const [activeTab, setActiveTab] = useState<TabType>(
+    tabFromUrl && ["stock","import","export","transfer","destroy","check","cost"].includes(tabFromUrl)
+      ? tabFromUrl
+      : "stock"
+  );
   const [permissions] = useState(getPermissions());
 
   const [showDialog, setShowDialog] = useState(false);
@@ -190,6 +197,7 @@ export default function InventoryManagement() {
   });
   // Flag để biết summary đã load chưa (load 1 lần, không theo page)
   const importSummaryLoaded = useRef(false);
+  const [showStockInitModal, setShowStockInitModal] = useState(false);
   const [transferSummary, setTransferSummary] = useState({
     total: 0, pending: 0, completed: 0, cancelled: 0,
   });
@@ -651,13 +659,22 @@ export default function InventoryManagement() {
         title: "Tạo phiếu nhập",
         callback: () => navigate(urls.create_inventory),
       },
+      activeTab === "import" && {
+        title: "Import tồn kho",
+        color: "secondary" as const,
+        icon: <Icon name="Upload" style={{ width: 15 }} />,
+        callback: () => {
+          console.log("[DEBUG] Import tồn kho clicked, setShowStockInitModal(true)");
+          setShowStockInitModal(true);
+        },
+      },
       activeTab === "transfer" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu chuyển kho",
-        callback: () => navigate(urls.inventory_transfer_document),
+        callback: () => navigate(`${urls.inventory_transfer_document}?mode=create`),
       },
       activeTab === "destroy" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu xuất hủy",
-        callback: () => showToast("Tính năng đang phát triển", "warning"),
+        callback: () => navigate(urls.destroy_slip),
       },
       activeTab === "check" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu kiểm kho",
@@ -798,11 +815,19 @@ export default function InventoryManagement() {
             renderBadge(item.status ?? 0, IMPORT_STATUS_MAP),
           ],
           actions: (item: IImportInvoiceItem): IAction[] => [
-            {
-              title: "Chi tiết",
-              icon: <Icon name="CollectInfo" style={{ width: 17 }} />,
-              callback: () => navigate(`${urls.create_inventory}?invoiceId=${item.id}`),
-            },
+            // STATUS_DONE=1, STATUS_CANCEL=3 → Xem (readonly)
+            // STATUS_PENDING=2 → Chỉnh sửa
+            item.status === 2
+              ? {
+                  title: "Chỉnh sửa",
+                  icon: <Icon name="Edit" style={{ width: 16 }} />,
+                  callback: () => navigate(`${urls.create_inventory}?invoiceId=${item.id}`),
+                }
+              : {
+                  title: "Xem chi tiết",
+                  icon: <Icon name="Eye" style={{ width: 16 }} />,
+                  callback: () => navigate(`${urls.create_inventory}?invoiceId=${item.id}&mode=view`),
+                },
             ...(item.status === 2 ? [  // 2 = STATUS_PENDING (chờ duyệt)
               {
                 title: "Xác nhận nhập",
@@ -1171,6 +1196,16 @@ export default function InventoryManagement() {
       </div>
 
       <Dialog content={contentDialog} isOpen={showDialog} />
+
+      <ModalStockInitImport
+        isOpen={showStockInitModal}
+        onClose={() => setShowStockInitModal(false)}
+        onSuccess={(invoiceCode) => {
+          showToast(`Import tồn kho thành công! Phiếu: ${invoiceCode}`, "success");
+          importSummaryLoaded.current = false;
+          loadData(params);
+        }}
+      />
     </div>
   );
 }
