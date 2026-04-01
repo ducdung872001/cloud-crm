@@ -1,4 +1,3 @@
-import { OmniChatPayload } from "@/hooks/useOmniCXM";
 import React from "react";
 
 export interface ContextType {
@@ -48,6 +47,5 @@ export interface ContextType {
   hangup: () => void;
   answer: () => void;
   transfer: (number: string) => void;
-  omniChatEvent?: OmniChatPayload | null;
 }
 export const UserContext = React.createContext({});

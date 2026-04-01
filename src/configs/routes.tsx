@@ -264,7 +264,7 @@ export const menu: IMenuItem[] = [
       //   code: "SALE_INVOICE",
       // },
       {
-        title: "fanpage", // Tương tác & Chốt đơn (Gộp Fanpage & Zalo)
+        title: "fanpage", // Hội thoại khách hàng
         path: urls.fanpage,
         icon: <Icon name="InteractionMenu" />,
         code: "FANPAGE",
@@ -436,7 +436,7 @@ export const menu: IMenuItem[] = [
         path: urls.setting_customer,
         icon: <Icon name="CustomerSettingMenu" />,
         code: "MENU_SETUP_CUSTOMER",
-      },      
+      },
       // {
       //   title: "reportCustomer", // Báo cáo khách hàng
       //   path: urls.report_customer,

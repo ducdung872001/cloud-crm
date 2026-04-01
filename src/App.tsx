@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "./contexts/userContext";
@@ -44,13 +44,7 @@ import WebRtcCallIncomeModal from "pages/CallCenter/partials/WebRtcCallIncomeMod
 import ringtone from "assets/sounds/call_in_sound.wav";
 import { useSTWebRTC } from "./webrtc/useSTWebRTC";
 import { messaging, requestPermission } from "./firebase-config";
-import OmniCXMMock from "./components/OmniCXMChat/OmniCXMMock";
 
-// ─── OmniCXM config ───────────────────────────────────────────────────────────
-const OMNICXM_CSS_URL = "https://omni-api.worldfone.cloud/embed_app/application/public/css/embed.css";
-const OMNICXM_JS_URL  = "https://omni-api.worldfone.cloud/embed_app/application/embed.js";
-const OMNICXM_KEY     = process.env.REACT_APP_OMNICXM_KEY || "";
-const OMNICXM_ENV     = process.env.REACT_APP_OMNICXM_ENV || ""; // "dev" | "uat" | bỏ trống = production
 // ─────────────────────────────────────────────────────────────────────────────
 
 const msalInstance = new PublicClientApplication(msalConfig);
@@ -72,17 +66,6 @@ export default function App() {
   const [countUnread, setCountUnread] = useState(0);
   const [newNotificationPayload, setNewNotificationPayload] = useState<any>(null);
 
-  // ─── OmniCXM state ──────────────────────────────────────────────────────────
-  const omniInitialized = useRef(false);
-
-  /** Dữ liệu room chat mới nhất từ OmniCXM (Zalo / Messenger / LiveChat) */
-  const [omniChatEvent, setOmniChatEvent] = useState<{
-    event: "pick" | "reassigned" | "solved" | "spam" | "linkobject" | null;
-    source: string;
-    room_id: string;
-    customernumber?: string;
-    people_id?: string;
-  } | null>(null);
   // ────────────────────────────────────────────────────────────────────────────
 
   fetchConfig();
@@ -92,97 +75,6 @@ export default function App() {
   const takeSelectedRole = localStorage.getItem("SelectedRole");
   const defaultRedirectRef = useRef<string>("/create_sale_add");
 
-  // ─── OmniCXM: Load CSS ──────────────────────────────────────────────────────
-  const loadOmniCSS = useCallback(() => {
-    if (document.querySelector(`link[href="${OMNICXM_CSS_URL}"]`)) return;
-    const link = document.createElement("link");
-    link.rel  = "stylesheet";
-    link.href = OMNICXM_CSS_URL;
-    document.head.appendChild(link);
-  }, []);
-
-  // ─── OmniCXM: Load JS ───────────────────────────────────────────────────────
-  const loadOmniScript = useCallback((): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      if (document.querySelector(`script[src="${OMNICXM_JS_URL}"]`)) {
-        resolve();
-        return;
-      }
-      const script = document.createElement("script");
-      script.src   = OMNICXM_JS_URL;
-      script.async = true;
-      script.onload  = () => resolve();
-      script.onerror = () => reject(new Error("[OmniCXM] Không tải được embed.js"));
-      document.body.appendChild(script);
-    });
-  }, []);
-
-  // ─── OmniCXM: Init widget ───────────────────────────────────────────────────
-  const initOmni = useCallback(() => {
-    if (!(window as any).STOmniCXMEmbedApp) {
-      console.error("[OmniCXM] STOmniCXMEmbedApp chưa sẵn sàng");
-      return;
-    }
-    const opts: Record<string, string> = { key: OMNICXM_KEY };
-    if (OMNICXM_ENV) opts.environment = OMNICXM_ENV;
-    (window as any).STOmniCXMEmbedApp.init(opts);
-    omniInitialized.current = true;
-    console.log("[OmniCXM] Đã khởi tạo widget chat");
-  }, []);
-
-  // ─── OmniCXM: Bootstrap (load → init) khi đã đăng nhập ─────────────────────
-  useEffect(() => {
-    if (!isLogin || omniInitialized.current || !OMNICXM_KEY) return;
-
-    loadOmniCSS();
-    loadOmniScript()
-      .then(initOmni)
-      .catch((err) => console.error(err.message));
-  }, [isLogin, loadOmniCSS, loadOmniScript, initOmni]);
-
-  // ─── OmniCXM: Lắng nghe Event Chat ─────────────────────────────────────────
-  useEffect(() => {
-    const handleOmniMessage = (event: MessageEvent) => {
-      if (event?.data?.from !== "OmniCXM_EmbedServiceChat") return;
-
-      const { event: evtName, from, ...payload } = event.data;
-
-      // Lưu event mới nhất vào state (UserContext có thể dùng ở bất kỳ page nào)
-      setOmniChatEvent({ event: evtName, ...payload });
-
-      // Xử lý theo từng loại event
-      switch (evtName) {
-        case "pick":
-          console.log(`[OmniCXM] Agent tiếp nhận – kênh: ${payload.source}`, payload);
-          // TODO: cập nhật CRM, mở tab room, v.v.
-          break;
-
-        case "reassigned":
-          console.log(`[OmniCXM] Phân công lại – kênh: ${payload.source}`, payload);
-          break;
-
-        case "solved":
-          console.log(`[OmniCXM] Kết thúc hội thoại – kênh: ${payload.source}`, payload);
-          // TODO: đóng ticket, gửi khảo sát, v.v.
-          break;
-
-        case "spam":
-          console.log(`[OmniCXM] Đánh dấu spam – kênh: ${payload.source}`, payload);
-          break;
-
-        case "linkobject":
-          console.log(`[OmniCXM] Liên kết contact – people_id: ${payload.people_id}`, payload);
-          break;
-
-        default:
-          break;
-      }
-    };
-
-    window.addEventListener("message", handleOmniMessage);
-    return () => window.removeEventListener("message", handleOmniMessage);
-  }, []);
-  // ────────────────────────────────────────────────────────────────────────────
 
   const handleGetRoles = async (token: string) => {
     if (!token) return;
@@ -475,18 +367,9 @@ export default function App() {
         answer: answer,
         hangup: hangup,
         transfer: transfer,
-        // ── OmniCXM ──────────────────────────────────────────────────────────
-        omniChatEvent: omniChatEvent,   // event mới nhất từ widget chat
-        // ─────────────────────────────────────────────────────────────────────
       }}
     >
       <MsalProvider instance={msalInstance}>
-        <OmniCXMMock
-          onEvent={(data) => {
-            setOmniChatEvent(data);
-            console.log("[Mock Event]", data);
-          }}
-        />
         <ToastContainer
           position="top-right"
           autoClose={5000}
