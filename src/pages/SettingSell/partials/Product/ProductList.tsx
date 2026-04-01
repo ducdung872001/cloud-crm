@@ -665,7 +665,7 @@ export default function ProductList(props: IProductListProps) {
   // --- Table columns ---
   const titles = ["Sản phẩm", "Danh mục", "Giá bán / giá sỉ", "Tồn kho", "Hiển thị web", "Trạng thái"];
 
-  const dataFormat = ["", "", "text-right", "text-center", "text-center", "text-center"];
+  const dataFormat = ["", "", "text-right", "text-right", "text-center", "text-center"];
 
   const getStatusBadge = (item: IProductResponse) => {
     switch (item.status) {
@@ -722,7 +722,7 @@ export default function ProductList(props: IProductListProps) {
 
       // GIÁ BÁN / GIÁ SỈ
       <div className="product-price-cell" key={`price-${item.id}`}>
-        <p className="product-price-cell__main">{formatCurrency(item.price)}</p>
+        <p className="product-price-cell__main">{formatCurrency(item.originalPrice)}</p>
         {item.priceWholesale > 0 && (
           <p className="product-price-cell__wholesale">Sỉ: {formatCurrency(item.priceWholesale)}</p>
         )}
@@ -731,7 +731,7 @@ export default function ProductList(props: IProductListProps) {
       // TỒN KHO
       <div className="product-stock-cell" key={`stock-${item.id}`}>
         <span className="product-stock-cell__value">
-          {item.stock != null ? item.stock : "—"}
+          {item.stockQuantity != null ? item.stockQuantity : "—"}
         </span>
       </div>,
 

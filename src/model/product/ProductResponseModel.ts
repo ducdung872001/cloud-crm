@@ -9,7 +9,8 @@ export interface IProductResponse {
   unitId?: number;
   unitName?: string;
   price?: number;
-  priceWholesale?: number;
+  originalPrice?: number;      // Giá bán lẻ — từ wList API (inventory/product/list)
+  priceWholesale?: number;     // Giá sỉ — từ wList API
   pricePromo?: number;
   costPrice?: number;
   type?: number;
@@ -21,6 +22,7 @@ export interface IProductResponse {
   categoryName?: string;
   trackStock?: boolean;
   stock?: number;
+  stockQuantity?: number;      // Tồn kho — từ wList API (inventory/product/list)
   stockWarning?: number;
   minStock?: number;
   maxStock?: number;
