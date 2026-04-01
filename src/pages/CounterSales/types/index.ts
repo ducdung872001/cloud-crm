@@ -53,6 +53,10 @@ export interface Order {
   total: number;
   cancellationReason?: string;
   note?: string;
+  /** Số tiền khách còn nợ (debt > 0 = có nợ) */
+  debt?: number;
+  /** Số tiền khách đã trả */
+  paid?: number;
 }
 
 /** Thông tin giao hàng kèm phí ship — dùng khi orderType === "ship" */

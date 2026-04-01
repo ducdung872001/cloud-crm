@@ -1,6 +1,4 @@
-.invoice-receipt-modal {
-  // Modal nhỏ gọn như biên lai thật
-}
+// InvoiceReceiptModal styles
 
 // ── Paper size selector ───────────────────────────────────────────────────────
 
@@ -241,9 +239,17 @@
     align-items: center;
   }
 
-  &__input {
+  // Wrapper để chứa input + icon mắt absolute bên trong
+  &__input-wrap {
     flex: 1;
-    padding: 0.7rem 1.2rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.7rem 3.2rem 0.7rem 1.2rem; // padding-right nhường chỗ icon mắt
     border: 1.5px solid var(--border);
     border-radius: 0.8rem;
     font-family: var(--font-base);
@@ -260,9 +266,66 @@
     &::placeholder {
       color: var(--muted2);
     }
+
+    // Trạng thái readonly khi khách hàng đã có email
+    &--readonly {
+      background: var(--paper);
+      color: var(--muted);
+      cursor: default;
+      border-color: var(--border);
+
+      &:focus {
+        border-color: var(--border);
+      }
+    }
+  }
+
+  // Icon mắt nằm absolute bên phải trong input-wrap
+  &__eye {
+    position: absolute;
+    right: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0.3rem;
+    cursor: pointer;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    line-height: 1;
+
+    &:hover:not(:disabled) {
+      color: var(--primary-color);
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    &:disabled,
+    &--loading {
+      cursor: wait;
+      opacity: 0.5;
+    }
   }
 
   &__btn {
     white-space: nowrap;
   }
+}
+
+// Spinner nhỏ trong nút mắt
+.ircpt-eye-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: ircpt-spin 0.7s linear infinite;
+}
+
+@keyframes ircpt-spin {
+  to { transform: rotate(360deg); }
 }

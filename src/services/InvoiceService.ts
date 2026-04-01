@@ -49,14 +49,14 @@ export default {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
     const url = URL.createObjectURL(blob);
-    const a   = document.createElement("a");
+    const a = document.createElement("a");
 
     const today = new Date();
-    const dd    = String(today.getDate()).padStart(2, "0");
-    const mm    = String(today.getMonth() + 1).padStart(2, "0");
-    const yyyy  = today.getFullYear();
-    a.download  = `DanhSachHoaDon_${dd}${mm}${yyyy}.xlsx`;
-    a.href      = url;
+    const dd = String(today.getDate()).padStart(2, "0");
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy = today.getFullYear();
+    a.download = `DanhSachHoaDon_${dd}${mm}${yyyy}.xlsx`;
+    a.href = url;
 
     document.body.appendChild(a);
     a.click();
@@ -164,6 +164,15 @@ export default {
     return fetch(urlsApi.invoiceImport.summary, {
       signal,
       method: "GET",
+    }).then((res) => res.json());
+  },
+  // Gửi biên lai qua email
+  // payload: { invoiceId, customerEmail }
+  sendEmail: (invoiceId: number, customerEmail: string) => {
+    return fetch(urlsApi.invoice.sendEmail, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ invoiceId, customerEmail }),
     }).then((res) => res.json());
   },
 

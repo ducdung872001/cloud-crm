@@ -111,6 +111,14 @@ export default {
     }).then((res) => res.json());
   },
 
+  consumePoint: (body: { customerId: number; point: number; description: string }) => {
+    return fetch(urlsApi.ma.consumePoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+
   // ── Cấu hình tỷ lệ quy đổi điểm ────────────────────────────────────────
   getConfig: (signal?: AbortSignal) => {
     return fetch(urlsApi.ma.getLoyaltyConfig, { signal, method: "GET" })

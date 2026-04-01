@@ -40,7 +40,8 @@ interface PayModalProps {
   open:            boolean;
   cartItems:       CartItem[];
   onClose:         () => void;
-  onConfirm:       (invoiceId: number | null) => void;
+  /** paid = số tiền khách thực trả; debt = số tiền còn nợ */
+  onConfirm:       (invoiceId: number | null, paid: number, debt: number) => void;
   invoiceId:       number | null;
   method:          PayMethod;
   setMethod:       (method: PayMethod) => void;
@@ -54,6 +55,15 @@ interface PayModalProps {
   shippingFeeBearer?: "RECEIVER" | "SENDER";
   /** Truyền activeConfig ra ngoài để CounterSales/index.tsx dùng khi generate QR */
   onConfigChange?: (cfg: IStorePaymentConfigResponse | null) => void;
+  /**
+   * customerId của khách đang chọn.
+   * -1 hoặc undefined = khách vãng lai → không cho ghi nợ.
+   */
+  customerId?: number | string;
+  /**
+   * Callback mở CustomerModal khi cần chọn khách để ghi nợ.
+   */
+  onRequestSelectCustomer?: () => void;
 }
 
 export default function PayModal({
@@ -62,10 +72,12 @@ export default function PayModal({
   loyaltyDiscount = 0,
   shippingFee = 0, shippingFeeBearer = "RECEIVER",
   onConfigChange,
+  customerId,
+  onRequestSelectCustomer,
 }: PayModalProps) {
-  const [customerPaid, setCustomerPaid]     = useState(0);
-  const [configs, setConfigs]               = useState<IStorePaymentConfigResponse[]>([]);
-  const [loaded, setLoaded]                 = useState(false);
+  const [customerPaid, setCustomerPaid]         = useState(0);
+  const [configs, setConfigs]                   = useState<IStorePaymentConfigResponse[]>([]);
+  const [loaded, setLoaded]                     = useState(false);
   const [selectedConfigId, setSelectedConfigId] = useState<number | null>(null);
 
   // ── Fetch store_payment_config 1 lần ─────────────────────────────────────
@@ -81,7 +93,7 @@ export default function PayModal({
       .finally(() => setLoaded(true));
   }, [loaded]);
 
-  // ── Config đang active (để render section chi tiết) ───────────────────────
+  // ── Config đang active ────────────────────────────────────────────────────
   const activeConfig: IStorePaymentConfigResponse | null = useMemo(() => {
     if (selectedConfigId !== null) {
       return configs.find((c) => c.id === selectedConfigId) ?? null;
@@ -93,13 +105,24 @@ export default function PayModal({
 
   useEffect(() => { onConfigChange?.(activeConfig); }, [activeConfig]);
 
-  const subtotal    = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
-  const discount    = couponDiscount + promoDiscount;
-  const shipCharge  = shippingFeeBearer === "RECEIVER" ? shippingFee : 0;
-  // ── FIX: trừ loyaltyDiscount vào tổng thanh toán ─────────────────────────
-  const total       = Math.max(0, subtotal - discount - loyaltyDiscount + shipCharge);
-  const change      = Math.max(0, customerPaid - total);
-  const fmt      = (n: number) => n.toLocaleString("vi") + " ₫";
+  const subtotal   = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
+  const discount   = couponDiscount + promoDiscount;
+  const shipCharge = shippingFeeBearer === "RECEIVER" ? shippingFee : 0;
+  const total      = Math.max(0, subtotal - discount - loyaltyDiscount + shipCharge);
+  const fmt        = (n: number) => n.toLocaleString("vi") + " ₫";
+
+  // ── Tính tiền thối / nợ theo method ─────────────────────────────────────
+  // Với tiền mặt: dùng customerPaid do người dùng nhập
+  // Với các method khác: mặc định khách trả đủ (paid = total, debt = 0)
+  const effectivePaid = method === "cash" ? Math.min(customerPaid, total) : total;
+  const change        = method === "cash" ? Math.max(0, customerPaid - total) : 0;
+  const debt          = method === "cash" ? Math.max(0, total - customerPaid) : 0;
+
+  // ── Kiểm tra khách vãng lai ───────────────────────────────────────────────
+  // customerId = -1/undefined/null = vãng lai → không cho ghi nợ
+  const isWalkIn  = !customerId || Number(customerId) <= 0;
+  // Có nợ VÀ là vãng lai → chặn confirm, yêu cầu chọn khách
+  const needCustomerForDebt = debt > 0 && isWalkIn;
 
   // ── Khi mở modal ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -115,6 +138,12 @@ export default function PayModal({
     }
   }, [open]);
 
+  // Khi total thay đổi (ít xảy ra, nhưng để safe) reset customerPaid
+  useEffect(() => {
+    if (!open) return;
+    setCustomerPaid(Math.ceil(total / 1000) * 1000);
+  }, [total]);
+
   // ── Build danh sách nút PTTT ──────────────────────────────────────────────
   const displayMethods = useMemo(() => {
     if (!loaded || configs.length === 0) return PAY_METHODS;
@@ -125,31 +154,45 @@ export default function PayModal({
         const logo    = cfg.template?.logoUrl
           ?? (partner === "MOMO" ? ImageMomo : partner === "ZALOPAY" ? ImageZaloPay : undefined);
         return {
-          id:       PARTNER_TO_PAY_METHOD[partner] ?? "cash",
-          icon:     PARTNER_ICON[partner] ?? "💳",
-          label:    cfg.displayName,
-          image:    logo,
-          cfgId:    cfg.id,
+          id:    PARTNER_TO_PAY_METHOD[partner] ?? "cash",
+          icon:  PARTNER_ICON[partner] ?? "💳",
+          label: cfg.displayName,
+          image: logo,
+          cfgId: cfg.id,
         };
       });
   }, [configs, loaded]);
+
+  // ── Nút xác nhận ─────────────────────────────────────────────────────────
+  const handleConfirm = () => {
+    // Không cho hoàn thành nếu có nợ mà chưa chọn khách hàng
+    if (needCustomerForDebt) return;
+    onConfirm(invoiceId, effectivePaid, debt);
+  };
 
   const actions: IActionModal = useMemo(() => ({
     actions_right: {
       buttons: [
         { title: "Hủy", color: "primary", variant: "outline", callback: onClose },
-        { title: "✅ Tạo hoá đơn", color: "primary", callback: () => onConfirm(invoiceId) },
+        {
+          title: needCustomerForDebt ? "⚠️ Chọn khách để ghi nợ" : "✅ Tạo hoá đơn",
+          color: "primary",
+          variant: needCustomerForDebt ? ("outline" as const) : undefined,
+          disabled: needCustomerForDebt,
+          callback: handleConfirm,
+        },
       ],
     },
-  }), [invoiceId, onClose, onConfirm]);
+  }), [invoiceId, onClose, effectivePaid, debt, needCustomerForDebt, handleConfirm]);
 
-  // ── Switch: render section chi tiết theo method ───────────────────────────
+  // ── Render section chi tiết theo method ─────────────────────────────────
   const renderSection = () => {
     switch (method) {
 
       case "cash":
         return (
           <>
+            {/* Tiền thực trả */}
             <div className="pay-modal__field">
               <label>Khách đưa (₫)</label>
               <input
@@ -166,10 +209,49 @@ export default function PayModal({
                 ))}
               </div>
             </div>
-            <div className="pay-modal__change">
-              <span>Tiền thối lại</span>
-              <span className="pay-modal__change-val">{fmt(change)}</span>
-            </div>
+
+            {/* Tiền thối — chỉ hiện khi khách đưa thừa */}
+            {change > 0 && (
+              <div className="pay-modal__change">
+                <span>Tiền thối lại</span>
+                <span className="pay-modal__change-val">{fmt(change)}</span>
+              </div>
+            )}
+
+            {/* Ghi nợ — chỉ hiện khi khách đưa thiếu */}
+            {debt > 0 && (
+              <div className={`pay-modal__debt${needCustomerForDebt ? " pay-modal__debt--blocked" : ""}`}>
+                <span>⚠️ Ghi nợ khách hàng</span>
+                <span className="pay-modal__debt-val">{fmt(debt)}</span>
+              </div>
+            )}
+
+            {/* Tiền thực thu — luôn hiện để rõ ràng */}
+            {debt > 0 && (
+              <div className="pay-modal__paid-row">
+                <span>Tiền thực thu</span>
+                <span>{fmt(effectivePaid)}</span>
+              </div>
+            )}
+
+            {/* Banner chặn khi vãng lai muốn ghi nợ */}
+            {needCustomerForDebt && (
+              <div className="pay-modal__debt-warning">
+                <div className="pay-modal__debt-warning-text">
+                  <strong>Không thể ghi nợ cho khách vãng lai.</strong><br />
+                  Vui lòng chọn khách hàng hoặc thu đủ tiền để hoàn thành đơn.
+                </div>
+                {onRequestSelectCustomer && (
+                  <button
+                    type="button"
+                    className="pay-modal__select-customer-btn"
+                    onClick={onRequestSelectCustomer}
+                  >
+                    👤 Chọn khách hàng
+                  </button>
+                )}
+              </div>
+            )}
           </>
         );
 
@@ -304,7 +386,6 @@ export default function PayModal({
             </div>
           )}
 
-          {/* FIX: Hiển thị dòng giảm từ điểm tích lũy */}
           {loyaltyDiscount > 0 && (
             <div className="pay-modal__summary-row">
               <span>Điểm tích lũy</span>
