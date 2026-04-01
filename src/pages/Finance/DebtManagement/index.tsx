@@ -386,12 +386,28 @@ function AgingSection({ data }: { data: IAgingBucket[] }) {
 
 function DonutChart({ slices }: { slices: Array<{ label: string; pct: number; color: string }> }) {
   const r = 45, cx = 60, cy = 60;
-  let cumAngle = -90;
   const paths: JSX.Element[] = [];
 
-  slices.forEach((s, i) => {
-    if (s.pct <= 0) return;
-    const angle = (s.pct / 100) * 360;
+  // Lọc slice có pct > 0 và normalize về tổng 100
+  const validSlices = slices.filter((s) => s.pct > 0);
+  const total = validSlices.reduce((sum, s) => sum + s.pct, 0);
+  if (total <= 0) return null;
+
+  // Trường hợp đặc biệt: chỉ có 1 slice (hoặc 1 slice chiếm ~100%)
+  // SVG arc không thể vẽ đường tròn 360° → dùng 2 circle thay thế
+  const dominantIdx = validSlices.findIndex((s) => (s.pct / total) >= 0.999);
+  if (dominantIdx >= 0) {
+    return (
+      <svg viewBox="0 0 120 120" width="120" height="120">
+        <circle cx={cx} cy={cy} r={r} fill={validSlices[dominantIdx].color} />
+        <circle cx={cx} cy={cy} r={28} fill="#fff" />
+      </svg>
+    );
+  }
+
+  let cumAngle = -90;
+  validSlices.forEach((s, i) => {
+    const angle    = (s.pct / total) * 360;
     const startRad = (cumAngle * Math.PI) / 180;
     const endRad   = ((cumAngle + angle) * Math.PI) / 180;
     const x1 = cx + r * Math.cos(startRad);
@@ -401,13 +417,13 @@ function DonutChart({ slices }: { slices: Array<{ label: string; pct: number; co
     const large = angle > 180 ? 1 : 0;
 
     paths.push(
-      <path key={i} d={`M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`}
+      <path key={i}
+        d={`M ${cx} ${cy} L ${x1.toFixed(3)} ${y1.toFixed(3)} A ${r} ${r} 0 ${large} 1 ${x2.toFixed(3)} ${y2.toFixed(3)} Z`}
         fill={s.color} stroke="#fff" strokeWidth="1.5" />
     );
     cumAngle += angle;
   });
 
-  // inner hole
   return (
     <svg viewBox="0 0 120 120" width="120" height="120">
       {paths}
