@@ -105,6 +105,7 @@ export default function FinanceCashBook() {
 
   // ── Slide-over tạo phiếu ─────────────────────────────────────────────────
   const [showCreate, setShowCreate] = useState(false);
+  const [exporting, setExporting]   = useState(false);
 
   const { toast, ToastNode } = useFinanceToast();
   const abortRef = useRef<AbortController | null>(null);
@@ -192,6 +193,38 @@ export default function FinanceCashBook() {
     setFundFilter("all");
   };
 
+  // ── Xuất Excel ───────────────────────────────────────────────────────────
+  const handleExportExcel = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const now = new Date();
+      // Tính fromTime/toTime theo filter hiện tại (đúng format dd/MM/yyyy backend yêu cầu)
+      const pad = (n: number) => String(n).padStart(2, "0");
+      const fmt = (d: Date) =>
+        `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+
+      let fromTime: string | undefined;
+      let toTime: string | undefined;
+      if (monthFilter === "this_month") {
+        fromTime = fmt(new Date(now.getFullYear(), now.getMonth(), 1));
+        toTime   = fmt(new Date(now.getFullYear(), now.getMonth() + 1, 0));
+      }
+
+      await CashbookService.exportFile({
+        fromTime,
+        toTime,
+        // type: kindFilter !== "all" ? Number(kindFilter) : undefined,
+      });
+    } catch (e: any) {
+      if (e?.name !== "AbortError") {
+        toast("Xuất Excel thất bại. Vui lòng thử lại.");
+      }
+    } finally {
+      setExporting(false);
+    }
+  };
+
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <FinancePageShell title="Sổ thu chi">
@@ -200,12 +233,22 @@ export default function FinanceCashBook() {
       {/* ── Screen header ── */}
       <div className="finance-screen-header">
         <h1>Sổ thu chi</h1>
-        <button
-          className="finance-action-btn finance-action-btn--primary"
-          onClick={() => setShowCreate(true)}
-        >
-          + Tạo phiếu thu/chi
-        </button>
+        <div style={{ display: "flex", gap: "0.8rem" }}>
+          <button
+            className="finance-action-btn finance-action-btn--outline"
+            onClick={handleExportExcel}
+            disabled={exporting || allTxns.length === 0}
+            title={allTxns.length === 0 ? "Không có dữ liệu để xuất" : "Xuất sổ thu chi ra Excel"}
+          >
+            {exporting ? "Đang xuất..." : "⬇ Xuất Excel"}
+          </button>
+          <button
+            className="finance-action-btn finance-action-btn--primary"
+            onClick={() => setShowCreate(true)}
+          >
+            + Tạo phiếu thu/chi
+          </button>
+        </div>
       </div>
 
       {/* ── KPI Cards ── */}

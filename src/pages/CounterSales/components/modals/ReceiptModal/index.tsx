@@ -1,9 +1,10 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { IActionModal } from "model/OtherModel";
 import { CartItem } from "../../../types";
 import "./index.scss";
 import InvoiceService from "@/services/InvoiceService";
+import CustomerService from "@/services/CustomerService";
 import { showToast } from "@/utils/common";
 import { PAY_METHODS } from "../PayModal";
 import { QRCodeCanvas } from "qrcode.react";
@@ -54,6 +55,14 @@ interface ReceiptModalProps {
   promoDiscount?: number;
   onPaymentSuccess?: () => void;
   note?: string;
+  /** Số tiền khách thực trả (từ PayModal) — ghi vào invoice khi xác nhận */
+  paidAmount?: number;
+  /** Số tiền còn nợ (từ PayModal) — ghi vào invoice khi xác nhận */
+  debtAmount?: number;
+  /** Tên khách hàng — truyền vào body để billing dùng khi tạo debt record */
+  customerName?: string;
+  /** Kho bán hàng (warehouseId) — truyền vào inventoryId để backend lưu */
+  warehouseId?: number;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -63,6 +72,10 @@ export default function ReceiptModal({
   invoiceDraft, method, qrCodePro,
   couponDiscount = 0, promoDiscount = 0, onPaymentSuccess,
   note = "",
+  paidAmount,
+  debtAmount = 0,
+  customerName = "",
+  warehouseId,
 }: ReceiptModalProps) {
   const printRef = useRef<HTMLDivElement>(null);
   const qrRef    = useRef<HTMLDivElement>(null);
@@ -71,6 +84,10 @@ export default function ReceiptModal({
   const [paperSize, setPaperSize]                     = useState<PaperSize>("80mm");
   const [showEmail, setShowEmail]                     = useState(false);
   const [emailInput, setEmailInput]                   = useState("");
+  const [emailMasked, setEmailMasked]                 = useState("");
+  const [emailReadonly, setEmailReadonly]             = useState(false);
+  const [emailRevealed, setEmailRevealed]             = useState(false);
+  const [isRevealingEmail, setIsRevealingEmail]       = useState(false);
   const [isSending, setIsSending]                     = useState(false);
 
   // ── Tính tiền ───────────────────────────────────────────────────────────────
@@ -79,30 +96,61 @@ export default function ReceiptModal({
   const total         = subtotal - totalDiscount;
   const fmt           = (n: number) => n.toLocaleString("vi") + " đ";
 
+  // Tiền thực thu và nợ — dùng giá trị từ PayModal nếu có, fallback total/0
+  const effectivePaid = paidAmount !== undefined ? paidAmount : total;
+  const effectiveDebt = debtAmount ?? 0;
+
   const now     = new Date();
   const dateStr = `${now.getDate().toString().padStart(2,"0")}/${(now.getMonth()+1).toString().padStart(2,"0")}/${now.getFullYear()}`;
   const timeStr = `${now.getHours().toString().padStart(2,"0")}:${now.getMinutes().toString().padStart(2,"0")}`;
 
   // ── Xác nhận thanh toán ─────────────────────────────────────────────────────
-  const handleConfirmPay = async () => {
+  // BƯỚC 2 — "Xác nhận thanh toán": UPDATE invoice từ DRAFT → DONE
+  // Backend dùng invoice.getId() làm WHERE → id PHẢI là invoiceId từ draft
+  // Tất cả field phải đầy đủ để InvoiceRepository.createInvoice() UPDATE đúng
+  // Sau đó publishSaleInventoryEvent() kiểm tra status=1 + invoiceType=IV1 → bắn Kafka
+  const handleConfirmPay = useCallback(async () => {
+    // Guard: phải có invoiceId hợp lệ từ bước tạo nháp
+    const realInvoiceId = invoiceDraft?.id ?? invoiceId;
+    if (!realInvoiceId || Number(realInvoiceId) <= 0) {
+      showToast("Không tìm thấy mã hóa đơn. Vui lòng thử lại.", "error");
+      return;
+    }
+
     try {
       const body: any = {
-        id: invoiceId,
-        amount: total,
-        discount: totalDiscount,
-        fee: total,
-        paid: total,
-        debt: 0,
-        paymentType: 1,
-        vatAmount: 0,
-        receiptDate: new Date().toISOString(),
-        account: "[]",
-        amountCard: 0,
-        branchId: invoiceDraft?.branchId || -1,
-        bsnId: invoiceDraft?.bsnId || -1,
-        invoiceType: "IV1",
-        customerId: customerId,
-        campaignId: 0,
+        // ── Định danh — QUAN TRỌNG: phải là id từ draft, không được là -1 ──
+        id:           Number(realInvoiceId),
+
+        // ── Tài chính ────────────────────────────────────────────────────────
+        fee:          total,           // tổng phải trả
+        paid:         effectivePaid,   // thực thu (từ PayModal)
+        debt:         effectiveDebt,   // còn nợ (từ PayModal)
+        amount:       total,           // tổng trước giảm giá (dùng subtotal nếu cần)
+        discount:     totalDiscount,
+        vatAmount:    0,
+        amountCard:   0,
+        paymentType:  1,               // 1 = tiền mặt/mặc định
+
+        // ── Loại hóa đơn — QUAN TRỌNG: IV1 để publishSaleInventoryEvent bắn Kafka ──
+        invoiceType:  invoiceDraft?.invoiceType ?? "IV1",
+
+        // ── Thông tin liên kết — lấy từ invoiceDraft để đúng branchId/bsnId ──
+        customerId:   Number(customerId),
+        branchId:     Number(invoiceDraft?.branchId ?? -1),
+        bsnId:        Number(invoiceDraft?.bsnId    ?? -1),
+        employeeId:   invoiceDraft?.employeeId ?? undefined,
+        campaignId:   invoiceDraft?.campaignId ?? 0,
+
+        // ── Kho bán hàng ─────────────────────────────────────────────────────
+        ...(warehouseId ? { inventoryId: warehouseId } : {}),
+
+        // ── Thời gian ────────────────────────────────────────────────────────
+        receiptDate:  new Date().toISOString(),
+
+        // ── Khác ─────────────────────────────────────────────────────────────
+        account:      "[]",
+        customerName: customerName || "",
         ...(getActiveShiftId() ? { shiftId: getActiveShiftId() } : {}),
       };
       const res = await InvoiceService.create(body);
@@ -114,7 +162,34 @@ export default function ReceiptModal({
         showToast(res.message || "Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại sau.", "error");
       }
     } catch {}
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invoiceDraft, invoiceId, effectivePaid, effectiveDebt, total, totalDiscount,
+      customerId, warehouseId, customerName]);
+
+  // ── Auto-fill email khách hàng ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!open) return;
+    // Reset email states mỗi lần mở modal
+    setEmailInput("");
+    setEmailMasked("");
+    setEmailReadonly(false);
+    setEmailRevealed(false);
+
+    const cid = Number(customerId);
+    if (cid > 0) {
+      CustomerService.detail(cid).then(res => {
+        if (res?.code === 0) {
+          const email = res.result?.email ?? res.result?.emailMasked ?? "";
+          if (email) {
+            setEmailInput(email);
+            setEmailMasked(email);
+            setEmailReadonly(true);
+          }
+        }
+      }).catch(() => {});
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, customerId]);
 
   const handleClose = () => {
     if (isPaymentProcessing) onPaymentSuccess?.();
@@ -122,6 +197,9 @@ export default function ReceiptModal({
     setIsPaymentProcessing(false);
     setShowEmail(false);
     setEmailInput("");
+    setEmailMasked("");
+    setEmailReadonly(false);
+    setEmailRevealed(false);
   };
 
   // ── In biên lai (popup đúng khổ giấy) ──────────────────────────────────────
@@ -181,32 +259,79 @@ ${html}
   };
 
   // ── Gửi email biên lai ──────────────────────────────────────────────────────
+
+  const handleToggleRevealEmail = async () => {
+    if (isRevealingEmail) return;
+
+    if (emailRevealed) {
+      // Ẩn lại → restore về masked
+      setEmailInput(emailMasked);
+      setEmailRevealed(false);
+      return;
+    }
+
+    // Mở mắt → gọi API lấy email thật
+    setIsRevealingEmail(true);
+    try {
+      const res = await CustomerService.viewEmail(Number(customerId));
+      if (res.code === 0) {
+        setEmailInput(res.result ?? emailMasked);
+        setEmailRevealed(true);
+      } else if (res.code === 400) {
+        showToast("Bạn không có quyền xem email!", "error");
+      } else {
+        showToast(res.message ?? "Không lấy được email", "error");
+      }
+    } catch {
+      showToast("Lỗi khi tải email", "error");
+    } finally {
+      setIsRevealingEmail(false);
+    }
+  };
+
   const handleSendEmail = async () => {
-    const email = emailInput.trim();
+    let email = emailInput.trim();
+
+    // Nếu email đang masked (chứa *) và chưa reveal → tự động reveal trước khi gửi
+    if (Number(customerId) > 0 && !emailRevealed && email.includes("*")) {
+      setIsRevealingEmail(true);
+      try {
+        const res = await CustomerService.viewEmail(Number(customerId));
+        if (res.code === 0) {
+          const realEmail = res.result ?? "";
+          setEmailInput(realEmail);
+          setEmailRevealed(true);
+          email = realEmail.trim();
+        } else if (res.code === 400) {
+          showToast("Bạn không có quyền xem email khách hàng!", "error");
+          return;
+        } else {
+          showToast(res.message ?? "Không lấy được email", "error");
+          return;
+        }
+      } catch {
+        showToast("Lỗi khi tải email. Vui lòng thử lại.", "error");
+        return;
+      } finally {
+        setIsRevealingEmail(false);
+      }
+    }
+
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       showToast("Email không hợp lệ", "error");
       return;
     }
+
+    const realInvoiceId = invoiceDraft?.id ?? invoiceId;
+    if (!realInvoiceId || Number(realInvoiceId) <= 0) {
+      showToast("Không tìm thấy mã hóa đơn để gửi email.", "error");
+      return;
+    }
+
     setIsSending(true);
     try {
-      const emailBody = buildEmailHtml({
-        items: cartItems.map(c => ({ name: c.name, qty: c.qty, price: c.price })),
-        subtotal, totalDiscount, total, method,
-        dateStr, timeStr,
-      });
-
-      const res = await fetch("/adminapi/outlookMail/sendEmail", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          toEmail: email,
-          subject: `Biên lai thanh toán`,
-          body: emailBody,
-        }),
-      });
-      const rj = await res.json().catch(() => ({}));
-      if (rj.code !== 0) throw new Error(rj.message ?? "Gửi thất bại");
-
+      const res = await InvoiceService.sendEmail(Number(realInvoiceId), email);
+      if (res?.code !== 0) throw new Error(res?.message ?? "Gửi thất bại");
       showToast(`Đã gửi biên lai tới ${email}`, "success");
       setShowEmail(false);
     } catch (err: any) {
@@ -257,7 +382,7 @@ ${html}
         ] : []),
       ],
     },
-  }), [isPaymentProcessing, showEmail, paperSize, cartItems]);
+  }), [isPaymentProcessing, showEmail, paperSize, cartItems, handleConfirmPay]);
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -295,48 +420,68 @@ ${html}
 
           {/* Items */}
           <div className="receipt__table">
-            <div className="receipt__row receipt__row--header">
-              <span className="receipt__col-name">Sản phẩm</span>
-              <span className="receipt__col-qty">SL</span>
-              <span className="receipt__col-total">Thành tiền</span>
+            <div className="receipt__row receipt__row--header"
+              style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
+                       fontWeight:700, borderBottom:"1px solid #ddd", paddingBottom:"6px", marginBottom:"2px" }}>
+              <span className="receipt__col-name" style={{ flex:1 }}>Sản phẩm</span>
+              <span className="receipt__col-qty" style={{ width:"2.8rem", textAlign:"center" }}>SL</span>
+              <span className="receipt__col-total" style={{ width:"8rem", textAlign:"right" }}>Thành tiền</span>
             </div>
             {cartItems.map((item) => (
-              <div key={item.id} className="receipt__row">
-                <span className="receipt__col-name">{item.name}</span>
-                <span className="receipt__col-qty">{item.qty}</span>
-                <span className="receipt__col-total">{fmt(item.price * item.qty)}</span>
+              <div key={item.id} className="receipt__row"
+                style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"5px 0" }}>
+                <span className="receipt__col-name" style={{ flex:1 }}>{item.name}</span>
+                <span className="receipt__col-qty" style={{ width:"2.8rem", textAlign:"center" }}>{item.qty}</span>
+                <span className="receipt__col-total" style={{ width:"8rem", textAlign:"right", fontWeight:600 }}>{fmt(item.price * item.qty)}</span>
               </div>
             ))}
           </div>
 
           {/* Totals */}
-          <div className="receipt__totals">
-            <div className="receipt__totals-row">
-              <span>Tạm tính</span>
-              <span>{fmt(subtotal)}</span>
+          <div className="receipt__totals" style={{ borderTop:"1px solid #ddd", paddingTop:"0.8rem", marginBottom:"1rem" }}>
+            <div className="receipt__totals-row"
+              style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+              <span style={{ color:"var(--muted)" }}>Tạm tính</span>
+              <span style={{ fontWeight:700 }}>{fmt(subtotal)}</span>
             </div>
-            <div className="receipt__totals-row">
-              <span>Giảm giá</span>
-              <span className="receipt__discount">{totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "−0 đ"}</span>
+            <div className="receipt__totals-row"
+              style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+              <span style={{ color:"var(--muted)" }}>Giảm giá</span>
+              <span className="receipt__discount" style={{ fontWeight:700, color:"var(--red,#e53e3e)" }}>{totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "−0 đ"}</span>
             </div>
-            <div className="receipt__totals-row receipt__totals-row--grand">
+            <div className="receipt__totals-row receipt__totals-row--grand"
+              style={{ display:"flex", justifyContent:"space-between", padding:"8px 0",
+                       fontSize:"1.5rem", fontWeight:900,
+                       borderTop:"2px solid var(--ink,#111)", borderBottom:"2px solid var(--ink,#111)",
+                       margin:"4px 0" }}>
               <span>TỔNG CỘNG</span>
-              <span className="receipt__grand-val">{fmt(total)}</span>
+              <span className="receipt__grand-val" style={{ color:"var(--lime-d,#3a7c11)" }}>{fmt(total)}</span>
             </div>
             {method === "cash" && (
               <>
-                <div className="receipt__totals-row">
-                  <span>Tiền khách đưa</span>
-                  <span>{fmt(total)}</span>
+                <div className="receipt__totals-row"
+                  style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+                  <span style={{ color:"var(--muted)" }}>Tiền khách đưa</span>
+                  <span style={{ fontWeight:700 }}>{fmt(effectivePaid)}</span>
                 </div>
-                <div className="receipt__totals-row">
-                  <span>Tiền thối</span>
-                  <span className="receipt__change">{fmt(0)}</span>
+                <div className="receipt__totals-row"
+                  style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+                  <span style={{ color:"var(--muted)" }}>Tiền thối</span>
+                  <span className="receipt__change" style={{ fontWeight:800, color:"var(--blue,#3182ce)" }}>{fmt(Math.max(0, effectivePaid - total))}</span>
                 </div>
+                {effectiveDebt > 0 && (
+                  <div className="receipt__totals-row"
+                    style={{ display:"flex", justifyContent:"space-between", padding:"3px 0",
+                             fontSize:"1.3rem", color:"#c2410c", fontWeight:700 }}>
+                    <span>⚠️ Còn nợ</span>
+                    <span>{fmt(effectiveDebt)}</span>
+                  </div>
+                )}
               </>
             )}
-            <div className="receipt__totals-row">
-              <span>Thanh toán</span>
+            <div className="receipt__totals-row"
+              style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+              <span style={{ color:"var(--muted)" }}>Thanh toán</span>
               <span className="receipt__pay-badge">
                 {PAY_METHODS.find((m) => m.id === method)?.icon}{" "}
                 {PAY_METHODS.find((m) => m.id === method)?.label}
@@ -370,18 +515,53 @@ ${html}
         {/* Email form */}
         {showEmail && (
           <div className="receipt-email-form">
-            <div className="receipt-email-form__label">Địa chỉ email nhận biên lai</div>
+            <div className="receipt-email-form__label">
+              {Number(customerId) > 0
+                ? "Gửi biên lai tới email khách hàng"
+                : "Nhập email nhận biên lai"}
+            </div>
             <div className="receipt-email-form__row">
-              <input
-                type="email"
-                className="receipt-email-form__input"
-                placeholder="example@email.com"
-                value={emailInput}
-                onChange={e => setEmailInput(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && handleSendEmail()}
-                autoFocus
-              />
-              <button className="btn btn--primary btn--sm" onClick={handleSendEmail} disabled={isSending}>
+              <div className="receipt-email-form__input-wrap">
+                <input
+                  type="email"
+                  className={`receipt-email-form__input${emailReadonly ? " receipt-email-form__input--readonly" : ""}`}
+                  placeholder={emailReadonly ? "" : "example@email.com"}
+                  value={emailInput}
+                  onChange={e => !emailReadonly && setEmailInput(e.target.value)}
+                  onKeyDown={e => !emailReadonly && e.key === "Enter" && handleSendEmail()}
+                  readOnly={emailReadonly}
+                  autoFocus={!emailReadonly}
+                />
+                {Number(customerId) > 0 && (
+                  <button
+                    type="button"
+                    className={`receipt-email-form__eye${isRevealingEmail ? " receipt-email-form__eye--loading" : ""}`}
+                    onClick={handleToggleRevealEmail}
+                    title={emailRevealed ? "Ẩn email" : "Xem email thật"}
+                    disabled={isRevealingEmail}
+                  >
+                    {isRevealingEmail ? (
+                      <span className="receipt-eye-spinner" />
+                    ) : emailRevealed ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                        width="16" height="16">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                        width="16" height="16">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                        <line x1="1" y1="1" x2="23" y2="23" />
+                      </svg>
+                    )}
+                  </button>
+                )}
+              </div>
+              <button className="btn btn--primary btn--sm receipt-email-form__btn" onClick={handleSendEmail} disabled={isSending || isRevealingEmail}>
                 {isSending ? "Đang gửi..." : "Gửi"}
               </button>
               <button className="btn btn--outline btn--sm" onClick={() => setShowEmail(false)}>Huỷ</button>

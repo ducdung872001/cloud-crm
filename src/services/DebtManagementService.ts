@@ -58,11 +58,12 @@ export interface IDebtSaveRequest {
 }
 
 export interface IDebtPayRequest {
-  debtId:    number;
-  amount:    number;
-  fundId:    number;
-  note?:     string;
-  paidDate?: string;
+  debtId?:    number;  // ID bảng debt — từ màn hình Quản lý công nợ
+  invoiceId?: number;  // ID hóa đơn — từ màn hình Danh sách đơn hàng
+  amount:     number;
+  fundId:     number;
+  note?:      string;
+  paidDate?:  string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

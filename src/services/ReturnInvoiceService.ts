@@ -76,11 +76,11 @@ export default {
   /**
    * Xác nhận phiếu trả / đổi: STATUS_PENDING → STATUS_DONE
    * POST /sales/invoice/return/confirm?id={id}
+   * Không có body — không set Content-Type để tránh CORS preflight
    */
   confirmReturn: (invoiceId: number) => {
     return fetch(`${urlsApi.returnInvoice.confirm}?id=${invoiceId}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
     }).then((res) => res.json());
   },
 

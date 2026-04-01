@@ -25,6 +25,7 @@ interface DailyPoint {
 interface TopProduct {
   rank:         number;
   productName:  string;
+  variantName?: string;  // tên biến thể — hiển thị phụ khi có
   avatar:       string;
   unitName:     string;
   totalQty:     number;
@@ -429,6 +430,9 @@ const Report: React.FC = () => {
                   </div>
                   <div className="tp-info">
                     <div className="tp-name">{p.productName || "Sản phẩm"}</div>
+                    {p.variantName && (
+                      <div className="tp-variant">{p.variantName}</div>
+                    )}
                     <div className="tp-qty">
                       {p.totalQty.toLocaleString("vi-VN")} {p.unitName || "cái"} đã bán
                     </div>

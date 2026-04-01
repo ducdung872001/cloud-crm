@@ -48,6 +48,8 @@ export interface IStorePaymentConfigResponse {
   isDefault: boolean;
   isActive: boolean;
   position: number;
+  /** Quỹ nhận tiền liên kết với PTTT này */
+  fundId?: number;
 }
 
 export interface IStorePaymentConfigRequest {
@@ -64,6 +66,8 @@ export interface IStorePaymentConfigRequest {
   isDefault?: boolean;
   isActive?: boolean;
   position?: number;
+  /** Quỹ nhận tiền liên kết — null = chưa liên kết */
+  fundId?: number;
 }
 
 // ── Constants dùng ở cả 2 tầng ────────────────────────────────────────────
