@@ -414,12 +414,12 @@ export default function Header(props: any) {
       try {
         const [custRes, prodRes, invRes] = await Promise.allSettled([
           CustomerService.filter({ keyword: q, page: 1, limit: 5 }, ctrl.signal),
-          ProductService.publicList({ name: q, page: 1, limit: 5 } as any, ctrl.signal),
-          // Nếu query trông giống mã đơn (HD, DH + số) → dùng invoiceCode, ngược lại keyword
-          InvoiceService.list({
-            ...(q.match(/^(HD|DH|INV|dh|hd)/i) ? { invoiceCode: q } : { keyword: q }),
-            page: 1, limit: 5,
-          } as any, ctrl.signal),
+          ProductService.publicList({ keyword: q, page: 1, limit: 5 } as any, ctrl.signal),
+          // Chỉ search invoice khi query trông như mã đơn (HD/DH/INV + số)
+          // Khi tìm tên thông thường, skip invoice để tránh hiển thị đơn không liên quan
+          /^(HD|DH|INV)\d*/i.test(q.trim())
+            ? InvoiceService.list({ invoiceCode: q, page: 1, limit: 5 } as any, ctrl.signal)
+            : Promise.resolve({ code: -1, result: null }),
         ]);
         const results: SearchResult[] = [];
         if (custRes.status === "fulfilled" && custRes.value?.code === 0) {
@@ -459,7 +459,7 @@ export default function Header(props: any) {
           if (prodTotal > 3) results.push({ id: -1, group: "product", title: `__more__${prodTotal}`, subtitle: "", meta: "" });
         }
 
-        if (invRes.status === "fulfilled" && invRes.value?.code === 0) {
+        if (/^(HD|DH|INV)\d*/i.test(q.trim()) && invRes.status === "fulfilled" && invRes.value?.code === 0) {
           const invItems = invRes.value.result?.pagedLst?.items
             ?? invRes.value.result?.items
             ?? [];
@@ -715,11 +715,11 @@ export default function Header(props: any) {
                         <div className="gs-more" onClick={() => {
                           setSearchOpen(false);
                           if (group === "customer")
-                            navigate(`/crm/customer_list?keyword=${encodeURIComponent(searchQuery)}`);
+                            navigate(`/customer_list?keyword=${encodeURIComponent(searchQuery)}`);
                           else if (group === "product")
-                            navigate(`/crm/setting_sell?tab=product_tab_one&keyword=${encodeURIComponent(searchQuery)}`);
+                            navigate(`/setting_sell?tab=product_tab_one&keyword=${encodeURIComponent(searchQuery)}`);
                           else
-                            navigate(`/crm/sale_invoice?keyword=${encodeURIComponent(searchQuery)}`);
+                            navigate(`/sale_invoice?keyword=${encodeURIComponent(searchQuery)}`);
                         }}>
                           Xem tất cả {moreCount} kết quả →
                         </div>
