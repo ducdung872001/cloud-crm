@@ -155,6 +155,22 @@ const DebtManagementService = {
     return fetch(`${urlsApi.debt.qr}?id=${id}`, { method: "GET", signal })
       .then((res) => parseResponse(res));
   },
+
+  /**
+   * POST /billing/debt/update-schedule
+   * Cập nhật hạn thanh toán + ngày nhắc nhở, đồng thời lập lịch FCM notification.
+   */
+  updateSchedule(
+    request: { id: number; dueDate: string; reminderDate: string },
+    signal?: AbortSignal
+  ): Promise<number> {
+    return fetch(urlsApi.debt.updateSchedule, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+      signal,
+    }).then((res) => parseResponse<number>(res));
+  },
 };
 
 export default DebtManagementService;

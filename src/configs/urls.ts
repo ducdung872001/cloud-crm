@@ -823,6 +823,7 @@ export const urlsApi = {
     pay: prefixBilling + "/debt/pay",
     markPaid: prefixBilling + "/debt/mark-paid",
     qr: prefixBilling + "/debt/qr",
+    updateSchedule: prefixBilling + "/debt/update-schedule",
   },
   cashbook: {
     list: prefixBilling + "/cashbook/list",
