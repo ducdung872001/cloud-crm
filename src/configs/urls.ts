@@ -827,7 +827,8 @@ export const urlsApi = {
     update: prefixBilling + "/cashbook/update",
     delete: prefixBilling + "/cashbook/delete",
     export: prefixBilling + "/cashbook/export",
-    detail: prefixBilling + "/cashbook/get",
+    exportFile: prefixBilling + "/cashbook/export-file",
+    detail: prefixBilling + "/cashbook/get"
   },
   qrCodePro: {
     generate: prefixBilling + "/vietqr/api/generate_qr",
