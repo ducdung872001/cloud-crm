@@ -199,6 +199,76 @@ export default function DashboardTNPM() {
           </div>
         </div>
       </div>
+
+      {/* Third Row - Vendor Invoices + Maintenance */}
+      <div className="tnpm-dashboard__content">
+        {/* Vendor Invoices pending */}
+        <div className="tnpm-dashboard__card">
+          <div className="card-header">
+            <span className="card-title">🧾 Hóa đơn NCC chờ duyệt</span>
+            <a href="/vendor-invoices" className="card-link">Xem tất cả</a>
+          </div>
+          <table className="mini-table">
+            <thead>
+              <tr>
+                <th>Mã HĐ</th>
+                <th>NCC</th>
+                <th>Số tiền</th>
+                <th>3-Way</th>
+              </tr>
+            </thead>
+            <tbody>
+              {MOCK_VENDOR_INVOICES.filter(i => i.approvalStatus === "pending").map((inv) => (
+                <tr key={inv.id}>
+                  <td className="code">{inv.code}</td>
+                  <td className="ellipsis">{inv.vendorName}</td>
+                  <td className="amount">{fmtMoney(inv.amount)}</td>
+                  <td style={{ textAlign: "center" }}>
+                    {inv.matchPO && inv.matchAcceptance
+                      ? <span style={{ color: "#52c41a" }}>✅</span>
+                      : <span style={{ color: "#ff4d4f" }}>❌</span>}
+                  </td>
+                </tr>
+              ))}
+              {MOCK_VENDOR_INVOICES.filter(i => i.approvalStatus === "pending").length === 0 && (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: "center", color: "#8c8c8c", padding: 16 }}>
+                    ✅ Không có hóa đơn chờ duyệt
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Maintenance Plans */}
+        <div className="tnpm-dashboard__card">
+          <div className="card-header">
+            <span className="card-title">📅 Kế hoạch bảo trì sắp tới</span>
+            <a href="/maintenance-plans" className="card-link">Xem tất cả</a>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {MOCK_MAINTENANCE_PLANS.filter(m => m.status === "scheduled").slice(0, 4).map((plan) => (
+              <div key={plan.id} style={{
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+                padding: "10px 12px", background: "#fafafa", borderRadius: 8,
+                borderLeft: "3px solid #1890ff",
+              }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#1a1a2e" }}>{plan.title}</div>
+                  <div style={{ fontSize: 11, color: "#8c8c8c" }}>
+                    📍 {plan.projectName} &nbsp;|&nbsp; 🏭 {plan.vendorName}
+                  </div>
+                </div>
+                <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 12 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#1890ff" }}>{plan.plannedDate}</div>
+                  <div style={{ fontSize: 11, color: "#722ed1" }}>{fmtMoney(plan.estimatedCost)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

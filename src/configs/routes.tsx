@@ -15,6 +15,8 @@ import BillingEngineList from "pages/BillingEngine/BillingEngineList";
 import TurnoverRentList from "pages/TurnoverRent/TurnoverRentList";
 import VendorManagementList from "pages/VendorManagement/VendorManagementList";
 import VendorInvoiceList from "pages/VendorInvoice/VendorInvoiceList";
+import VendorContractList from "pages/VendorContract/VendorContractList";
+import SettingTNPM from "pages/Setting/SettingTNPM";
 import ServiceRequestList from "pages/ServiceRequest/ServiceRequestList";
 import MaintenancePlanList from "pages/MaintenancePlan/MaintenancePlanList";
 import ReportTNPM from "pages/ReportTNPM/ReportTNPM";
@@ -218,26 +220,26 @@ export const menu: IMenuItem[] = [
     title: "Dashboard",
     path: "/dashboard",
     icon: <Icon name="DashboardMenu" />,
-    code: "DASHBOARD",
+    code: "",
   },
 
   // ── 2. DANH MỤC BĐS ──────────────────────────────────────────────────────
   {
     title: "Danh mục BĐS",
-    icon: <Icon name="CustomerMenu" />,
-    code: "PROPERTY",
+    icon: <Icon name="IndustryMenu" />,
+    code: "",
     children: [
       {
         title: "Dự án",
         path: "/projects",
-        icon: <Icon name="CustomerMenu" />,
-        code: "PROJECT_LIST",
+        icon: <Icon name="OverviewMenu" />,
+        code: "",
       },
       {
         title: "Quản lý Unit",
         path: "/units",
-        icon: <Icon name="CustomerMenu" />,
-        code: "UNIT_LIST",
+        icon: <Icon name="ViewStructureMenu" />,
+        code: "",
       },
     ],
   },
@@ -247,26 +249,26 @@ export const menu: IMenuItem[] = [
     title: "Khách hàng / Tenant",
     path: "/customer_person",
     icon: <Icon name="CustomersMenu" />,
-    code: "CUSTOMER",
+    code: "",
   },
 
   // ── 4. HỢP ĐỒNG ──────────────────────────────────────────────────────────
   {
     title: "Hợp đồng",
-    icon: <Icon name="ContractMenu" />,
-    code: "CONTRACT",
+    icon: <Icon name="OrderListMenu" />,
+    code: "",
     children: [
       {
         title: "Hợp đồng thuê",
         path: "/lease-contracts",
-        icon: <Icon name="ContractMenu" />,
-        code: "LEASE_CONTRACT",
+        icon: <Icon name="AuditMenu" />,
+        code: "",
       },
       {
         title: "Hợp đồng DV",
         path: "/service-contracts",
-        icon: <Icon name="ContractMenu" />,
-        code: "SERVICE_CONTRACT",
+        icon: <Icon name="AuditMenu" />,
+        code: "",
       },
     ],
   },
@@ -275,25 +277,25 @@ export const menu: IMenuItem[] = [
   {
     title: "Billing & Tài chính",
     icon: <Icon name="FinanceMenu" />,
-    code: "BILLING",
+    code: "",
     children: [
       {
         title: "Hóa đơn",
         path: "/billing",
-        icon: <Icon name="InvoiceMenu" />,
-        code: "BILLING_LIST",
+        icon: <Icon name="CashbookMenu" />,
+        code: "",
       },
       {
         title: "Turnover Rent",
         path: "/turnover-rent",
-        icon: <Icon name="RevenueMenu" />,
-        code: "TURNOVER_RENT",
+        icon: <Icon name="FinanceReportMenu" />,
+        code: "",
       },
       {
         title: "Lịch sử thanh toán",
         path: "/payment_history",
         icon: <Icon name="CashbookMenu" />,
-        code: "PAYMENT_HISTORY",
+        code: "",
       },
     ],
   },
@@ -302,25 +304,25 @@ export const menu: IMenuItem[] = [
   {
     title: "Nhà cung cấp",
     icon: <Icon name="PartnerMenu" />,
-    code: "VENDOR",
+    code: "",
     children: [
       {
         title: "Danh sách NCC",
         path: "/vendors",
         icon: <Icon name="PartnerMenu" />,
-        code: "VENDOR_LIST",
+        code: "",
       },
       {
         title: "HĐ Nhà cung cấp",
         path: "/vendor-contracts",
-        icon: <Icon name="ContractMenu" />,
-        code: "VENDOR_CONTRACT",
+        icon: <Icon name="AuditMenu" />,
+        code: "",
       },
       {
         title: "Hóa đơn NCC",
         path: "/vendor-invoices",
-        icon: <Icon name="InvoiceMenu" />,
-        code: "VENDOR_INVOICE",
+        icon: <Icon name="CashbookMenu" />,
+        code: "",
       },
     ],
   },
@@ -328,20 +330,20 @@ export const menu: IMenuItem[] = [
   // ── 7. VẬN HÀNH & KỸ THUẬT ───────────────────────────────────────────────
   {
     title: "Vận hành & Kỹ thuật",
-    icon: <Icon name="TicketMenu" />,
-    code: "OPERATIONS",
+    icon: <Icon name="WorkflowMenu" />,
+    code: "",
     children: [
       {
         title: "Yêu cầu Dịch vụ",
         path: "/service-requests",
-        icon: <Icon name="TicketMenu" />,
-        code: "SERVICE_REQUEST",
+        icon: <Icon name="SupportMenu" />,
+        code: "",
       },
       {
         title: "Kế hoạch Bảo trì",
         path: "/maintenance-plans",
-        icon: <Icon name="CalendarMenu" />,
-        code: "MAINTENANCE_PLAN",
+        icon: <Icon name="DefaultProcessMenu" />,
+        code: "",
       },
     ],
   },
@@ -350,32 +352,32 @@ export const menu: IMenuItem[] = [
   {
     title: "Phiếu hỗ trợ",
     path: "/ticket",
-    icon: <Icon name="TicketMenu" />,
-    code: "TICKET",
+    icon: <Icon name="SupportMenu" />,
+    code: "",
   },
 
   // ── 9. CÔNG VIỆC NỘI BỘ ──────────────────────────────────────────────────
   {
     title: "Công việc nội bộ",
     path: "/middle_work",
-    icon: <Icon name="TaskMenu" />,
-    code: "TASKS",
+    icon: <Icon name="WorkflowMenu" />,
+    code: "",
   },
 
   // ── 10. BÁO CÁO ──────────────────────────────────────────────────────────
   {
     title: "Báo cáo",
     path: "/reports",
-    icon: <Icon name="ReportMenu" />,
-    code: "REPORTS",
+    icon: <Icon name="FinanceReportMenu" />,
+    code: "",
   },
 
   // ── 11. CÀI ĐẶT ──────────────────────────────────────────────────────────
   {
     title: "Cài đặt",
     path: "/setting",
-    icon: <Icon name="SettingMenu" />,
-    code: "SETTINGS",
+    icon: <Icon name="SettingsMenu" />,
+    code: "",
   },
 ];
 
@@ -403,7 +405,7 @@ export const routes: IRouter[] = [
 
   // ─── TNPM: Vendor ───────────────────────────────────────────────────────
   { path: "/vendors", component: <VendorManagementList /> },
-  { path: "/vendor-contracts", component: <VendorManagementList /> },
+  { path: "/vendor-contracts", component: <VendorContractList /> },
   { path: "/vendor-invoices", component: <VendorInvoiceList /> },
 
   // ─── TNPM: Vận hành ─────────────────────────────────────────────────────
@@ -440,7 +442,7 @@ export const routes: IRouter[] = [
   { path: "/setting_process", component: <SettingProcess /> },
 
   // ─── Cài đặt ─────────────────────────────────────────────────────────────
-  { path: "/setting", component: <SettingList /> },
+  { path: "/setting", component: <SettingTNPM /> },
   { path: "/setting_basis", component: <SettingBasisList /> },
   { path: "/setting_customer", component: <SettingCustomerList /> },
   { path: "/setting_ticket", component: <SettingTicketList /> },

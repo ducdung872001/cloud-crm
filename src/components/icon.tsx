@@ -444,6 +444,9 @@ import IcGeneralConfigMenu from "assets/icons-menu/ic-general-config.svg";
 import IcIntegrationViettelMenu from "assets/icons-menu/ic-viettel.svg";
 import IcSaleChannelMenu from "assets/icons-menu/ic-sales-channel.svg";
 import IcOverviewMenu from "assets/icons-menu/ic-overview.svg";
+import IcIndustryMenu from "assets/icons-menu/ic-industry.svg";
+import IcViewStructureMenu from "assets/icons-menu/ic-view-structure.svg";
+
 import IcOpenShiftMenu from "assets/icons-menu/ic-open-shift.svg";
 import IcShiftReportMenu from "assets/icons-menu/ic-shift-report.svg";
 import IcLoginMenu from "assets/icons-menu/ic-login.svg";
@@ -944,10 +947,14 @@ const iconTypes = {
   IntegrationViettelMenu: IcIntegrationViettelMenu,
   SaleChannelMenu: IcSaleChannelMenu,
   OverviewMenu: IcOverviewMenu,
+  IndustryMenu: IcIndustryMenu,
+  ViewStructureMenu: IcViewStructureMenu,
+
   OpenShiftMenu: IcOpenShiftMenu,
   ShiftReportMenu: IcShiftReportMenu,
   LoginMenu: IcLoginMenu,
-  BellMenu: IcBellMenu,
+
+    BellMenu: IcBellMenu,
   CustomerGroup: IcCustomerGroup,
   Relationship: IcRelationship,
   Industry: IcIndustry,
