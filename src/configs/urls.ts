@@ -450,6 +450,7 @@ export const urlsApi = {
       dailySeries: prefixSales + "/report/daily-series",
       channelBreakdown: prefixSales + "/report/channel-breakdown",
       full: prefixSales + "/report/sales",
+      debtSummary: prefixSales + "/report/debt-summary",
     },
   },
   // Hóa đơn VAT điện tử – tích hợp Viettel S-Invoice qua cloud-integration
