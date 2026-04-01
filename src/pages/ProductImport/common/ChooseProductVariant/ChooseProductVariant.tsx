@@ -52,7 +52,8 @@ export interface IChooseProductVariantProps {
   inventory: { value: number; label: string } | null;
   /**
    * Danh sách key đã có trong phiếu để filter trùng.
-   * Format: `"${productId}_${variantId}"` hoặc chỉ `"${productId}"`
+   * Format ưu tiên: `"${productId}_${variantId}_${batchNo}"`
+   * Fallback cũ: `"${productId}_${variantId}"` hoặc chỉ `"${productId}"`
    */
   excludeKeys?: string[];
   /** Tiêu đề modal — mặc định "Chọn sản phẩm" */
@@ -105,21 +106,23 @@ export default function ChooseProductVariant({
     if (!p.warehouseId) return;
     setIsLoading(true);
     const res = await InventoryService.variantStockList(p);
-    if (res.code === 0) {
-      const items: IVariantItem[] = res.result?.items ?? [];
+    if (res.code === 0 || res.status === 1 || res.success === true) {
+      const result = res.result ?? res.data ?? {};
+      const items: IVariantItem[] = result?.items ?? [];
       // Lọc bỏ những item đã có trong phiếu
       const filtered = items.filter(i => {
-        const key1 = `${i.productId}_${i.variantId}`;
-        const key2 = String(i.productId);
-        return !excludeKeys.includes(key1) && !excludeKeys.includes(key2);
+        const compositeKey = `${i.productId}_${i.variantId ?? ""}_`;
+        const variantKey = `${i.productId}_${i.variantId ?? ""}`;
+        const productKey = String(i.productId);
+        return !excludeKeys.includes(compositeKey) && !excludeKeys.includes(variantKey) && !excludeKeys.includes(productKey);
       });
       setLstVariants(filtered);
       setPagination(prev => ({
         ...prev,
-        page:      +res.result.page,
+        page:      +(result.page ?? 1),
         sizeLimit: p.size ?? 20,
-        totalItem: +res.result.total,
-        totalPage: Math.ceil(+res.result.total / (p.size ?? 20)),
+        totalItem: +(result.total ?? filtered.length),
+        totalPage: Math.ceil(+(result.total ?? filtered.length) / (p.size ?? 20)),
       }));
     } else {
       showToast(res.message ?? "Có lỗi xảy ra", "error");

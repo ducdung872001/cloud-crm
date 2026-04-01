@@ -671,6 +671,7 @@ export const urlsApi = {
     saleExportList: prefixInventory + "/inventoryTransaction/sale/list",
     saleExportSummary: prefixInventory + "/inventoryTransaction/sale/summary",
     destroyList: prefixInventory + "/inventoryTransaction/destroy/list",
+    destroyDetail: prefixInventory + "/inventoryTransaction/destroy/get",
     destroySummary: prefixInventory + "/inventoryTransaction/destroy/summary",
     costSummary: prefixInventory + "/inventoryBalance/cost/summary",
   },
@@ -2361,11 +2362,15 @@ export const urlsApi = {
   },
   // Phiếu xuất hủy — dùng StockAdjust với adjustType = "DESTROY"
   destroySlip: {
+    list: prefixInventory + "/stockAdjust/destroy/list",
     temp: prefixInventory + "/stockAdjust/destroy/temp",
     create: prefixInventory + "/stockAdjust/destroy/create",
     // Reuse stockAdjustDetail endpoints
     addUpdatePro: prefixInventory + "/stockAdjustDetail/update",
     deletePro: prefixInventory + "/stockAdjustDetail/delete",
+    get: prefixInventory + "/stockAdjust/get",
+    approved: prefixInventory + "/stockAdjust/approved",
+    cancel: prefixInventory + "/stockAdjust/cancel",
     view: prefixInventory + "/stockAdjust/view",
   },
   kpiDatasource: {

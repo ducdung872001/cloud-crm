@@ -8,12 +8,14 @@ export default function DestroySlip() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const idFromUrl = searchParams.get("id");
+  const isViewMode = searchParams.get("mode") === "view";
 
   return (
     <div className="page-content">
       <AddDestroySlip
         id={idFromUrl ? +idFromUrl : null}
-        onHide={() => navigate(urls.inventory_checking, { replace: true })}
+        isViewMode={isViewMode}
+        onHide={() => navigate(`${urls.inventory_checking}?tab=destroy`, { replace: true })}
       />
     </div>
   );

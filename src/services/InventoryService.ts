@@ -105,6 +105,7 @@ export default {
   // POST /stockTransfer/update — tạo mới (id=null) hoặc cập nhật (id!=null)
   stockTransferUpdate: (body: {
     id?: number;
+    code?: string;
     fromWarehouseId: number;
     toWarehouseId: number;
     note?: string;
@@ -161,8 +162,8 @@ export default {
     }).then((res) => res.json());
   },
 
-  // GET /stockTransferDetail/list?transferId=:id
-  stockTransferDetailList: (params: { transferId: number; limit?: number }) => {
+  // GET /stockTransferDetail/list?transferId=:id&productId=-1
+  stockTransferDetailList: (params: { transferId: number; productId?: number; limit?: number }) => {
     return fetch(`${urlsApi.stockTransferDetail.list}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -202,6 +203,13 @@ export default {
   // Params: warehouseId, keyword, page, size
   destroyList: (params?: { warehouseId?: number; keyword?: string; page?: number; size?: number }, signal?: AbortSignal) => {
     return fetch(`${urlsApi.inventory.destroyList}${convertParamsToString(params)}`, {
+      signal,
+      method: "GET",
+    }).then((res) => res.json());
+  },
+
+  destroyDetail: (id: number, signal?: AbortSignal) => {
+    return fetch(`${urlsApi.inventory.destroyDetail}?id=${id}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
