@@ -1,0 +1,236 @@
+.tnpm-dashboard {
+  padding: 24px;
+  background: #f5f6fa;
+  min-height: 100vh;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  &__title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 4px;
+  }
+
+  &__subtitle {
+    color: #8c8c8c;
+    font-size: 14px;
+    margin: 0;
+  }
+
+  &__header-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  &__stat-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+
+    @media (max-width: 1400px) { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+
+    @media (max-width: 1024px) { grid-template-columns: 1fr; }
+  }
+
+  &__card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+
+    &--wide {
+      grid-column: span 1;
+    }
+  }
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  border-top: 4px solid;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__icon { font-size: 28px; }
+  &__value { font-size: 28px; font-weight: 700; }
+  &__label { font-size: 13px; color: #8c8c8c; }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.card-link {
+  font-size: 13px;
+  color: #1890ff;
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
+}
+
+// Revenue Chart
+.revenue-chart {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  height: 160px;
+  padding-bottom: 8px;
+
+  &__col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__bars {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+    height: 120px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  &__label { font-size: 11px; color: #8c8c8c; white-space: nowrap; }
+  &__val { font-size: 10px; color: #595959; }
+}
+
+.bar {
+  width: 16px;
+  border-radius: 4px 4px 0 0;
+  transition: all 0.3s;
+
+  &--actual { background: #1890ff; }
+  &--target { background: #d9d9d9; }
+}
+
+.chart-legend {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #595959;
+
+  .legend-item--actual { color: #1890ff; }
+  .legend-item--target { color: #8c8c8c; }
+}
+
+// Occupancy
+.occupancy-list { display: flex; flex-direction: column; gap: 12px; }
+
+.occupancy-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  &__info {
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__name { font-size: 13px; font-weight: 500; color: #1a1a2e; }
+  &__type { font-size: 11px; color: #8c8c8c; }
+
+  &__bar-wrap {
+    flex: 1;
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  &__bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+
+  &__pct { font-size: 13px; font-weight: 600; min-width: 44px; text-align: right; color: #1a1a2e; }
+}
+
+// Mini Table
+.mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    text-align: left;
+    padding: 8px 10px;
+    background: #fafafa;
+    color: #8c8c8c;
+    font-weight: 500;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  td {
+    padding: 10px 10px;
+    border-bottom: 1px solid #f5f5f5;
+    color: #1a1a2e;
+
+    &.code { font-family: monospace; color: #1890ff; font-size: 12px; }
+    &.ellipsis { max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    &.amount { font-weight: 600; color: #1a1a2e; white-space: nowrap; }
+  }
+}
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.overdue-summary {
+  margin-top: 12px;
+  padding: 12px;
+  background: #fff2f0;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+// Buttons
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+  transition: all 0.2s;
+
+  &-primary { background: #1890ff; color: #fff; &:hover { background: #096dd9; } }
+  &-outline { background: #fff; color: #1890ff; border: 1px solid #1890ff; &:hover { background: #e6f7ff; } }
+}
