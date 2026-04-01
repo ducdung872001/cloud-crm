@@ -70,7 +70,7 @@ const DebtReportService = {
     if (params.branchId) qp.set("branchId", String(params.branchId));
 
     const qs = qp.toString() ? `?${qp.toString()}` : "";
-    return fetch(`${urlsApi.salesReport.debtSummary}${qs}`, { method: "GET", signal })
+    return fetch(`${urlsApi.invoice.salesReport.debtSummary}${qs}`, { method: "GET", signal })
       .then((res) => res.json())
       .then((json) => {
         if (json.code !== 0 && json.code !== 200) {
