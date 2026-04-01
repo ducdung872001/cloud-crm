@@ -1,0 +1,175 @@
+// SupplierPage.scss
+// Kế thừa biến từ global CSS variables của project
+
+.page-supplier {
+  .stats-row {
+    display:   flex;
+    flex-wrap: wrap;
+    gap:       1.2rem;
+    padding:   1.6rem 2rem 0.4rem;
+  }
+
+  .stat-pill {
+    display:     flex;
+    align-items: center;
+    gap:         1rem;
+    background:  var(--primary-bg-color);
+    border:      1px solid var(--border-color);
+    border-radius: 1rem;
+    padding:     1rem 1.6rem;
+    min-width:   14rem;
+
+    .dot {
+      width:         0.8rem;
+      height:        0.8rem;
+      border-radius: 50%;
+      flex-shrink:   0;
+    }
+
+    .num {
+      font-size:   1.6rem;
+      font-weight: 700;
+      color:       var(--text-primary-color);
+      line-height: 1;
+    }
+
+    .lbl {
+      font-size: 1.2rem;
+      color:     var(--extra-color-50);
+      margin-top: 0.2rem;
+    }
+  }
+
+  // ── Filter chips ────────────────────────────────────────
+  .filter-chip {
+    background:    var(--primary-bg-color);
+    border:        1px solid var(--border-color);
+    border-radius: 2rem;
+    padding:       0.5rem 1.2rem;
+    font-size:     1.3rem;
+    cursor:        pointer;
+    color:         var(--text-primary-color);
+    transition:    background 0.15s, border-color 0.15s;
+
+    &:hover {
+      background:   var(--hover-bg-color, #f0f2f5);
+      border-color: var(--primary-color);
+    }
+
+    &--active {
+      background:   var(--primary-color-light, #eef0fd);
+      border-color: var(--primary-color);
+      color:        var(--primary-color);
+      font-weight:  600;
+    }
+  }
+
+  // ── Supplier name cell ──────────────────────────────────
+  .sup-name-cell {
+    display:     flex;
+    align-items: center;
+    gap:         1rem;
+  }
+
+  .sup-avatar {
+    width:         3.6rem;
+    height:        3.6rem;
+    border-radius: 50%;
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    font-size:     1.5rem;
+    font-weight:   700;
+    color:         #fff;
+    flex-shrink:   0;
+
+    &--img {
+      object-fit: cover;
+    }
+  }
+
+  .sup-name-cell__info {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.2rem;
+  }
+
+  .sup-name-cell__name {
+    font-weight: 600;
+    font-size:   1.4rem;
+    color:       var(--text-primary-color);
+  }
+
+  .sup-name-cell__code {
+    font-size: 1.2rem;
+    color:     var(--extra-color-50);
+  }
+
+  // ── Contact cell ────────────────────────────────────────
+  .sup-contact-cell {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.3rem;
+  }
+
+  .sup-contact-cell__row {
+    display:     flex;
+    align-items: center;
+    gap:         0.5rem;
+    font-size:   1.3rem;
+    color:       var(--text-primary-color);
+
+    svg {
+      width:       1.4rem;
+      height:      1.4rem;
+      flex-shrink: 0;
+      color:       var(--extra-color-50);
+    }
+
+    &--muted {
+      color: var(--extra-color-50);
+    }
+  }
+
+  // ── Group + tags cell ───────────────────────────────────
+  .sup-group-cell {
+    display:   flex;
+    flex-wrap: wrap;
+    gap:       0.5rem;
+    align-items: center;
+  }
+
+  // ── Debt cell ───────────────────────────────────────────
+  .sup-debt-cell {
+    font-weight: 600;
+    font-size:   1.4rem;
+
+    &--red   { color: var(--error-color, #ef4444); }
+    &--green { color: var(--success-color, #10b981); }
+  }
+
+  // ── Total cell ──────────────────────────────────────────
+  .sup-total-cell {
+    font-size: 1.3rem;
+    color:     var(--text-primary-color);
+  }
+
+  // ── Muted placeholder ───────────────────────────────────
+  .sup-muted {
+    color:     var(--extra-color-50);
+    font-size: 1.3rem;
+  }
+}
+
+// ── Modal form ──────────────────────────────────────────────────
+.modal-add-supplier {
+  .form-grid {
+    display:               grid;
+    grid-template-columns: 1fr 1fr;
+    gap:                   1.6rem;
+
+    .form-col-full {
+      grid-column: 1 / -1;
+    }
+  }
+}

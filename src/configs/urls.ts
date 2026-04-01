@@ -2177,6 +2177,14 @@ export const urlsApi = {
     deleteContact: prefixApplication + "/contactOrg/delete",
     detailContact: prefixApplication + "/contactOrg/get",
   },
+  inventorySupplier: {
+    list:         prefixInventory + "/supplier/list",
+    summary:      prefixInventory + "/supplier/summary",
+    get:          prefixInventory + "/supplier/get",
+    update:       prefixInventory + "/supplier/update",
+    delete:       prefixInventory + "/supplier/delete",
+    updateActive: prefixInventory + "/supplier/update/active",
+  },
   workCategory: {
     list: prefixApplication + "/workCategory/list",
     update: prefixApplication + "/workCategory/update",

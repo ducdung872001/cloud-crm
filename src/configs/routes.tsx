@@ -118,6 +118,7 @@ import TransferOrderForm from "pages/TransferOrderForm";
 import DetailMarketingAutomation from "pages/MarketingAutomation/DetailMarketingAutomation";
 import ManageDataSharing from "pages/ManageDataSharing/ManageDataSharing";
 import SettingPartnerList from "pages/SettingPartner/SettingPartnerList";
+import SupplierPage from "pages/SupplierPage/SupplierPage";
 import PartnerList from "pages/PartnerList/PartnerList";
 import ReportLogin from "pages/ReportLogin/ReportLogin";
 import BusinessProcessList from "pages/BPM/BusinessProcessList/BusinessProcessList";
@@ -435,13 +436,7 @@ export const menu: IMenuItem[] = [
         path: urls.setting_customer,
         icon: <Icon name="CustomerSettingMenu" />,
         code: "MENU_SETUP_CUSTOMER",
-      },
-      {
-        title: "settingPartner", // Cài đặt đối tác
-        path: urls.setting_partner,
-        icon: <Icon name="PartnerSettingMenu" />,
-        code: "",
-      },
+      },      
       // {
       //   title: "reportCustomer", // Báo cáo khách hàng
       //   path: urls.report_customer,
@@ -905,7 +900,7 @@ export const routes: IRouter[] = [
   },
   {
     path: urls.supplier_list,
-    component: <CustomerAndSupplier type="supplier" />,
+    component: <SupplierPage />,
   },
   {
     path: urls.partner,
@@ -1176,10 +1171,6 @@ export const routes: IRouter[] = [
   {
     path: urls.setting_customer,
     component: <SettingCustomerList />,
-  },
-  {
-    path: urls.setting_partner,
-    component: <SettingPartnerList />,
   },
   {
     path: urls.setting_contact,
