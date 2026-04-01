@@ -140,6 +140,7 @@
 .tf-col-num    { width: 10rem; text-align: right; }
 .tf-col-input  { width: 12rem; }
 .tf-col-action { width: 4.4rem; text-align: center; }
+.tf-col-action-wide { width: 12rem; text-align: center; }
 
 // Override browser user-agent th alignment
 .tf-th-right  { text-align: right !important; }
@@ -199,6 +200,29 @@
   &:hover { background: #fde8e8; svg { fill: var(--error-color, #d83b01); } }
 }
 
+.tf-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.tf-inline-btn {
+  border: 1px solid var(--border-color);
+  background: #fff;
+  color: var(--primary-color);
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
 // ── Sidebar card (right) ──────────────────────────────────────────────────────
 .tf-sidebar-card {
   overflow: hidden;
@@ -209,6 +233,12 @@
     gap: 0.8rem;
     padding: 1.4rem 2rem;
     border-bottom: 1px solid var(--border-color);
+  }
+
+  &__header-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
   }
 
   &__icon {
@@ -245,6 +275,32 @@
     border-top: 1px solid var(--border-color);
 
     .base-button { width: 100%; justify-content: center; }
+  }
+}
+
+.tf-status-chip {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+
+  &--draft,
+  &--0 {
+    background: #fff4db;
+    color: #a15c00;
+  }
+
+  &--1 {
+    background: #e6f7eb;
+    color: #16794b;
+  }
+
+  &--3 {
+    background: #fde8e8;
+    color: #b42318;
   }
 }
 

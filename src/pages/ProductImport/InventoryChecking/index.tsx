@@ -91,7 +91,7 @@ interface IStockTransferItem {
   fromWarehouseName?: string;
   toWarehouseId?: number;
   toWarehouseName?: string;
-  status?: number; // 0: chờ duyệt, 1: hoàn thành, 2: hủy
+  status?: number; // 0: chờ duyệt, 1: hoàn thành, 3: hủy
   note?: string;
   createdTime?: string;
   createdBy?: string;
@@ -339,7 +339,7 @@ export default function InventoryManagement() {
               total,
               pending: items.filter((i) => i.status === 0).length,
               completed: items.filter((i) => i.status === 1).length,
-              cancelled: items.filter((i) => i.status === 2).length,
+              cancelled: items.filter((i) => i.status === 3).length,
             });
             setPaginationMeta(total, p.page, size);
             setIsNoItem(total === 0 && p.page === 1);
@@ -1069,7 +1069,7 @@ export default function InventoryManagement() {
           { label: "Tất cả", value: "" },
           { label: "Chờ duyệt", value: "0" },
           { label: "Hoàn thành", value: "1" },
-          { label: "Đã hủy", value: "2" },
+          { label: "Đã hủy", value: "3" },
         ];
       case "check":
         return [

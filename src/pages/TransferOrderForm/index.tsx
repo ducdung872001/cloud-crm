@@ -14,7 +14,7 @@ export default function TransferOrderForm() {
     <div className="page-content">
       <AddTransferOrderForm
         id={idFromUrl ? +idFromUrl : null}
-        onHide={() => navigate(urls.inventory_checking, { replace: true })}
+        onHide={() => navigate(`${urls.inventory_checking}?tab=transfer`, { replace: true })}
       />
     </div>
   );
