@@ -28,6 +28,7 @@ export interface StatusCounts {
 
 interface OrderListProps {
   onViewDetail: (invoiceId: number | null) => void;
+  onCollectDebt?: (order: Order) => void;
   onViewReceipt: (invoiceId: number | null) => void;
   onConfirm: (invoiceId: number | null) => void;
   listOrder?: Order[];
@@ -59,7 +60,8 @@ const STATUS_BADGE_CLASS: Record<string, string> = {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 const OrderList: React.FC<OrderListProps> = ({
-  onViewDetail, onViewReceipt, onConfirm,
+  onViewDetail,
+  onCollectDebt, onViewReceipt, onConfirm,
   listOrder = ORDERS,
   // Filter props with fallback to local state if not controlled
   activeFilter: activeFilterProp,
@@ -255,6 +257,9 @@ const OrderList: React.FC<OrderListProps> = ({
               <div className="order-card__meta">
                 <span className={`src-badge src-${order.source === "offline" ? "offline" : "online"}`}>{order.sourceLabel}</span>
                 <span className={`badge ${STATUS_BADGE_CLASS[order.status]}`}>{order.statusLabel}</span>
+                {(order.debt ?? 0) > 0 && (
+                  <span className="badge badge--debt">⚠️ Còn nợ</span>
+                )}
                 <span className="oc-time">{order.time}</span>
               </div>
             </div>
@@ -286,6 +291,14 @@ const OrderList: React.FC<OrderListProps> = ({
                   <button className="btn btn--xs btn--outline"
                     onClick={e => { e.stopPropagation(); onViewReceipt(Number(order.id)); }}>
                     🧾 Biên lai
+                  </button>
+                )}
+                {order.status === "success" && (order.debt ?? 0) > 0 && onCollectDebt && (
+                  <button
+                    className="btn btn--xs btn--debt-collect"
+                    onClick={e => { e.stopPropagation(); onCollectDebt(order); }}
+                  >
+                    💰 Thu nợ
                   </button>
                 )}
                 {order.status === "pending" && (

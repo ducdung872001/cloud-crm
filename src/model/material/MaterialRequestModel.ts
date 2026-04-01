@@ -1,30 +1,35 @@
 export interface IMaterialFilterRequest {
-  name?: string;
+  keyword?: string;
+  categoryId?: number;
+  status?: number;
   page?: number;
   limit?: number;
 }
 
 export interface IMaterialRequest {
-  id: number;
+  id?: number;
+  code?: string;
   name: string;
-  avatar: string;
-  code: string;
-  productLine: string;
-  position: number | string;
-  bsnId: number;
-  unitId: number;
-  unitName: string;
-  price: number | string;
-  exchange: number;
-  status: number | string;
+  categoryId?: number;
+  unitId?: number;
+  unitName?: string;
+  supplierId?: number;
+  supplierName?: string;
+  price?: number | string;
+  minQuantity?: number | string;
+  maxQuantity?: number | string;
+  note?: string;
+  avatar?: string;
+  status?: number;
+  // legacy kept for compat
+  productLine?: string;
+  position?: number | string;
+  bsnId?: number;
+  exchange?: number;
   otherUnits?: string;
   type?: string;
   expiredPeriod?: number;
-  minQuantity?: number;
-  maxQuantity?: number;
   supplier?: string;
   productExtraInfos?: any;
-  categoryId?: number;
-  categoryName?: string;
   documents?: any;
 }

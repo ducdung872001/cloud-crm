@@ -3,14 +3,16 @@ import TitleAction from "components/titleAction/titleAction";
 import MaterialList from "./MaterialList";
 import MaterialImportPage from "./partials/MaterialImportPage";
 import MaterialBomPage from "./partials/MaterialBomPage";
+import ProductionOrderPage from "./partials/ProductionOrderPage";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
-type MaterialTab = "material" | "import" | "bom" | null;
+type MaterialTab = "material" | "import" | "bom" | "production" | null;
 
 const MENU_ITEMS: { key: MaterialTab; title: string }[] = [
-  { key: "material", title: "Danh sách nguyên vật liệu" },
-  { key: "import",   title: "Nhập nguyên vật liệu" },
-  { key: "bom",      title: "Công thức (BOM)" },
+  { key: "material",   title: "Danh sách nguyên vật liệu" },
+  { key: "import",     title: "Nhập nguyên vật liệu" },
+  { key: "bom",        title: "Công thức (BOM)" },
+  { key: "production", title: "Lệnh sản xuất" },
 ];
 
 export default function MaterialMenuPage() {
@@ -27,7 +29,6 @@ export default function MaterialMenuPage() {
       tab: "material",
       des: "Quản lý toàn bộ danh mục nguyên vật liệu, tra cứu thông tin và theo dõi tồn kho từng loại."
     },
-
     {
       title: "Nhập nguyên vật liệu",
       backgroundColor: "#FAEEDA",
@@ -42,7 +43,13 @@ export default function MaterialMenuPage() {
       tab: "bom",
       des: "Định nghĩa Bill of Materials — cấu trúc nguyên vật liệu cần thiết để sản xuất từng sản phẩm."
     },
-   
+    {
+      title: "Lệnh sản xuất",
+      backgroundColor: "#E0F2FE",
+      icon: "RecipeMasterials",
+      tab: "production",
+      des: "Tạo và quản lý lệnh sản xuất: xuất NVL theo BOM, nhập thành phẩm vào kho sản phẩm."
+    },
   ];
 
   return (
@@ -53,9 +60,7 @@ export default function MaterialMenuPage() {
           <div className="d-flex flex-column">
             <TabMenuList
               listTab={listTab}
-              onClick={(item) => {
-                  setTab(item.tab);
-              }}
+              onClick={(item) => { setTab(item.tab); }}
             />
           </div>
         </div>
@@ -71,6 +76,10 @@ export default function MaterialMenuPage() {
 
       {tab === "bom" && (
         <MaterialBomPage onBackProps={(isBack) => { if (isBack) goBack(); }} />
+      )}
+
+      {tab === "production" && (
+        <ProductionOrderPage onBackProps={(isBack) => { if (isBack) goBack(); }} />
       )}
     </>
   );

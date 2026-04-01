@@ -10,6 +10,10 @@ export interface CartItem {
   price: number;
   unit?: string;
   qty: number;
+  /** Giá đồng giá — nếu có, Cart hiển thị badge "Đồng giá Xđ" */
+  fixedPrice?: number;
+  /** Tên CT đồng giá để hiển thị tooltip */
+  promoName?: string;
 }
 
 export interface Product {
@@ -49,6 +53,10 @@ export interface Order {
   total: number;
   cancellationReason?: string;
   note?: string;
+  /** Số tiền khách còn nợ (debt > 0 = có nợ) */
+  debt?: number;
+  /** Số tiền khách đã trả */
+  paid?: number;
 }
 
 /** Thông tin giao hàng kèm phí ship — dùng khi orderType === "ship" */

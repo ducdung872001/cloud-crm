@@ -277,7 +277,19 @@ const Cart: React.FC<CartProps> = ({
               {item.image ? <img src={item.image} alt={item.name} /> : <span style={{ fontSize: "30px" }}>{item.icon}</span>}
             </div>
             <div className="ci__info">
-              <div className="ci__name">{item.name}</div>
+              <div className="ci__name">
+                {item.name}
+                {item.fixedPrice && (
+                  <span style={{
+                    marginLeft: 6, fontSize: 10, fontWeight: 700,
+                    background: "#6366f1", color: "#fff",
+                    padding: "1px 6px", borderRadius: 99,
+                    verticalAlign: "middle",
+                  }}>
+                    Đồng giá
+                  </span>
+                )}
+              </div>
               <div className="ci__price">{formatVND(item.price)}/{item.unitName || item.unit}</div>
             </div>
             <div className="ci__qty">

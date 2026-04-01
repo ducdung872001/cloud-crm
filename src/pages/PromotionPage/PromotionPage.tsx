@@ -6,6 +6,7 @@ import PromotionalProgram from "@/pages/PromotionalProgram";
 import PromoCode from "../PromoCode";
 import PromotionBundle from "../PromotionBundle";
 import PromotionDashboard from "../PromoReport/PromotionDashboard";
+import FixedPricePage from "../FixedPricePage";
 
 export default function PromotionPage() {
   document.title = "Khuyến mãi";
@@ -22,7 +23,6 @@ export default function PromotionPage() {
       tab: 1,
       des: "Quản lý các chương trình giảm giá theo thời gian, sản phẩm, nhóm khách hàng"
     },
-
     {
       title: "Mã giảm giá",
       icon: "ProcessConfigMenu",
@@ -38,6 +38,14 @@ export default function PromotionPage() {
       backgroundColor: "#ede9fe",
       tab: 3,
       des: "Thiết lập các gói sản phẩm bán kèm với giá ưu đãi để tăng giá trị đơn hàng"
+    },
+    {
+      title: "Đồng giá",
+      icon: "Tag",
+      strokeColor: "rgb(99, 102, 241)",
+      backgroundColor: "#e0e7ff",
+      tab: 5,
+      des: "Bán nhiều sản phẩm cùng một mức giá cố định — Flash Sale đồng giá 99k, 199k..."
     },
     {
       title: "Báo cáo khuyến mãi",
@@ -66,41 +74,31 @@ export default function PromotionPage() {
 
       {isDetail && tab === 1 ? (
         <PromotionalProgram
-          onBackProps={(isBack) => {
-            if (isBack) {
-              setIsDetail(false);
-            }
-          }}
+          onBackProps={(isBack) => { if (isBack) setIsDetail(false); }}
         />
       ) : null}
 
       {isDetail && tab === 2 ? (
         <PromoCode
-          onBackProps={(isBack) => {
-            if (isBack) {
-              setIsDetail(false);
-            }
-          }}
+          onBackProps={(isBack) => { if (isBack) setIsDetail(false); }}
         />
       ) : null}
 
       {isDetail && tab === 3 ? (
         <PromotionBundle
-          onBackProps={(isBack) => {
-            if (isBack) {
-              setIsDetail(false);
-            }
-          }}
+          onBackProps={(isBack) => { if (isBack) setIsDetail(false); }}
+        />
+      ) : null}
+
+      {isDetail && tab === 5 ? (
+        <FixedPricePage
+          onBackProps={(isBack) => { if (isBack) setIsDetail(false); }}
         />
       ) : null}
 
       {isDetail && tab === 4 ? (
         <PromotionDashboard
-          onBackProps={(isBack) => {
-            if (isBack) {
-              setIsDetail(false);
-            }
-          }}
+          onBackProps={(isBack) => { if (isBack) setIsDetail(false); }}
         />
       ) : null}
     </div>
