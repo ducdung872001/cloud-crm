@@ -97,7 +97,7 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
               <th>Đơn gốc</th>
               <th>Loại</th>
               <th>Sản phẩm</th>
-              <th>Tiền hoàn</th>
+              <th style={{ textAlign: "right" }}>Tiền hoàn</th>
               <th>Trạng thái</th>
               <th />
             </tr>

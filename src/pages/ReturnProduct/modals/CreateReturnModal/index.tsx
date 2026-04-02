@@ -653,12 +653,18 @@ export default function CreateReturnModal({
       let res: any;
       if (seg === "return") {
         const body: ICreateReturnRequest = {
-          invoice: invoiceBase, lstProduct: retLines, lstService: [], lstCardService: [],
+          invoice:          invoiceBase,
+          lstBoughtProduct: retLines,
+          lstService:       [],
+          lstCardService:   [],
         };
         res = await ReturnInvoiceService.createReturn(body);
       } else {
         const body: ICreateExchangeRequest = {
-          invoice: invoiceBase, lstProduct: retLines, lstService: [], lstCardService: [],
+          invoice:          invoiceBase,
+          lstBoughtProduct: retLines,
+          lstService:       [],
+          lstCardService:   [],
           ...(exchLines.length > 0 && {
             exchangeInvoice: {
               customerId:  autofill?.customerId,
