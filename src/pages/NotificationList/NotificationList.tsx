@@ -458,6 +458,8 @@ export default function NotificationList(props: any) {
         case "ORDER":
         case "ORDER_REQUEST":
           return "OrderListMenu";
+        case "INVENTORY_THRESHOLD_ALERT":
+          return "InventoryMenu";
         case "CAMPAIGN":
           return "Promotion";
         case "BID":
@@ -465,12 +467,12 @@ export default function NotificationList(props: any) {
         case "TASK":
           return "NotifySetting";
         case "TEST_PUSH":
-          return "NotifyRox";
+          return "BellMenu";
         default:
           break;
       }
     }
-    return "NotifyRox";
+    return "BellMenu";
   };
 
   /** Render a single notification item */
