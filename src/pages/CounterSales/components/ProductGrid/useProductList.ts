@@ -69,7 +69,28 @@ export function useProductList({ categoryId, params = {} }: UseProductListParams
         const sizeLimit = paramsSearch.limit ?? DataPaginationDefault.sizeLimit;
         const totalPage = Math.ceil(+result.total / +sizeLimit);
 
-        setListProduct((prev) => (paramsSearch.page === 1 ? result.items : [...prev, ...result.items]));
+        // Map raw API fields → UI fields used by ProductGrid
+        const mapped = (result.items ?? []).map((p: any) => {
+          const stock = p.stockQuantity ?? 0;
+          const price = p.originalPrice ?? p.promotionPrice ?? 0;
+          return {
+            ...p,
+            // Tồn kho: tổng tất cả biến thể từ backend (stockQuantity = SUM variant quantities)
+            minQuantity: stock,
+            // Giá hiển thị
+            priceLabel: price > 0 ? price.toLocaleString("vi") + " ₫" : "—",
+            // Ảnh
+            avatar: p.avatar ?? null,
+            // Icon fallback
+            icon: "📦",
+            // Cảnh báo tồn kho thấp (≤ 5)
+            lowStock: stock > 0 && stock <= 5,
+            // Đơn vị
+            unitName: p.unitName ?? p.unit ?? "",
+          };
+        });
+
+        setListProduct((prev) => (paramsSearch.page === 1 ? mapped : [...prev, ...mapped]));
         setPagination({
           page: +result.page,
           sizeLimit: sizeLimit,

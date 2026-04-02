@@ -155,6 +155,40 @@ const DebtManagementService = {
     return fetch(`${urlsApi.debt.qr}?id=${id}`, { method: "GET", signal })
       .then((res) => parseResponse(res));
   },
+
+  /**
+   * GET /billing/debt/customer-total?customerId=X
+   * Tổng công nợ còn lại của 1 khách hàng (dùng cho KPI sidebar chi tiết KH).
+   * Gọi billing DB trực tiếp — chính xác hơn customer.debt trong adminapi.
+   */
+  getCustomerTotalDebt(customerId: number, signal?: AbortSignal): Promise<number> {
+    return fetch(`${urlsApi.debt.customerTotal}?customerId=${customerId}`, {
+      method: "GET",
+      signal,
+    })
+      .then(async (res) => {
+        const json = await res.json();
+        if (json.code !== 0) return 0;
+        return typeof json.result === "number" ? json.result : 0;
+      })
+      .catch(() => 0);
+  },
+
+  /**
+   * POST /billing/debt/update-schedule
+   * Cập nhật hạn thanh toán + ngày nhắc nhở, đồng thời lập lịch FCM notification.
+   */
+  updateSchedule(
+    request: { id: number; dueDate: string; reminderDate: string },
+    signal?: AbortSignal
+  ): Promise<number> {
+    return fetch(urlsApi.debt.updateSchedule, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+      signal,
+    }).then((res) => parseResponse<number>(res));
+  },
 };
 
 export default DebtManagementService;

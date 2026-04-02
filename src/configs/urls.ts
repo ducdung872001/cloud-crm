@@ -423,6 +423,7 @@ export const urlsApi = {
     draftListWithProducts: prefixSales + "/invoice/draft/list-with-products",
     draftDelete: prefixSales + "/invoice/draft/delete",
     list: prefixSales + "/invoice/list/v2",
+    customerStats: prefixSales + "/invoice/customer-stats",
     export: prefixSales + "/invoice/export",
     tabCounts: prefixSales + "/invoice/tab-counts",
     create: prefixSales + "/invoice/create",
@@ -580,6 +581,7 @@ export const urlsApi = {
     wTagUpdate: prefixInventory + "/product/tags/update",
     wTagCreate: prefixInventory + "/product-tag/update", // dùng lại endpoint tag CRUD
     // ── Import ──
+    wExport: prefixInventory + "/product/export",
     wImportTemplate: prefixInventory + "/product/import/template",
     wImportUpload: prefixInventory + "/product/import/uploadFile",
     wImportErrorFile: prefixInventory + "/product/import/error-file",
@@ -667,10 +669,12 @@ export const urlsApi = {
     update: prefixInventory + "/warehouse/update",
     delete: prefixInventory + "/warehouse/delete",
     ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
+    ledgerExport: prefixInventory + "/inventoryTransaction/ledger/export",
     ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
     saleExportList: prefixInventory + "/inventoryTransaction/sale/list",
     saleExportSummary: prefixInventory + "/inventoryTransaction/sale/summary",
     destroyList: prefixInventory + "/inventoryTransaction/destroy/list",
+    destroyDetail: prefixInventory + "/inventoryTransaction/destroy/get",
     destroySummary: prefixInventory + "/inventoryTransaction/destroy/summary",
     costSummary: prefixInventory + "/inventoryBalance/cost/summary",
   },
@@ -823,6 +827,8 @@ export const urlsApi = {
     pay: prefixBilling + "/debt/pay",
     markPaid: prefixBilling + "/debt/mark-paid",
     qr: prefixBilling + "/debt/qr",
+    updateSchedule: prefixBilling + "/debt/update-schedule",
+    customerTotal: prefixBilling + "/debt/customer-total",
   },
   cashbook: {
     list: prefixBilling + "/cashbook/list",
@@ -2175,6 +2181,14 @@ export const urlsApi = {
     deleteContact: prefixApplication + "/contactOrg/delete",
     detailContact: prefixApplication + "/contactOrg/get",
   },
+  inventorySupplier: {
+    list:         prefixInventory + "/supplier/list",
+    summary:      prefixInventory + "/supplier/summary",
+    get:          prefixInventory + "/supplier/get",
+    update:       prefixInventory + "/supplier/update",
+    delete:       prefixInventory + "/supplier/delete",
+    updateActive: prefixInventory + "/supplier/update/active",
+  },
   workCategory: {
     list: prefixApplication + "/workCategory/list",
     update: prefixApplication + "/workCategory/update",
@@ -2360,11 +2374,15 @@ export const urlsApi = {
   },
   // Phiếu xuất hủy — dùng StockAdjust với adjustType = "DESTROY"
   destroySlip: {
+    list: prefixInventory + "/stockAdjust/destroy/list",
     temp: prefixInventory + "/stockAdjust/destroy/temp",
     create: prefixInventory + "/stockAdjust/destroy/create",
     // Reuse stockAdjustDetail endpoints
     addUpdatePro: prefixInventory + "/stockAdjustDetail/update",
     deletePro: prefixInventory + "/stockAdjustDetail/delete",
+    get: prefixInventory + "/stockAdjust/get",
+    approved: prefixInventory + "/stockAdjust/approved",
+    cancel: prefixInventory + "/stockAdjust/cancel",
     view: prefixInventory + "/stockAdjust/view",
   },
   kpiDatasource: {

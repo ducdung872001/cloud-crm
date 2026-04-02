@@ -1178,16 +1178,26 @@ export default function CustomerPersonList() {
 
   const LinkToAction = ({ data }) => {
     return (
-      <Link
-        key={data.id}
-        to={`/detail_person/customerId/${data.id}/not_purchase_invoice`}
-        onClick={() => {
-          // localStorage.setItem("backUpUrlCustomer", JSON.stringify(params));
-        }}
+      <span
         className="detail-person"
+        style={{ cursor: "pointer" }}
+        onClick={() => {
+          localStorage.setItem("backUpUrlCustomer", JSON.stringify(params));
+          // Lưu snapshot KPI từ list để DetailPersonList hiển thị ngay lập tức
+          // (customer/get không trả debt/paid/invoiceCount nên cần fallback này)
+          localStorage.setItem("customerListSnapshot", JSON.stringify({
+            id:           data.id,
+            debt:         data.dataItem?.debt         ?? null,
+            paid:         data.dataItem?.paid         ?? null,
+            fee:          data.dataItem?.fee          ?? null,
+            invoiceCount: data.dataItem?.invoiceCount ?? null,
+            lastBoughtDate: data.dataItem?.lastBoughtDate ?? null,
+          }));
+          navigate(`/detail_person/customerId/${data.id}/purchase_invoice`);
+        }}
       >
         {data.name}
-      </Link>
+      </span>
     );
   };
 
@@ -2414,6 +2424,14 @@ export default function CustomerPersonList() {
         icon: <Icon name="Bill" className="icon-invoice" />,
         callback: () => {
           localStorage.setItem("backUpUrlCustomer", JSON.stringify(params));
+          localStorage.setItem("customerListSnapshot", JSON.stringify({
+            id:           item.id,
+            debt:         item.debt         ?? null,
+            paid:         item.paid         ?? null,
+            fee:          item.fee          ?? null,
+            invoiceCount: item.invoiceCount ?? null,
+            lastBoughtDate: item.lastBoughtDate ?? null,
+          }));
           navigate(`/detail_person/customerId/${item.id}/purchase_invoice`);
         },
       },

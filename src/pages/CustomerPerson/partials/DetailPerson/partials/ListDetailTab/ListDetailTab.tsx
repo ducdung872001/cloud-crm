@@ -1,317 +1,46 @@
-import React, { useRef, useState } from "react";
-import _ from "lodash";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { IListTabDetailProps } from "model/customer/PropsModel";
 import WarrantyPersonList from "./partials/WarrantyPersonList/WarrantyPersonList";
 import TicketPersonList from "./partials/TicketPersonList/TicketPersonList";
-import ExchangePersonList from "./partials/ExchangePersonList/ExchangePersonList";
-import FeedbackPersonList from "./partials/FeedbackPersonList/FeedbackPersonList";
 import OrderList from "./partials/OrderList/OrderList";
-import AttachmentsList from "./partials/AttachmentsList/AttachmentsList";
-import "./ListDetailTab.scss";
 import InteractList from "./partials/InteractList";
-import CustomerJob from "./partials/CustomerJob/CustomerJob";
-import CustomerContact from "./partials/CustomerContact/CustomerContact";
-import CustomerSchedule from "./partials/CustomerSchedule/CustomerSchedule";
-import BriefFinancialStatements from "./partials/BriefFinancialStatements";
-import FullFinancialReports from "./partials/FullFinancialReports";
-import InfoCIC from "./partials/InfoCIC";
-import TransactionInformation from "./partials/TransactionInformation";
-import CustomerRevenue from "./partials/CustomerRevenue";
-import ProductNeeds from "./partials/ProductNeeds";
+import "./ListDetailTab.scss";
 
 export default function ListDetailTab(props: IListTabDetailProps) {
   const { data } = props;
-
   const { type } = useParams();
-  const swiperRelationshipRef = useRef(null);
 
-  const [tab, setTab] = useState<string>(() => {
-    return type == "purchase_invoice" ? "tab_three" : "tab_one";
-  });
-
-  const [tabChildren, setTabChildren] = useState<string>(() => {
-    return type == "purchase_invoice" ? "tab_children_two" : "";
-  });
+  const [tab, setTab] = useState<string>("tab_invoice");
 
   const listTabItems = [
-    {
-      title: "Trao đổi",
-      is_active: "tab_one",
-      is_tab_children: 1,
-      children: [
-        {
-          title: "Trao đổi nội bộ",
-          tab_children: "tab_children_one",
-        },
-        {
-          title: "Ý kiến khách hàng",
-          tab_children: "tab_children_two",
-        },
-      ],
-    },
-    {
-      title: "Lịch sử",
-      is_active: "tab_two",
-      is_tab_children: 1,
-      children: [
-        {
-          title: "Giao dịch",
-          tab_children: "tab_children_one",
-        },
-        {
-          title: "Tương tác",
-          tab_children: "tab_children_two",
-        },
-      ],
-    },
-    {
-      title: "Tài chính",
-      is_active: "tab_three",
-      is_tab_children: 1,
-      children: [
-        {
-          title: "Báo cáo tài chính rút gọn",
-          tab_children: "tab_children_one",
-        },
-        {
-          title: "Báo cáo tài chính đầy đủ",
-          tab_children: "tab_children_two",
-        },
-        {
-          title: "Thông tin CIC",
-          tab_children: "tab_children_three",
-        },
-        {
-          title: "Thông tin giao dịch",
-          tab_children: "tab_children_four",
-        },
-        {
-          title: "Thu thuần từ khách hàng",
-          tab_children: "tab_children_five",
-        },
-        {
-          title: "Nhu cầu sản phẩm",
-          tab_children: "tab_children_six",
-        },
-      ],
-    },
-    {
-      title: "Cơ hội",
-      is_active: "tab_four",
-      is_tab_children: 0,
-    },
-    {
-      title: "Công việc",
-      is_active: "tab_five",
-      is_tab_children: 0,
-    },
-    {
-      title: "Lịch hẹn",
-      is_active: "tab_six",
-      is_tab_children: 0,
-    },
-    {
-      title: "Người liên hệ",
-      is_active: "tab_seven",
-      is_tab_children: 0,
-    },
-    {
-      title: "Bảo hành",
-      is_active: "tab_eight",
-      is_tab_children: 0,
-    },
-    {
-      title: "Hỗ trợ",
-      is_active: "tab_nine",
-      is_tab_children: 0,
-    },
-    {
-      title: "Tài liệu",
-      is_active: "tab_ten",
-      is_tab_children: 0,
-    },
+    { title: "Hóa đơn & Giao dịch", key: "tab_invoice" },
+    { title: "Lịch sử tương tác",    key: "tab_interact" },
+    { title: "Bảo hành",             key: "tab_warranty" },
+    { title: "Hỗ trợ",               key: "tab_ticket"   },
   ];
 
-  const lstTabLocalStorage = JSON.parse(localStorage.getItem("lstTabDetailCustomer") || "[]");
-
-  const [listTabs, setListTabs] = useState(() => {
-    return lstTabLocalStorage && lstTabLocalStorage.length > 0 ? lstTabLocalStorage : listTabItems;
-  });
-
-  const handleOnDragEnd = (result) => {
-    // Nếu không có đích đến, thoát ra
-    if (!result.destination) return;
-
-    // Sao chép lại danh sách ban đầu
-    const items = Array.from(listTabs);
-
-    // Lấy phần tử bị kéo ra khỏi danh sách
-    const [reorderedItem] = items.splice(result.source.index, 1);
-
-    // Chèn lại phần tử bị kéo vào vị trí mới
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    // Cập nhật lại trạng thái danh sách
-    setListTabs(items);
-    localStorage.setItem("lstTabDetailCustomer", JSON.stringify(_.cloneDeep(items)));
-  };
-
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-
-  // State cho tooltip: null = ẩn; nếu có thì chứa toạ độ (px)
-  const [menuPos, setMenuPos] = useState<{ left: number; top: number } | null>(null);
-
-  // State lưu item.children hiện tại (được hover)
-  // const [hoveredChildren, setHoveredChildren] = useState<TabChild[] | null>(null);
-  const [hoveredItem, setHoveredItem] = useState(null);
-
-  function handleMouseEnter(e: React.MouseEvent<HTMLLIElement>, item?: any) {
-    const li = e.currentTarget; // thẻ li đang hover
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-
-    const liRect = li.getBoundingClientRect();
-    const wrapperRect = wrapper.getBoundingClientRect();
-
-    // Toạ độ li so với wrapper (bao gồm scroll offset của wrapper)
-    const relative = {
-      left: liRect.left - wrapperRect.left + wrapper.scrollLeft,
-      top: liRect.top - wrapperRect.top + wrapper.scrollTop,
-      right: liRect.right - wrapperRect.left + wrapper.scrollLeft,
-      bottom: liRect.bottom - wrapperRect.top + wrapper.scrollTop,
-      width: liRect.width,
-      height: liRect.height,
-    };
-    // hoặc lưu vào state để dùng vị trí này (ví dụ show menu)
-    // Hiển thị tooltip ngay bên dưới li (sử dụng relative.left và relative.bottom)
-    setMenuPos({
-      left: Math.max(0, relative.left),
-      top: Math.max(0, relative.bottom),
-    });
-
-    // Lưu children để hiển thị trong tooltip
-    setHoveredItem(item);
-  }
-
-  function handleMouseLeave() {
-    // Ân tooltip
-    setMenuPos(null);
-    setHoveredItem(null);
-  }
-
   return (
-    <div className="wrapper-tab" ref={wrapperRef}>
+    <div className="wrapper-tab retail-wrapper-tab">
       <div className="list-tab">
-        <DragDropContext onDragEnd={handleOnDragEnd}>
-          <Droppable droppableId="tabs" direction="horizontal">
-            {(provided) => (
-              <ul className="action__option--title" {...provided.droppableProps} ref={provided.innerRef}>
-                {listTabs.map((item, idx) => (
-                  <Draggable key={item.is_active} draggableId={item.is_active} index={idx}>
-                    {(provided) => (
-                      <li
-                        key={idx}
-                        onMouseEnter={(e) => handleMouseEnter(e, item)}
-                        className={`${item.is_active === tab ? "active" : ""} ${item.is_tab_children ? "confirm-children" : ""}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setTab(item.is_active);
-                        }}
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{
-                          ...provided.draggableProps.style,
-                        }}
-                      >
-                        {item.title}
-                      </li>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </ul>
-            )}
-          </Droppable>
-        </DragDropContext>
+        <ul className="action__option--title">
+          {listTabItems.map((item) => (
+            <li
+              key={item.key}
+              className={item.key === tab ? "active" : ""}
+              onClick={() => setTab(item.key)}
+            >
+              {item.title}
+            </li>
+          ))}
+        </ul>
       </div>
-      {/* Tooltip / popup hiển thị tại toạ độ tính được và dùng hoveredChildren */}
-      {menuPos && hoveredItem && hoveredItem?.children && hoveredItem?.children?.length && (
-        <div
-          className="hover-tooltip"
-          style={{
-            position: "absolute",
-            left: `${menuPos.left}px`,
-            top: `${menuPos.top}px`,
-            zIndex: 2147483647,
-          }}
-          onMouseLeave={() => {
-            // ẩn khi rời tooltip
-            handleMouseLeave();
-          }}
-        >
-          <ul className="hover-children-list">
-            {hoveredItem.children.map((c, i) => (
-              <li
-                key={i}
-                className={`hover-child-item ${c.tab_children === tabChildren ? "active-lv2-children" : ""}`}
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  setTab(hoveredItem.is_active);
-                  setTabChildren(c.tab_children);
-                  // ẩn tooltip sau khi chọn
-                  setMenuPos(null);
-                  setHoveredItem(null);
-                }}
-              >
-                {c.title}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+
       <div className="details-tab">
-        {tab === "tab_one" ? (
-          tabChildren === "tab_children_one" ? (
-            <ExchangePersonList idCustomer={data.id} />
-          ) : (
-            <FeedbackPersonList idCustomer={data.id} />
-          )
-        ) : tab === "tab_two" ? (
-          tabChildren === "tab_children_one" ? (
-            <OrderList />
-          ) : (
-            <InteractList data={data} />
-          )
-        ) : tab === "tab_three" ? (
-          tabChildren === "tab_children_one" ? (
-            <BriefFinancialStatements data={data} />
-          ) : tabChildren === "tab_children_two" ? (
-            <FullFinancialReports data={data} />
-          ) : tabChildren === "tab_children_three" ? (
-            <InfoCIC data={data} />
-          ) : tabChildren === "tab_children_four" ? (
-            <TransactionInformation data={data} />
-          ) : tabChildren === "tab_children_five" ? (
-            <CustomerRevenue data={data} />
-          ) : (
-            <ProductNeeds data={data} />
-          )
-        ) : tab === "tab_five" ? (
-          <CustomerJob dataCustomer={data} />
-        ) : tab === "tab_six" ? (
-          <CustomerSchedule idCustomer={data.id} />
-        ) : tab === "tab_seven" ? (
-          <CustomerContact idCustomer={data.id} />
-        ) : tab === "tab_eight" ? (
-          <WarrantyPersonList idCustomer={data.id} />
-        ) : tab === "tab_nine" ? (
-          <TicketPersonList idCustomer={data.id} />
-        ) : (
-          <AttachmentsList idCustomer={data.id} />
-        )}
+        {tab === "tab_invoice"  && <OrderList />}
+        {tab === "tab_interact" && <InteractList data={data} />}
+        {tab === "tab_warranty" && <WarrantyPersonList idCustomer={data.id} />}
+        {tab === "tab_ticket"   && <TicketPersonList   idCustomer={data.id} />}
       </div>
     </div>
   );
