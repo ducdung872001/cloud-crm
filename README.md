@@ -1,90 +1,82 @@
-# CRM Banking – Sales Management
+# CRM Banking – Sales Management Platform
 
-Phiên bản CRM dành cho lĩnh vực **Banking**, xây dựng trên codebase cloud-crm (Retail) và được tùy chỉnh UX/UI theo prototype Banking dark navy theme.
+Phiên bản CRM dành cho lĩnh vực **Banking**, chuyển đổi từ cloud-crm (Retail) với UX/UI dark navy banking theme.
 
 ## Tech Stack
 
-- **React 18** + **TypeScript**
-- **Vite** (build tool)
-- **SCSS** (BEM methodology, CSS custom properties)
-- **React Router DOM v7**
-- **React Toastify**
+- **React 18** + **TypeScript** + **Vite**
+- **SCSS** (CSS custom properties, BEM)
+- Font: **Be Vietnam Pro**
 
 ## Cài đặt & Chạy
 
 ```bash
-# Install dependencies
+# 1. Copy env
+cp .env.example .env.local
+# Điền đúng API URLs trong .env.local
+
+# 2. Cài dependencies
 npm install
-# hoặc
-yarn install
 
-# Dev server (port 3000)
+# 3. Chạy dev server
 npm run dev
-
-# Build production
-npm run build
+# → http://localhost:4000/crm/
 ```
 
-## Cấu trúc thư mục
+## Cấu trúc dự án
 
 ```
 src/
-├── App.tsx                    # Root component, page routing
-├── main.tsx                   # Entry point
-├── components/
-│   ├── header/                # Top header bar
-│   ├── sidebar/               # Navigation sidebar
-│   ├── modal/                 # Reusable Modal wrapper
-│   └── toast/                 # Toast notification
+├── App.tsx                  ← Auth guard + page router
+├── contexts/AppContext.tsx  ← isAuthenticated, login/logout, toast, modal
 ├── configs/
-│   └── mockData.ts            # Mock data cho dev/demo
-├── contexts/
-│   └── AppContext.tsx         # Global state (user, page, modal, toast)
+│   ├── apiClient.ts         ← fetch interceptor (Bearer token, URL routing)
+│   ├── urls.ts              ← tất cả API endpoints
+│   └── mockData.ts          ← fallback data khi API chưa có
+├── services/
+│   ├── LeadService.ts
+│   ├── PipelineService.ts
+│   └── index.ts             ← Campaign, Approval, Task, KPI, NPS, BPM, Employee...
 ├── pages/
-│   ├── Dashboard/             # Sales Dashboard
-│   ├── LeadManagement/        # Quản lý Lead
-│   ├── Pipeline/              # Pipeline Kanban 5 stages
-│   ├── Campaigns/             # Chiến dịch bán hàng
-│   ├── SalesProcess/          # BPMN 2.0 quy trình bán
-│   ├── SharedPages.tsx        # SalesDocs, Customer360, Tasks, Approval, KPI, NPS
-│   └── AllModals.tsx          # Tất cả 23 modal dialogs
+│   ├── Login/               ← Form đăng nhập + /authenticator/user/login
+│   ├── Dashboard/           ← KPI tổng quan + real API
+│   ├── LeadManagement/      ← Quản lý Lead + CRUD
+│   ├── Pipeline/            ← Kanban 5 giai đoạn
+│   ├── Campaigns/           ← Chiến dịch bán hàng
+│   ├── SalesProcess/        ← BPMN Designer + 6 sub-pages admin
+│   ├── OrgManagement/       ← Chi nhánh / Nhân viên / Phân quyền
+│   ├── Incentive/           ← Hoa hồng nhóm + cá nhân + lịch sử + config
+│   ├── SharedPages.tsx      ← Tasks, Approval, KPI, NPS, Customer360, SalesDocs
+│   └── AllModals.tsx        ← 23 modals với full API integration
 └── styles/
-    ├── _variables.scss        # Design tokens (colors, spacing, radius)
-    ├── _common.scss           # Global components (cards, tables, buttons...)
-    ├── _modal-form.scss       # Modal & form styles
-    └── main.scss              # Entry point
+    ├── _variables.scss      ← Design tokens (navy, accent, gold...)
+    ├── _common.scss         ← Utility classes
+    └── main.scss
 ```
 
-## Các phân hệ (Modules)
+## Luồng Authentication
 
-| Module | Mô tả |
-|--------|-------|
-| **Dashboard** | KPI tổng quan, Pipeline mini, Customer 360 quick, Leaderboard RM |
-| **Lead Management** | Danh sách lead, filter hot/warm/cold, tạo & import lead |
-| **Pipeline** | Kanban 5 giai đoạn: Tiếp cận → Tư vấn → Hồ sơ → Thẩm định → Chốt HĐ |
-| **Chiến dịch** | Quản lý campaign Banking, KPI tracker, tài liệu theo chiến dịch |
-| **Quy trình bán** | BPMN 2.0 editor cho Vay MN, Thẻ TD, Banca, Vay DN |
-| **Tài liệu** | Script tư vấn, bảng phí, brochure, mẫu biểu |
-| **Customer 360°** | Hồ sơ KH toàn diện, sản phẩm, cảnh báo & cơ hội |
-| **Tasks & Lịch hẹn** | Danh sách task hôm nay/ngày mai, mini calendar, nhắc nhở |
-| **Phê duyệt** | Workflow phê duyệt hồ sơ: RM → Credit → BLĐ |
-| **Báo cáo KPI** | KPI progress, leaderboard, biểu đồ doanh số |
-| **NPS & Chăm sóc** | NPS score, phản hồi KH, gửi khảo sát |
+1. Chưa đăng nhập → redirect tới `<Login>`
+2. Login thành công → lưu `token` vào cookie, load permissions từ `/adminapi/permission/resource`
+3. Refresh page → kiểm tra cookie `token`, nếu còn hợp lệ → vào thẳng app
+4. Logout → xóa cookie + localStorage → về Login
 
-## Design System
+## API Mapping
 
-Theme: **Dark Navy Banking**
-- Primary: `#0A1628` (navy), `#112240` (navy-mid)
-- Accent: `#2196F3` (blue), `#42A5F5` (bright)
-- Status: `#00C896` (success), `#FF9500` (warning), `#FF4757` (danger), `#F5A623` (gold)
-- Font: **Be Vietnam Pro**
-
-## Mở rộng (Roadmap)
-
-Các tính năng có thể phát triển tiếp:
-- [ ] Tích hợp real API từ `cloud-sales-master` microservice
-- [ ] Core Banking Sync (T24) thực tế
-- [ ] Highcharts cho biểu đồ nâng cao
-- [ ] bpmn-js cho BPMN editor thực tế
-- [ ] React Big Calendar cho lịch hẹn
-- [ ] Tích hợp Firebase notifications
+| Module | Endpoint |
+|---|---|
+| Auth | `POST /authenticator/user/login` |
+| Lead | `GET/POST /adminapi/customer/*` |
+| Pipeline | `GET/POST /adminapi/campaignOpportunity/*` |
+| Campaign | `GET/POST /adminapi/campaign/*` |
+| Approval | `GET/POST /adminapi/approval/*` |
+| Task | `GET/POST /bpmapi/workOrder/*` |
+| KPI | `GET /adminapi/kpi/*` |
+| NPS | `GET/POST /bizapi/care/customerSurvey/*` |
+| Employee | `GET/POST/DELETE /adminapi/employee/*` |
+| Department | `GET/POST/DELETE /adminapi/department/*` |
+| Role/Permission | `GET/POST /adminapi/role/*`, `/adminapi/rolePermission/*` |
+| BPM Process | `GET/POST /bpmapi/process/*` |
+| Incentive (Group) | `GET/POST/DELETE /adminapi/tipGroup/*`, `/tipGroupEmployee/*`, `/tipGroupConfig/*` |
+| Incentive (User) | `GET/POST/DELETE /adminapi/tipUser/*`, `/tipUserConfig/*` |
+| Dashboard | `GET /bizapi/sales/invoice/dashboard` |

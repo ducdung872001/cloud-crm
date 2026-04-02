@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useApp } from "contexts/AppContext";
 import { LEADERBOARD, MOCK_DEALS } from "configs/mockData";
+import { DashboardService } from "services/index";
 
 function MetricCard({ color, icon, trend, trendDir, value, label }: any) {
   return (
@@ -35,6 +36,21 @@ function DealCard({ deal, onClick }: any) {
 export default function Dashboard() {
   const { setActivePage, openModal, showToast } = useApp();
 
+  // ── Real API: load dashboard summary ─────────────────────────────
+  const [summary, setSummary] = useState<any>(null);
+  useEffect(() => {
+    const now = new Date();
+    DashboardService.summary({ month: now.getMonth() + 1, year: now.getFullYear() })
+      .then((res) => { if (res?.code === 0 || res?.result) setSummary(res.result || res); })
+      .catch(() => { /* fall back to mock values */ });
+  }, []);
+
+  // Use live values when available, otherwise fall back to display text
+  const metricLeads  = summary?.newLeads   ?? "247";
+  const metricRev    = summary?.revenue    ? `${(summary.revenue / 1e9).toFixed(1)} tỷ` : "18.4 tỷ";
+  const metricCvr    = summary?.conversionRate ? `${summary.conversionRate.toFixed(1)}%`  : "34.2%";
+  const metricCycle  = summary?.avgSalesCycle ? `${summary.avgSalesCycle} ngày`            : "8.3 ngày";
+
   const approachDeals = MOCK_DEALS.filter((d) => d.stage === "approach").slice(0, 2);
   const consultDeals  = MOCK_DEALS.filter((d) => d.stage === "consult").slice(0, 2);
   const closingDeals  = MOCK_DEALS.filter((d) => d.stage === "closing").slice(0, 1);
@@ -61,16 +77,16 @@ export default function Dashboard() {
 
       {/* Metrics */}
       <div className="metric-grid">
-        <MetricCard color="blue" trend="↑ 18%" trendDir="up" value="247" label="Leads mới tháng này"
+        <MetricCard color="blue" trend="↑ 18%" trendDir="up" value={metricLeads} label="Leads mới tháng này"
           icon={<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>}
         />
-        <MetricCard color="gold" trend="↑ 23%" trendDir="up" value="18.4 tỷ" label="Doanh số tháng"
+        <MetricCard color="gold" trend="↑ 23%" trendDir="up" value={metricRev} label="Doanh số tháng"
           icon={<svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>}
         />
-        <MetricCard color="green" trend="↑ 5%" trendDir="up" value="34.2%" label="Tỷ lệ chuyển đổi"
+        <MetricCard color="green" trend="↑ 5%" trendDir="up" value={metricCvr} label="Tỷ lệ chuyển đổi"
           icon={<svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>}
         />
-        <MetricCard color="red" trend="↓ 2%" trendDir="down" value="8.3 ngày" label="Chu kỳ bán trung bình"
+        <MetricCard color="red" trend="↓ 2%" trendDir="down" value={metricCycle} label="Chu kỳ bán trung bình"
           icon={<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>}
         />
       </div>

@@ -1,5 +1,6 @@
 import React from "react";
 import { AppProvider, useApp } from "contexts/AppContext";
+import Login from "pages/Login/Login";
 import Header from "components/header/header";
 import Sidebar from "components/sidebar/sidebar";
 import Toast from "components/toast/Toast";
@@ -8,18 +9,20 @@ import LeadManagement from "pages/LeadManagement/LeadManagement";
 import Pipeline from "pages/Pipeline/Pipeline";
 import Campaigns from "pages/Campaigns/Campaigns";
 import SalesProcess from "pages/SalesProcess/SalesProcess";
+import { OrgManagement }   from "pages/OrgManagement/OrgManagement";
+import { Incentive }       from "pages/Incentive/Incentive";
 import {
-  SalesDocs,
-  Customer360,
-  Tasks,
-  Approval,
-  KpiReport,
-  NPS,
+  SalesDocs, Customer360, Tasks, Approval, KpiReport, NPS,
 } from "pages/SharedPages";
 import { AllModals } from "pages/AllModals";
 
 function AppShell() {
-  const { activePage, isCollapsedSidebar } = useApp();
+  const { activePage, isCollapsedSidebar, isAuthenticated, login } = useApp();
+
+  // ── AUTH GUARD ───────────────────────────────────────────────────
+  if (!isAuthenticated) {
+    return <Login onLogin={(userData) => login(userData, "")} />;
+  }
 
   const renderPage = () => {
     switch (activePage) {
@@ -34,6 +37,8 @@ function AppShell() {
       case "approval":     return <Approval />;
       case "kpi":          return <KpiReport />;
       case "nps":          return <NPS />;
+      case "org":          return <OrgManagement />;
+      case "incentive":    return <Incentive />;
       default:             return <Dashboard />;
     }
   };

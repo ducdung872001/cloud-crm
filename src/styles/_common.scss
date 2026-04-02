@@ -1064,3 +1064,102 @@ input, select, textarea { font-family: var(--font); }
   .two-col   { grid-template-columns: 1fr !important; }
   .pipeline-col { width: 190px; }
 }
+
+// ── Upload zone ──────────────────────────────────────────────────────
+.upload-zone {
+  border: 2px dashed var(--border-hover);
+  border-radius: var(--radius-lg);
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  margin-bottom: 16px;
+  &:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .icon  { font-size: 32px; margin-bottom: 8px; }
+  .title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+  .hint  { font-size: 12px; color: var(--text-muted); }
+}
+
+// ── Info banners ─────────────────────────────────────────────────────
+.info-banner {
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 12px;
+  margin-top: 12px;
+  &--blue   { background: var(--accent-soft);   color: var(--accent-bright); border-left: 3px solid var(--accent); }
+  &--green  { background: var(--success-soft);  color: var(--success);       border-left: 3px solid var(--success); }
+  &--warning{ background: var(--warning-soft);  color: var(--warning);       border-left: 3px solid var(--warning); }
+  &--gold   { background: rgba(245,166,35,.12); color: var(--gold);          border-left: 3px solid var(--gold); }
+}
+
+// ── Filter chip dashed (+ New) ────────────────────────────────────────
+.filter-chip--dashed {
+  border: 1.5px dashed var(--border-hover) !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  &:hover { border-color: var(--accent) !important; color: var(--accent-bright) !important; }
+}
+
+// ── Deal task items ───────────────────────────────────────────────────
+.deal-task-item {
+  display: flex; align-items: center; gap: 10; padding: 9px 12px;
+  background: var(--surface); border-radius: 8px; cursor: pointer; margin-bottom: 6px;
+  user-select: none; transition: opacity .15s;
+  .dtask-cb {
+    width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border-hover);
+    flex-shrink: 0; transition: .15s;
+  }
+  &--done {
+    opacity: .5; text-decoration: line-through;
+    .dtask-cb { background: var(--success); border-color: var(--success); }
+  }
+}
+
+// ── Card highlight ────────────────────────────────────────────────────
+.card--highlight-blue { border-color: var(--accent) !important; }
+.card--highlight-gold { border-color: var(--gold)   !important; }
+
+// ── BPMN palette active item ──────────────────────────────────────────
+.bpmn-pal-active { background: var(--accent-soft) !important; color: var(--accent-bright) !important; }
+.bpmn-pal-label  { font-size: 9px; color: var(--text-muted); margin-top: 2px; text-align: center; }
+
+// ── Progress bar ─────────────────────────────────────────────────────
+.progress-bar {
+  height: 6px; background: var(--surface-hover); border-radius: 99px; overflow: hidden;
+  &__fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width .4s; }
+}
+.progress-label-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+.progress-label     { color: var(--text-secondary); }
+.pct                { font-weight: 600; }
+
+// ── Workflow step tracker ─────────────────────────────────────────────
+.workflow-steps {
+  display: flex; align-items: center; gap: 4; margin-bottom: 20px; flex-wrap: wrap;
+  .workflow-step { display: flex; flex-direction: column; align-items: center; gap: 4; }
+  .ws-circle {
+    width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0;
+    background: var(--surface); color: var(--text-muted); border: 2px solid var(--border);
+    &--done   { background: var(--success); color: white; border-color: var(--success); }
+    &--active { background: var(--accent);  color: white; border-color: var(--accent); }
+  }
+  .ws-label { font-size: 10px; color: var(--text-secondary); white-space: nowrap; }
+  .ws-line  { flex: 1; height: 2px; background: var(--border); min-width: 20px; border-radius: 99px;
+    &--done   { background: var(--success); }
+    &--active { background: linear-gradient(90deg, var(--success) 50%, var(--border) 50%); }
+  }
+}
+
+// ── Form checkbox list ────────────────────────────────────────────────
+.form-checkbox-list {
+  display: flex; flex-wrap: wrap; gap: 10;
+  .form-checkbox-item {
+    display: flex; align-items: center; gap: 6; font-size: 13px;
+    color: var(--text-secondary); cursor: pointer;
+    input { accent-color: var(--accent); cursor: pointer; }
+  }
+}
+
+// ── Danger soft & gold soft color utilities ───────────────────────────
+.danger-soft  { background: var(--danger-soft) !important; }
+.gold-soft    { background: var(--gold-soft)   !important; }
