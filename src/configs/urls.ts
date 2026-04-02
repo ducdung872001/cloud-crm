@@ -830,6 +830,7 @@ export const urlsApi = {
     qr: prefixBilling + "/debt/qr",
     updateSchedule: prefixBilling + "/debt/update-schedule",
     customerTotal: prefixBilling + "/debt/customer-total",
+    export:        prefixBilling + "/debt/export",
   },
   cashbook: {
     list: prefixBilling + "/cashbook/list",
@@ -2189,6 +2190,7 @@ export const urlsApi = {
     update:       prefixInventory + "/supplier/update",
     delete:       prefixInventory + "/supplier/delete",
     updateActive: prefixInventory + "/supplier/update/active",
+    export:       prefixInventory + "/supplier/export",
   },
   workCategory: {
     list: prefixApplication + "/workCategory/list",
@@ -2567,6 +2569,8 @@ export const urlsApi = {
     getLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/get",
     updateLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/update",
     consumePoint: prefixBiz + "/market/loyaltyPointLedger/consumePoint",
+    exportLoyaltyWallet:       prefixBiz + "/market/loyaltyWallet/export",
+    exportLoyaltyPointLedger:  prefixBiz + "/market/loyaltyPointLedger/export",
   },
 
   //TODO: Start quy trình bpm
