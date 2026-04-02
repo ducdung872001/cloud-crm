@@ -18,9 +18,11 @@ import {
 import { useOmniCXM, OmniChatPayload, omniSendMessage } from "@/hooks/useOmniCXM";
 import "./index.scss";
 
-// ── Env key (set trong .env: REACT_APP_OMNICXM_KEY) ───────────────────────────
-const OMNICXM_KEY = process.env.REACT_APP_OMNICXM_KEY || "";
-const OMNICXM_ENV = process.env.REACT_APP_OMNICXM_ENV || "";
+// ── Env key — Vite dùng import.meta.env (KHÔNG dùng process.env) ─────────────
+const OMNICXM_KEY = import.meta.env.VITE_OMNICXM_KEY || "";
+const OMNICXM_ENV = import.meta.env.VITE_OMNICXM_ENV || "";
+
+console.log("[OmniCXM] Key:", OMNICXM_KEY ? OMNICXM_KEY.slice(0, 8) + "..." : "⚠️ CHƯA CÓ KEY");
 
 // ── Helper: tạo thread rỗng từ OmniCXM event ─────────────────────────────────
 function threadFromOmniEvent(payload: OmniChatPayload, idx: number): IConversationThread {
