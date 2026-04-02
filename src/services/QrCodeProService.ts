@@ -7,8 +7,9 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  reconciliation: () => {
-    return fetch(`${urlsApi.qrCodePro.reconciliation}`, {
+  reconciliation: (params) => {
+    const query = new URLSearchParams(params).toString();
+    return fetch(`${urlsApi.qrCodePro.reconciliation}?${query}`, {
       method: "GET",
     }).then((res) => res.json());
   },
