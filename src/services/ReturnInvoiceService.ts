@@ -125,6 +125,28 @@ export default {
    *
    * Trả về ReturnProduct[] đã có productSummary đầy đủ.
    */
+  /**
+   * GET /sales/invoice/export?invoiceTypes=["IV2","IV11"]
+   * Xuất danh sách Trả/Đổi hàng ra Base64 xlsx.
+   */
+  exportReturnExchange: async (params?: {
+    fromDate?: string; toDate?: string;
+    invoiceCode?: string; status?: number; returnType?: number;
+  }, signal?: AbortSignal): Promise<string> => {
+    const qs = new URLSearchParams();
+    qs.set("invoiceTypes", JSON.stringify(["IV2", "IV11"]));
+    if (params?.fromDate)    qs.set("fromDate",    params.fromDate);
+    if (params?.toDate)      qs.set("toDate",      params.toDate);
+    if (params?.invoiceCode) qs.set("invoiceCode", params.invoiceCode);
+    if (params?.status !== undefined && params.status >= 0) qs.set("status", String(params.status));
+    if (params?.returnType === 1)  qs.set("invoiceTypes", JSON.stringify(["IV2"]));
+    if (params?.returnType === 2)  qs.set("invoiceTypes", JSON.stringify(["IV11"]));
+    const res = await fetch(`${urlsApi.returnInvoice.export}?${qs.toString()}`, { method: "GET", signal });
+    const json = await res.json();
+    if (json.code !== 0) throw new Error(json.message ?? "Xuất Excel thất bại");
+    return json.result as string;
+  },
+
   listAndEnrich: async (
     params?: IReturnInvoiceListParams,
     signal?: AbortSignal

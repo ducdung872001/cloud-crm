@@ -49,6 +49,7 @@ export default function ShiftReportTab({ shiftId, branchId }: Props) {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [sent, setSent]       = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     if (!shiftId || shiftId <= 0) { setLoading(false); return; }
@@ -167,6 +168,56 @@ export default function ShiftReportTab({ shiftId, branchId }: Props) {
       <p>Chưa có dữ liệu báo cáo cho ca này.</p>
     </div>
   );
+
+  // ── Export Excel ──────────────────────────────────────────────────────────
+  const handleExportExcel = () => {
+    if (!data || isExporting) return;
+    setIsExporting(true);
+    try {
+      const esc = (s: string) =>
+        String(s ?? "—").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      const row2 = (label: string, value: string, isNum = false) =>
+        `<Row><Cell ss:StyleID="lb"><Data ss:Type="String">${esc(label)}</Data></Cell>` +
+        `<Cell ${isNum ? 'ss:StyleID="nr"' : ''}><Data ss:Type="${isNum ? "Number" : "String"}">${esc(value)}</Data></Cell></Row>`;
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+<Styles>
+  <Style ss:ID="t"><Font ss:Bold="1" ss:Size="13" ss:Color="#015aa4"/></Style>
+  <Style ss:ID="lb"><Font ss:Bold="1"/></Style>
+  <Style ss:ID="nr"><Alignment ss:Horizontal="Right"/><NumberFormat ss:Format="#,##0"/></Style>
+</Styles>
+<Worksheet ss:Name="Báo cáo kết ca"><Table>
+<Column ss:Width="210"/><Column ss:Width="168"/>
+<Row ss:Height="26"><Cell ss:MergeAcross="1" ss:StyleID="t"><Data ss:Type="String">BÁO CÁO KẾT CA — ${esc(data.shiftName)} · ${esc(data.date)}</Data></Cell></Row>
+<Row ss:Height="16"><Cell ss:MergeAcross="1"><Data ss:Type="String">Ngày xuất: ${new Date().toLocaleDateString("vi-VN")}</Data></Cell></Row>
+<Row><Cell/></Row>
+${row2("Nhân viên", data.employeeName)}
+${row2("Ca làm việc", data.shiftName)}
+${row2("Thời gian", data.timeRange)}
+${row2("Ngày", data.date)}
+<Row><Cell/></Row>
+${row2("Tiền mặt đầu ca (VNĐ)", String(data.openingCash), true)}
+${row2("Doanh thu tiền mặt", String(data.totalCash), true)}
+${row2("Doanh thu thẻ", String(data.totalCard), true)}
+${row2("Doanh thu QR/Momo", String(data.totalQrMomo), true)}
+${row2("Doanh thu chuyển khoản", String(data.totalTransfer), true)}
+${row2("Tổng doanh thu", String(data.totalSaleRevenue), true)}
+<Row><Cell/></Row>
+${row2("Tiền mặt thực đếm", String(data.actualCashCounted), true)}
+${row2("Chênh lệch", String(data.cashDifference), true)}
+${data.diffNote ? row2("Ghi chú", data.diffNote) : ""}
+</Table></Worksheet></Workbook>`;
+      const blob = new Blob([xml], { type: "application/vnd.ms-excel;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `bao_cao_ca_${(data.date ?? "").replace(/\//g,"-")}.xls`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="page-shift-report">
@@ -292,6 +343,9 @@ export default function ShiftReportTab({ shiftId, branchId }: Props) {
             <div className="rsr-paper-actions">
               <Button variant="outline" color="primary" onClick={handlePrint}>
                 <Icon name="Print" className="mr-8" />In báo cáo
+              </Button>
+              <Button variant="outline" color="primary" disabled={isExporting} onClick={handleExportExcel}>
+                {isExporting ? "Đang xuất..." : "Xuất Excel"}
               </Button>
               <Button
                 color="primary"

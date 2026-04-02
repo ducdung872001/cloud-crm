@@ -468,6 +468,7 @@ export const urlsApi = {
   },
   returnInvoice: {
     list: prefixSales + "/invoice/return-exchange/list",
+    export: prefixSales + "/invoice/export",
     detail: prefixSales + "/invoice/get",
     getReturnItems: prefixSales + "/invoice/get/return",
     createReturn: prefixSales + "/invoice/create/return",
@@ -549,6 +550,7 @@ export const urlsApi = {
     list: prefixInventory + "/product/list",
     topProduct: prefixSales + "/invoice/topProduct",
     topProductV2: prefixSales + "/invoice/topProduct/v2",
+    topProductExport: prefixSales + "/invoice/topProduct/export",
     detail: prefixInventory + "/product/get",
     update: prefixInventory + "/product/update",
     updateContent: prefixInventory + "/product/update/content",
@@ -618,7 +620,6 @@ export const urlsApi = {
   //warehouse
   stockTransfer: {
     list: prefixInventory + "/stockTransfer/list",
-    export: prefixInventory + "/stockTransfer/export",
     get: prefixInventory + "/stockTransfer/get",
     update: prefixInventory + "/stockTransfer/update",
     delete: prefixInventory + "/stockTransfer/delete",
@@ -674,7 +675,6 @@ export const urlsApi = {
     saleExportList: prefixInventory + "/inventoryTransaction/sale/list",
     saleExportSummary: prefixInventory + "/inventoryTransaction/sale/summary",
     destroyList: prefixInventory + "/inventoryTransaction/destroy/list",
-    destroyExport: prefixInventory + "/inventoryTransaction/destroy/export",
     destroyDetail: prefixInventory + "/inventoryTransaction/destroy/get",
     destroySummary: prefixInventory + "/inventoryTransaction/destroy/summary",
     costSummary: prefixInventory + "/inventoryBalance/cost/summary",
@@ -2368,7 +2368,6 @@ export const urlsApi = {
     cancel: prefixInventory + "/stockAdjust/cancel",
     view: prefixInventory + "/stockAdjust/view",
     list: prefixInventory + "/stockAdjust/list",
-    export: prefixInventory + "/stockAdjust/export",
     // lấy danh sách sản phẩm có trong kho
     productList: prefixInventory + "/inventoryBalance/stockProduct/list",
     // xóa đi 1 sản phẩm
