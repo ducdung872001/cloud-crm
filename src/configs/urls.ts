@@ -581,6 +581,7 @@ export const urlsApi = {
     wTagUpdate: prefixInventory + "/product/tags/update",
     wTagCreate: prefixInventory + "/product-tag/update", // dùng lại endpoint tag CRUD
     // ── Import ──
+    wExport: prefixInventory + "/product/export",
     wImportTemplate: prefixInventory + "/product/import/template",
     wImportUpload: prefixInventory + "/product/import/uploadFile",
     wImportErrorFile: prefixInventory + "/product/import/error-file",
