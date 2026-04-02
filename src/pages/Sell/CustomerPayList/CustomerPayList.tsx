@@ -7,7 +7,7 @@ import Loading from "components/loading";
 import Badge from "components/badge/badge";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
-import TitleAction from "components/titleAction/titleAction";
+import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
@@ -22,14 +22,15 @@ import { ContextType, UserContext } from "contexts/userContext";
 export default function CustomerPayList() {
   document.title = "Hóa đơn Khách trả hàng";
 
-  const isMounted = useRef(false);
+  const isMounted    = useRef(false);
   const checkUserRoot = localStorage.getItem("user.root");
   const [searchParams, setSearchParams] = useSearchParams();
-  const [listCustomerPay, setListCustomerPay] = useState<IInvoiceResponse[]>([]);
+  const [listCustomerPay, setListCustomerPay]       = useState<IInvoiceResponse[]>([]);
   const [showModalCustomerInvoice, setShowModalCustomerInvoice] = useState<boolean>(false);
-  const [idCustomerPay, setIdCustomerPay] = useState<number>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isNoItem, setIsNoItem] = useState<boolean>(false);
+  const [idCustomerPay, setIdCustomerPay]           = useState<number>(null);
+  const [isLoading, setIsLoading]                   = useState<boolean>(true);
+  const [isNoItem, setIsNoItem]                     = useState<boolean>(false);
+  const [isExporting, setIsExporting]               = useState<boolean>(false);
   const { dataBranch } = useContext(UserContext) as ContextType;
 
   const [params, setParams] = useState<IInvoiceFilterRequest>({
@@ -40,17 +41,6 @@ export default function CustomerPayList() {
   const customerFilterList = useMemo(
     () =>
       [
-        // ...(+checkUserRoot == 1
-        //   ? [
-        //       {
-        //         key: "branchId",
-        //         name: "Chi nhánh",
-        //         type: "select",
-        //         is_featured: true,
-        //         value: searchParams.get("branchId") ?? "",
-        //       },
-        //     ]
-        //   : []),
         {
           key: "time_buy",
           name: "Khoảng thời gian",
@@ -61,7 +51,6 @@ export default function CustomerPayList() {
           value_extra: searchParams.get("toDate") ?? "",
           is_fmt_text: true,
         },
-
         {
           key: "customerId",
           name: "Khách hàng",
@@ -89,8 +78,8 @@ export default function CustomerPayList() {
   ]);
 
   useEffect(() => {
-    if(dataBranch){      
-      setParams((prevParams) => ({ ...prevParams, branchId: dataBranch.value}));
+    if (dataBranch) {
+      setParams((prevParams) => ({ ...prevParams, branchId: dataBranch.value }));
     }
   }, [dataBranch]);
 
@@ -99,10 +88,10 @@ export default function CustomerPayList() {
     name: "Hóa đơn Khách trả hàng",
     isChooseSizeLimit: true,
     setPage: (page) => {
-      setParams((prevParams) => ({ ...prevParams, page: page }));
+      setParams((prevParams) => ({ ...prevParams, page }));
     },
     chooseSizeLimit: (limit) => {
-      setParams((prevParams) => ({ ...prevParams, limit: limit }));
+      setParams((prevParams) => ({ ...prevParams, limit }));
     },
   });
 
@@ -110,21 +99,19 @@ export default function CustomerPayList() {
 
   const getListCustomerPay = async (paramsSearch: IInvoiceFilterRequest) => {
     setIsLoading(true);
-
     const response = await InvoiceService.list(paramsSearch, abortController.signal);
-
     if (response.code === 0) {
       const result = response.result.pagedLst;
       setListCustomerPay(result.items);
-
       setPagination({
         ...pagination,
         page: +result.page,
         sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
         totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
+        totalPage: Math.ceil(
+          +result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)
+        ),
       });
-
       if (+result.total === 0 && !params.invoiceCode && +result.page === 1) {
         setIsNoItem(true);
       }
@@ -147,30 +134,57 @@ export default function CustomerPayList() {
       isMounted.current = true;
       return;
     }
-    if (isMounted.current === true) {
-      getListCustomerPay(params);
-      const paramsTemp = _.cloneDeep(params);
-      if (paramsTemp.limit === 10) {
-        delete paramsTemp["limit"];
-      }
-      Object.keys(paramsTemp).map(function (key) {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-      if (isDifferenceObj(searchParams, paramsTemp)) {
-        if (paramsTemp.page === 1) {
-          delete paramsTemp["page"];
-        }
-        setSearchParams(paramsTemp as Record<string, string | string[]>);
-      }
+    getListCustomerPay(params);
+    const paramsTemp = _.cloneDeep(params);
+    if (paramsTemp.limit === 10) delete paramsTemp["limit"];
+    Object.keys(paramsTemp).map((key) => {
+      paramsTemp[key] === "" ? delete paramsTemp[key] : null;
+    });
+    if (isDifferenceObj(searchParams, paramsTemp)) {
+      if (paramsTemp.page === 1) delete paramsTemp["page"];
+      setSearchParams(paramsTemp as Record<string, string | string[]>);
     }
-    return () => {
-      abortController.abort();
-    };
+    return () => { abortController.abort(); };
   }, [params]);
 
-  const titles = ["STT", "Mã hóa đơn", "Tên khách hàng", "Ngày trả", "Tổng tiền", "VAT", "Giảm giá", "Đã thanh toán", "Công nợ", "Trạng thái"];
+  // ── Export Excel ───────────────────────────────────────────────
+  // Tái dùng InvoiceService.exportExcel (đã có sẵn),
+  // truyền params hiện tại (trừ page/limit — backend bỏ qua).
+  const handleExportExcel = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      await InvoiceService.exportExcel(params);
+      showToast("Xuất Excel thành công", "success");
+    } catch (err: any) {
+      showToast(err?.message ?? "Xuất Excel thất bại. Vui lòng thử lại", "error");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
-  const dataFormat = ["text-center", "", "", "", "text-right", "text-right", "text-right", "text-right", "text-right", "text-center"];
+  // ── Title actions ──────────────────────────────────────────────
+  const titleActions: ITitleActions = {
+    actions: [],
+    actions_extra: [
+      {
+        title:    isExporting ? "Đang xuất..." : "Xuất Excel",
+        icon:     <Icon name="FileDown" />,
+        disabled: isExporting,
+        callback: handleExportExcel,
+      },
+    ],
+  };
+
+  // ── Table ──────────────────────────────────────────────────────
+  const titles = [
+    "STT", "Mã hóa đơn", "Tên khách hàng", "Ngày trả",
+    "Tổng tiền", "VAT", "Giảm giá", "Đã thanh toán", "Công nợ", "Trạng thái",
+  ];
+  const dataFormat = [
+    "text-center", "", "", "",
+    "text-right", "text-right", "text-right", "text-right", "text-right", "text-center",
+  ];
 
   const dataMappingArray = (item: IInvoiceResponse, index: number) => [
     getPageOffset(params) + index + 1,
@@ -193,27 +207,29 @@ export default function CustomerPayList() {
     formatCurrency(item.debt ? item.debt : "0"),
     <Badge
       key={item.id}
-      text={item.status === 1 ? "Hoàn thành" : item.status === 2 ? "Chưa hoàn thành" : "Đã hủy"}
+      text={
+        item.status === 1 ? "Hoàn thành"
+        : item.status === 2 ? "Chưa hoàn thành"
+        : "Đã hủy"
+      }
       variant={item.status === 1 ? "success" : item.status === 2 ? "warning" : "error"}
     />,
   ];
 
-  const actionsTable = (item: IInvoiceResponse): IAction[] => {
-    return [
-      {
-        title: "Xem hóa đơn",
-        icon: <Icon name="Eye" />,
-        callback: () => {
-          setIdCustomerPay(item.id);
-          setShowModalCustomerInvoice(true);
-        },
+  const actionsTable = (item: IInvoiceResponse): IAction[] => [
+    {
+      title: "Xem hóa đơn",
+      icon: <Icon name="Eye" />,
+      callback: () => {
+        setIdCustomerPay(item.id);
+        setShowModalCustomerInvoice(true);
       },
-    ];
-  };
+    },
+  ];
 
   return (
     <div className={`page-content page__customer--pay${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Hóa đơn Khách trả hàng" />
+      <TitleAction title="Hóa đơn Khách trả hàng" titleActions={titleActions} />
       <div className="card-box d-flex flex-column">
         <SearchBox
           name="Mã hóa đơn"
@@ -242,12 +258,16 @@ export default function CustomerPayList() {
         ) : (
           <Fragment>
             {isNoItem ? (
-              <SystemNotification description={<span>Hiện tại chưa có hóa đơn khách trả hàng nào.</span>} type="no-item" />
+              <SystemNotification
+                description={<span>Hiện tại chưa có hóa đơn khách trả hàng nào.</span>}
+                type="no-item"
+              />
             ) : (
               <SystemNotification
                 description={
                   <span>
-                    Không có dữ liệu trùng khớp. <br />
+                    Không có dữ liệu trùng khớp.
+                    <br />
                     Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
                   </span>
                 }
@@ -261,9 +281,7 @@ export default function CustomerPayList() {
       <ShowCustomerInvoice
         onShow={showModalCustomerInvoice}
         idCustomerPay={idCustomerPay}
-        onHide={(hide) => {
-          setShowModalCustomerInvoice(false);
-        }}
+        onHide={() => setShowModalCustomerInvoice(false)}
       />
     </div>
   );
