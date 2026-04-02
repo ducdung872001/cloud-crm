@@ -263,3 +263,96 @@ export const STATUS_COLORS: Record<string, string> = {
   rejected: "#ff4d4f", suspended: "#faad14", available: "#52c41a",
   occupied: "#1890ff",
 };
+
+// ─── METER READINGS (Chỉ số điện/nước hàng tháng) ───────────────────────────
+export const MOCK_METER_READINGS = [
+  // Tháng 03/2024 - Dự án Vinhomes City Park
+  { id: 1, projectId: 1, unitId: 1, unitCode: "A-1201", customerId: 2, customerName: "Trần Văn Hùng", period: "2024-03",
+    waterPrev: 145, waterCurr: 162, waterUsed: 17, waterUnitPrice: 15000, waterAmount: 255000,
+    electricPrev: 2340, electricCurr: 2512, electricUsed: 172, electricUnitPrice: 3500, electricAmount: 602000,
+    managementFee: 685000, parkingFee: 1200000, otherFees: [{ name: "Phí dịch vụ thêm", amount: 50000 }],
+    totalAmount: 2792000, status: "invoiced", inputBy: "Nguyễn Nhân Viên", inputAt: "2024-03-28 09:00" },
+  { id: 2, projectId: 1, unitId: 2, unitCode: "A-1202", customerId: 2, customerName: "Lê Thị Bảo", period: "2024-03",
+    waterPrev: 210, waterCurr: 231, waterUsed: 21, waterUnitPrice: 15000, waterAmount: 315000,
+    electricPrev: 3120, electricCurr: 3345, electricUsed: 225, electricUnitPrice: 3500, electricAmount: 787500,
+    managementFee: 920000, parkingFee: 2400000, otherFees: [],
+    totalAmount: 4422500, status: "invoiced", inputBy: "Nguyễn Nhân Viên", inputAt: "2024-03-28 09:15" },
+  { id: 3, projectId: 1, unitId: 4, unitCode: "C-2301", customerId: 2, customerName: "Phạm Đức Anh", period: "2024-03",
+    waterPrev: 88, waterCurr: 101, waterUsed: 13, waterUnitPrice: 15000, waterAmount: 195000,
+    electricPrev: 1890, electricCurr: 2054, electricUsed: 164, electricUnitPrice: 3500, electricAmount: 574000,
+    managementFee: 1200000, parkingFee: 1200000, otherFees: [],
+    totalAmount: 3169000, status: "invoiced", inputBy: "Nguyễn Nhân Viên", inputAt: "2024-03-28 09:30" },
+  // Tháng 04/2024 - chưa nhập hết
+  { id: 4, projectId: 1, unitId: 1, unitCode: "A-1201", customerId: 2, customerName: "Trần Văn Hùng", period: "2024-04",
+    waterPrev: 162, waterCurr: 0, waterUsed: 0, waterUnitPrice: 15000, waterAmount: 0,
+    electricPrev: 2512, electricCurr: 0, electricUsed: 0, electricUnitPrice: 3500, electricAmount: 0,
+    managementFee: 685000, parkingFee: 1200000, otherFees: [],
+    totalAmount: 0, status: "pending", inputBy: "", inputAt: "" },
+  { id: 5, projectId: 1, unitId: 2, unitCode: "A-1202", customerId: 2, customerName: "Lê Thị Bảo", period: "2024-04",
+    waterPrev: 231, waterCurr: 0, waterUsed: 0, waterUnitPrice: 15000, waterAmount: 0,
+    electricPrev: 3345, electricCurr: 0, electricUsed: 0, electricUnitPrice: 3500, electricAmount: 0,
+    managementFee: 920000, parkingFee: 2400000, otherFees: [],
+    totalAmount: 0, status: "pending", inputBy: "", inputAt: "" },
+  { id: 6, projectId: 1, unitId: 4, unitCode: "C-2301", customerId: 2, customerName: "Phạm Đức Anh", period: "2024-04",
+    waterPrev: 101, waterCurr: 0, waterUsed: 0, waterUnitPrice: 15000, waterAmount: 0,
+    electricPrev: 2054, electricCurr: 0, electricUsed: 0, electricUnitPrice: 3500, electricAmount: 0,
+    managementFee: 1200000, parkingFee: 1200000, otherFees: [],
+    totalAmount: 0, status: "pending", inputBy: "", inputAt: "" },
+];
+
+// Giá điện/nước mặc định theo dự án
+export const MOCK_UTILITY_RATES = [
+  {
+    id: 1, projectId: 1, projectName: "Vinhomes City Park",
+    effectiveFrom: "2024-01-01", effectiveTo: null, status: "active",
+    // Điện
+    electricFormula: "meter",       // meter | flat | tiered
+    electricUnitPrice: 3500,        // đ/kWh (đơn giá đồng nhất)
+    electricTiered: [               // Bậc thang (nếu electricFormula = "tiered")
+      { from: 0, to: 50, price: 1678 },
+      { from: 51, to: 100, price: 1734 },
+      { from: 101, to: 200, price: 2014 },
+      { from: 201, to: 300, price: 2536 },
+      { from: 301, to: 400, price: 2834 },
+      { from: 401, to: null, price: 2927 },
+    ],
+    electricSurcharge: 10,          // % phụ thu thêm (hao hụt đường dây, VAT...)
+    // Nước
+    waterFormula: "meter",          // meter | flat
+    waterUnitPrice: 15000,          // đ/m³
+    waterSurcharge: 0,
+    // Phí quản lý
+    mgmtFormula: "per_m2",          // per_m2 | flat_per_unit | pct_rent
+    managementFeePerM2: 10000,      // đ/m²/tháng
+    managementFeeFlat: 0,           // Nếu flat_per_unit
+    managementFeePctRent: 0,        // Nếu % tiền thuê
+    // Gửi xe
+    parkingMotorbike: 200000,       // đ/xe máy/tháng
+    parkingCar: 1200000,            // đ/ô tô/tháng
+    // Ghi chú
+    note: "Biểu giá áp dụng cho Vinhomes City Park từ 01/2024. Điện tính đơn giá đồng nhất 3.500đ/kWh (đã gộp phụ thu 10%).",
+    updatedBy: "Nguyễn Quản Lý", updatedAt: "2023-12-15",
+  },
+  {
+    id: 2, projectId: 2, projectName: "Goldmark City Office Tower A",
+    effectiveFrom: "2024-01-01", effectiveTo: null, status: "active",
+    electricFormula: "meter", electricUnitPrice: 3800,
+    electricTiered: [], electricSurcharge: 8,
+    waterFormula: "meter", waterUnitPrice: 18000, waterSurcharge: 0,
+    mgmtFormula: "per_m2", managementFeePerM2: 8000, managementFeeFlat: 0, managementFeePctRent: 0,
+    parkingMotorbike: 300000, parkingCar: 1500000,
+    note: "Văn phòng hạng A – điện tính 3.800đ/kWh. Phí QL 8.000đ/m²/tháng.",
+    updatedBy: "Nguyễn Quản Lý", updatedAt: "2023-12-15",
+  },
+  {
+    id: 3, projectId: 3, projectName: "Khu Công Nghiệp Vinh Phúc",
+    effectiveFrom: "2024-01-01", effectiveTo: null, status: "active",
+    electricFormula: "meter", electricUnitPrice: 3200,
+    electricTiered: [], electricSurcharge: 5,
+    waterFormula: "meter", waterUnitPrice: 12000, waterSurcharge: 0,
+    mgmtFormula: "per_m2", managementFeePerM2: 5000, managementFeeFlat: 0, managementFeePctRent: 0,
+    parkingMotorbike: 150000, parkingCar: 800000,
+    note: "KCN áp dụng giá điện công nghiệp. Phí QL 5.000đ/m²/tháng.",
+    updatedBy: "Trần Vận Hành", updatedAt: "2023-12-20",
+  },
+];

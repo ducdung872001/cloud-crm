@@ -24,9 +24,10 @@ const SETTING_GROUPS: ISettingGroup[] = [
     icon: "💳",
     color: "#722ed1",
     items: [
-      { label: "Loại phí dịch vụ", desc: "Phí quản lý, điện, nước, gửi xe...", path: "/setting_basis" },
-      { label: "Phương thức thanh toán", desc: "MSB Pay, chuyển khoản, Timi App", path: "/setting_basis" },
-      { label: "Cấu hình billing", desc: "Chu kỳ hóa đơn, ngày hạn TT, nhắc nợ", path: "/setting_basis" },
+      { label: "Loại phí dịch vụ", desc: "Phí quản lý, điện, nước, gửi xe...", path: "/setting/fee-types" },
+      { label: "Phương thức thanh toán", desc: "MSB Pay, chuyển khoản, Timi App", path: "/setting/payment-methods" },
+      { label: "Cấu hình billing", desc: "Chu kỳ hóa đơn, ngày hạn TT, nhắc nợ", path: "/setting/billing-config" },
+      { label: "Biểu giá & Công thức tính phí", desc: "Đơn giá điện, nước, phí QL theo từng dự án", path: "/setting/billing-rates" },
       { label: "Mẫu hóa đơn", desc: "Template xuất PDF hóa đơn cho KH", path: "/setting_basis", badge: "Soon" },
     ],
   },
@@ -35,7 +36,7 @@ const SETTING_GROUPS: ISettingGroup[] = [
     icon: "🏭",
     color: "#13c2c2",
     items: [
-      { label: "Loại dịch vụ NCC", desc: "Bảo trì, vệ sinh, an ninh, PCCC...", path: "/setting_basis" },
+      { label: "Loại dịch vụ NCC", desc: "Bảo trì, vệ sinh, an ninh, PCCC...", path: "/setting/vendor-services" },
       { label: "Tiêu chí đánh giá KPI", desc: "Thang điểm, tiêu chí rating NCC", path: "/setting_basis" },
       { label: "Cấu hình 3-Way Match", desc: "Luồng phê duyệt hóa đơn NCC", path: "/setting_basis" },
     ],
@@ -45,8 +46,8 @@ const SETTING_GROUPS: ISettingGroup[] = [
     icon: "🔧",
     color: "#fa8c16",
     items: [
-      { label: "Danh mục yêu cầu DV", desc: "Loại SR: bảo trì, điện, nước, thang máy...", path: "/setting_basis" },
-      { label: "SLA & Quy trình xử lý", desc: "Thời gian xử lý theo mức ưu tiên", path: "/setting_basis" },
+      { label: "Danh mục yêu cầu DV", desc: "Loại SR: bảo trì, điện, nước, thang máy...", path: "/setting/sr-categories" },
+      { label: "SLA & Quy trình xử lý", desc: "Thời gian xử lý theo mức ưu tiên", path: "/setting/sla" },
       { label: "Kế hoạch bảo trì mẫu", desc: "Lịch bảo trì định kỳ theo loại thiết bị", path: "/maintenance-plans" },
     ],
   },

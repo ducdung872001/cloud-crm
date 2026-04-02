@@ -12,11 +12,15 @@ import DashboardTNPM from "pages/DashboardTNPM/DashboardTNPM";
 import PropertyProjectList from "pages/PropertyProject/PropertyProjectList";
 import LeaseContractList from "pages/LeaseContract/LeaseContractList";
 import BillingEngineList from "pages/BillingEngine/BillingEngineList";
+import MeterReadingList from "pages/BillingEngine/MeterReadingList";
 import TurnoverRentList from "pages/TurnoverRent/TurnoverRentList";
 import VendorManagementList from "pages/VendorManagement/VendorManagementList";
 import VendorInvoiceList from "pages/VendorInvoice/VendorInvoiceList";
 import VendorContractList from "pages/VendorContract/VendorContractList";
 import SettingTNPM from "pages/Setting/SettingTNPM";
+import SettingFeeTypes from "pages/SettingTNPM/SettingFeeTypes";
+import SettingComingSoon from "pages/SettingTNPM/SettingComingSoon";
+import SettingBillingRates from "pages/SettingTNPM/SettingBillingRates";
 import ServiceRequestList from "pages/ServiceRequest/ServiceRequestList";
 import MaintenancePlanList from "pages/MaintenancePlan/MaintenancePlanList";
 import ReportTNPM from "pages/ReportTNPM/ReportTNPM";
@@ -286,6 +290,12 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
+        title: "Nhập chỉ số tháng",
+        path: "/meter-readings",
+        icon: <Icon name="AuditMenu" />,
+        code: "",
+      },
+      {
         title: "Turnover Rent",
         path: "/turnover-rent",
         icon: <Icon name="FinanceReportMenu" />,
@@ -401,6 +411,7 @@ export const routes: IRouter[] = [
 
   // ─── TNPM: Billing ──────────────────────────────────────────────────────
   { path: "/billing", component: <BillingEngineList /> },
+  { path: "/meter-readings", component: <MeterReadingList /> },
   { path: "/turnover-rent", component: <TurnoverRentList /> },
 
   // ─── TNPM: Vendor ───────────────────────────────────────────────────────
@@ -443,6 +454,13 @@ export const routes: IRouter[] = [
 
   // ─── Cài đặt ─────────────────────────────────────────────────────────────
   { path: "/setting", component: <SettingTNPM /> },
+  { path: "/setting/fee-types", component: <SettingFeeTypes /> },
+  { path: "/setting/billing-rates", component: <SettingBillingRates /> },
+  { path: "/setting/payment-methods", component: <SettingComingSoon /> },
+  { path: "/setting/billing-config", component: <SettingComingSoon /> },
+  { path: "/setting/vendor-services", component: <SettingComingSoon /> },
+  { path: "/setting/sr-categories", component: <SettingComingSoon /> },
+  { path: "/setting/sla", component: <SettingComingSoon /> },
   { path: "/setting_basis", component: <SettingBasisList /> },
   { path: "/setting_customer", component: <SettingCustomerList /> },
   { path: "/setting_ticket", component: <SettingTicketList /> },
