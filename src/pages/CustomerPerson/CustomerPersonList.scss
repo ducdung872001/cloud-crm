@@ -667,9 +667,9 @@
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// TNPM STYLE SYNC – CustomerPersonList.scss overrides
-// ═══════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------
+// TNPM STYLE SYNC - CustomerPersonList.scss overrides
+// ---------------------------------------------------------------
 
 .page-customer {
   background: #f5f6fa;
@@ -681,7 +681,7 @@
     margin: 0 24px 24px !important;
     overflow: visible;
 
-    // ── Quick search (Tất cả / Mới cập nhật / Đừng quên + Tags) ─────────
+    // -- Quick search (T-t c- / M-i c-p nh-t / --ng qu-n + Tags) ---------
     .quick__search {
       padding: 14px 20px 12px !important;
       border-bottom: 1px solid #f0f0f0;
@@ -748,7 +748,7 @@
       }
     }
 
-    // ── Tab navigation (Danh sách / Đối tác / Thống kê / Phân tích) ──────
+    // -- Tab navigation (Danh s-ch / --i t-c / Th-ng k- / Ph-n t-ch) ------
     .search__box--customer {
       .line__height--customer {
         height: 46px !important;
@@ -782,7 +782,7 @@
         }
       }
 
-      // ── Filter/search bar (Swiper filters + SearchBox) ─────────────────
+      // -- Filter/search bar (Swiper filters + SearchBox) -----------------
       .desc__search {
         padding: 12px 20px !important;
         border-bottom: 1px solid #f0f0f0;
@@ -854,7 +854,7 @@
       }
     }
 
-    // ── Action icons per table row ──────────────────────────────────────
+    // -- Action icons per table row --------------------------------------
     .lst__action--cell,
     [class*="action--cell"] {
       display: flex;
@@ -887,7 +887,7 @@
       }
     }
 
-    // ── Filter advance tags ─────────────────────────────────────────────
+    // -- Filter advance tags ---------------------------------------------
     .filter_advance {
       margin: 10px 20px !important;
       gap: 8px !important;
@@ -910,5 +910,48 @@
         }
       }
     }
+  }
+}
+
+// -- FIX: Gap between filter bar and table ------------------------------------
+.page-customer .card-box {
+
+  // Remove extra padding from desc__search causing the big gap
+  .search__box--customer .desc__search {
+    padding: 10px 20px !important;
+
+    .search-container {
+      padding: 0 !important;
+    }
+  }
+
+  // Collapse empty filter_advance (when no active filters)
+  .filter_advance:empty {
+    display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .filter_advance {
+    margin: 0 20px 0 !important;
+    padding: 8px 0 0 !important;
+    min-height: 0 !important;
+
+    &:has(*) {
+      padding-bottom: 8px !important;
+    }
+  }
+
+  // Swiper container - compact
+  [class*="swiper-slide"] {
+    padding: 10px 20px !important;
+  }
+
+  // The BoxTableAdvanced / ag-grid container - remove top gap
+  .box-table,
+  .ag-root-wrapper,
+  [class*="box-table"],
+  [class*="ag-theme"] {
+    margin-top: 0 !important;
   }
 }

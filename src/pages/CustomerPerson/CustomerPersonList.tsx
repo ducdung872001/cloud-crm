@@ -1099,7 +1099,7 @@ export default function CustomerPersonList() {
           className="item__action view__invoice"
           onClick={() => {
             localStorage.setItem("backUpUrlCustomer", JSON.stringify(params));
-            navigate(`/detail_person/customerId/${data.id}/purchase_invoice`);
+            navigate(`/customer_person/${data.id}`);
           }}
         >
           <Tippy content="Hóa đơn đã mua">
@@ -1180,7 +1180,7 @@ export default function CustomerPersonList() {
     return (
       <Link
         key={data.id}
-        to={`/detail_person/customerId/${data.id}/not_purchase_invoice`}
+        to={`/customer_person/${data.id}`}
         onClick={() => {
           // localStorage.setItem("backUpUrlCustomer", JSON.stringify(params));
         }}

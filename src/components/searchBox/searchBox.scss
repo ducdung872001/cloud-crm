@@ -146,3 +146,10 @@
     li { font-size: 1.3rem; }
   }
 }
+// -- TNPM compact override --------------------------------------------------
+// Applied when inside .page-customer card-box to remove top gap
+.page-customer .card-box .search-container,
+.page-detail-person .card-box .search-container {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}

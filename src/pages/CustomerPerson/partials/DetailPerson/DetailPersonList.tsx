@@ -17,7 +17,7 @@ import AddCustomPlaceholderSMSModal from "./partials/ListDetailTab/partials/Cust
 import AddConsultationScheduleModal from "pages/CalendarCommon/partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
 import AddPhoneModal from "pages/CallCenter/partials/AddPhoneModal";
 
-import "./DetailPersonList.scss";
+// styles handled by tnpm-shared.scss
 
 export default function DetailPersonList() {
   document.title = "Chi tiết khách hàng";

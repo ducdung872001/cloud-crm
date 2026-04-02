@@ -450,17 +450,17 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 
 
 // ============================================================
-// TNPM UI SYNC — Đồng bộ trang cũ (Reborn) sang style TNPM mới
-// Áp dụng cho tất cả trang dùng .card-box + .title-action
+// TNPM UI SYNC - --ng b- trang c- (Reborn) sang style TNPM m-i
+// -p d-ng cho t-t c- trang d-ng .card-box + .title-action
 // ============================================================
 
-// Nền trang tổng thể — tất cả main-content wrapper
+// N-n trang t-ng th- - t-t c- main-content wrapper
 .main-content__wrapper {
   background: #f5f6fa;
   min-height: 100vh;
 }
 
-// Card-box: bo tròn, shadow mềm hơn, nền trắng sạch
+// Card-box: bo tr-n, shadow m-m h-n, n-n tr-ng s-ch
 .card-box {
   background: #fff;
   border-radius: 14px !important;
@@ -482,7 +482,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
       margin: 0 !important;
     }
 
-    // Action buttons (Thêm mới, etc.)
+    // Action buttons (Th-m m-i, etc.)
     .actions {
       .base-button {
         border-radius: 8px !important;
@@ -510,7 +510,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
       }
     }
 
-    // Extra actions row (Nhập, Xuất, ...)
+    // Extra actions row (Nh-p, Xu-t, ...)
     .actions-extra {
       margin-top: 8px !important;
 
@@ -535,7 +535,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   }
 }
 
-// ── Table bên trong card-box ──────────────────────────────────────────────────
+// -- Table b-n trong card-box --------------------------------------------------
 .card-box {
   // BoxTable wrapper
   table, .box-table {
@@ -579,7 +579,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   }
 }
 
-// ── Filter / search bar ───────────────────────────────────────────────────────
+// -- Filter / search bar -------------------------------------------------------
 .card-box {
   // Quick search / filter row
   .quick__search,
@@ -591,7 +591,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
     gap: 10px;
   }
 
-  // Tab navigation (Danh sách / Thống kê / Phân tích)
+  // Tab navigation (Danh s-ch / Th-ng k- / Ph-n t-ch)
   [class*="tab"],
   .swiper,
   .swiper-wrapper {
@@ -604,7 +604,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   }
 }
 
-// ── Status badges đồng bộ ─────────────────────────────────────────────────────
+// -- Status badges --ng b- -----------------------------------------------------
 .card-box {
   [class*="badge"],
   [class*="status"],
@@ -616,7 +616,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   }
 }
 
-// ── Button action icons trong table row ───────────────────────────────────────
+// -- Button action icons trong table row ---------------------------------------
 .card-box {
   .actions-row,
   [class*="action"] {
@@ -640,7 +640,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   }
 }
 
-// ── Modal đồng bộ (components/modal) ─────────────────────────────────────────
+// -- Modal --ng b- (components/modal) -----------------------------------------
 .modal {
   &__overlay, .modal-backdrop {
     background: rgba(0,0,0,0.45) !important;
@@ -687,7 +687,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   }
 }
 
-// ── Form inputs đồng bộ (trong modal/form) ────────────────────────────────────
+// -- Form inputs --ng b- (trong modal/form) ------------------------------------
 .base-input,
 .base-input__field,
 input[class*="base-input"],
@@ -707,14 +707,14 @@ input[class*="base-input"],
   }
 }
 
-// ── Page padding ─────────────────────────────────────────────────────────────
-// Chỉ áp dụng cho trang TNPM mới (có .tnpm-list-page), không ảnh hưởng trang cũ
+// -- Page padding -------------------------------------------------------------
+// Ch- -p d-ng cho trang TNPM m-i (c- .tnpm-list-page), kh-ng -nh h--ng trang c-
 .tnpm-list-page {
   .page-header { margin-bottom: 20px; }
 }
 
 
-// ── page-customer specific layout fixes ─────────────────────────────────────
+// -- page-customer specific layout fixes -------------------------------------
 .page-content.page-customer {
   background: #f5f6fa;
   padding: 0;
@@ -731,4 +731,165 @@ input[class*="base-input"],
       color: #1a1a2e !important;
     }
   }
+}
+
+// -- Kill SearchBox top padding inside customer page ---------------------------
+.page-customer .card-box {
+  .search-container {
+    > * { padding-top: 0 !important; }
+
+    // SearchBox component internal padding reset
+    [class*="search-box"],
+    .search-box {
+      padding-top: 0 !important;
+      padding: 0 !important;
+    }
+  }
+
+  // SearchBox renders .desc__search > flex > SearchBox > .search-container
+  // The .search-container wrapper also has internal padding
+  .desc__search > div > div,
+  .desc__search .search-container > div {
+    padding-top: 0 !important;
+  }
+}
+
+// Force compact: override searchBox.scss .search-container first-child padding
+.page-customer {
+  .search-container:first-child > *:first-child {
+    padding-top: 0 !important;
+  }
+
+  // Swiper filter row (Th-i gian, C-ng n-, Nh-m KH)
+  .card-box .search__box--customer .desc__search {
+    min-height: 0 !important;
+    padding-bottom: 0 !important;
+
+    // Swiper wrapper for filter chips
+    .swiper { padding: 0 !important; }
+  }
+}
+
+
+/* ===== Detail Person Page (TNPM style) ===== */
+.page-detail-person {
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+
+.page-detail-person .action-navigation {
+  display: none;
+}
+
+.page-detail-person .card-box {
+  margin: 0 24px 20px !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07) !important;
+  border: none !important;
+  overflow: hidden;
+}
+
+.page-detail-person .card-box .info-person {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #f0f0f0 !important;
+  padding: 0 !important;
+  background: #fff;
+}
+
+.page-detail-person .card-box .info-action-detail {
+  display: flex;
+  align-items: flex-start;
+}
+
+.retail-detail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px 12px;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.retail-detail__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.retail-detail__back-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: #1890ff;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 7px 12px 7px 8px;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  transition: all 0.15s;
+}
+
+.retail-detail__back-link:hover {
+  border-color: #1890ff;
+  background: #e6f7ff;
+}
+
+.retail-detail__back-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+.retail-detail__page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.retail-detail__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.retail-detail__action-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  height: 36px !important;
+  padding: 0 14px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  white-space: nowrap;
+  border: 1px solid #d9d9d9 !important;
+  background: #fff !important;
+  color: #595959 !important;
+  transition: all 0.15s !important;
+}
+
+.retail-detail__action-btn:hover {
+  border-color: #1890ff !important;
+  color: #1890ff !important;
+  background: #e6f7ff !important;
+}
+
+.retail-detail__action-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+@media (max-width: 1280px) {
+  .retail-detail__action-btn span { display: none; }
+  .retail-detail__action-btn { padding: 0 10px !important; }
 }

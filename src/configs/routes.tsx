@@ -400,6 +400,7 @@ export const routes: IRouter[] = [
   // ─── Khách hàng ──────────────────────────────────────────────────────────
   { path: "/customer_person", component: <CustomerPersonList /> },
   { path: "/customer_person/:id", component: <DetailPersonList /> },
+  { path: "/detail_person/customerId/:id/*", component: <DetailPersonList /> },
 
   // ─── TNPM: Dự án & Unit ─────────────────────────────────────────────────
   { path: "/projects", component: <PropertyProjectList /> },
