@@ -2293,13 +2293,7 @@ export default function CustomerPersonList() {
           setOnShowModalExport(true);
         },
       },
-      {
-        title: "Test",
-        icon: <Icon name="Download" />,
-        callback: () => {
-          openTestExportModal();
-        },
-      },
+
     ],
   };
 

@@ -666,3 +666,249 @@
     flex: 1 1 0;
   }
 }
+
+// ═══════════════════════════════════════════════════════════════
+// TNPM STYLE SYNC – CustomerPersonList.scss overrides
+// ═══════════════════════════════════════════════════════════════
+
+.page-customer {
+  background: #f5f6fa;
+
+  .card-box {
+    background: #fff;
+    border-radius: 14px !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,.07) !important;
+    margin: 0 24px 24px !important;
+    overflow: visible;
+
+    // ── Quick search (Tất cả / Mới cập nhật / Đừng quên + Tags) ─────────
+    .quick__search {
+      padding: 14px 20px 12px !important;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+
+      .quick__search--left {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        width: auto !important;
+        flex: 0 0 auto !important;
+
+        li {
+          padding: 5px 14px !important;
+          font-size: 13px !important;
+          border-radius: 20px !important;
+          border: 1px solid #d9d9d9 !important;
+          cursor: pointer;
+          color: #595959;
+          transition: all .15s;
+          white-space: nowrap;
+
+          &.active {
+            background: #1890ff !important;
+            border-color: #1890ff !important;
+            color: #fff !important;
+            font-weight: 500;
+          }
+
+          &:hover:not(.active) {
+            border-color: #1890ff !important;
+            color: #1890ff !important;
+          }
+        }
+      }
+
+      .quick__search--right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        width: auto !important;
+        flex: 1;
+        justify-content: flex-end;
+
+        .relationship-item,
+        [class*="item-relationship"] {
+          padding: 5px 14px !important;
+          font-size: 12px !important;
+          border-radius: 20px !important;
+          font-weight: 500;
+          cursor: pointer;
+          opacity: 1 !important;
+          transition: all .15s;
+          white-space: nowrap;
+        }
+
+        .active__item-block {
+          border: 2px solid rgba(0,0,0,.4) !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,.15) !important;
+        }
+      }
+    }
+
+    // ── Tab navigation (Danh sách / Đối tác / Thống kê / Phân tích) ──────
+    .search__box--customer {
+      .line__height--customer {
+        height: 46px !important;
+        padding: 0 20px !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        border-radius: 0 !important;
+        gap: 0 !important;
+
+        li.item-title {
+          padding: 0 20px !important;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          font-size: 14px !important;
+          font-weight: 400;
+          color: #8c8c8c;
+          border-bottom: 2px solid transparent !important;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: all .15s;
+
+          &.active__item--title {
+            color: #1890ff !important;
+            border-bottom-color: #1890ff !important;
+            font-weight: 500 !important;
+          }
+
+          &:hover:not(.active__item--title) {
+            color: #595959 !important;
+          }
+        }
+      }
+
+      // ── Filter/search bar (Swiper filters + SearchBox) ─────────────────
+      .desc__search {
+        padding: 12px 20px !important;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafafa;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+
+        .search-container {
+          padding: 0 !important;
+          flex: 1;
+          min-width: 220px;
+        }
+
+        .form-group-filter {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .button-filter-advance {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 8px !important;
+            margin-top: 0 !important;
+            border: 1px solid #d9d9d9 !important;
+            background: #fff;
+            transition: all .15s;
+
+            &:hover {
+              border-color: #1890ff !important;
+              background: #f0f7ff !important;
+            }
+
+            svg {
+              width: 16px !important;
+              height: 16px !important;
+            }
+          }
+        }
+      }
+
+      // Swiper filter tabs
+      .swiper,
+      [class*="swiper"] {
+        padding: 12px 20px !important;
+
+        .swiper-slide {
+          width: auto !important;
+
+          button, [class*="filter-item"] {
+            padding: 6px 14px !important;
+            border-radius: 8px !important;
+            font-size: 13px !important;
+            border: 1px solid #d9d9d9 !important;
+            background: #fff;
+            color: #595959;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .15s;
+
+            &.active, &[class*="active"] {
+              border-color: #1890ff !important;
+              color: #1890ff !important;
+              background: #e6f7ff !important;
+            }
+          }
+        }
+      }
+    }
+
+    // ── Action icons per table row ──────────────────────────────────────
+    .lst__action--cell,
+    [class*="action--cell"] {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      .item__action,
+      [class*="item__action"] {
+        width: 28px !important;
+        height: 28px !important;
+        border-radius: 6px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer;
+        transition: all .15s;
+        background: #fafafa;
+
+        &:hover { background: #e6f7ff !important; }
+
+        svg, .icon__item {
+          width: 16px !important;
+          height: 16px !important;
+        }
+
+        // Specific action colors
+        &.delete:hover { background: #fff2f0 !important; }
+        &.update:hover { background: #f6ffed !important; }
+        &.add__view:hover { background: #f9f0ff !important; }
+      }
+    }
+
+    // ── Filter advance tags ─────────────────────────────────────────────
+    .filter_advance {
+      margin: 10px 20px !important;
+      gap: 8px !important;
+
+      .item_advance {
+        padding: 4px 10px !important;
+        border-radius: 6px !important;
+        background: #e6f7ff !important;
+        color: #1890ff !important;
+        font-size: 12px !important;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .advance_close {
+          cursor: pointer;
+          opacity: 0.6;
+          &:hover { opacity: 1; }
+          svg { width: 14px !important; height: 14px !important; }
+        }
+      }
+    }
+  }
+}

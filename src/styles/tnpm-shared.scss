@@ -447,3 +447,288 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   &__label { font-size: 12px; color: #8c8c8c; margin-bottom: 4px; }
   &__value { font-size: 14px; color: #1a1a2e; font-weight: 500; }
 }
+
+
+// ============================================================
+// TNPM UI SYNC — Đồng bộ trang cũ (Reborn) sang style TNPM mới
+// Áp dụng cho tất cả trang dùng .card-box + .title-action
+// ============================================================
+
+// Nền trang tổng thể — tất cả main-content wrapper
+.main-content__wrapper {
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+
+// Card-box: bo tròn, shadow mềm hơn, nền trắng sạch
+.card-box {
+  background: #fff;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07) !important;
+  border: none !important;
+  // margin handled per-page
+  overflow: hidden;
+
+  // Title section trong card
+  .title-action {
+    padding: 20px 24px 16px !important;
+    border-bottom: 1px solid #f5f5f5;
+    background: #fff;
+
+    h1 {
+      font-size: 20px !important;
+      font-weight: 700 !important;
+      color: #1a1a2e !important;
+      margin: 0 !important;
+    }
+
+    // Action buttons (Thêm mới, etc.)
+    .actions {
+      .base-button {
+        border-radius: 8px !important;
+        font-size: 13px !important;
+        padding: 8px 18px !important;
+        font-weight: 500 !important;
+        height: auto !important;
+
+        // Primary button style
+        &:not(.base-button--variant-outline):not(.base-button--color-secondary):not(.base-button--color-transparent) {
+          background: #1890ff !important;
+          border-color: #1890ff !important;
+          color: #fff !important;
+          &:hover { background: #096dd9 !important; border-color: #096dd9 !important; }
+        }
+
+        // Outline / secondary
+        &.base-button--variant-outline,
+        &.base-button--color-secondary {
+          background: #fff !important;
+          border: 1px solid #d9d9d9 !important;
+          color: #595959 !important;
+          &:hover { border-color: #1890ff !important; color: #1890ff !important; background: #f0f7ff !important; }
+        }
+      }
+    }
+
+    // Extra actions row (Nhập, Xuất, ...)
+    .actions-extra {
+      margin-top: 8px !important;
+
+      .base-button {
+        border-radius: 8px !important;
+        font-size: 13px !important;
+        color: #595959 !important;
+        background: #fafafa !important;
+        border: 1px solid #e8e8e8 !important;
+        padding: 6px 14px !important;
+        height: auto !important;
+
+        &:hover {
+          color: #1890ff !important;
+          border-color: #1890ff !important;
+          background: #f0f7ff !important;
+        }
+
+        svg { width: 16px !important; height: 16px !important; color: inherit !important; }
+      }
+    }
+  }
+}
+
+// ── Table bên trong card-box ──────────────────────────────────────────────────
+.card-box {
+  // BoxTable wrapper
+  table, .box-table {
+    font-size: 13px !important;
+    border-collapse: collapse !important;
+
+    thead tr {
+      background: #fafafa !important;
+      th {
+        padding: 12px 14px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        color: #8c8c8c !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        white-space: nowrap;
+        text-transform: none !important;
+        letter-spacing: 0 !important;
+      }
+    }
+
+    tbody tr {
+      transition: background 0.15s;
+      td {
+        padding: 12px 14px !important;
+        border-bottom: 1px solid #f5f5f5 !important;
+        color: #1a1a2e !important;
+        vertical-align: middle !important;
+        font-size: 13px !important;
+      }
+      &:last-child td { border-bottom: none !important; }
+      &:hover td { background: #fafcff !important; }
+    }
+  }
+
+  // Pagination
+  .pagination-wrapper,
+  [class*="pagination"] {
+    padding: 12px 20px !important;
+    border-top: 1px solid #f0f0f0 !important;
+    background: #fff !important;
+  }
+}
+
+// ── Filter / search bar ───────────────────────────────────────────────────────
+.card-box {
+  // Quick search / filter row
+  .quick__search,
+  [class*="filter"],
+  [class*="search"] {
+    padding: 14px 20px !important;
+    background: #fafafa !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    gap: 10px;
+  }
+
+  // Tab navigation (Danh sách / Thống kê / Phân tích)
+  [class*="tab"],
+  .swiper,
+  .swiper-wrapper {
+    .swiper-slide,
+    [class*="tab-item"],
+    li[class*="tab"] {
+      font-size: 13px !important;
+      padding: 12px 20px !important;
+    }
+  }
+}
+
+// ── Status badges đồng bộ ─────────────────────────────────────────────────────
+.card-box {
+  [class*="badge"],
+  [class*="status"],
+  [class*="tag"] {
+    border-radius: 12px !important;
+    font-size: 11px !important;
+    padding: 3px 10px !important;
+    font-weight: 500 !important;
+  }
+}
+
+// ── Button action icons trong table row ───────────────────────────────────────
+.card-box {
+  .actions-row,
+  [class*="action"] {
+    .base-button--variant-outline,
+    button[class*="action"],
+    button[class*="edit"],
+    button[class*="view"],
+    button[class*="delete"] {
+      border-radius: 6px !important;
+      width: 30px !important;
+      height: 30px !important;
+      padding: 0 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border: none !important;
+      font-size: 14px !important;
+      cursor: pointer !important;
+      transition: all 0.15s !important;
+    }
+  }
+}
+
+// ── Modal đồng bộ (components/modal) ─────────────────────────────────────────
+.modal {
+  &__overlay, .modal-backdrop {
+    background: rgba(0,0,0,0.45) !important;
+  }
+
+  &__box, .modal-content, [class*="modal-container"] {
+    border-radius: 14px !important;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18) !important;
+    border: none !important;
+    overflow: hidden;
+  }
+
+  &__header, .modal-header {
+    padding: 20px 24px 16px !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    background: #fff !important;
+
+    h2, h3, [class*="title"] {
+      font-size: 17px !important;
+      font-weight: 700 !important;
+      color: #1a1a2e !important;
+      margin: 0 !important;
+    }
+  }
+
+  &__footer, .modal-footer {
+    padding: 16px 24px !important;
+    border-top: 1px solid #f0f0f0 !important;
+    background: #fff !important;
+  }
+
+  // Close button
+  &__close, button[class*="close"] {
+    border-radius: 8px !important;
+    background: #f5f5f5 !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    &:hover { background: #ffccc7 !important; color: #ff4d4f !important; }
+  }
+}
+
+// ── Form inputs đồng bộ (trong modal/form) ────────────────────────────────────
+.base-input,
+.base-input__field,
+input[class*="base-input"],
+.base-select-fill,
+[class*="react-select"] .control,
+[class*="-control"] {
+  border-radius: 8px !important;
+  border-color: #d9d9d9 !important;
+  font-size: 14px !important;
+  min-height: 36px !important;
+  transition: border-color 0.2s !important;
+
+  &:focus, &:focus-within {
+    border-color: #1890ff !important;
+    box-shadow: 0 0 0 2px #e6f7ff !important;
+    outline: none !important;
+  }
+}
+
+// ── Page padding ─────────────────────────────────────────────────────────────
+// Chỉ áp dụng cho trang TNPM mới (có .tnpm-list-page), không ảnh hưởng trang cũ
+.tnpm-list-page {
+  .page-header { margin-bottom: 20px; }
+}
+
+
+// ── page-customer specific layout fixes ─────────────────────────────────────
+.page-content.page-customer {
+  background: #f5f6fa;
+  padding: 0;
+
+  // TitleAction sits above card-box
+  > .title-action {
+    padding: 20px 24px 12px !important;
+    margin: 0 !important;
+    background: transparent !important;
+
+    h1 {
+      font-size: 20px !important;
+      font-weight: 700 !important;
+      color: #1a1a2e !important;
+    }
+  }
+}
