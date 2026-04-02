@@ -80,38 +80,6 @@ const renderPartner = (item: IInventoryLedgerResponse) => {
   const name = item.partnerName && item.partnerName !== "Không xác định"
     ? item.partnerName : null;
 
-  // ── Export Excel ────────────────────────────────────────────────────────────
-  const handleExportExcel = async () => {
-    if (isExporting) return;
-    setIsExporting(true);
-    try {
-      const base64 = await InventoryService.exportLedger({
-        refType:     params.refType     || undefined,
-        warehouseId: params.warehouseId ? +params.warehouseId : undefined,
-        keyword:     params.keyword     || undefined,
-      });
-      const binary = atob(base64);
-      const bytes  = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-      const blob = new Blob([bytes], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const url  = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href     = url;
-      link.download = `so_kho_${new Date().toISOString().slice(0, 10)}.xlsx`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-      showToast("Xuất Excel thành công!", "success");
-    } catch (e: any) {
-      showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
   return (
     <div className="wbl-partner">
       <div className="wbl-partner__name">
@@ -362,6 +330,38 @@ export default function WarehouseBookList() {
     "",            "",
     "",            "text-center",
   ];
+
+  // ── Export Excel ──────────────────────────────────────────────────────
+  const handleExportExcel = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      const base64 = await InventoryService.exportLedger({
+        refType:     params.refType     || undefined,
+        warehouseId: params.warehouseId ? +params.warehouseId : undefined,
+        keyword:     params.keyword     || undefined,
+      });
+      const binary = atob(base64);
+      const bytes  = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      const blob = new Blob([bytes], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url  = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href     = url;
+      link.download = `so_kho_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast("Xuất Excel thành công!", "success");
+    } catch (e: any) {
+      showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const titleActions: ITitleActions = {
     actions: [

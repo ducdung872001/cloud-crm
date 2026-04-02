@@ -132,6 +132,7 @@ export default function WarehouseReportSlowView() {
   const [warehouseList, setWarehouseList] = useState<{ value: number; label: string }[]>([]);
   const [isLoading, setIsLoading]       = useState(false);
   const [hasFetched, setHasFetched]     = useState(false);
+  const [isExporting, setIsExporting]   = useState(false);
   const [data, setData]                 = useState<ISlowData | null>(null);
 
   // Load warehouse list
@@ -180,6 +181,45 @@ export default function WarehouseReportSlowView() {
   const donutOptions = useMemo(() => buildDonutOptions(buckets, threshold), [buckets, threshold]);
   const barOptions   = useMemo(() => buildBarOptions(groups), [groups]);
 
+  // ── Export Excel — dùng data `rows` đã có, không cần gọi lại API ───────────
+  const handleExportExcel = () => {
+    if (isExporting || rows.length === 0) return;
+    setIsExporting(true);
+    try {
+      const SUGGESTION_LABEL: Record<string, string> = {
+        URGENT: "Xử lý khẩn", PROMO: "Khuyến mãi", TRANSFER: "Điều chuyển", WATCH: "Theo dõi"
+      };
+      const header = ["STT","Tên sản phẩm","SKU","Danh mục","Kho","Tồn kho","Số ngày tồn","Giá trị ứ đọng (VNĐ)","Lần xuất cuối","Đề xuất xử lý"];
+      const dataRows = rows.map((r, i) => [
+        String(i+1), r.productName, r.sku, r.categoryName, r.warehouseName,
+        String(r.endStock), String(r.stockDays),
+        String(r.lockedValue), r.lastExportDate ?? "—",
+        SUGGESTION_LABEL[r.suggestion] ?? r.suggestion,
+      ]);
+      const esc = (s: string) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+      const cell = (v: string) => `<Cell><Data ss:Type="String">${esc(v)}</Data></Cell>`;
+      const row  = (cells: string[]) => `<Row>${cells.join("")}</Row>`;
+      const titleLabel = `BÁO CÁO HÀNG CHẬM LUÂN CHUYỂN — Ngưỡng ${threshold} ngày`;
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+<Worksheet ss:Name="Hàng chậm luân chuyển"><Table>
+${row([`<Cell ss:MergeAcross="${header.length-1}"><Data ss:Type="String">${esc(titleLabel)}</Data></Cell>`])}
+${row([`<Cell ss:MergeAcross="${header.length-1}"><Data ss:Type="String">Ngày xuất: ${new Date().toLocaleDateString("vi-VN")}</Data></Cell>`])}
+${row(header.map(h => cell(h)))}
+${dataRows.map(r => row(r.map(v => cell(v)))).join("\n")}
+${row([`<Cell ss:MergeAcross="${header.length-1}"><Data ss:Type="String">Tổng: ${rows.length} SP — Tổng giá trị ứ đọng: ${rows.reduce((s,r)=>s+r.lockedValue,0).toLocaleString("vi-VN")} VNĐ</Data></Cell>`])}
+</Table></Worksheet></Workbook>`;
+      const blob = new Blob([xml], { type: "application/vnd.ms-excel;charset=utf-8" });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      a.href=url; a.download=`hang_cham_luan_chuyen_${threshold}ngay_${new Date().toISOString().slice(0,10)}.xls`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const alertTitle = summary
     ? `Phát hiện ${summary.slowSkuCount} sản phẩm chậm luân chuyển trên ${threshold} ngày`
     : "";
@@ -217,6 +257,17 @@ export default function WarehouseReportSlowView() {
         <button className="btn btn-primary" type="button" onClick={fetchReport} disabled={isLoading}>
           {isLoading ? "Đang tải..." : "Lọc"}
         </button>
+        {hasFetched && rows.length > 0 && (
+          <button
+            className="btn btn-primary"
+            type="button"
+            onClick={handleExportExcel}
+            disabled={isExporting}
+            style={{ marginLeft: 8, background: "transparent", border: "1px solid var(--primary-color)", color: "var(--primary-color)" }}
+          >
+            {isExporting ? "Đang xuất..." : "Xuất Excel"}
+          </button>
+        )}
       </div>
 
       {/* ── Alert banner ── */}

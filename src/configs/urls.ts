@@ -618,6 +618,7 @@ export const urlsApi = {
   //warehouse
   stockTransfer: {
     list: prefixInventory + "/stockTransfer/list",
+    export: prefixInventory + "/stockTransfer/export",
     get: prefixInventory + "/stockTransfer/get",
     update: prefixInventory + "/stockTransfer/update",
     delete: prefixInventory + "/stockTransfer/delete",
@@ -669,11 +670,11 @@ export const urlsApi = {
     update: prefixInventory + "/warehouse/update",
     delete: prefixInventory + "/warehouse/delete",
     ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
-    ledgerExport: prefixInventory + "/inventoryTransaction/ledger/export",
     ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
     saleExportList: prefixInventory + "/inventoryTransaction/sale/list",
     saleExportSummary: prefixInventory + "/inventoryTransaction/sale/summary",
     destroyList: prefixInventory + "/inventoryTransaction/destroy/list",
+    destroyExport: prefixInventory + "/inventoryTransaction/destroy/export",
     destroyDetail: prefixInventory + "/inventoryTransaction/destroy/get",
     destroySummary: prefixInventory + "/inventoryTransaction/destroy/summary",
     costSummary: prefixInventory + "/inventoryBalance/cost/summary",
@@ -2367,6 +2368,7 @@ export const urlsApi = {
     cancel: prefixInventory + "/stockAdjust/cancel",
     view: prefixInventory + "/stockAdjust/view",
     list: prefixInventory + "/stockAdjust/list",
+    export: prefixInventory + "/stockAdjust/export",
     // lấy danh sách sản phẩm có trong kho
     productList: prefixInventory + "/inventoryBalance/stockProduct/list",
     // xóa đi 1 sản phẩm

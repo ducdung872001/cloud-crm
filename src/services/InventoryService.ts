@@ -65,30 +65,6 @@ export default {
     }).then((res) => res.json());
   },
 
-  // GET /inventoryTransaction/ledger/export
-  /**
-   * Xuất Sổ kho ra Base64 xlsx.
-   * Hỗ trợ filter: refType | warehouseId | keyword.
-   * FE decode → Blob → download.
-   */
-  exportLedger: (params?: {
-    refType?: string;
-    warehouseId?: number;
-    keyword?: string;
-  }, signal?: AbortSignal): Promise<string> => {
-    const qs = new URLSearchParams();
-    if (params?.refType)                    qs.set("refType",     params.refType);
-    if (params?.warehouseId !== undefined)  qs.set("warehouseId", String(params.warehouseId));
-    if (params?.keyword)                    qs.set("keyword",     params.keyword);
-    const url = `${urlsApi.inventory.ledgerExport}${qs.toString() ? "?" + qs.toString() : ""}`;
-    return fetch(url, { method: "GET", signal })
-      .then(async (res) => {
-        const json = await res.json();
-        if (json.code !== 0) throw new Error(json.message ?? "Xuất Excel thất bại");
-        return json.result as string;
-      });
-  },
-
   // GET /inventoryTransaction/ledger/get?id=:id
   ledgerDetail: (id: number, signal?: AbortSignal) => {
     return fetch(`${urlsApi.inventory.ledgerDetail}?id=${id}`, {
@@ -225,6 +201,20 @@ export default {
   //
   // GET /inventoryTransaction/destroy/list
   // Params: warehouseId, keyword, page, size
+  exportDestroy: (params?: { warehouseId?: number; keyword?: string; status?: number }, signal?: AbortSignal): Promise<string> => {
+    const qs = new URLSearchParams();
+    if (params?.warehouseId !== undefined) qs.set("warehouseId", String(params.warehouseId));
+    if (params?.keyword)                   qs.set("keyword",     params.keyword);
+    if (params?.status !== undefined)      qs.set("status",      String(params.status));
+    return fetch(`${urlsApi.inventory.destroyExport}${qs.toString() ? "?" + qs.toString() : ""}`, { method: "GET", signal })
+      .then(async r => { const j = await r.json(); if (j.code !== 0) throw new Error(j.message ?? "Xuất Excel thất bại"); return j.result as string; });
+  },
+  exportTransfer: (params?: { status?: number }, signal?: AbortSignal): Promise<string> => {
+    const qs = new URLSearchParams();
+    if (params?.status !== undefined) qs.set("status", String(params.status));
+    return fetch(`${urlsApi.stockTransfer.export}${qs.toString() ? "?" + qs.toString() : ""}`, { method: "GET", signal })
+      .then(async r => { const j = await r.json(); if (j.code !== 0) throw new Error(j.message ?? "Xuất Excel thất bại"); return j.result as string; });
+  },
   destroyList: (params?: { warehouseId?: number; keyword?: string; page?: number; size?: number }, signal?: AbortSignal) => {
     return fetch(`${urlsApi.inventory.destroyList}${convertParamsToString(params)}`, {
       signal,
