@@ -3,6 +3,7 @@ import moment from "moment";
 import Loading from "components/loading";
 import "./Overview.scss";
 import ModalAddChannel from "./ModalAddChannel/ModalAddChannel";
+import OrderRequestService from "services/OrderRequestService";
 import MultiChannelService, {
   IStatCards,
   IChannelRow,
@@ -47,6 +48,7 @@ export default function Overview() {
   const [modalConnect, setModalConnect] = useState(false);
 
   // null = chưa load xong; [] = load xong, không có data; [...] = có data thật
+  const [isExporting, setIsExporting] = useState(false);
   const [statCards, setStatCards]   = useState<IStatCards | null>(null);
   const [channels,  setChannels]    = useState<IChannelRow[] | null>(null);
   const [statError, setStatError]   = useState(false);
@@ -170,6 +172,94 @@ export default function Overview() {
     },
   ];
 
+  // ── Export Excel ────────────────────────────────────────────────────────────
+  const handleExportAll = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      const res = await OrderRequestService.export({});
+      if (!res || res.code !== 0) throw new Error(res?.message ?? "Xuất Excel thất bại");
+      const base64 = res.result as string;
+      const bin = atob(base64); const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const blob = new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `don_hang_da_kenh_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    } catch (e: any) {
+      alert(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // ── Xuất báo cáo tổng quan (FE-only, dùng statCards + channels đã load) ───
+  const handleExportReport = () => {
+    const st  = statCards ?? EMPTY_STAT;
+    const chs = channels  ?? [];
+    const esc = (s: string) =>
+      String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const fmtNum = (n: number) => (n ?? 0).toLocaleString("vi-VN");
+    const fmtPct = (n: number) => (n > 0 ? "+" : "") + (n ?? 0).toFixed(1) + "%";
+    const trendLabel = (t: string) => t === "UP" ? "↑ Tăng" : t === "DOWN" ? "↓ Giảm" : "→ Ổn định";
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+<Styles>
+  <Style ss:ID="t"><Font ss:Bold="1" ss:Size="14" ss:Color="#015aa4"/></Style>
+  <Style ss:ID="h"><Font ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#015aa4" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center"/></Style>
+  <Style ss:ID="lb"><Font ss:Bold="1"/></Style>
+  <Style ss:ID="nr"><Alignment ss:Horizontal="Right"/><NumberFormat ss:Format="#,##0.##"/></Style>
+  <Style ss:ID="sum"><Font ss:Bold="1" ss:Color="#015aa4"/><Interior ss:Color="#E0EBF8" ss:Pattern="Solid"/></Style>
+</Styles>
+<Worksheet ss:Name="Báo cáo tổng quan"><Table>
+<Column ss:Width="210"/><Column ss:Width="154"/>
+<Row ss:Height="28"><Cell ss:MergeAcross="1" ss:StyleID="t"><Data ss:Type="String">BÁO CÁO BÁN HÀNG ĐA KÊNH — Hôm nay ${new Date().toLocaleDateString("vi-VN")}</Data></Cell></Row>
+<Row ss:Height="16"><Cell ss:MergeAcross="1"><Data ss:Type="String">Ngày xuất: ${new Date().toLocaleString("vi-VN")}</Data></Cell></Row>
+<Row><Cell/></Row>
+<Row><Cell ss:StyleID="lb"><Data ss:Type="String">Doanh thu hôm nay (VNĐ)</Data></Cell><Cell ss:StyleID="nr"><Data ss:Type="Number">${st.revenue}</Data></Cell></Row>
+<Row><Cell ss:StyleID="lb"><Data ss:Type="String">Tăng trưởng doanh thu</Data></Cell><Cell><Data ss:Type="String">${esc(fmtPct(st.revenueDeltaPct))}</Data></Cell></Row>
+<Row><Cell ss:StyleID="lb"><Data ss:Type="String">Tổng đơn hàng</Data></Cell><Cell ss:StyleID="nr"><Data ss:Type="Number">${st.orderCount}</Data></Cell></Row>
+<Row><Cell ss:StyleID="lb"><Data ss:Type="String">Chênh lệch đơn so hôm qua</Data></Cell><Cell><Data ss:Type="String">${st.orderDeltaCount > 0 ? "+" : ""}${st.orderDeltaCount} đơn</Data></Cell></Row>
+<Row><Cell ss:StyleID="lb"><Data ss:Type="String">Đơn hoàn thành</Data></Cell><Cell ss:StyleID="nr"><Data ss:Type="Number">${st.doneCount}</Data></Cell></Row>
+<Row><Cell ss:StyleID="lb"><Data ss:Type="String">Đơn đã hủy</Data></Cell><Cell ss:StyleID="nr"><Data ss:Type="Number">${st.cancelCount}</Data></Cell></Row>
+<Row><Cell ss:StyleID="lb"><Data ss:Type="String">Giá trị đơn TB (VNĐ)</Data></Cell><Cell ss:StyleID="nr"><Data ss:Type="Number">${st.avgOrderValue}</Data></Cell></Row>
+<Row><Cell/></Row>
+<Row ss:Height="22">
+  <Cell ss:StyleID="h"><Data ss:Type="String">Kênh bán hàng</Data></Cell>
+  <Cell ss:StyleID="h"><Data ss:Type="String">Số đơn</Data></Cell>
+  <Cell ss:StyleID="h"><Data ss:Type="String">Doanh thu (VNĐ)</Data></Cell>
+  <Cell ss:StyleID="h"><Data ss:Type="String">TB/đơn (VNĐ)</Data></Cell>
+  <Cell ss:StyleID="h"><Data ss:Type="String">Tỉ trọng</Data></Cell>
+  <Cell ss:StyleID="h"><Data ss:Type="String">Xu hướng</Data></Cell>
+</Row>
+${chs.map(ch => `<Row>
+  <Cell><Data ss:Type="String">${esc(ch.channelName)}</Data></Cell>
+  <Cell ss:StyleID="nr"><Data ss:Type="Number">${ch.orderCount}</Data></Cell>
+  <Cell ss:StyleID="nr"><Data ss:Type="Number">${ch.revenue}</Data></Cell>
+  <Cell ss:StyleID="nr"><Data ss:Type="Number">${ch.avgOrderValue}</Data></Cell>
+  <Cell><Data ss:Type="String">${(ch.ratio * 100).toFixed(1)}%</Data></Cell>
+  <Cell><Data ss:Type="String">${trendLabel(ch.trend)}</Data></Cell>
+</Row>`).join("")}
+<Row ss:Height="20">
+  <Cell ss:StyleID="sum"><Data ss:Type="String">Tổng cộng</Data></Cell>
+  <Cell ss:StyleID="sum"><Data ss:Type="Number">${chs.reduce((s,c)=>s+c.orderCount,0)}</Data></Cell>
+  <Cell ss:StyleID="sum"><Data ss:Type="Number">${chs.reduce((s,c)=>s+c.revenue,0)}</Data></Cell>
+  <Cell/><Cell/><Cell/>
+</Row>
+</Table></Worksheet></Workbook>`;
+
+    const blob = new Blob([xml], { type: "application/vnd.ms-excel;charset=utf-8" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href = url;
+    a.download = `bao_cao_ban_hang_da_kenh_${new Date().toISOString().slice(0,10)}.xls`;
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  };
+
   // ─── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="overview-page">
@@ -187,7 +277,11 @@ export default function Overview() {
           </div>
         </div>
         <div className="conatiner-button">
-          <div className="button-export">
+          <div
+            className="button-export"
+            onClick={handleExportReport}
+            style={{ cursor: "pointer" }}
+          >
             <span style={{ fontSize: 14, fontWeight: "500" }}>Xuất báo cáo</span>
           </div>
           <div className="button-connect" onClick={() => setModalConnect(true)}>
@@ -231,8 +325,14 @@ export default function Overview() {
       <div className="table-result-app">
         <div className="table-header">
           <span style={{ fontSize: 16, fontWeight: "700" }}>Hiệu quả từng kênh hôm nay</span>
-          <div className="button-export">
-            <span style={{ fontSize: 14, fontWeight: "500" }}>Xuất tất cả đơn</span>
+          <div
+            className="button-export"
+            onClick={handleExportAll}
+            style={{ cursor: isExporting ? "not-allowed" : "pointer", opacity: isExporting ? 0.7 : 1 }}
+          >
+            <span style={{ fontSize: 14, fontWeight: "500" }}>
+              {isExporting ? "Đang xuất..." : "Xuất tất cả đơn"}
+            </span>
           </div>
         </div>
 

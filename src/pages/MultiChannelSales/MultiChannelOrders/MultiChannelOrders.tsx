@@ -59,6 +59,7 @@ export default function MultiChannelOrders() {
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
 
   const [listOrder, setListOrder] = useState([]);
 
@@ -86,6 +87,30 @@ export default function MultiChannelOrders() {
   //     });
   //   };
   const abortController = new AbortController();
+  const handleExportExcel = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      // Không có filter trên trang này — xuất toàn bộ
+      const res = await OrderRequestService.export({});
+      if (!res || res.code !== 0) throw new Error(res?.message ?? "Xuất Excel thất bại");
+      const base64 = res.result as string;
+      const bin = atob(base64); const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const blob = new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `don_hang_da_kenh_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    } catch (e: any) {
+      console.error("Export failed", e);
+      alert(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const fetchData = async (paramsSearch: any) => {
     //   setIsLoading(true);
 
@@ -393,8 +418,14 @@ export default function MultiChannelOrders() {
         </div>
 
         <div className="conatiner-button">
-          <div className="button-export">
-            <span style={{ fontSize: 14, fontWeight: "500" }}>Xuất Excel</span>
+          <div
+            className="button-export"
+            onClick={handleExportExcel}
+            style={{ cursor: isExporting ? "not-allowed" : "pointer", opacity: isExporting ? 0.7 : 1 }}
+          >
+            <span style={{ fontSize: 14, fontWeight: "500" }}>
+              {isExporting ? "Đang xuất..." : "Xuất Excel"}
+            </span>
           </div>
         </div>
       </div>

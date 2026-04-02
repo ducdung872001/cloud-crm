@@ -43,6 +43,7 @@ const ReturnProductPage: React.FC = () => {
   const [toDate,       setToDate]       = useState("");
 
   // ── Modal state ─────────────────────────────────────────────────────────────
+  const [isExporting,   setIsExporting]   = useState(false);
   const [createOpen,    setCreateOpen]    = useState(false);
   const [detailOpen,    setDetailOpen]    = useState(false);
   const [selectedItem,  setSelectedItem]  = useState<ReturnProduct | null>(null);
@@ -165,10 +166,46 @@ const ReturnProductPage: React.FC = () => {
     );
   }, []);
 
+  const handleExport = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      const returnTypeNum =
+        filterType === "return" ? 1 : filterType === "exchange" ? 2 : undefined;
+      const statusNum =
+        filterStatus === "done"    ? 1
+        : filterStatus === "pending" ? 2
+        : filterStatus === "cancel"  ? 3
+        : undefined;
+      const base64 = await ReturnInvoiceService.exportReturnExchange({
+        fromDate:    fromDate    || undefined,
+        toDate:      toDate      || undefined,
+        invoiceCode: search.trim() || undefined,
+        status:      statusNum,
+        returnType:  returnTypeNum,
+      });
+      const bin = atob(base64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const blob = new Blob([bytes], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `doi_tra_hang_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    } catch (e: any) {
+      alert(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="return-product">
       <div className="return-product__main">
-        <ReturnTopbar onCreateClick={() => setCreateOpen(true)} />
+        <ReturnTopbar onCreateClick={() => setCreateOpen(true)} onExport={handleExport} isExporting={isExporting} />
 
         <div className="return-product__content">
           <div className="return-product__inner">
