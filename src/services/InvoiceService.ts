@@ -176,4 +176,31 @@ export default {
     }).then((res) => res.json());
   },
 
+  /**
+   * GET /sales/invoice/customer-stats?customerId=X
+   * Tổng doanh số (fee hoàn thành) + số HĐ hoàn thành của 1 KH.
+   * Không phụ thuộc viewMode — luôn trả đúng số liệu.
+   */
+  getCustomerStats: (
+    customerId: number,
+    signal?: AbortSignal
+  ): Promise<{ totalSales: number; invoiceCount: number; lastBoughtDate: string | null }> => {
+    return fetch(`${urlsApi.invoice.customerStats}?customerId=${customerId}`, {
+      method: "GET",
+      signal,
+    })
+      .then(async (res) => {
+        const json = await res.json();
+        const empty = { totalSales: 0, invoiceCount: 0, lastBoughtDate: null };
+        if (json.code !== 0) return empty;
+        const r = json.result ?? {};
+        return {
+          totalSales:     typeof r.totalSales   === "number" ? r.totalSales   : Number(r.totalSales ?? 0),
+          invoiceCount:   typeof r.invoiceCount === "number" ? r.invoiceCount : Number(r.invoiceCount ?? 0),
+          lastBoughtDate: typeof r.lastBoughtDate === "string" ? r.lastBoughtDate : null,
+        };
+      })
+      .catch(() => ({ totalSales: 0, invoiceCount: 0, lastBoughtDate: null }));
+  },
+
 };

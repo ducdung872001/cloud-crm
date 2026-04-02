@@ -15,14 +15,14 @@ import InvoiceService from "services/InvoiceService";
 import ShowModalDetailSaleInvoice from "pages/Sell/SaleInvoiceList/partials/ShowModalDetailSaleInvoice";
 import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ── Kiểu dữ liệu KPI bubble-up ────────────────────────────────────────────────
 
 export interface InvoiceStats {
-  totalSales:     number;   // result.totalSales  — tổng fee (doanh số)
-  paid:           number;   // result.totalRevenue — tổng đã thu
-  debt:           number;   // aggregate từ items
-  invoiceCount:   number;   // pagedLst.total
-  completedCount: number;   // statusCounts[1]
+  totalSales:     number;
+  paid:           number;
+  debt:           number;
+  invoiceCount:   number;
+  completedCount: number;
   lastBoughtDate: string | null;
 }
 
@@ -49,6 +49,7 @@ export default function ListBill({ tab, onStatsLoaded }: ListBillProps) {
     invoiceTypes: JSON.stringify(["IV1", "IV3"]),
   });
 
+  // Gán customerId khi route id sẵn sàng
   useEffect(() => {
     if (id) setParams((prev) => ({ ...prev, customerId: +id }));
   }, [id]);
@@ -62,13 +63,12 @@ export default function ListBill({ tab, onStatsLoaded }: ListBillProps) {
         return;
       }
 
-      // ── Cấu trúc response thực tế từ /invoice/list/v2 ────────────────────
-      // response.result.pagedLst.items[]  → item.invoice + item.products
-      // response.result.totalSales        → tổng fee toàn bộ
-      // response.result.totalRevenue      → tổng paid toàn bộ
-      // response.result.statusCounts      → { "1": n, "2": n, "3": n }
-      // item.invoiceId                    → ID record
-      // item.invoice.invoiceCode          → mã hóa đơn
+      // API /invoice/list/v2 trả nested structure:
+      //   response.result.pagedLst.items[].invoice   → tài chính (invoiceCode, fee, paid, debt...)
+      //   response.result.pagedLst.items[].invoiceId → ID record
+      //   response.result.totalSales                 → SUM(fee) toàn bộ (all pages)
+      //   response.result.totalRevenue               → SUM(paid) toàn bộ
+      //   response.result.statusCounts               → { "1": n, "2": n, "3": n }
       const result   = response.result;
       const paged    = result?.pagedLst ?? {};
       const rawItems: any[] = paged.items ?? [];
@@ -76,19 +76,19 @@ export default function ListBill({ tab, onStatsLoaded }: ListBillProps) {
       setListBill(rawItems);
       setIsNoItem(+paged.total === 0 && +paged.page === 1);
 
-      // ── Bubble KPI lên DetailPersonList ───────────────────────────────────
+      // Bubble KPI lên DetailPersonList
       if (onStatsLoaded) {
         const sc = result?.statusCounts ?? {};
 
-        // Aggregate debt từ trang hiện tại (API không trả totalDebt trực tiếp)
+        // Aggregate debt từ trang hiện tại (API không có totalDebt riêng)
         let totalDebt = 0;
         rawItems.forEach((item: any) => {
           totalDebt += Number((item.invoice ?? item).debt ?? 0);
         });
 
         // items sort desc → items[0] = mới nhất
-        const firstInv = rawItems[0]?.invoice ?? rawItems[0] ?? null;
-        const lastDate = firstInv
+        const firstInv    = rawItems[0]?.invoice ?? rawItems[0] ?? null;
+        const lastBought  = firstInv
           ? (firstInv.createdTime ?? firstInv.receiptDate ?? null)
           : null;
 
@@ -98,7 +98,7 @@ export default function ListBill({ tab, onStatsLoaded }: ListBillProps) {
           debt:           totalDebt,
           invoiceCount:   +paged.total,
           completedCount: Number(sc[1] ?? 0),
-          lastBoughtDate: lastDate,
+          lastBoughtDate: lastBought,
         });
       }
     } finally {
@@ -112,7 +112,7 @@ export default function ListBill({ tab, onStatsLoaded }: ListBillProps) {
     }
   }, [tab, params]);
 
-  // ── Table mapping ─────────────────────────────────────────────────────────
+  // ── Cấu hình bảng ────────────────────────────────────────────────────────
 
   const titles = [
     "STT", "Mã hóa đơn", "Ngày bán",
@@ -127,14 +127,14 @@ export default function ListBill({ tab, onStatsLoaded }: ListBillProps) {
   ];
 
   const dataMappingArray = (item: any, index: number) => {
-    // API nested: item.invoice chứa tài chính, item.invoiceId là ID
+    // item.invoice chứa tài chính; item.invoiceId là ID của record
     const inv = item.invoice ?? item;
     const iId = item.invoiceId ?? inv.id;
 
     return [
       getPageOffset(params) + index + 1,
 
-      // Mã hóa đơn — click xem chi tiết
+      // Mã hóa đơn — click mở modal chi tiết
       <span
         key={`code-${iId}`}
         style={{ cursor: "pointer", color: "var(--primary-color-80)", fontWeight: 500 }}
@@ -156,7 +156,7 @@ export default function ListBill({ tab, onStatsLoaded }: ListBillProps) {
       formatCurrency(inv.paid      ?? 0),
       formatCurrency(inv.amountCard ?? 0),
 
-      // Công nợ — clickable nếu > 0
+      // Công nợ — click thu hồi nếu > 0
       (inv.debt ?? 0) > 0 ? (
         <Tippy key={`debt-${iId}`} content="Click để thu hồi công nợ">
           <span

@@ -25,6 +25,7 @@ import ScoreHistoryModal from "./partials/ScoreHistoryModal";
 import EditScoreModal from "./partials/EditScoreModal";
 import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
 import DebtManagementService from "services/DebtManagementService";
+import InvoiceService from "services/InvoiceService";
 
 import "./DetailPersonList.scss";
 
@@ -62,6 +63,10 @@ export default function DetailPersonList() {
   const [showKpiDebt, setShowKpiDebt] = useState<boolean>(false);
   // Công nợ thực từ cloud-billing (nguồn chính xác nhất)
   const [billingDebt, setBillingDebt] = useState<number | null>(null);
+  // Doanh số thực từ cloud-sales (totalFee HĐ hoàn thành — không phụ thuộc viewMode)
+  const [customerSalesStats, setCustomerSalesStats] = useState<{
+    totalSales: number; invoiceCount: number; lastBoughtDate: string | null;
+  } | null>(null);
 
   // Snapshot KPI từ customer list (customer/get không trả debt/paid/invoiceCount)
   const [listSnapshot] = useState<any>(() => {
@@ -117,6 +122,15 @@ export default function DetailPersonList() {
     DebtManagementService.getCustomerTotalDebt(+id)
       .then((total) => setBillingDebt(total))
       .catch(() => setBillingDebt(null));
+  }, [id]);
+
+  // Load tổng doanh số thực từ cloud-sales (tách riêng, không phụ thuộc viewMode)
+  useEffect(() => {
+    if (!id) return;
+    setCustomerSalesStats(null);
+    InvoiceService.getCustomerStats(+id)
+      .then((stats) => setCustomerSalesStats(stats))
+      .catch(() => setCustomerSalesStats(null));
   }, [id]);
 
   const lstInteract = [
@@ -238,10 +252,10 @@ export default function DetailPersonList() {
                 <span className="rds-kpi__label">Tổng doanh số</span>
                 <span className="rds-kpi__value rds-kpi__value--primary">
                   {parser(convertToPrettyNumber(
-                    invoiceStats?.totalSales ?? listSnapshot?.fee ?? d.fee ?? 0
+                    customerSalesStats?.totalSales ?? invoiceStats?.totalSales ?? listSnapshot?.fee ?? d.fee ?? 0
                   ))}
                 </span>
-                {(invoiceStats || listSnapshot) && (
+                {(customerSalesStats || invoiceStats || listSnapshot) && (
                   <span className="rds-kpi__sub">
                     Đã thu: {parser(convertToPrettyNumber(
                       invoiceStats?.paid ?? listSnapshot?.paid ?? 0
@@ -272,18 +286,20 @@ export default function DetailPersonList() {
                   Số HĐ hoàn thành
                 </span>
                 <span className="rds-kpi__value">
-                  {invoiceStats?.completedCount ?? listSnapshot?.invoiceCount ?? d.invoiceCount ?? 0}
+                  {customerSalesStats?.invoiceCount ?? invoiceStats?.completedCount ?? listSnapshot?.invoiceCount ?? d.invoiceCount ?? 0}
                 </span>
               </div>
 
               <div className="rds-kpi">
                 <span className="rds-kpi__label">Lần mua cuối</span>
                 <span className="rds-kpi__value rds-kpi__value--sm">
-                  {invoiceStats?.lastBoughtDate
-                    ? moment(invoiceStats.lastBoughtDate).format("DD/MM/YYYY")
-                    : (listSnapshot?.lastBoughtDate ?? d.lastBoughtDate)
-                      ? moment(listSnapshot?.lastBoughtDate ?? d.lastBoughtDate).format("DD/MM/YYYY")
-                      : notData}
+                  {(() => {
+                    const d1 = customerSalesStats?.lastBoughtDate
+                      ?? invoiceStats?.lastBoughtDate
+                      ?? listSnapshot?.lastBoughtDate
+                      ?? d.lastBoughtDate;
+                    return d1 ? moment(d1).format("DD/MM/YYYY") : notData;
+                  })()}
                 </span>
               </div>
             </div>
