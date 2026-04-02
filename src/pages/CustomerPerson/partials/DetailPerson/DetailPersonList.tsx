@@ -23,6 +23,8 @@ import AddConsultationScheduleModal from "pages/CalendarCommon/partials/AddConsu
 import AddPhoneModal from "pages/CallCenter/partials/AddPhoneModal";
 import ScoreHistoryModal from "./partials/ScoreHistoryModal";
 import EditScoreModal from "./partials/EditScoreModal";
+import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
+import DebtManagementService from "services/DebtManagementService";
 
 import "./DetailPersonList.scss";
 
@@ -51,6 +53,26 @@ export default function DetailPersonList() {
 
   // Accordion sidebar
   const [openSection, setOpenSection] = useState<string>("detail");
+
+  // KPI từ invoice list (cập nhật khi ListBill load xong)
+  const [invoiceStats, setInvoiceStats] = useState<{
+    totalSales: number; paid: number; debt: number;
+    invoiceCount: number; completedCount: number; lastBoughtDate: string | null;
+  }>(null);
+  const [showKpiDebt, setShowKpiDebt] = useState<boolean>(false);
+  // Công nợ thực từ cloud-billing (nguồn chính xác nhất)
+  const [billingDebt, setBillingDebt] = useState<number | null>(null);
+
+  // Snapshot KPI từ customer list (customer/get không trả debt/paid/invoiceCount)
+  const [listSnapshot] = useState<any>(() => {
+    try {
+      const snap = localStorage.getItem("customerListSnapshot");
+      if (!snap) return null;
+      const parsed = JSON.parse(snap);
+      // Chỉ dùng nếu snapshot đúng với customer này
+      return parsed?.id === +id ? parsed : null;
+    } catch { return null; }
+  });
 
   const [dataOther, setDataOther] = useState([]);
 
@@ -87,6 +109,15 @@ export default function DetailPersonList() {
   useEffect(() => {
     if (id && !deleteSignal) getDetailPerson();
   }, [id, deleteSignal]);
+
+  // Load tổng công nợ thực từ cloud-billing
+  useEffect(() => {
+    if (!id) return;
+    setBillingDebt(null);
+    DebtManagementService.getCustomerTotalDebt(+id)
+      .then((total) => setBillingDebt(total))
+      .catch(() => setBillingDebt(null));
+  }, [id]);
 
   const lstInteract = [
     { label: "Đặt lịch hẹn", icon: <Icon name="CalendarFill" />, type: "calendar" },
@@ -201,28 +232,58 @@ export default function DetailPersonList() {
               </div>
             </div>
 
-            {/* KPI cards */}
+            {/* KPI cards — số liệu từ invoice list API (invoiceStats) */}
             <div className="rds-kpi-grid">
               <div className="rds-kpi">
-                <span className="rds-kpi__label">Tổng chi tiêu</span>
+                <span className="rds-kpi__label">Tổng doanh số</span>
                 <span className="rds-kpi__value rds-kpi__value--primary">
-                  {parser(convertToPrettyNumber(d.paid || 0))}
+                  {parser(convertToPrettyNumber(
+                    invoiceStats?.totalSales ?? listSnapshot?.fee ?? d.fee ?? 0
+                  ))}
+                </span>
+                {(invoiceStats || listSnapshot) && (
+                  <span className="rds-kpi__sub">
+                    Đã thu: {parser(convertToPrettyNumber(
+                      invoiceStats?.paid ?? listSnapshot?.paid ?? 0
+                    ))}
+                  </span>
+                )}
+              </div>
+
+              {/* Công nợ — click để thu hồi nhanh */}
+              <div
+                className={`rds-kpi rds-kpi--clickable ${(billingDebt ?? invoiceStats?.debt ?? listSnapshot?.debt ?? d.debt ?? 0) > 0 ? "rds-kpi--debt" : ""}`}
+                onClick={() => { if ((billingDebt ?? invoiceStats?.debt ?? listSnapshot?.debt ?? d.debt ?? 0) > 0) setShowKpiDebt(true); }}
+                title={(billingDebt ?? invoiceStats?.debt ?? listSnapshot?.debt ?? d.debt ?? 0) > 0 ? "Click để thu hồi công nợ" : undefined}
+              >
+                <span className="rds-kpi__label">
+                  Công nợ
+                  {(billingDebt ?? invoiceStats?.debt ?? listSnapshot?.debt ?? d.debt ?? 0) > 0 && (
+                    <span className="rds-kpi__collect-hint"> · Thu hồi</span>
+                  )}
+                </span>
+                <span className={`rds-kpi__value ${(billingDebt ?? invoiceStats?.debt ?? listSnapshot?.debt ?? d.debt ?? 0) > 0 ? "rds-kpi__value--danger" : ""}`}>
+                  {parser(convertToPrettyNumber(billingDebt ?? invoiceStats?.debt ?? listSnapshot?.debt ?? d.debt ?? 0))}
                 </span>
               </div>
+
               <div className="rds-kpi">
-                <span className="rds-kpi__label">Công nợ</span>
-                <span className={`rds-kpi__value ${(d.debt || 0) > 0 ? "rds-kpi__value--danger" : ""}`}>
-                  {parser(convertToPrettyNumber(d.debt || 0))}
+                <span className="rds-kpi__label">
+                  Số HĐ hoàn thành
+                </span>
+                <span className="rds-kpi__value">
+                  {invoiceStats?.completedCount ?? listSnapshot?.invoiceCount ?? d.invoiceCount ?? 0}
                 </span>
               </div>
-              <div className="rds-kpi">
-                <span className="rds-kpi__label">Số hóa đơn</span>
-                <span className="rds-kpi__value">{d.invoiceCount || 0}</span>
-              </div>
+
               <div className="rds-kpi">
                 <span className="rds-kpi__label">Lần mua cuối</span>
                 <span className="rds-kpi__value rds-kpi__value--sm">
-                  {d.lastBoughtDate ? moment(d.lastBoughtDate).format("DD/MM/YYYY") : notData}
+                  {invoiceStats?.lastBoughtDate
+                    ? moment(invoiceStats.lastBoughtDate).format("DD/MM/YYYY")
+                    : (listSnapshot?.lastBoughtDate ?? d.lastBoughtDate)
+                      ? moment(listSnapshot?.lastBoughtDate ?? d.lastBoughtDate).format("DD/MM/YYYY")
+                      : notData}
                 </span>
               </div>
             </div>
@@ -300,7 +361,7 @@ export default function DetailPersonList() {
 
           {/* ─── RIGHT CONTENT — tabs ──────────────────────────── */}
           <div className="retail-detail__main">
-            <ListDetailTab data={d} />
+            <ListDetailTab data={d} onInvoiceStatsLoaded={setInvoiceStats} />
           </div>
 
         </div>
@@ -397,6 +458,18 @@ export default function DetailPersonList() {
           onHide={() => setShowModalEditScore(false)}
         />
       )}
+      {/* Thu hồi công nợ từ KPI card */}
+      <RecoverPublicDebts
+        onShow={showKpiDebt}
+        idCustomer={detailPerson?.id}
+        onHide={(reload) => {
+          setShowKpiDebt(false);
+          if (reload) {
+            getDetailPerson();
+            setInvoiceStats(null); // trigger ListBill re-fetch khi remount
+          }
+        }}
+      />
     </div>
   );
 }

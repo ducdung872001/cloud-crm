@@ -237,6 +237,13 @@
     &--danger  { color: var(--error-color, #ef4444); }
     &--sm      { font-size: 1.2rem; font-weight: 600; }
   }
+
+  &__sub {
+    font-size: 1.05rem;
+    color: var(--text-extra-color);
+    font-weight: 400;
+    margin-top: 1px;
+  }
 }
 
 // ── Loyalty block ─────────────────────────────────────────────────────────
@@ -379,5 +386,31 @@
 
     .list-tab .action__option--title { padding: 0 0.4rem; }
     .details-tab { background: transparent; padding: 0; }
+  }
+}
+
+// ── KPI card - clickable debt variant ────────────────────────────────────────
+.rds-kpi {
+  &--clickable {
+    cursor: default;
+  }
+
+  &--debt {
+    cursor: pointer;
+    border-color: var(--error-color, #ef4444);
+    background: #fff5f5;
+    transition: background 0.15s, box-shadow 0.15s;
+
+    &:hover {
+      background: #fee2e2;
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+  }
+
+  &__collect-hint {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--error-color, #ef4444);
+    opacity: 0.85;
   }
 }

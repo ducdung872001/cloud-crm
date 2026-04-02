@@ -1,16 +1,8 @@
 import React, { useState } from "react";
-import ListBill from "./partials/ListBill/ListBill";
+import ListBill, { InvoiceStats } from "./partials/ListBill/ListBill";
 import PurchasedProduct from "./partials/PurchasedProduct/PurchasedProduct";
 import PurchasedService from "./partials/PurchasedService/PurchasedService";
 import "./OrderList.scss";
-
-interface InvoiceStats {
-  paid: number;
-  debt: number;
-  invoiceCount: number;
-  completedCount: number;
-  lastBoughtDate: string | null;
-}
 
 interface OrderListProps {
   onInvoiceStatsLoaded?: (stats: InvoiceStats) => void;

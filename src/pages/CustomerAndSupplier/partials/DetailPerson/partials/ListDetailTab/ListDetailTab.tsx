@@ -5,14 +5,7 @@ import TicketPersonList from "./partials/TicketPersonList/TicketPersonList";
 import OrderList from "./partials/OrderList/OrderList";
 import InteractList from "./partials/InteractList";
 import "./ListDetailTab.scss";
-
-interface InvoiceStats {
-  paid: number;
-  debt: number;
-  invoiceCount: number;
-  completedCount: number;
-  lastBoughtDate: string | null;
-}
+import { InvoiceStats } from "./partials/OrderList/partials/ListBill/ListBill";
 
 interface ListDetailTabProps {
   data: ICustomerResponse;

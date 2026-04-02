@@ -55,7 +55,8 @@ export default function DetailPersonList() {
 
   // KPI từ invoice list (cập nhật khi ListBill load xong)
   const [invoiceStats, setInvoiceStats] = useState<{
-    paid: number; debt: number; invoiceCount: number; completedCount: number; lastBoughtDate: string | null;
+    totalSales: number; paid: number; debt: number;
+    invoiceCount: number; completedCount: number; lastBoughtDate: string | null;
   }>(null);
   const [showKpiDebt, setShowKpiDebt] = useState<boolean>(false);
 
@@ -211,10 +212,15 @@ export default function DetailPersonList() {
             {/* KPI cards — số liệu từ invoice list API (invoiceStats) */}
             <div className="rds-kpi-grid">
               <div className="rds-kpi">
-                <span className="rds-kpi__label">Tổng chi tiêu</span>
+                <span className="rds-kpi__label">Tổng doanh số</span>
                 <span className="rds-kpi__value rds-kpi__value--primary">
-                  {parser(convertToPrettyNumber(invoiceStats?.paid ?? d.paid ?? 0))}
+                  {parser(convertToPrettyNumber(invoiceStats?.totalSales ?? d.fee ?? 0))}
                 </span>
+                {invoiceStats && (
+                  <span className="rds-kpi__sub">
+                    Đã thu: {parser(convertToPrettyNumber(invoiceStats.paid))}
+                  </span>
+                )}
               </div>
 
               {/* Công nợ — click để thu hồi nhanh */}
@@ -328,7 +334,7 @@ export default function DetailPersonList() {
 
           {/* ─── RIGHT CONTENT — tabs ──────────────────────────── */}
           <div className="retail-detail__main">
-            <ListDetailTab data={d} />
+            <ListDetailTab data={d} onInvoiceStatsLoaded={setInvoiceStats} />
           </div>
 
         </div>
