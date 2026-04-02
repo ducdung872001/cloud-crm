@@ -325,3 +325,63 @@
   color: #15803d !important;
   cursor: default;
 }
+// ── Product autocomplete dropdown ─────────────────────────────────────────────
+.crm-product-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 0.8rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 999;
+  max-height: 280px;
+  overflow-y: auto;
+
+  &__header {
+    padding: 8px 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  &__empty {
+    padding: 12px;
+    font-size: 1.3rem;
+    color: var(--muted);
+    text-align: center;
+  }
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background 0.12s;
+    &:hover { background: #f0fdf4; }
+  }
+  &__avatar {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  &__name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  &__meta {
+    font-size: 1.1rem;
+    color: var(--muted);
+  }
+  &--variants .crm-product-dropdown__item {
+    border-bottom: 1px solid #f1f5f9;
+    &:last-child { border-bottom: none; }
+  }
+}

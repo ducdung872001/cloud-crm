@@ -3,6 +3,7 @@ import _ from "lodash";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
+import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { ISaveSearch } from "model/OtherModel";
@@ -14,17 +15,19 @@ import { IRoyaltyFilterRequest } from "@/model/loyalty/RoyaltyRequest";
 import { ILoyaltyWalletResponse } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
+import Icon from "components/icon";
 
 export default function LoyaltyWallet(props) {
   document.title = "Danh sách thành viên";
 
   const isMounted = useRef(false);
   const { onBackProps, onViewHistory } = props;
-  const [listData, setListData] = useState<ILoyaltyWalletResponse[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isNoItem, setIsNoItem] = useState<boolean>(false);
+  const [listData, setListData]         = useState<ILoyaltyWalletResponse[]>([]);
+  const [isLoading, setIsLoading]       = useState<boolean>(true);
+  const [isNoItem, setIsNoItem]         = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
-  const [params, setParams] = useState<IRoyaltyFilterRequest>({ name: "", limit: 10 });
+  const [isExporting, setIsExporting]   = useState<boolean>(false);
+  const [params, setParams]             = useState<IRoyaltyFilterRequest>({ name: "", limit: 10 });
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     { key: "all", name: "Danh sách thành viên", is_active: true },
@@ -63,21 +66,48 @@ export default function LoyaltyWallet(props) {
   };
 
   useEffect(() => { setParams((prev) => ({ ...prev })); }, []);
-
   useEffect(() => {
     if (!isMounted.current) { isMounted.current = true; return; }
     fetchList(params);
     return () => { abortController.abort(); };
   }, [params]);
 
-  // Ví điểm là read-only, không có thao tác thêm/sửa/xóa từ UI
-  // Cột: STT | Khách hàng | Tổng điểm tích lũy | Điểm hiện tại | Hạng hội viên | Trạng thái
-  const titles = ["STT", "Khách hàng", "Tổng điểm tích lũy", "Điểm hiện tại", "Hạng hội viên", "Trạng thái"];
+  // ── Export ─────────────────────────────────────────────────────
+  const handleExportExcel = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      // customerId = undefined → xuất tất cả hội viên
+      await LoyaltyService.exportLoyaltyWallet(undefined);
+      showToast("Xuất Excel thành công", "success");
+    } catch (err: any) {
+      showToast(err?.message ?? "Xuất Excel thất bại. Vui lòng thử lại", "error");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const titleActions: ITitleActions = {
+    actions: [],
+    actions_extra: [
+      {
+        title:    isExporting ? "Đang xuất..." : "Xuất Excel",
+        icon:     <Icon name="FileDown" />,
+        disabled: isExporting,
+        callback: handleExportExcel,
+      },
+    ],
+  };
+
+  // ── Table columns ──────────────────────────────────────────────
+  const titles = [
+    "STT", "Khách hàng", "Tổng điểm tích lũy", "Điểm hiện tại", "Hạng hội viên", "Trạng thái",
+  ];
   const dataFormat = ["text-center", "", "text-right", "text-right", "", "text-center"];
+
   const dataMappingArray = (item: ILoyaltyWalletResponse, index: number) => [
     getPageOffset(params) + index + 1,
     item.customerName ?? "—",
-    // Tổng điểm tích lũy — click để xem lịch sử điểm của thành viên này
     <span
       className="loyalty-points loyalty-points--total loyalty-points--link"
       title="Xem lịch sử điểm"
@@ -85,7 +115,6 @@ export default function LoyaltyWallet(props) {
     >
       {(item.totalEarn ?? 0).toLocaleString("vi-VN")}
     </span>,
-    // Điểm hiện tại — click để xem lịch sử điểm của thành viên này
     <span
       className={`loyalty-points loyalty-points--link${
         (item.currentBalance ?? 0) === 0 ? " loyalty-points--zero" : " loyalty-points--current"
@@ -106,7 +135,7 @@ export default function LoyaltyWallet(props) {
       <HeaderTabMenu
         title="Danh sách thành viên"
         titleBack="Khách hàng thành viên"
-        // titleActions={titleActions}
+        titleActions={titleActions}
         onBackProps={onBackProps}
       />
 
@@ -137,12 +166,24 @@ export default function LoyaltyWallet(props) {
               <SystemNotification type="no-permission" />
             ) : isNoItem ? (
               <SystemNotification
-                description={<span>Hiện tại chưa có ví điểm nào.<br />Ví điểm được tạo tự động khi khách hàng tham gia chương trình loyalty.</span>}
+                description={
+                  <span>
+                    Hiện tại chưa có ví điểm nào.
+                    <br />
+                    Ví điểm được tạo tự động khi khách hàng tham gia chương trình loyalty.
+                  </span>
+                }
                 type="no-item"
               />
             ) : (
               <SystemNotification
-                description={<span>Không có dữ liệu trùng khớp.<br />Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!</span>}
+                description={
+                  <span>
+                    Không có dữ liệu trùng khớp.
+                    <br />
+                    Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
+                  </span>
+                }
                 type="no-result"
               />
             )}

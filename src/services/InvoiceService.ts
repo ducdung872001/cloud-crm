@@ -147,6 +147,36 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  /**
+   * GET /sales/invoice/export?invoiceTypes=["IV4"]&...
+   * Xuất danh sách Phiếu nhập hàng ra Base64 xlsx.
+   * Tái dùng endpoint /invoice/export đã có — chỉ khác invoiceTypes=["IV4"].
+   */
+  exportImportInvoice: async (
+    params: {
+      invoiceCode?: string;
+      fromDate?: string;
+      toDate?: string;
+      employeeId?: number;
+      status?: number;
+    },
+    signal?: AbortSignal
+  ): Promise<string> => {
+    const qs = new URLSearchParams();
+    qs.set("invoiceTypes", JSON.stringify(["IV4"]));
+    if (params.invoiceCode) qs.set("invoiceCode", params.invoiceCode);
+    if (params.fromDate)    qs.set("fromDate",    params.fromDate);
+    if (params.toDate)      qs.set("toDate",      params.toDate);
+    if (params.employeeId)  qs.set("employeeId",  String(params.employeeId));
+    if (params.status !== undefined && params.status >= 0)
+                            qs.set("status",      String(params.status));
+    const url = `${urlsApi.invoice.export}?${qs.toString()}`;
+    const res = await fetch(url, { method: "GET", signal });
+    const json = await res.json();
+    if (json.code !== 0) throw new Error(json.message ?? "Xuất Excel thất bại");
+    return json.result as string;
+  },
+
   importApprove: (invoiceId: number) => {
     return fetch(`${urlsApi.invoiceImport.approve}?invoiceId=${invoiceId}`, {
       method: "POST",
@@ -174,6 +204,33 @@ export default {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ invoiceId, customerEmail }),
     }).then((res) => res.json());
+  },
+
+  /**
+   * GET /sales/invoice/customer-stats?customerId=X
+   * Tổng doanh số (fee hoàn thành) + số HĐ hoàn thành của 1 KH.
+   * Không phụ thuộc viewMode — luôn trả đúng số liệu.
+   */
+  getCustomerStats: (
+    customerId: number,
+    signal?: AbortSignal
+  ): Promise<{ totalSales: number; invoiceCount: number; lastBoughtDate: string | null }> => {
+    return fetch(`${urlsApi.invoice.customerStats}?customerId=${customerId}`, {
+      method: "GET",
+      signal,
+    })
+      .then(async (res) => {
+        const json = await res.json();
+        const empty = { totalSales: 0, invoiceCount: 0, lastBoughtDate: null };
+        if (json.code !== 0) return empty;
+        const r = json.result ?? {};
+        return {
+          totalSales:     typeof r.totalSales   === "number" ? r.totalSales   : Number(r.totalSales ?? 0),
+          invoiceCount:   typeof r.invoiceCount === "number" ? r.invoiceCount : Number(r.invoiceCount ?? 0),
+          lastBoughtDate: typeof r.lastBoughtDate === "string" ? r.lastBoughtDate : null,
+        };
+      })
+      .catch(() => ({ totalSales: 0, invoiceCount: 0, lastBoughtDate: null }));
   },
 
 };

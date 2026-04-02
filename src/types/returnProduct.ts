@@ -192,7 +192,7 @@ export interface ICreateReturnRequest {
     refundMethod: number;
     note?: string;
   };
-  lstProduct: IReturnProductLine[];
+  lstBoughtProduct: IReturnProductLine[];
   lstService?: any[];
   lstCardService?: any[];
 }

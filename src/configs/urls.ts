@@ -423,6 +423,7 @@ export const urlsApi = {
     draftListWithProducts: prefixSales + "/invoice/draft/list-with-products",
     draftDelete: prefixSales + "/invoice/draft/delete",
     list: prefixSales + "/invoice/list/v2",
+    customerStats: prefixSales + "/invoice/customer-stats",
     export: prefixSales + "/invoice/export",
     tabCounts: prefixSales + "/invoice/tab-counts",
     create: prefixSales + "/invoice/create",
@@ -467,6 +468,7 @@ export const urlsApi = {
   },
   returnInvoice: {
     list: prefixSales + "/invoice/return-exchange/list",
+    export: prefixSales + "/invoice/export",
     detail: prefixSales + "/invoice/get",
     getReturnItems: prefixSales + "/invoice/get/return",
     createReturn: prefixSales + "/invoice/create/return",
@@ -548,6 +550,7 @@ export const urlsApi = {
     list: prefixInventory + "/product/list",
     topProduct: prefixSales + "/invoice/topProduct",
     topProductV2: prefixSales + "/invoice/topProduct/v2",
+    topProductExport: prefixSales + "/invoice/topProduct/export",
     detail: prefixInventory + "/product/get",
     update: prefixInventory + "/product/update",
     updateContent: prefixInventory + "/product/update/content",
@@ -580,6 +583,7 @@ export const urlsApi = {
     wTagUpdate: prefixInventory + "/product/tags/update",
     wTagCreate: prefixInventory + "/product-tag/update", // dùng lại endpoint tag CRUD
     // ── Import ──
+    wExport: prefixInventory + "/product/export",
     wImportTemplate: prefixInventory + "/product/import/template",
     wImportUpload: prefixInventory + "/product/import/uploadFile",
     wImportErrorFile: prefixInventory + "/product/import/error-file",
@@ -825,6 +829,8 @@ export const urlsApi = {
     markPaid: prefixBilling + "/debt/mark-paid",
     qr: prefixBilling + "/debt/qr",
     updateSchedule: prefixBilling + "/debt/update-schedule",
+    customerTotal: prefixBilling + "/debt/customer-total",
+    export:        prefixBilling + "/debt/export",
   },
   cashbook: {
     list: prefixBilling + "/cashbook/list",
@@ -2177,6 +2183,15 @@ export const urlsApi = {
     deleteContact: prefixApplication + "/contactOrg/delete",
     detailContact: prefixApplication + "/contactOrg/get",
   },
+  inventorySupplier: {
+    list:         prefixInventory + "/supplier/list",
+    summary:      prefixInventory + "/supplier/summary",
+    get:          prefixInventory + "/supplier/get",
+    update:       prefixInventory + "/supplier/update",
+    delete:       prefixInventory + "/supplier/delete",
+    updateActive: prefixInventory + "/supplier/update/active",
+    export:       prefixInventory + "/supplier/export",
+  },
   workCategory: {
     list: prefixApplication + "/workCategory/list",
     update: prefixApplication + "/workCategory/update",
@@ -2554,6 +2569,8 @@ export const urlsApi = {
     getLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/get",
     updateLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/update",
     consumePoint: prefixBiz + "/market/loyaltyPointLedger/consumePoint",
+    exportLoyaltyWallet:       prefixBiz + "/market/loyaltyWallet/export",
+    exportLoyaltyPointLedger:  prefixBiz + "/market/loyaltyPointLedger/export",
   },
 
   //TODO: Start quy trình bpm

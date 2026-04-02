@@ -66,6 +66,7 @@ export default function ProductList(props: IProductListProps) {
   const [scanNotFound, setScanNotFound]           = useState(false);
   const [scanCode, setScanCode]                   = useState("");
   const [preFillBarcode, setPreFillBarcode]       = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -665,7 +666,7 @@ export default function ProductList(props: IProductListProps) {
   // --- Table columns ---
   const titles = ["Sản phẩm", "Danh mục", "Giá bán / giá sỉ", "Tồn kho", "Hiển thị web", "Trạng thái"];
 
-  const dataFormat = ["", "", "text-right", "text-center", "text-center", "text-center"];
+  const dataFormat = ["", "", "text-right", "text-right", "text-center", "text-center"];
 
   const getStatusBadge = (item: IProductResponse) => {
     switch (item.status) {
@@ -722,7 +723,7 @@ export default function ProductList(props: IProductListProps) {
 
       // GIÁ BÁN / GIÁ SỈ
       <div className="product-price-cell" key={`price-${item.id}`}>
-        <p className="product-price-cell__main">{formatCurrency(item.price)}</p>
+        <p className="product-price-cell__main">{formatCurrency(item.originalPrice)}</p>
         {item.priceWholesale > 0 && (
           <p className="product-price-cell__wholesale">Sỉ: {formatCurrency(item.priceWholesale)}</p>
         )}
@@ -731,7 +732,7 @@ export default function ProductList(props: IProductListProps) {
       // TỒN KHO
       <div className="product-stock-cell" key={`stock-${item.id}`}>
         <span className="product-stock-cell__value">
-          {item.stock != null ? item.stock : "—"}
+          {item.stockQuantity != null ? item.stockQuantity : "—"}
         </span>
       </div>,
 
@@ -895,6 +896,40 @@ export default function ProductList(props: IProductListProps) {
     );
   }
 
+  // ── Export Excel ────────────────────────────────────────────────────────────
+  const handleExportExcel = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      const base64 = await ProductService.wExport({
+        keyword:     params.keyword    ?? undefined,
+        status:      params.status     ?? undefined,
+        categoryId:  params.categoryId ?? undefined,
+        warehouseId: params.warehouseId ?? undefined,
+      });
+      // decode Base64 → Blob → download
+      const binary = atob(base64);
+      const bytes  = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      const blob = new Blob([bytes], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url  = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href     = url;
+      link.download = `san_pham_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast("Xuất Excel thành công!", "success");
+    } catch (e: any) {
+      showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="page-content page-product page-product--v2">
       {/* ── HEADER ── */}
@@ -928,6 +963,15 @@ export default function ProductList(props: IProductListProps) {
         <button className="prod-list-btn prod-list-btn--ghost" onClick={() => setShowModalImport(true)}>
           <Icon name="UploadExcel" />
           Nhập Excel
+        </button>
+        <button
+          className="prod-list-btn prod-list-btn--ghost"
+          onClick={handleExportExcel}
+          disabled={isExporting}
+          title="Xuất danh sách sản phẩm ra file Excel"
+        >
+          <Icon name="DownloadExcel" />
+          {isExporting ? "Đang xuất..." : "Xuất Excel"}
         </button>
         <button className="prod-list-btn prod-list-btn--ghost" onClick={handleOpenCategory}>
           📦 Danh mục

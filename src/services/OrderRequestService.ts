@@ -43,7 +43,7 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  export: (params?: ICashbookFilterRequest, signal?: AbortSignal) => {
+  export: (params?: Record<string, any>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.orderRequest.export}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

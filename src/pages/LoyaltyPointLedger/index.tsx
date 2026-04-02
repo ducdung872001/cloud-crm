@@ -31,16 +31,16 @@ export default function LoyaltyPointLedger(props: Props) {
   const isMounted = useRef(false);
   const { onBackProps, initialCustomerId } = props;
 
-  const [listData, setListData] = useState<ILoyaltyPointLedgerResposne[]>([]);
-  const [selectedItem, setSelectedItem] = useState<ILoyaltyPointLedgerResposne>(null);
-  const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [listData, setListData]           = useState<ILoyaltyPointLedgerResposne[]>([]);
+  const [selectedItem, setSelectedItem]   = useState<ILoyaltyPointLedgerResposne>(null);
+  const [showModalAdd, setShowModalAdd]   = useState<boolean>(false);
+  const [showDialog, setShowDialog]       = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isNoItem, setIsNoItem] = useState<boolean>(false);
+  const [isLoading, setIsLoading]         = useState<boolean>(true);
+  const [isNoItem, setIsNoItem]           = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
+  const [isExporting, setIsExporting]     = useState<boolean>(false);
 
-  // Nếu có initialCustomerId (bấm từ Danh sách thành viên) thì pre-set vào params
   const [params, setParams] = useState<ILoyaltyPointLedgerRequest>({
     limit: 10,
     ...(initialCustomerId ? { customerId: initialCustomerId } : {}),
@@ -50,8 +50,6 @@ export default function LoyaltyPointLedger(props: Props) {
     { key: "all", name: "Lịch sử điểm", is_active: true },
   ]);
 
-  // ── Filter: Thành viên (customerId) ──────────────────────────────────────
-  // key "customerId" đã được SelectOptionData hỗ trợ sẵn trong filter component
   const filterList = useMemo<IFilterItem[]>(() => [
     {
       key: "customerId",
@@ -75,7 +73,9 @@ export default function LoyaltyPointLedger(props: Props) {
   const fetchList = async (paramsSearch: ILoyaltyPointLedgerRequest) => {
     setIsLoading(true);
     setIsNoItem(false);
-    const response = await LoyaltyService.listLoyaltyPointLedger(paramsSearch, abortController.signal);
+    const response = await LoyaltyService.listLoyaltyPointLedger(
+      paramsSearch, abortController.signal
+    );
     if (response.code === 0) {
       const result = response.result;
       setListData(result.items ?? []);
@@ -84,7 +84,9 @@ export default function LoyaltyPointLedger(props: Props) {
         page: +result.page,
         sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
         totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)),
+        totalPage: Math.ceil(
+          +result.total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)
+        ),
       }));
       if (+result.total === 0 && +result.page === 1) setIsNoItem(true);
     } else if (response.code === 400) {
@@ -96,30 +98,58 @@ export default function LoyaltyPointLedger(props: Props) {
   };
 
   useEffect(() => { setParams((prev) => ({ ...prev })); }, []);
-
   useEffect(() => {
     if (!isMounted.current) { isMounted.current = true; return; }
     fetchList(params);
     return () => { abortController.abort(); };
   }, [params]);
 
+  // ── Export ─────────────────────────────────────────────────────
+  const handleExportExcel = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      await LoyaltyService.exportLoyaltyPointLedger(
+        params.customerId ? Number(params.customerId) : undefined,
+        params.description ?? undefined
+      );
+      showToast("Xuất Excel thành công", "success");
+    } catch (err: any) {
+      showToast(err?.message ?? "Xuất Excel thất bại. Vui lòng thử lại", "error");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const titleActions: ITitleActions = {
     actions: [
-      { title: "Thêm mới", callback: () => { setSelectedItem(null); setShowModalAdd(true); } },
+      {
+        title: "Thêm mới",
+        callback: () => { setSelectedItem(null); setShowModalAdd(true); },
+      },
+    ],
+    actions_extra: [
+      {
+        title:    isExporting ? "Đang xuất..." : "Xuất Excel",
+        icon:     <Icon name="FileDown" />,
+        disabled: isExporting,
+        callback: handleExportExcel,
+      },
     ],
   };
 
-  // ── Table columns ─────────────────────────────────────────────────────────
+  // ── Table columns ──────────────────────────────────────────────
   const titles = [
     "STT", "Khách hàng", "Số điểm", "Lý do",
     "Chương trình thân thiết", "Đổi thưởng", "Người phụ trách", "Ngày tạo",
   ];
-  const dataFormat = ["text-center", "", "text-right", "", "", "", "", "text-center"];
+  const dataFormat = [
+    "text-center", "", "text-right", "", "", "", "", "text-center",
+  ];
 
   const dataMappingArray = (item: ILoyaltyPointLedgerResposne, index: number) => [
     getPageOffset(params) + index + 1,
     item.customerName ?? "—",
-    // Số điểm
     (() => {
       const p = item.point ?? 0;
       const cls = p > 0
@@ -133,29 +163,23 @@ export default function LoyaltyPointLedger(props: Props) {
         </span>
       );
     })(),
-    // Lý do (description)
     item.description
       ? <span className="ledger-description" title={item.description}>{item.description}</span>
       : <span className="ledger-dash">—</span>,
-    // Chương trình thân thiết
     item.loyaltyProgramName
       ? <span className="ledger-program">{item.loyaltyProgramName}</span>
       : <span className="ledger-dash">—</span>,
-    // Đổi thưởng
     item.loyaltyRewardName
       ? <span className="ledger-reward">{item.loyaltyRewardName}</span>
       : <span className="ledger-dash">—</span>,
-    // Người phụ trách
     item.employeeName
       ? <span className="ledger-employee">{item.employeeName}</span>
       : <span className="ledger-dash">—</span>,
-    // Ngày tạo
     item.createdTime
       ? <span className="ledger-date">{moment(item.createdTime).format("DD/MM/YYYY")}</span>
       : <span className="ledger-dash">—</span>,
   ];
 
-  // Tiêu đề động khi đang filter theo 1 thành viên cụ thể
   const filteredCustomerName = useMemo(() => {
     if (!params.customerId) return null;
     const first = listData.find((i) => i.customerId === params.customerId);
@@ -165,7 +189,11 @@ export default function LoyaltyPointLedger(props: Props) {
   return (
     <div className={`page-content page-category-service${isNoItem ? " bg-white" : ""}`}>
       <HeaderTabMenu
-        title={filteredCustomerName ? `Lịch sử điểm — ${filteredCustomerName}` : "Lịch sử điểm"}
+        title={
+          filteredCustomerName
+            ? `Lịch sử điểm — ${filteredCustomerName}`
+            : "Lịch sử điểm"
+        }
         titleBack="Khách hàng thành viên"
         onBackProps={onBackProps}
         titleActions={titleActions}
@@ -184,9 +212,9 @@ export default function LoyaltyPointLedger(props: Props) {
             setParams((prev) => ({
               ...prev,
               ...paramsNew,
-              // đảm bảo customerId là number hoặc undefined (không phải string "")
-              customerId: paramsNew.customerId ? Number(paramsNew.customerId) : undefined,
-              // giữ lại limit hiện tại nếu SearchBox không truyền (tránh limit=undefined)
+              customerId: paramsNew.customerId
+                ? Number(paramsNew.customerId)
+                : undefined,
               limit: paramsNew.limit || prev.limit || 10,
             }));
           }}
@@ -224,7 +252,13 @@ export default function LoyaltyPointLedger(props: Props) {
               />
             ) : (
               <SystemNotification
-                description={<span>Không có dữ liệu trùng khớp.<br />Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!</span>}
+                description={
+                  <span>
+                    Không có dữ liệu trùng khớp.
+                    <br />
+                    Bạn hãy thay đổi tiêu chí lọc hoặc tìm kiếm nhé!
+                  </span>
+                }
                 type="no-result"
               />
             )}

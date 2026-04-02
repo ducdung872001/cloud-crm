@@ -1,29 +1,23 @@
-// ── Giữ nguyên layout cũ ─────────────────────────────────────────────────
+// ── Trang chi tiết khách hàng — Retail layout ────────────────────────────
+
 .page-detail-person {
-  // Ẩn header cũ (thay bằng retail-detail__header)
-  .action-navigation {
-    display: none;
-  }
-
-  .card-box {
-    margin-top: 1.2rem;
-
-    .info-person {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 2px solid #3a87ad;
-    }
-
-    .info-action-detail {
-      display: flex;
-      align-items: flex-start;
-    }
-  }
+  .action-navigation { display: none; }
 }
 
-// ── Header retail mới ─────────────────────────────────────────────────────
+// ── Header ────────────────────────────────────────────────────────────────
 .retail-detail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 30rem;
+  }
+
   &__header {
     display: flex;
     align-items: center;
@@ -31,12 +25,13 @@
     gap: 16px;
     padding: 4px 0 12px;
     flex-shrink: 0;
+    border-bottom: 1px solid var(--border-color);
   }
 
   &__breadcrumb {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     min-width: 0;
   }
 
@@ -49,29 +44,22 @@
     font-size: 1.4rem;
     font-weight: 500;
     white-space: nowrap;
-    transition: opacity 0.15s;
-    padding: 5px 8px 5px 2px;
+    padding: 5px 6px 5px 2px;
     border-radius: 6px;
-
+    transition: opacity 0.15s;
     &:hover { opacity: 0.72; }
-
-    svg, i { width: 1.6rem; height: 1.6rem; }
+    svg { width: 1.6rem; height: 1.6rem; }
   }
 
+  &__sep { color: #94a3b8; font-size: 1.4rem; }
+
   &__page-title {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     font-weight: 700;
     color: var(--text-primary-color, #0f172a);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-
-    &::before {
-      content: "/";
-      color: #94a3b8;
-      margin-right: 8px;
-      font-weight: 400;
-    }
   }
 
   &__actions {
@@ -91,12 +79,338 @@
     font-weight: 500 !important;
     border-radius: 8px !important;
     white-space: nowrap;
-
-    svg, i { width: 1.5rem; height: 1.5rem; }
-
+    svg { width: 1.5rem; height: 1.5rem; }
     @media (max-width: 1280px) {
       span { display: none; }
       padding: 0 1rem !important;
     }
+  }
+
+  // ── 2-column body ──────────────────────────────────────────────────────
+  &__body {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  // ── SIDEBAR ────────────────────────────────────────────────────────────
+  &__sidebar {
+    width: 31rem;
+    min-width: 28rem;
+    max-width: 34rem;
+    flex-shrink: 0;
+    height: calc(100vh - 13rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-right: 1px solid var(--border-color);
+    padding: 1.4rem 1.4rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem 0;
+
+    // Scrollbar chỉ hiện khi hover
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    &:hover { scrollbar-color: var(--extra-color-30) transparent; }
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: transparent; border-radius: 4px; }
+    &:hover::-webkit-scrollbar-thumb { background: var(--extra-color-30); }
+  }
+
+  // ── MAIN PANEL ─────────────────────────────────────────────────────────
+  &__main {
+    flex: 1;
+    min-width: 0;
+    height: calc(100vh - 13rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: thin;
+    scrollbar-color: var(--extra-color-30) transparent;
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: var(--extra-color-30); border-radius: 4px; }
+  }
+}
+
+// ── Identity block ────────────────────────────────────────────────────────
+.rds-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--extra-color-20);
+
+  &__avatar {
+    flex-shrink: 0;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--extra-color-10);
+    border: 2px solid var(--extra-color-20);
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__name {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--text-primary-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__phone,
+  &__email {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1.2rem;
+    color: var(--text-extra-color);
+    svg { width: 1.2rem; height: 1.2rem; flex-shrink: 0; }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+}
+
+// ── Icon buttons ──────────────────────────────────────────────────────────
+.rds-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--extra-color-10);
+  transition: background 0.15s;
+  svg { width: 1.35rem; height: 1.35rem; }
+  &:hover { background: var(--extra-color-20); }
+  &--add  { background: var(--success-color-10, #ecfdf5); svg { fill: var(--success-color); } }
+  &--edit { background: var(--primary-color-5); svg { fill: var(--primary-color); } }
+}
+
+// ── KPI grid ─────────────────────────────────────────────────────────────
+.rds-kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+.rds-kpi {
+  background: var(--extra-color-5, #f8fafc);
+  border: 1px solid var(--extra-color-20);
+  border-radius: 8px;
+  padding: 9px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  &__label {
+    font-size: 1.1rem;
+    color: var(--text-extra-color);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  &__value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary-color);
+    &--primary { color: var(--primary-color); }
+    &--danger  { color: var(--error-color, #ef4444); }
+    &--sm      { font-size: 1.2rem; font-weight: 600; }
+  }
+
+  &__sub {
+    font-size: 1.05rem;
+    color: var(--text-extra-color);
+    font-weight: 400;
+    margin-top: 1px;
+  }
+}
+
+// ── Loyalty block ─────────────────────────────────────────────────────────
+.rds-loyalty {
+  background: linear-gradient(135deg, #fef9ec 0%, #fff8e1 100%);
+  border: 1px solid #f6d860;
+  border-radius: 10px;
+  padding: 10px 12px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #b45309;
+    svg { width: 1.5rem; height: 1.5rem; fill: #d97706; }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 5px;
+    .rds-icon-btn {
+      width: 2.4rem;
+      height: 2.4rem;
+      background: rgba(255,255,255,0.7);
+      &:hover { background: rgba(255,255,255,0.95); }
+    }
+  }
+
+  &__body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    svg { width: 1.8rem; height: 1.8rem; fill: #d97706; }
+  }
+
+  &__rank {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #92400e;
+  }
+
+  &__points {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #b45309;
+    span {
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: #d97706;
+      margin-left: 2px;
+    }
+  }
+}
+
+// ── Accordion sections ────────────────────────────────────────────────────
+// Dùng overflow: visible để nội dung KHÔNG bị cắt khi expand
+.rds-accordion {
+  border: 1px solid var(--extra-color-20);
+  border-radius: 8px;
+  overflow: visible;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    cursor: pointer;
+    background: var(--extra-color-5, #f8fafc);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary-color);
+    user-select: none;
+    border-radius: 8px;
+    transition: background 0.15s;
+    &:hover { background: var(--extra-color-10); }
+    svg { width: 1.3rem; height: 1.3rem; flex-shrink: 0; }
+  }
+
+  &__body {
+    border-top: 1px solid var(--extra-color-20);
+    padding: 10px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: var(--white-color);
+    border-radius: 0 0 8px 8px;
+  }
+
+  // Header bo trên khi có body mở
+  &--open .rds-accordion__header {
+    border-radius: 8px 8px 0 0;
+  }
+}
+
+.rds-info-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 1.22rem;
+  line-height: 1.6;
+
+  span:first-child {
+    color: var(--text-extra-color);
+    flex-shrink: 0;
+    min-width: 9rem;
+    padding-top: 1px;
+  }
+
+  span:last-child {
+    color: var(--text-primary-color);
+    font-weight: 500;
+    text-align: right;
+    word-break: break-word;
+  }
+}
+
+// ── Tab panel override ────────────────────────────────────────────────────
+.retail-detail__main {
+  .retail-wrapper-tab {
+    width: 100%;
+    border-left: none;
+    padding: 0 1.6rem 2rem;
+    flex: 1;
+
+    .list-tab .action__option--title { padding: 0 0.4rem; }
+    .details-tab { background: transparent; padding: 0; }
+  }
+}
+
+// ── KPI card - clickable debt variant ────────────────────────────────────────
+.rds-kpi {
+  &--clickable {
+    cursor: default;
+  }
+
+  &--debt {
+    cursor: pointer;
+    border-color: var(--error-color, #ef4444);
+    background: #fff5f5;
+    transition: background 0.15s, box-shadow 0.15s;
+
+    &:hover {
+      background: #fee2e2;
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+  }
+
+  &__collect-hint {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--error-color, #ef4444);
+    opacity: 0.85;
   }
 }

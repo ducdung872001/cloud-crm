@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
-import TitleAction from "components/titleAction/titleAction";
+import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { IFilterItem, ISaveSearch } from "model/OtherModel";
@@ -14,6 +14,7 @@ import { IBoughtProductResponse } from "model/boughtProduct/BoughtProductRespons
 import { showToast } from "utils/common";
 import { isDifferenceObj, getPageOffset } from "reborn-util";
 import BoughtProductService from "services/BoughtProductService";
+import ProductService from "services/ProductService";
 import { ContextType, UserContext } from "contexts/userContext";
 
 export default function ProductSoldList() {
@@ -25,7 +26,9 @@ export default function ProductSoldList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [listProductSold, setListProductSold] = useState<IBoughtProductResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isNoItem, setIsNoItem] = useState<boolean>(false);
+  const [isNoItem,    setIsNoItem]    = useState<boolean>(false);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [sortBy,      setSortBy]      = useState<"qty" | "revenue">("qty");
 
   const [params, setParams] = useState<IBoughtProductFilterRequest>({
     keyword: "",
@@ -163,9 +166,44 @@ export default function ProductSoldList() {
     item.unitName,
   ];
 
+  // ── Export Excel ─────────────────────────────────────────────────────────
+  const handleExportExcel = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      const base64 = await ProductService.wExportTopProduct(sortBy);
+      const bin = atob(base64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const blob = new Blob([bytes], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `top_san_pham_${sortBy}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    } catch (e: any) {
+      console.error("Export failed", e);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const titleActions: ITitleActions = {
+    actions: [
+      {
+        title: isExporting ? "Đang xuất..." : "Xuất Excel",
+        color: "primary" as const,
+        disabled: isExporting,
+        callback: handleExportExcel,
+      },
+    ],
+  };
+
   return (
     <div className={`page-content page__product--sold${isNoItem ? " bg-white" : ""}`}>
-      <TitleAction title="Sản phẩm đã bán" />
+      <TitleAction title="Sản phẩm đã bán" titleActions={titleActions} />
       <div className="card-box d-flex flex-column">
         <SearchBox
           name="Tên sản phẩm"

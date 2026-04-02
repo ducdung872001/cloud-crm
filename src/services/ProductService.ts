@@ -15,6 +15,19 @@ export default {
    * Top sản phẩm v2 — hỗ trợ sortBy: "qty" | "revenue"
    * cloud-sales tự gọi sang cloud-inventory để lấy tên variant
    */
+  /**
+   * GET /sales/invoice/topProduct/export?sortBy=qty|revenue
+   * Xuất top sản phẩm bán chạy ra Base64 xlsx.
+   */
+  wExportTopProduct: (sortBy: "qty" | "revenue" = "qty", signal?: AbortSignal): Promise<string> => {
+    return fetch(`${urlsApi.product.topProductExport}?sortBy=${sortBy}`, { method: "GET", signal })
+      .then(async r => {
+        const j = await r.json();
+        if (j.code !== 0) throw new Error(j.message ?? "Xuất Excel thất bại");
+        return j.result as string;
+      });
+  },
+
   topProductV2: (sortBy: "qty" | "revenue" = "qty", signal?: AbortSignal) => {
     return fetch(`${urlsApi.product.topProductV2}?sortBy=${sortBy}`, {
       signal,
@@ -305,6 +318,32 @@ export default {
       method: "POST",
       body: JSON.stringify({ ...body, status: body.status ?? 1 }),
     }).then((res) => res.json());
+  },
+
+  // ── Export ──
+  /**
+   * GET /inventory/product/export
+   * Xuất toàn bộ sản phẩm theo filter ra Base64 xlsx.
+   * FE decode → Blob → download.
+   */
+  wExport: (params?: {
+    keyword?: string;
+    status?: number;
+    categoryId?: number;
+    warehouseId?: number;
+  }, signal?: AbortSignal): Promise<string> => {
+    const qs = new URLSearchParams();
+    if (params?.keyword)     qs.set("keyword",     params.keyword);
+    if (params?.status      !== undefined) qs.set("status",      String(params.status));
+    if (params?.categoryId  !== undefined) qs.set("categoryId",  String(params.categoryId));
+    if (params?.warehouseId !== undefined) qs.set("warehouseId", String(params.warehouseId));
+    const url = `${urlsApi.product.wExport}${qs.toString() ? "?" + qs.toString() : ""}`;
+    return fetch(url, { method: "GET", signal })
+      .then(async (res) => {
+        const json = await res.json();
+        if (json.code !== 0) throw new Error(json.message ?? "Xuất Excel thất bại");
+        return json.result as string; // Base64 string
+      });
   },
 
   // ── Import ──

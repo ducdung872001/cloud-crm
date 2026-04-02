@@ -199,6 +199,7 @@ export default function InventoryManagement() {
   // Flag để biết summary đã load chưa (load 1 lần, không theo page)
   const importSummaryLoaded = useRef(false);
   const [showStockInitModal, setShowStockInitModal] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [transferSummary, setTransferSummary] = useState({
     total: 0, pending: 0, completed: 0, cancelled: 0,
   });
@@ -652,6 +653,42 @@ export default function InventoryManagement() {
   };
 
   // ── Title actions theo tab ────────────────────────────────────────────────
+  // ── Export Excel ──────────────────────────────────────────────────────────
+  const handleExportExcel = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    const dl = (base64: string, filename: string) => {
+      const bin = atob(base64); const bytes = new Uint8Array(bin.length);
+      for (let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+      const blob = new Blob([bytes],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+      const url = URL.createObjectURL(blob); const a = document.createElement("a");
+      a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    };
+    try {
+      if (activeTab === "transfer") {
+        const b = await InventoryService.exportTransfer({ status: params.status !== "" ? +params.status : undefined });
+        dl(b, `phieu_chuyen_kho_${new Date().toISOString().slice(0,10)}.xlsx`);
+      } else if (activeTab === "destroy") {
+        const b = await InventoryService.exportDestroy({
+          keyword: params.keyword || undefined,
+          status:  params.status !== "" ? +params.status : undefined,
+        });
+        dl(b, `phieu_xuat_huy_${new Date().toISOString().slice(0,10)}.xlsx`);
+      } else if (activeTab === "check") {
+        const b = await AdjustmentSlipService.exportCheck({
+          keyword: params.keyword || undefined,
+          status:  params.status !== "" ? +params.status : undefined,
+        });
+        dl(b, `kiem_ke_kho_${new Date().toISOString().slice(0,10)}.xlsx`);
+      }
+      showToast("Xuất Excel thành công!", "success");
+    } catch (e: any) {
+      showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const titleActions: ITitleActions = {
     actions: [
       activeTab === "import" && permissions["WAREHOUSE_ADD"] == 1 && {
@@ -678,6 +715,13 @@ export default function InventoryManagement() {
       activeTab === "check" && permissions["WAREHOUSE_ADD"] == 1 && {
         title: "Tạo phiếu kiểm kho",
         callback: () => navigate(urls.adjustment_slip),
+      },
+      ["transfer","destroy","check"].includes(activeTab) && {
+        title: isExporting ? "Đang xuất..." : "Xuất Excel",
+        color: "primary" as const,
+        variant: "outline" as const,
+        disabled: isExporting,
+        callback: handleExportExcel,
       },
     ].filter(Boolean),
   };
