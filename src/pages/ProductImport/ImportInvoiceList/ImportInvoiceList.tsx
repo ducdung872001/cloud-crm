@@ -40,6 +40,7 @@ export default function ImportInvoiceList() {
   const [idImportInvoice, setIdImportInvoice] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
 
   const [params, setParams] = useState<IInvoiceFilterRequest>({
     invoiceCode: "",
@@ -231,8 +232,50 @@ export default function ImportInvoiceList() {
     };
   }, [params]);
 
+  // ── Export Excel ────────────────────────────────────────────────────────────
+  const handleExportExcel = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      const base64 = await InvoiceService.exportImportInvoice({
+        invoiceCode: params.invoiceCode || undefined,
+        fromDate:    (params as any).fromDate    || undefined,
+        toDate:      (params as any).toDate      || undefined,
+        employeeId:  (params as any).employeeId  ? +(params as any).employeeId : undefined,
+        status:      (params as any).status !== undefined && (params as any).status !== ""
+                       ? +(params as any).status : undefined,
+      });
+      const binary = atob(base64);
+      const bytes  = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      const blob = new Blob([bytes], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url  = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href     = url;
+      link.download = `phieu_nhap_hang_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast("Xuất Excel thành công!", "success");
+    } catch (e: any) {
+      showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const titleActions: ITitleActions = {
     actions: [
+      {
+        title: isExporting ? "Đang xuất..." : "Xuất Excel",
+        color: "primary",
+        variant: "outline" as any,
+        disabled: isExporting,
+        callback: handleExportExcel,
+      },
       {
         title: "Nhập hàng",
         callback: () => {

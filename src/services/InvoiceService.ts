@@ -147,6 +147,36 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  /**
+   * GET /sales/invoice/export?invoiceTypes=["IV4"]&...
+   * Xuất danh sách Phiếu nhập hàng ra Base64 xlsx.
+   * Tái dùng endpoint /invoice/export đã có — chỉ khác invoiceTypes=["IV4"].
+   */
+  exportImportInvoice: async (
+    params: {
+      invoiceCode?: string;
+      fromDate?: string;
+      toDate?: string;
+      employeeId?: number;
+      status?: number;
+    },
+    signal?: AbortSignal
+  ): Promise<string> => {
+    const qs = new URLSearchParams();
+    qs.set("invoiceTypes", JSON.stringify(["IV4"]));
+    if (params.invoiceCode) qs.set("invoiceCode", params.invoiceCode);
+    if (params.fromDate)    qs.set("fromDate",    params.fromDate);
+    if (params.toDate)      qs.set("toDate",      params.toDate);
+    if (params.employeeId)  qs.set("employeeId",  String(params.employeeId));
+    if (params.status !== undefined && params.status >= 0)
+                            qs.set("status",      String(params.status));
+    const url = `${urlsApi.invoice.export}?${qs.toString()}`;
+    const res = await fetch(url, { method: "GET", signal });
+    const json = await res.json();
+    if (json.code !== 0) throw new Error(json.message ?? "Xuất Excel thất bại");
+    return json.result as string;
+  },
+
   importApprove: (invoiceId: number) => {
     return fetch(`${urlsApi.invoiceImport.approve}?invoiceId=${invoiceId}`, {
       method: "POST",

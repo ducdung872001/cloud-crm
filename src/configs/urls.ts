@@ -626,7 +626,6 @@ export const urlsApi = {
   },
   inventoryBalance: {
     stockProductList: prefixInventory + "/inventoryBalance/stockProduct/list",
-    stockProductExport: prefixInventory + "/inventoryBalance/stockProduct/export",
     variantList: prefixInventory + "/inventoryBalance/variant/list", // Tồn kho theo biến thể + đơn vị bán
     list: prefixInventory + "/inventoryBalance/list",
     get: prefixInventory + "/inventoryBalance/get",
@@ -670,6 +669,7 @@ export const urlsApi = {
     update: prefixInventory + "/warehouse/update",
     delete: prefixInventory + "/warehouse/delete",
     ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
+    ledgerExport: prefixInventory + "/inventoryTransaction/ledger/export",
     ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
     saleExportList: prefixInventory + "/inventoryTransaction/sale/list",
     saleExportSummary: prefixInventory + "/inventoryTransaction/sale/summary",

@@ -193,8 +193,7 @@ export default function ProductInventoryList() {
           actions: [
             {
               title: isExporting ? "Đang xuất..." : "Xuất Excel",
-              color: "outline-primary",
-              icon: "DownloadExcel",
+              color: "primary",
               disabled: isExporting,
               callback: handleExportExcel,
             },
