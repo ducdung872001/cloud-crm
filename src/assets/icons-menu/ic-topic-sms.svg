@@ -1,7 +1,0 @@
-<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#854F0B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 4h16a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"></path>
-        <line x1="2" y1="10" x2="22" y2="10"></line>
-        <!-- tag/label icon inside -->
-        <path d="M7 14h3M7 16.5h5"></path>
-        <circle cx="17" cy="15" r="2" stroke="#854F0B" stroke-width="1.4" fill="none"></circle>
-      </svg>

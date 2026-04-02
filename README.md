@@ -1,80 +1,90 @@
-# Hướng dẫn sử dụng
+# CRM Banking – Sales Management
 
-1. Cài đặt các gói thư viện
+Phiên bản CRM dành cho lĩnh vực **Banking**, xây dựng trên codebase cloud-crm (Retail) và được tùy chỉnh UX/UI theo prototype Banking dark navy theme.
 
-   `npm install`
+## Tech Stack
 
-2. Chạy project
+- **React 18** + **TypeScript**
+- **Vite** (build tool)
+- **SCSS** (BEM methodology, CSS custom properties)
+- **React Router DOM v7**
+- **React Toastify**
 
-   `npm start`
+## Cài đặt & Chạy
 
-# Các thành phần trong project
+```bash
+# Install dependencies
+npm install
+# hoặc
+yarn install
 
-- [Hướng dẫn sử dụng](#hướng-dẫn-sử-dụng)
-- [Các thành phần trong project](#các-thành-phần-trong-project)
-  - [1. _CSS Variable_](#1-css-variable)
-  - [2. _Utils_](#2-utils)
-    - [commons.ts](#commonsts)
+# Dev server (port 3000)
+npm run dev
 
-## 1. _CSS Variable_
-
-- Sửa các màu mặc định tại: shared/assets/styles/\_variable.scss
-- List các màu mặc định:
-
-```scss
-$background: ;
-$white-color: ;
-$white-color-extra: ;
-$silver-color: ;
-$green-color: ;
-$red-color: ;
-$orange-color: ;
-$yellow-color: ;
-$blue-color: ;
-$text-color-primary: ;
-$text-color-secondary: ;
-$line-color: ;
-$line-color-extra: ;
+# Build production
+npm run build
 ```
 
-- Các biến màu có thể gọi từ :root:
+## Cấu trúc thư mục
 
-```scss
---background
---white-color
---white-color-extra
---silver-color
---green-color
---red-color
---red-color-opacity-#{opacity}
---orange-color
---orange-color-opacity-#{opacity}
---yellow-color
---yellow-color-opacity-#{opacity}
---blue-color
---blue-color-opacity-#{opacity}
---text-color-primary
---text-color-primary-60
---text-color-secondary
---line-color
---line-color-extra
-
-#{opacity} là các giá trị trong dải sau: 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90
+```
+src/
+├── App.tsx                    # Root component, page routing
+├── main.tsx                   # Entry point
+├── components/
+│   ├── header/                # Top header bar
+│   ├── sidebar/               # Navigation sidebar
+│   ├── modal/                 # Reusable Modal wrapper
+│   └── toast/                 # Toast notification
+├── configs/
+│   └── mockData.ts            # Mock data cho dev/demo
+├── contexts/
+│   └── AppContext.tsx         # Global state (user, page, modal, toast)
+├── pages/
+│   ├── Dashboard/             # Sales Dashboard
+│   ├── LeadManagement/        # Quản lý Lead
+│   ├── Pipeline/              # Pipeline Kanban 5 stages
+│   ├── Campaigns/             # Chiến dịch bán hàng
+│   ├── SalesProcess/          # BPMN 2.0 quy trình bán
+│   ├── SharedPages.tsx        # SalesDocs, Customer360, Tasks, Approval, KPI, NPS
+│   └── AllModals.tsx          # Tất cả 23 modal dialogs
+└── styles/
+    ├── _variables.scss        # Design tokens (colors, spacing, radius)
+    ├── _common.scss           # Global components (cards, tables, buttons...)
+    ├── _modal-form.scss       # Modal & form styles
+    └── main.scss              # Entry point
 ```
 
-- Cách sử dụng các biến màu từ :root
+## Các phân hệ (Modules)
 
-```scss
-background: var(--background);
-border-color: var(--line-color);
-...
-```
+| Module | Mô tả |
+|--------|-------|
+| **Dashboard** | KPI tổng quan, Pipeline mini, Customer 360 quick, Leaderboard RM |
+| **Lead Management** | Danh sách lead, filter hot/warm/cold, tạo & import lead |
+| **Pipeline** | Kanban 5 giai đoạn: Tiếp cận → Tư vấn → Hồ sơ → Thẩm định → Chốt HĐ |
+| **Chiến dịch** | Quản lý campaign Banking, KPI tracker, tài liệu theo chiến dịch |
+| **Quy trình bán** | BPMN 2.0 editor cho Vay MN, Thẻ TD, Banca, Vay DN |
+| **Tài liệu** | Script tư vấn, bảng phí, brochure, mẫu biểu |
+| **Customer 360°** | Hồ sơ KH toàn diện, sản phẩm, cảnh báo & cơ hội |
+| **Tasks & Lịch hẹn** | Danh sách task hôm nay/ngày mai, mini calendar, nhắc nhở |
+| **Phê duyệt** | Workflow phê duyệt hồ sơ: RM → Credit → BLĐ |
+| **Báo cáo KPI** | KPI progress, leaderboard, biểu đồ doanh số |
+| **NPS & Chăm sóc** | NPS score, phản hồi KH, gửi khảo sát |
 
-## 2. _Utils_
+## Design System
 
-- [commons.ts](#commonsts)
-- [validate.ts](#validatets)
-- [function.ts](#functionts)
-- [dateFormat.ts](#dateFormatts)
+Theme: **Dark Navy Banking**
+- Primary: `#0A1628` (navy), `#112240` (navy-mid)
+- Accent: `#2196F3` (blue), `#42A5F5` (bright)
+- Status: `#00C896` (success), `#FF9500` (warning), `#FF4757` (danger), `#F5A623` (gold)
+- Font: **Be Vietnam Pro**
 
-### commons.ts
+## Mở rộng (Roadmap)
+
+Các tính năng có thể phát triển tiếp:
+- [ ] Tích hợp real API từ `cloud-sales-master` microservice
+- [ ] Core Banking Sync (T24) thực tế
+- [ ] Highcharts cho biểu đồ nâng cao
+- [ ] bpmn-js cho BPMN editor thực tế
+- [ ] React Big Calendar cho lịch hẹn
+- [ ] Tích hợp Firebase notifications

@@ -1,14 +1,8 @@
-@import "_variable.scss";
-@import "_typography.scss";
-@import "_common.scss";
-@import "_datetime_custom.scss";
-@import "_responsive.scss";
+@import "variables";
+@import "common";
+@import "modal-form";
 
-body {
-  .ag-theme-alpine .ag-menu {
-    z-index: 9999;
-  }
-  .ag-theme-alpine .ag-list {
-    z-index: 99999;
-  }
+// App collapsed sidebar state
+.app--collapsed {
+  --sidebar-width: 64px;
 }

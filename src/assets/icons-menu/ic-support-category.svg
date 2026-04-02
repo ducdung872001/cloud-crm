@@ -1,7 +1,0 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <!-- folder with ? = help category -->
-        <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2v11z"></path>
-        <!-- question mark -->
-        <path d="M12 11a2 2 0 011.5-1.94 2 2 0 01.5 3.94V14" stroke-width="1.5"></path>
-        <circle cx="12" cy="16.5" r="0.5" fill="#185FA5" stroke="none"></circle>
-      </svg>

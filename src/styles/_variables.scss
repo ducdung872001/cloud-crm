@@ -1,0 +1,87 @@
+// ═══════════════════════════════════════════════════════
+// CRM BANKING – DESIGN TOKENS
+// Dark navy theme matching prototype
+// ═══════════════════════════════════════════════════════
+
+// ── Core palette ──
+$navy:           #0A1628;
+$navy-mid:       #112240;
+$navy-light:     #1B3358;
+$accent:         #2196F3;
+$accent-bright:  #42A5F5;
+$gold:           #F5A623;
+$success:        #00C896;
+$warning:        #FF9500;
+$danger:         #FF4757;
+$purple:         #C39BD3;
+
+// ── Typography ──
+$font-family:    'Be Vietnam Pro', sans-serif;
+$font-size-base: 14px;
+
+// ── Layout ──
+$sidebar-width:           230px;
+$sidebar-collapsed-width: 64px;
+$header-height:           60px;
+
+// ── Radius ──
+$radius:    10px;
+$radius-lg: 14px;
+$radius-sm: 6px;
+
+// ── Spacing ──
+$sp-4:  4px;
+$sp-6:  6px;
+$sp-8:  8px;
+$sp-10: 10px;
+$sp-12: 12px;
+$sp-14: 14px;
+$sp-16: 16px;
+$sp-20: 20px;
+$sp-24: 24px;
+$sp-32: 32px;
+
+// ── Breakpoints ──
+$bp-mobile:  480px;
+$bp-tablet:  900px;
+$bp-desktop: 1280px;
+$bp-large:   1600px;
+
+// ═══════════════════════════════════════════════════════
+// CSS Custom Properties (used in components)
+// ═══════════════════════════════════════════════════════
+:root {
+  --navy:             #{$navy};
+  --navy-mid:         #{$navy-mid};
+  --navy-light:       #{$navy-light};
+  --accent:           #{$accent};
+  --accent-bright:    #{$accent-bright};
+  --accent-soft:      rgba(33, 150, 243, 0.12);
+  --gold:             #{$gold};
+  --gold-soft:        rgba(245, 166, 35, 0.15);
+  --success:          #{$success};
+  --success-soft:     rgba(0, 200, 150, 0.12);
+  --warning:          #{$warning};
+  --warning-soft:     rgba(255, 149, 0, 0.12);
+  --danger:           #{$danger};
+  --danger-soft:      rgba(255, 71, 87, 0.12);
+  --purple:           #{$purple};
+  --purple-soft:      rgba(195, 155, 211, 0.15);
+
+  --text-primary:     #E8EDF4;
+  --text-secondary:   #8A9BBF;
+  --text-muted:       #4A5878;
+
+  --border:           rgba(255, 255, 255, 0.07);
+  --border-hover:     rgba(255, 255, 255, 0.14);
+  --surface:          rgba(255, 255, 255, 0.04);
+  --surface-hover:    rgba(255, 255, 255, 0.07);
+
+  --radius:           #{$radius};
+  --radius-lg:        #{$radius-lg};
+  --radius-sm:        #{$radius-sm};
+
+  --sidebar-width:    #{$sidebar-width};
+  --header-height:    #{$header-height};
+  --font:             #{$font-family};
+}
