@@ -1,6 +1,6 @@
 .page-notification-list {
     .container-page {
-        padding: 0;          // ✅ wrapper parent đã có padding ngang
+        padding: 0; // ✅ wrapper parent đã có padding ngang
         display: flex;
         justify-content: space-between;
 
@@ -199,19 +199,23 @@
                 padding: 1.3rem 0 1rem 0;
                 border-bottom: 1px solid #EEEEEF;
 
-                .radio-list {
+                .radio-list,
+                .checkbox-list {
                     .form-group {
                         display: flex;
-                        align-items: center;
-                        flex-wrap: wrap;
+                        align-items: flex-start;
+                        flex-direction: column;
+                        flex-wrap: nowrap;
                         justify-content: flex-start;
-                        gap: 0 1.2rem;
+                        gap: 0.6rem 0;
 
                         .base-radio {
                             margin: 0;
                         }
 
                         .base-checkbox {
+                            margin: 0;
+
                             input {
                                 &:checked~.checkmark {
                                     border-color: #015aa4;
@@ -235,10 +239,7 @@
                         margin-top: -4;
                         margin-right: 2px;
 
-                        svg {
-                            // width: 15px;
-                            // height: 15px;
-                        }
+                        // svg width/height removed (use default)
                     }
                 }
             }
@@ -305,21 +306,34 @@
 
 // ✅ NotificationList Responsive
 @media (max-width: 1199px) {
-  .page-notification-list {
-    .container-page {
-      flex-direction: column;
-      .container-notification { width: 100%; }
-      .container-filter { width: 100%; margin-top: 2rem; }
+    .page-notification-list {
+        .container-page {
+            flex-direction: column;
+
+            .container-notification {
+                width: 100%;
+            }
+
+            .container-filter {
+                width: 100%;
+                margin-top: 2rem;
+            }
+        }
     }
-  }
 }
 
 @media (max-width: 767px) {
-  .page-notification-list {
-    .container-page {
-      flex-direction: column;
-      .container-notification { width: 100%; }
-      .container-filter { width: 100%; }
+    .page-notification-list {
+        .container-page {
+            flex-direction: column;
+
+            .container-notification {
+                width: 100%;
+            }
+
+            .container-filter {
+                width: 100%;
+            }
+        }
     }
-  }
 }
