@@ -11,6 +11,7 @@ import { IAction } from "model/OtherModel";
 import { getPermissions } from "utils/common";
 import { showToast } from "utils/common";
 import Badge from "components/badge/badge";
+import { ExportExcel } from "exports/excel";
 
 import "./style.scss";
 import InvoiceVATMockService, {
@@ -25,6 +26,8 @@ import Configuration         from "./partials/Configuration/index";
 import InvoicePreviewModal from "./partials/IssueInvoice/InvoicePreviewModal/index";
 import InvoiceVATList, { SinvoiceLog, fetchSinvoiceLogs, monthToRange } from "./partials/InvoiceVATList/index";
 import InvoiceDetailModal               from "./partials/InvoiceDetailModal/index";
+import VatInvoiceService, { VatConfig } from "services/VatInvoiceService";
+import EinvoiceProviderService, { ProviderItem } from "services/EinvoiceProviderService";
 
 const InvoiceVATService = InvoiceVATMockService;
 
@@ -114,6 +117,31 @@ export default function InvoiceVATOverview(props: any) {
   };
 
   const handleCloseDetail = () => { setShowDetail(false); setDetailData(null); };
+
+  // ── Load VAT config + active provider on mount ────────────────────────────
+  const [vatConfig, setVatConfig] = useState<VatConfig | null>(null);
+  const [activeProvider, setActiveProvider] = useState<ProviderItem | null>(null);
+
+  useEffect(() => {
+    VatInvoiceService.getConfig()
+      .then((res: any) => {
+        if (res?.code === 0 && res.result) {
+          const c: VatConfig = res.result;
+          setVatConfig(c);
+          (window as any).__VAT_SUPPLIER_TAX_CODE__ = c.taxCode;
+          (window as any).__VAT_TEMPLATE_CODE__ = c.defaultTemplateCode;
+          (window as any).__VAT_CONFIG__ = c;
+        }
+      })
+      .catch(() => {});
+
+    EinvoiceProviderService.listProviders()
+      .then((list) => {
+        const active = list.find((p) => p.configActive === 1) || null;
+        setActiveProvider(active);
+      })
+      .catch(() => {});
+  }, []);
 
   const [tab, setTab]     = useState<{ name: TabName }>({ name: "tab_one" });
   const [params, setParams] = useState<IInvoiceVATFilterRequest>({ name: "" });
@@ -287,6 +315,78 @@ export default function InvoiceVATOverview(props: any) {
 
   const stats = MOCK_INVOICE_STATS; // giữ lại cho các vùng chưa chuyển hết
 
+  // ─── Xuất báo cáo (Tab 1) ─────────────────────────────────────────────────
+  const [exportingReport, setExportingReport] = useState(false);
+
+  const fmtDateExport = (ts: number | null | undefined): string => {
+    if (!ts) return "—";
+    const d = new Date(ts);
+    return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+  };
+
+  const handleExportReport = useCallback(async () => {
+    setExportingReport(true);
+    try {
+      const { fromDate, toDate } = monthToRange(currentMonth);
+      const allData = await fetchSinvoiceLogs({
+        fromDate, toDate, page: 1, size: 5000,
+      });
+
+      if (allData.items.length === 0) {
+        showToast("Không có dữ liệu để xuất báo cáo.", "error");
+        return;
+      }
+
+      const statusLabel = (s: string) => {
+        const m: Record<string, string> = {
+          ISSUED: "Đã phát hành", PENDING: "Chờ ký số",
+          FAILED: "Lỗi / Hủy", CANCELLED: "Đã hủy",
+        };
+        return m[s] ?? s;
+      };
+
+      const [y, m] = currentMonth.split("-").map(Number);
+
+      ExportExcel({
+        title:        `BÁO CÁO HÓA ĐƠN VAT ĐIỆN TỬ - THÁNG ${m}/${y}`,
+        fileName:     `BaoCao_HoaDon_VAT_T${m}_${y}`,
+        generateInfo: false,
+        generateSign: false,
+        header: [[
+          "STT",
+          "Số hóa đơn",
+          "Ký hiệu",
+          "Ngày xuất",
+          "Người mua",
+          "Mã số thuế",
+          "Tiền hàng (VNĐ)",
+          "Thuế GTGT (VNĐ)",
+          "Tổng tiền (VNĐ)",
+          "Trạng thái",
+        ]],
+        data: allData.items.map((item, idx) => [
+          idx + 1,
+          item.invoiceNo || "Đang xử lý",
+          item.invoiceSeries || "",
+          fmtDateExport(item.invoiceIssuedDate),
+          item.buyerName || "",
+          item.buyerTaxCode || "Cá nhân",
+          (item as any).amountWithoutTax ?? 0,
+          (item as any).taxAmount ?? 0,
+          item.totalAmount ?? 0,
+          statusLabel(item.status),
+        ]),
+        columnsWidth: [6, 18, 12, 14, 30, 16, 18, 18, 18, 16],
+        formatExcel:  ["center", "left", "center", "center", "left", "center", "right", "right", "right", "center"],
+      });
+      showToast("Xuất báo cáo thành công!", "success");
+    } catch (e: any) {
+      showToast(e?.message || "Lỗi khi xuất báo cáo.", "error");
+    } finally {
+      setExportingReport(false);
+    }
+  }, [currentMonth]);
+
   // ---- Per-tab header configs ----
   const tabHeaderConfig: Record<TabName, TabHeaderConfig> = {
     tab_one: {
@@ -294,7 +394,9 @@ export default function InvoiceVATOverview(props: any) {
       subtitle: `Xuất và quản lý hóa đơn GTGT theo nghị định 123/2020/NĐ-CP${overviewStats.monthLabel ? " · " + overviewStats.monthLabel : ""}`,
       actions: (
         <>
-          <button className="btn-export-report"><Icon name="Download" /> Xuất báo cáo</button>
+          <button className="btn-export-report" onClick={handleExportReport} disabled={exportingReport}>
+            <Icon name="Download" /> {exportingReport ? "Đang xuất..." : "Xuất báo cáo"}
+          </button>
           <button className="btn-new-invoice" onClick={() => setTab({ name: "tab_three" })}>+ Xuất hóa đơn mới</button>
         </>
       ),
@@ -339,11 +441,7 @@ export default function InvoiceVATOverview(props: any) {
     tab_five: {
       title: "Cấu hình hóa đơn VAT",
       subtitle: "Mẫu hóa đơn, thông tin doanh nghiệp & tự động hóa",
-      actions: (
-        <button className="btn-new-invoice" onClick={() => showToast("Lưu cấu hình thành công!", "success")}>
-          <Icon name="Check" /> Lưu cấu hình
-        </button>
-      ),
+      actions: <></>,
     },
   };
 
@@ -475,14 +573,28 @@ export default function InvoiceVATOverview(props: any) {
               <div className="overview-sidebar">
                 <div className="sidebar-card">
                   <h4>Nhà cung cấp HĐĐT</h4>
-                  <div className="provider-item">
-                    <div className="provider-logo vnpt">VNPT</div>
-                    <div className="provider-info">
-                      <span className="provider-name">VNPT Invoice</span>
-                      <span className="provider-sub">Đang kết nối · API v2.1</span>
+                  {activeProvider ? (
+                    <div className="provider-item">
+                      <div className="provider-logo" style={{ background: activeProvider.logoColor || "#1e40af" }}>
+                        {activeProvider.logoText || activeProvider.code?.toUpperCase()}
+                      </div>
+                      <div className="provider-info">
+                        <span className="provider-name">{activeProvider.name}</span>
+                        <span className="provider-sub">
+                          {activeProvider.lastTestStatus === "success" ? "Đang kết nối" : "Chưa kiểm tra"} · API
+                        </span>
+                      </div>
+                      <span className={`provider-status ${activeProvider.lastTestStatus === "success" ? "active" : ""}`}>
+                        ● {activeProvider.lastTestStatus === "success" ? "Hoạt động" : "Chưa xác nhận"}
+                      </span>
                     </div>
-                    <span className="provider-status active">● Hoạt động</span>
-                  </div>
+                  ) : (
+                    <div className="provider-item">
+                      <div className="provider-info">
+                        <span className="provider-sub">Chưa cấu hình nhà cung cấp</span>
+                      </div>
+                    </div>
+                  )}
                   <div className="quota-section">
                     <div className="quota-header"><span>Hạn mức hóa đơn</span></div>
                     <div className="quota-bar-card">
@@ -557,21 +669,22 @@ export default function InvoiceVATOverview(props: any) {
         isOpen={showDetail}
         data={detailData}
         onClose={handleCloseDetail}
+        onRefresh={handleCloseDetail}
       />
 
       {/* ── InvoicePreviewModal (nút Xem trước / Phát hành ở header tab 3) ── */}
       <InvoicePreviewModal
         isOpen={showPreview}
         data={{
-          sellerName:       "POSME FASHION STORE",
-          sellerTaxCode:    "0311987654",
-          sellerAddress:    "123 Nguyễn Huệ, P.Bến Nghé, Q.1, TP.HCM",
-          sellerPhone:      "028 1234 5678",
-          sellerEmail:      "info@posme.vn",
-          sellerBankAccount:"0011234567890",
-          sellerBankName:   "Vietcombank HCM",
-          templateCode:     "01GTKT0/001 – HĐ GTGT điện tử",
-          symbol:           "C26TNA",
+          sellerName:       vatConfig?.companyName || "—",
+          sellerTaxCode:    vatConfig?.taxCode || "—",
+          sellerAddress:    vatConfig?.address || "—",
+          sellerPhone:      vatConfig?.phone || "",
+          sellerEmail:      vatConfig?.email || "",
+          sellerBankAccount:vatConfig?.bankAccount || "",
+          sellerBankName:   vatConfig?.bankName || "",
+          templateCode:     vatConfig?.defaultTemplateCode || "1/6553",
+          symbol:           vatConfig?.defaultInvoiceSeries || "C26TNA",
           invoiceNo:        "0000129",
           invoiceDate:      "28/02/2026",
           buyerName:        "Công ty TNHH Thương mại ABC",

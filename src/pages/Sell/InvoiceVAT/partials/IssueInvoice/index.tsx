@@ -32,22 +32,27 @@ interface InvoiceFormData {
   note:          string;
 }
 
-const SUPPLIER_TAX_CODE = (window as any).__VAT_SUPPLIER_TAX_CODE__ || "0100109106-501";
-const TEMPLATE_CODE     = (window as any).__VAT_TEMPLATE_CODE__     || "1/6553";
+const getSupplierTaxCode = () => (window as any).__VAT_SUPPLIER_TAX_CODE__ || "0100109106-501";
+const getTemplateCode    = () => (window as any).__VAT_TEMPLATE_CODE__     || "1/6553";
 
-const DEFAULT_FORM: InvoiceFormData = {
-  templateCode:  "01GTKT0/001 – HĐ GTGT điện tử",
-  symbol:        "C26TNA",
-  invoiceNo:     "",
-  invoiceDate:   new Date().toLocaleDateString("vi-VN"),
-  buyerName:     "",
-  taxCode:       "",
-  address:       "",
-  bankAccount:   "",
-  paymentMethod: "Chuyển khoản",
-  emailReceive:  "",
-  items:         [],
-  note:          "",
+const buildDefaultForm = (): InvoiceFormData => {
+  const cfg = (window as any).__VAT_CONFIG__;
+  return {
+    templateCode:  cfg?.defaultTemplateCode?.includes("2")
+      ? "02GTKT0/001 – HĐ GTGT dịch vụ"
+      : "01GTKT0/001 – HĐ GTGT điện tử",
+    symbol:        cfg?.defaultInvoiceSeries || "C26TNA",
+    invoiceNo:     "",
+    invoiceDate:   (() => { const d = new Date(); return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`; })(),
+    buyerName:     "",
+    taxCode:       "",
+    address:       "",
+    bankAccount:   "",
+    paymentMethod: "Chuyển khoản",
+    emailReceive:  "",
+    items:         [],
+    note:          "",
+  };
 };
 
 const STEPS = [
@@ -68,7 +73,7 @@ interface IssueInvoiceProps {
 
 export default function IssueInvoice({ onRegisterPreview, onRegisterPublish, initialInvoiceCode }: IssueInvoiceProps) {
   const [step,           setStep]          = useState(2);
-  const [form,           setForm]          = useState<InvoiceFormData>(DEFAULT_FORM);
+  const [form,           setForm]          = useState<InvoiceFormData>(buildDefaultForm);
   const [orderCode,      setOrderCode]     = useState(initialInvoiceCode ?? "");
   const [loadingOrder,   setLoadingOrder]  = useState(false);
   const [loadingPreview, setLoadingPreview]= useState(false);
@@ -173,14 +178,15 @@ export default function IssueInvoice({ onRegisterPreview, onRegisterPublish, ini
       taxMap[i.taxPercentage].taxAmount     += i.taxAmount;
     });
 
+    const cfg = (window as any).__VAT_CONFIG__;
+
     return {
-      supplierTaxCode: SUPPLIER_TAX_CODE,
+      supplierTaxCode: getSupplierTaxCode(),
       generalInvoiceInfo: {
-        invoiceType: "1", templateCode: TEMPLATE_CODE, invoiceSeries: form.symbol,
+        invoiceType: "1", templateCode: getTemplateCode(), invoiceSeries: form.symbol,
         currencyCode: "VND", exchangeRate: 1, adjustmentType: "1",
         paymentStatus: true, cusGetInvoiceRight: true,
         invoiceIssuedDate: (() => {
-          // form.invoiceDate là "dd/MM/yyyy" → chuyển sang Unix ms (UTC+7)
           try {
             const [d, m, y] = form.invoiceDate.split("/").map(Number);
             if (!d || !m || !y) return undefined;
@@ -188,6 +194,14 @@ export default function IssueInvoice({ onRegisterPreview, onRegisterPublish, ini
           } catch { return undefined; }
         })(),
       },
+      sellerInfo: cfg ? {
+        sellerLegalName:   cfg.companyName,
+        sellerTaxCode:     cfg.taxCode,
+        sellerAddressLine: cfg.address,
+        sellerPhoneNumber: cfg.phone,
+        sellerBankName:    cfg.bankName,
+        sellerBankAccount: cfg.bankAccount,
+      } : undefined,
       buyerInfo: {
         buyerName: form.buyerName, buyerLegalName: form.buyerName,
         buyerTaxCode: form.taxCode || undefined,
@@ -215,7 +229,7 @@ export default function IssueInvoice({ onRegisterPreview, onRegisterPublish, ini
     try {
       const req = buildVATRequest();
       req.generalInvoiceInfo.paymentStatus = false;
-      const res = await VatInvoiceService.previewDraft(SUPPLIER_TAX_CODE, req);
+      const res = await VatInvoiceService.previewDraft(getSupplierTaxCode(), req);
       if (res?.code === 0) {
         const pdfBase64 = typeof res.result === "string" ? res.result : null;
         if (pdfBase64) {
@@ -245,7 +259,7 @@ export default function IssueInvoice({ onRegisterPreview, onRegisterPublish, ini
       const res = await VatInvoiceService.createInvoice(buildVATRequest());
       if (res?.code === 0) {
         showToast(`Phát hành hóa đơn thành công!${res.result?.invoiceNo ? " Số HĐ: " + res.result.invoiceNo : ""}`, "success");
-        setStep(4); setForm({ ...DEFAULT_FORM }); setOrderCode("");
+        setStep(4); setForm(buildDefaultForm()); setOrderCode("");
       } else {
         showToast(res?.message || "Phát hành thất bại. Kiểm tra lại.", "error");
       }
@@ -265,7 +279,7 @@ export default function IssueInvoice({ onRegisterPreview, onRegisterPublish, ini
         const invoiceNo = res.result?.invoiceNo       || "";
         if (uuid) {
           await VatInvoiceService.sendEmailToCustomer({
-            supplierTaxCode: SUPPLIER_TAX_CODE,
+            supplierTaxCode: getSupplierTaxCode(),
             transactionUuid: uuid,
             buyerEmail:      form.emailReceive,
           });
@@ -273,7 +287,7 @@ export default function IssueInvoice({ onRegisterPreview, onRegisterPublish, ini
         } else {
           showToast(`Đã phát hành${invoiceNo ? " (" + invoiceNo + ")" : ""} – chưa lấy được UUID để gửi mail.`, "warning");
         }
-        setStep(4); setForm({ ...DEFAULT_FORM }); setOrderCode("");
+        setStep(4); setForm(buildDefaultForm()); setOrderCode("");
       } else {
         showToast(res?.message || "Phát hành thất bại.", "error");
       }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Icon from "components/icon";
 import Badge from "components/badge/badge";
 import { showToast } from "utils/common";
+import InvoiceAdjustmentModal from "../InvoiceAdjustmentModal";
 import "./style.scss";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -55,6 +56,7 @@ interface Props {
   isOpen:   boolean;
   data:     SinvoiceLogItem | null;
   onClose:  () => void;
+  onRefresh?: () => void;
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -96,10 +98,11 @@ const taxLabel = (pct: number): string => {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function InvoiceDetailModal({ isOpen, data, onClose }: Props) {
+export default function InvoiceDetailModal({ isOpen, data, onClose, onRefresh }: Props) {
   const [copied,        setCopied]        = useState(false);
   const [loadingPdf,    setLoadingPdf]    = useState(false);
   const [loadingEmail,  setLoadingEmail]  = useState(false);
+  const [showAdjust,    setShowAdjust]    = useState(false);
 
   // Đóng bằng ESC
   useEffect(() => {
@@ -383,7 +386,9 @@ export default function InvoiceDetailModal({ isOpen, data, onClose }: Props) {
           </button>
           <button
             className="idm-btn idm-btn--outline"
-            onClick={() => showToast("Chức năng điều chỉnh đang phát triển", "warning")}
+            onClick={() => setShowAdjust(true)}
+            disabled={data.status !== "ISSUED"}
+            title={data.status !== "ISSUED" ? "Chỉ điều chỉnh được hóa đơn đã phát hành" : ""}
           >
             <Icon name="Edit" /> Điều chỉnh HĐ
           </button>
@@ -391,6 +396,14 @@ export default function InvoiceDetailModal({ isOpen, data, onClose }: Props) {
         </div>
 
       </div>
+
+      {/* Modal điều chỉnh hóa đơn */}
+      <InvoiceAdjustmentModal
+        isOpen={showAdjust}
+        originalInvoice={data}
+        onClose={() => setShowAdjust(false)}
+        onSuccess={() => { onRefresh?.(); }}
+      />
     </div>
   );
 }

@@ -465,6 +465,9 @@ export const urlsApi = {
     searchInvoices: prefixIntegration + "/sinvoice/query/search",
     logList: prefixIntegration + "/sinvoice/log/list",
     logGet: prefixIntegration + "/sinvoice/log/get",
+    adjustInvoice: prefixIntegration + "/sinvoice/invoice/adjust",
+    configGet: prefixIntegration + "/sinvoice/config/get",
+    configSave: prefixIntegration + "/sinvoice/config/save",
   },
   returnInvoice: {
     list: prefixSales + "/invoice/return-exchange/list",
