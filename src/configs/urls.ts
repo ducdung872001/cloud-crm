@@ -2142,7 +2142,7 @@ export const urlsApi = {
     importGet: prefixInventory + "/material/import/get",
     importCreate: prefixInventory + "/material/import/create",
     importConfirm: prefixInventory + "/material/import/confirm",
-    importCancel: prefixInventory + "/material/import/cancel",
+    importCancel: prefixInventory + "/material/import/excel/cancel",
     bomList: prefixInventory + "/material/bom/list",
     bomSummary: prefixInventory + "/material/bom/summary",
     bomGet: prefixInventory + "/material/bom/get",
