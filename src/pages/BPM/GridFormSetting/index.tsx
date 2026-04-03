@@ -29,7 +29,7 @@ import TextArea from "components/textarea/textarea";
 import CustomerService from "services/CustomerService";
 import ReasonListBpmService from "services/ReasonListBpmService";
 import ProjectCatalogService from "services/ProjectCatalogService";
-import ProjectRealtyService from "services/ProjectRealtyService";
+// ProjectRealtyService removed (non-retail BDS)
 import UnitService from "services/UnitService";
 import MaterialService from "services/MaterialService";
 import FieldListService from "services/FieldListService";

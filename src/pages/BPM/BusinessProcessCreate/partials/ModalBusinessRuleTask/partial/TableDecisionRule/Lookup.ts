@@ -1,5 +1,5 @@
 import FieldListService from "services/FieldListService";
-import ProjectRealtyService from "services/ProjectRealtyService";
+// ProjectRealtyService removed (non-retail BDS)
 import ServiceService from "services/ServiceService";
 import WarehouseService from "services/WarehouseService";
 

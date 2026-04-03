@@ -10,9 +10,9 @@ import { createArrayFromTo, getMaxDay, isDifferenceObj } from "reborn-util";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { useActiveElement } from "utils/hookCustom";
 import "./AddCxmOption.scss";
-import SpaceService from "services/SpaceService";
+// SpaceService removed (non-retail BDS)
 
-import SpaceTypeService from "services/SpaceTypeService";
+// SpaceTypeService removed (non-retail BDS)
 
 export default function AddCxmOption(props: any) {
   const { onShow, onHide, data, dataBuildingFloor, dataBuilding } = props;

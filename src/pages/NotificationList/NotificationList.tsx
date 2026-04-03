@@ -24,7 +24,6 @@ import Button from "components/button/button";
 import NotificationService from "services/NotificationService";
 import Loading from "components/loading";
 import { Navigate, useNavigate } from "react-router-dom";
-import ProjectRealtyService from "services/ProjectRealtyService";
 import ModalViewNoti from "./ModalViewNoti/ModalViewNoti";
 import BeautyBranchService from "services/BeautyBranchService";
 

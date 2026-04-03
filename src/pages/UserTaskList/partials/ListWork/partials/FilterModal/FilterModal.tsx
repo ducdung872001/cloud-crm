@@ -15,7 +15,7 @@ import { ContextType, UserContext } from "contexts/userContext";
 import EmployeeService from "services/EmployeeService";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import Input from "components/input/input";
-import ProjectRealtyService from "services/ProjectRealtyService";
+// ProjectRealtyService removed (non-retail BDS)
 
 export default function FilterModal(props: any) {
   const isMounted = useRef(false);

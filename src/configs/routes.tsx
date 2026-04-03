@@ -7,7 +7,7 @@ import urls from "./urls";
 import CustomerPersonList from "pages/CustomerPerson/CustomerPersonList";
 import ContactList from "pages/Contact/ContactList";
 import ScheduleNextList from "pages/Schedule/ScheduleNextList";
-import TreatmentScheduleList from "pages/TreatmentSchedule/TreatmentScheduleList";
+// Removed: TreatmentSchedule (non-retail beauty/spa)
 import TimeKeepingList from "pages/Timekeeping/TimekeepingList";
 import CashBookList from "pages/CashBook/CashBookList";
 import PaymentHistoryList from "pages/PaymentHistory/PaymentHistoryList";
@@ -927,10 +927,7 @@ export const routes: IRouter[] = [
     path: urls.schedule_next,
     component: <ScheduleNextList />,
   },
-  {
-    path: urls.schedule,
-    component: <TreatmentScheduleList />,
-  },
+  // Removed: TreatmentSchedule (non-retail beauty/spa)
   {
     path: urls.timekeeping,
     component: <TimeKeepingList />,

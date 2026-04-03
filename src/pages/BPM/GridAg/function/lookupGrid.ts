@@ -1,6 +1,6 @@
 import { convertToId } from "reborn-util";
 import FieldListService from "services/FieldListService";
-import ProjectRealtyService from "services/ProjectRealtyService";
+// ProjectRealtyService removed (non-retail BDS)
 import { fetchLookupData } from "../partial/CustomCellEdit/partials/SelectLookupGrid";
 
 export const lookupOptions = [

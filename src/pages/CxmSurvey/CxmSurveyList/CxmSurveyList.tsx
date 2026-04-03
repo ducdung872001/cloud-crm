@@ -16,7 +16,7 @@ import { getPageOffset } from "reborn-util";
 
 import "./CxmSurveyList.scss";
 
-import BuildingService from "services/BuildingService";
+// BuildingService removed (non-retail BDS)
 import { useNavigate } from "react-router-dom";
 
 import SpaceList from "pages/SettingOperate/partials/Space/SpaceList";

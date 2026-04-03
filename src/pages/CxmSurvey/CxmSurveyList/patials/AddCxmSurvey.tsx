@@ -10,7 +10,7 @@ import { createArrayFromTo, getMaxDay, isDifferenceObj } from "reborn-util";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { useActiveElement } from "utils/hookCustom";
 import "./AddCxmSurvey.scss";
-import BuildingService from "services/BuildingService";
+// BuildingService removed (non-retail BDS)
 import CxmSurveyService from "services/CxmSurveyService";
 import SelectCustom from "components/selectCustom/selectCustom";
 
