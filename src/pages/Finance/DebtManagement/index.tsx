@@ -630,7 +630,7 @@ function EditScheduleModal({ debt, onClose, onSaved }: EditScheduleModalProps) {
               type="date"
               className="finance-input"
               value={dueDate}
-              min={new Date().toISOString().split("T")[0]}
+              min={(() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })()}
               onChange={(e) => setDueDate(e.target.value)}
             />
           </div>
@@ -640,7 +640,7 @@ function EditScheduleModal({ debt, onClose, onSaved }: EditScheduleModalProps) {
               type="date"
               className="finance-input"
               value={reminderDate}
-              min={new Date().toISOString().split("T")[0]}
+              min={(() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })()}
               max={dueDate || undefined}
               onChange={(e) => setReminderDate(e.target.value)}
             />
