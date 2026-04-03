@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { IActionModal } from "model/OtherModel";
 import { showToast } from "utils/common";
@@ -14,11 +15,11 @@ interface ReturnDetailModalProps {
   onConfirmed?: (updatedItem: ReturnProduct) => void;
 }
 
-const STATUS_MAP: Record<ReturnStatus, { label: string; cls: string }> = {
-  done:       { label: "Hoàn thành", cls: "rdm-badge--done" },
-  pending:    { label: "Chờ xử lý",  cls: "rdm-badge--pending" },
-  processing: { label: "Đang xử lý", cls: "rdm-badge--processing" },
-  cancel:     { label: "Đã hủy",     cls: "rdm-badge--cancel" },
+const STATUS_KEYS: Record<ReturnStatus, { key: string; cls: string }> = {
+  done:       { key: "pageReturnProduct.done",       cls: "rdm-badge--done" },
+  pending:    { key: "pageReturnProduct.pending",    cls: "rdm-badge--pending" },
+  processing: { key: "pageReturnProduct.processing", cls: "rdm-badge--processing" },
+  cancel:     { key: "pageReturnProduct.cancel",     cls: "rdm-badge--cancel" },
 };
 
 const fmt = (n: number) => (n > 0 ? n.toLocaleString("vi") + " ₫" : "–");
@@ -29,6 +30,7 @@ export default function ReturnDetailModal({
   onClose,
   onConfirmed,
 }: ReturnDetailModalProps) {
+  const { t } = useTranslation();
   const [confirming, setConfirming] = useState(false);
   // Local status để update ngay lập tức trên UI sau khi confirm
   const [localStatus, setLocalStatus] = useState<ReturnStatus | null>(null);
@@ -46,26 +48,25 @@ export default function ReturnDetailModal({
       const res = await ReturnInvoiceService.confirmReturn(Number(item.id));
 
       if (res?.code !== 0) {
-        showToast(res?.message ?? "Xác nhận thất bại. Vui lòng thử lại.", "error");
+        showToast(res?.message ?? t("pageReturnProduct.confirmFailed"), "error");
         return;
       }
 
       // Optimistic UI — đổi badge ngay lập tức
       setLocalStatus("done");
 
-      const actionLabel = item.type === "exchange" ? "đổi hàng" : "trả hàng";
-      showToast(`Xác nhận ${actionLabel} thành công!`, "success");
+      showToast(t("pageReturnProduct.confirmSuccess"), "success");
 
       // Báo lên parent để cập nhật item trong list
       if (onConfirmed) {
         onConfirmed({ ...item, status: "done" });
       }
     } catch {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại.", "error");
+      showToast(t("common.error"), "error");
     } finally {
       setConfirming(false);
     }
-  }, [item, isPending, confirming, onConfirmed]);
+  }, [item, isPending, confirming, onConfirmed, t]);
 
   // ── Reset local state khi đóng / mở modal mới ─────────────────────────────
 
@@ -79,14 +80,14 @@ export default function ReturnDetailModal({
   const actions = useMemo<IActionModal>(() => {
     const buttons: IActionModal["actions_right"]["buttons"] = [
       {
-        title: "Đóng",
+        title: t("common.close"),
         color: "primary",
         variant: "outline",
         callback: handleClose,
         disabled: confirming,
       },
       {
-        title: "🖨️ In phiếu",
+        title: `🖨️ ${t("common.print")}`,
         color: "primary",
         variant: "outline",
         callback: () => window.print(),
@@ -96,9 +97,9 @@ export default function ReturnDetailModal({
 
     // Nút xác nhận chỉ hiện khi phiếu đang "Chờ xử lý"
     if (isPending) {
-      const typeLabel = item?.type === "exchange" ? "Xác nhận đổi hàng" : "Xác nhận trả hàng";
+      const typeLabel = item?.type === "exchange" ? t("pageReturnProduct.confirmExchange") : t("pageReturnProduct.confirmReturn");
       buttons.push({
-        title: confirming ? "Đang xử lý..." : `✅ ${typeLabel}`,
+        title: confirming ? t("pageReturnProduct.confirming") : `✅ ${typeLabel}`,
         color: "primary",
         callback: handleConfirm,
         disabled: confirming,
@@ -106,21 +107,21 @@ export default function ReturnDetailModal({
     }
 
     return { actions_right: { buttons } };
-  }, [handleClose, handleConfirm, isPending, confirming, item?.type]);
+  }, [handleClose, handleConfirm, isPending, confirming, item?.type, t]);
 
   // ── Render ────────────────────────────────────────────────────────────────
 
   if (!item) return null;
 
-  const st = STATUS_MAP[effectiveStatus];
+  const st = STATUS_KEYS[effectiveStatus];
 
   const INFO_ROWS = [
-    { label: "Loại phiếu",   value: item.type === "return" ? "🔴 Trả hàng" : "🔵 Đổi hàng" },
-    { label: "Trạng thái",   value: <span className={`rdm-badge ${st.cls}`}>{st.label}</span> },
-    { label: "Khách hàng",   value: item.customerName },
-    { label: "Đơn hàng gốc", value: item.originalOrderCode },
-    { label: "Lý do",        value: item.reason },
-    { label: "Nhân viên",    value: item.staffName },
+    { label: t("pageReturnProduct.detailType"),          value: item.type === "return" ? `🔴 ${t("pageReturnProduct.returnType")}` : `🔵 ${t("pageReturnProduct.exchangeType")}` },
+    { label: t("pageReturnProduct.detailStatus"),        value: <span className={`rdm-badge ${st.cls}`}>{t(st.key)}</span> },
+    { label: t("pageReturnProduct.detailCustomer"),      value: item.customerName },
+    { label: t("pageReturnProduct.detailOriginalOrder"), value: item.originalOrderCode },
+    { label: t("pageReturnProduct.detailReason"),        value: item.reason },
+    { label: t("pageReturnProduct.detailStaff"),         value: item.staffName },
   ];
 
   const qtyMatch = item.productSummary.match(/x(\d+)\)/);
@@ -154,14 +155,14 @@ export default function ReturnDetailModal({
 
         {/* Products table */}
         <div className="rdm-section-title">
-          {item.type === "exchange" ? "Sản phẩm đổi lại" : "Sản phẩm trả lại"}
+          {item.type === "exchange" ? t("pageReturnProduct.detailExchangeProducts") : t("pageReturnProduct.detailReturnProducts")}
         </div>
         <table className="rdm-tbl">
           <thead>
             <tr>
-              <th>Sản phẩm</th>
-              <th style={{ textAlign: "center" }}>SL</th>
-              <th style={{ textAlign: "right" }}>Thành tiền</th>
+              <th>{t("common.product")}</th>
+              <th style={{ textAlign: "center" }}>{t("common.quantity")}</th>
+              <th style={{ textAlign: "right" }}>{t("common.total")}</th>
             </tr>
           </thead>
           <tbody>
@@ -176,18 +177,18 @@ export default function ReturnDetailModal({
         {/* Summary */}
         <div className="rdm-summary">
           <div className="rdm-summary__row">
-            <span>Hình thức hoàn</span>
+            <span>{t("pageReturnProduct.detailRefundMethod")}</span>
             <span>{item.paymentMethod}</span>
           </div>
           {item.note && (
             <div className="rdm-summary__row">
-              <span>Ghi chú</span>
+              <span>{t("common.note")}</span>
               <span>{item.note}</span>
             </div>
           )}
           <div className="rdm-summary__divider" />
           <div className="rdm-summary__row rdm-summary__row--total">
-            <span>Tổng tiền hoàn</span>
+            <span>{t("pageReturnProduct.detailTotalRefund")}</span>
             <span>{fmt(item.refundAmount)}</span>
           </div>
         </div>
@@ -195,11 +196,11 @@ export default function ReturnDetailModal({
         {/* Confirm hint khi pending */}
         {isPending && (
           <div className="rdm-confirm-hint">
-            ⚠️ Phiếu đang chờ xác nhận. Bấm{" "}
+            ⚠️ {t("pageReturnProduct.confirmHint")}{" "}
             <strong>
-              {item.type === "exchange" ? "Xác nhận đổi hàng" : "Xác nhận trả hàng"}
+              {item.type === "exchange" ? t("pageReturnProduct.confirmExchange") : t("pageReturnProduct.confirmReturn")}
             </strong>{" "}
-            để hoàn tất và ghi nhận.
+            {t("pageReturnProduct.confirmHintEnd")}
           </div>
         )}
       </ModalBody>

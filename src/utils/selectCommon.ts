@@ -27,7 +27,7 @@ import InventoryService from "services/InventoryService";
 import CategoryServiceService from "services/CategoryServiceService";
 import PositionService from "services/PositionService";
 import ContractPipelineService from "services/ContractPipelineService";
-import ContractStageService from "services/ContractStageService";
+// ContractStageService removed (non-retail)
 import KpiService from "services/KpiService";
 import ContactService from "services/ContactService";
 import ContractService from "services/ContractService";
@@ -245,7 +245,7 @@ export async function SelectOptionData(key: string, params?: any) {
       response = await ContractPipelineService.list(params);
       break;
     case "stageId":
-      response = await ContractStageService.list(params);
+      // ContractStageService removed (non-retail)
       break;
     case "contactId":
       response = await ContactService.list(params);

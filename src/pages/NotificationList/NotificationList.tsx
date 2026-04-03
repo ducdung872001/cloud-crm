@@ -1,4 +1,5 @@
 import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./NotificationList.scss";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
@@ -35,7 +36,8 @@ import BeautyBranchService from "services/BeautyBranchService";
 // 5 - Phản hồi Yêu cầu làm rõ (Phản hồi nhà thầu)
 
 export default function NotificationList(props: any) {
-  document.title = "Thông báo";
+  const { t } = useTranslation();
+  document.title = t("pageNotification.title");
 
   const navigate = useNavigate();
   const isMounted = useRef(false);
@@ -75,7 +77,7 @@ export default function NotificationList(props: any) {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "thông báo",
+    name: t("pageNotification.title"),
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -120,7 +122,7 @@ export default function NotificationList(props: any) {
     } else if (response.code == 400) {
       setIsPermissions(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? t("common.error"), "error");
     }
     setIsLoading(false);
     setIsLoadingMore(false);
@@ -165,11 +167,11 @@ export default function NotificationList(props: any) {
     const response = await NotificationService.delete(id);
 
     if (response.code === 0) {
-      showToast("Xóa thông báo thành công", "success");
+      showToast(t("pageNotification.deleteSuccess"), "success");
       getListNotify(params);
       setIsLoading(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? t("common.error"), "error");
     }
     setShowDialog(false);
     setContentDialog(null);
@@ -188,12 +190,12 @@ export default function NotificationList(props: any) {
 
     Promise.all(arrayPromise).then((result) => {
       if (result.length > 0) {
-        showToast("Xóa thông báo thành công", "success");
+        showToast(t("pageNotification.deleteSuccess"), "success");
         getListNotify(params);
         setIsLoading(true);
         setListIdChecked([]);
       } else {
-        showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+        showToast(t("common.error"), "error");
       }
       setShowDialog(false);
       setContentDialog(null);
@@ -340,7 +342,7 @@ export default function NotificationList(props: any) {
       getListNotify(params);
       getCountUnread();
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? t("common.error"), "error");
     }
   };
 
@@ -350,17 +352,17 @@ export default function NotificationList(props: any) {
     try {
       const response = await NotificationService.updateReadAll({});
       if (response.code === 0) {
-        showToast("Đã đánh dấu tất cả là đã đọc", "success");
+        showToast(t("pageNotification.markedAllRead"), "success");
         // Cập nhật UI ngay - đánh dấu toàn bộ list đã đọc
         setListNotification((prev) =>
           (prev as any[]).map((item) => ({ ...item, unread: 1 }))
         );
         setCountUnread(0);
       } else {
-        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+        showToast(response.message ?? t("common.error"), "error");
       }
     } catch {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(t("common.error"), "error");
     } finally {
       setIsReadingAll(false);
     }
@@ -372,7 +374,7 @@ export default function NotificationList(props: any) {
       const result = response.result;
       setCountUnread(result);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? t("common.error"), "error");
     }
   };
 
@@ -516,7 +518,7 @@ export default function NotificationList(props: any) {
 
   return (
     <div className="page-content page-notification-list card-box">
-      <TitleAction title="Thông báo" />
+      <TitleAction title={t("pageNotification.title")} />
 
       <div className="container-page">
 
@@ -524,14 +526,14 @@ export default function NotificationList(props: any) {
           <div className="container-notification">
             <div className="header-notification">
               <span className="text-unRead">
-                {countUnread > 0 ? `Có ${countUnread} thông báo chưa đọc` : 'Không có thông báo chưa đọc'}
+                {countUnread > 0 ? t("pageNotification.unreadCount", { count: countUnread }) : t("pageNotification.noUnread")}
               </span>
               <button
                 className={`text-Read${isReadingAll ? " text-Read--loading" : ""}${!countUnread || countUnread <= 0 ? " text-Read--disabled" : ""}`}
                 onClick={onReadAll}
                 disabled={isReadingAll || !countUnread || countUnread <= 0}
               >
-                {isReadingAll ? "Đang xử lý..." : "Đánh dấu là đã đọc"}
+                {isReadingAll ? t("pageNotification.markingRead") : t("pageNotification.markAllRead")}
               </button>
             </div>
 
@@ -580,7 +582,7 @@ export default function NotificationList(props: any) {
         <div className="container-filter">
           <div className="title-filter">
             <Icon name='Funnel' />
-            <span style={{ fontSize: 14, fontWeight: 600 }}>Bộ lọc</span>
+            <span style={{ fontSize: 14, fontWeight: 600 }}>{t("pageNotification.filterTitle")}</span>
           </div>
 
           <div className="notify-type">
@@ -590,11 +592,11 @@ export default function NotificationList(props: any) {
               options={[
                 {
                   value: '-1',
-                  label: "Tất cả",
+                  label: t("pageNotification.filterAll"),
                 },
                 {
                   value: '1',
-                  label: "Thông báo chưa đọc",
+                  label: t("pageNotification.filterUnread"),
                 },
               ]}
               value={notifyType}
@@ -611,15 +613,15 @@ export default function NotificationList(props: any) {
               options={[
                 {
                   value: '1',
-                  label: "Thông báo sản phẩm",
+                  label: t("pageNotification.filterProduct"),
                 },
                 {
                   value: '2',
-                  label: "Thông báo hết hạn",
+                  label: t("pageNotification.filterExpiry"),
                 },
                 {
                   value: '3',
-                  label: "Thông báo vận chuyển",
+                  label: t("pageNotification.filterShipping"),
                 },
               ]}
               onChange={(e) => {
@@ -638,7 +640,7 @@ export default function NotificationList(props: any) {
             <SelectCustom
               id=""
               name=""
-              label={'Chi nhánh'}
+              label={t("pageNotification.filterBranch")}
               fill={true}
               value={dataProject}
               options={[]}
@@ -646,7 +648,7 @@ export default function NotificationList(props: any) {
                 setDataProject(e);
               }}
               isAsyncPaginate={true}
-              placeholder="Chọn chi nhánh"
+              placeholder={t("pageNotification.filterBranchPlaceholder")}
               additional={{
                 page: 1,
               }}
@@ -658,45 +660,45 @@ export default function NotificationList(props: any) {
             <SelectCustom
               id="status"
               name="status"
-              label={'Trạng thái đơn hàng'}
+              label={t("pageNotification.filterOrderStatus")}
               special={true}
               fill={true}
               value={statusWork}
               options={[
                 {
                   value: '0',
-                  label: 'Cần xử lý'
+                  label: t("pageNotification.statusNeedHandle")
                 },
                 {
                   value: '1',
-                  label: 'Mới tiếp nhận'
+                  label: t("pageNotification.statusNewReceived")
                 },
                 {
                   value: '2',
-                  label: 'Đã hoàn thành'
+                  label: t("pageNotification.statusCompleted")
                 },
                 {
                   value: '4',
-                  label: 'Tạm dừng/tiếp tục'
+                  label: t("pageNotification.statusPausedResumed")
                 },
                 {
                   value: '3',
-                  label: 'Đã hủy'
+                  label: t("pageNotification.statusCancelled")
                 },
                 {
                   value: '5',
-                  label: 'Sắp tới hạn'
+                  label: t("pageNotification.statusDueSoon")
                 },
                 {
                   value: '6',
-                  label: 'Quá hạn'
+                  label: t("pageNotification.statusOverdue")
                 },
               ]}
               onChange={(e) => {
                 setStatusWork(e);
               }}
               isAsyncPaginate={false}
-              placeholder="Chọn trạng thái công việc"
+              placeholder={t("pageNotification.filterOrderStatusPlaceholder")}
             // additional={{
             //   page: 1,
             // }}
@@ -706,11 +708,11 @@ export default function NotificationList(props: any) {
           </div>
 
           <div className="filter_time">
-            <span style={{ fontSize: 14, fontWeight: '600', color: '#939394' }}>Khoảng thời gian</span>
+            <span style={{ fontSize: 14, fontWeight: '600', color: '#939394' }}>{t("pageNotification.filterDateRange")}</span>
             <div className="body_time">
               <div style={{ width: '49%' }}>
                 <DatePickerCustom
-                  label="Từ ngày:"
+                  label={`${t("pageNotification.filterFrom")}:`}
                   name="the_day"
                   fill={true}
                   required={false}
@@ -726,7 +728,7 @@ export default function NotificationList(props: any) {
               </div>
               <div style={{ width: '49%' }}>
                 <DatePickerCustom
-                  label="Đến ngày:"
+                  label={`${t("pageNotification.filterTo")}:`}
                   name="the_day"
                   fill={true}
                   required={false}
@@ -751,7 +753,7 @@ export default function NotificationList(props: any) {
               }}
               className='button_cancel'
             >
-              Đặt lại
+              {t("pageNotification.filterReset")}
             </Button>
             <Button
               // disabled={_.isEqual(dataConfirm, lstFieldActive)}
@@ -760,7 +762,7 @@ export default function NotificationList(props: any) {
               }}
               className='button_apply'
             >
-              Áp dụng
+              {t("pageNotification.filterApply")}
             </Button>
           </div>
         </div>

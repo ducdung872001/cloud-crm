@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ReturnProduct } from "../../../../types/returnProduct";
 import "./index.scss";
 
@@ -14,6 +15,7 @@ interface ReturnStatsProps {
 }
 
 const ReturnStats: React.FC<ReturnStatsProps> = ({ data, totalFromApi, lastMonthTotal }) => {
+  const { t } = useTranslation();
   const thisMonth   = totalFromApi ?? data.length;
   const pending     = data.filter((r) => r.status === "pending").length;
   const totalRefund = data.filter((r) => r.type === "return").reduce((s, r) => s + r.refundAmount, 0);
@@ -25,35 +27,34 @@ const ReturnStats: React.FC<ReturnStatsProps> = ({ data, totalFromApi, lastMonth
   const deltaStr = (() => {
     if (lastMonthTotal === undefined || lastMonthTotal === null) return null;
     const delta = thisMonth - lastMonthTotal;
-    if (delta > 0) return `+${delta} so với tháng trước`;
-    if (delta < 0) return `${delta} so với tháng trước`;
-    return "Bằng tháng trước";
+    if (delta > 0) return `+${delta} ${t("pageReturnProduct.vsLastMonth")}`;
+    if (delta < 0) return `${delta} ${t("pageReturnProduct.vsLastMonth")}`;
+    return t("pageReturnProduct.vsLastMonth");
   })();
 
   const CARDS = [
     {
-      label:   "Tổng phiếu tháng này",
+      label:   t("pageReturnProduct.totalThisMonth"),
       value:   String(thisMonth),
-      // Chỉ hiện delta nếu có — không hardcode "+4"
-      sub:     deltaStr ?? "Phiếu trả & đổi hàng",
+      sub:     deltaStr ?? t("pageReturnProduct.title"),
       variant: "default",
     },
     {
-      label:   "Chờ xử lý",
+      label:   t("pageReturnProduct.pendingCount"),
       value:   String(pending),
-      sub:     pending > 0 ? "Cần xử lý sớm" : "Không có phiếu chờ",
+      sub:     pending > 0 ? t("pageReturnProduct.pendingDesc") : t("common.noData"),
       variant: "warn",
     },
     {
-      label:   "Tiền hoàn tháng này",
+      label:   t("pageReturnProduct.refundThisMonth"),
       value:   fmt(totalRefund),
-      sub:     `${data.filter((r) => r.type === "return").length} phiếu trả hàng`,
+      sub:     `${data.filter((r) => r.type === "return").length} ${t("pageReturnProduct.refundDesc")}`,
       variant: "success",
     },
     {
-      label:   "Phiếu đổi hàng",
+      label:   t("pageReturnProduct.exchangeCount"),
       value:   String(exchCount),
-      sub:     exchCount > 0 ? `${exchCount} phiếu không hoàn tiền` : "Không có phiếu đổi",
+      sub:     exchCount > 0 ? `${exchCount} ${t("pageReturnProduct.exchangeDesc")}` : t("common.noData"),
       variant: "default",
     },
   ];
