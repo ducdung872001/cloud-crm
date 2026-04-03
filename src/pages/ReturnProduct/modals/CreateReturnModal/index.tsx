@@ -495,7 +495,11 @@ export default function CreateReturnModal({
     };
     setAutofill(af);
     const customerDisplay = [inv.customerName, inv.customerPhone].filter(Boolean).join(" – ");
-    if (customerDisplay) setCustomer(customerDisplay);
+    if (customerDisplay) {
+      setCustomer(customerDisplay);
+    } else if (inv.customerId) {
+      setCustomer(`KH #${inv.customerId}`);
+    }
     const productRows: ProductRow[] = af.products.map(apiProductToRow);
     setRetItems(productRows.length > 0 ? productRows : [mkRow()]);
     setLookupStatus("found");

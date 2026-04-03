@@ -101,11 +101,8 @@ export default function NotificationList(props: any) {
       // setListNotification(result?.items);
       // setHasMore((params.page - 1) * 10 + (result.items.length || 0) < result.total);
 
-      const newDataList = params.page === 1 ? [] : listNotification;
-
-      (result.items || []).map((item) => {
-        newDataList.push(item);
-      });
+      const prevList = params.page === 1 ? [] : [...listNotification];
+      const newDataList = [...prevList, ...(result.items || [])];
 
       setListNotification(newDataList);
       setHasMore(result?.loadMoreAble);
@@ -385,17 +382,29 @@ export default function NotificationList(props: any) {
   }, [])
 
   const onFilter = () => {
-    setParams({
-      ...params,
+    const newParams: any = {
+      title: params.title || "",
+      limit: params.limit || 10,
       page: 1,
-      unread: notifyType,
       notiTypes: listNofifyType,
-      // ...(listNofifyType ? {notiTypes: listNofifyType} : {}),
-      ...(dataProject ? { branchId: dataProject?.value } : {}),
-      ...(statusWork ? { status: statusWork?.value } : {}),
-      ...(startDate ? { fromTime: moment(startDate).format('DD/MM/YYYY') } : {}),
-      ...(endDate ? { toTime: moment(endDate).format('DD/MM/YYYY') } : {}),
-    });
+    };
+    if (notifyType && notifyType !== '-1') {
+      newParams.unread = notifyType;
+    }
+    if (dataProject) {
+      newParams.branchId = dataProject.value;
+    }
+    if (statusWork) {
+      newParams.status = statusWork.value;
+    }
+    if (startDate) {
+      newParams.fromTime = moment(startDate).format('DD/MM/YYYY');
+    }
+    if (endDate) {
+      newParams.toTime = moment(endDate).format('DD/MM/YYYY');
+    }
+    setListNotification([]);
+    setParams(newParams);
     setIsLoading(true);
   };
 

@@ -294,7 +294,16 @@ const Cart: React.FC<CartProps> = ({
             </div>
             <div className="ci__qty">
               <button className="qb" onClick={() => onChangeQty(item.id, -1)}>−</button>
-              <span className="qi">{item.qty}</span>
+              <input
+                type="number"
+                className="qi"
+                value={item.qty}
+                min={1}
+                onChange={(e) => {
+                  const v = Math.max(1, Number(e.target.value) || 1);
+                  onChangeQty(item.id, v - item.qty);
+                }}
+              />
               <button className="qb" onClick={() => onChangeQty(item.id, 1)}>+</button>
             </div>
             <div className="ci__total">{formatVND(item.price * item.qty)}</div>

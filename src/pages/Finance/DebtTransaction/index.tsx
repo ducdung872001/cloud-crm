@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useMemo, useState } from "react";
+import React, { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import Button from "components/button/button";
 import urls from "configs/urls";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,12 +6,45 @@ import { financeDebtTransactionTypeOptions, FinanceDebt, FinanceDebtTransactionT
 import { FinancePageShell, FinanceStatCard, formatCurrency } from "../shared";
 import "./index.scss";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
+import DebtManagementService, { IDebtItem } from "@/services/DebtManagementService";
+import { showToast } from "utils/common";
+
+function mapApiToFinanceDebt(item: IDebtItem): FinanceDebt {
+  return {
+    id: String(item.id),
+    name: item.name,
+    kind: item.kind,
+    amount: item.amount,
+    dueDate: item.dueDate,
+    daysRemaining: item.daysRemaining,
+    status: item.status,
+  };
+}
 
 export default function FinanceDebtTransaction(props) {
   document.title = "Tạo giao dịch nợ";
 
   const navigate = useNavigate();
-  const [debts] = useState<FinanceDebt[]>(() => getFinanceDebtsMock().filter((item) => item.status !== "paid"));
+  const [debts, setDebts] = useState<FinanceDebt[]>([]);
+  const [loadingDebts, setLoadingDebts] = useState(true);
+
+  const fetchDebts = useCallback(async () => {
+    setLoadingDebts(true);
+    try {
+      const res = await DebtManagementService.list({ size: 200 });
+      const activeDebts = (res.items ?? [])
+        .filter((item) => item.status !== "paid")
+        .map(mapApiToFinanceDebt);
+      setDebts(activeDebts);
+    } catch {
+      // Fallback to mock if API fails
+      setDebts(getFinanceDebtsMock().filter((item) => item.status !== "paid"));
+    } finally {
+      setLoadingDebts(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchDebts(); }, [fetchDebts]);
   const [debtTransactionType, setDebtTransactionType] = useState<FinanceDebtTransactionType>("collect_debt");
   const [selectedDebtId, setSelectedDebtId] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
@@ -51,7 +84,9 @@ export default function FinanceDebtTransaction(props) {
     }
   }, [selectedDebt]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!selectedDebt) {
@@ -85,7 +120,21 @@ export default function FinanceDebtTransaction(props) {
     }
 
     setError("");
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      await DebtManagementService.pay({
+        debtId: Number(selectedDebt.id),
+        amount: amountNumber,
+        fundId: 0,
+        note: note || undefined,
+      });
+      setSubmitted(true);
+      showToast("Tạo giao dịch nợ thành công!", "success");
+    } catch (e: any) {
+      setError(e?.message ?? "Tạo giao dịch thất bại. Vui lòng thử lại.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -168,8 +217,8 @@ export default function FinanceDebtTransaction(props) {
                   {error ? <span className="finance-field__error">{error}</span> : null}
 
                   <div className="finance-inline-actions">
-                    <Button type="submit" color="primary">
-                      Xác nhận giao dịch
+                    <Button type="submit" color="primary" disabled={submitting}>
+                      {submitting ? "Đang xử lý..." : "Xác nhận giao dịch"}
                     </Button>
                     <Link className="finance-link-button" to={urls.finance_management_debt_management}>
                       Quay lại công nợ

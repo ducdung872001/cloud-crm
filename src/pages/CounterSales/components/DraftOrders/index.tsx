@@ -11,7 +11,7 @@ type Props = {
    * Gọi khi "Tiếp tục xử lý" — trả cartItems + label đơn tạm trực tiếp
    * để CounterSales load vào giỏ hàng mà không cần navigate.
    */
-  onContinue?: (cartItems: CartItemForDraft[], draftLabel: string, draftId: string) => void;
+  onContinue?: (cartItems: CartItemForDraft[], draftLabel: string, draftId: string, customerInfo?: { customerId: number; customerName: string }) => void;
   /** Gọi sau khi xóa thành công → CounterSales refresh badge */
   onDeleted?:  () => void;
 };
@@ -76,7 +76,7 @@ const DraftOrders: React.FC<Props> = ({ onContinue, onDeleted }) => {
       <DraftDetailPanel
         order={vm.selected}
         onDelete={(id) => askDelete(id)}
-        onContinue={(cartItems, label, draftId) => onContinue?.(cartItems, label, draftId)}
+        onContinue={(cartItems, label, draftId, custInfo) => onContinue?.(cartItems, label, draftId, custInfo)}
         deleting={vm.deleting}
       />
 

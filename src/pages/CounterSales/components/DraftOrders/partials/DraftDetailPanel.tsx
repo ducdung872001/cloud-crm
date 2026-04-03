@@ -10,7 +10,7 @@ type Props = {
    * Truyền cartItems + label đơn tạm lên để CounterSales load vào giỏ.
    * Không dùng navigate() vì đang ở cùng route với CounterSales.
    */
-  onContinue?: (cartItems: CartItemForDraft[], draftLabel: string, draftId: string) => void;
+  onContinue?: (cartItems: CartItemForDraft[], draftLabel: string, draftId: string, customerInfo?: { customerId: number; customerName: string }) => void;
   deleting?:  string | null;
 };
 
@@ -37,7 +37,10 @@ const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue, deleti
     const cartItems: CartItemForDraft[] = order.cartItems ?? [];
     if (cartItems.length === 0) return;
     // order.id = invoiceId dạng string — dùng để xóa đơn tạm sau khi thanh toán
-    onContinue?.(cartItems, order.tenDon, order.id);
+    onContinue?.(cartItems, order.tenDon, order.id, {
+      customerId: order.customerId,
+      customerName: order.khachHang,
+    });
   };
 
   return (
