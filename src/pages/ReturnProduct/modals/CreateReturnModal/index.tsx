@@ -563,11 +563,11 @@ export default function CreateReturnModal({
 
   // ── Row helpers ────────────────────────────────────────────────
   const updateRow = useCallback((
-    list: ProductRow[],
+    _list: ProductRow[],
     setList: React.Dispatch<React.SetStateAction<ProductRow[]>>,
     id: string, field: keyof ProductRow, value: string | number
   ) => {
-    setList(list.map((r) => {
+    setList((prev) => prev.map((r) => {
       if (r.id !== id) return r;
       if (field === "qty" && r.fromApi) {
         return { ...r, qty: Math.min(Number(value) || 1, r.maxQty) };
