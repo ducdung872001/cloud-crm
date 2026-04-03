@@ -18,7 +18,7 @@ import {
   formatDateTime,
   useFinanceProgressiveList,
 } from "../shared";
-import { getFinanceDebtsMock } from "../data";
+import DebtManagementService, { IDebtItem } from "services/DebtManagementService";
 import "./index.scss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -29,11 +29,6 @@ interface DashboardState {
   totalExpense:     number;
   transactions:     IFinanceDashboardResponse["recentTransactions"];
 }
-
-// Debt alerts dùng mock cho đến khi cloud-sales có API
-const DEBT_ALERTS = getFinanceDebtsMock().filter(
-  d => d.status === "overdue" || d.status === "upcoming"
-);
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -48,6 +43,21 @@ export default function FinanceDashboard() {
   const [incomeChart, setIncomeChart]   = useState<IChartPoint[]>([]);
   const [expenseChart, setExpenseChart] = useState<IChartPoint[]>([]);
   const [chartLoading, setChartLoading] = useState(true);
+
+  // ── Debt alerts (from API) ──────────────────────────────────────────────────
+  const [debtAlerts, setDebtAlerts] = useState<IDebtItem[]>([]);
+
+  useEffect(() => {
+    DebtManagementService.list({ kind: "overdue", size: 50 })
+      .then((res) => {
+        // Lấy tất cả overdue + upcoming
+        const alerts = (res.items ?? []).filter(
+          (d) => d.status === "overdue" || d.status === "upcoming"
+        );
+        setDebtAlerts(alerts);
+      })
+      .catch(() => {});
+  }, []);
 
   // ── Slide-over create form ──────────────────────────────────────────────────
   const [showCreate, setShowCreate] = useState(false);
@@ -107,7 +117,7 @@ export default function FinanceDashboard() {
     handleScroll: onDebtScroll,
     hasMore: debtHasMore,
     isLoading: debtLoading,
-  } = useFinanceProgressiveList(DEBT_ALERTS, 10);
+  } = useFinanceProgressiveList(debtAlerts, 10);
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (

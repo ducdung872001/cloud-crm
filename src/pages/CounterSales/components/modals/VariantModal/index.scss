@@ -240,7 +240,7 @@
 }
 
 .vqi {
-  width: 5.2rem;
+  width: 6.4rem;
   height: 3.6rem;
   text-align: center;
   border: none;
@@ -252,6 +252,11 @@
   color: var(--ink);
   background: var(--white);
   outline: none;
+  cursor: text;
+
+  &:focus {
+    background: #f0fdf4;
+  }
 
   // Ẩn arrow của input number
   &::-webkit-outer-spin-button,
