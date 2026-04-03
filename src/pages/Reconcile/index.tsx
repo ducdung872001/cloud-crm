@@ -1,26 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import Button from "components/button/button";
 import QrCodeProService from "services/QrCodeProService";
 import "./index.scss";
-import { useReconciliationList } from "@/hooks/useReconciliationList";
-
-type BankStmt = {
-  date: string;
-  ref: string;
-  desc: string;
-  amount: number;
-  type: "thu" | "chi";
-  matched: boolean;
-};
-
-const MOCK_BANK_STMTS: BankStmt[] = [
-  { date: "16/03", ref: "FT26075123", desc: "TT don hang SO2318", amount: 31200000, type: "thu", matched: true },
-  { date: "16/03", ref: "FT26075234", desc: "KH Nguyen Lan chuyen khoan", amount: 8750000, type: "thu", matched: true },
-  { date: "15/03", ref: "FT26074345", desc: "CHUYEN TIEN LUONG T3/2026", amount: 28000000, type: "chi", matched: false },
-  { date: "15/03", ref: "FT26074456", desc: "VNPAY QR giao dich online", amount: 3500000, type: "thu", matched: true },
-  { date: "14/03", ref: "FT26073567", desc: "TT nha cung cap Minh Hoang", amount: 12500000, type: "chi", matched: false },
-];
+import { BankStmt, useReconciliationList } from "@/hooks/useReconciliationList";
+import { DataPaginationDefault, Pagination, PaginationProps } from "@/components/pagination/pagination";
 
 const formatVnd = (v: number) => new Intl.NumberFormat("vi-VN").format(v) + " VND";
 
@@ -29,12 +13,47 @@ const Reconcile: React.FC = () => {
   const [date, setDate] = useState("2026-03-16");
   const [running, setRunning] = useState(false);
   const [doneMsg, setDoneMsg] = useState<string | null>(null);
+  const [params, setParams] = useState({ limit: 10, page: 1 });
 
-  const {} = useReconciliationList({ enabled: true }); // ví dụ nếu muốn fetch data từ API thì bật flag enabled, còn không thì cứ để false
-
-  const matched = useMemo(() => MOCK_BANK_STMTS.filter((b) => b.matched).length, []);
-  const totalThu = useMemo(() => MOCK_BANK_STMTS.filter((b) => b.type === "thu").reduce((a, b) => a + b.amount, 0), []);
-  const totalTx = MOCK_BANK_STMTS.length;
+  const {
+    dataReconciliation,
+    isLoading,
+    pagination: paginationFromHook,
+  } = useReconciliationList({ params, enabled: true }) as {
+    dataReconciliation: BankStmt[];
+    isLoading: boolean;
+    pagination: {
+      page: number;
+      sizeLimit: number;
+      totalItem: number;
+      totalPage: number;
+    };
+  }; // ví dụ nếu muốn fetch data từ API thì bật flag enabled, còn không thì cứ để false
+  const [pagination, setPagination] = useState<PaginationProps>({
+    ...DataPaginationDefault,
+    name: "Giao dịch",
+    isChooseSizeLimit: true,
+    setPage: (page) => {
+      setParams((prevParams) => ({ ...prevParams, page: page }));
+    },
+    chooseSizeLimit: (limit) => {
+      setParams((prevParams) => ({ ...prevParams, limit: limit, page: 1 }));
+    },
+  });
+  useEffect(() => {
+    setPagination((prev) => ({
+      ...prev,
+      page: paginationFromHook.page,
+      sizeLimit: paginationFromHook.sizeLimit,
+      totalItem: paginationFromHook.totalItem,
+      totalPage: paginationFromHook.totalPage,
+    }));
+  }, [paginationFromHook]);
+  console.log("Data từ hook useReconciliationList:", dataReconciliation); // dataReconciliation sẽ là [] nếu enabled=false, hoặc dữ liệu thật từ API nếu enabled=true
+  const matched = useMemo(() => dataReconciliation.filter((b) => b.matched).length, [dataReconciliation]);
+  const totalThu = useMemo(() => dataReconciliation.filter((b) => b.type === "thu").reduce((a, b) => a + b.amount, 0), [dataReconciliation]);
+  // const totalTx = dataReconciliation.length;
+  const totalTx = useMemo(() => dataReconciliation.length, [dataReconciliation]);
 
   // ── QR Drawer ──────────────────────────────────────────────────────────────
   const [showQR, setShowQR] = useState(false);
@@ -125,71 +144,90 @@ const Reconcile: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid3 mb16">
-        <div className="stat">
-          <div className="stat-lbl">Đã khớp tự động</div>
-          <div className="stat-val c-gr">
-            {matched}/{totalTx} GD
+      {isLoading ? (
+        <div className="alert alert--info">Đang tải dữ liệu đối soát...</div>
+      ) : (
+        <>
+          <div className="grid3 mb16">
+            <div className="stat">
+              <div className="stat-lbl">Đã khớp tự động</div>
+              <div className="stat-val c-gr">
+                {matched}/{totalTx} GD
+              </div>
+              <div className="stat-chg c-gr">Tỷ lệ khớp {Math.round((matched / totalTx) * 100)}%</div>
+              <div className="stat-bar stat-bar--gr" />
+            </div>
+            <div className="stat">
+              <div className="stat-lbl">Chưa khớp</div>
+              <div className="stat-val c-am">{totalTx - matched} GD</div>
+              <div className="stat-chg c-t2">Cần xử lý thủ công</div>
+              <div className="stat-bar stat-bar--am" />
+            </div>
+            <div className="stat">
+              <div className="stat-lbl">Tổng thu trong kỳ</div>
+              <div className="stat-val c-bl">{formatVnd(totalThu)}</div>
+              <div className="stat-chg c-t2">{dataReconciliation.filter((b) => b.type === "thu").length} phát sinh</div>
+              <div className="stat-bar stat-bar--bl" />
+            </div>
           </div>
-          <div className="stat-chg c-gr">Tỷ lệ khớp {Math.round((matched / totalTx) * 100)}%</div>
-          <div className="stat-bar stat-bar--gr" />
-        </div>
-        <div className="stat">
-          <div className="stat-lbl">Chưa khớp</div>
-          <div className="stat-val c-am">{totalTx - matched} GD</div>
-          <div className="stat-chg c-t2">Cần xử lý thủ công</div>
-          <div className="stat-bar stat-bar--am" />
-        </div>
-        <div className="stat">
-          <div className="stat-lbl">Tổng thu trong kỳ</div>
-          <div className="stat-val c-bl">{formatVnd(totalThu)}</div>
-          <div className="stat-chg c-t2">{MOCK_BANK_STMTS.filter((b) => b.type === "thu").length} phát sinh</div>
-          <div className="stat-bar stat-bar--bl" />
-        </div>
-      </div>
 
-      {doneMsg && <div className="alert alert--success mb16">{doneMsg}</div>}
+          {doneMsg && <div className="alert alert--success mb16">{doneMsg}</div>}
 
-      <div className="card mb16">
-        <div className="card-title mb12">
-          Bảng đối soát · {bankAccount} · {date}
-        </div>
-        <div className="table-wrap">
-          <table className="fin-table">
-            <thead>
-              <tr>
-                <th>Ngày</th>
-                <th>Mã tham chiếu</th>
-                <th>Nội dung ngân hàng</th>
-                <th className="tr">Số tiền</th>
-                <th>Kết quả</th>
-                <th className="hide-m"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {MOCK_BANK_STMTS.map((b, idx) => (
-                <tr key={idx}>
-                  <td className="muted">{b.date}</td>
-                  <td className="mono blue">{b.ref}</td>
-                  <td className="fw">{b.desc}</td>
-                  <td className={`tr mono fw ${b.type === "thu" ? "c-gr" : "c-rd"}`}>
-                    {b.type === "thu" ? "+ " : "- "}
-                    {formatVnd(b.amount)}
-                  </td>
-                  <td>{b.matched ? <span className="badge bg">Đã khớp</span> : <span className="badge ba">Chưa khớp</span>}</td>
-                  <td className="hide-m">
-                    {!b.matched && (
-                      <Button color="secondary" variant="outline">
-                        Khớp thủ công
-                      </Button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+          <div className="card mb16">
+            <div className="card-title mb12">
+              Bảng đối soát · {bankAccount} · {date}
+            </div>
+            <div className="table-wrap">
+              <table className="fin-table">
+                <thead>
+                  <tr>
+                    <th>Ngày</th>
+                    <th>Mã tham chiếu</th>
+                    <th>Nội dung ngân hàng</th>
+                    <th className="tr">Số tiền</th>
+                    <th>Kết quả</th>
+                    <th className="hide-m"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataReconciliation.map((b, idx) => (
+                    <tr key={idx}>
+                      <td className="muted">{b.date}</td>
+                      <td className="mono blue">{b.ref}</td>
+                      <td className="fw">{b.desc}</td>
+                      <td className={`tr mono fw ${b.type === "thu" ? "c-gr" : "c-rd"}`}>
+                        {b.type === "thu" ? "+ " : "- "}
+                        {formatVnd(b.amount)}
+                      </td>
+                      <td>{b.matched ? <span className="badge bg">Đã khớp</span> : <span className="badge ba">Chưa khớp</span>}</td>
+                      <td className="hide-m">
+                        {!b.matched && (
+                          <Button color="secondary" variant="outline">
+                            Khớp thủ công
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="card-footer" style={{ borderTop: "1px solid var(--border-color)" }}>
+              <Pagination
+                name={pagination?.name || "reconcile-pagination"}
+                displayNumber={pagination?.displayNumber}
+                page={pagination?.page}
+                setPage={(page) => pagination?.setPage && pagination.setPage(page)}
+                sizeLimit={pagination?.sizeLimit}
+                totalItem={pagination?.totalItem}
+                totalPage={pagination?.totalPage}
+                isChooseSizeLimit={pagination?.isChooseSizeLimit}
+                chooseSizeLimit={(limit) => pagination?.chooseSizeLimit && pagination.chooseSizeLimit(limit)}
+              />
+            </div>
+          </div>
+        </>
+      )}
 
       <div className="banner banner--warn">
         <div className="banner-left">
