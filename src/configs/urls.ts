@@ -2141,7 +2141,7 @@ export const urlsApi = {
     importList: prefixInventory + "/material/import/list",
     importGet: prefixInventory + "/material/import/get",
     importCreate: prefixInventory + "/material/import/create",
-    importConfirm: prefixInventory + "/material/import/confirm",
+    importConfirm: prefixInventory + "/material/import/excel/confirm",
     importCancel: prefixInventory + "/material/import/excel/cancel",
     bomList: prefixInventory + "/material/bom/list",
     bomSummary: prefixInventory + "/material/bom/summary",
