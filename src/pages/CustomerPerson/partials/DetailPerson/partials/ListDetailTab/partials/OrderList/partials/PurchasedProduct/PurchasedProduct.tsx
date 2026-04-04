@@ -76,7 +76,7 @@ export default function PurchasedProduct(props: IPurchasedProductProps) {
     </div>,
     item.batchNo,
     item.unitName,
-    item.qty,
+    item.quantity,
     formatCurrency(item.priceDiscount || item.price ? item.priceDiscount || item.price : "0"),
     formatCurrency(item.fee ? item.fee : "0"),
   ];

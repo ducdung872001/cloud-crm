@@ -14,14 +14,14 @@ export interface IOfferProductFilterRequest {
     priceDiscount: number;
     discount: number;
     discountUnit: number;
-    qty: number;
+    quantity: number;
     saleId: number;
     fee: number;
     note?: string;
     customerId: number;
     offerId: number;
   }
-  
+
   export interface IOfferProductRequest {
     id: number;
     offerId: number;
@@ -31,7 +31,7 @@ export interface IOfferProductFilterRequest {
     inventoryId: number;
     productId: number;
     unitId: number;
-    qty: number;
+    quantity: number;
     saleId: number;
     discountUnit: string;
     discount: number;

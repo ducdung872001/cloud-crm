@@ -83,8 +83,8 @@ function apiProductToRow(p: IReturnableProduct): ProductRow {
   return {
     id:          Math.random().toString(36).slice(2),
     name:        p.name ?? `Sản phẩm #${p.productId}`,
-    qty:         p.qty,
-    maxQty:      p.qty,
+    qty:         p.quantity,
+    maxQty:      p.quantity,
     price:       p.price,
     productId:   p.productId,
     variantId:   p.variantId,
@@ -472,7 +472,7 @@ export default function CreateReturnModal({
     }
     const data: IInvoiceReturnItemResponse = res2.result;
     const inv = data.invoice;
-    const availableProducts = (data.lstBoughtProduct ?? []).filter((p) => (p.qty ?? 0) > 0);
+    const availableProducts = (data.lstBoughtProduct ?? []).filter((p) => (p.quantity ?? 0) > 0);
     const availableServices = (data.lstBoughtService ?? []).filter((s) => (s.serviceNumber ?? 0) > 0);
 
     if (availableProducts.length === 0 && availableServices.length === 0) {

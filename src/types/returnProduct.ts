@@ -105,7 +105,7 @@ export interface IReturnableProduct {
   productId: number;
   variantId?: number;
   name?: string;
-  qty: number;
+  quantity: number;
   price: number;
   priceDiscount?: number;
   fee: number;
@@ -278,7 +278,7 @@ export function enrichProductSummary(
     } else {
       label = p.name ?? `SP #${p.productId}`;
     }
-    return p.qty && p.qty > 1 ? `${label} (x${p.qty})` : label;
+    return p.quantity && p.quantity > 1 ? `${label} (x${p.quantity})` : label;
   });
 
   return { ...item, productSummary: parts.join(", ") };

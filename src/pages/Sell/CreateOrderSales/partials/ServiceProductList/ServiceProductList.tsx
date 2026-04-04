@@ -186,7 +186,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
           </span>
         </Fragment>
       ),
-    item.qty ? item.qty : 1,
+    item.quantity ? item.quantity : 1,
     formatCurrency(
       isBoughtCard && cardInfo?.price !== undefined
         ? cardInfo.price

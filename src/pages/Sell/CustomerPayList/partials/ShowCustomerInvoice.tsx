@@ -50,7 +50,7 @@ export default function ShowCustomerInvoice(props: IShowCustomerInvoiceProps) {
     index + 1,
     item.name,
     formatCurrency(item.price ? item.price : item.cash),
-    item.qty,
+    item.quantity,
     formatCurrency(item.priceDiscount ? item.priceDiscount : "0"),
     formatCurrency(item.fee),
   ];

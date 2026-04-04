@@ -488,7 +488,7 @@ export default function AddProductModal(props: AddProductProps) {
     if (detailProduct !== null) {
       if (detailProduct.otherUnits) {
         const fillData = JSON.parse(detailProduct?.otherUnits);
-        const result = fillData.filter((item) => item.isBasis !== 1);
+        const result = fillData.filter((item) => item.isBasis !== true);
         setAddFieldExchange(result);
       }
 
