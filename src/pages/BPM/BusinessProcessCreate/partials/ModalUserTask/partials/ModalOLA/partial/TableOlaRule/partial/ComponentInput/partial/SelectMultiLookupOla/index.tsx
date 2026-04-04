@@ -1,7 +1,7 @@
 import React, { ReactElement, useState, useEffect } from "react";
 import "./index.scss";
 import SelectCustom from "components/selectCustom/selectCustom";
-import ProjectRealtyService from "services/ProjectRealtyService";
+// ProjectRealtyService removed (non-retail BDS)
 
 import FieldListService from "services/FieldListService";
 import { IColumnGrid } from "pages/BPM/GridForm";

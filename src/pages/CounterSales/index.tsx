@@ -205,9 +205,9 @@ const CounterSales: React.FC = () => {
         const ineligible = json.result?.ineligible ?? [];
 
         // ── MOCK DATA — xóa khi BE có dữ liệu thật ──────────────────────────
-        const DEV_MOCK = true;
+        const DEV_MOCK = false;
         if (DEV_MOCK && eligible.length === 0) {
-          setEligiblePromos([
+          const mockEligible: EligiblePromotion[] = [
             {
               id: 901,
               name: "Tặng ốp lưng khi mua iPhone",
@@ -215,17 +215,26 @@ const CounterSales: React.FC = () => {
               discountAmount: 0,
               gifts: [{ productId: 999, productName: "Ốp lưng iPhone 15 chính hãng", avatar: "", unitName: "Cái", qty: 1 }],
             },
-            {
+          ];
+          const mockIneligible: IneligiblePromotion[] = [
+            { id: 903, name: "Giảm 15% đơn VIP", promotionType: 1, discount: 15, discountType: 1, reason: "Khách hàng chưa đạt hạng Vàng (đang hạng Đồng)" },
+          ];
+          if (orderAmount >= 15_000_000) {
+            mockEligible.push({
               id: 902,
               name: "Giảm 10% đơn trên 15M",
               promotionType: 1, discountType: 1, discount: 10,
               discountAmount: Math.round(orderAmount * 0.1),
               gifts: [],
-            },
-          ]);
-          setIneligiblePromos([
-            { id: 903, name: "Giảm 15% đơn VIP", promotionType: 1, discount: 15, discountType: 1, reason: "Khách hàng chưa đạt hạng Vàng (đang hạng Đồng)" },
-          ]);
+            });
+          } else {
+            mockIneligible.push({
+              id: 902, name: "Giảm 10% đơn trên 15M", promotionType: 1, discount: 10, discountType: 1,
+              reason: `Đơn hàng tối thiểu 15.000.000 ₫ (hiện tại ${orderAmount.toLocaleString("vi")} ₫)`,
+            });
+          }
+          setEligiblePromos(mockEligible);
+          setIneligiblePromos(mockIneligible);
           return;
         }
         // ── END MOCK ─────────────────────────────────────────────────────────
@@ -233,17 +242,9 @@ const CounterSales: React.FC = () => {
         setEligiblePromos(eligible);
         setIneligiblePromos(ineligible);
       } catch {
-        const DEV_MOCK_FALLBACK = true;
-        if (DEV_MOCK_FALLBACK) {
-          const orderAmount = items.reduce((s, c) => s + c.price * c.qty, 0);
-          setEligiblePromos([
-            { id: 901, name: "Tặng ốp lưng khi mua iPhone", promotionType: 2, discountAmount: 0, gifts: [{ productId: 999, productName: "Ốp lưng iPhone 15 chính hãng", avatar: "", unitName: "Cái", qty: 1 }] },
-            { id: 902, name: "Giảm 10% đơn trên 15M", promotionType: 1, discountType: 1, discount: 10, discountAmount: Math.round(orderAmount * 0.1), gifts: [] },
-          ]);
-          setIneligiblePromos([
-            { id: 903, name: "Giảm 15% đơn VIP", promotionType: 1, discount: 15, discountType: 1, reason: "Khách hàng chưa đạt hạng Vàng (đang hạng Đồng)" },
-          ]);
-        }
+        // API lỗi — không hiện mock nữa
+        setEligiblePromos([]);
+        setIneligiblePromos([]);
       }
     }, 600);
   }, []);
@@ -511,10 +512,22 @@ const CounterSales: React.FC = () => {
           {activeTab === "draft" && (
             <div className="counter-sales__screen">
               <DraftOrders
-                onContinue={(cartItemsFromDraft, draftLabel, draftId) => {
+                onContinue={(cartItemsFromDraft, draftLabel, draftId, custInfo) => {
                   if (cartItemsFromDraft.length > 0) {
                     setCartItems(cartItemsFromDraft);
                     setActiveDraftId(draftId ?? null);
+                    // Khôi phục thông tin khách hàng từ đơn tạm
+                    if (custInfo && custInfo.customerId && custInfo.customerId !== -1) {
+                      setCustomer({
+                        id: String(custInfo.customerId),
+                        name: custInfo.customerName || `KH #${custInfo.customerId}`,
+                        initial: (custInfo.customerName || "K")[0].toUpperCase(),
+                        phone: "",
+                        points: 0,
+                        tier: "—",
+                        color: "#6366f1",
+                      });
+                    }
                     showToast(`Đã tải ${cartItemsFromDraft.length} sản phẩm từ ${draftLabel}`, "success");
                   }
                   setActiveTab("pos");

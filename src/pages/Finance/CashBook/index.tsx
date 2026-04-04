@@ -63,8 +63,8 @@ interface CategoryItem {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /** Lấy URL fund overview từ billing prefix */
-const fundOverviewUrl = () =>
-  (urlsApi.financeDashboard as any).full.replace("/finance/dashboard", "/fund/overview");
+const fundOverviewUrl = () => urlsApi.fund?.overview
+  ?? (urlsApi.financeDashboard as any).full.replace("/finance/dashboard", "/fund/overview");
 
 /** Group danh sách giao dịch theo ngày (key = YYYY-MM-DD) */
 function groupByDate(items: TxItem[]): Record<string, TxItem[]> {
@@ -132,9 +132,12 @@ export default function FinanceCashBook() {
     CashbookService.list(params, ctrl.signal)
       .then((res: any) => {
         const raw: TxItem[] = res?.result?.cashbookResponse?.items ?? [];
-        const filteredByFund = fundFilter === "all"
+        const filteredByKind = kindFilter === "all"
           ? raw
-          : raw.filter((t: any) => String(t.fundName) === fundFilter);
+          : raw.filter((t) => t.type === Number(kindFilter));
+        const filteredByFund = fundFilter === "all"
+          ? filteredByKind
+          : filteredByKind.filter((t: any) => String(t.fundName) === fundFilter);
 
         setAllTxns(filteredByFund);
 
@@ -163,7 +166,7 @@ export default function FinanceCashBook() {
     fetch(fundOverviewUrl())
       .then(r => r.json())
       .then((res: any) => {
-        const raw = res?.data?.funds ?? [];
+        const raw = res?.result?.funds ?? res?.data?.funds ?? [];
         setFilterFunds(
           raw.map((f: any) => ({
             id:      Number(f.id),

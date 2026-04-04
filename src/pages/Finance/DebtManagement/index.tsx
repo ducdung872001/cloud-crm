@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import urls from "configs/urls";
 import { urlsApi } from "configs/urls";
@@ -23,11 +24,12 @@ import "./index.scss";
 
 type DebtKindFilter = "all" | "receivable" | "payable" | "overdue";
 
-const FILTER_OPTIONS = [
-  { value: "all" as DebtKindFilter, label: "Tất cả" },
-  { value: "receivable" as DebtKindFilter, label: "Phải thu (KH)" },
-  { value: "payable" as DebtKindFilter, label: "Phải trả (NCC)" },
-  { value: "overdue" as DebtKindFilter, label: "Quá hạn" },
+// Filter options labels are resolved at render time via useTranslation
+const FILTER_OPTION_KEYS: { value: DebtKindFilter; key: string }[] = [
+  { value: "all", key: "pageFinance.allDebts" },
+  { value: "receivable", key: "pageFinance.receivable" },
+  { value: "payable", key: "pageFinance.payable" },
+  { value: "overdue", key: "pageFinance.overdue" },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -628,7 +630,7 @@ function EditScheduleModal({ debt, onClose, onSaved }: EditScheduleModalProps) {
               type="date"
               className="finance-input"
               value={dueDate}
-              min={new Date().toISOString().split("T")[0]}
+              min={(() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })()}
               onChange={(e) => setDueDate(e.target.value)}
             />
           </div>
@@ -638,7 +640,7 @@ function EditScheduleModal({ debt, onClose, onSaved }: EditScheduleModalProps) {
               type="date"
               className="finance-input"
               value={reminderDate}
-              min={new Date().toISOString().split("T")[0]}
+              min={(() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })()}
               max={dueDate || undefined}
               onChange={(e) => setReminderDate(e.target.value)}
             />
@@ -673,7 +675,8 @@ function EditScheduleModal({ debt, onClose, onSaved }: EditScheduleModalProps) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function FinanceDebtManagement() {
-  document.title = "Quản lý công nợ";
+  const { t } = useTranslation();
+  document.title = t("pageFinance.debtManagement");
   const navigate = useNavigate();
 
   const [filter, setFilter] = useState<DebtKindFilter>("all");
@@ -752,10 +755,10 @@ export default function FinanceDebtManagement() {
   const visibleDebts = debts.filter((d) => d.status !== "paid");
 
   return (
-    <FinancePageShell title="Quản lý công nợ">
+    <FinancePageShell title={t("pageFinance.debtManagement")}>
       {/* Header */}
       <div className="finance-screen-header">
-        <h1>Quản lý công nợ</h1>
+        <h1>{t("pageFinance.debtManagement")}</h1>
         <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
           <button
             className="finance-action-btn finance-action-btn--outline"
@@ -769,7 +772,7 @@ export default function FinanceDebtManagement() {
             className="finance-action-btn finance-action-btn--primary"
             onClick={() => navigate(urls.finance_management_debt_transaction)}
           >
-            + Tạo giao dịch nợ
+            + {t("pageFinance.createTransaction")}
           </button>
         </div>
       </div>
@@ -778,21 +781,21 @@ export default function FinanceDebtManagement() {
       <div className="finance-grid">
         <div className="finance-grid__span-4">
           <FinanceStatCard
-            label="Tổng nợ phải thu"
+            label={t("pageFinance.totalReceivable")}
             value={formatCurrency(summary.totalReceivable)}
             tone="success"
           />
         </div>
         <div className="finance-grid__span-4">
           <FinanceStatCard
-            label="Tổng nợ phải trả"
+            label={t("pageFinance.totalPayable")}
             value={formatCurrency(summary.totalPayable)}
             tone="danger"
           />
         </div>
         <div className="finance-grid__span-4">
           <FinanceStatCard
-            label="Số đối tượng còn nợ"
+            label={t("pageFinance.counterpartyCount")}
             value={String(summary.totalCounterparty)}
             tone="warning"
           />
@@ -807,8 +810,8 @@ export default function FinanceDebtManagement() {
                 onChange={(e) => setFilter(e.target.value as DebtKindFilter)}
                 className="finance-filter-select"
               >
-                {FILTER_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                {FILTER_OPTION_KEYS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{t(opt.key)}</option>
                 ))}
               </select>
               <span className="debt-record-count">{visibleDebts.length} bản ghi</span>
@@ -826,13 +829,13 @@ export default function FinanceDebtManagement() {
               <table className="finance-table debt-table">
                 <thead>
                   <tr>
-                    <th>Đối tượng</th>
-                    <th>Loại</th>
-                    <th>Số nợ</th>
-                    <th>Hạn thanh toán</th>
-                    <th>Thời hạn nợ</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
+                    <th>{t("pageFinance.colCounterparty")}</th>
+                    <th>{t("pageFinance.colDebtType")}</th>
+                    <th>{t("pageFinance.colAmount")}</th>
+                    <th>{t("pageFinance.colDueDate")}</th>
+                    <th>{t("pageFinance.colRemaining")}</th>
+                    <th>{t("pageFinance.colStatus")}</th>
+                    <th>{t("pageFinance.colAction")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -860,14 +863,14 @@ export default function FinanceDebtManagement() {
                                 className="finance-action-btn finance-action-btn--success-sm"
                                 onClick={() => setSelectedDebt(item)}
                               >
-                                QR Thu nợ
+                                {t("pageFinance.qrCollect")}
                               </button>
                               <button
                                 className="finance-action-btn finance-action-btn--outline-sm"
                                 onClick={() => setEditTarget(item)}
-                                title="Chỉnh sửa hạn thanh toán & ngày nhắc nhở"
+                                title={t("pageFinance.editSchedule")}
                               >
-                                ✏ Sửa hạn
+                                ✏ {t("pageFinance.editSchedule")}
                               </button>
                             </div>
                           ) : (
@@ -876,14 +879,14 @@ export default function FinanceDebtManagement() {
                                 className="finance-action-btn finance-action-btn--outline"
                                 onClick={() => navigate(urls.finance_management_debt_transaction)}
                               >
-                                Thanh toán
+                                {t("pageFinance.confirmPaid")}
                               </button>
                               <button
                                 className="finance-action-btn finance-action-btn--outline-sm"
                                 onClick={() => setEditTarget(item)}
-                                title="Chỉnh sửa hạn thanh toán & ngày nhắc nhở"
+                                title={t("pageFinance.editSchedule")}
                               >
-                                ✏ Sửa hạn
+                                ✏ {t("pageFinance.editSchedule")}
                               </button>
                             </div>
                           )}

@@ -495,7 +495,11 @@ export default function CreateReturnModal({
     };
     setAutofill(af);
     const customerDisplay = [inv.customerName, inv.customerPhone].filter(Boolean).join(" – ");
-    if (customerDisplay) setCustomer(customerDisplay);
+    if (customerDisplay) {
+      setCustomer(customerDisplay);
+    } else if (inv.customerId) {
+      setCustomer(`KH #${inv.customerId}`);
+    }
     const productRows: ProductRow[] = af.products.map(apiProductToRow);
     setRetItems(productRows.length > 0 ? productRows : [mkRow()]);
     setLookupStatus("found");
@@ -563,11 +567,11 @@ export default function CreateReturnModal({
 
   // ── Row helpers ────────────────────────────────────────────────
   const updateRow = useCallback((
-    list: ProductRow[],
+    _list: ProductRow[],
     setList: React.Dispatch<React.SetStateAction<ProductRow[]>>,
     id: string, field: keyof ProductRow, value: string | number
   ) => {
-    setList(list.map((r) => {
+    setList((prev) => prev.map((r) => {
       if (r.id !== id) return r;
       if (field === "qty" && r.fromApi) {
         return { ...r, qty: Math.min(Number(value) || 1, r.maxQty) };

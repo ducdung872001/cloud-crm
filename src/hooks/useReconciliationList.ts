@@ -1,73 +1,79 @@
 import { useCallback, useEffect, useState } from "react";
 import { showToast } from "@/utils/common";
-import ProductService from "@/services/ProductService";
-import DashBoardService from "@/services/DashBoardService";
 import QrCodeProService from "@/services/QrCodeProService";
+import { DataPaginationDefault } from "@/components/pagination/pagination";
 
-interface UseGetDashBoardParams {
+interface UseReconciliationParams {
+  params?: { limit: number; page: number }; // nếu sau này có params nào cần theo dõi để refetch thì thêm vào đây, ví dụ: { limit, page }
   enabled?: boolean; // ✅ mặc định true, truyền false để tắt
 }
-interface TopProduct {
-  name: string;
-  revenue: number;
-  pct: number;
-  color: string;
-}
+export type BankStmt = {
+  date: string;
+  ref: string;
+  desc: string;
+  amount: number;
+  type: "thu" | "chi";
+  matched: boolean;
+};
 
-interface IDataRevenue {
-  stats: IStats;
-  listOrderByHour: number[];
-}
-
-interface UseGetDashBoardReturn {
+interface UseGetReconciliationReturn {
   isLoading: boolean;
   isNoItem: boolean;
   isPermissions: boolean;
-  dataTopProduct: TopProduct[] | [];
-  dataRevenue: IDataRevenue;
+  dataReconciliation: BankStmt[] | [];
+  pagination?: {
+    page: number;
+    sizeLimit: number;
+    totalItem: number;
+    totalPage: number;
+    loadMoreAble?: boolean;
+  };
 }
 
-export interface IStats {
-  totalRevenue: number;
-  totalOrder: number;
-  totalCancelOrder: number;
-  todayRevenue: number;
-  todayOrder: number;
+interface IPagination {
+  page: number;
+  sizeLimit: number;
+  totalItem: number;
+  totalPage: number;
+  loadMoreAble?: boolean;
 }
 
-const defaultRevenueData: IDataRevenue = {
-  stats: {
-    totalRevenue: 0,
-    totalOrder: 0,
-    totalCancelOrder: 0,
-    todayRevenue: 0,
-    todayOrder: 0,
-  },
-  listOrderByHour: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+const DEFAULT_PAGINATION: IPagination = {
+  page: 1,
+  sizeLimit: DataPaginationDefault.sizeLimit,
+  totalItem: 0,
+  totalPage: 0,
 };
 
 export function useReconciliationList({
+  params, // nếu sau này có params nào cần theo dõi để refetch thì thêm vào đây, ví dụ: { limit, page }
   enabled = true, // ✅ mặc định true, truyền false để tắt
-}: UseGetDashBoardParams): UseGetDashBoardReturn {
+}: UseReconciliationParams): UseGetReconciliationReturn {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
-  const [dataTopProduct, setDataTopProduct] = useState<TopProduct[]>([]);
-  const [dataRevenue, setDataRevenue] = useState<IDataRevenue>(defaultRevenueData);
+  const [dataReconciliation, setDataReconciliation] = useState<BankStmt[]>([]);
+  const [pagination, setPagination] = useState<IPagination>(DEFAULT_PAGINATION);
 
   // ── Core fetch ──────────────────────────────────────────────────────────────
 
-  const fetchTopProducts = useCallback(async () => {
+  const fetchReconciliation = useCallback(async () => {
     setIsNoItem(false);
 
     try {
-      const response = await QrCodeProService.reconciliation();
-      console.log(response);
-      return;
+      const response = await QrCodeProService.reconciliation(params);
 
       if (response.code === 0) {
         const result = response.result;
-        setDataTopProduct(mapToTopProduct(result)); // map API về đúng format rồi set vào state
+        setDataReconciliation(mapReconciliation(result.items)); // map API về đúng format rồi set vào state
+        setPagination({
+          page: result.page,
+          sizeLimit: params?.limit || DataPaginationDefault.sizeLimit,
+          totalItem: result?.total || 0,
+          totalPage: result?.totalPage || result?.total ? Math.ceil(result.total / (params?.limit || DataPaginationDefault.sizeLimit)) : 0,
+          loadMoreAble:
+            result.page < (result.totalPage || result?.total ? Math.ceil(result.total / (params?.limit || DataPaginationDefault.sizeLimit)) : 0),
+        });
         setIsNoItem(false);
       } else if (response.code === 400) {
         setIsPermissions(true);
@@ -84,53 +90,17 @@ export function useReconciliationList({
     } finally {
       setIsLoading(false);
     }
-  }, []);
-
-  const fetchRevenue = useCallback(async () => {
-    setIsNoItem(false);
-
-    try {
-      const response = await DashBoardService.detail();
-
-      if (response.code === 0) {
-        const result = response.result;
-        setDataRevenue(mapToRevenueDetail(result)); // map API về đúng format rồi set vào state
-        setIsNoItem(false);
-      } else if (response.code === 400) {
-        setIsPermissions(true);
-      } else {
-        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-      }
-      setIsLoading(false);
-    } catch (error) {
-      if (error?.name === "AbortError") {
-        console.log("Request was aborted");
-      } else {
-        showToast(error?.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  }, [params]);
 
   // ── Refetch ─────────────────────────────────────────────────────────────────
-
-  //  ^^^^^^^^^^^^^^^^^^^^^^^^^
-  //  Bỏ params ra khỏi deps — đọc qua ref thay thế
-  //  → refetch chỉ tạo lại khi categoryId thực sự thay đổi
-
-  // ── Auto fetch khi categoryId thay đổi ─────────────────────────────────────
-
   useEffect(() => {
     if (!enabled) return; // ✅ guard: nếu không enabled thì không fetch
     setIsLoading(true);
-    fetchTopProducts();
-    fetchRevenue();
-
+    fetchReconciliation();
     // return () => {
     //   abortControllerRef.current?.abort();
     // };
-  }, [enabled]);
+  }, [enabled, params]);
   //  ^^^^^^^^^^^
   //  Chỉ theo dõi params và enabled — giá trị primitive (string/boolean)
   //  string/boolean so sánh bằng value, không bị lặp như object
@@ -139,264 +109,61 @@ export function useReconciliationList({
     isLoading,
     isNoItem,
     isPermissions,
-    dataTopProduct,
-    dataRevenue,
+    dataReconciliation,
+    pagination,
   };
 }
 
 // Đây là dữ liệu giả định API trả về, bạn có thể thay bằng response thật từ API
-const sampleProductDetail = [
-  {
-    productId: 262,
-    productName: "SP test 2",
-    avatar: null,
-    unitId: null,
-    unitName: null,
-    variantId: 303,
-    variantName: "Mac dinh",
-    totalQty: 101,
-    totalRevenue: null,
-  },
-  {
-    productId: 218,
-    productName: "Sony Xperia 1 VI",
-    avatar: null,
-    unitId: null,
-    unitName: "Lọ",
-    variantId: 149,
-    variantName: "Xanh Rêu / 16 GB / 512 GB",
-    totalQty: 8,
-    totalRevenue: null,
-  },
-  {
-    productId: 223,
-    productName: "xúc xích",
-    avatar: null,
-    unitId: null,
-    unitName: null,
-    variantId: 166,
-    variantName: "Mac dinh",
-    totalQty: 7,
-    totalRevenue: null,
-  },
-  {
-    productId: 219,
-    productName: "Trà nhân trần",
-    avatar: null,
-    unitId: null,
-    unitName: null,
-    variantId: 180,
-    variantName: "Mac dinh",
-    totalQty: 7,
-    totalRevenue: null,
-  },
-  {
-    productId: 233,
-    productName: "Túi Tote Canvas",
-    avatar: null,
-    unitId: null,
-    unitName: null,
-    variantId: 176,
-    variantName: "Mac dinh",
-    totalQty: 5,
-    totalRevenue: null,
-  },
-  {
-    productId: null,
-    productName: null,
-    avatar: null,
-    unitId: null,
-    unitName: null,
-    variantId: null,
-    variantName: null,
-    totalQty: 3,
-    totalRevenue: null,
-  },
-  {
-    productId: 224,
-    productName: "Áo Polo Nam CoolMax",
-    avatar: null,
-    unitId: null,
-    unitName: null,
-    variantId: 167,
-    variantName: "Mac dinh",
-    totalQty: 3,
-    totalRevenue: null,
-  },
-  {
-    productId: 228,
-    productName: "Quần Jogger Unisex",
-    avatar: null,
-    unitId: null,
-    unitName: null,
-    variantId: 171,
-    variantName: "Mac dinh",
-    totalQty: 3,
-    totalRevenue: null,
-  },
-  {
-    productId: 217,
-    productName: "Asus ROG Phone 8 Pro",
-    avatar: null,
-    unitId: null,
-    unitName: "Lọ",
-    variantId: 141,
-    variantName: "Đen Nhám / 24 GB / 1 TB",
-    totalQty: 3,
-    totalRevenue: null,
-  },
-  {
-    productId: 218,
-    productName: "Sony Xperia 1 VI",
-    avatar: null,
-    unitId: null,
-    unitName: "Lọ",
-    variantId: 153,
-    variantName: "Đen / 16 GB / 512 GB",
-    totalQty: 2,
-    totalRevenue: null,
-  },
-];
+// const sampleResponse = [
+//   {
+//     id: 2,
+//     date: "21/03/2026 21:37:56",
+//     referenceNumber: null,
+//     bankContent: "VQR39fb857fee THANH TOAN DON HANG",
+//     amount: 100000,
+//     displayAmount: "+ 100.000 VND",
+//     transType: "C",
+//     result: "RECEIVED",
+//     resultName: "Đã nhận",
+//     canManualMatch: false,
+//     orderId: "6",
+//     transactionId: null,
+//   },
+//   {
+//     id: 1,
+//     date: "21/03/2026 21:33:25",
+//     referenceNumber: null,
+//     bankContent: "abc",
+//     amount: 1000,
+//     displayAmount: "+ 1.000 VND",
+//     transType: "99999",
+//     result: "RECEIVED",
+//     resultName: "Đã nhận",
+//     canManualMatch: false,
+//     orderId: "7",
+//     transactionId: null,
+//   },
+// ];
 
 // Đây là dữ liệu cần đổ ra UI
-const topProducts = [
-  { name: "Modern Wifi 350", revenue: "10 N", pct: 85.6, color: "#47B5AC" },
-  { name: "Sim Viettel 350", revenue: "9,8 N", pct: 61.5, color: "#47B5AC" },
-  { name: "Modern Wifi 350", revenue: "9,7 N", pct: 59.3, color: "#47B5AC" },
-  { name: "Modern Wifi 350", revenue: "8,5 N", pct: 57.7, color: "#47B5AC" },
-];
+// const MOCK_BANK_STMTS: BankStmt[] = [
+//   { date: "16/03", ref: "FT26075123", desc: "TT don hang SO2318", amount: 31200000, type: "thu", matched: true },
+//   { date: "16/03", ref: "FT26075234", desc: "KH Nguyen Lan chuyen khoan", amount: 8750000, type: "thu", matched: true },
+//   { date: "15/03", ref: "FT26074345", desc: "CHUYEN TIEN LUONG T3/2026", amount: 28000000, type: "chi", matched: false },
+//   { date: "15/03", ref: "FT26074456", desc: "VNPAY QR giao dich online", amount: 3500000, type: "thu", matched: true },
+//   { date: "14/03", ref: "FT26073567", desc: "TT nha cung cap Minh Hoang", amount: 12500000, type: "chi", matched: false },
+// ];
 
-// Đây là hàm để nhận đầu vào là dữ liệu giống như sampleProductDetail và trả về dữ liệu đã được map sang đúng format của topProducts để dễ đổ ra UI
-function mapToTopProduct(detail): any {
+// Đây là hàm để nhận đầu vào là dữ liệu giống như sampleResponse và trả về dữ liệu đã được map sang đúng format của MOCK_BANK_STMTS để dễ đổ ra UI
+function mapReconciliation(detail): any {
   if (!detail || detail.length === 0) return [];
   return detail.map((item) => ({
-    name: item.productName + " (" + item.variantName + ")" || "Sản phẩm không tên",
-    revenue: item.totalRevenue ? item.totalRevenue : 0,
-    pct: item.totalQty ? item.totalQty : 0, // API chưa trả về phần trăm, nên tạm set 0
-    color: "#47B5AC", // màu cố định cho demo, bạn có thể thay đổi logic để set màu khác nhau nếu muốn
+    date: item.date, // giữ nguyên định dạng ngày tháng như API trả về
+    ref: item.referenceNumber || "N/A", // nếu referenceNumber null thì hiển thị "N/A"
+    desc: item.bankContent,
+    amount: item.amount,
+    type: item.transType === "C" ? "thu" : "chi", // nếu transType là "C" thì loại là "thu", ngược lại là "chi"
+    matched: !item.canManualMatch, // giữ nguyên giá trị canManualMatch để biết giao dịch đã được đối soát hay chưa
   }));
-}
-
-// Đây là dữ liệu giả định API trả về khi fetchRevenue
-const sampleRevenueDetail = {
-  totalRevenue: 361651200,
-  totalOrder: 16,
-  totalCancelOrder: 4,
-  todayRevenue: 30990000,
-  todayOrder: 1,
-  orderByHour: [
-    {
-      hour: 0,
-      totalOrder: 1,
-    },
-    {
-      hour: 1,
-      totalOrder: 0,
-    },
-    {
-      hour: 2,
-      totalOrder: 0,
-    },
-    {
-      hour: 3,
-      totalOrder: 0,
-    },
-    {
-      hour: 4,
-      totalOrder: 0,
-    },
-    {
-      hour: 5,
-      totalOrder: 0,
-    },
-    {
-      hour: 6,
-      totalOrder: 0,
-    },
-    {
-      hour: 7,
-      totalOrder: 0,
-    },
-    {
-      hour: 8,
-      totalOrder: 0,
-    },
-    {
-      hour: 9,
-      totalOrder: 0,
-    },
-    {
-      hour: 10,
-      totalOrder: 0,
-    },
-    {
-      hour: 11,
-      totalOrder: 0,
-    },
-    {
-      hour: 12,
-      totalOrder: 0,
-    },
-    {
-      hour: 13,
-      totalOrder: 0,
-    },
-    {
-      hour: 14,
-      totalOrder: 0,
-    },
-    {
-      hour: 15,
-      totalOrder: 0,
-    },
-    {
-      hour: 16,
-      totalOrder: 0,
-    },
-    {
-      hour: 17,
-      totalOrder: 0,
-    },
-    {
-      hour: 18,
-      totalOrder: 0,
-    },
-    {
-      hour: 19,
-      totalOrder: 0,
-    },
-    {
-      hour: 20,
-      totalOrder: 0,
-    },
-    {
-      hour: 21,
-      totalOrder: 0,
-    },
-    {
-      hour: 22,
-      totalOrder: 0,
-    },
-    {
-      hour: 23,
-      totalOrder: 0,
-    },
-  ],
-};
-
-// Đây là hàm để nhận đầu vào là dữ liệu giống như sampleRevenueDetail và trả về dữ liệu đã được map sang đúng format của dataRevenue để dễ đổ ra UI
-function mapToRevenueDetail(detail): IDataRevenue {
-  if (!detail) return defaultRevenueData;
-  return {
-    stats: {
-      totalRevenue: detail.totalRevenue || 0,
-      totalOrder: detail.totalOrder || 0,
-      totalCancelOrder: detail.totalCancelOrder || 0,
-      todayRevenue: detail.todayRevenue || 0,
-      todayOrder: detail.todayOrder || 0,
-    },
-    listOrderByHour: detail.orderByHour
-      ? detail.orderByHour.map((item) => item.totalOrder)
-      : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  };
 }

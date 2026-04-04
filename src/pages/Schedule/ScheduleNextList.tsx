@@ -20,7 +20,7 @@ import TreamentService from "services/TreamentService";
 import { ITreamentResponse, ITreamentSchedulerResponse } from "model/treatment/TreamentResponseModel";
 import AddHistoryCallModal from "./partials/AddHistoryCallModal";
 import ExtendTimeSchedule from "./partials/ExtendTimeScheduleModal";
-import AddSchedulerModal from "pages/TreatmentSchedule/partials/AddSchedulerModal";
+// AddSchedulerModal removed (TreatmentSchedule page deleted - non-retail)
 import AddCaringEmployee from "./partials/AddCaringEmployee";
 import ShowCallHistory from "./partials/ShowCallHistory";
 import "./ScheduleNextList.scss";
@@ -329,16 +329,7 @@ export default function ScheduleNextList() {
           </Fragment>
         )}
       </div>
-      <AddSchedulerModal
-        onShow={showModalEditSchedule}
-        dataScheduler={dataCustomerScheduler}
-        onHide={(reload) => {
-          if (reload) {
-            getListScheduleNext(params);
-          }
-          setShowModalEditSchedule(false);
-        }}
-      />
+      {/* AddSchedulerModal removed (TreatmentSchedule deleted - non-retail) */}
       <AddHistoryCallModal
         onShow={showModalAddHistoryCall}
         data={dataTreatment}

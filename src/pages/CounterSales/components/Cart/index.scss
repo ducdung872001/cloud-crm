@@ -207,8 +207,13 @@
     font-size: 1.3rem;
     font-weight: 900;
     color: var(--ink);
-    min-width: 6rem;
+    width: 9rem;
+    min-width: 0;
+    flex-shrink: 0;
     text-align: right;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    white-space: normal;
   }
 }
 
@@ -236,10 +241,21 @@
 }
 
 .qi {
-  width: 2.8rem;
+  width: 5rem;
   text-align: center;
   font-size: 1.3rem;
   font-weight: 800;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+  }
+
+  &[type=number] {
+    -moz-appearance: textfield;
+  }
 }
 
 .del-btn {

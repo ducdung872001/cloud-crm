@@ -313,7 +313,7 @@ interface CashbookFundItem {
 const CASHBOOK_FORM_INIT: CashbookFormState = {
   type: 1, categoryId: "", fundId: "",
   amount: "", relatedEntity: "",
-  transDate: new Date().toISOString().split("T")[0],
+  transDate: (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })(),
   note: "",
 };
 
@@ -537,7 +537,7 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
 
   // ── Derived ────────────────────────────────────────────────────────────────
   const filteredCats = categories.filter(c => c.type === form.type);
-  const today = new Date().toISOString().split("T")[0];
+  const today = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })();
   const displayAmount = form.amount
     ? new Intl.NumberFormat("vi-VN").format(parseInt(form.amount, 10))
     : "";

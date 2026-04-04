@@ -36,6 +36,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
     });
   }, [warehouseId]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setParams((prev) => ({ ...prev, name: search, page: 1 }));
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   // ── Hook tách riêng ──
   const { categoryFiltered, isPermissions } = useProductCategory();
   const { listProduct, isLoading, pagination } = useProductList({

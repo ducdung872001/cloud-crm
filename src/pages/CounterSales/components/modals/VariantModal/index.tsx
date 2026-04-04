@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { IActionModal } from "model/OtherModel";
 import { CartItem } from "../../../types";
@@ -68,6 +69,7 @@ export const MOCK_IPHONE: VariantProduct = {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function VariantModal({ open, productData, onClose, onAddToCart }: VariantModalProps) {
+  const { t } = useTranslation();
   // selected: { groupId → optionId }
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [qty, setQty] = useState(1);
@@ -165,13 +167,13 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
     actions_right: {
       buttons: [
         {
-          title: "Hủy",
+          title: t("common.cancel"),
           color: "primary",
           variant: "outline",
           callback: onClose,
         },
         {
-          title: "🛒 Thêm vào giỏ hàng",
+          title: `🛒 ${t("pageCounterSales.variantAddToCart")}`,
           color: "primary",
           disabled: !canAdd,
           callback: handleAddToCart,
@@ -184,7 +186,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
 
   return (
     <Modal isFade={true} isOpen={open} isCentered={true} staticBackdrop={true} toggle={onClose} className="variant-modal">
-      <ModalHeader title="Chọn phân loại hàng" toggle={onClose} />
+      <ModalHeader title={t("pageCounterSales.variantTitle")} toggle={onClose} />
 
       <ModalBody>
         {!isLoading ? (
@@ -213,16 +215,16 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
                       }`}
                     >
                       {matchedVariant.stock === 0
-                        ? "❌ Hết hàng"
+                        ? `❌ ${t("pageCounterSales.variantOutOfStock")}`
                         : matchedVariant.stock <= 5
-                        ? `⚠️ Còn ${matchedVariant.stock} ${product?.unit ?? ""} (sắp hết)`
-                        : `✅ Còn ${matchedVariant.stock} ${product?.unit ?? ""}`}
+                        ? `⚠️ ${t("pageCounterSales.variantInStock")} ${matchedVariant.stock} ${product?.unit ?? ""} (${t("pageCounterSales.variantLowStock")})`
+                        : `✅ ${t("pageCounterSales.variantInStock")} ${matchedVariant.stock} ${product?.unit ?? ""}`}
                     </div>
                     <div className="variant-modal__sku">SKU: {matchedVariant.sku}</div>
                   </>
                 ) : (
                   <div className="variant-modal__price variant-modal__price--placeholder">
-                    {selectedCount < totalGroupCount ? `Vui lòng chọn (${selectedCount}/${totalGroupCount})` : "Không có biến thể phù hợp"}
+                    {selectedCount < totalGroupCount ? `${t("pageCounterSales.variantSelectPrompt")} (${selectedCount}/${totalGroupCount})` : t("pageCounterSales.variantNoMatch")}
                   </div>
                 )}
               </div>
@@ -266,7 +268,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
 
             {/* Quantity */}
             <div className="variant-modal__qty-row">
-              <span className="variant-modal__qty-label">Số lượng</span>
+              <span className="variant-modal__qty-label">{t("pageCounterSales.variantQuantity")}</span>
               <div className="variant-modal__qty">
                 <button type="button" className="vqb" onClick={() => handleQty(-1)} disabled={qty <= 1}>
                   −
@@ -296,13 +298,13 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
             {/* Tổng tiền */}
             {matchedVariant && matchedVariant.stock > 0 && (
               <div className="variant-modal__total">
-                <span>Thành tiền</span>
+                <span>{t("pageCounterSales.variantTotal")}</span>
                 <span className="variant-modal__total-val">{fmt(matchedVariant.price * qty)}</span>
               </div>
             )}
           </div>
         ) : (
-          <div className="variant-modal__loading">Đang tải thông tin sản phẩm...</div>
+          <div className="variant-modal__loading">{t("common.loading")}</div>
         )}
       </ModalBody>
 

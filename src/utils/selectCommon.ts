@@ -27,7 +27,7 @@ import InventoryService from "services/InventoryService";
 import CategoryServiceService from "services/CategoryServiceService";
 import PositionService from "services/PositionService";
 import ContractPipelineService from "services/ContractPipelineService";
-import ContractStageService from "services/ContractStageService";
+// ContractStageService removed (non-retail)
 import KpiService from "services/KpiService";
 import ContactService from "services/ContactService";
 import ContractService from "services/ContractService";
@@ -38,10 +38,10 @@ import TicketProcService from "services/TicketProcService";
 import TicketCategoryService from "services/TicketCategoryService";
 import ProjectService from "services/ProjectService";
 import OperationProjectService from "services/OperationProjectService";
-import VehicleService from "services/VehicleService";
-import SpaceTypeService from "services/SpaceTypeService";
+// VehicleService removed (non-retail BDS)
+// SpaceTypeService removed (non-retail BDS)
 import SpaceCustomerService from "services/SpaceCustomerService";
-import BuildingService from "services/BuildingService";
+// BuildingService removed (non-retail BDS)
 import CustomerMarketingLeadService from "services/CustomerMarketingLeadService";
 import RoleService from "services/RoleService";
 import PromotionService from "services/PromotionService";
@@ -245,7 +245,7 @@ export async function SelectOptionData(key: string, params?: any) {
       response = await ContractPipelineService.list(params);
       break;
     case "stageId":
-      response = await ContractStageService.list(params);
+      // ContractStageService removed (non-retail)
       break;
     case "contactId":
       response = await ContactService.list(params);
@@ -288,16 +288,16 @@ export async function SelectOptionData(key: string, params?: any) {
       response = await TicketCategoryService.list(params);
       break;
     case "vehicleId":
-      response = await VehicleService.list(params);
+      // VehicleService removed (non-retail BDS)
       break;
     case "steId":
-      response = await SpaceTypeService.list(params);
+      // SpaceTypeService removed (non-retail BDS)
       break;
     case "scrId":
       response = await SpaceCustomerService.list(params);
       break;
     case "buildingId":
-      response = await BuildingService.list(params);
+      // BuildingService removed (non-retail BDS)
       break;
     case "rolePermission":
       response = await RoleService.list(params);

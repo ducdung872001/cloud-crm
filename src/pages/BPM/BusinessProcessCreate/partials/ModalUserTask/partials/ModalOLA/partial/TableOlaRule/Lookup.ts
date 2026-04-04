@@ -1,5 +1,5 @@
 import FieldListService from "services/FieldListService";
-import ProjectRealtyService from "services/ProjectRealtyService";
+// ProjectRealtyService removed (non-retail BDS)
 
 export const lookupOptions = [
   //   {

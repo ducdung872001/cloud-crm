@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { DraftOrder, CartItemForDraft } from "../types";
 import DraftItemsTable from "./DraftItemsTable";
 import DraftSummary from "./DraftSummary";
@@ -10,21 +11,20 @@ type Props = {
    * Truyền cartItems + label đơn tạm lên để CounterSales load vào giỏ.
    * Không dùng navigate() vì đang ở cùng route với CounterSales.
    */
-  onContinue?: (cartItems: CartItemForDraft[], draftLabel: string, draftId: string) => void;
+  onContinue?: (cartItems: CartItemForDraft[], draftLabel: string, draftId: string, customerInfo?: { customerId: number; customerName: string }) => void;
   deleting?:  string | null;
 };
 
 const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue, deleting }) => {
+  const { t } = useTranslation();
   if (!order) {
     return (
       <div className="draft-right">
         <div className="empty-state">
           <div className="ei">🗂️</div>
-          <div className="et">Chọn đơn tạm để xem chi tiết</div>
+          <div className="et">{t("pageCounterSales.draftSelectHint")}</div>
           <div className="ed">
-            Chọn một đơn từ danh sách bên trái
-            <br />
-            để xem chi tiết và tiếp tục xử lý.
+            {t("pageCounterSales.draftSelectHintSub")}
           </div>
         </div>
       </div>
@@ -37,7 +37,10 @@ const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue, deleti
     const cartItems: CartItemForDraft[] = order.cartItems ?? [];
     if (cartItems.length === 0) return;
     // order.id = invoiceId dạng string — dùng để xóa đơn tạm sau khi thanh toán
-    onContinue?.(cartItems, order.tenDon, order.id);
+    onContinue?.(cartItems, order.tenDon, order.id, {
+      customerId: order.customerId,
+      customerName: order.khachHang,
+    });
   };
 
   return (
@@ -59,7 +62,7 @@ const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue, deleti
             disabled={isDeleting}
             style={{ opacity: isDeleting ? 0.5 : 1 }}
           >
-            {isDeleting ? "⏳ Đang xóa..." : "🗑️ Xóa đơn"}
+            {isDeleting ? `⏳ ${t("pageCounterSales.draftDeleting")}` : `🗑️ ${t("pageCounterSales.draftDelete")}`}
           </button>
 
           <button
@@ -67,7 +70,7 @@ const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue, deleti
             onClick={handleContinue}
             disabled={isDeleting || (order.cartItems ?? []).length === 0}
           >
-            ⚡ Tiếp tục xử lý
+            ⚡ {t("pageCounterSales.draftContinue")}
           </button>
         </div>
       </div>
@@ -75,15 +78,15 @@ const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue, deleti
       <div className="draft-right__body">
         <div className="info-grid">
           <div className="info-card">
-            <div className="l">👤 Khách hàng</div>
+            <div className="l">👤 {t("common.customer")}</div>
             <div className="v">{order.khachHang}</div>
           </div>
           <div className="info-card">
-            <div className="l">🏷️ Nhân viên</div>
+            <div className="l">🏷️ {t("common.name")}</div>
             <div className="v">{order.nhanVien}</div>
           </div>
           <div className="info-card">
-            <div className="l">📦 Số mặt hàng</div>
+            <div className="l">📦 {t("common.product")}</div>
             <div className="v">{order.sanPhams.length} mặt hàng</div>
           </div>
         </div>

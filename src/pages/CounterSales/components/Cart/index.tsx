@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { CartItem, Customer, OrderType, ShippingInfo } from "../../types";
 import "./index.scss";
 import InvoiceService from "@/services/InvoiceService";
@@ -51,6 +52,7 @@ const Cart: React.FC<CartProps> = ({
   onViewPromos, onRemovePromo, onCouponDiscountChange, onManualDiscountChange, onResetVoucher,
   note = "", onNoteChange,
 }) => {
+  const { t } = useTranslation();
   const [voucher, setVoucher]   = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isSuggestingFee, setIsSuggestingFee] = useState(false);
@@ -59,6 +61,9 @@ const Cart: React.FC<CartProps> = ({
   const [couponDiscount, setCouponDiscount]     = useState(0);
   const [couponMessage, setCouponMessage]       = useState("");
   const [couponError, setCouponError]           = useState("");
+
+  // draft qty: lưu giá trị đang nhập tạm theo itemId
+  const [qtyDraft, setQtyDraft] = useState<Record<string, string>>({});
 
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -150,19 +155,19 @@ const Cart: React.FC<CartProps> = ({
       const hasError = payload?.error || (res as any)?.success === false;
       if (hasError) {
         handleCouponDiscountChange(0);
-        setCouponError(payload?.message ?? "Mã không hợp lệ hoặc đã hết hạn");
+        setCouponError(payload?.message ?? t("pageCounterSales.voucherInvalid"));
       } else if (payload?.code || (res as any)?.success === true) {
         handleCouponDiscountChange(calcDiscount);
         setCouponMessage(calcDiscount > 0
-          ? (payload?.message ?? `Áp dụng thành công − ${calcDiscount.toLocaleString("vi")} đ`)
-          : (payload?.message ?? "Mã hợp lệ ✓"));
+          ? (payload?.message ?? `${t("pageCounterSales.voucherSuccess")} − ${calcDiscount.toLocaleString("vi")} đ`)
+          : (payload?.message ?? `${t("pageCounterSales.voucherSuccess")} ✓`));
       } else {
         handleCouponDiscountChange(0);
-        setCouponError("Mã không hợp lệ hoặc đã hết hạn");
+        setCouponError(t("pageCounterSales.voucherInvalid"));
       }
     } catch {
       handleCouponDiscountChange(0);
-      setCouponError("Lỗi kết nối khi áp dụng mã");
+      setCouponError(t("pageCounterSales.voucherConnectionError"));
     } finally {
       setIsApplyingCoupon(false);
     }
@@ -171,9 +176,9 @@ const Cart: React.FC<CartProps> = ({
   // ── Tạo đơn ──────────────────────────────────────────────────────────────
   const onCreateInvoice = async () => {
     if (isShipOrder) {
-      if (!shippingInfo.receiverName?.trim()) { showToast("Vui lòng nhập tên người nhận", "warning"); return; }
-      if (!shippingInfo.receiverPhone?.trim()) { showToast("Vui lòng nhập số điện thoại người nhận", "warning"); return; }
-      if (!shippingInfo.receiverAddress?.trim()) { showToast("Vui lòng nhập địa chỉ giao hàng", "warning"); return; }
+      if (!shippingInfo.receiverName?.trim()) { showToast(t("pageCounterSales.requireReceiverName"), "warning"); return; }
+      if (!shippingInfo.receiverPhone?.trim()) { showToast(t("pageCounterSales.requireReceiverPhone"), "warning"); return; }
+      if (!shippingInfo.receiverAddress?.trim()) { showToast(t("pageCounterSales.requireReceiverAddress"), "warning"); return; }
     }
     try {
       const invoice = await InvoiceService.createInvoice({
@@ -184,15 +189,15 @@ const Cart: React.FC<CartProps> = ({
         setInvoiceDraftToPaid(invoice.result.invoice);
         onPay(invoice.result.invoiceId);
       } else {
-        showToast(invoice.message ?? "Tạo đơn thất bại", "error");
+        showToast(invoice.message ?? t("pageCounterSales.createOrderFailed"), "error");
       }
     } catch {
-      showToast("Có lỗi khi tạo đơn hàng", "error");
+      showToast(t("pageCounterSales.createOrderFailed"), "error");
     }
   };
 
   const onSaveDraft = async () => {
-    if (items.length === 0) { showToast("Giỏ hàng trống", "error"); return; }
+    if (items.length === 0) { showToast(t("pageCounterSales.emptyCart"), "error"); return; }
     setIsSaving(true);
     try {
       const draftRes = await InvoiceService.createInvoice({
@@ -200,7 +205,7 @@ const Cart: React.FC<CartProps> = ({
         ...(note?.trim() ? { note: note.trim() } : {}),
       });
       if (draftRes.code !== 0 || !draftRes?.result?.invoiceId) {
-        showToast(draftRes.message ?? "Không thể tạo đơn tạm", "error");
+        showToast(draftRes.message ?? t("pageCounterSales.draftSaveFailed"), "error");
         return;
       }
       const invoiceId: number = draftRes.result.invoiceId;
@@ -213,33 +218,33 @@ const Cart: React.FC<CartProps> = ({
       const insertRes = await BoughtProductService.insert(body, { invoiceId });
       if (insertRes.code !== 0) {
         await fetch(`${urlsApi.invoice.draftDelete}?id=${invoiceId}`, { method: "DELETE" });
-        showToast(insertRes.message ?? "Lưu sản phẩm vào đơn tạm thất bại", "error");
+        showToast(insertRes.message ?? t("pageCounterSales.draftProductFailed"), "error");
         return;
       }
-      showToast(`Đã lưu tạm đơn hàng (${items.length} sản phẩm)`, "success");
+      showToast(`${t("pageCounterSales.draftSaved")} (${items.length} ${t("common.product")})`, "success");
       onSavedDraft?.();
     } catch {
-      showToast("Lỗi kết nối khi lưu tạm", "error");
+      showToast(t("common.error"), "error");
     } finally {
       setIsSaving(false);
     }
   };
 
-  const ORDER_TYPES: { id: OrderType; label: string }[] = [
-    { id: "retail", label: "Lẻ" },
-    { id: "wholesale", label: "Buôn" },
-    { id: "ship", label: "Ship" },
+  const ORDER_TYPES: { id: OrderType; labelKey: string }[] = [
+    { id: "retail", labelKey: "pageCounterSales.retail" },
+    { id: "wholesale", labelKey: "pageCounterSales.wholesale" },
+    { id: "ship", labelKey: "pageCounterSales.ship" },
   ];
 
   return (
     <div className="cart">
       <div className="cart__header">
         <div className="cart__header-top">
-          <div className="cart__title">🛒 Giỏ hàng</div>
+          <div className="cart__title">🛒 {t("pageCounterSales.cart")}</div>
           <div className="order-type">
             {ORDER_TYPES.map((ot) => (
               <button key={ot.id} className={`ot${orderType === ot.id ? " active" : ""}`}
-                onClick={() => onOrderTypeChange(ot.id)}>{ot.label}</button>
+                onClick={() => onOrderTypeChange(ot.id)}>{t(ot.labelKey)}</button>
             ))}
           </div>
         </div>
@@ -252,10 +257,10 @@ const Cart: React.FC<CartProps> = ({
               <div className="cust-info">
                 <div className="cust-name">{customer.name}</div>
                 {customer.id === "-1" ? (
-                  <div className="cust-pts" style={{ color: "var(--muted)" }}>Không lưu thông tin</div>
+                  <div className="cust-pts" style={{ color: "var(--muted)" }}>{t("pageCounterSales.noCustomerInfo")}</div>
                 ) : (
                   <div className="cust-pts">
-                    ⭐ {(customer.points || 0).toLocaleString("vi")} điểm · Hạng {customer.tier}
+                    ⭐ {(customer.points || 0).toLocaleString("vi")} {t("pageCounterSales.loyaltyPoints")} · {t("pageCounterSales.tier")} {customer.tier}
                     {isLoyaltyMember && loyaltyWallet!.segmentName && (
                       <span style={{ color: "var(--lime-d)", marginLeft: 4 }}>· {loyaltyWallet!.segmentName}</span>
                     )}
@@ -264,13 +269,13 @@ const Cart: React.FC<CartProps> = ({
               </div>
             </>
           ) : (
-            <div className="cust-placeholder"><p>Chọn khách hàng</p></div>
+            <div className="cust-placeholder"><p>{t("pageCounterSales.chooseCustomer")}</p></div>
           )}
         </div>
       </div>
 
       <div className="cart__items">
-        {items.length === 0 && <div className="cart__empty"><span>🛒</span><p>Giỏ hàng trống</p></div>}
+        {items.length === 0 && <div className="cart__empty"><span>🛒</span><p>{t("pageCounterSales.cartEmpty")}</p></div>}
         {items.map((item) => (
           <div key={item.id} className="ci">
             <div className="ci__icon">
@@ -294,10 +299,38 @@ const Cart: React.FC<CartProps> = ({
             </div>
             <div className="ci__qty">
               <button className="qb" onClick={() => onChangeQty(item.id, -1)}>−</button>
-              <span className="qi">{item.qty}</span>
+              <input
+                type="number"
+                className="qi"
+                value={qtyDraft[item.id] !== undefined ? qtyDraft[item.id] : item.qty}
+                min={1}
+                onFocus={() => setQtyDraft(prev => ({ ...prev, [item.id]: String(item.qty) }))}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  setQtyDraft(prev => ({ ...prev, [item.id]: raw }));
+                  const v = Number(raw);
+                  if (raw !== "" && v >= 1) {
+                    onChangeQty(item.id, v - item.qty);
+                  }
+                  // nếu trống hoặc 0: chỉ cập nhật draft, không gọi onChangeQty
+                }}
+                onBlur={() => {
+                  const raw = qtyDraft[item.id];
+                  const v = Number(raw);
+                  if (!raw || v < 1) {
+                    // reset về 1 nếu bỏ trống hoặc nhập 0
+                    onChangeQty(item.id, 1 - item.qty);
+                  }
+                  setQtyDraft(prev => { const n = { ...prev }; delete n[item.id]; return n; });
+                }}
+              />
               <button className="qb" onClick={() => onChangeQty(item.id, 1)}>+</button>
             </div>
-            <div className="ci__total">{formatVND(item.price * item.qty)}</div>
+            {(() => {
+              const draft = qtyDraft[item.id];
+              const displayQty = draft !== undefined ? Math.max(0, Number(draft) || 0) : item.qty;
+              return <div className="ci__total">{formatVND(item.price * displayQty)}</div>;
+            })()}
             <button className="del-btn" onClick={() => onRemove(item.id)}>✕</button>
           </div>
         ))}
@@ -308,13 +341,13 @@ const Cart: React.FC<CartProps> = ({
         {/* ══ Ship section ══════════════════════════════════════════════════ */}
         {isShipOrder && (
           <div className="ship-section">
-            <div className="ship-section__title">🚚 Thông tin giao hàng</div>
+            <div className="ship-section__title">🚚 {t("pageCounterSales.shippingTitle")}</div>
 
             {/* Tên người nhận */}
             <div className="ship-section__row">
-              <div className="ship-section__label">Người nhận *</div>
+              <div className="ship-section__label">{t("pageCounterSales.receiverName")} *</div>
               <input className="ship-section__input"
-                placeholder="Họ tên người nhận"
+                placeholder={t("pageCounterSales.receiverNamePlaceholder")}
                 value={shippingInfo.receiverName}
                 onChange={e => onShippingInfoChange({ ...shippingInfo, receiverName: e.target.value })}
               />
@@ -322,9 +355,9 @@ const Cart: React.FC<CartProps> = ({
 
             {/* SĐT */}
             <div className="ship-section__row">
-              <div className="ship-section__label">Số điện thoại *</div>
+              <div className="ship-section__label">{t("pageCounterSales.receiverPhone")} *</div>
               <input className="ship-section__input"
-                placeholder="0912 345 678"
+                placeholder={t("pageCounterSales.receiverPhonePlaceholder")}
                 value={shippingInfo.receiverPhone}
                 onChange={e => onShippingInfoChange({ ...shippingInfo, receiverPhone: e.target.value })}
               />
@@ -332,9 +365,9 @@ const Cart: React.FC<CartProps> = ({
 
             {/* Tỉnh/Thành → gợi ý phí ship */}
             <div className="ship-section__row">
-              <div className="ship-section__label">Tỉnh/Thành</div>
+              <div className="ship-section__label">{t("pageCounterSales.receiverProvince")}</div>
               <input className="ship-section__input"
-                placeholder="VD: TP. Hồ Chí Minh, Hà Nội..."
+                placeholder={t("pageCounterSales.receiverProvincePlaceholder")}
                 value={shippingInfo.receiverProvince}
                 onChange={e => handleProvinceChange(e.target.value)}
               />
@@ -342,9 +375,9 @@ const Cart: React.FC<CartProps> = ({
 
             {/* Địa chỉ chi tiết */}
             <div className="ship-section__row">
-              <div className="ship-section__label">Địa chỉ giao *</div>
+              <div className="ship-section__label">{t("pageCounterSales.receiverAddress")} *</div>
               <input className="ship-section__input"
-                placeholder="Số nhà, đường, phường/xã, quận/huyện"
+                placeholder={t("pageCounterSales.receiverAddressPlaceholder")}
                 value={shippingInfo.receiverAddress}
                 onChange={e => onShippingInfoChange({ ...shippingInfo, receiverAddress: e.target.value })}
               />
@@ -353,8 +386,8 @@ const Cart: React.FC<CartProps> = ({
             {/* Phí ship + nút gợi ý */}
             <div className="ship-section__row">
               <div className="ship-section__label">
-                Phí ship thu khách
-                {isSuggestingFee && <span style={{ fontSize: "1rem", color: "#0369a1", marginLeft: 6 }}>⏳ đang tính...</span>}
+                {t("pageCounterSales.shippingFeeLabel")}
+                {isSuggestingFee && <span style={{ fontSize: "1rem", color: "#0369a1", marginLeft: 6 }}>⏳ {t("pageCounterSales.shippingCalculating")}</span>}
               </div>
               <div className="ship-section__fee-row">
                 <input
@@ -368,28 +401,28 @@ const Cart: React.FC<CartProps> = ({
                   className="ship-section__suggest-btn"
                   disabled={isSuggestingFee || !shippingInfo.receiverProvince?.trim()}
                   onClick={() => suggestShippingFee(shippingInfo.receiverProvince)}
-                  title="Tính lại phí dựa trên cấu hình phí vận chuyển"
+                  title={t("pageCounterSales.shippingRecalculate")}
                 >
-                  Tính lại
+                  {t("pageCounterSales.shippingRecalculate")}
                 </button>
               </div>
             </div>
 
             {/* Bên trả phí ship */}
             <div className="ship-section__row">
-              <div className="ship-section__label">Ai trả phí ship?</div>
+              <div className="ship-section__label">{t("pageCounterSales.shippingBearer")}</div>
               <div className="ship-section__bearer">
                 <button
                   className={`ship-section__bearer-btn${shippingInfo.shippingFeeBearer === "RECEIVER" ? " active" : ""}`}
                   onClick={() => onShippingInfoChange({ ...shippingInfo, shippingFeeBearer: "RECEIVER" })}
                 >
-                  Người nhận
+                  {t("pageCounterSales.shippingReceiver")}
                 </button>
                 <button
                   className={`ship-section__bearer-btn${shippingInfo.shippingFeeBearer === "SENDER" ? " active" : ""}`}
                   onClick={() => onShippingInfoChange({ ...shippingInfo, shippingFeeBearer: "SENDER" })}
                 >
-                  Cửa hàng
+                  {t("pageCounterSales.shippingSender")}
                 </button>
               </div>
             </div>
@@ -404,11 +437,11 @@ const Cart: React.FC<CartProps> = ({
                   codAmount: e.target.checked ? finalTotal : 0,
                 })}
               />
-              Thu hộ COD ({formatVND(finalTotal)})
+              {t("pageCounterSales.codLabel")} ({formatVND(finalTotal)})
             </label>
             {shippingInfo.codAmount > 0 && (
               <div className="ship-section__row">
-                <div className="ship-section__label">Số tiền COD</div>
+                <div className="ship-section__label">{t("pageCounterSales.codAmount")}</div>
                 <div className="ship-section__fee-row">
                   <input
                     className="ship-section__fee-input"
@@ -423,9 +456,9 @@ const Cart: React.FC<CartProps> = ({
 
             {/* Ghi chú giao hàng */}
             <div className="ship-section__row">
-              <div className="ship-section__label">Ghi chú cho người ship</div>
+              <div className="ship-section__label">{t("pageCounterSales.shipperNote")}</div>
               <input className="ship-section__input"
-                placeholder="VD: Gọi trước khi giao, để trước cửa..."
+                placeholder={t("pageCounterSales.shipperNotePlaceholder")}
                 value={shippingInfo.noteForShipper ?? ""}
                 onChange={e => onShippingInfoChange({ ...shippingInfo, noteForShipper: e.target.value })}
               />
@@ -435,14 +468,14 @@ const Cart: React.FC<CartProps> = ({
 
         {/* Voucher */}
         <div className="voucher-row">
-          <input type="text" placeholder="🏷️ Nhập mã voucher..."
+          <input type="text" placeholder={`🏷️ ${t("pageCounterSales.voucherPlaceholder")}`}
             value={voucher}
             onChange={e => { setVoucher(e.target.value); handleCouponDiscountChange(0); setCouponMessage(""); setCouponError(""); }}
             onKeyDown={e => e.key === "Enter" && handleApplyCoupon()}
           />
           <button className="btn btn--outline btn--sm"
             onClick={handleApplyCoupon} disabled={isApplyingCoupon || !voucher.trim()}>
-            {isApplyingCoupon ? "..." : "Áp dụng"}
+            {isApplyingCoupon ? t("pageCounterSales.voucherApplying") : t("pageCounterSales.voucherApply")}
           </button>
         </div>
         {couponMessage && <div style={{ fontSize: 11, color: "#3B6D11", marginTop: 4, paddingLeft: 2 }}>✓ {couponMessage}</div>}
@@ -451,12 +484,12 @@ const Cart: React.FC<CartProps> = ({
         {/* Summary */}
         <div className="summary">
           <div className="sr">
-            <span className="sr__k">Tạm tính ({itemCount} sản phẩm)</span>
+            <span className="sr__k">{t("pageCounterSales.subtotal")} ({itemCount} {t("common.product")})</span>
             <span className="sr__v">{formatVND(subtotal)}</span>
           </div>
 
           <div className="sr">
-            <span className="sr__k">Giảm giá voucher</span>
+            <span className="sr__k">{t("pageCounterSales.voucherDiscount")}</span>
             <span className="sr__v sr__v--red">
               {couponDiscount > 0 ? `−${couponDiscount.toLocaleString("vi")} ₫` : "0 ₫"}
             </span>
@@ -470,10 +503,10 @@ const Cart: React.FC<CartProps> = ({
               marginBottom: 6, marginTop: 2,
             }}>
               <span style={{ fontSize: 12, color: "#3B6D11", fontWeight: 600, flex: 1 }}>
-                Có {eligiblePromoCount} khuyến mãi phù hợp
+                {eligiblePromoCount} {t("pageCounterSales.promoMatchCount")}
               </span>
               <span style={{ fontSize: 11, background: "#3B6D11", color: "#fff", padding: "2px 8px", borderRadius: "0.4rem" }}>
-                Xem ngay
+                {t("pageCounterSales.promoViewNow")}
               </span>
             </div>
           )}
@@ -489,7 +522,7 @@ const Cart: React.FC<CartProps> = ({
           )}
 
           <div className="sr">
-            <span className="sr__k">Khuyến mãi</span>
+            <span className="sr__k">{t("pageCounterSales.promotion")}</span>
             <span className="sr__v" style={{ color: promoDiscount > 0 ? "#3B6D11" : undefined }}>
               {promoDiscount > 0 ? `−${promoDiscount.toLocaleString("vi")} ₫` : "0 ₫"}
             </span>
@@ -499,14 +532,14 @@ const Cart: React.FC<CartProps> = ({
           {isShipOrder && (
             <div className="sr">
               <span className="sr__k">
-                Phí ship
+                {t("pageCounterSales.shippingFee")}
                 {shippingInfo.shippingFeeBearer === "SENDER"
-                  ? <span style={{ fontSize: "1rem", color: "#6b7280", marginLeft: 4 }}>(cửa hàng trả)</span>
+                  ? <span style={{ fontSize: "1rem", color: "#6b7280", marginLeft: 4 }}>({t("pageCounterSales.shippingSender")})</span>
                   : null}
               </span>
               <span className="sr__v sr__v--ship">
                 {shippingInfo.shippingFeeBearer === "SENDER"
-                  ? "Miễn phí cho khách"
+                  ? t("pageCounterSales.freeShipping")
                   : `+${shippingFee.toLocaleString("vi")} ₫`}
               </span>
             </div>
@@ -516,9 +549,9 @@ const Cart: React.FC<CartProps> = ({
           {isLoyaltyMember ? (
             <div className="sr" style={{ alignItems: "flex-start", gap: 4 }}>
               <span className="sr__k" style={{ paddingTop: 2 }}>
-                Điểm tích lũy dùng
+                {t("pageCounterSales.loyaltyPointsUsed")}
                 <span style={{ display: "block", fontSize: 11, color: "var(--muted)", fontWeight: 400, marginTop: 2 }}>
-                  Số dư: {(loyaltyWallet!.currentBalance || 0).toLocaleString("vi-VN")} điểm (tối đa {(maxPoints || 0).toLocaleString("vi-VN")})
+                  {t("pageCounterSales.pointBalance")}: {(loyaltyWallet!.currentBalance || 0).toLocaleString("vi-VN")} {t("pageCounterSales.points")} ({t("pageCounterSales.pointMax")} {(maxPoints || 0).toLocaleString("vi-VN")})
                 </span>
               </span>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
@@ -527,7 +560,7 @@ const Cart: React.FC<CartProps> = ({
                     onChange={e => { const v = Math.max(0, Math.min(Number(e.target.value), maxPoints)); onPointsChange?.(v, v * exchangeRate); }}
                     style={{ width: 72, fontSize: 12, textAlign: "right", border: "1.5px solid var(--border)", borderRadius: "0.4rem", padding: "3px 6px", fontFamily: "var(--font-base)", background: "var(--paper)" }}
                   />
-                  <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>điểm</span>
+                  <span style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>{t("pageCounterSales.points")}</span>
                 </div>
                 <span className="sr__v sr__v--blue">
                   {moneyFromPoints > 0 ? `−${moneyFromPoints.toLocaleString("vi")} ₫` : "0 ₫"}
@@ -536,12 +569,12 @@ const Cart: React.FC<CartProps> = ({
             </div>
           ) : customer ? (
             <div className="sr">
-              <span className="sr__k" style={{ color: "var(--muted)", fontSize: 11 }}>💡 Khách chưa đăng ký hội viên</span>
+              <span className="sr__k" style={{ color: "var(--muted)", fontSize: 11 }}>💡 {t("pageCounterSales.notLoyaltyMember")}</span>
             </div>
           ) : null}
 
           <div className="sr sr--total">
-            <span className="sr__k">TỔNG THANH TOÁN</span>
+            <span className="sr__k">{t("pageCounterSales.totalPayment")}</span>
             <span className="sr__v sr__v--lime">{formatVND(finalTotal)}</span>
           </div>
         </div>
@@ -549,7 +582,7 @@ const Cart: React.FC<CartProps> = ({
         <button className="btn btn--outline"
           style={{ width: "100%", padding: "1rem", marginBottom: "0.8rem", fontWeight: 700, fontSize: "1.4rem", borderRadius: "0.3rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.6rem" }}
           onClick={onSaveDraft} disabled={isSaving || items.length === 0}>
-          {isSaving ? "⏳ Đang lưu..." : "💾 Lưu tạm"}
+          {isSaving ? `⏳ ${t("pageCounterSales.saving")}` : `💾 ${t("pageCounterSales.saveDraft")}`}
         </button>
 
         {/* Ghi chú đơn */}
@@ -557,20 +590,20 @@ const Cart: React.FC<CartProps> = ({
           <button className={`cart-note__toggle${note?.trim() ? " has-value" : ""}`}
             onClick={() => { const el = document.getElementById("cart-note-textarea"); if (el) { el.style.display = el.style.display === "none" ? "block" : "none"; if (el.style.display !== "none") (el as HTMLTextAreaElement).focus(); } }}
           >
-            <span>📝 Ghi chú đơn hàng</span>
+            <span>📝 {t("pageCounterSales.orderNote")}</span>
             {note?.trim()
               ? <span className="cart-note__preview">{note.trim().slice(0, 30)}{note.trim().length > 30 ? "…" : ""}</span>
-              : <span className="cart-note__hint">Nhấn để thêm ghi chú</span>}
+              : <span className="cart-note__hint">{t("pageCounterSales.orderNoteHint")}</span>}
           </button>
           <textarea id="cart-note-textarea" className="cart-note__textarea"
             style={{ display: note?.trim() ? "block" : "none" }}
-            placeholder="VD: Giao buổi chiều, không lấy túi nilon, gói quà..."
+            placeholder={t("pageCounterSales.orderNotePlaceholder")}
             rows={3} value={note} onChange={e => onNoteChange?.(e.target.value)}
           />
         </div>
 
         <button className="pay-btn" onClick={onCreateInvoice} disabled={items.length === 0}>
-          {isShipOrder ? "📦 Tạo đơn giao hàng" : "💳 Tạo đơn hàng"}
+          {isShipOrder ? `📦 ${t("pageCounterSales.createShipOrder")}` : `💳 ${t("pageCounterSales.createOrder")}`}
         </button>
       </div>
     </div>

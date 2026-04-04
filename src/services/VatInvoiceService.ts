@@ -78,6 +78,43 @@ export interface VatInvoiceRequest {
   customFields?: Record<string, string>;
 }
 
+export interface VatAdjustmentRequest {
+  supplierTaxCode: string;
+  generalInvoiceInfo: {
+    invoiceType:        string;
+    templateCode:       string;
+    invoiceSeries:      string;
+    currencyCode:       string;
+    exchangeRate:       number;
+    adjustmentType:     "5";          // 5 = điều chỉnh
+    paymentStatus:      boolean;
+    cusGetInvoiceRight: boolean;
+    invoiceIssuedDate?: number;
+    originalInvoiceId?: string;       // số hóa đơn gốc
+    originalInvoiceIssueDate?: string; // ngày phát hành HĐ gốc (dd/MM/yyyy)
+    additionalReferenceDesc?: string; // lý do điều chỉnh
+    additionalReferenceDate?: number; // ngày biên bản thỏa thuận
+  };
+  buyerInfo: {
+    buyerName:         string;
+    buyerLegalName?:   string;
+    buyerTaxCode?:     string;
+    buyerAddressLine:  string;
+    buyerEmail?:       string;
+  };
+  payments:        { paymentMethodName: string }[];
+  itemInfo:        VatItemInfo[];
+  taxBreakdowns:   VatTaxBreakdown[];
+  summarizeInfo: {
+    totalAmountWithoutTax:    number;
+    totalTaxAmount:           number;
+    totalAmountWithTax:       number;
+    totalAmountAfterDiscount: number;
+    totalAmountInWords:       string;
+  };
+  customFields?: Record<string, string>;
+}
+
 export interface SendEmailRequest {
   supplierTaxCode:  string;
   transactionUuid:  string;
@@ -141,6 +178,19 @@ const VatInvoiceService = {
   },
 
   /**
+   * Phát hành hóa đơn điều chỉnh.
+   * POST /integration/sinvoice/invoice/adjust
+   * adjustmentType = "5" → điều chỉnh tăng/giảm.
+   */
+  adjustInvoice: (body: VatAdjustmentRequest): Promise<any> => {
+    return fetch(`${PREFIX_INTEGRATION}/invoice/adjust`, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify(body),
+    }).then(r => r.json());
+  },
+
+  /**
    * Lấy danh sách mẫu + ký hiệu hóa đơn của doanh nghiệp.
    * POST /integration/sinvoice/ext/all-templates
    */
@@ -151,6 +201,46 @@ const VatInvoiceService = {
       body:    JSON.stringify({ taxCode, invoiceType: "all" }),
     }).then(r => r.json());
   },
+
+  /**
+   * Lấy cấu hình VAT đã lưu.
+   * GET /integration/sinvoice/config/get
+   */
+  getConfig: (): Promise<any> => {
+    return fetch(`${PREFIX_INTEGRATION}/config/get`, { method: "GET" })
+      .then(r => r.json());
+  },
+
+  /**
+   * Lưu cấu hình VAT.
+   * POST /integration/sinvoice/config/save
+   */
+  saveConfig: (body: VatConfig): Promise<any> => {
+    return fetch(`${PREFIX_INTEGRATION}/config/save`, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify(body),
+    }).then(r => r.json());
+  },
 };
+
+export interface VatConfig {
+  companyName: string;
+  taxCode: string;
+  phone: string;
+  address: string;
+  email: string;
+  website: string;
+  bankAccount: string;
+  bankName: string;
+  defaultTemplateCode: string;
+  defaultInvoiceSeries: string;
+  defaultTaxRate: number;
+  currencyCode: string;
+  autoIssueOnComplete: boolean;
+  autoSendEmail: boolean;
+  remindPendingSign: boolean;
+  allowDeferredIssue: boolean;
+}
 
 export default VatInvoiceService;

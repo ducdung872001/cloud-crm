@@ -98,7 +98,7 @@ function QuickPayModal({ debtInfo, funds, onClose, onSuccess }: QuickPayModalPro
   const [note, setNote]             = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const fmtCurrency = (n: number) => n.toLocaleString("vi") + " VND";
+  const fmtCurrency = (n: number) => n.toLocaleString("vi") + "đ";
 
   async function handlePay() {
     if (!fundId)     { showToast("Vui lòng chọn quỹ nhận tiền", "error"); return; }

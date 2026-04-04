@@ -16,7 +16,7 @@ import { getPageOffset } from "reborn-util";
 
 import "./CxmOptionList.scss";
 import AddSpaceModal from "./partials/AddCxmOption";
-import SpaceService from "services/SpaceService";
+// SpaceService removed (non-retail BDS)
 import CxmOptionService from "services/CxmOptionService";
 
 export default function CxmOptionList(props: any) {

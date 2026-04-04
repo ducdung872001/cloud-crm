@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ReturnProduct, ReturnStatus, ReturnType } from "../../../../types/returnProduct";
 import "./index.scss";
 
@@ -20,11 +21,11 @@ interface ReturnTableProps {
   onLoadMore?: () => void;
 }
 
-const STATUS_MAP: Record<ReturnStatus, { label: string; cls: string }> = {
-  done:       { label: "Hoàn thành", cls: "rbadge--done" },
-  pending:    { label: "Chờ xử lý",  cls: "rbadge--pending" },
-  processing: { label: "Đang xử lý", cls: "rbadge--processing" },
-  cancel:     { label: "Đã hủy",     cls: "rbadge--cancel" },
+const STATUS_KEYS: Record<ReturnStatus, { key: string; cls: string }> = {
+  done:       { key: "pageReturnProduct.done",       cls: "rbadge--done" },
+  pending:    { key: "pageReturnProduct.pending",    cls: "rbadge--pending" },
+  processing: { key: "pageReturnProduct.processing", cls: "rbadge--processing" },
+  cancel:     { key: "pageReturnProduct.cancel",     cls: "rbadge--cancel" },
 };
 
 const fmt = (n: number) => (n > 0 ? n.toLocaleString("vi") + " ₫" : "–");
@@ -43,6 +44,7 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
   total,
   onLoadMore,
 }) => {
+  const { t } = useTranslation();
   const hasMore = total !== undefined && data.length < total;
 
   return (
@@ -50,7 +52,7 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
       {/* Panel header */}
       <div className="return-table-panel__header">
         <div className="return-table-panel__title">
-          Danh sách phiếu trả / đổi hàng
+          {t("pageReturnProduct.listTitle")}
           {total !== undefined && (
             <span className="return-table-panel__count"> ({total})</span>
           )}
@@ -58,30 +60,30 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
 
         <div className="return-table-panel__toolbar">
           <select className="rfilter" value={filterType} onChange={(e) => onFilterType(e.target.value)}>
-            <option value="">Tất cả loại</option>
-            <option value="return">Trả hàng</option>
-            <option value="exchange">Đổi hàng</option>
+            <option value="">{t("pageReturnProduct.allTypes")}</option>
+            <option value="return">{t("pageReturnProduct.returnType")}</option>
+            <option value="exchange">{t("pageReturnProduct.exchangeType")}</option>
           </select>
 
           <select className="rfilter" value={filterStatus} onChange={(e) => onFilterStatus(e.target.value)}>
-            <option value="">Tất cả trạng thái</option>
-            <option value="pending">Chờ xử lý</option>
-            <option value="processing">Đang xử lý</option>
-            <option value="done">Hoàn thành</option>
-            <option value="cancel">Đã hủy</option>
+            <option value="">{t("pageReturnProduct.allStatus")}</option>
+            <option value="pending">{t("pageReturnProduct.pending")}</option>
+            <option value="processing">{t("pageReturnProduct.processing")}</option>
+            <option value="done">{t("pageReturnProduct.done")}</option>
+            <option value="cancel">{t("pageReturnProduct.cancel")}</option>
           </select>
 
           <div className="rsearch-wrap">
             <span className="rsearch-wrap__icon">🔍</span>
             <input
-              placeholder="Tìm mã phiếu, khách hàng..."
+              placeholder={t("pageReturnProduct.searchPlaceholder")}
               value={search}
               onChange={(e) => onSearch(e.target.value)}
             />
           </div>
 
           <button className="btn btn--lime btn--sm" onClick={onCreateClick}>
-            + Tạo phiếu
+            + {t("pageReturnProduct.createTicket")}
           </button>
         </div>
       </div>
@@ -91,14 +93,14 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
         <table className="rtbl">
           <thead>
             <tr>
-              <th>Mã phiếu</th>
-              <th>Thời gian</th>
-              <th>Khách hàng</th>
-              <th>Đơn gốc</th>
-              <th>Loại</th>
-              <th>Sản phẩm</th>
-              <th style={{ textAlign: "right" }}>Tiền hoàn</th>
-              <th>Trạng thái</th>
+              <th>{t("pageReturnProduct.colCode")}</th>
+              <th>{t("pageReturnProduct.colTime")}</th>
+              <th>{t("pageReturnProduct.colCustomer")}</th>
+              <th>{t("pageReturnProduct.colOriginalOrder")}</th>
+              <th>{t("pageReturnProduct.colType")}</th>
+              <th>{t("pageReturnProduct.colProduct")}</th>
+              <th style={{ textAlign: "right" }}>{t("pageReturnProduct.colRefund")}</th>
+              <th>{t("pageReturnProduct.colStatus")}</th>
               <th />
             </tr>
           </thead>
@@ -119,13 +121,13 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
                 <td colSpan={9}>
                   <div className="rtbl__empty">
                     <span>📋</span>
-                    <p>Không có phiếu nào phù hợp</p>
+                    <p>{t("pageReturnProduct.noRecords")}</p>
                   </div>
                 </td>
               </tr>
             ) : (
               data.map((row) => {
-                const st = STATUS_MAP[row.status];
+                const st = STATUS_KEYS[row.status];
                 return (
                   <tr key={row.id} onClick={() => onViewDetail(row)}>
                     <td>
@@ -137,7 +139,7 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
                     <td>
                       <span className={`rtype-dot rtype-dot--${row.type}`}>
                         <span className="rtype-dot__dot" />
-                        {row.type === "return" ? "Trả hàng" : "Đổi hàng"}
+                        {row.type === "return" ? t("pageReturnProduct.returnType") : t("pageReturnProduct.exchangeType")}
                       </span>
                     </td>
                     <td className="rtbl__ellipsis" title={row.productSummary}>
@@ -147,7 +149,7 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
                       {fmt(row.refundAmount)}
                     </td>
                     <td>
-                      <span className={`rbadge ${st.cls}`}>{st.label}</span>
+                      <span className={`rbadge ${st.cls}`}>{t(st.key)}</span>
                     </td>
                     <td>
                       <button
@@ -157,7 +159,7 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
                           onViewDetail(row);
                         }}
                       >
-                        Xem
+                        {t("common.view")}
                       </button>
                     </td>
                   </tr>
@@ -176,7 +178,7 @@ const ReturnTable: React.FC<ReturnTableProps> = ({
             onClick={onLoadMore}
             disabled={loading}
           >
-            {loading ? "Đang tải..." : `Tải thêm (${total - data.length} còn lại)`}
+            {loading ? t("common.loading") : `${t("common.seeMore")} (${total - data.length} ${t("pageReturnProduct.loadMoreRemaining")})`}
           </button>
         </div>
       )}

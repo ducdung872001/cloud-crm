@@ -5,6 +5,7 @@ import { showToast } from "utils/common";
 import { IBomResponse } from "@/model/material/BomModel";
 import { IProductionOrderCreateRequest } from "@/model/material/ProductionOrderModel";
 import { BomService, ProductionOrderService } from "@/services/MaterialService";
+import WarehouseService from "@/services/WarehouseService";
 import { urlsApi } from "@/configs/urls";
 import { convertParamsToString } from "reborn-util";
 
@@ -24,12 +25,6 @@ interface MaterialLine {
   plannedQty: number;
   _key: string;
 }
-
-const WAREHOUSE_OPTIONS = [
-  { value: 1, label: "Kho A" },
-  { value: 2, label: "Kho B" },
-  { value: 3, label: "Kho lạnh" },
-];
 
 interface Props {
   isOpen: boolean;
@@ -62,8 +57,25 @@ export default function CreateProductionOrderModal({ isOpen, onClose, onSuccess 
   // NVL lines (tự động load từ BOM, có thể điều chỉnh)
   const [lines, setLines] = useState<MaterialLine[]>([]);
 
+  // Warehouse options from API
+  const [warehouseOptions, setWarehouseOptions] = useState<{ value: number; label: string }[]>([]);
+
   const [showDialog, setShowDialog]     = useState(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+
+  // Fetch warehouses
+  useEffect(() => {
+    if (!isOpen) return;
+    WarehouseService.list({ limit: 100 })
+      .then((res: any) => {
+        if (res?.code === 0 && res.result?.items) {
+          setWarehouseOptions(
+            res.result.items.map((w: any) => ({ value: w.id, label: w.name }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, [isOpen]);
 
   // Reset on close
   useEffect(() => {
@@ -336,7 +348,7 @@ export default function CreateProductionOrderModal({ isOpen, onClose, onSuccess 
                 <select style={S.select} value={materialWarehouseId}
                   onChange={(e) => setMatWh(Number(e.target.value) || "")}>
                   <option value="">Chọn kho...</option>
-                  {WAREHOUSE_OPTIONS.map((w) => <option key={w.value} value={w.value}>{w.label}</option>)}
+                  {warehouseOptions.map((w) => <option key={w.value} value={w.value}>{w.label}</option>)}
                 </select>
               </div>
               <div style={S.field}>
@@ -344,7 +356,7 @@ export default function CreateProductionOrderModal({ isOpen, onClose, onSuccess 
                 <select style={S.select} value={productWarehouseId}
                   onChange={(e) => setProdWh(Number(e.target.value) || "")}>
                   <option value="">Chọn kho...</option>
-                  {WAREHOUSE_OPTIONS.map((w) => <option key={w.value} value={w.value}>{w.label}</option>)}
+                  {warehouseOptions.map((w) => <option key={w.value} value={w.value}>{w.label}</option>)}
                 </select>
               </div>
             </div>

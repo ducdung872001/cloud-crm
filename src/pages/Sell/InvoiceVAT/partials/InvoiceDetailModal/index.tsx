@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Icon from "components/icon";
 import Badge from "components/badge/badge";
+import Button from "components/button/button";
 import { showToast } from "utils/common";
+import InvoiceAdjustmentModal from "../InvoiceAdjustmentModal";
 import "./style.scss";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -55,6 +57,7 @@ interface Props {
   isOpen:   boolean;
   data:     SinvoiceLogItem | null;
   onClose:  () => void;
+  onRefresh?: () => void;
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -96,10 +99,11 @@ const taxLabel = (pct: number): string => {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function InvoiceDetailModal({ isOpen, data, onClose }: Props) {
+export default function InvoiceDetailModal({ isOpen, data, onClose, onRefresh }: Props) {
   const [copied,        setCopied]        = useState(false);
   const [loadingPdf,    setLoadingPdf]    = useState(false);
   const [loadingEmail,  setLoadingEmail]  = useState(false);
+  const [showAdjust,    setShowAdjust]    = useState(false);
 
   // Đóng bằng ESC
   useEffect(() => {
@@ -364,33 +368,47 @@ export default function InvoiceDetailModal({ isOpen, data, onClose }: Props) {
 
         {/* Footer */}
         <div className="idm__footer">
-          <button
-            className="idm-btn idm-btn--outline"
+          <Button
+            color="secondary"
+            variant="outline"
             onClick={handleDownloadPdf}
             disabled={loadingPdf}
+            hasIcon
           >
             <Icon name="Download" />
             {loadingPdf ? "Đang tải..." : "Tải PDF"}
-          </button>
-          <button
-            className="idm-btn idm-btn--outline"
+          </Button>
+          <Button
+            color="secondary"
+            variant="outline"
             onClick={handleResendEmail}
             disabled={loadingEmail || !buyerEmail}
-            title={!buyerEmail ? "Hóa đơn không có email người mua" : ""}
+            hasIcon
           >
             <Icon name="Send" />
             {loadingEmail ? "Đang gửi..." : "Gửi lại email"}
-          </button>
-          <button
-            className="idm-btn idm-btn--outline"
-            onClick={() => showToast("Chức năng điều chỉnh đang phát triển", "warning")}
+          </Button>
+          <Button
+            color="secondary"
+            variant="outline"
+            onClick={() => setShowAdjust(true)}
+            disabled={data.status !== "ISSUED"}
+            hasIcon
           >
             <Icon name="Edit" /> Điều chỉnh HĐ
-          </button>
-          <button className="idm-btn idm-btn--primary" onClick={onClose}>Đóng</button>
+          </Button>
+          <Button color="primary" onClick={onClose} className="idm__footer-close">Đóng</Button>
         </div>
 
       </div>
+
+      {/* Modal điều chỉnh hóa đơn */}
+      <InvoiceAdjustmentModal
+        isOpen={showAdjust}
+        originalInvoice={data}
+        onClose={() => setShowAdjust(false)}
+        onSuccess={() => { onRefresh?.(); }}
+      />
     </div>
   );
 }
