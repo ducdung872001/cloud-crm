@@ -206,7 +206,7 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInv
             )
           : item.cardNumber
       }`,
-      `${checkView ? (item.qty ? item.qty : 1) : formatCurrency(item.cash)}`,
+      `${checkView ? (item.quantity ? item.quantity : 1) : formatCurrency(item.cash)}`,
       `${checkView ? formatCurrency(item.fee ? item.fee : "0") : formatCurrency(item.account)}`,
     ];
   };

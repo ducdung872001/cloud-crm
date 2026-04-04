@@ -445,7 +445,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   const [listCategory, setListCategory] = useState<IOption[]>([]);
 
   // ── Đơn vị quy đổi (product_unit) ──
-  const makeEmptyUE = (): IProductUnit => ({ unitId: null, unitName: "", isBasis: 0, exchange: 1 });
+  const makeEmptyUE = (): IProductUnit => ({ unitId: null, unitName: "", isBasis: false, exchange: 1 });
   const [unitExchangeList, setUnitExchangeList] = useState<IProductUnit[]>([makeEmptyUE()]);
   const [isSavingUE, setIsSavingUE] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<{ value: number; label: string } | null>(null);
@@ -655,7 +655,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         productId: i.productId,
         unitId: i.unitId ?? null,
         unitName: i.unitName ?? "",
-        isBasis: i.isBasis ?? 0,
+        isBasis: i.isBasis ?? false,
         exchange: i.exchange ?? 1,
       })) : [makeEmptyUE()]);
     } catch { /* giữ default nếu lỗi */ }
@@ -665,7 +665,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
     if (!idProduct) return;
     const valid = unitExchangeList.filter(u => u.unitId);
     if (!valid.length) { showToast("Vui lòng chọn ít nhất 1 đơn vị", "error"); return; }
-    const basisCount = valid.filter(u => u.isBasis === 1).length;
+    const basisCount = valid.filter(u => u.isBasis === true).length;
     if (basisCount === 0) { showToast("Vui lòng chọn 1 đơn vị làm đơn vị cơ bản", "error"); return; }
     if (basisCount > 1) { showToast("Chỉ được chọn 1 đơn vị cơ bản", "error"); return; }
     setIsSavingUE(true);
@@ -1614,7 +1614,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                           setUnitExchangeList(next);
                         }}
                         className="add-prod-ue-exchange-input"
-                        disabled={ue.isBasis === 1}
+                        disabled={ue.isBasis === true}
                       />
                     </div>
 
@@ -1624,16 +1624,16 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                         <input
                           type="radio"
                           name="ue-basis"
-                          checked={ue.isBasis === 1}
+                          checked={ue.isBasis === true}
                           onChange={() => {
                             setUnitExchangeList(prev => prev.map((u, i) => ({
                               ...u,
-                              isBasis: i === idx ? 1 : 0,
+                              isBasis: i === idx,
                               exchange: i === idx ? 1 : u.exchange, // đơn vị cơ bản exchange = 1
                             })));
                           }}
                         />
-                        <span>{ue.isBasis === 1 ? "Cơ bản" : "Đặt làm cơ bản"}</span>
+                        <span>{ue.isBasis === true ? "Cơ bản" : "Đặt làm cơ bản"}</span>
                       </label>
                     </div>
 
@@ -1870,7 +1870,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                         {/* Đơn vị cơ bản: readonly nếu product_unit đã khai báo */}
                         <div className="add-prod-vt-meta-field">
                           <Tippy
-                            content={unitExchangeList.some(u => u.unitId && u.isBasis === 1)
+                            content={unitExchangeList.some(u => u.unitId && u.isBasis === true)
                               ? "Đơn vị cơ bản được lấy từ cấu hình Đơn vị quy đổi của sản phẩm"
                               : "Đơn vị tính mặc định của biến thể này"}
                             placement="top"
@@ -1879,10 +1879,10 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                               Đơn vị cơ bản
                             </label>
                           </Tippy>
-                          {unitExchangeList.some(u => u.unitId && u.isBasis === 1) ? (
+                          {unitExchangeList.some(u => u.unitId && u.isBasis === true) ? (
                             // Readonly — lấy từ product_unit
                             <div className="add-prod-vt-unit-readonly">
-                              {unitExchangeList.find(u => u.isBasis === 1)?.unitName || "—"}
+                              {unitExchangeList.find(u => u.isBasis === true)?.unitName || "—"}
                             </div>
                           ) : (
                             // Chưa khai báo product_unit → cho chọn thủ công

@@ -152,7 +152,7 @@ export default function ShowPaymentBillModal(props: ShowPaymentBillModalProps) {
           )
         : item.cardNumber
     }`,
-    `${nameCommon ? (item.qty ? item.qty : 1) : formatCurrency(item.cash)}`,
+    `${nameCommon ? (item.quantity ? item.quantity : 1) : formatCurrency(item.cash)}`,
     `${nameCommon ? formatCurrency(item.fee ? item.fee : "0") : formatCurrency(item.account)}`,
   ];
 

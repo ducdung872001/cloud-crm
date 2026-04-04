@@ -14,7 +14,7 @@ export interface IBoughtProductToInvoiceRequest {
   priceDiscount: number;
   discount: number;
   discountUnit: number;
-  qty: number;
+  quantity: number;
   saleId: number;
   fee: number;
   note?: string;
@@ -31,7 +31,7 @@ export interface IBoughtProductRequest {
   inventoryId: number;
   productId: number;
   unitId: number;
-  qty: number;
+  quantity: number;
   saleId: number;
   discountUnit: string;
   discount: number;
@@ -51,7 +51,7 @@ export interface IInsertedItem {
   unitId?: number; // was number | null
   price: number;
   priceDiscount?: number; // was number | null
-  qty?: number; // was number | null
+  quantity?: number; // was number | null
   mfgDate?: string; // was string | null
   expiryDate?: string; // was string | null
   discount?: number; // was number | null

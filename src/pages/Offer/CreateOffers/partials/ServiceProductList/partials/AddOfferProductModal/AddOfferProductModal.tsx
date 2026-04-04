@@ -316,7 +316,7 @@ export default function AddofferProductModal(props: any) {
         unitId: data?.unitId ?? null,
         price: data?.price ?? 0,
         priceDiscount: 0,
-        qty: data?.qty ?? 0,
+        quantity: data?.quantity ?? 0,
         fee: data?.fee ?? 0,
         discountUnit: data?.discountUnit?.toString() ?? "0",
         discount: data?.discount ?? 0,
@@ -337,7 +337,7 @@ export default function AddofferProductModal(props: any) {
 
   const validations: IValidation[] = [
     {
-      name: "qty",
+      name: "quantity",
       rules: `required|min:0|max_equal:${dataUnit?.quantity}`,
     },
   ];
@@ -476,7 +476,7 @@ export default function AddofferProductModal(props: any) {
         },
         {
           label: "Số lượng",
-          name: "qty",
+          name: "quantity",
           type: "number",
           fill: true,
           required: true,
@@ -594,13 +594,13 @@ export default function AddofferProductModal(props: any) {
 
   //! đoạn này xử lý vấn đề nếu như mà số lượng lớn hơn 0 thì tính tổng tiền
   useEffect(() => {
-    if (formData?.values?.qty > 0) {
-      const result = +formData?.values?.priceSample * +formData?.values?.qty;
+    if (formData?.values?.quantity > 0) {
+      const result = +formData?.values?.priceSample * +formData?.values?.quantity;
       setFormData({ ...formData, values: { ...formData.values, fee: result } });
     } else {
       setFormData({ ...formData, values: { ...formData.values, fee: 0 } });
     }
-  }, [formData?.values?.qty, formData?.values?.priceSample]);
+  }, [formData?.values?.quantity, formData?.values?.priceSample]);
 
   const onSubmit = async (e) => {
     e && e.preventDefault();

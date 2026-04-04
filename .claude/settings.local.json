@@ -9,7 +9,8 @@
       "Bash(node -e ':*)",
       "Bash(python3)",
       "Bash(cd d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm grep -rl \"from.*TreatmentSchedule\" src/ --include=\"*.ts\" --include=\"*.tsx\")",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(echo \"EXIT:$?\")"
     ]
   }
 }

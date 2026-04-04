@@ -6,10 +6,10 @@ export interface IOfferProductToInvoiceResponse {
     orderDate: string;
     receiptDate: string;
     name: string;
-    qty: number;
+    quantity: number;
     fee: number;
   }
-  
+
   export interface IOfferProductResponse {
     batchNo: string;
     avatar: string;
@@ -29,7 +29,7 @@ export interface IOfferProductToInvoiceResponse {
     inventoryId: number;
     productId: number;
     name: string;
-    qty: number;
+    quantity: number;
     saleId: number;
     unitId: number;
     unitName: string;

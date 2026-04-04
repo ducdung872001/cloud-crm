@@ -6,7 +6,7 @@ export interface IBoughtProductToInvoiceResponse {
   orderDate: string;
   receiptDate: string;
   name: string;
-  qty: number;
+  quantity: number;
   fee: number;
 }
 
@@ -29,7 +29,7 @@ export interface IBoughtProductResponse {
   inventoryId: number;
   productId: number;
   name: string;
-  qty: number;
+  quantity: number;
   saleId: number;
   unitId: number;
   unitName: string;

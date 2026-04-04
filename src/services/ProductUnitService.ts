@@ -5,7 +5,7 @@ export interface IProductUnit {
   productId?: number;
   unitId: number | null;
   unitName?: string;
-  isBasis: number;   // 1 = cơ bản, 0 = quy đổi
+  isBasis: boolean;  // true = cơ bản, false = quy đổi
   exchange: number;  // tỷ lệ quy đổi so với đơn vị cơ bản
   createdTime?: string;
   updatedTime?: string;

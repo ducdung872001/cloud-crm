@@ -113,7 +113,7 @@ export default function ServiceProductList(props: any) {
         </span>
       </Fragment>
     ),
-    item.qty ? item.qty : 1,
+    item.quantity ? item.quantity : 1,
     formatCurrency(
       item.discount && item.discountUnit == 1
         ? (item.priceDiscount ? item.priceDiscount : item.price) - (item.priceDiscount ? item.priceDiscount : item.price) * (item.discount / 100)
