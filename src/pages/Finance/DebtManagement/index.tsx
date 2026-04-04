@@ -24,10 +24,10 @@ import "./index.scss";
 type DebtKindFilter = "all" | "receivable" | "payable" | "overdue";
 
 const FILTER_OPTIONS = [
-  { value: "all"         as DebtKindFilter, label: "Tất cả" },
-  { value: "receivable"  as DebtKindFilter, label: "Phải thu (KH)" },
-  { value: "payable"     as DebtKindFilter, label: "Phải trả (NCC)" },
-  { value: "overdue"     as DebtKindFilter, label: "Quá hạn" },
+  { value: "all" as DebtKindFilter, label: "Tất cả" },
+  { value: "receivable" as DebtKindFilter, label: "Phải thu (KH)" },
+  { value: "payable" as DebtKindFilter, label: "Phải trả (NCC)" },
+  { value: "overdue" as DebtKindFilter, label: "Quá hạn" },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -49,10 +49,10 @@ function getStatusBadge(status: string): {
   tone: "success" | "danger" | "warning" | "neutral";
 } {
   switch (status) {
-    case "overdue":  return { label: "Quá hạn",       tone: "danger"  };
-    case "upcoming": return { label: "Sắp đến hạn",   tone: "warning" };
-    case "paid":     return { label: "Đã thanh toán", tone: "success" };
-    default:         return { label: "Còn hạn",        tone: "neutral" };
+    case "overdue": return { label: "Quá hạn", tone: "danger" };
+    case "upcoming": return { label: "Sắp đến hạn", tone: "warning" };
+    case "paid": return { label: "Đã thanh toán", tone: "success" };
+    default: return { label: "Còn hạn", tone: "neutral" };
   }
 }
 
@@ -239,15 +239,15 @@ interface PayModalProps {
 }
 
 function PayModal({ debt, funds, onClose, onSuccess }: PayModalProps) {
-  const [amountStr, setAmountStr]   = useState(fmtVndInput(debt.amount));
-  const [amount, setAmount]         = useState(debt.amount);
-  const [fundId, setFundId]         = useState<number>(funds[0]?.id ?? 0);
-  const [note, setNote]             = useState("");
+  const [amountStr, setAmountStr] = useState(fmtVndInput(debt.amount));
+  const [amount, setAmount] = useState(debt.amount);
+  const [fundId, setFundId] = useState<number>(funds[0]?.id ?? 0);
+  const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   async function handlePay() {
-    if (!fundId)    { showToast("Vui lòng chọn quỹ nhận tiền", "error"); return; }
-    if (amount <= 0){ showToast("Số tiền phải lớn hơn 0", "error"); return; }
+    if (!fundId) { showToast("Vui lòng chọn quỹ nhận tiền", "error"); return; }
+    if (amount <= 0) { showToast("Số tiền phải lớn hơn 0", "error"); return; }
     if (amount > debt.amount + 0.01) {
       showToast(`Số tiền vượt quá nợ còn lại (${formatCurrency(debt.amount)})`, "error");
       return;
@@ -396,13 +396,13 @@ interface QRModalProps {
 }
 
 function QRModal({ debt, funds, onClose, onPaid }: QRModalProps) {
-  const [qrCode, setQrCode]             = useState<string | null>(null);
-  const [qrLoading, setQrLoading]       = useState(true);
-  const [qrError, setQrError]           = useState(false);
-  const [showPayModal, setShowPayModal]  = useState(false);
+  const [qrCode, setQrCode] = useState<string | null>(null);
+  const [qrLoading, setQrLoading] = useState(true);
+  const [qrError, setQrError] = useState(false);
+  const [showPayModal, setShowPayModal] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
-  const [qrDataUrl, setQrDataUrl]       = useState<string | null>(null);
-  const canvasRef                       = useRef<HTMLCanvasElement | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -411,7 +411,7 @@ function QRModal({ debt, funds, onClose, onPaid }: QRModalProps) {
     QrCodeProService.generate({
       content: "THU NO " + debt.id,
       orderId: debt.id,
-      amount:  debt.amount,
+      amount: debt.amount,
     })
       .then((res) => {
         if (cancelled) return;
@@ -429,7 +429,7 @@ function QRModal({ debt, funds, onClose, onPaid }: QRModalProps) {
     if (el) {
       canvasRef.current = el;
       // Lấy dataUrl ngay để dùng cho ShareSheet
-      try { setQrDataUrl(el.toDataURL("image/png")); } catch {}
+      try { setQrDataUrl(el.toDataURL("image/png")); } catch { }
     }
   }, []);
 
@@ -575,18 +575,18 @@ function EditScheduleModal({ debt, onClose, onSaved }: EditScheduleModalProps) {
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
   }
 
-  const [dueDate,      setDueDate]      = useState(toInputDate(debt.dueDate ?? ""));
+  const [dueDate, setDueDate] = useState(toInputDate(debt.dueDate ?? ""));
   const [reminderDate, setReminderDate] = useState(toInputDate(debt.dueDate ?? ""));
-  const [saving,       setSaving]       = useState(false);
+  const [saving, setSaving] = useState(false);
 
   async function handleSave() {
-    if (!dueDate)      { showToast("Vui lòng chọn hạn thanh toán", "error"); return; }
-    if (!reminderDate) { showToast("Vui lòng chọn ngày nhắc nhở", "error");  return; }
+    if (!dueDate) { showToast("Vui lòng chọn hạn thanh toán", "error"); return; }
+    if (!reminderDate) { showToast("Vui lòng chọn ngày nhắc nhở", "error"); return; }
     setSaving(true);
     try {
       await DebtManagementService.updateSchedule({
-        id:           debt.id,
-        dueDate:      fromInputDate(dueDate),
+        id: debt.id,
+        dueDate: fromInputDate(dueDate),
         reminderDate: fromInputDate(reminderDate),
       });
       showToast("✓ Đã cập nhật hạn thanh toán & lịch nhắc nhở", "success");
@@ -676,23 +676,24 @@ export default function FinanceDebtManagement() {
   document.title = "Quản lý công nợ";
   const navigate = useNavigate();
 
-  const [filter, setFilter]             = useState<DebtKindFilter>("all");
-  const [debts, setDebts]               = useState<IDebtItem[]>([]);
-  const [summary, setSummary]           = useState<IDebtSummary>({
+  const [filter, setFilter] = useState<DebtKindFilter>("all");
+  const [debts, setDebts] = useState<IDebtItem[]>([]);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [summary, setSummary] = useState<IDebtSummary>({
     totalReceivable: 0, totalPayable: 0, totalCounterparty: 0,
   });
-  const [loading, setLoading]           = useState(true);
-  const [selectedDebt, setSelectedDebt]   = useState<IDebtItem | null>(null);
-  const [editTarget,    setEditTarget]    = useState<IDebtItem | null>(null);
-  const [funds, setFunds]               = useState<IFundListItem[]>([]);
-  const abortRef                        = useRef<AbortController | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedDebt, setSelectedDebt] = useState<IDebtItem | null>(null);
+  const [editTarget, setEditTarget] = useState<IDebtItem | null>(null);
+  const [funds, setFunds] = useState<IFundListItem[]>([]);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Load quỹ một lần
   useEffect(() => {
     fetch(urlsApi.fund.overview, { method: "GET" })
       .then((r) => r.json())
       .then((res) => { if (res.code === 0) setFunds(res.result?.funds ?? []); })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const loadData = useCallback(async (kindFilter: DebtKindFilter) => {
@@ -734,6 +735,20 @@ export default function FinanceDebtManagement() {
     loadData(filter);
   }
 
+  const handleExportExcel = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      const kindParam = filter === "all" ? undefined : filter;
+      await DebtManagementService.exportExcel(kindParam, keyword || undefined);
+      showToast("Xuất Excel thành công", "success");
+    } catch (err: any) {
+      showToast(err?.message ?? "Xuất Excel thất bại. Vui lòng thử lại", "error");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const visibleDebts = debts.filter((d) => d.status !== "paid");
 
   return (
@@ -741,12 +756,22 @@ export default function FinanceDebtManagement() {
       {/* Header */}
       <div className="finance-screen-header">
         <h1>Quản lý công nợ</h1>
-        <button
-          className="finance-action-btn finance-action-btn--primary"
-          onClick={() => navigate(urls.finance_management_debt_transaction)}
-        >
-          + Tạo giao dịch nợ
-        </button>
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <button
+            className="finance-action-btn finance-action-btn--outline"
+            onClick={handleExportExcel}
+            disabled={isExporting}
+            title="Xuất danh sách công nợ theo bộ lọc hiện tại ra file Excel"
+          >
+            {isExporting ? "Đang xuất..." : "⬇ Xuất Excel"}
+          </button>
+          <button
+            className="finance-action-btn finance-action-btn--primary"
+            onClick={() => navigate(urls.finance_management_debt_transaction)}
+          >
+            + Tạo giao dịch nợ
+          </button>
+        </div>
       </div>
 
       {/* KPI */}
@@ -813,7 +838,7 @@ export default function FinanceDebtManagement() {
                 <tbody>
                   {visibleDebts.map((item) => {
                     const badge = getStatusBadge(item.status);
-                    const days  = getDaysLabel(item.daysRemaining);
+                    const days = getDaysLabel(item.daysRemaining);
                     return (
                       <tr key={item.id}>
                         <td className="debt-name">{item.name}</td>
@@ -831,20 +856,20 @@ export default function FinanceDebtManagement() {
                         <td>
                           {item.kind === "receivable" ? (
                             <div style={{ display: "flex", gap: "0.5rem" }}>
-                            <button
-                              className="finance-action-btn finance-action-btn--success-sm"
-                              onClick={() => setSelectedDebt(item)}
-                            >
-                              QR Thu nợ
-                            </button>
-                            <button
-                              className="finance-action-btn finance-action-btn--outline-sm"
-                              onClick={() => setEditTarget(item)}
-                              title="Chỉnh sửa hạn thanh toán & ngày nhắc nhở"
-                            >
-                              ✏ Sửa hạn
-                            </button>
-                          </div>
+                              <button
+                                className="finance-action-btn finance-action-btn--success-sm"
+                                onClick={() => setSelectedDebt(item)}
+                              >
+                                QR Thu nợ
+                              </button>
+                              <button
+                                className="finance-action-btn finance-action-btn--outline-sm"
+                                onClick={() => setEditTarget(item)}
+                                title="Chỉnh sửa hạn thanh toán & ngày nhắc nhở"
+                              >
+                                ✏ Sửa hạn
+                              </button>
+                            </div>
                           ) : (
                             <div style={{ display: "flex", gap: "0.5rem" }}>
                               <button

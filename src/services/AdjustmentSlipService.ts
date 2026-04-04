@@ -55,6 +55,14 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  exportCheck: (params?: { inventoryId?: number; keyword?: string; status?: number }, signal?: AbortSignal): Promise<string> => {
+    const qs = new URLSearchParams();
+    if (params?.inventoryId !== undefined) qs.set("inventoryId", String(params.inventoryId));
+    if (params?.keyword)                   qs.set("keyword",     params.keyword);
+    if (params?.status !== undefined)      qs.set("status",      String(params.status));
+    return fetch(`${urlsApi.adjustmentSlip.export}${qs.toString() ? "?" + qs.toString() : ""}`, { method: "GET", signal })
+      .then(async r => { const j = await r.json(); if (j.code !== 0) throw new Error(j.message ?? "Xuất Excel thất bại"); return j.result as string; });
+  },
   // từ chối điều chỉnh kho
   cancel: (id: number) => {
     return fetch(`${urlsApi.adjustmentSlip.cancel}?id=${id}`, {

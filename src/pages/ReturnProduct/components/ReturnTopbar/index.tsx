@@ -3,9 +3,11 @@ import "./index.scss";
 
 interface ReturnTopbarProps {
   onCreateClick: () => void;
+  onExport: () => void;
+  isExporting?: boolean;
 }
 
-const ReturnTopbar: React.FC<ReturnTopbarProps> = ({ onCreateClick }) => {
+const ReturnTopbar: React.FC<ReturnTopbarProps> = ({ onCreateClick, onExport, isExporting }) => {
   return (
     <div className="return-topbar">
       <div className="return-topbar__left">
@@ -15,7 +17,13 @@ const ReturnTopbar: React.FC<ReturnTopbarProps> = ({ onCreateClick }) => {
         </div>
       </div>
       <div className="return-topbar__right">
-        <button className="btn btn--outline btn--sm">📥 Xuất Excel</button>
+        <button
+          className="btn btn--outline btn--sm"
+          onClick={onExport}
+          disabled={isExporting}
+        >
+          {isExporting ? "Đang xuất..." : "📥 Xuất Excel"}
+        </button>
         <button className="btn btn--lime" onClick={onCreateClick}>
           + Tạo phiếu
         </button>

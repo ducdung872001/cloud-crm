@@ -385,20 +385,20 @@ export default function Header(props: any) {
   // ── Global Search ──────────────────────────────────────────────────────────
   type SearchGroup = "product" | "customer" | "invoice";
   interface SearchResult {
-    id:       number;
-    group:    SearchGroup;
-    title:    string;
+    id: number;
+    group: SearchGroup;
+    title: string;
     subtitle: string;
-    avatar?:  string;
-    meta?:    string;
+    avatar?: string;
+    meta?: string;
   }
-  const searchRef         = useRef<HTMLDivElement>(null);
-  const searchInputRef    = useRef<HTMLInputElement>(null);
-  const [searchQuery,     setSearchQuery]     = useState("");
-  const [searchOpen,      setSearchOpen]      = useState(false);
-  const [searchResults,   setSearchResults]   = useState<SearchResult[]>([]);
-  const [searchLoading,   setSearchLoading]   = useState(false);
-  const [searchAbort,     setSearchAbort]     = useState<AbortController | null>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchAbort, setSearchAbort] = useState<AbortController | null>(null);
 
   useOnClickOutside(searchRef, () => setSearchOpen(false), ["gs-dropdown"]);
 
@@ -429,12 +429,12 @@ export default function Header(props: any) {
             ?? [];
           (custItems as any[]).slice(0, 3).forEach((c: any) => {
             results.push({
-              id:       c.id,
-              group:    "customer",
-              title:    c.name,
+              id: c.id,
+              group: "customer",
+              title: c.name,
               subtitle: c.phone ?? c.number_phone ?? "",
-              avatar:   c.avatar,
-              meta:     c.code ?? "",
+              avatar: c.avatar,
+              meta: c.code ?? "",
             });
           });
           const custTotal = custRes.value.result?.total ?? custRes.value.result?.pagedLst?.total ?? 0;
@@ -447,12 +447,12 @@ export default function Header(props: any) {
             ?? [];
           (prodItems as any[]).slice(0, 3).forEach((p: any) => {
             results.push({
-              id:       p.id,
-              group:    "product",
-              title:    p.name,
+              id: p.id,
+              group: "product",
+              title: p.name,
               subtitle: `Tồn: ${p.stockQuantity ?? 0}`,
-              avatar:   p.image ?? p.avatar,
-              meta:     p.salePrice ? fmt(p.salePrice) : "",
+              avatar: p.image ?? p.avatar,
+              meta: p.salePrice ? fmt(p.salePrice) : "",
             });
           });
           const prodTotal = prodRes.value.result?.total ?? 0;
@@ -470,11 +470,11 @@ export default function Header(props: any) {
               .filter(Boolean)
               .join(", ");
             results.push({
-              id:       inv.id ?? row.invoiceId,
-              group:    "invoice",
-              title:    inv.invoiceCode ?? `#${inv.id ?? row.invoiceId}`,
+              id: inv.id ?? row.invoiceId,
+              group: "invoice",
+              title: inv.invoiceCode ?? `#${inv.id ?? row.invoiceId}`,
               subtitle: prodNames || "—",
-              meta:     inv.fee ? fmt(inv.fee) : inv.amount ? fmt(inv.amount) : "",
+              meta: inv.fee ? fmt(inv.fee) : inv.amount ? fmt(inv.amount) : "",
             });
           });
           const invTotal = invRes.value.result?.pagedLst?.total ?? invRes.value.result?.total ?? 0;
@@ -510,8 +510,8 @@ export default function Header(props: any) {
 
   const GROUP_LABEL: Record<SearchGroup, string> = {
     customer: "👤 Khách hàng",
-    product:  "📦 Sản phẩm",
-    invoice:  "🧾 Đơn hàng",
+    product: "📦 Sản phẩm",
+    invoice: "🧾 Đơn hàng",
   };
   const GROUP_ORDER: SearchGroup[] = ["customer", "product", "invoice"];
 
@@ -591,6 +591,8 @@ export default function Header(props: any) {
         case "ORDER":
         case "ORDER_REQUEST":
           return "OrderListMenu";
+        case "INVENTORY_THRESHOLD_ALERT":
+          return "InventoryMenu";
         case "CAMPAIGN":
           return "Promotion";
         case "BID":
@@ -598,12 +600,12 @@ export default function Header(props: any) {
         case "TASK":
           return "NotifySetting";
         case "TEST_PUSH":
-          return "NotifyRox";
+          return "BellMenu";
         default:
           break;
       }
     }
-    return "NotifyRox";
+    return "BellMenu";
   };
 
   /** Render a single notification item using the new API fields */
@@ -682,9 +684,9 @@ export default function Header(props: any) {
             ) : (
               <div className="gs-scroll">
                 {GROUP_ORDER.map((group) => {
-                  const all   = searchResults.filter((r) => r.group === group);
+                  const all = searchResults.filter((r) => r.group === group);
                   const items = all.filter(r => !r.title.startsWith("__more__"));
-                  const more  = all.find(r => r.title.startsWith("__more__"));
+                  const more = all.find(r => r.title.startsWith("__more__"));
                   if (!items.length) return null;
                   const moreCount = more ? parseInt(more.title.replace("__more__", "")) : 0;
                   return (
@@ -700,8 +702,8 @@ export default function Header(props: any) {
                             {item.avatar
                               ? <img src={item.avatar} alt="" />
                               : <span className="gs-item__avatar-fallback">
-                                  {group === "customer" ? "👤" : group === "product" ? "📦" : "🧾"}
-                                </span>
+                                {group === "customer" ? "👤" : group === "product" ? "📦" : "🧾"}
+                              </span>
                             }
                           </div>
                           <div className="gs-item__info">

@@ -57,6 +57,7 @@ export default function ManagementSale() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
   const [idSaleFlow, setIdSaleFlow] = useState<number>(null);
   const [isDetailManagementInvoice, setIsDetailManagementInvoice] = useState<boolean>(false);
 
@@ -390,6 +391,65 @@ export default function ManagementSale() {
 
   const { dataBranch } = useContext(UserContext) as ContextType;
 
+  // ── Export Excel (FE-only, từ listManagementInvoice đã load) ─────────────
+  const handleExportExcel = () => {
+    if (isExporting || listManagementInvoice.length === 0) return;
+    setIsExporting(true);
+    try {
+      const esc = (s: string) =>
+        String(s ?? "—").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+      const fmtAmt = (v: any) => (Number(v) || 0).toLocaleString("vi-VN");
+      const headers = ["STT","Mã hóa đơn","Ngày bán","Tổng tiền (VNĐ)","Giảm giá (VNĐ)","Đã thanh toán (VNĐ)","Công nợ (VNĐ)","Trạng thái"];
+      const COL_WIDTHS = [42, 140, 140, 154, 126, 168, 126, 112];
+      const colDefs = COL_WIDTHS.map(w => `<Column ss:AutoFitWidth="0" ss:Width="${w}"/>`).join("");
+      const STATUS_MAP: Record<number, string> = { 1: "Hoàn thành", 4: "Chưa hoàn thành", 3: "Đã hủy" };
+      const dataRows = listManagementInvoice.map((item: any, i: number) => {
+        const inv = item.invoiceResponse ?? item;
+        const cols = [
+          String(i + 1),
+          inv.invoiceCode ?? "—",
+          inv.receiptDate ? new Date(inv.receiptDate).toLocaleDateString("vi-VN") : "—",
+          fmtAmt(inv.amount),
+          fmtAmt(inv.discount),
+          fmtAmt(inv.paid),
+          fmtAmt(inv.debt),
+          STATUS_MAP[inv.status] ?? "—",
+        ];
+        const NUM = new Set([3,4,5,6]);
+        const cells = cols.map((v, ci) =>
+          NUM.has(ci)
+            ? `<Cell ss:StyleID="numR"><Data ss:Type="Number">${esc(v.replace(/[,\.]/g,"").replace("—","0"))}</Data></Cell>`
+            : `<Cell><Data ss:Type="String">${esc(v)}</Data></Cell>`
+        ).join("");
+        return `<Row>${cells}</Row>`;
+      });
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+<Styles>
+  <Style ss:ID="hdr"><Font ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#015aa4" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center"/></Style>
+  <Style ss:ID="numR"><Alignment ss:Horizontal="Right"/><NumberFormat ss:Format="#,##0"/></Style>
+  <Style ss:ID="title"><Font ss:Bold="1" ss:Size="13" ss:Color="#015aa4"/></Style>
+</Styles>
+<Worksheet ss:Name="Quản lý bán hàng"><Table>
+${colDefs}
+<Row ss:Height="26"><Cell ss:MergeAcross="${headers.length-1}" ss:StyleID="title"><Data ss:Type="String">DANH SÁCH ĐƠN HÀNG ONLINE</Data></Cell></Row>
+<Row ss:Height="16"><Cell ss:MergeAcross="${headers.length-1}"><Data ss:Type="String">Ngày xuất: ${new Date().toLocaleDateString("vi-VN")}</Data></Cell></Row>
+<Row ss:Height="22">${headers.map(h => `<Cell ss:StyleID="hdr"><Data ss:Type="String">${esc(h)}</Data></Cell>`).join("")}</Row>
+${dataRows.join("\n")}
+<Row><Cell ss:MergeAcross="${headers.length-1}" ss:StyleID="title"><Data ss:Type="String">Tổng: ${listManagementInvoice.length} đơn hàng</Data></Cell></Row>
+</Table></Worksheet></Workbook>`;
+      const blob = new Blob([xml], { type: "application/vnd.ms-excel;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `don_hang_online_${new Date().toISOString().slice(0,10)}.xls`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const titleActions: ITitleActions = {
     actions: [
       ...(isRegimeKanban
@@ -438,6 +498,13 @@ export default function ManagementSale() {
               },
             },
 
+            {
+              title: isExporting ? "Đang xuất..." : "Xuất Excel",
+              color: "primary" as const,
+              variant: "outline" as const,
+              disabled: isExporting,
+              callback: handleExportExcel,
+            },
             {
               title: "Kanban",
               // icon: <Icon name="Fullscreen" />,

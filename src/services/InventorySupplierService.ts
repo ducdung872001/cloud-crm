@@ -23,7 +23,7 @@ export interface ISupplierUpsertRequest {
   website?: string;
   groupId?: number;
   groupName?: string;
-  tags?: string; // JSON array string
+  tags?: string;
   note?: string;
   avatar?: string;
 }
@@ -100,6 +100,49 @@ const InventorySupplierService = {
       `${urlsApi.inventorySupplier.updateActive}?id=${id}&isActive=${isActive ? 1 : 0}`,
       { method: "POST" }
     ).then((r) => r.json());
+  },
+
+  /**
+   * Xuất danh sách NCC ra file Excel (.xlsx) — server-side.
+   * Backend trả Base64 string → decode → download.
+   * Params: keyword, groupId, isActive (không truyền page/limit).
+   */
+  exportExcel: async (
+    params?: Omit<ISupplierFilterParams, "page" | "limit">,
+    signal?: AbortSignal
+  ): Promise<void> => {
+    const res = await fetch(
+      `${urlsApi.inventorySupplier.export}${convertParamsToString(params)}`,
+      { method: "GET", signal }
+    );
+
+    const json = await res.json();
+    if (!res.ok || json.code !== 0) {
+      throw new Error(json.message || `Export thất bại (HTTP ${res.status})`);
+    }
+
+    const base64: string = json.result;
+    const binaryStr = atob(base64);
+    const bytes = new Uint8Array(binaryStr.length);
+    for (let i = 0; i < binaryStr.length; i++) {
+      bytes[i] = binaryStr.charCodeAt(i);
+    }
+
+    const blob = new Blob([bytes], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, "0");
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy = today.getFullYear();
+    a.download = `DanhSachNhaCungCap_${dd}${mm}${yyyy}.xlsx`;
+    a.href = url;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   },
 };
 

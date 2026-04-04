@@ -15,6 +15,19 @@ export default {
    * Top sản phẩm v2 — hỗ trợ sortBy: "qty" | "revenue"
    * cloud-sales tự gọi sang cloud-inventory để lấy tên variant
    */
+  /**
+   * GET /sales/invoice/topProduct/export?sortBy=qty|revenue
+   * Xuất top sản phẩm bán chạy ra Base64 xlsx.
+   */
+  wExportTopProduct: (sortBy: "qty" | "revenue" = "qty", signal?: AbortSignal): Promise<string> => {
+    return fetch(`${urlsApi.product.topProductExport}?sortBy=${sortBy}`, { method: "GET", signal })
+      .then(async r => {
+        const j = await r.json();
+        if (j.code !== 0) throw new Error(j.message ?? "Xuất Excel thất bại");
+        return j.result as string;
+      });
+  },
+
   topProductV2: (sortBy: "qty" | "revenue" = "qty", signal?: AbortSignal) => {
     return fetch(`${urlsApi.product.topProductV2}?sortBy=${sortBy}`, {
       signal,

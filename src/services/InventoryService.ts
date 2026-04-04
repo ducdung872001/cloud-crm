@@ -201,6 +201,20 @@ export default {
   //
   // GET /inventoryTransaction/destroy/list
   // Params: warehouseId, keyword, page, size
+  exportDestroy: (params?: { warehouseId?: number; keyword?: string; status?: number }, signal?: AbortSignal): Promise<string> => {
+    const qs = new URLSearchParams();
+    if (params?.warehouseId !== undefined) qs.set("warehouseId", String(params.warehouseId));
+    if (params?.keyword)                   qs.set("keyword",     params.keyword);
+    if (params?.status !== undefined)      qs.set("status",      String(params.status));
+    return fetch(`${urlsApi.inventory.destroyExport}${qs.toString() ? "?" + qs.toString() : ""}`, { method: "GET", signal })
+      .then(async r => { const j = await r.json(); if (j.code !== 0) throw new Error(j.message ?? "Xuất Excel thất bại"); return j.result as string; });
+  },
+  exportTransfer: (params?: { status?: number }, signal?: AbortSignal): Promise<string> => {
+    const qs = new URLSearchParams();
+    if (params?.status !== undefined) qs.set("status", String(params.status));
+    return fetch(`${urlsApi.stockTransfer.export}${qs.toString() ? "?" + qs.toString() : ""}`, { method: "GET", signal })
+      .then(async r => { const j = await r.json(); if (j.code !== 0) throw new Error(j.message ?? "Xuất Excel thất bại"); return j.result as string; });
+  },
   destroyList: (params?: { warehouseId?: number; keyword?: string; page?: number; size?: number }, signal?: AbortSignal) => {
     return fetch(`${urlsApi.inventory.destroyList}${convertParamsToString(params)}`, {
       signal,

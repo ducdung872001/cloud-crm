@@ -468,6 +468,7 @@ export const urlsApi = {
   },
   returnInvoice: {
     list: prefixSales + "/invoice/return-exchange/list",
+    export: prefixSales + "/invoice/export",
     detail: prefixSales + "/invoice/get",
     getReturnItems: prefixSales + "/invoice/get/return",
     createReturn: prefixSales + "/invoice/create/return",
@@ -549,6 +550,7 @@ export const urlsApi = {
     list: prefixInventory + "/product/list",
     topProduct: prefixSales + "/invoice/topProduct",
     topProductV2: prefixSales + "/invoice/topProduct/v2",
+    topProductExport: prefixSales + "/invoice/topProduct/export",
     detail: prefixInventory + "/product/get",
     update: prefixInventory + "/product/update",
     updateContent: prefixInventory + "/product/update/content",
@@ -626,7 +628,6 @@ export const urlsApi = {
   },
   inventoryBalance: {
     stockProductList: prefixInventory + "/inventoryBalance/stockProduct/list",
-    stockProductExport: prefixInventory + "/inventoryBalance/stockProduct/export",
     variantList: prefixInventory + "/inventoryBalance/variant/list", // Tồn kho theo biến thể + đơn vị bán
     list: prefixInventory + "/inventoryBalance/list",
     get: prefixInventory + "/inventoryBalance/get",
@@ -829,6 +830,7 @@ export const urlsApi = {
     qr: prefixBilling + "/debt/qr",
     updateSchedule: prefixBilling + "/debt/update-schedule",
     customerTotal: prefixBilling + "/debt/customer-total",
+    export:        prefixBilling + "/debt/export",
   },
   cashbook: {
     list: prefixBilling + "/cashbook/list",
@@ -2188,6 +2190,7 @@ export const urlsApi = {
     update:       prefixInventory + "/supplier/update",
     delete:       prefixInventory + "/supplier/delete",
     updateActive: prefixInventory + "/supplier/update/active",
+    export:       prefixInventory + "/supplier/export",
   },
   workCategory: {
     list: prefixApplication + "/workCategory/list",
@@ -2566,6 +2569,8 @@ export const urlsApi = {
     getLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/get",
     updateLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/update",
     consumePoint: prefixBiz + "/market/loyaltyPointLedger/consumePoint",
+    exportLoyaltyWallet:       prefixBiz + "/market/loyaltyWallet/export",
+    exportLoyaltyPointLedger:  prefixBiz + "/market/loyaltyPointLedger/export",
   },
 
   //TODO: Start quy trình bpm

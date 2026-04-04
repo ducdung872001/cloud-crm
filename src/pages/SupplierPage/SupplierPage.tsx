@@ -210,14 +210,12 @@ export default function SupplierPage() {
       <div key="contact" className="sup-contact-cell">
         {item.phone && (
           <span className="sup-contact-cell__row">
-            <span className="sup-label sup-label--phone">SĐT</span>
-            {item.phone}
+            <Icon name="Phone" />{item.phone}
           </span>
         )}
         {item.email && (
-          <span className="sup-contact-cell__row">
-            <span className="sup-label sup-label--mail">Mail</span>
-            {item.email}
+          <span className="sup-contact-cell__row sup-contact-cell__row--muted">
+            <Icon name="Mail" />{item.email}
           </span>
         )}
         {!item.phone && !item.email && <span className="sup-muted">—</span>}
@@ -266,22 +264,19 @@ export default function SupplierPage() {
     return [
       {
         title:    "Sửa",
-        icon:     <Icon name="Edit" className={busy ? "icon-disabled" : "icon-extra"} />,
+        icon:     <Icon name="Edit" />,
         disabled: busy,
         callback: () => { if (!busy) { setDataItem(item); setShowModalAdd(true); } },
       },
       {
         title:    item.isActive ? "Ngừng hợp tác" : "Kích hoạt lại",
-        icon:     <Icon
-                    name={item.isActive ? "EyeOff" : "Eye"}
-                    className={busy ? "icon-disabled" : item.isActive ? "icon-warning" : "icon-success"}
-                  />,
+        icon:     <Icon name={item.isActive ? "EyeOff" : "Eye"} />,
         disabled: busy,
         callback: () => { if (!busy) handleToggleActive(item); },
       },
       {
         title:    "Xóa",
-        icon:     <Icon name="Trash" className={busy ? "icon-disabled" : "icon-error"} />,
+        icon:     <Icon name="Trash" />,
         disabled: busy,
         callback: () => { if (!busy) showDeleteDialog(item); },
       },
