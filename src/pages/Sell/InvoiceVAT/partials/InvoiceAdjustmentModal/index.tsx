@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Icon from "components/icon";
 import Badge from "components/badge/badge";
 import Button from "components/button/button";
+import Modal, { ModalHeader, ModalBody } from "components/modal/modal";
 import { showToast } from "utils/common";
 import { numberToWords } from "utils/numberToWords";
 import InventoryService from "services/InventoryService";
@@ -102,7 +103,7 @@ export default function InvoiceAdjustmentModal({
   // Form state
   const [reason, setReason] = useState("");
   const [agreementDate, setAgreementDate] = useState(
-    new Date().toISOString().slice(0, 10)
+    (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })()
   );
   const [lines, setLines] = useState<AdjustLine[]>([]);
   const [loading, setLoading] = useState(false);
@@ -119,7 +120,7 @@ export default function InvoiceAdjustmentModal({
   useEffect(() => {
     if (!isOpen || !originalInvoice) return;
     setReason("");
-    setAgreementDate(new Date().toISOString().slice(0, 10));
+    setAgreementDate((() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; })());
     setLines([]);
     setStep("form");
     setLoading(false);
@@ -127,17 +128,7 @@ export default function InvoiceAdjustmentModal({
     setSuggestions([]);
   }, [isOpen, originalInvoice]);
 
-  // ESC to close
-  useEffect(() => {
-    if (!isOpen) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [isOpen, onClose]);
-
-  if (!isOpen || !originalInvoice) return null;
+  if (!originalInvoice) return null;
 
   const req = parseRaw(originalInvoice.rawRequestJson);
   const buyer = req.buyerInfo ?? {};
@@ -376,25 +367,25 @@ export default function InvoiceAdjustmentModal({
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="adj-overlay" onClick={onClose}>
-      <div className="adj-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
+    <Modal isOpen={isOpen} toggle={onClose} isCentered isFade className="adj-modal-wrap">
+      <ModalHeader custom>
         <div className="adj__header">
           <div className="adj__header-left">
-            <h2>Điều chỉnh hóa đơn</h2>
+            <h4>Điều chỉnh hóa đơn</h4>
             <span className="adj__meta">
               HĐ gốc: {originalInvoice.invoiceNo || "—"} · Ký hiệu{" "}
               {invoiceSeries} · Ngày{" "}
               {fmtDateDisplay(originalInvoice.invoiceIssuedDate)}
             </span>
           </div>
-          <button className="adj__close-btn" onClick={onClose}>
-            ✕
-          </button>
+          <Button onClick={onClose} color="transparent" onlyIcon className="btn-close">
+            <Icon name="Times" />
+          </Button>
         </div>
+      </ModalHeader>
 
-        {/* Body */}
-        <div className="adj__body">
+      <ModalBody className="adj__body">
+        <>
           {/* Thông tin HĐ gốc */}
           <div className="adj__section">
             <div className="adj__section-title">Thông tin hóa đơn gốc</div>
@@ -702,10 +693,11 @@ export default function InvoiceAdjustmentModal({
               </div>
             </div>
           )}
-        </div>
+        </>
+      </ModalBody>
 
-        {/* Footer */}
-        <div className="adj__footer">
+      {/* Footer */}
+      <div className="adj__footer">
           {step === "confirm" && (
             <Button
               color="secondary"
@@ -743,8 +735,7 @@ export default function InvoiceAdjustmentModal({
               </>
             )}
           </Button>
-        </div>
       </div>
-    </div>
+    </Modal>
   );
 }
