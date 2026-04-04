@@ -595,7 +595,7 @@ export default function NotificationList(props: any) {
                   label: t("pageNotification.filterAll"),
                 },
                 {
-                  value: '1',
+                  value: '0',
                   label: t("pageNotification.filterUnread"),
                 },
               ]}

@@ -62,6 +62,9 @@ const Cart: React.FC<CartProps> = ({
   const [couponMessage, setCouponMessage]       = useState("");
   const [couponError, setCouponError]           = useState("");
 
+  // draft qty: lưu giá trị đang nhập tạm theo itemId
+  const [qtyDraft, setQtyDraft] = useState<Record<string, string>>({});
+
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleCouponDiscountChange = (discount: number) => {
@@ -299,16 +302,35 @@ const Cart: React.FC<CartProps> = ({
               <input
                 type="number"
                 className="qi"
-                value={item.qty}
+                value={qtyDraft[item.id] !== undefined ? qtyDraft[item.id] : item.qty}
                 min={1}
+                onFocus={() => setQtyDraft(prev => ({ ...prev, [item.id]: String(item.qty) }))}
                 onChange={(e) => {
-                  const v = Math.max(1, Number(e.target.value) || 1);
-                  onChangeQty(item.id, v - item.qty);
+                  const raw = e.target.value;
+                  setQtyDraft(prev => ({ ...prev, [item.id]: raw }));
+                  const v = Number(raw);
+                  if (raw !== "" && v >= 1) {
+                    onChangeQty(item.id, v - item.qty);
+                  }
+                  // nếu trống hoặc 0: chỉ cập nhật draft, không gọi onChangeQty
+                }}
+                onBlur={() => {
+                  const raw = qtyDraft[item.id];
+                  const v = Number(raw);
+                  if (!raw || v < 1) {
+                    // reset về 1 nếu bỏ trống hoặc nhập 0
+                    onChangeQty(item.id, 1 - item.qty);
+                  }
+                  setQtyDraft(prev => { const n = { ...prev }; delete n[item.id]; return n; });
                 }}
               />
               <button className="qb" onClick={() => onChangeQty(item.id, 1)}>+</button>
             </div>
-            <div className="ci__total">{formatVND(item.price * item.qty)}</div>
+            {(() => {
+              const draft = qtyDraft[item.id];
+              const displayQty = draft !== undefined ? Math.max(0, Number(draft) || 0) : item.qty;
+              return <div className="ci__total">{formatVND(item.price * displayQty)}</div>;
+            })()}
             <button className="del-btn" onClick={() => onRemove(item.id)}>✕</button>
           </div>
         ))}
