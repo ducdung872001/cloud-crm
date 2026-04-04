@@ -170,8 +170,15 @@ export default function Configuration() {
 
   return (
     <div className="tab-cau-hinh">
+      {loadingGet && (
+        <div className="cah__loading-overlay">
+          <div className="cah__spinner" />
+          <span>Đang tải cấu hình...</span>
+        </div>
+      )}
+
       {/* Two-column grid */}
-      <div className="cah__grid">
+      <div className="cah__grid" style={{ opacity: loadingGet ? 0.4 : 1, pointerEvents: loadingGet ? "none" : "auto", transition: "opacity 0.2s" }}>
 
         {/* LEFT: Thông tin doanh nghiệp */}
         <div className="cah__card">
