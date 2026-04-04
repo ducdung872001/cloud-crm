@@ -481,32 +481,11 @@
   flex-shrink: 0;
 }
 
-.adj__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 16px;
-  border-radius: 0.3rem;
-  font-size: 12.5px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: background 0.15s;
-
-  svg { width: 13px; height: 13px; flex-shrink: 0; }
-
-  &--outline {
-    background: #fff;
-    border: 1px solid #d1d5db;
-    color: #374151;
-    &:hover { background: #f3f4f6; }
-  }
-
-  &--primary {
-    background: var(--primary-color);
-    color: #fff;
-    font-weight: 600;
-    &:hover { opacity: 0.92; }
+.adj__footer {
+  .base-button {
+    font-size: 12.5px;
+    padding: 8px 16px;
+    svg { width: 13px; height: 13px; }
     &:disabled { opacity: 0.6; cursor: not-allowed; }
   }
 }

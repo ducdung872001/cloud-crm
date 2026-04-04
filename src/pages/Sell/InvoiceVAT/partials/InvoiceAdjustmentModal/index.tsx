@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Icon from "components/icon";
 import Badge from "components/badge/badge";
+import Button from "components/button/button";
 import { showToast } from "utils/common";
 import { numberToWords } from "utils/numberToWords";
 import InventoryService from "services/InventoryService";
@@ -706,25 +707,29 @@ export default function InvoiceAdjustmentModal({
         {/* Footer */}
         <div className="adj__footer">
           {step === "confirm" && (
-            <button
-              className="adj__btn adj__btn--outline"
+            <Button
+              color="secondary"
+              variant="outline"
               onClick={() => setStep("form")}
               disabled={loading}
+              hasIcon
             >
               <Icon name="ArrowLeft" /> Quay lại chỉnh sửa
-            </button>
+            </Button>
           )}
-          <button
-            className="adj__btn adj__btn--outline"
+          <Button
+            color="secondary"
+            variant="outline"
             onClick={onClose}
             disabled={loading}
           >
             Hủy
-          </button>
-          <button
-            className="adj__btn adj__btn--primary"
+          </Button>
+          <Button
+            color="primary"
             onClick={handleSubmit}
             disabled={loading}
+            hasIcon
           >
             {loading ? (
               "Đang xử lý..."
@@ -737,7 +742,7 @@ export default function InvoiceAdjustmentModal({
                 <Icon name="Check" /> Phát hành hóa đơn điều chỉnh
               </>
             )}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

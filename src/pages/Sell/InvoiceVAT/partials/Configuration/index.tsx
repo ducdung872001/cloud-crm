@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Icon from "components/icon";
+import Button from "components/button/button";
 import { showToast } from "utils/common";
 import VatInvoiceService, { VatConfig } from "services/VatInvoiceService";
 import "./style.scss";
@@ -302,9 +303,9 @@ export default function Configuration() {
 
       {/* Save button (fixed at bottom or part of header - rendered by parent) */}
       <div className="cah__save-bar">
-        <button className="cah__save-btn" onClick={handleSave} disabled={saving || loadingGet}>
+        <Button color="primary" onClick={handleSave} disabled={saving || loadingGet}>
           {saving ? "Đang lưu..." : "Lưu cấu hình"}
-        </button>
+        </Button>
       </div>
     </div>
   );
