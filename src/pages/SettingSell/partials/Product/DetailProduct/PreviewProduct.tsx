@@ -1,5 +1,6 @@
 // ProductPreview.tsx
 import React from "react";
+import DOMPurify from "dompurify";
 import Image from "components/image";
 import { formatCurrency } from "reborn-util";
 import "./PreviewProduct.scss";
@@ -96,7 +97,7 @@ export default function ProductPreview({ product, config }: ProductPreviewProps)
             <div className="preview__divider" />
             <div
               className="preview__desc"
-              dangerouslySetInnerHTML={{ __html: product.content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.content) }}
             />
           </>
         )}

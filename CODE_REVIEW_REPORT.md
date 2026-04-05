@@ -30,7 +30,7 @@
 
 | # | Vấn đề | File | Ghi chú |
 |---|--------|------|---------|
-| 1 | eval() trực tiếp — chạy formula user nhập | src/pages/SettingProcess/partials/ProcessedObjectList/partials/AddFormObjectBackup/index.tsx dòng 194 | Có thể chạy bất kỳ JS nào — cần thay bằng safe expression parser |
+| 1_DONE | eval() trực tiếp — chạy formula user nhập | src/pages/SettingProcess/partials/ProcessedObjectList/partials/AddFormObjectBackup/index.tsx dòng 194 | Có thể chạy bất kỳ JS nào — cần thay bằng safe expression parser |
 | 2 | XSS qua dangerouslySetInnerHTML — không sanitize | src/pages/SettingSell/partials/Product/DetailProduct/PreviewProduct.tsx dòng 99 | product.content render thẳng HTML không qua DOMPurify |
 | 3 | XSS qua dangerouslySetInnerHTML — không sanitize | src/pages/WarehouseReport/components/WarehouseReportSlowView.tsx dòng 298 | String concatenation vào HTML |
 | 4 | Firebase API Key lộ trong source code | src/firebase-config.ts dòng 44 | AIzaSyD-7AgYaublHnECoXgCiMpRq9UwHchLvFk |

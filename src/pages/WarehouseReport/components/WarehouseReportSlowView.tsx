@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import DOMPurify from "dompurify";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { urlsApi } from "configs/urls";
@@ -295,7 +296,7 @@ ${dataRows.join("\n")}
           <span className="alert-banner__icon">⚠️</span>
           <div>
             <div className="alert-banner__title">{alertTitle}</div>
-            <div className="alert-banner__desc" dangerouslySetInnerHTML={{ __html: alertDesc.replace(fmtVnd(summary.lockedValue), `<b>${fmtVnd(summary.lockedValue)}</b>`) }} />
+            <div className="alert-banner__desc" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(alertDesc.replace(fmtVnd(summary.lockedValue), `<b>${fmtVnd(summary.lockedValue)}</b>`)) }} />
           </div>
         </div>
       )}

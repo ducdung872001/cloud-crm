@@ -13,6 +13,18 @@ import { showToast } from "utils/common";
 
 import "./index.scss";
 
+/**
+ * Safe math expression evaluator — chỉ cho phép số, +, -, *, /, (, )
+ * Thay thế eval() để chặn code injection.
+ */
+function safeEvalMath(expr: string): number {
+  const sanitized = String(expr).replace(/\s+/g, "");
+  if (!/^[\d+\-*/().]+$/.test(sanitized)) {
+    throw new Error(`Invalid expression: ${expr}`);
+  }
+  return new Function(`"use strict"; return (${sanitized});`)() as number;
+}
+
 interface IAddObjectProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
@@ -190,8 +202,8 @@ export default function AddFormObjectBackup(props: IAddObjectProps) {
                 return dataObj.hasOwnProperty(match) ? dataObj[match] : match;
               });
 
-              // Tính toán giá trị của công thức
-              const calculatedValue = eval(formula);
+              // Tính toán giá trị của công thức (safe — chỉ cho phép số và phép tính)
+              const calculatedValue = safeEvalMath(formula);
 
               return { ...field, [Object.keys(field)[0]]: calculatedValue };
             } catch (error) {
