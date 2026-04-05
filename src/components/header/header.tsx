@@ -143,7 +143,7 @@ export default function Header(props: any) {
       localStorage.removeItem("pipelineContractId");
 
       localStorage.removeItem("targetBsnId_product");
-      localStorage.removeItem("access_token_athena");
+      removeCookie("access_token_athena", { path: "/", domain: rootDomain });
     }
   };
 

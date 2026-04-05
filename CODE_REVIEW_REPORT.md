@@ -33,16 +33,16 @@
 | 1_FIX | eval() trực tiếp — chạy formula user nhập | src/pages/SettingProcess/partials/ProcessedObjectList/partials/AddFormObjectBackup/index.tsx dòng 194 | Có thể chạy bất kỳ JS nào — cần thay bằng safe expression parser |
 | 2_FIX | XSS qua dangerouslySetInnerHTML — không sanitize | src/pages/SettingSell/partials/Product/DetailProduct/PreviewProduct.tsx dòng 99 | product.content render thẳng HTML không qua DOMPurify |
 | 3_FIX | XSS qua dangerouslySetInnerHTML — không sanitize | src/pages/WarehouseReport/components/WarehouseReportSlowView.tsx dòng 298 | String concatenation vào HTML |
-| 4 | Firebase API Key lộ trong source code | src/firebase-config.ts dòng 44 | AIzaSyD-7AgYaublHnECoXgCiMpRq9UwHchLvFk |
-| 5 | Firebase API Key lộ (key khác) | src/configs/firebaseConfig.js dòng 5 | AIzaSyD9OUVhQ_QR-McUSan_hG1WI_7BLE1D7Ts |
-| 6 | Access token lưu localStorage — dễ bị XSS đọc | src/components/header/header.tsx dòng 97 | access_token_athena lưu localStorage |
+| 4_FIX | Firebase API Key lộ trong source code | src/firebase-config.ts dòng 44 | AIzaSyD-7AgYaublHnECoXgCiMpRq9UwHchLvFk |
+| 5_FIX | Firebase API Key lộ (key khác) | src/configs/firebaseConfig.js dòng 5 | AIzaSyD9OUVhQ_QR-McUSan_hG1WI_7BLE1D7Ts |
+| 6_NOTDONE | Access token lưu localStorage — dễ bị XSS đọc | src/components/header/header.tsx dòng 97 | access_token_athena lưu localStorage |
 
 ### 2.2 HIGH
 
 | # | Vấn đề | File | Ghi chú |
 |---|--------|------|---------|
-| 7 | Azure Client ID + email dev lộ | src/configs/authConfig.js dòng 15 | Comment chứa email cá nhân |
-| 8 | VAPID key lộ | src/firebase-config.ts dòng 99 | Firebase push notification key |
+| 7_FIX | Azure Client ID + email dev lộ | src/configs/authConfig.js dòng 15 | Comment chứa email cá nhân |
+| 8_FIX | VAPID key lộ | src/firebase-config.ts dòng 99 | Firebase push notification key |
 | 9 | OmniCXM secret key trong .env | .env.dev, .env.devlocal, .env.prod | VITE_OMNICXM_KEY hardcoded |
 | 10 | Thiếu Content-Security-Policy header | index.html, vite.config.ts | Không có CSP, X-Frame-Options |
 | 11 | Thiếu CSRF protection | src/configs/fetchConfig.ts | Không có CSRF token trong request |

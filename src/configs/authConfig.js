@@ -12,7 +12,7 @@ import { LogLevel } from "@azure/msal-browser";
  */
 export const msalConfig = {
   auth: {
-    clientId: "9d56aa14-bc78-4f52-841d-fd5329639631", //Tài khoản ducdung872001@yahoo.com vào outlook. Apps nằm trong entra.microsoft.com
+    clientId: "9d56aa14-bc78-4f52-841d-fd5329639631",
     authority: "https://login.microsoftonline.com/common",
     redirectUri: process.env.OUTLOOK_EMAIL_REDIRECT,
   },
