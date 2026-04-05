@@ -126,7 +126,7 @@
 
 | # | Vấn đề | Chi tiết |
 |---|--------|----------|
-| 1 | Không có code splitting | Zero React.lazy(), zero Suspense — 165 pages load đồng bộ |
+| 1_FIX | Không có code splitting | Zero React.lazy(), zero Suspense — 165 pages load đồng bộ |
 | 2 | Component khổng lồ | CreateCampaign.tsx có 81 useState calls |
 | 3 | React.memo gần như không dùng | Chỉ 12 lần toàn bộ project |
 

@@ -1,10 +1,11 @@
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, Suspense, useContext, useEffect, useState } from "react";
 import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
 import Icon from "components/icon";
 import Button from "components/button/button";
 import Header from "components/header/header";
 import Sidebar from "components/sidebar/sidebar";
 import Page404 from "pages/404/index";
+import Loading from "components/loading";
 import { routes } from "configs/routes";
 import { UserContext, ContextType } from "contexts/userContext";
 import CustomScrollbar from "components/customScrollbar";
@@ -344,17 +345,14 @@ export default function Layout() {
                 )}
               </div>
               <div className="main-content__wrapper">
-                <Routes>
-                  {routes.map((r, index) => {
-                    return <Route key={index} path={r.path} element={r.component} />;
-                    // if (!r.permission || permissions.filter((per) => r.permission.includes(per)).length > 0) {
-                    //   return <Route key={index} path={r.path} element={r.component} />;
-                    // } else {
-                    //   return <Route key={index} path={r.path} element={<SystemNotification type="no-permission" />} />;
-                    // }
-                  })}
-                  <Route path="*" element={<Page404 />} />
-                </Routes>
+                <Suspense fallback={<div className="page-loading"><Loading /></div>}>
+                  <Routes>
+                    {routes.map((r, index) => {
+                      return <Route key={index} path={r.path} element={r.component} />;
+                    })}
+                    <Route path="*" element={<Page404 />} />
+                  </Routes>
+                </Suspense>
               </div>
             </Fragment>
           </CustomScrollbar>
