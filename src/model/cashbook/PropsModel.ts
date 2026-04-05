@@ -5,5 +5,5 @@ export interface AddCashBookModalProps {
   onHide: (reload: boolean) => void;
   dataCashBook?: ICashBookResponse;
   type: number;
-  dataContractPayment?: any;
+  dataContractPayment?: Record<string, unknown>;
 }

@@ -1,7 +1,7 @@
 export interface IScheduleTreatmentResponseModalProps {
   onShow: boolean;
-  startDate: any;
-  endDate: any;
+  startDate: Date | string;
+  endDate: Date | string;
   onHide: (reload: boolean) => void;
   idData: number;
   idCustomer?: number;

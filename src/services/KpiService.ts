@@ -21,42 +21,42 @@ export default {
     }).then((res) => res.json());
   },
 
-  checkKpiCampaign: (params: any, signal?: AbortSignal) => {
+  checkKpiCampaign: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.kpi.checkKpiCampaign}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  updateKpi: (body: any) => {
+  updateKpi: (body: Record<string, unknown>) => {
     return fetch(urlsApi.kpi.updateKpi, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  listEmployeeKpi: (params: any, signal?: AbortSignal) => {
+  listEmployeeKpi: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.kpi.listEmployeeKpi}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  addEmployeeToKpi: (params: any, signal?: AbortSignal) => {
+  addEmployeeToKpi: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.kpi.addEmployeeToKpi}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  listGoalKpiEmployee: (params: any, signal?: AbortSignal) => {
+  listGoalKpiEmployee: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.kpi.listGoalKpiEmployee}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  saveKpiEmployee: (body: any) => {
+  saveKpiEmployee: (body: Record<string, unknown>) => {
     return fetch(urlsApi.kpi.saveKpiEmployee, {
       method: "POST",
       body: JSON.stringify(body),
@@ -69,21 +69,21 @@ export default {
     }).then((res) => res.json());
   },
 
-  addEmployeeToKpiContact: (params: any, signal?: AbortSignal) => {
+  addEmployeeToKpiContact: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.kpi.addEmployeeToKpiContact}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  saveKpiContactEmployee: (body: any) => {
+  saveKpiContactEmployee: (body: Record<string, unknown>) => {
     return fetch(urlsApi.kpi.saveKpiContactEmployee, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  listEmployeeKpiContact: (params: any, signal?: AbortSignal) => {
+  listEmployeeKpiContact: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.kpi.listEmployeeKpiContact}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

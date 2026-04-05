@@ -6,5 +6,5 @@ export interface AddBoughtProductModalProps {
   idCustomer: number;
   invoiceId: number;
   data: IBoughtProductResponse;
-  dataSuggestedProduct: any;
+  dataSuggestedProduct: Record<string, unknown>[];
 }

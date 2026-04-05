@@ -23,7 +23,7 @@ export interface IStockInitConfirmResponse {
   skippedRows: number;
 }
 
-const BASE = (urlsApi as any).stockInitImport ?? {
+const BASE = (urlsApi as Record<string, unknown>).stockInitImport as Record<string, string> ?? {
   template: "/bizapi/inventory/stock-init/import/template",
   upload:   "/bizapi/inventory/stock-init/import/upload",
   confirm:  "/bizapi/inventory/stock-init/import/confirm",

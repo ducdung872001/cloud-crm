@@ -66,7 +66,7 @@ export interface IMessageChatOpportunityRequestModal {
   coyId: number;
   employeeId?: number;
   id?: number;
-  media?: any;
+  media?: Record<string, unknown>;
 }
 
 export interface IAddCoyViewerRequestModel {

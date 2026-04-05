@@ -11,10 +11,10 @@ export interface IKpiGoalResponse {
   createdTime: string;
   parentId?: number;
   parentName?: string;
-  parent?: any;
+  parent?: Record<string, unknown>;
   selectedFormula?: string;
-  fieldList?: any;
-  parentIds?: any;
-  parents?: any;
-  fieldDTO?: any;
+  fieldList?: Record<string, unknown>[];
+  parentIds?: number[];
+  parents?: Record<string, unknown>[];
+  fieldDTO?: Record<string, unknown>;
 }

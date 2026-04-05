@@ -1,12 +1,12 @@
 export interface IAddCampaignOpportunityModel {
   onShow: boolean;
   idData?: number;
-  conditionCampain?: any;
+  conditionCampain?: Record<string, unknown>;
   idCustomer?: number;
   isBatch?: boolean;
   listId?: number[]; //Trường hợp muốn thêm cả lô khách hàng vào trong chiến dịch bán hàng
   onHide: (reload: boolean) => void;
-  dataCustomerProps?: any;
+  dataCustomerProps?: Record<string, unknown>;
 }
 
 export interface IAddChangeProbabilityModelProps {
@@ -19,7 +19,7 @@ export interface IAddChangeProbabilityModelProps {
   percentProp: number;
   onHide: (reload: boolean) => void;
   // updateApproach: any;
-  dataWork: any;
+  dataWork: Record<string, unknown>;
 }
 
 export interface IDetailManagementOpportunityProps {

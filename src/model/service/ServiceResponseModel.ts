@@ -33,7 +33,7 @@ export interface IServiceRespone {
   pageKeyword?: string;
   isCombo?: number;
   priceVariation: string;
-  documents?: any;
+  documents?: Record<string, unknown>[];
   code?: string;
 }
 

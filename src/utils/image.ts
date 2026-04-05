@@ -72,7 +72,7 @@ export const setKeyForImageFile = (files) => {
  * @param {*} autoConvertToJPG
  * @param {*} getProgress Callback lấy % hoàn thành
  */
-export const uploadImageFromFiles = (files, callback, autoConvertToJPG, getProgress?: any) => {
+export const uploadImageFromFiles = (files: FileList | File[], callback: (url: string) => void, autoConvertToJPG: boolean, getProgress?: (progress: number) => void) => {
   files = setKeyForImageFile([...files]);
   const convertToBase64 = autoConvertToJPG ? getFileBase64 : getImageBase64KeepFileType;
   Object.keys(files).map((key) => {

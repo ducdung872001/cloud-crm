@@ -25,23 +25,23 @@ export interface ITipUserProps {
 
 export interface ITipListUserProps {
   dataTipUser: ITipUserResponse;
-  setDataTipUser: any;
+  setDataTipUser: (data: ITipUserResponse) => void;
   showModalAdd: boolean;
-  setShowModalAdd: any;
-  setIsDetailUser: any;
+  setShowModalAdd: (show: boolean) => void;
+  setIsDetailUser: (isDetail: boolean) => void;
 }
 
 export interface ITipUserDetail {
   showModalCommissionRate: boolean;
-  setShowModalCommissionRate: any;
+  setShowModalCommissionRate: (show: boolean) => void;
   dataTipUser: ITipUserResponse;
-  dataDetailTip: any; // bao giờ api thì định nghĩa kiểu dữ liệu cho nó
-  setDataDetailTip: any;
+  dataDetailTip: Record<string, unknown>; // bao giờ api thì định nghĩa kiểu dữ liệu cho nó
+  setDataDetailTip: (data: Record<string, unknown>) => void;
 }
 
 export interface IAddTipRoseProps {
   onShow: boolean;
-  data?: any;
+  data?: Record<string, unknown>;
   dataEmployee?: ITipUserResponse;
   onHide: (reload: boolean) => void;
 }

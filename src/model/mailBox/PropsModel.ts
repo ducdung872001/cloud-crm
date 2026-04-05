@@ -2,9 +2,9 @@ import { IListMailboxExchangeResponseModel, IMailBoxResponseModel, IMailboxViewe
 
 export interface IHeaderInternalRightMailListProps {
   dataMailbox: IMailBoxResponseModel;
-  showDialogConfirmDelete: any;
+  showDialogConfirmDelete: (id: number) => void;
   isBroadly: boolean;
-  setIsBroadly: any;
+  setIsBroadly: (isBroadly: boolean) => void;
 }
 
 export interface IExchangeContentListProps {
@@ -52,8 +52,8 @@ export interface IUploadDocumentModalProps {
 
 export interface IEmojiChatProps {
   onShow: boolean;
-  dataMessage: any;
-  setDataMessage: any;
+  dataMessage: Record<string, unknown>;
+  setDataMessage: (data: Record<string, unknown>) => void;
   onHide: (reload: boolean) => void;
 }
 

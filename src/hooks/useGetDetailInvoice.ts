@@ -12,7 +12,7 @@ interface UseGetDetailInvoiceReturn {
   isLoading: boolean;
   isNoItem: boolean;
   isPermissions: boolean;
-  dataInvoice: any;
+  dataInvoice: Record<string, unknown> | null;
 }
 
 export function useGetDetailInvoice({
@@ -22,7 +22,7 @@ export function useGetDetailInvoice({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
-  const [dataInvoice, setDataInvoice] = useState<any>(null);
+  const [dataInvoice, setDataInvoice] = useState<Record<string, unknown> | null>(null);
 
   // ── Core fetch ──────────────────────────────────────────────────────────────
 

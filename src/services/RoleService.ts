@@ -2,7 +2,7 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.role.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -11,7 +11,7 @@ export default {
       },
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.role.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -34,7 +34,7 @@ export default {
   //   }).then((res) => res.json());
   // },
 
-  list_branch: (body: any) => {
+  list_branch: (body: Record<string, unknown>) => {
     return fetch(urlsApi.role.list_branch, {
       method: "POST",
       body: JSON.stringify(body),
@@ -42,19 +42,19 @@ export default {
   },
 
   // costs
-  lstCost: (params?: any) => {
+  lstCost: (params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.role.detail}/cost${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
-  updateCost: (body: any) => {
+  updateCost: (body: Record<string, unknown>) => {
     return fetch(`${urlsApi.role.update}/cost`, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  updateParent: (body: any) => {
+  updateParent: (body: Record<string, unknown>) => {
     return fetch(urlsApi.role.updateParent, {
       method: "POST",
       body: JSON.stringify(body),

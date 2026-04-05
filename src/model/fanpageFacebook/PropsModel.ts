@@ -11,8 +11,8 @@ export interface ITableFanpageFacebookProps {
   listFanpageFacebook: IFanpageFacebookResponse[];
   isLoading: boolean;
   isPermissionsFacebook: boolean;
-  dataPagination: any;
-  callback: any;
+  dataPagination: Record<string, unknown>;
+  callback: () => void;
 }
 
 export interface LoginFanpageModalProps {
@@ -22,7 +22,7 @@ export interface LoginFanpageModalProps {
 }
 
 export interface IMessageChatProps {
-  data?: any;
+  data?: Record<string, unknown>;
   takeHeightTextarea: (height: number) => void;
   onHide: (reload: boolean) => void;
 }

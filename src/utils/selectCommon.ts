@@ -61,7 +61,7 @@ import ProcessedObjectService from "services/ProcessedObjectService";
 import BusinessProcessService from "@/services/BusinessProcessService";
 import LoyaltyService from "@/services/LoyaltyService";
 // Function lấy dữ liệu danh sách từ service
-export async function SelectOptionData(key: string, params?: any) {
+export async function SelectOptionData(key: string, params?: Record<string, unknown>) {
   let response = null;
   params = { ...params, limit: 100 };
 

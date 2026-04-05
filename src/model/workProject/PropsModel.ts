@@ -1,8 +1,8 @@
 import { IWorkProjectResponseModel } from "./WorkProjectResponseModel";
 
 export interface IAddWorkProjectModalProps {
-  startDate: any;
-  endDate?: any;
+  startDate: Date | string;
+  endDate?: Date | string;
   onShow: boolean;
   idData?: number;
   onHide: (reload: boolean) => void;
@@ -16,21 +16,21 @@ export interface IViewProjectManagementModalProps {
 }
 
 export interface IProjectManagementListProps {
-  setType: any;
+  setType: (type: string) => void;
   isFullPage: boolean;
   isRegimeKanban: boolean;
   idProjectManagement: number;
-  setIdProjectManagement: any;
+  setIdProjectManagement: (id: number) => void;
 }
 
 export interface IProjectManagementItemProps {
   data: IWorkProjectResponseModel;
   isShowChildrenProject: boolean;
-  setIsShowChildrenProject: any;
+  setIsShowChildrenProject: (show: boolean) => void;
   idProjectManagement: number;
-  setIdProjectManagement: any;
-  setShowModalAdd: any;
-  showDialogConfirmDelete: any;
+  setIdProjectManagement: (id: number) => void;
+  setShowModalAdd: (show: boolean) => void;
+  showDialogConfirmDelete: (id: number) => void;
   onReload: (reload: boolean) => void;
 }
 

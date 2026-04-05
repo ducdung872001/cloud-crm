@@ -2,7 +2,7 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  lst: (params?: any, signal?: AbortSignal) => {
+  lst: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.qrCode.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

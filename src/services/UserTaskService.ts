@@ -21,7 +21,7 @@ export default {
   //     method: "GET",
   //   }).then((res) => res.json());
   // },
-  list: (body: any) => {
+  list: (body: Record<string, unknown>) => {
     return fetch(urlsApi.userTask.list, {
       method: "POST",
       body: JSON.stringify(body),
@@ -128,7 +128,7 @@ export default {
     }).then((res) => res.json());
   },
   // thêm mới trao đổi công việc
-  addWorkExchange: (body) => {
+  addWorkExchange: (body: Record<string, unknown>) => {
     return fetch(urlsApi.userTask.addWorkExchange, {
       method: "POST",
       body: JSON.stringify(body),
@@ -155,7 +155,7 @@ export default {
     }).then((res) => res.json());
   },
   // Báo cáo công việc
-  workReport: (params: any) => {
+  workReport: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.userTask.workReport}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -168,7 +168,7 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  listPause: (params: any, signal?: AbortSignal) => {
+  listPause: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.userTask.listPause}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -177,14 +177,14 @@ export default {
   //
 
   //export OLA
-  exportOLA: (params: any) => {
+  exportOLA: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.userTask.exportOLA}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
 
   //export SLA
-  exportSLA: (params: any) => {
+  exportSLA: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.userTask.exportSLA}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());

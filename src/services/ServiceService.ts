@@ -27,14 +27,14 @@ export default {
   },
 
   ///Danh sách dịch vụ của đối tác
-  listShared: (params?: any, signal?: AbortSignal) => {
+  listShared: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.service.listShared}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  updateContent: (body: any) => {
+  updateContent: (body: Record<string, unknown>) => {
     return fetch(urlsApi.service.updateContent, {
       method: "POST",
       body: JSON.stringify(body),

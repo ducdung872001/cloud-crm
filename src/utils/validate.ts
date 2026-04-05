@@ -387,7 +387,7 @@ export function ValidateField(field: IFieldCustomize, validation: IValidation, v
 }
 
 export function handleChangeValidate(
-  value: any,
+  value: unknown,
   field: IFieldCustomize,
   formData: IFormData,
   validations: IValidation[],

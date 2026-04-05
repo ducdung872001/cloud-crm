@@ -4,7 +4,7 @@ export interface IAddTemplateEmailModelProps {
   onShow: boolean;
   data?: ITemplateEmailResponseModel;
   onHide: (reload?: boolean) => void;
-  callback?: any //Hàm gọi về sau khi được chọn mẫu
+  callback?: (data: ITemplateEmailResponseModel) => void;
 }
 
 export interface ITemplateEmailListProps {
@@ -12,21 +12,21 @@ export interface ITemplateEmailListProps {
 }
 
 export interface ITableTemplateEmailProps {
-  params: any;
-  setParams: any;
-  listSaveSearch: any;
-  listFilterItem: any;
+  params: Record<string, unknown>;
+  setParams: (params: Record<string, unknown>) => void;
+  listSaveSearch: Record<string, unknown>[];
+  listFilterItem: Record<string, unknown>[];
   isLoading: boolean;
   listTemplateEmail: ITemplateEmailResponseModel[];
   titles: string[];
-  pagination: any;
+  pagination: Record<string, unknown>;
   dataFormat: string[];
-  dataMappingArray: any;
+  dataMappingArray: string[];
   listIdChecked: number[];
-  bulkActionItems: any;
-  setListIdChecked: any;
-  actionsTable: any;
+  bulkActionItems: Record<string, unknown>[];
+  setListIdChecked: (ids: number[]) => void;
+  actionsTable: Record<string, unknown>[];
   isPermissions: boolean;
-  setDataTemplateEmail: any;
+  setDataTemplateEmail: (data: ITemplateEmailResponseModel) => void;
   isNoItem: boolean;
 }

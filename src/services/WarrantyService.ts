@@ -61,12 +61,12 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  resetTransferVotes: (params: any) => {
+  resetTransferVotes: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.warranty.resetTransferVotes}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
-  collect: (body: IWarrantyRequestModel, params?: any) => {
+  collect: (body: IWarrantyRequestModel, params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.warranty.collect}${convertParamsToString(params)}`, {
       method: "POST",
       body: JSON.stringify(body),

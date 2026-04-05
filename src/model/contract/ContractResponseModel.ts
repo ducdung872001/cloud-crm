@@ -1,5 +1,5 @@
 export interface IContractResponse {
-  stageName: any;
+  stageName: string;
   id: number;
   name: string;
   taxCode: string;
@@ -12,7 +12,7 @@ export interface IContractResponse {
   bsnId: number;
   stage: string;
 
-  //Thông tin bổ sung
+  //Thông tin bổ sung
   pipelineName: string;
   pipelineId: number;
   approachId: number;
@@ -23,18 +23,18 @@ export interface IContractResponse {
   employeeId: number;
   employeeName: string;
   branchId: number;
-  contractExtraInfos: any;
-  status: any;
+  contractExtraInfos: Record<string, unknown>[];
+  status: number;
   categoryName: AnalyserOptions;
 }
 
 export interface IExpireTimeRequestModel {
   id?: number;
-  endDate?: any;
+  endDate?: string;
   expireTimeWarning?: number;
   expireTimeWarningUnit?: string;
   templateEmailId?: number | string;
   templateSmsId?: number | string;
-  emails?: any;
-  phoneNumbers?: any;
+  emails?: string[];
+  phoneNumbers?: string[];
 }

@@ -35,7 +35,7 @@ export interface IOrderResponseModel {
   payment_method: string;
   status: string;
   supplier_id: number;
-  supplier: any;
+  supplier: Record<string, unknown> | null;
   vat_amount: number;
   employeeName: string;
 }

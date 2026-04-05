@@ -198,7 +198,7 @@ export const getPermissions = () => {
  * Chuyển hướng người dùng tới trang mặc định
  * @param returnUrl
  */
-export const redirectUrl = (returnUrl: any, targetUrl: any) => {
+export const redirectUrl = (returnUrl: string | null, targetUrl: string | null) => {
   targetUrl = targetUrl || "/customer"; //dashboard
   let url = returnUrl || targetUrl;
   if (!url.startsWith("/")) {
@@ -228,17 +228,17 @@ export const convertToPrettyNumber = (total: number) => {
   };
 
   if (total > 999000) {
-    const formattedNumber = (total / 1000000).toLocaleString("vi-VN", options as any);
+    const formattedNumber = (total / 1000000).toLocaleString("vi-VN", options as Intl.NumberFormatOptions);
     return `${formattedNumber} <span className="currency-unit">Triệu</span>`;
   }
 
   if (total > 99000) {
-    const formattedNumber = (total / 100000).toLocaleString("vi-VN", options as any);
+    const formattedNumber = (total / 100000).toLocaleString("vi-VN", options as Intl.NumberFormatOptions);
     return `${formattedNumber} <span className="currency-unit">Trăm</span>`;
   }
 
   if (total > 9000) {
-    const formattedNumber = (total / 10000).toLocaleString("vi-VN", options as any);
+    const formattedNumber = (total / 10000).toLocaleString("vi-VN", options as Intl.NumberFormatOptions);
     return `${formattedNumber} <span className="currency-unit">Chục</span>`;
   }
 

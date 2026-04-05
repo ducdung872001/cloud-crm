@@ -9,7 +9,7 @@ export interface IAddServiceModalProps {
 
 export interface IAddPriceServiceProps {
   onShow: boolean;
-  handleTakePriceVariant: any;
+  handleTakePriceVariant: (data: string) => void;
   dataProps: string;
   onHide: (reload: boolean) => void;
 }
@@ -19,31 +19,31 @@ export interface IServiceListProps {
 }
 
 export interface ITabelServiceProps {
-  titles: any;
-  customerFilterList: any;
+  titles: Record<string, unknown>[];
+  customerFilterList: Record<string, unknown>[];
   params: IServiceFilterRequest;
-  setParams: any;
+  setParams: (params: IServiceFilterRequest) => void;
   listService: IServiceRespone[];
-  pagination: any;
-  dataMappingArray: any;
-  dataFormat: any;
+  pagination: Record<string, unknown>;
+  dataMappingArray: Record<string, unknown>[];
+  dataFormat: Record<string, unknown>;
   listIdChecked: number[];
-  setListIdChecked: any;
-  bulkActionList: any;
-  actionsTable: any;
+  setListIdChecked: (ids: number[]) => void;
+  bulkActionList: Record<string, unknown>[];
+  actionsTable: Record<string, unknown>[];
   isLoading: boolean;
-  setDataService: any;
+  setDataService: (data: IServiceRespone) => void;
   isNoItem: boolean;
-  listSaveSearch: any;
+  listSaveSearch: Record<string, unknown>[];
   isPermissions: boolean;
-  tab: any;
-  setTab: any;
-  listTabs: any;
-  listPartner: any;
-  paginationPartner: any;
-  targetBsnId: any;
-  handlClickPartner: any;
-  paramsServicePartner: any;
-  setParamsServicePartner: any;
-  setIsConfigIntegrateModal: any;
+  tab: string;
+  setTab: (tab: string) => void;
+  listTabs: Record<string, unknown>[];
+  listPartner: Record<string, unknown>[];
+  paginationPartner: Record<string, unknown>;
+  targetBsnId: number;
+  handlClickPartner: (partner: Record<string, unknown>) => void;
+  paramsServicePartner: Record<string, unknown>;
+  setParamsServicePartner: (params: Record<string, unknown>) => void;
+  setIsConfigIntegrateModal: (show: boolean) => void;
 }

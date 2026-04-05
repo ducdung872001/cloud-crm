@@ -2,7 +2,7 @@ export interface AddProductProps {
   onShow: boolean;
   idProduct: number;
   onHide: (reload: boolean) => void;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export interface IProductListProps {

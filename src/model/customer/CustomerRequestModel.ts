@@ -12,7 +12,7 @@ export interface ICustomerRequest {
   phone?: string;
   birthday?: string;
   branchId?: number;
-  careers?: any;
+  careers?: unknown[];
   careerId: number;
   employeeId?: number;
   cgpId?: number;
@@ -30,12 +30,11 @@ export interface ICustomerRequest {
   taxCode: string;
   contactId?: number;
   employeeTitle?: string;
-  customerExtraInfos: any; //Thuộc tính thêm
+  customerExtraInfos: Record<string, unknown>[];
   zaloUserId?: number | string;
-  // tình trạng hôn nhân
   maritalStatus: number;
   isExternal: number | string;
-  relationIds: any;
+  relationIds: number[];
 }
 
 export interface ICustomerLinkUserRequest {
@@ -82,10 +81,10 @@ export interface ICustomerSchedulerFilterRequest {
   relationshipId?: number;
   branchId?: number;
   targetBsnId?: number;
-  sourceIds?: any
-  employeeIds?: any;
-  callStatuses?: any;
-  customerExtraInfo?: any;
+  sourceIds?: number[]
+  employeeIds?: number[];
+  callStatuses?: number[];
+  customerExtraInfo?: Record<string, unknown>;
 }
 
 export interface IUpdateCustomerGroupRequest {
@@ -141,7 +140,7 @@ export interface ICustomerExchangeUpdateRequestModel {
   contentDelta?: string;
   employeeId?: number;
   type: number;
-  media?: any;
+  media?: string;
   customerId: number;
 }
 
@@ -158,19 +157,19 @@ export interface ICustomerFeedbackUpdateRequestModel {
 export interface ICustomerSendSMSRequestModel {
   templateId: number;
   customerId: number;
-  mapCustomPlaceholder?: any;
+  mapCustomPlaceholder?: Record<string, string>;
 }
 
 export interface ICustomerSendEmailRequestModel {
   templateId: number;
   customerId: number;
-  mapCustomPlaceholder?: any;
+  mapCustomPlaceholder?: Record<string, string>;
 }
 
 export interface ICustomerSendZaloRequestModel {
   templateId: number;
   customerId: number;
-  mapCustomPlaceholder?: any;
+  mapCustomPlaceholder?: Record<string, string>;
 }
 
 export interface IAddCustomerViewerRequestModel {
@@ -192,7 +191,6 @@ export interface IAutoProcessModalProps {
   processDuplicateCode: string;
 }
 
-// tương tác khách hàng
 export interface ICustomerReportProps {
   startTime?: string;
   endTime?: string;

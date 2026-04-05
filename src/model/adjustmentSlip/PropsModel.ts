@@ -8,6 +8,6 @@ export interface IChooseProductModalProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
   satId?: number;
-  inventory: any;
+  inventory: Record<string, unknown>;
   lstBatchNoProduct: string[];
 }

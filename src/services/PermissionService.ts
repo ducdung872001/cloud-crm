@@ -37,7 +37,7 @@ export default {
   },
 
   //danh sách yêu cầu xin quyền truy cập (mình xin quyền)
-  requestPermissionSource: (params: any, signal?: AbortSignal) => {
+  requestPermissionSource: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.permission.requestPermissionSource}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -45,7 +45,7 @@ export default {
   },
 
   //gửi yêu cầu xin phê duyệt
-  updateRequestPermission: (body: any) => {
+  updateRequestPermission: (body: Record<string, unknown>) => {
     return fetch(urlsApi.permission.updateRequestPermission, {
       method: "POST",
       body: JSON.stringify(body),
@@ -60,7 +60,7 @@ export default {
   },
 
   //danh sách cấp quyền truy cập (đối tác xin quyền)
-  requestPermissionTarget: (params: any, signal?: AbortSignal) => {
+  requestPermissionTarget: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.permission.requestPermissionTarget}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -68,7 +68,7 @@ export default {
   },
 
   //phê duyệt yêu cầu truy cập
-  updateApprovePermission: (body: any) => {
+  updateApprovePermission: (body: Record<string, unknown>) => {
     return fetch(urlsApi.permission.updateApprovePermission, {
       method: "POST",
       body: JSON.stringify(body),
@@ -76,7 +76,7 @@ export default {
   },
 
   //từ chối yêu cầu truy cập
-  updateRejectPermission: (body: any) => {
+  updateRejectPermission: (body: Record<string, unknown>) => {
     return fetch(urlsApi.permission.updateRejectPermission, {
       method: "POST",
       body: JSON.stringify(body),

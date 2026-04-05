@@ -40,8 +40,8 @@ export interface IProductResponse {
   defaultVariantId?: number;
   variantCount?: number;
   variantGroupCount?: number;
-  variantGroups?: any[];
-  variants?: any[];
+  variantGroups?: Record<string, unknown>[];
+  variants?: Record<string, unknown>[];
   bsnId?: number;
   hashedLink?: string;
   pageTitle?: string;
@@ -49,5 +49,5 @@ export interface IProductResponse {
   pageKeyword?: string;
   expiredPeriod?: number;
   minQuantity?: number;
-  documents?: any;
+  documents?: Record<string, unknown>[];
 }

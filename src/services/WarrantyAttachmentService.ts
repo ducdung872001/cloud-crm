@@ -2,14 +2,14 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  warrantyAttachmentList: (params?: any, signal?: AbortSignal) => {
+  warrantyAttachmentList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.warrantyAttachment.warrantyAttachmentList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  warrantyAttachmentUpdate: (body: any) => {
+  warrantyAttachmentUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.warrantyAttachment.warrantyAttachmentUpdate, {
       method: "POST",
       body: JSON.stringify(body),

@@ -20,13 +20,13 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  listAll: (params?: any, signal?: AbortSignal) => {
+  listAll: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.warrantyAttribute.listAll}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  checkDuplicated: (params: any, signal?: AbortSignal) => {
+  checkDuplicated: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.warrantyAttribute.checkDuplicated}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

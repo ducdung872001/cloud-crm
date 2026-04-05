@@ -3,7 +3,7 @@ import { update } from "lodash";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.order.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -14,13 +14,13 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  create: (data: any) => {
+  create: (data: Record<string, unknown>) => {
     return fetch(`${urlsApi.order.update}`, {
       method: "POST",
       body: JSON.stringify(data),
     }).then((res) => res.json());
   },
-  update: (data: any, id: number) => {
+  update: (data: Record<string, unknown>, id: number) => {
     return fetch(`${urlsApi.order.update}?id=${id}`, {
       method: "POST",
       body: JSON.stringify(data),

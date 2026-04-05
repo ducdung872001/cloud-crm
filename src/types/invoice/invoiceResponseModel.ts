@@ -104,7 +104,7 @@ export interface IInvoiceDetailItem {
   vat: number;
   warehouse_id?: number;
   warehouse_invoice_id?: number;
-  invoice_detail: any;
+  invoice_detail: Record<string, unknown>;
 }
 
 export interface IInvoiceDetail {

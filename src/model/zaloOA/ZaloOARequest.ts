@@ -35,7 +35,7 @@ export interface ILinkImageSendZaloChatRequest {
 
 export interface IFileSendZaloChatRequest {
   userIdByApp: string;
-  file: any;
+  file: File;
 }
 
 export interface IAnswerSendZaloChatRequest {

@@ -263,7 +263,7 @@ const topProducts = [
 ];
 
 // Đây là hàm để nhận đầu vào là dữ liệu giống như sampleProductDetail và trả về dữ liệu đã được map sang đúng format của topProducts để dễ đổ ra UI
-function mapToTopProduct(detail): any {
+function mapToTopProduct(detail: Record<string, unknown>[]) {
   if (!detail || detail.length === 0) return [];
 
   // Tính max để vẽ thanh bar tương đối (tránh bar vượt 100%)

@@ -44,7 +44,7 @@ export type CustomerMap = Record<number, ICustomerInfo>;
 
 // ── Helper: chuyển response item → ICustomerInfo ─────────────────────────────
 
-function toCustomerInfo(raw: any): ICustomerInfo {
+function toCustomerInfo(raw: Record<string, unknown>): ICustomerInfo {
   return {
     id: raw.id,
     name: raw.name ?? raw.contactName ?? "Khách vãng lai",
@@ -88,12 +88,12 @@ export async function fetchCustomerMap(
     if (response.code !== 0 || !response.result?.items) return {};
 
     const map: CustomerMap = {};
-    for (const item of response.result.items as any[]) {
+    for (const item of response.result.items as Record<string, unknown>[]) {
       map[item.id] = toCustomerInfo(item);
     }
     return map;
-  } catch (err: any) {
-    if (err?.name === "AbortError") return {};
+  } catch (err: unknown) {
+    if (err instanceof DOMException && err.name === "AbortError") return {};
     console.warn("[useCustomerEnrich] fetchCustomerMap error:", err);
     return {};
   }

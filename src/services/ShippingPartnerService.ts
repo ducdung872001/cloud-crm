@@ -53,7 +53,7 @@ const ShippingPartnerService = {
    * Lấy danh sách hãng VC + stats hôm nay
    * GET /logistics/carrier/list
    */
-  getCarrierList: (signal?: AbortSignal): Promise<any> => {
+  getCarrierList: (signal?: AbortSignal): Promise<Record<string, unknown>> => {
     return fetch(urlsApi.shippingPartner.carrierList, {
       method: "GET",
       signal,
@@ -64,7 +64,7 @@ const ShippingPartnerService = {
    * Lấy trạng thái kết nối API key theo bsnId (từ JWT)
    * GET /integration/carrier/configs
    */
-  getCarrierConfigs: (signal?: AbortSignal): Promise<any> => {
+  getCarrierConfigs: (signal?: AbortSignal): Promise<Record<string, unknown>> => {
     return fetch(urlsApi.shippingPartner.carrierConfigs, {
       method: "GET",
       signal,
@@ -75,7 +75,7 @@ const ShippingPartnerService = {
    * Kết nối / cập nhật API key hãng VC
    * POST /integration/carrier/connect
    */
-  connectCarrier: (body: ICarrierConnectRequest): Promise<any> => {
+  connectCarrier: (body: ICarrierConnectRequest): Promise<Record<string, unknown>> => {
     return fetch(urlsApi.shippingPartner.connect, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -87,7 +87,7 @@ const ShippingPartnerService = {
    * Ngắt kết nối hãng VC
    * DELETE /integration/carrier/disconnect?carrierCode=GHN
    */
-  disconnectCarrier: (carrierCode: string): Promise<any> => {
+  disconnectCarrier: (carrierCode: string): Promise<Record<string, unknown>> => {
     return fetch(`${urlsApi.shippingPartner.disconnect}?carrierCode=${carrierCode}`, {
       method: "DELETE",
     }).then((res) => res.json());

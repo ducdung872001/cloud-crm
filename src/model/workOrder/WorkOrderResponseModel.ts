@@ -25,8 +25,8 @@ export interface IWorkOrderResponseModel {
   status: number;
   percent: number;
   priorityLevel: number;
-  lstParticipant?: any[];
-  lstCustomer?: any[];
+  lstParticipant?: Record<string, unknown>[];
+  lstCustomer?: Record<string, unknown>[];
   notification: string;
   reviews?: string;
   nodeName?: string;
@@ -53,7 +53,7 @@ export interface IWorkExchangeResponseModal {
   employeeId: number;
   employeeName: string;
   loginEmployeeId: number;
-  viewers: any;
+  viewers: Record<string, unknown>[];
   worId: number;
 }
 

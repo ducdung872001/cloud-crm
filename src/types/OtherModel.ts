@@ -4,8 +4,8 @@ export interface IOption {
   label: string | number;
   type?: "number" | "amount";
   disabled?: boolean;
-  onChange?: any;
-  onClick?: any;
+  onChange?: (value: string | number) => void;
+  onClick?: () => void;
 }
 
 // Notification
@@ -21,7 +21,7 @@ export interface INotificationItem {
   url: string;
   type: string;
   is_read?: boolean;
-  created_at: any;
+  created_at: string;
   phone?: string;
 }
 
@@ -36,7 +36,7 @@ export interface IFilterItem {
   value_extra?: string | number; // Chỉ dành cho lọc date from -> to
   label_1?: string; // Chỉ dành cho lọc date from -> to
   label_2?: string; // Chỉ dành cho lọc date from -> to
-  params?: any; // Chỉ dành cho select lấy dữ liệu từ server
+  params?: Record<string, string | number | boolean>; // Chỉ dành cho select lấy dữ liệu từ server
   isAsync?: boolean; // Chỉ dành cho select muốn search từ serve
   disabledDelete?: boolean;
 }
@@ -85,8 +85,8 @@ export interface IValidate {
 export interface IMenuItem {
   title: string;
   path: string;
-  icon?: any;
-  action?: any;
+  icon?: React.ReactElement | string;
+  action?: () => void;
   target?: string;
   is_active?: boolean;
   children?: IMenuItem[];
@@ -97,7 +97,7 @@ export interface IMenuItem {
 // Router
 export interface IRouter {
   path: string;
-  component: any;
+  component: React.ComponentType;
   permission?: string[];
 }
 
@@ -109,7 +109,7 @@ export interface IAction {
   variant?: "outline";
   disabled?: boolean;
   is_loading?: boolean;
-  data_tip?: any;
+  data_tip?: string;
   type?: "submit" | "button";
   callback?: () => void;
 }

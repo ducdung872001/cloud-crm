@@ -1,5 +1,5 @@
 export interface ICustomerResponse {
-  contactName: any;
+  contactName: string;
   id: number;
   code?: string;
   profileLink?: string;
@@ -43,7 +43,7 @@ export interface ICustomerResponse {
   productChargeTotal?: number;
   branchId?: number;
   careerId?: number;
-  careers?: any;
+  careers?: unknown[];
   careerName?: string;
   cgpId?: number;
   avatar: string;
@@ -59,9 +59,9 @@ export interface ICustomerResponse {
   invoiceChargeTotal: number;
   dayNotContact: number;
   invoiceCount: number;
-  lastBoughtDate: any;
-  lastContactDate: any;
-  customerExtraInfos: any; //Thuộc tính thêm
+  lastBoughtDate: string;
+  lastContactDate: string;
+  customerExtraInfos: Record<string, unknown>[];
   timestamp?: number;
   custType?: number;
   trademark?: string;
@@ -71,19 +71,19 @@ export interface ICustomerResponse {
   contractId?: number;
   relationshipName?: string;
   cgpName?: string;
-  lastSignDate?: any;
+  lastSignDate?: string;
   totalRentedArea?: number | string;
   totalValueContract?: number;
   zaloUserId?: number | string;
   isExternal?: number;
-  relationIds: any;
-  relations: any;
-  mapCustomerAttribute?: any;
-  lstCustomerExtraInfo?: any;
-  telesaleCall?: any;
-  syncTime?: any;
-  saleAssignDate?: any;
-  employeeAssignDate?: any;
+  relationIds: number[];
+  relations: Record<string, unknown>[];
+  mapCustomerAttribute?: Record<string, unknown>;
+  lstCustomerExtraInfo?: Record<string, unknown>[];
+  telesaleCall?: Record<string, unknown>;
+  syncTime?: string;
+  saleAssignDate?: string;
+  employeeAssignDate?: string;
 }
 
 export interface ICustomerInvoiceResponse {
@@ -115,7 +115,7 @@ export interface ICustomerInvoiceResponse {
 
 export interface ICustomerExchangeResponseModel {
   medias: string;
-  media: any;
+  media: string;
   id: number;
   content: string;
   contentDelta: string;
@@ -139,6 +139,6 @@ export interface ICustomerFeedbackResponseModel {
   type: number;
   customerId: number;
   createdTime: string;
-  media?: any;
-  medias?: any;
+  media?: string;
+  medias?: string;
 }

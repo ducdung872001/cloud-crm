@@ -9,5 +9,5 @@ export interface ICareerRequest {
   bsnId: number;
   name: string;
   position: number;
-  custType: any;
+  custType: string | number;
 }

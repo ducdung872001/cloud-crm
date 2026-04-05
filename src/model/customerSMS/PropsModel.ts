@@ -3,7 +3,7 @@ import { ICustomerSMSResponseModel } from "./CustomerSMSResponseModel";
 export interface ICustomerSMSListProps {
   idCustomer: number;
   onShow: boolean;
-  callBack: any;
+  callBack: () => void;
 }
 
 export interface IAddCustomerSMSModelProps {

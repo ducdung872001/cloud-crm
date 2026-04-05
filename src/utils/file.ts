@@ -23,7 +23,7 @@ export const correctImageOrientation = (data) => {
   return new Promise((resolve) => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-    const img: any = new Image();
+    const img: HTMLImageElement = new Image();
     img.onload = function () {
       canvas.width = this.naturalWidth;
       canvas.height = this.naturalHeight;
@@ -45,7 +45,7 @@ export const correctImageOrientation = (data) => {
 
 export const getFileBase64 = (file) =>
   new Promise((resolve, reject) => {
-    const fileReader: any = new FileReader();
+    const fileReader: FileReader = new FileReader();
     fileReader.onload = () => {
       if (fileReader.result.match(/image\/gif;/)) {
         // nếu là định dạng gif thì ko chạy qua hàm đổi orientation để ko đổi định dang.
@@ -61,7 +61,7 @@ export const getFileBase64 = (file) =>
 export const getImageBase64KeepFileType = (file) =>
   new Promise((resolve, reject) => {
     // eslint-disable-next-line prefer-const
-    let reader: any = new FileReader();
+    let reader: FileReader = new FileReader();
     reader.onload = () => {
       resolve(reader.result);
     };

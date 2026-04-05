@@ -2,37 +2,37 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.processedObject.lst}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.processedObject.update, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateProcess: (body: any) => {
+  updateProcess: (body: Record<string, unknown>) => {
     return fetch(urlsApi.processedObject.updateProcess, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateProcessInstance: (body: any) => {
+  updateProcessInstance: (body: Record<string, unknown>) => {
     return fetch(urlsApi.processedObject.updateProcessInstance, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateStatus: (body: any) => {
+  updateStatus: (body: Record<string, unknown>) => {
     return fetch(urlsApi.processedObject.updateStatus, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  resetSignature: (params: any) => {
+  resetSignature: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.processedObject.resetSignal}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -44,21 +44,21 @@ export default {
   },
 
 
-  bpmStart: (body: any) => {
+  bpmStart: (body: Record<string, unknown>) => {
     return fetch(urlsApi.processedObject.bpmStart, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  bpmExecListNode: (params?: any, signal?: AbortSignal) => {
+  bpmExecListNode: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.processedObject.bpmExecListNode}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  bpmProcess: (body: any) => {
+  bpmProcess: (body: Record<string, unknown>) => {
     return fetch(urlsApi.processedObject.bpmProcess, {
       method: "POST",
       body: JSON.stringify(body),
@@ -66,7 +66,7 @@ export default {
   },
 
   //lấy dữ liệu đã lưu hiển thị lại trên eform bước tiếp theo
-  bpmArtifactData: (params?: any, signal?: AbortSignal) => {
+  bpmArtifactData: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.processedObject.bpmArtifactData}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -74,7 +74,7 @@ export default {
   },
 
   //lịch sử xử lý
-  bpmParticipantProcesslog: (params?: any, signal?: AbortSignal) => {
+  bpmParticipantProcesslog: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.processedObject.bpmParticipantProcesslog}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -82,7 +82,7 @@ export default {
   },
 
   //check đã xử lý đến node nào để hiển thị trên sơ đồ
-  processedObjectLog: (params?: any, signal?: AbortSignal) => {
+  processedObjectLog: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.processedObject.processedObjectLog}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

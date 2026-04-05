@@ -5,7 +5,7 @@ export interface ISwitchboardResponseModel {
   partnerId: number;
   partnerName: string;
   partnerConfig: string;
-  status?: any;
-  whitelist?: any;
-  active?: any
+  status?: number | string;
+  whitelist?: string;
+  active?: number | boolean
 }

@@ -19,5 +19,5 @@ export interface IWorkProjectRequestModel {
   departmentId: number;
   docLink: string;
   parentId: number;
-  projectTypes: any;
+  projectTypes: Record<string, unknown>[];
 }

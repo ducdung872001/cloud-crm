@@ -2,25 +2,25 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.quote.lst}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.quote.update, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateStatus: (body: any) => {
+  updateStatus: (body: Record<string, unknown>) => {
     return fetch(urlsApi.quote.updateStatus, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  resetSignature: (params: any) => {
+  resetSignature: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.quote.resetSignal}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -30,18 +30,18 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  cloneQuote: (body: any) => {
+  cloneQuote: (body: Record<string, unknown>) => {
     return fetch(urlsApi.quote.cloneQuote, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  quoteFormLst: (params?: any) => {
+  quoteFormLst: (params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.quote.quoteFormLst}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
-  quoteFormUpdate: (body: any) => {
+  quoteFormUpdate: (body: Record<string, unknown>) => {
     return fetch(`${urlsApi.quote.quoteFormUpdate}`, {
       method: "POST",
       body: JSON.stringify(body),
@@ -52,21 +52,21 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  quoteFormUpdatePostion: (body) => {
+  quoteFormUpdatePostion: (body: Record<string, unknown>) => {
     return fetch(urlsApi.quote.quoteFormUpdatePostion, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  updateQuoteContract: (body: any) => {
+  updateQuoteContract: (body: Record<string, unknown>) => {
     return fetch(urlsApi.quote.updateQuoteContract, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  listQuoteContract: (params?: any, signal?: AbortSignal) => {
+  listQuoteContract: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.quote.lstQuoteContract}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

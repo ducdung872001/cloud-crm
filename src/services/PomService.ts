@@ -24,7 +24,7 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  lstPomSales: (params: any) => {
+  lstPomSales: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.pom.lstPomSales}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());

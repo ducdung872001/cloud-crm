@@ -119,7 +119,7 @@ export default {
   },
 
   /** Thiết lập ca — lưu cấu hình ca */
-  saveConfigs: (branchId: number, configs: any[]) => {
+  saveConfigs: (branchId: number, configs: Record<string, unknown>[]) => {
     return fetch(`${SHIFT_URLS.saveConfigs}?branchId=${branchId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -135,7 +135,7 @@ export default {
   },
 
   /** Thiết lập ca — lưu phân công nhân viên */
-  saveStaff: (assignments: any[]) => {
+  saveStaff: (assignments: Record<string, unknown>[]) => {
     return fetch(SHIFT_URLS.saveStaff, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -144,7 +144,7 @@ export default {
   },
 
   /** Thiết lập ca — lưu quy tắc & thông báo */
-  saveRules: (branchId: number, rules: any) => {
+  saveRules: (branchId: number, rules: Record<string, unknown>) => {
     return fetch(`${SHIFT_URLS.saveRules}?branchId=${branchId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -23,7 +23,7 @@ export interface IInfoCustomerPurchaseProps {
 
 export interface IViewInfoPurchaseProps {
   data: IPurchaseResponseModel;
-  infoApproved: any;
+  infoApproved: Record<string, unknown>;
   onReload: (reload: boolean) => void;
   takeBlockRight: (reload: number) => void;
 }
@@ -41,29 +41,29 @@ export interface IMessageChatPurchaseProps {
 export interface ITablePurchaseProps {
   // listSaveSearch: any;
   // setListSaveSearch?: any;
-  customerFilterList: any;
+  customerFilterList: Record<string, unknown>[];
   params: IPurchaseFilterRequest;
-  setParams: any;
-  titles: any;
+  setParams: (params: IPurchaseFilterRequest) => void;
+  titles: string[];
   listPurchase: IPurchaseResponseModel[];
-  pagination: any;
-  dataMappingArray: any;
-  dataFormat: any;
+  pagination: Record<string, unknown>;
+  dataMappingArray: string[];
+  dataFormat: string[];
   listIdChecked: number[];
-  setListIdChecked: any;
-  bulkActionList: any;
-  actionsTable: any;
+  setListIdChecked: (ids: number[]) => void;
+  bulkActionList: Record<string, unknown>[];
+  actionsTable: Record<string, unknown>[];
   isLoading: boolean;
-  setDataPurchase: any;
-  setShowModalAdd: any;
+  setDataPurchase: (data: IPurchaseResponseModel) => void;
+  setShowModalAdd: (show: boolean) => void;
   isNoItem: boolean;
   isPermissions: boolean;
   isService: boolean;
-  dataSize: any;
+  dataSize: Record<string, unknown>;
 }
 
 export interface ITaskItemProps {
-  item: any;
+  item: Record<string, unknown>;
   index: number;
 }
 

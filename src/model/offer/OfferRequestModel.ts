@@ -53,7 +53,7 @@ export interface IOfferFilterRequest {
     discount?: number;
     fee?: number;
     paid?: number;
-    receiptDate?: any;
+    receiptDate?: string;
     vatAmount?: number;
     account?: string;
     amountCard?: number;
@@ -61,7 +61,7 @@ export interface IOfferFilterRequest {
     inventoryId?: number;
     customerId?: number;
     // tạo tạm ông này để xử lý form
-    card?: any;
+    card?: Record<string, unknown>;
     cardName?: string;
     cardPrice?: number;
     moneyUsed?: number;

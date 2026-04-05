@@ -23,7 +23,7 @@ export interface ITreatmentHistoryResponseModel {
   fmtScheduleNext: string;
   fmtTreatmentEnd: string;
   fmtTreatmentStart: string;
-  lstDiarySurgery: any;
+  lstDiarySurgery: Record<string, unknown>[];
   scheduleProcessed: number;
   totalCall: number;
   totalSuccess: string;

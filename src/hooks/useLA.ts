@@ -41,7 +41,7 @@ export const useOlaSetting = (props) => {
     const targetId = onShow && dataNode?.id ? dataNode.id : processId;
     if (!targetId) return;
 
-    const params: any = { type: typeOfNode };
+    const params: Record<string, string | number> = { type: typeOfNode };
     const key = onShow ? "nodeId" : "processId";
     if (onShow) {
       params.nodeId = targetId;
@@ -55,7 +55,7 @@ export const useOlaSetting = (props) => {
     getDetailTaskAdvance(params);
   }, [dataNode?.id, onShow, processId, typeOfNode]);
 
-  const getTypeOLA = async (params: any) => {
+  const getTypeOLA = async (params: Record<string, string | number>) => {
     const response = await BusinessProcessService.checkTypeOLA(params);
     if (response.code === 0) {
       const result = response.result;
@@ -67,7 +67,7 @@ export const useOlaSetting = (props) => {
     }
   };
 
-  const getDetailTaskAdvance = async (params: any) => {
+  const getDetailTaskAdvance = async (params: Record<string, string | number>) => {
     const targetId = params?.nodeId ? params?.nodeId : params?.processId;
     const response = await BusinessProcessService.detailBusinessRuleTaskAdvance(params);
     if (response.code === 0) {
@@ -81,7 +81,7 @@ export const useOlaSetting = (props) => {
 
       setDataConfigAdvance(parsedConfig);
 
-      const formAdvance: any = {
+      const formAdvance: Record<string, unknown> = {
         id: result?.id ?? null,
         name: result?.name ?? "",
         description: result?.description ?? "",
@@ -97,12 +97,12 @@ export const useOlaSetting = (props) => {
     setLoadingDataAdvance(false);
   };
 
-  const getDetailServiceLevel = async (params: any) => {
+  const getDetailServiceLevel = async (params: Record<string, string | number>) => {
     const response = await BusinessProcessService.listServiceLevel({ ...params });
     if (response.code === 0) {
       const items = response.result?.items || [];
-      const dataResponse = items.find((el: any) => el.timeType === "response");
-      const dataProcess = items.find((el: any) => el.timeType === "process");
+      const dataResponse = items.find((el: Record<string, unknown>) => el.timeType === "response");
+      const dataProcess = items.find((el: Record<string, unknown>) => el.timeType === "process");
 
       setValueResponse(dataResponse || { ...valueResponse, ...params });
       setValueProcess(dataProcess || { ...valueProcess, ...params });
@@ -171,7 +171,7 @@ export const useOlaSetting = (props) => {
     };
   };
 
-  const onSubmit = async (e: any) => {
+  const onSubmit = async (e: React.FormEvent) => {
     // e?.preventDefault();
     const dataConfig = convertDataRow(dataConfigAdvanceEdit, "checkValidate");
     const validation = validateInputRules(dataConfig.rules);

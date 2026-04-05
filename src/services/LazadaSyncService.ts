@@ -111,7 +111,7 @@ function escXml(s: string | number): string {
 export async function syncProductToLazada(
   product: IProductForSync,
   token = ""
-): Promise<{ success: boolean; message: string; data?: any }> {
+): Promise<{ success: boolean; message: string; data?: Record<string, unknown> }> {
   const payloadXml = buildLazadaXml(product);
   const body = {
     channelId:         CHANNEL_ID,
@@ -138,7 +138,7 @@ export async function syncProductToLazada(
       const msg = data?.message ?? data?.error ?? `Lỗi HTTP ${res.status}`;
       return { success: false, message: msg, data };
     }
-  } catch (err: any) {
-    return { success: false, message: err?.message ?? "Không thể kết nối integration server" };
+  } catch (err: unknown) {
+    return { success: false, message: err instanceof Error ? err.message : "Không thể kết nối integration server" };
   }
 }

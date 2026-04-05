@@ -22,7 +22,7 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  collect: (body: ITicketRequestModel, params?: any) => {
+  collect: (body: ITicketRequestModel, params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.ticket.collect}${convertParamsToString(params)}`, {
       method: "POST",
       body: JSON.stringify(body),
@@ -67,7 +67,7 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  resetTransferVotes: (params: any) => {
+  resetTransferVotes: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.ticket.resetTransferVotes}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());

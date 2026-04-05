@@ -6,7 +6,7 @@ export interface IEmailListProps {
 
 export interface IAddEmailModelProps {
   onShow: boolean;
-  data?: any;
+  data?: IEmailResponse;
   emailOrg?: string;
   bsnId?: number;
   onHide: (reload: boolean) => void;

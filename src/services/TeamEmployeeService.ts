@@ -3,13 +3,13 @@ import { convertParamsToString } from "reborn-util";
 import { ISwitchboardFilterRequest, ISwitchboardRequestModel } from "model/switchboard/SwitchboardRequestModel";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.teamEmployee.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.teamEmployee.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -26,14 +26,14 @@ export default {
     }).then((res) => res.json());
   },  
 
-  listEmployee: (params?: any, signal?: AbortSignal) => {
+  listEmployee: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.teamEmployee.listEmployee}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  updateEmployee: (body: any) => {
+  updateEmployee: (body: Record<string, unknown>) => {
     return fetch(urlsApi.teamEmployee.updateEmployee, {
       method: "POST",
       body: JSON.stringify(body),

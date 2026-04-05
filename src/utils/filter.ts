@@ -2,7 +2,7 @@ import _ from "lodash";
 import { IFilterItem, ISaveSearch } from "model/OtherModel";
 
 // Tạo param từ bộ lọc và saveSearch
-export function BuildObjectFilter(params: any, listFilter: IFilterItem[], saveSearch?: ISaveSearch) {
+export function BuildObjectFilter(params: Record<string, unknown>, listFilter: IFilterItem[], saveSearch?: ISaveSearch) {
   let result = {};
   const paramsOld = _.cloneDeep(params);
   if (listFilter) {
@@ -51,7 +51,7 @@ export function BuildObjectFilter(params: any, listFilter: IFilterItem[], saveSe
   return result;
 }
 
-export function clearFilter(params: any, listFilter: IFilterItem[]) {
+export function clearFilter(params: Record<string, unknown>, listFilter: IFilterItem[]) {
   const paramsOld = _.cloneDeep(params);
   listFilter?.map((filterItem) => {
     let paramName = filterItem.param_name;

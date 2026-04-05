@@ -142,8 +142,8 @@ interface IRawProductDetail {
 interface IRawFullResponse {
   summary:        IRawSummary;
   movementSeries: IRawMovementItem[];
-  healthStats:    any;
-  endStockSeries: any[];
+  healthStats:    Record<string, unknown>;
+  endStockSeries: Record<string, unknown>[];
   warehousePerf:  IRawWarehousePerf[];
   productDetails: IRawProductDetail[];
 }
@@ -351,7 +351,7 @@ const WarehouseReportService = {
       const json = await res.json();
       const data = Array.isArray(json.result) ? json.result
         : Array.isArray(json.result?.items) ? json.result.items : [];
-      return data.map((i: any) => ({ value: i.id as number, label: i.name as string }));
+      return data.map((i: Record<string, unknown>) => ({ value: i.id as number, label: i.name as string }));
     } catch {
       return [];
     }

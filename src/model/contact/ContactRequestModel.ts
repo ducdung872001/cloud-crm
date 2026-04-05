@@ -19,17 +19,17 @@ export interface IContactRequest {
   avatar: string;
   employeeId: number | string;
   positionId: number | string;
-  contactExtraInfos: any; //Thuộc tính thêm
+  contactExtraInfos: Record<string, unknown>[];
   bsnId: number;
-  customers: any;
-  emails: any;
+  customers: Record<string, unknown>[];
+  emails: string[];
   pipelineId: number | string;
   statusId: number | string;
   cardvisitFront: string;
   cardvisitBack: string;
   department: string;
-  coordinators: any;
-  primaryCustomerId: any;
+  coordinators: Record<string, unknown>[];
+  primaryCustomerId: number | null;
 }
 
 export interface IContactFilterRequest {
@@ -40,6 +40,6 @@ export interface IContactFilterRequest {
   page?: number;
   limit?: number;
   type?: number;
-  fmtStartEndDate?: any;
-  fmtEndEndDate?: any;
+  fmtStartEndDate?: string;
+  fmtEndEndDate?: string;
 }

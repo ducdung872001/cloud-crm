@@ -2,13 +2,13 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.notificationHistory.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.notificationHistory.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -25,14 +25,14 @@ export default {
     }).then((res) => res.json());
   },
 
-  updateUnread: (body: any) => {
+  updateUnread: (body: Record<string, unknown>) => {
     return fetch(urlsApi.notificationHistory.updateUnread, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  updateReadAll: (body: any) => {
+  updateReadAll: (body: Record<string, unknown>) => {
     return fetch(urlsApi.notificationHistory.updateReadAll, {
       method: "POST",
       body: JSON.stringify(body),

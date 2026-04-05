@@ -21,13 +21,13 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateStatus: (body: any) => {
+  updateStatus: (body: Record<string, unknown>) => {
     return fetch(urlsApi.orderRequest.updateStatus, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  confirm: (body: any) => {
+  confirm: (body: Record<string, unknown>) => {
     return fetch(urlsApi.orderRequest.confirm, {
       method: "POST",
       body: JSON.stringify(body),
@@ -43,7 +43,7 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  export: (params?: Record<string, any>, signal?: AbortSignal) => {
+  export: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.orderRequest.export}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

@@ -2,13 +2,13 @@ import { IPomResponse } from "./PomResponseModel";
 
 export interface IPomModalProps {
   onShow: boolean;
-  infoService: any;
+  infoService: Record<string, unknown>;
   onHide: (reload: boolean) => void;
 }
 
 export interface IAddPomProps {
   data: IPomResponse;
-  infoService: any;
+  infoService: Record<string, unknown>;
   onReload: (reload: boolean) => void;
 }
 
@@ -17,8 +17,8 @@ export interface ITablePomProps {
   listPom: IPomResponse[];
   titles: string[];
   dataFormat: string[];
-  dataMappingArray: any;
-  actionsTable: any;
-  setIsActiveForm: any;
+  dataMappingArray: string[];
+  actionsTable: Record<string, unknown>;
+  setIsActiveForm: (isActive: boolean) => void;
   isPermissions: boolean;
 }

@@ -25,13 +25,13 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  submitVoc: (body: any) => {
+  submitVoc: (body: Record<string, unknown>) => {
     return fetch(urlsApi.surveyForm.submitVoc, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  statistic: (id: number, params?: any) => {
+  statistic: (id: number, params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.surveyForm.statistic}/${id}/statistic${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());

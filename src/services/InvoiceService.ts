@@ -64,13 +64,13 @@ export default {
     URL.revokeObjectURL(url);
   },
 
-  createInvoice: (params: any, signal?: AbortSignal) => {
+  createInvoice: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.invoice.createInvoice}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  invoiceDetail: (params: any, signal?: AbortSignal) => {
+  invoiceDetail: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.invoice.invoiceDetail}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -131,7 +131,7 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  importUpdate: (body: Record<string, any>) => {
+  importUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.invoiceImport.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -142,7 +142,7 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  importList: (params?: Record<string, any>) => {
+  importList: (params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.invoiceImport.list}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());

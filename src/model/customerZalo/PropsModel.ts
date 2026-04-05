@@ -3,8 +3,8 @@ import { ICustomerZaloResponseModel } from "./CustomerZaloResponseModel";
 export interface ICustomerZaloListProps {
   idCustomer: number;
   customerName: string;
-  onShow: any;
-  callBack: any;
+  onShow: boolean;
+  callBack: () => void;
 }
 
 export interface IAddCustomerZaloModelProps {
@@ -13,5 +13,5 @@ export interface IAddCustomerZaloModelProps {
   data?: ICustomerZaloResponseModel;
   onHide: (reload: boolean) => void;
   callback?: (codes: object) => void;
-  type?: any;
+  type?: string;
 }

@@ -5,6 +5,6 @@ export interface IBrandNameResponseModel {
   partnerId: number;
   partnerName: string;
   partnerConfig: string;
-  status?: any;
-  whitelist?: any;
+  status?: number | string;
+  whitelist?: string;
 }

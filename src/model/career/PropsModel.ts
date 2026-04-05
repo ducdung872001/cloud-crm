@@ -4,7 +4,7 @@ export interface AddCareerModalProps {
   onShow: boolean;
   data?: ICareerResponse;
   onHide: (reload: boolean) => void;
-  custType?: any;
+  custType?: string | number;
 }
 
 export interface ICustomerCareerListProps {

@@ -20,6 +20,6 @@ export interface IWorkProjectResponseModel {
   parentId: number;
   bsnId?: number;
   lstParticipant?: IlstParticipantProps[];
-  projectTypes?: any;
-  lstProjectType?: any;
+  projectTypes?: Record<string, unknown>[];
+  lstProjectType?: Record<string, unknown>[];
 }

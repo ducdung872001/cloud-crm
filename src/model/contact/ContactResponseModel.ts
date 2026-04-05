@@ -11,8 +11,8 @@ export interface IContactResponse {
   customers: string;
   emails: string;
   bsnId: number;
-  lstCustomer: any,
-  contactExtraInfos: any;
+  lstCustomer: Record<string, unknown>[],
+  contactExtraInfos: Record<string, unknown>[];
   pipelineId: number | string,
   pipelineName: string,
   statusId:  number | string,
@@ -20,6 +20,6 @@ export interface IContactResponse {
   cardvisitFront: string;
   cardvisitBack: string;
   department: string;
-  coordinators: any;
-  primaryCustomerId: any;
+  coordinators: Record<string, unknown>[];
+  primaryCustomerId: number | null;
 }

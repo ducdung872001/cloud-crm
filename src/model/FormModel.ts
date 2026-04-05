@@ -10,20 +10,20 @@ export interface IFieldCustomize {
   name: string;
   disabled?: boolean;
   placeholder?: string;
-  onFocus?: any;
+  onFocus?: (e: React.FocusEvent) => void;
   value?: string;
-  onChange?: any;
-  onChangeContent?: any;
-  onClick?: any;
-  onBlur?: any;
-  onKeyDown?: any;
-  onKeyUp?: any;
-  onKeyPress?: any;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  onChangeContent?: (content: string) => void;
+  onClick?: (e: React.MouseEvent) => void;
+  onBlur?: (e: React.FocusEvent) => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
+  onKeyUp?: (e: React.KeyboardEvent) => void;
+  onKeyPress?: (e: React.KeyboardEvent) => void;
   className?: string;
   required?: boolean;
   readOnly?: boolean;
   maxLength?: number;
-  refElement?: any;
+  refElement?: React.RefObject<HTMLElement>;
   autoComplete?: string;
   regex?: RegExp;
   isMaxDate?: boolean;
@@ -32,7 +32,7 @@ export interface IFieldCustomize {
 
   //Dành cho input có lựa chọn
   nameOptions?: string;
-  onChangeValueOptions?: any;
+  onChangeValueOptions?: (value: string | number) => void;
 
   // Number
   suffixes?: string;
@@ -49,9 +49,9 @@ export interface IFieldCustomize {
   // Select
   isLoading?: boolean;
   isSearchable?: boolean;
-  onMenuOpen?: any;
+  onMenuOpen?: () => void;
   isFormatOptionLabel?: boolean;
-  formatOptionLabel?: any;
+  formatOptionLabel?: (option: IOption) => React.ReactNode;
   // Tags
   tagsData?: string[];
   acceptPaste?: boolean;
@@ -72,8 +72,8 @@ export interface IFieldCustomize {
   // Date
   hasSelectTime?: boolean;
   calculatorTime?: boolean;
-  minDate?: any;
-  maxDate?: any;
+  minDate?: Date | string;
+  maxDate?: Date | string;
 
   // Textarea
   fillColor?: boolean;
@@ -82,7 +82,7 @@ export interface IFieldCustomize {
   snippet?: React.ReactElement;
 
   //Lưu lại editor (trường hợp là trường soạn thảo)
-  saveEditor?: any;
+  saveEditor?: (content: string) => void;
 }
 
 export interface IValidation {
@@ -90,6 +90,6 @@ export interface IValidation {
   rules: string;
 }
 export interface IFormData {
-  values: Record<string, any>;
-  errors?: Record<string, any>;
+  values: Record<string, unknown>;
+  errors?: Record<string, unknown>;
 }

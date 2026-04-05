@@ -3,13 +3,13 @@ import { convertParamsToString } from "reborn-util";
 import { ICustomerAttributeFilterRequest, ICustomerAttributeRequest } from "model/customerAttribute/CustomerAttributeRequest";
 
 export default {
-  list: (params: any, signal?: AbortSignal) => {
+  list: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.objectAttribute.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.objectAttribute.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -40,14 +40,14 @@ export default {
     }).then((res) => res.json());
   },
 
-  checkDuplicated: (params: any, signal?: AbortSignal) => {
+  checkDuplicated: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.objectAttribute.checkDuplicated}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  updatePosition: (body: any) => {
+  updatePosition: (body: Record<string, unknown>) => {
     return fetch(urlsApi.objectAttribute.updatePosition, {
       method: "POST",
       body: JSON.stringify(body),

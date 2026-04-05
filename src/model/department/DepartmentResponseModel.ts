@@ -4,7 +4,7 @@ export interface IDepartmentResponse {
   note: string;
   leadership: number;
   status: number;
-  jobTitles?: any;
+  jobTitles?: Record<string, unknown>[];
   branchId?: number;
   parentId?: number;
   parentName?: string;

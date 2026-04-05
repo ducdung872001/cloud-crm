@@ -15,19 +15,19 @@ export interface ICampaignResponseModel {
   createdTime?: string;
   bsnId?: number;
   sales: string;
-  lstOpportunityProcess?: any,
+  lstOpportunityProcess?: Record<string, unknown>[],
   averageConvertRate?: number | string;
   totalRevenue?: number | string;
   totalCustomer?: number | string;
-  branches0?: any;
-  branches1?: any;
-  branches2?: any;
-  branches3?: any;
-  branches4?: any;
-  lstDepartment?: any;
-  lstBranch?: any;
-  coordinators?: any;
-  lstCoordinator?: any;
+  branches0?: Record<string, unknown>[];
+  branches1?: Record<string, unknown>[];
+  branches2?: Record<string, unknown>[];
+  branches3?: Record<string, unknown>[];
+  branches4?: Record<string, unknown>[];
+  lstDepartment?: Record<string, unknown>[];
+  lstBranch?: Record<string, unknown>[];
+  coordinators?: Record<string, unknown>[];
+  lstCoordinator?: Record<string, unknown>[];
   status: string | number;
   saleDistributionType?: string;
 }

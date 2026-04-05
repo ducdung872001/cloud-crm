@@ -22,7 +22,7 @@ export interface IInfoCustomerWarrantyProps {
 
 export interface IViewInfoWarrantyProps {
   data: IWarrantyResponseModel;
-  infoApproved: any;
+  infoApproved: Record<string, unknown>;
   onReload: (reload: boolean) => void;
   takeBlockRight: (reload: number) => void;
 }
@@ -38,30 +38,30 @@ export interface IMessageChatWarrantyProps {
 }
 
 export interface ITableWarrantyProps {
-  listSaveSearch: any;
-  customerFilterList: any;
+  listSaveSearch: Record<string, unknown>[];
+  customerFilterList: Record<string, unknown>[];
   params: IWarrantyFilterRequest;
-  setParams: any;
-  titles: any;
+  setParams: (params: IWarrantyFilterRequest) => void;
+  titles: string[];
   listWarranty: IWarrantyResponseModel[];
-  pagination: any;
-  dataMappingArray: any;
-  dataFormat: any;
+  pagination: Record<string, unknown>;
+  dataMappingArray: string[];
+  dataFormat: string[];
   listIdChecked: number[];
-  setListIdChecked: any;
-  bulkActionList: any;
-  actionsTable: any;
+  setListIdChecked: (ids: number[]) => void;
+  bulkActionList: Record<string, unknown>[];
+  actionsTable: Record<string, unknown>[];
   isLoading: boolean;
-  setDataWarranty: any;
-  setShowModalAdd: any;
+  setDataWarranty: (data: IWarrantyResponseModel) => void;
+  setShowModalAdd: (show: boolean) => void;
   isNoItem: boolean;
   isPermissions: boolean;
   isService: boolean;
-  dataSize: any;
+  dataSize: Record<string, unknown>;
 }
 
 export interface ITaskItemProps {
-  item: any;
+  item: Record<string, unknown>;
   index: number;
 }
 

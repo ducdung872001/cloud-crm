@@ -94,7 +94,7 @@ export interface IZaloChatResponse {
   id: number;
   messageId: string;
   src: number;
-  publishedTime: any;
+  publishedTime: string | number;
   type: string;
   message: string;
   attachments: string;
@@ -113,6 +113,6 @@ export interface IZaloChatResponse {
   fromAvatar: string;
   toDisplayName: string;
   toAvatar: string;
-  createdTime: any;
+  createdTime: string | number;
   userIdByApp: string;
 }

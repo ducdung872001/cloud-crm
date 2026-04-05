@@ -34,7 +34,7 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  filterWarehouse: (params: any, signal?: AbortSignal) => {
+  filterWarehouse: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.product.filterWarehouse}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -46,7 +46,7 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  listById: (params?: any, signal?: AbortSignal) => {
+  listById: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.product.listById}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -68,13 +68,13 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  listShared: (params?: any, signal?: AbortSignal) => {
+  listShared: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.product.listShared}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  updateContent: (body: any) => {
+  updateContent: (body: Record<string, unknown>) => {
     return fetch(urlsApi.product.updateContent, {
       method: "POST",
       body: JSON.stringify(body),
@@ -85,7 +85,7 @@ export default {
   wList: (params?: IProductFilterRequest, signal?: AbortSignal) => {
     // convertParamsToString có thể drop các giá trị số 0 vì falsy
     // Build query string thủ công để đảm bảo các numeric filter được serialize đúng
-    const base: Record<string, any> = {};
+    const base: Record<string, unknown> = {};
     if (params) {
       if (params.name !== undefined && params.name !== "") base.name = params.name;
       if (params.page !== undefined) base.page = params.page;
@@ -253,7 +253,7 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  wWebsiteSettingUpdate: (body: Record<string, any>) => {
+  wWebsiteSettingUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.product.wWebsiteSettingUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -265,7 +265,7 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  wWebsiteSettingDefaultUpdate: (body: Record<string, any>) => {
+  wWebsiteSettingDefaultUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.product.wWebsiteSettingDefaultUpdate, {
       method: "POST",
       body: JSON.stringify(body),

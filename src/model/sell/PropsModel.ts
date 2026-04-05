@@ -10,12 +10,12 @@ export interface ICardServiceListProps {
   tab: string;
   idCustomer: number;
   showModalAdd: boolean;
-  setShowModalAdd: any;
+  setShowModalAdd: (show: boolean) => void;
   dataService: ICardInvoiceServiceResponse;
-  setDataService: any;
+  setDataService: (data: ICardInvoiceServiceResponse) => void;
   dataPaymentBill: IInvoiceCreateRequest;
-  setDataPaymentBill: any;
-  setListIdCardService: any;
+  setDataPaymentBill: (data: IInvoiceCreateRequest) => void;
+  setListIdCardService: (ids: number[]) => void;
 }
 
 export interface IPaymentBillProps {
@@ -26,6 +26,6 @@ export interface IPaymentBillProps {
   listIdProduct: number[];
   listIdService: number[];
   productIdGetCode: number;
-  invoiceCode: any;
-  setInvoiceCode: any;
+  invoiceCode: string;
+  setInvoiceCode: (code: string) => void;
 }

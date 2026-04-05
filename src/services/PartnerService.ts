@@ -2,13 +2,13 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.partner.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.partner.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -43,7 +43,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  numberFieldPartner: (body) => {
+  numberFieldPartner: (body: Record<string, unknown>) => {
     return fetch(`${urlsApi.partner.numberFieldPartner}`, {
       method: "POST",
       body: JSON.stringify(body),
@@ -56,7 +56,7 @@ export default {
     });
   },
 
-  autoProcess: (body: any) => {
+  autoProcess: (body: Record<string, unknown>) => {
     return fetch(urlsApi.partner.autoProcess, {
       method: "POST",
       body: JSON.stringify(body),
@@ -70,20 +70,20 @@ export default {
   },
 
   // lấy ra các trường trong table
-  filterTable: (params?: any) => {
+  filterTable: (params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.partner.filterTable}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
 
-  partnerExchangeList: (params: any, signal?: AbortSignal) => {
+  partnerExchangeList: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.partner.partnerExchangeList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  partnerExchangeUpdate: (body: any) => {
+  partnerExchangeUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.partner.partnerExchangeUpdate, {
       method: "POST",
       body: JSON.stringify(body),

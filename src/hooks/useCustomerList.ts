@@ -23,7 +23,7 @@ interface UseCustomerListParams {
 }
 
 interface UseCustomerListReturn {
-  listCustomer: any[];
+  listCustomer: Record<string, unknown>[];
   isLoading: boolean;
   isNoItem: boolean;
   isPermissions: boolean;
@@ -51,7 +51,7 @@ export function useCustomerList({
     paramsRef.current = params;
   });
 
-  const [listCustomer, setListCustomer] = useState<any[]>([]);
+  const [listCustomer, setListCustomer] = useState<Record<string, unknown>[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);

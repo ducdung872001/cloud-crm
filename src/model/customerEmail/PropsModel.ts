@@ -3,7 +3,7 @@ import { ICustomerResponse } from "model/customer/CustomerResponseModel";
 export interface ICustomerEmailListProps {
   dataCustomer: ICustomerResponse;
   onShow: boolean;
-  callBack: any;
+  callBack: () => void;
 }
 
 export interface IAddCustomerEmailModelProps {

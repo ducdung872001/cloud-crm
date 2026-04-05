@@ -64,7 +64,7 @@ interface IRepliesProps {
   profileName: string;
   publishedTime: string;
   readUsers: string;
-  replies: any;
+  replies: IRepliesProps[];
   statusComment: number;
   _comment_id: string;
   _fanpage_id: string;

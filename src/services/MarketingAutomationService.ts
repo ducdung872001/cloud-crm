@@ -3,13 +3,13 @@ import { convertParamsToString } from "reborn-util";
 import { IKpiFilterRequest, IKpiRequest } from "model/kpi/KpiRequestModel";
 
 export default {
-  list: (params: any, signal?: AbortSignal) => {
+  list: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.ma.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -27,7 +27,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  addNode: (body: any) => {
+  addNode: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.addNode, {
       method: "POST",
       body: JSON.stringify(body),
@@ -40,7 +40,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  updateNode: (body: any) => {
+  updateNode: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.updateNode, {
       method: "POST",
       body: JSON.stringify(body),
@@ -59,54 +59,54 @@ export default {
     }).then((res) => res.json());
   },
 
-  updateConfigNode: (body: any) => {
+  updateConfigNode: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.updateConfigNode, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  approveMA: (body: any) => {
+  approveMA: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.updateStatus, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  listCustomer: (params: any, signal?: AbortSignal) => {
+  listCustomer: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.ma.listCustomer}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  listCustomerByType: (params: any, signal?: AbortSignal) => {
+  listCustomerByType: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.ma.listCustomerByType}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  listCustomerByCareer: (params: any, signal?: AbortSignal) => {
+  listCustomerByCareer: (params: Record<string, unknown>, signal?: AbortSignal) => {
     //Phân bổ gửi email theo nghề nghiệp khách hàng
     return fetch(`${urlsApi.ma.listCustomerByCareer}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  listCustomerByCustCard: (params: any, signal?: AbortSignal) => {
+  listCustomerByCustCard: (params: Record<string, unknown>, signal?: AbortSignal) => {
     //Phân bổ gửi email theo nhóm khách hàng
     return fetch(`${urlsApi.ma.listCustomerByCustCard}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  listCustomerByCustGroup: (params: any, signal?: AbortSignal) => {
+  listCustomerByCustGroup: (params: Record<string, unknown>, signal?: AbortSignal) => {
     //Tỉ lệ tương tác theo nhóm khách hàng
     return fetch(`${urlsApi.ma.listCustomerByCustGroup}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  listCustomerByDate: (params: any, signal?: AbortSignal) => {
+  listCustomerByDate: (params: Record<string, unknown>, signal?: AbortSignal) => {
     //Tỉ lệ tương theo từng ngày trong chiến dịch
     return fetch(`${urlsApi.ma.listCustomerByDate}${convertParamsToString(params)}`, {
       signal,
@@ -114,7 +114,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  detailCustomer: (params: any) => {
+  detailCustomer: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.ma.detailCustomer}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -125,7 +125,7 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  updateMapping: (body: any) => {
+  updateMapping: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.updateMapping, {
       method: "POST",
       body: JSON.stringify(body),

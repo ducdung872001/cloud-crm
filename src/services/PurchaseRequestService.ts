@@ -23,7 +23,7 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  collect: (body: any, params?: any) => {
+  collect: (body: Record<string, unknown>, params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.purchaseRequest.collect}${convertParamsToString(params)}`, {
       method: "POST",
       body: JSON.stringify(body),
@@ -80,7 +80,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  resetTransferVotes: (params: any) => {
+  resetTransferVotes: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.purchaseRequest.resetTransferVotes}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -97,43 +97,43 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  paymentBill: (params?: any, signal?: AbortSignal) => {
+  paymentBill: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.purchaseRequest.paymentBill}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  contractInfo: (params?: any, signal?: AbortSignal) => {
+  contractInfo: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.purchaseRequest.contractInfo}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  renewalContract: (body: any, params?: any) => {
+  renewalContract: (body: Record<string, unknown>, params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.purchaseRequest.renewalContract}${convertParamsToString(params)}`, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  initReceiveTask: (body: any, params?: any) => {
+  initReceiveTask: (body: Record<string, unknown>, params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.purchaseRequest.initReceiveTask}${convertParamsToString(params)}`, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateCertificate: (body: any, params?: any) => {
+  updateCertificate: (body: Record<string, unknown>, params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.purchaseRequest.updateCertificate}${convertParamsToString(params)}`, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  getJssdk: (params?: any, signal?: AbortSignal) => {
+  getJssdk: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.purchaseRequest.getJssdk}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  getProductJssdk: (params?: any, signal?: AbortSignal) => {
+  getProductJssdk: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.purchaseRequest.getProductJssdk}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

@@ -3,7 +3,7 @@ import { convertParamsToString } from "reborn-util";
 import { useEffect, useState } from "react";
 
 // Function lấy dữ liệu danh sách từ service
-export async function CallApiCommon(api: string, params?: any) {
+export async function CallApiCommon(api: string, params?: Record<string, unknown>) {
   params = { ...params};
   
   let response;

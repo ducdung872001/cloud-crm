@@ -9,13 +9,13 @@ const removeClassLevel = (key = "") => {
 };
 
 // https://docs.slatejs.org/concepts/10-serializing
-const serialize = (node: any, key = "") => {
+const serialize = (node: Record<string, unknown>, key = "") => {
   //Tham khảo cách xử lý trong EmbedNavigator
   //Ngắt theo từng khối heading-two
   let firstLevel2 = true;
   let hasLevel2 = false;
-  let classLevel1: any = localStorage.getItem(`${key}_classLevel1`);
-  let classLevel2: any = localStorage.getItem(`${key}_classLevel1`);
+  let classLevel1: string | number | null = localStorage.getItem(`${key}_classLevel1`);
+  let classLevel2: string | number | null = localStorage.getItem(`${key}_classLevel1`);
   if (classLevel1) {
     classLevel1 = parseInt(classLevel1);
   } else {
@@ -139,7 +139,7 @@ const serialize = (node: any, key = "") => {
   }
 };
 
-const deserialize = (el, markAttributes = {} as any) => {
+const deserialize = (el: ChildNode, markAttributes = {} as Record<string, boolean>) => {
   if (el.nodeType === Node.TEXT_NODE) {
     return jsx("text", markAttributes, el.textContent);
   } else if (el.nodeType !== Node.ELEMENT_NODE) {
@@ -230,7 +230,7 @@ const deserialize = (el, markAttributes = {} as any) => {
         let div = document.createElement("div");
         div.innerHTML = el.innerHTML;
         // eslint-disable-next-line prefer-const
-        let sourceTag: any = div.firstChild;
+        let sourceTag: Element | null = div.firstChild as Element | null;
         url = sourceTag ? sourceTag.getAttribute("src") : "";
       }
 
@@ -265,7 +265,7 @@ const getAlign = (el) => {
   return align;
 };
 
-const createParagraphNode = (children: any = [{ text: "" }]) =>
+const createParagraphNode = (children: { text: string }[] = [{ text: "" }]) =>
   ({
     type: "paragraph",
     children,

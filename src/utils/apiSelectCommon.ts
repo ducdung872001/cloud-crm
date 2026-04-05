@@ -3,7 +3,7 @@ import { convertParamsToString } from "reborn-util";
 import { useEffect, useState } from "react";
 
 // Function lấy dữ liệu danh sách từ service
-export async function SelectOptionEform(key: string, api: string, params?: any) {
+export async function SelectOptionEform(key: string, api: string, params?: Record<string, unknown>) {
   params = { ...params, limit: params?.limit ? params.limit : 200, page: params?.page ? params.page : 1 };
 
   let response;

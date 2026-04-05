@@ -149,7 +149,7 @@ export interface IInvoiceReturnItemResponse {
   };
   lstBoughtProduct: IReturnableProduct[];
   lstBoughtService: IReturnableService[];
-  lstBoughtCardService: any[];
+  lstBoughtCardService: Record<string, unknown>[];
 }
 
 export interface IAutofillState {
@@ -193,8 +193,8 @@ export interface ICreateReturnRequest {
     note?: string;
   };
   lstBoughtProduct: IReturnProductLine[];
-  lstService?: any[];
-  lstCardService?: any[];
+  lstService?: Record<string, unknown>[];
+  lstCardService?: Record<string, unknown>[];
 }
 
 export interface ICreateExchangeRequest extends ICreateReturnRequest {

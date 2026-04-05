@@ -13,22 +13,22 @@ export interface IViewOptManagementModalProps {
 }
 
 export interface IOptManagementListProps {
-  setType: any;
+  setType: (type: string | number) => void;
   isFullPage: boolean;
   isRegimeKanban: boolean;
   idOptManagement: number;
-  setIdOptManagement: any;
-  dataProjectReport?: any;
+  setIdOptManagement: (id: number) => void;
+  dataProjectReport?: Record<string, unknown>;
 }
 
 export interface IOptManagementItemProps {
   data: IWorkOptResponseModel;
   isShowChildrenOpt: boolean;
-  setIsShowChildrenOpt: any;
+  setIsShowChildrenOpt: (show: boolean) => void;
   idOptManagement: number;
-  setIdOptManagement: any;
-  setShowModalAdd: any;
-  showDialogConfirmDelete: any;
+  setIdOptManagement: (id: number) => void;
+  setShowModalAdd: (show: boolean) => void;
+  showDialogConfirmDelete: (id: number) => void;
   onReload: (reload: boolean) => void;
 }
 

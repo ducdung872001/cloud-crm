@@ -4,7 +4,7 @@ export interface AddZnsTemplateModalProps {
   onShow: boolean;
   data?: IZnsTemplateResponse;
   onHide: (reload: boolean) => void;
-  zaloOa: any;
+  zaloOa: Record<string, unknown>;
 }
 
 export interface IZnsTemplateListProps {

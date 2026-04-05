@@ -13,7 +13,7 @@ interface IFilterUser {
 export interface AddCustomerModalProps {
   onShow: boolean;
   data?: ICustomerResponse;
-  lstDataOrigin?: any;
+  lstDataOrigin?: unknown[];
   onHide: (reload?: boolean, nextModal?: boolean) => void;
   takeInfoCustomer?: (data: ICustomerResponse) => void;
   nameCustomer?: string;
@@ -24,7 +24,7 @@ export interface AddCustomerModalProps {
 
 export interface AddSchedulerModalProps {
   onShow: boolean;
-  dataScheduler?: any;
+  dataScheduler?: Record<string, unknown>;
   dataCustomer?: ICustomerResponse;
   onHide: (reload: boolean) => void;
 }
@@ -70,30 +70,30 @@ export interface IServiceProductListProps {
   idCustomer: number;
   // props product
   showModalAddProduct: boolean;
-  setShowModalAddProduct: any;
+  setShowModalAddProduct: (show: boolean) => void;
   dataProduct: IBoughtProductResponse;
-  setDataProduct: any;
-  dataSuggestedProduct: any;
-  setDataSuggestedProduct: any;
+  setDataProduct: (item: IBoughtProductResponse) => void;
+  dataSuggestedProduct: unknown[];
+  setDataSuggestedProduct: (items: unknown[]) => void;
   // props service
   showModalAddService: boolean;
-  setShowModalAddService: any;
+  setShowModalAddService: (show: boolean) => void;
   dataService: IBoughtServiceResponse;
-  setDataService: any;
+  setDataService: (item: IBoughtServiceResponse) => void;
   dataPaymentBill: IInvoiceCreateRequest;
-  setDataPaymentBill: any;
+  setDataPaymentBill: (item: IInvoiceCreateRequest) => void;
   // props delete all
   listIdProduct: number[];
-  setListIdProduct: any;
+  setListIdProduct: (ids: number[]) => void;
   listIdService: number[];
-  setListIdService: any;
-  setProductIdGetCode: any;
-  dataInvoice?: any;
+  setListIdService: (ids: number[]) => void;
+  setProductIdGetCode: (id: number) => void;
+  dataInvoice?: Record<string, unknown>;
   // props customer card
   showModalAddCustomerCard?: boolean;
-  setShowModalAddCustomerCard?: any;
-  dataCustomerCard?: any;
-  setDataCustomerCard?: any;
+  setShowModalAddCustomerCard?: (show: boolean) => void;
+  dataCustomerCard?: Record<string, unknown>;
+  setDataCustomerCard?: (data: Record<string, unknown>) => void;
 }
 
 export interface InfoCardServiceProps {
@@ -139,8 +139,8 @@ export interface IInfoPersonProps {
 
 export interface IViewDetailPersonProps {
   data: ICustomerResponse;
-  callback: any;
-  dataOther: any;
+  callback: () => void;
+  dataOther: Record<string, unknown>;
   deleteSignal: boolean;
   setDeleteSignal: (deleteSignal: boolean) => void;
 }
@@ -201,7 +201,7 @@ export interface IChooseTemplateSMSModelProps {
   onShow: boolean;
   idBrandname: number;
   firstIdBrandname: number;
-  callBack: any;
+  callBack: (data: unknown) => void;
   onHide: () => void;
 }
 
@@ -209,7 +209,7 @@ export interface IAddCustomerSendSMSModalProps {
   onShow: boolean;
   type?: string;
   listIdCustomer: number[];
-  callBack?: any;
+  callBack?: (data: unknown) => void;
   onHide: (isHide: boolean) => void;
 }
 
@@ -218,7 +218,7 @@ export interface IAddCustomerSendEmailModalProps {
   type?: string;
   listIdCustomer: number[];
   lstCustomer: IFilterUser[];
-  callBack?: any;
+  callBack?: (data: unknown) => void;
   onHide: () => void;
 }
 

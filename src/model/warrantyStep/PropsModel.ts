@@ -2,8 +2,8 @@ import { IWarrantyStepResponse } from "./WarrantyStepResponseModel";
 
 export interface IStepModalProps {
   onShow?: boolean;
-  data?: any;
-  infoProc: any;
+  data?: IWarrantyStepResponse;
+  infoProc: Record<string, unknown>;
   onHide?: (reload: boolean) => void;
   onReload?: (reload: boolean) => void;
 }
@@ -13,9 +13,9 @@ export interface ITableStepProps {
   listStep: IWarrantyStepResponse[];
   titles: string[];
   dataFormat: string[];
-  dataMappingArray: any;
-  actionsTable: any;
-  setIsActiveForm: any;
+  dataMappingArray: string[];
+  actionsTable: Record<string, unknown>;
+  setIsActiveForm: (isActive: boolean) => void;
   isPermissions: boolean;
 }
 

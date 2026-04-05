@@ -26,7 +26,7 @@ export interface IWarrantyResponseModel {
   statusId?: number;
   statusName?: string;
   bsnId?: number;
-  lstWarrantyProcess?: any;
+  lstWarrantyProcess?: Record<string, unknown>[];
   executorId?: number;
   processId?: number;
 }

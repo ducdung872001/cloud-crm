@@ -1,16 +1,16 @@
 declare global {
   interface Window {
     STWebRTCEmbed: {
-      init: (options: any) => void;
-      makecall: (phone: string) => Promise<any>;
-      answer: () => Promise<any>;
-      hangup: () => Promise<any>;
-      muteAndUnmute: () => Promise<any>;
-      holdAndUnhold: () => Promise<any>;
-      setDND: (status: boolean) => Promise<any>;
-      transfer: (extension: string) => Promise<any>;
-      sendDTMF: (tones: string) => Promise<any>;
-      getInformation: () => Promise<any>;
+      init: (options: Record<string, unknown>) => void;
+      makecall: (phone: string) => Promise<void>;
+      answer: () => Promise<void>;
+      hangup: () => Promise<void>;
+      muteAndUnmute: () => Promise<void>;
+      holdAndUnhold: () => Promise<void>;
+      setDND: (status: boolean) => Promise<void>;
+      transfer: (extension: string) => Promise<void>;
+      sendDTMF: (tones: string) => Promise<void>;
+      getInformation: () => Promise<Record<string, unknown>>;
     };
   }
 }

@@ -9,11 +9,10 @@ export interface IAddWorkModelProps {
   startDate?: string;
   endDate?: string;
   onHide: (reload: boolean) => void;
-  // đoạn này là tham số từ kanban fill vào
-  dataEmployeeProps?: any;
-  dataProjectProps?: any;
-  dataOptProps?: any;
-  dataManagerProps?: any;
+  dataEmployeeProps?: Record<string, unknown>;
+  dataProjectProps?: Record<string, unknown>;
+  dataOptProps?: Record<string, unknown>;
+  dataManagerProps?: Record<string, unknown>;
   statusProps?: number;
   customerId?: number;
   customerName?: string;
@@ -27,37 +26,37 @@ export interface IListWorkProps {
   isRegimeKanban: boolean;
   isRegimeReport?: boolean;
   isFullPage?: boolean;
-  handleDetailWork: any;
-  setIsDetailWork: any;
-  abortController: any;
+  handleDetailWork: (id: number) => void;
+  setIsDetailWork: (isDetail: boolean) => void;
+  abortController: AbortController;
   isExportWork: boolean;
   onHideExport: () => void;
-  showProjectManagement?: any;
-  setIsFullPage?: any;
-  dataProjectReport?: any;
+  showProjectManagement?: boolean;
+  setIsFullPage?: (isFull: boolean) => void;
+  dataProjectReport?: Record<string, unknown>;
 }
 
 export interface ITableWorkOrderProps {
-  listSaveSearch: any;
-  customerFilterList: any;
+  listSaveSearch: Record<string, unknown>[];
+  customerFilterList: Record<string, unknown>[];
   params: IWorkOrderFilterRequest;
-  setParams: any;
-  titles: any;
+  setParams: (params: IWorkOrderFilterRequest) => void;
+  titles: Record<string, unknown>[];
   listWork: IWorkOrderResponseModel[];
-  pagination: any;
-  dataMappingArray: any;
-  dataFormat: any;
+  pagination: Record<string, unknown>;
+  dataMappingArray: Record<string, unknown>[];
+  dataFormat: Record<string, unknown>;
   listIdChecked: number[];
-  setListIdChecked: any;
-  bulkActionList: any;
-  actionsTable: any;
+  setListIdChecked: (ids: number[]) => void;
+  bulkActionList: Record<string, unknown>[];
+  actionsTable: Record<string, unknown>[];
   isLoading: boolean;
-  setIdWork: any;
-  setShowModalAdd: any;
+  setIdWork: (id: number) => void;
+  setShowModalAdd: (show: boolean) => void;
   isNoItem: boolean;
 }
 export interface ITableWorkInColapsedProps {
-  paramsFilter: any;
+  paramsFilter: Record<string, unknown>;
   isOpen: boolean;
   setIdWork?: (id: number) => void;
   setShowModalAdd?: (show: boolean) => void;
@@ -70,8 +69,8 @@ export interface ITableWorkInColapsedProps {
 export interface IKanbanWorkProps {
   isKanban: boolean;
   params: IWorkOrderFilterRequest;
-  setParams: any;
-  customerFilterList: any;
+  setParams: (params: IWorkOrderFilterRequest) => void;
+  customerFilterList: Record<string, unknown>[];
   data: IWorkOrderResponseModel[];
   changeValueFilterByKanban: (data: string) => void;
   onReload: (reload: boolean) => void;
@@ -111,44 +110,39 @@ export interface IAddRelatedWorkModelProps {
 }
 
 export interface ITaskItemProps {
-  item: any;
+  item: Record<string, unknown>;
   index: number;
   totalTask?: number;
-  column: any;
+  column: Record<string, unknown>;
 }
 
-// Cập nhật tiến độ công việc
 export interface IAddWorkInprogressModalProps {
   onShow: boolean;
   idWork: number;
   onHide: (reload: boolean) => void;
 }
 
-// Hiển thị danh sách cập nhật tiến độ công việc
 export interface IViewWorkInprogressModalProps {
   onShow: boolean;
   idWork: number;
   onHide: () => void;
 }
 
-//Hiển thị modal chi tiết công việc
 export interface IViewWorkModalProps {
   idWork: number;
   onShow: boolean;
   onHide: (reload: boolean) => void;
 }
 
-// Cập nhật đánh giá công việc
 export interface IAddWorkRatingModalProps {
   idWork: number;
   onShow: boolean;
   disabledRating: boolean;
   numberRating: number;
-  data: any;
+  data: Record<string, unknown>;
   onHide: (reload: boolean) => void;
 }
 
-// Hiển thị modal hướng dẫn kéo thả công việc
 export interface ISupportTaskModalProps {
   onShow: boolean;
   onHide: () => void;

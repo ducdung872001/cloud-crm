@@ -3,26 +3,26 @@ import { IContractFilterRequest, IContractRequest } from "./ContractRequestModel
 
 export interface AddContractModalProps {
   onShow?: boolean;
-  data?: any;
-  setDataPaymentBill?: any;
-  dataProject?: any;
+  data?: IContractResponse;
+  setDataPaymentBill?: (data: Record<string, unknown>) => void;
+  dataProject?: Record<string, unknown>;
   idCustomer?: number;
   title?: string;
   onHide?: (reload: boolean) => void;
-  setContractId?: any;
-  setTab?:any;
+  setContractId?: (id: number) => void;
+  setTab?: (tab: string) => void;
   contractId?: number;
-  pipelineUrl?: any;
-  infoFile?: any;
-  setInfoFile?: any;
-  listService?: any;
-  setListService?: any;
-  listLogValue?: any;
-  fieldData?: any;
-  setFieldData?: any;
+  pipelineUrl?: string;
+  infoFile?: Record<string, unknown>;
+  setInfoFile?: (info: Record<string, unknown>) => void;
+  listService?: Record<string, unknown>[];
+  setListService?: (services: Record<string, unknown>[]) => void;
+  listLogValue?: Record<string, unknown>[];
+  fieldData?: Record<string, unknown>;
+  setFieldData?: (data: Record<string, unknown>) => void;
   showModalLog?: boolean;
-  setShowModalLog?: any;
-  callback?: any;
+  setShowModalLog?: (show: boolean) => void;
+  callback?: () => void;
 }
 
 export interface IContractListProps {
@@ -31,9 +31,9 @@ export interface IContractListProps {
 
 export interface IKanbanConstractProps {
   params: IContractFilterRequest;
-  setParams: any;
-  contractFilterList: any;
-  listApproachContract: any;
+  setParams: (params: IContractFilterRequest) => void;
+  contractFilterList: Record<string, unknown>[];
+  listApproachContract: Record<string, unknown>[];
   data: IContractResponse[];
   onReload: (reload: boolean) => void;
 }

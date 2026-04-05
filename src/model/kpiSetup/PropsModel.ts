@@ -2,8 +2,8 @@ import { IKpiSetupResponse } from "./KpiSetupResponseModel";
 
 export interface IKpiSetupModalProps {
   onShow?: boolean;
-  data?: any;
-  infoKpi: any;
+  data?: IKpiSetupResponse;
+  infoKpi: Record<string, unknown>;
   onHide?: (reload: boolean) => void;
   onReload?: (reload: boolean) => void;
 }
@@ -13,9 +13,9 @@ export interface ITableKpiSetupProps {
   listKpiSetup: IKpiSetupResponse[];
   titles: string[];
   dataFormat: string[];
-  dataMappingArray: any;
-  actionsTable: any;
-  setIsActiveForm: any;
+  dataMappingArray: string[];
+  actionsTable: Record<string, unknown>;
+  setIsActiveForm: (isActive: boolean) => void;
   isPermissions: boolean;
 }
 

@@ -26,7 +26,7 @@ export default {
     }).then((res) => res.json());
   },  
 
-  updateStatus: (body: any) => {
+  updateStatus: (body: Record<string, unknown>) => {
     return fetch(urlsApi.switchboard.updateStatus, {
       method: "POST",
       body: JSON.stringify(body),

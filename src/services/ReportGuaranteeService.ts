@@ -3,7 +3,7 @@ import { convertParamsToString } from "reborn-util";
 import { IAnalysisFilterRequest } from "model/analysis/AnalysisRequestModel";
 
 export default {
-  reportGuarantee: (params?: any, signal?: AbortSignal) => {
+  reportGuarantee: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.reportGuarantee.statistical}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

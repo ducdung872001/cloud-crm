@@ -30,6 +30,6 @@ export interface IMaterialRequest {
   type?: string;
   expiredPeriod?: number;
   supplier?: string;
-  productExtraInfos?: any;
-  documents?: any;
+  productExtraInfos?: Record<string, unknown>[];
+  documents?: Record<string, unknown>[];
 }

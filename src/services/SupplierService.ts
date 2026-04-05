@@ -2,19 +2,19 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.supplier.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.supplier.update, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateActive: (body: any) => {
+  updateActive: (body: Record<string, unknown>) => {
     return fetch(urlsApi.supplier.updateActive, {
       method: "POST",
       body: JSON.stringify(body),
@@ -32,7 +32,7 @@ export default {
   },
 
   // API người liên hệ
-  listContact: (params?: any, signal?: AbortSignal) => {
+  listContact: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.supplier.listContact}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

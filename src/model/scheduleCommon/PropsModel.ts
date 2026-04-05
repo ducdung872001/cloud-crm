@@ -13,5 +13,5 @@ export interface IFilterCalendarModalProps {
   onHide: () => void;
   idEmployee: number;
   filterCalendar: IFilterCalendar;
-  setFilterCalendar: any;
+  setFilterCalendar: (filter: IFilterCalendar) => void;
 }

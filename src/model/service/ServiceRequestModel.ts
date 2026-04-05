@@ -24,6 +24,6 @@ export interface IServiceRequestModel {
   parentId: number;
   active: number;
   syncStatus: number;
-  serviceExtraInfos?: any;
-  documents?: any;
+  serviceExtraInfos?: Record<string, unknown>[];
+  documents?: Record<string, unknown>[];
 }

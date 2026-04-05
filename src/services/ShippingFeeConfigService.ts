@@ -36,7 +36,7 @@ const ShippingFeeConfigService = {
    * Lấy cấu hình phí ship hiện tại của bsnId (từ JWT)
    * GET /logistics/fee-config
    */
-  get: (signal?: AbortSignal): Promise<any> =>
+  get: (signal?: AbortSignal): Promise<Record<string, unknown>> =>
     fetch(urlsApi.shippingFeeConfig.get, { method: "GET", signal })
       .then((r) => r.json()),
 
@@ -44,7 +44,7 @@ const ShippingFeeConfigService = {
    * Lưu cấu hình phí ship (replace all)
    * POST /logistics/fee-config/save
    */
-  save: (body: IShippingFeeConfigSaveRequest): Promise<any> =>
+  save: (body: IShippingFeeConfigSaveRequest): Promise<Record<string, unknown>> =>
     fetch(urlsApi.shippingFeeConfig.save, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -63,7 +63,7 @@ const ShippingFeeConfigService = {
   suggest: (params: {
     provinceName?: string;
     orderValue?: number;
-  }): Promise<any> => {
+  }): Promise<Record<string, unknown>> => {
     const qs = new URLSearchParams();
     if (params.provinceName) qs.set("provinceName", params.provinceName);
     if (params.orderValue != null) qs.set("orderValue", String(params.orderValue));

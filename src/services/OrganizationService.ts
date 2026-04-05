@@ -2,13 +2,13 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.organization.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  customerUploadList: (params?: any, signal?: AbortSignal) => {
+  customerUploadList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.organization.customerUploadList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

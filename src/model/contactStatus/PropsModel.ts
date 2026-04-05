@@ -2,13 +2,13 @@ import { IContactStatusResponse } from "./ContactStatusResponseModel";
 
 export interface IContactStatusModalProps {
   onShow: boolean;
-  infoPipeline: any;
+  infoPipeline: Record<string, unknown>;
   onHide: (reload: boolean) => void;
 }
 
 export interface IAddContactStatusProps {
   data: IContactStatusResponse;
-  infoPipeline: any;
+  infoPipeline: Record<string, unknown>;
   onReload: (reload: boolean) => void;
 }
 
@@ -17,8 +17,8 @@ export interface ITableContactStatusProps {
   listContactStatus: IContactStatusResponse[];
   titles: string[];
   dataFormat: string[];
-  dataMappingArray: any;
-  actionsTable: any;
-  setIsActiveForm: any;
+  dataMappingArray: string[];
+  actionsTable: Record<string, unknown>;
+  setIsActiveForm: (isActive: boolean) => void;
   isPermissions: boolean;
 }

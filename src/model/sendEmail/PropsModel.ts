@@ -7,6 +7,6 @@ export interface ISendEmail {
   listIdCustomerProps?: number[];
   idSendEmail?: number;
   paramCustomerProps?: ICustomerSchedulerFilterRequest;
-  customerIdList?: any;
+  customerIdList?: number[];
   type?: string;
 }

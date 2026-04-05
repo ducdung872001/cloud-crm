@@ -25,9 +25,9 @@ export const uploadDocumentFormData = (
   data,
   onSuccess,
   onError,
-  onProgress?: any,
+  onProgress?: (progress: number) => void,
   type?: "customer" | "partner" | "contract" | "guarantee" | "contact" | "contractWarranty" | "processData",
-  parmas?: any
+  parmas?: Record<string, unknown>
 ) => {
   if (data) {
     let formData = new FormData();

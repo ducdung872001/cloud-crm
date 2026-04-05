@@ -17,14 +17,14 @@ export interface ICampaignOpportunityResponseModel {
   employeePhone?: string;
   endDate: string;
   expectedRevenue: number;
-  lstOpportunityProcess?: any;
+  lstOpportunityProcess?: Record<string, unknown>[];
   refId: number;
   startDate?: string;
   saleId?: number;
-  opportunity?: any;
+  opportunity?: Record<string, unknown>;
   opportunityId?: number;
   saleName?: string;
-  saleAvatar?: any;
+  saleAvatar?: string;
   sourceId: number;
   sourceName?: string;
   status?: number | string;
@@ -32,7 +32,7 @@ export interface ICampaignOpportunityResponseModel {
   updatedTime?: string;
   percent?: number;
   approachName?: string;
-  activities?: any,
+  activities?: Record<string, unknown>[],
   note?: string;
   pipelineId?: number;
   pipelineName?: string;
@@ -47,7 +47,7 @@ export interface IOpportunityExchangeResponseModal {
   employeeId: number;
   employeeName: string;
   loginEmployeeId: number;
-  viewers: any;
+  viewers: Record<string, unknown>[];
   coyId: number;
 }
 

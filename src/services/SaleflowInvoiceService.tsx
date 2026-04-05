@@ -2,34 +2,34 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.saleflowInvoice.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.saleflowInvoice.update, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateApproach: (body: any) => {
+  updateApproach: (body: Record<string, unknown>) => {
     return fetch(urlsApi.saleflowInvoice.updateApproach, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  updateApproachSuccess: (body: any) => {
+  updateApproachSuccess: (body: Record<string, unknown>) => {
     return fetch(urlsApi.saleflowInvoice.updateApproachSuccess, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  updateApproachCancel: (body: any) => {
+  updateApproachCancel: (body: Record<string, unknown>) => {
     return fetch(urlsApi.saleflowInvoice.updateApproachCancel, {
       method: "POST",
       body: JSON.stringify(body),
@@ -47,7 +47,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  invoiceExchange: (params: any) => {
+  invoiceExchange: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.saleflowInvoice.invoiceExchange}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -59,7 +59,7 @@ export default {
     }).then((res) => res.json());
   },
   // thêm mới trao đổi 
-  addInvoiceExchange: (body) => {
+  addInvoiceExchange: (body: Record<string, unknown>) => {
     return fetch(urlsApi.saleflowInvoice.addInvoiceExchange, {
       method: "POST",
       body: JSON.stringify(body),

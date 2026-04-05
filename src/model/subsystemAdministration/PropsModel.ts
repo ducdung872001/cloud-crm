@@ -14,7 +14,7 @@ export interface IShowModalSubsystemProps {
   onShow: boolean;
   data: ISubsystemAdministrationResponse;
   currentPosition: number;
-  takePosition: any;
-  setTakePosition: any;
+  takePosition: number;
+  setTakePosition: (position: number) => void;
   onHide: (reload: boolean) => void;
 }

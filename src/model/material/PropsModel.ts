@@ -2,7 +2,7 @@ export interface AddMaterialProps {
   onShow: boolean;
   idMaterial: number;
   onHide: (reload: boolean) => void;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export interface IMaterialListProps {

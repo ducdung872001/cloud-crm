@@ -29,7 +29,7 @@ export interface ITicketResponseModel {
   creatorUserId: number;
   customerAddress: string;
   customerCode: string;
-  lstTicketProcess: any;
+  lstTicketProcess: Record<string, unknown>[];
   status: number;
   executorId: number;
   processId: number;

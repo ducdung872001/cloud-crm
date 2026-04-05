@@ -36,7 +36,7 @@ export interface IFilterItem {
   value_extra?: string | number; // Chỉ dành cho lọc date from -> to
   label_1?: string; // Chỉ dành cho lọc date from -> to
   label_2?: string; // Chỉ dành cho lọc date from -> to
-  params?: any; // Chỉ dành cho select lấy dữ liệu từ server
+  params?: Record<string, unknown>; // Chỉ dành cho select lấy dữ liệu từ server
   isAsync?: boolean; // Chỉ dành cho select muốn search từ serve
   disabled_delete?: boolean;
   is_fmt_text?: boolean;
@@ -86,7 +86,7 @@ export interface IValidate {
 export interface IMenuItem {
   title: string;
   path: string;
-  icon?: any;
+  icon?: React.ReactElement;
   target?: string;
   is_active?: boolean;
   children?: IMenuItem[];
@@ -105,7 +105,7 @@ export interface IMenuTab {
 // Router
 export interface IRouter {
   path: string;
-  component: any;
+  component: React.ComponentType;
   permission?: string[];
 }
 

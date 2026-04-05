@@ -6,8 +6,8 @@ export interface IContractFilterRequest {
   page?: number;
   limit?: number;
   type?: number;
-  fmtStartEndDate?: any;
-  fmtEndEndDate?: any;
+  fmtStartEndDate?: string;
+  fmtEndEndDate?: string;
 }
 
 export interface IContractFieldFilterRequest {
@@ -29,19 +29,19 @@ export interface IContractRequest {
   endDate: Date | string;
   adjustDate: Date | string;
   dealValue: number | string;
-  employeeId: number | string; //Người phụ trách
+  employeeId: number | string;
   employeeName?: string;
-  categoryId: number | string; //Loại hợp đồng
+  categoryId: number | string;
   categoryName: string;
-  pipelineId: number | string; //Loại hợp đồng
+  pipelineId: number | string;
   pipelineName: string;
   stageId: number;
   stageName: string;
   branchId: number;
   bsnId?: number;
-  contractExtraInfos?: any; //Thuộc tính thêm
-  timestamp?: any;
-  peopleInvolved?: any;
+  contractExtraInfos?: Record<string, unknown>[];
+  timestamp?: number;
+  peopleInvolved?: Record<string, unknown>[];
   custType?: number;
 
   projectId?: number;
@@ -59,7 +59,7 @@ export interface IContractRequest {
   actualArea?: number | string;
   lobbyArea?: number | string;
   totalArea?: number | string;
-  rentalTypes?: any;
+  rentalTypes?: Record<string, unknown>[];
   rteId?: number;
   rentalTypeName?: string;
 
@@ -75,14 +75,14 @@ export interface IContractRequest {
   template?: string;
   requestId?: number;
   requestCode?: string;
-  products?: any;
+  products?: Record<string, unknown>[];
   opportunityId?: number;
 }
 
 export interface IContractAlertRequest {
   id: number;
-  endDate: any;
-  alertConfig: any;
+  endDate: string;
+  alertConfig: Record<string, unknown>;
 }
 
 export interface IUpdateStageRequest {
@@ -90,14 +90,14 @@ export interface IUpdateStageRequest {
   stageId: number;
   name?: string;
   pipelineId?: number;
-  signDate?: any;
+  signDate?: string;
   taxCode?: string;
-  affectedDate?: any;
+  affectedDate?: string;
   branchId?: number;
-  contractExtraInfos?: any;
+  contractExtraInfos?: Record<string, unknown>[];
   contractNo?: string;
   customerId?: number;
   dealValue: number | string;
   employeeId?: number;
-  endDate?: any;
+  endDate?: string;
 }

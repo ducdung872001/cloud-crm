@@ -18,8 +18,8 @@ export interface IWorkOrderFilterRequest {
   employeeId?: number;
   participantId?: number;
   isPriority?: number;
-  biddingName?: any;
-  filters?: any;
+  biddingName?: string;
+  filters?: Record<string, unknown>;
 }
 export interface IGroupsFilterRequest {
   groupBy?: string;
@@ -85,7 +85,6 @@ export interface IUpdateStatusRequest {
   status: number;
 }
 
-// trao đổi công việc
 export interface IWorkExchangeFilterRequest {
   worId?: number;
   page?: number;
@@ -109,8 +108,8 @@ export interface IMessageChatWorkRequestModal {
 
 export interface IEmojiChatProps {
   onShow: boolean;
-  dataMessage: any;
-  setDataMessage: any;
+  dataMessage: Record<string, unknown>;
+  setDataMessage: (data: Record<string, unknown>) => void;
   onHide: (reload: boolean) => void;
 }
 

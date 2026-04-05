@@ -64,7 +64,7 @@ export default function App() {
   const [isShowChatBot, setIsShowChatBot] = useState<boolean>(false);
   const [dataBeauty, setDataBeauty] = useState(null);
   const [countUnread, setCountUnread] = useState(0);
-  const [newNotificationPayload, setNewNotificationPayload] = useState<any>(null);
+  const [newNotificationPayload, setNewNotificationPayload] = useState<Record<string, unknown> | null>(null);
 
   // ────────────────────────────────────────────────────────────────────────────
 
@@ -180,9 +180,9 @@ export default function App() {
           const defaultRedirect = result?.defaultRedirect;
           defaultRedirectRef.current = defaultRedirect || "/create_sale_add";
 
-          const endDate: any = new Date(changeResult?.endDate);
-          const currentDate: any = new Date();
-          const remainingTimeInMilliseconds = endDate - currentDate;
+          const endDate = new Date(changeResult?.endDate);
+          const currentDate = new Date();
+          const remainingTimeInMilliseconds = endDate.getTime() - currentDate.getTime();
           const remainingDays = Math.ceil((remainingTimeInMilliseconds || 0) / (1000 * 60 * 60 * 24));
 
           setDataExpired({

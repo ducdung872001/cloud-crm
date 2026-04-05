@@ -21,21 +21,21 @@ export default {
     }).then((res) => res.json());
   },
   //API thêm quyền cho gói
-  packagePermissionAdd: (body: any) => {
+  packagePermissionAdd: (body: Record<string, unknown>) => {
     return fetch(urlsApi.rolePermission.packagePermissionAdd, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
   //API thêm quyền cho nhóm quyền
-  permissionRoleAdd: (body: any) => {
+  permissionRoleAdd: (body: Record<string, unknown>) => {
     return fetch(urlsApi.rolePermission.permissionRoleAdd, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
   //API xóa quyền cho nhóm quyền
-  permissionRoleDelete: (body: any) => {
+  permissionRoleDelete: (body: Record<string, unknown>) => {
     return fetch(urlsApi.rolePermission.permissionRoleDelete, {
       method: "DELETE",
       body: JSON.stringify(body),
@@ -50,7 +50,7 @@ export default {
   },
 
   //danh sách yêu cầu xin quyền truy cập (mình xin quyền)
-  requestPermissionSource: (params: any, signal?: AbortSignal) => {
+  requestPermissionSource: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.rolePermission.requestPermissionSource}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -58,7 +58,7 @@ export default {
   },
 
   //gửi yêu cầu xin phê duyệt
-  updateRequestPermission: (body: any) => {
+  updateRequestPermission: (body: Record<string, unknown>) => {
     return fetch(urlsApi.rolePermission.updateRequestPermission, {
       method: "POST",
       body: JSON.stringify(body),
@@ -73,7 +73,7 @@ export default {
   },
 
   //danh sách cấp quyền truy cập (đối tác xin quyền)
-  requestPermissionTarget: (params: any, signal?: AbortSignal) => {
+  requestPermissionTarget: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.rolePermission.requestPermissionTarget}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -81,7 +81,7 @@ export default {
   },
 
   //phê duyệt yêu cầu truy cập
-  updateApprovePermission: (body: any) => {
+  updateApprovePermission: (body: Record<string, unknown>) => {
     return fetch(urlsApi.rolePermission.updateApprovePermission, {
       method: "POST",
       body: JSON.stringify(body),
@@ -89,7 +89,7 @@ export default {
   },
 
   //từ chối yêu cầu truy cập
-  updateRejectPermission: (body: any) => {
+  updateRejectPermission: (body: Record<string, unknown>) => {
     return fetch(urlsApi.rolePermission.updateRejectPermission, {
       method: "POST",
       body: JSON.stringify(body),

@@ -156,7 +156,7 @@ export function useReconciliationList({
 // ];
 
 // Đây là hàm để nhận đầu vào là dữ liệu giống như sampleResponse và trả về dữ liệu đã được map sang đúng format của MOCK_BANK_STMTS để dễ đổ ra UI
-function mapReconciliation(detail): any {
+function mapReconciliation(detail: Record<string, unknown>[]) {
   if (!detail || detail.length === 0) return [];
   return detail.map((item) => ({
     date: item.date, // giữ nguyên định dạng ngày tháng như API trả về

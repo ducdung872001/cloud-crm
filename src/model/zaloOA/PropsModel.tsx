@@ -4,8 +4,8 @@ export interface ITableZaloOAProps {
   listZaloOA: IZaloOAResponse[];
   isLoading: boolean;
   isPermissionsZalo: boolean;
-  dataPagination: any;
-  callback: any;
+  dataPagination: Record<string, unknown>;
+  callback: () => void;
 }
 
 export interface LoginZaloModalProps {

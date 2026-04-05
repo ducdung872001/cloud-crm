@@ -8,33 +8,33 @@ import WorkOrderService from "services/WorkOrderService";
 
 export type BuildListFieldAssignParams = {
   // data/state
-  dataManager: any;
-  dataWorkProject: any;
-  dataEmployee: any;
-  dataTimeWorkLoad: any;
-  listOptionTimeWorkLoad: any[];
+  dataManager: Record<string, unknown> | null;
+  dataWorkProject: Record<string, unknown> | null;
+  dataEmployee: Record<string, unknown> | null;
+  dataTimeWorkLoad: Record<string, unknown> | null;
+  listOptionTimeWorkLoad: Record<string, unknown>[];
   isOptionTimeWorkLoad: boolean;
 
   // derived/validate
   startDay: number;
   endDay: number;
   validateWordLoad: boolean;
-  formData: any;
+  formData: Record<string, unknown>;
 
   // refs
-  refContainerTimeWorkLoad: any;
-  refOptionTimeWorkLoad: any;
+  refContainerTimeWorkLoad: React.RefObject<HTMLDivElement>;
+  refOptionTimeWorkLoad: React.RefObject<HTMLUListElement>;
 
   // handlers (UI/state update)
-  formatOptionLabelManager: (opt: any) => React.ReactNode;
-  formatOptionLabelEmployee: (opt: any) => React.ReactNode;
+  formatOptionLabelManager: (opt: Record<string, unknown>) => React.ReactNode;
+  formatOptionLabelEmployee: (opt: Record<string, unknown>) => React.ReactNode;
 
-  handleChangeValueManager: (e: any) => void;
-  handleChangeValueEmployee: (e: any) => void;
-  handleChangeValueWorkLoad: (e: any) => void;
+  handleChangeValueManager: (e: unknown) => void;
+  handleChangeValueEmployee: (e: unknown) => void;
+  handleChangeValueWorkLoad: (e: unknown) => void;
 
   setIsOptionTimeWorkLoad: (v: boolean) => void;
-  setDataTimeWorkLoad: (v: any) => void;
+  setDataTimeWorkLoad: (v: Record<string, unknown>) => void;
 };
 
 export function buildListFieldAssign(p: BuildListFieldAssignParams): IFieldCustomize[] {
@@ -65,7 +65,7 @@ export function buildListFieldAssign(p: BuildListFieldAssignParams): IFieldCusto
     setDataTimeWorkLoad,
   } = p;
 
-  const loadProjectAssignees = async (_search: any, _loadedOptions: any, { page }: { page: number }) => {
+  const loadProjectAssignees = async (_search: string, _loadedOptions: unknown, { page }: { page: number }) => {
     if (!dataWorkProject?.value) return { options: [], hasMore: false };
 
     const response = await WorkOrderService.projectEmployeeAssignees({
@@ -78,7 +78,7 @@ export function buildListFieldAssign(p: BuildListFieldAssignParams): IFieldCusto
       const hasMore = !!raw?.loadMoreAble;
 
       return {
-        options: list.map((item: any) => ({
+        options: list.map((item: Record<string, unknown>) => ({
           value: item.id,
           label: item.name,
           avatar: item.avatar,

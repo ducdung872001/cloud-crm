@@ -12,22 +12,22 @@ export interface ITemplateZaloListProps {
 }
 
 export interface ITableTemplateZaloProps {
-  params: any;
-  setParams: any;
-  listSaveSearch: any;
-  listFilterItem: any;
+  params: Record<string, unknown>;
+  setParams: (params: Record<string, unknown>) => void;
+  listSaveSearch: Record<string, unknown>[];
+  listFilterItem: Record<string, unknown>[];
   isLoading: boolean;
   listTemplateZalo: ITemplateZaloResponseModel[];
   titles: string[];
-  pagination: any;
+  pagination: Record<string, unknown>;
   dataFormat: string[];
-  dataMappingArray: any;
+  dataMappingArray: string[];
   listIdChecked: number[];
-  bulkActionItems: any;
-  setListIdChecked: any;
-  actionsTable: any;
+  bulkActionItems: Record<string, unknown>[];
+  setListIdChecked: (ids: number[]) => void;
+  actionsTable: Record<string, unknown>[];
   isPermissions: boolean;
-  setDataTemplateZalo: any;
+  setDataTemplateZalo: (data: ITemplateZaloResponseModel) => void;
   isNoItem: boolean;
-  setIsAddEditTemplateZalo: any;
+  setIsAddEditTemplateZalo: (show: boolean) => void;
 }

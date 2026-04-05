@@ -3,13 +3,13 @@ import { convertParamsToString } from "reborn-util";
 
 export default {
   // config
-  lstConfig: (params: any, signal?: AbortSignal) => {
+  lstConfig: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.supportCommon.supportConfigLst}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  updateConfig: (body: any) => {
+  updateConfig: (body: Record<string, unknown>) => {
     return fetch(urlsApi.supportCommon.supportConfigUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -26,13 +26,13 @@ export default {
     }).then((res) => res.json());
   },
   //link
-  lstLink: (params: any, signal?: AbortSignal) => {
+  lstLink: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.supportCommon.supportLinkLst}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  updateLink: (body: any) => {
+  updateLink: (body: Record<string, unknown>) => {
     return fetch(urlsApi.supportCommon.supportLinkUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -44,23 +44,23 @@ export default {
     }).then((res) => res.json());
   },
   //object
-  lstObject: (params: any, signal?: AbortSignal) => {
+  lstObject: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.supportCommon.supportObjectLst}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  takeObject: (params: any) => {
+  takeObject: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.supportCommon.takeObject}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
-  checkApproved: (params: any) => {
+  checkApproved: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.supportCommon.checkApproved}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
-  updateObject: (body: any) => {
+  updateObject: (body: Record<string, unknown>) => {
     return fetch(urlsApi.supportCommon.supportObjectUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -72,13 +72,13 @@ export default {
     }).then((res) => res.json());
   },
   //log
-  lstLog: (params: any, signal?: AbortSignal) => {
+  lstLog: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.supportCommon.supportLogLst}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  updateLog: (body: any) => {
+  updateLog: (body: Record<string, unknown>) => {
     return fetch(urlsApi.supportCommon.supportLogUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -91,7 +91,7 @@ export default {
   },
 
   // cập nhật trạng thái
-  updateStatusSupport: (body: any) => {
+  updateStatusSupport: (body: Record<string, unknown>) => {
     return fetch(urlsApi.supportCommon.updateStatusSupport, {
       method: "POST",
       body: JSON.stringify(body),
@@ -99,19 +99,19 @@ export default {
   },
 
   // đoạn này là action confirm nút
-  processDone: (body: any) => {
+  processDone: (body: Record<string, unknown>) => {
     return fetch(urlsApi.supportCommon.processDone, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  processReceive: (body: any) => {
+  processReceive: (body: Record<string, unknown>) => {
     return fetch(urlsApi.supportCommon.processReceive, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  processRejected: (body: any) => {
+  processRejected: (body: Record<string, unknown>) => {
     return fetch(urlsApi.supportCommon.processRejected, {
       method: "POST",
       body: JSON.stringify(body),

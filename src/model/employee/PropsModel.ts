@@ -20,6 +20,6 @@ export interface ICreateAccountEmployeeProps {
 export interface IViewNewPasswordProps {
   onShow: boolean;
   password: string;
-  data?: any;
+  data?: IEmployeeResponse;
   onHide: (reload?: boolean) => void;
 }

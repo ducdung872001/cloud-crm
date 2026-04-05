@@ -58,12 +58,12 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  checkLogin: (params: any) => {
+  checkLogin: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.user.checkLogin}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
-  detailTimeLogin: (params: any) => {
+  detailTimeLogin: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.user.detailTimeLogin}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -73,7 +73,7 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  list: (params: any, signal?: AbortSignal) => {
+  list: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.user.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

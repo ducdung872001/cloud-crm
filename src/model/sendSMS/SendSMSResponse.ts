@@ -16,5 +16,5 @@ export interface ISendSMSResponseModel {
   createdTime?: string;
   timeType: number;
   total?: number;
-  recurrenceTime?: any;
+  recurrenceTime?: string;
 }

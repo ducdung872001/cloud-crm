@@ -73,7 +73,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  updateEmployee: (body: any) => {
+  updateEmployee: (body: Record<string, unknown>) => {
     return fetch(urlsApi.workOrder.updateEmployee, {
       method: "POST",
       body: JSON.stringify(body),
@@ -87,7 +87,7 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  listPause: (params: any, signal?: AbortSignal) => {
+  listPause: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.workOrder.listPause}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -96,7 +96,7 @@ export default {
   //
 
   //Từ chối xử lý công việc
-  updateReject: (body: any) => {
+  updateReject: (body: Record<string, unknown>) => {
     return fetch(urlsApi.workOrder.updateReject, {
       method: "POST",
       body: JSON.stringify(body),
@@ -186,7 +186,7 @@ export default {
     }).then((res) => res.json());
   },
   // lấy danh sách người nhận việc trong dự án
-  projectEmployeeAssignees: (params: any) => {
+  projectEmployeeAssignees: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.workOrder.projectEmployeeAssignees}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -204,7 +204,7 @@ export default {
     }).then((res) => res.json());
   },
   // thêm mới trao đổi công việc
-  addWorkExchange: (body) => {
+  addWorkExchange: (body: Record<string, unknown>) => {
     return fetch(urlsApi.workOrder.addWorkExchange, {
       method: "POST",
       body: JSON.stringify(body),
@@ -232,14 +232,14 @@ export default {
   },
 
   //export OLA
-  exportOLA: (params: any) => {
+  exportOLA: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.workOrder.exportOLA}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
 
   //export SLA
-  exportSLA: (params: any) => {
+  exportSLA: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.workOrder.exportSLA}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -261,7 +261,7 @@ export default {
   },
 
   // Giao công việc đàm phán, thương thảo hợp đồng mẫu
-  saveNegotiationWork: (body: any) => {
+  saveNegotiationWork: (body: Record<string, unknown>) => {
     return fetch(urlsApi.workOrder.saveNegotiationWork, {
       method: "PUT",
       body: JSON.stringify(body),
@@ -269,7 +269,7 @@ export default {
   },
 
   // hoàn thành công việc đàm phán, thương thảo hợp đồng mẫu
-  completeNegotiationWork: (body: any) => {
+  completeNegotiationWork: (body: Record<string, unknown>) => {
     return fetch(urlsApi.workOrder.completeNegotiationWork, {
       method: "POST",
       body: JSON.stringify(body),

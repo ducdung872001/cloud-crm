@@ -14,9 +14,9 @@ export interface IContactListProps {
 
 export interface IKanbanContactProps {
   params: IContactFilterRequest;
-  setParams: any;
-  contractFilterList: any;
-  listStatusContact: any;
+  setParams: (params: IContactFilterRequest) => void;
+  contractFilterList: Record<string, unknown>[];
+  listStatusContact: Record<string, unknown>[];
   data: IContactResponse[];
   onReload: (reload: boolean) => void;
 }

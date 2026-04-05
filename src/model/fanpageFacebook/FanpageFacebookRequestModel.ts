@@ -54,5 +54,5 @@ export interface IReplyFanpageCommentRequest {
 export interface IFanpageChatSendAttachmentRequest {
   fanpageId: string;
   receiverId: string;
-  file: any;
+  file: File;
 }

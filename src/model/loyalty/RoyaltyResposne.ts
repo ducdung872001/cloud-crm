@@ -52,7 +52,7 @@ export interface ILoyaltySegmentResposne {
   /** JSON string array quyền lợi từ DB */
   benefits?: string;
   // UI-only fields được merge từ getType()
-  icon?: any;
+  icon?: React.ReactElement;
   backgroundColor?: string;
   borderColor?: string;
   desList?: string[];

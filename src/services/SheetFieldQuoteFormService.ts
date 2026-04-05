@@ -2,13 +2,13 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  lst: (params?: any, signal?: AbortSignal) => {
+  lst: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.sheetFieldQuoteForm.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.sheetFieldQuoteForm.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -24,7 +24,7 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  updatePostion: (body: any) => {
+  updatePostion: (body: Record<string, unknown>) => {
     return fetch(urlsApi.sheetFieldQuoteForm.updatePosition, {
       method: "POST",
       body: JSON.stringify(body),

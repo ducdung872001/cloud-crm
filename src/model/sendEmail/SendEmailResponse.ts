@@ -19,5 +19,5 @@ export interface ISendEmailResponseModel {
   title: string;
   total?: number;
   isTracked: number;
-  recurrenceTime?: any;
+  recurrenceTime?: string;
 }

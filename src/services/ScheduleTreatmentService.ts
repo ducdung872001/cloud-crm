@@ -16,7 +16,7 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateKafka: (body: any) => {
+  updateKafka: (body: Record<string, unknown>) => {
     return fetch(urlsApi.scheduleTreatment.updateKafka, {
       method: "POST",
       body: JSON.stringify(body),

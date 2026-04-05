@@ -2,13 +2,13 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.saleflowApproach.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.saleflowApproach.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -24,21 +24,21 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  updateSLA: (body: any) => {
+  updateSLA: (body: Record<string, unknown>) => {
     return fetch(urlsApi.saleflowApproach.updateSLA, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  activityList: (params?: any, signal?: AbortSignal) => {
+  activityList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.saleflowApproach.activityList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  updateActivity: (body: any) => {
+  updateActivity: (body: Record<string, unknown>) => {
     return fetch(urlsApi.saleflowApproach.updateActivity, {
       method: "POST",
       body: JSON.stringify(body),
@@ -50,7 +50,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  updateSaleflowSale: (body: any) => {
+  updateSaleflowSale: (body: Record<string, unknown>) => {
     return fetch(urlsApi.saleflowApproach.updateSaleflowSale, {
       method: "POST",
       body: JSON.stringify(body),

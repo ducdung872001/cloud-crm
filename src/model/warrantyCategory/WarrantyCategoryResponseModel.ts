@@ -4,5 +4,5 @@ export interface IWarrantyCategoryResponse {
   position: number;
   type: number;
   bsnId: number;
-  status: any;
+  status: number | string;
 }

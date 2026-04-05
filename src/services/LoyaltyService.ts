@@ -3,8 +3,8 @@ import { convertParamsToString } from "reborn-util";
 
 // Giữ nguyên toàn bộ các interface + method hiện có, chỉ thêm 2 method export
 
-const cleanParams = (params: any) => {
-  const result: any = {};
+const cleanParams = (params: Record<string, unknown>) => {
+  const result: Record<string, unknown> = {};
   Object.keys(params).forEach((key) => {
     if (params[key] !== undefined && params[key] !== null && params[key] !== "") {
       result[key] = params[key];
@@ -47,12 +47,12 @@ function todayStr(): string {
 
 export default {
   // ─── Loyalty Program ──────────────────────────────────────────────────────
-  list: (params: any, signal?: AbortSignal) => {
+  list: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.ma.listLoyaltyProgram}${convertParamsToString(params)}`, {
       method: "GET", signal,
     }).then((r) => r.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.updateLoyaltyProgram, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -66,13 +66,13 @@ export default {
   },
 
   // ─── Point Ledger ─────────────────────────────────────────────────────────
-  listLoyaltyPointLedger: (params: any, signal?: AbortSignal) => {
+  listLoyaltyPointLedger: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(
       `${urlsApi.ma.listLoyaltyPointLedger}${convertParamsToString(cleanParams(params))}`,
       { method: "GET", signal }
     ).then((r) => r.json());
   },
-  updateLoyaltyPointLedger: (body: any) => {
+  updateLoyaltyPointLedger: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.updateLoyaltyPointLedger, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -86,7 +86,7 @@ export default {
   },
 
   // ─── Reward ───────────────────────────────────────────────────────────────
-  listLoyaltyReward: (params: any, signal?: AbortSignal) => {
+  listLoyaltyReward: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.ma.listLoyaltyReward}${convertParamsToString(params)}`, {
       method: "GET", signal,
     }).then((r) => r.json());
@@ -96,7 +96,7 @@ export default {
       method: "GET",
     }).then((r) => r.json());
   },
-  updateLoyaltyReward: (body: any) => {
+  updateLoyaltyReward: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.updateLoyaltyReward, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -110,12 +110,12 @@ export default {
   },
 
   // ─── Segment ──────────────────────────────────────────────────────────────
-  listLoyaltySegment: (params: any, signal?: AbortSignal) => {
+  listLoyaltySegment: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.ma.listLoyaltySegment}${convertParamsToString(params)}`, {
       method: "GET", signal,
     }).then((r) => r.json());
   },
-  updateLoyaltySegment: (body: any) => {
+  updateLoyaltySegment: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.updateLoyaltySegment, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -129,7 +129,7 @@ export default {
   },
 
   // ─── Wallet ───────────────────────────────────────────────────────────────
-  listLoyaltyWallet: (params: any, signal?: AbortSignal) => {
+  listLoyaltyWallet: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.ma.listLoyaltyWallet}${convertParamsToString(params)}`, {
       method: "GET", signal,
     }).then((r) => r.json());
@@ -139,14 +139,14 @@ export default {
       method: "GET",
     }).then((r) => r.json());
   },
-  createLoyaltyWallet: (body: any) => {
+  createLoyaltyWallet: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.createLoyaltyWallet, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }).then((r) => r.json());
   },
-  fluctuatePoint: (body: any) => {
+  fluctuatePoint: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.fluctuatePoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -156,14 +156,14 @@ export default {
   getLoyaltyConfig: () => {
     return fetch(urlsApi.ma.getLoyaltyConfig, { method: "GET" }).then((r) => r.json());
   },
-  updateLoyaltyConfig: (body: any) => {
+  updateLoyaltyConfig: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.updateLoyaltyConfig, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }).then((r) => r.json());
   },
-  consumePoint: (body: any) => {
+  consumePoint: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.consumePoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -198,7 +198,7 @@ export default {
     description?: string,
     signal?: AbortSignal
   ): Promise<void> => {
-    const params: Record<string, any> = {};
+    const params: Record<string, unknown> = {};
     if (customerId)  params.customerId  = customerId;
     if (description) params.description = description;
     const qs = convertParamsToString(params);

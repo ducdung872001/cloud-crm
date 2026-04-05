@@ -130,7 +130,7 @@ const VatInvoiceService = {
    * để tự động điền danh sách hàng hóa vào form xuất HĐVAT.
    * Endpoint: GET /bizapi/sales/invoice/get-for-vat?code=...
    */
-  getInvoiceByCode: (code: string): Promise<any> => {
+  getInvoiceByCode: (code: string): Promise<Record<string, unknown>> => {
     return fetch(`${PREFIX_SALES}/invoice/get-for-vat?code=${encodeURIComponent(code.trim())}`, {
       method: "GET",
     }).then(r => r.json());
@@ -140,7 +140,7 @@ const VatInvoiceService = {
    * Xem trước hóa đơn nháp – trả về base64 PDF hoặc HTML preview.
    * POST /integration/sinvoice/query/preview-draft?supplierTaxCode=...
    */
-  previewDraft: (supplierTaxCode: string, body: VatInvoiceRequest): Promise<any> => {
+  previewDraft: (supplierTaxCode: string, body: VatInvoiceRequest): Promise<Record<string, unknown>> => {
     return fetch(
       `${PREFIX_INTEGRATION}/query/preview-draft?supplierTaxCode=${encodeURIComponent(supplierTaxCode)}`,
       {
@@ -156,7 +156,7 @@ const VatInvoiceService = {
    * POST /integration/sinvoice/invoice/create
    * Response: { code: 0, result: { id, invoiceNo, transactionUuid, reservationCode, status } }
    */
-  createInvoice: (body: VatInvoiceRequest): Promise<any> => {
+  createInvoice: (body: VatInvoiceRequest): Promise<Record<string, unknown>> => {
     return fetch(`${PREFIX_INTEGRATION}/invoice/create`, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
@@ -169,7 +169,7 @@ const VatInvoiceService = {
    * POST /integration/sinvoice/ext/send-email-customer
    * Dùng sau khi createInvoice thành công và có transactionUuid.
    */
-  sendEmailToCustomer: (body: SendEmailRequest): Promise<any> => {
+  sendEmailToCustomer: (body: SendEmailRequest): Promise<Record<string, unknown>> => {
     return fetch(`${PREFIX_INTEGRATION}/ext/send-email-customer`, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
@@ -182,7 +182,7 @@ const VatInvoiceService = {
    * POST /integration/sinvoice/invoice/adjust
    * adjustmentType = "5" → điều chỉnh tăng/giảm.
    */
-  adjustInvoice: (body: VatAdjustmentRequest): Promise<any> => {
+  adjustInvoice: (body: VatAdjustmentRequest): Promise<Record<string, unknown>> => {
     return fetch(`${PREFIX_INTEGRATION}/invoice/adjust`, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
@@ -194,7 +194,7 @@ const VatInvoiceService = {
    * Lấy danh sách mẫu + ký hiệu hóa đơn của doanh nghiệp.
    * POST /integration/sinvoice/ext/all-templates
    */
-  getAllTemplates: (taxCode: string): Promise<any> => {
+  getAllTemplates: (taxCode: string): Promise<Record<string, unknown>> => {
     return fetch(`${PREFIX_INTEGRATION}/ext/all-templates`, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
@@ -206,7 +206,7 @@ const VatInvoiceService = {
    * Lấy cấu hình VAT đã lưu.
    * GET /integration/sinvoice/config/get
    */
-  getConfig: (): Promise<any> => {
+  getConfig: (): Promise<Record<string, unknown>> => {
     return fetch(`${PREFIX_INTEGRATION}/config/get`, { method: "GET" })
       .then(r => r.json());
   },
@@ -215,7 +215,7 @@ const VatInvoiceService = {
    * Lưu cấu hình VAT.
    * POST /integration/sinvoice/config/save
    */
-  saveConfig: (body: VatConfig): Promise<any> => {
+  saveConfig: (body: VatConfig): Promise<Record<string, unknown>> => {
     return fetch(`${PREFIX_INTEGRATION}/config/save`, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },

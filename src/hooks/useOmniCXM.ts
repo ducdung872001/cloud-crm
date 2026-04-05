@@ -1,5 +1,19 @@
 import { useEffect, useRef, useCallback } from "react";
 
+interface STOmniCXMEmbedAppType {
+  init: (opts: Record<string, string>) => void;
+  sendMessage: (payload: { room_id: string; message: string }) => void;
+  hideFloatButton: () => void;
+  showFloatButton: () => void;
+  [key: string]: unknown;
+}
+
+declare global {
+  interface Window {
+    STOmniCXMEmbedApp?: STOmniCXMEmbedAppType;
+  }
+}
+
 const OMNICXM_CSS_URL = "https://omni-api.worldfone.cloud/embed_app/application/public/css/embed.css";
 const OMNICXM_JS_URL  = "https://omni-api.worldfone.cloud/embed_app/application/embed.js";
 
@@ -33,7 +47,7 @@ interface UseOmniCXMOptions {
  * Trả về true nếu gửi thành công qua OmniCXM, false nếu chưa có API.
  */
 export function omniSendMessage(roomId: string, text: string): boolean {
-  const app = (window as any).STOmniCXMEmbedApp;
+  const app = window.STOmniCXMEmbedApp;
   if (app?.sendMessage) {
     try {
       app.sendMessage({ room_id: roomId, message: text });
@@ -86,7 +100,7 @@ export function useOmniCXM({
 
   // ── 3. Init + ẩn floating button nếu cần ─────────────────────────────────
   const initApp = useCallback(() => {
-    const app = (window as any).STOmniCXMEmbedApp;
+    const app = window.STOmniCXMEmbedApp;
     if (!app) {
       console.error("[OmniCXM] STOmniCXMEmbedApp chưa sẵn sàng");
       return;

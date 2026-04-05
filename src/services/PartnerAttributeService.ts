@@ -2,13 +2,13 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params: any, signal?: AbortSignal) => {
+  list: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.partnerAttribute.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.partnerAttribute.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -20,14 +20,14 @@ export default {
     }).then((res) => res.json());
   },
 
-  listAll: (params?: any, signal?: AbortSignal) => {
+  listAll: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.partnerAttribute.listAll}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  checkDuplicated: (params: any, signal?: AbortSignal) => {
+  checkDuplicated: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.partnerAttribute.checkDuplicated}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

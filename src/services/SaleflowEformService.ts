@@ -3,7 +3,7 @@ import { convertParamsToString } from "reborn-util";
 
 export default {
 
-  SaleflowEformUpdate: (body: any) => {
+  SaleflowEformUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.saleflow.saleflowEformUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -11,7 +11,7 @@ export default {
   },
 
 
-  SaleflowEformDetail: (params?: any, signal?: AbortSignal) => {
+  SaleflowEformDetail: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.saleflow.saleflowEformDetail}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

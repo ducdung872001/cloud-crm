@@ -6,7 +6,7 @@ export interface IEmployeeFilterRequest {
   departmentId?: number;
   page?: number;
   limit?: number;
-  LstId?: any;
+  LstId?: number[];
 }
 
 export interface IEmployeeRequest {
