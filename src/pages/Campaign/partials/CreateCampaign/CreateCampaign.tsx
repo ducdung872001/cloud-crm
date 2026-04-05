@@ -57,6 +57,7 @@ import SettingPineline from "./SettingPipeline/SettingPineline";
 import { set } from "lodash";
 import BusinessProcessService from "services/BusinessProcessService";
 import moment from "moment";
+import { useBranchHierarchy, useSalesAllocation, useKpiConfig, useScoringSystem, useActionSettings, useModalState } from "./hooks";
 
 interface IDataApproach {
   id?: number;
@@ -93,8 +94,74 @@ export default function CreateCampaign() {
   const focusedElement = useActiveElement();
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
+
+  // Custom hooks
+  const {
+    checkFieldBranch, setcheckFieldBranch,
+    listBranchId, setListBranchId,
+    listBranchValue, setListBranchValue,
+    listBranchDeleted0, setListBranchDelete0,
+    listBranchDeleted1, setListBranchDelete1,
+    listBranchDeleted2, setListBranchDelete2,
+    listBranchDeleted3, setListBranchDelete3,
+  } = useBranchHierarchy();
+
+  const {
+    listSales, setListSales,
+    allSales, setAllSales,
+    selectAllSales, setSelectAllSales,
+    checkFieldSales, setCheckFieldSales,
+    lstIdSale, setLstIdSale,
+  } = useSalesAllocation();
+
+  const {
+    tabKpi, setTabKpi,
+    dataKpi, setDataKpi,
+    dataKpiGoal, setDataKpiGoal,
+    sumWeight, setSumWeight,
+    kayId, setKayId,
+    dataKpiEmployee, setDataKpiEmployee,
+    isLoadingKpiEmployee, setIsLoadingKpiEmployee,
+    kpiEmployeeData, setKpiEmployeeData,
+    showModalConfigKpi, setShowModalConfigKpi,
+    paramsKpi, setParamsKpi,
+    pagination, setPagination,
+  } = useKpiConfig();
+
+  const {
+    scoreSetting, setScoreSetting,
+    scoreEmployee, setScoreEmployee,
+    timeExpireContact, setTimeExpireContact,
+    timeExpireFinish, setTimeExpireFinish,
+    minusPoints, setMinusPoints,
+    plusPoints, setPlusPoints,
+    lstAnnotate, setLstAnnotate,
+    valueAnnotate, setValueAnnotate,
+  } = useScoringSystem();
+
+  const {
+    dataStepAction, setDataStepAction,
+    listActionEmail, setListActionEmail,
+    listActionZalo, setListActionZalo,
+    listActionSms, setListActionSms,
+    listActionCall, setListActionCall,
+    settingEmail, setSettingEmail,
+    settingZalo, setSettingZalo,
+    settingSms, setSettingSms,
+    settingCall, setSettingCall,
+  } = useActionSettings();
+
+  const {
+    modalSettingAction, setModalSettingAction,
+    approachData, setApproachData,
+    modalSettingSLA, setModalSettingSLA,
+    dataApproach, setDataApproach,
+    isFilter, setIsFilter,
+    dataRule, setDataRule,
+    indexRule, setIndexRule,
+    showDialog, setShowDialog,
+    contentDialog, setContentDialog,
+  } = useModalState();
 
   //Chia làm 2 bước cấu hình (1 - cài đặt thông tin cơ bản chiến dịch, 2 - Quy trình bán hàng)
   const [setupStep, setSetupStep] = useState<number>(1);
@@ -1171,9 +1238,6 @@ export default function CreateCampaign() {
     setDataSourceProvider(newArr);
   };
 
-    const [checkFieldBranch, setcheckFieldBranch] = useState<boolean>(false);
-
-
   ///phương pháp thứ 2
   const defaultFormDataMethod2 = {
     id: null,
@@ -1200,23 +1264,9 @@ export default function CreateCampaign() {
     }
   }, [dataMethod2, formData.values.saleDistributionType]);
 
-  // lấy chi nhanh
-  const [listBranchId, setListBranchId] = useState({
-    level0: [],
-    level1: [],
-    level2: [],
-    level3: [],
-    level4: [],
-  });
+  // lấy chi nhanh - states moved to useBranchHierarchy hook
 
   useEffect(() => {
-    // setFormData({ ...formData, values: { ...formData?.values,
-    //                                     branches0: JSON.stringify(listBranchId.level0),
-    //                                     branches1: JSON.stringify(listBranchId.level1),
-    //                                     branches2: JSON.stringify(listBranchId.level2),
-    //                                     branches3: JSON.stringify(listBranchId.level3),
-    //                                     branches4: JSON.stringify(listBranchId.level4),
-    //                                     }});
     setDataMethod2({
       ...dataMethod2,
       branches0: listBranchId.level0,
@@ -1226,82 +1276,6 @@ export default function CreateCampaign() {
       branches4: listBranchId.level4,
     });
   }, [listBranchId]);
-
-  const [listBranchValue, setListBranchValue] = useState([
-    {
-      id: "level_0",
-      value: [],
-    },
-  ]);
-
-  const [listBranchDeleted0, setListBranchDelete0] = useState([]);
-
-  const [listBranchDeleted1, setListBranchDelete1] = useState([]);
-
-  const [listBranchDeleted2, setListBranchDelete2] = useState([]);
-
-  const [listBranchDeleted3, setListBranchDelete3] = useState([]);
-
-  useEffect(() => {
-    if (listBranchValue && listBranchValue.length > 0) {
-      let idArray_0 = [];
-      let idArray_1 = [];
-      let idArray_2 = [];
-      let idArray_3 = [];
-      let idArray_4 = [];
-
-      listBranchValue.map((item) => {
-        if (item.id === "level_0") {
-          idArray_0 =
-            item.value.length > 0
-              ? item.value.map((el) => {
-                  return el.value;
-                })
-              : [];
-        }
-        if (item.id === "level_1") {
-          idArray_1 =
-            item.value.length > 0
-              ? item.value.map((el) => {
-                  return el.value;
-                })
-              : [];
-        }
-        if (item.id === "level_2") {
-          idArray_2 =
-            item.value.length > 0
-              ? item.value.map((el) => {
-                  return el.value;
-                })
-              : [];
-        }
-        if (item.id === "level_3") {
-          idArray_3 =
-            item.value.length > 0
-              ? item.value.map((el) => {
-                  return el.value;
-                })
-              : [];
-        }
-        if (item.id === "level_4") {
-          idArray_4 =
-            item.value.length > 0
-              ? item.value.map((el) => {
-                  return el.value;
-                })
-              : [];
-        }
-
-        setListBranchId({
-          level0: idArray_0,
-          level1: idArray_1,
-          level2: idArray_2,
-          level3: idArray_3,
-          level4: idArray_4,
-        });
-      });
-    }
-  }, [listBranchValue]);
 
   const loadedOptionBranchLevel_0 = async (search, loadedOptions, { page }) => {
     const param: IBeautyBranchFilterRequest = {
@@ -1791,12 +1765,7 @@ export default function CreateCampaign() {
     }
   };
 
-  // const [listSales, setListSales] = useState<IDataSales[]>([{ employee: null, rank: { label: "Khá", value: 6 } }]);
-  const [listSales, setListSales] = useState<IDataSales[]>([]);
-  const [allSales, setAllSales] = useState([{ employeeId: -1, rank: -1 }]);
-  const [selectAllSales, setSelectAllSales] = useState(false);
-  const [checkFieldSales, setCheckFieldSales] = useState<boolean>(false);
-  const [lstIdSale, setLstIdSale] = useState([]);
+  // Sales states moved to useSalesAllocation hook
 
   //! đoạn này xử lý vấn đề lấy ra danh sách nhân viên
   const loadedOptionSales = async (search, loadedOptions, { page }) => {
@@ -1870,19 +1839,6 @@ export default function CreateCampaign() {
       })
     );
   };
-
-  useEffect(() => {
-    if (listSales.length > 0) {
-      const result = listSales.map((item) => {
-        if (item.employee) {
-          return item.employee?.value;
-        } else {
-          return [];
-        }
-      });
-      setLstIdSale([...result]);
-    }
-  }, [listSales]);
 
   //! Xóa đi một người bán
   const handleRemoveSale = (idx) => {
@@ -2024,9 +1980,7 @@ export default function CreateCampaign() {
     setFormData({ ...formData, values: { ...formData?.values, saleDistributionSetting: saleDistributionSetting } });
   }, [saleDistributionSetting]);
 
-  const [isFilter, setIsFilter] = useState(false);
-  const [dataRule, setDataRule] = useState(null);
-  const [indexRule, setIndexRule] = useState(null);
+  // isFilter, dataRule, indexRule moved to useModalState hook
 
   const onSubmit = async () => {
     // e && e.preventDefault();
@@ -2379,24 +2333,14 @@ export default function CreateCampaign() {
     });
   };
 
-  //Cài đặt hành động
-  const [modalSettingAction, setModalSettingAction] = useState(false);
-  const [approachData, setApproachData] = useState(null);
-
-  //Cài đặt SLA
-  const [modalSettingSLA, setModalSettingSLA] = useState(false);
-  const [dataApproach, setDataApproach] = useState(null);
+  //Cài đặt hành động - states moved to useModalState hook
 
   ///step 3
   /**
    * Lấy danh sách action step 3
    */
 
-  const [dataStepAction, setDataStepAction] = useState([]);
-  const [listActionEmail, setListActionEmail] = useState([]);
-  const [listActionZalo, setListActionZalo] = useState([]);
-  const [listActionSms, setListActionSms] = useState([]);
-  const [listActionCall, setListActionCall] = useState([]);
+  // dataStepAction, listAction* states moved to useActionSettings hook
 
   const loadCampaignStep3 = async (campaignId: number) => {
     const body: ICampaignApproachFilterRequest = {
@@ -2436,15 +2380,6 @@ export default function CreateCampaign() {
     }
   };
 
-  const [settingEmail, setSettingEmail] = useState([
-    {
-      id: "",
-      action: null,
-      time: null,
-      point: "",
-    },
-  ]);
-
   const loadedOptionEmailAction = async (search, loadedOptions, { page }) => {
     const param: Record<string, unknown> = {
       type: "email",
@@ -2473,15 +2408,6 @@ export default function CreateCampaign() {
 
     return { options: [], hasMore: false };
   };
-
-  const [settingZalo, setSettingZalo] = useState([
-    {
-      id: "",
-      action: null,
-      time: null,
-      point: "",
-    },
-  ]);
 
   const loadedOptionZaloAction = async (search, loadedOptions, { page }) => {
     const param: Record<string, unknown> = {
@@ -2512,15 +2438,6 @@ export default function CreateCampaign() {
     return { options: [], hasMore: false };
   };
 
-  const [settingSms, setSettingSms] = useState([
-    {
-      id: "",
-      action: null,
-      time: null,
-      point: "",
-    },
-  ]);
-
   const loadedOptionSmsAction = async (search, loadedOptions, { page }) => {
     const param: Record<string, unknown> = {
       type: "sms",
@@ -2550,15 +2467,6 @@ export default function CreateCampaign() {
 
     return { options: [], hasMore: false };
   };
-
-  const [settingCall, setSettingCall] = useState([
-    {
-      id: "",
-      action: null,
-      time: null,
-      point: "",
-    },
-  ]);
 
   const loadedOptionCallAction = async (search, loadedOptions, { page }) => {
     const param: Record<string, unknown> = {
@@ -2725,8 +2633,6 @@ export default function CreateCampaign() {
     }
   }, [dataStepAction, listActionEmail, listActionZalo, listActionCall]);
 
-  const [scoreSetting, setScoreSetting] = useState([]);
-
   useEffect(() => {
     const data = [];
     settingEmail.map((item) => {
@@ -2809,33 +2715,7 @@ export default function CreateCampaign() {
 
   //step 4
 
-  const [scoreEmployee, setScoreEmployee] = useState(0);
-  const [timeExpireContact, setTimeExpireContact] = useState(0);
-  const [timeExpireFinish, setTimeExpireFinish] = useState(0);
-
-  const [minusPoints, setMinusPoints] = useState({
-    getLead: 0,
-    leadFail: 0,
-    leadTakeBack: {
-      point: 0,
-      expireContact: {
-        day: 0,
-        hour: 0,
-        minute: 0,
-      },
-      expireFinish: {
-        day: 0,
-        hour: 0,
-        minute: 0,
-      },
-    },
-    sla: 0,
-  });
-
-  const [plusPoints, setPlusPoints] = useState({
-    getContact: 0,
-    leadSuccess: 0,
-  });
+  // scoreEmployee, timeExpire*, minusPoints, plusPoints moved to useScoringSystem hook
 
   const loadCampaignStep4 = async (campaignId: number) => {
     const body: ICampaignApproachFilterRequest = {
@@ -2924,24 +2804,6 @@ export default function CreateCampaign() {
     }
   };
 
-  useEffect(() => {
-    const day = minusPoints.leadTakeBack.expireContact.day;
-    const hour = minusPoints.leadTakeBack.expireContact.hour;
-    const minute = minusPoints.leadTakeBack.expireContact.minute;
-
-    const seconds = day * 24 * 60 * 60 + hour * 60 * 60 + minute * 60;
-    setTimeExpireContact(seconds);
-  }, [minusPoints.leadTakeBack.expireContact]);
-
-  useEffect(() => {
-    const day = minusPoints.leadTakeBack.expireFinish.day;
-    const hour = minusPoints.leadTakeBack.expireFinish.hour;
-    const minute = minusPoints.leadTakeBack.expireFinish.minute;
-
-    const seconds = day * 24 * 60 * 60 + hour * 60 * 60 + minute * 60;
-    setTimeExpireFinish(seconds);
-  }, [minusPoints.leadTakeBack.expireFinish]);
-
   const onSubmitStep4 = async () => {
     if (!scoreEmployee) {
       showToast("Vui lòng nhập Điểm tín dụng/nhân viên", "error");
@@ -3013,23 +2875,8 @@ export default function CreateCampaign() {
 
   //step 5
 
-  const [tabKpi, setTabKpi] = useState(1);
-  const [dataKpi, setDataKpi] = useState(null);
-  const [dataKpiGoal, setDataKpiGoal] = useState([]);
+  // tabKpi, dataKpi, dataKpiGoal, sumWeight, kayId moved to useKpiConfig hook
 
-  const [sumWeight, setSumWeight] = useState(0);
-
-  const [kayId, setKayId] = useState(null);
-
-  useEffect(() => {
-    if (dataKpiGoal.length > 0) {
-      let sumWeight = 0;
-      dataKpiGoal.map((item) => {
-        sumWeight += item.weight;
-      });
-      setSumWeight(sumWeight);
-    }
-  }, [dataKpiGoal]);
   //kiểm tra chiến dịch có kpi chưa
   const checkKpiCampaign = async (campaignId: number) => {
     const body = {
@@ -3157,9 +3004,7 @@ export default function CreateCampaign() {
     }
   };
 
-  //lấy danh sách kpi của nhân viên
-  const [dataKpiEmployee, setDataKpiEmployee] = useState([]);
-  const [isLoadingKpiEmployee, setIsLoadingKpiEmployee] = useState(false);
+  //lấy danh sách kpi của nhân viên - states moved to useKpiConfig hook
 
   const getListEmployeeKpi = async (id: number) => {
     const body = {
@@ -3188,23 +3033,7 @@ export default function CreateCampaign() {
     setIsLoadingKpiEmployee(false);
   };
 
-  const [paramsKpi, setParamsKpi] = useState({
-    name: "",
-  });
-
-  const [pagination, setPagination] = useState<PaginationProps>({
-    ...DataPaginationDefault,
-    name: "kpi cho nhân viên",
-    isChooseSizeLimit: true,
-    setPage: (page) => {
-      setParamsKpi((prevParams) => ({ ...prevParams, page: page }));
-    },
-    chooseSizeLimit: (limit) => {
-      setParamsKpi((prevParams) => ({ ...prevParams, limit: limit }));
-    },
-  });
-
-  const [kpiEmployeeData, setKpiEmployeeData] = useState(null);
+  // paramsKpi, pagination, kpiEmployeeData moved to useKpiConfig hook
 
   const titles = ["STT", "Tên nhân viên", "Phòng ban", "Chi nhánh", "Chỉ tiêu"];
 
@@ -3250,8 +3079,6 @@ export default function CreateCampaign() {
     ];
   };
 
-  const [showModalConfigKpi, setShowModalConfigKpi] = useState(false);
-
   const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
@@ -3287,40 +3114,10 @@ export default function CreateCampaign() {
     setShowDialog(true);
   };
 
-  // đoạn này dùng cho phân loại khách hàng
-  const defaultValues = [
-    {
-      name: "Lạnh",
-      color: "var(--primary-color-70)",
-      during: "0 - 25",
-      code: "cold",
-    },
-    {
-      name: "Mát",
-      color: "var(--primary-color)",
-      during: "26 - 50",
-      code: "cool",
-    },
-    {
-      name: "Ấm",
-      color: "var(--warning-color)",
-      during: "51 - 75",
-      code: "warn",
-    },
-    {
-      name: "Nóng",
-      color: "var(--error-darker-color)",
-      during: "76 - 100",
-      code: "hot",
-    },
-  ];
-
-  const [lstAnnotate, setLstAnnotate] = useState(defaultValues);
+  // lstAnnotate, valueAnnotate moved to useScoringSystem hook
 
   const step = 1; // Bước nhảy
   const pushable = step * 10; // Khoảng giữa các giá trị được kéo
-
-  const [valueAnnotate, setValueAnnotate] = useState([25, 50, 75]);
 
   const handleChangeAnnotate = (newValues) => {
     const newAnnotations = [];
