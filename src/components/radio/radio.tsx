@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import "./radio.scss";
 
 export interface RadioProps {
@@ -13,7 +13,7 @@ export interface RadioProps {
   onClick?: React.MouseEventHandler<HTMLLabelElement>;
   className?: string;
 }
-export default function Radio(props: RadioProps) {
+function Radio(props: RadioProps) {
   const { label, onChange, onClick, name, value, id, disabled, checked, defaultChecked, className } = props;
 
   return (
@@ -39,3 +39,5 @@ export default function Radio(props: RadioProps) {
     </div>
   );
 }
+
+export default memo(Radio);

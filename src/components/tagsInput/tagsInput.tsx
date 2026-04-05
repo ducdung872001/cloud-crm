@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, {useState, useRef, memo} from "react";
 import Icon from "components/icon";
 import "./tagsInput.scss";
 
@@ -12,7 +12,7 @@ interface TagsInputProps {
   label?: string;
 }
 
-export default function TagsInput(props: TagsInputProps) {
+function TagsInput(props: TagsInputProps) {
   const { tagsData, label, addTag, removeTag, placeholder, acceptPaste, maxLength } = props;
   const [errorShow, setErrorShow] = useState<boolean>(false);
   const [focusInput, setFocusInput] = useState<boolean>(false);
@@ -110,3 +110,5 @@ export default function TagsInput(props: TagsInputProps) {
     </div>
   );
 }
+
+export default memo(TagsInput);

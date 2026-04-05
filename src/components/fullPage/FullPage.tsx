@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import urls from "configs/urls";
 import TitleAction from "components/titleAction/titleAction";
 
@@ -12,7 +12,7 @@ interface FullPageProps {
   callback?: () => void;
 }
 
-export default function FullPage(props: FullPageProps) {
+function FullPage(props: FullPageProps) {
   const { title, to, isChildrenTitle, titleChildren, className, children, callback } = props;
   return (
     <div className="page-content page-common">
@@ -21,3 +21,5 @@ export default function FullPage(props: FullPageProps) {
     </div>
   );
 }
+
+export default memo(FullPage);

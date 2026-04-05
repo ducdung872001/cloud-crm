@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import "./badge.scss";
 
 interface BadgeProps {
@@ -7,7 +7,7 @@ interface BadgeProps {
   variant: "error" | "success" | "warning" | "primary" | "secondary" | "transparent" | "done" | "wait-collect";
 }
 
-export default function Badge(props: BadgeProps) {
+function Badge(props: BadgeProps) {
   const { text, variant, style } = props;
   return (
     <span className={`base-badge base-badge--${variant}`} style={style}>
@@ -15,3 +15,5 @@ export default function Badge(props: BadgeProps) {
     </span>
   );
 }
+
+export default memo(Badge);

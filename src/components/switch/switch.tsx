@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import "./switch.scss";
 
 interface SwitchProps {
@@ -11,7 +11,7 @@ interface SwitchProps {
   onClick?: React.MouseEventHandler<HTMLLabelElement>;
 }
 
-export default function Switch(props: SwitchProps) {
+function Switch(props: SwitchProps) {
   const { checked, id, onChange, name, onClick, label } = props;
   return (
     <div className="base-switch">
@@ -23,3 +23,5 @@ export default function Switch(props: SwitchProps) {
     </div>
   );
 }
+
+export default memo(Switch);

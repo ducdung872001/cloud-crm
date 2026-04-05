@@ -1,11 +1,11 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
+import React, {Fragment, useState, useEffect, useRef, memo} from "react";
 import _ from "lodash";
 import Icon from "components/icon";
 import SearchBox from "components/searchBox/searchBox";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import "./HeaderFilter.scss";
 
-export default function HeaderFilter(props: {
+function HeaderFilter(props: {
   params: Record<string, unknown>;
   setParams: (params: Record<string, unknown>) => void;
   listIdChecked?: number[];
@@ -93,3 +93,5 @@ export default function HeaderFilter(props: {
     </div>
   );
 }
+
+export default memo(HeaderFilter);

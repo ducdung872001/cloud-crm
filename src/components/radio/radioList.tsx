@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, {ReactElement, memo} from "react";
 import Radio, { RadioProps } from "./radio";
 import "./radioList.scss";
 
@@ -21,7 +21,7 @@ interface RadioListProps {
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   onClick?: React.MouseEventHandler<HTMLLabelElement>;
 }
-export default function RadioList(props: RadioListProps) {
+function RadioList(props: RadioListProps) {
   const {
     title,
     titlePosition,
@@ -90,3 +90,5 @@ export default function RadioList(props: RadioListProps) {
     </div>
   );
 }
+
+export default memo(RadioList);

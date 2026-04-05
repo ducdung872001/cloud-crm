@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {useContext, useEffect, useState, memo} from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
@@ -7,7 +7,7 @@ interface BasicColumnProps {
   data?: Highcharts.SeriesOptionsType[];
 }
 
-export default function BasicColumn(props: BasicColumnProps) {
+function BasicColumn(props: BasicColumnProps) {
   const { classNames, data } = props;
 
   const [chartData, setChartData] = useState({
@@ -63,3 +63,5 @@ export default function BasicColumn(props: BasicColumnProps) {
       </div>
   );
 }
+
+export default memo(BasicColumn);

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, {Fragment, memo} from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "components/button/button";
 import Modal, { ModalBody, ModalHeader } from "components/modal/modal";
@@ -11,7 +11,7 @@ interface INotifiPackageRenewalProps {
   onHide: () => void;
 }
 
-export default function NotifiPackageRenewal(props: INotifiPackageRenewalProps) {
+function NotifiPackageRenewal(props: INotifiPackageRenewalProps) {
   const { onShow, data, onHide } = props;
 
   const navigation = useNavigate();
@@ -59,3 +59,5 @@ export default function NotifiPackageRenewal(props: INotifiPackageRenewalProps) 
     </Fragment>
   );
 }
+
+export default memo(NotifiPackageRenewal);

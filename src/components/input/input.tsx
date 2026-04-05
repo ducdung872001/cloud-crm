@@ -1,6 +1,6 @@
 import RadioList from "components/radio/radioList";
 import { IOption } from "model/OtherModel";
-import React, { Fragment, ReactElement } from "react";
+import React, {Fragment, ReactElement, memo} from "react";
 import Icon from "components/icon";
 
 import "./input.scss";
@@ -50,7 +50,7 @@ interface InputProps {
   warningHistory?: boolean;
   onWarningHistory?: React.MouseEventHandler<HTMLDivElement>;
 }
-export default function Input(props: InputProps) {
+function Input(props: InputProps) {
   const {
     id,
     value,
@@ -211,3 +211,5 @@ export default function Input(props: InputProps) {
     </div>
   );
 }
+
+export default memo(Input);

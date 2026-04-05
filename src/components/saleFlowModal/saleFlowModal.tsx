@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState, memo} from "react";
 import { IActionModal } from "model/OtherModel";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import "./saleFlowModal.scss";
@@ -12,7 +12,7 @@ export interface SaleFlowModalProps {
   onShow: boolean;
   onHide: () => void;
 }
-export default function SaleFlowModal(props: SaleFlowModalProps) {
+function SaleFlowModal(props: SaleFlowModalProps) {
   const { itemSaleFlow, onShow, onHide } = props;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [valueSaleflow, setValueSaleflow] = useState(null);
@@ -123,3 +123,5 @@ export default function SaleFlowModal(props: SaleFlowModalProps) {
     </Modal>
   );
 }
+
+export default memo(SaleFlowModal);

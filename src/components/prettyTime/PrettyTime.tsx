@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import moment from "moment";
 
 interface PrettyTimeProps {
@@ -6,7 +6,7 @@ interface PrettyTimeProps {
   className?: string;
 }
 
-export default function PrettyTime(props: PrettyTimeProps) {
+function PrettyTime(props: PrettyTimeProps) {
   const { time, className } = props;
 
   const currentTime = new Date().getTime();
@@ -34,3 +34,5 @@ export default function PrettyTime(props: PrettyTimeProps) {
 
   return <span className={`time ${className ? className : ""}`}>{moment(time).format("DD/MM/YYYY HH:mm:ss")}</span>;
 }
+
+export default memo(PrettyTime);

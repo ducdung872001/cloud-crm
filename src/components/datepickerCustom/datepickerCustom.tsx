@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import React, { Fragment, ReactElement, useRef, useState } from "react";
+import React, {Fragment, ReactElement, useRef, useState, memo} from "react";
 import vi from "date-fns/locale/vi";
 import { Portal } from "react-overlays";
 import DatePicker from "react-datepicker";
@@ -45,7 +45,7 @@ interface DatePickerCustomProps {
   warningHistory?: boolean;
   onWarningHistory?: React.MouseEventHandler<HTMLDivElement>;
 }
-export default function DatePickerCustom(props: DatePickerCustomProps) {
+function DatePickerCustom(props: DatePickerCustomProps) {
   const {
     id,
     value,
@@ -259,3 +259,5 @@ const CalendarContainer = ({ children }: { children: React.ReactNode }) => {
   const el = document.getElementsByTagName("body")[0];
   return <Portal container={el}>{children}</Portal>;
 };
+
+export default memo(DatePickerCustom);

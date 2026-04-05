@@ -1,4 +1,4 @@
-import React, { Fragment, ReactElement, useEffect, useRef, useState } from "react";
+import React, {Fragment, ReactElement, useEffect, useRef, useState, memo} from "react";
 import NumberFormat from "react-number-format";
 import Button from "components/button/button";
 import Icon from "components/icon";
@@ -60,7 +60,7 @@ interface NumericInputProps {
   warningHistory?: boolean;
   onWarningHistory?: React.MouseEventHandler<HTMLDivElement>;
 }
-export default function NummericInput(props: NumericInputProps) {
+function NummericInput(props: NumericInputProps) {
   const {
     id,
     value,
@@ -297,3 +297,5 @@ export default function NummericInput(props: NumericInputProps) {
     </div>
   );
 }
+
+export default memo(NummericInput);

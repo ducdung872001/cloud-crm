@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, {useContext, useState, memo} from "react";
 import { useLocation, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Icon from "components/icon";
@@ -30,7 +30,7 @@ const filterMenuItemList = (menuItemList: IMenuItem[]) => {
     .filter((m) => m);
 };
 
-export default function Navigation(props: NavigationProps) {
+function Navigation(props: NavigationProps) {
   const { menuItemList } = props;
 
   const { permissions, dataExpired } = useContext(UserContext) as ContextType;
@@ -200,3 +200,5 @@ export default function Navigation(props: NavigationProps) {
     </ul>
   );
 }
+
+export default memo(Navigation);

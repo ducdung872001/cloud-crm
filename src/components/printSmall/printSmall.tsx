@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
+import React, {Fragment, useContext, useEffect, useRef, useState, memo} from "react";
 import moment from "moment";
 import { useReactToPrint } from "react-to-print";
 import ImgQrBill from "assets/images/qr-bill.png";
@@ -12,7 +12,7 @@ interface IPrintSmallProps {
   isPrint: boolean;
 }
 
-export default function PrintSmall(props: IPrintSmallProps) {
+function PrintSmall(props: IPrintSmallProps) {
   const { data, isPrint } = props;
 
   const refPrintSmall = useRef(null);
@@ -196,3 +196,5 @@ export default function PrintSmall(props: IPrintSmallProps) {
     </div>
   );
 }
+
+export default memo(PrintSmall);

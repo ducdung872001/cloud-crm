@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, {Fragment, useContext, useEffect, useState, memo} from "react";
 import Navigation from "components/navigation/navigation";
 import LogoMenu from "assets/images/logo-menu.svg";
 import { menu } from "configs/routes";
@@ -13,7 +13,7 @@ import { useWindowDimensions } from "utils/hookCustom";
 import { getDomain } from "reborn-util";
 import "./sidebar.scss";
 
-export default function Sidebar() {
+function Sidebar() {
   const location = useLocation();
   const [isMouseOver, setIsMouseOver] = useState<boolean>(false);
   const { isCollapsedSidebar, setIsCollapsedSidebar, dataBeauty } = useContext(UserContext) as ContextType;
@@ -98,3 +98,5 @@ export default function Sidebar() {
     </Fragment>
   );
 }
+
+export default memo(Sidebar);

@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import React, { Fragment, useEffect, useState } from "react";
+import React, {Fragment, useEffect, useState, memo} from "react";
 import BulkAction, { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import Checkbox from "components/checkbox/checkbox";
 import ReactTooltip from "react-tooltip";
@@ -40,7 +40,7 @@ export interface BoxTableProps {
   dataSummary?: React.ReactNode[];
 }
 
-export default function BoxTable(props: BoxTableProps) {
+function BoxTable(props: BoxTableProps) {
   const {
     name,
     titles,
@@ -233,3 +233,5 @@ export default function BoxTable(props: BoxTableProps) {
     </div>
   );
 }
+
+export default memo(BoxTable);

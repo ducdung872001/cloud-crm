@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, {Fragment, useEffect, useState, memo} from "react";
 import { Portal } from "react-overlays";
 import { getParentByClassName } from "reborn-util";
 import { useWindowDimensions } from "utils/hookCustom";
@@ -15,7 +15,7 @@ interface PopoverProps {
   distance?: number;
   forNote?: boolean;
 }
-export default function Popover(props: PopoverProps) {
+function Popover(props: PopoverProps) {
   const { className, alignment, direction, refContainer, children, isTriangle, refPopover, distance } = props;
   const el = document.getElementsByTagName("body")[0];
   const { width, height } = useWindowDimensions();
@@ -76,3 +76,5 @@ export default function Popover(props: PopoverProps) {
     </Fragment>
   );
 }
+
+export default memo(Popover);

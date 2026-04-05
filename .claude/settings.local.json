@@ -33,7 +33,8 @@
       "Bash(grep -rn -A1 \"else\\\\s*$\" src/ --include=\"*.ts\" --include=\"*.tsx\")",
       "Bash(grep -B1 \"^\\\\\\(src/.*-\\\\\\)\\\\s*$\\\\|^\\\\\\(src/.*-\\\\\\)\\\\s*}\\\\s*$\")",
       "Bash(node convert_lazy.js)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(node add_memo.js)"
     ]
   }
 }

@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import React, { Fragment, useRef, useState } from "react";
+import React, {Fragment, useRef, useState, memo} from "react";
 import Button from "components/button/button";
 import Icon from "components/icon";
 import Popover from "components/popover/popover";
@@ -26,7 +26,7 @@ export interface ITitleActions {
   actions_extra?: IAction[];
 }
 
-export default function TitleAction(props: TitleActionProps) {
+function TitleAction(props: TitleActionProps) {
   const { width } = useWindowDimensions();
   const { title } = props;
   let { titleActions } = props;
@@ -109,3 +109,5 @@ export default function TitleAction(props: TitleActionProps) {
     </div>
   );
 }
+
+export default memo(TitleAction);

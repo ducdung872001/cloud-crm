@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
+import React, {Fragment, useContext, useEffect, useRef, useState, memo} from "react";
 import _ from "lodash";
 import moment from "moment";
 import Button from "components/button/button";
@@ -22,7 +22,7 @@ interface FilterProps {
   listFilterItem: IFilterItem[];
 }
 
-export default function Filter(props: FilterProps) {
+function Filter(props: FilterProps) {
   const { name, onChangeFilter, listFilterItem, isShowFilterList } = props;
   const { width } = useWindowDimensions();
   const [listFilterItemState, setListFilterItemState] = useState<IFilterItem[]>([]);
@@ -712,3 +712,5 @@ export function ListFilterChoose(props: ListFilterChooseProps) {
     </>
   );
 }
+
+export default memo(Filter);

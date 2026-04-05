@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {useContext, useEffect, useState, memo} from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
@@ -7,7 +7,7 @@ interface PieChartProps {
   data?: Highcharts.SeriesOptionsType[];
 }
 
-export default function PieChart(props: PieChartProps) {
+function PieChart(props: PieChartProps) {
   const { classNames, data } = props;
 
   const [chartData, setChartData] = useState({
@@ -87,3 +87,5 @@ export default function PieChart(props: PieChartProps) {
       </div>
   );
 }
+
+export default memo(PieChart);

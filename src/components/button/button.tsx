@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import "./button.scss";
 export interface ButtonProps {
   color?: "primary" | "destroy" | "success" | "warning" | "transparent" | "link" | "secondary";
@@ -15,7 +15,7 @@ export interface ButtonProps {
   dataTip?: string;
   autoFocus?: boolean;
 }
-export default function Button(props: ButtonProps) {
+function Button(props: ButtonProps) {
   const { color, variant, children, disabled, onClick, type, className, hasIcon, onlyIcon, size, refButton, dataTip, autoFocus } = props;
   return (
     <button
@@ -35,3 +35,5 @@ export default function Button(props: ButtonProps) {
     </button>
   );
 }
+
+export default memo(Button);

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, {useRef, memo} from "react";
 import _ from "lodash";
 import Icon from "components/icon";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
@@ -12,7 +12,7 @@ interface IHeaderTab {
   title?: string
 }
 
-export default function HeaderTabMenu(props: IHeaderTab) {
+function HeaderTabMenu(props: IHeaderTab) {
   const { onBackProps, titleActions, titleBack, title, callBack } = props;
 
   const clickBack = () => {
@@ -48,3 +48,5 @@ export default function HeaderTabMenu(props: IHeaderTab) {
     </div>
   );
 }
+
+export default memo(HeaderTabMenu);

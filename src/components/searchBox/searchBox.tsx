@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, {Fragment, useEffect, useState, memo} from "react";
 import Icon from "components/icon";
 import Input from "components/input/input";
 import { IFilterItem, ISaveSearch, ISortItem } from "model/OtherModel";
@@ -32,7 +32,7 @@ interface SearchBoxProps {
   setTabActive?: (key: string | number) => void;
 }
 
-export default function SearchBox(props: SearchBoxProps) {
+function SearchBox(props: SearchBoxProps) {
   const {
     name,
     params,
@@ -340,3 +340,5 @@ export default function SearchBox(props: SearchBoxProps) {
     </Fragment>
   );
 }
+
+export default memo(SearchBox);

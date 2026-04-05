@@ -1,6 +1,6 @@
 import Icon from "components/icon";
 import Input from "components/input/input";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState, memo} from "react";
 import { convertParamsToString } from "reborn-util";
 import { showToast } from "utils/common";
 
@@ -12,7 +12,7 @@ export const fetchData = async (Uri: string, params: Record<string, unknown>, si
   }).then((res) => res.json());
 };
 
-export default function MaskedInput(props) {
+function MaskedInput(props) {
   const { field, handleUpdate, value, valueOfKey, originalValue, url } = props;
   const [isShow, setIsShow] = useState<boolean>(false);
   const [valueShow, setValueShow] = useState("");
@@ -90,3 +90,5 @@ export default function MaskedInput(props) {
     />
   );
 }
+
+export default memo(MaskedInput);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 interface CustomScrollbarProps {
   children: React.ReactElement;
@@ -9,7 +9,7 @@ interface CustomScrollbarProps {
   handleScroll?: React.UIEventHandler<HTMLDivElement>;
 }
 
-export default function CustomScrollbar(props: CustomScrollbarProps) {
+function CustomScrollbar(props: CustomScrollbarProps) {
   const { children, className, width, height, autoHide, handleScroll } = props;
   const renderThumb = ({ style, ...props }) => {
     const thumbStyle = {
@@ -34,3 +34,5 @@ export default function CustomScrollbar(props: CustomScrollbarProps) {
     </Scrollbars>
   );
 }
+
+export default memo(CustomScrollbar);

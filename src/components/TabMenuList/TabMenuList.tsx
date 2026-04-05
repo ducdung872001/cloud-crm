@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState, memo} from "react";
 import Icon from "../icon";
 import "./TabMenuList.scss";
 
@@ -10,7 +10,7 @@ import "./TabMenuList.scss";
  *   groups    – array of { label, items[] } để hiển thị section headers
  *   onClick   – callback khi click card
  */
-export default function TabMenuList(props: Record<string, unknown>) {
+function TabMenuList(props: Record<string, unknown>) {
   const { listTab, groups, onClick } = props;
 
   // ── Render một card ──────────────────────────────────────────────────────────
@@ -59,3 +59,5 @@ export default function TabMenuList(props: Record<string, unknown>) {
     </div>
   );
 }
+
+export default memo(TabMenuList);

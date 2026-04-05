@@ -1,4 +1,4 @@
-import React, { Fragment, ReactElement, useEffect, useRef, useState } from "react";
+import React, {Fragment, ReactElement, useEffect, useRef, useState, memo} from "react";
 import Select, { components } from "react-select";
 import { AsyncPaginate } from "react-select-async-paginate";
 import AsyncSelect from "react-select/async";
@@ -61,7 +61,7 @@ interface SelectCustomProps {
   chooseParent?: boolean;
 }
 
-export default function SelectTree(props: SelectCustomProps) {
+function SelectTree(props: SelectCustomProps) {
   const {
     id,
     value,
@@ -444,3 +444,5 @@ export default function SelectTree(props: SelectCustomProps) {
     </div>
   );
 }
+
+export default memo(SelectTree);

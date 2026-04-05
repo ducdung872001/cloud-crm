@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useMemo } from "react";
+import React, {Fragment, useState, useEffect, useMemo, memo} from "react";
 import classNames from "classnames";
 import Loading from "components/loading";
 import Image from "components/image";
@@ -20,7 +20,7 @@ interface IChooseItemProps {
   type?: "order" | "sales";
 }
 
-export default function ChooseItem(props: IChooseItemProps) {
+function ChooseItem(props: IChooseItemProps) {
   const { onShow, onHide, callback, type } = props;
 
   const listFilter = useMemo(
@@ -228,3 +228,5 @@ export default function ChooseItem(props: IChooseItemProps) {
     </Fragment>
   );
 }
+
+export default memo(ChooseItem);

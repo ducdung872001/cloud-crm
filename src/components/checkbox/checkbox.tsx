@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import Icon from "components/icon";
 import "./checkbox.scss";
 
@@ -13,7 +13,7 @@ export interface CheckboxProps {
   className?: string;
   disabled?: boolean;
 }
-export default function Checkbox(props: CheckboxProps) {
+function Checkbox(props: CheckboxProps) {
   const { value, label, checked, defaultChecked, indeterminate, onChange, onClick, className, disabled } = props;
   return (
     <div
@@ -32,3 +32,5 @@ export default function Checkbox(props: CheckboxProps) {
     </div>
   );
 }
+
+export default memo(Checkbox);

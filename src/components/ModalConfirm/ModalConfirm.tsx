@@ -1,10 +1,10 @@
-import React, { Fragment, useState, useEffect, useCallback, useMemo } from "react";
+import React, {Fragment, useState, useEffect, useCallback, useMemo, memo} from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import "./ModalConfirm.scss";
 import _, { at, get, set } from "lodash";
 import Icon from "components/icon";
 
-export default function ModalConfirm(props: { onShow: boolean; onHide: (value: boolean) => void; title: string; content: string; onSubmit: () => void; isSubmit?: boolean }) {
+function ModalConfirm(props: { onShow: boolean; onHide: (value: boolean) => void; title: string; content: string; onSubmit: () => void; isSubmit?: boolean }) {
   const { onShow, onHide, title, content, onSubmit, isSubmit} = props;
 
 
@@ -63,3 +63,5 @@ export default function ModalConfirm(props: { onShow: boolean; onHide: (value: b
     </Fragment>
   );
 }
+
+export default memo(ModalConfirm);

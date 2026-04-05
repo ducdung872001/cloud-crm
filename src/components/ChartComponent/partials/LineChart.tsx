@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {useContext, useEffect, useState, memo} from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
@@ -7,7 +7,7 @@ interface LineChartProps {
   data?: Highcharts.SeriesOptionsType[];
 }
 
-export default function LineChart(props: LineChartProps) {
+function LineChart(props: LineChartProps) {
   const { classNames, data } = props;
 
   const [chartData, setChartData] = useState({
@@ -105,3 +105,5 @@ export default function LineChart(props: LineChartProps) {
       </div>
   );
 }
+
+export default memo(LineChart);

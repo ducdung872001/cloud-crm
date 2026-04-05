@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext, useCallback } from "react";
+import React, {useEffect, useRef, useState, useContext, useCallback, memo} from "react";
 import _ from "lodash";
 import moment from "moment";
 import { useCookies } from "react-cookie";
@@ -75,7 +75,7 @@ interface HeaderProps {
   paramBranch: Record<string, unknown>;
 }
 
-export default function Header(props: HeaderProps) {
+function Header(props: HeaderProps) {
   const [cookies, setCookie, removeCookie] = useCookies();
   const { valueBranch, handleChangeValueBranch, listBranch, newListBranch, searchListBranch, paramBranch } = props;
   const {
@@ -1093,3 +1093,5 @@ export default function Header(props: HeaderProps) {
     </div>
   );
 }
+
+export default memo(Header);

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, {useMemo, useRef, memo} from "react";
 import { AgGridReact } from "ag-grid-react";
 import { Pagination, PaginationProps } from "components/pagination/pagination";
 import BulkAction, { BulkActionItemModel } from "components/bulkAction/bulkAction";
@@ -23,7 +23,7 @@ interface IBoxTableAdvancedProps {
   rowHeight?: number;
 }
 
-export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
+function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
   const {
     name,
     columnDefs,
@@ -138,3 +138,5 @@ export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
     </div>
   );
 }
+
+export default memo(BoxTableAdvanced);

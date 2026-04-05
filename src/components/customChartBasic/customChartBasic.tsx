@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { formatCurrency } from "reborn-util";
 import Loading from "components/loading";
 import { SystemNotification } from "components/systemNotification/systemNotification";
@@ -11,7 +11,7 @@ interface ICustomChartBasicProps {
   nameNotification: string;
 }
 
-export default function CustomChartBasic(props: ICustomChartBasicProps) {
+function CustomChartBasic(props: ICustomChartBasicProps) {
   const { totalMax, lstData, isLoading, nameNotification } = props;
 
   return (
@@ -40,3 +40,5 @@ export default function CustomChartBasic(props: ICustomChartBasicProps) {
     </div>
   );
 }
+
+export default memo(CustomChartBasic);

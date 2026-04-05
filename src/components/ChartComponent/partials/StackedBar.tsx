@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {useContext, useEffect, useState, memo} from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
@@ -7,7 +7,7 @@ interface StackedBarProps {
   data?: Highcharts.SeriesOptionsType[];
 }
 
-export default function StackedBar(props: StackedBarProps) {
+function StackedBar(props: StackedBarProps) {
   const { classNames, data } = props;
 
   const [chartData, setChartData] = useState({
@@ -58,3 +58,5 @@ export default function StackedBar(props: StackedBarProps) {
       </div>
   );
 }
+
+export default memo(StackedBar);

@@ -1,4 +1,4 @@
-import React, { Fragment, ReactElement } from "react";
+import React, {Fragment, ReactElement, memo} from "react";
 import "./textarea.scss";
 interface TextareaProps {
   id?: string;
@@ -29,7 +29,7 @@ interface TextareaProps {
   required?: boolean;
   row?: number;
 }
-export default function TextArea(props: TextareaProps) {
+function TextArea(props: TextareaProps) {
   const {
     id,
     value,
@@ -110,3 +110,5 @@ export default function TextArea(props: TextareaProps) {
     </div>
   );
 }
+
+export default memo(TextArea);

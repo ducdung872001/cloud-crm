@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, {Fragment, useEffect, useRef, useState, memo} from "react";
 import { Portal } from "react-overlays";
 import Button from "./../button/button";
 import Icon from "components/icon";
@@ -19,7 +19,7 @@ interface ModalProps {
   size?: "xxl" | "xl" | "lg" | "md" | "sm" | "full";
 }
 
-export default function Modal(props: ModalProps) {
+function Modal(props: ModalProps) {
   const { isOpen, children, toggle, staticBackdrop, className, isCentered, isFade, size = "md" } = props;
 
   const { width } = useWindowDimensions();
@@ -174,3 +174,5 @@ export function ModalFooter(props: ModalFooterProps) {
     </div>
   );
 }
+
+export default memo(Modal);

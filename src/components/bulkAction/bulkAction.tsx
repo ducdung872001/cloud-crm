@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, {useRef, useState, memo} from "react";
 import Popover from "components/popover/popover";
 import Button from "components/button/button";
 import Icon from "components/icon";
@@ -14,7 +14,7 @@ interface BulkActionProps {
   selectedCount: number;
   bulkActionItems: BulkActionItemModel[];
 }
-export default function BulkAction(props: BulkActionProps) {
+function BulkAction(props: BulkActionProps) {
   const { name, selectedCount, bulkActionItems } = props;
 
   const refLiAction = useRef();
@@ -68,3 +68,5 @@ export default function BulkAction(props: BulkActionProps) {
     </>
   );
 }
+
+export default memo(BulkAction);

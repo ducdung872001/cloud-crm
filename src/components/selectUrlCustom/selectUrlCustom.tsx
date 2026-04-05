@@ -1,4 +1,4 @@
-import React, { Fragment, ReactElement, useEffect, useRef, useState } from "react";
+import React, {Fragment, ReactElement, useEffect, useRef, useState, memo} from "react";
 import Select, { components } from "react-select";
 import { AsyncPaginate } from "react-select-async-paginate";
 import { IOption } from "model/OtherModel";
@@ -80,7 +80,7 @@ interface SelectCustomProps {
   bindingField?: string;
 }
 
-export default function SelectUrlCustom(props: SelectCustomProps) {
+function SelectUrlCustom(props: SelectCustomProps) {
   const {
     id,
     value,
@@ -449,3 +449,5 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
     </div>
   );
 }
+
+export default memo(SelectUrlCustom);

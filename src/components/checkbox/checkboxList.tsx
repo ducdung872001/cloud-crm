@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, {ReactElement, memo} from "react";
 import Checkbox, { CheckboxProps } from "./checkbox";
 import "./checkboxList.scss";
 
@@ -17,7 +17,7 @@ interface CheckboxListProps {
   onChange?: (value: string) => void;
   onClick?: React.MouseEventHandler<HTMLLabelElement>;
 }
-export default function CheckboxList(props: CheckboxListProps) {
+function CheckboxList(props: CheckboxListProps) {
   const { title, titlePosition, options, disabled, required, value, defaultValue, error, message, warning, messageWarning, onChange, onClick } =
     props;
 
@@ -68,3 +68,5 @@ export default function CheckboxList(props: CheckboxListProps) {
     </div>
   );
 }
+
+export default memo(CheckboxList);

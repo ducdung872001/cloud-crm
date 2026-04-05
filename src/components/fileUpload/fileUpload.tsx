@@ -1,4 +1,4 @@
-import React, { Fragment, ReactElement, useEffect, useRef, useState } from "react";
+import React, {Fragment, ReactElement, useEffect, useRef, useState, memo} from "react";
 import { uploadImageFromFiles } from "utils/image";
 import { showToast } from "utils/common";
 import { FILE_IMAGE_MAX } from "utils/constant";
@@ -18,7 +18,7 @@ interface FileUploadProps {
   source?: string;
 }
 
-export default function FileUpload(props: FileUploadProps) {
+function FileUpload(props: FileUploadProps) {
   const { label, isRequired, type, formData, setFormData, name, source = "reborn" } = props;
 
   const refInputUpload = useRef<HTMLInputElement>();
@@ -250,3 +250,5 @@ export default function FileUpload(props: FileUploadProps) {
     </div>
   );
 }
+
+export default memo(FileUpload);

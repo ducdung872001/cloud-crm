@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState, memo} from "react";
 import { IFilterItem, ISaveSearch, ISaveSearchParam } from "model/OtherModel";
 import "./saveSearch.scss";
 
@@ -11,7 +11,7 @@ interface SaveSearchProps {
   setTabActive?: (key: string | number) => void;
 }
 
-export default function SaveSearch(props: SaveSearchProps) {
+function SaveSearch(props: SaveSearchProps) {
   const { params, listSaveSearch, listFilterItem, setDisabledSaveSearch, callback, setTabActive } = props;
   const [saveSearchItems, setSaveSearchItems] = useState<ISaveSearch[]>(listSaveSearch);
 
@@ -128,3 +128,5 @@ export default function SaveSearch(props: SaveSearchProps) {
     </ul>
   );
 }
+
+export default memo(SaveSearch);

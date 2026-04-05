@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState, memo} from "react";
 import Icon from "components/icon";
 import { showToast } from "utils/common";
 import ExcelIcon from "assets/images/img-excel.png";
@@ -13,7 +13,7 @@ interface IAddFileProps {
  * @param props
  * @returns
  */
-export default function AddFile(props: IAddFileProps) {
+function AddFile(props: IAddFileProps) {
   const { takeFileAdd } = props;
 
   const refInputUpload = useRef<HTMLInputElement | null>(null);
@@ -123,3 +123,5 @@ export default function AddFile(props: IAddFileProps) {
     </div>
   );
 }
+
+export default memo(AddFile);

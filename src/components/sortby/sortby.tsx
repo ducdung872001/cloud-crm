@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState, memo} from "react";
 import { ISortItem } from "model/OtherModel";
 import Button from "components/button/button";
 import Icon from "components/icon";
@@ -14,7 +14,7 @@ interface SortProps {
   callback: (value: string) => void;
 }
 
-export default function SortBy(props: SortProps) {
+function SortBy(props: SortProps) {
   const { listSort, params, callback } = props;
   const refSortBy = useRef();
   const refSortByContainer = useRef();
@@ -53,3 +53,5 @@ export default function SortBy(props: SortProps) {
     </div>
   );
 }
+
+export default memo(SortBy);
