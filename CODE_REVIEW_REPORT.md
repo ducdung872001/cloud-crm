@@ -30,9 +30,9 @@
 
 | # | Vấn đề | File | Ghi chú |
 |---|--------|------|---------|
-| 1_DONE | eval() trực tiếp — chạy formula user nhập | src/pages/SettingProcess/partials/ProcessedObjectList/partials/AddFormObjectBackup/index.tsx dòng 194 | Có thể chạy bất kỳ JS nào — cần thay bằng safe expression parser |
-| 2 | XSS qua dangerouslySetInnerHTML — không sanitize | src/pages/SettingSell/partials/Product/DetailProduct/PreviewProduct.tsx dòng 99 | product.content render thẳng HTML không qua DOMPurify |
-| 3 | XSS qua dangerouslySetInnerHTML — không sanitize | src/pages/WarehouseReport/components/WarehouseReportSlowView.tsx dòng 298 | String concatenation vào HTML |
+| 1_FIX | eval() trực tiếp — chạy formula user nhập | src/pages/SettingProcess/partials/ProcessedObjectList/partials/AddFormObjectBackup/index.tsx dòng 194 | Có thể chạy bất kỳ JS nào — cần thay bằng safe expression parser |
+| 2_FIX | XSS qua dangerouslySetInnerHTML — không sanitize | src/pages/SettingSell/partials/Product/DetailProduct/PreviewProduct.tsx dòng 99 | product.content render thẳng HTML không qua DOMPurify |
+| 3_FIX | XSS qua dangerouslySetInnerHTML — không sanitize | src/pages/WarehouseReport/components/WarehouseReportSlowView.tsx dòng 298 | String concatenation vào HTML |
 | 4 | Firebase API Key lộ trong source code | src/firebase-config.ts dòng 44 | AIzaSyD-7AgYaublHnECoXgCiMpRq9UwHchLvFk |
 | 5 | Firebase API Key lộ (key khác) | src/configs/firebaseConfig.js dòng 5 | AIzaSyD9OUVhQ_QR-McUSan_hG1WI_7BLE1D7Ts |
 | 6 | Access token lưu localStorage — dễ bị XSS đọc | src/components/header/header.tsx dòng 97 | access_token_athena lưu localStorage |

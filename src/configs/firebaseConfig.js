@@ -2,13 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 var firebaseConfig = {
-  apiKey: "AIzaSyD9OUVhQ_QR-McUSan_hG1WI_7BLE1D7Ts",
-  authDomain: "reborn-crm.firebaseapp.com",
-  projectId: "reborn-crm",
-  storageBucket: "reborn-crm.appspot.com",
-  messagingSenderId: "175031404504",
-  appId: "1:175031404504:web:868bf345f199a3281dd4ad",
-  measurementId: "G-4T77GWKS8C"
+  apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
@@ -16,7 +15,7 @@ const messaging = getMessaging(firebaseApp);
 
 export const fetchToken = () => {
   return getToken(messaging, {
-    vapidKey: "BDbnAgiZyRkZeJ6R_fSEMrb6mIQhuusbkdVHh2l2qYw29Ew-fllpz9ZRVoUf8JtY1cZk-Lf8NtomLqg5sFkdY7Y",
+    vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
   })
     .then((currentToken) => {
       if (currentToken) {

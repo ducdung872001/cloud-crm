@@ -50,6 +50,28 @@ export default defineConfig(({ mode }) => {
         },
         include: "**/*.svg",
       }),
+      // Inject Firebase env vars vào service worker (không có import.meta.env)
+      {
+        name: "firebase-sw-env",
+        transformIndexHtml(html) {
+          return html;
+        },
+        generateBundle(_options, bundle) {
+          for (const file of Object.values(bundle)) {
+            if (file.type === "asset" && file.fileName === "firebase-messaging-sw.js") {
+              let code = typeof file.source === "string" ? file.source : new TextDecoder().decode(file.source);
+              code = code
+                .replace("__VITE_FIREBASE_API_KEY__", env.VITE_FIREBASE_API_KEY || "")
+                .replace("__VITE_FIREBASE_AUTH_DOMAIN__", env.VITE_FIREBASE_AUTH_DOMAIN || "")
+                .replace("__VITE_FIREBASE_PROJECT_ID__", env.VITE_FIREBASE_PROJECT_ID || "")
+                .replace("__VITE_FIREBASE_STORAGE_BUCKET__", env.VITE_FIREBASE_STORAGE_BUCKET || "")
+                .replace("__VITE_FIREBASE_MESSAGING_SENDER_ID__", env.VITE_FIREBASE_MESSAGING_SENDER_ID || "")
+                .replace("__VITE_FIREBASE_APP_ID__", env.VITE_FIREBASE_APP_ID || "");
+              file.source = code;
+            }
+          }
+        },
+      },
     ],
     define: createProcessEnvDefinitions(env),
 

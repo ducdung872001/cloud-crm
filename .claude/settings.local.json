@@ -13,7 +13,10 @@
       "Bash(echo \"EXIT:$?\")",
       "Bash(xargs head:*)",
       "Bash(find /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src -name \"*.tsx\" -type f -exec wc -l {} +)",
-      "Bash(yarn add:*)"
+      "Bash(yarn add:*)",
+      "Bash(ls \"d:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\"/.env*)",
+      "Bash(ls \"d:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\"/public/firebase*)",
+      "Bash(echo \"EXIT_CODE:$?\")"
     ]
   }
 }
